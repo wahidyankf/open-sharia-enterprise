@@ -1,11 +1,11 @@
 ---
-title: "Indonesian Content Policy - ayokoding-fs"
-description: Policy defining when and how to create Indonesian content in ayokoding-fs bilingual platform
+title: "Indonesian Content Policy - ayokoding-web"
+description: Policy defining when and how to create Indonesian content in ayokoding-web bilingual platform
 category: explanation
 subcategory: conventions
 tags:
   - hugo
-  - ayokoding-fs
+  - ayokoding-web
   - indonesian
   - bilingual
   - content-policy
@@ -14,9 +14,9 @@ created: 2026-02-07
 updated: 2026-02-07
 ---
 
-# Indonesian Content Policy - ayokoding-fs
+# Indonesian Content Policy - ayokoding-web
 
-This document defines the policy for Indonesian language content in ayokoding-fs, establishing when Indonesian content should be created and what types of content are appropriate for Indonesian translation.
+This document defines the policy for Indonesian language content in ayokoding-web, establishing when Indonesian content should be created and what types of content are appropriate for Indonesian translation.
 
 ## Principles Implemented/Respected
 
@@ -30,7 +30,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes a clear content language policy for ayokoding-fs to:
+This convention establishes a clear content language policy for ayokoding-web to:
 
 - Define the primary language for different content types
 - Prevent redundant translation effort for technical tutorials
@@ -50,15 +50,15 @@ This convention establishes a clear content language policy for ayokoding-fs to:
 ### What This Convention Does NOT Cover
 
 - Indonesian language writing style and tone (covered in general content quality standards)
-- Indonesian-specific frontmatter or markdown conventions (covered in [ayokoding-fs convention](./ayokoding.md))
-- Bilingual navigation structure (covered in [ayokoding-fs convention](./ayokoding.md))
+- Indonesian-specific frontmatter or markdown conventions (covered in [ayokoding-web convention](./ayokoding.md))
+- Bilingual navigation structure (covered in [ayokoding-web convention](./ayokoding.md))
 - Hugo multilingual configuration (covered in [shared Hugo convention](./shared.md))
 
 ---
 
 ## Core Policy: English-First for Technical Tutorials
 
-**CRITICAL RULE**: ayokoding-fs is **English-first** for technical tutorials and programming language content.
+**CRITICAL RULE**: ayokoding-web is **English-first** for technical tutorials and programming language content.
 
 **Rationale**:
 
@@ -225,7 +225,7 @@ START: Should I create Indonesian content?
 > _Artikel ini adalah hasil terjemahan dengan bantuan mesin. Karenanya akan ada pergeseran nuansa dari artikel aslinya. Untuk mendapatkan pesan dan nuansa asli dari artikel ini, silakan kunjungi artikel yang asli di: [English Article Title](/en/learn/path/to/article)_
 ```
 
-**See**: [ayokoding-fs convention - Cross-Reference Pattern](./ayokoding.md#cross-reference-pattern-bilingual-blogging-content) for complete cross-reference standards.
+**See**: [ayokoding-web convention - Cross-Reference Pattern](./ayokoding.md#cross-reference-pattern-bilingual-blogging-content) for complete cross-reference standards.
 
 ---
 
@@ -233,7 +233,7 @@ START: Should I create Indonesian content?
 
 ### Content Creation Agents
 
-**apps-ayokoding-fs-general-maker**, **apps-ayokoding-fs-by-example-maker**, **ayokoding-fs-by-concept-maker**:
+**apps-ayokoding-web-general-maker**, **apps-ayokoding-web-by-example-maker**, **ayokoding-web-by-concept-maker**:
 
 - **Default behavior**: Create technical tutorials in English under `/en/learn/`
 - **Do NOT automatically mirror** to Indonesian (`/id/belajar/`)
@@ -253,7 +253,7 @@ Agent: Creates /id/celoteh/2024/02/belajar-typescript.md
 
 ### Validation Agents
 
-**apps-ayokoding-fs-general-checker**:
+**apps-ayokoding-web-general-checker**:
 
 - Validates that technical tutorials in English do NOT have automatic Indonesian mirrors
 - Flags Indonesian technical tutorials without explicit translation justification
@@ -415,7 +415,7 @@ Before creating Indonesian content, verify:
 
 **Related Conventions**:
 
-- [Hugo Content - ayokoding-fs](./ayokoding.md) - Site-specific conventions including bilingual support, cross-reference patterns, and navigation structure
+- [Hugo Content - ayokoding-web](./ayokoding.md) - Site-specific conventions including bilingual support, cross-reference patterns, and navigation structure
 - [Hugo Content - Shared](./shared.md) - Common Hugo conventions applying to all sites
 - [Programming Language Content Standard](../tutorials/programming-language-content.md) - Full Set Tutorial Package architecture (applies to English tutorials)
 
@@ -427,10 +427,10 @@ Before creating Indonesian content, verify:
 
 **Agents**:
 
-- `apps-ayokoding-fs-general-maker` - Creates ayokoding-fs content following this policy
-- `apps-ayokoding-fs-by-example-maker` - Creates by-example tutorials (English-first)
-- `ayokoding-fs-by-concept-maker` - Creates by-concept tutorials (English-first)
-- `apps-ayokoding-fs-general-checker` - Validates compliance with this policy
+- `apps-ayokoding-web-general-maker` - Creates ayokoding-web content following this policy
+- `apps-ayokoding-web-by-example-maker` - Creates by-example tutorials (English-first)
+- `ayokoding-web-by-concept-maker` - Creates by-concept tutorials (English-first)
+- `apps-ayokoding-web-general-checker` - Validates compliance with this policy
 
 ---
 

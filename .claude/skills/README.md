@@ -59,9 +59,9 @@ This directory contains skill packages that provide progressive knowledge delive
 
 ### 🌐 Site Development Skills
 
-- **apps-ayokoding-fs-developing-content** - AyoKoding content development standards (Next.js)
+- **apps-ayokoding-web-developing-content** - AyoKoding content development standards (Next.js)
 - **apps-organiclever-fe-developing-content** - OrganicLever frontend content development standards
-- **apps-oseplatform-fs-developing-content** - OSE Platform content development standards
+- **apps-oseplatform-web-developing-content** - OSE Platform content development standards
 
 ## Skill Structure
 

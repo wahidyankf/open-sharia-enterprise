@@ -87,7 +87,7 @@ excluded by design) so that static analysis runs across the full codebase withou
 
 ---
 
-### ayokoding-fs — Hugo Site
+### ayokoding-web — Hugo Site
 
 **Current state**: `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`
 
@@ -100,7 +100,7 @@ excluded by design) so that static analysis runs across the full codebase withou
 
 ---
 
-### oseplatform-fs — Hugo Site
+### oseplatform-web — Hugo Site
 
 **Current state**: `dev`, `build`, `clean` (incomplete)
 

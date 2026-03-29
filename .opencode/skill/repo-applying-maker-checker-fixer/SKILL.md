@@ -320,7 +320,7 @@ Checker:
 3. Checks content structure (heading hierarchy, links)
 4. Validates content conventions (links, structure)
 5. Checks content quality (alt text, accessible colors)
-6. Generates audit report: generated-reports/ayokoding-fs**2025-12-14--20-45**audit.md
+6. Generates audit report: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
 7. Reports findings summary in conversation
 8. Does NOT modify the tutorial file
 ```
@@ -602,18 +602,18 @@ Generate fix report in `generated-reports/` using same UUID chain as audit:
 **Example Workflow**:
 
 ```markdown
-User: "Apply fixes from latest ayokoding-fs audit"
+User: "Apply fixes from latest ayokoding-web audit"
 
 Fixer:
 
-1. Auto-detects latest: generated-reports/ayokoding-fs**2025-12-14--20-45**audit.md
+1. Auto-detects latest: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
 2. Parses findings (25 issues)
 3. Re-validates each finding:
    - 18 findings → HIGH confidence (apply)
    - 4 findings → MEDIUM confidence (skip, manual review)
    - 3 findings → FALSE_POSITIVE (skip, report for checker improvement)
 4. Applies 18 fixes
-5. Generates fix report: generated-reports/ayokoding-fs**2025-12-14--20-45**fix.md
+5. Generates fix report: generated-reports/ayokoding-web**2025-12-14--20-45**fix.md
 6. Summary: 18 fixed, 4 manual review, 3 false positives
 ```
 
@@ -650,9 +650,9 @@ Fixer:
 Seven agent families implement this pattern:
 
 1. **repo-governance-\*** - Repository-wide consistency
-2. **apps-ayokoding-fs-\*** - Content (ayokoding-fs, Next.js)
+2. **apps-ayokoding-web-\*** - Content (ayokoding-web, Next.js)
 3. **docs-tutorial-\*** - Tutorial quality
-4. **apps-oseplatform-fs-content-\*** - Hugo content (oseplatform-fs)
+4. **apps-oseplatform-web-content-\*** - Hugo content (oseplatform-web)
 5. **readme-\*** - README quality
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure

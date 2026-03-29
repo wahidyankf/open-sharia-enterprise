@@ -17,7 +17,7 @@ updated: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding FSM](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/) and [AyoKoding DDD](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/) before using these standards.
+**REQUIRED**: Complete [AyoKoding FSM](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/) and [AyoKoding DDD](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/) before using these standards.
 
 ## REQUIRED: FSM Within Aggregate Root
 

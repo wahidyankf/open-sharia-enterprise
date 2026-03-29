@@ -351,25 +351,25 @@ Environment branches serve deployment purposes, not feature isolation:
 
 **Key distinction**: Environment branches reflect deployment state, not development work.
 
-**Example in this repository: `prod-ayokoding-fs`**
+**Example in this repository: `prod-ayokoding-web`**
 
-The `apps/ayokoding-fs/` project uses a production deployment branch:
+The `apps/ayokoding-web/` project uses a production deployment branch:
 
-- **Branch**: `prod-ayokoding-fs`
+- **Branch**: `prod-ayokoding-web`
 - **Purpose**: Triggers automatic deployment to ayokoding.com via Vercel
-- **Location**: Deploys `apps/ayokoding-fs/` (Nx-integrated Hugo application)
+- **Location**: Deploys `apps/ayokoding-web/` (Nx-integrated Hugo application)
 - **Workflow** (automated):
   1. All development happens in `main`
-  2. The `test-and-deploy-ayokoding-fs.yml` GitHub Actions workflow runs at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-fs/`, builds, then force-pushes `main` to `prod-ayokoding-fs`
-  3. Push to `prod-ayokoding-fs` triggers production deployment via Vercel
-- **Important**: Never commit directly to `prod-ayokoding-fs` outside the CI automation
+  2. The `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow runs at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, then force-pushes `main` to `prod-ayokoding-web`
+  3. Push to `prod-ayokoding-web` triggers production deployment via Vercel
+- **Important**: Never commit directly to `prod-ayokoding-web` outside the CI automation
 
 **Why this is TBD-compliant**:
 
 - Development still happens on `main` (trunk)
 - No feature isolation in branches
-- `prod-ayokoding-fs` is a deployment trigger, not a development workspace
-- Changes flow from `main` to `prod-ayokoding-fs`, never the reverse
+- `prod-ayokoding-web` is a deployment trigger, not a development workspace
+- Changes flow from `main` to `prod-ayokoding-web`, never the reverse
 - Consistent with TBD principles: environment branches are for release management, not feature development
 
 **Reference**: [TrunkBasedDevelopment.com - Branch for Release](https://trunkbaseddevelopment.com/branch-for-release/) explicitly describes release branches as acceptable in TBD.

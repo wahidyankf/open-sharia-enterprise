@@ -236,7 +236,7 @@ context: |
 
 ```
 docs-checker.md
-apps-ayokoding-fs-general-maker.md
+apps-ayokoding-web-general-maker.md
 plan-executor.md
 ```
 

@@ -26,7 +26,7 @@ The monorepo uses a two-tier token system:
 /* App-specific: chart-1 through chart-5 */
 ```
 
-### ayokoding-fs (Blue/Educational)
+### ayokoding-web (Blue/Educational)
 
 ```css
 /* Brand — blue tinted */
@@ -84,7 +84,7 @@ The monorepo uses a two-tier token system:
 }
 ```
 
-**ayokoding-fs (direct values)**:
+**ayokoding-web (direct values)**:
 
 ```css
 @theme {
@@ -92,4 +92,4 @@ The monorepo uses a two-tier token system:
 }
 ```
 
-**Recommended for shared lib**: Direct value approach (ayokoding-fs pattern) — simpler, no intermediate variable. Per-app overrides use CSS cascade in their own `@theme` block.
+**Recommended for shared lib**: Direct value approach (ayokoding-web pattern) — simpler, no intermediate variable. Per-app overrides use CSS cascade in their own `@theme` block.

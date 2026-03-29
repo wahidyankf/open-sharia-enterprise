@@ -23,7 +23,7 @@ updated: 2026-03-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Clojure fundamentals from [AyoKoding Clojure Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/_index.md) before using these standards.
+**REQUIRED**: You MUST understand Clojure fundamentals from [AyoKoding Clojure Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Clojure tutorial.
 

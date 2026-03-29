@@ -297,7 +297,7 @@ skills: []
 - Add `skills: []` to all existing agents (batch update ~45 agents)
 - Add actual Skills references to 5-10 demonstration agents:
   - `docs__maker` → `[color-accessibility-diagrams, maker-checker-fixer-pattern]`
-  - `ayokoding-fs-general-maker` → `[hugo-ayokoding-development]`
+  - `ayokoding-web-general-maker` → `[hugo-ayokoding-development]`
   - `plan__maker` → `[gherkin-acceptance-criteria, trunk-based-development]`
 
 **Rationale**: Required `skills:` field enables:

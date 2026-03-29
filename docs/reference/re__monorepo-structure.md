@@ -73,8 +73,8 @@ Flat structure - all apps at the same level, no subdirectories.
 
 **Current Apps**:
 
-- `oseplatform-fs` - OSE Platform website (Hugo static site)
-- `ayokoding-fs` - AyoKoding educational platform (Next.js 16 fullstack content platform)
+- `oseplatform-web` - OSE Platform website (Hugo static site)
+- `ayokoding-web` - AyoKoding educational platform (Next.js 16 fullstack content platform)
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 - `rhino-cli` - Repository management CLI, includes `java validate-annotations` (Go application)
 - `oseplatform-cli` - OSE Platform site maintenance CLI (Go application)
@@ -86,7 +86,7 @@ Flat structure - all apps at the same level, no subdirectories.
 ### App Structure (Hugo Static Site)
 
 ```
-apps/oseplatform-fs/
+apps/oseplatform-web/
 ├── content/                   # Markdown content files
 ├── layouts/                   # Hugo templates
 ├── static/                    # Static assets (images, CSS, JS)
@@ -278,7 +278,7 @@ The repository contains two distinct project structures with different purposes 
 - Quick prototypes without monorepo integration overhead
 - Temporary experiments that might be deleted after evaluation
 
-**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/oseplatform-fs/` as an example of a Hugo static site integrated with Nx monorepo.
+**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/oseplatform-web/` as an example of a Hugo static site integrated with Nx monorepo.
 
 ### Key Differences
 
@@ -315,26 +315,26 @@ The repository contains two distinct project structures with different purposes 
 
 Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
-**Hugo App Example** (`oseplatform-fs`):
+**Hugo App Example** (`oseplatform-web`):
 
 ```json
 {
-  "name": "oseplatform-fs",
-  "sourceRoot": "apps/oseplatform-fs",
+  "name": "oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -342,7 +342,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },
@@ -487,7 +487,7 @@ All projects use a standard four-dimension tag scheme:
 **Hugo Apps** do not require `package.json` as they use Hugo's native configuration:
 
 ```yaml
-# apps/oseplatform-fs/hugo.yaml
+# apps/oseplatform-web/hugo.yaml
 baseURL: https://oseplatform.com/
 languageCode: en-us
 title: Open Sharia Enterprise Platform
@@ -574,7 +574,7 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 nx graph
 
 # View specific project dependencies
-nx graph --focus=oseplatform-fs
+nx graph --focus=oseplatform-web
 
 # View affected projects
 nx affected:graph

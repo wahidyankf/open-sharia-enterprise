@@ -26,7 +26,7 @@ Remove the orca-grid-be Spring Boot application from the Nx monorepo as it is no
 
 **Rationale:**
 
-- Keep monorepo focused on active projects (ose-platform-web, ayokoding-fs, ayokoding-cli, rhino-cli)
+- Keep monorepo focused on active projects (ose-platform-web, ayokoding-web, ayokoding-cli, rhino-cli)
 - Remove technical debt from planned-but-never-implemented Orca Grid suite
 - Simplify system architecture to reflect actual implementation
 - Preserve historical context for future decisions
@@ -84,7 +84,7 @@ Updated two plan history files:
 
 Verification commands executed successfully:
 
-- `nx show projects`: Confirmed orca-grid-be not listed (4 projects: ose-platform-web, ayokoding-fs, ayokoding-cli, rhino-cli)
+- `nx show projects`: Confirmed orca-grid-be not listed (4 projects: ose-platform-web, ayokoding-web, ayokoding-cli, rhino-cli)
 - `nx graph`: Verified no broken dependencies
 - `nx build [app]`: All 4 apps built successfully
 - `nx test [app]`: All tests passed (ayokoding-cli, rhino-cli)
@@ -123,7 +123,7 @@ Created three separate commits following Conventional Commits format:
 All apps built successfully:
 
 - ose-platform-web (Hugo site)
-- ayokoding-fs (Hugo site)
+- ayokoding-web (Hugo site)
 - ayokoding-cli (Go CLI)
 - rhino-cli (Go CLI)
 

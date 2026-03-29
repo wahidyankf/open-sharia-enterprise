@@ -218,9 +218,9 @@ Fixer agents MUST process findings in strict priority order:
 
 - `docs-checker` - [Verified]/[Error]/[Outdated]/[Unverified] + criticality
 - `docs-tutorial-checker` - Verification labels + criticality
-- `apps-ayokoding-fs-facts-checker` - Verification labels + criticality
+- `apps-ayokoding-web-facts-checker` - Verification labels + criticality
 - `docs-link-general-checker` - [OK]/[BROKEN]/[REDIRECT] + criticality
-- `apps-ayokoding-fs-link-checker` - Status labels + criticality
+- `apps-ayokoding-web-link-checker` - Status labels + criticality
 
 **Format**:
 
@@ -417,7 +417,7 @@ for finding in low_priority:
 - Suggest adding related links
 - Consider alternative organization
 
-### ayokoding-fs Content (Next.js)
+### ayokoding-web Content (Next.js)
 
 **CRITICAL**:
 - Missing required `title` field (page fails to render)
@@ -464,7 +464,7 @@ for finding in low_priority:
 ```markdown
 ### 1. Missing Required Frontmatter Field
 
-**File**: `apps/ayokoding-fs/content/en/programming/python/_index.md:3`
+**File**: `apps/ayokoding-web/content/en/programming/python/_index.md:3`
 ****Criticality**: CRITICAL - Breaks page rendering
 **Category**: Missing Required Field
 

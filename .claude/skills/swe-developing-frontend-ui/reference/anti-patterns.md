@@ -7,7 +7,7 @@
 **Severity**: HIGH
 
 ```css
-/* WRONG — ayokoding-fs globals.css */
+/* WRONG — ayokoding-web globals.css */
 .prose pre {
   background-color: #f6f8fa !important;
 }

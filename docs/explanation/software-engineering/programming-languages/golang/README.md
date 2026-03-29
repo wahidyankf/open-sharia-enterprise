@@ -87,14 +87,14 @@ OSE Platform Go applications MUST use the following stack:
 
 **You MUST understand Go fundamentals before using these standards:**
 
-- **[Go Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/)** - Complete 0-95% language coverage
-- **[Go By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75-85 annotated code examples (beginner to advanced)
-- **[Go In the Field](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - Production patterns and design approaches
-- **[Go Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC)
+- **[Go Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - Complete 0-95% language coverage
+- **[Go By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75-85 annotated code examples (beginner to advanced)
+- **[Go In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - Production patterns and design approaches
+- **[Go Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
@@ -158,7 +158,7 @@ OSE Platform follows a three-tier Go versioning strategy focused on modern featu
 
 **Unlike Java's LTS model**: Go releases every 6 months with backward compatibility guarantees (Go 1 compatibility promise). No LTS distinction exists; all releases receive security patches for one year. Platform strategy focuses on staying current with stable releases.
 
-**See**: [Go Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/release-highlights/) for detailed feature documentation
+**See**: [Go Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/) for detailed feature documentation
 
 ## OSE Platform Coding Standards (Authoritative)
 

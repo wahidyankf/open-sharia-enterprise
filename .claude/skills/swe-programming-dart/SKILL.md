@@ -19,12 +19,12 @@ Progressive disclosure of Dart coding standards for agents writing Dart code.
 
 **You MUST understand Dart fundamentals before using these standards.** Complete the AyoKoding Dart learning path first:
 
-1. **[Dart Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
-2. **[Dart By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
+1. **[Dart Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
+2. **[Dart By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
 
 **What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns.
 
-**What this skill does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this skill does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

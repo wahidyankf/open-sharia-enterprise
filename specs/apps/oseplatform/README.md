@@ -1,6 +1,6 @@
 # OSE Platform Web Specs
 
-Specifications for the oseplatform-fs Next.js application — the OSE Platform marketing and
+Specifications for the oseplatform-web Next.js application — the OSE Platform marketing and
 updates site. The specs cover content retrieval, search, RSS feed, health, SEO, and
 frontend UI behaviour.
 
@@ -76,4 +76,4 @@ specs/apps/oseplatform/
 
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
-- [apps/oseplatform-fs/](../../../apps/oseplatform-fs/README.md) — Next.js implementation
+- [apps/oseplatform-web/](../../../apps/oseplatform-web/README.md) — Next.js implementation

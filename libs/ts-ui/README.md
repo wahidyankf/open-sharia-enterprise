@@ -6,10 +6,10 @@ Shared React component library for the open-sharia-enterprise monorepo. Built on
 
 | Component | Source                       | Pattern                                     |
 | --------- | ---------------------------- | ------------------------------------------- |
-| Button    | ayokoding-fs (reconciled)    | CVA variants, 6 variants, 8 sizes, asChild  |
-| Alert     | ayokoding-fs                 | CVA variants, role="alert"                  |
-| Dialog    | ayokoding-fs                 | Radix Dialog, portal, overlay, close button |
-| Input     | ayokoding-fs                 | focus-visible, aria-invalid                 |
+| Button    | ayokoding-web (reconciled)   | CVA variants, 6 variants, 8 sizes, asChild  |
+| Alert     | ayokoding-web                | CVA variants, role="alert"                  |
+| Dialog    | ayokoding-web                | Radix Dialog, portal, overlay, close button |
+| Input     | ayokoding-web                | focus-visible, aria-invalid                 |
 | Card      | organiclever-fe (modernized) | Subcomponents with data-slot                |
 | Label     | organiclever-fe (modernized) | Radix Label                                 |
 

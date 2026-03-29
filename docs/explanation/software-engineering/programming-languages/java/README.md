@@ -64,14 +64,14 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **You MUST understand Java fundamentals before using these standards:**
 
-- **[Java Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/)** - Complete 0-95% language coverage
-- **[Java By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/by-example/)** - 75-85 annotated code examples (beginner → advanced)
-- **[Java In the Field](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/in-the-field/)** - Production patterns and design approaches
-- **[Java Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/release-highlights/)** - Java 17, 21, 25 LTS features
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)** - Complete 0-95% language coverage
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/)** - 75-85 annotated code examples (beginner → advanced)
+- **[Java In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/)** - Production patterns and design approaches
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/)** - Java 17, 21, 25 LTS features
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Java knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Java syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Java syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
@@ -115,7 +115,7 @@ OSE Platform follows a three-tier Java versioning strategy:
 - Primitive types in patterns (when finalized)
 - Module import declarations (simplified module system)
 
-**Release highlights**: [Java Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/release-highlights/) on ayokoding-fs — Java 17, 21, 25 LTS feature guides.
+**Release highlights**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) on ayokoding-web — Java 17, 21, 25 LTS feature guides.
 
 ## OSE Platform Coding Standards (Authoritative)
 

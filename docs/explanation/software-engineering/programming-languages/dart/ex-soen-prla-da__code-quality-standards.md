@@ -23,7 +23,7 @@ updated: 2026-03-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Dart fundamentals from [AyoKoding Dart Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/_index.md) before using these standards.
+**REQUIRED**: You MUST understand Dart fundamentals from [AyoKoding Dart Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to enforce code quality in THIS codebase, not WHAT linting is.
 

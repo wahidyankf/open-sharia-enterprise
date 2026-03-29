@@ -7,7 +7,7 @@
 
 ## Overview
 
-Bring all 5 programming languages in ayokoding-fs (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/governance/conventions/tutorials/programming-language-content.md).
+Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/governance/conventions/tutorials/programming-language-content.md).
 
 **Current State**: Significant quality gaps exist across languages.
 
@@ -78,9 +78,9 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 - ✅ All 5 languages have exactly 23 how-to guides
 - ✅ All 5 languages have 5,000+ line cookbooks
-- ✅ All content passes ayokoding-fs-general-checker validation
-- ✅ All content passes ayokoding-fs-facts-checker verification
-- ✅ All links validated by ayokoding-fs-link-checker
+- ✅ All content passes ayokoding-web-general-checker validation
+- ✅ All content passes ayokoding-web-facts-checker verification
+- ✅ All links validated by ayokoding-web-link-checker
 - ✅ All Mermaid diagrams use color-blind friendly palette
 - ✅ Cross-references properly connect related content
 - ✅ No time estimates in any educational content
@@ -102,7 +102,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 **For Repository**:
 
 - Demonstrates commitment to quality and accessibility
-- Establishes ayokoding-fs as authoritative learning resource
+- Establishes ayokoding-web as authoritative learning resource
 - Creates reusable patterns for future languages
 
 ## Constraints
@@ -131,7 +131,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Not Included**:
 
-- Translation to Indonesian (ayokoding-fs is bilingual but this plan focuses on English content quality)
+- Translation to Indonesian (ayokoding-web is bilingual but this plan focuses on English content quality)
 - Reference documentation (API docs) - placeholder directories remain empty
 - New programming languages beyond the existing 5
 - Tutorial content changes (Initial Setup, Quick Start, Beginner, Intermediate, Advanced) - only how-to guides and cookbooks

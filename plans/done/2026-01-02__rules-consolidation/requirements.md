@@ -10,7 +10,7 @@ Based on pre-plan audit findings:
 4. **Assign skills to 39 agents** that have empty `skills: []` field
 5. **Fix 6 factual inaccuracies** in delivery infrastructure documentation
 6. **Enhance wow\_\_rules-checker** to validate Skills coverage
-7. **Create missing link-fixer agent** to complete MCF pattern for ayokoding-fs links
+7. **Create missing link-fixer agent** to complete MCF pattern for ayokoding-web links
 
 ## Functional Requirements
 
@@ -75,10 +75,10 @@ wow\_\_rules-checker must validate:
 
 ### FR-6: Complete MCF Pattern for Links
 
-Create missing `apps__ayokoding-fs__link-fixer` agent to complete the Maker-Checker-Fixer pattern.
+Create missing `apps__ayokoding-web__link-fixer` agent to complete the Maker-Checker-Fixer pattern.
 
-**Current State**: `apps__ayokoding-fs__link-checker` exists with no corresponding fixer
-**Target State**: Complete checker-fixer pair for ayokoding-fs link validation
+**Current State**: `apps__ayokoding-web__link-checker` exists with no corresponding fixer
+**Target State**: Complete checker-fixer pair for ayokoding-web link validation
 
 **Agent Capabilities**:
 
@@ -216,7 +216,7 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 ### Phase 6: Create Missing Link Fixer Agent
 
-- [ ] `apps__ayokoding-fs__link-fixer` agent created
+- [ ] `apps__ayokoding-web__link-fixer` agent created
 - [ ] Agent has correct frontmatter (name, description, tools, model, color, skills)
 - [ ] Agent registered in `.claude/agents/README.md`
 - [ ] CLAUDE.md agent list updated
@@ -289,7 +289,7 @@ And Skills without References are flagged as violations
 ### Link Fixer Agent Created
 
 ```gherkin
-Given apps__ayokoding-fs__link-fixer has been created
+Given apps__ayokoding-web__link-fixer has been created
 When I check the agent file
 Then it has valid frontmatter with name, description, tools, model, color, skills
 And skills field contains validating-links and assessing-criticality-confidence

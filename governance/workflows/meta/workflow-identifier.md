@@ -228,7 +228,7 @@ Steps execute one after another. Later steps can reference outputs from earlier 
 
 **Agent**: `swe-hugo-developer`
 
-- **Args**: `action: build, project: ayokoding-fs`
+- **Args**: `action: build, project: ayokoding-web`
 - **Output**: `{build-artifacts}`
 
 ### 2. Run Tests (Sequential)
@@ -455,7 +455,7 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 **When to use**:
 
 - Repository-wide validation (repository-rules-validation)
-- Content quality assurance (plan-quality-gate, ayokoding-fs-content-quality-gate)
+- Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
 - Pre-release quality gates
 - Periodic health checks
 

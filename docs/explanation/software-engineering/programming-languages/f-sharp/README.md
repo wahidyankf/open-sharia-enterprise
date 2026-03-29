@@ -82,12 +82,12 @@ OSE Platform F# applications MUST use the following stack:
 
 **You MUST understand F# fundamentals before using these standards:**
 
-- **[F# Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/f-sharp/)** - Complete language coverage from basics to advanced
-- **[F# By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/f-sharp/by-example/)** - Annotated code examples covering discriminated unions, computation expressions, and more
+- **[F# Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/f-sharp/)** - Complete language coverage from basics to advanced
+- **[F# By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/f-sharp/by-example/)** - Annotated code examples covering discriminated unions, computation expressions, and more
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply F# knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: F# syntax, language fundamentals, discriminated union semantics, computation expression mechanics (those are in ayokoding-fs).
+**What this documentation does NOT cover**: F# syntax, language fundamentals, discriminated union semantics, computation expression mechanics (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
@@ -137,7 +137,7 @@ OSE Platform follows a three-tier F# versioning strategy aligned with .NET LTS r
 
 **Unlike Go**: .NET follows an annual release cycle with LTS releases every two years. F# version numbers track .NET SDK versions. The platform strategy is: target the current LTS for stability, adopt latest features on new projects.
 
-**See**: [F# Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/f-sharp/) for detailed feature documentation
+**See**: [F# Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/f-sharp/) for detailed feature documentation
 
 ## OSE Platform Coding Standards (Authoritative)
 

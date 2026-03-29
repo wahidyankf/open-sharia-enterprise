@@ -27,7 +27,7 @@ flowchart TD
     RSC["React Server Components\n(server-side HTML rendering)"]
     TRPC_S["tRPC Server Caller\n(direct function call, no HTTP)"]
     TRPC_H["tRPC HTTP Endpoint\n(/api/trpc/*)"]
-    FS["Filesystem\napps/ayokoding-fs/content/\n(933 markdown files)"]
+    FS["Filesystem\napps/ayokoding-web/content/\n(933 markdown files)"]
     Index["In-Memory Index\n(FlexSearch + content map)"]
 
     Crawler -- "GET /en/learn/..." --> RSC
@@ -91,7 +91,7 @@ const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../../"),
   outputFileTracingIncludes: {
-    "/**": ["../../apps/ayokoding-fs/content/**/*"],
+    "/**": ["../../apps/ayokoding-web/content/**/*"],
   },
 };
 ```
@@ -129,28 +129,28 @@ behavior documented in [vercel/next.js#43973](https://github.com/vercel/next.js/
 
 ### Content Directory Reference
 
-The app reads markdown files from `apps/ayokoding-fs/content/` — the **same directory**
+The app reads markdown files from `apps/ayokoding-web/content/` — the **same directory**
 used by the Hugo site. No content is copied or duplicated. The path is resolved via the
 `CONTENT_DIR` environment variable with a fallback:
 
 ```typescript
 // src/server/content/reader.ts
-const CONTENT_DIR = process.env.CONTENT_DIR ?? path.resolve(process.cwd(), "../../apps/ayokoding-fs/content");
+const CONTENT_DIR = process.env.CONTENT_DIR ?? path.resolve(process.cwd(), "../../apps/ayokoding-web/content");
 ```
 
 **Path resolution by environment:**
 
-| Environment       | `CONTENT_DIR`  | Resolves To                                              |
-| ----------------- | -------------- | -------------------------------------------------------- |
-| Dev (`nx dev`)    | Not set        | `../../apps/ayokoding-fs/content` (relative to app root) |
-| Vercel            | Not set        | Same relative path (full repo cloned, app root is cwd)   |
-| Docker            | `/app/content` | Content copied into image at build time                  |
-| Integration tests | Not set        | Same relative path (runs from workspace)                 |
+| Environment       | `CONTENT_DIR`  | Resolves To                                               |
+| ----------------- | -------------- | --------------------------------------------------------- |
+| Dev (`nx dev`)    | Not set        | `../../apps/ayokoding-web/content` (relative to app root) |
+| Vercel            | Not set        | Same relative path (full repo cloned, app root is cwd)    |
+| Docker            | `/app/content` | Content copied into image at build time                   |
+| Integration tests | Not set        | Same relative path (runs from workspace)                  |
 
 ### Directory Structure on Disk
 
 ```
-apps/ayokoding-fs/content/
+apps/ayokoding-web/content/
 ├── en/                                    # English content (809 files)
 │   ├── _index.md                          # Root section index (cascade: type: docs)
 │   ├── about-ayokoding.md                 # Top-level static page
@@ -400,7 +400,7 @@ if the slug maps to a section page.
 
 ### Static Assets
 
-The Hugo site has static assets in `apps/ayokoding-fs/static/`:
+The Hugo site has static assets in `apps/ayokoding-web/static/`:
 
 ```
 static/
@@ -443,7 +443,7 @@ in the target locale and falls back to the locale's root page if not.
 ## Content Pipeline (Rendering)
 
 ```
-Markdown File (apps/ayokoding-fs/content/en/learn/...)
+Markdown File (apps/ayokoding-web/content/en/learn/...)
   │
   ├─ gray-matter ──→ YAML frontmatter ──→ Zod validation ──→ ContentMeta
   │
@@ -601,7 +601,7 @@ mode typography styling.
 ## Project Structure
 
 ```
-apps/ayokoding-fs-v2/
+apps/ayokoding-web-v2/
 ├── src/
 │   ├── app/                              # Next.js App Router
 │   │   ├── [locale]/                     # i18n dynamic segment
@@ -742,7 +742,7 @@ specs/apps/ayokoding/
 ## E2E Test Apps
 
 ```
-apps/ayokoding-fs-v2-be-e2e/            # Backend E2E (tRPC API via HTTP)
+apps/ayokoding-web-v2-be-e2e/            # Backend E2E (tRPC API via HTTP)
 ├── src/
 │   └── tests/
 │       ├── content-api.spec.ts           # tRPC content procedures
@@ -753,7 +753,7 @@ apps/ayokoding-fs-v2-be-e2e/            # Backend E2E (tRPC API via HTTP)
 ├── playwright.config.ts
 └── project.json
 
-apps/ayokoding-fs-v2-fe-e2e/            # Frontend E2E (Playwright browser)
+apps/ayokoding-web-v2-fe-e2e/            # Frontend E2E (Playwright browser)
 ├── src/
 │   └── tests/
 │       ├── content-rendering.spec.ts     # Page rendering
@@ -846,8 +846,8 @@ the `unknown → typed` boundary at runtime (frontmatter parsing, tRPC inputs).
 | BDD (unit)          | @amiceli/vitest-cucumber                            | Same as a-demo-fs-ts-nextjs                                                                                                                                        |
 | BDD (integration)   | @cucumber/cucumber                                  | Integration tests run outside Vitest (real filesystem, not mocked) — plain cucumber-js is the appropriate runner, same as demo-be backend integration test pattern |
 | Docker              | Multi-stage, no DB                                  | Local dev + CI E2E (standalone + outputFileTracingRoot)                                                                                                            |
-| Deployment          | Vercel                                              | Same as ayokoding-fs + organiclever-fe                                                                                                                             |
-| Prod branch         | `prod-ayokoding-fs-v2`                              | Vercel listens for pushes (never commit directly)                                                                                                                  |
+| Deployment          | Vercel                                              | Same as ayokoding-web + organiclever-fe                                                                                                                            |
+| Prod branch         | `prod-ayokoding-web-v2`                             | Vercel listens for pushes (never commit directly)                                                                                                                  |
 | Route architecture  | Route groups `(content)` + `(app)`                  | Content isolated; future fullstack routes added without restructure                                                                                                |
 | ISR strategy        | On-demand ISR (no `generateStaticParams`)           | Scales to thousands of pages without slow builds                                                                                                                   |
 
@@ -936,7 +936,7 @@ const appRouter = router({
 
 ## Visual Design Capture Strategy
 
-The current ayokoding-fs uses the Hextra documentation theme. To faithfully replicate
+The current ayokoding-web uses the Hextra documentation theme. To faithfully replicate
 the visual design, we reverse-engineer it before writing any UI code.
 
 ### Capture Process
@@ -1020,7 +1020,7 @@ Mobile (<768px):
 
 **What stays the same:**
 
-- Content files: Same markdown files in `apps/ayokoding-fs/content/`
+- Content files: Same markdown files in `apps/ayokoding-web/content/`
 - URL structure: `/en/learn/...` and `/id/belajar/...`
 - Search engine: FlexSearch (same library)
 - Content types: by-example, in-the-field, overview, rants, video content
@@ -1268,7 +1268,7 @@ locale-specific because folder and file names differ between languages. The tRPC
   "default",
   "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature",
   "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature",
-  "{workspaceRoot}/apps/ayokoding-fs/content/**/*.md"
+  "{workspaceRoot}/apps/ayokoding-web/content/**/*.md"
 ]
 ```
 
@@ -1277,12 +1277,12 @@ could affect test results.
 
 ## ayokoding-cli Integration
 
-The content directory (`apps/ayokoding-fs/content/`) is **shared** between the
+The content directory (`apps/ayokoding-web/content/`) is **shared** between the
 Hugo v1 site and the Next.js v2 app. `ayokoding-cli` operates on this shared
 content — it's a content maintenance tool, not tied to either frontend.
 
 **Backward compatibility**: `ayokoding-cli` must remain fully compatible with
-the current Hugo v1 site (`apps/ayokoding-fs/`) until v1 is deprecated and
+the current Hugo v1 site (`apps/ayokoding-web/`) until v1 is deprecated and
 removed. All 3 commands (`nav regen`, `titles update`, `links check`) must
 continue working unchanged for Hugo. No breaking changes to the CLI during the
 v1→v2 transition period. The v2 app consumes CLI output (titles, link validation)
@@ -1303,13 +1303,13 @@ test:quick = test:unit + coverage validation (rhino-cli) + link validation (ayok
 ```
 
 The `test:quick` target runs `ayokoding-cli links check` as a final step to catch
-broken internal links. This is the same validation that `ayokoding-fs` runs, but
+broken internal links. This is the same validation that `ayokoding-web` runs, but
 declared as v2's own target so it's included in `nx affected -t test:quick`.
 
 ### Pre-commit Hook
 
 When content files change, the existing pre-commit hook (configured in
-`ayokoding-fs/project.json`) already runs `titles update` and `nav regen`. Since
+`ayokoding-web/project.json`) already runs `titles update` and `nav regen`. Since
 both apps share the content directory, v2 benefits from this without additional
 configuration. The v2 app does NOT need its own pre-commit script for content.
 
@@ -1323,15 +1323,15 @@ configuration. The v2 app does NOT need its own pre-commit script for content.
 
 ## Vercel Deployment
 
-**Production branch**: `prod-ayokoding-fs-v2` (never commit directly — merge from `main`)
+**Production branch**: `prod-ayokoding-web-v2` (never commit directly — merge from `main`)
 
-**Vercel config** (`apps/ayokoding-fs-v2/vercel.json`):
+**Vercel config** (`apps/ayokoding-web-v2/vercel.json`):
 
 ```json
 {
   "version": 2,
   "installCommand": "npm install --prefix=../.. --ignore-scripts",
-  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"prod-ayokoding-fs-v2\" ]",
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"prod-ayokoding-web-v2\" ]",
   "headers": [
     {
       "source": "/(.*)",
@@ -1350,7 +1350,7 @@ configuration. The v2 app does NOT need its own pre-commit script for content.
 
 - Vercel's Next.js builder handles the build natively (no `output: 'standalone'` needed
   for Vercel — that's only for Docker)
-- Content files are at `apps/ayokoding-fs/content/` relative to workspace root. The
+- Content files are at `apps/ayokoding-web/content/` relative to workspace root. The
   `next.config.ts` must configure the content path to resolve correctly in both Vercel
   (workspace root build) and Docker (standalone build) environments via `CONTENT_DIR`
   env var with a fallback
@@ -1358,28 +1358,28 @@ configuration. The v2 app does NOT need its own pre-commit script for content.
   organiclever-fe pattern)
 - `ignoreCommand` ensures Vercel only builds when the production branch is pushed
 
-**Deployment workflow** (same pattern as `apps-ayokoding-fs-deployer`):
+**Deployment workflow** (same pattern as `apps-ayokoding-web-deployer`):
 
 1. Validate content on `main` (CI passes)
-2. Push `main` → `prod-ayokoding-fs-v2` branch
+2. Push `main` → `prod-ayokoding-web-v2` branch
 3. Vercel auto-builds and deploys
 
 ## Docker Compose (Local Dev + CI E2E)
 
-**Local development** (`infra/dev/ayokoding-fs-v2/docker-compose.yml`):
+**Local development** (`infra/dev/ayokoding-web-v2/docker-compose.yml`):
 
 ```yaml
 services:
-  ayokoding-fs-v2:
+  ayokoding-web-v2:
     build:
       context: ../../../
-      dockerfile: apps/ayokoding-fs-v2/Dockerfile
-    container_name: ayokoding-fs-v2
+      dockerfile: apps/ayokoding-web-v2/Dockerfile
+    container_name: ayokoding-web-v2
     ports:
       - "3101:3101"
     environment:
       - PORT=3101
-      - CONTENT_DIR=/app/apps/ayokoding-fs/content
+      - CONTENT_DIR=/app/apps/ayokoding-web/content
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3101/api/trpc/meta.health"]
       interval: 30s
@@ -1400,7 +1400,7 @@ markdown files.
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY apps/ayokoding-fs-v2/package.json ./apps/ayokoding-fs-v2/
+COPY apps/ayokoding-web-v2/package.json ./apps/ayokoding-web-v2/
 RUN npm ci --ignore-scripts
 
 # Stage 2: Build
@@ -1409,9 +1409,9 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
-COPY apps/ayokoding-fs-v2/ ./apps/ayokoding-fs-v2/
-COPY apps/ayokoding-fs/content/ ./apps/ayokoding-fs/content/
-WORKDIR /app/apps/ayokoding-fs-v2
+COPY apps/ayokoding-web-v2/ ./apps/ayokoding-web-v2/
+COPY apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
+WORKDIR /app/apps/ayokoding-web-v2
 RUN npx next build
 
 # Stage 3: Production
@@ -1421,26 +1421,26 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
-COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-fs-v2/public ./apps/ayokoding-fs-v2/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-fs-v2/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-fs-v2/.next/static ./apps/ayokoding-fs-v2/.next/static
-COPY --from=builder /app/apps/ayokoding-fs/content/ ./apps/ayokoding-fs/content/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/public ./apps/ayokoding-web-v2/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/.next/static ./apps/ayokoding-web-v2/.next/static
+COPY --from=builder /app/apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
 USER nextjs
 EXPOSE 3101
 ENV PORT=3101
 # Note: standalone output with outputFileTracingRoot places server.js at
-# apps/ayokoding-fs-v2/server.js relative to WORKDIR. Verify exact path
+# apps/ayokoding-web-v2/server.js relative to WORKDIR. Verify exact path
 # during Phase 12 by inspecting .next/standalone/ output structure.
-CMD ["node", "apps/ayokoding-fs-v2/server.js"]
+CMD ["node", "apps/ayokoding-web-v2/server.js"]
 ```
 
 ## CI Workflow
 
-`.github/workflows/test-ayokoding-fs-v2.yml`:
+`.github/workflows/test-ayokoding-web-v2.yml`:
 
 - **Triggers**: 2x daily cron (WIB 06, 18) + manual dispatch
 - **Jobs**:
-  - `unit`: `nx run ayokoding-fs-v2:test:quick` + Codecov upload
+  - `unit`: `nx run ayokoding-web-v2:test:quick` + Codecov upload
   - `e2e`: Start app via Docker, run both BE and FE E2E tests
 - **Codecov**: Upload coverage from unit tests
 

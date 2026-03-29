@@ -44,17 +44,17 @@ Playwright is written in TypeScript and provides first-class TypeScript support.
 
 **2. Learn Playwright Fundamentals**:
 
-You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/automation-testing/tools/playwright/) before using these standards.
+You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/automation-testing/tools/playwright/) before using these standards.
 
-- [Playwright Initial Setup](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup.md) - Environment and tooling setup
-- [Playwright Overview](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/automation-testing/tools/playwright/overview.md) - Auto-waiting, cross-browser support, trace viewer
-- [Playwright By Example](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/automation-testing/tools/playwright/by-example/) (85+ annotated examples) - Hands-on code learning
+- [Playwright Initial Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup.md) - Environment and tooling setup
+- [Playwright Overview](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/automation-testing/tools/playwright/overview.md) - Auto-waiting, cross-browser support, trace viewer
+- [Playwright By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/automation-testing/tools/playwright/by-example/) (85+ annotated examples) - Hands-on code learning
 
 **Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md).
 
 **What this documentation covers**: OSE Platform Playwright standards, test organization, page object patterns, how to apply Playwright knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Playwright tutorials, basic selectors, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Playwright tutorials, basic selectors, generic patterns (those are in ayokoding-web).
 
 **This documentation is OSE Platform-specific explanation**, not Playwright tutorials.
 

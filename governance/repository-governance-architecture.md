@@ -237,7 +237,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - **docs/** directory (all documentation)
-- **Hugo sites** (ayokoding-fs, oseplatform-fs)
+- **Hugo sites** (ayokoding-web, oseplatform-web)
 - **plans/** directory (project planning)
 - **README files** (repository root and project READMEs)
 

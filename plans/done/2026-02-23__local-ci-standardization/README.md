@@ -32,8 +32,8 @@ prior session to reference canonical target names. Only `project.json`, `nx.json
 | `package.json`             | workspace   | `"test"` ⚠️ → `nx run-many -t test`, `"affected:test"` ⚠️         | Both scripts reference non-standard `test`; update to `test:quick`                                                                                           |
 | `ayokoding-cli`            | Go CLI      | `build`, `test:quick`, `run`, `install`                           | Missing `lint`                                                                                                                                               |
 | `rhino-cli`                | Go CLI      | `build`, `test:quick`, `run`, `install`                           | Missing `lint`                                                                                                                                               |
-| `ayokoding-fs`             | Hugo site   | `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`           | Missing `lint`                                                                                                                                               |
-| `oseplatform-fs`           | Hugo site   | `dev`, `build`, `clean` ⚠️                                        | Missing `test:quick`, `lint`; `clean` incomplete                                                                                                             |
+| `ayokoding-web`            | Hugo site   | `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`           | Missing `lint`                                                                                                                                               |
+| `oseplatform-web`          | Hugo site   | `dev`, `build`, `clean` ⚠️                                        | Missing `test:quick`, `lint`; `clean` incomplete                                                                                                             |
 | `organiclever-fe`          | Next.js     | `dev`, `build`, `start`, `lint` ⚠️                                | `lint`→oxlint (replaces `next lint`); missing `test:quick`, `typecheck`, `test:unit`, `test:integration`; add vitest + devDeps                               |
 | `organiclever-be`          | Spring Boot | `build`, `serve` ⚠️, `test` ⚠️, `lint`                            | `serve`→`dev`, `test`→`test:unit`; missing `test:quick`, `start`, `outputs` on `build`                                                                       |
 | `organiclever-app`         | Flutter     | `install`, `dev`, `build:web`, `test` ⚠️, `test:quick`, `lint` ⚠️ | `test`→`test:unit`; `lint` removed (redundant with `typecheck`); missing `typecheck`, `dependsOn` on `test:quick`                                            |
@@ -44,7 +44,7 @@ prior session to reference canonical target names. Only `project.json`, `nx.json
 
 ## Critical Finding
 
-`oseplatform-fs` has **no `test:quick` target** — it is silently excluded from the pre-push hook
+`oseplatform-web` has **no `test:quick` target** — it is silently excluded from the pre-push hook
 (`nx affected -t test:quick`) and the PR merge gate. This is the highest-priority fix.
 
 `organiclever-fe` also has **no `test:quick` target** — same consequence.
@@ -60,7 +60,7 @@ Commit after each phase using [Conventional Commits](../../../governance/develop
 format. Suggested messages per phase:
 
 - Phase 1: `chore(infra): update nx.json targetDefaults and package.json test scripts`
-- Phase 2: `chore(infra): add test:quick and vitest to oseplatform-fs and organiclever-fe`
+- Phase 2: `chore(infra): add test:quick and vitest to oseplatform-web and organiclever-fe`
 - Phase 3: `chore(infra): add lint target to Hugo sites and Go CLIs`
 - Phase 4: `chore(infra): standardize Spring Boot nx targets`
 - Phase 5: `chore(infra): standardize Flutter nx targets`

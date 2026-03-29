@@ -13,7 +13,7 @@ After last week's cleanup (37 agents, 6 principles, 21 conventions), I spent thi
 
 🤖 45 AI agents
 
-Renamed 36 to domain-based naming (docs**checker, apps**ayokoding-fs\_\_general-checker). At a glance, you know exactly what each agent does and where it works.
+Renamed 36 to domain-based naming (docs**checker, apps**ayokoding-web\_\_general-checker). At a glance, you know exactly what each agent does and where it works.
 
 🧠 10 foundational principles
 

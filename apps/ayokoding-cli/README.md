@@ -1,10 +1,10 @@
 # ayokoding-cli
 
-Command-line tools for ayokoding-fs content validation.
+Command-line tools for ayokoding-web content validation.
 
 ## What is ayokoding-cli?
 
-A Go-based CLI tool that validates internal links in the ayokoding-fs content
+A Go-based CLI tool that validates internal links in the ayokoding-web content
 directory. Provides fast link checking with support for multiple output formats
 and verbose logging.
 
@@ -15,7 +15,7 @@ and verbose logging.
 ayokoding-cli links check
 
 # Check specific content directory
-ayokoding-cli links check --content apps/ayokoding-fs/content
+ayokoding-cli links check --content apps/ayokoding-web/content
 
 # JSON output for scripting or CI
 ayokoding-cli links check -o json
@@ -46,7 +46,7 @@ The binary will be created at `apps/ayokoding-cli/dist/ayokoding-cli`.
 ayokoding-cli links check
 
 # Check specific content directory
-ayokoding-cli links check --content apps/ayokoding-fs/content
+ayokoding-cli links check --content apps/ayokoding-web/content
 
 # JSON output for scripting or CI
 ayokoding-cli links check -o json
@@ -60,7 +60,7 @@ ayokoding-cli links check --quiet
 - Walks all `.md` files in the content directory
 - Extracts every markdown link (`[text](target)`) from non-code-block lines
 - Skips external links (`http://`, `https://`, `mailto:`, `//`) — use the
-  `apps-ayokoding-fs-link-checker` AI agent for those
+  `apps-ayokoding-web-link-checker` AI agent for those
 - Skips same-page anchors (`#section`)
 - Strips `#fragment` and `?query` from internal link targets before resolving
 - Resolves each internal link against the content directory:
@@ -70,11 +70,11 @@ ayokoding-cli links check --quiet
 
 **Internal vs External links:**
 
-| Type                     | Example                  | Handled by                             |
-| ------------------------ | ------------------------ | -------------------------------------- |
-| Internal (Hugo absolute) | `/en/learn/swe/overview` | `ayokoding-cli links check`            |
-| External URL             | `https://example.com`    | `apps-ayokoding-fs-link-checker` agent |
-| Same-page anchor         | `#section-name`          | Not validated                          |
+| Type                     | Example                  | Handled by                              |
+| ------------------------ | ------------------------ | --------------------------------------- |
+| Internal (Hugo absolute) | `/en/learn/swe/overview` | `ayokoding-cli links check`             |
+| External URL             | `https://example.com`    | `apps-ayokoding-web-link-checker` agent |
+| Same-page anchor         | `#section-name`          | Not validated                           |
 
 **Exit codes:**
 
@@ -83,7 +83,7 @@ ayokoding-cli links check --quiet
 
 **Flags:**
 
-- `--content` — Content directory path (default: `apps/ayokoding-fs/content`)
+- `--content` — Content directory path (default: `apps/ayokoding-web/content`)
 
 **Global Flags** (available to all commands):
 
@@ -96,10 +96,10 @@ ayokoding-cli links check --quiet
 
 ```bash
 # Run standalone (builds ayokoding-cli first automatically)
-nx run ayokoding-fs:links:check
+nx run ayokoding-web:links:check
 
 # Runs automatically as part of test:quick
-nx run ayokoding-fs:test:quick
+nx run ayokoding-web:test:quick
 ```
 
 **Performance:** ~100ms for 850+ files / 3000+ links
@@ -142,7 +142,7 @@ apps/ayokoding-cli/
 
 **Removed**: `nav regen` and `titles update` commands.
 
-The ayokoding-fs Hugo site has been replaced by a Next.js app. The navigation
+The ayokoding-web Hugo site has been replaced by a Next.js app. The navigation
 regeneration and title update commands were Hugo-specific and are no longer
 needed. Only the `links check` command is retained.
 
@@ -154,22 +154,22 @@ needed. Only the `links check` command is retained.
 **New**: `links check` command for internal link validation.
 
 - No breaking changes
-- `nx run ayokoding-fs:test:quick` now runs `links:check` before the Hugo build
-- Fix broken internal links to keep CI green: `nx run ayokoding-fs:links:check`
+- `nx run ayokoding-web:test:quick` now runs `links:check` before the Hugo build
+- Fix broken internal links to keep CI green: `nx run ayokoding-web:links:check`
 
 ## Integration with AI Agents
 
-The `apps-ayokoding-fs-link-checker` agent validates external links separately.
+The `apps-ayokoding-web-link-checker` agent validates external links separately.
 Internal link validation is handled by this CLI during `test:quick`.
 
 ## Pre-commit Automation
 
 Navigation and title automation via pre-commit hook has been removed as of
-v0.5.0 (ayokoding-fs migrated from Hugo to Next.js). The `run-pre-commit`
-target no longer exists for ayokoding-fs.
+v0.5.0 (ayokoding-web migrated from Hugo to Next.js). The `run-pre-commit`
+target no longer exists for ayokoding-web.
 
-The ayokoding-cli binary is still auto-built by Nx when `ayokoding-fs:test:quick`
-runs, because `ayokoding-fs/project.json` declares `ayokoding-cli` as an
+The ayokoding-cli binary is still auto-built by Nx when `ayokoding-web:test:quick`
+runs, because `ayokoding-web/project.json` declares `ayokoding-cli` as an
 implicit dependency.
 
 ## Testing
@@ -265,5 +265,5 @@ nx run ayokoding-cli
 
 ## References
 
-- [Hugo Content Convention - ayokoding-fs](../../governance/conventions/hugo/ayokoding.md)
+- [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)

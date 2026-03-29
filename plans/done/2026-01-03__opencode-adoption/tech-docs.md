@@ -372,19 +372,19 @@
 **Current skill names are INVALID:**
 
 - `docs__applying-content-quality` ❌ (double underscore)
-- `apps__ayokoding-fs__developing-content` ❌ (multiple underscores)
+- `apps__ayokoding-web__developing-content` ❌ (multiple underscores)
 - `wow__understanding-repository-architecture` ❌ (underscore)
 
 **Required new names (SINGLE hyphen -, NOT double hyphen --):**
 
 - `docs-applying-content-quality` ✓ (replace `__` with single `-`)
-- `apps-ayokoding-fs-developing-content` ✓ (replace all `__` with single `-`)
+- `apps-ayokoding-web-developing-content` ✓ (replace all `__` with single `-`)
 - `wow-understanding-repository-architecture` ✓ (replace `__` with single `-`)
 
 **INVALID new names (consecutive hyphens not allowed):**
 
 - `docs--applying-content-quality` ❌ (double hyphen)
-- `apps--ayokoding-fs--developing-content` ❌ (multiple double hyphens)
+- `apps--ayokoding-web--developing-content` ❌ (multiple double hyphens)
 
 ### Format Comparison
 
@@ -451,13 +451,13 @@ name: docs-applying-content-quality
 
 **Current agent names are INVALID (same rules as skills):**
 
-| Current Name (INVALID)                 | Required Name (VALID)                     |
-| -------------------------------------- | ----------------------------------------- |
-| `docs__checker.md`                     | `docs-checker.md`                         |
-| `apps__ayokoding-fs__general-maker.md` | `apps-apps-ayokoding-fs-general-maker.md` |
-| `wow__workflow-checker.md`             | `repo-workflow-checker.md`                |
-| `plan__executor.md`                    | `plan-executor.md`                        |
-| `agent__maker.md`                      | `agent-maker.md`                          |
+| Current Name (INVALID)                  | Required Name (VALID)                      |
+| --------------------------------------- | ------------------------------------------ |
+| `docs__checker.md`                      | `docs-checker.md`                          |
+| `apps__ayokoding-web__general-maker.md` | `apps-apps-ayokoding-web-general-maker.md` |
+| `wow__workflow-checker.md`              | `repo-workflow-checker.md`                 |
+| `plan__executor.md`                     | `plan-executor.md`                         |
+| `agent__maker.md`                       | `agent-maker.md`                           |
 
 **Impact Assessment:**
 

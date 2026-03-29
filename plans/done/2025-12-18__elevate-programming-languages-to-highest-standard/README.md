@@ -11,7 +11,7 @@
 
 ## Overview
 
-This plan outlines the comprehensive enhancement of all 4 programming language content on ayokoding-fs (Python, Java, Kotlin, Golang) to meet the highest standards defined in the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md). The project brings all languages to production-ready quality with complete tutorials, cookbooks, reference documentation, and validation.
+This plan outlines the comprehensive enhancement of all 4 programming language content on ayokoding-web (Python, Java, Kotlin, Golang) to meet the highest standards defined in the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md). The project brings all languages to production-ready quality with complete tutorials, cookbooks, reference documentation, and validation.
 
 ### Goals
 
@@ -42,9 +42,9 @@ All 4 languages achieve:
 - ✅ 30+ recipe cookbooks (4,000-5,500 lines)
 - ✅ 12-18 how-to guides appropriate to language complexity
 - ✅ Enhanced philosophy sections (overview, best-practices, anti-patterns)
-- ✅ Pass ayokoding-fs-general-checker validation
-- ✅ Pass ayokoding-fs-facts-checker verification
-- ✅ Pass ayokoding-fs-link-checker validation
+- ✅ Pass ayokoding-web-general-checker validation
+- ✅ Pass ayokoding-web-facts-checker verification
+- ✅ Pass ayokoding-web-link-checker validation
 
 ## Plan Structure
 

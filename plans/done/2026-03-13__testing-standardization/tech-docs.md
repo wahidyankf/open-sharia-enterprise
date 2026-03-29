@@ -54,8 +54,8 @@ Integration tests vary by project type:
 
 ### Projects Without Tests
 
-- **`oseplatform-fs`**: Hugo static site. `test:quick` runs link validation only. No unit/integration/e2e.
-- **`ayokoding-fs`**: Hugo static site. `test:quick` runs link validation only. No unit/integration/e2e.
+- **`oseplatform-web`**: Hugo static site. `test:quick` runs link validation only. No unit/integration/e2e.
+- **`ayokoding-web`**: Hugo static site. `test:quick` runs link validation only. No unit/integration/e2e.
 
 ### Summary Table
 
@@ -108,8 +108,8 @@ All 11 backends need to migrate to PostgreSQL. Four backends currently use SQLit
 | --------------------- | ---------- | ----------------- | ------------------------- | --------- |
 | `organiclever-fe`     | Vitest     | Vitest + MSW      | via `organiclever-fe-e2e` | Compliant |
 | `organiclever-fe-e2e` | —          | —                 | Playwright + bddgen       | Compliant |
-| `oseplatform-fs`      | —          | —                 | —                         | Compliant |
-| `ayokoding-fs`        | —          | —                 | —                         | Compliant |
+| `oseplatform-web`     | —          | —                 | —                         | Compliant |
+| `ayokoding-web`       | —          | —                 | —                         | Compliant |
 
 **Gap**: None. Web apps already follow the appropriate standard for their type.
 
@@ -176,7 +176,7 @@ These projects are already architecturally compliant with the three rules. Howev
 
 - **Web UI** (`organiclever-fe`): Rules 1+2+3 — test architecture already correct, but **needs test suite splitting**: currently `test:quick` runs unit + MSW together. Must split into separate `test:unit` (no MSW) and `test:integration` (MSW) targets so `test:quick` only runs unit tests.
 - **CLI apps** (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`): Rules 1+2 — test architecture already correct, but **may need target reconfiguration**: currently coverage comes from combined unit + Godog runs. Must ensure `test:quick` runs `test:unit` only and coverage ≥90% from unit tests alone.
-- **Hugo sites** (`oseplatform-fs`, `ayokoding-fs`): Exempt — no changes needed, build + link validation only
+- **Hugo sites** (`oseplatform-web`, `ayokoding-web`): Exempt — no changes needed, build + link validation only
 - **Libraries** (`golang-commons`, `hugo-commons`): Rule 1 — no changes needed, unit tests already working (integration exists but optional)
 - **Libraries** (`elixir-cabbage`, `elixir-gherkin`): Rule 1 — no changes needed, unit tests already working
 - **E2E runners** (`a-demo-be-e2e`, `organiclever-fe-e2e`): No changes needed, Playwright already working
@@ -430,8 +430,8 @@ These projects don't need the same README/architecture documentation rewrite as 
 - **`apps/ayokoding-cli/`**, **`apps/oseplatform-cli/`**, **`apps/rhino-cli/`** — Test architecture already correct, but `project.json` may need target reconfiguration (unit vs Godog integration) in Phase 3.
 - **`apps/a-demo-be-e2e/`** — Already compliant, no changes needed.
 - **`apps/organiclever-fe-e2e/`** — Already compliant (Playwright + bddgen), no changes needed.
-- **`apps/oseplatform-fs/`** — Already compliant (link validation only), no changes needed.
-- **`apps/ayokoding-fs/`** — Already compliant (link validation only), no changes needed.
+- **`apps/oseplatform-web/`** — Already compliant (link validation only), no changes needed.
+- **`apps/ayokoding-web/`** — Already compliant (link validation only), no changes needed.
 - **`libs/golang-commons/`** — Already compliant (Go unit + Godog integration), no changes needed.
 - **`libs/hugo-commons/`** — Already compliant (Go unit + Godog integration), no changes needed.
 - **`libs/elixir-cabbage/`** — Already compliant (ExUnit), no changes needed.
@@ -449,8 +449,8 @@ These projects don't need the same README/architecture documentation rewrite as 
 | `pr-quality-gate.yml`                                  | PR opened/sync/reopen              | `nx affected -t typecheck` + `nx affected -t lint` + `nx affected -t test:quick` |
 | `pr-validate-links.yml`                                | PR opened/sync/reopen              | `rhino-cli docs validate-links`                                                  |
 | `pr-format.yml`                                        | PR opened/sync/reopen              | Formatting checks                                                                |
-| `test-and-deploy-ayokoding-fs.yml`                     | Push to `prod-ayokoding-fs`        | Deploy to Vercel                                                                 |
-| `test-and-deploy-oseplatform-fs.yml`                   | Push to `prod-oseplatform-fs`      | Deploy to Vercel                                                                 |
+| `test-and-deploy-ayokoding-web.yml`                    | Push to `prod-ayokoding-web`       | Deploy to Vercel                                                                 |
+| `test-and-deploy-oseplatform-web.yml`                  | Push to `prod-oseplatform-web`     | Deploy to Vercel                                                                 |
 | `test-integration-e2e-a-demo-be-java-springboot.yml`   | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
 | `test-integration-e2e-a-demo-be-kotlin-ktor.yml`       | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
 | `test-integration-e2e-a-demo-be-java-vertx.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
@@ -487,8 +487,8 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 - `pr-validate-links.yml` — PR link validation, unrelated to testing
 - `pr-format.yml` — PR formatting checks, unrelated to testing
-- `test-and-deploy-ayokoding-fs.yml` — Deployment only
-- `test-and-deploy-oseplatform-fs.yml` — Deployment only
+- `test-and-deploy-ayokoding-web.yml` — Deployment only
+- `test-and-deploy-oseplatform-web.yml` — Deployment only
 
 #### 8. Root `README.md`
 

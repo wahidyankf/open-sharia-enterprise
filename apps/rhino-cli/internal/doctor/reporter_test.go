@@ -34,7 +34,7 @@ var allOKChecks = []ToolCheck{
 	{Name: "java", Binary: "java", Status: StatusOK, InstalledVersion: "25", RequiredVersion: "25", Source: "apps/organiclever-be-jasb/pom.xml → <java.version>", Note: "required: 25"},
 	{Name: "maven", Binary: "mvn", Status: StatusOK, InstalledVersion: "3.9.9", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "golang", Binary: "go", Status: StatusOK, InstalledVersion: "1.24.2", RequiredVersion: "1.24.2", Source: "apps/rhino-cli/go.mod → go directive", Note: "required: \u22651.24.2"},
-	{Name: "hugo", Binary: "hugo", Status: StatusOK, InstalledVersion: "0.156.0", RequiredVersion: "0.156.0", Source: "apps/oseplatform-fs/vercel.json → HUGO_VERSION", Note: "required: \u22650.156.0"},
+	{Name: "hugo", Binary: "hugo", Status: StatusOK, InstalledVersion: "0.156.0", RequiredVersion: "0.156.0", Source: "apps/oseplatform-web/vercel.json → HUGO_VERSION", Note: "required: \u22650.156.0"},
 	{Name: "python", Binary: "python3", Status: StatusOK, InstalledVersion: "3.13.1", RequiredVersion: "3.13", Source: "apps/a-demo-be-python-fastapi/.python-version", Note: "required: \u22653.13"},
 	{Name: "rust", Binary: "rustc", Status: StatusOK, InstalledVersion: "1.94.0", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "cargo-llvm-cov", Binary: "cargo", Status: StatusOK, InstalledVersion: "0.8.5", Source: "(no config file)", Note: "no version requirement"},

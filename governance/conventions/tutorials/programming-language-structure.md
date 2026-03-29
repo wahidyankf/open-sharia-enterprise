@@ -6,7 +6,7 @@ subcategory: conventions
 tags:
   - programming-languages
   - tutorials
-  - ayokoding-fs
+  - ayokoding-web
   - education
   - structure
 created: 2025-12-27
@@ -15,7 +15,7 @@ updated: 2025-12-30
 
 # Programming Language Tutorial Structure Convention
 
-**Defines the dual-path tutorial directory organization for programming language content on ayokoding-fs.**
+**Defines the dual-path tutorial directory organization for programming language content on ayokoding-web.**
 
 This convention standardizes how programming language tutorials are organized as a **Full Set Tutorial Package** with 5 mandatory components: foundational tutorials (initial-setup, quick-start), two complementary learning tracks (narrative-driven by-concept and code-first by-example, both achieving 95% coverage), and practical cookbook for problem-solving. All 5 components are required for complete language content.
 
@@ -42,15 +42,15 @@ This convention ensures:
 **Applies to:**
 
 - **All programming language tutorial structures** across the repository:
-  - **ayokoding-fs** (`apps/ayokoding-fs/content/[lang]/learn/software-engineering/programming-language/[language]/tutorials/`)
+  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/software-engineering/programming-language/[language]/tutorials/`)
   - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
   - **Any other location** where programming language tutorials are organized
 - Languages: Java, Elixir, Golang, Kotlin, Python, Rust (and future additions)
 
 **Enforced by:**
 
-- `apps-ayokoding-fs-general-checker` (validates by-concept structure)
-- `apps-ayokoding-fs-by-example-checker` (validates by-example structure)
+- `apps-ayokoding-web-general-checker` (validates by-concept structure)
+- `apps-ayokoding-web-by-example-checker` (validates by-example structure)
 - `docs-tutorial-checker` (validates docs/ tutorial quality)
 
 **Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/README.md)
@@ -104,7 +104,7 @@ Languages with only by-concept path (by-example not yet created):
 
 ## The Full Set Tutorial Package Components
 
-A complete programming language on ayokoding-fs requires **all 5 mandatory components**:
+A complete programming language on ayokoding-web requires **all 5 mandatory components**:
 
 ### Component 1-2: Foundational Tutorials (Mandatory)
 
@@ -310,7 +310,7 @@ tutorials/
 
 ### Weight Values
 
-Uses ayokoding-fs's level-based weight system with powers of 10 ranges:
+Uses ayokoding-web's level-based weight system with powers of 10 ranges:
 
 **Path Calculation:**
 
@@ -553,7 +553,7 @@ weight: 100002
 
 ### Automated Validation
 
-**apps-ayokoding-fs-general-checker** validates:
+**apps-ayokoding-web-general-checker** validates:
 
 - PASS: By-concept directory structure exists
 - PASS: All mandatory files present (\_index.md, overview.md, beginner/intermediate/advanced.md)
@@ -562,7 +562,7 @@ weight: 100002
 - PASS: Frontmatter completeness
 - PASS: No H1 headings in content
 
-**apps-ayokoding-fs-by-example-checker** validates:
+**apps-ayokoding-web-by-example-checker** validates:
 
 - PASS: By-example directory structure (when exists)
 - PASS: 75-90 examples across three files
@@ -711,7 +711,7 @@ If a language is missing components (created before Full Set requirement), follo
 **Step 1: Audit current state**
 
 ```bash
-cd apps/ayokoding-fs/content/en/learn/software-engineering/programming-language/[language]/tutorials/
+cd apps/ayokoding-web/content/en/learn/software-engineering/programming-language/[language]/tutorials/
 ls -la  # Check what exists
 ```
 
@@ -768,7 +768,7 @@ Follow [By Example Tutorial Convention](./by-example.md) to create 75-90 annotat
 
 **Step 6: Validate**
 
-Run `apps-ayokoding-fs-by-example-checker` to verify structure and content quality.
+Run `apps-ayokoding-web-by-example-checker` to verify structure and content quality.
 
 ## Related Conventions
 

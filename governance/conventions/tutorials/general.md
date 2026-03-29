@@ -50,7 +50,7 @@ This convention establishes comprehensive standards for tutorial content across 
 ### What This Convention Does NOT Cover
 
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
-- **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-fs convention](../hugo/ayokoding.md)
+- **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Non-tutorial content** - How-To guides, Reference, Explanation covered separately
 - **Tutorial validation** - Covered by docs-tutorial-checker agent
 
@@ -63,11 +63,11 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 **Scope**: Applies to **all tutorial content in the repository**, including:
 
 - **docs/tutorials/** - Business, AI Engineering, Software Engineering tutorials
-- **apps/ayokoding-fs/content/** - Programming language tutorials (Java, Golang, Python, etc.)
-- **apps/oseplatform-fs/content/** - Platform tutorials and guides
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/oseplatform-web/content/** - Platform tutorials and guides
 - **Any other location** - Tutorial content regardless of directory
 
-**Implementation Notes**: While these standards apply universally, implementation details (Hugo frontmatter, weight values, navigation structure) vary by platform and are covered in site-specific conventions ([ayokoding-fs](../hugo/ayokoding.md), [oseplatform-fs](../hugo/ose-platform.md))
+**Implementation Notes**: While these standards apply universally, implementation details (Hugo frontmatter, weight values, navigation structure) vary by platform and are covered in site-specific conventions ([ayokoding-web](../hugo/ayokoding.md), [oseplatform-web](../hugo/ose-platform.md))
 
 ## Diátaxis Principles for Tutorials
 

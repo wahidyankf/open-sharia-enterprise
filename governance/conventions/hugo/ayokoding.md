@@ -1,12 +1,12 @@
 ---
-title: "Hugo Content Convention - ayokoding-fs"
-description: Hugo content conventions specific to ayokoding-fs (Hextra theme, bilingual educational platform)
+title: "Hugo Content Convention - ayokoding-web"
+description: Hugo content conventions specific to ayokoding-web (Hextra theme, bilingual educational platform)
 category: explanation
 subcategory: conventions
 tags:
   - hugo
   - content
-  - ayokoding-fs
+  - ayokoding-web
   - hextra
   - bilingual
   - educational
@@ -14,9 +14,9 @@ created: 2025-12-13
 updated: 2026-01-02
 ---
 
-# Hugo Content Convention - ayokoding-fs
+# Hugo Content Convention - ayokoding-web
 
-This document defines Hugo content conventions specific to **ayokoding-fs** - a bilingual educational platform using the Hextra theme.
+This document defines Hugo content conventions specific to **ayokoding-web** - a bilingual educational platform using the Hextra theme.
 
 ## Principles Implemented/Respected
 
@@ -30,7 +30,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention defines content creation standards specific to the ayokoding-fs Hugo site, which uses the Hextra theme and serves bilingual programming tutorials. It establishes frontmatter requirements, navigation structure, weight systems, and linking patterns unique to ayokoding-fs, complementing the shared Hugo conventions.
+This convention defines content creation standards specific to the ayokoding-web Hugo site, which uses the Hextra theme and serves bilingual programming tutorials. It establishes frontmatter requirements, navigation structure, weight systems, and linking patterns unique to ayokoding-web, complementing the shared Hugo conventions.
 
 ## Scope
 
@@ -50,7 +50,7 @@ This convention defines content creation standards specific to the ayokoding-fs 
 - **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorials/programming-language-content.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorials/naming.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
-- **Deployment** - Covered by ayokoding-fs-deployer agent
+- **Deployment** - Covered by ayokoding-web-deployer agent
 
 ## Prerequisites
 
@@ -62,17 +62,17 @@ Read the shared conventions first, as they cover:
 - Adapted conventions (Hugo-specific modifications)
 - Hugo-specific conventions (basic concepts)
 
-This document covers **ayokoding-fs specific patterns only**.
+This document covers **ayokoding-web specific patterns only**.
 
 ---
 
-## ayokoding-fs Overview
+## ayokoding-web Overview
 
 **Site**: [ayokoding.com](https://ayokoding.com)
 **Theme**: Hextra
 **Purpose**: Bilingual educational platform for Indonesian developers
 **Languages**: Indonesian (id) and English (en)
-**Repository Path**: `apps/ayokoding-fs/`
+**Repository Path**: `apps/ayokoding-web/`
 
 **Content Types**:
 
@@ -85,7 +85,7 @@ This document covers **ayokoding-fs specific patterns only**.
 ## Content Structure
 
 ```
-apps/ayokoding-fs/content/
+apps/ayokoding-web/content/
 ├── id/                                    # Indonesian content
 │   ├── _index.md
 │   ├── belajar/                           # Learning (Indonesian)
@@ -103,7 +103,7 @@ apps/ayokoding-fs/content/
 
 ## Code Annotation Standards
 
-**CRITICAL: All code examples in ayokoding-fs content must meet annotation density standards**
+**CRITICAL: All code examples in ayokoding-web content must meet annotation density standards**
 
 ### Annotation Density Requirement
 
@@ -232,13 +232,13 @@ Edit the configuration file...
 
 ---
 
-## ayokoding-fs Site Patterns
+## ayokoding-web Site Patterns
 
-### No H1 Headings in Content (ayokoding-fs Specific)
+### No H1 Headings in Content (ayokoding-web Specific)
 
-**CRITICAL**: ayokoding-fs content MUST NOT include ANY H1 headings (`# ...`) in markdown content.
+**CRITICAL**: ayokoding-web content MUST NOT include ANY H1 headings (`# ...`) in markdown content.
 
-**This rule is STRICTER than the shared convention**, which only prohibits duplicate H1s. For ayokoding-fs, ALL H1 headings are prohibited.
+**This rule is STRICTER than the shared convention**, which only prohibits duplicate H1s. For ayokoding-web, ALL H1 headings are prohibited.
 
 **Rationale**:
 
@@ -251,7 +251,7 @@ Edit the configuration file...
 
 **Rule**: Content should start with introduction text or H2 headings (`## ...`).
 
-**Applies to**: ALL ayokoding-fs content (learning, rants/celoteh, video content)
+**Applies to**: ALL ayokoding-web content (learning, rants/celoteh, video content)
 
 PASS: **Good (no H1 in content)**:
 
@@ -293,9 +293,9 @@ This section discusses foundational concepts...
 This section covers common patterns...
 ```
 
-**Issue**: Even though these H1s are semantically different from the title, ayokoding-fs prohibits ALL H1s. If content needs multiple main sections, split into separate pages.
+**Issue**: Even though these H1s are semantically different from the title, ayokoding-web prohibits ALL H1s. If content needs multiple main sections, split into separate pages.
 
-**Note**: This stricter rule applies ONLY to ayokoding-fs. oseplatform-fs follows the shared convention (allows H1s that differ from title).
+**Note**: This stricter rule applies ONLY to ayokoding-web. oseplatform-web follows the shared convention (allows H1s that differ from title).
 
 ### Bilingual Content Organization
 
@@ -324,11 +324,11 @@ content/
 
 ### Default Language and Mirroring Policy
 
-**CRITICAL RULE**: When creating content for ayokoding-fs, the default language is **English ("en")**. Content should be created in English first.
+**CRITICAL RULE**: When creating content for ayokoding-web, the default language is **English ("en")**. Content should be created in English first.
 
 **Bilingual Support Does NOT Mean Automatic Mirroring:**
 
-ayokoding-fs is a bilingual website (English and Indonesian), but **content does NOT have to be mirrored between languages**. This means:
+ayokoding-web is a bilingual website (English and Indonesian), but **content does NOT have to be mirrored between languages**. This means:
 
 - PASS: **Content can exist in English only** (under `/en/`)
 - PASS: **Content can exist in Indonesian only** (under `/id/`)
@@ -366,7 +366,7 @@ Agent: Does NOT automatically create /id/belajar/typescript/generics.md
 
 ### Author Field Rules
 
-**CRITICAL RULE**: Most ayokoding-fs content does NOT include `author:` field in frontmatter.
+**CRITICAL RULE**: Most ayokoding-web content does NOT include `author:` field in frontmatter.
 
 **Default Behavior**:
 
@@ -377,15 +377,15 @@ Agent: Does NOT automatically create /id/belajar/typescript/generics.md
 
 PASS: **ALLOWED in these directories**:
 
-- `apps/ayokoding-fs/content/en/rants/` - English rants may have different authors
-- `apps/ayokoding-fs/content/id/celoteh/` - Indonesian rants may have different authors
+- `apps/ayokoding-web/content/en/rants/` - English rants may have different authors
+- `apps/ayokoding-web/content/id/celoteh/` - Indonesian rants may have different authors
 
 FAIL: **FORBIDDEN in these directories**:
 
-- `apps/ayokoding-fs/content/en/learn/` - Uses site-level author
-- `apps/ayokoding-fs/content/id/belajar/` - Uses site-level author
-- `apps/ayokoding-fs/content/en/video-content/` - Uses site-level author
-- `apps/ayokoding-fs/content/id/konten-video/` - Uses site-level author
+- `apps/ayokoding-web/content/en/learn/` - Uses site-level author
+- `apps/ayokoding-web/content/id/belajar/` - Uses site-level author
+- `apps/ayokoding-web/content/en/video-content/` - Uses site-level author
+- `apps/ayokoding-web/content/id/konten-video/` - Uses site-level author
 
 **Rationale**: Site-level author handles most content; rants/celoteh may have guest contributors.
 
@@ -420,11 +420,11 @@ author: "Guest Contributor Name" # Optional - allowed in rants/celoteh only
 
 ### Frontmatter Field Formatting Rules
 
-**CRITICAL RULES**: ayokoding-fs frontmatter has specific formatting requirements to prevent rendering errors.
+**CRITICAL RULES**: ayokoding-web frontmatter has specific formatting requirements to prevent rendering errors.
 
 #### Categories Field - DO NOT USE
 
-**FORBIDDEN**: The `categories:` field MUST NOT be used in ayokoding-fs frontmatter.
+**FORBIDDEN**: The `categories:` field MUST NOT be used in ayokoding-web frontmatter.
 
 **Rationale**: Hextra theme renders categories field as raw text on the page. Content categorization is handled through:
 
@@ -504,9 +504,9 @@ tags:
 
 ### Weight Field Ordering
 
-**CRITICAL RULE**: All content files use the `weight` field to control navigation ordering (lower weight = first in list). ayokoding-fs uses a **level-based weight system** with powers of 10 ranges that reset for each parent folder.
+**CRITICAL RULE**: All content files use the `weight` field to control navigation ordering (lower weight = first in list). ayokoding-web uses a **level-based weight system** with powers of 10 ranges that reset for each parent folder.
 
-**Scope**: Applies to ALL content in `apps/ayokoding-fs/content/` (both `/en/` and `/id/`).
+**Scope**: Applies to ALL content in `apps/ayokoding-web/content/` (both `/en/` and `/id/`).
 
 **Key Principle**: Hugo compares weights only among siblings within the same parent folder. Weights reset for children of different parents, allowing independent numbering in each folder.
 
@@ -851,7 +851,7 @@ FAIL: **Mistake 4: Missing weight field**
 
 **Why this happens:** Assuming Hugo will auto-assign weights or use alphabetical order
 
-**How to avoid:** EVERY content file in ayokoding-fs MUST have an explicit `weight` field. Hugo's default alphabetical sorting breaks our hierarchical navigation.
+**How to avoid:** EVERY content file in ayokoding-web MUST have an explicit `weight` field. Hugo's default alphabetical sorting breaks our hierarchical navigation.
 
 ```yaml
 # WRONG! Missing weight field entirely
@@ -963,7 +963,7 @@ Partial coverage (showing only some children) is a violation.
 
 **Rationale**: Two-layer navigation provides clear hierarchy while maintaining simplicity. Users can navigate to children, then view their grandchildren on the child page, reducing navigation complexity and improving mobile-friendly display.
 
-**Applies to**: All `_index.md` files in `apps/ayokoding-fs/content/en/learn/` and `apps/ayokoding-fs/content/id/belajar/`
+**Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
 **Terminal Directory Exemption**:
 
@@ -1090,7 +1090,7 @@ title: Business # WRONG! Too generic (missing context)
 
 **Rationale**: Clear separation of concerns (navigation vs content), consistent UX pattern, easier maintenance.
 
-**Applies to**: All `_index.md` files in `apps/ayokoding-fs/content/en/learn/` and `apps/ayokoding-fs/content/id/belajar/`
+**Applies to**: All `_index.md` files in `apps/ayokoding-web/content/en/learn/` and `apps/ayokoding-web/content/id/belajar/`
 
 ### Overview/Ikhtisar File Requirements
 
@@ -1118,8 +1118,8 @@ title: Business # WRONG! Too generic (missing context)
 
 **Scope**:
 
-- ALL `_index.md` files in `apps/ayokoding-fs/content/en/learn/` and subdirectories
-- ALL `_index.md` files in `apps/ayokoding-fs/content/id/belajar/` and subdirectories
+- ALL `_index.md` files in `apps/ayokoding-web/content/en/learn/` and subdirectories
+- ALL `_index.md` files in `apps/ayokoding-web/content/id/belajar/` and subdirectories
 
 **Exemptions** (language roots do not require this):
 
@@ -1193,8 +1193,8 @@ title: Business # WRONG! Too generic (missing context)
 
 **Agent Responsibilities**:
 
-- `apps-ayokoding-fs-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
-- `apps-ayokoding-fs-structure-checker` agent validates compliance with this system for ALL `_index.md` files
+- `apps-ayokoding-web-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
+- `apps-ayokoding-web-structure-checker` agent validates compliance with this system for ALL `_index.md` files
 - Violations are flagged as CRITICAL errors in audit reports
 
 #### Cookbook Location (Updated 2026-01-30)
@@ -1342,9 +1342,9 @@ Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini mem
 
 ### Optional Topic-Level Diátaxis Structure
 
-**Status**: OPTIONAL pattern (not required, not validated by apps-ayokoding-fs-general-checker)
+**Status**: OPTIONAL pattern (not required, not validated by apps-ayokoding-web-general-checker)
 
-Topics in ayokoding-fs MAY optionally organize content using Diátaxis framework at the topic level.
+Topics in ayokoding-web MAY optionally organize content using Diátaxis framework at the topic level.
 
 **Diátaxis Directories** (optional):
 
@@ -1636,7 +1636,7 @@ hugo new content/en/rants/2024/_index.md --kind _index
 
 ## Internal Link Requirements
 
-**CRITICAL RULE**: ALL internal links in ayokoding-fs content MUST use **absolute paths with language prefix**. This applies to manually written content AND automatically generated navigation listings.
+**CRITICAL RULE**: ALL internal links in ayokoding-web content MUST use **absolute paths with language prefix**. This applies to manually written content AND automatically generated navigation listings.
 
 ### Why Absolute Paths Are Required
 
@@ -1711,7 +1711,7 @@ Examples:
 
 **ayokoding-cli Generates Absolute Paths**:
 
-The `ayokoding-cli` tool (used by `ayokoding-fs-navigation-maker` agent) automatically generates absolute paths in navigation listings:
+The `ayokoding-cli` tool (used by `ayokoding-web-navigation-maker` agent) automatically generates absolute paths in navigation listings:
 
 **Location**: `apps/ayokoding-cli/internal/navigation/`
 
@@ -1748,8 +1748,8 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/programming-lan
 
 **Automated Validation**:
 
-- `apps-ayokoding-fs-link-checker` agent validates link format and targets
-- `apps-ayokoding-fs-structure-checker` agent validates navigation structure
+- `apps-ayokoding-web-link-checker` agent validates link format and targets
+- `apps-ayokoding-web-structure-checker` agent validates navigation structure
 
 ### Common Mistakes
 
@@ -1811,13 +1811,13 @@ PASS: **Correct: No .md extension**
 
 **After 2025-12-21**: All navigation links use absolute paths with language prefixes, ensuring consistent link resolution from any page context.
 
-**If you encounter relative paths**: Update them to absolute paths with language prefix. Run `ayokoding-fs-navigation-maker` agent to regenerate navigation listings automatically.
+**If you encounter relative paths**: Update them to absolute paths with language prefix. Run `ayokoding-web-navigation-maker` agent to regenerate navigation listings automatically.
 
 ---
 
 ## Archetypes
 
-**Location**: `apps/ayokoding-fs/archetypes/`
+**Location**: `apps/ayokoding-web/archetypes/`
 
 **Available Archetypes** (5 total):
 
@@ -1877,7 +1877,7 @@ Fallback template for general content.
 
 ## Taxonomy
 
-**CRITICAL**: ayokoding-fs does NOT use the `categories` field in frontmatter (causes raw text leak).
+**CRITICAL**: ayokoding-web does NOT use the `categories` field in frontmatter (causes raw text leak).
 
 **Content Categorization** (via directory structure):
 
@@ -1907,7 +1907,7 @@ tags: ["javascript", "async", "promises", "tutorial"]
 
 ## Configuration Highlights
 
-**File**: `apps/ayokoding-fs/hugo.yaml`
+**File**: `apps/ayokoding-web/hugo.yaml`
 
 ### Language Configuration
 
@@ -2058,7 +2058,7 @@ Before publishing, verify:
 
 ## Asset Organization
 
-**Location**: `apps/ayokoding-fs/static/`
+**Location**: `apps/ayokoding-web/static/`
 
 **Structure**:
 
@@ -2094,9 +2094,9 @@ static/
 
 **Related AI Agents**:
 
-- [apps-ayokoding-fs-general-maker](../../../.claude/agents/apps-ayokoding-fs-general-maker.md) - Creates general ayokoding-fs content
-- [apps-ayokoding-fs-by-example-maker](../../../.claude/agents/apps-ayokoding-fs-by-example-maker.md) - Creates by-example tutorials
-- [apps-ayokoding-fs-general-checker](../../../.claude/agents/apps-ayokoding-fs-general-checker.md) - Validates general ayokoding-fs content
-- [apps-ayokoding-fs-by-example-checker](../../../.claude/agents/apps-ayokoding-fs-by-example-checker.md) - Validates by-example tutorials
-- [apps-ayokoding-fs-link-checker](../../../.claude/agents/apps-ayokoding-fs-link-checker.md) - Validates links in ayokoding-fs
-- [ayokoding-fs-deployer](../../../.claude/agents/apps-ayokoding-fs-deployer.md) - Deploys ayokoding-fs to production
+- [apps-ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [apps-ayokoding-web-by-example-maker](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [apps-ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [apps-ayokoding-web-by-example-checker](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [apps-ayokoding-web-link-checker](../../../.claude/agents/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-web-deployer](../../../.claude/agents/apps-ayokoding-web-deployer.md) - Deploys ayokoding-web to production

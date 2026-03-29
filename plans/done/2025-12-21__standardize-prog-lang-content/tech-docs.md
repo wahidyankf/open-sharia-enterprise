@@ -84,11 +84,11 @@ graph TD
 
 **AI Agents**:
 
-- **ayokoding-fs-general-maker**: Create how-to guides and cookbook recipes
-- **ayokoding-fs-general-checker**: Validate Hugo conventions and quality
-- **ayokoding-fs-facts-checker**: Verify technical accuracy
-- **ayokoding-fs-link-checker**: Validate internal/external links
-- **ayokoding-fs-general-fixer**: Apply validated fixes from audit reports
+- **ayokoding-web-general-maker**: Create how-to guides and cookbook recipes
+- **ayokoding-web-general-checker**: Validate Hugo conventions and quality
+- **ayokoding-web-facts-checker**: Verify technical accuracy
+- **ayokoding-web-link-checker**: Validate internal/external links
+- **ayokoding-web-general-fixer**: Apply validated fixes from audit reports
 
 ### Validation Stack
 
@@ -297,12 +297,12 @@ See [Delivery Plan](./delivery.md) for detailed implementation steps per phase.
 For each how-to guide:
 
 1. **Research**: Review language documentation, identify common patterns
-2. **Draft**: Use ayokoding-fs-general-maker to create initial content
+2. **Draft**: Use ayokoding-web-general-maker to create initial content
 3. **Code Testing**: Test all code examples in development environment
 4. **Diagram Creation**: Create Mermaid diagrams with color-blind friendly palette
 5. **Cross-Reference**: Add links to related tutorials and cookbook recipes
-6. **Validation**: Run ayokoding-fs-general-checker, ayokoding-fs-facts-checker, ayokoding-fs-link-checker
-7. **Fix**: Use ayokoding-fs-general-fixer to apply validated fixes
+6. **Validation**: Run ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker
+7. **Fix**: Use ayokoding-web-general-fixer to apply validated fixes
 8. **Review**: Manual review for pedagogical effectiveness and clarity
 
 For each cookbook recipe:
@@ -363,7 +363,7 @@ New guide "optimize-performance.md" gets weight: 1000014 (next available positio
 2. Identify related how-to guides (check existing guides in same language)
 3. Identify related cookbook recipes (check cookbook categories)
 4. Add markdown links with descriptive text
-5. Validate links using ayokoding-fs-link-checker
+5. Validate links using ayokoding-web-link-checker
 
 ### Diagram Creation Guidelines
 
@@ -418,9 +418,9 @@ graph TD
 
 **Automated Validation**:
 
-1. **ayokoding-fs-general-checker**: Run on entire language directory
-2. **ayokoding-fs-facts-checker**: Verify factual accuracy of guides
-3. **ayokoding-fs-link-checker**: Validate all internal/external links
+1. **ayokoding-web-general-checker**: Run on entire language directory
+2. **ayokoding-web-facts-checker**: Verify factual accuracy of guides
+3. **ayokoding-web-link-checker**: Validate all internal/external links
 4. **Hugo Build**: Ensure content builds without errors
 
 **Manual Validation**:
@@ -450,28 +450,28 @@ graph TD
 
 **Hugo Build Process**:
 
-1. Nx build: `nx build ayokoding-fs` (builds Hugo site)
-2. Hugo generates static files in `apps/ayokoding-fs/public/`
+1. Nx build: `nx build ayokoding-web` (builds Hugo site)
+2. Hugo generates static files in `apps/ayokoding-web/public/`
 3. Validation: Check build logs for errors or warnings
 4. Deploy: Push to production branch triggers Vercel deployment
 
 **Deployment Branches**:
 
 - `main`: Development branch (TBD workflow)
-- `prod-ayokoding-fs`: Production deployment branch (auto-deploys to ayokoding.com)
+- `prod-ayokoding-web`: Production deployment branch (auto-deploys to ayokoding.com)
 
 **Deployment Process**:
 
 1. Merge PR to `main`
 2. Verify Hugo build succeeds on `main`
-3. Pull `main` changes to `prod-ayokoding-fs`
-4. Push to `prod-ayokoding-fs` triggers Vercel deployment
+3. Pull `main` changes to `prod-ayokoding-web`
+4. Push to `prod-ayokoding-web` triggers Vercel deployment
 5. Verify deployment in production
 
 **Rollback Strategy**:
 
 - Revert commit on `main` if issues discovered
-- Rebuild and redeploy `prod-ayokoding-fs` with reverted changes
+- Rebuild and redeploy `prod-ayokoding-web` with reverted changes
 
 ### Incremental Deployment
 
@@ -496,15 +496,15 @@ graph TD
 
 **Validation Reports**:
 
-- ayokoding-fs-general-checker generates audit reports in `generated-reports/`
-- ayokoding-fs-facts-checker generates factual accuracy reports
-- ayokoding-fs-link-checker generates link validation reports
+- ayokoding-web-general-checker generates audit reports in `generated-reports/`
+- ayokoding-web-facts-checker generates factual accuracy reports
+- ayokoding-web-link-checker generates link validation reports
 
 **Report Review Process**:
 
 1. Run validation agents after content creation
 2. Review audit reports for critical/high issues
-3. Use ayokoding-fs-general-fixer to apply validated fixes
+3. Use ayokoding-web-general-fixer to apply validated fixes
 4. Re-run validation to confirm fixes
 5. Archive reports for future reference
 
@@ -512,7 +512,7 @@ graph TD
 
 **Hugo Build Logs**:
 
-- Monitor for errors during `nx build ayokoding-fs`
+- Monitor for errors during `nx build ayokoding-web`
 - Check for warnings (broken links, invalid frontmatter)
 - Verify build time remains reasonable (< 2 minutes)
 
@@ -541,7 +541,7 @@ graph TD
 
 **Mitigation**:
 
-- Validate all external links using ayokoding-fs-link-checker
+- Validate all external links using ayokoding-web-link-checker
 - Prefer official documentation sources
 - Use HTTPS links where available
 - Review external sites for trustworthiness

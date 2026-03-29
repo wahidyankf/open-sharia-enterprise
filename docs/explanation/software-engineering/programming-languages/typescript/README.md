@@ -52,14 +52,14 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 **You MUST understand TypeScript fundamentals before using these standards:**
 
-- **[TypeScript Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
-- **[TypeScript By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[TypeScript In Practice](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
-- **[TypeScript Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/)** - TypeScript 4.x-5.x LTS feature guides
+- **[TypeScript Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
+- **[TypeScript By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[TypeScript In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
+- **[TypeScript Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/)** - TypeScript 4.x-5.x LTS feature guides
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: TypeScript syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: TypeScript syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
@@ -168,7 +168,7 @@ timeline
 - Improved error messages with actionable suggestions
 - Better JSDoc support for type inference
 
-**See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-fs — TypeScript 5.x version feature guides.
+**See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-web — TypeScript 5.x version feature guides.
 
 ## Documentation Structure
 
@@ -676,8 +676,8 @@ export class CampaignController {
 
 ```
 apps/
-├── oseplatform-fs/         # Hugo static site (TypeScript for build scripts)
-├── ayokoding-fs/            # Hugo static site (TypeScript for build scripts)
+├── oseplatform-web/         # Hugo static site (TypeScript for build scripts)
+├── ayokoding-web/            # Hugo static site (TypeScript for build scripts)
 ├── ayokoding-cli/            # Go CLI tool
 └── rhino-cli/               # Go CLI tool
 

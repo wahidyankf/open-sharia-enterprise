@@ -40,7 +40,7 @@ This convention establishes the standard linking format for all markdown files i
 
 ### What This Convention Does NOT Cover
 
-- **Link validation** - Covered by docs-link-general-checker and apps-ayokoding-fs-link-checker agents
+- **Link validation** - Covered by docs-link-general-checker and apps-ayokoding-web-link-checker agents
 - **Link text quality** - Descriptive link text is covered in [Content Quality Principles](../writing/quality.md)
 - **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
 - **Anchor links** - Deep linking to specific sections (implementation detail)
@@ -301,7 +301,7 @@ Final path: ../../../docs/tutorials/README.md
 
 ## Hugo Content Linking
 
-**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-fs/` and `apps/oseplatform-fs/` uses different linking rules:
+**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-web/` and `apps/oseplatform-web/` uses different linking rules:
 
 - **Hugo internal links** use absolute paths starting with `/` (e.g., `/learn/ai/chat-with-pdf`)
 - **Hugo links omit** the `.md` extension

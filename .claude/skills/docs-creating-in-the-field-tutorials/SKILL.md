@@ -273,7 +273,7 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
 
 **Related Skills**:
 
-- `apps-ayokoding-fs-developing-content` - ayokoding-fs specific patterns
+- `apps-ayokoding-web-developing-content` - ayokoding-web specific patterns
 - `docs-creating-accessible-diagrams` - Accessible diagram creation
 
 ---

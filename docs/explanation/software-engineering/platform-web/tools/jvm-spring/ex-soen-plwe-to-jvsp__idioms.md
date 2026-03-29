@@ -1843,7 +1843,7 @@ Production patterns using Spring Framework idioms:
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring In-the-Field - Configuration Management](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration.md) - Production config
+- [Spring In-the-Field - Configuration Management](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration.md) - Production config
 
 **Spring Boot Extension**:
 

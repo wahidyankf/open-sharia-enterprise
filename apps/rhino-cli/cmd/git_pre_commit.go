@@ -15,7 +15,7 @@ var gitPreCommitCmd = &cobra.Command{
   1. Validate .claude/ and .opencode/ configuration (if staged)
   2. Validate docker-compose files (if staged)
   3. Run nx affected run-pre-commit (warn only on failure)
-  4. Stage ayokoding-fs content changes
+  4. Stage ayokoding-web content changes
   5. Run lint-staged
   5b. Sync app-level package-lock.json files (if apps/*/package.json staged)
   6. Auto-format staged Elixir files with mix format

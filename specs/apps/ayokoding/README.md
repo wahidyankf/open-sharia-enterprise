@@ -3,8 +3,8 @@
 Specifications for the AyoKoding educational website (Next.js 16 with tRPC backend).
 The specs cover content retrieval, search, navigation, internationalisation, and service health.
 
-> **Note**: The Hugo (Hextra) implementation has been archived to `archived/ayokoding-fs-hugo/`.
-> ayokoding-fs is now a Next.js 16 fullstack content platform.
+> **Note**: The Hugo (Hextra) implementation has been archived to `archived/ayokoding-web-hugo/`.
+> ayokoding-web is now a Next.js 16 fullstack content platform.
 
 ## Structure
 
@@ -79,4 +79,4 @@ The backend exposes tRPC procedures consumed by these specs:
 - [C4 Architecture Diagrams](./c4/README.md) — Context, container, and component diagrams
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
-- [apps/ayokoding-fs/](../../../apps/ayokoding-fs/README.md) — Next.js implementation
+- [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — Next.js implementation

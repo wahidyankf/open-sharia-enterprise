@@ -87,8 +87,8 @@ Every workflow currently in the repository follows this rule:
 | `PR - Quality Gate`                          | `pr-quality-gate.yml`                  |
 | `PR - Format`                                | `pr-format.yml`                        |
 | `PR - Validate Links`                        | `pr-validate-links.yml`                |
-| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-fs.yml`     |
-| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-fs.yml`   |
+| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-web.yml`    |
+| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-web.yml`  |
 | `Test - Demo BE (Java/Spring Boot)`          | `test-a-demo-be-java-springboot.yml`   |
 | `Test - Demo BE (Java/Vert.x)`               | `test-a-demo-be-java-vertx.yml`        |
 | `Test - Demo BE (Elixir/Phoenix)`            | `test-a-demo-be-elixir-phoenix.yml`    |

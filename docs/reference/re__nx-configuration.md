@@ -265,22 +265,22 @@ Per-project:
 
 ```json
 {
-  "name": "oseplatform-fs",
-  "sourceRoot": "apps/oseplatform-fs",
+  "name": "oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -288,7 +288,7 @@ Per-project:
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },
@@ -375,7 +375,7 @@ Project name used by Nx CLI.
 
 **Examples**:
 
-- `"oseplatform-fs"` (app)
+- `"oseplatform-web"` (app)
 - `"ts-utils"` (lib)
 
 #### `sourceRoot`
@@ -388,7 +388,7 @@ Location of source code.
 
 **Examples**:
 
-- `"apps/oseplatform-fs"` (app root)
+- `"apps/oseplatform-web"` (app root)
 - `"libs/ts-utils/src"` (lib source)
 
 #### `projectType`
@@ -442,7 +442,7 @@ Executor options.
   - Examples: `"next build"`, `"tsc -p tsconfig.json"`
 - `cwd` (string): Working directory
   - Optional (defaults to workspace root)
-  - Examples: `"apps/oseplatform-fs"`, `"."`
+  - Examples: `"apps/oseplatform-web"`, `"."`
 
 **Example**:
 
@@ -450,7 +450,7 @@ Executor options.
 {
   "options": {
     "command": "next build",
-    "cwd": "apps/oseplatform-fs"
+    "cwd": "apps/oseplatform-web"
   }
 }
 ```
@@ -700,7 +700,7 @@ Skip Nx cache.
 **Usage**:
 
 ```bash
-NX_SKIP_NX_CACHE=true nx build oseplatform-fs
+NX_SKIP_NX_CACHE=true nx build oseplatform-web
 ```
 
 #### `NX_DAEMON`
@@ -710,7 +710,7 @@ Enable/disable Nx daemon.
 **Usage**:
 
 ```bash
-NX_DAEMON=false nx build oseplatform-fs
+NX_DAEMON=false nx build oseplatform-web
 ```
 
 ## Related Documentation

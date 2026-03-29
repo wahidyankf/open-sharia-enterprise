@@ -70,13 +70,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/)** - "How to code in Rust" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - "How to code in Rust" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/rust/)** - "How to code Rust in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding Rust learning path before using OSE standards:**
 
-1. **[Rust Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/)** - Initial setup, overview (0-95% language coverage)
-2. **[Rust By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated code examples
+1. **[Rust Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - Initial setup, overview (0-95% language coverage)
+2. **[Rust By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated code examples
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

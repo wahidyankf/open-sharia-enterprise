@@ -130,7 +130,7 @@ overridden per app.
 | Maintenance         | One file for all tokens           | One shared + per-app overrides         | Per-app everything |
 
 **Rationale**: organiclever-fe is a business productivity app (neutral, professional).
-ayokoding-fs is an educational platform (blue, approachable). Forcing identical brand colors
+ayokoding-web is an educational platform (blue, approachable). Forcing identical brand colors
 would harm both products. But radius, spacing rhythm, and typography scale should be consistent
 for shared component compatibility.
 
@@ -150,7 +150,7 @@ Per-app override (in app's `globals.css`):
 - `--secondary`, `--secondary-foreground`
 - `--accent`, `--accent-foreground`
 - `--chart-1` through `--chart-5` (organiclever-fe only)
-- `--sidebar-*` (ayokoding-fs only)
+- `--sidebar-*` (ayokoding-web only)
 
 ### AD3b: Per-Project Customization at Scale
 
@@ -181,12 +181,12 @@ Layer 2: Per-project brand tokens (app's globals.css)
 
 Layer 3: Per-project component extensions (app's src/components/)
   ├── Local components that wrap shared components with project-specific behavior
-  ├── Project-only components (Breadcrumb, TOC, SidebarTree for ayokoding-fs)
+  ├── Project-only components (Breadcrumb, TOC, SidebarTree for ayokoding-web)
   └── Project-specific variant additions
 
 Layer 4: Per-project Tailwind configuration (app's globals.css)
   ├── @source directives (content scan paths)
-  ├── @plugin directives (@tailwindcss/typography for ayokoding-fs)
+  ├── @plugin directives (@tailwindcss/typography for ayokoding-web)
   ├── Custom @utility definitions
   └── App-specific @layer base styles
 ```
@@ -285,21 +285,21 @@ or `bashPattern` fields.
 
 **Anti-pattern catalog** (repo-specific, with code examples):
 
-| Anti-Pattern                | Example From Our Codebase                                               | Correct Approach                                                                                                    |
-| --------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Hardcoded hex in CSS        | `background-color: #f6f8fa !important;` (ayokoding-fs globals.css)      | Use token: `bg-muted` or `var(--color-muted)`                                                                       |
-| `!important` in Tailwind    | `color: #24292e !important;` (ayokoding-fs globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers                                                                      |
-| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-fe)          | Use `next/font` for optimization                                                                                    |
-| Old Radix imports           | `import { Slot } from "@radix-ui/react-slot"`                           | `import { Slot } from "radix-ui"`                                                                                   |
-| forwardRef pattern          | `React.forwardRef<HTMLButtonElement, Props>`                            | `function Button(props: React.ComponentProps<"button">)`                                                            |
-| Missing data-slot           | `<button className={...}>`                                              | `<button data-slot="button" className={...}>`                                                                       |
-| Inline styles in production | `style={{ color: 'red' }}`                                              | Use Tailwind utility: `className="text-destructive"`                                                                |
-| Card inside Card            | `<Card><Card>nested</Card></Card>`                                      | Use spacing/dividers for hierarchy                                                                                  |
-| Color-only status           | `<span className="text-red-500">Error</span>`                           | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
-| Unverified color contrast   | Using arbitrary colors without checking WCAG AA contrast                | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios                |
-| Missing focus-visible       | `focus:ring-2`                                                          | `focus-visible:ring-2` (keyboard users only)                                                                        |
-| `transition: all`           | `className="transition-all"`                                            | `className="transition-colors"` (explicit properties)                                                               |
-| bounce/elastic easing       | `animate-bounce`                                                        | Custom `@keyframes` with `ease-out` or `cubic-bezier(0, 0, 0.2, 1)` timing                                          |
+| Anti-Pattern                | Example From Our Codebase                                                | Correct Approach                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Hardcoded hex in CSS        | `background-color: #f6f8fa !important;` (ayokoding-web globals.css)      | Use token: `bg-muted` or `var(--color-muted)`                                                                       |
+| `!important` in Tailwind    | `color: #24292e !important;` (ayokoding-web globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers                                                                      |
+| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-fe)           | Use `next/font` for optimization                                                                                    |
+| Old Radix imports           | `import { Slot } from "@radix-ui/react-slot"`                            | `import { Slot } from "radix-ui"`                                                                                   |
+| forwardRef pattern          | `React.forwardRef<HTMLButtonElement, Props>`                             | `function Button(props: React.ComponentProps<"button">)`                                                            |
+| Missing data-slot           | `<button className={...}>`                                               | `<button data-slot="button" className={...}>`                                                                       |
+| Inline styles in production | `style={{ color: 'red' }}`                                               | Use Tailwind utility: `className="text-destructive"`                                                                |
+| Card inside Card            | `<Card><Card>nested</Card></Card>`                                       | Use spacing/dividers for hierarchy                                                                                  |
+| Color-only status           | `<span className="text-red-500">Error</span>`                            | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
+| Unverified color contrast   | Using arbitrary colors without checking WCAG AA contrast                 | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios                |
+| Missing focus-visible       | `focus:ring-2`                                                           | `focus-visible:ring-2` (keyboard users only)                                                                        |
+| `transition: all`           | `className="transition-all"`                                             | `className="transition-colors"` (explicit properties)                                                               |
+| bounce/elastic easing       | `animate-bounce`                                                         | Custom `@keyframes` with `ease-out` or `cubic-bezier(0, 0, 0.2, 1)` timing                                          |
 
 ### AD6: Agent Strategy — Full Maker-Checker-Fixer Trio + Quality Gate Workflow
 
@@ -308,16 +308,16 @@ plus a `ui-quality-gate` workflow in `governance/workflows/`.
 
 **Trade-offs**:
 
-| Factor      | Checker Only          | Full Trio + Workflow (Chosen)                           |
-| ----------- | --------------------- | ------------------------------------------------------- |
-| Effort      | 1 agent               | 3 agents + 1 workflow                                   |
-| Value       | Identifies violations | Identifies, creates, AND fixes — full lifecycle         |
-| Risk        | Low — read-only       | Medium — fixer modifies TSX; mitigated by re-validation |
-| Automation  | Manual fix cycle      | Automated quality gate with iteration control           |
-| Consistency | Depends on who fixes  | Fixer applies fixes consistently per conventions        |
-| Precedent   | N/A                   | Follows established pattern (docs, ayokoding-fs, plans) |
+| Factor      | Checker Only          | Full Trio + Workflow (Chosen)                            |
+| ----------- | --------------------- | -------------------------------------------------------- |
+| Effort      | 1 agent               | 3 agents + 1 workflow                                    |
+| Value       | Identifies violations | Identifies, creates, AND fixes — full lifecycle          |
+| Risk        | Low — read-only       | Medium — fixer modifies TSX; mitigated by re-validation  |
+| Automation  | Manual fix cycle      | Automated quality gate with iteration control            |
+| Consistency | Depends on who fixes  | Fixer applies fixes consistently per conventions         |
+| Precedent   | N/A                   | Follows established pattern (docs, ayokoding-web, plans) |
 
-**Rationale**: The repo already has successful maker-checker-fixer trios for docs, ayokoding-fs
+**Rationale**: The repo already has successful maker-checker-fixer trios for docs, ayokoding-web
 content, plans, specs, and README files. The pattern is proven. A UI fixer that modifies TSX is
 higher-risk than a docs fixer, but the re-validation step (checker runs after fixer) catches
 regressions. The quality gate workflow automates the iteration loop.
@@ -749,7 +749,7 @@ tolerance threshold that accommodates OS differences.
    `.storybook/main.ts` to reference shared lib.
 8. **Verify**: Run `nx run organiclever-fe:test:quick` and `nx storybook ts-ui`.
 
-### For ayokoding-fs
+### For ayokoding-web
 
 1. **Token extraction**: Same as organiclever-fe for structural tokens. Keep blue brand
    overrides (`--primary: 221.2 83.2% 53.3%`) and sidebar tokens in app's `globals.css`.
@@ -763,7 +763,7 @@ tolerance threshold that accommodates OS differences.
 5. **Update imports**: Replace `src/components/ui/button` with shared lib import.
 6. **Keep typography plugin**: `@plugin "@tailwindcss/typography"` stays in app's `globals.css`
    since it's content-specific.
-7. **Verify**: Run `nx run ayokoding-fs:test:quick`.
+7. **Verify**: Run `nx run ayokoding-web:test:quick`.
 
 ### For a-demo-fe-ts-nextjs
 

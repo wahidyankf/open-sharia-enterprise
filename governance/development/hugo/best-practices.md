@@ -4,7 +4,7 @@
 
 ## Overview
 
-This document outlines best practices for developing Hugo sites in the `apps/oseplatform-fs/` project. (ayokoding-fs has migrated to Next.js 16 and is no longer a Hugo site.) Following these practices ensures maintainable, performant, and accessible Hugo implementations.
+This document outlines best practices for developing Hugo sites in the `apps/oseplatform-web/` project. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.) Following these practices ensures maintainable, performant, and accessible Hugo implementations.
 
 ## Purpose
 
@@ -282,7 +282,7 @@ python3 -m http.server 8000
 
 ```bash
 # Deploy without testing
-git push origin prod-ayokoding-fs  # HOPE IT WORKS
+git push origin prod-ayokoding-web  # HOPE IT WORKS
 ```
 
 **Rationale:**

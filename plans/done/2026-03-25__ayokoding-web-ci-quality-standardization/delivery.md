@@ -1,4 +1,4 @@
-# Delivery Plan: ayokoding-fs CI and Quality Gate Standardization
+# Delivery Plan: ayokoding-web CI and Quality Gate Standardization
 
 ## Overview
 
@@ -12,14 +12,14 @@
 
 ### Phase 1: Fix Documentation Drift in nx-targets.md
 
-**Goal**: Correct the stale `platform:hugo` tag for ayokoding-fs in the governance doc
+**Goal**: Correct the stale `platform:hugo` tag for ayokoding-web in the governance doc
 
 **Implementation Steps**:
 
 - [x] Open `governance/development/infra/nx-targets.md`
-- [x] In the Current Project Tags table, update ayokoding-fs row from `["type:app", "platform:hugo", "domain:ayokoding"]` to `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`
-- [x] Verify no other references to ayokoding-fs as a Hugo site in nx-targets.md
-- [x] Commit: `docs(nx-targets): fix stale ayokoding-fs tag — platform:nextjs not hugo`
+- [x] In the Current Project Tags table, update ayokoding-web row from `["type:app", "platform:hugo", "domain:ayokoding"]` to `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`
+- [x] Verify no other references to ayokoding-web as a Hugo site in nx-targets.md
+- [x] Commit: `docs(nx-targets): fix stale ayokoding-web tag — platform:nextjs not hugo`
 
 ### Phase 2: Add Gherkin Spec Inputs to test:quick
 
@@ -27,11 +27,11 @@
 
 **Implementation Steps**:
 
-- [x] Open `apps/ayokoding-fs/project.json`
+- [x] Open `apps/ayokoding-web/project.json`
 - [x] Add `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]` to the `test:quick` target
-- [x] Run `nx run ayokoding-fs:test:quick` locally to verify it still passes
+- [x] Run `nx run ayokoding-web:test:quick` locally to verify it still passes
   - Note: `test:integration` will fail at this stage — the `integration` vitest project config is not added until Phase 7. Only `test:quick` is required to pass here.
-- [x] Commit: `fix(ayokoding-fs): add Gherkin spec inputs to test:quick cache`
+- [x] Commit: `fix(ayokoding-web): add Gherkin spec inputs to test:quick cache`
 
 ### Phase 3: Add test:integration to Scheduled CI
 
@@ -39,13 +39,13 @@
 
 **Implementation Steps**:
 
-- [x] Open `.github/workflows/test-and-deploy-ayokoding-fs.yml`
-- [x] Add a new `integration` job that runs `npx nx run ayokoding-fs:test:integration`
+- [x] Open `.github/workflows/test-and-deploy-ayokoding-web.yml`
+- [x] Add a new `integration` job that runs `npx nx run ayokoding-web:test:integration`
 - [x] Model the job setup (checkout, Volta, Node, npm ci) after the existing `unit` job
 - [x] Update the `deploy` job's `needs` array to include `integration`
 - [x] Update the `deploy` job's `if:` condition to include `&& needs.integration.result == 'success'` alongside the existing `needs.unit.result == 'success'` and `needs.e2e.result == 'success'` checks
 - [x] Verify the `integration` job has no explicit `if:` condition (like the `unit` job — both run unconditionally on any scheduled or manual trigger, not via an explicit `if:` guard)
-- [x] Commit: `ci(ayokoding-fs): add test:integration to scheduled workflow`
+- [x] Commit: `ci(ayokoding-web): add test:integration to scheduled workflow`
 
 ### Phase 4: Introduce ContentRepository Interface and Implementations
 
@@ -58,8 +58,8 @@
   - `readFileContent(filePath: string): Promise<{ content: string; frontmatter: Record<string, unknown> }>`
 - [x] Create `src/server/content/repository-fs.ts` — `FileSystemContentRepository` wrapping current `reader.ts` functions
 - [x] Create `src/server/content/repository-memory.ts` — `InMemoryContentRepository` with Maps for fixture data
-- [x] Run `nx run ayokoding-fs:typecheck` to confirm both implementations satisfy the `ContentRepository` interface
-- [x] Commit: `feat(ayokoding-fs): add ContentRepository interface with fs and in-memory implementations`
+- [x] Run `nx run ayokoding-web:typecheck` to confirm both implementations satisfy the `ContentRepository` interface
+- [x] Commit: `feat(ayokoding-web): add ContentRepository interface with fs and in-memory implementations`
 
 ### Phase 5: Refactor Content Service Layer
 
@@ -82,11 +82,11 @@
 - [x] Refactor `src/server/trpc/procedures/content.ts` — delegate to `ctx.contentService` instead of importing module functions
 - [x] Refactor `src/server/trpc/procedures/search.ts` — delegate to `ctx.contentService`
 - [x] Update `src/app/sitemap.ts`, `src/app/feed.xml/route.ts`, `generateStaticParams` — use shared `ContentService` singleton
-- [x] Run `nx run ayokoding-fs:typecheck` to confirm all consumers compile before removing source files
+- [x] Run `nx run ayokoding-web:typecheck` to confirm all consumers compile before removing source files
 - [x] Remove `src/server/content/index.ts` (logic moved to `service.ts`)
 - [x] Remove `src/server/content/search-index.ts` (logic moved to `service.ts`)
-- [x] Run `nx run ayokoding-fs:typecheck` to verify no broken imports after deletions
-- [x] Commit: `refactor(ayokoding-fs): extract ContentService with repository injection`
+- [x] Run `nx run ayokoding-web:typecheck` to verify no broken imports after deletions
+- [x] Commit: `refactor(ayokoding-web): extract ContentService with repository injection`
 
 ### Phase 6: Refactor Unit Tests to Use InMemoryContentRepository
 
@@ -99,11 +99,11 @@
   - [x] Replace the empty `createCaller({})` context with `createCaller({ contentService: new ContentService(new InMemoryContentRepository(populateFixtureData())) })`
   - [x] Delete the entire `vi.hoisted()` block and all four `vi.mock()` calls (`@/server/content/index`, `@/server/content/reader`, `@/server/content/parser`, `@/server/content/search-index`)
   - [x] Convert the existing `mock-content.ts` fixture data file into the `InMemoryContentRepository` fixture population function rather than deleting it
-- [x] Run `nx run ayokoding-fs:typecheck` to confirm `test-caller.ts` compiles with the new context shape before running tests
+- [x] Run `nx run ayokoding-web:typecheck` to confirm `test-caller.ts` compiles with the new context shape before running tests
 - [x] Verify all 5 existing step files still pass: `content-api`, `search-api`, `navigation-api`, `i18n-api`, `health-check`
 - [x] Update `vitest.config.ts` coverage exclusions — remove `index.ts` and `search-index.ts`, keep `reader.ts`, `repository-fs.ts`, `parser.ts`, `types.ts`
-- [x] Run `nx run ayokoding-fs:test:quick` to verify coverage threshold still passes
-- [x] Commit: `refactor(ayokoding-fs): unit tests use InMemoryContentRepository instead of vi.mock`
+- [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
+- [x] Commit: `refactor(ayokoding-web): unit tests use InMemoryContentRepository instead of vi.mock`
 
 ### Phase 7: Add Integration Tests with FileSystemContentRepository
 
@@ -123,8 +123,8 @@
   - [x] `test/integration/be-steps/navigation-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/navigation-api/navigation-api.feature`
   - [x] `test/integration/be-steps/i18n-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/i18n/i18n-api.feature`
 - [x] Add Gherkin spec inputs to `test:integration` in `project.json`: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]` (even though `cache: false`, this documents the dependency for consistency with `test:unit` and `test:quick`)
-- [x] Verify `nx run ayokoding-fs:test:integration` passes
-- [x] Commit: `feat(ayokoding-fs): add integration tests with FileSystemContentRepository`
+- [x] Verify `nx run ayokoding-web:test:integration` passes
+- [x] Commit: `feat(ayokoding-web): add integration tests with FileSystemContentRepository`
 
 ### Phase 8: Add Oxlint Config for Unused Code Errors
 
@@ -132,7 +132,7 @@
 
 **Implementation Steps**:
 
-- [x] Create `apps/ayokoding-fs/oxlint.json` with:
+- [x] Create `apps/ayokoding-web/oxlint.json` with:
   - `$schema`: `"./node_modules/oxlint/configuration_schema.json"`
   - Plugins: `["typescript", "react", "nextjs", "import", "unicorn", "jsx-a11y", "vitest"]`
   - Categories: `{ "correctness": "error", "suspicious": "warn" }`
@@ -140,11 +140,11 @@
   - Settings: `{ "next": { "rootDir": "." }, "react": { "version": "detect" } }`
   - Env: `{ "browser": true, "node": true, "es2022": true }`
   - IgnorePatterns: `[".next/", "coverage/", "node_modules/", "content/"]`
-- [x] Create slimmer `apps/ayokoding-fs-be-e2e/oxlint.json` and `apps/ayokoding-fs-fe-e2e/oxlint.json` with: `typescript`, `import`, `unicorn` plugins only (no react/nextjs/jsx-a11y — these are Playwright test projects)
-- [x] Run `nx run ayokoding-fs:lint` and fix any existing violations surfaced by the new error-level rules and plugin categories
-- [x] Run `nx run ayokoding-fs-be-e2e:lint` and `nx run ayokoding-fs-fe-e2e:lint` and fix any violations
+- [x] Create slimmer `apps/ayokoding-web-be-e2e/oxlint.json` and `apps/ayokoding-web-fe-e2e/oxlint.json` with: `typescript`, `import`, `unicorn` plugins only (no react/nextjs/jsx-a11y — these are Playwright test projects)
+- [x] Run `nx run ayokoding-web:lint` and fix any existing violations surfaced by the new error-level rules and plugin categories
+- [x] Run `nx run ayokoding-web-be-e2e:lint` and `nx run ayokoding-web-fe-e2e:lint` and fix any violations
 - [x] Verify TypeScript strict mode is already enabled (`strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true` in tsconfig.json)
-- [x] Commit: `feat(ayokoding-fs): add oxlint config with plugins, categories, and strict rules`
+- [x] Commit: `feat(ayokoding-web): add oxlint config with plugins, categories, and strict rules`
 
 ### Phase 9: Enforce Unit Test Purity — Move Integration-Level Test
 
@@ -157,9 +157,9 @@
 - [x] Move `test/unit/be-steps/integration-content.unit.test.ts` to `test/integration/be-steps/integration-content.integration.test.ts`
 - [x] Rename from `.unit.test.ts` to `.integration.test.ts`
 - [x] Update the `integration` vitest project include pattern to also match `**/*.integration.{test,spec}.{ts,tsx}` alongside `test/integration/be-steps/**/*.steps.ts`
-- [x] Verify `nx run ayokoding-fs:test:unit` no longer runs the moved test
-- [x] Verify `nx run ayokoding-fs:test:integration` runs it successfully
-- [x] Commit: `refactor(ayokoding-fs): move integration-content test from unit to integration project`
+- [x] Verify `nx run ayokoding-web:test:unit` no longer runs the moved test
+- [x] Verify `nx run ayokoding-web:test:integration` runs it successfully
+- [x] Commit: `refactor(ayokoding-web): move integration-content test from unit to integration project`
 
 ### Phase 10: Create FE Unit Step Files for All FE Gherkin Specs
 
@@ -176,17 +176,17 @@
   - [x] `test/unit/fe-steps/i18n.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/i18n.feature`
   - [x] `test/unit/fe-steps/accessibility.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/accessibility.feature`
 - [x] All step files must use mocks only — mocked tRPC responses, mocked router, `@testing-library/react` for rendering
-- [x] Run `nx run ayokoding-fs:test:unit` and verify all 6 FE step files execute
-- [x] Run `nx run ayokoding-fs:test:quick` to verify coverage threshold still passes
-- [x] Commit: `feat(ayokoding-fs): add FE unit step files consuming all FE Gherkin specs`
+- [x] Run `nx run ayokoding-web:test:unit` and verify all 6 FE step files execute
+- [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
+- [x] Commit: `feat(ayokoding-web): add FE unit step files consuming all FE Gherkin specs`
 
 ### Phase 11: Convert BE E2E Tests to Consume Gherkin Specs via playwright-bdd
 
-**Goal**: Replace plain Playwright spec files with Gherkin-driven tests in `ayokoding-fs-be-e2e`
+**Goal**: Replace plain Playwright spec files with Gherkin-driven tests in `ayokoding-web-be-e2e`
 
 **Implementation Steps**:
 
-- [x] Install `playwright-bdd` in `apps/ayokoding-fs-be-e2e`: `npm install -D playwright-bdd`
+- [x] Install `playwright-bdd` in `apps/ayokoding-web-be-e2e`: `npm install -D playwright-bdd`
 - [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding/be/gherkin/`
 - [x] Create step files in `src/steps/` for all 5 BE features:
   - [x] `health-check.steps.ts` → `health/health-check.feature`
@@ -195,18 +195,18 @@
   - [x] `navigation-api.steps.ts` → `navigation-api/navigation-api.feature` (NEW — was missing)
   - [x] `i18n-api.steps.ts` → `i18n/i18n-api.feature`
 - [x] Remove old plain Playwright spec files from `src/tests/`
-- [x] Update `apps/ayokoding-fs-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"]`
+- [x] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"]`
 - [x] Add `.features-gen/` to `.gitignore`
-- [ ] Verify `nx run ayokoding-fs-be-e2e:test:e2e` passes against running server
-- [x] Commit: `feat(ayokoding-fs-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
+- [ ] Verify `nx run ayokoding-web-be-e2e:test:e2e` passes against running server
+- [x] Commit: `feat(ayokoding-web-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
 
 ### Phase 12: Convert FE E2E Tests to Consume Gherkin Specs via playwright-bdd
 
-**Goal**: Replace plain Playwright spec files with Gherkin-driven tests in `ayokoding-fs-fe-e2e`
+**Goal**: Replace plain Playwright spec files with Gherkin-driven tests in `ayokoding-web-fe-e2e`
 
 **Implementation Steps**:
 
-- [x] Install `playwright-bdd` in `apps/ayokoding-fs-fe-e2e`: `npm install -D playwright-bdd`
+- [x] Install `playwright-bdd` in `apps/ayokoding-web-fe-e2e`: `npm install -D playwright-bdd`
 - [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding/fe/gherkin/`
 - [x] Create step files in `src/steps/` for all 6 FE features:
   - [x] `content-rendering.steps.ts` → `content-rendering.feature`
@@ -216,10 +216,10 @@
   - [x] `i18n.steps.ts` → `i18n.feature`
   - [x] `accessibility.steps.ts` → `accessibility.feature`
 - [x] Remove old plain Playwright spec files from `src/tests/`
-- [x] Update `apps/ayokoding-fs-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature"]`
+- [x] Update `apps/ayokoding-web-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature"]`
 - [x] Add `.features-gen/` to `.gitignore`
-- [ ] Verify `nx run ayokoding-fs-fe-e2e:test:e2e` passes against running server
-- [x] Commit: `feat(ayokoding-fs-fe-e2e): convert to playwright-bdd consuming FE Gherkin specs`
+- [ ] Verify `nx run ayokoding-web-fe-e2e:test:e2e` passes against running server
+- [x] Commit: `feat(ayokoding-web-fe-e2e): convert to playwright-bdd consuming FE Gherkin specs`
 
 ### Phase 13: Verify and Validate
 
@@ -227,8 +227,8 @@
 
 **Implementation Steps**:
 
-- [x] Run `nx run ayokoding-fs:test:quick` and confirm it passes
-- [x] Run `nx run ayokoding-fs:test:integration` and confirm it passes
+- [x] Run `nx run ayokoding-web:test:quick` and confirm it passes
+- [x] Run `nx run ayokoding-web:test:integration` and confirm it passes
 - [x] Run `nx affected -t typecheck lint test:quick` and confirm pre-push gate passes
 - [x] Verify `nx-targets.md` renders correctly and the tag table is accurate
 - [x] Verify oxlint config catches unused vars/imports as errors
@@ -239,7 +239,7 @@
 
 ## Validation Checklist
 
-- [x] `nx-targets.md` tag table matches `apps/ayokoding-fs/project.json` tags
+- [x] `nx-targets.md` tag table matches `apps/ayokoding-web/project.json` tags
 - [x] `test:quick` target has explicit Gherkin spec cache inputs
 - [x] Scheduled CI workflow has unit, integration, and e2e jobs
 - [x] Deploy job depends on all three test jobs passing (both `needs` array and `if:` condition)
@@ -248,13 +248,13 @@
 - [x] BE unit tests use `InMemoryContentRepository` — no `vi.mock()` on content modules
 - [x] Integration tests use `FileSystemContentRepository` against real `content/` directory — no HTTP calls
 - [x] Both BE unit and integration tests consume all 5 BE Gherkin specs
-- [x] Coverage exclusions updated in `vitest.config.ts` — confirm `service.ts` is NOT in the exclusion list and `repository-fs.ts` IS in the exclusion list; run `nx run ayokoding-fs:test:quick` to confirm the 80% threshold passes
-- [x] `oxlint.json` exists in ayokoding-fs, ayokoding-fs-be-e2e, and ayokoding-fs-fe-e2e with `no-unused-vars: error`
+- [x] Coverage exclusions updated in `vitest.config.ts` — confirm `service.ts` is NOT in the exclusion list and `repository-fs.ts` IS in the exclusion list; run `nx run ayokoding-web:test:quick` to confirm the 80% threshold passes
+- [x] `oxlint.json` exists in ayokoding-web, ayokoding-web-be-e2e, and ayokoding-web-fe-e2e with `no-unused-vars: error`
 - [x] TypeScript strict mode verified: `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`
 - [x] No unit test performs real filesystem I/O — `integration-content.unit.test.ts` moved to integration project
 - [x] FE unit step files exist for all 6 FE Gherkin specs with mock-only dependencies
-- [x] `ayokoding-fs-be-e2e` consumes all 5 BE Gherkin specs via `playwright-bdd` (including navigation-api)
-- [x] `ayokoding-fs-fe-e2e` consumes all 6 FE Gherkin specs via `playwright-bdd`
+- [x] `ayokoding-web-be-e2e` consumes all 5 BE Gherkin specs via `playwright-bdd` (including navigation-api)
+- [x] `ayokoding-web-fe-e2e` consumes all 6 FE Gherkin specs via `playwright-bdd`
 - [x] Both E2E projects declare Gherkin spec inputs in `project.json`
 - [x] All local quality gates pass (`nx affected -t typecheck lint test:quick`)
 

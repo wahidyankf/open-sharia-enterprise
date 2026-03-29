@@ -43,8 +43,8 @@ These rules determine the mandatory test levels for each project. Integration te
 | `a-demo-be-e2e`               | App — E2E Runner  | —     | —    | —           | Yes | Shared Playwright suite for all backends    |
 | `organiclever-fe`             | App — Web UI      | 1+2+3 | Yes  | Yes (MSW)   | Yes | E2E via `organiclever-fe-e2e`               |
 | `organiclever-fe-e2e`         | App — E2E Runner  | —     | —    | —           | Yes | Playwright E2E for organiclever-fe          |
-| `oseplatform-fs`              | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
-| `ayokoding-fs`                | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
+| `oseplatform-web`             | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
+| `ayokoding-web`               | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
 | `ayokoding-cli`               | App — CLI         | 1+2   | Yes  | Yes (BDD)   | —   | Godog BDD integration tests                 |
 | `oseplatform-cli`             | App — CLI         | 1+2   | Yes  | Yes (BDD)   | —   | Godog BDD integration tests                 |
 | `rhino-cli`                   | App — CLI         | 1+2   | Yes  | Yes (BDD)   | —   | Godog BDD integration tests                 |

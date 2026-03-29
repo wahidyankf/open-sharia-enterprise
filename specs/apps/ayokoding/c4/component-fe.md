@@ -128,4 +128,4 @@ Each component above is exercised by Gherkin features from
 - **Container diagram**: [container.md](./container.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
 - **Frontend gherkin specs**: [fe/gherkin/](../fe/)
-- **Parent**: [ayokoding-fs specs](../README.md)
+- **Parent**: [ayokoding-web specs](../README.md)

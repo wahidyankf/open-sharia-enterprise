@@ -1,13 +1,13 @@
 ---
 name: docs-validating-software-engineering-separation
-description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-fs/). Ensures no duplication, proper prerequisite statements, and style guide focus on repository-specific conventions only.
+description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures no duplication, proper prerequisite statements, and style guide focus on repository-specific conventions only.
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
 # Validating Software Engineering Documentation Separation
 
-This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-fs/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
+This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
 
 ## Purpose
 
@@ -27,11 +27,11 @@ Use this Skill when:
 
 **Current explicit relationships to validate**:
 
-1. docs/explanation/programming-languages/java/ ↔ ayokoding-fs/.../java/
-2. docs/explanation/programming-languages/golang/ ↔ ayokoding-fs/.../golang/
-3. docs/explanation/programming-languages/elixir/ ↔ ayokoding-fs/.../elixir/
-4. docs/explanation/platform-web/tools/jvm-spring/ ↔ ayokoding-fs/.../jvm-spring/
-5. docs/explanation/platform-web/tools/jvm-spring-boot/ ↔ ayokoding-fs/.../jvm-spring-boot/
+1. docs/explanation/programming-languages/java/ ↔ ayokoding-web/.../java/
+2. docs/explanation/programming-languages/golang/ ↔ ayokoding-web/.../golang/
+3. docs/explanation/programming-languages/elixir/ ↔ ayokoding-web/.../elixir/
+4. docs/explanation/platform-web/tools/jvm-spring/ ↔ ayokoding-web/.../jvm-spring/
+5. docs/explanation/platform-web/tools/jvm-spring-boot/ ↔ ayokoding-web/.../jvm-spring-boot/
 
 **DO NOT validate** languages/frameworks not in this table (TypeScript, Python, etc.) until they are explicitly added to the Software Design Reference.
 
@@ -125,7 +125,7 @@ See [Programming Language Documentation Separation Convention](../../../governan
 # Extract "Specific Prerequisites" table
 # Parse table rows to get:
 #   - docs/explanation paths
-#   - ayokoding-fs paths
+#   - ayokoding-web paths
 # Store as validation scope (ONLY validate these)
 ```
 
@@ -239,11 +239,11 @@ These are OSE Platform-specific style guides, not educational tutorials.
 - repo-assessing-criticality-confidence
 - repo-applying-maker-checker-fixer
 - repo-generating-validation-reports
-- apps-ayokoding-fs-developing-content
+- apps-ayokoding-web-developing-content
 
 ## Related Agents
 
 - docs-software-engineering-separation-checker - Validates explicit relationships
 - docs-software-engineering-separation-fixer - Fixes violations
 - docs-maker - Creates style guide content
-- apps-ayokoding-fs-general-maker - Creates educational content
+- apps-ayokoding-web-general-maker - Creates educational content

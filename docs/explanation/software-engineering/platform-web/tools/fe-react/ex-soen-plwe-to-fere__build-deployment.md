@@ -485,14 +485,14 @@ deploy-production:
 npm run build
 
 # Upload to S3
-aws s3 sync dist/ s3://oseplatform-fs \
+aws s3 sync dist/ s3://oseplatform-web \
   --delete \
   --cache-control "public, max-age=31536000" \
   --exclude "index.html" \
   --exclude "*.map"
 
 # Upload index.html without cache
-aws s3 cp dist/index.html s3://oseplatform-fs/index.html \
+aws s3 cp dist/index.html s3://oseplatform-web/index.html \
   --cache-control "no-cache, no-store, must-revalidate" \
   --metadata-directive REPLACE
 
@@ -510,7 +510,7 @@ aws cloudfront create-invalidation \
     "WebsiteBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "oseplatform-fs",
+        "BucketName": "oseplatform-web",
         "WebsiteConfiguration": {
           "IndexDocument": "index.html",
           "ErrorDocument": "index.html"
@@ -523,7 +523,7 @@ aws cloudfront create-invalidation \
         "DistributionConfig": {
           "Origins": [
             {
-              "DomainName": "oseplatform-fs.s3-website-us-east-1.amazonaws.com",
+              "DomainName": "oseplatform-web.s3-website-us-east-1.amazonaws.com",
               "Id": "S3Origin",
               "CustomOriginConfig": {
                 "HTTPPort": 80,
@@ -604,21 +604,21 @@ volumes:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oseplatform-fs
+  name: oseplatform-web
   namespace: production
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: oseplatform-fs
+      app: oseplatform-web
   template:
     metadata:
       labels:
-        app: oseplatform-fs
+        app: oseplatform-web
     spec:
       containers:
         - name: web
-          image: oseplatform-fs:latest
+          image: oseplatform-web:latest
           ports:
             - containerPort: 80
           env:
@@ -651,12 +651,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: oseplatform-fs
+  name: oseplatform-web
   namespace: production
 spec:
   type: LoadBalancer
   selector:
-    app: oseplatform-fs
+    app: oseplatform-web
   ports:
     - protocol: TCP
       port: 80
@@ -679,7 +679,7 @@ data:
 replicaCount: 3
 
 image:
-  repository: oseplatform-fs
+  repository: oseplatform-web
   tag: latest
   pullPolicy: Always
 

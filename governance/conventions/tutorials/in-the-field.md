@@ -128,13 +128,13 @@ In-the-field prioritizes:
 - Comprehensive language coverage (by-example achieves 95%)
 - Sequential skill building (by-example/by-concept handle this)
 
-**Coverage verification**: The apps-ayokoding-fs-general-checker agent validates production scenario completeness.
+**Coverage verification**: The apps-ayokoding-web-general-checker agent validates production scenario completeness.
 
 ### 3. Topic Count: 20-40 Production Guides
 
 **Target range**: 20-40 production implementation guides per language or framework
 
-**Actual production counts** (ayokoding-fs Java in-the-field):
+**Actual production counts** (ayokoding-web Java in-the-field):
 
 - Current: 31 guides (authentication, security, TDD, BDD, build tools, CI/CD, Docker/K8s, SQL, NoSQL, messaging, caching, performance, logging, DDD, DI, web services, API integration, configuration, concurrency, reactive, resilience patterns, cloud-native patterns, design principles, best practices, anti-patterns, finite state machines, functional programming, type safety, CLI apps, linting/formatting)
 
@@ -2086,7 +2086,7 @@ When creating in-the-field content for a new domain:
 
 ### Example: Java Programming Language
 
-See actual implementation in `/apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/in-the-field/`:
+See actual implementation in `/apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/`:
 
 ```yaml
 # Foundation Layer (10000000-10000003)
@@ -2231,7 +2231,7 @@ Before publishing in-the-field content, verify:
 
 ### Automated Validation
 
-The **apps-ayokoding-fs-general-checker** agent validates:
+The **apps-ayokoding-web-general-checker** agent validates:
 
 - **Production topic coverage**: 20-40 guides
 - **Standard library first**: Built-in examples precede frameworks
@@ -2247,10 +2247,10 @@ The **apps-ayokoding-fs-general-checker** agent validates:
 
 The **in-the-field-quality-gate** workflow orchestrates:
 
-1. **apps-ayokoding-fs-general-maker**: Creates/updates production guides
-2. **apps-ayokoding-fs-general-checker**: Validates against standards
+1. **apps-ayokoding-web-general-maker**: Creates/updates production guides
+2. **apps-ayokoding-web-general-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **apps-ayokoding-fs-general-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-general-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -2314,7 +2314,7 @@ When creating in-the-field tutorials for multiple languages:
 
 ## Production-Validated Standards Summary
 
-This convention reflects standards validated by production in-the-field content on ayokoding-fs, enhanced with comprehensive examples matching by-example.md quality standards:
+This convention reflects standards validated by production in-the-field content on ayokoding-web, enhanced with comprehensive examples matching by-example.md quality standards:
 
 **Guide Count**: 20-40 production guides (currently 31 for Java)
 
@@ -2404,8 +2404,8 @@ This convention implements and respects:
 **Universal Application**: This convention applies to **all in-the-field tutorial content** across the repository:
 
 - **docs/tutorials/** - Production implementation guides in docs
-- **apps/ayokoding-fs/content/** - Programming language in-the-field guides (Java, Golang, Python, etc.)
-- **apps/oseplatform-fs/content/** - Platform in-the-field guides
+- **apps/ayokoding-web/content/** - Programming language in-the-field guides (Java, Golang, Python, etc.)
+- **apps/oseplatform-web/content/** - Platform in-the-field guides
 - **Any other location** - In-the-field tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/README.md)
@@ -2426,7 +2426,7 @@ This convention implements and respects:
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
 - **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/README.md)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by apps-ayokoding-fs-general-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-general-checker agent
 
 ## Related Documentation
 
@@ -2440,13 +2440,13 @@ This convention implements and respects:
 
 ## Related Agents
 
-- [apps-ayokoding-fs-in-the-field-maker](../../../.claude/agents/apps-ayokoding-fs-in-the-field-maker.md) - Creates in-the-field content
-- [apps-ayokoding-fs-in-the-field-checker](../../../.claude/agents/apps-ayokoding-fs-in-the-field-checker.md) - Validates in-the-field standards
-- [apps-ayokoding-fs-in-the-field-fixer](../../../.claude/agents/apps-ayokoding-fs-in-the-field-fixer.md) - Applies validated fixes
+- [apps-ayokoding-web-in-the-field-maker](../../../.claude/agents/apps-ayokoding-web-in-the-field-maker.md) - Creates in-the-field content
+- [apps-ayokoding-web-in-the-field-checker](../../../.claude/agents/apps-ayokoding-web-in-the-field-checker.md) - Validates in-the-field standards
+- [apps-ayokoding-web-in-the-field-fixer](../../../.claude/agents/apps-ayokoding-web-in-the-field-fixer.md) - Applies validated fixes
 
 ## Related Workflows
 
-- [ayokoding-fs-in-the-field-quality-gate](../../workflows/ayokoding-fs/ayokoding-fs-in-the-field-quality-gate.md) - Quality assurance workflow for in-the-field tutorials
+- [ayokoding-web-in-the-field-quality-gate](../../workflows/ayokoding-web/ayokoding-web-in-the-field-quality-gate.md) - Quality assurance workflow for in-the-field tutorials
 
 ## Related Skills
 

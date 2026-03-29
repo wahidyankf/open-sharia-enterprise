@@ -69,13 +69,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/)** - "How to code in Dart" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/)** - "How to code in Dart" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/dart/)** - "How to code Dart in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding Dart learning path before using OSE standards:**
 
-1. **[Dart Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/)** - Initial setup, overview, quick start (0-95% language coverage)
-2. **[Dart By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/by-example/)** - 75+ annotated code examples (beginner to advanced)
+1. **[Dart Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/)** - Initial setup, overview, quick start (0-95% language coverage)
+2. **[Dart By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example/)** - 75+ annotated code examples (beginner to advanced)
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

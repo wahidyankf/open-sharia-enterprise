@@ -101,7 +101,7 @@ graph TB
 **Execution Order:**
 
 1. **AyoKoding Content Processing** (if affected):
-   - Validate links in ayokoding-fs content
+   - Validate links in ayokoding-web content
 2. **Prettier Formatting** (via lint-staged):
    - Format all staged files
    - Auto-stage formatted changes
@@ -174,22 +174,22 @@ graph TB
 
 ### Deploy AyoKoding Web
 
-**Deployment**: Force-push `main` to `prod-ayokoding-fs` branch; Vercel auto-builds the Next.js application.
+**Deployment**: Force-push `main` to `prod-ayokoding-web` branch; Vercel auto-builds the Next.js application.
 
 **Purpose**: Deploy ayokoding.com (Next.js 16 fullstack content platform)
 
 ### Test and Deploy OSE Platform Web Workflow
 
-**File**: `.github/workflows/test-and-deploy-oseplatform-fs.yml`
+**File**: `.github/workflows/test-and-deploy-oseplatform-web.yml`
 
 **Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
 
 **Steps:**
 
-1. Detect changes in `apps/oseplatform-fs/` vs `prod-oseplatform-fs` branch
+1. Detect changes in `apps/oseplatform-web/` vs `prod-oseplatform-web` branch
 2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0, Hugo 0.156.0 extended
-3. Install dependencies and run `nx build oseplatform-fs`
-4. Force-push `main` to `prod-oseplatform-fs`; Vercel auto-builds
+3. Install dependencies and run `nx build oseplatform-web`
+4. Force-push `main` to `prod-oseplatform-web`; Vercel auto-builds
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 
@@ -324,7 +324,7 @@ Each backend workflow runs its own backend stack — never a different backend.
 
    - Pre-commit hook runs:
      - Formats code with Prettier
-     - Processes ayokoding-fs content if affected
+     - Processes ayokoding-web content if affected
      - Validates links
    - Commit-msg hook validates format
    - Commit created

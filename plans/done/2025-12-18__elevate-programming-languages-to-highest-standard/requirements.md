@@ -351,9 +351,9 @@ All languages MUST maintain:
 
 ### Process Constraints
 
-- **C7**: All content MUST pass ayokoding-fs-general-checker validation
-- **C8**: All content MUST pass ayokoding-fs-facts-checker verification
-- **C9**: All content MUST pass ayokoding-fs-link-checker validation
+- **C7**: All content MUST pass ayokoding-web-general-checker validation
+- **C8**: All content MUST pass ayokoding-web-facts-checker verification
+- **C9**: All content MUST pass ayokoding-web-link-checker validation
 - **C10**: Changes MUST be committed to `main` branch (Trunk Based Development)
 - **C11**: Each language MUST be delivered in a separate PR
 

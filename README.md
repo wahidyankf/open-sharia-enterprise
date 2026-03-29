@@ -76,7 +76,7 @@ npm install
 **Phase 0 (Complete):**
 
 - Node.js & npm (via Volta) - Tooling and development infrastructure
-- Hugo (Extended) - Static sites (oseplatform-fs)
+- Hugo (Extended) - Static sites (oseplatform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
 **Current Phase 1 (OrganicLever):**
@@ -113,7 +113,7 @@ open-sharia-enterprise/
 
 **Applications** (`apps/`):
 
-- **Sites**: [`oseplatform-fs`](./apps/oseplatform-fs/), [`ayokoding-fs`](./apps/ayokoding-fs/), [`organiclever-fe`](./apps/organiclever-fe/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-fe-e2e`](./apps/organiclever-fe-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/)
+- **Sites**: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-fe`](./apps/organiclever-fe/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-fe-e2e`](./apps/organiclever-fe-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/)
 - **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/)
 - **Demo backends**: [`a-demo-be-golang-gin`](./apps/a-demo-be-golang-gin/), [`a-demo-be-java-springboot`](./apps/a-demo-be-java-springboot/), [`a-demo-be-elixir-phoenix`](./apps/a-demo-be-elixir-phoenix/), [`a-demo-be-fsharp-giraffe`](./apps/a-demo-be-fsharp-giraffe/), [`a-demo-be-python-fastapi`](./apps/a-demo-be-python-fastapi/), [`a-demo-be-rust-axum`](./apps/a-demo-be-rust-axum/), [`a-demo-be-kotlin-ktor`](./apps/a-demo-be-kotlin-ktor/), [`a-demo-be-java-vertx`](./apps/a-demo-be-java-vertx/), [`a-demo-be-ts-effect`](./apps/a-demo-be-ts-effect/), [`a-demo-be-csharp-aspnetcore`](./apps/a-demo-be-csharp-aspnetcore/), [`a-demo-be-clojure-pedestal`](./apps/a-demo-be-clojure-pedestal/)
 - **Demo frontends**: [`a-demo-fe-ts-nextjs`](./apps/a-demo-fe-ts-nextjs/), [`a-demo-fe-ts-tanstack-start`](./apps/a-demo-fe-ts-tanstack-start/), [`a-demo-fe-dart-flutterweb`](./apps/a-demo-fe-dart-flutterweb/)
@@ -151,10 +151,10 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 
 **CI Schedule**: `test:quick` on every push/PR; per-service workflows run on a schedule.
 
-- [`apps/oseplatform-fs`](./apps/oseplatform-fs/)
-  - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-fs.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-fs.yml)
-- [`apps/ayokoding-fs`](./apps/ayokoding-fs/)
-  - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-fs.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-fs.yml)
+- [`apps/oseplatform-web`](./apps/oseplatform-web/)
+  - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml)
+- [`apps/ayokoding-web`](./apps/ayokoding-web/)
+  - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-web.yml)
 - [`apps/organiclever-fe`](./apps/organiclever-fe/)
   - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-organiclever.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-organiclever.yml)
   - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-fe)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)

@@ -307,7 +307,7 @@ See `examples.md` in this Skill directory for complete working examples:
 ## Related Skills
 
 - `repository-architecture` - Understanding how accessibility fits into governance layers
-- `apps-ayokoding-fs-developing-content` - ayokoding-fs diagram requirements
+- `apps-ayokoding-web-developing-content` - ayokoding-web diagram requirements
 - `factual-validation-methodology` (Phase 2) - Verifying color accessibility claims
 
 ---

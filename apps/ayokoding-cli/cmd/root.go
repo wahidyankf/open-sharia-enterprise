@@ -21,8 +21,8 @@ var osExit = os.Exit
 
 var rootCmd = &cobra.Command{
 	Use:   "ayokoding-cli",
-	Short: "CLI tools for ayokoding-fs link validation",
-	Long: `Command-line tools for ayokoding-fs content validation.
+	Short: "CLI tools for ayokoding-web link validation",
+	Long: `Command-line tools for ayokoding-web content validation.
 
 Provides fast internal link checking with support for multiple output formats
 and verbose logging.`,

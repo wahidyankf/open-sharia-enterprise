@@ -76,16 +76,16 @@ graph LR
 ### Content Management
 
 - **Hugo**: Static site generator (v0.119.0+)
-- **Hextra Theme**: Documentation theme for ayokoding-fs
+- **Hextra Theme**: Documentation theme for ayokoding-web
 - **Markdown**: Content format with extended syntax
 - **Mermaid**: Diagram rendering (crucial for ownership visualizations)
 - **Frontmatter**: YAML metadata for Hugo processing
 
 ### Validation Tools
 
-- **ayokoding-fs-general-checker**: Structural and quality validation
-- **ayokoding-fs-facts-checker**: Factual accuracy verification (Rust edition-specific)
-- **ayokoding-fs-link-checker**: Link integrity validation
+- **ayokoding-web-general-checker**: Structural and quality validation
+- **ayokoding-web-facts-checker**: Factual accuracy verification (Rust edition-specific)
+- **ayokoding-web-link-checker**: Link integrity validation
 - **Prettier**: JSON array format enforcement for tags
 
 ### Rust Toolchain
@@ -361,9 +361,9 @@ graph LR
 **Activities**:
 
 1. **Automated Validation**:
-   - Run ayokoding-fs-general-checker (structure, formatting)
-   - Run ayokoding-fs-facts-checker (Rust 2024 edition verification)
-   - Run ayokoding-fs-link-checker (internal and external links)
+   - Run ayokoding-web-general-checker (structure, formatting)
+   - Run ayokoding-web-facts-checker (Rust 2024 edition verification)
+   - Run ayokoding-web-link-checker (internal and external links)
 2. **Code Example Testing**:
    - Test all examples with rustc stable
    - Verify cargo commands (new, build, test, run)
@@ -769,9 +769,9 @@ Three-tier validation ensures Rust content quality:
 ```mermaid
 graph TD
     A[Content Creation] --> B{Tier 1: Automated}
-    B -->|ayokoding-fs-general-checker| C[Structure Valid?]
-    B -->|ayokoding-fs-facts-checker| D[Facts Correct?]
-    B -->|ayokoding-fs-link-checker| E[Links Working?]
+    B -->|ayokoding-web-general-checker| C[Structure Valid?]
+    B -->|ayokoding-web-facts-checker| D[Facts Correct?]
+    B -->|ayokoding-web-link-checker| E[Links Working?]
 
     C -->|Pass| F{Tier 2: Rust Compilation}
     D -->|Pass| F
@@ -816,7 +816,7 @@ graph TD
 
 #### Tier 1: Automated Validation
 
-**ayokoding-fs-general-checker** validates:
+**ayokoding-web-general-checker** validates:
 
 - File naming conventions
 - Directory structure
@@ -827,7 +827,7 @@ graph TD
 - Mermaid syntax
 - Color palette compliance
 
-**ayokoding-fs-facts-checker** verifies:
+**ayokoding-web-facts-checker** verifies:
 
 - Rust syntax correctness (2024 edition)
 - Ownership rules accuracy
@@ -835,7 +835,7 @@ graph TD
 - Standard library API correctness
 - Cargo command syntax
 
-**ayokoding-fs-link-checker** validates:
+**ayokoding-web-link-checker** validates:
 
 - Internal links (to other tutorials, guides)
 - External links (rust-lang.org, docs.rs, crates.io)
@@ -969,7 +969,7 @@ git commit -m "docs(rust): finalize Rust content to production standard"
 ```markdown
 ## Summary
 
-Add comprehensive Rust programming language content to ayokoding-fs per Programming Language Content Standard.
+Add comprehensive Rust programming language content to ayokoding-web per Programming Language Content Standard.
 
 ## Changes
 
@@ -1019,9 +1019,9 @@ Add comprehensive Rust programming language content to ayokoding-fs per Programm
 
 ## Validation
 
-- ✅ ayokoding-fs-general-checker: PASS (structure, formatting, weight numbering)
-- ✅ ayokoding-fs-facts-checker: PASS (Rust 2024 edition syntax verified)
-- ✅ ayokoding-fs-link-checker: PASS (all internal and external links valid)
+- ✅ ayokoding-web-general-checker: PASS (structure, formatting, weight numbering)
+- ✅ ayokoding-web-facts-checker: PASS (Rust 2024 edition syntax verified)
+- ✅ ayokoding-web-link-checker: PASS (all internal and external links valid)
 - ✅ Code compilation: PASS (all examples compile with rustc stable)
 - ✅ Cargo commands: PASS (all cargo workflows tested)
 - ✅ Clippy: PASS (code follows Rust idioms)
@@ -1146,10 +1146,10 @@ interface RustQualityMetrics {
 
 ### AI Agents
 
-- [ayokoding-fs-general-maker](../../../.claude/agents/apps-ayokoding-fs-general-maker.md) - Content creation agent
-- [ayokoding-fs-general-checker](../../../.claude/agents/apps-ayokoding-fs-general-checker.md) - Validation agent
-- [ayokoding-fs-facts-checker](../../../.claude/agents/apps-ayokoding-fs-facts-checker.md) - Fact verification agent
-- [ayokoding-fs-link-checker](../../../.claude/agents/apps-ayokoding-fs-link-checker.md) - Link validation agent
+- [ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Content creation agent
+- [ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validation agent
+- [ayokoding-web-facts-checker](../../../.claude/agents/apps-ayokoding-web-facts-checker.md) - Fact verification agent
+- [ayokoding-web-link-checker](../../../.claude/agents/apps-ayokoding-web-link-checker.md) - Link validation agent
 
 ### Rust Official Resources
 

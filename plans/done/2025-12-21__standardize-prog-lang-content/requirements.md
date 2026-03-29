@@ -41,7 +41,7 @@ Ensure all content meets quality benchmarks defined in the standard.
 - All how-to guides follow mandatory pattern (Problem → Solution → How It Works → Variations → Common Pitfalls → Related Patterns)
 - Cross-references properly connect tutorials, how-to guides, and cookbooks
 - No time estimates in any educational content
-- All content passes ayokoding-fs-general-checker, ayokoding-fs-facts-checker, ayokoding-fs-link-checker validation
+- All content passes ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker validation
 
 ### Secondary Objectives
 
@@ -276,7 +276,7 @@ Scenario: Learner verifies command syntax
 
 **Priority**: High
 
-**Description**: All new content files must have correct Hugo frontmatter following ayokoding-fs conventions.
+**Description**: All new content files must have correct Hugo frontmatter following ayokoding-web conventions.
 
 **Specifications**:
 
@@ -285,7 +285,7 @@ Scenario: Learner verifies command syntax
 - `draft`: false (for published content)
 - `description`: Brief summary (1-2 sentences)
 - `weight`: Correct level-based weight (see Hugo Content Convention - ayokoding)
-- No `categories` or `tags` fields (not used in ayokoding-fs)
+- No `categories` or `tags` fields (not used in ayokoding-web)
 - Proper weight calculation based on directory depth and position
 
 ## Non-Functional Requirements
@@ -378,7 +378,7 @@ All content must work within Hugo's static site generation model.
 
 **CONST-2: Existing Directory Structure**
 
-Content must fit within existing ayokoding-fs directory structure.
+Content must fit within existing ayokoding-web directory structure.
 
 **Impact**:
 
@@ -405,11 +405,11 @@ All content must be created and validated using designated AI agents.
 
 **Impact**:
 
-- Use ayokoding-fs-general-maker for content creation
-- Use ayokoding-fs-general-checker for Hugo validation
-- Use ayokoding-fs-facts-checker for factual verification
-- Use ayokoding-fs-link-checker for link validation
-- Use ayokoding-fs-general-fixer for applying validated fixes
+- Use ayokoding-web-general-maker for content creation
+- Use ayokoding-web-general-checker for Hugo validation
+- Use ayokoding-web-facts-checker for factual verification
+- Use ayokoding-web-link-checker for link validation
+- Use ayokoding-web-general-fixer for applying validated fixes
 
 **CONST-5: Quality Gates**
 

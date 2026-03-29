@@ -1,6 +1,6 @@
 ---
 title: "Programming Language Content Standard"
-description: "Universal content architecture for programming language education on ayokoding-fs with mandatory structure, coverage model, and quality benchmarks"
+description: "Universal content architecture for programming language education on ayokoding-web with mandatory structure, coverage model, and quality benchmarks"
 category: explanation
 subcategory: conventions
 tags:
@@ -15,9 +15,9 @@ updated: 2025-12-23
 
 # Programming Language Content Standard
 
-**Defines the universal content architecture for programming language education on ayokoding-fs.**
+**Defines the universal content architecture for programming language education on ayokoding-web.**
 
-All programming language content on ayokoding-fs follows a standardized **Full Set Tutorial Package** architecture: 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook, plus supporting documentation) providing complete language education from 0% to 95% coverage through multiple learning modalities.
+All programming language content on ayokoding-web follows a standardized **Full Set Tutorial Package** architecture: 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook, plus supporting documentation) providing complete language education from 0% to 95% coverage through multiple learning modalities.
 
 ## Principles Implemented/Respected
 
@@ -43,11 +43,11 @@ This convention ensures:
 This convention applies to:
 
 - **All programming language tutorial content** across the repository:
-  - **ayokoding-fs** (`apps/ayokoding-fs/content/[lang]/learn/swe/programming-languages/[language]/`)
+  - **ayokoding-web** (`apps/ayokoding-web/content/[lang]/learn/swe/programming-languages/[language]/`)
   - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
   - **Any other location** where programming language tutorials exist
 - Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
-- Enforced by: `apps-ayokoding-fs-general-checker`, `apps-ayokoding-fs-by-example-checker`, `apps-ayokoding-fs-general-maker`, `apps-ayokoding-fs-by-example-maker`, `apps-ayokoding-fs-facts-checker` agents
+- Enforced by: `apps-ayokoding-web-general-checker`, `apps-ayokoding-web-by-example-checker`, `apps-ayokoding-web-general-maker`, `apps-ayokoding-web-by-example-maker`, `apps-ayokoding-web-facts-checker` agents
 
 **Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/README.md)
 
@@ -223,7 +223,7 @@ reference/
 - **Level 5** (language folder): Language folder's `_index.md` at 10002
 - **Level 6** (content inside language folder): `overview.md` at 100000, category folders' `_index.md` at 100002, 100003, 100004...
 - **Level 7** (content inside category folders): 1000000, 1000001, 1000002... (resets per category parent)
-- Follows ayokoding-fs's level-based system: folder at level N has `_index.md` at level N, content inside at level N+1
+- Follows ayokoding-web's level-based system: folder at level N has `_index.md` at level N, content inside at level N+1
 
 ## Coverage Philosophy
 
@@ -675,7 +675,7 @@ From benchmark analysis:
 
 Content creators MUST:
 
-1. **Use apps-ayokoding-fs-general-maker or apps-ayokoding-fs-by-example-maker agent** for initial content creation
+1. **Use apps-ayokoding-web-general-maker or apps-ayokoding-web-by-example-maker agent** for initial content creation
 2. **Follow this standard exactly** (don't improvise structure)
 3. **Test all code examples** (ensure they run)
 4. **Verify factual accuracy** (check documentation, official sources)
@@ -685,9 +685,9 @@ Content creators MUST:
 
 Content MUST pass:
 
-1. **apps-ayokoding-fs-general-checker** or **apps-ayokoding-fs-by-example-checker** validation (Hugo conventions, quality principles)
-2. **apps-ayokoding-fs-facts-checker** verification (factual correctness)
-3. **apps-ayokoding-fs-link-checker** validation (all links work)
+1. **apps-ayokoding-web-general-checker** or **apps-ayokoding-web-by-example-checker** validation (Hugo conventions, quality principles)
+2. **apps-ayokoding-web-facts-checker** verification (factual correctness)
+3. **apps-ayokoding-web-link-checker** validation (all links work)
 4. **Manual review** (pedagogical effectiveness, clarity)
 
 ### Post-Publishing
@@ -719,7 +719,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Golang (Reference Implementation)
 
-**Location:** `apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/`
 
 **Characteristics:**
 
@@ -733,7 +733,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Python (Reference Implementation)
 
-**Location:** `apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/python/`
 
 **Characteristics:**
 
@@ -747,7 +747,7 @@ See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programmi
 
 ### Java (Reference Implementation)
 
-**Location:** `apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/`
+**Location:** `apps/ayokoding-web/content/en/learn/swe/programming-languages/java/`
 
 **Characteristics:**
 

@@ -62,12 +62,12 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 **You MUST understand Python fundamentals before using these standards:**
 
-- **[Python Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/python/_index.md)** - Complete 0-95% language coverage
-- **[Python By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/python/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[Python Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/_index.md)** - Complete 0-95% language coverage
+- **[Python By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Python knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Python syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Python syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

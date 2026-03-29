@@ -49,7 +49,7 @@ Link-checking utilities for Hugo site CLIs.
 ```go
 import "github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/links"
 
-result, err := links.CheckLinks("apps/ayokoding-fs/content")
+result, err := links.CheckLinks("apps/ayokoding-web/content")
 if err != nil {
     return err
 }

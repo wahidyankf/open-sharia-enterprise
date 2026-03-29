@@ -55,13 +55,13 @@ OSE Platform FSM implementations MUST use the following frameworks:
 
 **You MUST understand FSM fundamentals before using these standards:**
 
-- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
-- **[Finite State Machine Overview](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
-- **[Finite State Machine By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example/)** - Practical FSM implementation examples
+- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
+- **[Finite State Machine Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
+- **[Finite State Machine By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/finite-state-machine-fsm/by-example/)** - Practical FSM implementation examples
 
 **What this documentation covers**: OSE Platform-specific FSM patterns, Islamic finance state machines (Zakat lifecycle, contract approval, donation campaigns), framework choices (Spring State Machine, XState), integration with DDD aggregates, repository-specific FSM conventions.
 
-**What this documentation does NOT cover**: FSM fundamentals, basic state/transition concepts, generic FSM theory (those are in ayokoding-fs).
+**What this documentation does NOT cover**: FSM fundamentals, basic state/transition concepts, generic FSM theory (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

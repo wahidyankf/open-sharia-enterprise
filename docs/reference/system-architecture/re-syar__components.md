@@ -18,7 +18,7 @@ C4 Level 3 component diagrams and Level 4 code architecture for the Open Sharia 
 
 Shows the internal components within each container. Components are groupings of related functionality behind a well-defined interface.
 
-### oseplatform-fs Components (Hugo Static Site)
+### oseplatform-web Components (Hugo Static Site)
 
 ```mermaid
 graph TB
@@ -67,7 +67,7 @@ graph TB
 **Component Responsibilities:**
 
 - **Root Command**: CLI entry point, command routing, help text
-- **Links Check Command**: Validate internal links in ayokoding-fs content
+- **Links Check Command**: Validate internal links in ayokoding-web content
 
 ### rhino-cli Components (Go CLI Tool)
 
@@ -102,13 +102,13 @@ graph TB
 - **Automation Module**: Extensible module system for automation workflows
 - **Config Loader**: Load butler-specific configuration
 
-### ayokoding-fs Components (Next.js Fullstack Platform)
+### ayokoding-web Components (Next.js Fullstack Platform)
 
 **Component Responsibilities:**
 
 - **Next.js App Router**: Static generation and routing for educational content
 - **tRPC API**: Backend API for content retrieval, search, and navigation
-- **Content Directory**: Co-located markdown content at `apps/ayokoding-fs/content/`
+- **Content Directory**: Co-located markdown content at `apps/ayokoding-web/content/`
 - **Bilingual Support**: Default English with Indonesian content
 
 ## C4 Level 4: Code Architecture
@@ -117,4 +117,4 @@ Shows implementation details for critical components. Focus on Go CLI tool packa
 
 ### ayokoding-cli Package Structure (Go)
 
-ayokoding-cli now provides only `links check` for validating internal links in ayokoding-fs content. The title update and navigation regeneration commands were removed as part of the migration from Hugo to Next.js.
+ayokoding-cli now provides only `links check` for validating internal links in ayokoding-web content. The title update and navigation regeneration commands were removed as part of the migration from Hugo to Next.js.

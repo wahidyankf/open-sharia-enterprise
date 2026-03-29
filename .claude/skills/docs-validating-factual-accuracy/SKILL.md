@@ -404,7 +404,7 @@ Three agents implement this methodology:
 
 - **docs-checker** - Validates documentation factual accuracy
 - **docs-tutorial-checker** - Validates tutorial factual accuracy
-- **apps\_\_ayokoding-fs\_\_facts-checker** - Validates ayokoding-fs factual accuracy
+- **apps\_\_ayokoding-web\_\_facts-checker** - Validates ayokoding-web factual accuracy
 
 All use same validation workflow and confidence classification.
 
@@ -497,7 +497,7 @@ Step 3: Compare and classify
 
 - `docs-checker` - Documentation factual validation
 - `docs-tutorial-checker` - Tutorial factual validation
-- `apps-ayokoding-fs-facts-checker` - ayokoding-fs factual validation
+- `apps-ayokoding-web-facts-checker` - ayokoding-web factual validation
 
 ---
 

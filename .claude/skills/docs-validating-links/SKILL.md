@@ -7,7 +7,7 @@ updated: 2026-01-25
 
 # Validating Markdown Links
 
-This Skill provides comprehensive guidance for validating markdown links across the repository, including internal link validation, external link verification, Hugo-specific patterns (oseplatform-fs), and checker implementation strategies.
+This Skill provides comprehensive guidance for validating markdown links across the repository, including internal link validation, external link verification, Hugo-specific patterns (oseplatform-web), and checker implementation strategies.
 
 ## Purpose
 
@@ -43,7 +43,7 @@ Use this Skill when:
 **What to validate**:
 
 - Internal markdown links (docs/, governance/, plans/)
-- Content links (apps/ayokoding-fs/, apps/oseplatform-fs/)
+- Content links (apps/ayokoding-web/, apps/oseplatform-web/)
 - External URLs (HTTP/HTTPS)
 - Image links (relative paths)
 - Anchor links (same-page headings)
@@ -67,7 +67,7 @@ Use this Skill when:
 ❌ FAIL: [[file-naming]] ← Obsidian wiki link (not GitHub-compatible)
 ❌ FAIL: [file-naming.md](../meta/file-naming.md) ← Using filename as link text
 
-**Hugo content files** (apps/oseplatform-fs/content/):
+**Hugo content files** (apps/oseplatform-web/content/):
 
 ✅ PASS: [Learn AI](/learn/ai)
 ✅ PASS: [Chat with PDF Tutorial](/learn/ai/chat-with-pdf)
@@ -75,7 +75,7 @@ Use this Skill when:
 ❌ FAIL: [Learn AI](/learn/ai.md) ← Should omit .md extension in Hugo
 ❌ FAIL: [Learn AI](../ai) ← Should use absolute path in Hugo (starts with /)
 
-**Note**: ayokoding-fs is a Next.js app (not Hugo). Its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
+**Note**: ayokoding-web is a Next.js app (not Hugo). Its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
 
 ### Validation Methodology
 
@@ -98,7 +98,7 @@ For each internal link:
 
 1. Resolve relative path from current file location
 2. Check target file exists using filesystem
-3. Validate format (has .md extension for docs/, no extension for Hugo content in oseplatform-fs)
+3. Validate format (has .md extension for docs/, no extension for Hugo content in oseplatform-web)
 4. Check link text quality (descriptive, not filename-based)
 
 ### Common Internal Link Errors
@@ -139,7 +139,7 @@ From: governance/conventions/formatting/linking.md (3 levels deep)
 
 **Error 5: Hugo link with .md extension**
 
-From: apps/oseplatform-fs/content/updates/\_index.md
+From: apps/oseplatform-web/content/updates/\_index.md
 ❌ FAIL: [Feature Release](/updates/feature-release.md) ← Hugo omits .md
 ✅ PASS: [Feature Release](/updates/feature-release)
 
@@ -148,7 +148,7 @@ From: apps/oseplatform-fs/content/updates/\_index.md
 
 **Error 6: Hugo link using relative path**
 
-From: apps/oseplatform-fs/content/updates/\_index.md
+From: apps/oseplatform-web/content/updates/\_index.md
 ❌ FAIL: [About](../about) ← Hugo needs absolute paths
 ✅ PASS: [About](/about)
 
@@ -219,9 +219,9 @@ From: apps/oseplatform-fs/content/updates/\_index.md
 **Criticality**: MEDIUM - May be temporary network issue
 **Action**: Re-verify after TTL expires, flag if persistent
 
-## Hugo-Specific Link Validation (oseplatform-fs only)
+## Hugo-Specific Link Validation (oseplatform-web only)
 
-**Note**: Only `oseplatform-fs` uses Hugo. `ayokoding-fs` is a Next.js app — its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
+**Note**: Only `oseplatform-web` uses Hugo. `ayokoding-web` is a Next.js app — its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
 
 ### Hugo Link Patterns
 
@@ -239,7 +239,7 @@ Hugo renders the same navigation content in different contexts (sidebar, mobile 
 
 ### Validation Differences: Hugo vs. Docs
 
-| Aspect      | Docs/ Files                     | Hugo Content (oseplatform-fs)      |
+| Aspect      | Docs/ Files                     | Hugo Content (oseplatform-web)     |
 | ----------- | ------------------------------- | ---------------------------------- |
 | Extension   | MUST include .md                | MUST omit .md                      |
 | Path Type   | Relative (../, ./)              | Absolute (/path)                   |
@@ -281,7 +281,7 @@ Step 5: Finalize Report (summary, grouped by criticality)
 **CRITICAL** (Must fix before publication):
 
 - Broken internal links (404, file not found)
-- Wrong Hugo link format in oseplatform-fs (includes .md or uses relative path)
+- Wrong Hugo link format in oseplatform-web (includes .md or uses relative path)
 - Obsidian wiki links (breaks GitHub compatibility)
 
 **HIGH** (Should fix before publication):
@@ -328,7 +328,7 @@ Finding: [BROKEN] - Internal Link to Non-Existent File
 **Linking Standards**:
 
 - Linking Convention - Complete linking standards
-- Hugo Content Convention - Hugo linking patterns (oseplatform-fs only)
+- Hugo Content Convention - Hugo linking patterns (oseplatform-web only)
 
 **Validation Standards**:
 
@@ -349,11 +349,11 @@ Finding: [BROKEN] - Internal Link to Non-Existent File
 
 **Domain Skills**:
 
-- apps-ayokoding-fs-developing-content - ayokoding-fs content linking patterns (Next.js)
+- apps-ayokoding-web-developing-content - ayokoding-web content linking patterns (Next.js)
 
 ## Related Agents
 
 **Link Validation Agents**:
 
 - docs-link-general-checker - Validates links in docs/, governance/, plans/
-- apps-ayokoding-fs-link-checker - Validates links in ayokoding-fs content
+- apps-ayokoding-web-link-checker - Validates links in ayokoding-web content

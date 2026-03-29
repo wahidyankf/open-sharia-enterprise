@@ -45,7 +45,7 @@ Create high-quality, verified explanation documentation for Golang that:
 - Markdown formatting auto-runs via Prettier (auto-fixes and auto-stages)
 - Markdown linting auto-runs via markdownlint (may require manual fixes)
 - Link validation runs on staged markdown files
-- ayokoding-fs content changes trigger CLI rebuild and navigation updates
+- ayokoding-web content changes trigger CLI rebuild and navigation updates
 - If hook fails, fix reported issues and re-commit (changes are preserved)
 
 **No Feature Branches**: Work directly on `main` branch (standard TBD workflow)

@@ -315,13 +315,13 @@ Agents can reference multiple Skills that work together:
 
 ```yaml
 ---
-name: apps-ayokoding-fs-general-maker
-description: Expert at creating general Hugo content for ayokoding-fs (Hextra theme).
+name: apps-ayokoding-web-general-maker
+description: Expert at creating general Hugo content for ayokoding-web (Hextra theme).
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 skills:
-  - apps-ayokoding-fs-developing-content
+  - apps-ayokoding-web-developing-content
   - docs-creating-accessible-diagrams
   - docs-validating-factual-accuracy
 ---
@@ -449,7 +449,7 @@ After frontmatter, agents should follow this structure:
 
 **Required Sections:**
 
-1. **Title (H1)**: Must follow pattern `# [Name] Agent`. Exception: App-scoped agents may use `# [Role] for [app-name]` (e.g., `# Content Checker for oseplatform-fs`)
+1. **Title (H1)**: Must follow pattern `# [Name] Agent`. Exception: App-scoped agents may use `# [Role] for [app-name]` (e.g., `# Content Checker for oseplatform-web`)
 2. **Core Expertise/Responsibility (H2)**: Clear purpose statement
 3. **Reference Documentation (H2)**: Links to relevant conventions and guidance
 
@@ -482,10 +482,10 @@ PASS: Good - General agents (no scope prefix):
 - readme-maker.md
 
 PASS: Good - App-scoped agents:
-- apps-ayokoding-fs-general-maker.md
-- apps-ayokoding-fs-by-example-checker.md
-- apps-oseplatform-fs-content-maker.md
-- apps-oseplatform-fs-deployer.md
+- apps-ayokoding-web-general-maker.md
+- apps-ayokoding-web-by-example-checker.md
+- apps-oseplatform-web-content-maker.md
+- apps-oseplatform-web-deployer.md
 
 PASS: Good - Lib-scoped agents (future):
 - libs__ts-auth__validator.md
@@ -499,7 +499,7 @@ FAIL: Bad:
 - doc_writer.md (snake_case)
 - documentation-writer-agent.md (redundant suffix)
 - ayokoding-general-maker.md (missing scope delimiter)
-- apps_ayokoding-fs_general-maker.md (wrong delimiter - use hyphens)
+- apps_ayokoding-web_general-maker.md (wrong delimiter - use hyphens)
 ```
 
 ### Scope Prefix Guidelines
@@ -507,9 +507,9 @@ FAIL: Bad:
 **When to use scope prefixes:**
 
 1. **`apps-[app-name]-`** - Agent works ONLY with a specific app
-   - Content creation for Hugo sites (ayokoding-fs, oseplatform-fs)
+   - Content creation for Hugo sites (ayokoding-web, oseplatform-web)
    - App-specific validation, deployment, structure management
-   - Examples: `apps-ayokoding-fs-general-maker`, `apps-oseplatform-fs-deployer`
+   - Examples: `apps-ayokoding-web-general-maker`, `apps-oseplatform-web-deployer`
 
 2. **`libs-[lib-name]-`** - Agent works ONLY with a specific library
    - Future use when monorepo has libraries with specific agents
@@ -529,7 +529,7 @@ FAIL: Bad:
 
 **Scope naming rules:**
 
-- App/lib names must match directory names exactly (e.g., `ayokoding-fs` matches `apps/ayokoding-fs/`)
+- App/lib names must match directory names exactly (e.g., `ayokoding-web` matches `apps/ayokoding-web/`)
 - Use kebab-case throughout (no camelCase, PascalCase, or snake_case)
 - Hyphens `-` separate all parts of the agent name (consistent kebab-case throughout)
 - Agent name after scope uses standard kebab-case patterns
@@ -558,8 +558,8 @@ description: Expert documentation writer specializing in GitHub-compatible markd
 Example - App-scoped agent:
 
 ```yaml
-name: apps-ayokoding-fs-general-maker # Includes scope prefix
-description: Expert at creating general Hugo content for ayokoding-fs (Hextra theme) following Hugo Content Convention and Content Quality Principles. # Detailed usage guidance
+name: apps-ayokoding-web-general-maker # Includes scope prefix
+description: Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles. # Detailed usage guidance
 ```
 
 ## Tool Access Patterns
@@ -599,12 +599,12 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 
 1. repo-governance-checker
 2. repo-workflow-checker
-3. apps-ayokoding-fs-general-checker
-4. apps-ayokoding-fs-by-example-checker
-5. apps-ayokoding-fs-in-the-field-checker
-6. apps-ayokoding-fs-facts-checker
-7. apps-ayokoding-fs-link-checker
-8. apps-oseplatform-fs-content-checker
+3. apps-ayokoding-web-general-checker
+4. apps-ayokoding-web-by-example-checker
+5. apps-ayokoding-web-in-the-field-checker
+6. apps-ayokoding-web-facts-checker
+7. apps-ayokoding-web-link-checker
+8. apps-oseplatform-web-content-checker
 9. docs-checker
 10. docs-tutorial-checker
 11. docs-link-general-checker
@@ -755,18 +755,18 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                                                         |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| 🟦 **Blue**   | **Makers**       | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker<br>repo-governance-maker                                                       |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)\*\*     | repo-governance-checker<br>plan-checker<br>docs-checker<br>docs-link-general-checker\*\*<br>apps-ayokoding-fs-link-checker\*\* |
-| 🟨 **Yellow** | **Fixers**       | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-governance-fixer                                                                     |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>deployers\*<br>swe-\*-developer agents                                                                        |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                                                          |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Makers**       | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker<br>repo-governance-maker                                                        |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)\*\*     | repo-governance-checker<br>plan-checker<br>docs-checker<br>docs-link-general-checker\*\*<br>apps-ayokoding-web-link-checker\*\* |
+| 🟨 **Yellow** | **Fixers**       | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-governance-fixer                                                                      |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>deployers\*<br>swe-\*-developer agents                                                                         |
 
 **Edge Case Notes:**
 
 - **\*Yellow with Write**: Some Yellow fixer agents (e.g., readme-fixer, repo-governance-fixer) may have Write tool for audit report generation. Documented exception.
-- **\*Purple Bash-only**: Deployers (apps-ayokoding-fs-deployer, apps-oseplatform-fs-deployer, apps-organiclever-fe-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
-- **\*\*Green with Write + Edit**: Link checker agents (docs-link-general-checker, apps-ayokoding-fs-link-checker) also have Edit and Write tools for cache file management, but their primary role is validation (checker). Color is green to reflect primary role. See "Link Checker Agents Note" below.
+- **\*Purple Bash-only**: Deployers (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
+- **\*\*Green with Write + Edit**: Link checker agents (docs-link-general-checker, apps-ayokoding-web-link-checker) also have Edit and Write tools for cache file management, but their primary role is validation (checker). Color is green to reflect primary role. See "Link Checker Agents Note" below.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -787,7 +787,7 @@ This role-based categorization was chosen because it:
 **Link Checker Agents:**
 
 - **docs-link-general-checker** - Validates documentation links + manages external-links-status.yaml cache
-- **apps-ayokoding-fs-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
+- **apps-ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
 
 **Why green (not purple)?**
 
@@ -805,7 +805,7 @@ This role-based categorization was chosen because it:
 
 **Cache files are NOT temporary:**
 
-- Location: `docs/metadata/` (docs-link-general-checker) and `apps/ayokoding-fs/` (apps-ayokoding-fs-link-checker)
+- Location: `docs/metadata/` (docs-link-general-checker) and `apps/ayokoding-web/` (apps-ayokoding-web-link-checker)
 - Purpose: Long-term link status tracking (6-month expiry), shared across team
 - Committed to git: Yes (operational metadata)
 - Updated every run: Yes (including lastFullScan timestamp)
@@ -854,12 +854,12 @@ Start: What is the agent's primary capability?
   - Write tool needed for audit reports in generated-reports/
   - Edit tool needed for cache file management (external-links-status.yaml updates)
   - Bash tool needed for UTC+7 timestamps
-  - Examples: docs-link-general-checker, apps-ayokoding-fs-link-checker
+  - Examples: docs-link-general-checker, apps-ayokoding-web-link-checker
 - **Deployers with Bash only**: Use `purple` (Implementor)
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
   - Edge case: purple without Write/Edit tools (Bash-only orchestration)
-  - Examples: apps-ayokoding-fs-deployer, apps-oseplatform-fs-deployer, apps-organiclever-fe-deployer
+  - Examples: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer
 - **Fixers with Write tool**: Investigate actual usage
   - Yellow (Fixers) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
@@ -1267,8 +1267,8 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- apps-ayokoding-fs-deployer (deployment automation)
-- apps-oseplatform-fs-deployer (deployment automation)
+- apps-ayokoding-web-deployer (deployment automation)
+- apps-oseplatform-web-deployer (deployment automation)
 - apps-organiclever-fe-deployer (deployment automation)
 - social-linkedin-post-maker (single-purpose content generation)
 - repo-workflow-maker (workflow document creation)
@@ -1301,9 +1301,9 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - docs-tutorial-checker (tutorial quality validation)
 - docs-file-manager (file organization, prefix calculation, link updates)
 - agent-maker (agent creation automation)
-- apps-ayokoding-fs-general-maker (general Hugo content creation)
-- apps-ayokoding-fs-by-example-maker (by-example tutorial creation)
-- apps-oseplatform-fs-content-maker (Hugo content creation)
+- apps-ayokoding-web-general-maker (general Hugo content creation)
+- apps-ayokoding-web-by-example-maker (by-example tutorial creation)
+- apps-oseplatform-web-content-maker (Hugo content creation)
 
 **When to use this tier**:
 
@@ -1348,11 +1348,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | apps-ayokoding-fs-deployer, apps-oseplatform-fs-deployer, apps-organiclever-fe-deployer, social-linkedin-post-maker, apps-ayokoding-fs-facts-fixer, apps-ayokoding-fs-link-fixer, apps-oseplatform-fs-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-fs-general-maker, apps-ayokoding-fs-general-checker, apps-ayokoding-fs-general-fixer, apps-ayokoding-fs-by-example-maker, apps-ayokoding-fs-by-example-checker, apps-ayokoding-fs-by-example-fixer, apps-ayokoding-fs-in-the-field-maker, apps-ayokoding-fs-in-the-field-checker, apps-ayokoding-fs-in-the-field-fixer, apps-ayokoding-fs-link-checker, apps-ayokoding-fs-facts-checker, apps-oseplatform-fs-content-maker, apps-oseplatform-fs-content-checker, swe-python-developer, swe-typescript-developer, swe-elixir-developer, swe-java-developer, swe-golang-developer, swe-e2e-test-developer, swe-hugo-developer, swe-dart-developer, swe-kotlin-developer, swe-csharp-developer, swe-fsharp-developer, swe-clojure-developer, swe-rust-developer, swe-code-checker, specs-maker, specs-checker, specs-fixer |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, docs-link-general-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer, social-linkedin-post-maker, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-web-general-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-checker, apps-ayokoding-web-facts-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker, swe-python-developer, swe-typescript-developer, swe-elixir-developer, swe-java-developer, swe-golang-developer, swe-e2e-test-developer, swe-hugo-developer, swe-dart-developer, swe-kotlin-developer, swe-csharp-developer, swe-fsharp-developer, swe-clojure-developer, swe-rust-developer, swe-code-checker, specs-maker, specs-checker, specs-fixer |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, docs-link-general-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ### When to Condense or Split Agents
 
@@ -2302,7 +2302,7 @@ See `repo-assessing-criticality-confidence` Skill for level definitions.
 **Before Simplification** (1,100+ lines):
 
 ```markdown
-# apps-ayokoding-fs-by-example-maker
+# apps-ayokoding-web-by-example-maker
 
 ## Hugo Weight System
 
@@ -2330,15 +2330,15 @@ See `repo-assessing-criticality-confidence` Skill for level definitions.
 ```markdown
 ---
 skills:
-  - apps-ayokoding-fs-developing-content
+  - apps-ayokoding-web-developing-content
   - docs-creating-by-example-tutorials
 ---
 
-# apps-ayokoding-fs-by-example-maker
+# apps-ayokoding-web-by-example-maker
 
 ## Hugo Patterns
 
-See `apps-ayokoding-fs-developing-content` Skill for weight system, bilingual strategy.
+See `apps-ayokoding-web-developing-content` Skill for weight system, bilingual strategy.
 
 ## Example Structure
 
@@ -2454,8 +2454,8 @@ When simplifying an agent:
 - `repo-generating-validation-reports` - Report generation, UUID chains, timestamps
 - `repo-assessing-criticality-confidence` - Criticality levels, confidence assessment
 - `repo-applying-maker-checker-fixer` - Three-stage workflow, mode handling
-- `apps-ayokoding-fs-developing-content` - Hugo Hextra patterns, bilingual content
-- `apps-oseplatform-fs-developing-content` - Hugo PaperMod patterns
+- `apps-ayokoding-web-developing-content` - Hugo Hextra patterns, bilingual content
+- `apps-oseplatform-web-developing-content` - Hugo PaperMod patterns
 - `docs-creating-by-example-tutorials` - Annotation standards, five-part structure
 - `docs-creating-accessible-diagrams` - Color palettes, accessibility
 - `docs-applying-content-quality` - Markdown quality standards

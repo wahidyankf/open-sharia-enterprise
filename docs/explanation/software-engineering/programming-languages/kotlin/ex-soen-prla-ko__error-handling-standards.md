@@ -24,7 +24,7 @@ updated: 2026-03-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Kotlin fundamentals from [AyoKoding Kotlin Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/_index.md) before using these standards.
+**REQUIRED**: You MUST understand Kotlin fundamentals from [AyoKoding Kotlin Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to handle errors in THIS codebase.
 

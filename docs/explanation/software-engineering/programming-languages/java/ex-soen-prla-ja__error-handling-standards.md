@@ -18,7 +18,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -28,7 +28,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for error handling in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/_index.md).
+**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -403,14 +403,14 @@ void zakatShouldBeTwoPointFivePercent(
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
-  - **[Intermediate Examples](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/by-example/intermediate.md)** - Exception handling, try-catch-finally, custom exceptions
-  - **[Advanced Examples](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Result types, functional error handling, resilience patterns
-- **[Java In Practice](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Error handling patterns and best practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
+  - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/intermediate.md)** - Exception handling, try-catch-finally, custom exceptions
+  - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Result types, functional error handling, resilience patterns
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Error handling patterns and best practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features
 
-**Note**: These standards assume you've learned Java basics from ayokoding-fs. We don't re-explain fundamental concepts here.
+**Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
 ### Software Engineering Principles
 

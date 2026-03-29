@@ -118,7 +118,7 @@ Sections prioritize:
 - Platform-specific advanced features
 - Deprecated features
 
-**Coverage verification**: The apps-ayokoding-fs-general-checker agent validates coverage against comprehensive checklists for each language/framework.
+**Coverage verification**: The apps-ayokoding-web-general-checker agent validates coverage against comprehensive checklists for each language/framework.
 
 ### 3. Section Count: 40-60 Total
 
@@ -130,7 +130,7 @@ Sections prioritize:
 - **Intermediate**: 12-20 sections (40-75% coverage) - Production patterns
 - **Advanced**: 10-20 sections (75-95% coverage) - Expert mastery
 
-**Actual ranges observed in production** (ayokoding-fs):
+**Actual ranges observed in production** (ayokoding-web):
 
 - Golang: 60 sections (20/21/19)
 - Python: 42 sections (20/12/10)
@@ -294,7 +294,7 @@ fmt.Println(value)                // => Output: 42
 
 ## Complete Section Structure (Production Reference)
 
-Below is a complete section from ayokoding-fs demonstrating the recommended structure:
+Below is a complete section from ayokoding-web demonstrating the recommended structure:
 
 ### Goroutines and Concurrency (Golang Beginner)
 
@@ -440,13 +440,13 @@ print(y)                          # => Output: 84
 
 **Guideline**: 30-50 total diagrams per language (same as by-example)
 
-**Production standards** (ayokoding-fs enhanced target):
+**Production standards** (ayokoding-web enhanced target):
 
 - **Beginner level**: 10-15 diagrams (50-40% of 15-25 sections)
 - **Intermediate level**: 10-15 diagrams (60-75% of 12-20 sections)
 - **Advanced level**: 10-15 diagrams (60-75% of 10-20 sections)
 
-**Current production state** (ayokoding-fs, needs enhancement):
+**Current production state** (ayokoding-web, needs enhancement):
 
 - Most languages: 8-15 diagrams total (below target)
 - Dart: 46 diagrams (above target, good reference)
@@ -638,7 +638,7 @@ Before publishing by-concept content, verify:
 
 ### Automated Validation
 
-The **apps-ayokoding-fs-general-checker** agent validates:
+The **apps-ayokoding-web-general-checker** agent validates:
 
 - **Coverage percentage**: 95% target achieved
 - **Section count**: 40-60 total (beginner: 15-25, intermediate: 12-20, advanced: 10-20)
@@ -649,7 +649,7 @@ The **apps-ayokoding-fs-general-checker** agent validates:
 - **Section structure**: Intro, narrative, code, takeaway, why it matters present
 - **Frontmatter completeness**: Title, date, weight, description, tags present
 
-**Production validation targets** (ayokoding-fs needs enhancement to match by-example quality):
+**Production validation targets** (ayokoding-web needs enhancement to match by-example quality):
 
 - Current: 40-60 sections, 8-15 diagrams, minimal annotation
 - Target: 40-60 sections, 30-50 diagrams, 1.0-2.25 annotation density
@@ -658,10 +658,10 @@ The **apps-ayokoding-fs-general-checker** agent validates:
 
 The **by-concept-quality-gate** workflow orchestrates:
 
-1. **apps-ayokoding-fs-general-maker**: Creates/updates sections
-2. **apps-ayokoding-fs-general-checker**: Validates against standards
+1. **apps-ayokoding-web-general-maker**: Creates/updates sections
+2. **apps-ayokoding-web-general-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **apps-ayokoding-fs-general-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-general-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -703,7 +703,7 @@ When creating by-concept tutorials for multiple languages:
 
 ## Production-Validated Standards Summary
 
-This convention reflects standards that should be achieved by by-concept tutorials on ayokoding-fs:
+This convention reflects standards that should be achieved by by-concept tutorials on ayokoding-web:
 
 **Section Count**: 40-60 total
 
@@ -737,7 +737,7 @@ This convention reflects standards that should be achieved by by-concept tutoria
 5. Key takeaway (1-2 sentences)
 6. Why it matters (50-100 words)
 
-**Current state** (ayokoding-fs as of 2026-01-30):
+**Current state** (ayokoding-web as of 2026-01-30):
 
 - Section counts: ✅ 42-60 sections (within target)
 - Diagram counts: ❌ 8-15 diagrams (needs enhancement to 30-50)
@@ -749,7 +749,7 @@ This convention reflects standards that should be achieved by by-concept tutoria
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-fs-general-checker agent
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-web-general-checker agent
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
@@ -760,8 +760,8 @@ This convention implements and respects:
 **Universal Application**: This convention applies to **all by-concept tutorial content** across the repository:
 
 - **docs/tutorials/** - Programming language tutorials in docs
-- **apps/ayokoding-fs/content/** - Programming language tutorials (Java, Golang, Python, etc.)
-- **apps/oseplatform-fs/content/** - Platform tutorials using by-concept approach
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/oseplatform-web/content/** - Platform tutorials using by-concept approach
 - **Any other location** - By-concept tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/README.md)
@@ -781,9 +781,9 @@ This convention implements and respects:
 - **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
 - **Hugo-specific implementation** - Covered in [Hugo conventions](../hugo/README.md)
-- **Hugo implementation** - Hextra specifics in [ayokoding-fs convention](../hugo/ayokoding.md)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by apps-ayokoding-fs-general-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-general-checker agent
 
 ## Related Documentation
 

@@ -54,18 +54,18 @@ release** as of 2026-02-25. Classification:
 | ------------------------ | ---------------------- | --------- | ---- | --------------------------------- |
 | `ayokoding-cli` go.mod   | `1.24.2`               | `1.26`    | m    | Normalize with other modules      |
 | `rhino-cli` go.mod       | `1.24.2`               | `1.26`    | m    | Normalize with other modules      |
-| `ayokoding-fs` go.mod    | `1.25`                 | `1.26`    | m    | Already more recent than CLI apps |
-| `oseplatform-fs` go.mod  | `1.25`                 | `1.26`    | m    | Already more recent than CLI apps |
+| `ayokoding-web` go.mod   | `1.25`                 | `1.26`    | m    | Already more recent than CLI apps |
+| `oseplatform-web` go.mod | `1.25`                 | `1.26`    | m    | Already more recent than CLI apps |
 | `github.com/spf13/cobra` | `v1.10.2`              | `v1.10.2` | ✓    | Already latest                    |
 | `gopkg.in/yaml.v3`       | `v3.0.1`               | `v3.0.1`  | ✓    | Stable, no newer release          |
 
 ### Hugo Themes (Go modules)
 
-| Theme                                                     | Current                       | Latest             | Type | Notes                                  |
-| --------------------------------------------------------- | ----------------------------- | ------------------ | ---- | -------------------------------------- |
-| `github.com/imfing/hextra` (ayokoding-fs)                 | `v0.11.1`                     | `v0.12.0`          | m    | WCAG 2.2 AA improvements, new features |
-| `github.com/adityatelange/hugo-PaperMod` (oseplatform-fs) | commit `3bb0ca2` (2026-01-25) | latest HEAD        | P    | Rolling release; pin to latest commit  |
-| Hugo binary                                               | `0.155.2 Extended`            | `0.156.0 Extended` | m    | Update docs and any CI runners         |
+| Theme                                                      | Current                       | Latest             | Type | Notes                                  |
+| ---------------------------------------------------------- | ----------------------------- | ------------------ | ---- | -------------------------------------- |
+| `github.com/imfing/hextra` (ayokoding-web)                 | `v0.11.1`                     | `v0.12.0`          | m    | WCAG 2.2 AA improvements, new features |
+| `github.com/adityatelange/hugo-PaperMod` (oseplatform-web) | commit `3bb0ca2` (2026-01-25) | latest HEAD        | P    | Rolling release; pin to latest commit  |
+| Hugo binary                                                | `0.155.2 Extended`            | `0.156.0 Extended` | m    | Update docs and any CI runners         |
 
 ### Flutter / Dart
 
@@ -141,7 +141,7 @@ React 19 compatibility before starting Phase 7b.
 
 ### Go — Module Normalization + Updates
 
-All four Go modules (`ayokoding-cli`, `rhino-cli`, `ayokoding-fs`, `oseplatform-fs`) currently
+All four Go modules (`ayokoding-cli`, `rhino-cli`, `ayokoding-web`, `oseplatform-web`) currently
 declare different Go toolchain versions (1.24.2 and 1.25). They must all target **Go 1.26**
 (released 2026-02-10), which is the current stable release.
 
@@ -158,11 +158,11 @@ For Hugo sites, run `hugo mod get -u` instead, which updates Hugo modules proper
 Hugo themes are Go modules fetched via `hugo mod get`. Update each site:
 
 ```bash
-# ayokoding-fs — Hextra 0.11.1 → 0.12.0
-cd apps/ayokoding-fs && hugo mod get github.com/imfing/hextra@v0.12.0
+# ayokoding-web — Hextra 0.11.1 → 0.12.0
+cd apps/ayokoding-web && hugo mod get github.com/imfing/hextra@v0.12.0
 
-# oseplatform-fs — PaperMod rolling
-cd apps/oseplatform-fs && hugo mod get -u
+# oseplatform-web — PaperMod rolling
+cd apps/oseplatform-web && hugo mod get -u
 ```
 
 Review Hextra 0.12.0 changelog for any breaking template or shortcode changes before applying.
@@ -207,12 +207,12 @@ No code changes are expected for a patch bump 4.0.2 → 4.0.3.
 
 The current repo has a version mismatch in `go` directives:
 
-| File                         | Current `go` directive |
-| ---------------------------- | ---------------------- |
-| `apps/ayokoding-cli/go.mod`  | `1.24.2`               |
-| `apps/rhino-cli/go.mod`      | `1.24.2`               |
-| `apps/ayokoding-fs/go.mod`   | `1.25`                 |
-| `apps/oseplatform-fs/go.mod` | `1.25`                 |
+| File                          | Current `go` directive |
+| ----------------------------- | ---------------------- |
+| `apps/ayokoding-cli/go.mod`   | `1.24.2`               |
+| `apps/rhino-cli/go.mod`       | `1.24.2`               |
+| `apps/ayokoding-web/go.mod`   | `1.25`                 |
+| `apps/oseplatform-web/go.mod` | `1.25`                 |
 
 **Resolution**: Normalize all four to `go 1.26` (the current stable). This changes only the
 toolchain declaration, not the API surface, so no code changes are required.
@@ -250,8 +250,8 @@ go list -u -m all        # run in apps/rhino-cli/
 
 # Hugo sites — inspect current module versions with hugo mod graph
 # (Note: hugo mod get -u --dry-run is not a supported Hugo CLI flag)
-cd apps/ayokoding-fs && hugo mod graph
-cd apps/oseplatform-fs && hugo mod graph
+cd apps/ayokoding-web && hugo mod graph
+cd apps/oseplatform-web && hugo mod graph
 
 # Flutter
 cd apps/organiclever-app && flutter pub outdated

@@ -39,7 +39,7 @@ func (s *linksCheckAyokodingSteps) before(_ context.Context, _ *godog.Scenario) 
 	verbose = false
 	quiet = false
 	output = "text"
-	linksContentDir = "apps/ayokoding-fs/content"
+	linksContentDir = "apps/ayokoding-web/content"
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
 }
@@ -146,9 +146,9 @@ func InitializeLinksCheckAyokodingScenario(sc *godog.ScenarioContext) {
 	sc.Before(s.before)
 	sc.After(s.after)
 
-	sc.Step(`^ayokoding-fs content where all internal links resolve correctly$`, s.ayokodingWebContentWhereAllInternalLinksResolveCorrectly)
-	sc.Step(`^ayokoding-fs content with a link pointing to a non-existent page$`, s.ayokodingWebContentWithALinkPointingToANonExistentPage)
-	sc.Step(`^ayokoding-fs content with only external HTTPS links$`, s.ayokodingWebContentWithOnlyExternalHTTPSLinks)
+	sc.Step(`^ayokoding-web content where all internal links resolve correctly$`, s.ayokodingWebContentWhereAllInternalLinksResolveCorrectly)
+	sc.Step(`^ayokoding-web content with a link pointing to a non-existent page$`, s.ayokodingWebContentWithALinkPointingToANonExistentPage)
+	sc.Step(`^ayokoding-web content with only external HTTPS links$`, s.ayokodingWebContentWithOnlyExternalHTTPSLinks)
 	sc.Step(`^the developer runs links check$`, s.theDeveloperRunsLinksCheck)
 	sc.Step(`^the developer runs links check with JSON output$`, s.theDeveloperRunsLinksCheckWithJSONOutput)
 	sc.Step(`^the command exits successfully$`, s.theLinksCheckCommandExitsSuccessfully)

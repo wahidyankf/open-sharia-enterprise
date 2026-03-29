@@ -34,8 +34,8 @@ This plan was executed in 3 phases:
 - [x] **1.1 Rename all skill files from hyphen to double underscore format**
 
   **Files Renamed** (7 skills):
-  - `apps-ayokoding-fs-by-example-developing-content.md` → `apps__ayokoding-fs__by-example__developing-content.md`
-  - `apps-ayokoding-fs-developing-content.md` → `apps__ayokoding-fs__developing-content.md`
+  - `apps-ayokoding-web-by-example-developing-content.md` → `apps__ayokoding-web__by-example__developing-content.md`
+  - `apps-ayokoding-web-developing-content.md` → `apps__ayokoding-web__developing-content.md`
   - `apps-ose-platform-web-developing-content.md` → `apps__ose-platform-web__developing-content.md`
   - `docs-applying-diataxis-framework.md` → `docs__applying-diataxis-framework.md`
   - `docs-creating-accessible-diagrams.md` → `docs__creating-accessible-diagrams.md`

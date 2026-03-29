@@ -1,6 +1,6 @@
 ---
 title: "Internal AyoKoding Reference Links Convention"
-description: Standards for linking from docs/ to apps/ayokoding-fs/ content using relative paths instead of public web URLs
+description: Standards for linking from docs/ to apps/ayokoding-web/ content using relative paths instead of public web URLs
 category: explanation
 subcategory: conventions
 tags:
@@ -8,20 +8,20 @@ tags:
   - cross-reference
   - relative-paths
   - portability
-  - ayokoding-fs
+  - ayokoding-web
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
 # Internal AyoKoding Reference Links Convention
 
-This document defines standards for linking from documentation in `docs/` to educational content in `apps/ayokoding-fs/` using repository-relative paths instead of public web URLs. This ensures links work during local development, testing, and remain portable across environments.
+This document defines standards for linking from documentation in `docs/` to educational content in `apps/ayokoding-web/` using repository-relative paths instead of public web URLs. This ensures links work during local development, testing, and remain portable across environments.
 
 ## Principles Implemented/Respected
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Uses explicit relative file paths instead of implicit external URLs. When a docs/ file references ayokoding-fs content, the relative path `../../../../../apps/ayokoding-fs/content/en/learn/...` makes the relationship explicit and visible. No hidden assumptions about domain availability or DNS resolution.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Uses explicit relative file paths instead of implicit external URLs. When a docs/ file references ayokoding-web content, the relative path `../../../../../apps/ayokoding-web/content/en/learn/...` makes the relationship explicit and visible. No hidden assumptions about domain availability or DNS resolution.
 
 - **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Relative paths work consistently across all environments (local development, CI/CD, offline testing, cloned repositories). External URLs depend on network availability, domain ownership, and DNS configuration. Relative paths eliminate these external dependencies for reproducible local builds.
 
@@ -38,13 +38,13 @@ This convention ensures documentation references to AyoKoding educational conten
 - Migrating domains or hosting infrastructure
 - Archiving or backing up documentation
 
-**Key insight**: Content in `apps/ayokoding-fs/` is part of the **same repository**. References from `docs/` to AyoKoding content should use repository-internal linking (relative paths), not public web linking (external URLs).
+**Key insight**: Content in `apps/ayokoding-web/` is part of the **same repository**. References from `docs/` to AyoKoding content should use repository-internal linking (relative paths), not public web linking (external URLs).
 
 ## Scope
 
 ### What This Convention Covers
 
-- **docs/ → apps/ayokoding-fs/** - Linking from documentation to AyoKoding educational content
+- **docs/ → apps/ayokoding-web/** - Linking from documentation to AyoKoding educational content
 - **Relative path calculation** - How to determine correct `../` depth
 - **URL pattern recognition** - Identifying when to use relative paths vs external URLs
 - **Path examples by location** - Common linking scenarios and correct paths
@@ -56,13 +56,13 @@ This convention ensures documentation references to AyoKoding educational conten
 - **Hugo internal navigation** - Covered by [Hugo Content Convention - ayokoding](../hugo/ayokoding.md)
 - **External web resources** - Public URLs to third-party sites (Stack Overflow, GitHub, etc.)
 - **Cross-repository references** - Links to content in separate git repositories
-- **apps/ayokoding-fs/ → docs/** - Reverse direction (educational content linking to docs)
+- **apps/ayokoding-web/ → docs/** - Reverse direction (educational content linking to docs)
 
 ## Standards
 
 ### Core Rule: Use Relative Paths for Repository-Internal References
 
-When documentation in `docs/` references educational content in `apps/ayokoding-fs/`, use **relative file paths** within the repository, not public web URLs.
+When documentation in `docs/` references educational content in `apps/ayokoding-web/`, use **relative file paths** within the repository, not public web URLs.
 
 **Rationale:**
 
@@ -90,7 +90,7 @@ When documentation in `docs/` references educational content in `apps/ayokoding-
 #### ✅ CORRECT: Relative Repository Path
 
 ```markdown
-[Java Explanation](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/)
+[Java Explanation](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)
 ```
 
 **Benefits:**
@@ -102,13 +102,13 @@ When documentation in `docs/` references educational content in `apps/ayokoding-
 
 ### Path Calculation Method
 
-To calculate the correct relative path from `docs/` to `apps/ayokoding-fs/`:
+To calculate the correct relative path from `docs/` to `apps/ayokoding-web/`:
 
 1. **Count your depth in docs/** - How many directories deep is your current file?
 2. **Navigate to repository root** - Use that many `../` to reach the root
-3. **Navigate down to target** - `apps/ayokoding-fs/content/[lang]/[path]/`
+3. **Navigate down to target** - `apps/ayokoding-web/content/[lang]/[path]/`
 
-**Formula:** `[../]×depth + apps/ayokoding-fs/content/[lang]/[path]/`
+**Formula:** `[../]×depth + apps/ayokoding-web/content/[lang]/[path]/`
 
 ### Common Path Examples
 
@@ -116,12 +116,12 @@ To calculate the correct relative path from `docs/` to `apps/ayokoding-fs/`:
 
 **Depth:** 5 levels deep (`docs` → `explanation` → `software-engineering` → `programming-languages` → `java`)
 
-**Target:** `apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/`
+**Target:** `apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/`
 
 **Path:**
 
 ```markdown
-../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/
+../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/
 ```
 
 **Breakdown:**
@@ -133,7 +133,7 @@ Start:  docs/explanation/software-engineering/programming-languages/java/README.
 ../     docs/explanation/                                             (up 3)
 ../     docs/                                                          (up 4)
 ../     [repository root]                                              (up 5)
-apps/ayokoding-fs/                                                    (down 1)
+apps/ayokoding-web/                                                    (down 1)
 content/en/learn/software-engineering/programming-languages/java/     (down to target)
 ```
 
@@ -141,24 +141,24 @@ content/en/learn/software-engineering/programming-languages/java/     (down to t
 
 **Depth:** 6 levels deep
 
-**Target:** `apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/`
+**Target:** `apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/`
 
 **Path:**
 
 ```markdown
-../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/
+../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/
 ```
 
 #### From docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/
 
 **Depth:** 6 levels deep
 
-**Target:** `apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/`
+**Target:** `apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/`
 
 **Path:**
 
 ```markdown
-../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/
+../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/
 ```
 
 ### Language Selection
@@ -168,13 +168,13 @@ AyoKoding content is bilingual (English and Indonesian). When linking from `docs
 **Pattern:**
 
 ```markdown
-apps/ayokoding-fs/content/en/learn/[topic-path]/
+apps/ayokoding-web/content/en/learn/[topic-path]/
 ```
 
 **Not:**
 
 ```markdown
-apps/ayokoding-fs/content/id/learn/[topic-path]/ ← Indonesian version
+apps/ayokoding-web/content/id/learn/[topic-path]/ ← Indonesian version
 ```
 
 **Rationale:** Documentation in `docs/` is written in English, so references should point to English educational content for consistency.
@@ -186,21 +186,21 @@ Use **descriptive, context-appropriate link text** that follows [Content Quality
 **Good examples:**
 
 ```markdown
-[Java programming language explanation](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/)
+[Java programming language explanation](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)
 
-[Spring Framework fundamentals](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/)
+[Spring Framework fundamentals](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/)
 
-[Complete Spring Boot tutorial series](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/)
+[Complete Spring Boot tutorial series](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/)
 ```
 
 **Avoid:**
 
 ```markdown
-[here](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/) ← Vague
+[here](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/) ← Vague
 
-[Click this link](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/) ← Non-descriptive
+[Click this link](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/) ← Non-descriptive
 
-[ayokoding-fs](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) ← Technical, not semantic
+[ayokoding-web](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) ← Technical, not semantic
 ```
 
 ## Examples
@@ -220,7 +220,7 @@ For hands-on Java tutorials, see our [Java learning path](https://ayokoding.com/
 ✅ **CORRECT:**
 
 ```markdown
-For hands-on Java tutorials, see our [Java learning path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/).
+For hands-on Java tutorials, see our [Java learning path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/).
 ```
 
 ### Example 2: Spring Framework Reference
@@ -238,7 +238,7 @@ Learn Spring Framework basics at [ayokoding.com](https://ayokoding.com/en/learn/
 ✅ **CORRECT:**
 
 ```markdown
-Learn Spring Framework basics in our [comprehensive Spring tutorial series](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+Learn Spring Framework basics in our [comprehensive Spring tutorial series](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 ```
 
 ### Example 3: Spring Boot Deep Dive
@@ -256,7 +256,7 @@ Check out our [Spring Boot tutorials](https://ayokoding.com/en/learn/software-en
 ✅ **CORRECT:**
 
 ```markdown
-Check out our [Spring Boot tutorials](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) for practical examples.
+Check out our [Spring Boot tutorials](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/) for practical examples.
 ```
 
 ### Example 4: Multiple Cross-References in One Document
@@ -272,9 +272,9 @@ Check out our [Spring Boot tutorials](../../../../../../apps/ayokoding-fs/conten
 
 This documentation provides reference material for Java in the open-sharia-enterprise project. For comprehensive learning content, explore:
 
-- **[Java Fundamentals](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/)** - Core language concepts, syntax, and basic programming
-- **[Spring Framework](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/)** - Dependency injection, AOP, and enterprise patterns
-- **[Spring Boot](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/)** - Rapid application development with Spring ecosystem
+- **[Java Fundamentals](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)** - Core language concepts, syntax, and basic programming
+- **[Spring Framework](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/)** - Dependency injection, AOP, and enterprise patterns
+- **[Spring Boot](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/)** - Rapid application development with Spring ecosystem
 ```
 
 ## Path Verification Checklist
@@ -284,7 +284,7 @@ Before committing documentation with AyoKoding references:
 - [ ] All AyoKoding links use relative paths (no `https://ayokoding.com/...`)
 - [ ] Path depth matches file location in docs/ hierarchy
 - [ ] Paths use `/en/` language directory (not `/id/`)
-- [ ] Paths point to existing directories in apps/ayokoding-fs/content/
+- [ ] Paths point to existing directories in apps/ayokoding-web/content/
 - [ ] Link text is descriptive and context-appropriate
 - [ ] Links tested locally (navigate in file explorer or markdown preview)
 
@@ -336,7 +336,7 @@ Use public `https://ayokoding.com/` URLs **only when:**
 If referencing **Indonesian content** specifically (rare from English docs):
 
 ```markdown
-[Konten Bahasa Indonesia](../../../../../apps/ayokoding-fs/content/id/learn/...)
+[Konten Bahasa Indonesia](../../../../../apps/ayokoding-web/content/id/learn/...)
 ```
 
 **But:** Prefer English (`/en/`) for consistency when linking from English documentation.

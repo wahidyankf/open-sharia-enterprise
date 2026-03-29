@@ -2571,7 +2571,7 @@ Production deployment security checklist for Spring Boot applications.
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot In-the-Field - Authentication](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security.md) - Production security
+- [Spring Boot In-the-Field - Authentication](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security.md) - Production security
 
 ---
 

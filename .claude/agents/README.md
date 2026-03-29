@@ -9,10 +9,10 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **docs-maker** - Expert documentation writer
 - **docs-tutorial-maker** - Tutorial creation specialist
 - **readme-maker** - README file writer
-- **apps-ayokoding-fs-general-maker** - General content for AyoKoding
-- **apps-ayokoding-fs-by-example-maker** - By-example tutorials
-- **apps-ayokoding-fs-in-the-field-maker** - In-the-field tutorials for AyoKoding
-- **apps-oseplatform-fs-content-maker** - OSE Platform content
+- **apps-ayokoding-web-general-maker** - General content for AyoKoding
+- **apps-ayokoding-web-by-example-maker** - By-example tutorials
+- **apps-ayokoding-web-in-the-field-maker** - In-the-field tutorials for AyoKoding
+- **apps-oseplatform-web-content-maker** - OSE Platform content
 - **plan-maker** - Project plan creation
 - **repo-governance-maker** - Governance document creation
 - **repo-workflow-maker** - Workflow documentation
@@ -28,12 +28,12 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **docs-link-general-checker** - Link validity checking
 - **docs-software-engineering-separation-checker** - Programming language docs separation validation
 - **readme-checker** - README quality validation
-- **apps-ayokoding-fs-general-checker** - General content validation
-- **apps-ayokoding-fs-by-example-checker** - By-example validation
-- **apps-ayokoding-fs-in-the-field-checker** - In-the-field content validation
-- **apps-ayokoding-fs-facts-checker** - Factual accuracy for AyoKoding
-- **apps-ayokoding-fs-link-checker** - Link validation for AyoKoding
-- **apps-oseplatform-fs-content-checker** - OSE content validation
+- **apps-ayokoding-web-general-checker** - General content validation
+- **apps-ayokoding-web-by-example-checker** - By-example validation
+- **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation
+- **apps-ayokoding-web-facts-checker** - Factual accuracy for AyoKoding
+- **apps-ayokoding-web-link-checker** - Link validation for AyoKoding
+- **apps-oseplatform-web-content-checker** - OSE content validation
 - **plan-checker** - Project plan validation
 - **plan-execution-checker** - Plan execution validation
 - **repo-governance-checker** - Governance compliance validation
@@ -49,12 +49,12 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **docs-tutorial-fixer** - Apply tutorial fixes
 - **docs-software-engineering-separation-fixer** - Fix programming language docs separation issues
 - **readme-fixer** - Apply README fixes
-- **apps-ayokoding-fs-general-fixer** - Apply general content fixes
-- **apps-ayokoding-fs-by-example-fixer** - Apply by-example fixes
-- **apps-ayokoding-fs-in-the-field-fixer** - Fix in-the-field content issues
-- **apps-ayokoding-fs-facts-fixer** - Apply factual corrections
-- **apps-ayokoding-fs-link-fixer** - Fix broken links
-- **apps-oseplatform-fs-content-fixer** - Fix OSE content issues
+- **apps-ayokoding-web-general-fixer** - Apply general content fixes
+- **apps-ayokoding-web-by-example-fixer** - Apply by-example fixes
+- **apps-ayokoding-web-in-the-field-fixer** - Fix in-the-field content issues
+- **apps-ayokoding-web-facts-fixer** - Apply factual corrections
+- **apps-ayokoding-web-link-fixer** - Fix broken links
+- **apps-oseplatform-web-content-fixer** - Fix OSE content issues
 - **plan-fixer** - Apply plan fixes
 - **repo-governance-fixer** - Fix governance compliance issues
 - **repo-workflow-fixer** - Fix workflow documentation
@@ -63,8 +63,8 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 🟪 Operations
 
-- **apps-ayokoding-fs-deployer** - AyoKoding deployment (Next.js via Vercel)
-- **apps-oseplatform-fs-deployer** - OSE Platform deployment
+- **apps-ayokoding-web-deployer** - AyoKoding deployment (Next.js via Vercel)
+- **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-fe-deployer** - organiclever-fe deployment
 - **plan-executor** - Execute project plans
 
@@ -77,7 +77,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **swe-elixir-developer** - Elixir application development
 - **swe-fsharp-developer** - F# application development
 - **swe-golang-developer** - Go application development
-- **swe-hugo-developer** - Hugo site development (oseplatform-fs)
+- **swe-hugo-developer** - Hugo site development (oseplatform-web)
 - **swe-java-developer** - Java application development
 - **swe-kotlin-developer** - Kotlin application development
 - **swe-python-developer** - Python application development

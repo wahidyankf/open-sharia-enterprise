@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-governance-fixer, apps-ayokoding-fs-general-fixer, apps-ayokoding-fs-by-example-fixer, apps-ayokoding-fs-facts-fixer, docs-tutorial-fixer, apps-oseplatform-fs-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Implemented/Respected
 
@@ -111,13 +111,13 @@ Confidence levels serve multiple critical purposes:
 All fixer agents implement this confidence level system:
 
 - **repo-governance-fixer** - Repository-wide structural consistency fixes
-- **apps-ayokoding-fs-general-fixer** - ayokoding-fs general content fixes
-- **apps-ayokoding-fs-by-example-fixer** - ayokoding-fs by-example tutorial fixes
-- **apps-ayokoding-fs-facts-fixer** - ayokoding-fs factual accuracy fixes
-- **apps-ayokoding-fs-in-the-field-fixer** - ayokoding-fs in-the-field tutorial fixes
-- **apps-ayokoding-fs-link-fixer** - ayokoding-fs link validation fixes
+- **apps-ayokoding-web-general-fixer** - ayokoding-web general content fixes
+- **apps-ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
+- **apps-ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
+- **apps-ayokoding-web-in-the-field-fixer** - ayokoding-web in-the-field tutorial fixes
+- **apps-ayokoding-web-link-fixer** - ayokoding-web link validation fixes
 - **docs-tutorial-fixer** - Tutorial quality fixes
-- **apps-oseplatform-fs-content-fixer** - oseplatform-fs Hugo content fixes
+- **apps-oseplatform-web-content-fixer** - oseplatform-web Hugo content fixes
 - **readme-fixer** - README quality fixes
 - **docs-fixer** - Documentation factual accuracy fixes
 - **plan-fixer** - Plan structural and format fixes
@@ -159,7 +159,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Wrong field value verified by comparing actual vs expected value
 - File naming convention violation verified by prefix analysis
 
-**apps-ayokoding-fs-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Missing `draft: false` field verified by re-reading frontmatter
 - Wrong date format verified by regex pattern match (missing UTC+7 timezone)
@@ -173,7 +173,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Wrong tutorial type naming verified against convention patterns
 - Time estimate violation verified by keyword search (forbidden in tutorials)
 
-**apps-oseplatform-fs-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Missing required frontmatter field verified (title, date, draft)
 - Wrong date format verified by regex (missing timezone)
@@ -226,7 +226,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Link target unclear (file missing, but can't determine correct target automatically)
 - Field value could be valid in specific context (non-standard but potentially intentional)
 
-**apps-ayokoding-fs-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Description length borderline (145 chars vs 150-160 optimal - functional but could improve)
 - Line length slightly over 100 characters (breaking might harm readability)
@@ -241,7 +241,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Content balance assessments (theory vs practice ratio)
 - Example quality assessments (examples work but could be better)
 
-**apps-oseplatform-fs-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Summary length is short but functional (85 chars vs 150-160 optimal)
 - Image alt text vague but not missing ("screenshot" - need image context to improve)
@@ -294,7 +294,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker reported missing field that actually exists (case sensitivity issue)
 - Checker misinterpreted file content (wrong pattern match)
 
-**apps-ayokoding-fs-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Checker flagged overview.md in English folder but file is correct (checker confused /en/ with /id/)
 - Checker flagged missing ikhtisar.md in blogging content (learning-only rule applied to wrong directory)
@@ -306,7 +306,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker reported missing diagram but diagram exists (different Mermaid syntax or placement)
 - Checker misinterpreted tutorial type (tutorial follows convention correctly)
 
-**apps-oseplatform-fs-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Checker flagged Hugo shortcode link as broken (doesn't recognize `{{< ref >}}` syntax)
 - Checker applied post validation rules to static page (about.md doesn't need date field)
@@ -476,7 +476,7 @@ Each fixer agent has domain-specific validation checks:
 - File naming convention compliance
 - Structural consistency across repository
 
-**apps-ayokoding-fs-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Hugo frontmatter for Hextra theme
 - Bilingual content validation (en/id)
@@ -490,7 +490,7 @@ Each fixer agent has domain-specific validation checks:
 - Tutorial naming patterns by type
 - No time estimates rule
 
-**apps-oseplatform-fs-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Hugo frontmatter for PaperMod theme
 - English-only content validation
@@ -602,7 +602,7 @@ All fixer agents MUST:
 
 ### 1. Missing Required Field Breaks Hugo Build
 
-**File**: `apps/ayokoding-fs/content/en/programming/python/_index.md:3`
+**File**: `apps/ayokoding-web/content/en/programming/python/_index.md:3`
 **Criticality**: CRITICAL - Breaks Hugo build process
 **Confidence**: HIGH - Field objectively missing from frontmatter
 
@@ -885,16 +885,16 @@ FAIL: All agent files - Frontmatter comment detection
 ### Fixer Agents Using This Convention
 
 - [repo-governance-fixer.md](../../../.claude/agents/repo-governance-fixer.md) - Repository structural consistency fixer
-- [apps-ayokoding-fs-general-fixer.md](../../../.claude/agents/apps-ayokoding-fs-general-fixer.md) - ayokoding-fs general Hugo content fixer
-- [apps-ayokoding-fs-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-fs-by-example-fixer.md) - ayokoding-fs by-example tutorial fixer
-- [apps-ayokoding-fs-facts-fixer.md](../../../.claude/agents/apps-ayokoding-fs-facts-fixer.md) - ayokoding-fs factual accuracy fixer
+- [apps-ayokoding-web-general-fixer.md](../../../.claude/agents/apps-ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
+- [apps-ayokoding-web-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
+- [apps-ayokoding-web-facts-fixer.md](../../../.claude/agents/apps-ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
 - [docs-tutorial-fixer.md](../../../.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
-- [apps-oseplatform-fs-content-fixer.md](../../../.claude/agents/apps-oseplatform-fs-content-fixer.md) - oseplatform-fs Hugo content fixer
+- [apps-oseplatform-web-content-fixer.md](../../../.claude/agents/apps-oseplatform-web-content-fixer.md) - oseplatform-web Hugo content fixer
 - [readme-fixer.md](../../../.claude/agents/readme-fixer.md) - README quality fixer
 - [plan-fixer.md](../../../.claude/agents/plan-fixer.md) - Plan structural and format fixer
 - [docs-fixer.md](../../../.claude/agents/docs-fixer.md) - Documentation factual accuracy fixer
-- [apps-ayokoding-fs-in-the-field-fixer.md](../../../.claude/agents/apps-ayokoding-fs-in-the-field-fixer.md) - ayokoding-fs in-the-field tutorial fixer
-- [apps-ayokoding-fs-link-fixer.md](../../../.claude/agents/apps-ayokoding-fs-link-fixer.md) - ayokoding-fs link validation fixer
+- [apps-ayokoding-web-in-the-field-fixer.md](../../../.claude/agents/apps-ayokoding-web-in-the-field-fixer.md) - ayokoding-web in-the-field tutorial fixer
+- [apps-ayokoding-web-link-fixer.md](../../../.claude/agents/apps-ayokoding-web-link-fixer.md) - ayokoding-web link validation fixer
 - [docs-software-engineering-separation-fixer.md](../../../.claude/agents/docs-software-engineering-separation-fixer.md) - Software engineering documentation separation fixer
 - [repo-workflow-fixer.md](../../../.claude/agents/repo-workflow-fixer.md) - Repository workflow structural consistency fixer
 
@@ -911,8 +911,8 @@ FAIL: All agent files - Frontmatter comment detection
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal content quality standards
 - [README Quality Convention](../../conventions/writing/readme-quality.md)
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-fs specific standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-fs specific standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web specific standards
 
 **Infrastructure:**
 - [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`generated-reports/`)
@@ -941,7 +941,7 @@ When this convention is updated:
 
 ### Version History
 
-- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-fs, docs-tutorial, oseplatform-fs-content, readme)
+- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, oseplatform-web-content, readme)
 
 ---
 

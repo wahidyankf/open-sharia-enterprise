@@ -777,9 +777,9 @@ com.oseplatform.donation/
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring By Example](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
 
-**Note**: These standards assume you've learned Spring basics from ayokoding-fs. We don't re-explain fundamental concepts here.
+**Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
 ### Software Engineering Principles
 

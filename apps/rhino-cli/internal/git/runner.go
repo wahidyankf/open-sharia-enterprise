@@ -194,9 +194,9 @@ func step3NxPreCommit(gitRoot string, deps Deps) {
 	}
 }
 
-// step4StageAyokoding stages ayokoding-fs content changes; errors are ignored.
+// step4StageAyokoding stages ayokoding-web content changes; errors are ignored.
 func step4StageAyokoding(gitRoot string, deps Deps) {
-	cmd := deps.ExecCommand("git", "add", "apps/ayokoding-fs/content/")
+	cmd := deps.ExecCommand("git", "add", "apps/ayokoding-web/content/")
 	cmd.Dir = gitRoot
 	_ = cmd.Run()
 }

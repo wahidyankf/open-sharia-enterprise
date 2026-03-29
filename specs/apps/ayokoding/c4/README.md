@@ -33,16 +33,16 @@ C4 architecture diagrams for the AyoKoding educational website (Next.js 16 fulls
 
 ## Testing
 
-| Suite           | App                 | Scope                            |
-| --------------- | ------------------- | -------------------------------- |
-| Unit tests      | ayokoding-fs        | Vitest, >= 80% line coverage     |
-| Backend E2E     | ayokoding-fs-be-e2e | Playwright, tRPC API endpoints   |
-| Frontend E2E    | ayokoding-fs-fe-e2e | Playwright, browser interactions |
-| Link validation | ayokoding-cli       | Internal content link checks     |
+| Suite           | App                  | Scope                            |
+| --------------- | -------------------- | -------------------------------- |
+| Unit tests      | ayokoding-web        | Vitest, >= 80% line coverage     |
+| Backend E2E     | ayokoding-web-be-e2e | Playwright, tRPC API endpoints   |
+| Frontend E2E    | ayokoding-web-fe-e2e | Playwright, browser interactions |
+| Link validation | ayokoding-cli        | Internal content link checks     |
 
 ## Related
 
-- **Parent**: [ayokoding-fs specs](../README.md)
+- **Parent**: [ayokoding-web specs](../README.md)
 - **Backend gherkin specs**: [be/gherkin/](../be/)
 - **Frontend gherkin specs**: [fe/gherkin/](../fe/)
-- **App source**: [apps/ayokoding-fs/](../../../../apps/ayokoding-fs/README.md)
+- **App source**: [apps/ayokoding-web/](../../../../apps/ayokoding-web/README.md)

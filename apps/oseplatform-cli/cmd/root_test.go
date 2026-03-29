@@ -11,8 +11,8 @@ func TestRootCommand_Initialization(t *testing.T) {
 		t.Errorf("Expected use 'oseplatform-cli', got %s", rootCmd.Use)
 	}
 
-	if rootCmd.Short != "CLI tools for oseplatform-fs Hugo site" {
-		t.Errorf("Expected short description 'CLI tools for oseplatform-fs Hugo site', got %s", rootCmd.Short)
+	if rootCmd.Short != "CLI tools for oseplatform-web Hugo site" {
+		t.Errorf("Expected short description 'CLI tools for oseplatform-web Hugo site', got %s", rootCmd.Short)
 	}
 
 	if rootCmd.Version != "0.1.0" {

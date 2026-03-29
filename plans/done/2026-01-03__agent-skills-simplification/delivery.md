@@ -38,30 +38,30 @@ This plan delivers agent simplification through three sequential phases based on
 **Top 5 Duplication Patterns**:
 
 1. **Criticality levels system** (CRITICAL) - 25+ agents, 2,800-4,200 lines total
-2. **Hugo ayokoding-fs weight system** (CRITICAL) - 3-4 agents, ~400 lines
+2. **Hugo ayokoding-web weight system** (CRITICAL) - 3-4 agents, ~400 lines
 3. **Annotation density standards** (CRITICAL) - 2 agents, ~150 lines
 4. **Maker-Checker-Fixer workflow** (HIGH) - Multiple agents, ~150 lines
 5. **Accessible color palette** (HIGH) - 8+ agents, ~80 lines
 
 **Top 5 Agents by Duplication**:
 
-1. apps**ayokoding-fs**by-example-maker (~800 lines)
-2. apps**ayokoding-fs**general-checker (~400 lines)
+1. apps**ayokoding-web**by-example-maker (~800 lines)
+2. apps**ayokoding-web**general-checker (~400 lines)
 3. docs\_\_checker (~300 lines)
-4. apps**ayokoding-fs**structure-maker (~300 lines)
-5. apps**ayokoding-fs**by-example-checker (~300 lines)
+4. apps**ayokoding-web**structure-maker (~300 lines)
+5. apps**ayokoding-web**by-example-checker (~300 lines)
 
 **Most-Duplicated Skills**:
 
 1. assessing-criticality-confidence (25+ agents - all checkers/fixers)
-2. developing-ayokoding-content (8-10 ayokoding-fs agents)
+2. developing-ayokoding-content (8-10 ayokoding-web agents)
 3. creating-by-example-tutorials (3-4 by-example agents)
 4. applying-content-quality (10+ content-creating agents)
 5. creating-accessible-diagrams (8+ diagram-using agents)
 
 **Simplification Priority**:
 
-- **P0 (CRITICAL)**: Refactor checker/fixer agents (criticality systems), ayokoding-fs agents (weight systems, annotation standards)
+- **P0 (CRITICAL)**: Refactor checker/fixer agents (criticality systems), ayokoding-web agents (weight systems, annotation standards)
 - **P1 (HIGH)**: Refactor diagram references, plan agents, README agents
 - **P2 (MEDIUM)**: Update agent frontmatter `skills:` fields, create Skill references index
 
@@ -336,7 +336,7 @@ Scenario: Pilot results documented
     - LOW: Batch 10 (infrastructure) - Specialized agents
   - **Execution Order**: Batch 1 → 4 → 5 → 9 → 2 → 3 → 6 → 7 → 8 → 10
   - **Report Location**: rollout-order.md in plan folder
-  - Group remaining agents by family: ayokoding-fs (16), ose-platform-web (4), readme (3), plan (5), workflow (3), swe (1), social (1), agent (1), docs remaining (5 agents: tutorial-maker, tutorial-checker, tutorial-fixer, file-manager, link-general-checker), wow-rules (3)
+  - Group remaining agents by family: ayokoding-web (16), ose-platform-web (4), readme (3), plan (5), workflow (3), swe (1), social (1), agent (1), docs remaining (5 agents: tutorial-maker, tutorial-checker, tutorial-fixer, file-manager, link-general-checker), wow-rules (3)
   - Note: docs pilot (maker, checker, fixer) completed in Phase 1
   - Prioritize families by duplication level (from Phase 1 audit)
   - Document rollout order
@@ -372,7 +372,7 @@ Scenario: Pilot results documented
   - For each: Remove duplication, update skills:, verify size
   - Measure batch metrics and update delivery.md
 
-- [x] **4.3: Simplify ayokoding-fs family (16 agents)**
+- [x] **4.3: Simplify ayokoding-web family (16 agents)**
   - General: general-maker, general-checker, general-fixer
   - By-Example: by-example-maker, by-example-checker, by-example-fixer
   - Facts: facts-checker, facts-fixer
@@ -468,7 +468,7 @@ Scenario: Rollout metrics tracked
 
 **Size Reduction by Family**:
 
-- ayokoding-fs (16): [Average reduction: X%]
+- ayokoding-web (16): [Average reduction: X%]
 - ose-platform-web (4): [Average reduction: X%]
 - readme (3): [Average reduction: X%]
 - plan (5): [Average reduction: X%]

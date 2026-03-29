@@ -27,7 +27,7 @@ the "dynamic linking" defense. The LGPL-licensed code is baked into the wheel ar
 
 **Severity**: HIGH — replaceable with a permissive alternative.
 
-### 2. `@img/sharp-libvips` (LGPL-3.0) — ayokoding-fs
+### 2. `@img/sharp-libvips` (LGPL-3.0) — ayokoding-web
 
 **What it is**: Pre-built native binary of `libvips`, an image processing library. Pulled in as
 an optional transitive dependency: `next` → `sharp` (Apache 2.0) → `@img/sharp-libvips`
@@ -68,7 +68,7 @@ Feature: Remove or mitigate all LGPL runtime dependencies
     And all existing tests pass
 
   Scenario: Next.js sharp/libvips LGPL is documented and mitigated
-    Given the app "ayokoding-fs"
+    Given the app "ayokoding-web"
     When I inspect the npm dependency tree for LGPL licenses
     Then either "@img/sharp-libvips" is not present
     Or a documented justification exists explaining dynamic linking compliance

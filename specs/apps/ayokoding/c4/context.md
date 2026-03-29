@@ -52,4 +52,4 @@ graph TD
 - **Container diagram**: [container.md](./container.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
 - **Frontend component diagram**: [component-fe.md](./component-fe.md)
-- **Parent**: [ayokoding-fs specs](../README.md)
+- **Parent**: [ayokoding-web specs](../README.md)

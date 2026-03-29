@@ -7,26 +7,26 @@
 
 ## Executive Summary
 
-Separate universal Java knowledge from OSE codebase-specific style guides by migrating educational content to ayokoding-fs and refining docs/explanation to contain only coding standards for OSE platform development.
+Separate universal Java knowledge from OSE codebase-specific style guides by migrating educational content to ayokoding-web and refining docs/explanation to contain only coding standards for OSE platform development.
 
 **Current State**: 26 files (~48,822 lines) in `docs/explanation/software-engineering/programming-languages/java/` contain mixed universal Java knowledge and OSE-specific style guidelines.
 
 **Target State**:
 
-- **ayokoding-fs**: Universal Java educational content accessible to all learners
+- **ayokoding-web**: Universal Java educational content accessible to all learners
   - `by-example/` - Heavily annotated code examples (beginner/intermediate/advanced)
   - `in-practice/` - Practical guidance (best practices, anti-patterns, TDD/BDD)
   - `release-highlights/` - Java LTS release highlights (last 5 years)
 - **docs/explanation**: OSE-specific Java coding standards and conventions
 
-**Impact**: Improved content findability, clearer separation of concerns, better educational experience for ayokoding-fs users, authoritative style guide for OSE developers.
+**Impact**: Improved content findability, clearer separation of concerns, better educational experience for ayokoding-web users, authoritative style guide for OSE developers.
 
 ## Problem Statement
 
 ### Current Issues
 
 1. **Mixed Content**: `docs/explanation/.../java/` contains both universal Java knowledge (e.g., "what are records?") and OSE-specific style guides (e.g., "use Spring Boot 4 with these configurations")
-2. **Unclear Audience**: Developers unsure whether to reference ayokoding-fs or docs/explanation for Java guidance
+2. **Unclear Audience**: Developers unsure whether to reference ayokoding-web or docs/explanation for Java guidance
 3. **Content Duplication**: Some universal concepts explained in both locations with inconsistent depth
 4. **Findability**: Universal Java knowledge buried in internal documentation rather than public educational site
 5. **Maintainability**: Updates to Java universal knowledge must consider OSE-specific context
@@ -42,16 +42,16 @@ Documentation evolved organically without clear separation between:
 
 ### Primary Goals
 
-1. **Migrate Universal Content**: Move all universal Java knowledge to ayokoding-fs by-example tutorials
+1. **Migrate Universal Content**: Move all universal Java knowledge to ayokoding-web by-example tutorials
 2. **Refine Style Guide**: Reduce docs/explanation to OSE-specific coding standards only
 3. **Maintain Quality**: Ensure no valuable content is lost during migration
 4. **Establish Boundaries**: Create clear guidelines for future content placement
 
 ### Secondary Goals
 
-1. **Improve Annotations**: Ensure ayokoding-fs by-example meets 1.0-2.25 comments-per-code-line ratio
+1. **Improve Annotations**: Ensure ayokoding-web by-example meets 1.0-2.25 comments-per-code-line ratio
 2. **Bilingual Coverage**: Complete Indonesian (ID) navigation for migrated content
-3. **Cross-Reference**: Link docs/explanation style guide to ayokoding-fs for learning resources
+3. **Cross-Reference**: Link docs/explanation style guide to ayokoding-web for learning resources
 
 ## Git Workflow
 
@@ -66,9 +66,9 @@ Documentation evolved organically without clear separation between:
 
 **Commit Strategy**:
 
-- Small, frequent commits per task (e.g., "feat(ayokoding-fs): migrate idioms to intermediate.md")
+- Small, frequent commits per task (e.g., "feat(ayokoding-web): migrate idioms to intermediate.md")
 - One commit per migration task (2.1, 2.2, etc.)
-- Split commits by domain (ayokoding-fs vs docs/explanation)
+- Split commits by domain (ayokoding-web vs docs/explanation)
 - Tag after each phase complete: `phase-1-complete`, `phase-2-complete`, `phase-3-complete`, `phase-4-complete`
 - Never squash during migration (preserve granular history for selective rollback)
 
@@ -82,10 +82,10 @@ Documentation evolved organically without clear separation between:
 
 - Categorize each file as Universal / Style Guide / Mixed
 - Identify content requiring split or consolidation
-- Map universal content to ayokoding-fs structure (by-example/, in-practice/, release-highlights/)
+- Map universal content to ayokoding-web structure (by-example/, in-practice/, release-highlights/)
 - Ensure alignment with latest Java LTS (Java 25, released September 2025)
 
-**Migration to ayokoding-fs**:
+**Migration to ayokoding-web**:
 
 - **by-example/** - Heavily annotated code examples with 1.0-2.25 density PER EXAMPLE
   - Universal Java idioms, patterns, features
@@ -104,7 +104,7 @@ Documentation evolved organically without clear separation between:
 **Refinement in docs/explanation**:
 
 - OSE framework standards (Spring Boot 4, Jakarta EE 11)
-- OSE coding conventions (naming, organization, structure) - **assumes reader knows Java from ayokoding-fs**
+- OSE coding conventions (naming, organization, structure) - **assumes reader knows Java from ayokoding-web**
 - OSE testing standards (JUnit 5, Mockito, TestContainers setup)
 - OSE build configuration (Maven, dependency management)
 - OSE linting and formatting (Checkstyle, Spotless, Error Prone)
@@ -123,19 +123,19 @@ Documentation evolved organically without clear separation between:
 - **Latest LTS alignment** - All content references Java 25 LTS (except release-highlights which covers 5-year window)
 - **Bilingual navigation** - Ensure EN/ID navigation pairs for all folders
 - **Markdown quality** - Prettier and markdownlint compliance
-- **Cross-reference validation** - Verify all links between docs/explanation and ayokoding-fs
+- **Cross-reference validation** - Verify all links between docs/explanation and ayokoding-web
 - **Principles alignment** - Verify style guide aligns with 5 software engineering principles
 
 ### Out of Scope
 
 - Creating new Java educational content not present in docs/explanation
 - Translating existing content to Indonesian (focus on navigation only)
-- Rewriting ayokoding-fs by-example tutorials from scratch
+- Rewriting ayokoding-web by-example tutorials from scratch
 - Changing fundamental structure of either documentation system
 
 ## Content Categorization Matrix
 
-### Category 1: Universal Content (Move to ayokoding-fs)
+### Category 1: Universal Content (Move to ayokoding-web)
 
 | File                                                     | Lines  | Destination                   | Notes                                            |
 | -------------------------------------------------------- | ------ | ----------------------------- | ------------------------------------------------ |
@@ -150,7 +150,7 @@ Documentation evolved organically without clear separation between:
 | `ex-soen-prla-ja__best-practices.md` (universal)         | ~2,959 | in-practice/best-practices.md | General Java best practices (70% of 4,227 lines) |
 | `ex-soen-prla-ja__finite-state-machine.md`               | 2,201  | by-example/advanced.md        | FSM patterns in Java                             |
 
-**Subtotal**: ~23,513 lines → ayokoding-fs (by-example: ~16,000, in-practice: ~7,173, release-highlights: ~3,300, removed: ~700)
+**Subtotal**: ~23,513 lines → ayokoding-web (by-example: ~16,000, in-practice: ~7,173, release-highlights: ~3,300, removed: ~700)
 
 ### Category 2: Style Guide Content (Refine in docs/explanation)
 
@@ -179,9 +179,9 @@ Documentation evolved organically without clear separation between:
 
 ### Category 4: Index & Overview (Update)
 
-| File        | Lines | Action  | Notes                                                |
-| ----------- | ----- | ------- | ---------------------------------------------------- |
-| `README.md` | 1,584 | Rewrite | Transform to style guide index, link to ayokoding-fs |
+| File        | Lines | Action  | Notes                                                 |
+| ----------- | ----- | ------- | ----------------------------------------------------- |
+| `README.md` | 1,584 | Rewrite | Transform to style guide index, link to ayokoding-web |
 
 **Subtotal**: ~1,584 lines → rewrite
 
@@ -192,7 +192,7 @@ Documentation evolved organically without clear separation between:
 
 **Destination Breakdown** (after splits):
 
-- **Universal → ayokoding-fs**: ~32,000 lines (65%)
+- **Universal → ayokoding-web**: ~32,000 lines (65%)
   - Category 1 (pure universal): 23,513 lines
   - Category 3 (universal parts): ~8,500 lines (estimated from mixed splits)
   - Subtotal before consolidation: ~32,000 lines
@@ -206,7 +206,7 @@ Documentation evolved organically without clear separation between:
   - Duplicate content after consolidation: ~4,100 lines
   - Category 4 (Index): 1,584 lines rewritten (not counted in removal)
 
-**Note**: Mixed content files (Category 3) are split between destinations. Gross total counts source files before splits (51,853 lines). Net total accounts for splits and consolidation (48,822 lines). Final ayokoding-fs content will expand due to heavy annotations (1.0-2.25 ratio PER EXAMPLE).
+**Note**: Mixed content files (Category 3) are split between destinations. Gross total counts source files before splits (51,853 lines). Net total accounts for splits and consolidation (48,822 lines). Final ayokoding-web content will expand due to heavy annotations (1.0-2.25 ratio PER EXAMPLE).
 
 ## Approach
 
@@ -216,7 +216,7 @@ Documentation evolved organically without clear separation between:
 
 1. ✅ Create plan directory and structure
 2. 🔄 Analyze 26 files for content categorization
-3. 🔄 Map universal content to ayokoding-fs structure
+3. 🔄 Map universal content to ayokoding-web structure
 4. 🔄 Identify style guide content for docs/explanation
 5. 🔄 Draft Gherkin acceptance criteria
 
@@ -226,7 +226,7 @@ Documentation evolved organically without clear separation between:
 - Migration mapping document
 - Gherkin acceptance scenarios
 
-### Phase 2: ayokoding-fs Content Migration
+### Phase 2: ayokoding-web Content Migration
 
 **Tasks**:
 
@@ -242,10 +242,10 @@ Documentation evolved organically without clear separation between:
 
 **Agents**:
 
-- `apps__ayokoding-fs__by-example-maker` - Create by-example content
-- `apps__ayokoding-fs__by-example-checker` - Validate annotation density
-- `apps__ayokoding-fs__general-checker` - Validate structure, navigation
-- `apps__ayokoding-fs__facts-checker` - Verify technical accuracy
+- `apps__ayokoding-web__by-example-maker` - Create by-example content
+- `apps__ayokoding-web__by-example-checker` - Validate annotation density
+- `apps__ayokoding-web__general-checker` - Validate structure, navigation
+- `apps__ayokoding-web__facts-checker` - Verify technical accuracy
 
 **Deliverables**:
 
@@ -262,7 +262,7 @@ Documentation evolved organically without clear separation between:
 3. Refine modules-and-dependencies.md (OSE-specific only)
 4. Extract style guide sections from mixed content files
 5. Consolidate overlapping style guide content
-6. Add cross-references to ayokoding-fs for learning
+6. Add cross-references to ayokoding-web for learning
 7. Apply MUST/SHOULD/MAY directive keywords
 8. Validate against governance/principles/
 
@@ -276,14 +276,14 @@ Documentation evolved organically without clear separation between:
 
 - Refined docs/explanation/software-engineering/programming-languages/java/ structure
 - Style guide README.md with authoritative reference marker
-- Cross-references to ayokoding-fs and governance/
+- Cross-references to ayokoding-web and governance/
 
 ### Phase 4: Quality Assurance & Validation
 
 **Tasks**:
 
 1. Validate no content loss (all valuable content preserved)
-2. Check cross-references (docs ↔ ayokoding-fs)
+2. Check cross-references (docs ↔ ayokoding-web)
 3. Verify markdown quality (Prettier, markdownlint)
 4. Validate Gherkin acceptance criteria met
 5. Test navigation in both locations
@@ -291,7 +291,7 @@ Documentation evolved organically without clear separation between:
 
 **Agents**:
 
-- `apps__ayokoding-fs__general-checker` - Validate ayokoding-fs quality
+- `apps__ayokoding-web__general-checker` - Validate ayokoding-web quality
 - `docs-checker` - Validate docs/explanation quality
 - `docs-link-general-checker` - Validate all links
 
@@ -318,7 +318,7 @@ Documentation evolved organically without clear separation between:
   - Created categorization matrix in plan document
 
 - [x] **1.3: Create content migration mapping**
-  - Universal → ayokoding-fs: ~32,000 lines (65%)
+  - Universal → ayokoding-web: ~32,000 lines (65%)
   - Style Guide → docs/explanation: ~12,000 lines (25%)
   - Remove/Consolidate: ~4,800 lines (10%)
 
@@ -339,7 +339,7 @@ Documentation evolved organically without clear separation between:
 
 ---
 
-### Phase 2: ayokoding-fs Content Migration
+### Phase 2: ayokoding-web Content Migration
 
 **Status**: ✅ Complete
 
@@ -349,7 +349,7 @@ Documentation evolved organically without clear separation between:
   - Source: `ex-soen-prla-ja__idioms.md` (2,322 lines)
   - Add heavy code annotations (1.0-2.25 ratio)
   - Remove platform-specific references (2 instances)
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 10 examples (51-60), 1,845 lines, removed Islamic finance refs
 
 - [x] **2.2: Create release-highlights/ folder with LTS summaries**
@@ -360,31 +360,31 @@ Documentation evolved organically without clear separation between:
   - Create `java-25.md` - Java 25 LTS highlights (~1,000 lines)
   - Focus on highlights, not exhaustive coverage
   - Exclude Java 8, 11, 14, 18, 22 (outside 5-year window or non-LTS)
-  - Agent: `apps__ayokoding-fs__general-maker`
+  - Agent: `apps__ayokoding-web__general-maker`
   - Completed: 2026-02-03 - Created 5 files (1,717 lines total), condensed from source
 
 - [x] **2.3: Migrate functional programming to by-example/intermediate.md**
   - Source: `ex-soen-prla-ja__functional-programming.md` (1,700 lines)
   - Add practical examples with annotations
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 10 examples (61-70), 2,056 lines, FP concepts
 
 - [x] **2.4: Migrate type safety to by-example/intermediate.md**
   - Source: `ex-soen-prla-ja__type-safety.md` (1,907 lines)
   - Add tool examples (JSpecify, NullAway)
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 9 examples (71-79), 980 lines, type safety tools
 
 - [x] **2.5: Migrate interfaces and polymorphism to by-example/beginner.md**
   - Source: `ex-soen-prla-ja__interfaces-and-polymorphism.md` (1,777 lines)
   - Add foundational examples
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 10 examples (31-40), 700 lines, beginner OOP
 
 - [x] **2.6: Migrate memory management to by-example/advanced.md**
   - Source: `ex-soen-prla-ja__memory-management.md` (2,433 lines)
   - Add JVM tuning examples
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 9 examples (76-84), 1,519 lines, JVM internals
 
 - [x] **2.7: Migrate anti-patterns to in-practice/anti-patterns.md**
@@ -392,13 +392,13 @@ Documentation evolved organically without clear separation between:
   - Source: `ex-soen-prla-ja__anti-patterns.md` (4,214 lines)
   - Create conceptual guidance with anti-pattern examples
   - Not code-heavy like by-example (more explanatory)
-  - Agent: `apps__ayokoding-fs__general-maker`
+  - Agent: `apps__ayokoding-web__general-maker`
   - Completed: 2026-02-03 - Created in-practice/ folder with 978 lines, conceptual guidance
 
 - [x] **2.8: Migrate finite state machine to by-example/advanced.md**
   - Source: `ex-soen-prla-ja__finite-state-machine.md` (2,201 lines)
   - Add FSM implementation examples
-  - Agent: `apps__ayokoding-fs__by-example-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker`
   - Completed: 2026-02-03 - Added 7 examples (85-91), 1,712 lines, 6 state diagrams
 
 #### Mixed Content Migration (Universal Parts)
@@ -408,42 +408,42 @@ Documentation evolved organically without clear separation between:
   - Extract universal best practices (~70%, 2,959 lines) → in-practice/best-practices.md
   - Keep OSE naming conventions, project structure (~30%, 1,268 lines) → docs/explanation
   - Create conceptual guidance (not code-heavy)
-  - Agent: `apps__ayokoding-fs__general-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__general-maker` + `docs-maker`
   - Completed: 2026-02-03 - Created universal part (1,468 lines), OSE part for Phase 3
 
 - [x] **2.10: Split and migrate error handling**
   - Source: `ex-soen-prla-ja__error-handling.md` (3,225 lines)
   - Extract exception patterns (~80%, 2,580 lines) → intermediate.md
   - Keep OSE error handling standards (~20%, 645 lines) → docs/explanation
-  - Agent: `apps__ayokoding-fs__by-example-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker` + `docs-maker`
   - Completed: 2026-02-03 - Added 9 examples (80-88), 1,820 lines, error handling
 
 - [x] **2.11: Split and migrate concurrency**
   - Source: `ex-soen-prla-ja__concurrency-and-parallelism.md` (2,025 lines)
   - Extract virtual threads, patterns (~75%, 1,519 lines) → advanced.md
   - Keep OSE concurrency guidelines (~25%, 506 lines) → docs/explanation
-  - Agent: `apps__ayokoding-fs__by-example-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker` + `docs-maker`
   - Completed: 2026-02-03 - Added 9 examples (92-100), advanced.md now 100 examples!
 
 - [x] **2.12: Split and migrate performance**
   - Source: `ex-soen-prla-ja__performance.md` (1,733 lines)
   - Extract JVM tuning, profiling (~85%, 1,473 lines) → advanced.md
   - Keep OSE performance requirements (~15%, 260 lines) → docs/explanation
-  - Agent: `apps__ayokoding-fs__by-example-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker` + `docs-maker`
   - Completed: 2026-02-03 - Added 9 examples (JVM, GC, profiling, JMH)
 
 - [x] **2.13: Split and migrate security**
   - Source: `ex-soen-prla-ja__security.md` (2,281 lines)
   - Extract OWASP guidelines, crypto (~90%, 2,053 lines) → advanced.md
   - Keep OSE security standards (~10%, 228 lines) → docs/explanation
-  - Agent: `apps__ayokoding-fs__by-example-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker` + `docs-maker`
   - Completed: 2026-02-03 - Added 9 examples (OWASP, crypto, JWT, CSRF)
 
 - [x] **2.14: Split and migrate web services**
   - Source: `ex-soen-prla-ja__web-services.md` (3,644 lines)
   - Extract REST, GraphQL, gRPC (~80%, 2,915 lines) → advanced.md
   - Keep OSE API standards (~20%, 729 lines) → docs/explanation
-  - Agent: `apps__ayokoding-fs__by-example-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__by-example-maker` + `docs-maker`
   - Completed: 2026-02-03 - Added 10 examples (REST, GraphQL, gRPC, HATEOAS)
 
 - [x] **2.15: Split and migrate TDD**
@@ -451,7 +451,7 @@ Documentation evolved organically without clear separation between:
   - Extract TDD principles, patterns (~85%, 1,515 lines) → in-practice/test-driven-development.md
   - Keep OSE testing setup (~15%, 267 lines) → docs/explanation
   - Create conceptual guidance with testing examples
-  - Agent: `apps__ayokoding-fs__general-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__general-maker` + `docs-maker`
   - Completed: 2026-02-03 - Created TDD content (589 lines, conceptual guidance)
 
 - [x] **2.16: Split and migrate BDD**
@@ -459,7 +459,7 @@ Documentation evolved organically without clear separation between:
   - Extract BDD with Cucumber (~90%, 1,761 lines) → in-practice/behavior-driven-development.md
   - Keep OSE BDD standards (~10%, 196 lines) → docs/explanation
   - Create conceptual guidance with BDD examples
-  - Agent: `apps__ayokoding-fs__general-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__general-maker` + `docs-maker`
   - Completed: 2026-02-03 - Created BDD content (869 lines, conceptual guidance)
 
 - [x] **2.17: Split and migrate DDD**
@@ -467,7 +467,7 @@ Documentation evolved organically without clear separation between:
   - Extract DDD tactical patterns (~85%, 1,740 lines) → in-practice/domain-driven-design.md
   - Keep OSE DDD implementation (~15%, 307 lines) → docs/explanation
   - Create conceptual guidance with DDD pattern examples
-  - Agent: `apps__ayokoding-fs__general-maker` + `docs-maker`
+  - Agent: `apps__ayokoding-web__general-maker` + `docs-maker`
   - Completed: 2026-02-03 - Created DDD content (1,612 lines, conceptual guidance)
 
 #### Navigation and Structure
@@ -476,27 +476,27 @@ Documentation evolved organically without clear separation between:
   - Create folder: `java/in-practice/`
   - Create `_index.md` with folder description and navigation
   - Set appropriate weight for ordering
-  - Agent: `apps__ayokoding-fs__general-maker`
+  - Agent: `apps__ayokoding-web__general-maker`
   - Completed: 2026-02-03 - Created during task 2.7 (anti-patterns)
 
 - [x] **2.19: Create release-highlights/ folder structure**
   - Create folder: `java/release-highlights/`
   - Create `_index.md` with LTS overview (last 5 years)
   - Set appropriate weight for ordering
-  - Agent: `apps__ayokoding-fs__general-maker`
+  - Agent: `apps__ayokoding-web__general-maker`
   - Completed: 2026-02-03 - Created during task 2.2
 
 - [x] **2.20: Update java/overview.md**
   - Explain three-folder structure (by-example, in-practice, release-highlights)
   - Add navigation links to all three folders
   - Explain when to use each folder type
-  - Agent: `apps__ayokoding-fs__general-maker`
+  - Agent: `apps__ayokoding-web__general-maker`
   - Completed: 2026-02-03 - Added tutorial organization section with learning paths
 
 - [x] **2.21: Update java/\_index.md**
   - Update navigation to include in-practice/ and release-highlights/
   - Ensure bilingual EN/ID navigation
-  - Agent: `apps__ayokoding-fs__navigation-maker`
+  - Agent: `apps__ayokoding-web__navigation-maker`
   - Completed: 2026-02-03 - Updated with complete 2-layer navigation, added BDD/DDD
 
 #### Quality Validation
@@ -508,22 +508,22 @@ Documentation evolved organically without clear separation between:
   - Check diagram frequency (30-50% of examples have diagrams)
   - Verify color-blind friendly palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC)
   - Verify "Why It Matters" sections 50-100 words (per by-example convention)
-  - Agent: `apps__ayokoding-fs__by-example-checker`
-  - Fix violations: `apps__ayokoding-fs__by-example-fixer`
+  - Agent: `apps__ayokoding-web__by-example-checker`
+  - Fix violations: `apps__ayokoding-web__by-example-fixer`
   - Completed: 2026-02-03 - PASS with minor fixes needed (157 examples, 4 annotation violations)
 
 - [x] **2.23: Update bilingual navigation (EN/ID)**
   - Update `_index.md` files for all folders (by-example/, in-practice/, release-highlights/)
   - Ensure EN/ID pairs exist for all content
   - Verify navigation completeness
-  - Agent: `apps__ayokoding-fs__navigation-maker`
+  - Agent: `apps__ayokoding-web__navigation-maker`
   - Completed: 2026-02-03 - EN navigation complete, ID translation pending (out of scope)
 
-- [x] **2.24: Validate ayokoding-fs structure**
+- [x] **2.24: Validate ayokoding-web structure**
   - Check level-based weight ordering
   - Verify absolute path linking (no .md extension)
   - Validate frontmatter completeness
-  - Agent: `apps__ayokoding-fs__general-checker`
+  - Agent: `apps__ayokoding-web__general-checker`
   - Completed: 2026-02-03 - PASS with 2 minor frontmatter issues (missing tags)
 
 - [x] **2.25: Web-validate technical accuracy**
@@ -531,13 +531,13 @@ Documentation evolved organically without clear separation between:
   - Use WebFetch to check official Java documentation for code examples
   - Validate command syntax (javac, java, maven commands)
   - Verify library versions and API references
-  - Agent: `apps__ayokoding-fs__facts-checker`
+  - Agent: `apps__ayokoding-web__facts-checker`
   - Completed: 2026-02-03 - Verified 8 features, found 1 JEP reference error (fixable)
 
 **Phase 2 Metrics**:
 
 - Files migrated: [17/17 universal + mixed files] ✅
-- Lines migrated to ayokoding-fs: [~35,000+ lines created] ✅
+- Lines migrated to ayokoding-web: [~35,000+ lines created] ✅
 - Folders created: [2/2 new folders (in-practice/, release-highlights/)] ✅
 - Navigation files created: [4/4 _index.md files] ✅
 - By-example compliance: [PASS - 157 examples, 4 minor annotation violations] ✅
@@ -550,7 +550,7 @@ Documentation evolved organically without clear separation between:
 **Content Migration** (BLOCKING):
 
 - ✅ 17/17 files migrated successfully (100% required)
-- ✅ 32,000+ lines in ayokoding-fs (allow ±5% variance: 30,400-33,600 lines)
+- ✅ 32,000+ lines in ayokoding-web (allow ±5% variance: 30,400-33,600 lines)
 - ✅ 2/2 new folders created (in-practice/, release-highlights/)
 - ✅ 4/4 navigation \_index.md files created
 
@@ -585,10 +585,10 @@ Documentation evolved organically without clear separation between:
   - Transform to authoritative reference marker
   - Document framework stack (Spring Boot 4, Jakarta EE 11)
   - Add clear MUST/SHOULD/MAY directives
-  - Link to ayokoding-fs for learning
+  - Link to ayokoding-web for learning
   - Link to governance/principles/ for foundations
   - Agent: `docs-maker`
-  - **Completed**: Transformed from 1,585 to ~270 lines with authoritative positioning, MUST/SHOULD/MAY directives, ayokoding-fs learning links, and framework stack documentation
+  - **Completed**: Transformed from 1,585 to ~270 lines with authoritative positioning, MUST/SHOULD/MAY directives, ayokoding-web learning links, and framework stack documentation
 
 #### Style Guide Files
 
@@ -644,19 +644,19 @@ Documentation evolved organically without clear separation between:
   - Security standards (228 lines from security split)
   - API standards (729 lines from web-services split)
   - DDD implementation (307 lines from DDD split)
-  - **CRITICAL**: Assume reader knows Java basics from ayokoding-fs (don't re-explain fundamentals)
+  - **CRITICAL**: Assume reader knows Java basics from ayokoding-web (don't re-explain fundamentals)
   - Agent: `docs-maker`
   - **Completed**: Created 6 OSE-specific standards files (error-handling-standards.md, concurrency-standards.md, performance-standards.md, security-standards.md, api-standards.md, ddd-standards.md) totaling ~3,070 lines with prescriptive directives and financial domain examples
 
-- [x] **3.8: Add cross-references to ayokoding-fs**
-  - **CRITICAL**: Link to ayokoding-fs for learning Java (assume knowledge)
+- [x] **3.8: Add cross-references to ayokoding-web**
+  - **CRITICAL**: Link to ayokoding-web for learning Java (assume knowledge)
   - Reference by-example/ for code examples
   - Reference in-practice/ for conceptual guidance
   - Reference release-highlights/ for LTS features
-  - Add "Learn more: [topic] in ayokoding-fs" sections
+  - Add "Learn more: [topic] in ayokoding-web" sections
   - Ensure all style guide directives reference learning resources
   - Agent: `docs-maker`
-  - **Completed**: Added comprehensive "Learning Resources" sections to all 12 files with specific topic links to ayokoding-fs tutorials
+  - **Completed**: Added comprehensive "Learning Resources" sections to all 12 files with specific topic links to ayokoding-web tutorials
 
 - [x] **3.9: Align with software engineering principles**
   - **Automation Over Manual** (governance/principles/software-engineering/automation-over-manual.md):
@@ -709,12 +709,12 @@ Documentation evolved organically without clear separation between:
   - **Completed**: PASS WITH MINOR ISSUES - Spring Boot 4 and Jakarta EE 11 verified, Java 25 features mostly verified (3 MEDIUM priority findings: JUnit version update, 2 unverified JEPs), report: generated-reports/docs**\_fcac59**2026-02-03--13-54\_\_audit.md
 
 - [x] **3.13: Validate cross-references**
-  - Check all links to ayokoding-fs (by-example/, in-practice/, release-highlights/)
+  - Check all links to ayokoding-web (by-example/, in-practice/, release-highlights/)
   - Verify links to governance/principles/software-engineering/
   - Validate internal style guide links
-  - Ensure "Learn more" sections point to ayokoding-fs
+  - Ensure "Learn more" sections point to ayokoding-web
   - Agent: `docs-link-general-checker`
-  - **Completed**: PASS - 98/98 links working (100% pass rate), all ayokoding-fs learning path links valid, all governance principles links valid, cache updated, report: generated-reports/docs-link**8a564e**2026-02-03--13-58\_\_audit.md
+  - **Completed**: PASS - 98/98 links working (100% pass rate), all ayokoding-web learning path links valid, all governance principles links valid, cache updated, report: generated-reports/docs-link**8a564e**2026-02-03--13-58\_\_audit.md
 
 - [x] **3.14: Validate markdown quality**
   - Check Prettier compliance
@@ -733,7 +733,7 @@ Documentation evolved organically without clear separation between:
   - error-handling-standards.md, concurrency-standards.md, performance-standards.md, security-standards.md, api-standards.md, ddd-standards.md
 - OSE-specific content consolidated: [~3,070 lines created] ✅
 - Software engineering principles referenced: [5/5 principles in all files] ✅
-- Cross-references to ayokoding-fs: [98 links verified] ✅
+- Cross-references to ayokoding-web: [98 links verified] ✅
 - Cross-references to governance/: [20 principle links verified] ✅
 - Java 25 LTS alignment: [Verified with minor issues] ✅
 - Validation: [4/4 validation tasks passed] ✅
@@ -760,10 +760,10 @@ Documentation evolved organically without clear separation between:
 
 **Cross-References** (BLOCKING):
 
-- ✅ All links to ayokoding-fs tested (zero broken)
+- ✅ All links to ayokoding-web tested (zero broken)
 - ✅ All links to governance/ tested (zero broken)
-- ✅ "Learn more" sections point to ayokoding-fs appropriately
-- ✅ Style guide assumes ayokoding-fs knowledge (no re-explanation)
+- ✅ "Learn more" sections point to ayokoding-web appropriately
+- ✅ Style guide assumes ayokoding-web knowledge (no re-explanation)
 
 **Markdown Quality** (BLOCKING):
 
@@ -811,10 +811,10 @@ Documentation evolved organically without clear separation between:
   - **Completed**: 2026-02-03 - Spring Boot 4 (Nov 2025) and Jakarta EE 11 (Jun 2025) verified
 
 - [x] **4.4: Validate Gherkin acceptance criteria**
-  - **Scenario 1**: Universal content migrated to ayokoding-fs (by-example/, in-practice/, release-highlights/)
+  - **Scenario 1**: Universal content migrated to ayokoding-web (by-example/, in-practice/, release-highlights/)
   - **Scenario 2**: Style guide refined in docs/explanation with principles alignment
   - **Scenario 3**: No content loss during migration
-  - **Scenario 4**: Cross-references maintained (docs ↔ ayokoding-fs ↔ governance)
+  - **Scenario 4**: Cross-references maintained (docs ↔ ayokoding-web ↔ governance)
   - **Scenario 5**: Quality standards maintained (by-example compliance, web-validated accuracy)
   - **Scenario 6**: Latest LTS alignment (Java 25) except release-highlights (5-year window)
   - **Completed**: 2026-02-03 - 6/6 scenarios PASS
@@ -822,18 +822,18 @@ Documentation evolved organically without clear separation between:
 #### Link Validation
 
 - [x] **4.5: Validate all cross-references**
-  - Test docs/explanation → ayokoding-fs links (by-example/, in-practice/, release-highlights/)
-  - Test ayokoding-fs → docs/explanation links
+  - Test docs/explanation → ayokoding-web links (by-example/, in-practice/, release-highlights/)
+  - Test ayokoding-web → docs/explanation links
   - Test docs/explanation → governance/principles/software-engineering/ links
   - Test docs/explanation → governance/conventions/ links
-  - Verify absolute paths in ayokoding-fs (no .md extension)
+  - Verify absolute paths in ayokoding-web (no .md extension)
   - Agent: `docs-link-general-checker`
   - **Completed**: 2026-02-03 - 98/98 links working (100% pass rate)
 
 - [x] **4.6: Test navigation in all locations**
-  - Navigate through ayokoding-fs by-example/ tutorials
-  - Navigate through ayokoding-fs in-practice/ content
-  - Navigate through ayokoding-fs release-highlights/ summaries
+  - Navigate through ayokoding-web by-example/ tutorials
+  - Navigate through ayokoding-web in-practice/ content
+  - Navigate through ayokoding-web release-highlights/ summaries
   - Navigate through docs/explanation style guide
   - Verify bilingual navigation (EN/ID) works
   - Test \_index.md files for all folders
@@ -849,7 +849,7 @@ Documentation evolved organically without clear separation between:
   - Pre-commit hooks validation
   - **Completed**: 2026-02-03 - Prettier: 0 errors, markdownlint: 0 errors
 
-- [x] **4.8: Validate ayokoding-fs by-example compliance**
+- [x] **4.8: Validate ayokoding-web by-example compliance**
   - **CRITICAL**: Annotation density 1.0-2.25 PER EXAMPLE (not file average)
   - Five-part structure (explanation, diagram optional, code, takeaway, why it matters)
   - Self-containment (copy-paste runnable within chapter scope)
@@ -859,17 +859,17 @@ Documentation evolved organically without clear separation between:
   - Level-based weight ordering
   - Bilingual navigation completeness (EN/ID)
   - Absolute path linking (no .md extension)
-  - Agent: `apps__ayokoding-fs__by-example-checker` + `apps__ayokoding-fs__general-checker`
+  - Agent: `apps__ayokoding-web__by-example-checker` + `apps__ayokoding-web__general-checker`
   - **Completed**: 2026-02-03 - 95%+ compliance, 4 violations fixed
 
 - [x] **4.9: Validate docs/explanation style guide compliance**
-  - **Assumes ayokoding-fs knowledge**: Verify no re-explanation of Java basics
+  - **Assumes ayokoding-web knowledge**: Verify no re-explanation of Java basics
   - **Software engineering principles alignment**: Check all 5 principles referenced
   - MUST/SHOULD/MAY directive usage (clear imperatives)
   - Active voice throughout
   - Proper heading hierarchy
   - WCAG AA compliance
-  - Links to ayokoding-fs for learning
+  - Links to ayokoding-web for learning
   - Links to governance/principles/software-engineering/
   - Agent: `docs-checker`
   - **Completed**: 2026-02-03 - All 5 principles aligned, PASS
@@ -935,7 +935,7 @@ Documentation evolved organically without clear separation between:
 **Link Validation** (BLOCKING):
 
 - ✅ Zero broken links (docs-link-general-checker)
-- ✅ All cross-references tested (docs ↔ ayokoding-fs ↔ governance)
+- ✅ All cross-references tested (docs ↔ ayokoding-web ↔ governance)
 - ✅ Navigation functional in all locations
 
 **Quality Validation** (BLOCKING):
@@ -1017,7 +1017,7 @@ Documentation evolved organically without clear separation between:
 **Key Metrics**:
 
 - Files analyzed: 26/26 ✅
-- Files migrated to ayokoding-fs: 0/17
+- Files migrated to ayokoding-web: 0/17
 - Style guide files created: 0/6
 - Files removed from docs/explanation: 0/20
 - Total lines migrated: 0/~32,000
@@ -1033,12 +1033,12 @@ Documentation evolved organically without clear separation between:
 
 ## Success Criteria (Gherkin)
 
-### Scenario: Universal content migrated to ayokoding-fs
+### Scenario: Universal content migrated to ayokoding-web
 
 ```gherkin
 Given docs/explanation Java files contain universal knowledge
 When content is categorized and migrated
-Then ayokoding-fs contains all universal Java concepts in three folders
+Then ayokoding-web contains all universal Java concepts in three folders
   And by-example/ contains heavily annotated code examples
   And by-example tutorials follow annotation standards (1.0-2.25 ratio PER EXAMPLE)
   And beginner.md covers Java basics and simple patterns
@@ -1063,7 +1063,7 @@ Then ayokoding-fs contains all universal Java concepts in three folders
 Given docs/explanation contains mixed content
 When non-style-guide content is removed
 Then only OSE-specific coding standards remain
-  And style guide clearly references ayokoding-fs for learning
+  And style guide clearly references ayokoding-web for learning
   And all directives use MUST/SHOULD/MAY keywords
   And framework choices documented (Spring Boot 4, Jakarta EE 11)
   And build configuration standardized (Maven, dependency management)
@@ -1087,8 +1087,8 @@ Then all valuable content is preserved
 ```gherkin
 Given content split across two locations
 When migration completes
-Then docs/explanation links to ayokoding-fs for universal topics
-  And ayokoding-fs links to docs/explanation for OSE conventions
+Then docs/explanation links to ayokoding-web for universal topics
+  And ayokoding-web links to docs/explanation for OSE conventions
   And governance/principles/ referenced appropriately
   And all links validated by docs-link-general-checker
 ```
@@ -1096,7 +1096,7 @@ Then docs/explanation links to ayokoding-fs for universal topics
 ### Scenario: Quality standards maintained
 
 ```gherkin
-Given ayokoding-fs and docs/explanation quality requirements
+Given ayokoding-web and docs/explanation quality requirements
 When content migration completes
 Then markdown passes Prettier and markdownlint checks
   And WCAG AA accessibility compliance maintained
@@ -1119,13 +1119,13 @@ Then markdown passes Prettier and markdownlint checks
 
 **Completion Criteria**: Task 1.5 (stakeholder approval) complete
 
-### Phase 2: ayokoding-fs Migration
+### Phase 2: ayokoding-web Migration
 
 **Dependencies**: Phase 1 complete
 
 **Deliverables**:
 
-- 17 files migrated to ayokoding-fs (universal + mixed content splits)
+- 17 files migrated to ayokoding-web (universal + mixed content splits)
 - By-example compliance validated (annotation density 1.0-2.25 PER EXAMPLE)
 - Bilingual navigation complete (EN/ID pairs for all folders)
 - 2 new folders created (in-practice/, release-highlights/)
@@ -1140,7 +1140,7 @@ Then markdown passes Prettier and markdownlint checks
 
 - 6 style guide files created
 - Software engineering principles aligned
-- Cross-references validated (docs ↔ ayokoding-fs ↔ governance)
+- Cross-references validated (docs ↔ ayokoding-web ↔ governance)
 - Java 25 LTS alignment verified
 
 **Completion Criteria**: All Phase 3 gate criteria passed (see Phase 3 Gate Criteria section)
@@ -1164,8 +1164,8 @@ Then markdown passes Prettier and markdownlint checks
 
 ### Internal Dependencies
 
-- **Agents**: apps\_\_ayokoding-fs\_\_by-example-maker, apps\_\_ayokoding-fs\_\_by-example-checker, apps\_\_ayokoding-fs\_\_by-example-fixer, apps\_\_ayokoding-fs\_\_general-checker, apps\_\_ayokoding-fs\_\_facts-checker, apps\_\_ayokoding-fs\_\_general-maker, apps\_\_ayokoding-fs\_\_navigation-maker, docs-maker, docs-checker, docs-link-general-checker
-- **Skills**: apps-ayokoding-fs-developing-content, docs-creating-by-example-tutorials, docs-applying-diataxis-framework
+- **Agents**: apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ayokoding-web\_\_by-example-checker, apps\_\_ayokoding-web\_\_by-example-fixer, apps\_\_ayokoding-web\_\_general-checker, apps\_\_ayokoding-web\_\_facts-checker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_navigation-maker, docs-maker, docs-checker, docs-link-general-checker
+- **Skills**: apps-ayokoding-web-developing-content, docs-creating-by-example-tutorials, docs-applying-diataxis-framework
 - **Conventions**: File naming, linking, markdown quality, Diátaxis framework
 
 ### External Dependencies
@@ -1218,8 +1218,8 @@ Then markdown passes Prettier and markdownlint checks
 
 **If Phase 3 style guide fails validation**:
 
-1. Revert Phase 3 commits only (Phase 2 ayokoding-fs content preserved)
-2. Keep migrated universal content in ayokoding-fs
+1. Revert Phase 3 commits only (Phase 2 ayokoding-web content preserved)
+2. Keep migrated universal content in ayokoding-web
 3. Restore original docs/explanation files temporarily
 4. Revise style guide extraction approach
 5. Restart Phase 3
@@ -1289,7 +1289,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 ### Content Migration Validation
 
 - [ ] **All 26 source files accounted for**
-  - [ ] 8 universal files migrated to ayokoding-fs (idioms, FP, type safety, interfaces, memory, FSM + 2 release highlights)
+  - [ ] 8 universal files migrated to ayokoding-web (idioms, FP, type safety, interfaces, memory, FSM + 2 release highlights)
   - [ ] 2 style guide files refined in docs/explanation (linting, modules)
   - [ ] 9 mixed files split correctly (best practices, error handling, concurrency, performance, security, web services, TDD, BDD, DDD)
   - [ ] 7 outdated release files removed/archived (Java 8, 11, 14, 18, 22 + 2 non-LTS)
@@ -1301,7 +1301,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
   - [ ] All important concepts covered
   - [ ] Justification provided for removed content
 
-### ayokoding-fs Compliance Validation
+### ayokoding-web Compliance Validation
 
 - [ ] **Folder structure created**
   - [ ] by-example/ exists with beginner.md, intermediate.md, advanced.md
@@ -1322,7 +1322,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 - [ ] **Navigation completeness**
   - [ ] All \_index.md files exist (java/, by-example/, in-practice/, release-highlights/)
   - [ ] Bilingual pairs complete (EN/ID) for all folders
-  - [ ] Absolute path linking (no .md extension) in all ayokoding-fs files
+  - [ ] Absolute path linking (no .md extension) in all ayokoding-web files
   - [ ] Level-based weight ordering correct
 
 ### docs/explanation Compliance Validation
@@ -1333,13 +1333,13 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
   - [ ] OSE-specific content from splits consolidated (~12,000 lines)
   - [ ] 20 old files removed from docs/explanation
 
-- [ ] **Assumes ayokoding-fs knowledge**
+- [ ] **Assumes ayokoding-web knowledge**
   - [ ] No re-explanation of Java basics (variables, loops, classes, etc.)
-  - [ ] Links to ayokoding-fs for learning fundamentals
+  - [ ] Links to ayokoding-web for learning fundamentals
   - [ ] References by-example/ for code examples
   - [ ] References in-practice/ for conceptual guidance
   - [ ] References release-highlights/ for LTS features
-  - [ ] "Learn more" sections point to ayokoding-fs appropriately
+  - [ ] "Learn more" sections point to ayokoding-web appropriately
 
 - [ ] **Software engineering principles alignment**
   - [ ] Automation Over Manual referenced (linting, testing, dependency management tools)
@@ -1379,8 +1379,8 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 ### Link and Navigation Validation
 
 - [ ] **Cross-reference completeness**
-  - [ ] docs/explanation → ayokoding-fs links tested (by-example/, in-practice/, release-highlights/)
-  - [ ] ayokoding-fs → docs/explanation links tested
+  - [ ] docs/explanation → ayokoding-web links tested (by-example/, in-practice/, release-highlights/)
+  - [ ] ayokoding-web → docs/explanation links tested
   - [ ] docs/explanation → governance/principles/ links tested
   - [ ] docs/explanation → governance/conventions/ links tested
   - [ ] All links validated by docs-link-general-checker (zero broken links)
@@ -1410,10 +1410,10 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 ### Gherkin Acceptance Criteria
 
-- [ ] **Scenario 1**: Universal content migrated to ayokoding-fs (3 folders)
+- [ ] **Scenario 1**: Universal content migrated to ayokoding-web (3 folders)
 - [ ] **Scenario 2**: Style guide refined in docs/explanation (principles-aligned)
 - [ ] **Scenario 3**: No content loss during migration
-- [ ] **Scenario 4**: Cross-references maintained (docs ↔ ayokoding-fs ↔ governance)
+- [ ] **Scenario 4**: Cross-references maintained (docs ↔ ayokoding-web ↔ governance)
 - [ ] **Scenario 5**: Quality standards maintained (by-example, markdown, accessibility)
 - [ ] **Scenario 6**: Latest LTS alignment (Java 25) except release-highlights (5-year window)
 
@@ -1443,7 +1443,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,322
 - **Content**: Modern Java patterns (records, sealed classes, pattern matching, Optional, streams)
-- **Destination**: ayokoding-fs/by-example/intermediate.md
+- **Destination**: ayokoding-web/by-example/intermediate.md
 - **Action**: Migrate entire file with heavy code annotations
 - **Platform-specific references**: 2 (minimal, remove during migration)
 
@@ -1451,7 +1451,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: ~4,000 total
 - **Content**: Java 8, 11, 14, 17, 18, 21, 22, 25 version features
-- **Destination**: ayokoding-fs/by-example/overview.md
+- **Destination**: ayokoding-web/by-example/overview.md
 - **Action**: Consolidate into Java version history with examples
 - **Platform-specific references**: 1-7 per file (minimal, remove)
 
@@ -1459,7 +1459,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,700
 - **Content**: Pure functions, immutability, Vavr library, monads
-- **Destination**: ayokoding-fs/by-example/intermediate.md
+- **Destination**: ayokoding-web/by-example/intermediate.md
 - **Action**: Migrate with practical examples
 - **Platform-specific references**: 0 (pure universal content)
 
@@ -1467,7 +1467,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,907
 - **Content**: JSpecify, NullAway, Checker Framework, sealed classes, Optional
-- **Destination**: ayokoding-fs/by-example/intermediate.md
+- **Destination**: ayokoding-web/by-example/intermediate.md
 - **Action**: Migrate with tool examples
 - **Platform-specific references**: 0 (pure universal content)
 
@@ -1475,7 +1475,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,777
 - **Content**: Interface design, sealed interfaces, polymorphism patterns
-- **Destination**: ayokoding-fs/by-example/beginner.md
+- **Destination**: ayokoding-web/by-example/beginner.md
 - **Action**: Migrate with foundational examples
 - **Platform-specific references**: 1 (minimal, remove)
 
@@ -1483,7 +1483,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,433
 - **Content**: JVM memory, GC algorithms, profiling tools
-- **Destination**: ayokoding-fs/by-example/advanced.md
+- **Destination**: ayokoding-web/by-example/advanced.md
 - **Action**: Migrate with JVM tuning examples
 - **Platform-specific references**: 0 (pure universal content)
 
@@ -1491,7 +1491,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 4,214
 - **Content**: Common Java mistakes, pitfalls, legacy patterns
-- **Destination**: ayokoding-fs/by-example/advanced.md
+- **Destination**: ayokoding-web/by-example/advanced.md
 - **Action**: Migrate with anti-pattern examples and fixes
 - **Platform-specific references**: 0 (pure universal content)
 
@@ -1499,7 +1499,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,201
 - **Content**: FSM patterns, state management in Java
-- **Destination**: ayokoding-fs/by-example/advanced.md
+- **Destination**: ayokoding-web/by-example/advanced.md
 - **Action**: Migrate with FSM implementation examples
 - **Platform-specific references**: 0 (pure universal content)
 
@@ -1517,7 +1517,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,910
 - **Content**: Maven POM structure, dependency management, JPMS
-- **Action**: Keep OSE Maven standards, move JPMS concepts to ayokoding-fs
+- **Action**: Keep OSE Maven standards, move JPMS concepts to ayokoding-web
 - **Platform-specific references**: 111 (very high, OSE-specific)
 - **Refinement**: Extract universal JPMS content, keep OSE Maven configuration
 
@@ -1527,7 +1527,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 4,227
 - **Universal part** (~70%): General Java best practices (naming, methods, classes, testing principles)
-  - Destination: ayokoding-fs/by-example/intermediate.md
+  - Destination: ayokoding-web/by-example/intermediate.md
 - **Style guide part** (~30%): OSE naming conventions, project structure, framework usage
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 12
@@ -1536,7 +1536,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 3,225
 - **Universal part** (~80%): Exception types, patterns, try-catch, custom exceptions
-  - Destination: ayokoding-fs/by-example/intermediate.md
+  - Destination: ayokoding-web/by-example/intermediate.md
 - **Style guide part** (~20%): OSE error handling standards, logging requirements
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 10
@@ -1545,7 +1545,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,025
 - **Universal part** (~75%): Virtual threads, synchronization, concurrent collections
-  - Destination: ayokoding-fs/by-example/advanced.md
+  - Destination: ayokoding-web/by-example/advanced.md
 - **Style guide part** (~25%): OSE concurrency guidelines, thread pool configuration
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 11
@@ -1554,7 +1554,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,733
 - **Universal part** (~85%): JVM tuning, profiling tools, optimization techniques
-  - Destination: ayokoding-fs/by-example/advanced.md
+  - Destination: ayokoding-web/by-example/advanced.md
 - **Style guide part** (~15%): OSE performance requirements, benchmarking standards
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 9
@@ -1563,7 +1563,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,281
 - **Universal part** (~90%): OWASP guidelines, cryptography, input validation
-  - Destination: ayokoding-fs/by-example/advanced.md
+  - Destination: ayokoding-web/by-example/advanced.md
 - **Style guide part** (~10%): OSE security standards, compliance requirements
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 0 (but OSE context in examples)
@@ -1572,7 +1572,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 3,644
 - **Universal part** (~80%): REST, GraphQL, gRPC concepts, API design
-  - Destination: ayokoding-fs/by-example/advanced.md
+  - Destination: ayokoding-web/by-example/advanced.md
 - **Style guide part** (~20%): OSE API standards, Spring Boot configuration
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 0 (but OSE examples)
@@ -1581,7 +1581,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,782
 - **Universal part** (~85%): TDD principles, JUnit 5, Mockito, AssertJ patterns
-  - Destination: ayokoding-fs/by-example/intermediate.md
+  - Destination: ayokoding-web/by-example/intermediate.md
 - **Style guide part** (~15%): OSE testing setup, TestContainers configuration
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 3
@@ -1590,7 +1590,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 1,957
 - **Universal part** (~90%): BDD concepts, Cucumber, Gherkin syntax
-  - Destination: ayokoding-fs/by-example/intermediate.md
+  - Destination: ayokoding-web/by-example/intermediate.md
 - **Style guide part** (~10%): OSE BDD standards, collaboration process
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 3
@@ -1599,17 +1599,17 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 - **Lines**: 2,047
 - **Universal part** (~85%): DDD tactical patterns, value objects, entities, aggregates
-  - Destination: ayokoding-fs/by-example/advanced.md
+  - Destination: ayokoding-web/by-example/advanced.md
 - **Style guide part** (~15%): OSE DDD implementation, Axon Framework configuration
   - Destination: docs/explanation style guide
 - **Platform-specific references**: 1
 
-## Appendix B: ayokoding-fs Structure After Migration
+## Appendix B: ayokoding-web Structure After Migration
 
 ### Folder Structure
 
 ```
-apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/
+apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/
 ├── by-example/              # Heavily annotated code examples
 │   ├── beginner.md          # Java basics, interfaces, OOP fundamentals
 │   ├── intermediate.md      # Idioms, FP, type safety, error handling
@@ -1874,10 +1874,10 @@ apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/ja
    - Testing standards (JUnit 5, Mockito, TestContainers)
 3. **Quick Reference**
    - MUST/SHOULD/MAY directives index
-   - Link to ayokoding-fs for learning Java
+   - Link to ayokoding-web for learning Java
    - Link to governance/principles/ for foundations
 4. **Related Documentation**
-   - Cross-references to governance/, ayokoding-fs, other docs/
+   - Cross-references to governance/, ayokoding-web, other docs/
 
 ### New Style Guide Files
 
@@ -1909,25 +1909,25 @@ apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/ja
 
 ### Removed/Consolidated Files
 
-- **Remove**: All release note files (universal content → ayokoding-fs)
-- **Remove**: idioms.md (universal → ayokoding-fs)
-- **Remove**: functional-programming.md (universal → ayokoding-fs)
-- **Remove**: type-safety.md (universal → ayokoding-fs)
-- **Remove**: memory-management.md (universal → ayokoding-fs)
-- **Remove**: anti-patterns.md (universal → ayokoding-fs)
-- **Remove**: finite-state-machine.md (universal → ayokoding-fs)
-- **Remove**: interfaces-and-polymorphism.md (universal → ayokoding-fs)
+- **Remove**: All release note files (universal content → ayokoding-web)
+- **Remove**: idioms.md (universal → ayokoding-web)
+- **Remove**: functional-programming.md (universal → ayokoding-web)
+- **Remove**: type-safety.md (universal → ayokoding-web)
+- **Remove**: memory-management.md (universal → ayokoding-web)
+- **Remove**: anti-patterns.md (universal → ayokoding-web)
+- **Remove**: finite-state-machine.md (universal → ayokoding-web)
+- **Remove**: interfaces-and-polymorphism.md (universal → ayokoding-web)
 - **Consolidate**: linting-and-formatting.md → code-quality.md
-- **Split**: modules-and-dependencies.md → build-configuration.md (OSE) + ayokoding-fs (JPMS)
-- **Split**: best-practices.md → coding-standards.md (OSE) + ayokoding-fs (general)
-- **Split**: error-handling.md → coding-standards.md (OSE) + ayokoding-fs (patterns)
-- **Split**: concurrency-and-parallelism.md → coding-standards.md (OSE) + ayokoding-fs (virtual threads)
-- **Split**: performance.md → coding-standards.md (OSE requirements) + ayokoding-fs (optimization)
-- **Split**: security.md → coding-standards.md (OSE standards) + ayokoding-fs (OWASP)
-- **Split**: web-services.md → framework-integration.md (OSE) + ayokoding-fs (concepts)
-- **Split**: test-driven-development.md → testing-standards.md (OSE) + ayokoding-fs (TDD)
-- **Split**: behaviour-driven-development.md → testing-standards.md (OSE) + ayokoding-fs (BDD)
-- **Split**: domain-driven-design.md → coding-standards.md (OSE) + ayokoding-fs (DDD patterns)
+- **Split**: modules-and-dependencies.md → build-configuration.md (OSE) + ayokoding-web (JPMS)
+- **Split**: best-practices.md → coding-standards.md (OSE) + ayokoding-web (general)
+- **Split**: error-handling.md → coding-standards.md (OSE) + ayokoding-web (patterns)
+- **Split**: concurrency-and-parallelism.md → coding-standards.md (OSE) + ayokoding-web (virtual threads)
+- **Split**: performance.md → coding-standards.md (OSE requirements) + ayokoding-web (optimization)
+- **Split**: security.md → coding-standards.md (OSE standards) + ayokoding-web (OWASP)
+- **Split**: web-services.md → framework-integration.md (OSE) + ayokoding-web (concepts)
+- **Split**: test-driven-development.md → testing-standards.md (OSE) + ayokoding-web (TDD)
+- **Split**: behaviour-driven-development.md → testing-standards.md (OSE) + ayokoding-web (BDD)
+- **Split**: domain-driven-design.md → coding-standards.md (OSE) + ayokoding-web (DDD patterns)
 
 **Result**:
 

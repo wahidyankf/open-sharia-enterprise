@@ -30,13 +30,13 @@ that preserves correctness and does not break running applications.
 
 ## Ecosystems in Scope
 
-| Ecosystem      | Apps / Files                                                   | Package Manager       |
-| -------------- | -------------------------------------------------------------- | --------------------- |
-| Node.js / NPM  | root workspace, `organiclever-fe`, all `*-e2e` apps            | npm                   |
-| Go modules     | `ayokoding-cli`, `rhino-cli`, `ayokoding-fs`, `oseplatform-fs` | go mod                |
-| Flutter / Dart | `organiclever-app`                                             | pub / flutter pub     |
-| Java / Maven   | `organiclever-be`                                              | Maven                 |
-| Hugo themes    | `ayokoding-fs` (Hextra), `oseplatform-fs` (PaperMod)           | go mod (Hugo modules) |
+| Ecosystem      | Apps / Files                                                     | Package Manager       |
+| -------------- | ---------------------------------------------------------------- | --------------------- |
+| Node.js / NPM  | root workspace, `organiclever-fe`, all `*-e2e` apps              | npm                   |
+| Go modules     | `ayokoding-cli`, `rhino-cli`, `ayokoding-web`, `oseplatform-web` | go mod                |
+| Flutter / Dart | `organiclever-app`                                               | pub / flutter pub     |
+| Java / Maven   | `organiclever-be`                                                | Maven                 |
+| Hugo themes    | `ayokoding-web` (Hextra), `oseplatform-web` (PaperMod)           | go mod (Hugo modules) |
 
 ## Out of Scope
 

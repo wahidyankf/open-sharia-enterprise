@@ -1,6 +1,6 @@
 # oseplatform-cli
 
-Go CLI tool for oseplatform-fs Hugo site maintenance. Validates internal links
+Go CLI tool for oseplatform-web Hugo site maintenance. Validates internal links
 across all markdown content files.
 
 ## Usage
@@ -11,9 +11,9 @@ oseplatform-cli <command> [flags]
 
 ### Commands
 
-| Command       | Description                                       |
-| ------------- | ------------------------------------------------- |
-| `links check` | Validate internal links in oseplatform-fs content |
+| Command       | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `links check` | Validate internal links in oseplatform-web content |
 
 ### Global Flags
 
@@ -26,9 +26,9 @@ oseplatform-cli <command> [flags]
 
 ### `links check` Flags
 
-| Flag        | Default                       | Description            |
-| ----------- | ----------------------------- | ---------------------- |
-| `--content` | `apps/oseplatform-fs/content` | Content directory path |
+| Flag        | Default                        | Description            |
+| ----------- | ------------------------------ | ---------------------- |
+| `--content` | `apps/oseplatform-web/content` | Content directory path |
 
 ### Exit codes
 
@@ -45,7 +45,7 @@ oseplatform-cli <command> [flags]
 ./apps/oseplatform-cli/dist/oseplatform-cli links check
 
 # Check links with explicit content path
-oseplatform-cli links check --content apps/oseplatform-fs/content
+oseplatform-cli links check --content apps/oseplatform-web/content
 
 # Output as JSON
 oseplatform-cli links check -o json
@@ -113,8 +113,8 @@ nx run oseplatform-cli:run -- links check
 
 ## Why this exists
 
-`oseplatform-fs` needs internal link validation as a quality gate before build.
-This CLI runs as a `dependsOn` step in `oseplatform-fs`'s `test:quick` target,
+`oseplatform-web` needs internal link validation as a quality gate before build.
+This CLI runs as a `dependsOn` step in `oseplatform-web`'s `test:quick` target,
 ensuring broken links are caught before the Hugo build runs.
 
 Keeping it as a standalone binary prevents unrelated changes from triggering

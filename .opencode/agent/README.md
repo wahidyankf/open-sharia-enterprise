@@ -61,59 +61,59 @@
 - **plan-executor** - Executes delivery checklists systematically (implementor, not maker)
 - **plan-execution-checker** - Final validation of completed plan implementation
 
-### ayokoding-fs Family
+### ayokoding-web Family
 
 **General Content** (Maker-Checker-Fixer):
 
-- **apps-ayokoding-fs-general-maker** - Creates general content (by-concept tutorials, guides)
-- **apps-ayokoding-fs-general-checker** - Validates general content quality
-- **apps-ayokoding-fs-general-fixer** - Applies validated fixes to general content
+- **apps-ayokoding-web-general-maker** - Creates general content (by-concept tutorials, guides)
+- **apps-ayokoding-web-general-checker** - Validates general content quality
+- **apps-ayokoding-web-general-fixer** - Applies validated fixes to general content
 
 **By-Example Content** (Maker-Checker-Fixer):
 
-- **apps-ayokoding-fs-by-example-maker** - Creates by-example tutorials (75-90 annotated examples)
-- **apps-ayokoding-fs-by-example-checker** - Validates by-example annotation density (1-2.25 ratio)
-- **apps-ayokoding-fs-by-example-fixer** - Applies validated fixes to by-example content
+- **apps-ayokoding-web-by-example-maker** - Creates by-example tutorials (75-90 annotated examples)
+- **apps-ayokoding-web-by-example-checker** - Validates by-example annotation density (1-2.25 ratio)
+- **apps-ayokoding-web-by-example-fixer** - Applies validated fixes to by-example content
 
 **Facts Validation** (Checker-Fixer):
 
-- **apps-ayokoding-fs-facts-checker** - Validates factual accuracy using WebSearch/WebFetch
-- **apps-ayokoding-fs-facts-fixer** - Applies validated factual fixes
+- **apps-ayokoding-web-facts-checker** - Validates factual accuracy using WebSearch/WebFetch
+- **apps-ayokoding-web-facts-fixer** - Applies validated factual fixes
 
 **Link Validation** (Checker-Fixer):
 
-- **apps-ayokoding-fs-link-checker** - Validates links (hybrid: validator + cache manager)
-- **apps-ayokoding-fs-link-fixer** - Applies validated link fixes
+- **apps-ayokoding-web-link-checker** - Validates links (hybrid: validator + cache manager)
+- **apps-ayokoding-web-link-fixer** - Applies validated link fixes
 
 **Structure Management** (Maker-Checker-Fixer):
 
-- **apps-ayokoding-fs-structure-maker** - Creates folder structure and \_index.md files
-- **apps-ayokoding-fs-structure-checker** - Validates folder organization and navigation depth
-- **apps-ayokoding-fs-structure-fixer** - Applies validated structure fixes
+- **apps-ayokoding-web-structure-maker** - Creates folder structure and \_index.md files
+- **apps-ayokoding-web-structure-checker** - Validates folder organization and navigation depth
+- **apps-ayokoding-web-structure-fixer** - Applies validated structure fixes
 
 **Specialized**:
 
-- **apps-ayokoding-fs-navigation-maker** - Updates prev/next navigation links in frontmatter
-- **apps-ayokoding-fs-title-maker** - Generates appropriate titles based on content type and level
-- **apps-ayokoding-fs-deployer** - Deploys to production branch (prod-ayokoding-fs)
+- **apps-ayokoding-web-navigation-maker** - Updates prev/next navigation links in frontmatter
+- **apps-ayokoding-web-title-maker** - Generates appropriate titles based on content type and level
+- **apps-ayokoding-web-deployer** - Deploys to production branch (prod-ayokoding-web)
 
 **In-the-Field Content** (Maker-Checker-Fixer):
 
-- **apps-ayokoding-fs-in-the-field-maker** - Creates in-the-field tutorials from real-world experiences
-- **apps-ayokoding-fs-in-the-field-checker** - Validates in-the-field tutorial quality
-- **apps-ayokoding-fs-in-the-field-fixer** - Applies validated fixes to in-the-field tutorials
+- **apps-ayokoding-web-in-the-field-maker** - Creates in-the-field tutorials from real-world experiences
+- **apps-ayokoding-web-in-the-field-checker** - Validates in-the-field tutorial quality
+- **apps-ayokoding-web-in-the-field-fixer** - Applies validated fixes to in-the-field tutorials
 
-### oseplatform-fs Family
+### oseplatform-web Family
 
 **Maker-Checker-Fixer Pattern**:
 
-- **apps-oseplatform-fs-content-maker** - Creates landing page content (PaperMod theme, English-only)
-- **apps-oseplatform-fs-content-checker** - Validates PaperMod theme compliance
-- **apps-oseplatform-fs-content-fixer** - Applies validated fixes
+- **apps-oseplatform-web-content-maker** - Creates landing page content (PaperMod theme, English-only)
+- **apps-oseplatform-web-content-checker** - Validates PaperMod theme compliance
+- **apps-oseplatform-web-content-fixer** - Applies validated fixes
 
 **Deployment**:
 
-- **apps-oseplatform-fs-deployer** - Deploys to production branch (prod-oseplatform-fs)
+- **apps-oseplatform-web-deployer** - Deploys to production branch (prod-oseplatform-web)
 
 ### Repository Governance Family
 
@@ -199,16 +199,16 @@ opencode agent list
 5. [Move to plans/done/ if validation passes]
    \`\`\`
 
-**Hugo Content (ayokoding-fs)**:
+**Hugo Content (ayokoding-web)**:
 \`\`\`bash
 
-1. apps-ayokoding-fs-general-maker → Create content
-2. apps-ayokoding-fs-general-checker → Validate quality
-3. apps-ayokoding-fs-facts-checker → Verify factual accuracy
-4. apps-ayokoding-fs-link-checker → Validate links
+1. apps-ayokoding-web-general-maker → Create content
+2. apps-ayokoding-web-general-checker → Validate quality
+3. apps-ayokoding-web-facts-checker → Verify factual accuracy
+4. apps-ayokoding-web-link-checker → Validate links
 5. [User reviews all audit reports]
-6. apps-ayokoding-fs-general-fixer → Apply validated fixes
-7. apps-ayokoding-fs-deployer → Deploy to production
+6. apps-ayokoding-web-general-fixer → Apply validated fixes
+7. apps-ayokoding-web-deployer → Deploy to production
    \`\`\`
 
 ## Agent Patterns
@@ -242,7 +242,7 @@ opencode agent list
 
 **Purpose**: Combine validation + state management
 **Tools**: Standard + write (for cache only)
-**Examples**: docs-link-general-checker, apps-ayokoding-fs-link-checker
+**Examples**: docs-link-general-checker, apps-ayokoding-web-link-checker
 
 ## Skills Integration
 

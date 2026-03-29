@@ -19,14 +19,14 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 
 **You MUST understand Go fundamentals before using these standards.** Complete the AyoKoding Go learning path first:
 
-1. **[Go Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
-2. **[Go By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
-3. **[Go In the Field](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
-4. **[Go Release Highlights](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC default, self-referential generics, errors.AsType)
+1. **[Go Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
+2. **[Go By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
+3. **[Go In the Field](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
+4. **[Go Release Highlights](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC default, self-referential generics, errors.AsType)
 
 **What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
 
-**What this skill does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this skill does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

@@ -17,7 +17,7 @@ updated: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand C4 fundamentals from [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/) before using these standards.
+**REQUIRED**: You MUST understand C4 fundamentals from [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/) before using these standards.
 
 **This document is OSE Platform-specific**, defining how to visualize Nx workspace structure in C4 diagrams for THIS codebase.
 
@@ -41,8 +41,8 @@ This document defines **authoritative standards** for visualizing Nx monorepo st
 
 ```
 apps/
-├── oseplatform-fs/        # Hugo static site
-├── ayokoding-fs/          # Hugo static site
+├── oseplatform-web/        # Hugo static site
+├── ayokoding-web/          # Hugo static site
 ├── ayokoding-cli/          # Go CLI tool
 └── rhino-cli/              # Go CLI tool
 ```
@@ -85,7 +85,7 @@ graph TD
 
 **Example**:
 
-If `ayokoding-cli` has an Nx dependency on `ayokoding-fs` (builds it), show this as a relationship in the container diagram.
+If `ayokoding-cli` has an Nx dependency on `ayokoding-web` (builds it), show this as a relationship in the container diagram.
 
 ## Container Naming for Nx Apps
 

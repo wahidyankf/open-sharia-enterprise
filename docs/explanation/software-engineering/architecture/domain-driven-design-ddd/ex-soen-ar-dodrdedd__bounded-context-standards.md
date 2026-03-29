@@ -18,7 +18,7 @@ updated: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding Domain-Driven Design](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/) before using these standards.
+**REQUIRED**: Complete [AyoKoding Domain-Driven Design](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/) before using these standards.
 
 **This document is OSE Platform-specific**, defining how to organize bounded contexts in THIS codebase.
 

@@ -15,7 +15,7 @@ updated: 2026-03-28
 
 # Component Patterns Convention
 
-Standards for building UI components in the open-sharia-enterprise monorepo. These rules govern how components are structured, composed, and styled across `ayokoding-fs`, `organiclever-fe`, `a-demo-fe-ts-nextjs`, and `a-demo-fs-ts-nextjs`.
+Standards for building UI components in the open-sharia-enterprise monorepo. These rules govern how components are structured, composed, and styled across `ayokoding-web`, `organiclever-fe`, `a-demo-fe-ts-nextjs`, and `a-demo-fs-ts-nextjs`.
 
 ## File Structure
 
@@ -215,7 +215,7 @@ return <Comp data-slot="button" className={cn(buttonVariants({ variant, size, cl
 
 ## Complete Button Example
 
-The following is the canonical `ayokoding-fs` implementation, which all new apps should follow.
+The following is the canonical `ayokoding-web` implementation, which all new apps should follow.
 
 ```tsx
 // components/ui/button.tsx

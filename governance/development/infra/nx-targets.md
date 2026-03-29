@@ -149,7 +149,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 | Project                     | Tags                                                                     |
 | --------------------------- | ------------------------------------------------------------------------ |
-| `ayokoding-fs`              | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
+| `ayokoding-web`             | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
 | `ayokoding-cli`             | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`        |
 | `rhino-cli`                 | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`          |
 | `a-demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:a-demo-be"]`  |
@@ -168,7 +168,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `a-demo-fe-ts-nextjs`       | `["type:app", "platform:nextjs", "lang:ts", "domain:a-demo-fe"]`         |
 | `a-demo-fe-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:a-demo-fe"]`     |
 | `oseplatform-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
-| `oseplatform-fs`            | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
+| `oseplatform-web`           | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
 | `hugo-commons`              | `["type:lib", "lang:golang"]`                                            |
 | `golang-commons`            | `["type:lib", "lang:golang"]`                                            |
 
