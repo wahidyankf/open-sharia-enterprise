@@ -45,15 +45,19 @@ export async function ensureMigrations(): Promise<void> {
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
         "user_id" uuid NOT NULL,
         "amount" numeric(19, 4) NOT NULL,
-        "currency" varchar(3) NOT NULL,
+        "currency" varchar(10) NOT NULL,
         "category" varchar(100) NOT NULL,
-        "description" varchar(500) NOT NULL,
+        "description" varchar(500) DEFAULT '' NOT NULL,
         "date" date NOT NULL,
-        "type" varchar(10) NOT NULL,
+        "type" varchar(20) NOT NULL,
         "quantity" numeric(19, 4),
-        "unit" varchar(20),
+        "unit" varchar(50),
         "created_at" timestamp with time zone DEFAULT now() NOT NULL,
-        "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+        "created_by" varchar(255) DEFAULT 'system' NOT NULL,
+        "updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+        "updated_by" varchar(255) DEFAULT 'system' NOT NULL,
+        "deleted_at" timestamp with time zone,
+        "deleted_by" varchar(255)
       )
     `);
     await db.execute(sql`
