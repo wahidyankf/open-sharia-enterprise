@@ -49,6 +49,8 @@ follow-up plan.
 - [ ] Create `fe/gherkin/authentication/profile.feature` (/profile shows name, email, avatar)
 - [ ] Create `fe/gherkin/authentication/route-protection.feature` (unauthenticated access to
   /profile redirects to /login)
+- [ ] Create `fe/gherkin/layout/accessibility.feature` (WCAG AA: heading hierarchy, form labels,
+  keyboard navigation, color contrast, ARIA attributes)
 - [ ] Verify all FE features follow demo conventions (UI-semantic, user story blocks)
 - [ ] Verify `specs/apps/organiclever/` structure matches tech-docs.md spec structure diagram
 - [ ] Verify AC-1 (unified spec structure) is satisfied before proceeding to Phase 2
@@ -139,8 +141,9 @@ follow-up plan.
 ### Milestone 4.1: Project Scaffold
 
 - [ ] Create `apps/organiclever-fe/` with Next.js 16 scaffold
-- [ ] Create `apps/organiclever-fe/project.json` with all 9 Nx targets
-  (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, dev, start)
+- [ ] Create `apps/organiclever-fe/project.json` with all Nx targets
+  (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, storybook,
+  build-storybook, dev, start)
 - [ ] Create `apps/organiclever-fe/package.json` (next, react, effect, typescript)
 - [ ] Create `apps/organiclever-fe/next.config.mjs`
 - [ ] Create `apps/organiclever-fe/tsconfig.json` (strict mode)
@@ -172,13 +175,25 @@ follow-up plan.
 - [ ] Create `src/app/metadata.ts`
 - [ ] Add `ORGANICLEVER_BE_URL` server-only environment variable (no `NEXT_PUBLIC_` prefix)
 
-### Milestone 4.4: Frontend Testing
+### Milestone 4.4: Storybook
+
+- [ ] Create `.storybook/main.ts` (`@storybook/nextjs-vite` framework)
+- [ ] Create `.storybook/preview.ts` (global decorators, theme)
+- [ ] Create stories for login page components (`.stories.tsx`)
+- [ ] Create stories for profile page components (`.stories.tsx`)
+- [ ] Create stories for shared UI components (layout, buttons)
+- [ ] Verify `nx run organiclever-fe:storybook` starts on port 6006
+- [ ] Verify `nx run organiclever-fe:build-storybook` produces static export
+
+### Milestone 4.5: Frontend Testing
 
 - [ ] Create `test/setup.ts`
 - [ ] Create unit tests for auth-service using Effect test layers
+- [ ] Create unit tests for accessibility consuming `fe/gherkin/layout/accessibility.feature`
+  (heading hierarchy, form labels, ARIA attributes via Testing Library)
 - [ ] Create integration tests for profile page using MSW + Gherkin specs
 - [ ] Verify `nx run organiclever-fe:test:quick` passes with 70% coverage
-- [ ] Verify `nx run organiclever-fe:lint` passes
+- [ ] Verify `nx run organiclever-fe:lint` passes (includes jsx-a11y checks)
 - [ ] Verify `nx run organiclever-fe:typecheck` passes
 - [ ] Verify `nx run organiclever-fe:build` passes
 - [ ] Verify `nx run organiclever-fe:codegen` generates contracts
@@ -206,7 +221,8 @@ follow-up plan.
 - [ ] Create `package.json` (playwright, @playwright/test, playwright-bdd)
 - [ ] Create `playwright.config.ts` (base URL: localhost:3200)
 - [ ] Create `tsconfig.json`
-- [ ] Create step definitions for google-login, profile, and route-protection features
+- [ ] Create step definitions for google-login, profile, route-protection, and accessibility
+  features
 - [ ] Create `README.md`
 - [ ] Verify `nx run organiclever-fe-e2e:test:quick` passes
 - [ ] Verify `nx run organiclever-fe-e2e:test:e2e` passes against running frontend + backend

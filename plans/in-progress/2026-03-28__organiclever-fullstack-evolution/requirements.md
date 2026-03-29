@@ -28,7 +28,9 @@
   name, email, avatar; redirects to `/login` if not authenticated
 - **FR-1.3.3**: `authentication/route-protection.feature` -- Unauthenticated access to `/profile`
   redirects to `/login`
-- **FR-1.3.4**: Background step convention: `Given the app is running`
+- **FR-1.3.4**: `layout/accessibility.feature` -- All pages meet WCAG AA: proper heading
+  hierarchy, form labels, keyboard navigation, color contrast, ARIA attributes
+- **FR-1.3.5**: Background step convention: `Given the app is running`
 
 #### FR-1.4: OpenAPI Contract (`contracts/`)
 
@@ -137,8 +139,16 @@
 - **FR-3.4.5**: `test:unit` -- Vitest with mocked services, Gherkin specs
 - **FR-3.4.6**: `test:quick` -- Unit tests + coverage + rhino-cli validation (70%)
 - **FR-3.4.7**: `test:integration` -- Vitest with MSW, Gherkin specs
-- **FR-3.4.8**: `dev` (optional) -- `next dev --port 3200`
-- **FR-3.4.9**: `start` (optional) -- `next start --port 3200`
+- **FR-3.4.8**: `storybook` (optional) -- Storybook dev server for component documentation
+- **FR-3.4.9**: `build-storybook` (optional) -- Static Storybook export
+- **FR-3.4.10**: `dev` (optional) -- `next dev --port 3200`
+- **FR-3.4.11**: `start` (optional) -- `next start --port 3200`
+
+#### FR-3.5: Storybook
+
+- **FR-3.5.1**: Storybook with `@storybook/nextjs-vite` for component documentation
+- **FR-3.5.2**: Stories for all UI components (login button, profile card, layout)
+- **FR-3.5.3**: Storybook config in `.storybook/` directory
 
 ### FR-4: Backend E2E Tests (`apps/organiclever-be-e2e`)
 

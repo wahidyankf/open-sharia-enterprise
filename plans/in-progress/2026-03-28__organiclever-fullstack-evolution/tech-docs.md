@@ -43,10 +43,12 @@ specs/apps/organiclever/
 │   ├── README.md
 │   └── gherkin/
 │       ├── README.md
-│       └── authentication/
-│           ├── google-login.feature
-│           ├── profile.feature
-│           └── route-protection.feature
+│       ├── authentication/
+│       │   ├── google-login.feature
+│       │   ├── profile.feature
+│       │   └── route-protection.feature
+│       └── layout/
+│           └── accessibility.feature
 └── contracts/
     ├── README.md
     ├── openapi.yaml
@@ -70,6 +72,7 @@ specs/apps/organiclever/
 | -------------- | ----------- | ----------- | --------------------------------------------- |
 | health         | 1           | --          | Service health status                         |
 | authentication | 2           | 3           | Google OAuth login, profile (protected), route protection |
+| layout         | --          | 1           | Accessibility (WCAG AA compliance)            |
 
 ### Spec Migration Map
 
@@ -364,12 +367,18 @@ apps/organiclever-fe/
 │   │   ├── backend-client-live.ts        # Live HTTP layer (server-side only)
 │   │   └── backend-client-test.ts        # Mock layer for tests
 │   ├── components/
-│   │   └── ui/                           # shadcn/ui components
+│   │   └── ui/                           # shadcn/ui components (with .stories.tsx)
 │   └── generated-contracts/              # From OpenAPI codegen (gitignored)
+├── .storybook/
+│   ├── main.ts                           # Storybook config (@storybook/nextjs-vite)
+│   └── preview.ts                        # Global decorators, theme
 ├── test/
 │   ├── setup.ts
 │   ├── unit/
-│   │   └── auth-service.unit.test.ts
+│   │   ├── auth-service.unit.test.ts
+│   │   └── steps/
+│   │       └── layout/
+│   │           └── accessibility.steps.tsx  # Gherkin accessibility tests
 │   └── integration/
 │       └── profile-page.integration.test.tsx
 ├── project.json
@@ -513,6 +522,8 @@ Following `demo-fe-ts-nextjs` pattern:
 | `test:unit`         | vitest run --project unit                  | Yes       | --                  |
 | `test:quick`        | vitest coverage + rhino-cli validate (70%) | Yes       | --                  |
 | `test:integration`  | vitest run --project integration (MSW)     | Yes       | --                  |
+| `storybook`         | storybook dev (port 6006)                  | No        | --                  |
+| `build-storybook`   | storybook build                            | Yes       | --                  |
 | `dev`               | next dev --port 3200                       | No        | --                  |
 | `start`             | next start --port 3200                     | No        | --                  |
 
@@ -546,7 +557,8 @@ apps/organiclever-fe-e2e/
 ├── steps/                        # Step definitions
 │   ├── google-login.steps.ts
 │   ├── profile.steps.ts
-│   └── route-protection.steps.ts
+│   ├── route-protection.steps.ts
+│   └── accessibility.steps.ts
 ├── playwright.config.ts
 ├── project.json
 ├── package.json
