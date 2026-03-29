@@ -29,34 +29,6 @@ Building OrganicLever, a full-stack individual productivity tracker:
 
 See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
 
-## 🎯 Motivation
-
-Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
-
-**The Opportunity:**
-
-- Islamic enterprise (finance, commerce, cooperatives) is a multi-trillion dollar global market
-- Existing platforms are proprietary, expensive, and domain-limited
-- Most organizations rely on legacy systems retrofitted for Sharia compliance
-- The gap: open-source, compliance-first solutions with radical transparency
-
-**Our Solution:**
-
-- Progressive complexity: individual (Phase 1) → SMB (Phase 2) → enterprise (Phase 3)
-- Each phase funds the next; Phase 1/2 success funds Phase 3's certification budget
-- Sharia-compliance built in from the ground up, not bolted on after
-
-**What We Believe:**
-
-- 🕌 **Sharia-compliance as a foundation** - Built in from the ground up, not bolted on later
-- 🔓 **Transparency builds trust** - Open source code enables community verification of Sharia compliance
-- 🤖 **AI-assisted development** - Systematic use of AI tools to enhance productivity and code quality
-- 🛡️ **Security and governance from day one** - Architectural foundations, not afterthoughts
-- 📚 **Learning in public** - Share our research and knowledge through [ayokoding.com](https://ayokoding.com)
-- 🏗️ **Long-term foundation over quick wins** - Building solid foundations for a life-long project
-
-For complete principles, see [governance/principles/](./governance/principles/README.md).
-
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
@@ -115,8 +87,7 @@ open-sharia-enterprise/
 
 - **Sites**: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-fe`](./apps/organiclever-fe/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-fe-e2e`](./apps/organiclever-fe-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/)
 - **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/)
-- **Demo backends**: [`a-demo-be-golang-gin`](./apps/a-demo-be-golang-gin/), [`a-demo-be-java-springboot`](./apps/a-demo-be-java-springboot/), [`a-demo-be-elixir-phoenix`](./apps/a-demo-be-elixir-phoenix/), [`a-demo-be-fsharp-giraffe`](./apps/a-demo-be-fsharp-giraffe/), [`a-demo-be-python-fastapi`](./apps/a-demo-be-python-fastapi/), [`a-demo-be-rust-axum`](./apps/a-demo-be-rust-axum/), [`a-demo-be-kotlin-ktor`](./apps/a-demo-be-kotlin-ktor/), [`a-demo-be-java-vertx`](./apps/a-demo-be-java-vertx/), [`a-demo-be-ts-effect`](./apps/a-demo-be-ts-effect/), [`a-demo-be-csharp-aspnetcore`](./apps/a-demo-be-csharp-aspnetcore/), [`a-demo-be-clojure-pedestal`](./apps/a-demo-be-clojure-pedestal/)
-- **Demo frontends**: [`a-demo-fe-ts-nextjs`](./apps/a-demo-fe-ts-nextjs/), [`a-demo-fe-ts-tanstack-start`](./apps/a-demo-fe-ts-tanstack-start/), [`a-demo-fe-dart-flutterweb`](./apps/a-demo-fe-dart-flutterweb/)
+- **Demo apps**: 11 backend implementations (Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure) + 3 frontends (Next.js, TanStack Start, Flutter Web) — see [Demo Apps CI & Coverage](./docs/reference/re__demo-apps-ci-coverage.md)
 
 **Libraries** (`libs/`): Reusable shared code
 
@@ -145,11 +116,9 @@ See [Code Quality](./governance/development/quality/code.md) and [Commit Message
 
 ## 📊 CI & Test Coverage
 
-[![Main CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml)
-
 All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is uploaded to [Codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) on every push to `main`.
 
-**CI Schedule**: `test:quick` on every push/PR; per-service workflows run on a schedule.
+**Quality gates**: pre-commit hooks (formatting, linting), pre-push hooks (`typecheck`, `lint`, `test:quick` for affected projects), and [PR Quality Gate](./.github/workflows/pr-quality-gate.yml) workflow.
 
 - [`apps/oseplatform-web`](./apps/oseplatform-web/)
   - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml)
@@ -167,57 +136,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 - [`apps/oseplatform-cli`](./apps/oseplatform-cli/)
   - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
 
-### 🧪 Demo Backend Apps
-
-CI and coverage status for demo backend implementations across multiple languages and frameworks:
-
-- [`apps/a-demo-be-java-springboot`](./apps/a-demo-be-java-springboot/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-java-springboot.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-java-springboot.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-java-springboot)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-elixir-phoenix`](./apps/a-demo-be-elixir-phoenix/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-elixir-phoenix.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-elixir-phoenix.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-elixir-phoenix)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-fsharp-giraffe`](./apps/a-demo-be-fsharp-giraffe/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-fsharp-giraffe.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-fsharp-giraffe.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-fsharp-giraffe)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-golang-gin`](./apps/a-demo-be-golang-gin/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-golang-gin.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-golang-gin.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-golang-gin)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-python-fastapi`](./apps/a-demo-be-python-fastapi/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-python-fastapi.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-python-fastapi.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-python-fastapi)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-rust-axum`](./apps/a-demo-be-rust-axum/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-rust-axum.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-rust-axum.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-rust-axum)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-kotlin-ktor`](./apps/a-demo-be-kotlin-ktor/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-kotlin-ktor.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-kotlin-ktor.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-kotlin-ktor)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-java-vertx`](./apps/a-demo-be-java-vertx/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-java-vertx.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-java-vertx.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-java-vertx)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-ts-effect`](./apps/a-demo-be-ts-effect/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-ts-effect.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-ts-effect.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-ts-effect)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-csharp-aspnetcore`](./apps/a-demo-be-csharp-aspnetcore/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-csharp-aspnetcore.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-csharp-aspnetcore.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-csharp-aspnetcore)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-be-clojure-pedestal`](./apps/a-demo-be-clojure-pedestal/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-clojure-pedestal.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-be-clojure-pedestal.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-be-clojure-pedestal)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-
-### 🖥️ Demo Frontend Apps
-
-Frontend implementations consuming the demo-be API:
-
-- [`apps/a-demo-fe-ts-nextjs`](./apps/a-demo-fe-ts-nextjs/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-ts-nextjs.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-ts-nextjs.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-fe-ts-nextjs)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-fe-ts-tanstack-start`](./apps/a-demo-fe-ts-tanstack-start/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-ts-tanstack-start.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-ts-tanstack-start.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-fe-ts-tanstack-start)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/a-demo-fe-dart-flutterweb`](./apps/a-demo-fe-dart-flutterweb/)
-  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-dart-flutterweb.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fe-dart-flutterweb.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-fe-dart-flutterweb)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+For demo app CI badges, see [Demo Apps CI & Coverage](./docs/reference/re__demo-apps-ci-coverage.md).
 
 ## 📚 Documentation
 
@@ -226,6 +145,34 @@ Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./d
 **Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault.
 
 See [`docs/README.md`](./docs/README.md) for details.
+
+## 🎯 Motivation
+
+Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
+
+**The Opportunity:**
+
+- Islamic enterprise (finance, commerce, cooperatives) is a multi-trillion dollar global market
+- Existing platforms are proprietary, expensive, and domain-limited
+- Most organizations rely on legacy systems retrofitted for Sharia compliance
+- The gap: open-source, compliance-first solutions with radical transparency
+
+**Our Solution:**
+
+- Progressive complexity: individual (Phase 1) → SMB (Phase 2) → enterprise (Phase 3)
+- Each phase funds the next; Phase 1/2 success funds Phase 3's certification budget
+- Sharia-compliance built in from the ground up, not bolted on after
+
+**What We Believe:**
+
+- 🕌 **Sharia-compliance as a foundation** - Built in from the ground up, not bolted on later
+- 🔓 **Transparency builds trust** - Open source code enables community verification of Sharia compliance
+- 🤖 **AI-assisted development** - Systematic use of AI tools to enhance productivity and code quality
+- 🛡️ **Security and governance from day one** - Architectural foundations, not afterthoughts
+- 📚 **Learning in public** - Share our research and knowledge through [ayokoding.com](https://ayokoding.com)
+- 🏗️ **Long-term foundation over quick wins** - Building solid foundations for a life-long project
+
+For complete principles, see [governance/principles/](./governance/principles/README.md).
 
 ## 🤝 Contributing
 
