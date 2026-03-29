@@ -30,7 +30,9 @@
       "get": {
         "operationId": "getHealth",
         "summary": "Health check",
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "responses": {
           "200": {
             "description": "Service is healthy",
@@ -50,7 +52,9 @@
         "operationId": "googleLogin",
         "summary": "Google OAuth login",
         "description": "Accepts a Google ID token, validates it with Google, creates or updates the user record, and returns JWT access + refresh tokens.\n",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -90,7 +94,9 @@
         "operationId": "refreshToken",
         "summary": "Refresh access token",
         "description": "Accepts a refresh token, validates it, invalidates the old token (rotation), and returns a new access + refresh token pair.\n",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -130,7 +136,9 @@
         "operationId": "getMe",
         "summary": "Get authenticated user profile",
         "description": "Returns the profile of the currently authenticated user. Requires a valid JWT access token in the Authorization header.\n",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -173,7 +181,9 @@
       "AuthGoogleRequest": {
         "type": "object",
         "description": "Google OAuth login request with ID token",
-        "required": ["idToken"],
+        "required": [
+          "idToken"
+        ],
         "properties": {
           "idToken": {
             "type": "string",
@@ -184,7 +194,11 @@
       "AuthTokenResponse": {
         "type": "object",
         "description": "Authentication token pair returned on login or refresh",
-        "required": ["accessToken", "refreshToken", "tokenType"],
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "tokenType"
+        ],
         "properties": {
           "accessToken": {
             "type": "string"
@@ -201,7 +215,9 @@
       "RefreshRequest": {
         "type": "object",
         "description": "Token refresh request",
-        "required": ["refreshToken"],
+        "required": [
+          "refreshToken"
+        ],
         "properties": {
           "refreshToken": {
             "type": "string"
@@ -211,7 +227,14 @@
       "UserProfile": {
         "type": "object",
         "description": "Authenticated user profile from Google OAuth",
-        "required": ["id", "email", "name", "avatarUrl", "createdAt", "updatedAt"],
+        "required": [
+          "id",
+          "email",
+          "name",
+          "avatarUrl",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -241,7 +264,9 @@
       "ErrorResponse": {
         "type": "object",
         "description": "Standardized error response",
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "string"
@@ -258,7 +283,9 @@
       "HealthResponse": {
         "type": "object",
         "description": "Health check response",
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "properties": {
           "status": {
             "type": "string",

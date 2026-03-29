@@ -22,12 +22,12 @@ paths:
       tags:
         - Health
       responses:
-        "200":
+        '200':
           description: Service is healthy
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthResponse"
+                $ref: '#/components/schemas/HealthResponse'
   /api/v1/auth/google:
     post:
       operationId: googleLogin
@@ -41,20 +41,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AuthGoogleRequest"
+              $ref: '#/components/schemas/AuthGoogleRequest'
       responses:
-        "200":
+        '200':
           description: Login successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthTokenResponse"
-        "401":
+                $ref: '#/components/schemas/AuthTokenResponse'
+        '401':
           description: Invalid Google ID token
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/auth/refresh:
     post:
       operationId: refreshToken
@@ -68,20 +68,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RefreshRequest"
+              $ref: '#/components/schemas/RefreshRequest'
       responses:
-        "200":
+        '200':
           description: Token refreshed successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthTokenResponse"
-        "401":
+                $ref: '#/components/schemas/AuthTokenResponse'
+        '401':
           description: Invalid or expired refresh token
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/auth/me:
     get:
       operationId: getMe
@@ -93,18 +93,18 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: User profile
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
+                $ref: '#/components/schemas/UserProfile'
+        '401':
           description: Not authenticated or token expired
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
