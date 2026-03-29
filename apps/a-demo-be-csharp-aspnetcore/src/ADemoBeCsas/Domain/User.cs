@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace AADemoBeCsas.Domain;
+namespace ADemoBeCsas.Domain;
 
 public sealed record UserDomain(
     Guid Id,

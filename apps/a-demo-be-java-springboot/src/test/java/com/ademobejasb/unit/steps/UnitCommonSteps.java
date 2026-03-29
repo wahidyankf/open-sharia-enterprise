@@ -1,9 +1,9 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.contracts.RegisterRequest;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.contracts.RegisterRequest;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -66,7 +66,7 @@ public class UnitCommonSteps {
             req.setUsername(username);
             req.setEmail(email);
             req.setPassword(password);
-            com.aademobejasb.contracts.User resp = authService.register(req);
+            com.ademobejasb.contracts.User resp = authService.register(req);
             if ("alice".equals(username)) {
                 stateStore.setAliceId(java.util.UUID.fromString(resp.getId()));
             }

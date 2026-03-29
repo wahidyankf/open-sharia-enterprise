@@ -1,12 +1,12 @@
 using System.Text;
-using AADemoBeCsas.Auth;
-using AADemoBeCsas.Endpoints;
-using AADemoBeCsas.Infrastructure;
-using AADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Auth;
+using ADemoBeCsas.Endpoints;
+using ADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Org.OpenAPITools.AADemoBeCsas.Contracts;
+using Org.OpenAPITools.ADemoBeCsas.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 

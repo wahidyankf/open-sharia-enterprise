@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.expense.controller;
+package com.ademobejasb.expense.controller;
 
 import org.jspecify.annotations.NullMarked;

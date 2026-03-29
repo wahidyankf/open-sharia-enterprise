@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.attachment;
+package com.ademobejasb.attachment;
 
 import org.jspecify.annotations.NullMarked;

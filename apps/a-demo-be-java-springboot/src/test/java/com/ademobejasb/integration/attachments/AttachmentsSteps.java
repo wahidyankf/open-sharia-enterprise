@@ -1,22 +1,22 @@
-package com.aademobejasb.integration.attachments;
+package com.ademobejasb.integration.attachments;
 
-import com.aademobejasb.attachment.dto.AttachmentListResponse;
-import com.aademobejasb.attachment.dto.AttachmentResponse;
-import com.aademobejasb.attachment.model.Attachment;
-import com.aademobejasb.attachment.repository.AttachmentRepository;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.expense.model.Expense;
-import com.aademobejasb.expense.repository.ExpenseRepository;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.AuthSteps;
-import com.aademobejasb.integration.steps.ExpenseStepHelper;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.attachment.dto.AttachmentListResponse;
+import com.ademobejasb.attachment.dto.AttachmentResponse;
+import com.ademobejasb.attachment.model.Attachment;
+import com.ademobejasb.attachment.repository.AttachmentRepository;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.expense.model.Expense;
+import com.ademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.AuthSteps;
+import com.ademobejasb.integration.steps.ExpenseStepHelper;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.security.JwtUtil;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -165,7 +165,7 @@ public class AttachmentsSteps {
         // Login bob
         AuthTokens bobAuth;
         try {
-            com.aademobejasb.contracts.LoginRequest loginReq = new com.aademobejasb.contracts.LoginRequest();
+            com.ademobejasb.contracts.LoginRequest loginReq = new com.ademobejasb.contracts.LoginRequest();
             loginReq.setUsername("bob");
             loginReq.setPassword("Str0ng#Pass2");
             bobAuth = authService.login(loginReq);

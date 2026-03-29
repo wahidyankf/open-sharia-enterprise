@@ -1,4 +1,4 @@
-defmodule AAAADemoBeExphWeb.Plugs.CheckUserActive do
+defmodule AAADemoBeExphWeb.Plugs.CheckUserActive do
   @moduledoc """
   Plug that loads the current user from DB and rejects requests for
   deactivated, disabled, or locked users.
@@ -9,7 +9,7 @@ defmodule AAAADemoBeExphWeb.Plugs.CheckUserActive do
 
   alias Guardian.Plug, as: GuardianPlug
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   def init(opts), do: opts
 

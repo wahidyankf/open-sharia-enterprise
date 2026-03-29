@@ -1,7 +1,7 @@
 import Config
 
 # Configure your database
-config :a_demo_be_exph, AADemoBeExph.Repo,
+config :a_demo_be_exph, ADemoBeExph.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
@@ -16,7 +16,7 @@ config :a_demo_be_exph, AADemoBeExph.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
   # Bind to 0.0.0.0 to expose the server to the docker host machine.
   # This makes make the service accessible from any network interface.
   # Change to `ip: {127, 0, 0, 1}` to allow access only from the server machine.

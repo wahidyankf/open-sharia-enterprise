@@ -22,8 +22,8 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [x] Create `apps/a-demo-be-fsharp-giraffe/` directory structure per tech-docs.md
 - [x] Create `global.json` pinning .NET SDK 10.0.x
-- [x] Create `src/AADemoBeFsgi/AADemoBeFsgi.fsproj` with all NuGet dependencies
-- [x] Create `tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj` with test dependencies
+- [x] Create `src/ADemoBeFsgi/ADemoBeFsgi.fsproj` with all NuGet dependencies
+- [x] Create `tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj` with test dependencies
 - [x] Create minimal `Program.fs` with Giraffe health endpoint
 - [x] Create `project.json` with all Nx targets from tech-docs.md
 - [x] Add `.editorconfig` with Fantomas configuration

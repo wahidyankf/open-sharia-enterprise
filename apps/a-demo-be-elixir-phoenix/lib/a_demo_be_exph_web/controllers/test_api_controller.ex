@@ -1,12 +1,12 @@
-defmodule AAAADemoBeExphWeb.TestApiController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.TestApiController do
+  use AAADemoBeExphWeb, :controller
 
-  alias AADemoBeExph.Accounts.User
-  alias AADemoBeExph.Attachment.Attachment
-  alias AADemoBeExph.Expense.Expense
-  alias AADemoBeExph.Repo
-  alias AADemoBeExph.Token.RefreshToken
-  alias AADemoBeExph.Token.RevokedToken
+  alias ADemoBeExph.Accounts.User
+  alias ADemoBeExph.Attachment.Attachment
+  alias ADemoBeExph.Expense.Expense
+  alias ADemoBeExph.Repo
+  alias ADemoBeExph.Token.RefreshToken
+  alias ADemoBeExph.Token.RevokedToken
 
   @doc """
   Deletes all data in dependency order to respect foreign key constraints.

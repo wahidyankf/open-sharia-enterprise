@@ -1,7 +1,7 @@
-package com.aademobejavx.repository.pg;
+package com.ademobejavx.repository.pg;
 
-import com.aademobejavx.domain.model.TokenRevocation;
-import com.aademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.domain.model.TokenRevocation;
+import com.ademobejavx.repository.TokenRevocationRepository;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;

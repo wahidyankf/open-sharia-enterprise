@@ -1,4 +1,4 @@
-package com.aademobejasb.unit.expense_management;
+package com.ademobejasb.unit.expense_management;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -16,8 +16,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("expenses/expense-management.feature")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejasb.unit.expense_management"
-                + ",com.aademobejasb.unit.steps")
+        value = "com.ademobejasb.unit.expense_management"
+                + ",com.ademobejasb.unit.steps")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty,html:target/cucumber-reports/unit-expense-management.html")

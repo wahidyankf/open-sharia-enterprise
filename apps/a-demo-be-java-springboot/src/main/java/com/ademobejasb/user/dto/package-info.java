@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.user.dto;
+package com.ademobejasb.user.dto;
 
 import org.jspecify.annotations.NullMarked;

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <AssemblyName>AAADemoBeFsgi.Tests</AssemblyName>
-    <RootNamespace>AAADemoBeFsgi.Tests</RootNamespace>
+    <AssemblyName>AADemoBeFsgi.Tests</AssemblyName>
+    <RootNamespace>AADemoBeFsgi.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <OtherFlags>--nowarn:3261 --nowarn:3264</OtherFlags>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AAADemoBeFsgi\AAADemoBeFsgi.fsproj" />
+    <ProjectReference Include="..\..\src\AADemoBeFsgi\AADemoBeFsgi.fsproj" />
   </ItemGroup>
 
   <Target Name="CopyGherkinSpecs" BeforeTargets="Build">

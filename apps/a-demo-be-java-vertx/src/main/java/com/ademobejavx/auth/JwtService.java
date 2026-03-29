@@ -1,10 +1,10 @@
-package com.aademobejavx.auth;
+package com.ademobejavx.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.aademobejavx.domain.model.User;
+import com.ademobejavx.domain.model.User;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;

@@ -1,9 +1,9 @@
-defmodule AADemoBeExph.Integration.Helpers do
+defmodule ADemoBeExph.Integration.Helpers do
   @moduledoc """
   Shared helpers for Cabbage integration tests using in-memory store.
   """
 
-  alias AADemoBeExph.Auth.Guardian
+  alias ADemoBeExph.Auth.Guardian
 
   defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module)
   defp token_ctx, do: Application.get_env(:a_demo_be_exph, :token_module)

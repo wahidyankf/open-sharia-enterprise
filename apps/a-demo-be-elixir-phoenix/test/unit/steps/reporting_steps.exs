@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.ReportingSteps do
+defmodule AAADemoBeExphWeb.Unit.ReportingSteps do
   use Cabbage.Feature, async: false, file: "expenses/reporting.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

@@ -1,4 +1,4 @@
-package com.aademobejavx.domain.validation;
+package com.ademobejavx.domain.validation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

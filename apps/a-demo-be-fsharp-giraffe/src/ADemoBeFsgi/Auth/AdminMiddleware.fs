@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Auth.AdminMiddleware
+module ADemoBeFsgi.Auth.AdminMiddleware
 
 open Giraffe
 

@@ -1,16 +1,16 @@
-package com.aademobejasb.auth.service;
+package com.ademobejasb.auth.service;
 
-import com.aademobejasb.auth.model.RefreshToken;
-import com.aademobejasb.auth.model.RevokedToken;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.RefreshTokenRepository;
-import com.aademobejasb.auth.repository.RevokedTokenRepository;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.config.ValidationException;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.contracts.LoginRequest;
-import com.aademobejasb.contracts.RegisterRequest;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.model.RefreshToken;
+import com.ademobejasb.auth.model.RevokedToken;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.RefreshTokenRepository;
+import com.ademobejasb.auth.repository.RevokedTokenRepository;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.config.ValidationException;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.contracts.LoginRequest;
+import com.ademobejasb.contracts.RegisterRequest;
+import com.ademobejasb.security.JwtUtil;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +54,7 @@ public class AuthService {
     }
 
     @Transactional
-    public com.aademobejasb.contracts.User register(final RegisterRequest request)
+    public com.ademobejasb.contracts.User register(final RegisterRequest request)
             throws UsernameAlreadyExistsException {
         validateEmail(request.getEmail());
         validatePasswordStrength(request.getPassword());
@@ -167,15 +167,15 @@ public class AuthService {
         return tokens;
     }
 
-    public static com.aademobejasb.contracts.User buildUserResponse(final User user) {
-        com.aademobejasb.contracts.User response = new com.aademobejasb.contracts.User();
+    public static com.ademobejasb.contracts.User buildUserResponse(final User user) {
+        com.ademobejasb.contracts.User response = new com.ademobejasb.contracts.User();
         response.setId(user.getId().toString());
         response.setUsername(user.getUsername());
         response.setEmail(user.getEmail() != null ? user.getEmail() : "");
         response.setDisplayName(
                 user.getDisplayName() != null ? user.getDisplayName() : user.getUsername());
         response.setStatus(
-                com.aademobejasb.contracts.User.StatusEnum.fromValue(user.getStatus()));
+                com.ademobejasb.contracts.User.StatusEnum.fromValue(user.getStatus()));
         response.setRoles(List.of(user.getRole()));
         response.setCreatedAt(
                 user.getCreatedAt() != null

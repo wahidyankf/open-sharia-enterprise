@@ -1,13 +1,13 @@
-using AADemoBeCsas.Auth;
-using AADemoBeCsas.Infrastructure;
-using AADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Auth;
+using ADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AADemoBeCsas.Tests;
+namespace ADemoBeCsas.Tests;
 
 /// <summary>
 /// Builds and owns the DI service container for integration tests.

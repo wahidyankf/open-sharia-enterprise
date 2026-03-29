@@ -1,7 +1,7 @@
-package com.aademobejasb.attachment.repository;
+package com.ademobejasb.attachment.repository;
 
-import com.aademobejasb.attachment.model.Attachment;
-import com.aademobejasb.expense.model.Expense;
+import com.ademobejasb.attachment.model.Attachment;
+import com.ademobejasb.expense.model.Expense;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

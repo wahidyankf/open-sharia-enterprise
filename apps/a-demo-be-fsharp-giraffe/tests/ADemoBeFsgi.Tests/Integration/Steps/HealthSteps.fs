@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.Integration.Steps.HealthSteps
+module ADemoBeFsgi.Tests.Integration.Steps.HealthSteps
 
 open System.Text.Json
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
 
 [<When>]
 let ``an operations engineer sends GET /health`` (state: StepState) =

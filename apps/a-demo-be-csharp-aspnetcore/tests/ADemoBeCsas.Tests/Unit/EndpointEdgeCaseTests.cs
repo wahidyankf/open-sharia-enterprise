@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Unit;
+namespace ADemoBeCsas.Tests.Unit;
 
 /// <summary>
 /// xUnit integration tests that exercise endpoint edge cases not covered by the
@@ -154,16 +154,16 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     {
         // Covers AuthEndpoints lines 108-110: disabled account check
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AADemoBeCsas.Infrastructure.AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<ADemoBeCsas.Infrastructure.AppDbContext>();
         // Create a disabled user directly
-        var user = new AADemoBeCsas.Infrastructure.Models.UserModel
+        var user = new ADemoBeCsas.Infrastructure.Models.UserModel
         {
             Id = Guid.NewGuid(),
             Username = "disableduser_edge",
             Email = "disableduser_edge@example.com",
-            PasswordHash = new AADemoBeCsas.Infrastructure.PasswordHasher().HashPassword("Str0ng#Pass1"),
-            Status = AADemoBeCsas.Domain.UserStatus.Disabled,
-            Role = AADemoBeCsas.Domain.Role.User,
+            PasswordHash = new ADemoBeCsas.Infrastructure.PasswordHasher().HashPassword("Str0ng#Pass1"),
+            Status = ADemoBeCsas.Domain.UserStatus.Disabled,
+            Role = ADemoBeCsas.Domain.Role.User,
             CreatedAt = DateTimeOffset.UtcNow,
             UpdatedAt = DateTimeOffset.UtcNow,
         };
@@ -459,7 +459,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
 
         // Delete user from DB directly
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AADemoBeCsas.Infrastructure.AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<ADemoBeCsas.Infrastructure.AppDbContext>();
         var userModel = await db.Users.FindAsync(Guid.Parse(userId));
         if (userModel is not null)
         {
@@ -502,7 +502,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
 
         // Delete user from DB
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AADemoBeCsas.Infrastructure.AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<ADemoBeCsas.Infrastructure.AppDbContext>();
         var userModel = await db.Users.FindAsync(Guid.Parse(userId));
         if (userModel is not null)
         {
@@ -699,11 +699,11 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
 
         // Set role to Admin directly in DB
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AADemoBeCsas.Infrastructure.AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<ADemoBeCsas.Infrastructure.AppDbContext>();
         var user = db.Users.FirstOrDefault(u => u.Username == username);
         if (user is not null)
         {
-            user.Role = AADemoBeCsas.Domain.Role.Admin;
+            user.Role = ADemoBeCsas.Domain.Role.Admin;
             await db.SaveChangesAsync();
         }
 

@@ -1,13 +1,13 @@
-package com.aademobejasb.attachment.controller;
+package com.ademobejasb.attachment.controller;
 
-import com.aademobejasb.attachment.dto.AttachmentListResponse;
-import com.aademobejasb.attachment.dto.AttachmentResponse;
-import com.aademobejasb.attachment.model.Attachment;
-import com.aademobejasb.attachment.repository.AttachmentRepository;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.expense.model.Expense;
-import com.aademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.attachment.dto.AttachmentListResponse;
+import com.ademobejasb.attachment.dto.AttachmentResponse;
+import com.ademobejasb.attachment.model.Attachment;
+import com.ademobejasb.attachment.repository.AttachmentRepository;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.expense.model.Expense;
+import com.ademobejasb.expense.repository.ExpenseRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +59,7 @@ public class AttachmentController {
                     HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported file type");
         }
         if (file.getSize() > MAX_SIZE) {
-            throw new com.aademobejasb.attachment.FileSizeLimitExceededException();
+            throw new com.ademobejasb.attachment.FileSizeLimitExceededException();
         }
 
         Expense expense = getExpense(expenseId);

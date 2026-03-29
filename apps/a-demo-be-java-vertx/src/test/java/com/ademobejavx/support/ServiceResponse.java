@@ -1,4 +1,4 @@
-package com.aademobejavx.support;
+package com.ademobejavx.support;
 
 import io.vertx.core.json.JsonObject;
 import org.jspecify.annotations.Nullable;

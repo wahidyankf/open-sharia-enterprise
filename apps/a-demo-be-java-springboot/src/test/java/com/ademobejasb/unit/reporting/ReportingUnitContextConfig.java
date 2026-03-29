@@ -1,7 +1,7 @@
-package com.aademobejasb.unit.reporting;
+package com.ademobejasb.unit.reporting;
 
-import com.aademobejasb.unit.steps.BaseUnitCucumberContextConfig;
-import com.aademobejasb.unit.steps.UnitTestApplication;
+import com.ademobejasb.unit.steps.BaseUnitCucumberContextConfig;
+import com.ademobejasb.unit.steps.UnitTestApplication;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Expense.Expense do
+defmodule ADemoBeExph.Expense.Expense do
   use Ecto.Schema
   import Ecto.Changeset
 

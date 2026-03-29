@@ -1,7 +1,7 @@
-package com.aademobejasb.security;
+package com.ademobejasb.security;
 
-import com.aademobejasb.auth.repository.RevokedTokenRepository;
-import com.aademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.repository.RevokedTokenRepository;
+import com.ademobejasb.auth.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

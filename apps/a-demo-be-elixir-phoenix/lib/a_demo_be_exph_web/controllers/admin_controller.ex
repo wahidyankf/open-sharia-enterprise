@@ -1,15 +1,15 @@
-defmodule AAAADemoBeExphWeb.AdminController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.AdminController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.PasswordResetResponse
   alias GeneratedSchemas.User, as: UserSchema
   alias GeneratedSchemas.UserListResponse
   alias Guardian.Plug, as: GuardianPlug
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   defp token_ctx,
-    do: Application.get_env(:a_demo_be_exph, :token_module, AADemoBeExph.Token.TokenContext)
+    do: Application.get_env(:a_demo_be_exph, :token_module, ADemoBeExph.Token.TokenContext)
 
   def list_users(conn, params) do
     current_user = GuardianPlug.current_resource(conn)

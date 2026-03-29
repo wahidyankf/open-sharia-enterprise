@@ -1,11 +1,11 @@
-package com.aademobejavx.support;
+package com.ademobejavx.support;
 
 import org.jspecify.annotations.Nullable;
 
 /**
  * Per-scenario mutable state shared across Cucumber step definition classes via
  * PicoContainer constructor injection. Every field is reset before each scenario
- * by {@link com.aademobejavx.integration.steps.CommonSteps#resetState}.
+ * by {@link com.ademobejavx.integration.steps.CommonSteps#resetState}.
  */
 public class ScenarioState {
 

@@ -1,4 +1,4 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 /**
  * Unit-level Cucumber test runner. Runs all Gherkin scenarios via
- * {@link com.aademobejavx.support.DirectCallService} backed by a real
+ * {@link com.ademobejavx.support.DirectCallService} backed by a real
  * PostgreSQL database (same as the integration-level CucumberIT). Lives under
  * the {@code unit} package so it is picked up by the default Maven Surefire
  * configuration (no profile required).
@@ -27,7 +27,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
     "expenses"
 })
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejavx.unit.steps")
+        value = "com.ademobejavx.unit.steps")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
         value = "pretty,json:target/cucumber-reports/unit-cucumber.json")
 public class UnitCucumberTest {

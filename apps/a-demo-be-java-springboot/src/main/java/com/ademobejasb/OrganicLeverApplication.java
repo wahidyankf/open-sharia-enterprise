@@ -1,4 +1,4 @@
-package com.aademobejasb;
+package com.ademobejasb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

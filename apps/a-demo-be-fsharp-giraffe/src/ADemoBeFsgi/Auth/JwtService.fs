@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Auth.JwtService
+module ADemoBeFsgi.Auth.JwtService
 
 open System
 open System.IdentityModel.Tokens.Jwt

@@ -1,14 +1,14 @@
 using System.Text.Json;
-using AADemoBeCsas.Auth;
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure;
-using AADemoBeCsas.Infrastructure.Models;
-using AADemoBeCsas.Infrastructure.Repositories;
-using AADemoBeCsas.Tests.ScenarioContext;
+using ADemoBeCsas.Auth;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Infrastructure.Models;
+using ADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Tests.ScenarioContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AADemoBeCsas.Tests;
+namespace ADemoBeCsas.Tests;
 
 /// <summary>
 /// Implements all integration-test operations by calling service and repository

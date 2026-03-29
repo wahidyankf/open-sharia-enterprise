@@ -1,4 +1,4 @@
-defmodule AAAADemoBeExphWeb.Telemetry do
+defmodule AAADemoBeExphWeb.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
@@ -87,7 +87,7 @@ defmodule AAAADemoBeExphWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {AAAADemoBeExphWeb, :count_users, []}
+      # {AAADemoBeExphWeb, :count_users, []}
     ]
   end
 end

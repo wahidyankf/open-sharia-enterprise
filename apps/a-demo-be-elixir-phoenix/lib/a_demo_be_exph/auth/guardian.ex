@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Auth.Guardian do
+defmodule ADemoBeExph.Auth.Guardian do
   @moduledoc """
   Guardian implementation for JWT authentication.
   Encodes and decodes user tokens for protected endpoints.
@@ -6,7 +6,7 @@ defmodule AADemoBeExph.Auth.Guardian do
 
   use Guardian, otp_app: :a_demo_be_exph
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   def subject_for_token(%{id: id}, _claims), do: {:ok, to_string(id)}
   def subject_for_token(_, _), do: {:error, :unknown_resource}

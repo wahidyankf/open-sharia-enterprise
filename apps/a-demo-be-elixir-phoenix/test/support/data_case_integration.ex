@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.DataCaseIntegration do
+defmodule ADemoBeExph.DataCaseIntegration do
   @moduledoc """
   Test case for integration tests that call context/service functions directly
   against a real PostgreSQL database — no HTTP dispatch, no Plug pipeline.
@@ -10,12 +10,12 @@ defmodule AADemoBeExph.DataCaseIntegration do
 
   using do
     quote do
-      import AADemoBeExph.DataCaseIntegration
+      import ADemoBeExph.DataCaseIntegration
     end
   end
 
   setup _tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(AADemoBeExph.Repo, shared: true)
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ADemoBeExph.Repo, shared: true)
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
     :ok
   end

@@ -89,7 +89,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
 
 #### Phase 2b: a-demo-be-csharp-aspnetcore — EF Core Migrations
 
-- [x] Add `Microsoft.EntityFrameworkCore.Design` to `AADemoBeCsas.csproj` (PrivateAssets="all")
+- [x] Add `Microsoft.EntityFrameworkCore.Design` to `ADemoBeCsas.csproj` (PrivateAssets="all")
 - [x] Run `dotnet ef migrations add InitialCreate` to generate `Migrations/` directory
 - [x] Replace `Database.EnsureCreatedAsync()` with `Database.MigrateAsync()` in `Program.cs`
 - [x] Search codebase for `EnsureCreated` — SQLite test paths retain EnsureCreated (expected)

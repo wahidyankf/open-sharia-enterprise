@@ -1,7 +1,7 @@
-module AADemoBeFsgi.Domain.User
+module ADemoBeFsgi.Domain.User
 
 open System
-open AADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.Types
 
 type User =
     { Id: Guid

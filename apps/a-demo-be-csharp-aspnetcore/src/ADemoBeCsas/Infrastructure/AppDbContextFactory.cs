@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace AADemoBeCsas.Infrastructure;
+namespace ADemoBeCsas.Infrastructure;
 
 /// <summary>
 /// Design-time factory used by <c>dotnet ef</c> CLI tools to create an

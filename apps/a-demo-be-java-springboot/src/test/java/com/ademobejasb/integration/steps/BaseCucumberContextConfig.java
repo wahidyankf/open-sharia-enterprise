@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
 /**
  * Abstract base for Cucumber context configs. Not annotated with @CucumberContextConfiguration —

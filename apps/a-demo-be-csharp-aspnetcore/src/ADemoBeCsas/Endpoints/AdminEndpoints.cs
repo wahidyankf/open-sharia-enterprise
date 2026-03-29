@@ -1,8 +1,8 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class AdminEndpoints
 {

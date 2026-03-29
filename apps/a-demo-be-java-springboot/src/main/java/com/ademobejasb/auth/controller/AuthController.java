@@ -1,15 +1,15 @@
-package com.aademobejasb.auth.controller;
+package com.ademobejasb.auth.controller;
 
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.auth.service.InvalidTokenException;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.contracts.LoginRequest;
-import com.aademobejasb.contracts.RefreshRequest;
-import com.aademobejasb.contracts.RegisterRequest;
-import com.aademobejasb.contracts.User;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.auth.service.InvalidTokenException;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.contracts.LoginRequest;
+import com.ademobejasb.contracts.RefreshRequest;
+import com.ademobejasb.contracts.RegisterRequest;
+import com.ademobejasb.contracts.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

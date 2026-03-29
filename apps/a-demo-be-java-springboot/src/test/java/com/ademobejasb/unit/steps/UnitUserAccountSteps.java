@@ -1,10 +1,10 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.contracts.ChangePasswordRequest;
-import com.aademobejasb.contracts.UpdateProfileRequest;
-import com.aademobejasb.user.controller.UserController;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.contracts.ChangePasswordRequest;
+import com.ademobejasb.contracts.UpdateProfileRequest;
+import com.ademobejasb.user.controller.UserController;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class UnitUserAccountSteps {
     @When("^alice sends GET /api/v1/users/me$")
     public void aliceSendsGetUsersMe() {
         String username = resolveUsername();
-        ResponseEntity<com.aademobejasb.contracts.User> resp = userController.getProfile(
+        ResponseEntity<com.ademobejasb.contracts.User> resp = userController.getProfile(
                 UnitAuthSteps.userDetails(username));
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
@@ -40,7 +40,7 @@ public class UnitUserAccountSteps {
         String username = resolveUsername();
         UpdateProfileRequest req = new UpdateProfileRequest();
         req.setDisplayName("Alice Smith");
-        ResponseEntity<com.aademobejasb.contracts.User> resp = userController.updateProfile(
+        ResponseEntity<com.ademobejasb.contracts.User> resp = userController.updateProfile(
                 UnitAuthSteps.userDetails(username), req);
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());

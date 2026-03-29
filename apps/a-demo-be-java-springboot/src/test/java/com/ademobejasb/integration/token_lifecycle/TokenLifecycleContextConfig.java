@@ -1,6 +1,6 @@
-package com.aademobejasb.integration.token_lifecycle;
+package com.ademobejasb.integration.token_lifecycle;
 
-import com.aademobejasb.integration.steps.BaseCucumberContextConfig;
+import com.ademobejasb.integration.steps.BaseCucumberContextConfig;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

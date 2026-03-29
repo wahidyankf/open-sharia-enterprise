@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <AssemblyName>AAADemoBeFsgi</AssemblyName>
-    <RootNamespace>AAADemoBeFsgi</RootNamespace>
+    <AssemblyName>AADemoBeFsgi</AssemblyName>
+    <RootNamespace>AADemoBeFsgi</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Nullable>enable</Nullable>
     <OtherFlags>--warnon:1182 --nowarn:3261 --nowarn:3264 --nowarn:3511</OtherFlags>
@@ -15,20 +15,20 @@
 
   <ItemGroup>
     <!-- Generated contract types from OpenAPI spec (generated-contracts/, gitignored) -->
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\CategoryBreakdown.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\AuthTokens.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\JwkKey.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\JwksResponse.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\HealthResponse.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\User.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\UserListResponse.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\Expense.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\ExpenseListResponse.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\ExpenseSummary.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\Attachment.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\PLReport.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\PasswordResetResponse.fs" />
-    <Compile Include="..\..\generated-contracts\OpenAPI\src\AAADemoBeFsgi.Contracts\TokenClaims.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\CategoryBreakdown.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\AuthTokens.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\JwkKey.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\JwksResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\HealthResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\User.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\UserListResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\Expense.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\ExpenseListResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\ExpenseSummary.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\Attachment.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\PLReport.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\PasswordResetResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\AADemoBeFsgi.Contracts\TokenClaims.fs" />
     <!-- CLIMutable request wrappers for JSON deserialization -->
     <Compile Include="Contracts/ContractWrappers.fs" />
     <!-- Domain and infrastructure -->

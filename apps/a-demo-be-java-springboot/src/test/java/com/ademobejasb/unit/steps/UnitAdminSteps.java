@@ -1,13 +1,13 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
-import com.aademobejasb.admin.controller.AdminController;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.contracts.DisableRequest;
-import com.aademobejasb.contracts.PasswordResetResponse;
-import com.aademobejasb.contracts.User;
-import com.aademobejasb.contracts.UserListResponse;
+import com.ademobejasb.admin.controller.AdminController;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.contracts.DisableRequest;
+import com.ademobejasb.contracts.PasswordResetResponse;
+import com.ademobejasb.contracts.User;
+import com.ademobejasb.contracts.UserListResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -144,8 +144,8 @@ public class UnitAdminSteps {
             String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
             String email = username + "@example.com";
             try {
-                com.aademobejasb.contracts.RegisterRequest req =
-                        new com.aademobejasb.contracts.RegisterRequest();
+                com.ademobejasb.contracts.RegisterRequest req =
+                        new com.ademobejasb.contracts.RegisterRequest();
                 req.setUsername(username);
                 req.setEmail(email);
                 req.setPassword(password);

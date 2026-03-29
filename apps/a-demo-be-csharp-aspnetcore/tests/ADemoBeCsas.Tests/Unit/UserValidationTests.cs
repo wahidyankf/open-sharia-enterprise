@@ -1,8 +1,8 @@
-using AADemoBeCsas.Domain;
+using ADemoBeCsas.Domain;
 using FluentAssertions;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Unit;
+namespace ADemoBeCsas.Tests.Unit;
 
 [Trait("Category", "Unit")]
 public class UserValidationTests

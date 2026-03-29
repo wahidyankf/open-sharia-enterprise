@@ -1,7 +1,7 @@
-package com.aademobejavx.repository.memory;
+package com.ademobejavx.repository.memory;
 
-import com.aademobejavx.domain.model.TokenRevocation;
-import com.aademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.domain.model.TokenRevocation;
+import com.ademobejavx.repository.TokenRevocationRepository;
 import io.vertx.core.Future;
 import java.util.concurrent.ConcurrentHashMap;
 

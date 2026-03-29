@@ -1,7 +1,7 @@
-package com.aademobejasb.integration.expense_management;
+package com.ademobejasb.integration.expense_management;
 
-import com.aademobejasb.integration.steps.ExpenseStepHelper;
-import com.aademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.integration.steps.ExpenseStepHelper;
+import com.ademobejasb.integration.steps.TokenStore;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import java.util.UUID;

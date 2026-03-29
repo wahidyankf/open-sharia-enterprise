@@ -1,12 +1,12 @@
-module AADemoBeFsgi.Tests.Integration.Steps.ExpenseSteps
+module ADemoBeFsgi.Tests.Integration.Steps.ExpenseSteps
 
 open System
 open System.Text.Json
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 /// Parse a JSON expense body and call createExpense directly.
 let internal createExpenseFromBody (state: StepState) (bodyStr: string) : int * string * string option =

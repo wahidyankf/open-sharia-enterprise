@@ -20,13 +20,13 @@ with `{ repo with FindById = fun _ -> ... }`.
 
 **New files to create**:
 
-- `src/AADemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record type
+- `src/ADemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record type
   definitions (`UserRepository`, `ExpenseRepository`, `AttachmentRepository`, `TokenRepository`,
   `RefreshTokenRepository`) where each field is a function (e.g.,
   `FindById: Guid -> Guid -> Task<ExpenseEntity option>`)
-- `src/AADemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — constructor functions that
+- `src/ADemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — constructor functions that
   return function records wired to `AppDbContext` (e.g., `EfRepositories.createUserRepo: AppDbContext -> UserRepository`)
-- `tests/AADemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — constructor functions that return
+- `tests/ADemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — constructor functions that return
   function records backed by `ConcurrentDictionary` (e.g., `InMemoryRepositories.createUserRepo: unit -> UserRepository`)
 
 **Files to modify**:
@@ -36,21 +36,21 @@ with `{ repo with FindById = fun _ -> ... }`.
   (e.g., `ctx.GetService<UserRepository>()`)
 - `Program.fs` — register function records in DI container via factory lambdas
   (e.g., `services.AddSingleton<UserRepository>(fun sp -> EfRepositories.createUserRepo(sp.GetService<AppDbContext>()))`)
-- `tests/AADemoBeFsgi.Tests/DirectServices.fs` — replace `db: AppDbContext` parameter with
+- `tests/ADemoBeFsgi.Tests/DirectServices.fs` — replace `db: AppDbContext` parameter with
   individual function-record repositories (this is the actual business logic layer for unit tests)
-- `tests/AADemoBeFsgi.Tests/Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to
+- `tests/ADemoBeFsgi.Tests/Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to
   inject in-memory function records instead of constructing an `AppDbContext` via `createDb()`
-- `tests/AADemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with function-record
+- `tests/ADemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with function-record
   repository fields (e.g., `UserRepo: UserRepository`, `ExpenseRepo: ExpenseRepository`);
   update `empty` constructor accordingly (propagates to all Integration step files)
-- `tests/AADemoBeFsgi.Tests/Integration/Steps/*.fs` (all 13 step definition files: AuthSteps.fs,
+- `tests/ADemoBeFsgi.Tests/Integration/Steps/*.fs` (all 13 step definition files: AuthSteps.fs,
   CommonSteps.fs, TokenLifecycleSteps.fs, TokenManagementSteps.fs, UserAccountSteps.fs,
   SecuritySteps.fs, AdminSteps.fs, ExpenseSteps.fs, CurrencySteps.fs, UnitHandlingSteps.fs,
   ReportingSteps.fs, AttachmentSteps.fs, HealthSteps.fs) — replace all `state.Db` call sites
   with the appropriate function-record repository from the updated `StepState`
-- `AADemoBeFsgi.fsproj` — add `RepositoryTypes.fs` and `EfRepositories.fs` in correct compilation
+- `ADemoBeFsgi.fsproj` — add `RepositoryTypes.fs` and `EfRepositories.fs` in correct compilation
   order (types before constructors before handlers)
-- `tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct
+- `tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct
   compilation order
 
 **Key pattern**:

@@ -29,10 +29,10 @@ Execute phases in order. Each phase produces a working, committable state.
       (`Nullable`, `ImplicitUsings`, `TreatWarningsAsErrors`, `RestorePackagesWithLockFile`)
 - [ ] Create `Directory.Packages.props` with all NuGet Central Package Management versions
       per tech-docs.md
-- [ ] Create `src/AADemoBeCsas/AADemoBeCsas.csproj` referencing all runtime packages
-- [ ] Create `tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj` referencing all test packages
+- [ ] Create `src/ADemoBeCsas/ADemoBeCsas.csproj` referencing all runtime packages
+- [ ] Create `tests/ADemoBeCsas.Tests/ADemoBeCsas.Tests.csproj` referencing all test packages
       and the main project, with the `CopyGherkinSpecs` MSBuild target
-- [ ] Create minimal `src/AADemoBeCsas/Program.cs` with `WebApplication.CreateBuilder` that
+- [ ] Create minimal `src/ADemoBeCsas/Program.cs` with `WebApplication.CreateBuilder` that
       starts on port 8201 (no routes yet except health)
 - [ ] Create `.editorconfig` with `dotnet format` rules (indentation, braces, using directives)
 - [ ] Create `project.json` with all Nx targets from tech-docs.md
@@ -48,25 +48,25 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add domain types and EF Core database layer`
 
-- [ ] Create `src/AADemoBeCsas/Domain/Types.cs` — C# enums:
+- [ ] Create `src/ADemoBeCsas/Domain/Types.cs` — C# enums:
       `Currency` (USD, IDR), `Role` (User, Admin), `UserStatus` (Active, Inactive, Disabled, Locked)
-- [ ] Create `src/AADemoBeCsas/Domain/Errors.cs` — sealed record error hierarchy:
+- [ ] Create `src/ADemoBeCsas/Domain/Errors.cs` — sealed record error hierarchy:
       `DomainError`, `ValidationError`, `NotFoundError`, `ForbiddenError`,
       `ConflictError`, `UnauthorizedError`, `FileTooLargeError`, `UnsupportedMediaTypeError`
-- [ ] Create `src/AADemoBeCsas/Domain/User.cs` — `UserDomain` record + static `UserValidation`
+- [ ] Create `src/ADemoBeCsas/Domain/User.cs` — `UserDomain` record + static `UserValidation`
       class with `ValidatePassword`, `ValidateEmail`, `ValidateUsername` (all return
       `Result<T>` or throw `DomainError`)
-- [ ] Create `src/AADemoBeCsas/Domain/Expense.cs` — `ExpenseDomain` record + `CurrencyValidation`
+- [ ] Create `src/ADemoBeCsas/Domain/Expense.cs` — `ExpenseDomain` record + `CurrencyValidation`
       class with `ValidateAmount(currency, amount)` enforcing decimal precision per currency
-- [ ] Create `src/AADemoBeCsas/Domain/Attachment.cs` — `AttachmentDomain` record
-- [ ] Create `src/AADemoBeCsas/Infrastructure/Models/` — EF Core entity classes:
+- [ ] Create `src/ADemoBeCsas/Domain/Attachment.cs` — `AttachmentDomain` record
+- [ ] Create `src/ADemoBeCsas/Infrastructure/Models/` — EF Core entity classes:
       `UserModel`, `ExpenseModel`, `AttachmentModel`, `RevokedTokenModel`
-- [ ] Create `src/AADemoBeCsas/Infrastructure/AppDbContext.cs` — EF Core `DbContext` with
+- [ ] Create `src/ADemoBeCsas/Infrastructure/AppDbContext.cs` — EF Core `DbContext` with
       `DbSet<>` properties and `OnModelCreating` config (unique indexes, enum-to-string
       conversions, decimal precision)
-- [ ] Create `src/AADemoBeCsas/Infrastructure/PasswordHasher.cs` — BCrypt.Net-Next wrapper
+- [ ] Create `src/ADemoBeCsas/Infrastructure/PasswordHasher.cs` — BCrypt.Net-Next wrapper
       with `IPasswordHasher` interface, `HashPassword(string)`, `VerifyPassword(string, string)`
-- [ ] Write unit tests in `tests/AADemoBeCsas.Tests/Unit/`:
+- [ ] Write unit tests in `tests/ADemoBeCsas.Tests/Unit/`:
   - `UserValidationTests.cs`: password strength (min 12 chars, uppercase, special char),
     email format, username constraints — tagged `[Trait("Category", "Unit")]`
   - `CurrencyTests.cs`: USD 2dp enforcement, IDR 0dp enforcement, unsupported currency,
@@ -83,22 +83,22 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add /health endpoint`
 
-- [ ] Create `src/AADemoBeCsas/Endpoints/HealthEndpoints.cs` with
+- [ ] Create `src/ADemoBeCsas/Endpoints/HealthEndpoints.cs` with
       `MapHealthEndpoints(this IEndpointRouteBuilder app)` extension — `GET /health` returns
       `Results.Ok(new { status = "UP" })` (public, no auth)
 - [ ] Register `app.MapHealthEndpoints()` in `Program.cs`
 - [ ] Register domain error → HTTP response mapping in `Program.cs` (middleware or endpoint
       filter converting `DomainError` subclasses to appropriate `IResult`)
-- [ ] Create `tests/AADemoBeCsas.Tests/TestWebApplicationFactory.cs` with:
+- [ ] Create `tests/ADemoBeCsas.Tests/TestWebApplicationFactory.cs` with:
   - `WebApplicationFactory<Program>` subclass
   - `ConfigureWebHost` override removing production Postgres EF registration and adding
     SQLite in-memory (`DataSource=:memory:`)
   - `EnsureDatabaseCreated()` helper calling `dbContext.Database.EnsureCreated()`
-- [ ] Create `tests/AADemoBeCsas.Tests/ScenarioContext/SharedState.cs` — POCO for per-scenario
+- [ ] Create `tests/ADemoBeCsas.Tests/ScenarioContext/SharedState.cs` — POCO for per-scenario
       state: `LastResponse`, `AccessToken`, `RefreshToken`, `LastCreatedId`
-- [ ] Create `tests/AADemoBeCsas.Tests/Integration/Steps/CommonSteps.cs` with shared step
+- [ ] Create `tests/ADemoBeCsas.Tests/Integration/Steps/CommonSteps.cs` with shared step
       definitions: status code assertions, API-is-running setup
-- [ ] Create `tests/AADemoBeCsas.Tests/Integration/Steps/HealthSteps.cs` — Reqnroll `[Binding]`
+- [ ] Create `tests/ADemoBeCsas.Tests/Integration/Steps/HealthSteps.cs` — Reqnroll `[Binding]`
       class consuming `health-check.feature` (2 scenarios), tagged
       `[Trait("Category", "Integration")]`
 - [ ] Verify `dotnet test --filter Category=Integration` passes — 2 scenarios
@@ -110,26 +110,26 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add register and login endpoints`
 
-- [ ] Create `src/AADemoBeCsas/Auth/JwtService.cs` — `IJwtService` interface +
+- [ ] Create `src/ADemoBeCsas/Auth/JwtService.cs` — `IJwtService` interface +
       `JwtService` implementation:
   - `CreateAccessToken(userId, username, role) -> string`
   - `CreateRefreshToken(userId) -> string`
   - `DecodeToken(token) -> ClaimsPrincipal`
 - [ ] Register `JwtService` in DI and configure `AddAuthentication().AddJwtBearer(...)` in
       `Program.cs`
-- [ ] Create `src/AADemoBeCsas/Infrastructure/Repositories/UserRepository.cs` —
+- [ ] Create `src/ADemoBeCsas/Infrastructure/Repositories/UserRepository.cs` —
       `IUserRepository` + `UserRepository`:
   - `CreateAsync(username, email, passwordHash, displayName) -> UserModel`
   - `FindByUsernameAsync(username) -> UserModel?`
   - `FindByIdAsync(userId) -> UserModel?`
-- [ ] Create `src/AADemoBeCsas/Endpoints/AuthEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/AuthEndpoints.cs`:
   - `POST /api/v1/auth/register` → 201 `{id, username, email, display_name}`
     (validates password strength; returns 409 on duplicate username)
   - `POST /api/v1/auth/login` → 200 `{access_token, refresh_token, token_type: "Bearer"}`
     (raises 401 on wrong password, 401 on Inactive status, 423 on Locked)
 - [ ] Register `app.MapAuthEndpoints()` and all repository scopes in `Program.cs`
 - [ ] Write Reqnroll integration steps in
-      `tests/AADemoBeCsas.Tests/Integration/Steps/AuthSteps.cs` consuming
+      `tests/ADemoBeCsas.Tests/Integration/Steps/AuthSteps.cs` consuming
       `registration.feature` (6 scenarios) and `password-login.feature` (5 scenarios)
 - [ ] Verify `dotnet test --filter Category=Integration` passes — 13 scenarios
 - [ ] Verify `dotnet build /p:TreatWarningsAsErrors=true` passes
@@ -141,7 +141,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add token lifecycle and management endpoints`
 
-- [ ] Create `src/AADemoBeCsas/Infrastructure/Repositories/RevokedTokenRepository.cs` —
+- [ ] Create `src/ADemoBeCsas/Infrastructure/Repositories/RevokedTokenRepository.cs` —
       `IRevokedTokenRepository` + `RevokedTokenRepository`:
   - `RevokeAsync(jti) -> Task` — idempotent
   - `IsRevokedAsync(jti) -> Task<bool>`
@@ -152,7 +152,7 @@ Execute phases in order. Each phase produces a working, committable state.
   - `POST /api/v1/auth/logout` — revokes current access token jti (idempotent: 200 even
     if already revoked); public route (reads Authorization header)
   - `POST /api/v1/auth/logout-all` — protected by JWT; revokes all tokens for user
-- [ ] Create `src/AADemoBeCsas/Endpoints/TokenEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/TokenEndpoints.cs`:
   - `GET /api/v1/tokens/claims` — decode and return JWT claims (protected)
   - `GET /.well-known/jwks.json` — return JWKS public key info (public)
 - [ ] Register `app.MapTokenEndpoints()` in `Program.cs`
@@ -168,7 +168,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add user account and security endpoints`
 
-- [ ] Create `src/AADemoBeCsas/Endpoints/UserEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/UserEndpoints.cs`:
   - `GET /api/v1/users/me` — return `{id, username, email, display_name, status}` (protected)
   - `PATCH /api/v1/users/me` — update `display_name` field (protected)
   - `POST /api/v1/users/me/password` — verify old password, hash new, update (protected);
@@ -193,10 +193,10 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add admin endpoints`
 
-- [ ] Create `src/AADemoBeCsas/Auth/AuthorizationExtensions.cs` — admin role policy:
+- [ ] Create `src/ADemoBeCsas/Auth/AuthorizationExtensions.cs` — admin role policy:
       `builder.Services.AddAuthorization(opts => opts.AddPolicy("Admin", ...))` and
       `RequireAuthorization("Admin")` helper
-- [ ] Create `src/AADemoBeCsas/Endpoints/AdminEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/AdminEndpoints.cs`:
   - `GET /api/v1/admin/users` — paginated list with optional `email` query filter
     (protected + Admin policy); returns `{items: [...], total, page, size}`
   - `POST /api/v1/admin/users/{id}/disable` — set status to Disabled (admin only)
@@ -219,7 +219,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(a-demo-be-csharp-aspnetcore): add expense CRUD and currency handling`
 
-- [ ] Create `src/AADemoBeCsas/Infrastructure/Repositories/ExpenseRepository.cs` —
+- [ ] Create `src/ADemoBeCsas/Infrastructure/Repositories/ExpenseRepository.cs` —
       `IExpenseRepository` + `ExpenseRepository`:
   - `CreateAsync(userId, data) -> ExpenseModel`
   - `FindByIdAsync(expenseId, userId) -> ExpenseModel?`
@@ -227,7 +227,7 @@ Execute phases in order. Each phase produces a working, committable state.
   - `UpdateAsync(expenseId, userId, data) -> ExpenseModel`
   - `DeleteAsync(expenseId, userId) -> Task`
   - `SummaryByCurrencyAsync(userId) -> IReadOnlyList<CurrencySummary>`
-- [ ] Create `src/AADemoBeCsas/Endpoints/ExpenseEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/ExpenseEndpoints.cs`:
   - `POST /api/v1/expenses` — create expense or income (protected); validates currency and
     amount precision; returns 201 with `{id, ...}`
   - `GET /api/v1/expenses` — list own (paginated, protected)
@@ -255,12 +255,12 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Implement unit-of-measure validation in `ExpenseEndpoints.cs` — supported SI units
       (liter, kilogram, meter) and imperial equivalents (gallon, pound, foot, mile, ounce);
       unsupported returns 400
-- [ ] Create `src/AADemoBeCsas/Endpoints/ReportEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/ReportEndpoints.cs`:
   - `GET /api/v1/reports/pl` — P&L report with `from`, `to` (ISO date), and `currency`
     query params (protected); returns `{income_total, expense_total, net, breakdown}`
-- [ ] Create `src/AADemoBeCsas/Infrastructure/Repositories/AttachmentRepository.cs` —
+- [ ] Create `src/ADemoBeCsas/Infrastructure/Repositories/AttachmentRepository.cs` —
       `IAttachmentRepository` + `AttachmentRepository`
-- [ ] Create `src/AADemoBeCsas/Endpoints/AttachmentEndpoints.cs`:
+- [ ] Create `src/ADemoBeCsas/Endpoints/AttachmentEndpoints.cs`:
   - `POST /api/v1/expenses/{id}/attachments` — upload file via `IFormFile` (protected);
     validates content type (image/jpeg, image/png, application/pdf) → 415;
     validates size ≤ 10MB → 413; returns 201 with metadata
@@ -282,11 +282,11 @@ Execute phases in order. Each phase produces a working, committable state.
 **Commit**: `fix(a-demo-be-csharp-aspnetcore): achieve 90% coverage and pass quality gates`
 
 - [ ] Run full test suite with Coverlet LCOV:
-      `dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --collect:"XPlat Code Coverage" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov`
+      `dotnet test tests/ADemoBeCsas.Tests/ADemoBeCsas.Tests.csproj --collect:"XPlat Code Coverage" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov`
 - [ ] Validate: `rhino-cli test-coverage validate apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info 90`
       passes
 - [ ] If coverage below 90%: add unit tests for domain error paths and handler error branches
-      in `AADemoBeCsas.Tests/Unit/` until threshold is met
+      in `ADemoBeCsas.Tests/Unit/` until threshold is met
 - [ ] Verify `dotnet format --verify-no-changes` passes (zero formatting changes)
 - [ ] Verify `dotnet build /p:TreatWarningsAsErrors=true` passes (zero analyzer warnings)
 - [ ] `nx run a-demo-be-csharp-aspnetcore:test:quick` passes all gates

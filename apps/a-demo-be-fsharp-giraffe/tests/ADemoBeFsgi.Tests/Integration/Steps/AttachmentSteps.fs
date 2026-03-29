@@ -1,13 +1,13 @@
-module AADemoBeFsgi.Tests.Integration.Steps.AttachmentSteps
+module ADemoBeFsgi.Tests.Integration.Steps.AttachmentSteps
 
 open System
 open System.Text.Json
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
-open AADemoBeFsgi.Tests.Integration.Steps.ExpenseSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.Integration.Steps.ExpenseSteps
 
 [<When>]
 let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expenses/\{expenseId\}/attachments``

@@ -61,8 +61,8 @@ TickSpec discovers features from the output directory at runtime.
 ```
 apps/a-demo-be-fsharp-giraffe/
 ├── src/
-│   └── AADemoBeFsgi/
-│       ├── AADemoBeFsgi.fsproj              # Main application
+│   └── ADemoBeFsgi/
+│       ├── ADemoBeFsgi.fsproj              # Main application
 │       ├── Program.fs                      # Entry point + ASP.NET Core configuration
 │       ├── Domain/
 │       │   ├── Types.fs                    # Domain types (DUs, records)
@@ -86,8 +86,8 @@ apps/a-demo-be-fsharp-giraffe/
 │           ├── AttachmentHandler.fs        # file upload/list/delete
 │           └── TokenHandler.fs             # claims, JWKS
 ├── tests/
-│   └── AADemoBeFsgi.Tests/
-│       ├── AADemoBeFsgi.Tests.fsproj         # Test project
+│   └── ADemoBeFsgi.Tests/
+│       ├── ADemoBeFsgi.Tests.fsproj         # Test project
 │       ├── TestFixture.fs                  # TestServer + HttpClient setup
 │       ├── State.fs                        # Step state record
 │       ├── Unit/
@@ -261,7 +261,7 @@ let validateAmount (currency: string) (amount: decimal) =
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet publish src/AADemoBeFsgi/AADemoBeFsgi.fsproj -c Release -o dist",
+        "command": "dotnet publish src/ADemoBeFsgi/ADemoBeFsgi.fsproj -c Release -o dist",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       },
       "outputs": ["{projectRoot}/dist"]
@@ -269,14 +269,14 @@ let validateAmount (currency: string) (amount: decimal) =
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet watch run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "command": "dotnet watch run --project src/ADemoBeFsgi/ADemoBeFsgi.fsproj",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "command": "dotnet run --project src/ADemoBeFsgi/ADemoBeFsgi.fsproj",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
@@ -284,10 +284,10 @@ let validateAmount (currency: string) (amount: decimal) =
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
+          "dotnet test tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-fsharp-giraffe/coverage/**/coverage.info 90)",
           "dotnet fantomas --check src/ tests/",
-          "dotnet fsharplint lint src/AADemoBeFsgi/AADemoBeFsgi.fsproj"
+          "dotnet fsharplint lint src/ADemoBeFsgi/ADemoBeFsgi.fsproj"
         ],
         "parallel": false,
         "cwd": "apps/a-demo-be-fsharp-giraffe"
@@ -296,14 +296,14 @@ let validateAmount (currency: string) (amount: decimal) =
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --filter Category=Unit",
+        "command": "dotnet test tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj --filter Category=Unit",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --filter Category=Integration",
+        "command": "dotnet test tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj --filter Category=Integration",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       },
       "cache": true,
@@ -316,14 +316,14 @@ let validateAmount (currency: string) (amount: decimal) =
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet fsharplint lint src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "command": "dotnet fsharplint lint src/ADemoBeFsgi/ADemoBeFsgi.fsproj",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/AADemoBeFsgi/AADemoBeFsgi.fsproj --no-restore /p:TreatWarningsAsErrors=true",
+        "command": "dotnet build src/ADemoBeFsgi/ADemoBeFsgi.fsproj --no-restore /p:TreatWarningsAsErrors=true",
         "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     }
@@ -393,7 +393,7 @@ services:
     depends_on:
       a-demo-be-db:
         condition: service_healthy
-    command: sh -c "dotnet ef database update --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj && dotnet watch run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj"
+    command: sh -c "dotnet ef database update --project src/ADemoBeFsgi/ADemoBeFsgi.fsproj && dotnet watch run --project src/ADemoBeFsgi/ADemoBeFsgi.fsproj"
     networks:
       - a-demo-be-fsharp-giraffe-network
 
@@ -416,7 +416,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 WORKDIR /workspace
 
-CMD ["dotnet", "watch", "run", "--project", "src/AADemoBeFsgi/AADemoBeFsgi.fsproj"]
+CMD ["dotnet", "watch", "run", "--project", "src/ADemoBeFsgi/ADemoBeFsgi.fsproj"]
 ```
 
 ---
@@ -456,7 +456,7 @@ Add after existing Java/Elixir setup:
 
 ## Dependencies Summary
 
-### NuGet Packages (AADemoBeFsgi.fsproj)
+### NuGet Packages (ADemoBeFsgi.fsproj)
 
 | Package                               | Purpose                                    |
 | ------------------------------------- | ------------------------------------------ |
@@ -468,7 +468,7 @@ Add after existing Java/Elixir setup:
 | BCrypt.Net-Next                       | Password hashing                           |
 | FSharp.SystemTextJson                 | F# type serialization for System.Text.Json |
 
-### NuGet Packages (AADemoBeFsgi.Tests.fsproj)
+### NuGet Packages (ADemoBeFsgi.Tests.fsproj)
 
 | Package                          | Purpose                            |
 | -------------------------------- | ---------------------------------- |

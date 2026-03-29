@@ -1,11 +1,11 @@
-package com.aademobejasb.integration.token_management;
+package com.ademobejasb.integration.token_management;
 
-import com.aademobejasb.auth.repository.RevokedTokenRepository;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.repository.RevokedTokenRepository;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.security.JwtUtil;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

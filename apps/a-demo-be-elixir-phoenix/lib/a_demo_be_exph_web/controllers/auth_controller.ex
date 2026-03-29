@@ -1,14 +1,14 @@
-defmodule AAAADemoBeExphWeb.AuthController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.AuthController do
+  use AAADemoBeExphWeb, :controller
 
-  alias AADemoBeExph.Auth.Guardian
+  alias ADemoBeExph.Auth.Guardian
   alias GeneratedSchemas.AuthTokens
   alias GeneratedSchemas.User, as: UserSchema
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   defp token_ctx,
-    do: Application.get_env(:a_demo_be_exph, :token_module, AADemoBeExph.Token.TokenContext)
+    do: Application.get_env(:a_demo_be_exph, :token_module, ADemoBeExph.Token.TokenContext)
 
   def register(conn, params) do
     case accounts().register_user(params) do

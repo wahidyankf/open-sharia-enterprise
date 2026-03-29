@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AAADemoBeCsas\AAADemoBeCsas.csproj" />
+    <ProjectReference Include="..\..\src\AADemoBeCsas\AADemoBeCsas.csproj" />
   </ItemGroup>
 
   <!-- Include shared Gherkin feature files for Reqnroll code-behind generation -->

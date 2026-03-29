@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Tests.Integration.Steps.TokenLifecycleSteps
+module ADemoBeFsgi.Tests.Integration.Steps.TokenLifecycleSteps
 
 open System
 open System.IdentityModel.Tokens.Jwt
@@ -6,9 +6,9 @@ open System.Text
 open Microsoft.IdentityModel.Tokens
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 let private makeExpiredRefreshToken (userId: string) =
     let key =

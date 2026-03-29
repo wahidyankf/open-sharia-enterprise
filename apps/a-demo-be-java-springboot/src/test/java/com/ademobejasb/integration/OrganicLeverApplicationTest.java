@@ -1,4 +1,4 @@
-package com.aademobejasb.integration;
+package com.ademobejasb.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

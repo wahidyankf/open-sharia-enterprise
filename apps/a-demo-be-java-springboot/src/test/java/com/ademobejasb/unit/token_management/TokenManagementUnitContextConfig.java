@@ -1,7 +1,7 @@
-package com.aademobejasb.unit.token_management;
+package com.ademobejasb.unit.token_management;
 
-import com.aademobejasb.unit.steps.BaseUnitCucumberContextConfig;
-import com.aademobejasb.unit.steps.UnitTestApplication;
+import com.ademobejasb.unit.steps.BaseUnitCucumberContextConfig;
+import com.ademobejasb.unit.steps.UnitTestApplication;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

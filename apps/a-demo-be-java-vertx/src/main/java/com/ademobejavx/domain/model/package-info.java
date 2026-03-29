@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejavx.domain.model;
+package com.ademobejavx.domain.model;
 
 import org.jspecify.annotations.NullMarked;

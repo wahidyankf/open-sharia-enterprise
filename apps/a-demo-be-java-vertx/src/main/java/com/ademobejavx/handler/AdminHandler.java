@@ -1,10 +1,10 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
-import com.aademobejavx.contracts.PasswordResetResponse;
-import com.aademobejavx.contracts.User;
-import com.aademobejavx.contracts.UserListResponse;
-import com.aademobejavx.domain.validation.DomainException;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.contracts.PasswordResetResponse;
+import com.ademobejavx.contracts.User;
+import com.ademobejavx.contracts.UserListResponse;
+import com.ademobejavx.domain.validation.DomainException;
+import com.ademobejavx.repository.UserRepository;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -47,13 +47,13 @@ public class AdminHandler implements Handler<RoutingContext> {
                     int total = users.size();
                     int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
                     int start = (page - 1) * size;
-                    List<com.aademobejavx.domain.model.User> pageUsers = users.stream()
+                    List<com.ademobejavx.domain.model.User> pageUsers = users.stream()
                             .skip(start)
                             .limit(size)
                             .toList();
 
                     List<User> content = new ArrayList<>();
-                    for (com.aademobejavx.domain.model.User u : pageUsers) {
+                    for (com.ademobejavx.domain.model.User u : pageUsers) {
                         content.add(AuthHandler.buildContractUser(u));
                     }
 
@@ -81,7 +81,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
                     return userRepo.update(userOpt.get().withStatus(
-                            com.aademobejavx.domain.model.User.STATUS_DISABLED));
+                            com.ademobejavx.domain.model.User.STATUS_DISABLED));
                 })
                 .onSuccess(user -> {
                     User resp = AuthHandler.buildContractUser(user);
@@ -102,7 +102,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
                     return userRepo.update(userOpt.get().withStatus(
-                            com.aademobejavx.domain.model.User.STATUS_ACTIVE));
+                            com.ademobejavx.domain.model.User.STATUS_ACTIVE));
                 })
                 .onSuccess(user -> {
                     User resp = AuthHandler.buildContractUser(user);
@@ -122,8 +122,8 @@ public class AdminHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    com.aademobejavx.domain.model.User updated = userOpt.get()
-                            .withStatus(com.aademobejavx.domain.model.User.STATUS_ACTIVE)
+                    com.ademobejavx.domain.model.User updated = userOpt.get()
+                            .withStatus(com.ademobejavx.domain.model.User.STATUS_ACTIVE)
                             .withFailedLoginAttempts(0);
                     return userRepo.update(updated);
                 })

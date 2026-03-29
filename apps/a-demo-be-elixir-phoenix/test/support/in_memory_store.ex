@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Test.InMemoryStore do
+defmodule ADemoBeExph.Test.InMemoryStore do
   @moduledoc """
   Agent-based in-memory store shared across Cabbage step files within a scenario.
   Holds users, refresh tokens, revoked JTIs, expenses, and attachments.

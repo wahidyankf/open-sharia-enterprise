@@ -1,12 +1,12 @@
-module AADemoBeFsgi.Handlers.AdminHandler
+module ADemoBeFsgi.Handlers.AdminHandler
 
 open System
 open System.Text.Json
 open Giraffe
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Contracts.ContractWrappers
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Contracts.ContractWrappers
 
 let listUsers: HttpHandler =
     fun next ctx ->

@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.health;
+package com.ademobejasb.integration.health;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -13,8 +13,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("health/health-check.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.aademobejasb.integration.health"
-        + ",com.aademobejasb.integration.steps")
+    value = "com.ademobejasb.integration.health"
+        + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/health.html")

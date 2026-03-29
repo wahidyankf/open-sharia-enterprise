@@ -1,4 +1,4 @@
-package com.aademobejasb.unit.currency_handling;
+package com.ademobejasb.unit.currency_handling;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -16,8 +16,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("expenses/currency-handling.feature")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejasb.unit.currency_handling"
-                + ",com.aademobejasb.unit.steps")
+        value = "com.ademobejasb.unit.currency_handling"
+                + ",com.ademobejasb.unit.steps")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty,html:target/cucumber-reports/unit-currency-handling.html")

@@ -1,14 +1,14 @@
-package com.aademobejasb.integration.admin;
+package com.ademobejasb.integration.admin;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.contracts.PasswordResetResponse;
-import com.aademobejasb.contracts.UserListResponse;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.AuthSteps;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.contracts.PasswordResetResponse;
+import com.ademobejasb.contracts.UserListResponse;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.AuthSteps;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -76,7 +76,7 @@ public class AdminSteps {
         }
         Page<User> page =
                 userRepository.findAll(PageRequest.of(0, 20, Sort.by("createdAt")));
-        List<com.aademobejasb.contracts.User> data = page.getContent().stream()
+        List<com.ademobejasb.contracts.User> data = page.getContent().stream()
                 .map(AuthService::buildUserResponse)
                 .toList();
         UserListResponse response = new UserListResponse();
@@ -101,7 +101,7 @@ public class AdminSteps {
         Page<User> page = userRepository
                 .findAllByEmailContaining("alice@example.com",
                         PageRequest.of(0, 20, Sort.by("createdAt")));
-        List<com.aademobejasb.contracts.User> data = page.getContent().stream()
+        List<com.ademobejasb.contracts.User> data = page.getContent().stream()
                 .map(AuthService::buildUserResponse)
                 .toList();
         UserListResponse response = new UserListResponse();

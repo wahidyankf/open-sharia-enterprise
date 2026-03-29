@@ -1,10 +1,10 @@
-defmodule AAAADemoBeExphWeb.Integration.PasswordLoginSteps do
+defmodule AAADemoBeExphWeb.Integration.PasswordLoginSteps do
   use Cabbage.Feature, async: false, file: "authentication/password-login.feature"
 
-  use AADemoBeExph.DataCaseIntegration
+  use ADemoBeExph.DataCaseIntegration
 
-  alias AADemoBeExph.Integration.Helpers
-  alias AADemoBeExph.Integration.ServiceLayer
+  alias ADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 

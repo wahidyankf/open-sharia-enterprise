@@ -8,11 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "a-demo-be-csharp-aspnetcore
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B3347020-41AA-28C1-C7FF-757E623DC291}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADemoBeCsas.Tests", "apps\a-demo-be-csharp-aspnetcore\tests\AADemoBeCsas.Tests\AADemoBeCsas.Tests.csproj", "{CD9730FC-947B-FCC0-DE1C-FB445BD41DCA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADemoBeCsas.Tests", "apps\a-demo-be-csharp-aspnetcore\tests\ADemoBeCsas.Tests\ADemoBeCsas.Tests.csproj", "{CD9730FC-947B-FCC0-DE1C-FB445BD41DCA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{69F0BE8A-CD79-38BA-B8F7-DC886949F317}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADemoBeCsas", "apps\a-demo-be-csharp-aspnetcore\src\AADemoBeCsas\AADemoBeCsas.csproj", "{9A3F5925-7F1C-4296-DAA0-7BB3332B840C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADemoBeCsas", "apps\a-demo-be-csharp-aspnetcore\src\ADemoBeCsas\ADemoBeCsas.csproj", "{9A3F5925-7F1C-4296-DAA0-7BB3332B840C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

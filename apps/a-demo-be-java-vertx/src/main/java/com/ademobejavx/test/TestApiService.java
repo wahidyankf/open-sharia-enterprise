@@ -1,4 +1,4 @@
-package com.aademobejavx.test;
+package com.ademobejavx.test;
 
 import io.vertx.core.Future;
 

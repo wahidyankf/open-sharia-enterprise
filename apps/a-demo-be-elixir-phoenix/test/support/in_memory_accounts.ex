@@ -1,13 +1,13 @@
-defmodule AADemoBeExph.Test.InMemoryAccounts do
+defmodule ADemoBeExph.Test.InMemoryAccounts do
   @moduledoc """
-  In-memory implementation of AADemoBeExph.Accounts.Behaviour backed by InMemoryStore Agent.
+  In-memory implementation of ADemoBeExph.Accounts.Behaviour backed by InMemoryStore Agent.
   Used in test environment to avoid real PostgreSQL.
   """
 
-  @behaviour AADemoBeExph.Accounts.Behaviour
+  @behaviour ADemoBeExph.Accounts.Behaviour
 
-  alias AADemoBeExph.Accounts.User
-  alias AADemoBeExph.Test.InMemoryStore
+  alias ADemoBeExph.Accounts.User
+  alias ADemoBeExph.Test.InMemoryStore
 
   @max_failed_attempts 5
 

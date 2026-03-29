@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.integration.registration;
+package com.ademobejasb.integration.registration;
 
 import org.jspecify.annotations.NullMarked;

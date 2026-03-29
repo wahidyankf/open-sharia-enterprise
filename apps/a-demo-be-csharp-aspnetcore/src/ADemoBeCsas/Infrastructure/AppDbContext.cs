@@ -1,8 +1,8 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure.Models;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AADemoBeCsas.Infrastructure;
+namespace ADemoBeCsas.Infrastructure;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

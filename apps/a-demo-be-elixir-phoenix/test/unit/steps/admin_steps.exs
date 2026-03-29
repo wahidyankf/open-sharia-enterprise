@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.AdminSteps do
+defmodule AAADemoBeExphWeb.Unit.AdminSteps do
   use Cabbage.Feature, async: false, file: "admin/admin.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

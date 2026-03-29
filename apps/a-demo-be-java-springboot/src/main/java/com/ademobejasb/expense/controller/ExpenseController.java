@@ -1,12 +1,12 @@
-package com.aademobejasb.expense.controller;
+package com.ademobejasb.expense.controller;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.config.ValidationException;
-import com.aademobejasb.contracts.CreateExpenseRequest;
-import com.aademobejasb.contracts.Expense;
-import com.aademobejasb.contracts.ExpenseListResponse;
-import com.aademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.config.ValidationException;
+import com.ademobejasb.contracts.CreateExpenseRequest;
+import com.ademobejasb.contracts.Expense;
+import com.ademobejasb.contracts.ExpenseListResponse;
+import com.ademobejasb.expense.repository.ExpenseRepository;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,8 +59,8 @@ public class ExpenseController {
             @Valid @RequestBody final CreateExpenseRequest request) {
         validateExpenseRequest(request);
         User user = getUser(userDetails);
-        com.aademobejasb.expense.model.Expense expense =
-                new com.aademobejasb.expense.model.Expense(
+        com.ademobejasb.expense.model.Expense expense =
+                new com.ademobejasb.expense.model.Expense(
                         user,
                         new BigDecimal(request.getAmount()),
                         request.getCurrency(),
@@ -70,7 +70,7 @@ public class ExpenseController {
                         request.getType().getValue().toLowerCase());
         expense.setQuantity(request.getQuantity());
         expense.setUnit(request.getUnit());
-        com.aademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        com.ademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
         return ResponseEntity.status(HttpStatus.CREATED).body(buildExpenseResponse(saved));
     }
 
@@ -79,7 +79,7 @@ public class ExpenseController {
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id) {
         User user = getUser(userDetails);
-        com.aademobejasb.expense.model.Expense expense =
+        com.ademobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -92,7 +92,7 @@ public class ExpenseController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "20") final int size) {
         User user = getUser(userDetails);
-        Page<com.aademobejasb.expense.model.Expense> expenses =
+        Page<com.ademobejasb.expense.model.Expense> expenses =
                 expenseRepository.findAllByUser(
                         user, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         List<Expense> data = expenses.getContent().stream()
@@ -110,12 +110,12 @@ public class ExpenseController {
     public ResponseEntity<Map<String, String>> summary(
             @AuthenticationPrincipal final UserDetails userDetails) {
         User user = getUser(userDetails);
-        List<com.aademobejasb.expense.model.Expense> allExpenses =
+        List<com.ademobejasb.expense.model.Expense> allExpenses =
                 expenseRepository
                         .findAllByUser(user, PageRequest.of(0, Integer.MAX_VALUE, Sort.unsorted()))
                         .getContent();
         Map<String, BigDecimal> totals = new HashMap<>();
-        for (com.aademobejasb.expense.model.Expense e : allExpenses) {
+        for (com.ademobejasb.expense.model.Expense e : allExpenses) {
             if ("expense".equals(e.getType())) {
                 totals.merge(e.getCurrency(), e.getAmount(), BigDecimal::add);
             }
@@ -134,7 +134,7 @@ public class ExpenseController {
             @Valid @RequestBody final CreateExpenseRequest request) {
         validateExpenseRequest(request);
         User user = getUser(userDetails);
-        com.aademobejasb.expense.model.Expense expense =
+        com.ademobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -147,7 +147,7 @@ public class ExpenseController {
         expense.setQuantity(request.getQuantity());
         expense.setUnit(request.getUnit());
         expense.setUpdatedAt(Instant.now());
-        com.aademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        com.ademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
         return ResponseEntity.ok(buildExpenseResponse(saved));
     }
 
@@ -156,7 +156,7 @@ public class ExpenseController {
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id) {
         User user = getUser(userDetails);
-        com.aademobejasb.expense.model.Expense expense =
+        com.ademobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -164,7 +164,7 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-    public static Expense buildExpenseResponse(final com.aademobejasb.expense.model.Expense expense) {
+    public static Expense buildExpenseResponse(final com.ademobejasb.expense.model.Expense expense) {
         String formattedAmount;
         if ("IDR".equals(expense.getCurrency())) {
             formattedAmount =

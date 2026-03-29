@@ -1,7 +1,7 @@
-defmodule AAAADemoBeExphWeb.AttachmentController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.AttachmentController do
+  use AAADemoBeExphWeb, :controller
 
-  alias AADemoBeExph.Attachment.Attachment
+  alias ADemoBeExph.Attachment.Attachment
   alias GeneratedSchemas.Attachment, as: AttachmentSchema
   alias Guardian.Plug, as: GuardianPlug
 
@@ -13,7 +13,7 @@ defmodule AAAADemoBeExphWeb.AttachmentController do
       Application.get_env(
         :a_demo_be_exph,
         :expense_module,
-        AADemoBeExph.Expense.ExpenseContext
+        ADemoBeExph.Expense.ExpenseContext
       )
 
   defp attachment_ctx,
@@ -21,7 +21,7 @@ defmodule AAAADemoBeExphWeb.AttachmentController do
       Application.get_env(
         :a_demo_be_exph,
         :attachment_module,
-        AADemoBeExph.Attachment.AttachmentContext
+        ADemoBeExph.Attachment.AttachmentContext
       )
 
   def index(conn, %{"expense_id" => expense_id}) do

@@ -1,11 +1,11 @@
-package com.aademobejasb.admin.controller;
+package com.ademobejasb.admin.controller;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.contracts.DisableRequest;
-import com.aademobejasb.contracts.PasswordResetResponse;
-import com.aademobejasb.contracts.UserListResponse;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.contracts.DisableRequest;
+import com.ademobejasb.contracts.PasswordResetResponse;
+import com.ademobejasb.contracts.UserListResponse;
 import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
@@ -43,7 +43,7 @@ public class AdminController {
         } else {
             users = userRepository.findAll(pageRequest);
         }
-        List<com.aademobejasb.contracts.User> data =
+        List<com.ademobejasb.contracts.User> data =
                 users.getContent().stream().map(AuthService::buildUserResponse).toList();
         UserListResponse response = new UserListResponse();
         response.setContent(data);
@@ -55,7 +55,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/disable")
-    public ResponseEntity<com.aademobejasb.contracts.User> disableUser(
+    public ResponseEntity<com.ademobejasb.contracts.User> disableUser(
             @PathVariable final UUID id,
             @RequestBody final DisableRequest request) {
         User user =
@@ -68,7 +68,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/enable")
-    public ResponseEntity<com.aademobejasb.contracts.User> enableUser(@PathVariable final UUID id) {
+    public ResponseEntity<com.ademobejasb.contracts.User> enableUser(@PathVariable final UUID id) {
         User user =
                 userRepository
                         .findById(id)
@@ -79,7 +79,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/unlock")
-    public ResponseEntity<com.aademobejasb.contracts.User> unlockUser(@PathVariable final UUID id) {
+    public ResponseEntity<com.ademobejasb.contracts.User> unlockUser(@PathVariable final UUID id) {
         User user =
                 userRepository
                         .findById(id)

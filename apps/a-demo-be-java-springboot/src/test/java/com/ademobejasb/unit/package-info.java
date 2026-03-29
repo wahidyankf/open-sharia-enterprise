@@ -1,4 +1,4 @@
 /** JUnit 5 unit tests — no Spring context, no external services. */
 @NullMarked
-package com.aademobejasb.unit;
+package com.ademobejasb.unit;
 import org.jspecify.annotations.NullMarked;

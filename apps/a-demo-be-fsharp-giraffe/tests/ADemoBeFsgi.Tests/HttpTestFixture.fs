@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Tests.HttpTestFixture
+module ADemoBeFsgi.Tests.HttpTestFixture
 
 open System
 open Microsoft.AspNetCore.Hosting
@@ -6,7 +6,7 @@ open Microsoft.AspNetCore.Mvc.Testing
 open Microsoft.Data.Sqlite
 open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.DependencyInjection
-open AADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.AppDbContext
 
 /// WebApplicationFactory that replaces the database with an in-memory SQLite instance.
 /// Used exclusively in HandlerCoverageTests to exercise the HTTP handler pipeline
@@ -15,7 +15,7 @@ open AADemoBeFsgi.Infrastructure.AppDbContext
 /// Each factory instance uses a unique in-memory SQLite connection so test classes
 /// are fully isolated from each other.
 type TestWebAppFactory() =
-    inherit WebApplicationFactory<AADemoBeFsgi.Program.Marker>()
+    inherit WebApplicationFactory<ADemoBeFsgi.Program.Marker>()
 
     let conn = new SqliteConnection("DataSource=:memory:")
 

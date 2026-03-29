@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.DataCase do
+defmodule ADemoBeExph.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule AADemoBeExph.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use AADemoBeExph.DataCase, async: true`, although
+  by setting `use ADemoBeExph.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,17 +18,17 @@ defmodule AADemoBeExph.DataCase do
 
   using do
     quote do
-      alias AADemoBeExph.Repo
+      alias ADemoBeExph.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import AADemoBeExph.DataCase
+      import ADemoBeExph.DataCase
     end
   end
 
   setup tags do
-    AADemoBeExph.DataCase.setup_sandbox(tags)
+    ADemoBeExph.DataCase.setup_sandbox(tags)
     :ok
   end
 
@@ -37,7 +37,7 @@ defmodule AADemoBeExph.DataCase do
   """
   def setup_sandbox(tags) do
     pid =
-      Ecto.Adapters.SQL.Sandbox.start_owner!(AADemoBeExph.Repo, shared: not tags[:async])
+      Ecto.Adapters.SQL.Sandbox.start_owner!(ADemoBeExph.Repo, shared: not tags[:async])
 
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end

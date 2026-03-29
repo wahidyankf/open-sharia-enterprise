@@ -1,4 +1,4 @@
-package com.aademobejavx;
+package com.ademobejavx;
 
 import io.vertx.core.Vertx;
 

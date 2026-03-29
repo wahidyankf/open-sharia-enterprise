@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Infrastructure;
+namespace ADemoBeCsas.Infrastructure;
 
 public interface IPasswordHasher
 {

@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
 import org.springframework.boot.test.context.TestConfiguration;
 

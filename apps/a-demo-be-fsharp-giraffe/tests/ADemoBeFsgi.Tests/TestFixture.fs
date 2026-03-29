@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.TestFixture
+module ADemoBeFsgi.Tests.TestFixture
 
 open System
 open Microsoft.Data.Sqlite
 open Microsoft.EntityFrameworkCore
 open DbUp
-open AADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.AppDbContext
 
 /// Returns true when a real PostgreSQL DATABASE_URL is present in the environment.
 /// Integration tests (docker-compose) always set DATABASE_URL.
@@ -29,7 +29,7 @@ let createDb () : AppDbContext * (unit -> unit) =
         let result =
             DeployChanges.To
                 .PostgresqlDatabase(connStr)
-                .WithScriptsEmbeddedInAssembly(Reflection.Assembly.GetAssembly(typeof<AADemoBeFsgi.Program.Marker>))
+                .WithScriptsEmbeddedInAssembly(Reflection.Assembly.GetAssembly(typeof<ADemoBeFsgi.Program.Marker>))
                 .LogToConsole()
                 .Build()
                 .PerformUpgrade()

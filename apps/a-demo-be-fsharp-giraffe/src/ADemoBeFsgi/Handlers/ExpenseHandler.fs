@@ -1,13 +1,13 @@
-module AADemoBeFsgi.Handlers.ExpenseHandler
+module ADemoBeFsgi.Handlers.ExpenseHandler
 
 open System
 open System.Text.Json
 open Giraffe
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Domain.Expense
-open AADemoBeFsgi.Contracts.ContractWrappers
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.Expense
+open ADemoBeFsgi.Contracts.ContractWrappers
 
 let private parseAmount (s: string) =
     if String.IsNullOrEmpty s then

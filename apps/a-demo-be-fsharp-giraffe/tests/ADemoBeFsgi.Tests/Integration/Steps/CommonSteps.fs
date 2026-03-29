@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+module ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 open System.Text.Json
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

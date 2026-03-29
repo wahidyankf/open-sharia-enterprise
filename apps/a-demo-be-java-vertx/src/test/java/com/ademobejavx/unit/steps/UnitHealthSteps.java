@@ -1,8 +1,8 @@
-package com.aademobejavx.unit.steps;
+package com.ademobejavx.unit.steps;
 
-import com.aademobejavx.unit.UnitFactory;
-import com.aademobejavx.support.ScenarioState;
-import com.aademobejavx.support.ServiceResponse;
+import com.ademobejavx.unit.UnitFactory;
+import com.ademobejavx.support.ScenarioState;
+import com.ademobejavx.support.ServiceResponse;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.vertx.core.json.JsonObject;

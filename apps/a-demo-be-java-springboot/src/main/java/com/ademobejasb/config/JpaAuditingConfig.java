@@ -1,4 +1,4 @@
-package com.aademobejasb.config;
+package com.ademobejasb.config;
 
 import java.util.Optional;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Auth;
+namespace ADemoBeCsas.Auth;
 
 public static class AuthorizationExtensions
 {

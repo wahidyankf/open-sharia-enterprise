@@ -1,10 +1,10 @@
-defmodule AAAADemoBeExphWeb.Integration.SecuritySteps do
+defmodule AAADemoBeExphWeb.Integration.SecuritySteps do
   use Cabbage.Feature, async: false, file: "security/security.feature"
 
-  use AADemoBeExph.DataCaseIntegration
+  use ADemoBeExph.DataCaseIntegration
 
-  alias AADemoBeExph.Integration.Helpers
-  alias AADemoBeExph.Integration.ServiceLayer
+  alias ADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 

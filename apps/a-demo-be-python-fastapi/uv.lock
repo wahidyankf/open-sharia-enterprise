@@ -7,6 +7,74 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "a-demo-be-python-fastapi"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "alembic" },
+    { name = "bcrypt" },
+    { name = "fastapi", extra = ["standard"] },
+    { name = "psycopg2-binary" },
+    { name = "pydantic", extra = ["email"] },
+    { name = "pydantic-settings" },
+    { name = "pyjwt" },
+    { name = "python-multipart" },
+    { name = "sqlalchemy" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "httpx" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-bdd" },
+    { name = "ruff" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "httpx" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-bdd" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "alembic", specifier = ">=1.14" },
+    { name = "bcrypt", specifier = ">=4.0" },
+    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'", specifier = ">=7.6" },
+    { name = "fastapi", extras = ["standard"], specifier = ">=0.115" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
+    { name = "psycopg2-binary", specifier = ">=2.9" },
+    { name = "pydantic", extras = ["email"], specifier = ">=2.9" },
+    { name = "pydantic-settings", specifier = ">=2.6" },
+    { name = "pyjwt", specifier = ">=2.9" },
+    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
+    { name = "pytest-bdd", marker = "extra == 'dev'", specifier = ">=7.3" },
+    { name = "python-multipart", specifier = ">=0.0.12" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+    { name = "sqlalchemy", specifier = ">=2.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
+]
+provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", extras = ["toml"], specifier = ">=7.6" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pyright", specifier = ">=1.1" },
+    { name = "pytest", specifier = ">=8.3" },
+    { name = "pytest-bdd", specifier = ">=7.3" },
+    { name = "ruff", specifier = ">=0.8" },
+]
+
+[[package]]
 name = "alembic"
 version = "1.18.4"
 source = { registry = "https://pypi.org/simple" }
@@ -213,74 +281,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/96/38086d58a181aac86d503dfa9c47eb20715a79c3e3acbdf786e92e5c09a8/coverage-7.13.4-cp314-cp314t-win_amd64.whl", hash = "sha256:4c7d3cc01e7350f2f0f6f7036caaf5673fb56b6998889ccfe9e1c1fe75a9c932", size = 224148, upload-time = "2026-02-09T12:58:58.645Z" },
     { url = "https://files.pythonhosted.org/packages/ce/72/8d10abd3740a0beb98c305e0c3faf454366221c0f37a8bcf8f60020bb65a/coverage-7.13.4-cp314-cp314t-win_arm64.whl", hash = "sha256:23e3f687cf945070d1c90f85db66d11e3025665d8dafa831301a0e0038f3db9b", size = 222172, upload-time = "2026-02-09T12:59:00.396Z" },
     { url = "https://files.pythonhosted.org/packages/0d/4a/331fe2caf6799d591109bb9c08083080f6de90a823695d412a935622abb2/coverage-7.13.4-py3-none-any.whl", hash = "sha256:1af1641e57cf7ba1bd67d677c9abdbcd6cc2ab7da3bca7fa1e2b7e50e65f2ad0", size = 211242, upload-time = "2026-02-09T12:59:02.032Z" },
-]
-
-[[package]]
-name = "demo-be-python-fastapi"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "alembic" },
-    { name = "bcrypt" },
-    { name = "fastapi", extra = ["standard"] },
-    { name = "psycopg2-binary" },
-    { name = "pydantic", extra = ["email"] },
-    { name = "pydantic-settings" },
-    { name = "pyjwt" },
-    { name = "python-multipart" },
-    { name = "sqlalchemy" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "coverage" },
-    { name = "httpx" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-bdd" },
-    { name = "ruff" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "coverage" },
-    { name = "httpx" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-bdd" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "alembic", specifier = ">=1.14" },
-    { name = "bcrypt", specifier = ">=4.0" },
-    { name = "coverage", extras = ["toml"], marker = "extra == 'dev'", specifier = ">=7.6" },
-    { name = "fastapi", extras = ["standard"], specifier = ">=0.115" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27" },
-    { name = "psycopg2-binary", specifier = ">=2.9" },
-    { name = "pydantic", extras = ["email"], specifier = ">=2.9" },
-    { name = "pydantic-settings", specifier = ">=2.6" },
-    { name = "pyjwt", specifier = ">=2.9" },
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3" },
-    { name = "pytest-bdd", marker = "extra == 'dev'", specifier = ">=7.3" },
-    { name = "python-multipart", specifier = ">=0.0.12" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
-    { name = "sqlalchemy", specifier = ">=2.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
-]
-provides-extras = ["dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "coverage", extras = ["toml"], specifier = ">=7.6" },
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "pyright", specifier = ">=1.1" },
-    { name = "pytest", specifier = ">=8.3" },
-    { name = "pytest-bdd", specifier = ">=7.3" },
-    { name = "ruff", specifier = ">=0.8" },
 ]
 
 [[package]]

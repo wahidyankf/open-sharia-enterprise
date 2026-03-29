@@ -1,7 +1,7 @@
-package com.aademobejavx.test;
+package com.ademobejavx.test;
 
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.repository.UserRepository;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 

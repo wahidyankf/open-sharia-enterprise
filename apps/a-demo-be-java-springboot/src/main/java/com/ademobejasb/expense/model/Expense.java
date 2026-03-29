@@ -1,6 +1,6 @@
-package com.aademobejasb.expense.model;
+package com.ademobejasb.expense.model;
 
-import com.aademobejasb.auth.model.User;
+import com.ademobejasb.auth.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,12 +1,12 @@
-module AADemoBeFsgi.Tests.Unit.UnitFeatureRunner
+module ADemoBeFsgi.Tests.Unit.UnitFeatureRunner
 
 open System
 open System.IO
 open System.Reflection
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.InMemory.InMemoryRepositories
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.InMemory.InMemoryRepositories
 
 /// Unit-level BDD runner.
 ///

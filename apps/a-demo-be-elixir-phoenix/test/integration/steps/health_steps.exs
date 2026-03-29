@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Integration.HealthSteps do
+defmodule AAADemoBeExphWeb.Integration.HealthSteps do
   use Cabbage.Feature, async: false, file: "health/health-check.feature"
 
-  use AADemoBeExph.DataCaseIntegration
+  use ADemoBeExph.DataCaseIntegration
 
-  alias AADemoBeExph.Integration.ServiceLayer
+  alias ADemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 

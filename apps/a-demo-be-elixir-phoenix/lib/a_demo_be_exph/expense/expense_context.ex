@@ -1,14 +1,14 @@
-defmodule AADemoBeExph.Expense.ExpenseContext do
+defmodule ADemoBeExph.Expense.ExpenseContext do
   @moduledoc """
   Context for managing financial entries (income and expenses).
   """
 
-  @behaviour AADemoBeExph.Expense.ExpenseBehaviour
+  @behaviour ADemoBeExph.Expense.ExpenseBehaviour
 
   import Ecto.Query
 
-  alias AADemoBeExph.Expense.Expense
-  alias AADemoBeExph.Repo
+  alias ADemoBeExph.Expense.Expense
+  alias ADemoBeExph.Repo
 
   @doc "Create a new financial entry for user_id."
   def create_expense(user_id, attrs) do

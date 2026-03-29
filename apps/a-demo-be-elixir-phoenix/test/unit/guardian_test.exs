@@ -1,7 +1,7 @@
-defmodule AADemoBeExph.Auth.GuardianTest do
+defmodule ADemoBeExph.Auth.GuardianTest do
   use ExUnit.Case, async: true
 
-  alias AADemoBeExph.Auth.Guardian
+  alias ADemoBeExph.Auth.Guardian
 
   @moduletag :unit
 

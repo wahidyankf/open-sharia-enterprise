@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.user_account;
+package com.ademobejasb.integration.user_account;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -13,8 +13,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("user-lifecycle/user-account.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.aademobejasb.integration.user_account"
-        + ",com.aademobejasb.integration.steps")
+    value = "com.ademobejasb.integration.user_account"
+        + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/user-account.html")

@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Domain;
+namespace ADemoBeCsas.Domain;
 
 public enum Currency
 {

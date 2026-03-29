@@ -1,10 +1,10 @@
-defmodule AAAADemoBeExphWeb.Integration.ReportingSteps do
+defmodule AAADemoBeExphWeb.Integration.ReportingSteps do
   use Cabbage.Feature, async: false, file: "expenses/reporting.feature"
 
-  use AADemoBeExph.DataCaseIntegration
+  use ADemoBeExph.DataCaseIntegration
 
-  alias AADemoBeExph.Integration.Helpers
-  alias AADemoBeExph.Integration.ServiceLayer
+  alias ADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 

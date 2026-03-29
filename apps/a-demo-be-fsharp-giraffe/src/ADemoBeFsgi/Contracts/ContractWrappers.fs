@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Contracts.ContractWrappers
+module ADemoBeFsgi.Contracts.ContractWrappers
 
 // Request wrappers with [<CLIMutable>] for JSON deserialization.
 // Field names match the camelCase JSON keys from the OpenAPI spec.

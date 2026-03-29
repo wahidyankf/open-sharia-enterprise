@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Tests.ScenarioContext;
+namespace ADemoBeCsas.Tests.ScenarioContext;
 
 /// <summary>
 /// Holds scenario-scoped state shared between step definition classes.

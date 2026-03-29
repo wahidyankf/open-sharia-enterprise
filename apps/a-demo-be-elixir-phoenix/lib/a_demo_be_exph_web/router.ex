@@ -1,29 +1,29 @@
-defmodule AAAADemoBeExphWeb.Router do
-  use AAAADemoBeExphWeb, :router
+defmodule AAADemoBeExphWeb.Router do
+  use AAADemoBeExphWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug AAAADemoBeExphWeb.CorsPlug
+    plug AAADemoBeExphWeb.CorsPlug
   end
 
   pipeline :auth do
     plug Guardian.Plug.Pipeline,
-      module: AADemoBeExph.Auth.Guardian,
-      error_handler: AAAADemoBeExphWeb.AuthErrorHandler
+      module: ADemoBeExph.Auth.Guardian,
+      error_handler: AAADemoBeExphWeb.AuthErrorHandler
 
     plug Guardian.Plug.VerifyHeader, scheme: "Bearer"
     plug Guardian.Plug.EnsureAuthenticated
-    plug AAAADemoBeExphWeb.Plugs.CheckRevoked
-    plug AAAADemoBeExphWeb.Plugs.CheckUserActive
+    plug AAADemoBeExphWeb.Plugs.CheckRevoked
+    plug AAADemoBeExphWeb.Plugs.CheckUserActive
   end
 
   scope "/" do
-    get "/health", AAAADemoBeExphWeb.HealthController, :index
-    get "/.well-known/jwks.json", AAAADemoBeExphWeb.JwksController, :index
+    get "/health", AAADemoBeExphWeb.HealthController, :index
+    get "/.well-known/jwks.json", AAADemoBeExphWeb.JwksController, :index
   end
 
   if System.get_env("ENABLE_TEST_API") == "true" do
-    scope "/api/v1/test", AAAADemoBeExphWeb do
+    scope "/api/v1/test", AAADemoBeExphWeb do
       pipe_through :api
 
       post "/reset-db", TestApiController, :reset_db
@@ -31,7 +31,7 @@ defmodule AAAADemoBeExphWeb.Router do
     end
   end
 
-  scope "/api/v1", AAAADemoBeExphWeb do
+  scope "/api/v1", AAADemoBeExphWeb do
     pipe_through :api
 
     scope "/auth" do

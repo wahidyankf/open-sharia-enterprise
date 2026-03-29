@@ -1,10 +1,10 @@
-defmodule AADemoBeExph.Accounts.Behaviour do
+defmodule ADemoBeExph.Accounts.Behaviour do
   @moduledoc """
   Behaviour contract for the Accounts context.
   Allows swapping real Ecto implementation for in-memory implementation in tests.
   """
 
-  alias AADemoBeExph.Accounts.User
+  alias ADemoBeExph.Accounts.User
 
   @callback register_user(map()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   @callback authenticate_user(String.t(), String.t()) ::

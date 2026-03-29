@@ -1,13 +1,13 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.contracts.CreateExpenseRequest;
-import com.aademobejasb.contracts.Expense;
-import com.aademobejasb.contracts.ExpenseListResponse;
-import com.aademobejasb.expense.controller.ExpenseController;
-import com.aademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.contracts.CreateExpenseRequest;
+import com.ademobejasb.contracts.Expense;
+import com.ademobejasb.contracts.ExpenseListResponse;
+import com.ademobejasb.expense.controller.ExpenseController;
+import com.ademobejasb.expense.repository.ExpenseRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -73,7 +73,7 @@ public class UnitExpenseSteps {
     public void aliceHasCreated3Entries() {
         User user = getAlice();
         for (int i = 0; i < 3; i++) {
-            com.aademobejasb.expense.model.Expense expense = new com.aademobejasb.expense.model.Expense(
+            com.ademobejasb.expense.model.Expense expense = new com.ademobejasb.expense.model.Expense(
                     user, new BigDecimal("5.00"), "USD", "misc", "Entry",
                     LocalDate.of(2025, 1, 1), "expense");
             expenseRepository.save(expense);
@@ -309,13 +309,13 @@ public class UnitExpenseSteps {
                 qty = new BigDecimal(quantityObj.toString());
             }
             User user = getAlice();
-            com.aademobejasb.expense.model.Expense expense =
-                    new com.aademobejasb.expense.model.Expense(
+            com.ademobejasb.expense.model.Expense expense =
+                    new com.ademobejasb.expense.model.Expense(
                             user, new BigDecimal(amount), currency, category, description,
                             LocalDate.parse(dateStr), type);
             expense.setQuantity(qty);
             expense.setUnit(unit);
-            com.aademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+            com.ademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
             stateStore.setExpenseId(saved.getId());
         } catch (Exception e) {
             throw new RuntimeException("Failed to create expense in setup: " + e.getMessage(), e);

@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.RegistrationSteps do
+defmodule AAADemoBeExphWeb.Unit.RegistrationSteps do
   use Cabbage.Feature, async: false, file: "user-lifecycle/registration.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

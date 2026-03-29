@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Handlers.AttachmentHandler
+module ADemoBeFsgi.Handlers.AttachmentHandler
 
 open System
 open Giraffe
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.Attachment
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.Attachment
 
 let upload (expenseId: Guid) : HttpHandler =
     fun _next ctx ->
@@ -67,7 +67,7 @@ let upload (expenseId: Guid) : HttpHandler =
                         let contentType = file.ContentType
 
                         match validateContentType contentType with
-                        | Error(AADemoBeFsgi.Domain.Types.UnsupportedMediaType m) ->
+                        | Error(ADemoBeFsgi.Domain.Types.UnsupportedMediaType m) ->
                             ctx.Response.StatusCode <- 415
 
                             return!
@@ -89,7 +89,7 @@ let upload (expenseId: Guid) : HttpHandler =
                                     ctx
                         | Ok _ ->
                             match validateFileSize file.Length with
-                            | Error(AADemoBeFsgi.Domain.Types.FileTooLarge limit) ->
+                            | Error(ADemoBeFsgi.Domain.Types.FileTooLarge limit) ->
                                 ctx.Response.StatusCode <- 413
 
                                 return!

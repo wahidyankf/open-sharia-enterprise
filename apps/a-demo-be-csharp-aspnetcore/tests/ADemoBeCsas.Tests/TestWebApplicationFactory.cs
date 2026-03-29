@@ -1,4 +1,4 @@
-using AADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AADemoBeCsas.Tests;
+namespace ADemoBeCsas.Tests;
 
 /// <summary>
 /// WebApplicationFactory used for both unit-level tests (SQLite in-memory, no external services)

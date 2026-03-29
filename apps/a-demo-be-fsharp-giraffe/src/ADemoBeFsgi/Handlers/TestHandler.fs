@@ -1,12 +1,12 @@
-module AADemoBeFsgi.Handlers.TestHandler
+module ADemoBeFsgi.Handlers.TestHandler
 
 open System
 open System.Text.Json
 open Giraffe
 open Microsoft.EntityFrameworkCore
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Contracts.ContractWrappers
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Contracts.ContractWrappers
 
 let private testApiEnabled () =
     Environment.GetEnvironmentVariable("ENABLE_TEST_API") = "true"

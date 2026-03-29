@@ -1,10 +1,10 @@
-package com.aademobejasb.integration.user_account;
+package com.ademobejasb.integration.user_account;
 
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import java.util.Map;

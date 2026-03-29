@@ -1,4 +1,4 @@
-package com.aademobejasb.attachment;
+package com.ademobejasb.attachment;
 
 /** Thrown when an uploaded file exceeds the maximum allowed size. */
 public class FileSizeLimitExceededException extends RuntimeException {

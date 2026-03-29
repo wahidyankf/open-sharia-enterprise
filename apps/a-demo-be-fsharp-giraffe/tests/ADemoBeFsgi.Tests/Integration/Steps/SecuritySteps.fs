@@ -1,11 +1,11 @@
-module AADemoBeFsgi.Tests.Integration.Steps.SecuritySteps
+module ADemoBeFsgi.Tests.Integration.Steps.SecuritySteps
 
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
-open AADemoBeFsgi.Tests.Integration.Steps.TokenManagementSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.Integration.Steps.TokenManagementSteps
 
 [<Given>]
 let ``"(.+)" has had the maximum number of failed login attempts`` (username: string) (state: StepState) =

@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Infrastructure.Repositories.EfRepositories
+module ADemoBeFsgi.Infrastructure.Repositories.EfRepositories
 
 open System
 open System.Linq
 open Microsoft.EntityFrameworkCore
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 let createUserRepo (db: AppDbContext) : UserRepository =
     { FindById =

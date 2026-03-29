@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.unit_handling;
+package com.ademobejasb.integration.unit_handling;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -13,8 +13,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("expenses/unit-handling.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.aademobejasb.integration.unit_handling"
-        + ",com.aademobejasb.integration.steps")
+    value = "com.ademobejasb.integration.unit_handling"
+        + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/unit-handling.html")

@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Infrastructure.AppDbContext
+module ADemoBeFsgi.Infrastructure.AppDbContext
 
 open System
 open System.ComponentModel.DataAnnotations

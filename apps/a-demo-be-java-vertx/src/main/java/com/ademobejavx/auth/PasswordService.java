@@ -1,4 +1,4 @@
-package com.aademobejavx.auth;
+package com.ademobejavx.auth;
 
 import org.mindrot.jbcrypt.BCrypt;
 

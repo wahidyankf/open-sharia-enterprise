@@ -1,7 +1,7 @@
-package com.aademobejasb.test.controller;
+package com.ademobejasb.test.controller;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;

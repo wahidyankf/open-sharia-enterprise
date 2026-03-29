@@ -1,6 +1,6 @@
-package com.aademobejasb.auth.repository;
+package com.ademobejasb.auth.repository;
 
-import com.aademobejasb.auth.model.User;
+import com.ademobejasb.auth.model.User;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;

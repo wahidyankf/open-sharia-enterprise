@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.AttachmentsSteps do
+defmodule AAADemoBeExphWeb.Unit.AttachmentsSteps do
   use Cabbage.Feature, async: false, file: "expenses/attachments.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

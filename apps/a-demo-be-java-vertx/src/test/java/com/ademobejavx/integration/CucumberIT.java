@@ -1,4 +1,4 @@
-package com.aademobejavx.integration;
+package com.ademobejavx.integration;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -20,7 +20,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
     "expenses"
 })
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejavx.integration.steps")
+        value = "com.ademobejavx.integration.steps")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
         value = "pretty,json:target/cucumber-reports/cucumber.json")
 public class CucumberIT {

@@ -1,6 +1,6 @@
-package com.aademobejavx.repository;
+package com.ademobejavx.repository;
 
-import com.aademobejavx.domain.model.User;
+import com.ademobejavx.domain.model.User;
 import io.vertx.core.Future;
 import java.util.List;
 import java.util.Optional;

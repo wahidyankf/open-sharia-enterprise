@@ -1,7 +1,7 @@
-module AADemoBeFsgi.Domain.Attachment
+module ADemoBeFsgi.Domain.Attachment
 
 open System
-open AADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.Types
 
 type Attachment =
     { Id: Guid

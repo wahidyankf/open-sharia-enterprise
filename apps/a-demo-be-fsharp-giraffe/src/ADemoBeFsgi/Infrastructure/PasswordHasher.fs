@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Infrastructure.PasswordHasher
+module ADemoBeFsgi.Infrastructure.PasswordHasher
 
 let hashPassword (password: string) : string =
     BCrypt.Net.BCrypt.HashPassword(password)

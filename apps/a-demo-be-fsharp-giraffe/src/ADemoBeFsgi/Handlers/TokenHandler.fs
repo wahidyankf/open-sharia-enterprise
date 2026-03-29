@@ -1,9 +1,9 @@
-module AADemoBeFsgi.Handlers.TokenHandler
+module ADemoBeFsgi.Handlers.TokenHandler
 
 open System
 open System.IdentityModel.Tokens.Jwt
 open Giraffe
-open AADemoBeFsgi.Auth.JwtService
+open ADemoBeFsgi.Auth.JwtService
 
 let claims: HttpHandler =
     fun next ctx ->

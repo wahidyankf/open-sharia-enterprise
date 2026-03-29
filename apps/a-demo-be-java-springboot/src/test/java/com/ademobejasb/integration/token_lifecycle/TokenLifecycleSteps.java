@@ -1,14 +1,14 @@
-package com.aademobejasb.integration.token_lifecycle;
+package com.ademobejasb.integration.token_lifecycle;
 
-import com.aademobejasb.auth.repository.RefreshTokenRepository;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidTokenException;
-import com.aademobejasb.auth.service.TokenExpiredException;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.repository.RefreshTokenRepository;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidTokenException;
+import com.ademobejasb.auth.service.TokenExpiredException;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

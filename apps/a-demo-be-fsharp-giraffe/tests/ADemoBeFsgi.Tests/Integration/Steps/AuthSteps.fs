@@ -1,9 +1,9 @@
-module AADemoBeFsgi.Tests.Integration.Steps.AuthSteps
+module ADemoBeFsgi.Tests.Integration.Steps.AuthSteps
 
 open TickSpec
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 [<Given>]
 let ``a user "(.+)" is registered and deactivated`` (username: string) (state: StepState) =

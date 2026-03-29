@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Attachment.Attachment do
+defmodule ADemoBeExph.Attachment.Attachment do
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,4 @@
-package com.aademobejasb.auth.model;
+package com.ademobejasb.auth.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
