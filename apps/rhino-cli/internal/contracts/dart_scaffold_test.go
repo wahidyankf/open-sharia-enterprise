@@ -50,8 +50,8 @@ func TestScaffoldDart_WithModels(t *testing.T) {
 		t.Fatalf("reading pubspec.yaml: %v", err)
 	}
 	pubspec := string(pubspecData)
-	if !strings.Contains(pubspec, "name: demo_contracts") {
-		t.Error("pubspec.yaml missing 'name: demo_contracts'")
+	if !strings.Contains(pubspec, "name: a_demo_contracts") {
+		t.Error("pubspec.yaml missing 'name: a_demo_contracts'")
 	}
 	if !strings.Contains(pubspec, "sdk: ^3.11.1") {
 		t.Error("pubspec.yaml missing sdk constraint")
@@ -61,7 +61,7 @@ func TestScaffoldDart_WithModels(t *testing.T) {
 	}
 
 	// Verify barrel file content.
-	barrelData, err := os.ReadFile(filepath.Join(dir, "lib", "demo_contracts.dart"))
+	barrelData, err := os.ReadFile(filepath.Join(dir, "lib", "a_demo_contracts.dart"))
 	if err != nil {
 		t.Fatalf("reading barrel file: %v", err)
 	}
@@ -117,7 +117,7 @@ func TestScaffoldDart_NoModels(t *testing.T) {
 		t.Errorf("ModelFiles: got %v, want empty", result.ModelFiles)
 	}
 
-	barrelData, err := os.ReadFile(filepath.Join(dir, "lib", "demo_contracts.dart"))
+	barrelData, err := os.ReadFile(filepath.Join(dir, "lib", "a_demo_contracts.dart"))
 	if err != nil {
 		t.Fatalf("reading barrel file: %v", err)
 	}

@@ -56,12 +56,12 @@ func TestContractsDartScaffoldCmd_WithModels(t *testing.T) {
 	if readErr != nil {
 		t.Fatalf("expected pubspec.yaml to be created, got error: %v", readErr)
 	}
-	if !strings.Contains(string(pubspecData), "name: demo_contracts") {
-		t.Errorf("expected pubspec.yaml to contain 'name: demo_contracts', got: %s", string(pubspecData))
+	if !strings.Contains(string(pubspecData), "name: a_demo_contracts") {
+		t.Errorf("expected pubspec.yaml to contain 'name: a_demo_contracts', got: %s", string(pubspecData))
 	}
 
 	// Verify barrel file was created with sorted part directives
-	barrelPath := filepath.Join(src, "lib", "demo_contracts.dart")
+	barrelPath := filepath.Join(src, "lib", "a_demo_contracts.dart")
 	barrelData, readErr := os.ReadFile(barrelPath)
 	if readErr != nil {
 		t.Fatalf("expected barrel library to be created, got error: %v", readErr)
@@ -107,7 +107,7 @@ func TestContractsDartScaffoldCmd_NoModels(t *testing.T) {
 	if _, statErr := os.Stat(filepath.Join(src, "pubspec.yaml")); statErr != nil {
 		t.Errorf("expected pubspec.yaml to be created even with no models, got error: %v", statErr)
 	}
-	if _, statErr := os.Stat(filepath.Join(src, "lib", "demo_contracts.dart")); statErr != nil {
+	if _, statErr := os.Stat(filepath.Join(src, "lib", "a_demo_contracts.dart")); statErr != nil {
 		t.Errorf("expected barrel library to be created even with no models, got error: %v", statErr)
 	}
 }
