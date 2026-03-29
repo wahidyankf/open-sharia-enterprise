@@ -133,10 +133,9 @@ jobs:
         working-directory: apps/a-demo-fe-e2e
 
       - name: Run BE E2E tests
-        run: npx nx run a-demo-be-e2e:test:e2e:no-test-api
+        run: npx nx run a-demo-be-e2e:test:e2e
         env:
           BASE_URL: http://localhost:8201
-          DATABASE_URL: postgresql://a_demo_be_elixir_phoenix:a_demo_be_elixir_phoenix@localhost:5432/a_demo_be_elixir_phoenix
 
       - name: Upload BE E2E report
         if: always()
