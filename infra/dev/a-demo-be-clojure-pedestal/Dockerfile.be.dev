@@ -11,7 +11,7 @@ RUN apk add --no-cache bash curl wget rlwrap \
     && rm linux-install.sh
 
 # Pre-download dependencies at build time so container startup is fast
-COPY apps/demo-be-clojure-pedestal/deps.edn /tmp/deps/deps.edn
+COPY apps/a-demo-be-clojure-pedestal/deps.edn /tmp/deps/deps.edn
 RUN cd /tmp/deps && clojure -P && rm -rf /tmp/deps
 
 WORKDIR /workspace

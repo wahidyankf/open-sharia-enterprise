@@ -127,9 +127,6 @@ jobs:
           npx nx run organiclever-contracts:bundle
           npx nx run-many -t codegen --projects=demo-*,organiclever-*
 
-      - name: Install Flutter dependencies
-        run: (cd apps/a-demo-fe-dart-flutterweb && flutter pub get)
-
       - name: Restore .NET dependencies (required before --no-restore typecheck)
         run: |
           dotnet restore apps/a-demo-be-fsharp-giraffe/src/ADemoBeFsgi/ADemoBeFsgi.fsproj

@@ -18,7 +18,7 @@ COPY generated-contracts/ /tmp/build/generated-contracts/
 RUN cd /tmp/build \
     && mvn package -Dmaven.test.skip=true -Dmaven.antrun.skip=true -B \
     && mkdir -p /app \
-    && cp /tmp/build/target/demo-be-java-vertx-1.0.0.jar /app/app.jar \
+    && cp /tmp/build/target/a-demo-be-java-vertx-1.0.0.jar /app/app.jar \
     && rm -rf /tmp/build
 
 CMD ["mvn", "compile", "exec:java"]
