@@ -7,7 +7,7 @@ OPEN SHARIA ENTERPRISE
 Week 19 / Phase 1, Week 7
 
 Last week: 14 demo apps, 2 Hugo websites, no database migrations.
-This week: both websites rewritten to Next.js 16, migrations for all 12 backends, a fullstack demo app, shared UI libraries, and OrganicLever's stack finalized.
+This week: both websites rewritten to Next.js 16, migrations for all 12 backends, a full-stack demo app, shared UI libraries, and OrganicLever's stack finalized.
 
 What changed:
 
@@ -15,13 +15,13 @@ Hugo to Next.js 16 (Both Websites)
 ayokoding.com and oseplatform.com rewritten from Hugo to Next.js 16 with App Router, tRPC, and SSG. AyoKoding got repository pattern with DI, full-text search, Playwright BDD E2E tests, and oxlint. Zero Hugo sites remain.
 
 Database Migrations (All 12 Backends)
-Every backend now has idiomatic migration tooling: Flyway (Kotlin), Liquibase (Vert.x), Alembic (Python), goose (Go), DbUp (F#), Migratus (Clojure), EF Core (C#), @effect/sql (TypeScript), plus existing Ecto, Spring Boot, and Drizzle. PostgreSQL schema standardized. All CI green.
+Every backend now has idiomatic migration tooling: Flyway (Kotlin), Liquibase (Vert.x), Alembic (Python), goose (Go), DbUp (F#), Migratus (Clojure), EF Core (C#), @effect/sql (TypeScript), plus existing Ecto, Spring Boot, and Drizzle—PostgreSQL schema standardization—all CI green.
 
 Fullstack Demo App (NEW)
 Next.js 16 with 24 route handlers, Drizzle ORM, JWT auth. 170 E2E tests passing (78 BE + 92 FE). Integration tests hit real PostgreSQL.
 
 Shared UI Libraries (NEW)
-ts-ui and ts-ui-tokens: design tokens, Radix primitives, Tailwind, Storybook with visual tests. jsx-a11y linting enabled across all frontends.
+ts-ui and ts-ui-tokens: design tokens, Radix primitives, Tailwind, Storybook with visual tests. jsx-a11y linting is enabled across all frontends.
 
 Repository Pattern (4 More Backends)
 Idiomatic abstractions: trait objects (Rust), Protocol (Python), defprotocol (Clojure), function records (F#).
