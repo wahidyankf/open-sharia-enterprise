@@ -46,6 +46,7 @@ services:
       dockerfile: apps/organiclever-fe/Dockerfile
       args:
         ORGANICLEVER_BE_URL: http://organiclever-be:8202
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     ports:
       - "3200:3200"
     environment:
