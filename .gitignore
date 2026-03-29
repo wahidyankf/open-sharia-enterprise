@@ -132,7 +132,7 @@ __pycache__/
 
 # Go intermediate coverage files and build artifacts
 cover_*.out
-apps/demo-be-golang-gin/server
+apps/a-demo-be-golang-gin/server
 
 # .NET / F# build artifacts
 [Bb]in/

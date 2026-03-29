@@ -540,7 +540,7 @@ rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
 rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -q
 
 # Shared steps mode (for E2E projects with shared step files)
-rhino-cli spec-coverage validate specs/apps/demo-be/be/gherkin apps/a-demo-be-e2e --shared-steps
+rhino-cli spec-coverage validate specs/apps/a-demo/be/gherkin apps/a-demo-be-e2e --shared-steps
 ```
 
 **What it does:**
