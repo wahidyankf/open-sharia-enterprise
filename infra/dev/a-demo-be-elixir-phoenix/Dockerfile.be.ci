@@ -16,8 +16,11 @@ COPY apps/a-demo-be-elixir-phoenix/lib/ lib/
 COPY apps/a-demo-be-elixir-phoenix/priv/ priv/
 COPY apps/a-demo-be-elixir-phoenix/generated-contracts/ generated-contracts/
 
-# Install and compile deps + app in dev mode
+# Install and compile deps + app in dev mode.
+# Set ENABLE_TEST_API at build time so the router compiles test routes.
+# This prevents recompilation at container startup.
 ENV MIX_ENV=dev
+ENV ENABLE_TEST_API=true
 RUN mix deps.get && mix deps.compile && mix compile
 
 EXPOSE 8201
