@@ -2,6 +2,12 @@
 
 CI and coverage status for demo app implementations. These apps implement the same API contract (`specs/apps/a-demo/contracts/`) across multiple languages and frameworks.
 
+## 🔄 Demo Fullstack Apps
+
+- [`apps/a-demo-fs-ts-nextjs`](../../apps/a-demo-fs-ts-nextjs/)
+  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fs-ts-nextjs.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-a-demo-fs-ts-nextjs.yml)
+  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=a-demo-fs-ts-nextjs)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+
 ## 🧪 Demo Backend Apps
 
 - [`apps/a-demo-be-java-springboot`](../../apps/a-demo-be-java-springboot/)

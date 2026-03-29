@@ -18,6 +18,14 @@ ignore:
   - "**/generated-contracts/**"
 
 flags:
+  oseplatform-web:
+    paths:
+      - apps/oseplatform-web/
+    carryforward: true
+  ayokoding-web:
+    paths:
+      - apps/ayokoding-web/
+    carryforward: true
   rhino-cli:
     paths:
       - apps/rhino-cli/
@@ -29,6 +37,10 @@ flags:
   oseplatform-cli:
     paths:
       - apps/oseplatform-cli/
+    carryforward: true
+  a-demo-fs-ts-nextjs:
+    paths:
+      - apps/a-demo-fs-ts-nextjs/
     carryforward: true
   a-demo-be-java-springboot:
     paths:

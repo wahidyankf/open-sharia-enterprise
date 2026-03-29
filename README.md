@@ -118,23 +118,22 @@ See [Code Quality](./governance/development/quality/code.md) and [Commit Message
 
 All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is uploaded to [Codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) on every push to `main`.
 
-**Quality gates**: pre-commit hooks (formatting, linting), pre-push hooks (`typecheck`, `lint`, `test:quick` for affected projects), and [PR Quality Gate](./.github/workflows/pr-quality-gate.yml) workflow.
+**Quality gates**: pre-commit hooks (formatting, linting), pre-push hooks (`typecheck`, `lint`, `test:quick` for affected projects), [PR Quality Gate](./.github/workflows/pr-quality-gate.yml), and [Codecov Upload](./.github/workflows/codecov-upload.yml) on push to `main`.
 
-- [`apps/oseplatform-web`](./apps/oseplatform-web/)
+- OSE Platform
   - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-oseplatform-web.yml)
-- [`apps/ayokoding-web`](./apps/ayokoding-web/)
+  - [`oseplatform-web`](./apps/oseplatform-web/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-web)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+  - [`oseplatform-cli`](./apps/oseplatform-cli/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+- AyoKoding
   - [![Deploy](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-and-deploy-ayokoding-web.yml)
-- [`apps/organiclever-fe`](./apps/organiclever-fe/)
+  - [`ayokoding-web`](./apps/ayokoding-web/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-web)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+  - [`ayokoding-cli`](./apps/ayokoding-cli/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+- OrganicLever
   - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-organiclever.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-organiclever.yml)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-fe)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/organiclever-be`](./apps/organiclever-be/)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-be)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/rhino-cli`](./apps/rhino-cli/)
+  - [`organiclever-fe`](./apps/organiclever-fe/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-fe)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+  - [`organiclever-be`](./apps/organiclever-be/) [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-be)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+- [`rhino-cli`](./apps/rhino-cli/)
   - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=rhino-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/ayokoding-cli`](./apps/ayokoding-cli/)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
-- [`apps/oseplatform-cli`](./apps/oseplatform-cli/)
-  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
 
 For demo app CI badges, see [Demo Apps CI & Coverage](./docs/reference/re__demo-apps-ci-coverage.md).
 
