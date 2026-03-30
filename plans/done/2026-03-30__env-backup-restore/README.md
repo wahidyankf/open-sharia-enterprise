@@ -1,7 +1,8 @@
 # Plan: Add .env Backup and Restore Commands to rhino-cli
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-03-30
+**Completed**: 2026-03-31
 
 ## Overview
 

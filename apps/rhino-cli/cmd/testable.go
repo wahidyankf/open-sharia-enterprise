@@ -7,6 +7,7 @@ import (
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/contracts"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/docs"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/doctor"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/envbackup"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/git"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/java"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/speccoverage"
@@ -63,6 +64,12 @@ var testCoverageToCoverageMapFn = testcoverage.ToCoverageMap
 
 // test-coverage diff command delegation.
 var testCoverageComputeDiffCoverageFn = testcoverage.ComputeDiffCoverage
+
+// env backup command delegation.
+var envBackupFn = envbackup.Backup
+
+// env restore command delegation.
+var envRestoreFn = envbackup.Restore
 
 // git pre-commit command delegation.
 var gitRunFn = git.Run

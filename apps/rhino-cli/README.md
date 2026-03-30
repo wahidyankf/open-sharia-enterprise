@@ -870,6 +870,55 @@ Summary: 6/7 tools OK, 0 warning, 1 missing
 }
 ```
 
+### env backup
+
+Back up all `.env*` files from the repository to an external directory, preserving the relative
+directory structure. Auto-generated directories (node_modules, dist, build, .next, etc.) are
+skipped. Symlinks and files larger than 1 MB are skipped with a warning.
+
+```bash
+# Back up to default directory ~/ose-env-bkup
+rhino-cli env backup
+
+# Back up to a custom directory
+rhino-cli env backup --dir /tmp/my-env-backup
+
+# Namespace backup by worktree/repo name
+rhino-cli env backup --worktree-aware
+
+# JSON output
+rhino-cli env backup -o json
+```
+
+**Flags:**
+
+- `--dir <path>` - Backup directory (default: `~/ose-env-bkup`)
+- `--worktree-aware` - Namespace backup by worktree/repo directory name
+
+### env restore
+
+Restore previously backed-up `.env*` files from the backup directory back to their original
+repository paths. Only files whose basename starts with `.env` are restored.
+
+```bash
+# Restore from default directory ~/ose-env-bkup
+rhino-cli env restore
+
+# Restore from a custom directory
+rhino-cli env restore --dir /tmp/my-env-backup
+
+# Restore from worktree-namespaced backup
+rhino-cli env restore --worktree-aware
+
+# JSON output
+rhino-cli env restore -o json
+```
+
+**Flags:**
+
+- `--dir <path>` - Backup source directory (default: `~/ose-env-bkup`)
+- `--worktree-aware` - Read from worktree-namespaced backup
+
 ## Help Commands
 
 ```bash
@@ -1201,6 +1250,17 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.14.0 (2026-03-31)
+
+- Added `env backup` command: recursively finds and backs up all `.env*` files to an external
+  directory, preserving relative paths. Skips auto-generated dirs, symlinks, and oversized files
+- Added `env restore` command: restores previously backed-up `.env*` files to their original
+  repository paths
+- Both commands support `--dir` (custom backup location), `--worktree-aware` (namespace backup by
+  worktree/repo name), and all output formats (text, JSON, markdown)
+- New `internal/envbackup` package with complete test suite
+- 18 godog BDD scenarios (11 backup + 7 restore) at both unit and integration levels
 
 ### v0.12.0 (2026-03-19)
 

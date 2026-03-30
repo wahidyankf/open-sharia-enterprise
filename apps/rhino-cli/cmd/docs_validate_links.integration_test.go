@@ -204,6 +204,7 @@ func TestIntegrationValidateDocsLinks(t *testing.T) {
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsDocsDir},
+			Tags:     "docs-validate-links",
 			TestingT: t,
 		},
 	}

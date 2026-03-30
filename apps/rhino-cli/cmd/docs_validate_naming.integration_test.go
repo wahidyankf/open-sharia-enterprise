@@ -221,7 +221,7 @@ func TestIntegrationValidateDocsNaming(t *testing.T) {
 		ScenarioInitializer: InitializeValidateDocsNamingScenario,
 		Options: &godog.Options{
 			Format:   "pretty",
-			Paths:    []string{specsDocsNamingDir},
+			Paths:    []string{filepath.Join(specsDocsNamingDir, "docs-validate-naming.feature")},
 			Tags:     "docs-validate-naming",
 			TestingT: t,
 		},
