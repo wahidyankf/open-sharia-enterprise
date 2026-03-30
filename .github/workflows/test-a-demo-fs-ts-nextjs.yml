@@ -34,6 +34,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-fs-ts-nextjs/coverage/lcov.info
           flags: a-demo-fs-ts-nextjs
+          disable_search: true
           fail_ci_if_error: false
 
   e2e:

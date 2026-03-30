@@ -63,6 +63,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/oseplatform-web/coverage/lcov.info
           flags: oseplatform-web
+          disable_search: true
           fail_ci_if_error: false
 
   integration:
