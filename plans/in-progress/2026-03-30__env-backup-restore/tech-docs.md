@@ -16,11 +16,16 @@ rhino-cli
 ```text
 apps/rhino-cli/
 ├── cmd/
-│   ├── env.go                   # Group command registration
-│   ├── env_backup.go            # Backup subcommand + RunE
-│   ├── env_backup.integration_test.go
-│   ├── env_restore.go           # Restore subcommand + RunE
-│   └── env_restore.integration_test.go
+│   ├── env.go                              # Group command registration
+│   ├── env_backup.go                       # Backup subcommand + RunE (calls envBackupFn); Args: cobra.NoArgs
+│   ├── env_backup_test.go                  # Godog unit tests (mocked deps via testable.go)
+│   ├── env_backup.integration_test.go      # Godog integration tests (real /tmp fixtures)
+│   ├── env_restore.go                      # Restore subcommand + RunE (calls envRestoreFn); Args: cobra.NoArgs
+│   ├── env_restore_test.go                 # Godog unit tests (mocked deps via testable.go)
+│   ├── env_restore.integration_test.go     # Godog integration tests (real /tmp fixtures)
+│   ├── testable.go                         # (EXISTING) — add envBackupFn, envRestoreFn vars
+│   ├── testable_mock_test.go               # (EXISTING) — mockFileInfo already present
+│   └── steps_common_test.go                # (EXISTING) — add env step constants
 └── internal/
     └── envbackup/
         ├── types.go             # Result, FileEntry, Options structs
@@ -33,8 +38,7 @@ apps/rhino-cli/
         ├── worktree.go          # Git worktree detection and name resolution
         ├── worktree_test.go
         ├── reporter.go          # text/json/markdown formatters
-        ├── reporter_test.go
-        └── testdata/            # Fixtures for unit tests
+        └── reporter_test.go
 ```
 
 ### Why a New `internal/envbackup` Package
@@ -42,6 +46,73 @@ apps/rhino-cli/
 Following existing patterns (`internal/testcoverage`, `internal/doctor`, `internal/docs`), the
 business logic lives in `internal/envbackup` and the Cobra wiring lives in `cmd/`. This keeps the
 core logic unit-testable without depending on Cobra.
+
+Note: `internal/fileutil/fileutil.go` exists as a shared utilities package, but it contains
+markdown-specific and git-specific helpers — it does not include file copy utilities. The
+`copyFile()` function needed here is new and belongs in `internal/envbackup/`.
+
+### Dependency Injection via `testable.go`
+
+Per the CLI testing alignment standard, all internal package function calls in `cmd/*.go` files use
+package-level function variables defined in `cmd/testable.go`. This allows unit tests to mock the
+internal logic while integration tests use the real implementations.
+
+Add these to `cmd/testable.go`:
+
+```go
+// env backup command delegation.
+var envBackupFn = envbackup.Backup
+
+// env restore command delegation.
+var envRestoreFn = envbackup.Restore
+```
+
+The `cmd/env_backup.go` RunE calls `envBackupFn(opts)` (not `envbackup.Backup(opts)` directly),
+and `cmd/env_restore.go` RunE calls `envRestoreFn(opts)`.
+
+### Dual-Level Gherkin Consumption
+
+Both unit and integration tests consume the **same** Gherkin feature files from
+`specs/apps/rhino-cli/env/`. Step implementations differ:
+
+| Level       | Test File                            | Step Implementation                                           |
+| ----------- | ------------------------------------ | ------------------------------------------------------------- |
+| Unit        | `cmd/env_backup_test.go`             | Mock `envBackupFn` via `testable.go`, mock `osGetwd`/`osStat` |
+| Integration | `cmd/env_backup.integration_test.go` | Real filesystem via `/tmp` fixtures, calls `cmd.RunE()`       |
+
+Unit tests:
+
+- Name the test function `TestUnitEnvBackup(t *testing.T)` / `TestUnitEnvRestore(t *testing.T)`
+- Mock `envBackupFn`/`envRestoreFn` to return predetermined `*envbackup.Result` or error
+- Mock `osGetwd` and `osStat` for `findGitRoot()` (same pattern as `doctor_test.go`)
+- Use `mockFileInfo` from `testable_mock_test.go`
+- Assert on command exit code and output content
+- Include non-BDD tests for initialization checks and edge cases beyond Gherkin
+
+Integration tests:
+
+- Use `//go:build integration` build tag
+- Name the test function `TestIntegrationEnvBackup(t *testing.T)` / `TestIntegrationEnvRestore(t *testing.T)`
+- Create real `/tmp` fixture directories per scenario
+- Call `cmd.RunE()` against the real `envbackup` package
+
+### Shared Step Constants in `steps_common_test.go`
+
+Add env-specific step regex constants to `cmd/steps_common_test.go`:
+
+```go
+// Env backup step patterns.
+const (
+    stepRepoWithEnvFilesAtRootAndSubdirs    = `^a repository with \.env files at root and in app subdirectories$`
+    stepRepoWithEnvFiles                    = `^a repository with \.env files$`
+    stepDeveloperRunsEnvBackup              = `^the developer runs env backup$`
+    stepDeveloperRunsEnvBackupWithDir       = `^the developer runs env backup --dir (.+)$`
+    // ... etc for all Gherkin step texts
+)
+```
+
+This follows the established pattern where all step regex constants are centralized and shared
+between unit and integration test files.
 
 ## Data Structures
 
@@ -53,6 +124,7 @@ type Options struct {
     SkipDirs       []string // Directory basenames to skip during walk
     MaxSize        int64    // Max file size in bytes (default 1 MB)
     WorktreeAware  bool     // If true, namespace backup by worktree/repo name
+    WorktreeName   string   // Set by cmd layer from detectWorktree(); used to populate Result and namespace the dir
 }
 
 // FileEntry represents a single .env file found or processed.
@@ -66,12 +138,13 @@ type FileEntry struct {
 
 // Result holds the outcome of a backup or restore operation.
 type Result struct {
-    Direction string      // "backup" or "restore"
-    Dir       string      // Backup directory path
-    Files     []FileEntry // All discovered files (including skipped)
-    Copied    int         // Count of successfully copied files
-    Skipped   int         // Count of skipped files
-    Errors    []string    // Non-fatal warnings
+    Direction    string      // "backup" or "restore"
+    Dir          string      // Backup directory path
+    Files        []FileEntry // All discovered files (including skipped)
+    Copied       int         // Count of successfully copied files
+    Skipped      int         // Count of skipped files
+    Errors       []string    // Non-fatal warnings
+    WorktreeName string      // Worktree/repo name when --worktree-aware is used (empty otherwise)
 }
 ```
 
@@ -156,7 +229,7 @@ env backup [--dir <path>] [--worktree-aware]
    a. destPath = filepath.Join(backupDir, entry.RelPath)
    b. os.MkdirAll(filepath.Dir(destPath))
    c. copyFile(entry.AbsPath, destPath) — byte-stream copy, preserve permissions
-6. Build Result, format output, return
+7. Build Result, format output, return
 ```
 
 ## Restore Flow
@@ -173,11 +246,11 @@ env restore [--dir <path>] [--worktree-aware]
    b. sourceDir = filepath.Join(sourceDir, info.WorktreeName)
 4. Validate sourceDir exists (os.Stat)
 5. Walk sourceDir for .env* files (same discovery logic, but rooted at sourceDir)
-5. For each valid FileEntry:
+6. For each valid FileEntry:
    a. destPath = filepath.Join(repoRoot, entry.RelPath)
    b. os.MkdirAll(filepath.Dir(destPath))
    c. copyFile(entry.AbsPath, destPath)
-6. Build Result, format output, return
+7. Build Result, format output, return
 ```
 
 ## File Copy Implementation
@@ -374,7 +447,15 @@ temp dir (`/tmp` on macOS/Linux). Every test creates its own isolated temp tree 
 via `t.Cleanup()` (unit) or godog `After` hook (integration). No test reads from or writes to
 the real filesystem outside `/tmp`.
 
-### Unit Tests (`internal/envbackup/*_test.go`)
+Testing follows the **three-level testing standard** for Go CLI apps:
+
+1. **Internal unit tests** (`internal/envbackup/*_test.go`) — pure logic validation
+2. **Cmd-layer unit tests** (`cmd/env_*_test.go`) — godog + mocked deps via `testable.go`
+3. **Cmd-layer integration tests** (`cmd/env_*.integration_test.go`) — godog + real `/tmp` fixtures
+
+Levels 2 and 3 consume the **same Gherkin specs** from `specs/apps/rhino-cli/env/`.
+
+### Internal Unit Tests (`internal/envbackup/*_test.go`)
 
 Unit tests validate pure logic in isolation. Each `*_test.go` file focuses on one module.
 
@@ -452,10 +533,92 @@ Unit tests validate pure logic in isolation. Each `*_test.go` file focuses on on
 | Markdown: table format          | Result with files               | Contains markdown table headers and rows     |
 | Worktree-aware: shows namespace | Result with worktree name       | Output mentions worktree namespace           |
 
+### Cmd-Layer Unit Tests (`cmd/env_backup_test.go`, `cmd/env_restore_test.go`)
+
+Cmd-layer unit tests use godog to consume the same Gherkin specs from `specs/apps/rhino-cli/env/`,
+but with all dependencies mocked via `testable.go` function variables.
+
+Following the per-file variable convention (e.g., `specsDirUnitDoctor` in `doctor_test.go`), each
+test file declares its own constant pointing to the same specs path:
+
+```go
+// In env_backup_test.go
+const specsDirUnitEnvBackup = "../../../specs/apps/rhino-cli/env"
+
+// In env_restore_test.go
+const specsDirUnitEnvRestore = "../../../specs/apps/rhino-cli/env"
+```
+
+**Pattern** (follows `doctor_test.go`):
+
+```go
+package cmd
+
+type envBackupUnitSteps struct {
+    cmdErr    error
+    cmdOutput string
+}
+
+func (s *envBackupUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
+    verbose = false
+    quiet = false
+    output = "text"
+    s.cmdErr = nil
+    s.cmdOutput = ""
+
+    // Mock findGitRoot via osGetwd/osStat
+    osGetwd = func() (string, error) { return "/mock-repo", nil }
+    osStat = func(name string) (os.FileInfo, error) {
+        if name == "/mock-repo/.git" {
+            return &mockFileInfo{name: ".git", isDir: true}, nil
+        }
+        return nil, os.ErrNotExist
+    }
+
+    // Default mock: no files backed up
+    envBackupFn = func(_ envbackup.Options) (*envbackup.Result, error) {
+        return &envbackup.Result{Copied: 0, Files: nil}, nil
+    }
+
+    return context.Background(), nil
+}
+
+func (s *envBackupUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+    envBackupFn = envbackup.Backup
+    osGetwd = os.Getwd
+    osStat = os.Stat
+    return context.Background(), nil
+}
+
+func TestUnitEnvBackup(t *testing.T) {
+    s := &envBackupUnitSteps{}
+    suite := godog.TestSuite{
+        ScenarioInitializer: func(sc *godog.ScenarioContext) {
+            sc.Before(s.before)
+            sc.After(s.after)
+            // Register step definitions using constants from steps_common_test.go
+        },
+        Options: &godog.Options{
+            Format:   "pretty",
+            Paths:    []string{specsDirUnitEnvBackup},
+            TestingT: t,
+            Tags:     "env-backup",
+        },
+    }
+    if suite.Run() != 0 {
+        t.Fatal("non-zero status returned, failed to run unit feature tests")
+    }
+}
+```
+
+**Non-BDD tests** (outside Gherkin): Include `TestEnvBackupCmd_Initialization` (verifies command
+Use/Short metadata) and `TestEnvBackupCmd_FnError` (verifies error propagation from internal fn).
+
 ### Integration Tests (`cmd/env_backup.integration_test.go`, `cmd/env_restore.integration_test.go`)
 
-Integration tests use godog to consume Gherkin specs from `specs/apps/rhino-cli/env/`. They
-exercise the full Cobra command pipeline (flag parsing → internal package → formatted output).
+Integration tests use godog to consume the same Gherkin specs from `specs/apps/rhino-cli/env/`.
+They exercise the full Cobra command pipeline (flag parsing → internal package → formatted output)
+with real filesystem fixtures.
 
 **Pattern**: Same as existing rhino-cli integration tests (see `doctor.integration_test.go`):
 

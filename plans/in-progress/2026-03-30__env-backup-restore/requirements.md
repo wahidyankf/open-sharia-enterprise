@@ -69,14 +69,18 @@ worktrees of the same repo have the same relative file paths but potentially dif
 
 Both commands support the global `--output` flag:
 
-| Format     | Content                                                |
-| ---------- | ------------------------------------------------------ |
-| `text`     | One line per file (relative path), summary line at end |
-| `json`     | `{ "backupDir": "...", "files": ["..."], "count": N }` |
-| `markdown` | Markdown table of files with summary                   |
+| Format     | Content                                                                                        |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| `text`     | One line per file (relative path), summary line at end                                         |
+| `json`     | `{ "direction": "backup"/"restore", "dir": "...", "files": [...], "copied": N, "skipped": N }` |
+| `markdown` | Markdown table of files with summary (covered by `reporter_test.go`, not Gherkin scenarios)    |
 
 `--verbose` adds absolute paths and file sizes. `--quiet` suppresses per-file lines, shows only
 the summary.
+
+> **Note**: `--verbose` and `--quiet` flag behavior is covered by internal reporter unit tests
+> (`reporter_test.go`), not Gherkin scenarios. The Gherkin scenarios focus on functional
+> correctness (files discovered, paths preserved, exit codes) rather than output formatting modes.
 
 ### FR-5: Safety
 
@@ -105,12 +109,15 @@ the summary.
 
 ## Non-Functional Requirements
 
-| Requirement | Detail                                                     |
-| ----------- | ---------------------------------------------------------- |
-| NFR-1       | No external dependencies beyond stdlib + cobra             |
-| NFR-2       | File copy via byte stream (not shell `cp`) for portability |
-| NFR-3       | Works on macOS, Linux, and WSL                             |
-| NFR-4       | >=90% line coverage for unit tests (per project standard)  |
+| Requirement | Detail                                                                                                                                                                       |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-1       | No external dependencies beyond stdlib + cobra                                                                                                                               |
+| NFR-2       | File copy via byte stream (not shell `cp`) for portability                                                                                                                   |
+| NFR-3       | Works on macOS, Linux, and WSL                                                                                                                                               |
+| NFR-4       | >=90% line coverage for unit tests (enforced by `project.json` and CLAUDE.md; note: `specs/apps/rhino-cli/README.md` mentions 95% but the project-enforced threshold is 90%) |
+| NFR-5       | Dual-level Gherkin consumption: same `.feature` files consumed by both godog unit tests (mocked deps) and godog integration tests (real fs)                                  |
+| NFR-6       | Dependency injection via `testable.go` function variables — cmd files never call internal packages directly                                                                  |
+| NFR-7       | Step regex constants centralized in `steps_common_test.go` — shared between unit and integration test files                                                                  |
 
 ## Acceptance Criteria (Gherkin)
 
@@ -168,13 +175,13 @@ Feature: Environment file backup and restore
     Given a repository with .env files
     When the developer runs env backup with JSON output
     Then the output is valid JSON
-    And the JSON contains backupDir, files array, and count
+    And the JSON contains direction, dir, files array, copied, and skipped
 
   Scenario: JSON output for restore
     Given a backup directory with .env files
     When the developer runs env restore with JSON output
     Then the output is valid JSON
-    And the JSON contains sourceDir, files array, and count
+    And the JSON contains direction, dir, files array, copied, and skipped
 
   Scenario: Env files inside auto-generated directories are not discovered
     Given a repository with .env files inside node_modules, dist, build, .next, __pycache__, target, vendor, coverage, and generated-contracts
