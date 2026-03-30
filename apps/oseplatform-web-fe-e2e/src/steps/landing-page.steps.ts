@@ -21,20 +21,22 @@ Then("the hero section displays a description of the platform mission", async ({
 Then("the hero section contains a {string} link to {string}", async ({ page }, linkText: string, href: string) => {
   const link = page.getByRole("link", { name: linkText });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute("href", href);
+  // Accept both /about and /about/ (trailing slash may vary)
+  const actual = await link.getAttribute("href");
+  expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
 Then("the hero section contains a {string} link", async ({ page }, linkText: string) => {
   const link = page.getByRole("link", { name: new RegExp(linkText, "i") });
-  await expect(link).toBeVisible();
+  await expect(link.first()).toBeVisible();
 });
 
 Then("a GitHub icon link is visible", async ({ page }) => {
-  const githubLink = page.getByRole("link", { name: /github/i });
-  await expect(githubLink).toBeVisible();
+  const githubLinks = page.getByRole("link", { name: /github/i });
+  await expect(githubLinks.first()).toBeVisible();
 });
 
 Then("an RSS feed icon link is visible", async ({ page }) => {
-  const rssLink = page.getByRole("link", { name: /rss|feed/i });
-  await expect(rssLink).toBeVisible();
+  const rssLinks = page.getByRole("link", { name: /rss|feed/i });
+  await expect(rssLinks.first()).toBeVisible();
 });
