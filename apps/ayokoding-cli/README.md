@@ -174,20 +174,30 @@ implicit dependency.
 
 ## Testing
 
-Two test tiers cover different concerns:
+Two test tiers consume the same Gherkin specs from `specs/apps/ayokoding-cli/` via
+[godog](https://github.com/cucumber/godog) — only the step implementations differ:
+
+| Level       | Test File Pattern                   | Step Implementation                             | Nx Target          |
+| ----------- | ----------------------------------- | ----------------------------------------------- | ------------------ |
+| Unit        | `cmd/{command}_test.go`             | Mocked I/O via package-level function variables | `test:unit`        |
+| Integration | `cmd/{command}.integration_test.go` | Real filesystem via `/tmp` fixtures             | `test:integration` |
+
+This pattern will be implemented as part of the CLI testing alignment plan.
 
 ### Unit Tests
 
 ```bash
-# Run unit tests (no build tag required)
-go test ./...
-
-# Via Nx (includes 90% line coverage check)
+# Run unit tests (includes godog BDD scenarios with mocked I/O)
 nx run ayokoding-cli:test:quick
+
+# Run unit tests directly
+cd apps/ayokoding-cli
+go test -v -run TestUnit ./cmd/...
 ```
 
-Unit tests cover isolated pure functions, algorithmic logic, and edge cases not
-reachable from integration tests. Coverage threshold: ≥90% line coverage.
+Unit tests run godog BDD scenarios with all I/O mocked via package-level function variables.
+They also cover pure function logic and edge cases not reachable from integration tests.
+Coverage threshold: ≥90% line coverage.
 
 ### Integration Tests
 
@@ -200,9 +210,8 @@ cd apps/ayokoding-cli
 go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
 ```
 
-Integration tests use [godog](https://github.com/cucumber/godog) to run Gherkin
-scenarios from `specs/apps/ayokoding-cli/`. They are co-located in `cmd/` (same
-package) to access unexported flag variables.
+Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
+`/tmp` filesystem fixtures.
 
 | Test function               | Feature file                                         | Scenarios |
 | --------------------------- | ---------------------------------------------------- | --------- |

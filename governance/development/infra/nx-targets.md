@@ -101,7 +101,7 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 | `typecheck`        | Verify type correctness without producing artifacts                                                              | Statically typed languages        |
 | `lint`             | Static analysis and code style checks                                                                            | All projects                      |
 | `test:quick`       | Fast quality gate for pre-push and PR merge; composed of fast checks                                             | All projects                      |
-| `test:unit`        | Isolated unit tests with mocked dependencies; must consume Gherkin specs (demo-be backends)                      | Projects with unit tests          |
+| `test:unit`        | Isolated unit tests with mocked dependencies; must consume Gherkin specs (demo-be backends and Go CLI apps)      | Projects with unit tests          |
 | `test:integration` | Demo-be: real PostgreSQL via docker-compose, direct code calls (no HTTP). Others: existing patterns (MSW, Godog) | Projects with integration tests   |
 | `test:e2e`         | Run E2E tests headlessly against a running app; must consume Gherkin specs (demo-be backends) via Playwright     | E2E test projects (`*-e2e`)       |
 | `test:e2e:ui`      | Run E2E tests with interactive Playwright UI                                                                     | E2E test projects                 |
@@ -118,7 +118,7 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 
 - Use `dev` for the development server — never `serve`, never `start:dev`
 - Use `start` for the production server — never `serve`
-- Use `test:quick` for the fast pre-push gate; `test:unit` for isolated unit tests with mocked dependencies; `test:integration` for tests with real infrastructure (demo-be: PostgreSQL via docker-compose) or in-process mocking (MSW, Godog); `test:e2e` for end-to-end tests — run targets individually rather than through an aggregate wrapper
+- Use `test:quick` for the fast pre-push gate; `test:unit` for isolated unit tests with mocked dependencies (Go CLI apps consume Gherkin specs via godog at this level); `test:integration` for tests with real infrastructure (demo-be: PostgreSQL via docker-compose) or in-process mocking (MSW, Godog); `test:e2e` for end-to-end tests — run targets individually rather than through an aggregate wrapper
 - Separate target variants with a colon (`build:web`, `test:e2e:ui`), not a hyphen or underscore
 - All target names use lowercase with hyphens for multi-word names (`run-pre-commit`)
 
@@ -335,13 +335,12 @@ Two integration test patterns exist depending on project type:
 
 **Demo-be backends** expose `test:integration` which runs `docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build`. This starts a fresh PostgreSQL container, runs migrations, and executes all shared Gherkin scenarios by calling application service/repository functions directly — no HTTP layer. Each backend has a `docker-compose.integration.yml` (postgres + test runner services) and a `Dockerfile.integration` (language runtime + test execution). Coverage is NOT measured at the integration level — coverage comes from `test:unit` only.
 
-**Go CLIs** expose `test:integration` for godog BDD tests: each command has a
-`{stem}.integration_test.go` file with `//go:build integration` that drives the command in-process
-via `cmd.RunE()` against controlled filesystem fixtures. The `test:integration` Nx target uses
-`-tags=integration -run TestIntegration` to isolate these from unit tests. Tests are co-located in
-the same `cmd/` package (not a separate folder) because they need direct access to unexported
-package-level flag variables (`output`, `quiet`, `verbose`) — the idiomatic Go pattern for this
-situation is `//go:build integration` in the same package. See
+**Go CLIs** consume Gherkin specs at both test levels. Each command has two test files:
+
+- `{stem}_test.go` (no build tag) — godog unit step definitions; runs in `test:quick` as part of `go test ./...`; mocks all I/O via package-level function variables; coverage measured here
+- `{stem}.integration_test.go` (`//go:build integration`) — godog integration step definitions; drives the command in-process via `cmd.RunE()` against controlled `/tmp` filesystem fixtures; runs in `test:integration` via `-tags=integration -run TestIntegration`
+
+Both files are co-located in the same `cmd/` package (not a separate folder) to access unexported package-level flag variables (`output`, `quiet`, `verbose`). Both levels filter scenarios by the same `@tag` from the same feature file. See
 [BDD Spec-to-Test Mapping Convention](./bdd-spec-test-mapping.md) for the mandatory 1:1 mapping
 between commands and feature file `@tags`.
 
@@ -503,6 +502,26 @@ language:
 
 **Note**: Python and Clojure use underscore in `generated_contracts/` (matching their language
 conventions). All other languages use hyphen in `generated-contracts/`.
+
+**Go CLI apps** (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) also consume Gherkin specs in `test:unit` (godog unit step definitions run without a build tag). Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
+
+| CLI App           | Gherkin specs input                                       |
+| ----------------- | --------------------------------------------------------- |
+| `rhino-cli`       | `{workspaceRoot}/specs/apps/rhino-cli/**/*.feature`       |
+| `ayokoding-cli`   | `{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature`   |
+| `oseplatform-cli` | `{workspaceRoot}/specs/apps/oseplatform-cli/**/*.feature` |
+
+Example for `rhino-cli` `test:unit` inputs:
+
+```json
+"inputs": [
+  "{projectRoot}/cmd/**/*.go",
+  "{projectRoot}/internal/**/*.go",
+  "{projectRoot}/go.mod",
+  "{projectRoot}/go.sum",
+  "{workspaceRoot}/specs/apps/rhino-cli/**/*.feature"
+]
+```
 
 **Why specs and contracts in inputs**: If a Gherkin feature file changes or the OpenAPI contract
 spec changes (triggering `codegen`), `test:unit` and `test:quick` must re-run even if application

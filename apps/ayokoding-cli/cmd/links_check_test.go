@@ -1,143 +1,226 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
-	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
+	"github.com/cucumber/godog"
+	"github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons/links"
 )
 
-func resetFlags() {
-	quiet = false
+var specsDirUnitLinksCheck = func() string {
+	_, f, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/ayokoding-cli/links")
+}()
+
+type linksCheckUnitSteps struct {
+	cmdErr     error
+	cmdOutput  string
+	mockResult *links.CheckResult
+}
+
+func (s *linksCheckUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
 	verbose = false
+	quiet = false
 	output = "text"
-	linksContentDir = ""
+	linksContentDir = "apps/ayokoding-web/content"
+	s.cmdErr = nil
+	s.cmdOutput = ""
+	s.mockResult = nil
+	return context.Background(), nil
 }
 
-func TestRunLinksCheck_NoMarkdownFiles(t *testing.T) {
-	tmpDir := t.TempDir()
-	resetFlags()
-	linksContentDir = tmpDir
-
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	read()
-	if err != nil {
-		t.Errorf("expected nil error for empty dir, got %v", err)
-	}
+func (s *linksCheckUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	checkLinksFn = links.CheckLinks
+	return context.Background(), nil
 }
 
-func TestRunLinksCheck_ValidLinks(t *testing.T) {
-	tmpDir := t.TempDir()
-
-	target := filepath.Join(tmpDir, "about.md")
-	if err := os.WriteFile(target, []byte("# About"), 0644); err != nil {
-		t.Fatal(err)
+func (s *linksCheckUnitSteps) ayokodingWebContentWhereAllInternalLinksResolveCorrectly() error {
+	s.mockResult = &links.CheckResult{
+		CheckedCount: 2,
+		ErrorCount:   0,
+		BrokenLinks:  nil,
 	}
-	index := filepath.Join(tmpDir, "index.md")
-	if err := os.WriteFile(index, []byte("[About](/about)"), 0644); err != nil {
-		t.Fatal(err)
+	checkLinksFn = func(_ string) (*links.CheckResult, error) {
+		return s.mockResult, nil
 	}
-
-	resetFlags()
-	linksContentDir = tmpDir
-
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	read()
-	if err != nil {
-		t.Errorf("expected nil error for valid links, got %v", err)
-	}
+	return nil
 }
 
-func TestRunLinksCheck_BrokenLinks(t *testing.T) {
-	tmpDir := t.TempDir()
-
-	index := filepath.Join(tmpDir, "index.md")
-	if err := os.WriteFile(index, []byte("[Missing](/does-not-exist)"), 0644); err != nil {
-		t.Fatal(err)
+func (s *linksCheckUnitSteps) ayokodingWebContentWithALinkPointingToANonExistentPage() error {
+	s.mockResult = &links.CheckResult{
+		CheckedCount: 1,
+		ErrorCount:   1,
+		BrokenLinks: []links.BrokenLink{
+			{SourceFile: "page.md", Line: 1, Text: "link", Target: "/nonexistent"},
+		},
 	}
-
-	resetFlags()
-	linksContentDir = tmpDir
-
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	read()
-	if err == nil {
-		t.Error("expected error for broken links, got nil")
+	checkLinksFn = func(_ string) (*links.CheckResult, error) {
+		return s.mockResult, nil
 	}
-	if !strings.Contains(err.Error(), "broken link") {
-		t.Errorf("expected 'broken link' in error, got %q", err.Error())
-	}
+	return nil
 }
 
-func TestRunLinksCheck_DirectoryNotExist(t *testing.T) {
-	resetFlags()
-	linksContentDir = "/tmp/nonexistent-dir-xyz-12345"
-
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	read()
-	if err == nil {
-		t.Error("expected error for nonexistent directory, got nil")
+func (s *linksCheckUnitSteps) ayokodingWebContentWithOnlyExternalHTTPSLinks() error {
+	s.mockResult = &links.CheckResult{
+		CheckedCount: 1,
+		ErrorCount:   0,
+		BrokenLinks:  nil,
 	}
+	checkLinksFn = func(_ string) (*links.CheckResult, error) {
+		return s.mockResult, nil
+	}
+	return nil
 }
 
-func TestRunLinksCheck_JSONOutput(t *testing.T) {
-	tmpDir := t.TempDir()
-	resetFlags()
-	linksContentDir = tmpDir
+func (s *linksCheckUnitSteps) captureRun() {
+	r, w, _ := os.Pipe()
+	origStdout := os.Stdout
+	os.Stdout = w
+	s.cmdErr = linksCheckCmd.RunE(linksCheckCmd, []string{})
+	_ = w.Close()
+	os.Stdout = origStdout
+	out, _ := io.ReadAll(r)
+	s.cmdOutput = string(out)
+}
+
+func (s *linksCheckUnitSteps) theDeveloperRunsLinksCheck() error {
+	s.captureRun()
+	return nil
+}
+
+func (s *linksCheckUnitSteps) theDeveloperRunsLinksCheckWithJSONOutput() error {
 	output = "json"
+	s.captureRun()
+	return nil
+}
 
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	out := read()
-	if err != nil {
-		t.Errorf("expected nil error, got %v", err)
+func (s *linksCheckUnitSteps) theLinksCheckCommandExitsSuccessfully() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected command to succeed but got error: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
+	return nil
+}
+
+func (s *linksCheckUnitSteps) theLinksCheckCommandExitsWithAFailureCode() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected command to fail but it succeeded\nOutput: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *linksCheckUnitSteps) theLinksOutputIsValidJSON() error {
 	var parsed map[string]any
-	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
-		t.Errorf("expected valid JSON output, got %q: %v", out, err)
+	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
+		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
 	}
-	if parsed["status"] != "success" {
-		t.Errorf("expected status 'success', got %v", parsed["status"])
+	return nil
+}
+
+func TestUnitLinksCheck(t *testing.T) {
+	s := &linksCheckUnitSteps{}
+	suite := godog.TestSuite{
+		ScenarioInitializer: func(sc *godog.ScenarioContext) {
+			sc.Before(s.before)
+			sc.After(s.after)
+			sc.Step(`^ayokoding-web content where all internal links resolve correctly$`, s.ayokodingWebContentWhereAllInternalLinksResolveCorrectly)
+			sc.Step(`^ayokoding-web content with a link pointing to a non-existent page$`, s.ayokodingWebContentWithALinkPointingToANonExistentPage)
+			sc.Step(`^ayokoding-web content with only external HTTPS links$`, s.ayokodingWebContentWithOnlyExternalHTTPSLinks)
+			sc.Step(`^the developer runs links check$`, s.theDeveloperRunsLinksCheck)
+			sc.Step(`^the developer runs links check with JSON output$`, s.theDeveloperRunsLinksCheckWithJSONOutput)
+			sc.Step(`^the command exits successfully$`, s.theLinksCheckCommandExitsSuccessfully)
+			sc.Step(`^the command exits with a failure code$`, s.theLinksCheckCommandExitsWithAFailureCode)
+			sc.Step(`^the output is valid JSON$`, s.theLinksOutputIsValidJSON)
+		},
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{specsDirUnitLinksCheck},
+			TestingT: t,
+		},
+	}
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run unit feature tests")
 	}
 }
 
+// TestLinksCheckCommand_Initialization verifies the command metadata is correct.
+// This is a non-BDD test because command metadata is not in Gherkin specs.
+func TestLinksCheckCommand_Initialization(t *testing.T) {
+	if linksCheckCmd.Use != "check" {
+		t.Errorf("expected Use == %q, got %q", "check", linksCheckCmd.Use)
+	}
+	if !strings.Contains(strings.ToLower(linksCheckCmd.Short), "link") {
+		t.Errorf("expected Short to contain 'link', got %q", linksCheckCmd.Short)
+	}
+}
+
+// captureStdoutRun runs f() while capturing os.Stdout; returns captured output.
+func captureStdoutRun(f func()) string {
+	r, w, _ := os.Pipe()
+	origStdout := os.Stdout
+	os.Stdout = w
+	f()
+	_ = w.Close()
+	os.Stdout = origStdout
+	out, _ := io.ReadAll(r)
+	return string(out)
+}
+
+// TestRunLinksCheck_CheckLinksFnError verifies error propagation from checkLinksFn.
+// This is a non-BDD test because the error path from checkLinksFn is not in Gherkin specs.
+func TestRunLinksCheck_CheckLinksFnError(t *testing.T) {
+	origFn := checkLinksFn
+	defer func() { checkLinksFn = origFn }()
+
+	checkLinksFn = func(_ string) (*links.CheckResult, error) {
+		return nil, fmt.Errorf("simulated check error")
+	}
+
+	quiet = false
+	output = "text"
+	linksContentDir = "any/dir"
+
+	var err error
+	captureStdoutRun(func() {
+		err = runLinksCheck(nil, nil)
+	})
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !strings.Contains(err.Error(), "link check failed") {
+		t.Errorf("expected 'link check failed' in error, got %q", err.Error())
+	}
+}
+
+// TestRunLinksCheck_MarkdownOutput verifies markdown output mode.
+// This is a non-BDD test because the markdown output path is not in Gherkin specs.
 func TestRunLinksCheck_MarkdownOutput(t *testing.T) {
-	tmpDir := t.TempDir()
-	resetFlags()
-	linksContentDir = tmpDir
+	origFn := checkLinksFn
+	defer func() { checkLinksFn = origFn }()
+
+	checkLinksFn = func(_ string) (*links.CheckResult, error) {
+		return &links.CheckResult{CheckedCount: 1}, nil
+	}
+
+	quiet = false
 	output = "markdown"
+	linksContentDir = "any/dir"
 
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	out := read()
-	if err != nil {
-		t.Errorf("expected nil error, got %v", err)
-	}
+	out := captureStdoutRun(func() {
+		if err := runLinksCheck(nil, nil); err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+	})
+
 	if !strings.Contains(out, "# Link Check Report") {
-		t.Errorf("expected '# Link Check Report' header, got %q", out)
-	}
-}
-
-func TestRunLinksCheck_QuietMode(t *testing.T) {
-	tmpDir := t.TempDir()
-	resetFlags()
-	linksContentDir = tmpDir
-	quiet = true
-
-	read := testutil.CaptureStdout(t)
-	err := runLinksCheck(nil, nil)
-	out := read()
-	if err != nil {
-		t.Errorf("expected nil error in quiet mode, got %v", err)
-	}
-	if out != "" {
-		t.Errorf("expected no stdout in quiet mode, got %q", out)
+		t.Errorf("expected '# Link Check Report' in output, got %q", out)
 	}
 }

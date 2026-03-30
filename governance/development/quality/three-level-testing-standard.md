@@ -183,25 +183,45 @@ apps/a-demo-be-{lang}-{framework}/
 
 The exact directory structure varies by language convention (e.g., Go uses `_test.go` files, Java uses `src/test/java/`, Elixir uses `test/`).
 
+## CLI App Implementation Pattern
+
+Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) consume the same Gherkin specs from `specs/apps/<cli-name>/` at both the unit and integration levels. The difference is what the step definitions use as their I/O substrate:
+
+| Level       | Test File Pattern                       | Step Implementation                                                 | What's Real                   |
+| ----------- | --------------------------------------- | ------------------------------------------------------------------- | ----------------------------- |
+| Unit        | `{domain}_{action}_test.go` (no tag)    | Calls command logic with mocked I/O via package-level function vars | Application logic only        |
+| Integration | `{domain}_{action}.integration_test.go` | Drives command in-process via `cmd.RunE()` against `/tmp` fixtures  | Filesystem + command pipeline |
+
+**Architecture**: Both levels filter scenarios by the same `@tag` from the same feature files. Unit step definitions inject mock function variables (e.g., `readFileFn`, `writeFileFn`) to replace real filesystem calls. Integration step definitions run the full `cmd.RunE()` path against controlled temporary directory fixtures.
+
+```
+Unit:        Gherkin Step -> Command Logic -> Mocked I/O function vars
+Integration: Gherkin Step -> cmd.RunE()   -> Real /tmp filesystem
+```
+
+**Coverage**: Coverage is measured at the unit level only (≥90% line coverage via `rhino-cli test-coverage validate`). Both levels must consume all Gherkin scenarios for their command.
+
+**Spec directory**: `specs/apps/<cli-name>/` — one feature file per command, organized by domain subdirectory.
+
 ## Applicability by Project Type
 
 The three-level standard applies universally, with adaptations per project type:
 
-| Project Type                 | Unit                         | Integration                      | E2E                                    | Gherkin Specs                   |
-| ---------------------------- | ---------------------------- | -------------------------------- | -------------------------------------- | ------------------------------- |
-| Demo-be API backend          | All mocked + specs           | Real PostgreSQL, no HTTP + specs | Playwright + specs                     | `specs/apps/a-demo/be/gherkin/` |
-| Web UI app (organiclever-fe) | Vitest mocks                 | MSW in-process (cacheable)       | Playwright                             | Project-specific                |
-| CLI app (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                    | `specs/{app}/`                  |
-| Library (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                    | `specs/{lib}/`                  |
-| Demo-fe frontend             | Vitest/Flutter mocks + specs | N/A                              | Playwright (via a-demo-fe-e2e) + specs | `specs/apps/a-demo/fe/gherkin/` |
-| Hugo site                    | Exempt                       | Exempt                           | Exempt                                 | N/A                             |
-| E2E runner                   | N/A                          | N/A                              | Playwright                             | Shared specs                    |
+| Project Type                 | Unit                            | Integration                      | E2E                                    | Gherkin Specs                   |
+| ---------------------------- | ------------------------------- | -------------------------------- | -------------------------------------- | ------------------------------- |
+| Demo-be API backend          | All mocked + specs              | Real PostgreSQL, no HTTP + specs | Playwright + specs                     | `specs/apps/a-demo/be/gherkin/` |
+| Web UI app (organiclever-fe) | Vitest mocks                    | MSW in-process (cacheable)       | Playwright                             | Project-specific                |
+| CLI app (Go)                 | Go test mocks + Gherkin (godog) | Godog BDD in-process (cacheable) | N/A                                    | `specs/{app}/`                  |
+| Library (Go)                 | Go test mocks                   | Godog BDD in-process (cacheable) | N/A                                    | `specs/{lib}/`                  |
+| Demo-fe frontend             | Vitest/Flutter mocks + specs    | N/A                              | Playwright (via a-demo-fe-e2e) + specs | `specs/apps/a-demo/fe/gherkin/` |
+| Hugo site                    | Exempt                          | Exempt                           | Exempt                                 | N/A                             |
+| E2E runner                   | N/A                             | N/A                              | Playwright                             | Shared specs                    |
 
 **Key rules by project type**:
 
 - **Demo-be backends**: All three levels mandatory; all consume Gherkin specs; integration uses real PostgreSQL with no HTTP
 - **Web UI apps**: All three levels mandatory; integration uses in-process mocking (MSW); cacheable
-- **CLI apps**: Unit + integration mandatory; integration uses Godog BDD with in-process command execution; cacheable
+- **CLI apps**: Unit + integration mandatory; both levels consume Gherkin specs via godog; unit mocks all I/O via package-level function variables; integration uses real filesystem with `/tmp` fixtures; cacheable
 - **Libraries**: Unit mandatory; integration optional (Godog BDD with public API calls); cacheable
 - **Demo-fe frontends**: Two-level testing (unit + E2E); no integration tier; all consume Gherkin specs from `specs/apps/a-demo/fe/gherkin/`; E2E via centralized `a-demo-fe-e2e` Playwright suite
 - **Hugo sites**: Exempt from all test levels (only `test:quick` for link checking)

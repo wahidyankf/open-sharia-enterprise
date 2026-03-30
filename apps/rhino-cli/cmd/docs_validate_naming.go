@@ -90,7 +90,7 @@ func runValidateDocsNaming(cmd *cobra.Command, args []string) error {
 	}
 
 	// Validate all docs files
-	result, err := docs.ValidateAll(opts)
+	result, err := docsValidateAllFn(opts)
 	if err != nil {
 		return fmt.Errorf("validation failed: %w", err)
 	}
@@ -134,7 +134,7 @@ func runFixMode(cmd *cobra.Command, validationResult *docs.ValidationResult, rep
 	}
 
 	// Run fix operation
-	fixResult, err := docs.Fix(validationResult, fixOpts)
+	fixResult, err := docsFixFn(validationResult, fixOpts)
 	if err != nil {
 		return fmt.Errorf("fix operation failed: %w", err)
 	}

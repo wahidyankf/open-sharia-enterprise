@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -10,7 +9,7 @@ import (
 
 // findGitRoot finds the root directory of the git repository by walking up from the current directory.
 func findGitRoot() (string, error) {
-	dir, err := os.Getwd()
+	dir, err := osGetwd()
 	if err != nil {
 		return "", err
 	}
@@ -18,7 +17,7 @@ func findGitRoot() (string, error) {
 	// Walk up the directory tree looking for .git
 	for {
 		gitDir := filepath.Join(dir, ".git")
-		if _, err := os.Stat(gitDir); err == nil {
+		if _, err := osStat(gitDir); err == nil {
 			return dir, nil
 		}
 

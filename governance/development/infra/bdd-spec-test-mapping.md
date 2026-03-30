@@ -17,7 +17,7 @@ updated: 2026-03-13
 
 This convention defines how Gherkin specifications are consumed across the monorepo:
 
-- **CLI apps**: Mandatory 1:1 mapping between commands and Gherkin specs via Godog integration tests
+- **CLI apps**: Mandatory 1:1 mapping between commands and Gherkin specs via Godog at both unit and integration test levels
 - **Demo-be backends**: Three-level consumption of shared Gherkin specs (unit/integration/e2e) with different step implementations at each level
 
 ## Principles Implemented/Respected
@@ -95,9 +95,26 @@ specs/apps/rhino-cli/agents/agents-sync.feature                  <- @agents-sync
 specs/apps/rhino-cli/agents/agents-validate-claude.feature       <- single @agents-validate-claude tag
 ```
 
-### 3. Integration Test to Tag (mandatory)
+### 3. Unit & Integration Test to Tag (mandatory)
 
-Each command has a dedicated integration test file that filters scenarios by `@tag`:
+Each command has dedicated test files at both levels that filter scenarios by `@tag`. The same tag is used at both levels, pointing to the same feature file:
+
+**Unit test** (no build tag — runs in `test:quick`):
+
+```go
+func TestUnitValidateSync(t *testing.T) {
+    suite := godog.TestSuite{
+        ScenarioInitializer: InitializeValidateSyncUnitScenario,
+        Options: &godog.Options{
+            Paths: []string{specsDir},
+            Tags:  "agents-validate-sync",  // filters to matching @tag
+        },
+    }
+    // ...
+}
+```
+
+**Integration test** (`//go:build integration` — runs in `test:integration`):
 
 ```go
 func TestIntegrationValidateSync(t *testing.T) {
@@ -105,7 +122,7 @@ func TestIntegrationValidateSync(t *testing.T) {
         ScenarioInitializer: InitializeValidateSyncScenario,
         Options: &godog.Options{
             Paths: []string{specsDir},
-            Tags:  "agents-validate-sync",  // filters to matching @tag
+            Tags:  "agents-validate-sync",  // same @tag, different step implementations
         },
     }
     // ...
@@ -121,6 +138,8 @@ func TestIntegrationValidateSync(t *testing.T) {
 | Unit test        | `{domain}_{action}_test.go`                      | `agents_validate_sync_test.go`                             |
 | Integration test | `{domain}_{action}.integration_test.go`          | `agents_validate_sync.integration_test.go`                 |
 | Feature file     | `specs/{app}/{domain}/{domain}-{action}.feature` | `specs/apps/rhino-cli/agents/agents-validate-sync.feature` |
+
+**Unit test files** (`{domain}_{action}_test.go`) serve dual purpose: they contain both godog BDD step definitions (consuming Gherkin specs via `TestUnit*` functions) and any non-BDD pure function tests for edge cases not covered by the Gherkin scenarios. The godog step definitions in unit test files use mocked I/O function variables instead of real filesystem access.
 
 **The universal rule**: All Go files (command, unit test, integration test) use underscores. Feature files and `@tag`s use hyphens. The `spec-coverage validate` tool normalises hyphens to underscores when matching feature stems to Go test files.
 
@@ -149,8 +168,47 @@ expects. This will be addressed in a follow-up plan.
 1. Create the parent command file `apps/{app}/cmd/{domain}.go` if the domain is new
 2. Create the feature file `specs/{app}/{domain}/{domain}-{action}.feature`
 3. Create `apps/{app}/cmd/{domain}_{action}.go` with the Cobra command (register with parent)
-4. Create `apps/{app}/cmd/{domain}_{action}.integration_test.go` with godog steps
-5. Verify: `rhino-cli spec-coverage validate specs/{app} apps/{app}`
+4. Create `apps/{app}/cmd/{domain}_{action}_test.go` with godog unit step definitions — use package-level function variables to mock all I/O, no build tag (runs in `test:quick`)
+5. Create `apps/{app}/cmd/{domain}_{action}.integration_test.go` with godog integration steps — add `//go:build integration`, drive via `cmd.RunE()` against real `/tmp` fixtures
+6. Verify: `rhino-cli spec-coverage validate specs/{app} apps/{app}`
+
+## CLI Apps: Dual-Level Spec Consumption
+
+Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) consume Gherkin specs at both the unit and integration test levels. The same feature files serve as the contract for both levels — only the step implementations differ.
+
+### Architecture
+
+| Level       | Nx Target          | Test File Pattern                       | Step Implementation                          | Dependencies    |
+| ----------- | ------------------ | --------------------------------------- | -------------------------------------------- | --------------- |
+| Unit        | `test:unit`        | `{domain}_{action}_test.go` (no tag)    | Package-level mock function vars replace I/O | All mocked      |
+| Integration | `test:integration` | `{domain}_{action}.integration_test.go` | `cmd.RunE()` against real `/tmp` fixtures    | Real filesystem |
+
+### Unit-Level Step Definitions
+
+Unit steps call command logic directly with mocked dependencies. Package-level function variables (e.g., `readFileFn`, `writeFileFn`, `statFn`) are overridden in step setup to inject controlled behavior without touching the real filesystem.
+
+- No build tag — included in `go test ./...` and `test:quick`
+- Coverage is measured at this level (≥90% line coverage)
+- Must run all Gherkin scenarios for the command's `@tag`
+
+### Integration-Level Step Definitions
+
+Integration steps drive commands in-process via `cmd.RunE()` against controlled `/tmp` filesystem fixtures. Steps create temporary directory structures, invoke the command, and assert on stdout/stderr and exit code.
+
+- Build tag: `//go:build integration`
+- Runs via `go test -tags=integration -run TestIntegration ./cmd/...`
+- Coverage is NOT measured at this level
+- Must run all Gherkin scenarios for the command's `@tag`
+
+### Example: Same Spec, Two Step Implementations
+
+The same `@agents-validate-sync` tag is consumed at both levels from the same feature file:
+
+```
+specs/apps/rhino-cli/agents/agents-validate-sync.feature
+  -> Unit steps in:       apps/rhino-cli/cmd/agents_validate_sync_test.go
+  -> Integration steps in: apps/rhino-cli/cmd/agents_validate_sync.integration_test.go
+```
 
 ## Demo-be Backend: Three-Level Spec Consumption
 

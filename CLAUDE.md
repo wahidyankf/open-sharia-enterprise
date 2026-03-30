@@ -225,7 +225,7 @@ as part of `test:quick`.
 **`test:integration` caching**: Default `cache: false` in `nx.json`. Demo-be backends use
 docker-compose with real PostgreSQL — non-deterministic and must never be cached. Projects using
 in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`:
-`organiclever-fe` (MSW), Go CLI apps (Godog + BDD features), `hugo-commons` (Godog + tmpdir mocks),
+`organiclever-fe` (MSW), Go CLI apps (Godog at both unit and integration levels), `hugo-commons` (Godog + tmpdir mocks),
 `golang-commons` (Godog + mock closures).
 
 **Three-level testing standard** (demo-be backends):
@@ -238,6 +238,14 @@ All three levels consume the same Gherkin specs — only step implementations ch
 includes only `test:unit` + coverage validation. It does NOT include `lint`, `typecheck`,
 `test:integration`, or `test:e2e`. Spec-coverage validation (`rhino-cli spec-coverage validate`)
 is deferred pending tool enhancement for demo-be naming conventions.
+
+**Three-level testing standard** (Go CLI apps):
+
+1. **Unit (`test:unit`)**: All mocked dependencies; consumes Gherkin specs from `specs/apps/<cli-name>/` via godog (no build tag); mocks all I/O via package-level function variables; coverage measured here (>=90%)
+2. **Integration (`test:integration`)**: Real filesystem via `/tmp` fixtures; consumes same Gherkin specs via godog (`//go:build integration`); drives commands in-process via `cmd.RunE()`; cacheable
+3. **E2E**: Not applicable for CLI apps
+
+Both unit and integration levels consume the same Gherkin specs — step implementations differ (mocked I/O vs real filesystem). `test:quick` includes `test:unit` (with godog BDD scenarios) + coverage validation.
 
 **Mandatory Nx targets for demo apps**: All `a-demo-be-*` and `a-demo-fe-*` apps must have 7 targets:
 `codegen`, `typecheck`, `lint`, `build`, `test:unit`, `test:quick`, `test:integration`. Coverage

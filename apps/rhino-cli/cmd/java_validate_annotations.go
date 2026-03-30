@@ -58,7 +58,7 @@ func runValidateJavaAnnotations(cmd *cobra.Command, args []string) error {
 		Annotation: javaAnnotation,
 	}
 
-	result, err := java.ValidateAll(opts)
+	result, err := javaValidateAllFn(opts)
 	if err != nil {
 		return fmt.Errorf("validation failed: %w", err)
 	}

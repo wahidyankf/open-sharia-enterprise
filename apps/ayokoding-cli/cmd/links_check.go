@@ -40,7 +40,7 @@ func runLinksCheck(_ *cobra.Command, _ []string) error {
 
 	startTime := time.Now()
 
-	result, err := links.CheckLinks(linksContentDir)
+	result, err := checkLinksFn(linksContentDir)
 	if err != nil {
 		return fmt.Errorf("link check failed: %w", err)
 	}

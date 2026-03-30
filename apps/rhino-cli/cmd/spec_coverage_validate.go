@@ -60,7 +60,7 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 		SharedSteps: sharedSteps,
 	}
 
-	result, err := speccoverage.CheckAll(opts)
+	result, err := specCoverageCheckAllFn(opts)
 	if err != nil {
 		return fmt.Errorf("spec coverage check failed: %w", err)
 	}

@@ -41,6 +41,7 @@ func (s *linksCheckOseplatformSteps) before(_ context.Context, _ *godog.Scenario
 	quiet = false
 	output = "text"
 	linksContentDir = "apps/oseplatform-web/content"
+	checkLinksFn = links.CheckLinks
 	outputLinksJSONFn = links.OutputLinksJSON
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil

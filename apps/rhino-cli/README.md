@@ -1091,17 +1091,26 @@ nx install rhino-cli
 
 ## Testing
 
-The project uses two complementary test tiers:
+The project uses two complementary test tiers. Both consume the same Gherkin specs from
+`specs/apps/rhino-cli/` via [godog](https://github.com/cucumber/godog) — only the step
+implementations differ:
 
-- **Unit tests** (`go test ./...`, no build tag): pure function tests with temp dir fixtures.
-  Run via `nx run rhino-cli:test:quick` with ≥95% line coverage enforcement.
-- **Integration tests** (`//go:build integration`, `go test -tags=integration -run TestIntegration ./cmd/...`):
-  godog BDD tests that drive each command in-process via `cmd.RunE()` against controlled filesystem
-  fixtures. One file per command in `apps/rhino-cli/cmd/`, 47 scenarios total across 11 suites.
-  Run via `nx run rhino-cli:test:integration` (cached). Integration tests are co-located with the
-  implementation in `cmd/` (not a separate folder): they are in `package cmd` to access unexported
-  flag variables (`output`, `quiet`, `verbose`) that each command sets before calling `RunE()`.
-  Exporting those variables or switching to subprocess testing would add unnecessary complexity.
+| Level       | Test File Pattern                           | Step Implementation                             | Nx Target          |
+| ----------- | ------------------------------------------- | ----------------------------------------------- | ------------------ |
+| Unit        | `cmd/{domain}_{action}_test.go`             | Mocked I/O via package-level function variables | `test:unit`        |
+| Integration | `cmd/{domain}_{action}.integration_test.go` | Real filesystem via `/tmp` fixtures             | `test:integration` |
+
+- **Unit tests** (no build tag, runs in `test:quick`): godog BDD scenarios with all I/O mocked
+  via package-level function variables. Also includes pure function tests for logic not covered by
+  Gherkin scenarios. Run via `nx run rhino-cli:test:quick` with ≥95% line coverage enforcement.
+- **Integration tests** (`//go:build integration`): godog BDD tests that drive each command
+  in-process via `cmd.RunE()` against controlled `/tmp` filesystem fixtures. 47 scenarios total
+  across 11 suites. Run via `nx run rhino-cli:test:integration` (cached).
+
+Both tiers are co-located in `cmd/` (not a separate folder): they are in `package cmd` to access
+unexported flag variables (`output`, `quiet`, `verbose`) that each command sets before calling
+`RunE()`. Exporting those variables or switching to subprocess testing would add unnecessary
+complexity.
 
 ### Test Suite
 

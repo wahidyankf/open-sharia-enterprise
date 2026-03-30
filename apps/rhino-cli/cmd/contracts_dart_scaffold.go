@@ -39,7 +39,7 @@ func runContractsDartScaffold(cmd *cobra.Command, args []string) error {
 		Dir: absDir,
 	}
 
-	result, err := contracts.ScaffoldDart(opts)
+	result, err := contractsScaffoldDartFn(opts)
 	if err != nil {
 		return fmt.Errorf("dart scaffolding failed: %w", err)
 	}

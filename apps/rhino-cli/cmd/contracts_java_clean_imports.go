@@ -40,7 +40,7 @@ func runContractsJavaCleanImports(cmd *cobra.Command, args []string) error {
 		Dir: absDir,
 	}
 
-	result, err := contracts.CleanJavaImports(opts)
+	result, err := contractsCleanJavaImportsFn(opts)
 	if err != nil {
 		return fmt.Errorf("java import cleaning failed: %w", err)
 	}

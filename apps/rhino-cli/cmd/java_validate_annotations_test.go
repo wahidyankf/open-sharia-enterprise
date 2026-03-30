@@ -2,329 +2,271 @@ package cmd
 
 import (
 	"bytes"
-	"os"
+	"context"
+	"fmt"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/cucumber/godog"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/java"
 )
 
-// makeJavaSourceRoot creates a temp directory with Java package fixtures.
-// Returns (sourceRoot, validPkgDir, invalidPkgDir).
-func makeJavaSourceRoot(t *testing.T) string {
-	t.Helper()
-	src := t.TempDir()
+var specsDirUnitJavaValidateAnnotations = func() string {
+	_, f, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino-cli/java")
+}()
 
-	// Valid package: has package-info.java with @NullMarked
-	validPkg := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(validPkg, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(validPkg, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(validPkg, "package-info.java"),
-		[]byte("@NullMarked\npackage com.example;"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	// Invalid package: missing package-info.java
-	invalidPkg := filepath.Join(src, "com", "example", "service")
-	if err := os.MkdirAll(invalidPkg, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(invalidPkg, "Bar.java"), []byte("class Bar {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	return src
+type javaValidateAnnotationsUnitSteps struct {
+	cmdErr    error
+	cmdOutput string
 }
 
+func (s *javaValidateAnnotationsUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
+	verbose = false
+	quiet = false
+	output = "text"
+	javaAnnotation = "NullMarked"
+	s.cmdErr = nil
+	s.cmdOutput = ""
+
+	// Default mock: all packages valid
+	javaValidateAllFn = func(_ java.ValidationOptions) (*java.ValidationResult, error) {
+		return &java.ValidationResult{
+			TotalPackages: 1,
+			ValidPackages: 1,
+			AllPackages: []java.PackageEntry{
+				{PackageDir: "com/example", Valid: true},
+			},
+			Annotation: "NullMarked",
+		}, nil
+	}
+
+	return context.Background(), nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	javaValidateAllFn = java.ValidateAll
+	return context.Background(), nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) aJavaSourceTreeAllPackagesNullMarked() error {
+	javaValidateAllFn = func(_ java.ValidationOptions) (*java.ValidationResult, error) {
+		return &java.ValidationResult{
+			TotalPackages: 2,
+			ValidPackages: 2,
+			AllPackages: []java.PackageEntry{
+				{PackageDir: "com/example", Valid: true},
+				{PackageDir: "com/example/service", Valid: true},
+			},
+			Annotation: "NullMarked",
+		}, nil
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) aJavaSourceTreeOnePackageNoPackageInfo() error {
+	javaValidateAllFn = func(_ java.ValidationOptions) (*java.ValidationResult, error) {
+		return &java.ValidationResult{
+			TotalPackages: 2,
+			ValidPackages: 1,
+			AllPackages: []java.PackageEntry{
+				{PackageDir: "com/example", Valid: true},
+				{
+					PackageDir:    "com/example/service",
+					Valid:         false,
+					ViolationType: java.ViolationMissingPackageInfo,
+				},
+			},
+			Annotation: "NullMarked",
+		}, nil
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) aJavaSourceTreeOnePackageWithoutNullMarked() error {
+	javaValidateAllFn = func(_ java.ValidationOptions) (*java.ValidationResult, error) {
+		return &java.ValidationResult{
+			TotalPackages: 2,
+			ValidPackages: 1,
+			AllPackages: []java.PackageEntry{
+				{PackageDir: "com/example", Valid: true},
+				{
+					PackageDir:    "com/example/service",
+					Valid:         false,
+					ViolationType: java.ViolationMissingAnnotation,
+				},
+			},
+			Annotation: "NullMarked",
+		}, nil
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) aJavaSourceTreeAllPackagesNonNull() error {
+	javaAnnotation = "NonNull"
+	javaValidateAllFn = func(opts java.ValidationOptions) (*java.ValidationResult, error) {
+		return &java.ValidationResult{
+			TotalPackages: 1,
+			ValidPackages: 1,
+			AllPackages: []java.PackageEntry{
+				{PackageDir: "com/example", Valid: true},
+			},
+			Annotation: opts.Annotation,
+		}, nil
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theDeveloperRunsJavaValidateAnnotationsOnRoot() error {
+	buf := new(bytes.Buffer)
+	validateJavaAnnotationsCmd.SetOut(buf)
+	validateJavaAnnotationsCmd.SetErr(buf)
+	s.cmdErr = validateJavaAnnotationsCmd.RunE(validateJavaAnnotationsCmd, []string{"/mock/src"})
+	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theDeveloperRunsJavaValidateAnnotationsNonNull() error {
+	javaAnnotation = "NonNull"
+	return s.theDeveloperRunsJavaValidateAnnotationsOnRoot()
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theCommandExitsSuccessfully() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theCommandExitsWithAFailureCode() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected failure but succeeded\nOutput: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theOutputReportsZeroJavaViolations() error {
+	if !strings.Contains(s.cmdOutput, "0 violations found") {
+		return fmt.Errorf("expected '0 violations found' in output but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theOutputIdentifiesPackageMissingPackageInfo() error {
+	if !strings.Contains(s.cmdOutput, "✗") && !strings.Contains(strings.ToLower(s.cmdOutput), "violation") {
+		return fmt.Errorf("expected output to identify missing package-info (✗ or 'violation') but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *javaValidateAnnotationsUnitSteps) theOutputIdentifiesPackageWithMissingAnnotation() error {
+	if !strings.Contains(s.cmdOutput, "✗") && !strings.Contains(strings.ToLower(s.cmdOutput), "violation") {
+		return fmt.Errorf("expected output to identify missing annotation (✗ or 'violation') but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func TestUnitJavaValidateAnnotations(t *testing.T) {
+	s := &javaValidateAnnotationsUnitSteps{}
+	suite := godog.TestSuite{
+		ScenarioInitializer: func(sc *godog.ScenarioContext) {
+			sc.Before(s.before)
+			sc.After(s.after)
+			sc.Step(stepJavaSourceTreeAllPackagesNullMarked, s.aJavaSourceTreeAllPackagesNullMarked)
+			sc.Step(stepJavaSourceTreeOnePackageNoPackageInfo, s.aJavaSourceTreeOnePackageNoPackageInfo)
+			sc.Step(stepJavaSourceTreeOnePackageWithoutNullMarked, s.aJavaSourceTreeOnePackageWithoutNullMarked)
+			sc.Step(stepJavaSourceTreeAllPackagesNonNull, s.aJavaSourceTreeAllPackagesNonNull)
+			sc.Step(stepDeveloperRunsJavaValidateAnnotationsOnRoot, s.theDeveloperRunsJavaValidateAnnotationsOnRoot)
+			sc.Step(stepDeveloperRunsJavaValidateAnnotationsNonNull, s.theDeveloperRunsJavaValidateAnnotationsNonNull)
+			sc.Step(stepExitsSuccessfully, s.theCommandExitsSuccessfully)
+			sc.Step(stepExitsWithFailure, s.theCommandExitsWithAFailureCode)
+			sc.Step(stepOutputReportsZeroJavaViolations, s.theOutputReportsZeroJavaViolations)
+			sc.Step(stepOutputIdentifiesPackageMissingPackageInfo, s.theOutputIdentifiesPackageMissingPackageInfo)
+			sc.Step(stepOutputIdentifiesPackageWithMissingAnnotation, s.theOutputIdentifiesPackageWithMissingAnnotation)
+		},
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{specsDirUnitJavaValidateAnnotations},
+			TestingT: t,
+			Tags:     "java-validate-annotations",
+		},
+	}
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run unit feature tests")
+	}
+}
+
+// TestValidateJavaAnnotationsCmd_Initialization verifies command metadata.
+// This is a non-BDD test because command metadata is not in Gherkin specs.
+func TestValidateJavaAnnotationsCmd_Initialization(t *testing.T) {
+	if !strings.Contains(validateJavaAnnotationsCmd.Use, "validate-annotations") {
+		t.Errorf("expected Use to contain 'validate-annotations', got %q", validateJavaAnnotationsCmd.Use)
+	}
+}
+
+// TestValidateJavaAnnotationsCmd_NoArgs verifies ExactArgs(1) validation.
+// This is a non-BDD test covering the args validator not in Gherkin specs.
 func TestValidateJavaAnnotationsCmd_NoArgs(t *testing.T) {
-	// Cobra's ExactArgs(1) is enforced before RunE; test the Args validator directly.
 	err := validateJavaAnnotationsCmd.Args(validateJavaAnnotationsCmd, []string{})
 	if err == nil {
 		t.Error("expected error when no args provided")
 	}
 }
 
-func TestValidateJavaAnnotationsCmd_ValidSourceRoot_NoViolations(t *testing.T) {
-	src := t.TempDir()
+// TestValidateJavaAnnotationsCmd_FnError verifies error propagation from the internal function.
+// This is a non-BDD test covering the error path not in Gherkin specs.
+func TestValidateJavaAnnotationsCmd_FnError(t *testing.T) {
+	origFn := javaValidateAllFn
+	defer func() { javaValidateAllFn = origFn }()
 
-	// Single valid package
-	pkgDir := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "package-info.java"),
-		[]byte("@NullMarked\npackage com.example;"), 0644); err != nil {
-		t.Fatal(err)
+	javaValidateAllFn = func(_ java.ValidationOptions) (*java.ValidationResult, error) {
+		return nil, fmt.Errorf("scan failed")
 	}
 
-	cmd := validateJavaAnnotationsCmd
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	javaAnnotation = "NullMarked"
-	output = "text"
-	verbose = false
-	quiet = false
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error for valid source root, got: %v", err)
-	}
-
-	got := buf.String()
-	if !strings.Contains(got, "0 violations found") {
-		t.Errorf("expected '0 violations found' in output, got: %s", got)
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_WithViolations(t *testing.T) {
-	src := makeJavaSourceRoot(t)
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	validateJavaAnnotationsCmd.SetOut(buf)
+	validateJavaAnnotationsCmd.SetErr(buf)
 
 	javaAnnotation = "NullMarked"
 	output = "text"
 	verbose = false
 	quiet = false
 
-	err := cmd.RunE(cmd, []string{src})
+	err := validateJavaAnnotationsCmd.RunE(validateJavaAnnotationsCmd, []string{"/mock/src"})
 	if err == nil {
-		t.Error("expected error when violations found")
+		t.Error("expected error when internal function fails")
 	}
-
-	got := buf.String()
-	if !strings.Contains(got, "✗") {
-		t.Errorf("expected ✗ marker in output, got: %s", got)
-	}
-	if !strings.Contains(got, "violation") {
-		t.Errorf("expected violation count in output, got: %s", got)
+	if !strings.Contains(err.Error(), "validation failed") {
+		t.Errorf("expected 'validation failed' error, got: %v", err)
 	}
 }
 
-func TestValidateJavaAnnotationsCmd_JSONOutput(t *testing.T) {
-	src := makeJavaSourceRoot(t)
+// TestValidateJavaAnnotationsCmd_DefaultAnnotation verifies the annotation flag defaults to NullMarked.
+// This is a non-BDD test covering flag defaults not in Gherkin specs.
+func TestValidateJavaAnnotationsCmd_DefaultAnnotation(t *testing.T) {
+	origFn := javaValidateAllFn
+	defer func() { javaValidateAllFn = origFn }()
 
-	cmd := validateJavaAnnotationsCmd
+	var capturedAnnotation string
+	javaValidateAllFn = func(opts java.ValidationOptions) (*java.ValidationResult, error) {
+		capturedAnnotation = opts.Annotation
+		return &java.ValidationResult{TotalPackages: 0, ValidPackages: 0, Annotation: opts.Annotation}, nil
+	}
+
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	javaAnnotation = "NullMarked"
-	output = "json"
-	verbose = false
-	quiet = false
-
-	_ = cmd.RunE(cmd, []string{src})
-
-	got := buf.String()
-	if !strings.Contains(got, `"status"`) {
-		t.Errorf("expected 'status' field in JSON output, got: %s", got)
-	}
-	if !strings.Contains(got, `"total_packages"`) {
-		t.Errorf("expected 'total_packages' field in JSON output, got: %s", got)
-	}
-	if !strings.Contains(got, `"violations"`) {
-		t.Errorf("expected 'violations' field in JSON output, got: %s", got)
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_MarkdownOutput(t *testing.T) {
-	src := makeJavaSourceRoot(t)
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	javaAnnotation = "NullMarked"
-	output = "markdown"
-	verbose = false
-	quiet = false
-
-	_ = cmd.RunE(cmd, []string{src})
-
-	got := buf.String()
-	if !strings.Contains(got, "# Java Null Safety Validation Report") {
-		t.Errorf("expected markdown heading in output, got: %s", got)
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_QuietMode(t *testing.T) {
-	src := t.TempDir()
-
-	// Single valid package
-	pkgDir := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "package-info.java"),
-		[]byte("@NullMarked\npackage com.example;"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	javaAnnotation = "NullMarked"
-	output = "text"
-	verbose = false
-	quiet = true
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error, got: %v", err)
-	}
-
-	got := buf.String()
-	if strings.Contains(got, "0 violations found") {
-		t.Error("quiet mode should suppress '0 violations found' message")
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_AnnotationFlag(t *testing.T) {
-	src := t.TempDir()
-
-	// Package with @NonNull annotation (not @NullMarked)
-	pkgDir := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "package-info.java"),
-		[]byte("@NonNull\npackage com.example;"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Use @NonNull annotation — should pass
-	javaAnnotation = "NonNull"
-	output = "text"
-	verbose = false
-	quiet = false
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error with --annotation NonNull, got: %v", err)
-	}
-
-	got := buf.String()
-	if !strings.Contains(got, "0 violations found") {
-		t.Errorf("expected '0 violations found' for custom annotation, got: %s", got)
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_EmptySourceRoot(t *testing.T) {
-	src := t.TempDir() // No Java files
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	validateJavaAnnotationsCmd.SetOut(buf)
+	validateJavaAnnotationsCmd.SetErr(buf)
 
 	javaAnnotation = "NullMarked"
 	output = "text"
 	verbose = false
 	quiet = false
 
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error for empty source root, got: %v", err)
-	}
-}
+	_ = validateJavaAnnotationsCmd.RunE(validateJavaAnnotationsCmd, []string{"/mock/src"})
 
-func TestValidateJavaAnnotationsCmd_VerboseMode(t *testing.T) {
-	src := t.TempDir()
-
-	pkgDir := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "package-info.java"),
-		[]byte("@NullMarked\npackage com.example;"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	javaAnnotation = "NullMarked"
-	output = "text"
-	verbose = true
-	quiet = false
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error, got: %v", err)
-	}
-
-	got := buf.String()
-	if !strings.Contains(got, "✓") {
-		t.Errorf("expected ✓ marker for valid package in verbose mode, got: %s", got)
-	}
-}
-
-func TestValidateJavaAnnotationsCmd_ValidateAllError(t *testing.T) {
-	// Covers line 62: java.ValidateAll returns error when ScanPackages fails.
-	// ScanPackages uses WalkDir which fails for unreadable directories.
-	src := t.TempDir()
-
-	// Create a Java package directory
-	pkgDir := filepath.Join(src, "com", "example")
-	if err := os.MkdirAll(pkgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(pkgDir, "Foo.java"), []byte("class Foo {}"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	// Make the root directory unreadable so WalkDir fails
-	if err := os.Chmod(src, 0000); err != nil {
-		t.Fatal(err)
-	}
-	defer func() { _ = os.Chmod(src, 0755) }()
-
-	cmd := validateJavaAnnotationsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	javaAnnotation = "NullMarked"
-	output = "text"
-	verbose = false
-	quiet = false
-
-	err := cmd.RunE(cmd, []string{src})
-	// On non-root systems this should fail; on root systems it may succeed
-	if err != nil {
-		if !strings.Contains(err.Error(), "validation failed") && !strings.Contains(err.Error(), "violation") {
-			t.Logf("ValidateAll error: %v", err)
-		}
+	if capturedAnnotation != "NullMarked" {
+		t.Errorf("expected default annotation 'NullMarked', got: %s", capturedAnnotation)
 	}
 }

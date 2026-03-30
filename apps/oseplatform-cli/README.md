@@ -59,21 +59,34 @@ oseplatform-cli links check -v
 
 ## Testing
 
-Two test tiers cover different concerns:
+Two test tiers consume the same Gherkin specs from `specs/apps/oseplatform-cli/` via
+[godog](https://github.com/cucumber/godog) — only the step implementations differ:
+
+| Level       | Test File Pattern                   | Step Implementation                             | Nx Target          |
+| ----------- | ----------------------------------- | ----------------------------------------------- | ------------------ |
+| Unit        | `cmd/{command}_test.go`             | Mocked I/O via package-level function variables | `test:unit`        |
+| Integration | `cmd/{command}.integration_test.go` | Real filesystem via `/tmp` fixtures             | `test:integration` |
+
+This pattern will be implemented as part of the CLI testing alignment plan.
 
 ### Unit Tests
 
 ```sh
-# Via Nx (includes 95% line coverage check)
+# Run unit tests (includes godog BDD scenarios with mocked I/O)
 nx run oseplatform-cli:test:quick
+
+# Run unit tests directly
+cd apps/oseplatform-cli
+go test -v -run TestUnit ./cmd/...
 ```
 
+Unit tests run godog BDD scenarios with all I/O mocked via package-level function variables.
 Coverage threshold: ≥95% line coverage.
 
 ### Integration Tests
 
 ```sh
-# Run all 4 BDD integration tests
+# Run all BDD integration tests
 nx run oseplatform-cli:test:integration
 
 # Run the suite directly during development
@@ -81,9 +94,8 @@ cd apps/oseplatform-cli
 go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
 ```
 
-Integration tests use [godog](https://github.com/cucumber/godog) to run Gherkin
-scenarios from `specs/apps/oseplatform-cli/`. They are co-located in `cmd/` (same
-package) to access unexported flag variables.
+Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
+`/tmp` filesystem fixtures.
 
 | Test function               | Feature file                                           | Scenarios |
 | --------------------------- | ------------------------------------------------------ | --------- |

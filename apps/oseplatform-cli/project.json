@@ -17,14 +17,16 @@
       "options": {
         "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-cli/cover.out 90)",
         "cwd": "apps/oseplatform-cli"
-      }
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/oseplatform-cli/**/*.feature"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 go test ./... -count=1",
         "cwd": "apps/oseplatform-cli"
-      }
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/oseplatform-cli/**/*.feature"]
     },
     "run": {
       "executor": "nx:run-commands",

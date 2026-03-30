@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/git"
 )
 
 var gitPreCommitCmd = &cobra.Command{
@@ -30,7 +29,7 @@ Exits immediately on the first failure (except step 3 which only warns).`,
 		if err != nil {
 			return fmt.Errorf("failed to find git repository root: %w", err)
 		}
-		return git.Run(gitRoot, git.DefaultDeps())
+		return gitRunFn(gitRoot, gitDefaultDepsFn())
 	},
 }
 

@@ -18,14 +18,16 @@
       "options": {
         "command": "CGO_ENABLED=0 go test -coverprofile=cover.out -coverpkg=./cmd/... ./... && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-cli/cover.out 90)",
         "cwd": "apps/ayokoding-cli"
-      }
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 go test ./... -count=1",
         "cwd": "apps/ayokoding-cli"
-      }
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature"]
     },
     "run": {
       "executor": "nx:run-commands",

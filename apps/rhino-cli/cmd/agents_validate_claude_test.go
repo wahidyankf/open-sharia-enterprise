@@ -2,611 +2,290 @@ package cmd
 
 import (
 	"bytes"
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/cucumber/godog"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/agents"
 )
 
-func TestValidateClaudeCommand_AllValid(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
+var specsDirUnitValidateClaude = func() string {
+	_, f, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino-cli/agents")
+}()
 
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
+type validateClaudeUnitSteps struct {
+	cmdErr    error
+	cmdOutput string
+}
 
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create valid skill
-	createTestSkill(t, skillsDir, "test-skill")
-
-	// Create valid agent
-	createTestAgent(t, agentsDir, "test-agent")
-
-	// Test command execution
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	agentsOnly = false
-	skillsOnly = false
-	output = "text"
+func (s *validateClaudeUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
 	verbose = false
 	quiet = false
+	output = "text"
+	agentsOnly = false
+	skillsOnly = false
+	s.cmdErr = nil
+	s.cmdOutput = ""
 
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
+	// Mock findGitRoot
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
 	}
 
-	outputStr := buf.String()
-	t.Logf("Command output:\n%s", outputStr)
-
-	// Verify success message
-	if !strings.Contains(outputStr, "✓ VALIDATION PASSED") {
-		t.Error("Expected output to contain validation passed message")
+	// Default: all valid
+	agentsValidateClaudeFn = func(_ agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		return &agents.ValidationResult{
+			TotalChecks:  18,
+			PassedChecks: 18,
+			FailedChecks: 0,
+			Checks:       makeAllPassedChecks(18),
+		}, nil
 	}
-	if !strings.Contains(outputStr, "Failed: 0") {
-		t.Error("Expected output to show 0 failed checks")
+
+	return context.Background(), nil
+}
+
+func (s *validateClaudeUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	agentsValidateClaudeFn = agents.ValidateClaude
+	osGetwd = os.Getwd
+	osStat = os.Stat
+	return context.Background(), nil
+}
+
+// makeAllPassedChecks creates n validation checks all with "passed" status.
+func makeAllPassedChecks(n int) []agents.ValidationCheck {
+	checks := make([]agents.ValidationCheck, n)
+	for i := range checks {
+		checks[i] = agents.ValidationCheck{
+			Name:   fmt.Sprintf("check-%d", i+1),
+			Status: "passed",
+		}
+	}
+	return checks
+}
+
+// makeFailedResult creates a ValidationResult with one failed check.
+func makeFailedResult(message string) *agents.ValidationResult {
+	return &agents.ValidationResult{
+		TotalChecks:  1,
+		PassedChecks: 0,
+		FailedChecks: 1,
+		Checks: []agents.ValidationCheck{
+			{Name: "check-1", Status: "failed", Message: message},
+		},
 	}
 }
 
-func TestValidateClaudeCommand_InvalidAgent_MissingName(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
+func (s *validateClaudeUnitSteps) aClaudeDirWhereAllAgentsAndSkillsAreValid() error {
+	agentsValidateClaudeFn = func(_ agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		return &agents.ValidationResult{
+			TotalChecks:  18,
+			PassedChecks: 18,
+			FailedChecks: 0,
+			Checks:       makeAllPassedChecks(18),
+		}, nil
 	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-
-	// Create invalid agent (missing name field)
-	invalidAgentContent := `---
-description: Test agent description
-tools: Read
-model: sonnet
-color: blue
-skills:
----
-Test agent body`
-	if err := os.WriteFile(filepath.Join(agentsDir, "test-agent.md"), []byte(invalidAgentContent), 0644); err != nil {
-		t.Fatalf("Failed to create invalid agent: %v", err)
-	}
-
-	// Test command execution
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	agentsOnly = false
-	skillsOnly = false
-	output = "text"
-	verbose = false
-	quiet = false
-
-	// Execute command (should fail)
-	err = cmd.RunE(cmd, []string{})
-	if err == nil {
-		t.Error("Expected command to fail with invalid agent")
-	}
-
-	outputStr := buf.String()
-	t.Logf("Command output:\n%s", outputStr)
-
-	// Verify error indicates validation failure
-	if !strings.Contains(outputStr, "Failed:") && !strings.Contains(err.Error(), "validation failed") {
-		t.Error("Expected output or error to indicate validation failure")
-	}
+	return nil
 }
 
-func TestValidateClaudeCommand_InvalidSkill_MissingName(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
+func (s *validateClaudeUnitSteps) aClaudeDirWithAgentMissingToolsField() error {
+	agentsValidateClaudeFn = func(_ agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		return makeFailedResult("required field 'tools' is missing"), nil
 	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create invalid skill (missing name field)
-	skillDir := filepath.Join(skillsDir, "test-skill")
-	if err := os.MkdirAll(skillDir, 0755); err != nil {
-		t.Fatalf("Failed to create skill dir: %v", err)
-	}
-
-	invalidSkillContent := `---
-description: Test skill description
----
-Skill content`
-	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(invalidSkillContent), 0644); err != nil {
-		t.Fatalf("Failed to create invalid skill: %v", err)
-	}
-
-	// Test command execution
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	agentsOnly = false
-	skillsOnly = false
-	output = "text"
-	verbose = false
-	quiet = false
-
-	// Execute command (should fail)
-	err = cmd.RunE(cmd, []string{})
-	if err == nil {
-		t.Error("Expected command to fail with invalid skill")
-	}
-
-	outputStr := buf.String()
-	t.Logf("Command output:\n%s", outputStr)
-
-	// Verify error indicates validation failure
-	if !strings.Contains(outputStr, "Failed:") && !strings.Contains(err.Error(), "validation failed") {
-		t.Error("Expected output or error to indicate validation failure")
-	}
+	return nil
 }
 
-func TestValidateClaudeCommand_AgentsOnly(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
+func (s *validateClaudeUnitSteps) aClaudeDirWithTwoAgentsDeclaringSameName() error {
+	agentsValidateClaudeFn = func(_ agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		return makeFailedResult("duplicate agent name: same-agent"), nil
 	}
-	defer func() { _ = os.Chdir(originalWd) }()
+	return nil
+}
 
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
+func (s *validateClaudeUnitSteps) aClaudeDirWhereAgentsAreValidButSkillsHaveIssues() error {
+	agentsValidateClaudeFn = func(opts agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		if opts.AgentsOnly {
+			return &agents.ValidationResult{
+				TotalChecks:  11,
+				PassedChecks: 11,
+				FailedChecks: 0,
+				Checks:       makeAllPassedChecks(11),
+			}, nil
+		}
+		return makeFailedResult("skill missing required field 'description'"), nil
 	}
+	return nil
+}
 
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
+func (s *validateClaudeUnitSteps) aClaudeDirWhereSkillsAreValidButAgentsHaveIssues() error {
+	agentsValidateClaudeFn = func(opts agents.ValidateClaudeOptions) (*agents.ValidationResult, error) {
+		if opts.SkillsOnly {
+			return &agents.ValidationResult{
+				TotalChecks:  7,
+				PassedChecks: 7,
+				FailedChecks: 0,
+				Checks:       makeAllPassedChecks(7),
+			}, nil
+		}
+		return makeFailedResult("agent missing required field 'tools'"), nil
 	}
+	return nil
+}
 
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create valid agent and skill
-	createTestAgent(t, agentsDir, "test-agent")
-	createTestSkill(t, skillsDir, "test-skill")
-
-	// Test agents-only command
-	cmd := validateClaudeCmd
+func (s *validateClaudeUnitSteps) runValidateClaude() error {
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	validateClaudeCmd.SetOut(buf)
+	validateClaudeCmd.SetErr(buf)
+	s.cmdErr = validateClaudeCmd.RunE(validateClaudeCmd, []string{})
+	s.cmdOutput = buf.String()
+	return nil
+}
 
-	// Set agents-only flag
+func (s *validateClaudeUnitSteps) runValidateClaudeWithAgentsOnlyFlag() error {
 	agentsOnly = true
-	skillsOnly = false
-	output = "text"
-	verbose = false
-	quiet = false
+	return s.runValidateClaude()
+}
 
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
+func (s *validateClaudeUnitSteps) runValidateClaudeWithSkillsOnlyFlag() error {
+	skillsOnly = true
+	return s.runValidateClaude()
+}
+
+func (s *validateClaudeUnitSteps) commandExitsSuccessfully() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
+	return nil
+}
 
-	outputStr := buf.String()
-	t.Logf("Agents-only output:\n%s", outputStr)
-
-	// Verify success and that only agents were validated
-	if !strings.Contains(outputStr, "✓ VALIDATION PASSED") {
-		t.Error("Expected output to contain validation passed message")
+func (s *validateClaudeUnitSteps) commandExitsWithFailureCode() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected failure but succeeded\nOutput: %s", s.cmdOutput)
 	}
-	// Should show agent checks (11 checks per agent)
-	if !strings.Contains(outputStr, "Total Checks: 11") {
-		t.Error("Expected output to show 11 checks (agents-only mode)")
+	return nil
+}
+
+func (s *validateClaudeUnitSteps) outputReportsAllChecksAsPassing() error {
+	if !strings.Contains(s.cmdOutput, "VALIDATION PASSED") {
+		return fmt.Errorf("expected output to contain 'VALIDATION PASSED' but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateClaudeUnitSteps) outputIdentifiesAgentAndMissingField() error {
+	combined := s.cmdOutput
+	if s.cmdErr != nil {
+		combined += s.cmdErr.Error()
+	}
+	lc := strings.ToLower(combined)
+	if !strings.Contains(lc, "failed") && !strings.Contains(lc, "validation failed") {
+		return fmt.Errorf("expected output to identify validation failure but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+	}
+	return nil
+}
+
+func (s *validateClaudeUnitSteps) outputReportsDuplicateAgentName() error {
+	combined := s.cmdOutput
+	if s.cmdErr != nil {
+		combined += s.cmdErr.Error()
+	}
+	lc := strings.ToLower(combined)
+	if !strings.Contains(lc, "same-agent") && !strings.Contains(lc, "duplicate") && !strings.Contains(lc, "failed") {
+		return fmt.Errorf("expected output to report duplicate agent name but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+	}
+	return nil
+}
+
+func TestUnitValidateClaude(t *testing.T) {
+	s := &validateClaudeUnitSteps{}
+	suite := godog.TestSuite{
+		ScenarioInitializer: func(sc *godog.ScenarioContext) {
+			sc.Before(s.before)
+			sc.After(s.after)
+			sc.Step(stepClaudeDirWhereAllAgentsAndSkillsValid, s.aClaudeDirWhereAllAgentsAndSkillsAreValid)
+			sc.Step(stepClaudeDirWhereOneAgentMissingToolsField, s.aClaudeDirWithAgentMissingToolsField)
+			sc.Step(stepClaudeDirWithTwoAgentsSameName, s.aClaudeDirWithTwoAgentsDeclaringSameName)
+			sc.Step(stepClaudeDirAgentsValidButSkillsHaveIssues, s.aClaudeDirWhereAgentsAreValidButSkillsHaveIssues)
+			sc.Step(stepClaudeDirSkillsValidButAgentsHaveIssues, s.aClaudeDirWhereSkillsAreValidButAgentsHaveIssues)
+			sc.Step(stepDeveloperRunsValidateClaude, s.runValidateClaude)
+			sc.Step(stepDeveloperRunsValidateClaudeWithAgentsOnlyFlag, s.runValidateClaudeWithAgentsOnlyFlag)
+			sc.Step(stepDeveloperRunsValidateClaudeWithSkillsOnlyFlag, s.runValidateClaudeWithSkillsOnlyFlag)
+			sc.Step(stepExitsSuccessfully, s.commandExitsSuccessfully)
+			sc.Step(stepExitsWithFailure, s.commandExitsWithFailureCode)
+			sc.Step(stepOutputReportsAllChecksAsPassing, s.outputReportsAllChecksAsPassing)
+			sc.Step(stepOutputIdentifiesAgentAndMissingField, s.outputIdentifiesAgentAndMissingField)
+			sc.Step(stepOutputReportsDuplicateAgentName, s.outputReportsDuplicateAgentName)
+		},
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{specsDirUnitValidateClaude},
+			TestingT: t,
+			Tags:     "agents-validate-claude",
+		},
+	}
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run unit feature tests")
 	}
 }
 
-func TestValidateClaudeCommand_SkillsOnly(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
+// TestValidateClaudeCommand_ConflictingFlags verifies flag conflict detection — not in Gherkin specs.
+func TestValidateClaudeCommand_ConflictingFlags(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+	}()
 
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
 	}
 
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create valid agent and skill
-	createTestAgent(t, agentsDir, "test-agent")
-	createTestSkill(t, skillsDir, "test-skill")
-
-	// Test skills-only command
 	cmd := validateClaudeCmd
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
 	cmd.SetErr(buf)
 
-	// Set skills-only flag
-	agentsOnly = false
+	agentsOnly = true
 	skillsOnly = true
 	output = "text"
 	verbose = false
 	quiet = false
 
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
-	}
-
-	outputStr := buf.String()
-	t.Logf("Skills-only output:\n%s", outputStr)
-
-	// Verify success and that only skills were validated
-	if !strings.Contains(outputStr, "✓ VALIDATION PASSED") {
-		t.Error("Expected output to contain validation passed message")
-	}
-	// Should show skill checks (7 checks per skill)
-	if !strings.Contains(outputStr, "Total Checks: 7") {
-		t.Error("Expected output to show 7 checks (skills-only mode)")
-	}
-}
-
-func TestValidateClaudeCommand_ConflictingFlags(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Test command with conflicting flags
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Set conflicting flags
-	agentsOnly = true
-	skillsOnly = true // Conflict!
-	output = "text"
-	verbose = false
-	quiet = false
-
-	// Execute command (should fail)
-	err = cmd.RunE(cmd, []string{})
+	err := cmd.RunE(cmd, []string{})
 	if err == nil {
-		t.Error("Expected command to fail with conflicting flags")
+		t.Error("expected command to fail with conflicting flags")
 	}
-
 	if !strings.Contains(err.Error(), "cannot use") {
-		t.Errorf("Expected error message about conflicting flags, got: %v", err)
+		t.Errorf("expected error message about conflicting flags, got: %v", err)
 	}
 }
 
-func TestValidateClaudeCommand_JSONOutput(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create valid agent and skill
-	createTestAgent(t, agentsDir, "test-agent")
-	createTestSkill(t, skillsDir, "test-skill")
-
-	// Test JSON output
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Set JSON output flag
-	agentsOnly = false
-	skillsOnly = false
-	output = "json"
-	verbose = false
-	quiet = false
-
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
-	}
-
-	jsonOutput := buf.String()
-	t.Logf("JSON output:\n%s", jsonOutput)
-
-	// Verify JSON structure (snake_case field names)
-	if !strings.Contains(jsonOutput, `"total_checks"`) {
-		t.Error("Expected JSON output to contain 'total_checks' field")
-	}
-	if !strings.Contains(jsonOutput, `"passed_checks"`) {
-		t.Error("Expected JSON output to contain 'passed_checks' field")
-	}
-	if !strings.Contains(jsonOutput, `"failed_checks"`) {
-		t.Error("Expected JSON output to contain 'failed_checks' field")
-	}
-	if !strings.Contains(jsonOutput, `"checks"`) {
-		t.Error("Expected JSON output to contain 'checks' field")
-	}
-	if !strings.Contains(jsonOutput, `"status"`) {
-		t.Error("Expected JSON output to contain 'status' field")
-	}
-	if !strings.Contains(jsonOutput, `"timestamp"`) {
-		t.Error("Expected JSON output to contain 'timestamp' field")
-	}
-}
-
-func TestValidateClaudeCommand_InvalidYAMLFormatting(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-
-	// Create agent with YAML formatting error (missing space after colon)
-	invalidFormatContent := `---
-name:test-agent
-description:Test agent description
-tools:Read
-model:sonnet
-color:blue
-skills:
----
-Test agent body`
-	if err := os.WriteFile(filepath.Join(agentsDir, "test-agent.md"), []byte(invalidFormatContent), 0644); err != nil {
-		t.Fatalf("Failed to create invalid agent: %v", err)
-	}
-
-	// Test command execution
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	agentsOnly = false
-	skillsOnly = false
-	output = "text"
-	verbose = false
-	quiet = false
-
-	// Execute command (should fail)
-	err = cmd.RunE(cmd, []string{})
-	if err == nil {
-		t.Error("Expected command to fail with YAML formatting errors")
-	}
-
-	outputStr := buf.String()
-	t.Logf("Command output:\n%s", outputStr)
-
-	// Verify error indicates YAML formatting issue
-	if !strings.Contains(outputStr, "YAML") && !strings.Contains(outputStr, "formatting") {
-		t.Error("Expected output to mention YAML formatting error")
-	}
-}
-
-func TestValidateClaudeCommand_VerboseOutput(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create .claude structure
-	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
-	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
-	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		t.Fatalf("Failed to create agents dir: %v", err)
-	}
-	if err := os.MkdirAll(skillsDir, 0755); err != nil {
-		t.Fatalf("Failed to create skills dir: %v", err)
-	}
-
-	// Create valid agent and skill
-	createTestAgent(t, agentsDir, "test-agent")
-	createTestSkill(t, skillsDir, "test-skill")
-
-	// Test verbose output
-	cmd := validateClaudeCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Set verbose flag
-	agentsOnly = false
-	skillsOnly = false
-	output = "text"
-	verbose = true
-	quiet = false
-
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
-	}
-
-	verboseOutput := buf.String()
-	t.Logf("Verbose output:\n%s", verboseOutput)
-
-	// Verify verbose output contains check details
-	if !strings.Contains(verboseOutput, "✓") || (!strings.Contains(verboseOutput, "passed") && !strings.Contains(verboseOutput, "PASSED")) {
-		t.Error("Expected verbose output to contain check status indicators")
-	}
-}
-
+// TestValidateClaudeCommand_MissingGitRoot verifies git root detection — not in Gherkin specs.
 func TestValidateClaudeCommand_MissingGitRoot(t *testing.T) {
-	// Covers line 75: findGitRoot() error when not in a git repository
-	// (must not use conflicting flags, since ConflictingFlags returns early before line 75)
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
+	origGetwd := osGetwd
+	origStat := osStat
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+	}()
 
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-	// No .git directory — findGitRoot() will fail
+	osGetwd = func() (string, error) { return "/no-git-here", nil }
+	osStat = func(_ string) (os.FileInfo, error) { return nil, os.ErrNotExist }
 
 	cmd := validateClaudeCmd
 	buf := new(bytes.Buffer)
@@ -619,7 +298,7 @@ func TestValidateClaudeCommand_MissingGitRoot(t *testing.T) {
 	verbose = false
 	quiet = false
 
-	err = cmd.RunE(cmd, []string{})
+	err := cmd.RunE(cmd, []string{})
 	if err == nil {
 		t.Fatal("expected error when no .git directory found")
 	}

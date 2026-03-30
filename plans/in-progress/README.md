@@ -8,8 +8,6 @@ Active project plans currently being worked on.
   dependencies with permissive alternatives
 - [Env Backup and Restore](./2026-03-30__env-backup-restore/) — Add .env file backup/restore
   commands to rhino-cli
-- [CLI Testing Alignment](./2026-03-30__cli-testing-alignment/) — Align CLI app testing with
-  three-level standard (both unit and integration consume Gherkin)
 
 ## Instructions
 

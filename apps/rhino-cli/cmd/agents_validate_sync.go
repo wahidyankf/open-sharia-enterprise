@@ -53,7 +53,7 @@ func runValidateSync(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform validation
-	result, err := agents.ValidateSync(repoRoot)
+	result, err := agentsValidateSyncFn(repoRoot)
 	if err != nil {
 		return fmt.Errorf("validation failed: %w", err)
 	}

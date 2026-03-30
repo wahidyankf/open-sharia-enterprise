@@ -62,7 +62,7 @@ func runValidateDocsLinks(cmd *cobra.Command, args []string) error {
 	}
 
 	// Validate all links
-	result, err := docs.ValidateAllLinks(opts)
+	result, err := docsValidateAllLinksFn(opts)
 	if err != nil {
 		return fmt.Errorf("validation failed: %w", err)
 	}

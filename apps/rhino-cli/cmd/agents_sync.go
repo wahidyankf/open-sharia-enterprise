@@ -80,7 +80,7 @@ func runSyncAgents(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform sync
-	result, err := agents.SyncAll(opts)
+	result, err := agentsSyncAllFn(opts)
 	if err != nil {
 		return fmt.Errorf("sync failed: %w", err)
 	}

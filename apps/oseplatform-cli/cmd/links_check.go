@@ -10,9 +10,6 @@ import (
 
 var linksContentDir string
 
-// outputLinksJSONFn is the function used to output JSON results. Overridable in tests.
-var outputLinksJSONFn = links.OutputLinksJSON
-
 var linksCheckCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Validate internal links in oseplatform-web content",
@@ -43,7 +40,7 @@ func runLinksCheck(_ *cobra.Command, _ []string) error {
 
 	startTime := time.Now()
 
-	result, err := links.CheckLinks(linksContentDir)
+	result, err := checkLinksFn(linksContentDir)
 	if err != nil {
 		return fmt.Errorf("link check failed: %w", err)
 	}

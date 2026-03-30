@@ -1,0 +1,69 @@
+package cmd
+
+import (
+	"os"
+
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/agents"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/contracts"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/docs"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/doctor"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/git"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/java"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/speccoverage"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/testcoverage"
+)
+
+// OS operation function variables for dependency injection in tests.
+var (
+	osStat  = os.Stat
+	osGetwd = os.Getwd
+)
+
+// Internal package function variables for dependency injection in tests.
+
+// doctor command delegation.
+var doctorCheckAllFn = doctor.CheckAll
+
+// agents sync command delegation.
+var agentsSyncAllFn = agents.SyncAll
+
+// agents validate-claude command delegation.
+var agentsValidateClaudeFn = agents.ValidateClaude
+
+// agents validate-sync command delegation.
+var agentsValidateSyncFn = agents.ValidateSync
+
+// docs validate-links command delegation.
+var docsValidateAllLinksFn = docs.ValidateAllLinks
+
+// docs validate-naming command delegation.
+var docsValidateAllFn = docs.ValidateAll
+var docsFixFn = docs.Fix
+
+// contracts dart-scaffold command delegation.
+var contractsScaffoldDartFn = contracts.ScaffoldDart
+
+// contracts java-clean-imports command delegation.
+var contractsCleanJavaImportsFn = contracts.CleanJavaImports
+
+// java validate-annotations command delegation.
+var javaValidateAllFn = java.ValidateAll
+
+// spec-coverage validate command delegation.
+var specCoverageCheckAllFn = speccoverage.CheckAll
+
+// test-coverage validate command delegation.
+var testCoverageComputeLCOVResultFn = testcoverage.ComputeLCOVResult
+var testCoverageComputeJaCoCoResultFn = testcoverage.ComputeJaCoCoResult
+var testCoverageComputeCoberturaResultFn = testcoverage.ComputeCoberturaResult
+var testCoverageComputeGoResultFn = testcoverage.ComputeGoResult
+
+// test-coverage merge command delegation.
+var testCoverageToCoverageMapFn = testcoverage.ToCoverageMap
+
+// test-coverage diff command delegation.
+var testCoverageComputeDiffCoverageFn = testcoverage.ComputeDiffCoverage
+
+// git pre-commit command delegation.
+var gitRunFn = git.Run
+var gitDefaultDepsFn = git.DefaultDeps

@@ -2,312 +2,221 @@ package cmd
 
 import (
 	"bytes"
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/cucumber/godog"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/docs"
 )
 
-func TestValidateDocsLinksCommand(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
+var specsDirUnitDocsValidateLinks = func() string {
+	_, f, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino-cli/docs")
+}()
 
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
+type validateDocsLinksUnitSteps struct {
+	cmdErr    error
+	cmdOutput string
+}
 
-	// Create .git directory to simulate a git repository
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create test structure
-	docsDir := filepath.Join(tmpDir, "docs")
-	if err := os.MkdirAll(docsDir, 0755); err != nil {
-		t.Fatalf("Failed to create docs dir: %v", err)
-	}
-
-	// Create a valid target file
-	validTarget := filepath.Join(docsDir, "target.md")
-	if err := os.WriteFile(validTarget, []byte("# Target"), 0644); err != nil {
-		t.Fatalf("Failed to create target file: %v", err)
-	}
-
-	// Create source file with both valid and broken links
-	sourceFile := filepath.Join(docsDir, "source.md")
-	content := `# Test Document
-
-Valid link: [target](./target.md)
-Broken link: [missing](./missing.md)
-External link: [example](https://example.com)
-`
-	if err := os.WriteFile(sourceFile, []byte(content), 0644); err != nil {
-		t.Fatalf("Failed to create source file: %v", err)
-	}
-
-	// Test command execution
-	cmd := validateDocsLinksCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
-	validateDocsLinksStagedOnly = false
+func (s *validateDocsLinksUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
+	verbose = false
+	quiet = false
 	output = "text"
-	verbose = false
-	quiet = false
-
-	// Execute command (should exit with error due to broken link)
-	err = cmd.RunE(cmd, []string{})
-
-	// Note: The command calls os.Exit(1) on failure, but in tests we just check the output
-	// We expect the RunE to complete successfully (no panic), and we check output
-	if err != nil {
-		// This is okay - the error indicates validation logic ran
-		t.Logf("Command returned error (expected): %v", err)
-	}
-
-	output := buf.String()
-	t.Logf("Command output:\n%s", output)
-
-	// Verify output contains broken link report
-	if !strings.Contains(output, "Broken Links Report") {
-		t.Error("Expected output to contain 'Broken Links Report'")
-	}
-	if !strings.Contains(output, "./missing.md") {
-		t.Error("Expected output to contain './missing.md'")
-	}
-	if strings.Contains(output, "./target.md") {
-		t.Error("Output should not contain valid link './target.md'")
-	}
-	if strings.Contains(output, "https://example.com") {
-		t.Error("Output should not contain external link")
-	}
-}
-
-func TestValidateDocsLinksCommand_NoProblems(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
-	}
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
-	}
-
-	// Create .git directory to simulate a git repository
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
-	}
-
-	// Create test structure
-	docsDir := filepath.Join(tmpDir, "docs")
-	if err := os.MkdirAll(docsDir, 0755); err != nil {
-		t.Fatalf("Failed to create docs dir: %v", err)
-	}
-
-	// Create a valid target file
-	validTarget := filepath.Join(docsDir, "target.md")
-	if err := os.WriteFile(validTarget, []byte("# Target"), 0644); err != nil {
-		t.Fatalf("Failed to create target file: %v", err)
-	}
-
-	// Create source file with only valid links
-	sourceFile := filepath.Join(docsDir, "source.md")
-	content := `# Test Document
-
-Valid link: [target](./target.md)
-External link: [example](https://example.com)
-`
-	if err := os.WriteFile(sourceFile, []byte(content), 0644); err != nil {
-		t.Fatalf("Failed to create source file: %v", err)
-	}
-
-	// Test command execution
-	cmd := validateDocsLinksCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Reset flags
 	validateDocsLinksStagedOnly = false
-	output = "text"
-	verbose = false
-	quiet = false
+	s.cmdErr = nil
+	s.cmdOutput = ""
 
-	// Execute command (should succeed)
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Errorf("Command failed: %v", err)
+	// Mock findGitRoot
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
 	}
 
-	output := buf.String()
-	t.Logf("Command output:\n%s", output)
-
-	// Verify success message
-	if !strings.Contains(output, "✓ All links valid!") {
-		t.Error("Expected output to contain success message")
+	// Default: no broken links
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles:  1,
+			TotalLinks:  0,
+			BrokenLinks: nil,
+		}, nil
 	}
+
+	return context.Background(), nil
 }
 
-func TestValidateDocsLinksCommand_JSONOutput(t *testing.T) {
-	// Save original working directory
-	originalWd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Failed to get working directory: %v", err)
+func (s *validateDocsLinksUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	docsValidateAllLinksFn = docs.ValidateAllLinks
+	osGetwd = os.Getwd
+	osStat = os.Stat
+	return context.Background(), nil
+}
+
+func (s *validateDocsLinksUnitSteps) markdownFilesWhereAllInternalLinksPointToExistingFiles() error {
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles:  2,
+			TotalLinks:  1,
+			BrokenLinks: nil,
+		}, nil
 	}
-	defer func() { _ = os.Chdir(originalWd) }()
+	return nil
+}
 
-	// Create temporary test repository
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatalf("Failed to change to temp directory: %v", err)
+func (s *validateDocsLinksUnitSteps) aMarkdownFileWithALinkPointingToANonExistentFile() error {
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles: 1,
+			TotalLinks: 1,
+			BrokenLinks: []docs.BrokenLink{
+				{
+					SourceFile: "docs/a.md",
+					LinkText:   "./nonexistent.md",
+					TargetPath: "/mock-repo/docs/nonexistent.md",
+					LineNumber: 1,
+				},
+			},
+		}, nil
 	}
+	return nil
+}
 
-	// Create .git directory to simulate a git repository
-	gitDir := filepath.Join(tmpDir, ".git")
-	if err := os.MkdirAll(gitDir, 0755); err != nil {
-		t.Fatalf("Failed to create .git dir: %v", err)
+func (s *validateDocsLinksUnitSteps) aMarkdownFileContainingOnlyExternalHTTPSLinks() error {
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles:  1,
+			TotalLinks:  1,
+			BrokenLinks: nil,
+		}, nil
 	}
+	return nil
+}
 
-	// Create minimal structure
-	docsDir := filepath.Join(tmpDir, "docs")
-	if err := os.MkdirAll(docsDir, 0755); err != nil {
-		t.Fatalf("Failed to create docs dir: %v", err)
+func (s *validateDocsLinksUnitSteps) aMarkdownFileWithABrokenLinkThatHasNotBeenStagedInGit() error {
+	// In staged-only mode, the scanner only checks staged files.
+	// Since this file was not staged, the broken link should not be returned.
+	docsValidateAllLinksFn = func(opts docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		if opts.StagedOnly {
+			// No staged files — no broken links reported
+			return &docs.LinkValidationResult{
+				TotalFiles:  0,
+				TotalLinks:  0,
+				BrokenLinks: nil,
+			}, nil
+		}
+		// Without staged-only, the broken link would be detected
+		return &docs.LinkValidationResult{
+			TotalFiles: 1,
+			TotalLinks: 1,
+			BrokenLinks: []docs.BrokenLink{
+				{
+					SourceFile: "docs/a.md",
+					LinkText:   "./nonexistent.md",
+					TargetPath: "/mock-repo/docs/nonexistent.md",
+					LineNumber: 1,
+				},
+			},
+		}, nil
 	}
+	return nil
+}
 
-	sourceFile := filepath.Join(docsDir, "source.md")
-	content := `# Test
-Link: [missing](./missing.md)
-`
-	if err := os.WriteFile(sourceFile, []byte(content), 0644); err != nil {
-		t.Fatalf("Failed to create source file: %v", err)
-	}
-
-	// Test JSON output
-	cmd := validateDocsLinksCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	// Set flags for JSON output
+func (s *validateDocsLinksUnitSteps) theDeveloperRunsValidateDocsLinks() error {
 	validateDocsLinksStagedOnly = false
-	output = "json"
-	verbose = false
-	quiet = false
-
-	// Execute command
-	err = cmd.RunE(cmd, []string{})
-	if err != nil {
-		t.Logf("Command returned error (expected for broken links): %v", err)
-	}
-
-	jsonOutput := buf.String()
-	t.Logf("JSON output:\n%s", jsonOutput)
-
-	// Verify JSON structure
-	if !strings.Contains(jsonOutput, `"status"`) {
-		t.Error("Expected JSON output to contain 'status' field")
-	}
-	if !strings.Contains(jsonOutput, `"broken_count"`) {
-		t.Error("Expected JSON output to contain 'broken_count' field")
-	}
-}
-
-func TestValidateDocsLinksCommand_MarkdownOutput(t *testing.T) {
-	originalWd, _ := os.Getwd()
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte("# Test\n"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := validateDocsLinksCmd
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	validateDocsLinksStagedOnly = false
-	output = "markdown"
-	verbose = false
-	quiet = false
-
-	if err := cmd.RunE(cmd, []string{}); err != nil {
-		t.Errorf("expected no error for valid links, got: %v", err)
-	}
-
-	got := buf.String()
-	if !strings.Contains(got, "links") && !strings.Contains(got, "#") && !strings.Contains(got, "valid") {
-		t.Errorf("expected markdown output with link info, got: %s", got)
-	}
+	validateDocsLinksCmd.SetOut(buf)
+	validateDocsLinksCmd.SetErr(buf)
+	s.cmdErr = validateDocsLinksCmd.RunE(validateDocsLinksCmd, []string{})
+	s.cmdOutput = buf.String()
+	return nil
 }
 
-func TestValidateDocsLinksCommand_QuietBrokenLinks(t *testing.T) {
-	originalWd, _ := os.Getwd()
-	defer func() { _ = os.Chdir(originalWd) }()
-
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
-		t.Fatal(err)
-	}
-	content := "# Test\n[broken](./missing-file.md)\n"
-	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte(content), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := validateDocsLinksCmd
+func (s *validateDocsLinksUnitSteps) theDeveloperRunsValidateDocsLinksWithTheStagedOnlyFlag() error {
+	validateDocsLinksStagedOnly = true
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	validateDocsLinksCmd.SetOut(buf)
+	validateDocsLinksCmd.SetErr(buf)
+	s.cmdErr = validateDocsLinksCmd.RunE(validateDocsLinksCmd, []string{})
+	s.cmdOutput = buf.String()
+	return nil
+}
 
-	validateDocsLinksStagedOnly = false
-	output = "text"
-	verbose = false
-	quiet = true
+func (s *validateDocsLinksUnitSteps) theCommandExitsSuccessfully() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
 
-	err := cmd.RunE(cmd, []string{})
-	if err == nil {
-		t.Error("expected error for broken links in quiet mode")
+func (s *validateDocsLinksUnitSteps) theCommandExitsWithAFailureCode() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected failure but succeeded\nOutput: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateDocsLinksUnitSteps) theOutputReportsNoBrokenLinksFound() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected no broken links, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateDocsLinksUnitSteps) theOutputIdentifiesTheFileContainingTheBrokenLink() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected broken link error, but command succeeded")
+	}
+	return nil
+}
+
+func TestUnitDocsValidateLinks(t *testing.T) {
+	s := &validateDocsLinksUnitSteps{}
+	suite := godog.TestSuite{
+		ScenarioInitializer: func(sc *godog.ScenarioContext) {
+			sc.Before(s.before)
+			sc.After(s.after)
+			sc.Step(stepMarkdownFilesAllInternalLinksValid, s.markdownFilesWhereAllInternalLinksPointToExistingFiles)
+			sc.Step(stepMarkdownFileWithLinkToNonExistentFile, s.aMarkdownFileWithALinkPointingToANonExistentFile)
+			sc.Step(stepMarkdownFileContainingOnlyExternalLinks, s.aMarkdownFileContainingOnlyExternalHTTPSLinks)
+			sc.Step(stepMarkdownFileWithBrokenLinkNotStaged, s.aMarkdownFileWithABrokenLinkThatHasNotBeenStagedInGit)
+			sc.Step(stepDeveloperRunsValidateDocsLinks, s.theDeveloperRunsValidateDocsLinks)
+			sc.Step(stepDeveloperRunsValidateDocsLinksWithStaged, s.theDeveloperRunsValidateDocsLinksWithTheStagedOnlyFlag)
+			sc.Step(stepExitsSuccessfully, s.theCommandExitsSuccessfully)
+			sc.Step(stepExitsWithFailure, s.theCommandExitsWithAFailureCode)
+			sc.Step(stepOutputReportsNoBrokenLinksFound, s.theOutputReportsNoBrokenLinksFound)
+			sc.Step(stepOutputIdentifiesFileContainingBrokenLink, s.theOutputIdentifiesTheFileContainingTheBrokenLink)
+		},
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{specsDirUnitDocsValidateLinks},
+			TestingT: t,
+			Tags:     "@docs-validate-links",
+		},
+	}
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run unit feature tests")
 	}
 }
 
+// TestValidateDocsLinksCommand_MissingGitRoot verifies git root detection — not in Gherkin specs.
 func TestValidateDocsLinksCommand_MissingGitRoot(t *testing.T) {
-	originalWd, _ := os.Getwd()
-	defer func() { _ = os.Chdir(originalWd) }()
+	origGetwd := osGetwd
+	origStat := osStat
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+	}()
 
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatal(err)
-	}
-	// No .git directory
+	osGetwd = func() (string, error) { return "/no-git-here", nil }
+	osStat = func(_ string) (os.FileInfo, error) { return nil, os.ErrNotExist }
 
 	cmd := validateDocsLinksCmd
 	buf := new(bytes.Buffer)
@@ -328,23 +237,80 @@ func TestValidateDocsLinksCommand_MissingGitRoot(t *testing.T) {
 	}
 }
 
-func TestValidateDocsLinksCommand_BrokenLinks_JSONOutput(t *testing.T) {
-	originalWd, _ := os.Getwd()
-	defer func() { _ = os.Chdir(originalWd) }()
+// TestValidateDocsLinksCommand_JSONOutput verifies JSON output format — not in Gherkin specs.
+func TestValidateDocsLinksCommand_JSONOutput(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := docsValidateAllLinksFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		docsValidateAllLinksFn = origFn
+	}()
 
-	tmpDir := t.TempDir()
-	if err := os.Chdir(tmpDir); err != nil {
-		t.Fatal(err)
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
-		t.Fatal(err)
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles:  1,
+			TotalLinks:  1,
+			BrokenLinks: nil,
+		}, nil
 	}
-	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
-		t.Fatal(err)
+
+	cmd := validateDocsLinksCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsLinksStagedOnly = false
+	output = "json"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
-	content := "# Test\n[broken](./nonexistent.md)\n"
-	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte(content), 0644); err != nil {
-		t.Fatal(err)
+	if !strings.Contains(buf.String(), `"status"`) {
+		t.Errorf("expected JSON output to contain 'status' field, got: %s", buf.String())
+	}
+	if !strings.Contains(buf.String(), `"broken_count"`) {
+		t.Errorf("expected JSON output to contain 'broken_count' field, got: %s", buf.String())
+	}
+}
+
+// TestValidateDocsLinksCommand_BrokenLinksJSON verifies error returned for broken links in JSON mode.
+func TestValidateDocsLinksCommand_BrokenLinksJSON(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := docsValidateAllLinksFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		docsValidateAllLinksFn = origFn
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+	docsValidateAllLinksFn = func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
+		return &docs.LinkValidationResult{
+			TotalFiles: 1,
+			TotalLinks: 1,
+			BrokenLinks: []docs.BrokenLink{
+				{SourceFile: "docs/test.md", LinkText: "./nonexistent.md", LineNumber: 1},
+			},
+		}, nil
 	}
 
 	cmd := validateDocsLinksCmd

@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	diffBase             string
-	diffThreshold        float64
-	diffStaged           bool
-	diffPerFile          bool
-	diffExcludePatterns  []string
+	diffBase            string
+	diffThreshold       float64
+	diffStaged          bool
+	diffPerFile         bool
+	diffExcludePatterns []string
 )
 
 var diffTestCoverageCmd = &cobra.Command{
@@ -56,7 +56,7 @@ func runDiffTestCoverage(cmd *cobra.Command, args []string) error {
 
 	absPath := filepath.Join(repoRoot, args[0])
 
-	result, err := testcoverage.ComputeDiffCoverage(testcoverage.DiffCoverageOptions{
+	result, err := testCoverageComputeDiffCoverageFn(testcoverage.DiffCoverageOptions{
 		CoverageFile:    absPath,
 		Base:            diffBase,
 		Staged:          diffStaged,

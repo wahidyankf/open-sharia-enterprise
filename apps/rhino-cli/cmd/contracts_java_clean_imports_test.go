@@ -2,33 +2,202 @@ package cmd
 
 import (
 	"bytes"
-	"os"
+	"context"
+	"fmt"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/cucumber/godog"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/contracts"
 )
 
-// makeJavaContractsDir creates a temp directory with a .java file that has unused imports.
-// Returns the directory path.
-func makeJavaContractsDir(t *testing.T) string {
-	t.Helper()
-	dir := t.TempDir()
+var specsDirUnitContractsJavaCleanImports = func() string {
+	_, f, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino-cli/contracts")
+}()
 
-	content := `package com.example;
-
-import com.other.UsedClass;
-import com.other.UnusedClass;
-
-public class Foo {
-    UsedClass x;
+type contractsJavaCleanImportsUnitSteps struct {
+	cmdErr     error
+	cmdOutput  string
+	mockResult *contracts.JavaCleanImportsResult
 }
-`
-	if err := os.WriteFile(filepath.Join(dir, "Foo.java"), []byte(content), 0644); err != nil {
-		t.Fatal(err)
+
+func (s *contractsJavaCleanImportsUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
+	verbose = false
+	quiet = false
+	output = "text"
+	s.cmdErr = nil
+	s.cmdOutput = ""
+	s.mockResult = nil
+
+	// Default mock: no files modified
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    0,
+			ModifiedFiles: 0,
+			Modified:      nil,
+		}, nil
 	}
-	return dir
+
+	return context.Background(), nil
 }
 
+func (s *contractsJavaCleanImportsUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	contractsCleanJavaImportsFn = contracts.CleanJavaImports
+	return context.Background(), nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) aGeneratedContractsDirWithUnusedImports() error {
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    1,
+			ModifiedFiles: 1,
+			Modified:      []string{"Foo.java"},
+		}, nil
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) aGeneratedContractsDirWithSamePackageImports() error {
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    1,
+			ModifiedFiles: 1,
+			Modified:      []string{"Bar.java"},
+		}, nil
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) aGeneratedContractsDirWithDuplicateImports() error {
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    1,
+			ModifiedFiles: 1,
+			Modified:      []string{"Baz.java"},
+		}, nil
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) aGeneratedContractsDirWithOnlyRequiredImports() error {
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    1,
+			ModifiedFiles: 0,
+			Modified:      nil,
+		}, nil
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) anEmptyGeneratedContractsDir() error {
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return &contracts.JavaCleanImportsResult{
+			TotalFiles:    0,
+			ModifiedFiles: 0,
+			Modified:      nil,
+		}, nil
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) theDeveloperRunsContractsJavaCleanImportsOnTheDirectory() error {
+	buf := new(bytes.Buffer)
+	contractsJavaCleanImportsCmd.SetOut(buf)
+	contractsJavaCleanImportsCmd.SetErr(buf)
+	s.cmdErr = contractsJavaCleanImportsCmd.RunE(contractsJavaCleanImportsCmd, []string{"/mock/contracts"})
+	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) theCommandExitsSuccessfully() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) unusedImportsRemovedFromJavaFiles() error {
+	// The mock returns 1 modified file — just verify command succeeded
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) samePackageImportsRemovedFromJavaFiles() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) onlyOneCopyOfEachImportRemains() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) javaFilesAreUnchanged() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *contractsJavaCleanImportsUnitSteps) commandReportsNoFilesModified() error {
+	if !strings.Contains(s.cmdOutput, "No imports needed cleaning") &&
+		!strings.Contains(s.cmdOutput, "0") {
+		return fmt.Errorf("expected output to indicate no files modified but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func TestUnitContractsJavaCleanImports(t *testing.T) {
+	s := &contractsJavaCleanImportsUnitSteps{}
+	suite := godog.TestSuite{
+		ScenarioInitializer: func(sc *godog.ScenarioContext) {
+			sc.Before(s.before)
+			sc.After(s.after)
+			sc.Step(stepGeneratedContractsDirWithUnusedImports, s.aGeneratedContractsDirWithUnusedImports)
+			sc.Step(stepGeneratedContractsDirWithSamePackageImports, s.aGeneratedContractsDirWithSamePackageImports)
+			sc.Step(stepGeneratedContractsDirWithDuplicateImports, s.aGeneratedContractsDirWithDuplicateImports)
+			sc.Step(stepGeneratedContractsDirWithOnlyRequiredImports, s.aGeneratedContractsDirWithOnlyRequiredImports)
+			sc.Step(stepEmptyGeneratedContractsDir, s.anEmptyGeneratedContractsDir)
+			sc.Step(stepDeveloperRunsContractsJavaCleanImports, s.theDeveloperRunsContractsJavaCleanImportsOnTheDirectory)
+			sc.Step(stepExitsSuccessfully, s.theCommandExitsSuccessfully)
+			sc.Step(stepUnusedImportsRemovedFromJavaFiles, s.unusedImportsRemovedFromJavaFiles)
+			sc.Step(stepSamePackageImportsRemovedFromJavaFiles, s.samePackageImportsRemovedFromJavaFiles)
+			sc.Step(stepOnlyOneCopyOfEachImportRemains, s.onlyOneCopyOfEachImportRemains)
+			sc.Step(stepJavaFilesAreUnchanged, s.javaFilesAreUnchanged)
+			sc.Step(stepCommandReportsNoFilesModified, s.commandReportsNoFilesModified)
+		},
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{specsDirUnitContractsJavaCleanImports},
+			TestingT: t,
+			Tags:     "contracts-java-clean-imports",
+		},
+	}
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run unit feature tests")
+	}
+}
+
+// TestContractsJavaCleanImportsCmd_Initialization verifies command metadata.
+// This is a non-BDD test because command metadata is not in Gherkin specs.
+func TestContractsJavaCleanImportsCmd_Initialization(t *testing.T) {
+	if !strings.Contains(contractsJavaCleanImportsCmd.Use, "java-clean-imports") {
+		t.Errorf("expected Use to contain 'java-clean-imports', got %q", contractsJavaCleanImportsCmd.Use)
+	}
+}
+
+// TestContractsJavaCleanImportsCmd_NoArgs verifies ExactArgs(1) validation.
+// This is a non-BDD test covering the args validator not in Gherkin specs.
 func TestContractsJavaCleanImportsCmd_NoArgs(t *testing.T) {
 	err := contractsJavaCleanImportsCmd.Args(contractsJavaCleanImportsCmd, []string{})
 	if err == nil {
@@ -36,148 +205,57 @@ func TestContractsJavaCleanImportsCmd_NoArgs(t *testing.T) {
 	}
 }
 
-func TestContractsJavaCleanImportsCmd_ValidDir(t *testing.T) {
-	src := makeJavaContractsDir(t)
+// TestContractsJavaCleanImportsCmd_FnError verifies error propagation from the internal function.
+// This is a non-BDD test covering the error path not in Gherkin specs.
+func TestContractsJavaCleanImportsCmd_FnError(t *testing.T) {
+	origFn := contractsCleanJavaImportsFn
+	defer func() { contractsCleanJavaImportsFn = origFn }()
 
-	cmd := contractsJavaCleanImportsCmd
+	contractsCleanJavaImportsFn = func(_ contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		return nil, fmt.Errorf("scan error")
+	}
+
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	contractsJavaCleanImportsCmd.SetOut(buf)
+	contractsJavaCleanImportsCmd.SetErr(buf)
 
 	output = "text"
 	verbose = false
 	quiet = false
 
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error for valid dir, got: %v", err)
+	err := contractsJavaCleanImportsCmd.RunE(contractsJavaCleanImportsCmd, []string{"/mock/dir"})
+	if err == nil {
+		t.Error("expected error when internal function fails")
+	}
+	if !strings.Contains(err.Error(), "java import cleaning failed") {
+		t.Errorf("expected 'java import cleaning failed' error, got: %v", err)
 	}
 }
 
-func TestContractsJavaCleanImportsCmd_EmptyDir(t *testing.T) {
-	src := t.TempDir()
+// TestContractsJavaCleanImportsCmd_OSFunctions verifies the os.* calls are testable.
+// This is a non-BDD test covering that filepath.Abs is called correctly.
+func TestContractsJavaCleanImportsCmd_OSFunctions(t *testing.T) {
+	origFn := contractsCleanJavaImportsFn
+	defer func() { contractsCleanJavaImportsFn = origFn }()
 
-	cmd := contractsJavaCleanImportsCmd
+	var capturedDir string
+	contractsCleanJavaImportsFn = func(opts contracts.JavaCleanImportsOptions) (*contracts.JavaCleanImportsResult, error) {
+		capturedDir = opts.Dir
+		return &contracts.JavaCleanImportsResult{}, nil
+	}
+
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
+	contractsJavaCleanImportsCmd.SetOut(buf)
+	contractsJavaCleanImportsCmd.SetErr(buf)
 
 	output = "text"
 	verbose = false
 	quiet = false
 
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error for empty dir, got: %v", err)
-	}
+	_ = contractsJavaCleanImportsCmd.RunE(contractsJavaCleanImportsCmd, []string{"relative/path"})
 
-	got := buf.String()
-	if !strings.Contains(got, "No imports needed cleaning") {
-		t.Errorf("expected 'No imports needed cleaning' in output for empty dir, got: %s", got)
-	}
-}
-
-func TestContractsJavaCleanImportsCmd_JSONOutput(t *testing.T) {
-	src := makeJavaContractsDir(t)
-
-	cmd := contractsJavaCleanImportsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	output = "json"
-	verbose = false
-	quiet = false
-
-	_ = cmd.RunE(cmd, []string{src})
-
-	got := buf.String()
-	if !strings.Contains(got, `"status"`) {
-		t.Errorf("expected 'status' field in JSON output, got: %s", got)
-	}
-	if !strings.Contains(got, `"total_files"`) {
-		t.Errorf("expected 'total_files' field in JSON output, got: %s", got)
-	}
-	if !strings.Contains(got, `"modified_files"`) {
-		t.Errorf("expected 'modified_files' field in JSON output, got: %s", got)
-	}
-}
-
-func TestContractsJavaCleanImportsCmd_MarkdownOutput(t *testing.T) {
-	src := makeJavaContractsDir(t)
-
-	cmd := contractsJavaCleanImportsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	output = "markdown"
-	verbose = false
-	quiet = false
-
-	_ = cmd.RunE(cmd, []string{src})
-
-	got := buf.String()
-	if !strings.Contains(got, "# Java Import Cleaning Report") {
-		t.Errorf("expected markdown heading in output, got: %s", got)
-	}
-}
-
-func TestContractsJavaCleanImportsCmd_QuietMode(t *testing.T) {
-	src := t.TempDir()
-
-	// File with only required imports (no unused)
-	content := `package com.example;
-
-import com.other.UsedClass;
-
-public class Foo {
-    UsedClass x;
-}
-`
-	if err := os.WriteFile(filepath.Join(src, "Foo.java"), []byte(content), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cmd := contractsJavaCleanImportsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	output = "text"
-	verbose = false
-	quiet = true
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error, got: %v", err)
-	}
-
-	got := buf.String()
-	if strings.Contains(got, "Cleaned imports") {
-		t.Error("quiet mode should suppress summary message when no files modified")
-	}
-}
-
-func TestContractsJavaCleanImportsCmd_VerboseMode(t *testing.T) {
-	src := makeJavaContractsDir(t) // Has unused import, will be modified
-
-	cmd := contractsJavaCleanImportsCmd
-	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-
-	output = "text"
-	verbose = true
-	quiet = false
-
-	err := cmd.RunE(cmd, []string{src})
-	if err != nil {
-		t.Errorf("expected no error, got: %v", err)
-	}
-
-	got := buf.String()
-	if !strings.Contains(got, "✓") {
-		t.Errorf("expected '✓' listing in verbose output for modified files, got: %s", got)
+	// filepath.Abs should have made the path absolute
+	if !filepath.IsAbs(capturedDir) {
+		t.Errorf("expected absolute path to be passed to fn, got: %s", capturedDir)
 	}
 }

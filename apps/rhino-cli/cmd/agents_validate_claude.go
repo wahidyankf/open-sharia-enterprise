@@ -77,7 +77,7 @@ func runValidateClaude(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform validation
-	result, err := agents.ValidateClaude(agents.ValidateClaudeOptions{
+	result, err := agentsValidateClaudeFn(agents.ValidateClaudeOptions{
 		RepoRoot:   repoRoot,
 		AgentsOnly: agentsOnly,
 		SkillsOnly: skillsOnly,

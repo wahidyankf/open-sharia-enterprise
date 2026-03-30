@@ -65,7 +65,7 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to find git repository root: %w", err)
 	}
 
-	result, err := doctor.CheckAll(doctor.CheckOptions{RepoRoot: repoRoot})
+	result, err := doctorCheckAllFn(doctor.CheckOptions{RepoRoot: repoRoot})
 	if err != nil {
 		return fmt.Errorf("doctor check failed: %w", err)
 	}

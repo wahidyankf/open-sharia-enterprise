@@ -54,7 +54,7 @@ func runMergeTestCoverage(cmd *cobra.Command, args []string) error {
 	var maps []testcoverage.CoverageMap
 	for _, arg := range args {
 		absPath := filepath.Join(repoRoot, arg)
-		cm, parseErr := testcoverage.ToCoverageMap(absPath)
+		cm, parseErr := testCoverageToCoverageMapFn(absPath)
 		if parseErr != nil {
 			return fmt.Errorf("failed to parse %s: %w", arg, parseErr)
 		}
