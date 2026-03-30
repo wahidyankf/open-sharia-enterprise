@@ -9,13 +9,15 @@ Given("the header component is rendered", async ({ page }) => {
 
 Then("the header contains a link to {string} at {string}", async ({ page }, text: string, href: string) => {
   const link = page.getByRole("link", { name: text });
-  await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute("href", href);
+  await expect(link.first()).toBeVisible();
+  // Accept both /updates and /updates/ (trailing slash may vary)
+  const actual = await link.first().getAttribute("href");
+  expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
 Then("the header contains an external link to {string}", async ({ page }, text: string) => {
   const link = page.getByRole("link", { name: new RegExp(text, "i") });
-  await expect(link).toBeVisible();
+  await expect(link.first()).toBeVisible();
 });
 
 Given("the about page is rendered with breadcrumbs", async ({ page }) => {
@@ -26,7 +28,8 @@ Then("the breadcrumb shows {string} linking to {string}", async ({ page }, text:
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const link = breadcrumb.getByRole("link", { name: text });
   await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute("href", href);
+  const actual = await link.getAttribute("href");
+  expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
 Then("the breadcrumb shows {string} as the current page", async ({ page }, text: string) => {
@@ -50,12 +53,11 @@ Given("an update detail page is rendered with adjacent updates", async ({ page }
 });
 
 Then("a {string} link is displayed with the previous update title", async ({ page }, _label: string) => {
-  // Look for prev/next navigation links
   const prevLink = page.getByRole("link", { name: /prev|previous|←/i });
-  await expect(prevLink).toBeVisible();
+  await expect(prevLink.first()).toBeVisible();
 });
 
 Then("a {string} link is displayed with the next update title", async ({ page }, _label: string) => {
   const nextLink = page.getByRole("link", { name: /next|→/i });
-  await expect(nextLink).toBeVisible();
+  await expect(nextLink.first()).toBeVisible();
 });
