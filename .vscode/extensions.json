@@ -2,7 +2,6 @@
   "recommendations": [
     "anthropic.claude-code",
     "bierner.markdown-mermaid",
-    "cucumberopen.cucumber-official",
     "dart-code.dart-code",
     "dart-code.flutter",
     "edonet.vscode-command-runner",
@@ -20,6 +19,7 @@
     "vscjava.vscode-spring-initializr",
     "rust-lang.rust-analyzer",
     "sethjones.kotlin-on-vscode",
-    "ms-dotnettools.csdevkit"
+    "ms-dotnettools.csdevkit",
+    "blodwynn.featurehighlight"
   ]
 }
