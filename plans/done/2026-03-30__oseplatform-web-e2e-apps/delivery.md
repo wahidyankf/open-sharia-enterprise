@@ -65,7 +65,7 @@ any point. Phase 6 (cleanup) is independent and can be done at any point after P
   - Then steps: body contains `User-agent: *` (or equivalent allow-all), sitemap URL reference
 - [x] Run `cd apps/oseplatform-web-be-e2e && npm install` to install dependencies
 - [x] Run `nx run oseplatform-web-be-e2e:test:quick` — verify lint and typecheck pass
-- [ ] Commit: `feat(oseplatform-web-be-e2e): add BE E2E app with Playwright BDD step implementations`
+- [x] Commit: `feat(oseplatform-web-be-e2e): add BE E2E app with Playwright BDD step implementations`
 
 ### Phase 2: FE E2E app (`oseplatform-web-fe-e2e`)
 
@@ -116,7 +116,7 @@ any point. Phase 6 (cleanup) is independent and can be done at any point after P
   - `Then("the hamburger menu button is hidden")` — assert button hidden
 - [x] Run `cd apps/oseplatform-web-fe-e2e && npm install` to install dependencies
 - [x] Run `nx run oseplatform-web-fe-e2e:test:quick` — verify lint and typecheck pass
-- [ ] Commit: `feat(oseplatform-web-fe-e2e): add FE E2E app with Playwright BDD step implementations`
+- [x] Commit: `feat(oseplatform-web-fe-e2e): add FE E2E app with Playwright BDD step implementations`
 
 ### Phase 3: Docker infrastructure and CI update
 
@@ -151,7 +151,7 @@ any point. Phase 6 (cleanup) is independent and can be done at any point after P
     `apps/oseplatform-web-fe-e2e/playwright-report/`, retention 7 days, `if: always()`
   - Step: "Stop Docker" — `cd infra/dev/oseplatform-web && docker compose down`, `if: always()`
 - [x] Verify `deploy` job still has `needs: [unit, integration, e2e, detect-changes]`
-- [ ] Commit: `feat(ci): update oseplatform-web e2e job to Docker-based BE+FE pattern`
+- [x] Commit: `feat(ci): update oseplatform-web e2e job to Docker-based BE+FE pattern`
 
 ### Phase 4: Specs update (C4 diagrams + README)
 
@@ -197,7 +197,7 @@ picture.
     app source
 - [x] Verify all Mermaid diagrams use the accessible color palette
       (`#0173B2`, `#DE8F05`, `#029E73`, `#CC78BC`, `#CA9161`, `#808080`)
-- [ ] Commit: `docs(specs): add C4 architecture diagrams for oseplatform-web`
+- [x] Commit: `docs(specs): add C4 architecture diagrams for oseplatform-web`
 
 ### Phase 5: CLAUDE.md update
 
@@ -210,7 +210,7 @@ picture.
 - [x] Add both apps to the **Project Structure** tree under `apps/`
 - [x] Add both apps to the **oseplatform-web** section under "E2E tests" (matching ayokoding-web
       section pattern)
-- [ ] Commit: `docs(claude): add oseplatform-web-be-e2e and oseplatform-web-fe-e2e to app listing`
+- [x] Commit: `docs(claude): add oseplatform-web-be-e2e and oseplatform-web-fe-e2e to app listing`
 
 ### Phase 6: Remove embedded visual E2E from oseplatform-web
 
@@ -227,7 +227,7 @@ picture.
 - [x] Run `nx run oseplatform-web:test:quick` — verify the main app still passes
 - [x] Run `nx run oseplatform-web-be-e2e:test:quick` — verify BE E2E app still passes
 - [x] Run `nx run oseplatform-web-fe-e2e:test:quick` — verify FE E2E app still passes
-- [ ] Commit: `chore(oseplatform-web): remove embedded visual E2E tests superseded by dedicated E2E apps`
+- [x] Commit: `chore(oseplatform-web): remove embedded visual E2E tests superseded by dedicated E2E apps`
 
 ## Validation Checklist
 
