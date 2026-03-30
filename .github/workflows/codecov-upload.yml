@@ -147,6 +147,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/oseplatform-web/coverage/lcov.info
           flags: oseplatform-web
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — ayokoding-web
@@ -155,6 +156,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/ayokoding-web/coverage/lcov.info
           flags: ayokoding-web
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — organiclever-fe
@@ -163,6 +165,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/organiclever-fe/coverage/lcov.info
           flags: organiclever-fe
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — organiclever-be
@@ -171,6 +174,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/organiclever-be/coverage/altcov.info
           flags: organiclever-be
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — rhino-cli
@@ -179,6 +183,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/rhino-cli/cover.out
           flags: rhino-cli
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — ayokoding-cli
@@ -187,6 +192,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/ayokoding-cli/cover.out
           flags: ayokoding-cli
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — oseplatform-cli
@@ -195,6 +201,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/oseplatform-cli/cover.out
           flags: oseplatform-cli
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — golang-commons
@@ -203,6 +210,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: libs/golang-commons/cover.out
           flags: golang-commons
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — hugo-commons
@@ -211,6 +219,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: libs/hugo-commons/cover.out
           flags: hugo-commons
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-fs-ts-nextjs
@@ -219,6 +228,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-fs-ts-nextjs/coverage/lcov.info
           flags: a-demo-fs-ts-nextjs
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-java-springboot
@@ -227,6 +237,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-java-springboot/target/site/jacoco/jacoco.xml
           flags: a-demo-be-java-springboot
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-elixir-phoenix
@@ -235,6 +246,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-elixir-phoenix/cover/lcov.info
           flags: a-demo-be-elixir-phoenix
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-fsharp-giraffe
@@ -243,6 +255,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-fsharp-giraffe/coverage/altcov.info
           flags: a-demo-be-fsharp-giraffe
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-golang-gin
@@ -251,6 +264,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-golang-gin/cover.out
           flags: a-demo-be-golang-gin
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-python-fastapi
@@ -259,6 +273,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-python-fastapi/coverage/lcov.info
           flags: a-demo-be-python-fastapi
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-rust-axum
@@ -267,6 +282,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-rust-axum/coverage/lcov.info
           flags: a-demo-be-rust-axum
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-kotlin-ktor
@@ -275,6 +291,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml
           flags: a-demo-be-kotlin-ktor
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-java-vertx
@@ -283,6 +300,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-java-vertx/target/site/jacoco/jacoco.xml
           flags: a-demo-be-java-vertx
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-ts-effect
@@ -291,6 +309,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-ts-effect/coverage/lcov.info
           flags: a-demo-be-ts-effect
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-csharp-aspnetcore
@@ -299,6 +318,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info
           flags: a-demo-be-csharp-aspnetcore
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-be-clojure-pedestal
@@ -307,6 +327,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-be-clojure-pedestal/coverage/lcov.info
           flags: a-demo-be-clojure-pedestal
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-fe-ts-nextjs
@@ -315,6 +336,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-fe-ts-nextjs/coverage/lcov.info
           flags: a-demo-fe-ts-nextjs
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-fe-ts-tanstack-start
@@ -323,6 +345,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-fe-ts-tanstack-start/coverage/lcov.info
           flags: a-demo-fe-ts-tanstack-start
+          disable_search: true
           fail_ci_if_error: false
 
       - name: Upload coverage — a-demo-fe-dart-flutterweb
@@ -331,4 +354,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/a-demo-fe-dart-flutterweb/coverage/lcov.info
           flags: a-demo-fe-dart-flutterweb
+          disable_search: true
           fail_ci_if_error: false
