@@ -10,6 +10,7 @@ build/
 .next/
 out/
 cover.out
+coverage.html
 /static/
 storybook-static/
 

@@ -269,6 +269,45 @@ PAYMENT_API_KEY=actual_api_key
 .env.*.local
 ```
 
+### Backing Up and Restoring .env Files
+
+**`rhino-cli env backup/restore` is the recommended tool** for safely copying `.env*` files across machines, worktrees, or after fresh clones.
+
+The commands recursively find every `.env*` file in the repository (skipping auto-generated directories such as `node_modules`, `dist`, and `build`), copy them to a backup directory while preserving relative paths, and restore them back to their original locations on demand.
+
+**Basic usage**:
+
+```bash
+# Back up all .env* files to ~/ose-env-bkup (default)
+npx nx run rhino-cli:run -- env backup
+
+# Restore from the default backup directory
+npx nx run rhino-cli:run -- env restore
+
+# Use a custom backup directory
+npx nx run rhino-cli:run -- env backup --dir /tmp/my-backup
+npx nx run rhino-cli:run -- env restore --dir /tmp/my-backup
+```
+
+**Worktree-aware backup** (namespaces by repo/worktree name, recommended when using git worktrees):
+
+```bash
+npx nx run rhino-cli:run -- env backup --worktree-aware
+npx nx run rhino-cli:run -- env restore --worktree-aware
+```
+
+**Safety constraints**:
+
+- Rejects backup directories that are inside the repository (prevents accidental commits of secrets)
+- Skips symlinks and files larger than 1 MB
+- Supports `--output json/markdown` for scripting and `--verbose`/`--quiet` for output control
+
+**Typical workflow** for setting up a new machine or worktree:
+
+1. On the source machine, run `npx nx run rhino-cli:run -- env backup` to capture current `.env*` files.
+2. Transfer the backup directory to the target machine (e.g., via a secure channel or shared network path).
+3. On the target machine, run `npx nx run rhino-cli:run -- env restore` to place `.env*` files back at their original repository paths.
+
 ### Loading Environment Variables
 
 **Using dotenv**:
@@ -587,6 +626,7 @@ echo "  http://localhost:3000"
 ```typescript
 // scripts/verify-environment.ts
 import { execSync } from "child_process";
+import { existsSync } from "fs";
 import pkg from "../package.json";
 
 function getVersion(command: string): string {
@@ -617,8 +657,7 @@ function verify() {
   }
 
   // Check lockfile exists
-  const fs = require("fs");
-  if (fs.existsSync("package-lock.json")) {
+  if (existsSync("package-lock.json")) {
     console.log("PASS: package-lock.json exists");
   } else {
     console.error("FAIL: package-lock.json missing");
