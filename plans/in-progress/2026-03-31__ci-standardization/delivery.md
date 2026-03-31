@@ -340,6 +340,16 @@ hot-reload within 60 seconds.
 
 ### W10: Spec-Coverage Integration
 
+All spec-coverage validation uses `rhino-cli spec-coverage validate`. If rhino-cli needs
+enhancements to support new app types (FE unit specs, restructured CLI specs, content platform
+specs), update rhino-cli first.
+
+- [ ] Verify `rhino-cli spec-coverage validate` supports all app types:
+  - [ ] Test with BE projects (already supported)
+  - [ ] Test with FE projects (may need enhancement for vitest-cucumber step detection)
+  - [ ] Test with CLI projects after specs restructuring (W12 -- new `cli/gherkin/` paths)
+  - [ ] Test with content platform projects (tRPC step definitions)
+  - [ ] Update rhino-cli if needed to handle new step definition patterns or paths
 - [ ] Add `spec-coverage` Nx target to demo backend projects:
   - [ ] `a-demo-be-golang-gin/project.json`
   - [ ] `a-demo-be-java-springboot/project.json`
@@ -352,6 +362,15 @@ hot-reload within 60 seconds.
   - [ ] `a-demo-be-clojure-pedestal/project.json`
   - [ ] `a-demo-be-elixir-phoenix/project.json`
   - [ ] `a-demo-be-java-vertx/project.json`
+- [ ] Add `spec-coverage` Nx target to frontend projects:
+  - [ ] `a-demo-fe-ts-nextjs/project.json`
+  - [ ] `a-demo-fe-ts-tanstack-start/project.json`
+  - [ ] `a-demo-fe-dart-flutterweb/project.json`
+  - [ ] `organiclever-fe/project.json`
+- [ ] Add `spec-coverage` Nx target to fullstack and content platform projects:
+  - [ ] `a-demo-fs-ts-nextjs/project.json`
+  - [ ] `ayokoding-web/project.json`
+  - [ ] `oseplatform-web/project.json`
 - [ ] Add `spec-coverage` Nx target to E2E projects:
   - [ ] `a-demo-be-e2e/project.json`
   - [ ] `a-demo-fe-e2e/project.json`
