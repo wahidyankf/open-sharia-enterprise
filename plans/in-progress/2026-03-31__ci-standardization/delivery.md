@@ -58,7 +58,7 @@
   - [ ] Add contract-driven development requirement (OpenAPI + tRPC)
 - [ ] Update related markdown files to reference new conventions:
   - [ ] Update `CLAUDE.md` CI-related sections (coverage rules, test levels, CRON strategy)
-  - [ ] Update `governance/development/infra/nx-targets.md` (caching rules, 4-track CRON)
+  - [ ] Update `governance/development/infra/nx-targets.md` (caching rules, 5-track CRON)
   - [ ] Update `governance/development/quality/code.md` (hook changes, formatting additions)
   - [ ] Update `governance/development/quality/markdown.md` (if hook behavior changes)
   - [ ] Update `governance/development/workflow/commit-messages.md` (if commit-msg hook changes)
@@ -225,7 +225,7 @@ All integration tests still pass after changes.
     - [ ] Track 1: `lint` (independent matrix job, includes jsx-a11y for UI)
     - [ ] Track 2: `typecheck` (independent matrix job)
     - [ ] Track 3: `test:quick` (independent, includes coverage validation)
-    - [ ] Track 4: `test:quick` + `spec-coverage` (independent, spec-to-test mapping)
+    - [ ] Track 4: `spec-coverage` (independent, spec-to-test mapping)
     - [ ] Track 5: `integration` → `e2e` (sequential chain via `needs:`)
   - [ ] Schedule: cron 2x daily (06:00 WIB, 18:00 WIB)
   - [ ] workflow_dispatch with backend filter input
@@ -309,7 +309,7 @@ Web frontends are now tested in CI.
   - [ ] TypeScript: Drizzle migrations
   - [ ] Python: Alembic migrations
   - [ ] Others: language-specific migration tools
-- [ ] Add `.env.example` files for any dev setup that lacks one
+- [ ] Verify `.env.example` exists for each dev setup (creation handled by W16)
 - [ ] Finalize `docs/how-to/hoto__local-dev-with-docker.md` with tested instructions
 
 **Validation**: Developer can run `npm run dev:{any-app}` and get a working dev environment with
@@ -549,20 +549,20 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                   | Before                         | Target                                                |
-| ---------------------------------------- | ------------------------------ | ----------------------------------------------------- |
-| GitHub Actions workflow files            | 22                             | 12 (-45%)                                             |
-| Total workflow YAML lines                | ~4,500                         | ~1,500 (-67%)                                         |
-| PR quality gate time (TS-only PR)        | ~12 min                        | ~5 min (-58%)                                         |
-| CRON parallel tracks                     | 2 (integration, e2e)           | 5 (lint, typecheck, coverage, spec-coverage, int→e2e) |
-| Adding a new backend to CI               | ~3 hours                       | ~30 min (checklist)                                   |
-| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)      | 9 (+5)                                                |
-| Apps with spec-coverage in CI            | 0                              | All testable projects                                 |
-| Projects with Gherkin at all test levels | ~15 (BE + CLI only)            | All testable projects                                 |
-| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe) | All UI apps                                           |
-| UI apps with a11y Gherkin specs          | 3                              | All UI apps                                           |
-| `infra/dev/` dirs with `.env.example`    | 5                              | All (18+)                                             |
-| Apps with `infra/dev/` Docker Compose    | 18                             | 21 (+3 CLIs)                                          |
-| Redundant FE `test:integration` targets  | 5                              | 0 (removed)                                           |
-| CI Docker cache hit rate                 | 0%                             | 80%+                                                  |
-| Governance docs covering CI              | 0                              | 3 new docs                                            |
+| Metric                                   | Before                         | Target                                                  |
+| ---------------------------------------- | ------------------------------ | ------------------------------------------------------- |
+| GitHub Actions workflow files            | 22                             | 12 (-45%)                                               |
+| Total workflow YAML lines                | ~4,500                         | ~1,500 (-67%)                                           |
+| PR quality gate time (TS-only PR)        | ~12 min                        | ~5 min (-58%)                                           |
+| CRON parallel tracks                     | 2 (integration, e2e)           | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e) |
+| Adding a new backend to CI               | ~3 hours                       | ~30 min (checklist)                                     |
+| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)      | 9 (+5)                                                  |
+| Apps with spec-coverage in CI            | 0                              | All testable projects                                   |
+| Projects with Gherkin at all test levels | ~15 (BE + CLI only)            | All testable projects                                   |
+| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe) | All UI apps                                             |
+| UI apps with a11y Gherkin specs          | 3                              | All UI apps                                             |
+| `infra/dev/` dirs with `.env.example`    | 5                              | All (18+)                                               |
+| Apps with `infra/dev/` Docker Compose    | 18                             | 21 (+3 CLIs)                                            |
+| Redundant FE `test:integration` targets  | 5                              | 0 (removed)                                             |
+| CI Docker cache hit rate                 | 0%                             | 80%+                                                    |
+| Governance docs covering CI              | 0                              | 3 new docs                                              |

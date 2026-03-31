@@ -469,7 +469,7 @@ flowchart LR
     CRON["CRON Trigger"] --> LINT["Track 1: lint"]
     CRON --> TC["Track 2: typecheck"]
     CRON --> COV["Track 3: coverage check<br/>(test:quick)"]
-    CRON --> SPEC["Track 4: test:quick +<br/>spec-coverage"]
+    CRON --> SPEC["Track 4: spec-coverage"]
     CRON --> INT["Track 5: test:integration"]
     INT --> E2E["test:e2e"]
 ```
@@ -479,7 +479,7 @@ flowchart LR
 | Track 1 | `lint` (includes jsx-a11y for UI apps)  | Independent      | Style + a11y lint rules                                         |
 | Track 2 | `typecheck`                             | Independent      | Type errors                                                     |
 | Track 3 | `test:quick` (= `test:unit` + coverage) | Independent      | Unit tests + coverage threshold validation                      |
-| Track 4 | `test:quick` + `spec-coverage`          | Independent      | Spec-to-test mapping completeness                               |
+| Track 4 | `spec-coverage`                         | Independent      | Spec-to-test mapping completeness                               |
 | Track 5 | `test:integration` → `test:e2e`         | Sequential chain | Integration must pass before E2E (E2E assumes data layer works) |
 
 **Key design**: The 5 tracks run in parallel so a slow integration test does not block lint,

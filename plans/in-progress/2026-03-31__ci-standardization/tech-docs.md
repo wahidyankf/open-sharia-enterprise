@@ -63,23 +63,23 @@ Each composite action:
 flowchart LR
     PR["PR Opened/Updated"] --> DETECT["Detect Job:<br/>nx show projects --affected<br/>→ determine language families"]
 
-    DETECT --> |"has TS projects"| TS["TypeScript Job<br/>setup-node<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:ts"]
+    DETECT --> |"has TS projects"| TS["TypeScript Job<br/>setup-node<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:ts"]
 
-    DETECT --> |"has Go projects"| GO["Go Job<br/>setup-node + setup-golang<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:golang"]
+    DETECT --> |"has Go projects"| GO["Go Job<br/>setup-node + setup-golang<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:golang"]
 
-    DETECT --> |"has Java projects"| JVM["JVM Job<br/>setup-node + setup-jvm<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:java,tag:language:kotlin"]
+    DETECT --> |"has Java projects"| JVM["JVM Job<br/>setup-node + setup-jvm<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:java,tag:language:kotlin"]
 
-    DETECT --> |"has .NET projects"| NET[".NET Job<br/>setup-node + setup-dotnet<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:fsharp,tag:language:csharp"]
+    DETECT --> |"has .NET projects"| NET[".NET Job<br/>setup-node + setup-dotnet<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:fsharp,tag:language:csharp"]
 
-    DETECT --> |"has Python projects"| PY["Python Job<br/>setup-node + setup-python<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:python"]
+    DETECT --> |"has Python projects"| PY["Python Job<br/>setup-node + setup-python<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:python"]
 
-    DETECT --> |"has Rust projects"| RS["Rust Job<br/>setup-node + setup-rust<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:rust"]
+    DETECT --> |"has Rust projects"| RS["Rust Job<br/>setup-node + setup-rust<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:rust"]
 
-    DETECT --> |"has Elixir projects"| EX["Elixir Job<br/>setup-node + setup-elixir<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:elixir"]
+    DETECT --> |"has Elixir projects"| EX["Elixir Job<br/>setup-node + setup-elixir<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:elixir"]
 
-    DETECT --> |"has Clojure projects"| CLJ["Clojure Job<br/>setup-node + setup-clojure<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:clojure"]
+    DETECT --> |"has Clojure projects"| CLJ["Clojure Job<br/>setup-node + setup-clojure<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:clojure"]
 
-    DETECT --> |"has Dart projects"| DART["Dart Job<br/>setup-node + setup-flutter<br/>nx affected -t typecheck lint test:quick<br/>--projects=tag:language:dart"]
+    DETECT --> |"has Dart projects"| DART["Dart Job<br/>setup-node + setup-flutter<br/>nx affected -t typecheck lint test:quick spec-coverage<br/>--projects=tag:language:dart"]
 
     DETECT --> MD["Markdown Job<br/>markdownlint-cli2"]
 
@@ -192,15 +192,13 @@ jobs:
       - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
       - run: npx nx run a-demo-be-${{ matrix.backend.name }}:test:quick
 
-  # Track 4: spec-coverage (test:quick + spec-coverage validation)
+  # Track 4: spec-coverage (spec-to-test mapping validation)
   spec-coverage:
     needs: prepare
     strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     steps:
       - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
-      - run: |
-          npx nx run a-demo-be-${{ matrix.backend.name }}:test:quick
-          npx nx run a-demo-be-${{ matrix.backend.name }}:spec-coverage
+      - run: npx nx run a-demo-be-${{ matrix.backend.name }}:spec-coverage
 
   # Track 5: integration → e2e (sequential chain)
   integration:
@@ -445,7 +443,7 @@ verbatim.
 | --------------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `test-organiclever.yml` (single workflow for BE+FE)             | Keep as-is but document as the "multi-component product" pattern     | OrganicLever BE and FE are co-dependent; splitting would add complexity without benefit |
 | `docker-compose.ci-e2e.yml` (Elixir only)                       | Rename to `docker-compose.ci.yml` and merge with existing CI overlay | Eliminate the unique naming exception                                                   |
-| CLI specs at `specs/apps/{cli}/domain/` (no `gherkin/` nesting) | Keep as-is but document as the "CLI spec" pattern                    | CLIs have no BE/FE split, so `gherkin/` nesting adds no value                           |
+| CLI specs at `specs/apps/{cli}/domain/` (no `gherkin/` nesting) | Restructure to `specs/apps/{cli}/cli/gherkin/` (W12)                 | Align with the `{role}/gherkin/` standard used by all other app types                   |
 
 **New artifact naming conventions**:
 
