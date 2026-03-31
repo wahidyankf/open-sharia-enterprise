@@ -86,3 +86,60 @@ Feature: Env file backup
     When the developer runs rhino-cli env backup with --worktree-aware
     Then the command exits successfully
     And the .env file is copied under an open-sharia-enterprise subdirectory inside the backup directory
+
+  @env-backup-confirm
+  Scenario: Backup prompts when destination files already exist
+    Given a git repository containing a .env file at the root
+    And the backup directory already contains a backed-up .env file
+    When the developer runs rhino-cli env backup and confirms the overwrite
+    Then the command exits successfully
+    And the .env file is overwritten in the backup directory
+
+  @env-backup-confirm
+  Scenario: Backup aborts when user declines overwrite
+    Given a git repository containing a .env file at the root
+    And the backup directory already contains a backed-up .env file
+    When the developer runs rhino-cli env backup and declines the overwrite
+    Then the command exits successfully
+    And the output reports that backup was cancelled
+    And the existing backup file is unchanged
+
+  @env-backup-confirm
+  Scenario: Backup with --force skips confirmation
+    Given a git repository containing a .env file at the root
+    And the backup directory already contains a backed-up .env file
+    When the developer runs rhino-cli env backup with --force
+    Then the command exits successfully
+    And the .env file is overwritten in the backup directory without prompting
+
+  @env-backup-confirm
+  Scenario: Backup proceeds without prompt when no conflicts exist
+    Given a git repository containing a .env file at the root
+    And the backup directory is empty
+    When the developer runs rhino-cli env backup
+    Then the command exits successfully
+    And no confirmation prompt is shown
+    And the .env file is copied to the backup directory
+
+  @env-backup-config
+  Scenario: Backup includes config files with --include-config
+    Given a git repository containing a .env file and a .claude/settings.local.json file
+    When the developer runs rhino-cli env backup with --include-config and --force
+    Then the command exits successfully
+    And the .env file is copied to the backup directory
+    And the .claude/settings.local.json is copied to the backup directory preserving its relative path
+
+  @env-backup-config
+  Scenario: Backup without --include-config ignores config files
+    Given a git repository containing a .env file and a .claude/settings.local.json file
+    When the developer runs rhino-cli env backup with --force
+    Then the command exits successfully
+    And the .env file is copied to the backup directory
+    And the .claude/settings.local.json is not copied to the backup directory
+
+  @env-backup-config
+  Scenario: Backup with --include-config and no config files found
+    Given a git repository containing a .env file but no known config files
+    When the developer runs rhino-cli env backup with --include-config and --force
+    Then the command exits successfully
+    And only the .env file is copied to the backup directory

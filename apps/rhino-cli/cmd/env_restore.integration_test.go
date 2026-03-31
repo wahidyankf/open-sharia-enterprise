@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -51,7 +52,10 @@ func (s *envRestoreIntSteps) after(_ context.Context, _ *godog.Scenario, _ error
 	_ = os.Chdir(s.originalWd)
 	envRestoreDir = ""
 	envRestoreWorktreeAware = false
+	envRestoreForce = false
+	envRestoreIncludeConfig = false
 	envRestoreFn = envbackup.Restore
+	confirmFn = envbackup.DefaultConfirmFn
 	osGetwd = os.Getwd
 	osStat = os.Stat
 	if s.repoDir != "" {
@@ -381,6 +385,145 @@ func (s *envRestoreIntSteps) theEnvFileCopiedBackToOriginalPathInWorktree() erro
 	return nil
 }
 
+// --- Confirm Given steps ---
+
+func (s *envRestoreIntSteps) theRepoAlreadyContainsEnvFileAtOriginalPath() error {
+	// Pre-populate the repo with .env so conflicts are detected.
+	return writeEnvFile(s.repoDir, ".env", "OLD=1\n")
+}
+
+func (s *envRestoreIntSteps) theRepoDoesNotContainEnvFileAtOriginalPath() error {
+	// No .env in repo — no conflicts.
+	envPath := filepath.Join(s.repoDir, ".env")
+	_ = os.Remove(envPath) // remove if exists
+	return nil
+}
+
+// --- Confirm When steps ---
+
+func (s *envRestoreIntSteps) theDeveloperRunsEnvRestoreAndConfirmsOverwrite() error {
+	envRestoreForce = true // In integration tests, use force to simulate confirmation
+	return s.runCmd()
+}
+
+func (s *envRestoreIntSteps) theDeveloperRunsEnvRestoreAndDeclinesOverwrite() error {
+	confirmFn = func(_ io.Reader, _ io.Writer) func([]string) bool {
+		return func(_ []string) bool { return false }
+	}
+	return s.runCmd()
+}
+
+func (s *envRestoreIntSteps) theDeveloperRunsEnvRestoreWithForce() error {
+	envRestoreForce = true
+	return s.runCmd()
+}
+
+// --- Confirm Then steps ---
+
+func (s *envRestoreIntSteps) theEnvFileInRepoOverwrittenWithBackup() error {
+	envPath := filepath.Join(s.repoDir, ".env")
+	content, err := os.ReadFile(envPath)
+	if err != nil {
+		return fmt.Errorf("expected .env in repo: %v", err)
+	}
+	if strings.Contains(string(content), "OLD=1") {
+		return fmt.Errorf("expected .env to be overwritten but still has old content")
+	}
+	return nil
+}
+
+func (s *envRestoreIntSteps) theOutputReportsRestoreCancelled() error {
+	if !strings.Contains(s.cmdOutput, "cancelled") {
+		return fmt.Errorf("expected 'cancelled' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envRestoreIntSteps) theExistingRepoFileUnchanged() error {
+	envPath := filepath.Join(s.repoDir, ".env")
+	content, err := os.ReadFile(envPath)
+	if err != nil {
+		return fmt.Errorf("expected .env to still exist: %v", err)
+	}
+	if !strings.Contains(string(content), "OLD=1") {
+		return fmt.Errorf("expected .env to be unchanged with old content")
+	}
+	return nil
+}
+
+func (s *envRestoreIntSteps) theEnvFileInRepoOverwrittenWithoutPrompting() error {
+	return s.theEnvFileInRepoOverwrittenWithBackup()
+}
+
+func (s *envRestoreIntSteps) noConfirmationPromptShown() error {
+	return nil
+}
+
+func (s *envRestoreIntSteps) theEnvFileRestoredToRepo() error {
+	envPath := filepath.Join(s.repoDir, ".env")
+	if _, err := os.Stat(envPath); err != nil {
+		return fmt.Errorf("expected .env to be restored: %v", err)
+	}
+	return nil
+}
+
+// --- Config Given steps ---
+
+func (s *envRestoreIntSteps) aBackupDirWithEnvFileAndClaudeConfig() error {
+	repo, err := s.makeRestoreRepo("int-env-restore-config-repo-*")
+	if err != nil {
+		return err
+	}
+	s.repoDir = repo
+
+	backup, err := s.makeRestoreBackupDir("int-env-restore-config-bkup-*")
+	if err != nil {
+		return err
+	}
+	s.backupDir = backup
+	envRestoreDir = backup
+
+	if err := writeEnvFile(backup, ".env", "KEY=val\n"); err != nil {
+		return err
+	}
+	if err := writeEnvFile(backup, ".claude/settings.local.json", `{"key":"val"}`); err != nil {
+		return err
+	}
+
+	return os.Chdir(repo)
+}
+
+// --- Config When steps ---
+
+func (s *envRestoreIntSteps) theDeveloperRunsEnvRestoreWithIncludeConfigForce() error {
+	envRestoreIncludeConfig = true
+	envRestoreForce = true
+	return s.runCmd()
+}
+
+func (s *envRestoreIntSteps) theDeveloperRunsEnvRestoreWithForceOnly() error {
+	envRestoreForce = true
+	return s.runCmd()
+}
+
+// --- Config Then steps ---
+
+func (s *envRestoreIntSteps) theClaudeConfigRestoredToRepo() error {
+	configPath := filepath.Join(s.repoDir, ".claude", "settings.local.json")
+	if _, err := os.Stat(configPath); err != nil {
+		return fmt.Errorf("expected .claude/settings.local.json in repo: %v", err)
+	}
+	return nil
+}
+
+func (s *envRestoreIntSteps) theClaudeConfigNotRestoredToRepo() error {
+	configPath := filepath.Join(s.repoDir, ".claude", "settings.local.json")
+	if _, err := os.Stat(configPath); err == nil {
+		return fmt.Errorf("expected .claude/settings.local.json to NOT be in repo")
+	}
+	return nil
+}
+
 func TestIntegrationEnvRestore(t *testing.T) {
 	s := &envRestoreIntSteps{}
 	suite := godog.TestSuite{
@@ -417,11 +560,31 @@ func TestIntegrationEnvRestore(t *testing.T) {
 			sc.Step(stepOutputReportsZeroFilesRestored, s.theOutputReportsZeroFilesRestored)
 			sc.Step(stepEnvFileReadFromFeatureBranchNamespace, s.theEnvFileReadFromFeatureBranchNamespace)
 			sc.Step(stepEnvFileCopiedBackToOriginalPathInWorktree, s.theEnvFileCopiedBackToOriginalPathInWorktree)
+
+			// Confirm scenario steps.
+			sc.Step(stepRepoAlreadyContainsEnvFileAtOriginalPath, s.theRepoAlreadyContainsEnvFileAtOriginalPath)
+			sc.Step(stepRepoDoesNotContainEnvFileAtOriginalPath, s.theRepoDoesNotContainEnvFileAtOriginalPath)
+			sc.Step(stepDeveloperRunsEnvRestoreAndConfirmsOverwrite, s.theDeveloperRunsEnvRestoreAndConfirmsOverwrite)
+			sc.Step(stepDeveloperRunsEnvRestoreAndDeclinesOverwrite, s.theDeveloperRunsEnvRestoreAndDeclinesOverwrite)
+			sc.Step(stepDeveloperRunsEnvRestoreWithForce, s.theDeveloperRunsEnvRestoreWithForce)
+			sc.Step(stepEnvFileInRepoOverwrittenWithBackup, s.theEnvFileInRepoOverwrittenWithBackup)
+			sc.Step(stepOutputReportsRestoreCancelled, s.theOutputReportsRestoreCancelled)
+			sc.Step(stepExistingRepoFileUnchanged, s.theExistingRepoFileUnchanged)
+			sc.Step(stepEnvFileInRepoOverwrittenWithoutPrompting, s.theEnvFileInRepoOverwrittenWithoutPrompting)
+			sc.Step(stepNoConfirmationPromptShown, s.noConfirmationPromptShown)
+			sc.Step(stepEnvFileRestoredToRepo, s.theEnvFileRestoredToRepo)
+
+			// Config scenario steps.
+			sc.Step(stepBackupDirWithEnvFileAndClaudeConfig, s.aBackupDirWithEnvFileAndClaudeConfig)
+			sc.Step(stepDeveloperRunsEnvRestoreWithIncludeConfigForce, s.theDeveloperRunsEnvRestoreWithIncludeConfigForce)
+			sc.Step(stepDeveloperRunsEnvRestoreWithForceOnly, s.theDeveloperRunsEnvRestoreWithForceOnly)
+			sc.Step(stepClaudeConfigRestoredToRepo, s.theClaudeConfigRestoredToRepo)
+			sc.Step(stepClaudeConfigNotRestoredToRepo, s.theClaudeConfigNotRestoredToRepo)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsIntEnvRestoreDir},
-			Tags:     "env-restore",
+			Tags:     "@env-restore,@env-restore-confirm,@env-restore-config",
 			TestingT: t,
 		},
 	}

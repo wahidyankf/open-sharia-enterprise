@@ -57,3 +57,53 @@ Feature: Env file restore
     Then the command exits successfully
     And the .env file is read from the feature-branch namespace inside the backup directory
     And the .env file is copied back to its original path in the worktree
+
+  @env-restore-confirm
+  Scenario: Restore prompts when destination files already exist
+    Given a backup directory containing a previously backed-up .env file
+    And the repository already contains a .env file at the original path
+    When the developer runs rhino-cli env restore and confirms the overwrite
+    Then the command exits successfully
+    And the .env file in the repository is overwritten with the backup
+
+  @env-restore-confirm
+  Scenario: Restore aborts when user declines overwrite
+    Given a backup directory containing a previously backed-up .env file
+    And the repository already contains a .env file at the original path
+    When the developer runs rhino-cli env restore and declines the overwrite
+    Then the command exits successfully
+    And the output reports that restore was cancelled
+    And the existing repository file is unchanged
+
+  @env-restore-confirm
+  Scenario: Restore with --force skips confirmation
+    Given a backup directory containing a previously backed-up .env file
+    And the repository already contains a .env file at the original path
+    When the developer runs rhino-cli env restore with --force
+    Then the command exits successfully
+    And the .env file in the repository is overwritten without prompting
+
+  @env-restore-confirm
+  Scenario: Restore proceeds without prompt when no conflicts exist
+    Given a backup directory containing a previously backed-up .env file
+    And the repository does not contain a .env file at the original path
+    When the developer runs rhino-cli env restore
+    Then the command exits successfully
+    And no confirmation prompt is shown
+    And the .env file is restored to the repository
+
+  @env-restore-config
+  Scenario: Restore includes config files with --include-config
+    Given a backup directory containing a .env file and a .claude/settings.local.json file
+    When the developer runs rhino-cli env restore with --include-config and --force
+    Then the command exits successfully
+    And the .env file is restored to the repository
+    And the .claude/settings.local.json is restored to the repository preserving its relative path
+
+  @env-restore-config
+  Scenario: Restore without --include-config ignores config files in backup
+    Given a backup directory containing a .env file and a .claude/settings.local.json file
+    When the developer runs rhino-cli env restore with --force
+    Then the command exits successfully
+    And the .env file is restored to the repository
+    And the .claude/settings.local.json is not restored to the repository

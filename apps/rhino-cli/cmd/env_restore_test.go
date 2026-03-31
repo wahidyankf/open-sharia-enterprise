@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -33,6 +34,8 @@ func (s *envRestoreUnitSteps) before(_ context.Context, _ *godog.Scenario) (cont
 	output = "text"
 	envRestoreDir = ""
 	envRestoreWorktreeAware = false
+	envRestoreForce = false
+	envRestoreIncludeConfig = false
 	s.cmdErr = nil
 	s.cmdOutput = ""
 	s.backupDir = ""
@@ -65,8 +68,11 @@ func (s *envRestoreUnitSteps) before(_ context.Context, _ *godog.Scenario) (cont
 
 func (s *envRestoreUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
 	envRestoreFn = envbackup.Restore
+	confirmFn = envbackup.DefaultConfirmFn
 	osGetwd = os.Getwd
 	osStat = os.Stat
+	envRestoreForce = false
+	envRestoreIncludeConfig = false
 	if s.backupDir != "" {
 		_ = os.RemoveAll(s.backupDir)
 	}
@@ -385,6 +391,148 @@ func (s *envRestoreUnitSteps) theEnvFileCopiedBackToOriginalPathInWorktree() err
 	return s.eachEnvFileCopiedBackToOriginalPath()
 }
 
+// --- Confirm Given steps ---
+
+func (s *envRestoreUnitSteps) theRepoAlreadyContainsEnvFileAtOriginalPath() error {
+	// Pre-existing file triggers confirmation.
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theRepoDoesNotContainEnvFileAtOriginalPath() error {
+	// No pre-existing file, no prompt.
+	return nil
+}
+
+// --- Confirm When steps ---
+
+func (s *envRestoreUnitSteps) theDeveloperRunsEnvRestoreAndConfirmsOverwrite() error {
+	confirmFn = func(_ io.Reader, _ io.Writer) func([]string) bool {
+		return func(_ []string) bool { return true }
+	}
+	envRestoreFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		return &envbackup.Result{
+			Direction: "restore",
+			Dir:       opts.BackupDir,
+			Files: []envbackup.FileEntry{
+				{RelPath: ".env", AbsPath: "/mock-repo/.env", Size: 100},
+			},
+			Copied: 1,
+		}, nil
+	}
+	return s.runEnvRestoreCmd()
+}
+
+func (s *envRestoreUnitSteps) theDeveloperRunsEnvRestoreAndDeclinesOverwrite() error {
+	envRestoreFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		return &envbackup.Result{
+			Direction: "restore",
+			Dir:       opts.BackupDir,
+			Cancelled: true,
+		}, nil
+	}
+	return s.runEnvRestoreCmd()
+}
+
+func (s *envRestoreUnitSteps) theDeveloperRunsEnvRestoreWithForce() error {
+	envRestoreForce = true
+	return s.runEnvRestoreCmd()
+}
+
+// --- Confirm Then steps ---
+
+func (s *envRestoreUnitSteps) theEnvFileInRepoOverwrittenWithBackup() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theOutputReportsRestoreCancelled() error {
+	if !strings.Contains(s.cmdOutput, "cancelled") {
+		return fmt.Errorf("expected 'cancelled' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theExistingRepoFileUnchanged() error {
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theEnvFileInRepoOverwrittenWithoutPrompting() error {
+	return s.theEnvFileInRepoOverwrittenWithBackup()
+}
+
+func (s *envRestoreUnitSteps) noConfirmationPromptShown() error {
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theEnvFileRestoredToRepo() error {
+	if !strings.Contains(s.cmdOutput, ".env") {
+		return fmt.Errorf("expected '.env' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+// --- Config Given steps ---
+
+func (s *envRestoreUnitSteps) aBackupDirWithEnvFileAndClaudeConfig() error {
+	tmpBackup, err := os.MkdirTemp("", "env-restore-config-*")
+	if err != nil {
+		return fmt.Errorf("create temp backup dir: %w", err)
+	}
+	s.backupDir = tmpBackup
+	envRestoreDir = tmpBackup
+
+	envRestoreFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		files := []envbackup.FileEntry{
+			{RelPath: ".env", AbsPath: "/mock-repo/.env", Size: 100, Source: "env"},
+		}
+		copied := 1
+		if opts.IncludeConfig {
+			files = append(files, envbackup.FileEntry{
+				RelPath: ".claude/settings.local.json", AbsPath: "/mock-repo/.claude/settings.local.json", Size: 200, Source: "config",
+			})
+			copied = 2
+		}
+		return &envbackup.Result{
+			Direction: "restore",
+			Dir:       opts.BackupDir,
+			Files:     files,
+			Copied:    copied,
+		}, nil
+	}
+	return nil
+}
+
+// --- Config When steps ---
+
+func (s *envRestoreUnitSteps) theDeveloperRunsEnvRestoreWithIncludeConfigForce() error {
+	envRestoreIncludeConfig = true
+	envRestoreForce = true
+	return s.runEnvRestoreCmd()
+}
+
+func (s *envRestoreUnitSteps) theDeveloperRunsEnvRestoreWithForceOnly() error {
+	envRestoreForce = true
+	return s.runEnvRestoreCmd()
+}
+
+// --- Config Then steps ---
+
+func (s *envRestoreUnitSteps) theClaudeConfigRestoredToRepo() error {
+	if !strings.Contains(s.cmdOutput, ".claude/settings.local.json") {
+		return fmt.Errorf("expected .claude/settings.local.json in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envRestoreUnitSteps) theClaudeConfigNotRestoredToRepo() error {
+	if strings.Contains(s.cmdOutput, "settings.local.json") {
+		return fmt.Errorf("expected .claude/settings.local.json to be absent from output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
 func TestUnitEnvRestore(t *testing.T) {
 	s := &envRestoreUnitSteps{}
 	suite := godog.TestSuite{
@@ -421,11 +569,31 @@ func TestUnitEnvRestore(t *testing.T) {
 			sc.Step(stepOutputReportsZeroFilesRestored, s.theOutputReportsZeroFilesRestored)
 			sc.Step(stepEnvFileReadFromFeatureBranchNamespace, s.theEnvFileReadFromFeatureBranchNamespace)
 			sc.Step(stepEnvFileCopiedBackToOriginalPathInWorktree, s.theEnvFileCopiedBackToOriginalPathInWorktree)
+
+			// Confirm scenario steps.
+			sc.Step(stepRepoAlreadyContainsEnvFileAtOriginalPath, s.theRepoAlreadyContainsEnvFileAtOriginalPath)
+			sc.Step(stepRepoDoesNotContainEnvFileAtOriginalPath, s.theRepoDoesNotContainEnvFileAtOriginalPath)
+			sc.Step(stepDeveloperRunsEnvRestoreAndConfirmsOverwrite, s.theDeveloperRunsEnvRestoreAndConfirmsOverwrite)
+			sc.Step(stepDeveloperRunsEnvRestoreAndDeclinesOverwrite, s.theDeveloperRunsEnvRestoreAndDeclinesOverwrite)
+			sc.Step(stepDeveloperRunsEnvRestoreWithForce, s.theDeveloperRunsEnvRestoreWithForce)
+			sc.Step(stepEnvFileInRepoOverwrittenWithBackup, s.theEnvFileInRepoOverwrittenWithBackup)
+			sc.Step(stepOutputReportsRestoreCancelled, s.theOutputReportsRestoreCancelled)
+			sc.Step(stepExistingRepoFileUnchanged, s.theExistingRepoFileUnchanged)
+			sc.Step(stepEnvFileInRepoOverwrittenWithoutPrompting, s.theEnvFileInRepoOverwrittenWithoutPrompting)
+			sc.Step(stepNoConfirmationPromptShown, s.noConfirmationPromptShown)
+			sc.Step(stepEnvFileRestoredToRepo, s.theEnvFileRestoredToRepo)
+
+			// Config scenario steps.
+			sc.Step(stepBackupDirWithEnvFileAndClaudeConfig, s.aBackupDirWithEnvFileAndClaudeConfig)
+			sc.Step(stepDeveloperRunsEnvRestoreWithIncludeConfigForce, s.theDeveloperRunsEnvRestoreWithIncludeConfigForce)
+			sc.Step(stepDeveloperRunsEnvRestoreWithForceOnly, s.theDeveloperRunsEnvRestoreWithForceOnly)
+			sc.Step(stepClaudeConfigRestoredToRepo, s.theClaudeConfigRestoredToRepo)
+			sc.Step(stepClaudeConfigNotRestoredToRepo, s.theClaudeConfigNotRestoredToRepo)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsDirUnitEnvRestore},
-			Tags:     "env-restore",
+			Tags:     "@env-restore,@env-restore-confirm,@env-restore-config",
 			TestingT: t,
 		},
 	}
@@ -451,6 +619,25 @@ func TestEnvRestoreCmd_NoArgs(t *testing.T) {
 	}
 	if err := envRestoreCmd.Args(envRestoreCmd, []string{"unexpected"}); err == nil {
 		t.Error("expected error when positional args provided, got nil")
+	}
+}
+
+// TestEnvRestoreCmd_ForceFlag verifies the --force flag is wired.
+func TestEnvRestoreCmd_ForceFlag(t *testing.T) {
+	f := envRestoreCmd.Flags().Lookup("force")
+	if f == nil {
+		t.Fatal("expected --force flag to be registered")
+	}
+	if f.Shorthand != "f" {
+		t.Errorf("expected shorthand 'f', got %q", f.Shorthand)
+	}
+}
+
+// TestEnvRestoreCmd_IncludeConfigFlag verifies the --include-config flag is wired.
+func TestEnvRestoreCmd_IncludeConfigFlag(t *testing.T) {
+	f := envRestoreCmd.Flags().Lookup("include-config")
+	if f == nil {
+		t.Fatal("expected --include-config flag to be registered")
 	}
 }
 

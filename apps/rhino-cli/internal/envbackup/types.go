@@ -3,21 +3,25 @@ package envbackup
 
 // Options configures a backup or restore operation.
 type Options struct {
-	RepoRoot      string   // Absolute path to git root (or worktree root)
-	BackupDir     string   // Absolute path to backup directory
-	SkipDirs      []string // Directory basenames to skip during walk
-	MaxSize       int64    // Max file size in bytes (default 1 MB)
-	WorktreeAware bool     // If true, namespace backup by worktree/repo name
-	WorktreeName  string   // Set by cmd layer from detectWorktree(); used to populate Result
+	RepoRoot      string                       // Absolute path to git root (or worktree root)
+	BackupDir     string                       // Absolute path to backup directory
+	SkipDirs      []string                     // Directory basenames to skip during walk
+	MaxSize       int64                        // Max file size in bytes (default 1 MB)
+	WorktreeAware bool                         // If true, namespace backup by worktree/repo name
+	WorktreeName  string                       // Set by cmd layer from detectWorktree(); used to populate Result
+	Force         bool                         // Skip confirmation prompt
+	IncludeConfig bool                         // Also discover config files
+	ConfirmFn     func(existing []string) bool // Called when destinations exist; nil = force
 }
 
 // FileEntry represents a single .env file found or processed.
 type FileEntry struct {
-	RelPath string // Relative to repo root
-	AbsPath string // Absolute path in source location
-	Size    int64  // File size in bytes
-	Skipped bool   // True if skipped (symlink, too large)
-	Reason  string // Skip reason (empty if not skipped)
+	RelPath string `json:"relPath"`           // Relative to repo root
+	AbsPath string `json:"absPath,omitempty"` // Absolute path in source location
+	Size    int64  `json:"size,omitempty"`    // File size in bytes
+	Skipped bool   `json:"skipped,omitempty"` // True if skipped (symlink, too large)
+	Reason  string `json:"reason,omitempty"`  // Skip reason (empty if not skipped)
+	Source  string `json:"source,omitempty"`  // "env" or "config" — empty defaults to "env"
 }
 
 // Result holds the outcome of a backup or restore operation.
@@ -29,6 +33,7 @@ type Result struct {
 	Skipped      int         // Count of skipped files
 	Errors       []string    // Non-fatal warnings
 	WorktreeName string      // Worktree/repo name when --worktree-aware is used
+	Cancelled    bool        // True if user declined confirmation prompt
 }
 
 // DefaultSkipDirs lists directory basenames to skip during file discovery.
@@ -52,4 +57,4 @@ var DefaultSkipDirs = []string{
 }
 
 const DefaultMaxSize = 1024 * 1024 // 1 MB
-const DefaultBackupDir = "ose-env-bkup"
+const DefaultBackupDir = "ose-open-env-backup"

@@ -6,8 +6,6 @@ Active project plans currently being worked on.
 
 - [LGPL Dependency Replacement](./2026-03-26__lgpl-dependency-replacement/) — Replace LGPL
   dependencies with permissive alternatives
-- [Enhanced Env Backup/Restore](./2026-03-31__env-enhanced-backup-restore/) — Add overwrite
-  confirmation prompts and uncommitted config file backup to rhino-cli env commands
 
 ## Instructions
 

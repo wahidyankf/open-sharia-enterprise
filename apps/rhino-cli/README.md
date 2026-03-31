@@ -876,8 +876,14 @@ Back up all `.env*` files from the repository to an external directory, preservi
 directory structure. Auto-generated directories (node_modules, dist, build, .next, etc.) are
 skipped. Symlinks and files larger than 1 MB are skipped with a warning.
 
+If destination files already exist, the user is prompted for confirmation before overwriting.
+Use `--force` to skip the prompt. JSON and markdown output modes imply `--force`.
+
+Use `--include-config` to also back up known uncommitted local configuration files (AI tool
+settings, Docker overrides, version managers, direnv).
+
 ```bash
-# Back up to default directory ~/ose-env-bkup
+# Back up to default directory ~/ose-open-env-backup
 rhino-cli env backup
 
 # Back up to a custom directory
@@ -886,22 +892,44 @@ rhino-cli env backup --dir /tmp/my-env-backup
 # Namespace backup by worktree/repo name
 rhino-cli env backup --worktree-aware
 
-# JSON output
+# Skip overwrite confirmation
+rhino-cli env backup --force
+
+# Include uncommitted config files
+rhino-cli env backup --include-config
+
+# JSON output (implies --force)
 rhino-cli env backup -o json
 ```
 
 **Flags:**
 
-- `--dir <path>` - Backup directory (default: `~/ose-env-bkup`)
+- `--dir <path>` - Backup directory (default: `~/ose-open-env-backup`)
 - `--worktree-aware` - Namespace backup by worktree/repo directory name
+- `--force` / `-f` - Skip overwrite confirmation prompt
+- `--include-config` - Also back up known uncommitted config files
+
+**Config file patterns** (backed up with `--include-config`):
+
+| Category         | File                                                                                                                                                                                                                                          |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AI Tools         | `.claude/settings.local.json`, `.claude/settings.local.json.bkup`, `.cursor/mcp.json`, `.windsurfrules`, `.clinerules`, `.aider.conf.yml`, `.aiderignore`, `.continue/config.json`, `.gemini/settings.json`, `.amazonq/mcp.json`, `.roomodes` |
+| Docker           | `docker-compose.override.yml`                                                                                                                                                                                                                 |
+| Version Managers | `mise.local.toml`                                                                                                                                                                                                                             |
+| Environment      | `.envrc`                                                                                                                                                                                                                                      |
 
 ### env restore
 
 Restore previously backed-up `.env*` files from the backup directory back to their original
 repository paths. Only files whose basename starts with `.env` are restored.
 
+If destination files already exist, the user is prompted for confirmation before overwriting.
+Use `--force` to skip the prompt. JSON and markdown output modes imply `--force`.
+
+Use `--include-config` to also restore known uncommitted local configuration files.
+
 ```bash
-# Restore from default directory ~/ose-env-bkup
+# Restore from default directory ~/ose-open-env-backup
 rhino-cli env restore
 
 # Restore from a custom directory
@@ -910,14 +938,22 @@ rhino-cli env restore --dir /tmp/my-env-backup
 # Restore from worktree-namespaced backup
 rhino-cli env restore --worktree-aware
 
-# JSON output
+# Skip overwrite confirmation
+rhino-cli env restore --force
+
+# Include config files
+rhino-cli env restore --include-config
+
+# JSON output (implies --force)
 rhino-cli env restore -o json
 ```
 
 **Flags:**
 
-- `--dir <path>` - Backup source directory (default: `~/ose-env-bkup`)
+- `--dir <path>` - Backup source directory (default: `~/ose-open-env-backup`)
 - `--worktree-aware` - Read from worktree-namespaced backup
+- `--force` / `-f` - Skip overwrite confirmation prompt
+- `--include-config` - Also restore known uncommitted config files
 
 ## Help Commands
 

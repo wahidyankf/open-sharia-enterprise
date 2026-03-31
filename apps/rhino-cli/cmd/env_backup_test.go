@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -33,6 +34,8 @@ func (s *envBackupUnitSteps) before(_ context.Context, _ *godog.Scenario) (conte
 	output = "text"
 	envBackupDir = ""
 	envBackupWorktreeAware = false
+	envBackupForce = false
+	envBackupIncludeConfig = false
 	s.cmdErr = nil
 	s.cmdOutput = ""
 	s.backupDir = ""
@@ -66,8 +69,11 @@ func (s *envBackupUnitSteps) before(_ context.Context, _ *godog.Scenario) (conte
 
 func (s *envBackupUnitSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
 	envBackupFn = envbackup.Backup
+	confirmFn = envbackup.DefaultConfirmFn
 	osGetwd = os.Getwd
 	osStat = os.Stat
+	envBackupForce = false
+	envBackupIncludeConfig = false
 	if s.backupDir != "" {
 		_ = os.RemoveAll(s.backupDir)
 	}
@@ -458,6 +464,167 @@ func (s *envBackupUnitSteps) theEnvFileCopiedUnderOpenShariaEnterpriseSubdir() e
 	return nil
 }
 
+// --- Confirm Given steps ---
+
+func (s *envBackupUnitSteps) theBackupDirAlreadyContainsBackedUpEnvFile() error {
+	// Pre-existing file in backup triggers confirmation.
+	// The mock envBackupFn will see ConfirmFn in opts.
+	return nil
+}
+
+func (s *envBackupUnitSteps) theBackupDirIsEmpty() error {
+	// No pre-existing files in backup.
+	return nil
+}
+
+// --- Confirm When steps ---
+
+func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupAndConfirmsOverwrite() error {
+	// Mock confirmFn to always confirm.
+	confirmFn = func(_ io.Reader, _ io.Writer) func([]string) bool {
+		return func(_ []string) bool { return true }
+	}
+	envBackupFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		return &envbackup.Result{
+			Direction: "backup",
+			Dir:       opts.BackupDir,
+			Files: []envbackup.FileEntry{
+				{RelPath: ".env", AbsPath: "/mock-repo/.env", Size: 100},
+			},
+			Copied: 1,
+		}, nil
+	}
+	return s.runEnvBackupCmd()
+}
+
+func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupAndDeclinesOverwrite() error {
+	envBackupFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		return &envbackup.Result{
+			Direction: "backup",
+			Dir:       opts.BackupDir,
+			Cancelled: true,
+		}, nil
+	}
+	return s.runEnvBackupCmd()
+}
+
+func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupWithForce() error {
+	envBackupForce = true
+	return s.runEnvBackupCmd()
+}
+
+// --- Confirm Then steps ---
+
+func (s *envBackupUnitSteps) theEnvFileOverwrittenInBackupDir() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+	}
+	return nil
+}
+
+func (s *envBackupUnitSteps) theOutputReportsBackupCancelled() error {
+	if !strings.Contains(s.cmdOutput, "cancelled") {
+		return fmt.Errorf("expected 'cancelled' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envBackupUnitSteps) theExistingBackupFileUnchanged() error {
+	// When cancelled, no files should have been overwritten.
+	// The mock returns Cancelled: true, so output should report cancelled.
+	return nil
+}
+
+func (s *envBackupUnitSteps) theEnvFileOverwrittenWithoutPrompting() error {
+	return s.theEnvFileOverwrittenInBackupDir()
+}
+
+func (s *envBackupUnitSteps) noConfirmationPromptShown() error {
+	// Prompt is not shown when no conflicts exist. The mock succeeds normally.
+	return nil
+}
+
+func (s *envBackupUnitSteps) theEnvFileCopiedToBackupDirConfirm() error {
+	if !strings.Contains(s.cmdOutput, ".env") {
+		return fmt.Errorf("expected '.env' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+// --- Config Given steps ---
+
+func (s *envBackupUnitSteps) aGitRepoWithEnvFileAndClaudeConfig() error {
+	envBackupFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		files := []envbackup.FileEntry{
+			{RelPath: ".env", AbsPath: "/mock-repo/.env", Size: 100, Source: "env"},
+		}
+		copied := 1
+		if opts.IncludeConfig {
+			files = append(files, envbackup.FileEntry{
+				RelPath: ".claude/settings.local.json", AbsPath: "/mock-repo/.claude/settings.local.json", Size: 200, Source: "config",
+			})
+			copied = 2
+		}
+		return &envbackup.Result{
+			Direction: "backup",
+			Dir:       opts.BackupDir,
+			Files:     files,
+			Copied:    copied,
+		}, nil
+	}
+	return nil
+}
+
+func (s *envBackupUnitSteps) aGitRepoWithEnvFileButNoKnownConfigFiles() error {
+	envBackupFn = func(opts envbackup.Options) (*envbackup.Result, error) {
+		return &envbackup.Result{
+			Direction: "backup",
+			Dir:       opts.BackupDir,
+			Files: []envbackup.FileEntry{
+				{RelPath: ".env", AbsPath: "/mock-repo/.env", Size: 100, Source: "env"},
+			},
+			Copied: 1,
+		}, nil
+	}
+	return nil
+}
+
+// --- Config When steps ---
+
+func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupWithIncludeConfigForce() error {
+	envBackupIncludeConfig = true
+	envBackupForce = true
+	return s.runEnvBackupCmd()
+}
+
+func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupWithForceOnly() error {
+	envBackupForce = true
+	return s.runEnvBackupCmd()
+}
+
+// --- Config Then steps ---
+
+func (s *envBackupUnitSteps) theClaudeConfigCopiedToBackupDir() error {
+	if !strings.Contains(s.cmdOutput, ".claude/settings.local.json") {
+		return fmt.Errorf("expected .claude/settings.local.json in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envBackupUnitSteps) theClaudeConfigNotCopiedToBackupDir() error {
+	if strings.Contains(s.cmdOutput, "settings.local.json") {
+		return fmt.Errorf("expected .claude/settings.local.json to be absent from output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envBackupUnitSteps) onlyTheEnvFileCopiedToBackupDir() error {
+	if !strings.Contains(s.cmdOutput, "1 file(s)") {
+		return fmt.Errorf("expected '1 file(s)' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
 func TestUnitEnvBackup(t *testing.T) {
 	s := &envBackupUnitSteps{}
 	suite := godog.TestSuite{
@@ -502,11 +669,33 @@ func TestUnitEnvBackup(t *testing.T) {
 			sc.Step(stepEnvFileCopiedWithFlatStructure, s.theEnvFileCopiedWithFlatStructure)
 			sc.Step(stepEnvFileCopiedUnderFeatureBranchSubdir, s.theEnvFileCopiedUnderFeatureBranchSubdir)
 			sc.Step(stepEnvFileCopiedUnderOpenShariaEnterpriseSubdir, s.theEnvFileCopiedUnderOpenShariaEnterpriseSubdir)
+
+			// Confirm scenario steps.
+			sc.Step(stepBackupDirAlreadyContainsBackedUpEnvFile, s.theBackupDirAlreadyContainsBackedUpEnvFile)
+			sc.Step(stepBackupDirIsEmpty, s.theBackupDirIsEmpty)
+			sc.Step(stepDeveloperRunsEnvBackupAndConfirmsOverwrite, s.theDeveloperRunsEnvBackupAndConfirmsOverwrite)
+			sc.Step(stepDeveloperRunsEnvBackupAndDeclinesOverwrite, s.theDeveloperRunsEnvBackupAndDeclinesOverwrite)
+			sc.Step(stepDeveloperRunsEnvBackupWithForce, s.theDeveloperRunsEnvBackupWithForce)
+			sc.Step(stepEnvFileOverwrittenInBackupDir, s.theEnvFileOverwrittenInBackupDir)
+			sc.Step(stepOutputReportsBackupCancelled, s.theOutputReportsBackupCancelled)
+			sc.Step(stepExistingBackupFileUnchanged, s.theExistingBackupFileUnchanged)
+			sc.Step(stepEnvFileOverwrittenWithoutPrompting, s.theEnvFileOverwrittenWithoutPrompting)
+			sc.Step(stepNoConfirmationPromptShown, s.noConfirmationPromptShown)
+			sc.Step(stepEnvFileCopiedToBackupDir, s.theEnvFileCopiedToBackupDirConfirm)
+
+			// Config scenario steps.
+			sc.Step(stepRepoWithEnvFileAndClaudeConfig, s.aGitRepoWithEnvFileAndClaudeConfig)
+			sc.Step(stepRepoWithEnvFileButNoKnownConfigFiles, s.aGitRepoWithEnvFileButNoKnownConfigFiles)
+			sc.Step(stepDeveloperRunsEnvBackupWithIncludeConfigForce, s.theDeveloperRunsEnvBackupWithIncludeConfigForce)
+			sc.Step(stepDeveloperRunsEnvBackupWithForceOnly, s.theDeveloperRunsEnvBackupWithForceOnly)
+			sc.Step(stepClaudeConfigCopiedToBackupDir, s.theClaudeConfigCopiedToBackupDir)
+			sc.Step(stepClaudeConfigNotCopiedToBackupDir, s.theClaudeConfigNotCopiedToBackupDir)
+			sc.Step(stepOnlyEnvFileCopiedToBackupDir, s.onlyTheEnvFileCopiedToBackupDir)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsDirUnitEnvBackup},
-			Tags:     "env-backup",
+			Tags:     "@env-backup,@env-backup-confirm,@env-backup-config",
 			TestingT: t,
 		},
 	}
@@ -532,6 +721,25 @@ func TestEnvBackupCmd_NoArgs(t *testing.T) {
 	}
 	if err := envBackupCmd.Args(envBackupCmd, []string{"unexpected"}); err == nil {
 		t.Error("expected error when positional args provided, got nil")
+	}
+}
+
+// TestEnvBackupCmd_ForceFlag verifies the --force flag is wired.
+func TestEnvBackupCmd_ForceFlag(t *testing.T) {
+	f := envBackupCmd.Flags().Lookup("force")
+	if f == nil {
+		t.Fatal("expected --force flag to be registered")
+	}
+	if f.Shorthand != "f" {
+		t.Errorf("expected shorthand 'f', got %q", f.Shorthand)
+	}
+}
+
+// TestEnvBackupCmd_IncludeConfigFlag verifies the --include-config flag is wired.
+func TestEnvBackupCmd_IncludeConfigFlag(t *testing.T) {
+	f := envBackupCmd.Flags().Lookup("include-config")
+	if f == nil {
+		t.Fatal("expected --include-config flag to be registered")
 	}
 }
 

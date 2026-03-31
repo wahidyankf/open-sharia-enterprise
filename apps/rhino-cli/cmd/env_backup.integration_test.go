@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -53,8 +54,11 @@ func (s *envBackupIntSteps) after(_ context.Context, _ *godog.Scenario, _ error)
 	envBackupDir = ""
 	envBackupWorktreeAware = false
 	envBackupFn = envbackup.Backup
+	confirmFn = envbackup.DefaultConfirmFn
 	osGetwd = os.Getwd
 	osStat = os.Stat
+	envBackupForce = false
+	envBackupIncludeConfig = false
 	if s.repoDir != "" {
 		_ = os.RemoveAll(s.repoDir)
 	}
@@ -504,6 +508,170 @@ func (s *envBackupIntSteps) theEnvFileCopiedUnderOpenShariaEnterpriseSubdir() er
 	return nil
 }
 
+// --- Confirm Given steps ---
+
+func (s *envBackupIntSteps) theBackupDirAlreadyContainsBackedUpEnvFile() error {
+	// Pre-populate the backup dir with .env so conflicts are detected.
+	if s.backupDir == "" {
+		return fmt.Errorf("backupDir not set; Given step for repo must run first")
+	}
+	return writeEnvFile(s.backupDir, ".env", "OLD=1\n")
+}
+
+func (s *envBackupIntSteps) theBackupDirIsEmpty() error {
+	// backupDir is already created fresh and empty by the repo Given step.
+	return nil
+}
+
+// --- Confirm When steps ---
+
+func (s *envBackupIntSteps) theDeveloperRunsEnvBackupAndConfirmsOverwrite() error {
+	envBackupForce = true // In integration tests, use force to simulate confirmation
+	return s.runCmd()
+}
+
+func (s *envBackupIntSteps) theDeveloperRunsEnvBackupAndDeclinesOverwrite() error {
+	// Inject a confirmFn that declines.
+	confirmFn = func(_ io.Reader, _ io.Writer) func([]string) bool {
+		return func(_ []string) bool { return false }
+	}
+	return s.runCmd()
+}
+
+func (s *envBackupIntSteps) theDeveloperRunsEnvBackupWithForce() error {
+	envBackupForce = true
+	return s.runCmd()
+}
+
+// --- Confirm Then steps ---
+
+func (s *envBackupIntSteps) theEnvFileOverwrittenInBackupDir() error {
+	envPath := filepath.Join(s.backupDir, ".env")
+	content, err := os.ReadFile(envPath)
+	if err != nil {
+		return fmt.Errorf("expected .env in backup dir: %v", err)
+	}
+	// Should contain the NEW content from the repo, not "OLD=1".
+	if strings.Contains(string(content), "OLD=1") {
+		return fmt.Errorf("expected .env to be overwritten but still has old content")
+	}
+	return nil
+}
+
+func (s *envBackupIntSteps) theOutputReportsBackupCancelled() error {
+	if !strings.Contains(s.cmdOutput, "cancelled") {
+		return fmt.Errorf("expected 'cancelled' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *envBackupIntSteps) theExistingBackupFileUnchanged() error {
+	envPath := filepath.Join(s.backupDir, ".env")
+	content, err := os.ReadFile(envPath)
+	if err != nil {
+		return fmt.Errorf("expected .env to still exist: %v", err)
+	}
+	if !strings.Contains(string(content), "OLD=1") {
+		return fmt.Errorf("expected .env to be unchanged with old content")
+	}
+	return nil
+}
+
+func (s *envBackupIntSteps) theEnvFileOverwrittenWithoutPrompting() error {
+	return s.theEnvFileOverwrittenInBackupDir()
+}
+
+func (s *envBackupIntSteps) noConfirmationPromptShown() error {
+	return nil
+}
+
+func (s *envBackupIntSteps) theEnvFileCopiedToBackupDirInt() error {
+	envPath := filepath.Join(s.backupDir, ".env")
+	if _, err := os.Stat(envPath); err != nil {
+		return fmt.Errorf("expected .env in backup dir: %v", err)
+	}
+	return nil
+}
+
+// --- Config Given steps ---
+
+func (s *envBackupIntSteps) aGitRepoWithEnvFileAndClaudeConfig() error {
+	repo, err := s.makeRepo("int-env-backup-config-*")
+	if err != nil {
+		return err
+	}
+	s.repoDir = repo
+	if err := writeEnvFile(repo, ".env", "KEY=val\n"); err != nil {
+		return err
+	}
+	if err := writeEnvFile(repo, ".claude/settings.local.json", `{"key":"val"}`); err != nil {
+		return err
+	}
+	backup, err := s.makeBackupDir("int-env-backup-config-dest-*")
+	if err != nil {
+		return err
+	}
+	s.backupDir = backup
+	envBackupDir = backup
+	return os.Chdir(repo)
+}
+
+func (s *envBackupIntSteps) aGitRepoWithEnvFileButNoKnownConfigFiles() error {
+	repo, err := s.makeRepo("int-env-backup-noconfig-*")
+	if err != nil {
+		return err
+	}
+	s.repoDir = repo
+	if err := writeEnvFile(repo, ".env", "KEY=val\n"); err != nil {
+		return err
+	}
+	backup, err := s.makeBackupDir("int-env-backup-noconfig-dest-*")
+	if err != nil {
+		return err
+	}
+	s.backupDir = backup
+	envBackupDir = backup
+	return os.Chdir(repo)
+}
+
+// --- Config When steps ---
+
+func (s *envBackupIntSteps) theDeveloperRunsEnvBackupWithIncludeConfigForce() error {
+	envBackupIncludeConfig = true
+	envBackupForce = true
+	return s.runCmd()
+}
+
+func (s *envBackupIntSteps) theDeveloperRunsEnvBackupWithForceOnly() error {
+	envBackupForce = true
+	return s.runCmd()
+}
+
+// --- Config Then steps ---
+
+func (s *envBackupIntSteps) theClaudeConfigCopiedToBackupDir() error {
+	configPath := filepath.Join(s.backupDir, ".claude", "settings.local.json")
+	if _, err := os.Stat(configPath); err != nil {
+		return fmt.Errorf("expected .claude/settings.local.json in backup dir: %v", err)
+	}
+	return nil
+}
+
+func (s *envBackupIntSteps) theClaudeConfigNotCopiedToBackupDir() error {
+	configPath := filepath.Join(s.backupDir, ".claude", "settings.local.json")
+	if _, err := os.Stat(configPath); err == nil {
+		return fmt.Errorf("expected .claude/settings.local.json to NOT be in backup dir")
+	}
+	return nil
+}
+
+func (s *envBackupIntSteps) onlyTheEnvFileCopiedToBackupDir() error {
+	if !strings.Contains(s.cmdOutput, "1 file(s)") {
+		return fmt.Errorf("expected '1 file(s)' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
 func TestIntegrationEnvBackup(t *testing.T) {
 	s := &envBackupIntSteps{}
 	suite := godog.TestSuite{
@@ -548,11 +716,33 @@ func TestIntegrationEnvBackup(t *testing.T) {
 			sc.Step(stepEnvFileCopiedWithFlatStructure, s.theEnvFileCopiedWithFlatStructure)
 			sc.Step(stepEnvFileCopiedUnderFeatureBranchSubdir, s.theEnvFileCopiedUnderFeatureBranchSubdir)
 			sc.Step(stepEnvFileCopiedUnderOpenShariaEnterpriseSubdir, s.theEnvFileCopiedUnderOpenShariaEnterpriseSubdir)
+
+			// Confirm scenario steps.
+			sc.Step(stepBackupDirAlreadyContainsBackedUpEnvFile, s.theBackupDirAlreadyContainsBackedUpEnvFile)
+			sc.Step(stepBackupDirIsEmpty, s.theBackupDirIsEmpty)
+			sc.Step(stepDeveloperRunsEnvBackupAndConfirmsOverwrite, s.theDeveloperRunsEnvBackupAndConfirmsOverwrite)
+			sc.Step(stepDeveloperRunsEnvBackupAndDeclinesOverwrite, s.theDeveloperRunsEnvBackupAndDeclinesOverwrite)
+			sc.Step(stepDeveloperRunsEnvBackupWithForce, s.theDeveloperRunsEnvBackupWithForce)
+			sc.Step(stepEnvFileOverwrittenInBackupDir, s.theEnvFileOverwrittenInBackupDir)
+			sc.Step(stepOutputReportsBackupCancelled, s.theOutputReportsBackupCancelled)
+			sc.Step(stepExistingBackupFileUnchanged, s.theExistingBackupFileUnchanged)
+			sc.Step(stepEnvFileOverwrittenWithoutPrompting, s.theEnvFileOverwrittenWithoutPrompting)
+			sc.Step(stepNoConfirmationPromptShown, s.noConfirmationPromptShown)
+			sc.Step(stepEnvFileCopiedToBackupDir, s.theEnvFileCopiedToBackupDirInt)
+
+			// Config scenario steps.
+			sc.Step(stepRepoWithEnvFileAndClaudeConfig, s.aGitRepoWithEnvFileAndClaudeConfig)
+			sc.Step(stepRepoWithEnvFileButNoKnownConfigFiles, s.aGitRepoWithEnvFileButNoKnownConfigFiles)
+			sc.Step(stepDeveloperRunsEnvBackupWithIncludeConfigForce, s.theDeveloperRunsEnvBackupWithIncludeConfigForce)
+			sc.Step(stepDeveloperRunsEnvBackupWithForceOnly, s.theDeveloperRunsEnvBackupWithForceOnly)
+			sc.Step(stepClaudeConfigCopiedToBackupDir, s.theClaudeConfigCopiedToBackupDir)
+			sc.Step(stepClaudeConfigNotCopiedToBackupDir, s.theClaudeConfigNotCopiedToBackupDir)
+			sc.Step(stepOnlyEnvFileCopiedToBackupDir, s.onlyTheEnvFileCopiedToBackupDir)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsIntEnvBackupDir},
-			Tags:     "env-backup",
+			Tags:     "@env-backup,@env-backup-confirm,@env-backup-config",
 			TestingT: t,
 		},
 	}

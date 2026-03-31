@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -50,6 +51,40 @@ func Restore(opts Options) (*Result, error) {
 		return nil, fmt.Errorf("discover backup files: %w", err)
 	}
 
+	// Config discovery from backup dir.
+	if opts.IncludeConfig {
+		// Set Source: "env" on discovered entries for clarity.
+		for i := range entries {
+			if entries[i].Source == "" {
+				entries[i].Source = "env"
+			}
+		}
+		configEntries, err := DiscoverConfig(srcRoot, DefaultConfigPatterns, opts.MaxSize)
+		if err != nil {
+			return nil, fmt.Errorf("discover config files: %w", err)
+		}
+		entries = append(entries, configEntries...)
+		sort.Slice(entries, func(i, j int) bool { return entries[i].RelPath < entries[j].RelPath })
+	}
+
+	// Confirmation check.
+	if !opts.Force && opts.ConfirmFn != nil {
+		// Build a filtered list of entries that will actually be restored.
+		var restoreEntries []FileEntry
+		for _, e := range entries {
+			base := filepath.Base(e.RelPath)
+			if e.Source == "config" || strings.HasPrefix(base, ".env") {
+				restoreEntries = append(restoreEntries, e)
+			}
+		}
+		existing := FindExisting(restoreEntries, opts.RepoRoot)
+		if len(existing) > 0 {
+			if !opts.ConfirmFn(existing) {
+				return &Result{Direction: "restore", Dir: opts.BackupDir, Cancelled: true}, nil
+			}
+		}
+	}
+
 	result := &Result{
 		Direction:    "restore",
 		Dir:          opts.BackupDir,
@@ -57,9 +92,9 @@ func Restore(opts Options) (*Result, error) {
 	}
 
 	for _, e := range entries {
-		// Only restore files whose basename starts with ".env".
+		// Only restore files whose basename starts with ".env" OR config files.
 		base := filepath.Base(e.RelPath)
-		if !strings.HasPrefix(base, ".env") {
+		if e.Source != "config" && !strings.HasPrefix(base, ".env") {
 			continue
 		}
 

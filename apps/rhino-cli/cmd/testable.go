@@ -71,6 +71,9 @@ var envBackupFn = envbackup.Backup
 // env restore command delegation.
 var envRestoreFn = envbackup.Restore
 
+// confirm prompt function delegation.
+var confirmFn = envbackup.DefaultConfirmFn
+
 // git pre-commit command delegation.
 var gitRunFn = git.Run
 var gitDefaultDepsFn = git.DefaultDeps

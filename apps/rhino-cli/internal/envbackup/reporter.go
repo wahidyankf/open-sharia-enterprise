@@ -15,6 +15,16 @@ import (
 func FormatText(r *Result, verbose, quiet bool) string {
 	var sb strings.Builder
 
+	// Handle cancelled result.
+	if r.Cancelled {
+		label := r.Direction
+		if label == "" {
+			label = "operation"
+		}
+		fmt.Fprintf(&sb, "%s cancelled.\n", capitalize(label))
+		return sb.String()
+	}
+
 	if !quiet {
 		// Per-file lines.
 		for _, f := range r.Files {
@@ -24,7 +34,11 @@ func FormatText(r *Result, verbose, quiet bool) string {
 				}
 				continue
 			}
-			fmt.Fprintf(&sb, "  %s  %s\n", strings.ToUpper(r.Direction), f.RelPath)
+			tag := ""
+			if f.Source == "config" {
+				tag = " [config]"
+			}
+			fmt.Fprintf(&sb, "  %s  %s%s\n", strings.ToUpper(r.Direction), f.RelPath, tag)
 		}
 
 		// Non-fatal warnings.
@@ -40,6 +54,17 @@ func FormatText(r *Result, verbose, quiet bool) string {
 	}
 	fmt.Fprintf(&sb, "%s complete: %d file(s) %s, %d skipped",
 		capitalize(label), r.Copied, label+"d", r.Skipped)
+
+	// Config count in summary when present.
+	configCount := 0
+	for _, f := range r.Files {
+		if f.Source == "config" && !f.Skipped {
+			configCount++
+		}
+	}
+	if configCount > 0 {
+		fmt.Fprintf(&sb, " (%d config)", configCount)
+	}
 
 	if r.WorktreeName != "" {
 		fmt.Fprintf(&sb, "  [worktree: %s]", r.WorktreeName)
@@ -58,6 +83,7 @@ type jsonResult struct {
 	Skipped      int             `json:"skipped"`
 	Errors       []string        `json:"errors,omitempty"`
 	WorktreeName string          `json:"worktreeName,omitempty"`
+	Cancelled    bool            `json:"cancelled,omitempty"`
 }
 
 type jsonFileEntry struct {
@@ -65,6 +91,7 @@ type jsonFileEntry struct {
 	Size    int64  `json:"size,omitempty"`
 	Skipped bool   `json:"skipped,omitempty"`
 	Reason  string `json:"reason,omitempty"`
+	Source  string `json:"source,omitempty"`
 }
 
 // FormatJSON serialises the result to a JSON string.
@@ -76,6 +103,7 @@ func FormatJSON(r *Result) (string, error) {
 			Size:    f.Size,
 			Skipped: f.Skipped,
 			Reason:  f.Reason,
+			Source:  f.Source,
 		}
 	}
 
@@ -87,6 +115,7 @@ func FormatJSON(r *Result) (string, error) {
 		Skipped:      r.Skipped,
 		Errors:       r.Errors,
 		WorktreeName: r.WorktreeName,
+		Cancelled:    r.Cancelled,
 	}
 
 	b, err := json.MarshalIndent(out, "", "  ")
@@ -109,13 +138,37 @@ func FormatMarkdown(r *Result) string {
 		fmt.Fprintf(&sb, "**Worktree**: `%s`\n\n", r.WorktreeName)
 	}
 
+	// Handle cancelled result.
+	if r.Cancelled {
+		label := r.Direction
+		if label == "" {
+			label = "operation"
+		}
+		fmt.Fprintf(&sb, "_%s cancelled._\n", capitalize(label))
+		return sb.String()
+	}
+
 	if len(r.Files) == 0 {
 		fmt.Fprintln(&sb, "_No .env files found._")
 		return sb.String()
 	}
 
-	fmt.Fprintln(&sb, "| File | Size (bytes) | Status | Reason |")
-	fmt.Fprintln(&sb, "|------|-------------|--------|--------|")
+	// Detect if any config files are present for an extra source column.
+	hasConfig := false
+	for _, f := range r.Files {
+		if f.Source == "config" {
+			hasConfig = true
+			break
+		}
+	}
+
+	if hasConfig {
+		fmt.Fprintln(&sb, "| File | Size (bytes) | Source | Status | Reason |")
+		fmt.Fprintln(&sb, "|------|-------------|--------|--------|--------|")
+	} else {
+		fmt.Fprintln(&sb, "| File | Size (bytes) | Status | Reason |")
+		fmt.Fprintln(&sb, "|------|-------------|--------|--------|")
+	}
 
 	for _, f := range r.Files {
 		status := "copied"
@@ -126,7 +179,15 @@ func FormatMarkdown(r *Result) string {
 		}
 		// Normalise path separators for display.
 		displayPath := filepath.ToSlash(f.RelPath)
-		fmt.Fprintf(&sb, "| `%s` | %d | %s | %s |\n", displayPath, f.Size, status, reason)
+		if hasConfig {
+			source := f.Source
+			if source == "" {
+				source = "env"
+			}
+			fmt.Fprintf(&sb, "| `%s` | %d | %s | %s | %s |\n", displayPath, f.Size, source, status, reason)
+		} else {
+			fmt.Fprintf(&sb, "| `%s` | %d | %s | %s |\n", displayPath, f.Size, status, reason)
+		}
 	}
 
 	if len(r.Errors) > 0 {

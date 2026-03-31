@@ -282,6 +282,142 @@ func TestCapitalize_NonEmpty(t *testing.T) {
 	}
 }
 
+func TestFormatText_ConfigTag(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Files: []FileEntry{
+			{RelPath: ".env", Size: 42, Source: "env"},
+			{RelPath: ".claude/settings.local.json", Size: 100, Source: "config"},
+		},
+		Copied: 2,
+	}
+	out := FormatText(r, false, false)
+
+	if !strings.Contains(out, "[config]") {
+		t.Errorf("expected [config] tag in output; got: %q", out)
+	}
+	if !strings.Contains(out, ".claude/settings.local.json") {
+		t.Error("expected config file path in output")
+	}
+	if !strings.Contains(out, "(1 config)") {
+		t.Errorf("expected config count in summary; got: %q", out)
+	}
+}
+
+func TestFormatText_CancelledResult(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Cancelled: true,
+	}
+	out := FormatText(r, false, false)
+
+	if !strings.Contains(out, "Backup cancelled.") {
+		t.Errorf("expected 'Backup cancelled.' in output; got: %q", out)
+	}
+}
+
+func TestFormatText_CancelledRestore(t *testing.T) {
+	r := &Result{
+		Direction: "restore",
+		Dir:       "/tmp/backup",
+		Cancelled: true,
+	}
+	out := FormatText(r, false, false)
+
+	if !strings.Contains(out, "Restore cancelled.") {
+		t.Errorf("expected 'Restore cancelled.' in output; got: %q", out)
+	}
+}
+
+func TestFormatJSON_SourceField(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Files: []FileEntry{
+			{RelPath: ".env", Size: 42, Source: "env"},
+			{RelPath: ".claude/settings.local.json", Size: 100, Source: "config"},
+		},
+		Copied: 2,
+	}
+
+	out, err := FormatJSON(r)
+	if err != nil {
+		t.Fatalf("FormatJSON error: %v", err)
+	}
+
+	if !strings.Contains(out, `"source": "config"`) {
+		t.Errorf("expected source field in JSON; got: %s", out)
+	}
+	if !strings.Contains(out, `"source": "env"`) {
+		t.Errorf("expected source 'env' in JSON; got: %s", out)
+	}
+}
+
+func TestFormatJSON_CancelledField(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Cancelled: true,
+	}
+
+	out, err := FormatJSON(r)
+	if err != nil {
+		t.Fatalf("FormatJSON error: %v", err)
+	}
+
+	if !strings.Contains(out, `"cancelled": true`) {
+		t.Errorf("expected 'cancelled: true' in JSON; got: %s", out)
+	}
+}
+
+func TestFormatJSON_CancelledOmittedWhenFalse(t *testing.T) {
+	r := sampleBackupResult()
+
+	out, err := FormatJSON(r)
+	if err != nil {
+		t.Fatalf("FormatJSON error: %v", err)
+	}
+
+	if strings.Contains(out, "cancelled") {
+		t.Errorf("cancelled should be omitted when false; got: %s", out)
+	}
+}
+
+func TestFormatMarkdown_SourceColumn(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Files: []FileEntry{
+			{RelPath: ".env", Size: 42, Source: "env"},
+			{RelPath: ".claude/settings.local.json", Size: 100, Source: "config"},
+		},
+		Copied: 2,
+	}
+	out := FormatMarkdown(r)
+
+	if !strings.Contains(out, "| Source |") {
+		t.Errorf("expected Source column in markdown table; got: %q", out[:min(len(out), 300)])
+	}
+	if !strings.Contains(out, "config") {
+		t.Error("expected 'config' source in markdown table")
+	}
+}
+
+func TestFormatMarkdown_CancelledResult(t *testing.T) {
+	r := &Result{
+		Direction: "backup",
+		Dir:       "/tmp/backup",
+		Cancelled: true,
+	}
+	out := FormatMarkdown(r)
+
+	if !strings.Contains(out, "cancelled") {
+		t.Errorf("expected 'cancelled' in markdown output; got: %q", out)
+	}
+}
+
 func TestFormatText_EmptyDirection(t *testing.T) {
 	r := &Result{
 		Direction: "",

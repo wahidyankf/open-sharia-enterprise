@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -36,10 +37,39 @@ func Backup(opts Options) (*Result, error) {
 		return nil, fmt.Errorf("discover env files: %w", err)
 	}
 
+	// Set Source: "env" on discovered entries when IncludeConfig is active (for clarity).
+	if opts.IncludeConfig {
+		for i := range entries {
+			if entries[i].Source == "" {
+				entries[i].Source = "env"
+			}
+		}
+	}
+
+	// Config discovery.
+	if opts.IncludeConfig {
+		configEntries, err := DiscoverConfig(opts.RepoRoot, DefaultConfigPatterns, opts.MaxSize)
+		if err != nil {
+			return nil, fmt.Errorf("discover config files: %w", err)
+		}
+		entries = append(entries, configEntries...)
+		sort.Slice(entries, func(i, j int) bool { return entries[i].RelPath < entries[j].RelPath })
+	}
+
 	// Determine the effective destination root (worktree-aware namespacing).
 	destRoot := opts.BackupDir
 	if opts.WorktreeAware && opts.WorktreeName != "" {
 		destRoot = filepath.Join(opts.BackupDir, opts.WorktreeName)
+	}
+
+	// Confirmation check.
+	if !opts.Force && opts.ConfirmFn != nil {
+		existing := FindExisting(entries, destRoot)
+		if len(existing) > 0 {
+			if !opts.ConfirmFn(existing) {
+				return &Result{Direction: "backup", Dir: opts.BackupDir, Cancelled: true}, nil
+			}
+		}
 	}
 
 	if err := os.MkdirAll(destRoot, 0o750); err != nil {

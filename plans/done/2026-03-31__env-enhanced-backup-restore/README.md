@@ -1,6 +1,6 @@
 # Plan: Enhanced Env Backup/Restore — Confirmation Prompts and Config File Support
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-03-31
 
 ## Overview

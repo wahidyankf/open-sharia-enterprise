@@ -238,6 +238,55 @@ const (
 	stepEnvFileCopiedUnderOpenShariaEnterpriseSubdir = `^the \.env file is copied under an open-sharia-enterprise subdirectory inside the backup directory$`
 )
 
+// Env backup confirm step patterns.
+const (
+	stepBackupDirAlreadyContainsBackedUpEnvFile    = `^the backup directory already contains a backed-up \.env file$`
+	stepBackupDirIsEmpty                           = `^the backup directory is empty$`
+	stepDeveloperRunsEnvBackupAndConfirmsOverwrite = `^the developer runs rhino-cli env backup and confirms the overwrite$`
+	stepDeveloperRunsEnvBackupAndDeclinesOverwrite = `^the developer runs rhino-cli env backup and declines the overwrite$`
+	stepDeveloperRunsEnvBackupWithForce            = `^the developer runs rhino-cli env backup with --force$`
+	stepEnvFileOverwrittenInBackupDir              = `^the \.env file is overwritten in the backup directory$`
+	stepOutputReportsBackupCancelled               = `^the output reports that backup was cancelled$`
+	stepExistingBackupFileUnchanged                = `^the existing backup file is unchanged$`
+	stepEnvFileOverwrittenWithoutPrompting         = `^the \.env file is overwritten in the backup directory without prompting$`
+	stepNoConfirmationPromptShown                  = `^no confirmation prompt is shown$`
+	stepEnvFileCopiedToBackupDir                   = `^the \.env file is copied to the backup directory$`
+)
+
+// Env backup config step patterns.
+const (
+	stepRepoWithEnvFileAndClaudeConfig               = `^a git repository containing a \.env file and a \.claude/settings\.local\.json file$`
+	stepRepoWithEnvFileButNoKnownConfigFiles         = `^a git repository containing a \.env file but no known config files$`
+	stepDeveloperRunsEnvBackupWithIncludeConfigForce = `^the developer runs rhino-cli env backup with --include-config and --force$`
+	stepDeveloperRunsEnvBackupWithForceOnly          = `^the developer runs rhino-cli env backup with --force$`
+	stepClaudeConfigCopiedToBackupDir                = `^the \.claude/settings\.local\.json is copied to the backup directory preserving its relative path$`
+	stepClaudeConfigNotCopiedToBackupDir             = `^the \.claude/settings\.local\.json is not copied to the backup directory$`
+	stepOnlyEnvFileCopiedToBackupDir                 = `^only the \.env file is copied to the backup directory$`
+)
+
+// Env restore confirm step patterns.
+const (
+	stepRepoAlreadyContainsEnvFileAtOriginalPath    = `^the repository already contains a \.env file at the original path$`
+	stepRepoDoesNotContainEnvFileAtOriginalPath     = `^the repository does not contain a \.env file at the original path$`
+	stepDeveloperRunsEnvRestoreAndConfirmsOverwrite = `^the developer runs rhino-cli env restore and confirms the overwrite$`
+	stepDeveloperRunsEnvRestoreAndDeclinesOverwrite = `^the developer runs rhino-cli env restore and declines the overwrite$`
+	stepDeveloperRunsEnvRestoreWithForce            = `^the developer runs rhino-cli env restore with --force$`
+	stepEnvFileInRepoOverwrittenWithBackup          = `^the \.env file in the repository is overwritten with the backup$`
+	stepOutputReportsRestoreCancelled               = `^the output reports that restore was cancelled$`
+	stepExistingRepoFileUnchanged                   = `^the existing repository file is unchanged$`
+	stepEnvFileInRepoOverwrittenWithoutPrompting    = `^the \.env file in the repository is overwritten without prompting$`
+	stepEnvFileRestoredToRepo                       = `^the \.env file is restored to the repository$`
+)
+
+// Env restore config step patterns.
+const (
+	stepBackupDirWithEnvFileAndClaudeConfig           = `^a backup directory containing a \.env file and a \.claude/settings\.local\.json file$`
+	stepDeveloperRunsEnvRestoreWithIncludeConfigForce = `^the developer runs rhino-cli env restore with --include-config and --force$`
+	stepDeveloperRunsEnvRestoreWithForceOnly          = `^the developer runs rhino-cli env restore with --force$`
+	stepClaudeConfigRestoredToRepo                    = `^the \.claude/settings\.local\.json is restored to the repository preserving its relative path$`
+	stepClaudeConfigNotRestoredToRepo                 = `^the \.claude/settings\.local\.json is not restored to the repository$`
+)
+
 // Env restore step patterns.
 const (
 	stepBackupDirWithPreviouslyBackedUpEnvFiles      = `^a backup directory containing previously backed-up \.env files from the repository$`

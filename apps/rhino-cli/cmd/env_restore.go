@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -10,14 +11,23 @@ import (
 
 var envRestoreDir string
 var envRestoreWorktreeAware bool
+var envRestoreForce bool
+var envRestoreIncludeConfig bool
 
 var envRestoreCmd = &cobra.Command{
 	Use:   "restore",
 	Short: "Restore .env files from a backup",
 	Long: `Copy previously backed-up .env* files from the backup directory back to
 their original repository paths. Only files whose basename starts with
-".env" are restored; other files in the backup are ignored.`,
-	Example: `  # Restore from default directory ~/ose-env-bkup
+".env" are restored; other files in the backup are ignored.
+
+If destination files already exist, the user is prompted for confirmation
+before overwriting. Use --force to skip the prompt. JSON and markdown output
+modes imply --force. Non-TTY stdin also implies --force.
+
+Use --include-config to also restore known uncommitted local configuration
+files (AI tool settings, Docker overrides, version managers, direnv).`,
+	Example: `  # Restore from default directory ~/ose-open-env-backup
   rhino-cli env restore
 
   # Restore from a custom directory
@@ -26,7 +36,13 @@ their original repository paths. Only files whose basename starts with
   # Restore from worktree-namespaced backup
   rhino-cli env restore --worktree-aware
 
-  # JSON output
+  # Skip overwrite confirmation
+  rhino-cli env restore --force
+
+  # Include config files
+  rhino-cli env restore --include-config
+
+  # JSON output (implies --force)
   rhino-cli env restore -o json`,
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
@@ -35,8 +51,10 @@ their original repository paths. Only files whose basename starts with
 
 func init() {
 	envCmd.AddCommand(envRestoreCmd)
-	envRestoreCmd.Flags().StringVar(&envRestoreDir, "dir", "", "backup source directory (default: ~/ose-env-bkup)")
+	envRestoreCmd.Flags().StringVar(&envRestoreDir, "dir", "", "backup source directory (default: ~/ose-open-env-backup)")
 	envRestoreCmd.Flags().BoolVar(&envRestoreWorktreeAware, "worktree-aware", false, "read from worktree-namespaced backup")
+	envRestoreCmd.Flags().BoolVarP(&envRestoreForce, "force", "f", false, "skip overwrite confirmation")
+	envRestoreCmd.Flags().BoolVar(&envRestoreIncludeConfig, "include-config", false, "also restore known uncommitted config files")
 }
 
 func runEnvRestore(cmd *cobra.Command, _ []string) error {
@@ -63,11 +81,27 @@ func runEnvRestore(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	// Determine if force mode (explicit flag, non-text output, or non-TTY stdin).
+	force := envRestoreForce || output != "text"
+	if !force {
+		if fi, err := os.Stdin.Stat(); err == nil {
+			if fi.Mode()&os.ModeCharDevice == 0 {
+				force = true // stdin is not a terminal
+			}
+		}
+	}
+
 	opts := envbackup.Options{
 		RepoRoot:      repoRoot,
 		BackupDir:     backupDir,
 		MaxSize:       envbackup.DefaultMaxSize,
 		WorktreeAware: envRestoreWorktreeAware,
+		Force:         force,
+		IncludeConfig: envRestoreIncludeConfig,
+	}
+
+	if !force {
+		opts.ConfirmFn = confirmFn(os.Stdin, cmd.OutOrStderr())
 	}
 
 	if envRestoreWorktreeAware {

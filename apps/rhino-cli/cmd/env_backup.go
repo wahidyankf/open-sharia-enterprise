@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -10,6 +11,8 @@ import (
 
 var envBackupDir string
 var envBackupWorktreeAware bool
+var envBackupForce bool
+var envBackupIncludeConfig bool
 
 var envBackupCmd = &cobra.Command{
 	Use:   "backup",
@@ -18,8 +21,15 @@ var envBackupCmd = &cobra.Command{
 backup directory, preserving the relative directory structure.
 
 Auto-generated directories (node_modules, dist, build, .next, etc.) are
-skipped. Symlinks and files larger than 1 MB are skipped with a warning.`,
-	Example: `  # Back up to default directory ~/ose-env-bkup
+skipped. Symlinks and files larger than 1 MB are skipped with a warning.
+
+If destination files already exist, the user is prompted for confirmation
+before overwriting. Use --force to skip the prompt. JSON and markdown output
+modes imply --force. Non-TTY stdin also implies --force.
+
+Use --include-config to also back up known uncommitted local configuration
+files (AI tool settings, Docker overrides, version managers, direnv).`,
+	Example: `  # Back up to default directory ~/ose-open-env-backup
   rhino-cli env backup
 
   # Back up to a custom directory
@@ -28,7 +38,13 @@ skipped. Symlinks and files larger than 1 MB are skipped with a warning.`,
   # Namespace backup by worktree/repo name
   rhino-cli env backup --worktree-aware
 
-  # JSON output
+  # Skip overwrite confirmation
+  rhino-cli env backup --force
+
+  # Include uncommitted config files
+  rhino-cli env backup --include-config
+
+  # JSON output (implies --force)
   rhino-cli env backup -o json`,
 	Args:          cobra.NoArgs,
 	SilenceErrors: true,
@@ -37,8 +53,10 @@ skipped. Symlinks and files larger than 1 MB are skipped with a warning.`,
 
 func init() {
 	envCmd.AddCommand(envBackupCmd)
-	envBackupCmd.Flags().StringVar(&envBackupDir, "dir", "", "backup directory (default: ~/ose-env-bkup)")
+	envBackupCmd.Flags().StringVar(&envBackupDir, "dir", "", "backup directory (default: ~/ose-open-env-backup)")
 	envBackupCmd.Flags().BoolVar(&envBackupWorktreeAware, "worktree-aware", false, "namespace backup by worktree/repo directory name")
+	envBackupCmd.Flags().BoolVarP(&envBackupForce, "force", "f", false, "skip overwrite confirmation")
+	envBackupCmd.Flags().BoolVar(&envBackupIncludeConfig, "include-config", false, "also back up known uncommitted config files")
 }
 
 func runEnvBackup(cmd *cobra.Command, _ []string) error {
@@ -65,12 +83,28 @@ func runEnvBackup(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	// Determine if force mode (explicit flag, non-text output, or non-TTY stdin).
+	force := envBackupForce || output != "text"
+	if !force {
+		if fi, err := os.Stdin.Stat(); err == nil {
+			if fi.Mode()&os.ModeCharDevice == 0 {
+				force = true // stdin is not a terminal
+			}
+		}
+	}
+
 	opts := envbackup.Options{
 		RepoRoot:      repoRoot,
 		BackupDir:     backupDir,
 		SkipDirs:      envbackup.DefaultSkipDirs,
 		MaxSize:       envbackup.DefaultMaxSize,
 		WorktreeAware: envBackupWorktreeAware,
+		Force:         force,
+		IncludeConfig: envBackupIncludeConfig,
+	}
+
+	if !force {
+		opts.ConfirmFn = confirmFn(os.Stdin, cmd.OutOrStderr())
 	}
 
 	if envBackupWorktreeAware {

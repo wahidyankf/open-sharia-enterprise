@@ -357,6 +357,181 @@ func TestCopyFile_UnwritableDestDir(t *testing.T) {
 	}
 }
 
+func TestBackup_ForceOverwritesWithoutConfirmFn(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "NEW=2")
+	writeFile(t, filepath.Join(bkup, ".env"), "OLD=1") // pre-existing
+
+	confirmCalled := false
+	result, err := Backup(Options{
+		RepoRoot:  repo,
+		BackupDir: bkup,
+		SkipDirs:  DefaultSkipDirs,
+		Force:     true,
+		ConfirmFn: func(_ []string) bool { confirmCalled = true; return false },
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if confirmCalled {
+		t.Error("ConfirmFn should not be called when Force=true")
+	}
+	if result.Copied != 1 {
+		t.Errorf("Copied: got %d, want 1", result.Copied)
+	}
+}
+
+func TestBackup_ConfirmFnReturningTrueProceeds(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "NEW=2")
+	writeFile(t, filepath.Join(bkup, ".env"), "OLD=1") // pre-existing
+
+	result, err := Backup(Options{
+		RepoRoot:  repo,
+		BackupDir: bkup,
+		SkipDirs:  DefaultSkipDirs,
+		ConfirmFn: func(_ []string) bool { return true },
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if result.Cancelled {
+		t.Error("expected Cancelled=false when ConfirmFn returns true")
+	}
+	if result.Copied != 1 {
+		t.Errorf("Copied: got %d, want 1", result.Copied)
+	}
+}
+
+func TestBackup_ConfirmFnReturningFalseCancels(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "NEW=2")
+	writeFile(t, filepath.Join(bkup, ".env"), "OLD=1") // pre-existing
+
+	result, err := Backup(Options{
+		RepoRoot:  repo,
+		BackupDir: bkup,
+		SkipDirs:  DefaultSkipDirs,
+		ConfirmFn: func(_ []string) bool { return false },
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if !result.Cancelled {
+		t.Error("expected Cancelled=true when ConfirmFn returns false")
+	}
+}
+
+func TestBackup_NoExistingSkipsConfirmation(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "KEY=1")
+	// No pre-existing files in backup.
+
+	confirmCalled := false
+	result, err := Backup(Options{
+		RepoRoot:  repo,
+		BackupDir: bkup,
+		SkipDirs:  DefaultSkipDirs,
+		ConfirmFn: func(_ []string) bool { confirmCalled = true; return false },
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if confirmCalled {
+		t.Error("ConfirmFn should not be called when no existing files")
+	}
+	if result.Copied != 1 {
+		t.Errorf("Copied: got %d, want 1", result.Copied)
+	}
+}
+
+func TestBackup_IncludeConfigTrue(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "KEY=1")
+	writeFile(t, filepath.Join(repo, ".claude", "settings.local.json"), `{"key":"val"}`)
+
+	result, err := Backup(Options{
+		RepoRoot:      repo,
+		BackupDir:     bkup,
+		SkipDirs:      DefaultSkipDirs,
+		Force:         true,
+		IncludeConfig: true,
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if result.Copied != 2 {
+		t.Errorf("Copied: got %d, want 2", result.Copied)
+	}
+
+	// Verify config file is in backup.
+	configDst := filepath.Join(bkup, ".claude", "settings.local.json")
+	if _, err := os.Stat(configDst); err != nil {
+		t.Errorf("expected config file at %s: %v", configDst, err)
+	}
+
+	// Verify source markers.
+	envCount, configCount := 0, 0
+	for _, f := range result.Files {
+		if f.Source == "env" {
+			envCount++
+		}
+		if f.Source == "config" {
+			configCount++
+		}
+	}
+	if envCount != 1 {
+		t.Errorf("expected 1 env source, got %d", envCount)
+	}
+	if configCount != 1 {
+		t.Errorf("expected 1 config source, got %d", configCount)
+	}
+}
+
+func TestBackup_IncludeConfigFalse(t *testing.T) {
+	tmp := t.TempDir()
+	repo := makeDir(t, tmp, "repo")
+	bkup := makeDir(t, tmp, "backup")
+
+	writeFile(t, filepath.Join(repo, ".env"), "KEY=1")
+	writeFile(t, filepath.Join(repo, ".claude", "settings.local.json"), `{"key":"val"}`)
+
+	result, err := Backup(Options{
+		RepoRoot:      repo,
+		BackupDir:     bkup,
+		SkipDirs:      DefaultSkipDirs,
+		Force:         true,
+		IncludeConfig: false,
+	})
+	if err != nil {
+		t.Fatalf("Backup error: %v", err)
+	}
+	if result.Copied != 1 {
+		t.Errorf("Copied: got %d, want 1 (.env only)", result.Copied)
+	}
+
+	// Verify config file is NOT in backup.
+	configDst := filepath.Join(bkup, ".claude", "settings.local.json")
+	if _, err := os.Stat(configDst); !os.IsNotExist(err) {
+		t.Error("config file should not be in backup when IncludeConfig=false")
+	}
+}
+
 func TestBackup_SkippedFileCountedCorrectly(t *testing.T) {
 	tmp := t.TempDir()
 	repo := makeDir(t, tmp, "repo")
