@@ -16,11 +16,11 @@ on:
         type: string
         default: "infra/dev/a-demo-be-golang-gin"
         description: "Path to backend compose directory for codegen (default: infra/dev/a-demo-be-golang-gin)"
-      extra-setup-action:
+      extra-language:
         required: false
         type: string
         default: ""
-        description: "Additional composite setup action (e.g., ./.github/actions/setup-flutter)"
+        description: "Additional language runtime to set up (e.g., flutter)"
       extra-codegen-targets:
         required: false
         type: string
@@ -45,10 +45,11 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-docker-cache
       - uses: ./.github/actions/setup-golang
-
-      - name: Run extra setup action
-        if: inputs.extra-setup-action != ''
-        uses: ${{ inputs.extra-setup-action }}
+      - name: Setup extra language runtime
+        if: inputs.extra-language != ''
+        uses: ./.github/actions/setup-language
+        with:
+          language: ${{ inputs.extra-language }}
 
       - name: Generate contract types
         run: |
@@ -58,6 +59,10 @@ jobs:
           for target in ${{ inputs.extra-codegen-targets }}; do
             npx nx run "$target"
           done
+
+      - name: Flutter pub get (after codegen)
+        if: inputs.extra-language == 'flutter'
+        run: cd apps/a-demo-fe-dart-flutterweb && flutter pub get
 
       - name: Start full stack
         run: docker compose -f ${{ inputs.compose-dir }}/docker-compose.yml up --build -d

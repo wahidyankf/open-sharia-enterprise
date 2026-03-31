@@ -14,31 +14,31 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-lint.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
 
   typecheck:
     uses: ./.github/workflows/_reusable-backend-typecheck.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
 
   coverage:
     uses: ./.github/workflows/_reusable-backend-coverage.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
 
   spec-coverage:
     uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
 
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
       compose-file: apps/a-demo-be-elixir-phoenix/docker-compose.integration.yml
 
   e2e:
@@ -46,6 +46,6 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-be-elixir-phoenix
-      setup-action: ./.github/actions/setup-elixir
+      language: elixir
       compose-dir: infra/dev/a-demo-be-elixir-phoenix
       health-timeout: 900

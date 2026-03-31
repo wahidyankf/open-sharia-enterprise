@@ -14,31 +14,31 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-lint.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
 
   typecheck:
     uses: ./.github/workflows/_reusable-backend-typecheck.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
 
   coverage:
     uses: ./.github/workflows/_reusable-backend-coverage.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
 
   spec-coverage:
     uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
 
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
       compose-file: apps/a-demo-be-ts-effect/docker-compose.integration.yml
 
   e2e:
@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-be-ts-effect
-      setup-action: ./.github/actions/setup-node
+      language: typescript
       compose-dir: infra/dev/a-demo-be-ts-effect
       be-e2e-target: "test:e2e:no-test-api"
       be-e2e-extra-env: "DATABASE_URL=postgresql://a_demo_be_ts_effect:a_demo_be_ts_effect@localhost:5432/a_demo_be_ts_effect"

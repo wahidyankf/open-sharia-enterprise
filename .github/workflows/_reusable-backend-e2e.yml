@@ -6,10 +6,10 @@ on:
       backend-name:
         required: true
         type: string
-      setup-action:
+      language:
         required: true
         type: string
-        description: "Path to composite setup action (e.g., ./.github/actions/setup-golang)"
+        description: "Language runtime (golang, jvm, dotnet, python, rust, elixir, clojure, typescript)"
       compose-dir:
         required: true
         type: string
@@ -81,7 +81,9 @@ jobs:
       - name: Install oapi-codegen
         run: go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 
-      - uses: ${{ inputs.setup-action }}
+      - uses: ./.github/actions/setup-language
+        with:
+          language: ${{ inputs.language }}
 
       - name: Generate contract types
         run: |

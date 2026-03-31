@@ -1,0 +1,25 @@
+name: "Setup Language Runtime"
+description: "Dispatch to the correct language setup composite action based on language input"
+inputs:
+  language:
+    required: true
+    description: "Language runtime to set up (golang, jvm, dotnet, python, rust, elixir, clojure, flutter, typescript)"
+runs:
+  using: "composite"
+  steps:
+    - if: inputs.language == 'golang'
+      uses: ./.github/actions/setup-golang
+    - if: inputs.language == 'jvm'
+      uses: ./.github/actions/setup-jvm
+    - if: inputs.language == 'dotnet'
+      uses: ./.github/actions/setup-dotnet
+    - if: inputs.language == 'python'
+      uses: ./.github/actions/setup-python
+    - if: inputs.language == 'rust'
+      uses: ./.github/actions/setup-rust
+    - if: inputs.language == 'elixir'
+      uses: ./.github/actions/setup-elixir
+    - if: inputs.language == 'clojure'
+      uses: ./.github/actions/setup-clojure
+    - if: inputs.language == 'flutter'
+      uses: ./.github/actions/setup-flutter

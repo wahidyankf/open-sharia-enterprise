@@ -21,9 +21,5 @@ runs:
         restore-keys: |
           pub-${{ runner.os }}-
 
-    - name: Get pub dependencies
-      shell: bash
-      run: |
-        if [ -f "apps/a-demo-fe-dart-flutterweb/pubspec.yaml" ]; then
-          cd apps/a-demo-fe-dart-flutterweb && flutter pub get
-        fi
+    # Note: flutter pub get must run AFTER codegen (generated-contracts dependency).
+    # Callers are responsible for running flutter pub get after contract generation.

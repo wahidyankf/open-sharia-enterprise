@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-fs-ts-nextjs
-      setup-action: ./.github/actions/setup-node
+      language: typescript
       compose-file: apps/a-demo-fs-ts-nextjs/docker-compose.integration.yml
 
   e2e:
@@ -22,7 +22,7 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-fs-ts-nextjs
-      setup-action: ./.github/actions/setup-node
+      language: typescript
       compose-dir: infra/dev/a-demo-fs-ts-nextjs
       frontend-port: 3401
       backend-port: 3401

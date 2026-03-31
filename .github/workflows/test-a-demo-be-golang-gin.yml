@@ -14,31 +14,31 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-lint.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
 
   typecheck:
     uses: ./.github/workflows/_reusable-backend-typecheck.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
 
   coverage:
     uses: ./.github/workflows/_reusable-backend-coverage.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
 
   spec-coverage:
     uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
 
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
       compose-file: apps/a-demo-be-golang-gin/docker-compose.integration.yml
 
   e2e:
@@ -46,5 +46,5 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-be-golang-gin
-      setup-action: ./.github/actions/setup-golang
+      language: golang
       compose-dir: infra/dev/a-demo-be-golang-gin

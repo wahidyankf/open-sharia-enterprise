@@ -6,10 +6,10 @@ on:
       backend-name:
         required: true
         type: string
-      setup-action:
+      language:
         required: true
         type: string
-        description: "Path to composite setup action (e.g., ./.github/actions/setup-golang)"
+        description: "Language runtime (golang, jvm, dotnet, python, rust, elixir, clojure, typescript)"
 
 permissions:
   contents: read
@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
-      - uses: ${{ inputs.setup-action }}
+      - uses: ./.github/actions/setup-language
+        with:
+          language: ${{ inputs.language }}
       - name: Generate contract types
         run: |
           npx nx run a-demo-contracts:bundle

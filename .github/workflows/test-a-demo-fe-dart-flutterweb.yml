@@ -15,6 +15,6 @@ jobs:
     with:
       frontend-name: a-demo-fe-dart-flutterweb
       compose-dir: infra/dev/a-demo-fe-dart-flutterweb
-      extra-setup-action: ./.github/actions/setup-flutter
+      extra-language: flutter
       extra-codegen-targets: "a-demo-fe-ts-nextjs:codegen a-demo-fe-ts-tanstack-start:codegen"
       health-timeout: 600

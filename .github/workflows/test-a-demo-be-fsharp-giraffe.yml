@@ -14,31 +14,31 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-lint.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
 
   typecheck:
     uses: ./.github/workflows/_reusable-backend-typecheck.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
 
   coverage:
     uses: ./.github/workflows/_reusable-backend-coverage.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
 
   spec-coverage:
     uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
 
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
       compose-file: apps/a-demo-be-fsharp-giraffe/docker-compose.integration.yml
 
   e2e:
@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-be-fsharp-giraffe
-      setup-action: ./.github/actions/setup-dotnet
+      language: dotnet
       compose-dir: infra/dev/a-demo-be-fsharp-giraffe
       be-e2e-target: "test:e2e:no-test-api"
       be-e2e-extra-env: "DATABASE_URL=postgresql://a_demo_be_fsharp_giraffe:a_demo_be_fsharp_giraffe@localhost:5432/a_demo_be_fsharp_giraffe"

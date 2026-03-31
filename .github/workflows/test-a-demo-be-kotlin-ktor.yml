@@ -14,31 +14,31 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-lint.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
 
   typecheck:
     uses: ./.github/workflows/_reusable-backend-typecheck.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
 
   coverage:
     uses: ./.github/workflows/_reusable-backend-coverage.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
 
   spec-coverage:
     uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
 
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
       compose-file: apps/a-demo-be-kotlin-ktor/docker-compose.integration.yml
 
   e2e:
@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/_reusable-backend-e2e.yml
     with:
       backend-name: a-demo-be-kotlin-ktor
-      setup-action: ./.github/actions/setup-jvm
+      language: jvm
       compose-dir: infra/dev/a-demo-be-kotlin-ktor
       be-e2e-target: "test:e2e:no-test-api"
       be-e2e-extra-env: "DATABASE_URL=postgresql://a_demo_be_kotlin_ktor:a_demo_be_kotlin_ktor@localhost:5432/a_demo_be_kotlin_ktor"
