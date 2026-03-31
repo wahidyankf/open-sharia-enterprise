@@ -762,7 +762,6 @@ specs/
 **Gaps** (measured against the standard in
 [R0.2 Specs Folder Standard](#specs-folder-standard)):
 
-- `a-demo/` lacks `c4/` directory (other apps have it)
 - `a-demo/` lacks `fs/gherkin/` for fullstack-specific specs
 - CLI specs (`rhino-cli/`, `ayokoding-cli/`, `oseplatform-cli/`) use flat domain directories
   without `cli/gherkin/` nesting -- must be restructured to `specs/apps/{cli}/cli/gherkin/`
@@ -980,7 +979,7 @@ CI overlays extend dev compose files with:
 | Python/Rust/C#/Clojure/Dart not auto-formatted on commit        | Manual formatting burden                    | Medium   |
 | No Docker layer caching in CI                                   | Slow integration/E2E test cycles            | Medium   |
 | CLI specs use flat domain dirs instead of `cli/gherkin/`        | Inconsistent with other app types           | Medium   |
-| `a-demo/` lacks `c4/` and `fs/gherkin/` directories             | Incomplete spec folder structure            | Low      |
+| `a-demo/` lacks `fs/gherkin/` directory                         | Incomplete spec folder structure            | Low      |
 
 ## Acceptance Criteria
 
@@ -1146,8 +1145,13 @@ Feature: CI Compliance Enforcement via Agents and Workflows
   Scenario: ci-checker validates all projects against CI standards
     Given the ci-checker agent
     When run against the repository
-    Then it checks mandatory Nx targets, coverage thresholds, Docker setup,
-         Gherkin consumption, spec-coverage targets, env files, and E2E pairing
+    Then it checks mandatory Nx targets per app type
+    And coverage thresholds are validated
+    And Docker setup requirements are verified
+    And Gherkin consumption is confirmed at all test levels
+    And spec-coverage targets exist for all testable projects
+    And env files are present in all infra/dev/ directories
+    And E2E pairing rules are enforced
     And it produces an audit report with findings per project
 
   Scenario: ci-fixer remediates common CI compliance gaps

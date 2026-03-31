@@ -95,7 +95,7 @@ duplication, inconsistent patterns, and undocumented conventions.
 | W13 | [CLI Docker Compose Setup](#w13-cli-docker-compose-setup)                         | 3     | W7                                                             |
 | W15 | [Accessibility Testing Remediation](#w15-accessibility-testing-remediation)       | 3     | W1, W11                                                        |
 | W16 | [Environment Variable Standardization](#w16-environment-variable-standardization) | 3     | W7                                                             |
-| W17 | [CI Compliance Enforcement](#w17-ci-compliance-enforcement)                       | 4     | W1, W14                                                        |
+| W17 | [CI Compliance Enforcement](#w17-ci-compliance-enforcement)                       | 4     | W1                                                             |
 | W14 | [Governance Propagation](#w14-governance-propagation)                             | 4     | W1-W17 (intentionally last — depends on all other workstreams) |
 
 ## Context

@@ -756,8 +756,8 @@ monorepo paths correctly. Test each integration before committing.
 | `pr-quality-gate.yml.bak`                                                  | Temporary backup created during PR quality gate refactor (W4); no longer needed post-validation | Cleanup    |
 | Redundant FE `test:integration` targets in `project.json` (not file-level) | FE apps require unit + e2e only; `test:integration` removed from FE project configs             | W11        |
 
-**Net change**: Create ~26 new files (11 composite actions + 8 reusable workflows + 3 docs +
-2 agents + 1 skill + 1 workflow),
+**Net change**: Create ~24 new files (11 composite actions + 8 reusable workflows + 1 governance
+doc + 2 agents + 1 skill + 1 workflow),
 rewrite 15 workflow files from ~150 lines each to ~30-40 lines each, delete 2 files. Total
 per-variant workflow YAML reduced from ~150 lines to ~40 lines (each calls reusable workflows
 for the heavy lifting).

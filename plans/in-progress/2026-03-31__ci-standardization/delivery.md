@@ -2,12 +2,12 @@
 
 ## Phase Overview
 
-| Phase       | Workstreams                  | Focus                                                         | Risk   |
-| ----------- | ---------------------------- | ------------------------------------------------------------- | ------ |
-| **Phase 1** | W1, W2                       | Foundation: governance docs + git hooks                       | Low    |
-| **Phase 2** | W3, W4, W7                   | Core: composite actions + PR gate + Docker standards          | Medium |
-| **Phase 3** | W5, W6, W8, W11-W13, W15-W16 | DRY-up: workflows, Gherkin, a11y, env vars, specs, CLI Docker | Medium |
-| **Phase 4** | W9, W10, W14                 | Optimization: caching, spec-coverage, governance propagation  | Low    |
+| Phase       | Workstreams                  | Focus                                                                                | Risk   |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------------------ | ------ |
+| **Phase 1** | W1, W2                       | Foundation: governance docs + git hooks                                              | Low    |
+| **Phase 2** | W3, W4, W7                   | Core: composite actions + PR gate + Docker standards                                 | Medium |
+| **Phase 3** | W5, W6, W8, W11-W13, W15-W16 | DRY-up: workflows, Gherkin, a11y, env vars, specs, CLI Docker                        | Medium |
+| **Phase 4** | W9, W10, W17, W14            | Optimization: caching, spec-coverage, compliance enforcement, governance propagation | Low    |
 
 ## Phase 1: Foundation
 
@@ -186,6 +186,8 @@ links resolve correctly.
 - [ ] Test with PRs touching: (a) only TypeScript, (b) only Go, (c) multiple languages, (d) only docs
 - [ ] Compare CI times: old monolithic vs. new parallel approach
 - [ ] Keep old `pr-quality-gate.yml` as `pr-quality-gate.yml.bak` until new gate is validated
+      (GitHub Actions does not process `.bak` extension files in `.github/workflows/` --
+      this is safe to store there temporarily; delete in Post-Delivery Cleanup)
 
 **Validation**: PR touching only TypeScript completes in < 5 minutes. Cross-language PR runs all
 relevant jobs in parallel.
@@ -318,85 +320,6 @@ file reduced from ~100+ lines to ~30 lines via reusable workflow calls.
 **Validation**: Developer can run `npm run dev:{any-app}` and the service health check passes,
 confirming the environment is running and hot-reload is active.
 
-## Phase 4: Optimization
-
-### W9: CI Docker Caching & Optimization
-
-- [ ] Integrate `setup-docker-cache` composite action into reusable workflows:
-  - [ ] `_reusable-backend-integration.yml`: add Docker Buildx + cache
-  - [ ] `_reusable-backend-e2e.yml`: add Docker Buildx + cache
-  - [ ] `_reusable-frontend-e2e.yml`: add Docker Buildx + cache
-- [ ] Configure cache keys based on Dockerfile content hash:
-  - [ ] Key: `docker-${{ runner.os }}-${{ inputs.backend-name }}-${{ hashFiles('...Dockerfile*') }}`
-  - [ ] Restore keys: `docker-${{ runner.os }}-${{ inputs.backend-name }}-`
-- [ ] Measure CI times before and after caching:
-  - [ ] Record baseline times for 3 consecutive runs (no cache)
-  - [ ] Record cached times for 3 consecutive runs (warm cache)
-  - [ ] Target: 30-60% reduction for unchanged Dockerfiles
-- [ ] Update `codecov-upload.yml` to use composite actions:
-  - [ ] Replace inline language setup with composite action calls
-  - [ ] Verify all coverage uploads still work
-- [ ] Update `test-and-deploy-ayokoding-web.yml` to use reusable workflows
-- [ ] Update `test-and-deploy-oseplatform-web.yml` to use reusable workflows
-
-**Validation**: Cached CI runs are measurably faster. All coverage uploads succeed.
-
-### W10: Spec-Coverage Integration
-
-All spec-coverage validation uses `rhino-cli spec-coverage validate`. If rhino-cli needs
-enhancements to support new app types (FE unit specs, restructured CLI specs, content platform
-specs), update rhino-cli first.
-
-- [ ] Verify `rhino-cli spec-coverage validate` supports all app types:
-  - [ ] Test with BE projects (already supported)
-  - [ ] Test with FE projects (may need enhancement for vitest-cucumber step detection)
-  - [ ] Test with CLI projects after specs restructuring (W12 -- new `cli/gherkin/` paths)
-  - [ ] Test with content platform projects (tRPC step definitions)
-  - [ ] Update rhino-cli if needed to handle new step definition patterns or paths
-- [ ] Add `spec-coverage` Nx target to demo backend projects:
-  - [ ] `a-demo-be-golang-gin/project.json`
-  - [ ] `a-demo-be-java-springboot/project.json`
-  - [ ] `a-demo-be-ts-effect/project.json`
-  - [ ] `a-demo-be-python-fastapi/project.json`
-  - [ ] `a-demo-be-rust-axum/project.json`
-  - [ ] `a-demo-be-kotlin-ktor/project.json`
-  - [ ] `a-demo-be-fsharp-giraffe/project.json`
-  - [ ] `a-demo-be-csharp-aspnetcore/project.json`
-  - [ ] `a-demo-be-clojure-pedestal/project.json`
-  - [ ] `a-demo-be-elixir-phoenix/project.json`
-  - [ ] `a-demo-be-java-vertx/project.json`
-- [ ] Add `spec-coverage` Nx target to frontend projects:
-  - [ ] `a-demo-fe-ts-nextjs/project.json`
-  - [ ] `a-demo-fe-ts-tanstack-start/project.json`
-  - [ ] `a-demo-fe-dart-flutterweb/project.json`
-  - [ ] `organiclever-fe/project.json`
-- [ ] Add `spec-coverage` Nx target to fullstack and content platform projects:
-  - [ ] `a-demo-fs-ts-nextjs/project.json`
-  - [ ] `ayokoding-web/project.json`
-  - [ ] `oseplatform-web/project.json`
-- [ ] Add `spec-coverage` Nx target to E2E projects:
-  - [ ] `a-demo-be-e2e/project.json`
-  - [ ] `a-demo-fe-e2e/project.json`
-  - [ ] `organiclever-be-e2e/project.json`
-  - [ ] `organiclever-fe-e2e/project.json`
-- [ ] Add `spec-coverage` Nx target to CLI projects:
-  - [ ] `rhino-cli/project.json`
-  - [ ] `ayokoding-cli/project.json`
-  - [ ] `oseplatform-cli/project.json`
-- [ ] Configure cache inputs for spec-coverage targets:
-  - [ ] Include: `{workspaceRoot}/specs/.../**/*.feature` + `{projectRoot}/**/*.{ext}`
-  - [ ] Set `cache: true` (deterministic based on specs + test files)
-- [ ] Add `spec-coverage` to pre-push hook:
-  - [ ] `npx nx affected -t typecheck lint test:quick spec-coverage --parallel="$PARALLEL"`
-- [ ] Add `spec-coverage` to PR quality gate detection and language jobs
-- [ ] Run spec-coverage validation across all projects and fix any gaps:
-  - [ ] Document any intentionally unimplemented scenarios with `@skip` tags
-  - [ ] Ensure all feature files have corresponding step definitions
-- [ ] Update governance documentation with spec-coverage CI integration
-
-**Validation**: `npx nx affected -t spec-coverage` passes for all projects. Unimplemented
-scenarios are tagged `@skip` with documented rationale. PR quality gate includes spec-coverage.
-
 ### W11: Gherkin Consumption Remediation
 
 FE, content platform, and OrganicLever FE unit tests currently do NOT consume Gherkin specs.
@@ -412,6 +335,12 @@ This must be fixed so all test levels verify behavioral specs.
   - [ ] Document selected tool and rationale as AD10 in tech-docs.md
   - [ ] If no tool satisfies all criteria, document the constraint and propose alternative
         (e.g., custom Gherkin parser, or defer Gherkin-at-unit-level for FE apps)
+  - [ ] **If deferral is selected**: document as a known gap in
+        `governance/development/quality/three-level-testing-standard.md` under a "Known Gaps"
+        section. Skip the remaining W11 steps below. The spec-coverage W10 target for FE projects
+        should still be added (using whatever step definitions exist). Owner: plan executor. No
+        additional approval needed for deferral -- this is a pragmatic decision based on tool
+        availability.
 - [ ] Add Gherkin BDD runner to FE unit test setup (after spike resolves tool selection):
   - [ ] Configure FE unit tests to consume `specs/apps/a-demo/fe/gherkin/*.feature`
   - [ ] Implement step definitions for FE unit specs (MSW + JSDOM)
@@ -442,6 +371,11 @@ Gherkin consumption. FE `test:integration` targets are removed.
 Align specs folder structure with the standard defined in R0.2.
 
 - [ ] Restructure CLI specs to use `cli/gherkin/` pattern:
+  - [ ] Check for filename collisions before merging rhino-cli domain directories:
+    - [ ] Run `ls specs/apps/rhino-cli/*/` to inventory all feature file names across the 9 domains
+    - [ ] Confirm no two domains contain a `.feature` file with the same name
+    - [ ] If collisions exist, use domain-prefix naming (e.g., `agents-validate.feature`,
+          `test-coverage-validate.feature`) before proceeding
   - [ ] Move `specs/apps/rhino-cli/{domain}/*.feature` to `specs/apps/rhino-cli/cli/gherkin/`
   - [ ] Move `specs/apps/ayokoding-cli/links/*.feature` to `specs/apps/ayokoding-cli/cli/gherkin/`
   - [ ] Move `specs/apps/oseplatform-cli/links/*.feature` to `specs/apps/oseplatform-cli/cli/gherkin/`
@@ -459,7 +393,6 @@ Align specs folder structure with the standard defined in R0.2.
     - [ ] Update each occurrence to reference the new `cli/gherkin/` path
   - [ ] Run `nx run-many -t test:unit --projects=rhino-cli,ayokoding-cli,oseplatform-cli` after all path updates to confirm no broken spec references
 - [ ] Add missing spec directories:
-  - [ ] Create `specs/apps/a-demo/c4/` with README.md
   - [ ] Create `specs/apps/a-demo/fs/gherkin/` with README.md
 - [ ] Add README.md to all `gherkin/` directories that lack one
 - [ ] Reclassify `ayokoding/build-tools/gherkin/` to fit the standard pattern
@@ -551,11 +484,91 @@ Ensure all apps use `.env.example` + `.env.local` pattern per R0.2.
 in CI workflows (except test-only defaults in docker-compose.integration.yml). `git grep`
 for `GOOGLE_CLIENT_SECRET=` or similar patterns returns zero hits outside `.env.example`.
 
+## Phase 4: Optimization
+
+### W9: CI Docker Caching & Optimization
+
+- [ ] Integrate `setup-docker-cache` composite action into reusable workflows:
+  - [ ] `_reusable-backend-integration.yml`: add Docker Buildx + cache
+  - [ ] `_reusable-backend-e2e.yml`: add Docker Buildx + cache
+  - [ ] `_reusable-frontend-e2e.yml`: add Docker Buildx + cache
+- [ ] Configure cache keys based on Dockerfile content hash:
+  - [ ] Key: `docker-${{ runner.os }}-${{ inputs.backend-name }}-${{ hashFiles('...Dockerfile*') }}`
+  - [ ] Restore keys: `docker-${{ runner.os }}-${{ inputs.backend-name }}-`
+- [ ] Measure CI times before and after caching:
+  - [ ] Record baseline times for 3 consecutive runs (no cache)
+  - [ ] Record cached times for 3 consecutive runs (warm cache)
+  - [ ] Target: 30-60% reduction for unchanged Dockerfiles
+- [ ] Update `codecov-upload.yml` to use composite actions:
+  - [ ] Replace inline language setup with composite action calls
+  - [ ] Verify all coverage uploads still work
+- [ ] Update `test-and-deploy-ayokoding-web.yml` to use reusable workflows
+- [ ] Update `test-and-deploy-oseplatform-web.yml` to use reusable workflows
+
+**Validation**: Cached CI runs are measurably faster. All coverage uploads succeed.
+
+### W10: Spec-Coverage Integration
+
+All spec-coverage validation uses `rhino-cli spec-coverage validate`. If rhino-cli needs
+enhancements to support new app types (FE unit specs, restructured CLI specs, content platform
+specs), update rhino-cli first.
+
+- [ ] Verify `rhino-cli spec-coverage validate` supports all app types:
+  - [ ] Test with BE projects (already supported)
+  - [ ] Test with FE projects (may need enhancement for vitest-cucumber step detection)
+  - [ ] Test with CLI projects after specs restructuring (W12 -- new `cli/gherkin/` paths)
+  - [ ] Test with content platform projects (tRPC step definitions)
+  - [ ] Update rhino-cli if needed to handle new step definition patterns or paths
+- [ ] Add `spec-coverage` Nx target to demo backend projects:
+  - [ ] `a-demo-be-golang-gin/project.json`
+  - [ ] `a-demo-be-java-springboot/project.json`
+  - [ ] `a-demo-be-ts-effect/project.json`
+  - [ ] `a-demo-be-python-fastapi/project.json`
+  - [ ] `a-demo-be-rust-axum/project.json`
+  - [ ] `a-demo-be-kotlin-ktor/project.json`
+  - [ ] `a-demo-be-fsharp-giraffe/project.json`
+  - [ ] `a-demo-be-csharp-aspnetcore/project.json`
+  - [ ] `a-demo-be-clojure-pedestal/project.json`
+  - [ ] `a-demo-be-elixir-phoenix/project.json`
+  - [ ] `a-demo-be-java-vertx/project.json`
+- [ ] Add `spec-coverage` Nx target to frontend projects:
+  - [ ] `a-demo-fe-ts-nextjs/project.json`
+  - [ ] `a-demo-fe-ts-tanstack-start/project.json`
+  - [ ] `a-demo-fe-dart-flutterweb/project.json`
+  - [ ] `organiclever-fe/project.json`
+- [ ] Add `spec-coverage` Nx target to fullstack and content platform projects:
+  - [ ] `a-demo-fs-ts-nextjs/project.json`
+  - [ ] `ayokoding-web/project.json`
+  - [ ] `oseplatform-web/project.json`
+- [ ] Add `spec-coverage` Nx target to E2E projects:
+  - [ ] `a-demo-be-e2e/project.json`
+  - [ ] `a-demo-fe-e2e/project.json`
+  - [ ] `organiclever-be-e2e/project.json`
+  - [ ] `organiclever-fe-e2e/project.json`
+- [ ] Add `spec-coverage` Nx target to CLI projects:
+  - [ ] `rhino-cli/project.json`
+  - [ ] `ayokoding-cli/project.json`
+  - [ ] `oseplatform-cli/project.json`
+- [ ] Configure cache inputs for spec-coverage targets:
+  - [ ] Include: `{workspaceRoot}/specs/.../**/*.feature` + `{projectRoot}/**/*.{ext}`
+  - [ ] Set `cache: true` (deterministic based on specs + test files)
+- [ ] Add `spec-coverage` to pre-push hook:
+  - [ ] `npx nx affected -t typecheck lint test:quick spec-coverage --parallel="$PARALLEL"`
+- [ ] Add `spec-coverage` to PR quality gate detection and language jobs
+- [ ] Run spec-coverage validation across all projects and fix any gaps:
+  - [ ] Document any intentionally unimplemented scenarios with `@skip` tags
+  - [ ] Ensure all feature files have corresponding step definitions
+- [ ] Update governance documentation with spec-coverage CI integration
+
+**Validation**: `npx nx affected -t spec-coverage` passes for all projects. Unimplemented
+scenarios are tagged `@skip` with documented rationale. PR quality gate includes spec-coverage.
+
 ### W17: CI Compliance Enforcement
 
-After CI conventions are documented (W1) and propagated (W14), create agents, skills, and
-workflows that **automatically validate** all projects in the repository conform to CI standards.
-This is the ongoing enforcement layer — without it, standards decay as new projects are added.
+After CI conventions are documented (W1), create agents, skills, and workflows that
+**automatically validate** all projects in the repository conform to CI standards. This is the
+ongoing enforcement layer — without it, standards decay as new projects are added. W17 can run
+in parallel with W14 (governance propagation) since it only depends on the conventions doc.
 
 - [ ] Create `ci-standards` inline skill (`.claude/skills/ci-standards/SKILL.md`):
   - [ ] Reference CI conventions governance doc (`governance/development/infra/ci-conventions.md`)
@@ -640,21 +653,21 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                                                           | Before                                          | Target                                                                     |
-| -------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| GitHub Actions workflow files                                                    | 22                                              | ~30 (22 caller files rewritten + 8 new reusable workflows)                 |
-| Caller workflow YAML lines                                                       | ~4,500 (~150 lines × 22 files + 6 others)       | ~1,500 (~40 lines × 15 BE/FE/FS callers, -67% per caller)                  |
-| PR quality gate (TS-only PR)                                                     | 1 monolithic job (13+ runtimes installed)       | 1-2 language-scoped parallel jobs                                          |
-| CRON parallel tracks                                                             | 2 (integration, e2e)                            | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e)                    |
-| Adding a new backend to CI                                                       | Copy ~150 lines, make 5-10 manual substitutions | Create ~40-line workflow calling reusable + follow checklist               |
-| Programming languages with auto-format on commit (markup/config already covered) | 4 (JS/TS, Go, F#, Elixir)                       | 9 (+5: adds Python, Rust, C#, Clojure, Dart)                               |
-| Apps with spec-coverage in CI                                                    | 0                                               | All testable projects                                                      |
-| Projects with Gherkin at all test levels                                         | ~15 (BE + CLI only)                             | All testable projects                                                      |
-| UI apps with @axe-core/playwright E2E                                            | 2 (organiclever-fe, a-demo-fe)                  | All UI apps                                                                |
-| UI apps with a11y Gherkin specs                                                  | 3                                               | All UI apps                                                                |
-| `infra/dev/` dirs with `.env.example`                                            | 5                                               | All (18+)                                                                  |
-| Apps with `infra/dev/` Docker Compose                                            | 18                                              | 21 (+3 CLIs)                                                               |
-| Redundant FE `test:integration` targets                                          | 5                                               | 0 (removed)                                                                |
-| CI Docker cache hit rate                                                         | 0%                                              | 80%+                                                                       |
-| Governance docs covering CI                                                      | 0                                               | 3 new docs                                                                 |
-| CI compliance enforcement (agents + workflow)                                    | 0                                               | ci-checker + ci-fixer agents, ci-quality-gate workflow, ci-standards skill |
+| Metric                                                                           | Before                                                                | Target                                                                     |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| GitHub Actions workflow files                                                    | 22                                                                    | ~30 (15 workflows rewritten + 7 updated + 8 new reusable workflows)        |
+| Caller workflow YAML lines                                                       | ~4,500 (~150 lines × 22 files + 6 others)                             | ~1,500 (~40 lines × 15 BE/FE/FS callers, -67% per caller)                  |
+| PR quality gate (TS-only PR)                                                     | 1 monolithic job (13+ runtimes installed)                             | 1-2 language-scoped parallel jobs                                          |
+| CRON parallel tracks                                                             | 2 (integration, e2e)                                                  | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e)                    |
+| Adding a new backend to CI                                                       | Copy ~150 lines, make 5-10 manual substitutions                       | Create ~40-line workflow calling reusable + follow checklist               |
+| Programming languages with auto-format on commit (markup/config already covered) | 4 (JS/TS, Go, F#, Elixir)                                             | 9 (+5: adds Python, Rust, C#, Clojure, Dart)                               |
+| Apps with spec-coverage in CI                                                    | 0                                                                     | All testable projects                                                      |
+| Projects with Gherkin at all test levels                                         | ~15 (BE + CLI only)                                                   | All testable projects                                                      |
+| UI apps with @axe-core/playwright E2E                                            | 3 (organiclever-fe, a-demo-fe-ts-nextjs, a-demo-fe-ts-tanstack-start) | All UI apps                                                                |
+| UI apps with a11y Gherkin specs                                                  | 3                                                                     | All UI apps                                                                |
+| `infra/dev/` dirs with `.env.example`                                            | 5                                                                     | All (18+)                                                                  |
+| Apps with `infra/dev/` Docker Compose                                            | 18                                                                    | 21 (+3 CLIs)                                                               |
+| Redundant FE `test:integration` targets                                          | 5                                                                     | 0 (removed)                                                                |
+| CI Docker cache hit rate                                                         | 0%                                                                    | 80%+                                                                       |
+| Governance docs covering CI                                                      | 0                                                                     | 3 new docs                                                                 |
+| CI compliance enforcement (agents + workflow)                                    | 0                                                                     | ci-checker + ci-fixer agents, ci-quality-gate workflow, ci-standards skill |
