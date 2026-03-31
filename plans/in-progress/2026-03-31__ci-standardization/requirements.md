@@ -161,7 +161,7 @@ Not all app types need all three levels. The matrix below defines which levels a
 | **Fullstack (FS)**   | Yes  | Yes         | Yes | Same as BE -- has data layer that needs real DB testing.                                                                          |
 | **CLI**              | Yes  | Yes         | --  | CLIs interact with filesystem (needs integration) but have no HTTP/browser layer (no E2E).                                        |
 | **Content Platform** | Yes  | --          | Yes | Content platforms are FE-heavy with tRPC. No local DB to integrate with. E2E tests real server.                                   |
-| **Library**          | Yes  | Varies      | --  | Libraries have no deployment. Integration only if they interact with real I/O.                                                    |
+| **Library**          | Yes  | If needed   | --  | Libraries have no deployment and no E2E. Integration only if they interact with real I/O (filesystem, external process).          |
 
 ### App-Type-Specific Manifestations
 
@@ -205,6 +205,103 @@ This must be remediated as part of this plan.
 
 Coverage is measured at the **unit test level only** and enforced by
 `rhino-cli test-coverage validate` as part of the `test:quick` target.
+
+### Accessibility Testing Standard (UI Apps)
+
+All apps with a UI (FE, FS, content platform) MUST include accessibility testing. This is
+mandatory at **all gates** (pre-push, PR quality gate, CRON).
+
+#### Required Accessibility Coverage
+
+| Layer                    | What                                                    | Tool                                               | Enforced At                                |
+| ------------------------ | ------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------ |
+| **Lint** (a11y rules)    | JSX a11y rules (aria-\*, role, alt text, labels)        | oxlint `--jsx-a11y-plugin`                         | `lint` target (pre-push, PR, CRON Track 1) |
+| **Unit** (a11y specs)    | Keyboard nav, ARIA attributes, focus management, labels | Gherkin specs + vitest-cucumber + @testing-library | `test:unit` (pre-push, PR, CRON Track 4)   |
+| **E2E** (automated scan) | Color contrast, WCAG AA violations, full-page audit     | `@axe-core/playwright` + Gherkin specs             | `test:e2e` (CRON Track 5 only)             |
+
+#### Current State and Gaps
+
+| App                         | Lint (jsx-a11y) | Unit A11y     | E2E Axe-Core               | Gap                             |
+| --------------------------- | --------------- | ------------- | -------------------------- | ------------------------------- |
+| organiclever-fe             | Yes             | Yes (Gherkin) | Yes (@axe-core/playwright) | Complete                        |
+| a-demo-fe-ts-nextjs         | Yes             | Yes (Gherkin) | Yes (@axe-core/playwright) | Complete                        |
+| a-demo-fe-ts-tanstack-start | Yes             | Yes (Gherkin) | Yes (shared e2e)           | Complete                        |
+| a-demo-fs-ts-nextjs         | Yes             | Yes (Gherkin) | No axe-core                | Add @axe-core/playwright        |
+| ayokoding-web               | Yes             | Yes (Gherkin) | Manual only (no axe-core)  | Add @axe-core/playwright        |
+| oseplatform-web             | Yes             | No a11y steps | No a11y tests              | Add unit Gherkin + E2E axe-core |
+| a-demo-fe-dart-flutterweb   | N/A (Dart)      | No            | No                         | Add Flutter a11y testing        |
+
+#### Accessibility Gherkin Specs
+
+Every UI app MUST have accessibility feature files in `specs/apps/{domain}/fe/gherkin/`
+covering at minimum:
+
+- Heading hierarchy (single h1, no level skips)
+- Form label association (aria-label, aria-labelledby, `<label for>`)
+- Keyboard navigation (Tab, Shift+Tab, Enter, Escape)
+- Focus management (focus-visible indicators, focus traps in dialogs)
+- Color contrast (WCAG AA 4.5:1 for text, 3:1 for UI components)
+- Image alt text (descriptive for informative, `alt=""` for decorative)
+
+See [governance/development/frontend/accessibility.md](../../../governance/development/frontend/accessibility.md).
+
+### Environment Variable Standard
+
+All credentials and configuration MUST be supplied via environment variables. **No hardcoded
+secrets or config in source code.**
+
+#### Local Development
+
+| File           | Purpose                                            | Git Status                            |
+| -------------- | -------------------------------------------------- | ------------------------------------- |
+| `.env.example` | Template with placeholder values and documentation | **Committed**                         |
+| `.env.local`   | Real values for local development                  | **Never committed** (in `.gitignore`) |
+
+**Rules**:
+
+- Every app with environment variables MUST have a `.env.example` in its `infra/dev/{app}/`
+  directory
+- `.env.example` MUST list all required variables with placeholder values and comments
+- `.env.local` is loaded by Docker Compose (`env_file: .env.local`) and by framework dev servers
+- `.env*.local` MUST be in `.gitignore` (already the case)
+
+#### CI/CD (GitHub Actions)
+
+| Variable Type        | GitHub Feature                       | Example                                  |
+| -------------------- | ------------------------------------ | ---------------------------------------- |
+| Non-sensitive config | **Environment variables** (`vars.*`) | `DATABASE_HOST`, `APP_PORT`              |
+| Secrets              | **Secrets** (`secrets.*`)            | `APP_JWT_SECRET`, `GOOGLE_CLIENT_SECRET` |
+
+**Rules**:
+
+- CI workflows use `${{ vars.NAME }}` for config and `${{ secrets.NAME }}` for secrets
+- No `echo` or logging of secret values in CI steps
+- Test-only credentials in docker-compose.integration.yml can use hardcoded defaults (never
+  leave CI runner)
+
+#### Current Gaps (apps missing `.env.example`)
+
+Apps with `infra/dev/` that already have `.env.example`: `a-demo-be-java-springboot`,
+`a-demo-be-elixir-phoenix`, `a-demo-fe-ts-nextjs`, `a-demo-fe-dart-flutterweb`,
+`organiclever`. All other `infra/dev/` directories need `.env.example` added.
+
+### Spec-Coverage Enforcement
+
+Spec-coverage validation (via `rhino-cli spec-coverage validate`) ensures all Gherkin feature
+files and scenarios have corresponding test implementations. This MUST be enforced at **all
+gates**:
+
+| Gate            | Spec-Coverage Enforced? | How                                        |
+| --------------- | ----------------------- | ------------------------------------------ |
+| Pre-push hook   | Yes                     | `spec-coverage` for affected projects      |
+| PR quality gate | Yes                     | `spec-coverage` for affected projects      |
+| Scheduled CRON  | Yes                     | `spec-coverage` for all projects (Track 4) |
+
+The `spec-coverage` target validates that:
+
+- Every `.feature` file has matching step definition files
+- Every `Scenario` has corresponding step implementations
+- No orphaned step definitions exist without a matching scenario
 
 ### Specs Folder Standard
 
@@ -317,33 +414,36 @@ Backend and frontend services that communicate over a network boundary MUST have
 | `lint`             | Yes       | Deterministic: same source → same result         |
 | `test:unit`        | Yes       | All dependencies mocked → deterministic          |
 | `test:quick`       | Yes       | Composition of `test:unit` + coverage validation |
+| `spec-coverage`    | Yes       | Deterministic: same specs + tests → same result  |
 | `codegen`          | Yes       | Same spec → same generated code                  |
 | `build`            | Yes       | Same source → same artifacts                     |
 | `test:integration` | **No**    | Real database/filesystem → non-deterministic     |
 | `test:e2e`         | **No**    | Full stack → non-deterministic                   |
 
-### Coverage Enforcement
+### Coverage and Spec-Coverage Enforcement
 
-Coverage validation is enforced via `test:quick` = `test:unit` + `rhino-cli test-coverage
+**Coverage validation** is enforced via `test:quick` = `test:unit` + `rhino-cli test-coverage
 validate`. The `test:quick` target checks coverage against the per-project threshold (90%/80%/
-75%/70% -- see [Coverage Thresholds](#coverage-thresholds-with-rationale)). This means coverage
-is automatically checked wherever `test:quick` runs:
+75%/70% -- see [Coverage Thresholds](#coverage-thresholds-with-rationale)).
 
-| Gate            | Coverage Enforced? | How                                     |
-| --------------- | ------------------ | --------------------------------------- |
-| Pre-push hook   | Yes                | `test:quick` for affected projects      |
-| PR quality gate | Yes                | `test:quick` for affected projects      |
-| Scheduled CRON  | Yes                | `test:quick` for all projects (Track 3) |
+**Spec-coverage validation** is enforced via the `spec-coverage` Nx target
+(`rhino-cli spec-coverage validate`). It ensures all Gherkin specs have test implementations.
+
+| Gate            | Coverage? | Spec-Coverage? | How                                                                 |
+| --------------- | --------- | -------------- | ------------------------------------------------------------------- |
+| Pre-push hook   | Yes       | Yes            | `test:quick` + `spec-coverage` for affected projects                |
+| PR quality gate | Yes       | Yes            | `test:quick` + `spec-coverage` for affected projects                |
+| Scheduled CRON  | Yes       | Yes            | `test:quick` (Track 4) + `spec-coverage` (Track 4) for all projects |
 
 ### Pre-Push Hook (Local Quality Gate)
 
 Runs **affected projects only**:
 
 ```bash
-npx nx affected -t typecheck lint test:quick --parallel="$PARALLEL"
+npx nx affected -t typecheck lint test:quick spec-coverage --parallel="$PARALLEL"
 ```
 
-Coverage is enforced because `test:quick` includes coverage validation.
+Enforces: code coverage (via `test:quick`) + spec coverage (via `spec-coverage`).
 Does **NOT** run `test:integration` or `test:e2e` (too slow for local push gate).
 
 ### PR Quality Gate (GitHub Actions)
@@ -351,38 +451,40 @@ Does **NOT** run `test:integration` or `test:e2e` (too slow for local push gate)
 Runs **affected projects only**. Covers:
 
 - `format` (Prettier, gofmt, fantomas, etc. -- via PR auto-format workflow)
-- `lint` (oxlint, golangci-lint, clippy, etc.)
+- `lint` (oxlint, golangci-lint, clippy, etc. -- includes jsx-a11y for UI apps)
 - `typecheck` (tsc, go vet, javac, cargo check, etc.)
 - `test:quick` (`test:unit` + **coverage validation** -- fails if below threshold)
+- `spec-coverage` (**spec-coverage validation** -- fails if specs lack implementations)
 
-Coverage is enforced because `test:quick` includes coverage validation.
+Enforces both code coverage and spec coverage.
 Does **NOT** run `test:integration` or `test:e2e` -- these are too slow for PR feedback loops
 and are covered by scheduled CI.
 
 ### Scheduled CI (CRON, 2x daily)
 
-Runs **all projects** (not just affected). Executes **4 parallel tracks**:
+Runs **all projects** (not just affected). Executes **5 parallel tracks**:
 
 ```mermaid
 flowchart LR
-    CRON["CRON Trigger"] --> LINT["lint<br/>(all projects)"]
-    CRON --> TC["typecheck<br/>(all projects)"]
-    CRON --> TQ["test:quick<br/>(all projects)<br/>includes coverage"]
-    CRON --> INT["test:integration<br/>(all projects)"]
-    INT --> E2E["test:e2e<br/>(all projects)"]
+    CRON["CRON Trigger"] --> LINT["Track 1: lint"]
+    CRON --> TC["Track 2: typecheck"]
+    CRON --> COV["Track 3: coverage check<br/>(test:quick)"]
+    CRON --> SPEC["Track 4: test:quick +<br/>spec-coverage"]
+    CRON --> INT["Track 5: test:integration"]
+    INT --> E2E["test:e2e"]
 ```
 
-| Track   | Targets                         | Parallel?        | Coverage? | Rationale                                                       |
-| ------- | ------------------------------- | ---------------- | --------- | --------------------------------------------------------------- |
-| Track 1 | `lint`                          | Independent      | --        | Fast, catches style issues                                      |
-| Track 2 | `typecheck`                     | Independent      | --        | Fast, catches type errors                                       |
-| Track 3 | `test:quick`                    | Independent      | **Yes**   | Unit tests + coverage validation                                |
-| Track 4 | `test:integration` → `test:e2e` | Sequential chain | --        | Integration must pass before E2E (E2E assumes data layer works) |
+| Track   | Targets                                 | Parallel?        | Rationale                                                       |
+| ------- | --------------------------------------- | ---------------- | --------------------------------------------------------------- |
+| Track 1 | `lint` (includes jsx-a11y for UI apps)  | Independent      | Style + a11y lint rules                                         |
+| Track 2 | `typecheck`                             | Independent      | Type errors                                                     |
+| Track 3 | `test:quick` (= `test:unit` + coverage) | Independent      | Unit tests + coverage threshold validation                      |
+| Track 4 | `test:quick` + `spec-coverage`          | Independent      | Spec-to-test mapping completeness                               |
+| Track 5 | `test:integration` → `test:e2e`         | Sequential chain | Integration must pass before E2E (E2E assumes data layer works) |
 
-**Key design**: The 4 tracks run in parallel so a slow integration test does not block lint or
-typecheck feedback. Within Track 4, integration and E2E are sequential because E2E depends on
-the data layer being correct (proven by integration tests). Coverage is enforced in Track 3
-via `test:quick`.
+**Key design**: The 5 tracks run in parallel so a slow integration test does not block lint,
+typecheck, or coverage feedback. Within Track 5, integration and E2E are sequential because E2E
+depends on the data layer being correct (proven by integration tests).
 
 ## Current State Audit
 
@@ -839,8 +941,13 @@ CI overlays extend dev compose files with:
 | Gap                                                             | Impact                                      | Priority |
 | --------------------------------------------------------------- | ------------------------------------------- | -------- |
 | FE/content platform unit tests don't consume Gherkin specs      | Behavioral specs not verified at unit level | High     |
-| spec-coverage validation not in CI                              | Specs can drift from tests undetected       | High     |
+| spec-coverage validation not in pre-push, PR, or CRON           | Specs can drift from tests undetected       | High     |
 | CLI apps lack `infra/dev/` Docker Compose setup                 | Inconsistent local dev experience           | High     |
+| oseplatform-web has no a11y unit or E2E tests                   | WCAG AA not verified                        | High     |
+| ayokoding-web E2E lacks @axe-core/playwright                    | Manual contrast checks, no automated scan   | High     |
+| Missing `.env.example` in most `infra/dev/` dirs                | Onboarding friction, undocumented config    | High     |
+| a-demo-fs-ts-nextjs E2E lacks @axe-core/playwright              | No automated a11y scanning                  | Medium   |
+| a-demo-fe-dart-flutterweb lacks a11y testing                    | Flutter a11y not verified                   | Medium   |
 | FE `test:integration` targets are redundant (identical to unit) | Misleading test levels                      | Medium   |
 | Python/Rust/C#/Clojure/Dart not auto-formatted on commit        | Manual formatting burden                    | Medium   |
 | No Docker layer caching in CI                                   | Slow integration/E2E test cycles            | Medium   |

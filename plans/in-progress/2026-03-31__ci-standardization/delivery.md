@@ -2,12 +2,12 @@
 
 ## Phase Overview
 
-| Phase       | Workstreams               | Focus                                                                          | Risk   |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------ | ------ |
-| **Phase 1** | W1, W2                    | Foundation: governance docs + git hooks                                        | Low    |
-| **Phase 2** | W3, W4, W7                | Core: composite actions + PR gate + Docker standards                           | Medium |
-| **Phase 3** | W5, W6, W8, W11, W12, W13 | Consolidation: workflows, Gherkin remediation, specs restructuring, CLI Docker | Medium |
-| **Phase 4** | W9, W10, W14              | Optimization: caching, spec-coverage, governance propagation                   | Low    |
+| Phase       | Workstreams                  | Focus                                                                | Risk   |
+| ----------- | ---------------------------- | -------------------------------------------------------------------- | ------ |
+| **Phase 1** | W1, W2                       | Foundation: governance docs + git hooks                              | Low    |
+| **Phase 2** | W3, W4, W7                   | Core: composite actions + PR gate + Docker standards                 | Medium |
+| **Phase 3** | W5, W6, W8, W11-W13, W15-W16 | Consolidation: workflows, Gherkin, a11y, env vars, specs, CLI Docker | Medium |
+| **Phase 4** | W9, W10, W14                 | Optimization: caching, spec-coverage, governance propagation         | Low    |
 
 ## Phase 1: Foundation
 
@@ -221,11 +221,12 @@ All integration tests still pass after changes.
 - [ ] Create `.github/workflows/test-demo-backends.yml`:
   - [ ] Matrix strategy with all 11 backends
   - [ ] Each matrix entry: name, language, compose-dir, app-dir, setup-action
-  - [ ] 4 parallel tracks per R0.4:
-    - [ ] Track 1: `lint` (independent matrix job)
+  - [ ] 5 parallel tracks per R0.4:
+    - [ ] Track 1: `lint` (independent matrix job, includes jsx-a11y for UI)
     - [ ] Track 2: `typecheck` (independent matrix job)
-    - [ ] Track 3: `test:quick` (independent matrix job)
-    - [ ] Track 4: `integration` → `e2e` (sequential chain via `needs:`)
+    - [ ] Track 3: `test:quick` (independent, includes coverage validation)
+    - [ ] Track 4: `test:quick` + `spec-coverage` (independent, spec-to-test mapping)
+    - [ ] Track 5: `integration` → `e2e` (sequential chain via `needs:`)
   - [ ] Schedule: cron 2x daily (06:00 WIB, 18:00 WIB)
   - [ ] workflow_dispatch with backend filter input
 - [ ] Create `prepare` job for workflow_dispatch filtering:
@@ -448,6 +449,66 @@ Add `infra/dev/` Docker Compose for CLI apps to ensure consistent local developm
 **Validation**: `npm run dev:rhino-cli` starts a containerized dev environment. `go test ./...`
 works inside the container.
 
+### W15: Accessibility Testing Remediation
+
+Ensure all UI apps have accessibility testing at lint, unit, and E2E levels per R0.2.
+
+- [ ] Add @axe-core/playwright to E2E apps that lack it:
+  - [ ] `ayokoding-web-fe-e2e`: install @axe-core/playwright, add axe scan to accessibility steps
+  - [ ] `oseplatform-web-fe-e2e`: install @axe-core/playwright, create accessibility steps
+  - [ ] `a-demo-fs-ts-nextjs` E2E: add axe-core integration
+- [ ] Add accessibility Gherkin specs where missing:
+  - [ ] `specs/apps/oseplatform/fe/gherkin/accessibility.feature` (missing entirely)
+  - [ ] Verify all existing a11y features cover the minimum required scenarios
+- [ ] Add accessibility unit test step implementations where missing:
+  - [ ] `oseplatform-web`: create unit accessibility steps consuming Gherkin specs
+  - [ ] Verify all UI apps have a11y step implementations at unit level
+- [ ] Evaluate Flutter a11y testing for `a-demo-fe-dart-flutterweb`:
+  - [ ] Research Flutter Semantics-based accessibility testing
+  - [ ] Add `flutter test` a11y assertions or document why deferred
+- [ ] Standardize oxlint configuration:
+  - [ ] Create `oxlint.json` with `jsx-a11y` plugin for apps that use CLI flag only
+  - [ ] Ensure consistent rule set across all UI apps
+- [ ] Verify a11y lint runs in pre-push and PR quality gate:
+  - [ ] Confirm `lint` target includes `--jsx-a11y-plugin` for all UI apps
+  - [ ] Confirm `lint` is part of `test:quick` / pre-push / PR gate
+
+**Validation**: All UI apps pass axe-core scans in E2E. All UI apps have a11y Gherkin specs
+at unit and E2E levels. `npx nx run-many -t lint` passes jsx-a11y rules for all UI apps.
+
+### W16: Environment Variable Standardization
+
+Ensure all apps use `.env.example` + `.env.local` pattern per R0.2.
+
+- [ ] Audit all `infra/dev/` directories for `.env.example`:
+  - [ ] List apps that have `.env.example` vs those that don't
+  - [ ] Document all environment variables used in each docker-compose.yml
+- [ ] Create `.env.example` for each `infra/dev/` directory missing one:
+  - [ ] `infra/dev/a-demo-be-golang-gin/.env.example`
+  - [ ] `infra/dev/a-demo-be-ts-effect/.env.example`
+  - [ ] `infra/dev/a-demo-be-python-fastapi/.env.example`
+  - [ ] `infra/dev/a-demo-be-rust-axum/.env.example`
+  - [ ] `infra/dev/a-demo-be-kotlin-ktor/.env.example`
+  - [ ] `infra/dev/a-demo-be-fsharp-giraffe/.env.example`
+  - [ ] `infra/dev/a-demo-be-csharp-aspnetcore/.env.example`
+  - [ ] `infra/dev/a-demo-be-clojure-pedestal/.env.example`
+  - [ ] `infra/dev/a-demo-be-java-vertx/.env.example`
+  - [ ] `infra/dev/a-demo-fe-ts-tanstack-start/.env.example`
+  - [ ] `infra/dev/a-demo-fs-ts-nextjs/.env.example`
+  - [ ] `infra/dev/ayokoding-web/.env.example`
+  - [ ] `infra/dev/oseplatform-web/.env.example`
+- [ ] Update docker-compose.yml files to use `env_file` directive where applicable
+- [ ] Verify `.env*.local` is in `.gitignore` (should already be)
+- [ ] Audit CI workflows for hardcoded secrets:
+  - [ ] Replace inline credentials with `${{ secrets.* }}` or `${{ vars.* }}`
+  - [ ] Document which GitHub secrets need to be configured per workflow
+- [ ] Add `.env.example` validation to pre-commit hook:
+  - [ ] Check that every env var in docker-compose.yml has a matching entry in `.env.example`
+
+**Validation**: Every `infra/dev/` directory has a `.env.example`. No hardcoded credentials
+in CI workflows (except test-only defaults in docker-compose.integration.yml). `git grep`
+for `GOOGLE_CLIENT_SECRET=` or similar patterns returns zero hits outside `.env.example`.
+
 ### W14: Governance Propagation
 
 After all conventions are documented and implemented, run the `repo-governance-maker` agent to
@@ -488,16 +549,20 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                   | Before                    | Target                |
-| ---------------------------------------- | ------------------------- | --------------------- |
-| GitHub Actions workflow files            | 22                        | 12 (-45%)             |
-| Total workflow YAML lines                | ~4,500                    | ~1,500 (-67%)         |
-| PR quality gate time (TS-only PR)        | ~12 min                   | ~5 min (-58%)         |
-| Adding a new backend to CI               | ~3 hours                  | ~30 min (checklist)   |
-| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir) | 9 (+5)                |
-| Apps with spec-coverage validation       | 0                         | 25+                   |
-| Projects with Gherkin at all test levels | ~15 (BE + CLI only)       | All testable projects |
-| Apps with `infra/dev/` Docker Compose    | 18                        | 21 (+3 CLIs)          |
-| Redundant FE `test:integration` targets  | 5                         | 0 (removed)           |
-| CI Docker cache hit rate                 | 0%                        | 80%+                  |
-| Governance docs covering CI              | 0                         | 3 new docs            |
+| Metric                                   | Before                         | Target                                                |
+| ---------------------------------------- | ------------------------------ | ----------------------------------------------------- |
+| GitHub Actions workflow files            | 22                             | 12 (-45%)                                             |
+| Total workflow YAML lines                | ~4,500                         | ~1,500 (-67%)                                         |
+| PR quality gate time (TS-only PR)        | ~12 min                        | ~5 min (-58%)                                         |
+| CRON parallel tracks                     | 2 (integration, e2e)           | 5 (lint, typecheck, coverage, spec-coverage, int→e2e) |
+| Adding a new backend to CI               | ~3 hours                       | ~30 min (checklist)                                   |
+| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)      | 9 (+5)                                                |
+| Apps with spec-coverage in CI            | 0                              | All testable projects                                 |
+| Projects with Gherkin at all test levels | ~15 (BE + CLI only)            | All testable projects                                 |
+| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe) | All UI apps                                           |
+| UI apps with a11y Gherkin specs          | 3                              | All UI apps                                           |
+| `infra/dev/` dirs with `.env.example`    | 5                              | All (18+)                                             |
+| Apps with `infra/dev/` Docker Compose    | 18                             | 21 (+3 CLIs)                                          |
+| Redundant FE `test:integration` targets  | 5                              | 0 (removed)                                           |
+| CI Docker cache hit rate                 | 0%                             | 80%+                                                  |
+| Governance docs covering CI              | 0                              | 3 new docs                                            |

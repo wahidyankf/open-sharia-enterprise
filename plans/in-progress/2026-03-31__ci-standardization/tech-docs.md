@@ -147,7 +147,7 @@ strategy:
       # ... 8 more entries
 ```
 
-**Workflow structure** (4 parallel tracks per R0.4):
+**Workflow structure** (5 parallel tracks per R0.4):
 
 ```yaml
 # .github/workflows/test-demo-backends.yml
@@ -168,10 +168,9 @@ jobs:
     outputs:
       matrix: ${{ steps.filter.outputs.matrix }}
 
-  # Track 1: lint (parallel, independent)
+  # Track 1: lint (parallel, independent -- includes jsx-a11y for UI)
   lint:
     needs: prepare
-    runs-on: ubuntu-latest
     strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     steps:
       - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
@@ -180,22 +179,30 @@ jobs:
   # Track 2: typecheck (parallel, independent)
   typecheck:
     needs: prepare
-    runs-on: ubuntu-latest
     strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     steps:
       - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
       - run: npx nx run a-demo-be-${{ matrix.backend.name }}:typecheck
 
-  # Track 3: test:quick (parallel, independent)
-  test-quick:
+  # Track 3: coverage check (test:quick = test:unit + coverage validation)
+  coverage:
     needs: prepare
-    runs-on: ubuntu-latest
     strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     steps:
       - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
       - run: npx nx run a-demo-be-${{ matrix.backend.name }}:test:quick
 
-  # Track 4: integration → e2e (sequential chain)
+  # Track 4: spec-coverage (test:quick + spec-coverage validation)
+  spec-coverage:
+    needs: prepare
+    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
+    steps:
+      - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
+      - run: |
+          npx nx run a-demo-be-${{ matrix.backend.name }}:test:quick
+          npx nx run a-demo-be-${{ matrix.backend.name }}:spec-coverage
+
+  # Track 5: integration → e2e (sequential chain)
   integration:
     needs: prepare
     uses: ./.github/workflows/_reusable-backend-integration.yml
@@ -213,9 +220,9 @@ jobs:
       compose-dir: ${{ matrix.backend.compose-dir }}
 ```
 
-**4 parallel tracks**: `lint`, `typecheck`, and `test:quick` run independently. `integration →
-e2e` runs as a sequential chain. A slow integration test does not block lint or typecheck
-feedback.
+**5 parallel tracks**: `lint`, `typecheck`, `coverage`, and `spec-coverage` run independently.
+`integration → e2e` runs as a sequential chain. A slow integration test does not block any
+other track.
 
 **Filtering for workflow_dispatch**: When triggered manually, the `prepare` job filters the
 matrix based on the `backends` input. This allows developers to test a single backend without
