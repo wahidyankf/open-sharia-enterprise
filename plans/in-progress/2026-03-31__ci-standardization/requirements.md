@@ -433,7 +433,7 @@ validate`. The `test:quick` target checks coverage against the per-project thres
 | --------------- | --------- | -------------- | ------------------------------------------------------------------- |
 | Pre-push hook   | Yes       | Yes            | `test:quick` + `spec-coverage` for affected projects                |
 | PR quality gate | Yes       | Yes            | `test:quick` + `spec-coverage` for affected projects                |
-| Scheduled CRON  | Yes       | Yes            | `test:quick` (Track 4) + `spec-coverage` (Track 4) for all projects |
+| Scheduled CRON  | Yes       | Yes            | `test:quick` (Track 3) + `spec-coverage` (Track 4) for all projects |
 
 ### Pre-Push Hook (Local Quality Gate)
 
