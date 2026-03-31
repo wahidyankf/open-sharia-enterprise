@@ -123,7 +123,7 @@ by **what is real vs mocked**, not by the tooling used.
 
 | Level           | Definition                                                                                                                                                                                                                                                                                                                                              | Key Constraints                                                  | Cacheable                                    |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
-| **Unit**        | All external dependencies are **mocked or stubbed**. Tests exercise business logic in complete isolation. No real databases, filesystems, network calls, or browsers. **Must test Gherkin specs.**                                                                                                                                                      | Everything external is fake. No I/O.                             | Always                                       |
+| **Unit**        | All external dependencies are **mocked or stubbed**. Tests exercise business logic in complete isolation. No real databases, filesystems, network calls, or browsers. **Must implement ALL Gherkin specs** plus additional non-Gherkin tests where needed (edge cases, error paths, implementation-specific behavior that doesn't belong in specs).     | Everything external is fake. No I/O.                             | Always                                       |
 | **Integration** | At least one external dependency is **real** (database, filesystem). Tests exercise the interaction between application code and real infrastructure. **No network calls** -- no inbound HTTP (no server listening) and no outbound HTTP (no calling external services). Tests call service/repository functions directly. **Must test Gherkin specs.** | Real local deps only. Zero network.                              | Default no; override to yes if deterministic |
 | **E2E**         | The **full system** is under test. Real HTTP requests through real servers. For web apps, a real browser (Playwright). For APIs, real HTTP clients. Real databases. External service dependencies are **optional** (case by case -- mock when flaky or unavailable, real when critical to verify). **Must test Gherkin specs.**                         | Full stack is real. Network is real. External deps case-by-case. | Never                                        |
 
@@ -149,6 +149,14 @@ database/filesystem, not through HTTP.
 differ (mocked vs real dependencies). This ensures behavioral consistency: if a Gherkin scenario
 passes at the unit level with mocks, it must also pass at the integration level with a real
 database, and at the E2E level with real HTTP.
+
+**Unit tests are a superset of Gherkin**: Unit tests MUST implement ALL Gherkin scenarios, but
+MAY also include additional non-Gherkin tests for concerns that only make sense at the unit
+level -- edge cases, error handling paths, boundary conditions, internal implementation details,
+concurrency behavior, or language-specific patterns that don't map cleanly to Gherkin. Gherkin
+specs define the behavioral contract; unit tests verify the contract AND internal correctness.
+Integration and E2E tests should stick to Gherkin specs only (they verify the same behavior
+with real dependencies).
 
 ### Mandatory Test Levels by App Type
 
