@@ -966,7 +966,7 @@ Feature: Standardized Git Hooks
     When the pre-commit hook runs
     Then only relevant formatters execute for the staged file types
     And language-specific formatting is handled by lint-staged (not separate hook steps)
-    And the hook completes within 30 seconds for typical changes
+    And each hook step runs only for staged file types (no unnecessary formatters execute)
 
   Scenario: Pre-push runs cacheable quality gates
     Given a developer pushes to the remote

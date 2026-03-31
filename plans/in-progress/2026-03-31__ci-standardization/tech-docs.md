@@ -86,14 +86,10 @@ flowchart LR
     TS & GO & JVM & NET & PY & RS & EX & CLJ & DART & MD --> GATE["Status Check Gate"]
 ```
 
-**Detection mechanism**: The first job runs:
-
-```bash
-# Get affected projects and extract unique language tags
-AFFECTED=$(npx nx show projects --affected --json)
-LANGUAGES=$(npx nx show projects --affected --json | \
-  jq -r '.[].tags[]' | grep '^language:' | sort -u)
-```
+**Detection mechanism**: The first job uses a two-step approach — first get affected project names
+(flat string array), then query each project's tags individually. See Pattern 4 for the complete
+implementation. The single-command shortcut does NOT work because `npx nx show projects --affected
+--json` returns a flat array of project name strings, not objects with tags.
 
 Then sets GitHub Actions outputs that downstream jobs use in `if:` conditions:
 

@@ -57,7 +57,10 @@
   - [ ] Add repository pattern requirement for BE (swap point for test levels)
   - [ ] Add contract-driven development requirement (OpenAPI + tRPC)
 - [ ] Update related markdown files to reference new conventions:
-  - [ ] Update `CLAUDE.md` CI-related sections (coverage rules, test levels, CRON strategy)
+  - [ ] Update `CLAUDE.md` CI-related sections (coverage rules, test levels, CRON strategy):
+    - [ ] Add explicit entry for `a-demo-fs-ts-nextjs` with 75% threshold (fullstack tier, distinct
+          from the 70% frontend tier -- currently missing from CLAUDE.md coverage section)
+    - [ ] Verify `apps/a-demo-fs-ts-nextjs/project.json` enforces 75% (update from 70% if needed)
   - [ ] Update `governance/development/infra/nx-targets.md` (caching rules, 5-track CRON)
   - [ ] Update `governance/development/quality/code.md` (hook changes, formatting additions)
   - [ ] Update `governance/development/quality/markdown.md` (if hook behavior changes)
@@ -168,8 +171,13 @@ links resolve correctly.
 - [ ] Add `if: needs.detect.outputs.has-{lang} == 'true'` to each language job
 - [ ] Add contract codegen step to each job (if affected projects depend on contracts)
 - [ ] Configure required status checks in GitHub branch protection:
-  - [ ] Mark detection job as always required
-  - [ ] Mark language jobs as required only when they run
+  - [ ] Create a final `quality-gate` job in `pr-quality-gate.yml` that depends on all language
+        jobs via `needs:` and always runs (even if some language jobs are skipped via `if:` conditions)
+  - [ ] Mark only `quality-gate` as the required status check in branch protection settings
+        (GitHub branch protection cannot mark jobs as "required only when they run" — the gate job
+        pattern works around this: if a language job is skipped, it is treated as passed by the
+        gate job's `needs:` dependency)
+  - [ ] Verify the gate job correctly blocks merges when any language job fails
 - [ ] Test with PRs touching: (a) only TypeScript, (b) only Go, (c) multiple languages, (d) only docs
 - [ ] Compare CI times: old monolithic vs. new parallel approach
 - [ ] Keep old `pr-quality-gate.yml` as `pr-quality-gate.yml.bak` until new gate is validated
@@ -312,8 +320,8 @@ Web frontends are now tested in CI.
 - [ ] Verify `.env.example` exists for each dev setup (creation handled by W16)
 - [ ] Finalize `docs/how-to/hoto__local-dev-with-docker.md` with tested instructions
 
-**Validation**: Developer can run `npm run dev:{any-app}` and get a working dev environment with
-hot-reload within 60 seconds.
+**Validation**: Developer can run `npm run dev:{any-app}` and the service health check passes,
+confirming the environment is running and hot-reload is active.
 
 ## Phase 4: Optimization
 
@@ -399,8 +407,17 @@ scenarios are tagged `@skip` with documented rationale. PR quality gate includes
 FE, content platform, and OrganicLever FE unit tests currently do NOT consume Gherkin specs.
 This must be fixed so all test levels verify behavioral specs.
 
-- [ ] Add Gherkin BDD runner to FE unit test setup:
-  - [ ] Evaluate vitest-cucumber or playwright-bdd for Vitest-based unit tests
+- [ ] **Spike: Select FE BDD runner for Vitest-based unit tests** (prerequisite for all steps below)
+  - [ ] Research available options: `vitest-cucumber`, `playwright-bdd` (repurposed), or other
+  - [ ] Selection criteria -- chosen tool MUST:
+    - (a) integrate with Vitest without requiring test runner replacement
+    - (b) support Given-When-Then step definitions in TypeScript
+    - (c) not require a browser environment (JSDOM/happy-dom only is sufficient)
+    - (d) support `--coverage` output compatible with `rhino-cli test-coverage validate`
+  - [ ] Document selected tool and rationale as AD10 in tech-docs.md
+  - [ ] If no tool satisfies all criteria, document the constraint and propose alternative
+        (e.g., custom Gherkin parser, or defer Gherkin-at-unit-level for FE apps)
+- [ ] Add Gherkin BDD runner to FE unit test setup (after spike resolves tool selection):
   - [ ] Configure FE unit tests to consume `specs/apps/a-demo/fe/gherkin/*.feature`
   - [ ] Implement step definitions for FE unit specs (MSW + JSDOM)
 - [ ] Add Gherkin consumption to demo frontend unit tests:
@@ -435,6 +452,17 @@ Align specs folder structure with the standard defined in R0.2.
   - [ ] Move `specs/apps/oseplatform-cli/links/*.feature` to `specs/apps/oseplatform-cli/cli/gherkin/`
   - [ ] Update all godog step definition paths in CLI project configs
   - [ ] Update all `inputs` in project.json that reference old spec paths
+  - [ ] Update godog feature path configurations in `apps/rhino-cli/` Go source code:
+    - [ ] Run `grep -r 'specs/apps/rhino-cli' apps/rhino-cli/` to find all hardcoded paths
+    - [ ] Update each occurrence to reference the new `cli/gherkin/` path
+    - [ ] Run `nx run rhino-cli:test:unit` to confirm no broken spec references
+  - [ ] Update godog feature path configurations in `apps/ayokoding-cli/` Go source code:
+    - [ ] Run `grep -r 'specs/apps/ayokoding-cli' apps/ayokoding-cli/` to find all hardcoded paths
+    - [ ] Update each occurrence to reference the new `cli/gherkin/` path
+  - [ ] Update godog feature path configurations in `apps/oseplatform-cli/` Go source code:
+    - [ ] Run `grep -r 'specs/apps/oseplatform-cli' apps/oseplatform-cli/` to find all hardcoded paths
+    - [ ] Update each occurrence to reference the new `cli/gherkin/` path
+  - [ ] Run `nx run-many -t test:unit --projects=rhino-cli,ayokoding-cli,oseplatform-cli` after all path updates to confirm no broken spec references
 - [ ] Add missing spec directories:
   - [ ] Create `specs/apps/a-demo/c4/` with README.md
   - [ ] Create `specs/apps/a-demo/fs/gherkin/` with README.md
@@ -568,20 +596,20 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                   | Before                         | Target                                                  |
-| ---------------------------------------- | ------------------------------ | ------------------------------------------------------- |
-| GitHub Actions workflow files            | 22                             | 12 (-45%)                                               |
-| Total workflow YAML lines                | ~4,500                         | ~1,500 (-67%)                                           |
-| PR quality gate time (TS-only PR)        | ~12 min                        | ~5 min (-58%)                                           |
-| CRON parallel tracks                     | 2 (integration, e2e)           | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e) |
-| Adding a new backend to CI               | ~3 hours                       | ~30 min (checklist)                                     |
-| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)      | 9 (+5)                                                  |
-| Apps with spec-coverage in CI            | 0                              | All testable projects                                   |
-| Projects with Gherkin at all test levels | ~15 (BE + CLI only)            | All testable projects                                   |
-| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe) | All UI apps                                             |
-| UI apps with a11y Gherkin specs          | 3                              | All UI apps                                             |
-| `infra/dev/` dirs with `.env.example`    | 5                              | All (18+)                                               |
-| Apps with `infra/dev/` Docker Compose    | 18                             | 21 (+3 CLIs)                                            |
-| Redundant FE `test:integration` targets  | 5                              | 0 (removed)                                             |
-| CI Docker cache hit rate                 | 0%                             | 80%+                                                    |
-| Governance docs covering CI              | 0                              | 3 new docs                                              |
+| Metric                                   | Before                                          | Target                                                  |
+| ---------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| GitHub Actions workflow files            | 22                                              | 12 (-45%)                                               |
+| Total workflow YAML lines                | ~4,500                                          | ~1,500 (-67%)                                           |
+| PR quality gate (TS-only PR)             | 1 monolithic job (13+ runtimes installed)       | 1-2 language-scoped parallel jobs                       |
+| CRON parallel tracks                     | 2 (integration, e2e)                            | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e) |
+| Adding a new backend to CI               | Copy ~150 lines, make 5-10 manual substitutions | Fill in matrix entry (10 fields) + follow checklist     |
+| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)                       | 9 (+5)                                                  |
+| Apps with spec-coverage in CI            | 0                                               | All testable projects                                   |
+| Projects with Gherkin at all test levels | ~15 (BE + CLI only)                             | All testable projects                                   |
+| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe)                  | All UI apps                                             |
+| UI apps with a11y Gherkin specs          | 3                                               | All UI apps                                             |
+| `infra/dev/` dirs with `.env.example`    | 5                                               | All (18+)                                               |
+| Apps with `infra/dev/` Docker Compose    | 18                                              | 21 (+3 CLIs)                                            |
+| Redundant FE `test:integration` targets  | 5                                               | 0 (removed)                                             |
+| CI Docker cache hit rate                 | 0%                                              | 80%+                                                    |
+| Governance docs covering CI              | 0                                               | 3 new docs                                              |
