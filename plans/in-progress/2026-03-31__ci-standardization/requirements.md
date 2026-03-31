@@ -106,12 +106,12 @@ under each domain directory.
 
 #### Proposed Naming Standard for New Artifacts
 
-| Artifact              | Pattern                                     | Example                             |
-| --------------------- | ------------------------------------------- | ----------------------------------- |
-| Composite action      | `.github/actions/setup-{tool}/action.yml`   | `setup-golang/action.yml`           |
-| Reusable workflow     | `.github/workflows/_reusable-{purpose}.yml` | `_reusable-backend-integration.yml` |
-| Consolidated workflow | `.github/workflows/test-{group}.yml`        | `test-demo-backends.yml`            |
-| npm dev script        | `dev:{app-name}`                            | `dev:a-demo-be-golang-gin`          |
+| Artifact             | Pattern                                       | Example                             |
+| -------------------- | --------------------------------------------- | ----------------------------------- |
+| Composite action     | `.github/actions/setup-{tool}/action.yml`     | `setup-golang/action.yml`           |
+| Reusable workflow    | `.github/workflows/_reusable-{purpose}.yml`   | `_reusable-backend-integration.yml` |
+| Per-variant workflow | `.github/workflows/test-a-demo-be-{name}.yml` | `test-a-demo-be-golang-gin.yml`     |
+| npm dev script       | `dev:{app-name}`                              | `dev:a-demo-be-golang-gin`          |
 
 ## R0.2: Standardized Test Level Definitions
 
@@ -485,6 +485,21 @@ flowchart LR
 **Key design**: The 5 tracks run in parallel so a slow integration test does not block lint,
 typecheck, or coverage feedback. Within Track 5, integration and E2E are sequential because E2E
 depends on the data layer being correct (proven by integration tests).
+
+### E2E Test Pairing Rule
+
+Every demo variant is paired with the **default counterpart** for E2E testing:
+
+| Variant Type     | Default Pairing                                     | Example                                                                   |
+| ---------------- | --------------------------------------------------- | ------------------------------------------------------------------------- |
+| Backend variant  | Paired with **default FE** (`a-demo-fe-ts-nextjs`)  | `test-a-demo-be-java-springboot.yml` runs E2E with `a-demo-fe-ts-nextjs`  |
+| Frontend variant | Paired with **default BE** (`a-demo-be-golang-gin`) | `test-a-demo-fe-dart-flutterweb.yml` runs E2E with `a-demo-be-golang-gin` |
+| Fullstack        | Self-contained (BE + FE in one app)                 | `test-a-demo-fs-ts-nextjs.yml` runs E2E against itself                    |
+
+**Rationale**: Each variant must prove it works end-to-end with a known-good counterpart. The
+default BE (`golang-gin`) and default FE (`ts-nextjs`) serve as the stable reference
+implementations. The pairing is configured in each variant's `infra/dev/a-demo-be-{name}/`
+docker-compose file, which includes the default counterpart as a service.
 
 ## Current State Audit
 
@@ -1007,24 +1022,25 @@ Feature: Optimized PR Quality Gate
     And results from all parallel jobs are aggregated
 ```
 
-### AC3: Consolidated Backend Test Workflows
+### AC3: Backend Test Workflows (DRY via Reusable Workflows)
 
 ```gherkin
-Feature: Consolidated Backend Test Workflows
+Feature: Backend Test Workflows Using Reusable Workflows
 
-  Scenario: Single workflow tests all backends via matrix
-    Given the consolidated backend test workflow
-    When triggered on schedule (2x daily)
-    Then all 11 backends are tested via a matrix strategy
-    And each matrix entry uses the appropriate composite action for language setup
+  Scenario: Each backend has its own workflow calling reusable workflows
+    Given an individual backend test workflow (e.g., test-a-demo-be-java-springboot.yml)
+    When triggered on schedule (2x daily) or via workflow_dispatch
+    Then it calls reusable workflows for lint, typecheck, coverage, spec-coverage, integration, and e2e
+    And each reusable workflow uses the appropriate composite action for language setup
     And integration tests run before E2E tests (sequential dependency)
+    And E2E pairs the backend variant with the default frontend (a-demo-fe-ts-nextjs)
     And test artifacts are uploaded per backend
 
-  Scenario: Backend test workflow can be triggered manually
-    Given a developer wants to test a specific backend
-    When they trigger the workflow via workflow_dispatch
-    Then they can select which backend(s) to test
-    And only the selected backends are tested
+  Scenario: Adding a new backend requires minimal boilerplate
+    Given a developer wants to add a 12th backend to CI
+    When they create a new workflow file
+    Then it requires only ~40 lines calling existing reusable workflows
+    And no duplication of setup, health-check, or teardown logic
 ```
 
 ### AC4: Docker Standardization

@@ -38,7 +38,7 @@
   - [ ] Dockerfile.integration creation
   - [ ] project.json targets (codegen, typecheck, lint, build, test:unit, test:quick, test:integration)
   - [ ] Specs folder setup (gherkin/ directory under specs/apps/)
-  - [ ] Adding to matrix in test-demo-backends.yml
+  - [ ] Creating per-variant workflow file calling reusable workflows
   - [ ] Adding composite action (if new language)
   - [ ] Adding to PR quality gate detection
   - [ ] Adding to codecov-upload.yml
@@ -221,7 +221,7 @@ All integration tests still pass after changes.
 
 ## Phase 3: Consolidation
 
-### W5: Backend Test Workflow Consolidation
+### W5: Backend Test Workflow DRY-up
 
 - [ ] Create `.github/workflows/_reusable-backend-integration.yml`:
   - [ ] Inputs: backend-name, app-dir, compose-file
@@ -231,43 +231,30 @@ All integration tests still pass after changes.
   - [ ] Inputs: backend-name, compose-dir, health-url, health-timeout
   - [ ] Steps: checkout, setup-node, setup-golang, npm ci, contracts, start stack, wait, Playwright, artifacts, teardown
   - [ ] Timeout: 20 minutes
-- [ ] Create `.github/workflows/test-demo-backends.yml`:
-  - [ ] Matrix strategy with all 11 backends
-  - [ ] Each matrix entry: name, language, compose-dir, app-dir, setup-action
-  - [ ] 4 active parallel tracks initially (Track 4 enabled in W10 once Nx targets exist):
-    - [ ] Track 1: `lint` (independent matrix job, includes jsx-a11y for UI)
-    - [ ] Track 2: `typecheck` (independent matrix job)
-    - [ ] Track 3: `test:quick` (independent, includes coverage validation)
-    - [ ] Track 4: `spec-coverage` -- **leave commented out in W5**; the `spec-coverage` Nx
-          targets for all 11 backends are created in W10 (Phase 4). Enabling Track 4 before W10
-          causes CI failures for all 11 backends. Enable in W10 once targets exist.
+- [ ] Create reusable workflows for backend test tracks:
+  - [ ] `.github/workflows/_reusable-backend-lint.yml` (inputs: backend-name, setup-action)
+  - [ ] `.github/workflows/_reusable-backend-typecheck.yml` (inputs: backend-name, setup-action)
+  - [ ] `.github/workflows/_reusable-backend-coverage.yml` (inputs: backend-name, setup-action)
+  - [ ] `.github/workflows/_reusable-backend-spec-coverage.yml` (inputs: backend-name, setup-action)
+        -- **leave calls to this commented out in W5**; the `spec-coverage` Nx targets for all 11
+        backends are created in W10 (Phase 4). Enable in W10 once targets exist.
+- [ ] Rewrite all 11 backend test workflows to call reusable workflows:
+  - [ ] Each file: ~40 lines calling reusable workflows with variant-specific inputs
+  - [ ] 4 active parallel tracks initially (Track 4 enabled in W10):
+    - [ ] Track 1: `lint` (calls `_reusable-backend-lint.yml`)
+    - [ ] Track 2: `typecheck` (calls `_reusable-backend-typecheck.yml`)
+    - [ ] Track 3: `test:quick` (calls `_reusable-backend-coverage.yml`)
+    - [ ] Track 4: `spec-coverage` (commented out until W10)
     - [ ] Track 5: `integration` → `e2e` (sequential chain via `needs:`)
-  - [ ] Schedule: cron 2x daily (06:00 WIB, 18:00 WIB)
-  - [ ] workflow_dispatch with backend filter input
-- [ ] Create `prepare` job for workflow_dispatch filtering:
-  - [ ] Parse `backends` input (comma-separated)
-  - [ ] Generate filtered matrix JSON
-  - [ ] Default to full matrix when input is empty
-- [ ] Test consolidated workflow with all 11 backends:
+  - [ ] Preserve: schedule (cron 2x daily), workflow_dispatch trigger
+  - [ ] Each backend workflow pairs with default frontend for E2E
+- [ ] Verify all 11 rewritten workflows produce identical results:
   - [ ] Verify each backend's integration tests pass
-  - [ ] Verify each backend's E2E tests pass
+  - [ ] Verify each backend's E2E tests pass (with default FE pairing)
   - [ ] Verify artifacts are uploaded per backend
-  - [ ] Verify workflow_dispatch filtering works
-- [ ] Delete individual backend test workflows (11 files):
-  - [ ] `test-a-demo-be-golang-gin.yml`
-  - [ ] `test-a-demo-be-java-springboot.yml`
-  - [ ] `test-a-demo-be-java-vertx.yml`
-  - [ ] `test-a-demo-be-python-fastapi.yml`
-  - [ ] `test-a-demo-be-rust-axum.yml`
-  - [ ] `test-a-demo-be-kotlin-ktor.yml`
-  - [ ] `test-a-demo-be-fsharp-giraffe.yml`
-  - [ ] `test-a-demo-be-csharp-aspnetcore.yml`
-  - [ ] `test-a-demo-be-clojure-pedestal.yml`
-  - [ ] `test-a-demo-be-elixir-phoenix.yml`
-  - [ ] `test-a-demo-be-ts-effect.yml`
 
-**Validation**: Consolidated workflow produces identical results to individual workflows. Manual
-dispatch with single backend filter works.
+**Validation**: All 11 rewritten workflows produce identical results to the originals. Each
+workflow file reduced from ~150 lines to ~40 lines via reusable workflow calls.
 
 ### W6: Frontend & Fullstack Test Workflows
 
@@ -275,27 +262,22 @@ dispatch with single backend filter works.
   - [ ] Inputs: frontend-name, compose-dir, backend-compose-dir, health-urls
   - [ ] Steps: checkout, setup-node, start backend + frontend, wait, Playwright, artifacts, teardown
   - [ ] Timeout: 20 minutes
-- [ ] Create `.github/workflows/test-demo-frontends.yml`:
-  - [ ] Matrix strategy with frontend apps:
-    - [ ] a-demo-fe-ts-nextjs (with Go backend)
-    - [ ] a-demo-fe-ts-tanstack-start (with Go backend)
-    - [ ] a-demo-fe-dart-flutterweb (with Go backend)
-    - [ ] a-demo-fs-ts-nextjs (fullstack, no separate backend)
-  - [ ] Schedule: cron 2x daily (same as backends)
-  - [ ] workflow_dispatch with frontend filter input
-- [ ] Test consolidated workflow with all frontends
-- [ ] Delete individual frontend test workflows:
-  - [ ] `test-a-demo-fe-ts-nextjs.yml`
-  - [ ] `test-a-demo-fe-dart-flutterweb.yml`
-  - [ ] `test-a-demo-fe-ts-tanstack-start.yml`
-  - [ ] `test-a-demo-fs-ts-nextjs.yml`
+- [ ] Rewrite all 3 frontend test workflows to call reusable workflows:
+  - [ ] `test-a-demo-fe-ts-nextjs.yml` (pairs with default BE: golang-gin)
+  - [ ] `test-a-demo-fe-ts-tanstack-start.yml` (pairs with default BE: golang-gin)
+  - [ ] `test-a-demo-fe-dart-flutterweb.yml` (pairs with default BE: golang-gin)
+  - [ ] Each file: ~30 lines calling `_reusable-frontend-e2e.yml`
+  - [ ] Preserve: schedule (cron 2x daily), workflow_dispatch trigger
+- [ ] Rewrite fullstack test workflow:
+  - [ ] `test-a-demo-fs-ts-nextjs.yml` (self-contained, no separate BE)
+  - [ ] ~30 lines calling reusable workflows
 - [ ] Update `test-organiclever.yml` to use reusable workflows:
   - [ ] Use `_reusable-backend-integration.yml` for BE integration
   - [ ] Use `_reusable-backend-e2e.yml` or custom for full-stack E2E
   - [ ] Keep OrganicLever-specific environment secrets handling
 
-**Validation**: All frontend E2E tests pass via consolidated workflow. TanStack Start and Flutter
-Web frontends are now tested in CI.
+**Validation**: All frontend/fullstack E2E tests pass via rewritten workflows. Each workflow
+file reduced from ~100+ lines to ~30 lines via reusable workflow calls.
 
 ### W8: Local Development with Docker
 
@@ -339,8 +321,8 @@ confirming the environment is running and hot-reload is active.
   - [ ] `_reusable-backend-e2e.yml`: add Docker Buildx + cache
   - [ ] `_reusable-frontend-e2e.yml`: add Docker Buildx + cache
 - [ ] Configure cache keys based on Dockerfile content hash:
-  - [ ] Key: `docker-${{ runner.os }}-${{ matrix.backend.name }}-${{ hashFiles('...Dockerfile*') }}`
-  - [ ] Restore keys: `docker-${{ runner.os }}-${{ matrix.backend.name }}-`
+  - [ ] Key: `docker-${{ runner.os }}-${{ inputs.backend-name }}-${{ hashFiles('...Dockerfile*') }}`
+  - [ ] Restore keys: `docker-${{ runner.os }}-${{ inputs.backend-name }}-`
 - [ ] Measure CI times before and after caching:
   - [ ] Record baseline times for 3 consecutive runs (no cache)
   - [ ] Record cached times for 3 consecutive runs (warm cache)
@@ -603,20 +585,20 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                   | Before                                          | Target                                                  |
-| ---------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| GitHub Actions workflow files            | 22                                              | 12 (-45%)                                               |
-| Total workflow YAML lines                | ~4,500                                          | ~1,500 (-67%)                                           |
-| PR quality gate (TS-only PR)             | 1 monolithic job (13+ runtimes installed)       | 1-2 language-scoped parallel jobs                       |
-| CRON parallel tracks                     | 2 (integration, e2e)                            | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e) |
-| Adding a new backend to CI               | Copy ~150 lines, make 5-10 manual substitutions | Fill in matrix entry (10 fields) + follow checklist     |
-| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)                       | 9 (+5)                                                  |
-| Apps with spec-coverage in CI            | 0                                               | All testable projects                                   |
-| Projects with Gherkin at all test levels | ~15 (BE + CLI only)                             | All testable projects                                   |
-| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe)                  | All UI apps                                             |
-| UI apps with a11y Gherkin specs          | 3                                               | All UI apps                                             |
-| `infra/dev/` dirs with `.env.example`    | 5                                               | All (18+)                                               |
-| Apps with `infra/dev/` Docker Compose    | 18                                              | 21 (+3 CLIs)                                            |
-| Redundant FE `test:integration` targets  | 5                                               | 0 (removed)                                             |
-| CI Docker cache hit rate                 | 0%                                              | 80%+                                                    |
-| Governance docs covering CI              | 0                                               | 3 new docs                                              |
+| Metric                                   | Before                                          | Target                                                       |
+| ---------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
+| GitHub Actions workflow files            | 22                                              | 12 (-45%)                                                    |
+| Total workflow YAML lines                | ~4,500                                          | ~1,500 (-67%)                                                |
+| PR quality gate (TS-only PR)             | 1 monolithic job (13+ runtimes installed)       | 1-2 language-scoped parallel jobs                            |
+| CRON parallel tracks                     | 2 (integration, e2e)                            | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e)      |
+| Adding a new backend to CI               | Copy ~150 lines, make 5-10 manual substitutions | Create ~40-line workflow calling reusable + follow checklist |
+| Languages with auto-format on commit     | 4 (JS/TS, Go, F#, Elixir)                       | 9 (+5)                                                       |
+| Apps with spec-coverage in CI            | 0                                               | All testable projects                                        |
+| Projects with Gherkin at all test levels | ~15 (BE + CLI only)                             | All testable projects                                        |
+| UI apps with @axe-core/playwright E2E    | 2 (organiclever-fe, a-demo-fe)                  | All UI apps                                                  |
+| UI apps with a11y Gherkin specs          | 3                                               | All UI apps                                                  |
+| `infra/dev/` dirs with `.env.example`    | 5                                               | All (18+)                                                    |
+| Apps with `infra/dev/` Docker Compose    | 18                                              | 21 (+3 CLIs)                                                 |
+| Redundant FE `test:integration` targets  | 5                                               | 0 (removed)                                                  |
+| CI Docker cache hit rate                 | 0%                                              | 80%+                                                         |
+| Governance docs covering CI              | 0                                               | 3 new docs                                                   |

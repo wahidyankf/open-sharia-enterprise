@@ -111,116 +111,77 @@ jobs:
 checkout + setup). For PRs touching 1-2 languages, this is a net win. For PRs touching all
 languages (rare), slightly slower due to job startup overhead but still parallel.
 
-### AD3: Backend Test Workflow Consolidation
+### AD3: Backend Test Workflow DRY-up
 
-**Decision**: Replace 11 separate backend test workflows with a single matrix workflow.
+**Decision**: Keep 11 individual backend test workflow files (one per variant), but each calls
+reusable workflows instead of duplicating ~150 lines of boilerplate. Each backend workflow pairs
+with the default frontend (`a-demo-fe-ts-nextjs`) for E2E, matching the current architecture.
+Similarly, each frontend workflow pairs with the default backend (`a-demo-be-golang-gin`).
 
-**Matrix definition**:
-
-```yaml
-strategy:
-  fail-fast: false
-  matrix:
-    backend:
-      - name: golang-gin
-        language: golang
-        compose-dir: infra/dev/a-demo-be-golang-gin
-        app-dir: apps/a-demo-be-golang-gin
-        setup-action: setup-golang
-
-      - name: java-springboot
-        language: jvm
-        compose-dir: infra/dev/a-demo-be-java-springboot
-        app-dir: apps/a-demo-be-java-springboot
-        setup-action: setup-jvm
-
-      - name: ts-effect
-        language: node
-        compose-dir: infra/dev/a-demo-be-ts-effect
-        app-dir: apps/a-demo-be-ts-effect
-        setup-action: setup-node
-
-      # ... 8 more entries
-```
-
-**Workflow structure** (5 parallel tracks per R0.4):
+**Per-variant workflow structure** (calls reusable, 5 parallel tracks per R0.4):
 
 ```yaml
-# .github/workflows/test-demo-backends.yml
-name: "Test Demo Backends"
+# .github/workflows/test-a-demo-be-java-springboot.yml
+name: "Test - Demo BE (Java/Spring Boot)"
 on:
   schedule:
     - cron: "0 23 * * *" # 06:00 WIB
     - cron: "0 11 * * *" # 18:00 WIB
   workflow_dispatch:
-    inputs:
-      backends:
-        description: "Comma-separated backend names (empty = all)"
-        required: false
 
 jobs:
-  prepare:
-    # Filters matrix based on workflow_dispatch input
-    outputs:
-      matrix: ${{ steps.filter.outputs.matrix }}
-
-  # Track 1: lint (parallel, independent -- includes jsx-a11y for UI)
+  # Track 1: lint (independent)
   lint:
-    needs: prepare
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
-    steps:
-      - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
-      - run: npx nx run a-demo-be-${{ matrix.backend.name }}:lint
+    uses: ./.github/workflows/_reusable-backend-lint.yml
+    with:
+      backend-name: java-springboot
+      setup-action: setup-jvm
 
-  # Track 2: typecheck (parallel, independent)
+  # Track 2: typecheck (independent)
   typecheck:
-    needs: prepare
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
-    steps:
-      - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
-      - run: npx nx run a-demo-be-${{ matrix.backend.name }}:typecheck
+    uses: ./.github/workflows/_reusable-backend-typecheck.yml
+    with:
+      backend-name: java-springboot
+      setup-action: setup-jvm
 
   # Track 3: coverage check (test:quick = test:unit + coverage validation)
   coverage:
-    needs: prepare
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
-    steps:
-      - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
-      - run: npx nx run a-demo-be-${{ matrix.backend.name }}:test:quick
+    uses: ./.github/workflows/_reusable-backend-coverage.yml
+    with:
+      backend-name: java-springboot
+      setup-action: setup-jvm
 
   # Track 4: spec-coverage (spec-to-test mapping validation)
   spec-coverage:
-    needs: prepare
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
-    steps:
-      - uses: ./.github/actions/setup-${{ matrix.backend.setup-action }}
-      - run: npx nx run a-demo-be-${{ matrix.backend.name }}:spec-coverage
+    uses: ./.github/workflows/_reusable-backend-spec-coverage.yml
+    with:
+      backend-name: java-springboot
+      setup-action: setup-jvm
 
   # Track 5: integration → e2e (sequential chain)
   integration:
-    needs: prepare
     uses: ./.github/workflows/_reusable-backend-integration.yml
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     with:
-      backend-name: ${{ matrix.backend.name }}
-      app-dir: ${{ matrix.backend.app-dir }}
+      backend-name: java-springboot
+      app-dir: apps/a-demo-be-java-springboot
 
   e2e:
-    needs: integration  # Sequential: integration must pass first
+    needs: integration # Sequential: integration must pass first
     uses: ./.github/workflows/_reusable-backend-e2e.yml
-    strategy: { matrix: ${{ fromJson(needs.prepare.outputs.matrix) }} }
     with:
-      backend-name: ${{ matrix.backend.name }}
-      compose-dir: ${{ matrix.backend.compose-dir }}
+      backend-name: java-springboot
+      compose-dir: infra/dev/a-demo-be-java-springboot
 ```
 
 **5 parallel tracks**: `lint`, `typecheck`, `coverage`, and `spec-coverage` run independently.
 `integration → e2e` runs as a sequential chain. A slow integration test does not block any
 other track.
 
-**Filtering for workflow_dispatch**: When triggered manually, the `prepare` job filters the
-matrix based on the `backends` input. This allows developers to test a single backend without
-running all 11.
+**Why individual files (not matrix)**: Each backend variant pairs with the default frontend for
+E2E testing via its own `infra/dev/a-demo-be-{name}/docker-compose.yml`. Keeping individual
+workflow files preserves clear GitHub Actions UI (one run per variant), independent failure
+isolation, and straightforward dispatch for a single variant. The DRY benefit comes from
+reusable workflows, reducing each caller to ~40 lines (from ~150).
 
 ### AD4: Docker Standardization
 
@@ -443,12 +404,12 @@ verbatim.
 
 **New artifact naming conventions**:
 
-| Artifact                   | Pattern                                     | Prefix/Suffix                                             |
-| -------------------------- | ------------------------------------------- | --------------------------------------------------------- |
-| Composite action           | `.github/actions/setup-{tool}/action.yml`   | `setup-` prefix                                           |
-| Reusable workflow          | `.github/workflows/_reusable-{purpose}.yml` | `_reusable-` prefix (underscore = internal)               |
-| Consolidated test workflow | `.github/workflows/test-{group}.yml`        | `test-` prefix, group = `demo-backends`, `demo-frontends` |
-| npm dev script             | `dev:{app-name}`                            | `dev:` prefix                                             |
+| Artifact                  | Pattern                                       | Prefix/Suffix                                         |
+| ------------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| Composite action          | `.github/actions/setup-{tool}/action.yml`     | `setup-` prefix                                       |
+| Reusable workflow         | `.github/workflows/_reusable-{purpose}.yml`   | `_reusable-` prefix (underscore = internal)           |
+| Per-variant test workflow | `.github/workflows/test-a-demo-be-{name}.yml` | `test-` prefix, one file per variant (calls reusable) |
+| npm dev script            | `dev:{app-name}`                              | `dev:` prefix                                         |
 
 ### AD9: Local Development Entrypoint
 
@@ -716,28 +677,30 @@ monorepo paths correctly. Test each integration before committing.
 
 ### New Files to Create
 
-| File                                                  | Purpose                             |
-| ----------------------------------------------------- | ----------------------------------- |
-| `.github/actions/setup-node/action.yml`               | Node.js + npm composite action      |
-| `.github/actions/setup-golang/action.yml`             | Go composite action                 |
-| `.github/actions/setup-jvm/action.yml`                | Java/Kotlin composite action        |
-| `.github/actions/setup-dotnet/action.yml`             | .NET composite action               |
-| `.github/actions/setup-python/action.yml`             | Python composite action             |
-| `.github/actions/setup-rust/action.yml`               | Rust composite action               |
-| `.github/actions/setup-elixir/action.yml`             | Elixir composite action             |
-| `.github/actions/setup-flutter/action.yml`            | Flutter/Dart composite action       |
-| `.github/actions/setup-clojure/action.yml`            | Clojure composite action            |
-| `.github/actions/setup-playwright/action.yml`         | Playwright composite action         |
-| `.github/actions/setup-docker-cache/action.yml`       | Docker Buildx + caching             |
-| `.github/workflows/_reusable-backend-integration.yml` | Backend integration test workflow   |
-| `.github/workflows/_reusable-backend-e2e.yml`         | Backend E2E test workflow           |
-| `.github/workflows/_reusable-frontend-e2e.yml`        | Frontend E2E test workflow          |
-| `.github/workflows/_reusable-test-and-deploy.yml`     | Test + deploy workflow              |
-| `.github/workflows/test-demo-backends.yml`            | Consolidated backend test workflow  |
-| `.github/workflows/test-demo-frontends.yml`           | Consolidated frontend test workflow |
-| `governance/development/infra/ci-conventions.md`      | CI conventions governance doc       |
-| `docs/how-to/hoto__local-dev-with-docker.md`          | Local dev how-to guide              |
-| `docs/how-to/hoto__add-new-backend-ci.md`             | Adding a new backend to CI          |
+| File                                                    | Purpose                                 |
+| ------------------------------------------------------- | --------------------------------------- |
+| `.github/actions/setup-node/action.yml`                 | Node.js + npm composite action          |
+| `.github/actions/setup-golang/action.yml`               | Go composite action                     |
+| `.github/actions/setup-jvm/action.yml`                  | Java/Kotlin composite action            |
+| `.github/actions/setup-dotnet/action.yml`               | .NET composite action                   |
+| `.github/actions/setup-python/action.yml`               | Python composite action                 |
+| `.github/actions/setup-rust/action.yml`                 | Rust composite action                   |
+| `.github/actions/setup-elixir/action.yml`               | Elixir composite action                 |
+| `.github/actions/setup-flutter/action.yml`              | Flutter/Dart composite action           |
+| `.github/actions/setup-clojure/action.yml`              | Clojure composite action                |
+| `.github/actions/setup-playwright/action.yml`           | Playwright composite action             |
+| `.github/actions/setup-docker-cache/action.yml`         | Docker Buildx + caching                 |
+| `.github/workflows/_reusable-backend-lint.yml`          | Backend lint reusable workflow          |
+| `.github/workflows/_reusable-backend-typecheck.yml`     | Backend typecheck reusable workflow     |
+| `.github/workflows/_reusable-backend-coverage.yml`      | Backend coverage reusable workflow      |
+| `.github/workflows/_reusable-backend-spec-coverage.yml` | Backend spec-coverage reusable workflow |
+| `.github/workflows/_reusable-backend-integration.yml`   | Backend integration test workflow       |
+| `.github/workflows/_reusable-backend-e2e.yml`           | Backend E2E test workflow               |
+| `.github/workflows/_reusable-frontend-e2e.yml`          | Frontend E2E test workflow              |
+| `.github/workflows/_reusable-test-and-deploy.yml`       | Test + deploy workflow                  |
+| `governance/development/infra/ci-conventions.md`        | CI conventions governance doc           |
+| `docs/how-to/hoto__local-dev-with-docker.md`            | Local dev how-to guide                  |
+| `docs/how-to/hoto__add-new-backend-ci.md`               | Adding a new backend to CI              |
 
 ### Files to Modify
 
@@ -749,34 +712,35 @@ monorepo paths correctly. Test each integration before committing.
 | `package.json`                          | Extend lint-staged, add dev:\* scripts         |
 | Various `project.json` files            | Add `spec-coverage` target                     |
 
-### Files to Delete (after consolidation)
+### Files to Rewrite (refactor to call reusable workflows)
 
-| File                                                     | Replaced By               |
-| -------------------------------------------------------- | ------------------------- |
-| `.github/workflows/test-a-demo-be-golang-gin.yml`        | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-java-springboot.yml`   | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-java-vertx.yml`        | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-python-fastapi.yml`    | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-rust-axum.yml`         | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-kotlin-ktor.yml`       | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-fsharp-giraffe.yml`    | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-csharp-aspnetcore.yml` | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-clojure-pedestal.yml`  | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-elixir-phoenix.yml`    | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-be-ts-effect.yml`         | `test-demo-backends.yml`  |
-| `.github/workflows/test-a-demo-fe-ts-nextjs.yml`         | `test-demo-frontends.yml` |
-| `.github/workflows/test-a-demo-fe-dart-flutterweb.yml`   | `test-demo-frontends.yml` |
-| `.github/workflows/test-a-demo-fe-ts-tanstack-start.yml` | `test-demo-frontends.yml` |
-| `.github/workflows/test-a-demo-fs-ts-nextjs.yml`         | `test-demo-frontends.yml` |
+| File                                                     | Change                                         |
+| -------------------------------------------------------- | ---------------------------------------------- |
+| `.github/workflows/test-a-demo-be-golang-gin.yml`        | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-java-springboot.yml`   | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-java-vertx.yml`        | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-python-fastapi.yml`    | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-rust-axum.yml`         | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-kotlin-ktor.yml`       | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-fsharp-giraffe.yml`    | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-csharp-aspnetcore.yml` | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-clojure-pedestal.yml`  | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-elixir-phoenix.yml`    | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-be-ts-effect.yml`         | Rewrite to call reusable workflows (~40 lines) |
+| `.github/workflows/test-a-demo-fe-ts-nextjs.yml`         | Rewrite to call reusable workflows (~30 lines) |
+| `.github/workflows/test-a-demo-fe-dart-flutterweb.yml`   | Rewrite to call reusable workflows (~30 lines) |
+| `.github/workflows/test-a-demo-fe-ts-tanstack-start.yml` | Rewrite to call reusable workflows (~30 lines) |
+| `.github/workflows/test-a-demo-fs-ts-nextjs.yml`         | Rewrite to call reusable workflows (~30 lines) |
 
-**Net change**: Delete 15 workflow files, create ~20 new files (actions + workflows + docs).
-Total workflow YAML reduced from ~4,500 lines to ~1,500 lines.
+**Net change**: Create ~22 new files (11 composite actions + 8 reusable workflows + 3 docs),
+rewrite 15 workflow files from ~150 lines each to ~30-40 lines each. Total per-variant workflow
+YAML reduced from ~150 lines to ~40 lines (each calls reusable workflows for the heavy lifting).
 
 ## Risks and Mitigations
 
 | Risk                                          | Impact | Likelihood | Mitigation                                                                        |
 | --------------------------------------------- | ------ | ---------- | --------------------------------------------------------------------------------- |
-| Matrix workflow harder to debug               | Medium | Medium     | Keep individual backend names in job names; upload per-backend artifacts          |
+| Reusable workflow call overhead               | Low    | Medium     | Each reusable workflow call adds ~10s overhead; net savings from DRY far outweigh |
 | Detection job adds latency to PR gate         | Low    | High       | Detection job is fast (~30s); net savings from skipping unused runtimes is 5-8min |
 | Docker layer cache misses in CI               | Low    | Medium     | Use content-addressable cache keys; fall back gracefully to full rebuild          |
 | lint-staged formatters fail for new languages | Medium | Medium     | Test each formatter integration in isolation before merging                       |

@@ -83,7 +83,7 @@ duplication, inconsistent patterns, and undocumented conventions.
 | W2  | [Git Hooks Standardization](#w2-git-hooks-standardization)                        | 1     | None                                                           |
 | W3  | [GitHub Actions Composite Actions](#w3-github-actions-composite-actions)          | 2     | W1                                                             |
 | W4  | [PR Quality Gate Optimization](#w4-pr-quality-gate-optimization)                  | 2     | W3                                                             |
-| W5  | [Backend Test Workflow Consolidation](#w5-backend-test-workflow-consolidation)    | 3     | W3                                                             |
+| W5  | [Backend Test Workflow DRY-up](#w5-backend-test-workflow-dry-up)                  | 3     | W3                                                             |
 | W6  | [Frontend & Fullstack Test Workflows](#w6-frontend--fullstack-test-workflows)     | 3     | W3                                                             |
 | W7  | [Docker Standardization](#w7-docker-standardization)                              | 2     | W1                                                             |
 | W8  | [Local Development with Docker](#w8-local-development-with-docker)                | 3     | W7                                                             |
@@ -127,9 +127,9 @@ flowchart TD
     end
 
     subgraph pr["PR Workflows (on pull_request)"]
-        direction TB
+        direction LR
         subgraph qg["pr-quality-gate.yml (monolithic)"]
-            direction TB
+            direction LR
             QGS["Setup: 13+ runtimes in single job<br/>(Go, Java 21+25, .NET 10, Elixir,<br/>Python, Rust, Flutter, Clojure CLI,<br/>Hugo, Node/Volta)"]
             QGT["typecheck (affected)"]
             QGL["lint (affected)"]
@@ -142,21 +142,21 @@ flowchart TD
     end
 
     subgraph scheduled["Scheduled Workflows (cron 2x daily + dispatch)"]
-        direction TB
+        direction LR
 
         subgraph be_tests["11 Backend Test Workflows (one file each)"]
             direction LR
-            BEgo["golang-gin"]
-            BEjava["java-springboot"]
-            BEjv["java-vertx"]
-            BEfs["fsharp-giraffe"]
-            BEcs["csharp-aspnetcore"]
-            BEkt["kotlin-ktor"]
-            BEpy["python-fastapi"]
-            BErs["rust-axum"]
-            BEts["ts-effect"]
-            BEex["elixir-phoenix"]
-            BEcl["clojure-pedestal"]
+            BEgo["golang-gin<br/>+ default FE"]
+            BEjava["java-springboot<br/>+ default FE"]
+            BEjv["java-vertx<br/>+ default FE"]
+            BEfs["fsharp-giraffe<br/>+ default FE"]
+            BEcs["csharp-aspnetcore<br/>+ default FE"]
+            BEkt["kotlin-ktor<br/>+ default FE"]
+            BEpy["python-fastapi<br/>+ default FE"]
+            BErs["rust-axum<br/>+ default FE"]
+            BEts["ts-effect<br/>+ default FE"]
+            BEex["elixir-phoenix<br/>+ default FE"]
+            BEcl["clojure-pedestal<br/>+ default FE"]
         end
 
         subgraph be_pattern["Each Backend: integration → e2e"]
@@ -167,9 +167,9 @@ flowchart TD
 
         subgraph fe_tests["3 Frontend Test Workflows"]
             direction LR
-            FEnx["fe-ts-nextjs"]
-            FEts["fe-ts-tanstack-start"]
-            FEdt["fe-dart-flutterweb"]
+            FEnx["fe-ts-nextjs<br/>+ default BE"]
+            FEts["fe-ts-tanstack-start<br/>+ default BE"]
+            FEdt["fe-dart-flutterweb<br/>+ default BE"]
         end
 
         subgraph fe_pattern["Each Frontend: e2e only"]
@@ -187,7 +187,7 @@ flowchart TD
     end
 
     subgraph deploy["Test & Deploy (cron + dispatch)"]
-        direction TB
+        direction LR
         subgraph aw["test-and-deploy-ayokoding-web.yml"]
             AW_U["unit"]
             AW_I["integration"]
@@ -224,50 +224,120 @@ flowchart TD
 ### Target CI Architecture (To-Be)
 
 ```mermaid
-flowchart LR
-    subgraph local["Local Development"]
-        PC["pre-commit<br/>(streamlined)"]
-        CM["commit-msg<br/>(commitlint)"]
-        PP["pre-push<br/>(nx affected, cacheable)"]
+flowchart TD
+    subgraph local["Local (Git Hooks)"]
+        direction LR
+        subgraph precommit_to["pre-commit (rhino-cli, streamlined)"]
+            PCS["lint-staged<br/>(9 languages:<br/>Prettier, gofmt, mix format,<br/>ruff, rustfmt, dotnet format,<br/>cljfmt, dart format)"]
+            PCO["config validation +<br/>markdown checks"]
+        end
+        CM_TO["commit-msg<br/>(commitlint)"]
+        subgraph prepush_to["pre-push (nx affected, cacheable)"]
+            PPT_TO["typecheck"]
+            PPL_TO["lint"]
+            PPQ_TO["test:quick<br/>(+ coverage)"]
+            PPS_TO["spec-coverage"]
+            PPM_TO["lint:md"]
+        end
+        precommit_to --> CM_TO --> prepush_to
     end
 
-    subgraph actions["Reusable GitHub Actions"]
-        CA1["composite: setup-golang"]
-        CA2["composite: setup-jvm"]
-        CA3["composite: setup-dotnet"]
-        CA4["composite: setup-python"]
-        CA5["composite: setup-rust"]
-        CA6["composite: setup-elixir"]
-        CA7["composite: setup-node"]
-        CA8["composite: setup-flutter"]
-        RW1["reusable: backend-test"]
-        RW2["reusable: frontend-test"]
-        RW3["reusable: test-and-deploy"]
+    subgraph actions["Reusable GitHub Actions (DRY building blocks)"]
+        direction LR
+        subgraph composites["Composite Actions (setup-*)"]
+            direction LR
+            CA1["setup-golang"]
+            CA2["setup-jvm"]
+            CA3["setup-dotnet"]
+            CA4["setup-python"]
+            CA5["setup-rust"]
+            CA6["setup-elixir"]
+            CA7["setup-node"]
+            CA8["setup-flutter"]
+            CA9["setup-clojure"]
+            CA10["setup-dart"]
+            CA11["setup-hugo"]
+        end
+        subgraph reusables["Reusable Workflows"]
+            direction LR
+            RW1["backend-test.yml<br/>(5-track: lint, typecheck,<br/>test:quick, spec-coverage,<br/>integration → e2e)"]
+            RW2["frontend-test.yml<br/>(lint, typecheck,<br/>test:quick, e2e)"]
+            RW3["test-and-deploy.yml<br/>(unit, integration, e2e,<br/>detect-changes → deploy)"]
+        end
     end
 
-    subgraph pr["PR Workflows"]
-        QG["PR Quality Gate<br/>(parallel, language-scoped jobs)"]
-        AF["PR Auto-Format"]
-        VL["PR Validate Links"]
+    subgraph pr["PR Workflows (on pull_request)"]
+        direction LR
+        subgraph qg_to["pr-quality-gate.yml (parallel, language-scoped)"]
+            direction LR
+            QG_DET["detect affected<br/>languages"]
+            QG_GO["Go jobs"]
+            QG_JVM["JVM jobs"]
+            QG_NET[".NET jobs"]
+            QG_PY["Python jobs"]
+            QG_RS["Rust jobs"]
+            QG_EX["Elixir jobs"]
+            QG_TS["Node/TS jobs"]
+            QG_FL["Flutter jobs"]
+            QG_CLJ["Clojure jobs"]
+            QG_DET --> QG_GO & QG_JVM & QG_NET & QG_PY & QG_RS & QG_EX & QG_TS & QG_FL & QG_CLJ
+        end
+        AF_TO["pr-format.yml"]
+        VL_TO["pr-validate-links.yml"]
     end
 
-    subgraph scheduled["Scheduled Workflows"]
-        BEM["backend-tests<br/>(matrix: 11 backends)"]
-        FEM["frontend-tests<br/>(matrix: 3 frontends)"]
-        OL["test-organiclever"]
+    subgraph scheduled["Scheduled Workflows (cron 2x daily + dispatch)"]
+        direction LR
+
+        subgraph be_wf["11 Backend Workflows (one file each, calls reusable)"]
+            direction LR
+            BEgo_to["golang-gin<br/>+ default FE"]
+            BEjava_to["java-springboot<br/>+ default FE"]
+            BEjv_to["java-vertx<br/>+ default FE"]
+            BEfs_to["fsharp-giraffe<br/>+ default FE"]
+            BEcs_to["csharp-aspnetcore<br/>+ default FE"]
+            BEkt_to["kotlin-ktor<br/>+ default FE"]
+            BEpy_to["python-fastapi<br/>+ default FE"]
+            BErs_to["rust-axum<br/>+ default FE"]
+            BEts_to["ts-effect<br/>+ default FE"]
+            BEex_to["elixir-phoenix<br/>+ default FE"]
+            BEcl_to["clojure-pedestal<br/>+ default FE"]
+        end
+
+        subgraph fe_wf["3 Frontend Workflows (one file each, calls reusable)"]
+            direction LR
+            FEnx_to["fe-ts-nextjs<br/>+ default BE"]
+            FEts_to["fe-ts-tanstack-start<br/>+ default BE"]
+            FEdt_to["fe-dart-flutterweb<br/>+ default BE"]
+        end
+
+        subgraph fs_wf["1 Fullstack Workflow"]
+            FSts_to["fs-ts-nextjs"]
+        end
+
+        OL_TO["test-organiclever"]
     end
 
-    subgraph deploy["Test & Deploy"]
-        AW["test-and-deploy-ayokoding-web"]
-        OW["test-and-deploy-oseplatform-web"]
+    subgraph deploy["Test & Deploy (cron + dispatch)"]
+        direction LR
+        AW_TO["test-and-deploy-ayokoding-web<br/>(calls reusable)"]
+        OW_TO["test-and-deploy-oseplatform-web<br/>(calls reusable)"]
     end
 
-    CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8 --> RW1 & RW2 & RW3
-    RW1 --> BEM
-    RW2 --> FEM
-    RW3 --> AW & OW
-    QG --> CA1 & CA2 & CA3 & CA4 & CA5 & CA6 & CA7 & CA8
+    subgraph codecov_to["Coverage (on push to main)"]
+        CC_TO["codecov-upload<br/>(uses composite actions,<br/>all projects, 27 reports)"]
+    end
+
+    composites --> reusables
+    be_wf --> RW1
+    fe_wf --> RW2
+    deploy --> RW3
+    qg_to --> composites
+
     local --> pr
+    pr --> scheduled
+    scheduled --> deploy
+    deploy --> codecov_to
 ```
 
 ## Related Documentation
