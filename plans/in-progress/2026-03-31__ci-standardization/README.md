@@ -77,24 +77,24 @@ duplication, inconsistent patterns, and undocumented conventions.
 
 ## Workstreams
 
-| #   | Workstream                                                                        | Phase | Dependencies |
-| --- | --------------------------------------------------------------------------------- | ----- | ------------ |
-| W1  | [Governance & Documentation](#w1-governance--documentation)                       | 1     | None         |
-| W2  | [Git Hooks Standardization](#w2-git-hooks-standardization)                        | 1     | None         |
-| W3  | [GitHub Actions Composite Actions](#w3-github-actions-composite-actions)          | 2     | W1           |
-| W4  | [PR Quality Gate Optimization](#w4-pr-quality-gate-optimization)                  | 2     | W3           |
-| W5  | [Backend Test Workflow Consolidation](#w5-backend-test-workflow-consolidation)    | 3     | W3           |
-| W6  | [Frontend & Fullstack Test Workflows](#w6-frontend--fullstack-test-workflows)     | 3     | W3           |
-| W7  | [Docker Standardization](#w7-docker-standardization)                              | 2     | W1           |
-| W8  | [Local Development with Docker](#w8-local-development-with-docker)                | 3     | W7           |
-| W9  | [CI Docker Caching & Optimization](#w9-ci-docker-caching--optimization)           | 4     | W5, W7       |
-| W10 | [Spec-Coverage Integration](#w10-spec-coverage-integration)                       | 4     | W5           |
-| W11 | [Gherkin Consumption Remediation](#w11-gherkin-consumption-remediation)           | 3     | W1           |
-| W12 | [Specs Folder Restructuring](#w12-specs-folder-restructuring)                     | 3     | W1           |
-| W13 | [CLI Docker Compose Setup](#w13-cli-docker-compose-setup)                         | 3     | W7           |
-| W15 | [Accessibility Testing Remediation](#w15-accessibility-testing-remediation)       | 3     | W1, W11      |
-| W16 | [Environment Variable Standardization](#w16-environment-variable-standardization) | 3     | W7           |
-| W14 | [Governance Propagation](#w14-governance-propagation)                             | 4     | W1-W16       |
+| #   | Workstream                                                                        | Phase | Dependencies                                                   |
+| --- | --------------------------------------------------------------------------------- | ----- | -------------------------------------------------------------- |
+| W1  | [Governance & Documentation](#w1-governance--documentation)                       | 1     | None                                                           |
+| W2  | [Git Hooks Standardization](#w2-git-hooks-standardization)                        | 1     | None                                                           |
+| W3  | [GitHub Actions Composite Actions](#w3-github-actions-composite-actions)          | 2     | W1                                                             |
+| W4  | [PR Quality Gate Optimization](#w4-pr-quality-gate-optimization)                  | 2     | W3                                                             |
+| W5  | [Backend Test Workflow Consolidation](#w5-backend-test-workflow-consolidation)    | 3     | W3                                                             |
+| W6  | [Frontend & Fullstack Test Workflows](#w6-frontend--fullstack-test-workflows)     | 3     | W3                                                             |
+| W7  | [Docker Standardization](#w7-docker-standardization)                              | 2     | W1                                                             |
+| W8  | [Local Development with Docker](#w8-local-development-with-docker)                | 3     | W7                                                             |
+| W9  | [CI Docker Caching & Optimization](#w9-ci-docker-caching--optimization)           | 4     | W5, W7                                                         |
+| W10 | [Spec-Coverage Integration](#w10-spec-coverage-integration)                       | 4     | W5                                                             |
+| W11 | [Gherkin Consumption Remediation](#w11-gherkin-consumption-remediation)           | 3     | W1                                                             |
+| W12 | [Specs Folder Restructuring](#w12-specs-folder-restructuring)                     | 3     | W1                                                             |
+| W13 | [CLI Docker Compose Setup](#w13-cli-docker-compose-setup)                         | 3     | W7                                                             |
+| W15 | [Accessibility Testing Remediation](#w15-accessibility-testing-remediation)       | 3     | W1, W11                                                        |
+| W16 | [Environment Variable Standardization](#w16-environment-variable-standardization) | 3     | W7                                                             |
+| W14 | [Governance Propagation](#w14-governance-propagation)                             | 4     | W1-W16 (intentionally last — depends on all other workstreams) |
 
 ## Context
 
