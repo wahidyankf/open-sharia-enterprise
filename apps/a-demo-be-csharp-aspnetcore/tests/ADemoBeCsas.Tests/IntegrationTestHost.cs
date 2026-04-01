@@ -18,7 +18,7 @@ namespace ADemoBeCsas.Tests;
 /// SQLite in-memory database is used with a single shared connection so all
 /// DbContext instances within a test scenario see the same data.
 /// </summary>
-public sealed class IntegrationTestHost : IDisposable
+public sealed class IntegrationTestHost : ITestHost, IDisposable
 {
     private readonly ServiceProvider _provider;
     private SqliteConnection? _sharedConnection;

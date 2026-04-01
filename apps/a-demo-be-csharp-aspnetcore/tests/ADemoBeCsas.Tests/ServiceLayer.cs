@@ -18,7 +18,7 @@ namespace ADemoBeCsas.Tests;
 /// what the corresponding HTTP endpoint would have returned, allowing existing
 /// Gherkin "Then the response status code should be N" steps to work unchanged.
 /// </summary>
-public sealed class ServiceLayer(IntegrationTestHost host)
+public class ServiceLayer(ITestHost host)
 {
     private const int MaxFailedAttempts = 5;
     private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
@@ -1236,7 +1236,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
     // Direct database helpers (for test setup — Given steps)
     // ─────────────────────────────────────────────────────────────
 
-    public async Task SetUserStatusDirectAsync(string username, string status)
+    public virtual async Task SetUserStatusDirectAsync(string username, string status)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -1251,7 +1251,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         await db.SaveChangesAsync();
     }
 
-    public async Task SetUserRoleDirectAsync(string username, string role)
+    public virtual async Task SetUserRoleDirectAsync(string username, string role)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -1266,7 +1266,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         await db.SaveChangesAsync();
     }
 
-    public async Task<Guid> SetUserLockedDirectAsync(string username)
+    public virtual async Task<Guid> SetUserLockedDirectAsync(string username)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -1283,7 +1283,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         return user.Id;
     }
 
-    public async Task SetUserFailedAttemptsDirectAsync(string username, int attempts)
+    public virtual async Task SetUserFailedAttemptsDirectAsync(string username, int attempts)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -1298,7 +1298,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         await db.SaveChangesAsync();
     }
 
-    public async Task<Guid> GetUserIdByUsernameAsync(string username)
+    public virtual async Task<Guid> GetUserIdByUsernameAsync(string username)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -1306,7 +1306,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         return user?.Id ?? Guid.Empty;
     }
 
-    public async Task<string?> GetUserStatusAsync(string username)
+    public virtual async Task<string?> GetUserStatusAsync(string username)
     {
         using var scope = host.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

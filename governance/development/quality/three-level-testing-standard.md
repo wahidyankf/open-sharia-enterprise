@@ -339,7 +339,7 @@ The three-level standard applies universally, with adaptations per project type:
 | CLI app (Go)                 | Go test mocks + Gherkin (godog) | Godog BDD in-process (cacheable)      | N/A                                    | Yes        | `specs/{app}/`                         |
 | Library (Go)                 | Go test mocks                   | Godog BDD in-process (cacheable)      | N/A                                    | Yes        | `specs/{lib}/`                         |
 | Demo-fe frontend             | Vitest/Flutter mocks + specs    | N/A                                   | Playwright (via a-demo-fe-e2e) + specs | Yes        | `specs/apps/a-demo/fe/gherkin/`        |
-| Fullstack (FS)               | Vitest mocks + specs            | Mandatory (MSW/real DB as applicable) | Playwright + specs                     | Yes        | `specs/apps/a-demo/fs/gherkin/`        |
+| Fullstack (FS)               | Vitest mocks + specs            | Mandatory (MSW/real DB as applicable) | Playwright + specs                     | Yes        | `specs/apps/a-demo/` (BE + FE specs)   |
 | Hugo site                    | Exempt                          | Exempt                                | Exempt                                 | Yes\*      | N/A                                    |
 | E2E runner                   | N/A                             | N/A                                   | Playwright                             | N/A        | Shared specs                           |
 
@@ -350,7 +350,7 @@ _\* Hugo sites run `test:quick` for link checking only, not test execution._
 - **Demo-be backends**: All three levels mandatory; all consume Gherkin specs; integration uses real PostgreSQL with no HTTP
 - **Content platforms**: All three levels mandatory; integration uses MSW/tRPC in-process mocking (cacheable); Gherkin consumption planned (see "Known Gaps")
 - **Web UI apps**: All three levels mandatory; integration uses in-process mocking (MSW); cacheable
-- **Fullstack apps**: All three levels mandatory; consume Gherkin specs from `specs/apps/a-demo/fs/gherkin/`
+- **Fullstack apps**: All three levels mandatory; consume Gherkin specs from both `specs/apps/a-demo/be/gherkin/` and `specs/apps/a-demo/fe/gherkin/` (the FS app spans both layers). Fullstack-specific scenarios that cannot be expressed through shared BE or FE specs may be added to `specs/apps/a-demo/fs/gherkin/`
 - **CLI apps**: Unit + integration mandatory; both levels consume Gherkin specs via godog; unit mocks all I/O via package-level function variables; integration uses real filesystem with `/tmp` fixtures; cacheable
 - **Libraries**: Unit mandatory; integration optional (Godog BDD with public API calls); cacheable
 - **Demo-fe frontends**: Two-level testing (unit + E2E); no integration tier; all consume Gherkin specs from `specs/apps/a-demo/fe/gherkin/`; E2E via centralized `a-demo-fe-e2e` Playwright suite

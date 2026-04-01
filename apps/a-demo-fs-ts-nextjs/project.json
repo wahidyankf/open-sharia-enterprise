@@ -92,9 +92,9 @@
       "cache": false
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/a-demo/fs/gherkin apps/a-demo-fs-ts-nextjs",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/a-demo apps/a-demo-fs-ts-nextjs",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/a-demo/fs/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
+      "inputs": ["{workspaceRoot}/specs/apps/a-demo/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:a-demo-fs"],

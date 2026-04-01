@@ -112,6 +112,6 @@
       "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
     }
   },
-  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever-fe"],
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["organiclever-contracts", "rhino-cli", "ts-ui"]
 }

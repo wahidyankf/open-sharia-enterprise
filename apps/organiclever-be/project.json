@@ -105,8 +105,13 @@
       },
       "dependsOn": ["codegen"],
       "cache": true
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/organiclever/be/gherkin apps/organiclever-be",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
     }
   },
-  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever-be"],
+  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"],
   "implicitDependencies": ["organiclever-contracts", "rhino-cli"]
 }

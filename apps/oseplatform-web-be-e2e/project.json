@@ -54,6 +54,11 @@
         "command": "npx playwright show-report",
         "cwd": "apps/oseplatform-web-be-e2e"
       }
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/oseplatform/be/gherkin apps/oseplatform-web-be-e2e",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/oseplatform/be/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:oseplatform"]

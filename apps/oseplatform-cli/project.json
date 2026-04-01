@@ -52,6 +52,13 @@
       "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/oseplatform-cli/**/*.feature"],
       "outputs": ["{projectRoot}/cover_spec.out"]
     },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go vet ./...",
+        "cwd": "apps/oseplatform-cli"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {

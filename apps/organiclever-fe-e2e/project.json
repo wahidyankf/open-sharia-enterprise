@@ -62,6 +62,6 @@
       "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
-  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever-fe"],
+  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"],
   "implicitDependencies": ["organiclever-fe", "organiclever-be"]
 }

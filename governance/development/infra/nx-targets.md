@@ -173,6 +173,10 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `oseplatform-web`           | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
 | `hugo-commons`              | `["type:lib", "lang:golang"]`                                            |
 | `golang-commons`            | `["type:lib", "lang:golang"]`                                            |
+| `clojure-openapi-codegen`   | `["type:lib", "lang:clojure", "domain:tooling"]`                         |
+| `elixir-cabbage`            | `["type:lib", "lang:elixir", "domain:tooling"]`                          |
+| `elixir-gherkin`            | `["type:lib", "lang:elixir", "domain:tooling"]`                          |
+| `elixir-openapi-codegen`    | `["type:lib", "lang:elixir", "domain:tooling"]`                          |
 
 ### Example: Complete Tag Declaration
 
