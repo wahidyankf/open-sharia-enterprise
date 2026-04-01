@@ -169,7 +169,14 @@ jobs:
         working-directory: apps/a-demo-fe-e2e
 
       - name: Run BE E2E tests
-        run: npx nx run a-demo-be-e2e:${{ inputs.be-e2e-target }}
+        run: |
+          # Export extra env vars if provided
+          if [ -n "${{ inputs.be-e2e-extra-env }}" ]; then
+            while IFS= read -r line; do
+              [ -n "$line" ] && export "$line"
+            done <<< "${{ inputs.be-e2e-extra-env }}"
+          fi
+          npx nx run a-demo-be-e2e:${{ inputs.be-e2e-target }}
         env:
           BASE_URL: http://localhost:${{ inputs.backend-port }}
 
