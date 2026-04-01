@@ -39,7 +39,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 **Format Differences**:
 
 - **Tools**: Claude Code uses arrays `[Read, Write]`, OpenCode uses `{ read: true, write: true }`
-- **Models**: Claude Code uses `sonnet`/`haiku`, OpenCode uses `zai/glm-4.7` or `inherit`
+- **Models**: Claude Code uses `sonnet`/`haiku`, OpenCode uses `zai-coding-plan/glm-5.1` or `zai-coding-plan/glm-5-turbo`
 - **Skills**: Same format for both systems (SKILL.md)
 
 # AI Agents
@@ -66,7 +66,7 @@ OpenCode agents use YAML (YAML Ain't Markup Language) frontmatter with boolean t
 ```yaml
 ---
 description: Brief description of what the agent does
-model: zai/glm-4.7 | zai/glm-4.5-air | inherit
+model: zai-coding-plan/glm-5.1 | zai-coding-plan/glm-5-turbo
 tools:
   read: true | false
   grep: true | false

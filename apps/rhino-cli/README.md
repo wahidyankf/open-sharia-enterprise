@@ -317,7 +317,7 @@ rhino-cli agents sync -v
 **Agents (`.claude/agents/` → `.opencode/agent/`):**
 
 - Converts tools array to boolean map (`Read, Write` → `read: true, write: true`)
-- Maps models (`sonnet`/`opus` → `zai/glm-4.7`, `haiku` → `zai/glm-4.5-air`, empty → `inherit`)
+- Maps models (`sonnet`/`opus` → `zai-coding-plan/glm-5.1`, `haiku` → `zai-coding-plan/glm-5-turbo`, empty → `zai-coding-plan/glm-5.1`)
 - Removes Claude-specific fields (`name`, `color`)
 - Preserves description, skills, and body content
 - Normalizes YAML formatting (adds spaces after colons)
@@ -372,7 +372,7 @@ rhino-cli agents validate-sync -q
 - Count check: Ensures equal number of agents in both directories
 - Equivalence check for each agent:
   - Description matches exactly
-  - Model correctly converted (empty/sonnet/opus → inherit/zai/glm-4.7)
+  - Model correctly converted (sonnet/opus/empty → zai-coding-plan/glm-5.1, haiku → zai-coding-plan/glm-5-turbo)
   - Tools correctly mapped (array → boolean map, lowercase)
   - Skills array matches exactly
   - Body content identical

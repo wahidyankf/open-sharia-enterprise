@@ -170,12 +170,12 @@ func TestConvertModel(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{name: "sonnet", input: "sonnet", expected: "zai/glm-4.7"},
-		{name: "opus", input: "opus", expected: "zai/glm-4.7"},
-		{name: "haiku", input: "haiku", expected: "zai/glm-4.5-air"},
-		{name: "empty", input: "", expected: "inherit"},
-		{name: "whitespace", input: "  ", expected: "inherit"},
-		{name: "unknown", input: "unknown-model", expected: "inherit"},
+		{name: "sonnet", input: "sonnet", expected: "zai-coding-plan/glm-5.1"},
+		{name: "opus", input: "opus", expected: "zai-coding-plan/glm-5.1"},
+		{name: "haiku", input: "haiku", expected: "zai-coding-plan/glm-5-turbo"},
+		{name: "empty", input: "", expected: "zai-coding-plan/glm-5.1"},
+		{name: "whitespace", input: "  ", expected: "zai-coding-plan/glm-5.1"},
+		{name: "unknown", input: "unknown-model", expected: "zai-coding-plan/glm-5.1"},
 	}
 
 	for _, tt := range tests {
@@ -242,8 +242,8 @@ This is the agent body content.
 		t.Errorf("Description = %q, want %q", agent.Description, "Test agent for unit testing")
 	}
 
-	if agent.Model != "zai/glm-4.7" {
-		t.Errorf("Model = %q, want %q", agent.Model, "zai/glm-4.7")
+	if agent.Model != "zai-coding-plan/glm-5.1" {
+		t.Errorf("Model = %q, want %q", agent.Model, "zai-coding-plan/glm-5.1")
 	}
 
 	expectedTools := map[string]bool{"read": true, "write": true, "edit": true}
@@ -341,9 +341,9 @@ Body content.
 		t.Fatalf("Failed to parse YAML: %v", err)
 	}
 
-	// Empty model should convert to "inherit"
-	if agent.Model != "inherit" {
-		t.Errorf("Model = %q, want %q", agent.Model, "inherit")
+	// Empty model should default to the most capable model
+	if agent.Model != "zai-coding-plan/glm-5.1" {
+		t.Errorf("Model = %q, want %q", agent.Model, "zai-coding-plan/glm-5.1")
 	}
 }
 

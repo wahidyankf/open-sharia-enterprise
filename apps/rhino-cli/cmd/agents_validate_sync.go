@@ -18,7 +18,7 @@ Agents:
 - Count check: Ensures equal number of agents in both directories
 - Equivalence check: Validates each agent is semantically equivalent:
   * Description matches exactly
-  * Model is correctly converted (empty/sonnet/opus → inherit/zai/glm-4.7)
+  * Model is correctly converted (sonnet/opus/empty → zai-coding-plan/glm-5.1, haiku → zai-coding-plan/glm-5-turbo)
   * Tools are correctly mapped (array → boolean map, lowercase)
   * Skills array matches exactly
   * Body content is identical

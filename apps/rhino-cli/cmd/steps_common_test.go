@@ -67,7 +67,7 @@ const (
 	stepOutputDescribesPlannedOperations          = `^the output describes the planned operations$`
 	stepNoFilesWrittenToOpenCodeDir               = `^no files are written to the \.opencode/ directory$`
 	stepOnlyAgentFilesWrittenToOpenCodeDir        = `^only agent files are written to the \.opencode/ directory$`
-	stepCorrespondingOpenCodeAgentUsesZaiGlmModel = `^the corresponding \.opencode/ agent uses the "zai/glm-4\.7" model identifier$`
+	stepCorrespondingOpenCodeAgentUsesZaiGlmModel = `^the corresponding \.opencode/ agent uses the "zai-coding-plan/glm-5\.1" model identifier$`
 )
 
 // Agents validate-claude step patterns.

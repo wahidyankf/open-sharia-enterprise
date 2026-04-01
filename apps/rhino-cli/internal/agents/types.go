@@ -20,7 +20,7 @@ type ClaudeAgent struct {
 // OpenCodeAgent represents OpenCode format agent configuration
 type OpenCodeAgent struct {
 	Description string          `yaml:"description"`
-	Model       string          `yaml:"model"` // "inherit" | "zai/glm-4.7" | "zai/glm-4.5-air"
+	Model       string          `yaml:"model"` // "zai-coding-plan/glm-5.1" | "zai-coding-plan/glm-5-turbo"
 	Tools       map[string]bool `yaml:"tools"` // read: true, write: true, etc.
 	Skills      []string        `yaml:"skills,omitempty"`
 }

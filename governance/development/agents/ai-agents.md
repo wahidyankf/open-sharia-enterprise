@@ -65,7 +65,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 - **`.opencode/agent/`** - SECONDARY (Auto-Generated)
   - Synced from `.claude/agents/` using `npm run sync:claude-to-opencode`
   - Uses OpenCode format: boolean flags `{ read: true, write: true }`
-  - Model selection: `zai/glm-4.7`, `zai/glm-4.5-air`, or `inherit`
+  - Model selection: `zai-coding-plan/glm-5.1` or `zai-coding-plan/glm-5-turbo`
 
 **Workflow**: Always edit `.claude/agents/` first, then run sync script to regenerate `.opencode/agent/`.
 
@@ -154,7 +154,7 @@ skills: []
 ---
 ```
 
-**Format Note**: This example shows **Claude Code format** (`.claude/agents/`). The equivalent **OpenCode format** (`.opencode/agent/`) uses boolean flags for tools: `tools: { read: true, glob: true, grep: true }` and model references like `model: zai/glm-4.7` or `model: inherit`.
+**Format Note**: This example shows **Claude Code format** (`.claude/agents/`). The equivalent **OpenCode format** (`.opencode/agent/`) uses boolean flags for tools: `tools: { read: true, glob: true, grep: true }` and model references like `model: zai-coding-plan/glm-5.1` or `model: zai-coding-plan/glm-5-turbo`.
 
 **Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color, skills) for consistency and grep-ability across all agents.
 
@@ -2554,9 +2554,8 @@ model: sonnet # or opus, haiku, or omit for inherit
 **OpenCode**:
 
 ```yaml
-model: zai/glm-4.7     # sonnet equivalent
-model: zai/glm-4.5-air # haiku equivalent
-model: inherit         # inherits from parent
+model: zai-coding-plan/glm-5.1     # sonnet/opus equivalent
+model: zai-coding-plan/glm-5-turbo # haiku equivalent
 ```
 
 #### Skills Format

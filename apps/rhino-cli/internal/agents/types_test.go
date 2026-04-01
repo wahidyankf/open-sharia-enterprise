@@ -31,15 +31,15 @@ func TestOpenCodeAgent(t *testing.T) {
 
 	agent := OpenCodeAgent{
 		Description: "Test agent description",
-		Model:       "inherit",
+		Model:       "zai-coding-plan/glm-5.1",
 		Tools:       tools,
 	}
 
 	if agent.Description != "Test agent description" {
 		t.Errorf("Expected description 'Test agent description', got '%s'", agent.Description)
 	}
-	if agent.Model != "inherit" {
-		t.Errorf("Expected model 'inherit', got '%s'", agent.Model)
+	if agent.Model != "zai-coding-plan/glm-5.1" {
+		t.Errorf("Expected model 'zai-coding-plan/glm-5.1', got '%s'", agent.Model)
 	}
 	if len(agent.Tools) != 3 {
 		t.Errorf("Expected 3 tools, got %d", len(agent.Tools))

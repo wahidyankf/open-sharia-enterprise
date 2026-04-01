@@ -190,8 +190,8 @@ func (s *syncAgentsSteps) theCorrespondingOpenCodeAgentUsesTheZaiGlmModel() erro
 	if err != nil {
 		return fmt.Errorf("failed to read .opencode/agent/sync-agent.md: %w", err)
 	}
-	if !strings.Contains(string(data), "zai/glm-4.7") {
-		return fmt.Errorf("expected .opencode agent to contain 'zai/glm-4.7' but got:\n%s", string(data))
+	if !strings.Contains(string(data), "zai-coding-plan/glm-5.1") {
+		return fmt.Errorf("expected .opencode agent to contain 'zai-coding-plan/glm-5.1' but got:\n%s", string(data))
 	}
 	return nil
 }
@@ -214,7 +214,7 @@ func InitializeSyncAgentsScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^the output describes the planned operations$`, s.theOutputDescribesThePlannedOperations)
 	sc.Step(`^no files are written to the \.opencode/ directory$`, s.noFilesAreWrittenToTheOpenCodeDirectory)
 	sc.Step(`^only agent files are written to the \.opencode/ directory$`, s.onlyAgentFilesAreWrittenToTheOpenCodeDirectory)
-	sc.Step(`^the corresponding \.opencode/ agent uses the "zai/glm-4\.7" model identifier$`, s.theCorrespondingOpenCodeAgentUsesTheZaiGlmModel)
+	sc.Step(`^the corresponding \.opencode/ agent uses the "zai-coding-plan/glm-5\.1" model identifier$`, s.theCorrespondingOpenCodeAgentUsesTheZaiGlmModel)
 }
 
 func TestIntegrationSyncAgents(t *testing.T) {

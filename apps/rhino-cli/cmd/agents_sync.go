@@ -22,7 +22,7 @@ YAML frontmatter transformation and skills synchronization.
 This command performs the following operations:
 - Converts agents from .claude/agents/ to .opencode/agent/ with:
   * Tools array → boolean map (Read → read: true)
-  * Model mapping (sonnet/opus → zai/glm-4.7, haiku → zai/glm-4.5-air, empty → inherit)
+  * Model mapping (sonnet/opus → zai-coding-plan/glm-5.1, haiku → zai-coding-plan/glm-5-turbo, empty → zai-coding-plan/glm-5.1)
   * Removal of Claude-specific fields (name, color)
   * Preservation of description, skills, and body content
 

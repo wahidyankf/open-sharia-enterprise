@@ -113,11 +113,14 @@ func ConvertModel(claudeModel string) string {
 
 	switch model {
 	case "sonnet", "opus":
-		return "zai/glm-4.7"
+		return "zai-coding-plan/glm-5.1"
 	case "haiku":
-		return "zai/glm-4.5-air"
+		return "zai-coding-plan/glm-5-turbo"
 	default:
-		return "inherit"
+		// Default to the most capable model.
+		// "inherit" is not a valid OpenCode model value and causes
+		// ProviderModelNotFoundError, so we use an explicit model ID.
+		return "zai-coding-plan/glm-5.1"
 	}
 }
 
