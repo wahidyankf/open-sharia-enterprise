@@ -240,8 +240,9 @@ in-process mocking only (MSW, Godog) override to `cache: true` in their `project
 
 All three levels consume the same Gherkin specs — only step implementations change. `test:quick`
 includes only `test:unit` + coverage validation. It does NOT include `lint`, `typecheck`,
-`test:integration`, or `test:e2e`. Spec-coverage validation (`rhino-cli spec-coverage validate`)
-is deferred pending tool enhancement for demo-be naming conventions.
+`test:integration`, or `test:e2e`. `spec-coverage` (`rhino-cli spec-coverage validate`) runs as a
+separate Nx target enforced by the pre-push hook; it is active for demo-be backends and most other
+projects.
 
 **Three-level testing standard** (Go CLI apps):
 
@@ -343,9 +344,9 @@ Husky + lint-staged enforce quality:
   - Validates all markdown files (markdownlint)
   - Auto-stages changes
 - **Commit-msg**: Validates Conventional Commits format (Commitlint)
-- **Pre-push**: Runs `typecheck`, `lint`, and `test:quick` for affected projects (parallelism: cores-1)
+- **Pre-push**: Runs `typecheck`, `lint`, `test:quick`, and `spec-coverage` for affected projects (parallelism: cores-1)
   - Runs markdown linting
-  - All three Nx targets are cacheable — if pre-push times out, run `npx nx affected -t typecheck lint test:quick` first to warm the cache, then push again
+  - All four Nx targets are cacheable — if pre-push times out, run `npx nx affected -t typecheck lint test:quick spec-coverage` first to warm the cache, then push again
 
 **See**: [governance/development/quality/code.md](./governance/development/quality/code.md)
 

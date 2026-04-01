@@ -161,11 +161,10 @@ specs because they use a separate spec directory (`specs/apps/a-demo/fe/gherkin/
 
 See [Nx Target Standards](../infra/nx-targets.md) for the full canonical inputs table per language.
 
-**Note on spec-coverage enforcement**: Running `rhino-cli spec-coverage validate` in `test:quick`
-to enforce that all Gherkin scenarios have corresponding step definitions is planned for demo-be
-backends but currently deferred. The tool needs enhancement to support demo-be test file naming
-conventions (e.g., `health_steps_test.go`) before this can be enforced. Spec-coverage enforcement
-is currently active for CLI apps only. This will be addressed in a follow-up plan.
+**Spec-coverage enforcement**: `rhino-cli spec-coverage validate` runs as the dedicated
+`spec-coverage` Nx target and is enforced by the pre-push hook. It is active for 19 projects. 11
+projects have it temporarily deferred until step implementations are complete. See [Nx Target
+Standards](../infra/nx-targets.md) for the full project-by-project status and command flags.
 
 ## Coverage Enforcement
 
@@ -262,26 +261,57 @@ The `typecheck` and `build` Nx targets depend on `codegen`. This means contract 
 
 The following table maps GitHub Actions workflows to the test levels they execute:
 
-| Workflow                | test:unit        | test:integration | test:e2e | When           |
-| ----------------------- | ---------------- | ---------------- | -------- | -------------- |
-| Pre-push hook           | Via `test:quick` | No               | No       | Every push     |
-| PR quality gate         | Via `test:quick` | No               | No       | Every PR       |
-| `test-a-demo-be-*.yml`  | No               | Yes              | Yes      | CRON 2x daily  |
-| `test-a-demo-fe-*.yml`  | No               | No               | Yes      | CRON 2x daily  |
-| `test-and-deploy-*.yml` | Via `test:quick` | Yes              | Yes      | CRON 2x daily  |
-| `codecov-upload.yml`    | Via `test:quick` | No               | No       | Push to `main` |
+| Workflow                | test:unit        | spec-coverage | test:integration | test:e2e | When           |
+| ----------------------- | ---------------- | ------------- | ---------------- | -------- | -------------- |
+| Pre-push hook           | Via `test:quick` | Yes           | No               | No       | Every push     |
+| PR quality gate         | Via `test:quick` | No            | No               | No       | Every PR       |
+| `test-a-demo-be-*.yml`  | No               | No            | Yes              | Yes      | CRON 2x daily  |
+| `test-a-demo-fe-*.yml`  | No               | No            | No               | Yes      | CRON 2x daily  |
+| `test-and-deploy-*.yml` | Via `test:quick` | No            | Yes              | Yes      | CRON 2x daily  |
+| `codecov-upload.yml`    | Via `test:quick` | No            | No               | No       | Push to `main` |
 
-The pre-push hook and PR quality gate intentionally omit integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. Scheduled CRON workflows cover integration and E2E coverage on a regular cadence.
+The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration and E2E coverage on a regular cadence.
 
 ## Spec-Coverage Validation
 
-`rhino-cli spec-coverage validate` ensures every Gherkin scenario has corresponding step definitions. This prevents scenarios from silently having no implementation.
+`rhino-cli spec-coverage validate` ensures every Gherkin step has a matching step definition. This
+prevents scenarios from silently having no implementation.
 
-- **Currently active**: CLI apps only (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`)
-- **Planned (Phase 4 of CI standardization)**: `rhino-cli spec-coverage validate` will be added as a `spec-coverage` Nx target to all testable projects once the tool supports demo-be naming conventions (e.g., `health_steps_test.go`)
-- **Dependency**: The tool must be enhanced to recognize demo-be test file naming patterns before enforcement can be enabled for backends
+The tool is invoked as the `spec-coverage` Nx target and is enforced by the pre-push hook alongside
+`typecheck`, `lint`, and `test:quick`. All four targets are cacheable.
 
-When active, `spec-coverage` runs as part of `test:quick` immediately after coverage validation.
+### Flags
+
+**`--shared-steps`**: All projects use this flag. It validates steps across ALL source files in the
+supplied directories rather than requiring a 1:1 match between each feature file and a
+corresponding step file. This accommodates shared step libraries and the varying naming conventions
+across languages (e.g., `health_steps_test.go`, `UserSteps.java`, `user_steps.ex`).
+
+**`--exclude-dir test-support`**: Demo-be backends and demo-fe frontends use this flag. It excludes
+E2E-only `test-support` API spec files from validation. These specs exist only to support E2E
+testing infrastructure and are not implemented at the unit or integration level. E2E runners do
+**not** use this flag because they implement those steps.
+
+### Project Coverage Status
+
+19 projects currently have `spec-coverage` enforced. 11 projects have it temporarily deferred
+pending step implementation. The project-by-project breakdown is maintained in
+[Nx Target Standards](../infra/nx-targets.md).
+
+### Relationship to the Three Test Levels
+
+All three test levels (unit, integration, E2E) consume the same Gherkin specs. `spec-coverage`
+enforces that every step referenced in the feature files has at least one step definition
+somewhere in the project's source tree. It does not verify which test level implements each step —
+it verifies that no step is silently unimplemented across all levels combined.
+
+```
+Gherkin feature file
+  -> spec-coverage validates: every step has a matching step definition
+  -> test:unit runs: unit-level step definitions (mocked dependencies)
+  -> test:integration runs: integration-level step definitions (real DB, no HTTP)
+  -> test:e2e runs: E2E-level step definitions (real HTTP + real DB)
+```
 
 ## Known Gaps
 
@@ -289,7 +319,7 @@ The following gaps are known and tracked for future resolution:
 
 - **FE unit tests lack Gherkin**: `a-demo-fe-ts-nextjs`, `a-demo-fe-ts-tanstack-start`, `a-demo-fe-dart-flutterweb`, and `organiclever-fe` do not yet consume Gherkin specs at the unit level. A BDD runner compatible with Vitest-based unit tests needs to be selected (tracked in W11 of the CI standardization plan).
 - **Content platform Gherkin pending**: `ayokoding-web` and `oseplatform-web` do not yet consume Gherkin specs at any test level. Gherkin consumption for content platforms is planned as part of the same standardization effort.
-- **Spec-coverage not enforced for demo-be**: `rhino-cli spec-coverage validate` is not yet active for demo-be backends. See "Spec-Coverage Validation" above.
+- **Spec-coverage deferred for some projects**: 11 projects have `spec-coverage` temporarily removed until step implementations are complete. See "Spec-Coverage Validation" above and [Nx Target Standards](../infra/nx-targets.md) for the deferred project list.
 
 ## Per-Backend Implementation Pattern
 
