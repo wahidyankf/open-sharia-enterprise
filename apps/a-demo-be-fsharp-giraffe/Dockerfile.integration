@@ -32,8 +32,8 @@ COPY apps/a-demo-be-fsharp-giraffe/src/ src/
 COPY apps/a-demo-be-fsharp-giraffe/generated-contracts/ generated-contracts/
 COPY apps/a-demo-be-fsharp-giraffe/tests/ tests/
 
-# Build the test project.
-RUN dotnet build tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj --no-restore
+# Build the test project (restore again to ensure packages are available after source copy).
+RUN dotnet build tests/ADemoBeFsgi.Tests/ADemoBeFsgi.Tests.fsproj
 
 # Run all tests against real PostgreSQL.
 # DATABASE_URL and APP_JWT_SECRET are supplied by docker-compose as environment variables.

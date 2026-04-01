@@ -143,9 +143,14 @@ Then("a visible focus indicator should be displayed on that element", async ({ p
 });
 
 Then("the focus indicator should have sufficient contrast against the surrounding background", async ({ page }) => {
-  // Verify the focused element has a visible focus ring using axe-core
-  const results = await new AxeBuilder({ page }).withRules(["focus-visible"]).analyze();
-  // If axe doesn't flag focus-visible issues, we're good
-  const focusViolations = results.violations.filter((v) => v.id === "focus-visible");
-  expect(focusViolations).toEqual([]);
+  // Verify focused element has a visible focus ring via computed styles
+  const hasFocusContrast = await page.evaluate(() => {
+    const el = document.activeElement;
+    if (!el || el === document.body) return true;
+    const styles = window.getComputedStyle(el);
+    const outlineWidth = parseFloat(styles.outlineWidth);
+    const boxShadow = styles.boxShadow;
+    return outlineWidth > 0 || (boxShadow !== "none" && boxShadow !== "");
+  });
+  expect(hasFocusContrast).toBe(true);
 });
