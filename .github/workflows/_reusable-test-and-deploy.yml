@@ -40,7 +40,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-golang
-      - run: npx nx run ${{ inputs.app-name }}:spec-coverage
+      - name: Run spec-coverage for app and E2E runners
+        run: |
+          npx nx run ${{ inputs.app-name }}:spec-coverage
+          # Run E2E runner spec-coverage if the target exists on the project
+          for suffix in be-e2e fe-e2e; do
+            proj="${{ inputs.app-name }}-${suffix}"
+            if npx nx show project "$proj" --json 2>/dev/null | grep -q '"spec-coverage"'; then
+              npx nx run "${proj}:spec-coverage"
+            fi
+          done
 
   integration:
     name: Integration tests
