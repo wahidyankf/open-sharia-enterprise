@@ -47,7 +47,7 @@ All pushes, PRs, and `Test*` workflows must reject when spec-coverage fails:
 - [x] Add `spec-coverage` job to `test-a-demo-fs-ts-nextjs.yml`
 - [x] Add `spec-coverage` job to `test-a-demo-fe-ts-nextjs.yml`
 - [x] Add `spec-coverage` job to `test-a-demo-fe-ts-tanstack-start.yml`
-- [ ] Add `spec-coverage` job to remaining `Test*` workflows as each project's target is restored
+- [x] Add `spec-coverage` job to remaining `Test*` workflows as each project's target is restored
 - [x] Pre-push hook already enforces `spec-coverage` (done in prior commit)
 
 ### 0.3 Update plan gap counts (Background steps now included)
@@ -98,7 +98,7 @@ ones. This confirms the parser (after the Background step fix) reports correct c
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-ts-effect/project.json` using the
       TypeScript BE pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-ts-effect:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-ts-effect): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-ts-effect): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 1.2 a-demo-be-python-fastapi (8 missing steps)
 
@@ -116,7 +116,7 @@ ones. This confirms the parser (after the Background step fix) reports correct c
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-python-fastapi/project.json` using the
       Python pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-python-fastapi:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-python-fastapi): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-python-fastapi): implement missing BDD step definitions and restore spec-coverage`.
 
 ---
 
@@ -139,7 +139,7 @@ ones. This confirms the parser (after the Background step fix) reports correct c
 - [x] Add the `spec-coverage` target to `apps/a-demo-fe-e2e/project.json` using the TS FE E2E
       pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-fe-e2e:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-fe-e2e): implement missing viewport BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-fe-e2e): implement missing viewport BDD step definitions and restore spec-coverage`.
 
 ### 2.2 organiclever-fe-e2e (15 missing steps)
 
@@ -156,7 +156,7 @@ navigation, form labels)
 - [x] Add the `spec-coverage` target to `apps/organiclever-fe-e2e/project.json` using the
       organiclever FE E2E pattern from tech-docs.md.
 - [x] Run `npx nx run organiclever-fe-e2e:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(organiclever-fe-e2e): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(organiclever-fe-e2e): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 2.3 a-demo-be-clojure-pedestal (22 missing steps)
 
@@ -178,7 +178,7 @@ navigation, form labels)
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-clojure-pedestal/project.json` using
       the Clojure pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-clojure-pedestal:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-clojure-pedestal): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-clojure-pedestal): implement missing BDD step definitions and restore spec-coverage`.
 
 ---
 
@@ -212,7 +212,7 @@ attachments, admin operations, user profile/password/display-name, currency/unit
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-java-springboot/project.json` using
       the Java pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-java-springboot:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-java-springboot): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-java-springboot): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 3.2 a-demo-be-rust-axum (59 missing steps)
 
@@ -232,7 +232,7 @@ attachments, admin operations, user profile/password/display-name, currency/unit
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-rust-axum/project.json` using the
       Rust pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-rust-axum:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-rust-axum): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-rust-axum): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 3.3 a-demo-be-elixir-phoenix (76 missing steps)
 
@@ -257,7 +257,7 @@ attachments, user accounts, currency, units
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-elixir-phoenix/project.json` using
       the Elixir pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-elixir-phoenix:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-elixir-phoenix): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-elixir-phoenix): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 3.4 a-demo-be-java-vertx (80 missing steps)
 
@@ -276,7 +276,7 @@ attachments, user accounts, currency, units
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-java-vertx/project.json` using the
       Java pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-java-vertx:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-java-vertx): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-java-vertx): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 3.5 a-demo-be-kotlin-ktor (97 missing steps)
 
@@ -303,7 +303,7 @@ attachments, user accounts, currency, units, list/pagination
 - [x] Add the `spec-coverage` target to `apps/a-demo-be-kotlin-ktor/project.json` using the
       Kotlin pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-be-kotlin-ktor:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-be-kotlin-ktor): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-be-kotlin-ktor): implement missing BDD step definitions and restore spec-coverage`.
 
 ---
 
@@ -336,7 +336,7 @@ responsive layout, accessibility
 - [x] Add the `spec-coverage` target to `apps/a-demo-fe-dart-flutterweb/project.json` using
       the Dart pattern from tech-docs.md.
 - [x] Run `npx nx run a-demo-fe-dart-flutterweb:spec-coverage` and confirm 0 gaps.
-- [ ] Commit: `feat(a-demo-fe-dart-flutterweb): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Commit: `feat(a-demo-fe-dart-flutterweb): implement missing BDD step definitions and restore spec-coverage`.
 
 ---
 
@@ -344,23 +344,23 @@ responsive layout, accessibility
 
 - [x] Run `npx nx run-many -t spec-coverage` across ALL projects (apps/ and libs/) and confirm
       every project with a spec-coverage target exits with code 0.
-- [ ] Run `npx nx run-many -t test:quick` for all 11 previously failing projects and confirm
+- [x] Run `npx nx run-many -t test:quick` for all 11 previously failing projects and confirm
       all pass.
 - [x] Spot-check step definitions in at least 3 projects (one per tier) to confirm no shortcuts
       were taken — no stubs, no `pending()`, no empty bodies, no `assert(true)`.
 - [x] Verify the pre-push hook includes spec-coverage in its affected targets run by
       simulating a push or running `npx nx affected -t spec-coverage`.
-- [ ] Update this plan's status in [README.md](./README.md) to "Completed".
-- [ ] Move this plan folder from `plans/in-progress/` to `plans/done/` and update both index
+- [x] Update this plan's status in [README.md](./README.md) to "Completed".
+- [x] Move this plan folder from `plans/in-progress/` to `plans/done/` and update both index
       files.
 
 ## Validation Checklist
 
 - [x] All 30 projects report 0 spec-coverage gaps.
 - [x] All 11 previously failing projects have `spec-coverage` in their `project.json`.
-- [ ] All 11 previously failing projects pass `test:quick` with coverage at or above threshold.
+- [x] All 11 previously failing projects pass `test:quick` with coverage at or above threshold.
 - [x] No existing passing project has regressed (still passes `test:quick` and `spec-coverage`).
-- [ ] All commits follow conventional commit format.
+- [x] All commits follow conventional commit format.
 - [x] No changes made to `.feature` files — only step definition code was added.
 - [x] No step definition contains stubs, `pending()`, empty bodies, or `assert(true)`.
 - [x] Phase 0.4 parser recheck was completed before implementation began.
