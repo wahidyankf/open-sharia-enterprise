@@ -100,25 +100,25 @@ flowchart TD
 
 Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-patterns.
 
-| Target             | Purpose                                                                                                          | When Required                     |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| `build`            | Produce deployable or runnable artifacts                                                                         | Compiled and bundled projects     |
-| `typecheck`        | Verify type correctness without producing artifacts                                                              | Statically typed languages        |
-| `lint`             | Static analysis and code style checks                                                                            | All projects                      |
-| `test:quick`       | Fast quality gate for pre-push and PR merge; composed of fast checks                                             | All projects                      |
-| `spec-coverage`    | Validate that every Gherkin step has a matching step definition; uses `rhino-cli spec-coverage validate`         | Projects consuming Gherkin specs  |
-| `test:unit`        | Isolated unit tests with mocked dependencies; must consume Gherkin specs (demo-be backends and Go CLI apps)      | Projects with unit tests          |
-| `test:integration` | Demo-be: real PostgreSQL via docker-compose, direct code calls (no HTTP). Others: existing patterns (MSW, Godog) | Projects with integration tests   |
-| `test:e2e`         | Run E2E tests headlessly against a running app; must consume Gherkin specs (demo-be backends) via Playwright     | E2E test projects (`*-e2e`)       |
-| `test:e2e:ui`      | Run E2E tests with interactive Playwright UI                                                                     | E2E test projects                 |
-| `test:e2e:report`  | Open the last E2E HTML report                                                                                    | E2E test projects                 |
-| `dev`              | Start local development server with hot-reload                                                                   | Apps with dev servers             |
-| `start`            | Start server in production mode                                                                                  | Apps with production server mode  |
-| `run`              | Execute the application directly                                                                                 | CLI applications                  |
-| `codegen`          | Generate code from OpenAPI contract spec into `generated-contracts/`                                             | Demo apps with contract types     |
-| `docs`             | Generate browsable API documentation from contract spec                                                          | Contract spec projects            |
-| `install`          | Install project-local dependencies                                                                               | E2E suites, Go CLIs               |
-| `clean`            | Remove build artifacts and caches                                                                                | Projects with large build outputs |
+| Target             | Purpose                                                                                                                  | When Required                     |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| `build`            | Produce deployable or runnable artifacts                                                                                 | Compiled and bundled projects     |
+| `typecheck`        | Verify type correctness without producing artifacts                                                                      | Statically typed languages        |
+| `lint`             | Static analysis, code style checks, and static a11y checks (oxlint jsx-a11y for TS UI projects, `dart analyze` for Dart) | All projects                      |
+| `test:quick`       | Fast quality gate for pre-push and PR merge; composed of fast checks                                                     | All projects                      |
+| `spec-coverage`    | Validate that every Gherkin step has a matching step definition; uses `rhino-cli spec-coverage validate`                 | All apps and E2E runners          |
+| `test:unit`        | Isolated unit tests with mocked dependencies; must consume Gherkin specs (demo-be backends and Go CLI apps)              | Projects with unit tests          |
+| `test:integration` | Demo-be: real PostgreSQL via docker-compose, direct code calls (no HTTP). Others: existing patterns (MSW, Godog)         | Projects with integration tests   |
+| `test:e2e`         | Run E2E tests headlessly against a running app; must consume Gherkin specs (demo-be backends) via Playwright             | E2E test projects (`*-e2e`)       |
+| `test:e2e:ui`      | Run E2E tests with interactive Playwright UI                                                                             | E2E test projects                 |
+| `test:e2e:report`  | Open the last E2E HTML report                                                                                            | E2E test projects                 |
+| `dev`              | Start local development server with hot-reload                                                                           | Apps with dev servers             |
+| `start`            | Start server in production mode                                                                                          | Apps with production server mode  |
+| `run`              | Execute the application directly                                                                                         | CLI applications                  |
+| `codegen`          | Generate code from OpenAPI contract spec into `generated-contracts/`                                                     | Demo apps with contract types     |
+| `docs`             | Generate browsable API documentation from contract spec                                                                  | Contract spec projects            |
+| `install`          | Install project-local dependencies                                                                                       | E2E suites, Go CLIs               |
+| `clean`            | Remove build artifacts and caches                                                                                        | Projects with large build outputs |
 
 ### Naming Rules
 
@@ -214,17 +214,18 @@ A Go lib has no platform boundary and no domain, so it omits both:
 
 ### Summary Matrix
 
-Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → integration tests, (3) All web apps (APIs + web UIs) → E2E tests. Hugo sites are exempt from all rules.
+Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → integration tests, (3) All web apps (APIs + web UIs) → E2E tests. Hugo sites are exempt from all rules. `spec-coverage` is compulsory for all apps and E2E runners.
 
-| Project Type | `test:unit` | `test:integration` | `test:e2e` | `test:quick` | `lint` | `build` | `typecheck`  |
-| ------------ | ----------- | ------------------ | ---------- | ------------ | ------ | ------- | ------------ |
-| API Backend  | Yes         | Yes (PG)           | Yes\*      | Yes          | Yes    | Yes     | Yes (all 11) |
-| Web UI App   | Yes         | Yes (MSW)          | Yes\*      | Yes          | Yes    | Yes     | If typed     |
-| Demo-fe FE   | Yes         | —                  | Yes\*      | Yes          | Yes    | Yes     | If typed     |
-| CLI App      | Yes         | Yes (Godog)        | —          | Yes          | Yes    | Yes     | If typed     |
-| Library      | Yes         | Optional           | —          | Yes          | Yes    | —       | If typed     |
-| Hugo Site    | —           | —                  | —          | Yes          | —      | Yes     | —            |
-| E2E Runner   | —           | —                  | Yes        | Yes          | Yes    | —       | If typed     |
+| Project Type | `test:unit` | `test:integration` | `test:e2e` | `test:quick` | `spec-coverage` | `lint` | `build` | `typecheck`  |
+| ------------ | ----------- | ------------------ | ---------- | ------------ | --------------- | ------ | ------- | ------------ |
+| API Backend  | Yes         | Yes (PG)           | Yes\*      | Yes          | Yes             | Yes    | Yes     | Yes (all 11) |
+| Web UI App   | Yes         | Yes (MSW)          | Yes\*      | Yes          | Yes             | Yes    | Yes     | If typed     |
+| Demo-fe FE   | Yes         | —                  | Yes\*      | Yes          | Yes             | Yes    | Yes     | If typed     |
+| Fullstack    | Yes         | Yes                | Yes\*      | Yes          | Yes             | Yes    | Yes     | If typed     |
+| CLI App      | Yes         | Yes (Godog)        | —          | Yes          | Yes             | Yes    | Yes     | If typed     |
+| Library      | Yes         | Optional           | —          | Yes          | Yes             | Yes    | —       | If typed     |
+| Hugo Site    | —           | —                  | —          | Yes          | —               | —      | Yes     | —            |
+| E2E Runner   | —           | —                  | Yes        | Yes          | Yes             | Yes    | —       | If typed     |
 
 **Demo-be backend `typecheck` commands** (all 11 backends have `typecheck` with `dependsOn: ["codegen"]`):
 
@@ -250,11 +251,12 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 Every project in `apps/` and `libs/` must expose:
 
-| Target       | Requirement                                                                                                                                                |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge               |
-| `lint`       | Exit non-zero on violations; enforced by the pre-push hook, the PR quality gate, and scheduled Test CI workflows                                           |
-| `typecheck`  | Required for statically typed projects and all demo-be backends; enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
+| Target          | Requirement                                                                                                                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test:quick`    | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                                                          |
+| `spec-coverage` | Compulsory for all apps and E2E runners; validates every Gherkin step has a matching step definition via `rhino-cli spec-coverage validate`; enforced by the pre-push hook and scheduled CI workflows |
+| `lint`          | Exit non-zero on violations; enforced by the pre-push hook, the PR quality gate, and scheduled Test CI workflows. UI projects must include static a11y checks (see "Accessibility Testing" below)     |
+| `typecheck`     | Required for statically typed projects and all demo-be backends; enforced by the pre-push hook; skipped by Nx for projects that do not declare this target                                            |
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
 
@@ -400,9 +402,10 @@ containers and volumes.
 
 ### Spec-Coverage Projects
 
-`spec-coverage` validates that every Gherkin step in the project's feature files has a matching step
-definition in the implementation. It runs `rhino-cli spec-coverage validate` and is enforced by the
-pre-push hook alongside `typecheck`, `lint`, and `test:quick`.
+`spec-coverage` is compulsory for ALL apps and E2E runners. It validates that every Gherkin step in
+the project's feature files has a matching step definition in the implementation. It runs
+`rhino-cli spec-coverage validate` and is enforced by the pre-push hook alongside `typecheck`,
+`lint`, and `test:quick`, as well as in all scheduled Test CI workflows.
 
 **Command flags used across project types**:
 
@@ -413,17 +416,21 @@ pre-push hook alongside `typecheck`, `lint`, and `test:quick`.
 
 **Project coverage status**:
 
-| Project group                                                 | Status   | Notes                                                                    |
-| ------------------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
-| Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs) |
-| Demo-be backends (all 11)                                     | Enforced | `--shared-steps --exclude-dir test-support`                              |
-| Demo-fe frontends                                             | Enforced | `--shared-steps --exclude-dir test-support`                              |
-| Fullstack (`a-demo-fs-ts-nextjs`)                             | Enforced | `--shared-steps --exclude-dir test-support`                              |
-| E2E runners (`a-demo-be-e2e`, `a-demo-fe-e2e`)                | Enforced | `--shared-steps` only; test-support steps are implemented here           |
-| Projects with genuine step gaps                               | Deferred | `spec-coverage` removed until step implementation is complete            |
+| Project group                                                 | Status   | Notes                                                                                       |
+| ------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                    |
+| Demo-be backends (all 11)                                     | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
+| Demo-fe frontends                                             | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
+| Fullstack (`a-demo-fs-ts-nextjs`)                             | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
+| E2E runners (`a-demo-be-e2e`, `a-demo-fe-e2e`)                | Enforced | `--shared-steps` only; test-support steps are implemented here                              |
+| Content platforms (`ayokoding-web`, `oseplatform-web`)        | Enforced | `--shared-steps`                                                                            |
+| Web UI apps (`organiclever-fe`)                               | Enforced | `--shared-steps`                                                                            |
+| OrganicLever backend (`organiclever-be`)                      | Enforced | `--shared-steps`                                                                            |
+| Libraries (`golang-commons`, `hugo-commons`)                  | Enforced | `--shared-steps`                                                                            |
+| Projects with genuine step gaps                               | Deferred | `spec-coverage` target exists but validation deferred until step implementation is complete |
 
-**19 projects** currently have `spec-coverage` enforced. **11 projects** have it temporarily
-deferred pending step implementation.
+All apps and E2E runners are required to have a `spec-coverage` target. Projects with genuine step
+gaps have the target deferred temporarily until step implementations are complete.
 
 **Nx inputs for `spec-coverage`**: The target must declare the project's feature files and source
 files as inputs so the cache invalidates when specs or step definitions change:
@@ -444,6 +451,38 @@ files as inputs so the cache invalidates when specs or step definitions change:
 
 The exact source directory arguments vary by language. The feature files argument always points to
 `{workspaceRoot}/specs/.../**/*.feature` for the project's spec directory.
+
+### Accessibility Testing
+
+Accessibility testing is compulsory for all UI-related projects. It operates at two levels:
+
+**Static a11y linting** (enforced via the `lint` target at all three gates: pre-push hook, PR
+quality gate, and scheduled Test CI workflows):
+
+| Project                                                                     | Static a11y tool           |
+| --------------------------------------------------------------------------- | -------------------------- |
+| `a-demo-fe-ts-nextjs`, `a-demo-fe-ts-tanstack-start`, `a-demo-fs-ts-nextjs` | `oxlint --jsx-a11y-plugin` |
+| `organiclever-fe`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui`         | `oxlint --jsx-a11y-plugin` |
+| `a-demo-fe-dart-flutterweb`                                                 | `dart analyze`             |
+
+Static a11y linting catches common accessibility violations at compile time: missing alt text,
+missing ARIA labels, invalid ARIA attributes, missing form labels, and incorrect role usage.
+
+**Runtime accessibility E2E tests** (enforced via `test:e2e` in scheduled CI workflows):
+
+All UI projects must have runtime accessibility E2E tests using `@axe-core/playwright` (axe-core)
+covering WCAG AA compliance. These tests verify:
+
+- Color contrast ratios (WCAG AA: 4.5:1 for normal text, 3:1 for large text)
+- Keyboard navigation (all interactive elements reachable via Tab/Shift+Tab)
+- ARIA labels and roles on interactive elements
+- Focus management (focus moves logically, focus traps work correctly)
+- Heading hierarchy (no skipped levels, single H1)
+
+**Gherkin accessibility specs**: UI projects must have accessibility Gherkin specs at
+`specs/apps/<domain>/fe/gherkin/accessibility.feature`. UI component library specs in
+`specs/libs/ts-ui/gherkin/` must include "Has no accessibility violations" scenarios for each
+component.
 
 ### Hugo Sites
 
@@ -588,11 +627,11 @@ Example for `rhino-cli` `test:unit` inputs:
 spec changes (triggering `codegen`), `test:unit` and `test:quick` must re-run even if application
 source files are unchanged. Without these paths in `inputs`, Nx incorrectly serves cached results.
 
-**Note on spec-coverage enforcement**: `rhino-cli spec-coverage validate` runs as the `spec-coverage`
-Nx target, enforced by the pre-push hook alongside `typecheck`, `lint`, and `test:quick`. It is
-active for 19 projects (all 11 demo-be backends, demo-fe frontends, fullstack apps, CLI apps, and
-E2E runners). 11 projects have it temporarily deferred until step implementations are complete. See
-the "Spec-Coverage Projects" section for flags and project-by-project status.
+**Note on spec-coverage enforcement**: `spec-coverage` is compulsory for all apps and E2E runners.
+`rhino-cli spec-coverage validate` runs as the `spec-coverage` Nx target, enforced by the pre-push
+hook alongside `typecheck`, `lint`, and `test:quick`, and in all scheduled Test CI workflows.
+Projects with genuine step gaps have the target deferred temporarily until step implementations are
+complete. See the "Spec-Coverage Projects" section for flags and project-by-project status.
 
 ## Codegen Dependency Chain
 

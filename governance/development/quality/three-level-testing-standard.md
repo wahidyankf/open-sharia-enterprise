@@ -161,9 +161,10 @@ specs because they use a separate spec directory (`specs/apps/a-demo/fe/gherkin/
 
 See [Nx Target Standards](../infra/nx-targets.md) for the full canonical inputs table per language.
 
-**Spec-coverage enforcement**: `rhino-cli spec-coverage validate` runs as the dedicated
-`spec-coverage` Nx target and is enforced by the pre-push hook. It is active for 19 projects. 11
-projects have it temporarily deferred until step implementations are complete. See [Nx Target
+**Spec-coverage enforcement**: `spec-coverage` is compulsory for all apps and E2E runners.
+`rhino-cli spec-coverage validate` runs as the dedicated `spec-coverage` Nx target and is enforced
+by the pre-push hook and all scheduled Test CI workflows. Projects with genuine step gaps have the
+target deferred temporarily until step implementations are complete. See [Nx Target
 Standards](../infra/nx-targets.md) for the full project-by-project status and command flags.
 
 ## Coverage Enforcement
@@ -265,12 +266,12 @@ The following table maps GitHub Actions workflows to the test levels they execut
 | ----------------------- | ---- | ---------------- | ------------- | ---------------- | -------- | -------------- |
 | Pre-push hook           | Yes  | Via `test:quick` | Yes           | No               | No       | Every push     |
 | PR quality gate         | Yes  | Via `test:quick` | No            | No               | No       | Every PR       |
-| `test-a-demo-be-*.yml`  | Yes  | No               | No            | Yes              | Yes      | CRON 2x daily  |
-| `test-a-demo-fe-*.yml`  | Yes  | No               | No            | No               | Yes      | CRON 2x daily  |
-| `test-and-deploy-*.yml` | Yes  | Via `test:quick` | No            | Yes              | Yes      | CRON 2x daily  |
+| `test-a-demo-be-*.yml`  | Yes  | No               | Yes           | Yes              | Yes      | CRON 2x daily  |
+| `test-a-demo-fe-*.yml`  | Yes  | No               | Yes           | No               | Yes      | CRON 2x daily  |
+| `test-and-deploy-*.yml` | Yes  | Via `test:quick` | Yes           | Yes              | Yes      | CRON 2x daily  |
 | `codecov-upload.yml`    | No   | Via `test:quick` | No            | No               | No       | Push to `main` |
 
-`lint` (including static a11y checks via oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects) runs in all three enforcement gates: the pre-push hook, the PR quality gate, and scheduled CRON workflows. The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration and E2E coverage on a regular cadence.
+`lint` (including static a11y checks via oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects) runs in all three enforcement gates: the pre-push hook, the PR quality gate, and scheduled CRON workflows. `spec-coverage` runs in the pre-push hook and all scheduled Test CI workflows, ensuring every Gherkin step has a matching step definition. The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration, E2E, and spec-coverage on a regular cadence.
 
 ## Spec-Coverage Validation
 
@@ -312,6 +313,43 @@ Gherkin feature file
   -> test:integration runs: integration-level step definitions (real DB, no HTTP)
   -> test:e2e runs: E2E-level step definitions (real HTTP + real DB)
 ```
+
+## Accessibility Testing
+
+Accessibility testing is compulsory for all UI-related projects and operates at two levels that
+complement the three-level testing standard.
+
+### Static A11y Linting (via `lint` target)
+
+All UI projects must include static accessibility checks in their `lint` target. These checks catch
+common accessibility violations at compile time and are enforced at all three gates: pre-push hook,
+PR quality gate, and scheduled Test CI workflows.
+
+- **TypeScript UI projects** (`a-demo-fe-ts-nextjs`, `a-demo-fe-ts-tanstack-start`,
+  `a-demo-fs-ts-nextjs`, `organiclever-fe`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui`):
+  `oxlint --jsx-a11y-plugin`
+- **Dart UI projects** (`a-demo-fe-dart-flutterweb`): `dart analyze`
+
+### Runtime Accessibility E2E Tests (via `test:e2e`)
+
+All UI projects must have runtime accessibility E2E tests using `@axe-core/playwright` (axe-core)
+covering WCAG AA compliance:
+
+- Color contrast ratios (WCAG AA: 4.5:1 for normal text, 3:1 for large text)
+- Keyboard navigation (all interactive elements reachable via Tab/Shift+Tab)
+- ARIA labels and roles on interactive elements
+- Focus management (focus moves logically, focus traps work correctly)
+- Heading hierarchy (no skipped levels, single H1)
+
+### Gherkin Accessibility Specs
+
+UI projects must have accessibility Gherkin specs at
+`specs/apps/<domain>/fe/gherkin/accessibility.feature`. UI component library specs in
+`specs/libs/ts-ui/gherkin/` must include "Has no accessibility violations" scenarios for each
+component.
+
+See [Nx Target Standards](../infra/nx-targets.md) for the full list of projects with static a11y
+linting and the enforcement gates.
 
 ## Known Gaps
 

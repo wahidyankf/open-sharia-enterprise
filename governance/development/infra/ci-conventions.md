@@ -103,18 +103,19 @@ with a period.
 The pre-push hook runs two commands in sequence:
 
 ```bash
-nx affected -t typecheck lint test:quick --parallel=cores-1
+nx affected -t typecheck lint test:quick spec-coverage --parallel=cores-1
 npm run lint:md
 ```
 
 `nx affected` computes which projects changed since the merge base and runs only those projects.
 `--parallel=cores-1` reserves one core for system responsiveness. `lint:md` runs
-`markdownlint-cli2` over all markdown files as a final gate.
+`markdownlint-cli2` over all markdown files as a final gate. `spec-coverage` validates that every
+Gherkin step has a matching step definition and is compulsory for all apps and E2E runners.
 
 If the pre-push hook times out, warm the Nx cache first:
 
 ```bash
-npx nx affected -t typecheck lint test:quick
+npx nx affected -t typecheck lint test:quick spec-coverage
 ```
 
 Then push again — the cached results make the second run fast.
@@ -355,13 +356,13 @@ Scheduled workflows run twice daily aligned to WIB (UTC+7) business hours:
 
 Each scheduled test run executes five parallel tracks:
 
-| Track | Nx Target / Command             | Notes                                          |
-| ----- | ------------------------------- | ---------------------------------------------- |
-| 1     | `lint`                          | Static analysis across all affected projects   |
-| 2     | `typecheck`                     | Type verification                              |
-| 3     | `test:quick`                    | Unit tests + coverage validation               |
-| 4     | `spec-coverage`                 | Validates Gherkin scenario coverage (CLI apps) |
-| 5     | `test:integration` → `test:e2e` | Sequential: integration then E2E per service   |
+| Track | Nx Target / Command             | Notes                                                                               |
+| ----- | ------------------------------- | ----------------------------------------------------------------------------------- |
+| 1     | `lint`                          | Static analysis across all affected projects (includes static a11y for UI projects) |
+| 2     | `typecheck`                     | Type verification                                                                   |
+| 3     | `test:quick`                    | Unit tests + coverage validation                                                    |
+| 4     | `spec-coverage`                 | Validates Gherkin step coverage for all apps and E2E runners                        |
+| 5     | `test:integration` → `test:e2e` | Sequential: integration then E2E per service                                        |
 
 Tracks 1–4 run in parallel. Track 5 sequences integration before E2E within each service but
 services themselves run in parallel across matrix entries.
