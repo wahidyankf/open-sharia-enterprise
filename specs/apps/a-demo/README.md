@@ -17,12 +17,9 @@ specs/apps/a-demo/
 ├── be/                    # Backend specs (HTTP-semantic)
 │   ├── README.md
 │   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
-├── fe/                    # Frontend specs (UI-semantic)
-│   ├── README.md
-│   └── gherkin/           # Frontend Gherkin scenarios (see fe/gherkin/README)
-└── fs/                    # Fullstack specs (BE + FE combined)
+└── fe/                    # Frontend specs (UI-semantic)
     ├── README.md
-    └── gherkin/           # Fullstack-specific Gherkin scenarios (see fs/gherkin/README)
+    └── gherkin/           # Frontend Gherkin scenarios (see fe/gherkin/README)
 ```
 
 ## Backend vs Frontend
@@ -59,7 +56,6 @@ since they combine backend and frontend in a single deployable unit.
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
 - **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
 - **[fe/](./fe/README.md)** — Frontend app specs ([Gherkin features](./fe/gherkin/README.md))
-- **[fs/](./fs/README.md)** — Fullstack specs ([Gherkin features](./fs/gherkin/README.md))
 - **[contracts/](./contracts/README.md)** — OpenAPI 3.1 API contract (request/response shapes,
   code generation, browsable documentation)
 
@@ -72,9 +68,8 @@ All demo backends consume the backend Gherkin specs at **all three test levels**
 - **`test:quick`** — unit + coverage check; Gherkin spec paths included in Nx cache inputs
 - **`test:integration`** — steps call service functions with real PostgreSQL; cache disabled
 
-Spec-coverage validation (`rhino-cli spec-coverage validate`) is planned but deferred — the tool
-needs enhancement to support demo-be test file naming conventions before it can be enforced in
-`test:quick`.
+Spec-coverage validation (`rhino-cli spec-coverage validate`) is enforced for all demo apps via the
+`spec-coverage` Nx target, the pre-push hook, and scheduled Test CI workflows.
 
 ## Related
 
