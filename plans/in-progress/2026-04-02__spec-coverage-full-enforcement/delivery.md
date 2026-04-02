@@ -80,7 +80,7 @@ Corrected totals after parser fix:
 **Agent**: `swe-python-developer`
 **Feature areas**: Account status assertions, refresh token rotation, attachment upload
 
-- [ ] Audit existing step files in `apps/a-demo-be-python-fastapi/tests/unit/bdd/steps/` to
+- [ ] Audit existing step files in `apps/a-demo-be-python-fastapi/tests/unit/steps/` to
       locate where auth, account, and attachment steps live.
 - [ ] Add `@then` step for `alice's account status should be "{status}"` (×3 feature contexts —
       confirm whether one step definition covers all three or each needs a separate handler).
@@ -104,8 +104,8 @@ Corrected totals after parser fix:
 
 - [ ] Identify the 10 missing viewport step texts by running the spec-coverage check against
       `specs/apps/a-demo/fe/gherkin/` on `apps/a-demo-fe-e2e`.
-- [ ] Create a new step file `apps/a-demo-fe-e2e/steps/viewport-steps.ts` (or add to an
-      existing file) with steps like `Given the viewport is set to "desktop" (1280x800)` that call
+- [ ] Create a new step file `apps/a-demo-fe-e2e/tests/steps/layout/viewport.steps.ts` (or add to an
+      existing file in `tests/steps/layout/`) with steps like `Given the viewport is set to "desktop" (1280x800)` that call
       `page.setViewportSize({ width: 1280, height: 800 })`.
 - [ ] Cover all named viewport presets present in the feature files (desktop, tablet, mobile,
       etc.).
@@ -140,13 +140,14 @@ navigation, form labels)
 
 - [ ] Identify all 22 missing step texts by running spec-coverage against
       `specs/apps/a-demo/be/gherkin/` on `apps/a-demo-be-clojure-pedestal`.
-- [ ] Add admin step definitions (disable/enable/unlock/force-password-reset) to the admin
-      step namespace in `apps/a-demo-be-clojure-pedestal/test/`.
-- [ ] Add expenses step definitions (GET by ID, PUT, DELETE) to the expenses step namespace.
-- [ ] Add attachment step definitions (upload, list, delete + authorization checks) to the
-      attachments step namespace.
-- [ ] Add currency display step definitions (USD and IDR formatting assertions).
-- [ ] Add any remaining unit-handling steps.
+- [ ] Add admin step definitions (disable/enable/unlock/force-password-reset) to the existing
+      `apps/a-demo-be-clojure-pedestal/test/step_definitions/steps.clj` file (all steps live
+      in this single monolithic file; shared helpers are in `common.clj`).
+- [ ] Add expenses step definitions (GET by ID, PUT, DELETE) to `steps.clj`.
+- [ ] Add attachment step definitions (upload, list, delete + authorization checks) to
+      `steps.clj`.
+- [ ] Add currency display step definitions (USD and IDR formatting assertions) to `steps.clj`.
+- [ ] Add any remaining unit-handling steps to `steps.clj`.
 - [ ] Run `npx nx run a-demo-be-clojure-pedestal:test:quick` and confirm exit 0 with
       coverage ≥ 90%.
 - [ ] Add the `spec-coverage` target to `apps/a-demo-be-clojure-pedestal/project.json` using
@@ -188,12 +189,12 @@ attachments, admin operations, user profile/password/display-name, currency/unit
 - [ ] Run `npx nx run a-demo-be-java-springboot:spec-coverage` and confirm 0 gaps.
 - [ ] Commit: `feat(a-demo-be-java-springboot): implement missing BDD step definitions and restore spec-coverage`.
 
-### 3.2 a-demo-be-rust-axum (58 missing steps)
+### 3.2 a-demo-be-rust-axum (59 missing steps)
 
 **Agent**: `swe-rust-developer`
 **Feature areas**: Same as Java springboot but with more granular Given/And setup steps
 
-- [ ] Run spec-coverage to enumerate all 58 missing step texts.
+- [ ] Run spec-coverage to enumerate all 59 missing step texts.
 - [ ] Group by feature area as in 3.1.
 - [ ] Add step functions using `#[given]`, `#[when]`, `#[then]` macros operating on the
       `World` struct in `apps/a-demo-be-rust-axum/tests/unit/`.
@@ -233,12 +234,12 @@ attachments, user accounts, currency, units
 - [ ] Run `npx nx run a-demo-be-elixir-phoenix:spec-coverage` and confirm 0 gaps.
 - [ ] Commit: `feat(a-demo-be-elixir-phoenix): implement missing BDD step definitions and restore spec-coverage`.
 
-### 3.4 a-demo-be-java-vertx (79 missing steps)
+### 3.4 a-demo-be-java-vertx (80 missing steps)
 
 **Agent**: `swe-java-developer`
 **Feature areas**: Same breadth as Elixir — all categories
 
-- [ ] Run spec-coverage to enumerate all 79 missing step texts.
+- [ ] Run spec-coverage to enumerate all 80 missing step texts.
 - [ ] Group by feature area (health, JWKS, auth, token, logout, admin, expenses, reporting,
       attachments, user-lifecycle, currency, units).
 - [ ] Implement all step definition classes in `apps/a-demo-be-java-vertx/src/test/java/`
@@ -252,13 +253,13 @@ attachments, user accounts, currency, units
 - [ ] Run `npx nx run a-demo-be-java-vertx:spec-coverage` and confirm 0 gaps.
 - [ ] Commit: `feat(a-demo-be-java-vertx): implement missing BDD step definitions and restore spec-coverage`.
 
-### 3.5 a-demo-be-kotlin-ktor (96 missing steps)
+### 3.5 a-demo-be-kotlin-ktor (97 missing steps)
 
 **Agent**: `swe-kotlin-developer`
 **Feature areas**: Health, JWKS, token lifecycle, logout, admin, expenses, reporting,
 attachments, user accounts, currency, units, list/pagination
 
-- [ ] Run spec-coverage to enumerate all 96 missing step texts.
+- [ ] Run spec-coverage to enumerate all 97 missing step texts.
 - [ ] Group by feature area.
 - [ ] Add step functions in `apps/a-demo-be-kotlin-ktor/src/test/kotlin/` using Kotlin
       Cucumber JVM annotations (`@Given`, `@When`, `@Then`).
@@ -283,14 +284,14 @@ attachments, user accounts, currency, units, list/pagination
 
 ## Phase 4: Tier 4 — Largest Effort
 
-### 4.1 a-demo-fe-dart-flutterweb (220 missing steps)
+### 4.1 a-demo-fe-dart-flutterweb (241 missing steps)
 
 **Agent**: `swe-dart-developer`
 **Feature areas**: Auth flows, admin panel, expense management, attachments, reporting,
 responsive layout, accessibility
 
 - [ ] Run spec-coverage against `specs/apps/a-demo/fe/gherkin/` on
-      `apps/a-demo-fe-dart-flutterweb` to enumerate all 220 missing step texts.
+      `apps/a-demo-fe-dart-flutterweb` to enumerate all 241 missing step texts.
 - [ ] Audit the existing step files in `apps/a-demo-fe-dart-flutterweb/test/` to understand
       the current step file organization and BDD framework in use.
 - [ ] Implement auth flow steps (login, logout, registration, token refresh, redirect

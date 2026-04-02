@@ -81,7 +81,7 @@ And npx nx run a-demo-be-java-springboot:spec-coverage reports 0 gaps
 ```
 
 ```gherkin
-Given a-demo-be-rust-axum has 58 missing steps
+Given a-demo-be-rust-axum has 59 missing steps
 When the swe-rust-developer agent implements the missing step definitions
 Then npx nx run a-demo-be-rust-axum:test:quick passes with coverage >= 90%
 And npx nx run a-demo-be-rust-axum:spec-coverage reports 0 gaps
@@ -95,14 +95,14 @@ And npx nx run a-demo-be-elixir-phoenix:spec-coverage reports 0 gaps
 ```
 
 ```gherkin
-Given a-demo-be-java-vertx has 79 missing steps
+Given a-demo-be-java-vertx has 80 missing steps
 When the swe-java-developer agent implements the missing step definitions
 Then npx nx run a-demo-be-java-vertx:test:quick passes with coverage >= 90%
 And npx nx run a-demo-be-java-vertx:spec-coverage reports 0 gaps
 ```
 
 ```gherkin
-Given a-demo-be-kotlin-ktor has 96 missing steps
+Given a-demo-be-kotlin-ktor has 97 missing steps
 When the swe-kotlin-developer agent implements the missing step definitions
 Then npx nx run a-demo-be-kotlin-ktor:test:quick passes with coverage >= 90%
 And npx nx run a-demo-be-kotlin-ktor:spec-coverage reports 0 gaps
@@ -111,7 +111,7 @@ And npx nx run a-demo-be-kotlin-ktor:spec-coverage reports 0 gaps
 ### Story 6: The largest project (dart) passes spec-coverage
 
 ```gherkin
-Given a-demo-fe-dart-flutterweb has 220 missing steps across all FE feature areas
+Given a-demo-fe-dart-flutterweb has 241 missing steps across all FE feature areas
 When the swe-dart-developer agent implements all missing step definitions
 Then npx nx run a-demo-fe-dart-flutterweb:test:quick passes with coverage >= 70%
 And npx nx run a-demo-fe-dart-flutterweb:spec-coverage reports 0 gaps
