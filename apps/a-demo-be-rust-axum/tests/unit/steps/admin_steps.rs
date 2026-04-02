@@ -54,9 +54,8 @@ async fn response_has_user_with_field(world: &mut AppWorld, field: String, value
     );
 }
 
-#[when(
-    regex = r#"the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body \{ "reason": "Policy violation" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body \{ "reason": "Policy violation" \}"#)]
 async fn admin_disable_alice(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
     let alice_id = match world.alice_id {

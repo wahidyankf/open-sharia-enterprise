@@ -59,28 +59,28 @@ defmodule AADemoBeExphWeb.Integration.TokenLifecycleSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her refresh token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.refresh with her refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
     response = ServiceLayer.refresh(refresh_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her original refresh token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.refresh with her original refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
     response = ServiceLayer.refresh(refresh_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout with her access token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.logout with her access token$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.logout(access_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout-all with her access token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.logout-all with her access token$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.logout_all(access_token)

@@ -2,18 +2,16 @@ use cucumber::{given, when};
 
 use crate::world::AppWorld;
 
-#[when(
-    regex = r#"the client sends POST /api/v1/auth/register with body \{ "username": "alice", "email": "alice@example\.com", "password": "Short1!Ab" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"the client sends POST /api/v1/auth/register with body \{ "username": "alice", "email": "alice@example\.com", "password": "Short1!Ab" \}"#)]
 async fn register_short_password(world: &mut AppWorld) {
     world
         .svc_register("alice", "alice@example.com", "Short1!Ab")
         .await;
 }
 
-#[when(
-    regex = r#"the client sends POST /api/v1/auth/register with body \{ "username": "alice", "email": "alice@example\.com", "password": "AllUpperCase1234" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"the client sends POST /api/v1/auth/register with body \{ "username": "alice", "email": "alice@example\.com", "password": "AllUpperCase1234" \}"#)]
 async fn register_no_special_char(world: &mut AppWorld) {
     world
         .svc_register("alice", "alice@example.com", "AllUpperCase1234")

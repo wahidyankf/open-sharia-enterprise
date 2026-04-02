@@ -79,7 +79,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
+  defwhen ~r/^alice sends POST .api.v1.expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token} = state do
     body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
@@ -93,7 +93,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
+  defwhen ~r/^the client sends POST .api.v1.expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           state do
     body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
@@ -106,7 +106,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     conn =
@@ -117,7 +117,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses$/,
           _vars,
           %{access_token: access_token} = state do
     conn =
@@ -128,7 +128,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends PUT \/api\/v1\/expenses\/\{expenseId\} with body \{ (?<body>.+) \}$/,
+  defwhen ~r/^alice sends PUT .api.v1.expenses.\{expenseId\} with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token, expense_id: expense_id} = state do
     body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
@@ -142,7 +142,7 @@ defmodule AADemoBeExphWeb.Unit.ExpenseManagementSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}$/,
+  defwhen ~r/^alice sends DELETE .api.v1.expenses.\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     conn =

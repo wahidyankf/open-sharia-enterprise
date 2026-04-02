@@ -52,7 +52,7 @@ public class UnitExpenseSteps {
         parseAndCreateOrValidateExpense(body, true);
     }
 
-    @When("^the client sends POST /api/v1/expenses with body \\{ \"amount\": \"10\\.00\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Coffee\", \"date\": \"2025-01-01\", \"type\": \"expense\" \\}$")
+    @When("^the client sends POST /api/v1/expenses with body [{] \"amount\": \"10[.]00\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Coffee\", \"date\": \"2025-01-01\", \"type\": \"expense\" [}]$")
     public void unauthenticatedClientCreatesExpense() {
         // No token — unauthenticated
         stateStore.setStatusCode(401);
@@ -84,7 +84,7 @@ public class UnitExpenseSteps {
     // Get / list — When steps
     // ============================================================
 
-    @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}$")
+    @When("^alice sends GET /api/v1/expenses/[{]expenseId[}]$")
     public void aliceSendsGetExpenseById() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {
@@ -122,7 +122,7 @@ public class UnitExpenseSteps {
     // Update / delete — When steps
     // ============================================================
 
-    @When("^alice sends PUT /api/v1/expenses/\\{expenseId\\} with body \\{ \"amount\": \"12\\.00\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Updated breakfast\", \"date\": \"2025-01-10\", \"type\": \"expense\" \\}$")
+    @When("^alice sends PUT /api/v1/expenses/[{]expenseId[}] with body [{] \"amount\": \"12[.]00\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Updated breakfast\", \"date\": \"2025-01-10\", \"type\": \"expense\" [}]$")
     public void aliceUpdatesExpense() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {
@@ -147,7 +147,7 @@ public class UnitExpenseSteps {
         }
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]$")
     public void aliceDeletesExpense() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {

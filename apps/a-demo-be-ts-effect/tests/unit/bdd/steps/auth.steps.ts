@@ -92,9 +92,12 @@ When(/^the client sends POST (.+) with body (.+)$/, async function (this: Custom
   this.response = await this.post(path, body);
 });
 
-When(/^the client sends GET ((?!.*with alice's access token).+)$/, async function (this: CustomWorld, path: string) {
-  this.response = await this.get(path);
-});
+When(
+  /^the client sends GET ((?!.*with alice's access token)(?!\/\.well-known\/jwks\.json).+)$/,
+  async function (this: CustomWorld, path: string) {
+    this.response = await this.get(path);
+  },
+);
 
 When(/^the client sends GET (.+) with alice's access token$/, async function (this: CustomWorld, path: string) {
   const token = this.tokens.get("alice_access") ?? "";

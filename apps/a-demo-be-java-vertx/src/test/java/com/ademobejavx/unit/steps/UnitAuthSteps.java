@@ -80,13 +80,13 @@ public class UnitAuthSteps {
         }
     }
 
-    @When("^the client sends POST /api/v1/auth/register with body \\{ \"username\": \"([^\"]*)\", \"email\": \"([^\"]*)\", \"password\": \"([^\"]*)\" \\}$")
+    @When("^the client sends POST /api/v1/auth/register with body [{] \"username\": \"([^\"]*)\", \"email\": \"([^\"]*)\", \"password\": \"([^\"]*)\" [}]$")
     public void clientSendsRegister(String username, String email, String password) throws Exception {
         ServiceResponse response = svc().register(username, email, password);
         state.setLastResponse(response);
     }
 
-    @When("^the client sends POST /api/v1/auth/login with body \\{ \"username\": \"([^\"]*)\", \"password\": \"([^\"]*)\" \\}$")
+    @When("^the client sends POST /api/v1/auth/login with body [{] \"username\": \"([^\"]*)\", \"password\": \"([^\"]*)\" [}]$")
     public void clientSendsLogin(String username, String password) throws Exception {
         ServiceResponse response = login(username, password);
         state.setLastResponse(response);

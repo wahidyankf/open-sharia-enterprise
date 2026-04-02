@@ -11,12 +11,12 @@ defmodule AADemoBeExphWeb.Integration.HealthSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^an operations engineer sends GET \/health$/, _vars, state do
+  defwhen ~r/^an operations engineer sends GET .health$/, _vars, state do
     response = ServiceLayer.get_health()
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^an unauthenticated engineer sends GET \/health$/, _vars, state do
+  defwhen ~r/^an unauthenticated engineer sends GET .health$/, _vars, state do
     response = ServiceLayer.get_health()
     {:ok, Map.put(state, :response, response)}
   end

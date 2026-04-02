@@ -9,12 +9,12 @@ defmodule AADemoBeExphWeb.Unit.HealthSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^an operations engineer sends GET \/health$/, _vars, state do
+  defwhen ~r/^an operations engineer sends GET .health$/, _vars, state do
     conn = get(build_conn(), "/health")
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^an unauthenticated engineer sends GET \/health$/, _vars, state do
+  defwhen ~r/^an unauthenticated engineer sends GET .health$/, _vars, state do
     conn = get(build_conn(), "/health")
     {:ok, Map.put(state, :conn, conn)}
   end

@@ -40,7 +40,7 @@ defmodule AADemoBeExphWeb.Unit.ReportingSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/reports\/pl\?from=(?<from>[^&]+)&to=(?<to>[^&]+)&currency=(?<currency>[^\s]+)$/,
+  defwhen ~r/^alice sends GET .api.v1.reports.pl\?from=(?<from>[^&]+)&to=(?<to>[^&]+)&currency=(?<currency>[^\s]+)$/,
           %{from: from, to: to, currency: currency},
           %{access_token: access_token} = state do
     conn =

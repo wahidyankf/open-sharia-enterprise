@@ -40,7 +40,7 @@ defmodule AADemoBeExphWeb.Integration.PasswordLoginSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
     response = ServiceLayer.login(%{"username" => username, "password" => password})

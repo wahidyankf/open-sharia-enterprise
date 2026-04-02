@@ -113,7 +113,7 @@ public class UnitTokenManagementSteps {
         }
     }
 
-    @Given("^the admin has disabled alice's account via POST /api/v1/admin/users/\\{alice_id\\}/disable$")
+    @Given("^the admin has disabled alice's account via POST /api/v1/admin/users/[{]alice_id[}]/disable$")
     public void theAdminHasDisabledAlicesAccount() {
         java.util.UUID aliceId = stateStore.getAliceId();
         if (aliceId == null) {

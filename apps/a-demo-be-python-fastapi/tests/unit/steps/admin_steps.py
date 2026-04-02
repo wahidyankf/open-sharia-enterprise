@@ -158,35 +158,5 @@ def check_alice_in_results(response: FakeResponse) -> None:
     )
 
 
-@then('alice\'s account status should be "disabled"')
-def check_alice_disabled(
-    client: ServiceClient, registered_users: list, admin_tokens: dict
-) -> None:
-    alice = next((u for u in registered_users if u["username"] == "alice"), None)
-    assert alice is not None
-    resp = client.get_admin_users(
-        f"Bearer {admin_tokens['accessToken']}",
-        search="alice@example.com",
-    )
-    body = resp.json()
-    users = body.get("content", [])
-    alice_info = next((u for u in users if u["username"] == "alice"), None)
-    assert alice_info is not None
-    assert alice_info["status"].upper() == "DISABLED"
-
-
-@then('alice\'s account status should be "active"')
-def check_alice_active(
-    client: ServiceClient, registered_users: list, admin_tokens: dict
-) -> None:
-    alice = next((u for u in registered_users if u["username"] == "alice"), None)
-    assert alice is not None
-    resp = client.get_admin_users(
-        f"Bearer {admin_tokens['accessToken']}",
-        search="alice@example.com",
-    )
-    body = resp.json()
-    users = body.get("content", [])
-    alice_info = next((u for u in users if u["username"] == "alice"), None)
-    assert alice_info is not None
-    assert alice_info["status"].upper() == "ACTIVE"
+# NOTE: The parametrised step 'alice's account status should be {status}'
+# is defined in conftest.py to avoid duplicate definitions across step files.

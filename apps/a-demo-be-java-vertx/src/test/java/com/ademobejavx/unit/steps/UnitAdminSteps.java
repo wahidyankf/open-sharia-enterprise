@@ -41,13 +41,13 @@ public class UnitAdminSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?search=(.+)$")
+    @When("^the admin sends GET /api/v1/admin/users[?]search=(.+)$")
     public void adminSendsGetUsersWithEmailFilter(String email) throws Exception {
         ServiceResponse response = svc().adminListUsers(state.getAdminAccessToken(), email, 1, 100);
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/disable with body \\{ \"reason\": \"([^\"]+)\" \\}$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/disable with body [{] \"reason\": \"([^\"]+)\" [}]$")
     public void adminSendsDisableUser(String reason) throws Exception {
         String userId = state.getUserId();
         Assertions.assertNotNull(userId, "Alice's user ID must be set");
@@ -55,7 +55,7 @@ public class UnitAdminSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/enable$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/enable$")
     public void adminSendsEnableUser() throws Exception {
         String userId = state.getUserId();
         Assertions.assertNotNull(userId, "Alice's user ID must be set");
@@ -63,7 +63,7 @@ public class UnitAdminSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/force-password-reset$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/force-password-reset$")
     public void adminSendsForcePasswordReset() throws Exception {
         String userId = state.getUserId();
         Assertions.assertNotNull(userId, "Alice's user ID must be set");

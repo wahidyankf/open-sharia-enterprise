@@ -3,9 +3,8 @@ use cucumber::{given, then, when};
 use crate::steps::expense_steps::create_expense_helper;
 use crate::world::AppWorld;
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_created_usd_expense_coffee(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -14,9 +13,8 @@ async fn alice_created_usd_expense_coffee(world: &mut AppWorld) {
     .await;
 }
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_created_idr_expense_taxi(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -25,9 +23,8 @@ async fn alice_created_idr_expense_taxi(world: &mut AppWorld) {
     .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "EUR", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "EUR", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_create_expense_eur(world: &mut AppWorld) {
     let bearer = world.bearer();
     world
@@ -45,9 +42,8 @@ async fn alice_create_expense_eur(world: &mut AppWorld) {
         .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "US", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "US", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_create_expense_malformed_currency(world: &mut AppWorld) {
     let bearer = world.bearer();
     world
@@ -65,9 +61,8 @@ async fn alice_create_expense_malformed_currency(world: &mut AppWorld) {
         .await;
 }
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "20\.00", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "20\.00", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_created_usd_20(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -76,9 +71,8 @@ async fn alice_created_usd_20(world: &mut AppWorld) {
     .await;
 }
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_created_usd_10(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -108,9 +102,8 @@ async fn summary_total_equals(world: &mut AppWorld, currency: String, amount: St
     );
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "-10\.00", "currency": "USD", "category": "food", "description": "Refund", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "-10\.00", "currency": "USD", "category": "food", "description": "Refund", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_create_negative_expense(world: &mut AppWorld) {
     let bearer = world.bearer();
     world

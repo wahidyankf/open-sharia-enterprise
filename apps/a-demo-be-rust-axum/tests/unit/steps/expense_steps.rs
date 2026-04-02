@@ -31,9 +31,8 @@ pub async fn create_expense_helper(world: &mut AppWorld, body_json: &str) {
         .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_create_expense_lunch(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -42,9 +41,8 @@ async fn alice_create_expense_lunch(world: &mut AppWorld) {
     .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "3000\.00", "currency": "USD", "category": "salary", "description": "Monthly salary", "date": "2025-01-31", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "3000\.00", "currency": "USD", "category": "salary", "description": "Monthly salary", "date": "2025-01-31", "type": "income" \}"#)]
 async fn alice_create_income_salary(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -53,9 +51,8 @@ async fn alice_create_income_salary(world: &mut AppWorld) {
     .await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "10\.50", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_created_entry_lunch(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -82,9 +79,8 @@ async fn alice_list_expenses(world: &mut AppWorld) {
     world.svc_list_expenses(&bearer).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Breakfast", "date": "2025-01-10", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Breakfast", "date": "2025-01-10", "type": "expense" \}"#)]
 async fn alice_created_entry_breakfast(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -93,9 +89,8 @@ async fn alice_created_entry_breakfast(world: &mut AppWorld) {
     .await;
 }
 
-#[when(
-    regex = r#"alice sends PUT /api/v1/expenses/\{expenseId\} with body \{ "amount": "12\.00", "currency": "USD", "category": "food", "description": "Updated breakfast", "date": "2025-01-10", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends PUT /api/v1/expenses/\{expenseId\} with body \{ "amount": "12\.00", "currency": "USD", "category": "food", "description": "Updated breakfast", "date": "2025-01-10", "type": "expense" \}"#)]
 async fn alice_update_expense(world: &mut AppWorld) {
     let bearer = world.bearer();
     let expense_id = match world.last_expense_id {
@@ -118,9 +113,8 @@ async fn alice_update_expense(world: &mut AppWorld) {
         .await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Snack", "date": "2025-01-05", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Snack", "date": "2025-01-05", "type": "expense" \}"#)]
 async fn alice_created_entry_snack(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -139,9 +133,8 @@ async fn alice_delete_expense(world: &mut AppWorld) {
     world.svc_delete_expense(&bearer, expense_id).await;
 }
 
-#[when(
-    regex = r#"the client sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-01", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"the client sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-01", "type": "expense" \}"#)]
 async fn unauthenticated_create_expense(world: &mut AppWorld) {
     // No bearer token — svc_create_expense with empty bearer returns 401
     world

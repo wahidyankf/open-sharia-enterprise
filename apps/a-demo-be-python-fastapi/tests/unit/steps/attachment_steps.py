@@ -76,7 +76,7 @@ def alice_upload_attachment_given(
 
 @when(
     parsers.parse(
-        'alice uploads file "{filename}" with content type "{content_type}" to POST /api/v1/expenses/{{expenseId}}/attachments'  # noqa: E501
+        'alice uploads file "{filename}" with content type "{content_type}" to POST /api/v1/expenses/{{expenseId}}/attachments'
     ),
     target_fixture="response",
 )
@@ -99,7 +99,7 @@ def alice_upload_file(
 
 @when(
     parsers.parse(
-        'alice uploads file "{filename}" with content type "{content_type}" to POST /api/v1/expenses/{{bobExpenseId}}/attachments'  # noqa: E501
+        'alice uploads file "{filename}" with content type "{content_type}" to POST /api/v1/expenses/{{bobExpenseId}}/attachments'
     ),
     target_fixture="response",
 )
@@ -242,9 +242,7 @@ def check_attachment_content_type(response: FakeResponse, content_type: str) -> 
 def check_filename(response: FakeResponse, filename: str) -> None:
     body = response.json()
     assert "filename" in body, f"'filename' not in response: {body}"
-    assert body["filename"] == filename, (
-        f"Expected filename={filename!r}, got {body['filename']!r}"
-    )
+    assert body["filename"] == filename, f"Expected filename={filename!r}, got {body['filename']!r}"
 
 
 @then('the response body should contain a validation error for "file"')

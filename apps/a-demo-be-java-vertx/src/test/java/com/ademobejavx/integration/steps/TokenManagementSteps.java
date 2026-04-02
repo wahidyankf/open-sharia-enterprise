@@ -39,7 +39,7 @@ public class TokenManagementSteps {
                 "Expected non-null claim '" + claim + "' in: " + body.encode());
     }
 
-    @When("^the client sends GET /\\.well-known/jwks\\.json$")
+    @When("^the client sends GET /.well-known/jwks.json$")
     public void clientSendsGetJwks() {
         ServiceResponse response = AppFactory.getService().getJwks();
         state.setLastResponse(response);
@@ -72,7 +72,7 @@ public class TokenManagementSteps {
         AppFactory.getService().logout(token);
     }
 
-    @Given("^the admin has disabled alice's account via POST /api/v1/admin/users/\\{alice_id\\}/disable$")
+    @Given("^the admin has disabled alice's account via POST /api/v1/admin/users/[{]alice_id[}]/disable$")
     public void adminHasDisabledAlice() throws Exception {
         String adminToken = state.getAdminAccessToken();
         Assertions.assertNotNull(adminToken);

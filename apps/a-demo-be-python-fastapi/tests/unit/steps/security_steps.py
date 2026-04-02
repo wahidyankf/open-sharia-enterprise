@@ -1,6 +1,6 @@
 """BDD step definitions for security feature."""
 
-from pytest_bdd import given, parsers, scenarios, then, when
+from pytest_bdd import given, parsers, scenarios, when
 
 from a_demo_be_python_fastapi.config import settings
 from tests.integration.service_client import FakeResponse, ServiceClient
@@ -79,10 +79,5 @@ def admin_unlock_alice(
 # --- Then steps ---
 
 
-@then('alice\'s account status should be "locked"')
-def check_alice_locked(client: ServiceClient, registered_user: dict) -> None:
-    # Attempt login to verify the account is locked — locked accounts return 401
-    resp = client.post_login("alice", _PASSWORD)
-    assert resp.status_code == 401, (
-        f"Expected 401 for locked account, got {resp.status_code}: {resp.text}"
-    )
+# NOTE: The parametrised step 'alice's account status should be {status}'
+# is defined in conftest.py to avoid duplicate definitions across step files.

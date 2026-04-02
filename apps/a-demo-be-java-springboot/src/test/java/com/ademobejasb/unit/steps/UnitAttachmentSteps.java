@@ -48,7 +48,7 @@ public class UnitAttachmentSteps {
     @Autowired
     private AttachmentController attachmentController;
 
-    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceUploadsFileToExpense(final String filename, final String contentType) {
         performUpload(filename, contentType, stateStore.getExpenseId(), false);
     }
@@ -60,7 +60,7 @@ public class UnitAttachmentSteps {
         performUploadForSetup(filename, contentType, expenseId);
     }
 
-    @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice sends GET /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceSendsGetAttachments() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {
@@ -78,7 +78,7 @@ public class UnitAttachmentSteps {
         }
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{attachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]/attachments/[{]attachmentId[}]$")
     public void aliceDeletesAttachment() {
         UUID expenseId = stateStore.getExpenseId();
         UUID attachmentId = stateStore.getAttachmentId();
@@ -97,7 +97,7 @@ public class UnitAttachmentSteps {
         }
     }
 
-    @When("^alice uploads an oversized file to POST /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice uploads an oversized file to POST /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceUploadsOversizedFile() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {
@@ -110,14 +110,14 @@ public class UnitAttachmentSteps {
                 new RuntimeException("File size exceeds the maximum allowed size"));
     }
 
-    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{bobExpenseId\\}/attachments$")
+    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/[{]bobExpenseId[}]/attachments$")
     public void aliceUploadsFileToBobsExpense(
             final String filename, final String contentType) {
         UUID bobExpenseId = stateStore.getBobExpenseId();
         performUpload(filename, contentType, bobExpenseId, true);
     }
 
-    @When("^alice sends GET /api/v1/expenses/\\{bobExpenseId\\}/attachments$")
+    @When("^alice sends GET /api/v1/expenses/[{]bobExpenseId[}]/attachments$")
     public void aliceSendsGetAttachmentsOnBobsExpense() {
         UUID bobExpenseId = stateStore.getBobExpenseId();
         if (bobExpenseId == null) {
@@ -135,7 +135,7 @@ public class UnitAttachmentSteps {
         }
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{bobExpenseId\\}/attachments/\\{attachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]bobExpenseId[}]/attachments/[{]attachmentId[}]$")
     public void aliceDeletesAttachmentOnBobsExpense() {
         UUID bobExpenseId = stateStore.getBobExpenseId();
         UUID attachmentId = stateStore.getAttachmentId();
@@ -154,7 +154,7 @@ public class UnitAttachmentSteps {
         }
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{randomAttachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]/attachments/[{]randomAttachmentId[}]$")
     public void aliceDeletesNonExistentAttachment() {
         UUID expenseId = stateStore.getExpenseId();
         if (expenseId == null) {

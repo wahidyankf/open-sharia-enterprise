@@ -8,17 +8,15 @@ async fn get_alice_profile(world: &mut AppWorld) {
     world.svc_get_profile(&bearer).await;
 }
 
-#[when(
-    regex = r#"alice sends PATCH /api/v1/users/me with body \{ "displayName": "Alice Smith" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends PATCH /api/v1/users/me with body \{ "displayName": "Alice Smith" \}"#)]
 async fn patch_display_name(world: &mut AppWorld) {
     let bearer = world.bearer();
     world.svc_update_profile(&bearer, "Alice Smith").await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456" \}"#)]
 async fn change_password_correct(world: &mut AppWorld) {
     let bearer = world.bearer();
     world
@@ -26,9 +24,8 @@ async fn change_password_correct(world: &mut AppWorld) {
         .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Wr0ngOld!", "newPassword": "NewPass#456" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Wr0ngOld!", "newPassword": "NewPass#456" \}"#)]
 async fn change_password_wrong_old(world: &mut AppWorld) {
     let bearer = world.bearer();
     world

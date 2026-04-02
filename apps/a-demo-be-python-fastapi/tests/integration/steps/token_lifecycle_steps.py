@@ -63,10 +63,10 @@ def alice_refresh(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
     return client.post_refresh(alice_tokens["refreshToken"])
 
 
-_STEP_REFRESH_ORIGINAL = "alice sends POST /api/v1/auth/refresh with her original refresh token"
-
-
-@when(_STEP_REFRESH_ORIGINAL, target_fixture="response")
+@when(
+    "alice sends POST /api/v1/auth/refresh with her original refresh token",
+    target_fixture="response",
+)
 def alice_refresh_with_original(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
     original = alice_tokens.get("_original_refresh", alice_tokens["refreshToken"])
     return client.post_refresh(original)

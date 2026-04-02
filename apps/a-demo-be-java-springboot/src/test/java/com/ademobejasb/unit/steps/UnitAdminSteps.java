@@ -54,7 +54,7 @@ public class UnitAdminSteps {
         stateStore.setResponseBody(resp.getBody());
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?search=alice@example\\.com$")
+    @When("^the admin sends GET /api/v1/admin/users[?]search=alice@example[.]com$")
     public void theAdminSendsGetAdminUsersSearchByEmail() {
         ResponseEntity<UserListResponse> resp =
                 adminController.listUsers("alice@example.com", 0, 20);
@@ -81,7 +81,7 @@ public class UnitAdminSteps {
         assertThat(found).isTrue();
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/disable with body \\{ \"reason\": \"Policy violation\" \\}$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/disable with body [{] \"reason\": \"Policy violation\" [}]$")
     public void theAdminDisablesAlice() {
         UUID aliceId = stateStore.getAliceId();
         if (aliceId == null) {
@@ -100,7 +100,7 @@ public class UnitAdminSteps {
         }
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/enable$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/enable$")
     public void theAdminEnablesAlice() {
         UUID aliceId = stateStore.getAliceId();
         if (aliceId == null) {
@@ -117,7 +117,7 @@ public class UnitAdminSteps {
         }
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/force-password-reset$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/force-password-reset$")
     public void theAdminForcesPasswordReset() {
         UUID aliceId = stateStore.getAliceId();
         if (aliceId == null) {

@@ -58,7 +58,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users$/,
+  defwhen ~r/^the admin sends GET .api.v1.admin.users$/,
           _vars,
           %{admin_token: admin_token} = state do
     conn =
@@ -69,7 +69,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?search=(?<search>[^\s]+)$/,
+  defwhen ~r/^the admin sends GET .api.v1.admin.users\?search=(?<search>[^\s]+)$/,
           %{search: search},
           %{admin_token: admin_token} = state do
     conn =
@@ -80,7 +80,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/disable with body \{ "reason": "(?<reason>[^"]+)" \}$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.disable with body \{ "reason": "(?<reason>[^"]+)" \}$/,
           %{reason: reason},
           %{alice: alice, admin_token: admin_token} = state do
     body = Jason.encode!(%{reason: reason})
@@ -94,7 +94,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the client sends GET \/api\/v1\/users\/me with alice's access token$/,
+  defwhen ~r/^the client sends GET .api.v1.users.me with alice's access token$/,
           _vars,
           %{alice_token: alice_token} = state do
     conn =
@@ -105,7 +105,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/enable$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.enable$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
     conn =
@@ -117,7 +117,7 @@ defmodule AADemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/force-password-reset$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.force-password-reset$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
     conn =

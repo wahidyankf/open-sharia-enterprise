@@ -20,7 +20,7 @@ public class AttachmentSteps {
         this.state = state;
     }
 
-    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceUploadsFileToExpense(String filename, String contentType) throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getExpenseId();
@@ -38,7 +38,7 @@ public class AttachmentSteps {
         }
     }
 
-    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{bobExpenseId\\}/attachments$")
+    @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/[{]bobExpenseId[}]/attachments$")
     public void aliceUploadsFileToBobsExpense(String filename,
             String contentType) throws Exception {
         String token = state.getAccessToken();
@@ -51,7 +51,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice uploads an oversized file to POST /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice uploads an oversized file to POST /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceUploadsOversizedFile() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getExpenseId();
@@ -63,7 +63,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}/attachments$")
+    @When("^alice sends GET /api/v1/expenses/[{]expenseId[}]/attachments$")
     public void aliceSendsGetAttachments() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getExpenseId();
@@ -74,7 +74,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends GET /api/v1/expenses/\\{bobExpenseId\\}/attachments$")
+    @When("^alice sends GET /api/v1/expenses/[{]bobExpenseId[}]/attachments$")
     public void aliceSendsGetBobsAttachments() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getBobExpenseId();
@@ -85,7 +85,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{attachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]/attachments/[{]attachmentId[}]$")
     public void aliceSendsDeleteAttachment() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getExpenseId();
@@ -98,7 +98,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{bobExpenseId\\}/attachments/\\{attachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]bobExpenseId[}]/attachments/[{]attachmentId[}]$")
     public void aliceSendsDeleteBobsAttachment() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getBobExpenseId();
@@ -111,7 +111,7 @@ public class AttachmentSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{randomAttachmentId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]/attachments/[{]randomAttachmentId[}]$")
     public void aliceSendsDeleteNonExistentAttachment() throws Exception {
         String token = state.getAccessToken();
         String expenseId = state.getExpenseId();
@@ -135,7 +135,7 @@ public class AttachmentSteps {
         }
     }
 
-    @Given("^bob has created an entry with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @Given("^bob has created an entry with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void bobHasCreatedEntry(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         String bobToken = state.getBobAccessToken();

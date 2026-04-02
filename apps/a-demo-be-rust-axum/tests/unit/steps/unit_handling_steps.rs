@@ -3,9 +3,8 @@ use cucumber::{given, then, when};
 use crate::steps::expense_steps::create_expense_helper;
 use crate::world::AppWorld;
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "75000", "currency": "IDR", "category": "fuel", "description": "Petrol", "date": "2025-01-15", "type": "expense", "quantity": 50\.5, "unit": "liter" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "75000", "currency": "IDR", "category": "fuel", "description": "Petrol", "date": "2025-01-15", "type": "expense", "quantity": 50\.5, "unit": "liter" \}"#)]
 async fn alice_created_liter_expense(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -14,9 +13,8 @@ async fn alice_created_liter_expense(world: &mut AppWorld) {
     .await;
 }
 
-#[given(
-    regex = r#"alice has created an expense with body \{ "amount": "45\.00", "currency": "USD", "category": "fuel", "description": "Gas", "date": "2025-01-15", "type": "expense", "quantity": 10, "unit": "gallon" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an expense with body \{ "amount": "45\.00", "currency": "USD", "category": "fuel", "description": "Gas", "date": "2025-01-15", "type": "expense", "quantity": 10, "unit": "gallon" \}"#)]
 async fn alice_created_gallon_expense(world: &mut AppWorld) {
     create_expense_helper(
         world,
@@ -25,9 +23,8 @@ async fn alice_created_gallon_expense(world: &mut AppWorld) {
     .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "USD", "category": "misc", "description": "Cargo", "date": "2025-01-15", "type": "expense", "quantity": 5, "unit": "fathom" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "10\.00", "currency": "USD", "category": "misc", "description": "Cargo", "date": "2025-01-15", "type": "expense", "quantity": 5, "unit": "fathom" \}"#)]
 async fn alice_create_unsupported_unit(world: &mut AppWorld) {
     let bearer = world.bearer();
     world
@@ -45,9 +42,8 @@ async fn alice_create_unsupported_unit(world: &mut AppWorld) {
         .await;
 }
 
-#[when(
-    regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "25\.00", "currency": "USD", "category": "food", "description": "Dinner", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice sends POST /api/v1/expenses with body \{ "amount": "25\.00", "currency": "USD", "category": "food", "description": "Dinner", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn alice_create_no_unit(world: &mut AppWorld) {
     let bearer = world.bearer();
     world

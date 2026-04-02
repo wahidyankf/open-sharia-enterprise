@@ -6,65 +6,56 @@ async fn alice_create(world: &mut AppWorld, body: &str) {
     crate::steps::expense_steps::create_expense_helper(world, body).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "5000\.00", "currency": "USD", "category": "salary", "description": "Monthly salary", "date": "2025-01-15", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "5000\.00", "currency": "USD", "category": "salary", "description": "Monthly salary", "date": "2025-01-15", "type": "income" \}"#)]
 async fn alice_income_5000(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "5000.00", "currency": "USD", "category": "salary", "description": "Monthly salary", "date": "2025-01-15", "type": "income"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "150\.00", "currency": "USD", "category": "food", "description": "Groceries", "date": "2025-01-20", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "150\.00", "currency": "USD", "category": "food", "description": "Groceries", "date": "2025-01-20", "type": "expense" \}"#)]
 async fn alice_expense_150(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "150.00", "currency": "USD", "category": "food", "description": "Groceries", "date": "2025-01-20", "type": "expense"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "3000\.00", "currency": "USD", "category": "salary", "description": "Salary", "date": "2025-02-10", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "3000\.00", "currency": "USD", "category": "salary", "description": "Salary", "date": "2025-02-10", "type": "income" \}"#)]
 async fn alice_income_3000(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "3000.00", "currency": "USD", "category": "salary", "description": "Salary", "date": "2025-02-10", "type": "income"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "500\.00", "currency": "USD", "category": "freelance", "description": "Freelance project", "date": "2025-02-15", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "500\.00", "currency": "USD", "category": "freelance", "description": "Freelance project", "date": "2025-02-15", "type": "income" \}"#)]
 async fn alice_income_500(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "500.00", "currency": "USD", "category": "freelance", "description": "Freelance project", "date": "2025-02-15", "type": "income"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "200\.00", "currency": "USD", "category": "transport", "description": "Monthly pass", "date": "2025-02-05", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "200\.00", "currency": "USD", "category": "transport", "description": "Monthly pass", "date": "2025-02-05", "type": "expense" \}"#)]
 async fn alice_expense_200(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "200.00", "currency": "USD", "category": "transport", "description": "Monthly pass", "date": "2025-02-05", "type": "expense"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "1000\.00", "currency": "USD", "category": "salary", "description": "Bonus", "date": "2025-03-05", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "1000\.00", "currency": "USD", "category": "salary", "description": "Bonus", "date": "2025-03-05", "type": "income" \}"#)]
 async fn alice_income_1000_bonus(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "1000.00", "currency": "USD", "category": "salary", "description": "Bonus", "date": "2025-03-05", "type": "income"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "75\.00", "currency": "USD", "category": "utilities", "description": "Internet bill", "date": "2025-04-10", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "75\.00", "currency": "USD", "category": "utilities", "description": "Internet bill", "date": "2025-04-10", "type": "expense" \}"#)]
 async fn alice_expense_75(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "75.00", "currency": "USD", "category": "utilities", "description": "Internet bill", "date": "2025-04-10", "type": "expense"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "1000\.00", "currency": "USD", "category": "freelance", "description": "USD project", "date": "2025-05-01", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "1000\.00", "currency": "USD", "category": "freelance", "description": "USD project", "date": "2025-05-01", "type": "income" \}"#)]
 async fn alice_income_usd_1000(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "1000.00", "currency": "USD", "category": "freelance", "description": "USD project", "date": "2025-05-01", "type": "income"}"#).await;
 }
 
-#[given(
-    regex = r#"alice has created an entry with body \{ "amount": "5000000", "currency": "IDR", "category": "freelance", "description": "IDR project", "date": "2025-05-01", "type": "income" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"alice has created an entry with body \{ "amount": "5000000", "currency": "IDR", "category": "freelance", "description": "IDR project", "date": "2025-05-01", "type": "income" \}"#)]
 async fn alice_income_idr_5m(world: &mut AppWorld) {
     alice_create(world, r#"{"amount": "5000000", "currency": "IDR", "category": "freelance", "description": "IDR project", "date": "2025-05-01", "type": "income"}"#).await;
 }

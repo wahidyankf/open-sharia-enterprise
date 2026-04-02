@@ -35,7 +35,7 @@ defmodule AADemoBeExphWeb.Integration.ReportingSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/reports\/pl\?from=(?<from>[^&]+)&to=(?<to>[^&]+)&currency=(?<currency>[^\s]+)$/,
+  defwhen ~r/^alice sends GET .api.v1.reports.pl\?from=(?<from>[^&]+)&to=(?<to>[^&]+)&currency=(?<currency>[^\s]+)$/,
           %{from: from, to: to, currency: currency},
           %{access_token: access_token} = state do
     response = ServiceLayer.pl_report(access_token, from, to, currency)

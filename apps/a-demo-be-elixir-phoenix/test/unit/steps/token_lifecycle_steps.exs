@@ -61,7 +61,7 @@ defmodule AADemoBeExphWeb.Unit.TokenLifecycleSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her refresh token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.refresh with her refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
     body = Jason.encode!(%{"refreshToken" => refresh_token})
@@ -74,7 +74,7 @@ defmodule AADemoBeExphWeb.Unit.TokenLifecycleSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her original refresh token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.refresh with her original refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
     body = Jason.encode!(%{"refreshToken" => refresh_token})
@@ -87,7 +87,7 @@ defmodule AADemoBeExphWeb.Unit.TokenLifecycleSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout with her access token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.logout with her access token$/,
           _vars,
           %{access_token: access_token} = state do
     conn =
@@ -98,7 +98,7 @@ defmodule AADemoBeExphWeb.Unit.TokenLifecycleSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout-all with her access token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.logout-all with her access token$/,
           _vars,
           %{access_token: access_token} = state do
     conn =

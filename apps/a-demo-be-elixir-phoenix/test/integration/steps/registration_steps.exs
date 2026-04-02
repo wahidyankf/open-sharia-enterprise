@@ -19,7 +19,7 @@ defmodule AADemoBeExphWeb.Integration.RegistrationSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]*)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]*)" \}$/,
           %{username: username, email: email, password: password},
           state do
     response =

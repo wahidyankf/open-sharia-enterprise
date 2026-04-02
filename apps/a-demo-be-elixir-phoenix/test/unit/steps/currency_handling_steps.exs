@@ -41,7 +41,7 @@ defmodule AADemoBeExphWeb.Unit.CurrencyHandlingSteps do
     {:ok, Map.put(state, :expense_id, expense_body["id"])}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     conn =
@@ -52,7 +52,7 @@ defmodule AADemoBeExphWeb.Unit.CurrencyHandlingSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
+  defwhen ~r/^alice sends POST .api.v1.expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token} = state do
     body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
@@ -66,7 +66,7 @@ defmodule AADemoBeExphWeb.Unit.CurrencyHandlingSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/summary$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.summary$/,
           _vars,
           %{access_token: access_token} = state do
     conn =

@@ -68,7 +68,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :uploaded_attachment_ids, attachments ++ [att_body["id"]])}
   end
 
-  defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
+  defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST .api.v1.expenses.\{expenseId\}.attachments$/,
           %{filename: filename, content_type: content_type},
           %{access_token: access_token, expense_id: expense_id} = state do
     conn = upload_file(build_conn(), access_token, expense_id, filename, content_type)
@@ -76,14 +76,14 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.merge(state, %{conn: conn, last_attachment_id: att_body["id"]})}
   end
 
-  defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments$/,
+  defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST .api.v1.expenses.\{bobExpenseId\}.attachments$/,
           %{filename: filename, content_type: content_type},
           %{access_token: access_token, bob_expense_id: bob_expense_id} = state do
     conn = upload_file(build_conn(), access_token, bob_expense_id, filename, content_type)
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.\{bobExpenseId\}.attachments$/,
           _vars,
           %{access_token: access_token, bob_expense_id: bob_expense_id} = state do
     conn =
@@ -94,7 +94,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments\/\{attachmentId\}$/,
+  defwhen ~r/^alice sends DELETE .api.v1.expenses.\{bobExpenseId\}.attachments.\{attachmentId\}$/,
           _vars,
           %{
             access_token: access_token,
@@ -109,7 +109,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}\/attachments\/\{randomAttachmentId\}$/,
+  defwhen ~r/^alice sends DELETE .api.v1.expenses.\{expenseId\}.attachments.\{randomAttachmentId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     random_id = Ecto.UUID.generate()
@@ -122,7 +122,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice uploads an oversized file to POST \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
+  defwhen ~r/^alice uploads an oversized file to POST .api.v1.expenses.\{expenseId\}.attachments$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     large_data = :crypto.strong_rand_bytes(6 * 1024 * 1024)
@@ -144,7 +144,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.\{expenseId\}.attachments$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     conn =
@@ -155,7 +155,7 @@ defmodule AADemoBeExphWeb.Unit.AttachmentsSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}\/attachments\/\{attachmentId\}$/,
+  defwhen ~r/^alice sends DELETE .api.v1.expenses.\{expenseId\}.attachments.\{attachmentId\}$/,
           _vars,
           %{
             access_token: access_token,

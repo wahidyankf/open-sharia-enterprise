@@ -54,9 +54,8 @@ async fn alice_logged_out_blacklisted(world: &mut AppWorld) {
     world.svc_logout(&format!("Bearer {token}")).await;
 }
 
-#[given(
-    regex = r#"the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable"#)]
 async fn admin_disabled_alice(world: &mut AppWorld) {
     let admin_bearer = world.admin_bearer();
     let alice_id = match world.alice_id {

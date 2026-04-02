@@ -2,11 +2,11 @@ import { When, Then } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import type { CustomWorld } from "../world.js";
 
-When("an operations engineer sends GET \\/health", async function (this: CustomWorld) {
+When(/^an operations engineer sends GET \/health$/, async function (this: CustomWorld) {
   this.response = await this.get("/health");
 });
 
-When("an unauthenticated engineer sends GET \\/health", async function (this: CustomWorld) {
+When(/^an unauthenticated engineer sends GET \/health$/, async function (this: CustomWorld) {
   this.response = await this.get("/health");
 });
 

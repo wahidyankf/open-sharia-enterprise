@@ -53,42 +53,42 @@ defmodule AADemoBeExphWeb.Integration.AdminSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users$/,
+  defwhen ~r/^the admin sends GET .api.v1.admin.users$/,
           _vars,
           %{admin_token: admin_token} = state do
     response = ServiceLayer.admin_list_users(admin_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?search=(?<search>[^\s]+)$/,
+  defwhen ~r/^the admin sends GET .api.v1.admin.users\?search=(?<search>[^\s]+)$/,
           %{search: search},
           %{admin_token: admin_token} = state do
     response = ServiceLayer.admin_list_users(admin_token, email: search)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/disable with body \{ "reason": "(?<reason>[^"]+)" \}$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.disable with body \{ "reason": "(?<reason>[^"]+)" \}$/,
           %{reason: reason},
           %{alice: alice, admin_token: admin_token} = state do
     response = ServiceLayer.admin_disable_user(admin_token, alice.id, reason)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the client sends GET \/api\/v1\/users\/me with alice's access token$/,
+  defwhen ~r/^the client sends GET .api.v1.users.me with alice's access token$/,
           _vars,
           %{alice_token: alice_token} = state do
     response = ServiceLayer.get_me(alice_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/enable$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.enable$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
     response = ServiceLayer.admin_enable_user(admin_token, alice.id)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/force-password-reset$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.force-password-reset$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
     response = ServiceLayer.admin_force_password_reset(admin_token, alice.id)

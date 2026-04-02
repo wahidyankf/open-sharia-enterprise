@@ -16,7 +16,7 @@ public class ExpenseSteps {
         this.state = state;
     }
 
-    @Given("^alice has created an entry with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @Given("^alice has created an entry with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void aliceHasCreatedEntry(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         String token = state.getAccessToken();
@@ -29,13 +29,13 @@ public class ExpenseSteps {
         state.setExpenseId(body.getString("id"));
     }
 
-    @Given("^alice has created an expense with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @Given("^alice has created an expense with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void aliceHasCreatedExpense(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         aliceHasCreatedEntry(amount, currency, category, description, date, type);
     }
 
-    @Given("^alice has created an expense with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\", \"quantity\": ([0-9.]+), \"unit\": \"([^\"]*)\" \\}$")
+    @Given("^alice has created an expense with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\", \"quantity\": ([0-9.]+), \"unit\": \"([^\"]*)\" [}]$")
     public void aliceHasCreatedExpenseWithUnit(String amount, String currency, String category,
             String description, String date, String type, String quantityStr,
             String unit) throws Exception {
@@ -59,7 +59,7 @@ public class ExpenseSteps {
         }
     }
 
-    @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}$")
+    @When("^alice sends GET /api/v1/expenses/[{]expenseId[}]$")
     public void aliceSendsGetExpense() throws Exception {
         String id = state.getExpenseId();
         Assertions.assertNotNull(id, "Expense ID must be set");
@@ -81,7 +81,7 @@ public class ExpenseSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends POST /api/v1/expenses with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @When("^alice sends POST /api/v1/expenses with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void aliceSendsCreateExpense(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         ServiceResponse response = AppFactory.getService()
@@ -96,7 +96,7 @@ public class ExpenseSteps {
         }
     }
 
-    @When("^alice sends POST /api/v1/expenses with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\", \"quantity\": ([0-9.]+), \"unit\": \"([^\"]*)\" \\}$")
+    @When("^alice sends POST /api/v1/expenses with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\", \"quantity\": ([0-9.]+), \"unit\": \"([^\"]*)\" [}]$")
     public void aliceSendsCreateExpenseWithUnit(String amount, String currency, String category,
             String description, String date, String type, String quantityStr,
             String unit) throws Exception {
@@ -113,7 +113,7 @@ public class ExpenseSteps {
         }
     }
 
-    @When("^alice sends PUT /api/v1/expenses/\\{expenseId\\} with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @When("^alice sends PUT /api/v1/expenses/[{]expenseId[}] with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void aliceSendsUpdateExpense(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         String id = state.getExpenseId();
@@ -124,7 +124,7 @@ public class ExpenseSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}$")
+    @When("^alice sends DELETE /api/v1/expenses/[{]expenseId[}]$")
     public void aliceSendsDeleteExpense() throws Exception {
         String id = state.getExpenseId();
         Assertions.assertNotNull(id, "Expense ID must be set");
@@ -133,7 +133,7 @@ public class ExpenseSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the client sends POST /api/v1/expenses with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")
+    @When("^the client sends POST /api/v1/expenses with body [{] \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" [}]$")
     public void unauthClientSendsCreateExpense(String amount, String currency, String category,
             String description, String date, String type) throws Exception {
         // Unauthenticated: no bearer token

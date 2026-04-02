@@ -15,9 +15,8 @@ async fn upload_file(
         .await;
 }
 
-#[when(
-    regex = r#"alice uploads file "([^"]+)" with content type "([^"]+)" to POST /api/v1/expenses/\{expenseId\}/attachments"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice uploads file "([^"]+)" with content type "([^"]+)" to POST /api/v1/expenses/\{expenseId\}/attachments"#)]
 async fn alice_uploads_file(world: &mut AppWorld, filename: String, content_type: String) {
     let bearer = world.bearer();
     let expense_id = match world.last_expense_id {
@@ -91,9 +90,8 @@ async fn response_array_count(world: &mut AppWorld, count: usize, field: String)
     );
 }
 
-#[then(
-    regex = r#"the response body should contain an attachment with "([^"]+)" equal to "([^"]+)""#
-)]
+#[rustfmt::skip]
+#[then(regex = r#"the response body should contain an attachment with "([^"]+)" equal to "([^"]+)""#)]
 async fn attachment_with_field(world: &mut AppWorld, field: String, value: String) {
     let attachments = world
         .last_body
@@ -132,9 +130,8 @@ async fn error_file_size(world: &mut AppWorld) {
 
 // Bob steps for cross-user ownership tests
 
-#[given(
-    regex = r#"bob has created an entry with body \{ "amount": "25\.00", "currency": "USD", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" \}"#
-)]
+#[rustfmt::skip]
+#[given(regex = r#"bob has created an entry with body \{ "amount": "25\.00", "currency": "USD", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" \}"#)]
 async fn bob_created_entry(world: &mut AppWorld) {
     world.svc_login("bob", "Str0ng#Pass2").await;
     if world.last_status == 200 {
@@ -167,9 +164,8 @@ async fn bob_created_entry(world: &mut AppWorld) {
     }
 }
 
-#[when(
-    regex = r#"alice uploads file "([^"]+)" with content type "([^"]+)" to POST /api/v1/expenses/\{bobExpenseId\}/attachments"#
-)]
+#[rustfmt::skip]
+#[when(regex = r#"alice uploads file "([^"]+)" with content type "([^"]+)" to POST /api/v1/expenses/\{bobExpenseId\}/attachments"#)]
 async fn alice_uploads_to_bob_expense(
     world: &mut AppWorld,
     filename: String,

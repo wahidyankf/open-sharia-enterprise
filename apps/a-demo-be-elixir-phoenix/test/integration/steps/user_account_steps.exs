@@ -26,42 +26,42 @@ defmodule AADemoBeExphWeb.Integration.UserAccountSteps do
     {:ok, Map.put(state, :access_token, access_token)}
   end
 
-  defgiven ~r/^alice has deactivated her own account via POST \/api\/v1\/users\/me\/deactivate$/,
+  defgiven ~r/^alice has deactivated her own account via POST .api.v1.users.me.deactivate$/,
            _vars,
            %{access_token: access_token} = state do
     ServiceLayer.deactivate_me(access_token)
     {:ok, state}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/users\/me$/,
+  defwhen ~r/^alice sends GET .api.v1.users.me$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.get_me(access_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "displayName": "(?<displayName>[^"]+)" \}$/,
+  defwhen ~r/^alice sends PATCH .api.v1.users.me with body \{ "displayName": "(?<displayName>[^"]+)" \}$/,
           %{displayName: displayName},
           %{access_token: access_token} = state do
     response = ServiceLayer.update_me(access_token, %{"displayName" => displayName})
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "oldPassword": "(?<oldPassword>[^"]+)", "newPassword": "(?<newPassword>[^"]+)" \}$/,
+  defwhen ~r/^alice sends POST .api.v1.users.me.password with body \{ "oldPassword": "(?<oldPassword>[^"]+)", "newPassword": "(?<newPassword>[^"]+)" \}$/,
           %{oldPassword: oldPassword, newPassword: newPassword},
           %{access_token: access_token} = state do
     response = ServiceLayer.change_password(access_token, oldPassword, newPassword)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/deactivate$/,
+  defwhen ~r/^alice sends POST .api.v1.users.me.deactivate$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.deactivate_me(access_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
     response = ServiceLayer.login(%{"username" => username, "password" => password})

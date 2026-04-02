@@ -39,7 +39,7 @@ defmodule AADemoBeExphWeb.Unit.PasswordLoginSteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
     body = Jason.encode!(%{username: username, password: password})

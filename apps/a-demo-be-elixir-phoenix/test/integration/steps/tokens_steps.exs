@@ -47,7 +47,7 @@ defmodule AADemoBeExphWeb.Integration.TokensSteps do
     {:ok, Map.merge(state, %{admin: admin_user, admin_token: access_token})}
   end
 
-  defgiven ~r/^the admin has disabled alice's account via POST \/api\/v1\/admin\/users\/\{alice_id\}\/disable$/,
+  defgiven ~r/^the admin has disabled alice's account via POST .api.v1.admin.users.\{alice_id\}.disable$/,
            _vars,
            %{alice: alice, admin_token: admin_token} = state do
     ServiceLayer.admin_disable_user(admin_token, alice.id, "Test deactivation")
@@ -61,19 +61,19 @@ defmodule AADemoBeExphWeb.Integration.TokensSteps do
     {:ok, Map.put(state, :token_payload, payload)}
   end
 
-  defwhen ~r/^the client sends GET \/.well-known\/jwks.json$/, _vars, state do
+  defwhen ~r/^the client sends GET ..well-known.jwks.json$/, _vars, state do
     response = ServiceLayer.get_jwks()
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout with her access token$/,
+  defwhen ~r/^alice sends POST .api.v1.auth.logout with her access token$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.logout(access_token)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the client sends GET \/api\/v1\/users\/me with alice's access token$/,
+  defwhen ~r/^the client sends GET .api.v1.users.me with alice's access token$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.get_me(access_token)

@@ -44,6 +44,7 @@ def test_client() -> Generator[ServiceClient]:  # type: ignore[override]
     Base.metadata.drop_all(engine)
     engine.dispose()
 
+
 # Path to the shared Gherkin feature files.
 # GHERKIN_ROOT_ENV allows Docker containers to override the path directly
 # (e.g. GHERKIN_ROOT=/specs/apps/a-demo/be/gherkin) since the relative parent
@@ -149,6 +150,32 @@ def check_file_size_error(response: FakeResponse) -> None:
     )
 
 
+@then(parsers.parse("alice's account status should be {status}"))
+def check_alice_account_status(
+    request: pytest.FixtureRequest, client: ServiceClient, status: str
+) -> None:
+    status_value = status.strip('"')
+    if status_value.upper() == "LOCKED":
+        # Locked accounts reject login with 401
+        resp = client.post_login("alice", _STRONG_PASSWORD)
+        assert resp.status_code == 401, (
+            f"Expected 401 for locked account, got {resp.status_code}: {resp.text}"
+        )
+    else:
+        admin_tokens: dict = request.getfixturevalue("admin_tokens")
+        resp = client.get_admin_users(
+            f"Bearer {admin_tokens['accessToken']}",
+            search="alice@example.com",
+        )
+        body = resp.json()
+        users = body.get("content", [])
+        alice_info = next((u for u in users if u["username"] == "alice"), None)
+        assert alice_info is not None, f"alice not found in admin users: {users}"
+        assert alice_info["status"].upper() == status_value.upper(), (
+            f"Expected status {status_value!r}, got {alice_info['status']!r}"
+        )
+
+
 # --- Shared background registration steps (used across multiple step files) ---
 
 
@@ -156,9 +183,7 @@ def check_file_size_error(response: FakeResponse) -> None:
     parsers.parse('a user "{username}" is registered with password "{password}"'),
     target_fixture="registered_user",
 )
-def shared_register_user_with_password(
-    client: ServiceClient, username: str, password: str
-) -> dict:
+def shared_register_user_with_password(client: ServiceClient, username: str, password: str) -> dict:
     return _register_user_helper(client, username, password=password)
 
 

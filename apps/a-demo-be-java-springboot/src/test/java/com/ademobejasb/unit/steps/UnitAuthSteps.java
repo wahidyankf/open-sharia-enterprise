@@ -69,7 +69,7 @@ public class UnitAuthSteps {
         performRegister(username, email, password);
     }
 
-    @When("^the client sends POST /api/v1/auth/register with body \\{ \"username\": \"([^\"]+)\", \"email\": \"([^\"]+)\", \"password\": \"([^\"]*)\" \\}$")
+    @When("^the client sends POST /api/v1/auth/register with body [{] \"username\": \"([^\"]+)\", \"email\": \"([^\"]+)\", \"password\": \"([^\"]*)\" [}]$")
     public void theClientSendsPostRegisterWithBody(
             final String username, final String email, final String password) {
         performRegister(username, email, password);
@@ -86,7 +86,7 @@ public class UnitAuthSteps {
         performLogin(username, password);
     }
 
-    @When("^the client sends POST /api/v1/auth/login with body \\{ \"username\": \"([^\"]+)\", \"password\": \"([^\"]+)\" \\}$")
+    @When("^the client sends POST /api/v1/auth/login with body [{] \"username\": \"([^\"]+)\", \"password\": \"([^\"]+)\" [}]$")
     public void theClientSendsPostLoginWithBody(final String username, final String password) {
         performLogin(username, password);
     }
@@ -297,7 +297,7 @@ public class UnitAuthSteps {
         stateStore.setResponseBody(resp.getBody());
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/unlock$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/unlock$")
     public void theAdminSendsPostUnlockAliceShared() {
         java.util.UUID aliceId = stateStore.getAliceId();
         if (aliceId == null) {

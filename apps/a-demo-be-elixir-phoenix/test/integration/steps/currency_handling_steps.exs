@@ -35,14 +35,14 @@ defmodule AADemoBeExphWeb.Integration.CurrencyHandlingSteps do
     {:ok, Map.put(state, :expense_id, response.body["id"])}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     response = ServiceLayer.get_expense(access_token, expense_id)
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
+  defwhen ~r/^alice sends POST .api.v1.expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token} = state do
     params = Jason.decode!("{" <> body_content <> "}")
@@ -50,7 +50,7 @@ defmodule AADemoBeExphWeb.Integration.CurrencyHandlingSteps do
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends GET \/api\/v1\/expenses\/summary$/,
+  defwhen ~r/^alice sends GET .api.v1.expenses.summary$/,
           _vars,
           %{access_token: access_token} = state do
     response = ServiceLayer.expense_summary(access_token)

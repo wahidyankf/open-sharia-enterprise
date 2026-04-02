@@ -69,7 +69,7 @@ defmodule AADemoBeExphWeb.Integration.SecuritySteps do
     {:ok, state}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, email: email, password: password},
           state do
     response =
@@ -78,14 +78,14 @@ defmodule AADemoBeExphWeb.Integration.SecuritySteps do
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
+  defwhen ~r/^the client sends POST .api.v1.auth.login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
     response = ServiceLayer.login(%{"username" => username, "password" => password})
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/unlock$/,
+  defwhen ~r/^the admin sends POST .api.v1.admin.users.\{alice_id\}.unlock$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
     response = ServiceLayer.admin_unlock_user(admin_token, alice.id)

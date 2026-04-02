@@ -22,7 +22,7 @@ public class UnitReportingSteps {
         return UnitFactory.getService();
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=([^&]+)&to=([^&]+)&currency=([^&]+)$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=([^&]+)&to=([^&]+)&currency=([^&]+)$")
     public void aliceSendsGetPlReport(String from, String to, String currency) throws Exception {
         String token = state.getAccessToken();
         ServiceResponse response = svc().getPlReport(token, from, to, currency);

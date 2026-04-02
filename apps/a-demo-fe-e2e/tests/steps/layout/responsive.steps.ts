@@ -15,12 +15,17 @@ Given("the navigation drawer is open", async ({ page }) => {
 
 // "{word} has created income and expense entries" is defined in reporting.steps.ts
 
-Given(
-  "the viewport is set to {string} \\({int}x{int}\\)",
-  async ({ page }, _label: string, width: number, height: number) => {
-    await page.setViewportSize({ width, height });
-  },
-);
+Given('the viewport is set to "desktop" (1280x800)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+});
+
+Given('the viewport is set to "tablet" (768x1024)', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+});
+
+Given('the viewport is set to "mobile" (375x667)', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+});
 
 When("{word} taps the hamburger menu button", async ({ page }) => {
   await page

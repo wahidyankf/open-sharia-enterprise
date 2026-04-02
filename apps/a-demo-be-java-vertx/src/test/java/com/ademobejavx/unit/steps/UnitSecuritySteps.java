@@ -107,7 +107,7 @@ public class UnitSecuritySteps {
         svc().adminUnlockUser(adminToken, aliceId);
     }
 
-    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/unlock$")
+    @When("^the admin sends POST /api/v1/admin/users/[{]alice_id[}]/unlock$")
     public void adminSendsUnlock() throws Exception {
         String adminToken = state.getAdminAccessToken();
         Assertions.assertNotNull(adminToken);

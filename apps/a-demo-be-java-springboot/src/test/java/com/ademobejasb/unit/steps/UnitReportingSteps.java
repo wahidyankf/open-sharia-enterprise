@@ -24,32 +24,32 @@ public class UnitReportingSteps {
     @Autowired
     private ReportController reportController;
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2025-01-01&to=2025-01-31&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2025-01-01&to=2025-01-31&currency=USD$")
     public void aliceSendsGetPLJan() {
         performGetPl(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31), "USD");
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2025-02-01&to=2025-02-28&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2025-02-01&to=2025-02-28&currency=USD$")
     public void aliceSendsGetPLFeb() {
         performGetPl(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 2, 28), "USD");
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2025-03-01&to=2025-03-31&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2025-03-01&to=2025-03-31&currency=USD$")
     public void aliceSendsGetPLMar() {
         performGetPl(LocalDate.of(2025, 3, 1), LocalDate.of(2025, 3, 31), "USD");
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2025-04-01&to=2025-04-30&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2025-04-01&to=2025-04-30&currency=USD$")
     public void aliceSendsGetPLApr() {
         performGetPl(LocalDate.of(2025, 4, 1), LocalDate.of(2025, 4, 30), "USD");
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2025-05-01&to=2025-05-31&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2025-05-01&to=2025-05-31&currency=USD$")
     public void aliceSendsGetPLMay() {
         performGetPl(LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 31), "USD");
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=2099-01-01&to=2099-01-31&currency=USD$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=2099-01-01&to=2099-01-31&currency=USD$")
     public void aliceSendsGetPLFuture() {
         performGetPl(LocalDate.of(2099, 1, 1), LocalDate.of(2099, 1, 31), "USD");
     }

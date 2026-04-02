@@ -28,6 +28,10 @@ Given(
 
 // ---- When ----
 
+When(/^the client sends GET \/\.well-known\/jwks\.json$/, async function (this: CustomWorld) {
+  this.response = await this.get("/.well-known/jwks.json");
+});
+
 When("alice decodes her access token payload", function (this: CustomWorld) {
   const token = this.tokens.get("alice_access") ?? "";
   const parts = token.split(".");

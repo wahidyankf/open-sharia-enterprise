@@ -17,7 +17,7 @@ public class ReportingSteps {
         this.state = state;
     }
 
-    @When("^alice sends GET /api/v1/reports/pl\\?from=([^&]+)&to=([^&]+)&currency=([^&]+)$")
+    @When("^alice sends GET /api/v1/reports/pl[?]from=([^&]+)&to=([^&]+)&currency=([^&]+)$")
     public void aliceSendsGetPlReport(String from, String to,
             String currency) throws Exception {
         String token = state.getAccessToken();

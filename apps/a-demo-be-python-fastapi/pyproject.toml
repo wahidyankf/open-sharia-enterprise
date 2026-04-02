@@ -80,6 +80,9 @@ ignore = [
     "N815",  # Pydantic response models use camelCase field names to match the camelCase JSON API contract
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**/steps/*_steps.py" = ["E501"]  # Long BDD step strings must stay on one line for spec-coverage regex matching
+
 [tool.pyright]
 include = ["src", "tests"]
 pythonVersion = "3.13"
