@@ -25,6 +25,15 @@ jobs:
           npx nx run organiclever-be-e2e:spec-coverage
           npx nx run organiclever-fe-e2e:spec-coverage
 
+  fe-lint:
+    name: FE lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - run: npx nx run organiclever-fe:lint
+
   be-integration:
     name: BE integration tests
     runs-on: ubuntu-latest

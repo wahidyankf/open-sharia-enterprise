@@ -12,7 +12,7 @@ tags:
   - gherkin
   - demo-be
 created: 2026-03-13
-updated: 2026-03-31
+updated: 2026-04-02
 ---
 
 # Three-Level Testing Standard
@@ -261,16 +261,16 @@ The `typecheck` and `build` Nx targets depend on `codegen`. This means contract 
 
 The following table maps GitHub Actions workflows to the test levels they execute:
 
-| Workflow                | test:unit        | spec-coverage | test:integration | test:e2e | When           |
-| ----------------------- | ---------------- | ------------- | ---------------- | -------- | -------------- |
-| Pre-push hook           | Via `test:quick` | Yes           | No               | No       | Every push     |
-| PR quality gate         | Via `test:quick` | No            | No               | No       | Every PR       |
-| `test-a-demo-be-*.yml`  | No               | No            | Yes              | Yes      | CRON 2x daily  |
-| `test-a-demo-fe-*.yml`  | No               | No            | No               | Yes      | CRON 2x daily  |
-| `test-and-deploy-*.yml` | Via `test:quick` | No            | Yes              | Yes      | CRON 2x daily  |
-| `codecov-upload.yml`    | Via `test:quick` | No            | No               | No       | Push to `main` |
+| Workflow                | lint | test:unit        | spec-coverage | test:integration | test:e2e | When           |
+| ----------------------- | ---- | ---------------- | ------------- | ---------------- | -------- | -------------- |
+| Pre-push hook           | Yes  | Via `test:quick` | Yes           | No               | No       | Every push     |
+| PR quality gate         | Yes  | Via `test:quick` | No            | No               | No       | Every PR       |
+| `test-a-demo-be-*.yml`  | Yes  | No               | No            | Yes              | Yes      | CRON 2x daily  |
+| `test-a-demo-fe-*.yml`  | Yes  | No               | No            | No               | Yes      | CRON 2x daily  |
+| `test-and-deploy-*.yml` | Yes  | Via `test:quick` | No            | Yes              | Yes      | CRON 2x daily  |
+| `codecov-upload.yml`    | No   | Via `test:quick` | No            | No               | No       | Push to `main` |
 
-The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration and E2E coverage on a regular cadence.
+`lint` (including static a11y checks via oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects) runs in all three enforcement gates: the pre-push hook, the PR quality gate, and scheduled CRON workflows. The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration and E2E coverage on a regular cadence.
 
 ## Spec-Coverage Validation
 

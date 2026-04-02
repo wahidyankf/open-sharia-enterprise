@@ -18,6 +18,13 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-golang
       - run: npx nx run a-demo-fs-ts-nextjs:spec-coverage
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - run: npx nx run a-demo-fs-ts-nextjs:lint
   integration:
     uses: ./.github/workflows/_reusable-backend-integration.yml
     with:

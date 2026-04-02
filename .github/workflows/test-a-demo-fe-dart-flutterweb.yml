@@ -18,6 +18,18 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-golang
       - run: npx nx run a-demo-fe-dart-flutterweb:spec-coverage
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-flutter
+      - name: Generate contract types
+        run: |
+          npx nx run a-demo-contracts:bundle
+          npx nx run a-demo-fe-dart-flutterweb:codegen
+      - run: npx nx run a-demo-fe-dart-flutterweb:lint
   e2e-fe:
     uses: ./.github/workflows/_reusable-frontend-e2e.yml
     with:

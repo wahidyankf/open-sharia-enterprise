@@ -18,6 +18,17 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-golang
       - run: npx nx run a-demo-fe-ts-nextjs:spec-coverage
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - name: Generate contract types
+        run: |
+          npx nx run a-demo-contracts:bundle
+          npx nx run a-demo-fe-ts-nextjs:codegen
+      - run: npx nx run a-demo-fe-ts-nextjs:lint
   e2e-fe:
     uses: ./.github/workflows/_reusable-frontend-e2e.yml
     with:

@@ -10,7 +10,7 @@ tags:
   - build
   - scripts
 created: 2026-02-23
-updated: 2026-03-31
+updated: 2026-04-02
 ---
 
 # Nx Target Standards
@@ -38,7 +38,7 @@ flowchart TD
     F -- No --> G[Push blocked]
     F -- Yes --> H[Push succeeds]
 
-    P[PR opened / updated] --> Q["GitHub Actions CI<br/>nx affected -t test:quick"]
+    P[PR opened / updated] --> Q["GitHub Actions CI<br/>nx affected -t lint test:quick"]
     Q --> R{Pass?}
     R -- No --> S[PR merge blocked]
     R -- Yes --> T[PR merge allowed]
@@ -244,7 +244,7 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 \* E2E tests live in dedicated `*-e2e` runner projects, not in the backend/frontend project itself.
 
-**CI schedules**: Per-service "Test" workflows run 2x daily (WIB 06, 18) combining `test:integration` + `test:e2e` for each service. `test:quick` runs on every push to main and every PR.
+**CI schedules**: Per-service "Test" workflows run 2x daily (WIB 06, 18) combining `lint`, `test:integration`, and `test:e2e` for each service. `lint` and `test:quick` run on every push to main and every PR.
 
 ### All Projects
 
@@ -253,7 +253,7 @@ Every project in `apps/` and `libs/` must expose:
 | Target       | Requirement                                                                                                                                                |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge               |
-| `lint`       | Exit non-zero on violations; enforced by the pre-push hook                                                                                                 |
+| `lint`       | Exit non-zero on violations; enforced by the pre-push hook, the PR quality gate, and scheduled Test CI workflows                                           |
 | `typecheck`  | Required for statically typed projects and all demo-be backends; enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
@@ -637,10 +637,10 @@ runs when artifacts already exist from a prior `build` or `typecheck` execution.
 
 ## Principles Traceability
 
-| Decision                                                                                               | Principle                                                                                 |
-| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| Consistent target names across all projects                                                            | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| `typecheck`, `lint`, `test:quick`, `spec-coverage` enforced at pre-push; `test:quick` at PR merge gate | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
-| Minimum required targets per project type                                                              | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
-| `outputs` required for cacheable targets                                                               | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| Four-dimension tag scheme with controlled vocabulary declared in every `project.json`                  | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Decision                                                                                                                                                 | Principle                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Consistent target names across all projects                                                                                                              | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| `typecheck`, `lint`, `test:quick`, `spec-coverage` enforced at pre-push; `lint` and `test:quick` at PR merge gate; `lint` in scheduled Test CI workflows | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
+| Minimum required targets per project type                                                                                                                | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
+| `outputs` required for cacheable targets                                                                                                                 | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Four-dimension tag scheme with controlled vocabulary declared in every `project.json`                                                                    | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |

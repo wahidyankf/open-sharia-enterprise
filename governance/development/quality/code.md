@@ -10,7 +10,7 @@ tags:
   - automation
 category: explanation
 subcategory: development
-updated: 2026-03-31
+updated: 2026-04-02
 ---
 
 # Code Quality Convention
@@ -238,7 +238,9 @@ $ git commit -m "added new feature"
 
 - **Type correctness** (`typecheck`): Catches type errors in TypeScript, Dart/Flutter, and other
   statically typed projects. Projects without a `typecheck` target are silently skipped by Nx.
-- **Code quality** (`lint`): Static analysis across all projects.
+- **Code quality** (`lint`): Static analysis across all projects (includes static a11y checks via
+  oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects). Also
+  enforced remotely in the PR quality gate and in all scheduled Test CI workflows.
 - **Fast quality gate** (`test:quick`): Unit tests, build smoke tests, or other fast checks
   defined per project. Also enforced remotely as a required GitHub Actions status check before PR
   merge.
