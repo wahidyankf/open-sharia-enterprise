@@ -605,11 +605,11 @@ conventions). All other languages use hyphen in `generated-contracts/`.
 
 **Go CLI apps** (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) also consume Gherkin specs in `test:unit` (godog unit step definitions run without a build tag). Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
 
-| CLI App           | Gherkin specs input                                       |
-| ----------------- | --------------------------------------------------------- |
-| `rhino-cli`       | `{workspaceRoot}/specs/apps/rhino-cli/**/*.feature`       |
-| `ayokoding-cli`   | `{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature`   |
-| `oseplatform-cli` | `{workspaceRoot}/specs/apps/oseplatform-cli/**/*.feature` |
+| CLI App           | Gherkin specs input                                   |
+| ----------------- | ----------------------------------------------------- |
+| `rhino-cli`       | `{workspaceRoot}/specs/apps/rhino/**/*.feature`       |
+| `ayokoding-cli`   | `{workspaceRoot}/specs/apps/ayokoding/**/*.feature`   |
+| `oseplatform-cli` | `{workspaceRoot}/specs/apps/oseplatform/**/*.feature` |
 
 Example for `rhino-cli` `test:unit` inputs:
 
@@ -619,7 +619,7 @@ Example for `rhino-cli` `test:unit` inputs:
   "{projectRoot}/internal/**/*.go",
   "{projectRoot}/go.mod",
   "{projectRoot}/go.sum",
-  "{workspaceRoot}/specs/apps/rhino-cli/**/*.feature"
+  "{workspaceRoot}/specs/apps/rhino/**/*.feature"
 ]
 ```
 

@@ -1177,7 +1177,7 @@ nx install rhino-cli
 ## Testing
 
 The project uses two complementary test tiers. Both consume the same Gherkin specs from
-`specs/apps/rhino-cli/` via [godog](https://github.com/cucumber/godog) — only the step
+`specs/apps/rhino/` via [godog](https://github.com/cucumber/godog) — only the step
 implementations differ:
 
 | Level       | Test File Pattern                           | Step Implementation                             | Nx Target          |
