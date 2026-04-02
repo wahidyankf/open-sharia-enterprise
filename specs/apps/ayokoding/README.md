@@ -32,6 +32,9 @@ specs/apps/ayokoding/
 │   └── gherkin/
 │       └── index-generation/
 │           └── index-generation.feature
+├── cli/                   # CLI tool specs (ayokoding-cli)
+│   └── gherkin/
+│       └── links-check.feature
 └── fe/                    # Frontend specs (UI-semantic)
     └── gherkin/           # Frontend Gherkin scenarios (future)
 ```
@@ -61,6 +64,12 @@ specs/apps/ayokoding/
 | ---------------- | --------------------------------------------------------------- | ---------------------------------------- |
 | index-generation | `build-tools/gherkin/index-generation/index-generation.feature` | Auto-generated \_index.md child listings |
 
+## CLI Domains
+
+| Domain      | File                              | Description                                     |
+| ----------- | --------------------------------- | ----------------------------------------------- |
+| links-check | `cli/gherkin/links-check.feature` | Content link validation (`links check` command) |
+
 ## tRPC Procedures
 
 The backend exposes tRPC procedures consumed by these specs:
@@ -80,3 +89,4 @@ The backend exposes tRPC procedures consumed by these specs:
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — Next.js implementation
+- [apps/ayokoding-cli/](../../../apps/ayokoding-cli/README.md) — CLI tool (content link validation)

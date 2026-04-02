@@ -174,7 +174,7 @@ implicit dependency.
 
 ## Testing
 
-Two test tiers consume the same Gherkin specs from `specs/apps/ayokoding-cli/` via
+Two test tiers consume the same Gherkin specs from `specs/apps/ayokoding/cli/` via
 [godog](https://github.com/cucumber/godog) — only the step implementations differ:
 
 | Level       | Test File Pattern                   | Step Implementation                             | Nx Target          |
@@ -213,12 +213,12 @@ go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
 Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
 `/tmp` filesystem fixtures.
 
-| Test function               | Feature file                                         | Scenarios |
-| --------------------------- | ---------------------------------------------------- | --------- |
-| `TestIntegrationLinksCheck` | `specs/apps/ayokoding-cli/links/links-check.feature` | 4         |
+| Test function               | Feature file                                           | Scenarios |
+| --------------------------- | ------------------------------------------------------ | --------- |
+| `TestIntegrationLinksCheck` | `specs/apps/ayokoding/cli/gherkin/links-check.feature` | 4         |
 
 The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
-`specs/apps/ayokoding-cli/**/*.feature` files change.
+`specs/apps/ayokoding/**/*.feature` files change.
 
 ## Development
 

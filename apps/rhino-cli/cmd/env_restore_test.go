@@ -18,7 +18,7 @@ import (
 
 var specsDirUnitEnvRestore = func() string {
 	_, f, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino-cli/cli/gherkin")
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino/cli/gherkin")
 }()
 
 type envRestoreUnitSteps struct {

@@ -27,6 +27,9 @@ specs/apps/oseplatform/
 │       │   └── health.feature
 │       └── seo/
 │           └── seo.feature
+├── cli/                   # CLI tool specs (oseplatform-cli)
+│   └── gherkin/
+│       └── links-check.feature
 └── fe/                    # Frontend specs (UI-semantic)
     └── gherkin/           # Frontend Gherkin scenarios
         ├── landing-page.feature
@@ -72,6 +75,12 @@ specs/apps/oseplatform/
 | theme        | `theme.feature`        | Light/dark mode default and toggle behaviour         |
 | responsive   | `responsive.feature`   | Mobile and desktop viewport layout                   |
 
+## CLI Domains
+
+| Domain      | File                              | Description                                     |
+| ----------- | --------------------------------- | ----------------------------------------------- |
+| links-check | `cli/gherkin/links-check.feature` | Content link validation (`links check` command) |
+
 ## Scenario Summary
 
 | Area      | Feature File      | Scenarios |
@@ -102,3 +111,4 @@ specs/apps/oseplatform/
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/oseplatform-web/](../../../apps/oseplatform-web/README.md) — Next.js implementation
+- [apps/oseplatform-cli/](../../../apps/oseplatform-cli/README.md) — CLI tool (content link validation)

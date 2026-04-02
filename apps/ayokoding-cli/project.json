@@ -19,7 +19,7 @@
         "command": "CGO_ENABLED=0 go test -coverprofile=cover.out -coverpkg=./cmd/... ./... && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-cli/cover.out 90)",
         "cwd": "apps/ayokoding-cli"
       },
-      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature"]
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -27,7 +27,7 @@
         "command": "CGO_ENABLED=0 go test ./... -count=1",
         "cwd": "apps/ayokoding-cli"
       },
-      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature"]
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]
     },
     "run": {
       "executor": "nx:run-commands",
@@ -50,7 +50,7 @@
         "cwd": "apps/ayokoding-cli"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding-cli/**/*.feature"],
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"],
       "outputs": ["{projectRoot}/cover_spec.out"]
     },
     "typecheck": {
@@ -68,9 +68,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/ayokoding-cli/cli/gherkin apps/ayokoding-cli --shared-steps",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/ayokoding/cli/gherkin apps/ayokoding-cli --shared-steps",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ayokoding-cli/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": ["{workspaceRoot}/specs/apps/ayokoding/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     }
   }
 }

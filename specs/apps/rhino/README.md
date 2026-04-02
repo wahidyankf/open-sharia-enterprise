@@ -1,7 +1,7 @@
 # rhino-cli Specs
 
 Gherkin behavioral specifications for
-[rhino-cli](../../apps/rhino-cli/README.md) — the Repository Hygiene &
+[rhino-cli](../../../apps/rhino-cli/README.md) — the Repository Hygiene &
 INtegration Orchestrator CLI.
 
 ## Purpose
@@ -16,7 +16,7 @@ the contract between the CLI implementation and its consumers.
 All feature files live under a single `cli/gherkin/` directory:
 
 ```
-specs/apps/rhino-cli/
+specs/apps/rhino/
 ├── README.md
 └── cli/
     └── gherkin/    # All rhino-cli Gherkin feature files
@@ -46,12 +46,12 @@ go test -v -tags=integration -run TestIntegrationDoctor ./cmd/...
 ```
 
 The `test:integration` target is cached — it only re-runs when source files in
-`cmd/**/*.go` or `specs/apps/rhino-cli/**/*.feature` change. The `test:unit` target
+`cmd/**/*.go` or `specs/apps/rhino/**/*.feature` change. The `test:unit` target
 (via `test:quick`) is also cache-invalidated when these spec files change.
 
 ## Adding New Specs
 
-1. Create `specs/apps/rhino-cli/cli/gherkin/<domain>-<action>.feature`
+1. Create `specs/apps/rhino/cli/gherkin/<domain>-<action>.feature`
 2. Create `apps/rhino-cli/cmd/<domain>_<action>_test.go` (no build tag — unit test with godog):
    - Add `package cmd` at the top
    - Include `// Scenario: <title>` comments for every scenario
@@ -66,7 +66,7 @@ The `test:integration` target is cached — it only re-runs when source files in
 
    ```bash
    cd apps/rhino-cli
-   go run main.go spec-coverage validate specs/rhino-cli apps/rhino-cli
+   go run main.go spec-coverage validate specs/apps/rhino/cli/gherkin apps/rhino-cli
    ```
 
 ## Dual Consumption

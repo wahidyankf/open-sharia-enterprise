@@ -19,7 +19,7 @@
         "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && CGO_ENABLED=0 go run main.go test-coverage validate apps/rhino-cli/cover.out 90",
         "cwd": "apps/rhino-cli"
       },
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/rhino-cli/**/*.feature"]
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -27,7 +27,7 @@
         "command": "CGO_ENABLED=0 go test ./... -count=1",
         "cwd": "apps/rhino-cli"
       },
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/rhino-cli/**/*.feature"]
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"]
     },
     "run": {
       "executor": "nx:run-commands",
@@ -50,7 +50,7 @@
         "cwd": "apps/rhino-cli"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/rhino-cli/**/*.feature"],
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"],
       "outputs": ["{projectRoot}/cover_spec.out"]
     },
     "typecheck": {
@@ -68,9 +68,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino-cli/cli/gherkin apps/rhino-cli --shared-steps",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/cli/gherkin apps/rhino-cli --shared-steps",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/rhino-cli/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": ["{workspaceRoot}/specs/apps/rhino/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     }
   }
 }

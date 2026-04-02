@@ -1,6 +1,6 @@
 # oseplatform-cli Gherkin Specs
 
-Gherkin feature files for [oseplatform-cli](../../../../apps/oseplatform-cli/README.md) — the
+Gherkin feature files for [oseplatform-cli](../../../../../apps/oseplatform-cli/README.md) — the
 CLI tool for oseplatform-web Hugo site maintenance. 1 file, 4 scenarios.
 
 ## Feature Files
