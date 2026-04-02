@@ -6,8 +6,6 @@ Active project plans currently being worked on.
 
 - [LGPL Dependency Replacement](./2026-03-26__lgpl-dependency-replacement/) — Replace LGPL
   dependencies with permissive alternatives
-- [Specs Structure Consistency](./2026-04-02__specs-structure-consistency/) — Standardize specs
-  directory structure across FE gherkin, Go library, and ts-ui specs
 
 ## Instructions
 
