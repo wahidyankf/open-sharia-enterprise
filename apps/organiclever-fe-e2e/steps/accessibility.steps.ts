@@ -18,7 +18,7 @@ When("I navigate to any page", async ({ page }) => {
   await page.waitForLoadState("load");
 });
 
-When("I navigate to /login using only the keyboard", async ({ page }) => {
+When("I navigate to \\/login using only the keyboard", async ({ page }) => {
   await page.goto("/login");
   await page.waitForLoadState("load");
   // Focus the page body to establish a keyboard starting point.
