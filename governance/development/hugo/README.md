@@ -1,10 +1,10 @@
 # Hugo Development
 
-Standards for developing Hugo sites (layouts, themes, assets, configuration) for oseplatform-web. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
+Historical Hugo development standards. **No active Hugo sites remain in this repository.** Both ayokoding-web and oseplatform-web have migrated to Next.js 16. Preserved for reference only.
 
 ## Purpose
 
-These standards define **HOW to develop Hugo themes and layouts**, covering theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices. This is about building the technical infrastructure of Hugo sites, not writing content.
+These standards defined **HOW to develop Hugo themes and layouts**, covering theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices. This was about building the technical infrastructure of Hugo sites, not writing content.
 
 ## Scope
 
@@ -24,7 +24,7 @@ These standards define **HOW to develop Hugo themes and layouts**, covering them
 
 ## Documents
 
-- [Hugo Development Convention](./development.md) - Complete standards for Hugo site development including theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
+- [Hugo Development Convention](./development.md) - **DEPRECATED** - Complete standards for Hugo site development including theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
 
 ## Companion Documents
 
@@ -56,4 +56,4 @@ This set of development practices respects the following conventions:
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-04-02

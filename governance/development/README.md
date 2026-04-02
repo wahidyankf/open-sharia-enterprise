@@ -26,7 +26,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 
 - Software development methodologies (BDD, testing, agile practices)
 - Build processes, tooling, and automation workflows
-- Hugo **theme/layout development** (HTML templates, CSS/JS, asset pipeline)
+- Hugo **theme/layout development** (historical - no active Hugo sites remain)
 - Development infrastructure (temporary files, build artifacts, reports)
 - Git workflows and commit message standards
 - AI agent development and configuration
@@ -39,7 +39,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Markdown writing standards and style guides
 - Documentation organization (Diátaxis framework)
 - File naming and linking in docs
-- Hugo **content** writing (frontmatter, markdown, archetypes)
+- Hugo **content** writing (historical - no active Hugo sites remain)
 - Visual documentation elements (diagrams, colors in docs)
 - Documentation quality and accessibility
 
@@ -105,6 +105,7 @@ Development practices in this directory fall into several categories:
 - [Commit Message Convention](./workflow/commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
 - [Reproducible Environments Convention](./workflow/reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking, environment configuration, and containerization
 - [Worktree Setup](./workflow/worktree-setup.md) - Practice for running `npm install` in the root repository worktree after creating a new git worktree. Keeps `node_modules/` consistent with `package-lock.json` and ensures Nx task caching, builds, and linting function correctly across all worktrees
+- [Git Push Safety Convention](./workflow/git-push-safety.md) - Requires explicit per-instance user approval before any AI agent or automation executes `git push --force`, `--force-with-lease`, or `--no-verify`; prior approval does not carry forward
 
 ### Quality Standards Documentation
 
@@ -143,6 +144,7 @@ Development practices in this directory fall into several categories:
 - [GitHub Actions Workflow Naming Convention](./infra/github-actions-workflow-naming.md) - Workflow filenames must mirror their `name:` field using a consistent kebab-case derivation rule, enabling developers to navigate between the GitHub UI and the filesystem without ambiguity
 - [Vercel Deployment Convention](./infra/vercel-deployment.md) - Rules for configuring `vercel.json` when Nx build targets must run before the framework build
 - [Docker Monorepo Build Patterns](./infra/docker-monorepo-builds.md) - Patterns and pitfalls for building Docker images in an npm workspace monorepo (workspace symlink resolution, direct node_modules injection, transitive dependency hoisting)
+- [CI/CD Conventions](./infra/ci-conventions.md) - Central reference for CI/CD conventions: git hooks, test level definitions, coverage thresholds, Docker patterns, GitHub Actions structure, and naming rules
 
 ### Frontend Development Documentation
 
@@ -153,7 +155,7 @@ Development practices in this directory fall into several categories:
 
 ### Hugo Development Documentation
 
-- [Hugo Development Convention](./hugo/development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
+- [Hugo Development Convention](./hugo/development.md) - **DEPRECATED** -- Historical standards for developing Hugo sites. Both ayokoding-web and oseplatform-web have migrated to Next.js 16. Preserved for reference only
 
 ## 📚 Companion Documents
 
@@ -173,4 +175,4 @@ These companion files exist in each subdirectory: `workflow/`, `quality/`, `patt
 
 ---
 
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02

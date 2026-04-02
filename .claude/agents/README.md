@@ -41,6 +41,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **specs-checker** - Gherkin/BDD specs directory structural and content validation
 - **swe-code-checker** - Validates projects against platform coding standards (validates application code rather than documentation)
 - **swe-ui-checker** - UI component quality validation
+- **ci-checker** - CI/CD standards validation (mandatory Nx targets, coverage thresholds, Docker setup, Gherkin specs)
 
 ### 🟨 Fixing (Fixers)
 
@@ -60,6 +61,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-workflow-fixer** - Fix workflow documentation
 - **specs-fixer** - Fix specs structural and accuracy issues
 - **swe-ui-fixer** - Apply validated UI component fixes
+- **ci-fixer** - Apply validated CI/CD standards fixes
 
 ### 🟪 Operations
 
@@ -77,7 +79,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **swe-elixir-developer** - Elixir application development
 - **swe-fsharp-developer** - F# application development
 - **swe-golang-developer** - Go application development
-- **swe-hugo-developer** - Hugo site development (oseplatform-web)
+- **swe-hugo-developer** - **DEPRECATED** -- No active Hugo sites remain (formerly oseplatform-web)
 - **swe-java-developer** - Java application development
 - **swe-kotlin-developer** - Kotlin application development
 - **swe-python-developer** - Python application development
@@ -153,4 +155,4 @@ All agents follow governance principles:
 
 ---
 
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02

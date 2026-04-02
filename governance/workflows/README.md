@@ -101,9 +101,9 @@ Workflows for creating and validating documentation:
 - **readme**: README.md quality and engagement (planned - no workflow file yet)
 - **plan**: Project planning documents
 
-### Hugo Content Workflows
+### Web Content Workflows
 
-Workflows for Hugo website content:
+Workflows for web application content (Next.js sites, formerly Hugo):
 
 - **ayokoding-web**: ayokoding-web content creation and validation
 - **ayokoding-facts**: Factual accuracy validation for ayokoding-web (planned - no workflow file yet)
@@ -308,4 +308,4 @@ See [Workflow Pattern Convention](./meta/workflow-identifier.md) and [Execution 
 
 ---
 
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02

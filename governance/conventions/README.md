@@ -29,14 +29,14 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - Visual elements in docs (diagrams, colors, emojis, math notation)
 - Content quality and accessibility standards
 - Documentation file formats (tutorials, plans)
-- Hugo **content** writing (frontmatter, markdown, archetypes)
+- Hugo **content** writing conventions (historical - no active Hugo sites remain)
 - Repository documentation standards (README, CONTRIBUTING)
 
 **Does NOT Belong Here (use [Development](../development/README.md) instead):**
 
 - Software development methodologies (BDD, testing, agile)
 - Build processes and tooling workflows
-- Hugo **theme/layout development** (HTML templates, asset pipeline)
+- Hugo **theme/layout development** (historical - no active Hugo sites remain)
 - Development infrastructure (temporary files, build artifacts)
 - Git workflows and commit practices
 - AI agent development standards
@@ -63,7 +63,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 - "File naming must use `prefix__identifier.md` format" - Convention (documentation rule)
 - "Use 2-space indentation for nested lists" - Convention (documentation formatting)
-- "Hugo themes use Tailwind CSS" - Development (software practice)
+- "Web app themes use Tailwind CSS" - Development (software practice)
 - "Why we avoid time estimates in tutorials" - Principle (foundational value)
 
 ## Directory Structure
@@ -117,6 +117,7 @@ Documentation organization frameworks, file naming, and project planning structu
 - [File Naming Convention](./structure/file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
 - [Plans Organization](./structure/plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers. Defines how plans move from ideas - backlog - in-progress - done
 - [Programming Language Documentation Separation](./structure/programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational programming language content (ayokoding-web). Defines scope boundaries, prerequisite knowledge requirements, cross-referencing patterns, and DRY principle application. Applies to all programming languages (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
+- [Specs Directory Structure](./structure/specs-directory-structure.md) - Canonical directory structure for Gherkin feature files, C4 architecture diagrams, and OpenAPI contracts in the specs/ directory. Defines path patterns, domain subdirectory rules (required for BE/FE, flat for CLI), and lib spec organization
 
 ## Tutorials
 
@@ -131,13 +132,13 @@ Tutorial creation, structure, naming, and content standards applying to **all tu
 - [Tutorial Naming](./tutorials/naming.md) - **Universal** Full Set Tutorial Package definition (5 mandatory components) and tutorial type standards (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). Replaces old "Full Set" concept (5 sequential levels) with new architecture emphasizing component completeness. Applies to all tutorial content across the repository
 - [In-the-Field Tutorial Convention](./tutorials/in-the-field.md) - **Universal** standards for production-ready implementation guides that build on by-example and by-concept foundations by introducing frameworks, libraries, and enterprise patterns used in real-world systems. Targets developers ready to apply concepts in production environments. Applies to all in-the-field tutorial content across the repository
 
-## Hugo
+## Hugo (Historical)
 
-Hugo site-specific content conventions.
+Hugo site-specific content conventions. **All Hugo sites have migrated to Next.js 16.** These conventions are preserved for historical reference only.
 
 - [Hugo Content - ayokoding](./hugo/ayokoding.md) - **DEPRECATED** — Historical Hugo conventions for ayokoding-web (Hextra theme). ayokoding-web has migrated to Next.js 16. Preserved for reference only
-- [Hugo Content - OSE Platform](./hugo/ose-platform.md) - Site-specific conventions for oseplatform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
-- [Hugo Content - Shared](./hugo/shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
+- [Hugo Content - OSE Platform](./hugo/ose-platform.md) - **DEPRECATED** -- Historical Hugo conventions for oseplatform-web (PaperMod theme). oseplatform-web has migrated to Next.js 16. Preserved for reference only
+- [Hugo Content - Shared](./hugo/shared.md) - **DEPRECATED** -- Historical shared Hugo content conventions. No active Hugo sites remain. Preserved for reference only
 - [Indonesian Content Policy - ayokoding-web](./hugo/indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), provides decision tree for language selection, and specifies agent behavior for content creation
 
 ## Related Documentation
@@ -149,4 +150,4 @@ Hugo site-specific content conventions.
 
 ---
 
-**Last Updated**: 2026-03-24
+**Last Updated**: 2026-04-02

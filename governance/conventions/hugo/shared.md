@@ -16,7 +16,9 @@ updated: 2025-12-22
 
 # Hugo Content Convention - Shared
 
-This document defines **common Hugo conventions** that apply to Hugo sites in this repository:
+> **DEPRECATED**: No active Hugo sites remain in this repository. Both ayokoding-web and oseplatform-web have migrated to Next.js 16. This document is preserved for historical reference only.
+
+This document defines **common Hugo conventions** that formerly applied to Hugo sites in this repository:
 
 - **oseplatform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
 
