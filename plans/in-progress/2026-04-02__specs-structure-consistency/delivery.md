@@ -60,14 +60,14 @@
 
 ### 1.6 Phase 1 Validation
 
-- [ ] Run `npx nx run ayokoding-web:test:quick` -- passes
-- [ ] Run `npx nx run oseplatform-web:test:quick` -- passes
-- [ ] Run `npx nx run ayokoding-web-fe-e2e:spec-coverage` -- passes (verify glob still finds files)
-- [ ] Run `npx nx run oseplatform-web-fe-e2e:spec-coverage` -- passes (verify glob still finds files)
-- [ ] Run `npm run lint:md` -- no broken links in updated READMEs
-- [ ] Verify no flat feature files remain directly under `specs/apps/ayokoding/fe/gherkin/`
-- [ ] Verify no flat feature files remain directly under `specs/apps/oseplatform/fe/gherkin/`
-- [ ] Commit: `refactor(specs): move ayokoding and oseplatform FE gherkin specs into domain subdirectories`
+- [x] Run `npx nx run ayokoding-web:test:quick` -- passes
+- [x] Run `npx nx run oseplatform-web:test:quick` -- passes
+- [x] Run `npx nx run ayokoding-web-fe-e2e:spec-coverage` -- passes (verify glob still finds files)
+- [x] Run `npx nx run oseplatform-web-fe-e2e:spec-coverage` -- passes (verify glob still finds files)
+- [x] Run `npm run lint:md` -- no broken links in updated READMEs
+- [x] Verify no flat feature files remain directly under `specs/apps/ayokoding/fe/gherkin/`
+- [x] Verify no flat feature files remain directly under `specs/apps/oseplatform/fe/gherkin/`
+- [x] Commit: `refactor(specs): move ayokoding and oseplatform FE gherkin specs into domain subdirectories`
 
 ---
 
@@ -75,28 +75,28 @@
 
 ### 2.1 Move golang-commons Feature Files Under gherkin/ Wrapper
 
-- [ ] Create directory `specs/libs/golang-commons/gherkin/testutil/`
-- [ ] `git mv specs/libs/golang-commons/testutil/capture-stdout.feature specs/libs/golang-commons/gherkin/testutil/capture-stdout.feature`
-- [ ] Remove empty directory `specs/libs/golang-commons/testutil/` (if git mv leaves it empty)
-- [ ] Create directory `specs/libs/golang-commons/gherkin/timeutil/`
-- [ ] `git mv specs/libs/golang-commons/timeutil/timestamp.feature specs/libs/golang-commons/gherkin/timeutil/timestamp.feature`
-- [ ] Remove empty directory `specs/libs/golang-commons/timeutil/` (if git mv leaves it empty)
+- [x] Create directory `specs/libs/golang-commons/gherkin/testutil/`
+- [x] `git mv specs/libs/golang-commons/testutil/capture-stdout.feature specs/libs/golang-commons/gherkin/testutil/capture-stdout.feature`
+- [x] Remove empty directory `specs/libs/golang-commons/testutil/` (if git mv leaves it empty)
+- [x] Create directory `specs/libs/golang-commons/gherkin/timeutil/`
+- [x] `git mv specs/libs/golang-commons/timeutil/timestamp.feature specs/libs/golang-commons/gherkin/timeutil/timestamp.feature`
+- [x] Remove empty directory `specs/libs/golang-commons/timeutil/` (if git mv leaves it empty)
 
 ### 2.2 Move hugo-commons Feature Files Under gherkin/ Wrapper
 
-- [ ] Create directory `specs/libs/hugo-commons/gherkin/links/`
-- [ ] `git mv specs/libs/hugo-commons/links/check-links.feature specs/libs/hugo-commons/gherkin/links/check-links.feature`
-- [ ] Remove empty directory `specs/libs/hugo-commons/links/` (if git mv leaves it empty)
+- [x] Create directory `specs/libs/hugo-commons/gherkin/links/`
+- [x] `git mv specs/libs/hugo-commons/links/check-links.feature specs/libs/hugo-commons/gherkin/links/check-links.feature`
+- [x] Remove empty directory `specs/libs/hugo-commons/links/` (if git mv leaves it empty)
 
 ### 2.3 Update Go Integration Test File Paths
 
-- [ ] Update `libs/golang-commons/testutil/capture-stdout.integration_test.go`: change `"../../../specs/libs/golang-commons/testutil"` to `"../../../specs/libs/golang-commons/gherkin/testutil"`
-- [ ] Update `libs/golang-commons/timeutil/timestamp.integration_test.go`: change `"../../../specs/libs/golang-commons/timeutil"` to `"../../../specs/libs/golang-commons/gherkin/timeutil"`
-- [ ] Update `libs/hugo-commons/links/check-links.integration_test.go`: change `"../../../specs/libs/hugo-commons/links"` to `"../../../specs/libs/hugo-commons/gherkin/links"`
+- [x] Update `libs/golang-commons/testutil/capture-stdout.integration_test.go`: change `"../../../specs/libs/golang-commons/testutil"` to `"../../../specs/libs/golang-commons/gherkin/testutil"`
+- [x] Update `libs/golang-commons/timeutil/timestamp.integration_test.go`: change `"../../../specs/libs/golang-commons/timeutil"` to `"../../../specs/libs/golang-commons/gherkin/timeutil"`
+- [x] Update `libs/hugo-commons/links/check-links.integration_test.go`: change `"../../../specs/libs/hugo-commons/links"` to `"../../../specs/libs/hugo-commons/gherkin/links"`
 
 ### 2.4 Update specs/README.md Library Links (If Needed)
 
-- [ ] Check `specs/README.md` library links for golang-commons and hugo-commons -- update if they point to old directory paths
+- [x] Check `specs/README.md` library links for golang-commons and hugo-commons -- update if they point to old directory paths
 
 ### 2.5 Phase 2 Validation
 
