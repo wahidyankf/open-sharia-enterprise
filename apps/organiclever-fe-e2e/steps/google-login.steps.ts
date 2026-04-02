@@ -17,12 +17,12 @@ Given("the app is running", async ({}) => {
   // No-op: the app is assumed to be running at baseURL.
 });
 
-When("I navigate to /login", async ({ page }) => {
+When("I navigate to \\/login", async ({ page }) => {
   await page.goto("/login");
   await page.waitForLoadState("load");
 });
 
-Given("I am on the /login page", async ({ page }) => {
+Given("I am on the \\/login page", async ({ page }) => {
   await page.goto("/login");
   await page.waitForLoadState("load");
 });
@@ -36,7 +36,7 @@ Then("I should see a {string} button", async ({ page }, buttonText: string) => {
   await expect(button.or(placeholder).first()).toBeVisible();
 });
 
-Then("there should be no email/password form", async ({ page }) => {
+Then("there should be no email\\/password form", async ({ page }) => {
   await expect(page.getByRole("textbox", { name: /email/i })).not.toBeVisible();
   await expect(page.getByRole("textbox", { name: /password/i })).not.toBeVisible();
 });

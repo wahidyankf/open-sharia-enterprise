@@ -24,17 +24,17 @@ Given("I am not logged in", async ({ page }) => {
     .catch(() => {});
 });
 
-When("I navigate to /profile", async ({ page }) => {
+When("I navigate to \\/profile", async ({ page }) => {
   await page.goto("/profile");
   await page.waitForLoadState("load");
 });
 
-When("I navigate to /", async ({ page }) => {
+When("I navigate to \\/", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("load");
 });
 
-Then("I should be redirected to /login", async ({ page }) => {
+Then("I should be redirected to \\/login", async ({ page }) => {
   await page.waitForURL(/\/login/, { timeout: 15000 });
   await expect(page).toHaveURL(/\/login/);
 });
@@ -45,7 +45,7 @@ Then("I should see the profile page", async ({ page }) => {
   await expect(profileContent.first()).toBeVisible();
 });
 
-Then("I should be redirected to /profile", async ({ page }) => {
+Then("I should be redirected to \\/profile", async ({ page }) => {
   await page.waitForURL(/\/profile/, { timeout: 15000 });
   await expect(page).toHaveURL(/\/profile/);
 });
