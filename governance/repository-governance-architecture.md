@@ -9,7 +9,7 @@ tags:
   - six-layer
   - structure
 created: 2026-02-09
-updated: 2026-03-28
+updated: 2026-04-02
 ---
 
 # Repository Governance Architecture
@@ -17,7 +17,7 @@ updated: 2026-03-28
 **Document Type**: Explanation
 **Purpose**: Comprehensive architectural overview of the six-layer governance hierarchy governing the open-sharia-enterprise repository
 **Audience**: All contributors, AI agents, governance designers
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02
 
 ---
 
@@ -215,7 +215,7 @@ Vision: "Accessible to everyone"
 Principle: Accessibility First
     ↓ governs
 Convention: Color Accessibility Convention
-Development: Hugo Development Convention (semantic HTML)
+Development: Hugo Development Convention (historical, semantic HTML)
 ```
 
 **Requirements**:
@@ -237,7 +237,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - **docs/** directory (all documentation)
-- **Hugo sites** (ayokoding-web, oseplatform-web)
+- **Hugo sites (historical)** (conventions preserved for reference)
 - **plans/** directory (project planning)
 - **README files** (repository root and project READMEs)
 
@@ -247,7 +247,7 @@ Development: Hugo Development Convention (semantic HTML)
 - **Formatting**: Linking, indentation, emoji usage, diagrams, color accessibility, mathematical notation, timestamp, nested code fences
 - **Writing**: Content quality, README quality, factual validation, conventions writing, dynamic collection references, OSS documentation
 - **Linking**: Internal AyoKoding references and cross-repository linking patterns
-- **Hugo-Specific**: AyoKoding content, OSE Platform content, shared patterns, Indonesian content policy
+- **Hugo-Specific (historical)**: AyoKoding content, OSE Platform content, shared patterns, Indonesian content policy
 - **Tutorials**: Tutorial types, naming, programming language content and structure
 
 **Example Conventions**:
@@ -282,7 +282,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - **Source code** (JavaScript, TypeScript, future: Java, Kotlin, Python)
-- **Hugo themes and layouts** (Go templates)
+- **Hugo themes and layouts (historical)** (Go templates)
 - **Build systems** (Nx, npm, Volta)
 - **AI agents** (.claude/agents/)
 - **Git workflows** (commits, branches, hooks)
@@ -293,7 +293,7 @@ Development: Hugo Development Convention (semantic HTML)
 - **Quality**: Code quality, criticality levels, fixer confidence, repository validation
 - **Workflows**: Trunk-based development, commit messages, implementation workflow, reproducible environments
 - **Infrastructure**: Temporary files, AI agents convention
-- **Hugo-Specific**: Development practices for Hugo sites
+- **Hugo-Specific (historical)**: Development practices for Hugo sites
 - **Frontend**: Design tokens, component patterns, accessibility, styling conventions
 - **Practices**: Proactive Preexisting Error Resolution (and future practice-level guidance)
 
@@ -823,6 +823,6 @@ As the repository grows, additional layers might be considered:
 
 ---
 
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02
 **Maintained By**: Repository governance team
 **Review Cycle**: Quarterly (ensure layer descriptions remain accurate)

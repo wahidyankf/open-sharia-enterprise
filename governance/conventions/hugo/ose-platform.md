@@ -15,6 +15,8 @@ updated: 2025-12-13
 
 # Hugo Content Convention - oseplatform-web
 
+> **DEPRECATED**: oseplatform-web has migrated to Next.js 16 and is no longer a Hugo site. This document is preserved for historical reference only. For current oseplatform-web development, see the Next.js-based application at `apps/oseplatform-web/`.
+
 This document defines Hugo content conventions specific to **oseplatform-web** - an English-only project landing page using the PaperMod theme.
 
 ## Principles Implemented/Respected

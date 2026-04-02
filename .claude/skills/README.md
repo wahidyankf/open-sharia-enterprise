@@ -28,6 +28,10 @@ This directory contains skill packages that provide progressive knowledge delive
 
 - **agent-developing-agents** - Agent creation, reference documentation structure, and model selection standards
 
+### 🔧 CI/CD Skills
+
+- **ci-standards** - CI/CD standards including mandatory Nx targets, coverage thresholds, Docker setup, Gherkin consumption, and workflow files
+
 ### 🏗️ Repository Pattern Skills
 
 - **repo-applying-maker-checker-fixer** - Three-stage quality workflow pattern
@@ -137,4 +141,4 @@ All skills follow governance principles:
 
 ---
 
-**Last Updated**: 2026-03-28
+**Last Updated**: 2026-04-02

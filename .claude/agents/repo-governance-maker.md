@@ -1,6 +1,6 @@
 ---
 name: repo-governance-maker
-description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
+description: Creates repository rules and conventions in governance/ directories. Documents standards, patterns, and quality requirements.
 tools: Read, Write, Edit, Glob, Grep
 model:
 color: blue

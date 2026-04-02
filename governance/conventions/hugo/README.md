@@ -1,10 +1,10 @@
 # Hugo Content Conventions
 
-Hugo site-specific content conventions for oseplatform-web. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
+Historical Hugo site-specific content conventions. **All Hugo sites have migrated to Next.js 16.** Preserved for reference only.
 
 ## Purpose
 
-These conventions define **WHAT Hugo content rules apply** to our Hugo-based websites, covering theme-specific requirements, content structure, navigation patterns, and bilingual support. All Hugo content must follow these standards.
+These conventions defined **WHAT Hugo content rules applied** to our former Hugo-based websites. All Hugo sites have migrated to Next.js 16. These conventions are preserved for historical reference only.
 
 ## Scope
 
@@ -26,8 +26,8 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 ## Conventions
 
 - [Hugo Content - ayokoding](./ayokoding.md) - **DEPRECATED** — Historical Hugo conventions for ayokoding-web (Hextra theme). ayokoding-web has migrated to Next.js 16
-- [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for oseplatform-web (PaperMod theme, English-only)
-- [Hugo Content - Shared](./shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository
+- [Hugo Content - OSE Platform](./ose-platform.md) - **DEPRECATED** — Historical Hugo conventions for oseplatform-web (PaperMod theme). oseplatform-web has migrated to Next.js 16
+- [Hugo Content - Shared](./shared.md) - **DEPRECATED** — Historical shared Hugo content conventions. No active Hugo sites remain
 - [Indonesian Content Policy - ayokoding-web](./indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), and provides decision tree for language selection
 
 ## Principles Implemented/Respected
@@ -49,4 +49,4 @@ This set of conventions implements/respects the following core principles:
 
 ---
 
-**Last Updated**: 2026-02-07
+**Last Updated**: 2026-04-02
