@@ -4,59 +4,59 @@
 
 ### 1.1 Move Ayokoding FE Feature Files Into Domain Subdirectories
 
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/accessibility/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/accessibility.feature specs/apps/ayokoding/fe/gherkin/accessibility/accessibility.feature`
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/content-rendering/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/content-rendering.feature specs/apps/ayokoding/fe/gherkin/content-rendering/content-rendering.feature`
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/i18n/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/i18n.feature specs/apps/ayokoding/fe/gherkin/i18n/i18n.feature`
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/navigation/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/navigation.feature specs/apps/ayokoding/fe/gherkin/navigation/navigation.feature`
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/responsive/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/responsive.feature specs/apps/ayokoding/fe/gherkin/responsive/responsive.feature`
-- [ ] Create directory `specs/apps/ayokoding/fe/gherkin/search/`
-- [ ] `git mv specs/apps/ayokoding/fe/gherkin/search.feature specs/apps/ayokoding/fe/gherkin/search/search.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/accessibility/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/accessibility.feature specs/apps/ayokoding/fe/gherkin/accessibility/accessibility.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/content-rendering/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/content-rendering.feature specs/apps/ayokoding/fe/gherkin/content-rendering/content-rendering.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/i18n/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/i18n.feature specs/apps/ayokoding/fe/gherkin/i18n/i18n.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/navigation/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/navigation.feature specs/apps/ayokoding/fe/gherkin/navigation/navigation.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/responsive/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/responsive.feature specs/apps/ayokoding/fe/gherkin/responsive/responsive.feature`
+- [x] Create directory `specs/apps/ayokoding/fe/gherkin/search/`
+- [x] `git mv specs/apps/ayokoding/fe/gherkin/search.feature specs/apps/ayokoding/fe/gherkin/search/search.feature`
 
 ### 1.2 Move OSE Platform FE Feature Files Into Domain Subdirectories
 
-- [ ] Create directory `specs/apps/oseplatform/fe/gherkin/accessibility/`
-- [ ] `git mv specs/apps/oseplatform/fe/gherkin/accessibility.feature specs/apps/oseplatform/fe/gherkin/accessibility/accessibility.feature`
-- [ ] Create directory `specs/apps/oseplatform/fe/gherkin/landing-page/`
-- [ ] `git mv specs/apps/oseplatform/fe/gherkin/landing-page.feature specs/apps/oseplatform/fe/gherkin/landing-page/landing-page.feature`
-- [ ] Create directory `specs/apps/oseplatform/fe/gherkin/navigation/`
-- [ ] `git mv specs/apps/oseplatform/fe/gherkin/navigation.feature specs/apps/oseplatform/fe/gherkin/navigation/navigation.feature`
-- [ ] Create directory `specs/apps/oseplatform/fe/gherkin/responsive/`
-- [ ] `git mv specs/apps/oseplatform/fe/gherkin/responsive.feature specs/apps/oseplatform/fe/gherkin/responsive/responsive.feature`
-- [ ] Create directory `specs/apps/oseplatform/fe/gherkin/theme/`
-- [ ] `git mv specs/apps/oseplatform/fe/gherkin/theme.feature specs/apps/oseplatform/fe/gherkin/theme/theme.feature`
+- [x] Create directory `specs/apps/oseplatform/fe/gherkin/accessibility/`
+- [x] `git mv specs/apps/oseplatform/fe/gherkin/accessibility.feature specs/apps/oseplatform/fe/gherkin/accessibility/accessibility.feature`
+- [x] Create directory `specs/apps/oseplatform/fe/gherkin/landing-page/`
+- [x] `git mv specs/apps/oseplatform/fe/gherkin/landing-page.feature specs/apps/oseplatform/fe/gherkin/landing-page/landing-page.feature`
+- [x] Create directory `specs/apps/oseplatform/fe/gherkin/navigation/`
+- [x] `git mv specs/apps/oseplatform/fe/gherkin/navigation.feature specs/apps/oseplatform/fe/gherkin/navigation/navigation.feature`
+- [x] Create directory `specs/apps/oseplatform/fe/gherkin/responsive/`
+- [x] `git mv specs/apps/oseplatform/fe/gherkin/responsive.feature specs/apps/oseplatform/fe/gherkin/responsive/responsive.feature`
+- [x] Create directory `specs/apps/oseplatform/fe/gherkin/theme/`
+- [x] `git mv specs/apps/oseplatform/fe/gherkin/theme.feature specs/apps/oseplatform/fe/gherkin/theme/theme.feature`
 
 ### 1.3 Update Ayokoding Web Unit Test Step File Paths
 
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/accessibility.steps.tsx`: change `fe/gherkin/accessibility.feature` to `fe/gherkin/accessibility/accessibility.feature`
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/content-rendering.steps.tsx`: change `fe/gherkin/content-rendering.feature` to `fe/gherkin/content-rendering/content-rendering.feature`
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/i18n.steps.tsx`: change `fe/gherkin/i18n.feature` to `fe/gherkin/i18n/i18n.feature`
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/navigation.steps.tsx`: change `fe/gherkin/navigation.feature` to `fe/gherkin/navigation/navigation.feature`
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/responsive.steps.tsx`: change `fe/gherkin/responsive.feature` to `fe/gherkin/responsive/responsive.feature`
-- [ ] Update `apps/ayokoding-web/test/unit/fe-steps/search.steps.tsx`: change `fe/gherkin/search.feature` to `fe/gherkin/search/search.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/accessibility.steps.tsx`: change `fe/gherkin/accessibility.feature` to `fe/gherkin/accessibility/accessibility.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/content-rendering.steps.tsx`: change `fe/gherkin/content-rendering.feature` to `fe/gherkin/content-rendering/content-rendering.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/i18n.steps.tsx`: change `fe/gherkin/i18n.feature` to `fe/gherkin/i18n/i18n.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/navigation.steps.tsx`: change `fe/gherkin/navigation.feature` to `fe/gherkin/navigation/navigation.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/responsive.steps.tsx`: change `fe/gherkin/responsive.feature` to `fe/gherkin/responsive/responsive.feature`
+- [x] Update `apps/ayokoding-web/test/unit/fe-steps/search.steps.tsx`: change `fe/gherkin/search.feature` to `fe/gherkin/search/search.feature`
 
 ### 1.4 Update OSE Platform Web Unit Test Step File Paths
 
-- [ ] Update `apps/oseplatform-web/test/unit/fe-steps/landing-page.steps.tsx`: change `fe/gherkin/landing-page.feature` to `fe/gherkin/landing-page/landing-page.feature`
-- [ ] Update `apps/oseplatform-web/test/unit/fe-steps/navigation.steps.tsx`: change `fe/gherkin/navigation.feature` to `fe/gherkin/navigation/navigation.feature`
-- [ ] Update `apps/oseplatform-web/test/unit/fe-steps/responsive.steps.tsx`: change `fe/gherkin/responsive.feature` to `fe/gherkin/responsive/responsive.feature`
-- [ ] Update `apps/oseplatform-web/test/unit/fe-steps/theme.steps.tsx`: change `fe/gherkin/theme.feature` to `fe/gherkin/theme/theme.feature`
+- [x] Update `apps/oseplatform-web/test/unit/fe-steps/landing-page.steps.tsx`: change `fe/gherkin/landing-page.feature` to `fe/gherkin/landing-page/landing-page.feature`
+- [x] Update `apps/oseplatform-web/test/unit/fe-steps/navigation.steps.tsx`: change `fe/gherkin/navigation.feature` to `fe/gherkin/navigation/navigation.feature`
+- [x] Update `apps/oseplatform-web/test/unit/fe-steps/responsive.steps.tsx`: change `fe/gherkin/responsive.feature` to `fe/gherkin/responsive/responsive.feature`
+- [x] Update `apps/oseplatform-web/test/unit/fe-steps/theme.steps.tsx`: change `fe/gherkin/theme.feature` to `fe/gherkin/theme/theme.feature`
 
 ### 1.5 Update Spec README Files
 
-- [ ] Update `specs/apps/ayokoding/README.md`:
-  - [ ] Structure tree: replace `gherkin/           # Frontend Gherkin scenarios (future)` with the new subdirectory structure listing all 6 domain directories (`accessibility/`, `content-rendering/`, `i18n/`, `navigation/`, `responsive/`, `search/`) and their feature files
-  - [ ] Add a new **Frontend Domains** table (analogous to the existing Backend Domains table) with rows for all 6 FE domains: accessibility, content-rendering, i18n, navigation, responsive, search
-  - [ ] Backend vs Frontend table: change the Frontend Domains cell from `Defined separately (future)` to `6 domains`
-- [ ] Update `specs/apps/oseplatform/README.md`:
-  - [ ] Structure tree: add `accessibility/` subdirectory with `accessibility.feature` (currently missing) and change the other 4 flat feature files to subdirectory paths (e.g., `landing-page/landing-page.feature` instead of `landing-page.feature`)
-  - [ ] Frontend Domains table: add an `accessibility` row with file `accessibility/accessibility.feature`
-  - [ ] Backend vs Frontend table: change Frontend Domains cell from `4 domains` to `5 domains`
-  - [ ] Scenario Summary table: add a `Frontend | accessibility | 5` row and update the total from `21` to `26`
+- [x] Update `specs/apps/ayokoding/README.md`:
+  - [x] Structure tree: replace `gherkin/           # Frontend Gherkin scenarios (future)` with the new subdirectory structure listing all 6 domain directories (`accessibility/`, `content-rendering/`, `i18n/`, `navigation/`, `responsive/`, `search/`) and their feature files
+  - [x] Add a new **Frontend Domains** table (analogous to the existing Backend Domains table) with rows for all 6 FE domains: accessibility, content-rendering, i18n, navigation, responsive, search
+  - [x] Backend vs Frontend table: change the Frontend Domains cell from `Defined separately (future)` to `6 domains`
+- [x] Update `specs/apps/oseplatform/README.md`:
+  - [x] Structure tree: add `accessibility/` subdirectory with `accessibility.feature` (currently missing) and change the other 4 flat feature files to subdirectory paths (e.g., `landing-page/landing-page.feature` instead of `landing-page.feature`)
+  - [x] Frontend Domains table: add an `accessibility` row with file `accessibility/accessibility.feature`
+  - [x] Backend vs Frontend table: change Frontend Domains cell from `4 domains` to `5 domains`
+  - [x] Scenario Summary table: add a `Frontend | accessibility | 5` row and update the total from `21` to `26`
 
 ### 1.6 Phase 1 Validation
 

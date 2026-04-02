@@ -32,10 +32,16 @@ specs/apps/oseplatform/
 │       └── links-check.feature
 └── fe/                    # Frontend specs (UI-semantic)
     └── gherkin/           # Frontend Gherkin scenarios
-        ├── landing-page.feature
-        ├── navigation.feature
-        ├── theme.feature
-        └── responsive.feature
+        ├── accessibility/
+        │   └── accessibility.feature
+        ├── landing-page/
+        │   └── landing-page.feature
+        ├── navigation/
+        │   └── navigation.feature
+        ├── responsive/
+        │   └── responsive.feature
+        └── theme/
+            └── theme.feature
 ```
 
 ## Backend vs Frontend
@@ -45,7 +51,7 @@ specs/apps/oseplatform/
 | Perspective | HTTP-semantic (service calls, status codes) | UI-semantic (clicks, types, sees) |
 | Background  | `Given the API is running`                  | `Given the app is running`        |
 | Transport   | tRPC / Route Handlers over HTTP             | Browser interactions              |
-| Domains     | 5 domains                                   | 4 domains                         |
+| Domains     | 5 domains                                   | 5 domains                         |
 
 ## tRPC Procedures
 
@@ -68,12 +74,13 @@ specs/apps/oseplatform/
 
 ## Frontend Domains
 
-| Domain       | File                   | Description                                          |
-| ------------ | ---------------------- | ---------------------------------------------------- |
-| landing-page | `landing-page.feature` | Hero section and social icons on the home page       |
-| navigation   | `navigation.feature`   | Header links, breadcrumbs, prev/next between updates |
-| theme        | `theme.feature`        | Light/dark mode default and toggle behaviour         |
-| responsive   | `responsive.feature`   | Mobile and desktop viewport layout                   |
+| Domain        | File                                  | Description                                          |
+| ------------- | ------------------------------------- | ---------------------------------------------------- |
+| accessibility | `accessibility/accessibility.feature` | WCAG compliance and keyboard navigation              |
+| landing-page  | `landing-page/landing-page.feature`   | Hero section and social icons on the home page       |
+| navigation    | `navigation/navigation.feature`       | Header links, breadcrumbs, prev/next between updates |
+| responsive    | `responsive/responsive.feature`       | Mobile and desktop viewport layout                   |
+| theme         | `theme/theme.feature`                 | Light/dark mode default and toggle behaviour         |
 
 ## CLI Domains
 
@@ -90,11 +97,12 @@ specs/apps/oseplatform/
 | Backend   | rss-feed          | 2         |
 | Backend   | health            | 1         |
 | Backend   | seo               | 2         |
+| Frontend  | accessibility     | 5         |
 | Frontend  | landing-page      | 2         |
 | Frontend  | navigation        | 3         |
-| Frontend  | theme             | 2         |
 | Frontend  | responsive        | 2         |
-| **Total** |                   | **21**    |
+| Frontend  | theme             | 2         |
+| **Total** |                   | **26**    |
 
 ## Testing
 

@@ -54,7 +54,7 @@ import { Hero } from "@/components/landing/hero";
 import { SocialIcons } from "@/components/landing/social-icons";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/fe/gherkin/landing-page.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/fe/gherkin/landing-page/landing-page.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
