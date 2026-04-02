@@ -50,7 +50,7 @@ For E2E apps using FE gherkin specs:
 ```json
 {
   "spec-coverage": {
-    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps --exclude-dir test-support specs/apps/a-demo/fe/gherkin apps/a-demo-fe-e2e",
+    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/a-demo/fe/gherkin apps/a-demo-fe-e2e",
     "cache": true,
     "inputs": ["{workspaceRoot}/specs/apps/a-demo/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
   }
@@ -124,7 +124,7 @@ For organiclever-fe-e2e (uses organiclever fe gherkin):
   "spec-coverage": {
     "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps --exclude-dir test-support specs/apps/a-demo/be/gherkin apps/a-demo-be-elixir-phoenix",
     "cache": true,
-    "inputs": ["{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature", "{projectRoot}/**/*.ex"]
+    "inputs": ["{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature", "{projectRoot}/**/*.{ex,exs}"]
   }
 }
 ```
@@ -146,7 +146,7 @@ For organiclever-fe-e2e (uses organiclever fe gherkin):
 ```json
 {
   "spec-coverage": {
-    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps --exclude-dir test-support specs/apps/a-demo/fe/gherkin apps/a-demo-fe-dart-flutterweb",
+    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/a-demo/fe/gherkin apps/a-demo-fe-dart-flutterweb",
     "cache": true,
     "inputs": ["{workspaceRoot}/specs/apps/a-demo/fe/gherkin/**/*.feature", "{projectRoot}/**/*.dart"]
   }
@@ -324,50 +324,76 @@ async fn alice_account_status_should_be(world: &mut AppWorld, status: String) {
 }
 ```
 
-### Elixir / WhiteBread or ExUnit+BDD (reference: `a-demo-be-elixir-phoenix`)
+### Elixir / Cabbage (reference: `a-demo-be-elixir-phoenix`)
 
-Steps use pattern-matched step functions:
+Steps use `Cabbage.Feature` with `defgiven`/`defwhen`/`defthen` macros and regex patterns:
 
 ```elixir
-defmodule MyApp.StepDefinitions do
-  use WhiteBread.Suite
+defmodule AADemoBeExphWeb.Unit.HealthSteps do
+  use Cabbage.Feature, async: false, file: "health/health-check.feature"
 
-  step "alice is authenticated" do
-    # setup
+  defgiven ~r/^the API is running$/, _vars, state do
+    {:ok, state}
   end
 
-  step "alice's account status should be \"(.*?)\"", [status] do
-    # assertion using status
+  defwhen ~r/^an operations engineer sends GET \/health$/, _vars, state do
+    conn = get(build_conn(), "/health")
+    {:ok, Map.put(state, :conn, conn)}
+  end
+
+  defthen ~r/^the response status code should be (?<code>\d+)$/,
+          %{code: code},
+          %{conn: conn} = state do
+    assert conn.status == String.to_integer(code)
+    {:ok, state}
   end
 end
 ```
 
-### Clojure / clj-bdd or kaocha (reference: `a-demo-be-clojure-pedestal`)
+### Clojure / kaocha-cucumber (lambdaisland) (reference: `a-demo-be-clojure-pedestal`)
 
-Steps are registered with defstep macros:
+Steps use `Given`/`When`/`Then` from `lambdaisland.cucumber.dsl`:
 
 ```clojure
-(defstep "alice is authenticated"
-  [state]
+(ns step-definitions.steps
+  (:require [lambdaisland.cucumber.dsl :refer [Given When Then]]))
+
+(Given "the API is running" [state]
   ;; setup
   state)
 
-(defstep #"alice's account status should be \"(.*?)\""
-  [state [_ status]]
-  ;; assertion
+(When "alice sends GET /expenses" [state]
+  ;; action — call service handler directly
+  state)
+
+(Then "alice's account status should be {string}" [state]
+  ;; assertion using (first (:cucumber/match-args state))
   state)
 ```
 
-### Dart / bdd_widget_test or flutter_test (reference: `a-demo-fe-dart-flutterweb`)
+### Dart / custom gherkin_helper + flutter_test (reference: `a-demo-fe-dart-flutterweb`)
 
-Steps are defined in step files under `test/`:
+Steps use a custom `gherkin_helper.dart` that parses `.feature` files and wraps them in
+`flutter_test` primitives via `describeFeature`/`scenario.when`/`scenario.then`:
 
 ```dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:bdd_widget_test/bdd_widget_test.dart';
+import '../gherkin_helper.dart';
 
-Future<void> theViewportIsSetToDesktop(WidgetTester tester) async {
-  await tester.binding.setSurfaceSize(const Size(1280, 800));
+void main() {
+  describeFeature(
+    '../../specs/apps/a-demo/fe/gherkin/health/health-status.feature',
+    (feature) {
+      feature.scenario('Health indicator shows the service is UP', (scenario) {
+        scenario.when('the user opens the app', () async {
+          // action
+        });
+        scenario.then('the health status indicator should display "UP"', () async {
+          // assertion
+        });
+      });
+    },
+  );
 }
 ```
 
@@ -429,7 +455,8 @@ navigation and `locator.getAttribute('aria-label')` for label checks.
 | Currency: USD and IDR display assertions          | 2             |
 | Unit handling                                     | ~2            |
 
-**Fix approach**: Add step definitions to the existing step namespace files. Reference the Go
+**Fix approach**: Add step definitions to the existing step file (the project uses a single
+`steps.clj` file rather than separate namespace files per feature area). Reference the Go
 step definitions for behavioral semantics. Clojure steps call service functions directly with
 mocked repositories.
 
@@ -445,7 +472,7 @@ currency/unit handling.
 Cucumber JVM step class organization. Each new step method calls the appropriate service class
 with a mock repository injected via Spring's test context or Mockito.
 
-#### a-demo-be-rust-axum (58 missing steps)
+#### a-demo-be-rust-axum (59 missing steps)
 
 Same feature set as Java but Rust has more granular `Given`/`And` steps for data setup
 (e.g., separate steps for seeding expense records vs. calling the endpoint).
@@ -462,7 +489,7 @@ attachments, user accounts, currency, units.
 **Fix approach**: Add step modules in `test/unit/` using the existing BDD framework in the
 project. Reference the F# steps for behavioral semantics since F# is also functional-first.
 
-#### a-demo-be-java-vertx (79 missing steps)
+#### a-demo-be-java-vertx (80 missing steps)
 
 Similar breadth to Elixir. Vertx uses reactive programming patterns internally but the step
 definitions at the unit level still call service functions synchronously (blocking on futures).
@@ -470,7 +497,7 @@ definitions at the unit level still call service functions synchronously (blocki
 **Fix approach**: Follow the same pattern as `a-demo-be-java-springboot` but adapted to Vertx's
 service layer API. The step definition classes live in `src/test/java/`.
 
-#### a-demo-be-kotlin-ktor (96 missing steps)
+#### a-demo-be-kotlin-ktor (97 missing steps)
 
 Broadest BE gap. Missing health, JWKS, token lifecycle, logout, admin, expenses, reporting,
 attachments, user accounts, currency, units, list/pagination.
@@ -480,7 +507,7 @@ concise syntax means each step is typically 3-5 lines.
 
 ### Tier 4: Largest Effort
 
-#### a-demo-fe-dart-flutterweb (220 missing steps)
+#### a-demo-fe-dart-flutterweb (241 missing steps)
 
 Nearly all FE step definitions are missing. Covers every feature area: auth flows, admin panel,
 expense management, attachments, reporting, responsive layout, accessibility.
@@ -492,11 +519,13 @@ interacts with the widget tree via `WidgetTester` (finders, taps, text input).
 
 ## Feature File Locations
 
-| Project(s)                                                                                 | Feature spec directory                |
-| ------------------------------------------------------------------------------------------ | ------------------------------------- |
-| All `a-demo-be-*` apps                                                                     | `specs/apps/a-demo/be/gherkin/`       |
-| `a-demo-fe-e2e`, `a-demo-fe-dart-flutterweb`, `a-demo-fe-ts-nextjs`, `a-demo-fs-ts-nextjs` | `specs/apps/a-demo/fe/gherkin/`       |
-| `organiclever-fe-e2e`                                                                      | `specs/apps/organiclever/fe/gherkin/` |
+| Project(s)                                                                                     | Feature spec directory                |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------- |
+| All `a-demo-be-*` apps                                                                         | `specs/apps/a-demo/be/gherkin/`       |
+| `a-demo-fe-e2e`, `a-demo-fe-dart-flutterweb`, `a-demo-fe-ts-nextjs`\*, `a-demo-fs-ts-nextjs`\* | `specs/apps/a-demo/fe/gherkin/`       |
+| `organiclever-fe-e2e`                                                                          | `specs/apps/organiclever/fe/gherkin/` |
+
+\*Already passing spec-coverage — listed for reference only, not in scope for this plan.
 
 ## Validation Commands
 
@@ -519,16 +548,16 @@ npx nx run <project>:lint
 
 ## Coverage Thresholds Reference
 
-| Project                      | Threshold              |
-| ---------------------------- | ---------------------- |
-| `a-demo-be-ts-effect`        | ≥90% (LCOV)            |
-| `a-demo-be-python-fastapi`   | ≥90% (LCOV)            |
-| `a-demo-be-clojure-pedestal` | ≥90% (LCOV)            |
-| `a-demo-be-java-springboot`  | ≥90% (JaCoCo)          |
-| `a-demo-be-rust-axum`        | ≥90% (LCOV)            |
-| `a-demo-be-elixir-phoenix`   | ≥90% (AltCover LCOV)   |
-| `a-demo-be-java-vertx`       | ≥90% (JaCoCo)          |
-| `a-demo-be-kotlin-ktor`      | ≥90% (Kover JaCoCo)    |
-| `a-demo-fe-dart-flutterweb`  | ≥70% (LCOV)            |
-| `a-demo-fe-e2e`              | No coverage (E2E only) |
-| `organiclever-fe-e2e`        | No coverage (E2E only) |
+| Project                      | Threshold               |
+| ---------------------------- | ----------------------- |
+| `a-demo-be-ts-effect`        | ≥90% (LCOV)             |
+| `a-demo-be-python-fastapi`   | ≥90% (LCOV)             |
+| `a-demo-be-clojure-pedestal` | ≥90% (LCOV)             |
+| `a-demo-be-java-springboot`  | ≥90% (JaCoCo)           |
+| `a-demo-be-rust-axum`        | ≥90% (LCOV)             |
+| `a-demo-be-elixir-phoenix`   | ≥90% (Excoveralls LCOV) |
+| `a-demo-be-java-vertx`       | ≥90% (JaCoCo)           |
+| `a-demo-be-kotlin-ktor`      | ≥90% (Kover JaCoCo)     |
+| `a-demo-fe-dart-flutterweb`  | ≥70% (LCOV)             |
+| `a-demo-fe-e2e`              | No coverage (E2E only)  |
+| `organiclever-fe-e2e`        | No coverage (E2E only)  |

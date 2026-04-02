@@ -36,12 +36,12 @@ correctness. The following tool issues were identified and fixed:
 
 Counts include Background steps (corrected after parser fix):
 
-| Tier | Projects                                                                                                                        | Missing Steps | Effort  |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------- |
-| 1    | `a-demo-be-ts-effect`, `a-demo-be-python-fastapi`                                                                               | 3, 8          | Quick   |
-| 2    | `a-demo-fe-e2e`, `organiclever-fe-e2e`, `a-demo-be-clojure-pedestal`                                                            | 10, 15, 22    | Medium  |
-| 3    | `a-demo-be-java-springboot`, `a-demo-be-rust-axum`, `a-demo-be-elixir-phoenix`, `a-demo-be-java-vertx`, `a-demo-be-kotlin-ktor` | 49–97         | Large   |
-| 4    | `a-demo-fe-dart-flutterweb`                                                                                                     | 241           | Largest |
+| Tier | Projects                                                                                                                        | Missing Steps      | Effort  |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------- |
+| 1    | `a-demo-be-ts-effect`, `a-demo-be-python-fastapi`                                                                               | 3, 8               | Quick   |
+| 2    | `a-demo-fe-e2e`, `organiclever-fe-e2e`, `a-demo-be-clojure-pedestal`                                                            | 10, 15, 22         | Medium  |
+| 3    | `a-demo-be-java-springboot`, `a-demo-be-rust-axum`, `a-demo-be-elixir-phoenix`, `a-demo-be-java-vertx`, `a-demo-be-kotlin-ktor` | 49, 59, 76, 80, 97 | Large   |
+| 4    | `a-demo-fe-dart-flutterweb`                                                                                                     | 241                | Largest |
 
 ## Key Constraints
 
