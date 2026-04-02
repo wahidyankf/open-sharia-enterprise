@@ -36,7 +36,19 @@ specs/apps/ayokoding/
 │   └── gherkin/
 │       └── links-check.feature
 └── fe/                    # Frontend specs (UI-semantic)
-    └── gherkin/           # Frontend Gherkin scenarios (future)
+    └── gherkin/           # Frontend Gherkin scenarios
+        ├── accessibility/
+        │   └── accessibility.feature
+        ├── content-rendering/
+        │   └── content-rendering.feature
+        ├── i18n/
+        │   └── i18n.feature
+        ├── navigation/
+        │   └── navigation.feature
+        ├── responsive/
+        │   └── responsive.feature
+        └── search/
+            └── search.feature
 ```
 
 ## Backend vs Frontend
@@ -46,7 +58,7 @@ specs/apps/ayokoding/
 | Perspective | HTTP-semantic (tRPC calls, status codes) | UI-semantic (clicks, types, sees) |
 | Background  | `Given the API is running`               | `Given the app is running`        |
 | Transport   | tRPC over HTTP (procedure names)         | Browser interactions              |
-| Domains     | 5 domains                                | Defined separately (future)       |
+| Domains     | 5 domains                                | 6 domains                         |
 
 ## Backend Domains
 
@@ -69,6 +81,17 @@ specs/apps/ayokoding/
 | Domain      | File                              | Description                                     |
 | ----------- | --------------------------------- | ----------------------------------------------- |
 | links-check | `cli/gherkin/links-check.feature` | Content link validation (`links check` command) |
+
+## Frontend Domains
+
+| Domain            | File                                          | Description                                   |
+| ----------------- | --------------------------------------------- | --------------------------------------------- |
+| accessibility     | `accessibility/accessibility.feature`         | WCAG compliance and screen reader support     |
+| content-rendering | `content-rendering/content-rendering.feature` | Markdown content display and code blocks      |
+| i18n              | `i18n/i18n.feature`                           | Language switching and locale-scoped content  |
+| navigation        | `navigation/navigation.feature`               | Header links, breadcrumbs, sidebar navigation |
+| responsive        | `responsive/responsive.feature`               | Mobile and desktop viewport layout            |
+| search            | `search/search.feature`                       | Client-side search functionality              |
 
 ## tRPC Procedures
 

@@ -67,7 +67,7 @@ vi.mock("@/lib/hooks/use-search", () => ({
 import { Header } from "@/components/layout/header";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/fe/gherkin/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/fe/gherkin/responsive/responsive.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
