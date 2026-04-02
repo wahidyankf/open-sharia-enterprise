@@ -139,15 +139,15 @@
 
 ### 3.3 Phase 3 Validation
 
-- [ ] Run `npx nx run ts-ui:test:quick` -- passes
-- [ ] Verify no flat feature files remain directly under `specs/libs/ts-ui/gherkin/`
-- [ ] Run `npm run lint:md` -- no broken links
-- [ ] Commit: `refactor(specs): move ts-ui gherkin specs into component subdirectories`
+- [x] Run `npx nx run ts-ui:test:quick` -- passes
+- [x] Verify no flat feature files remain directly under `specs/libs/ts-ui/gherkin/`
+- [x] Run `npm run lint:md` -- no broken links
+- [x] Commit: `refactor(specs): move ts-ui gherkin specs into component subdirectories`
 
 ---
 
 ## Final Validation
 
-- [ ] Run `npx nx affected -t test:quick` -- all affected projects pass
-- [ ] Run `npm run lint:md` -- no markdown violations
-- [ ] Verify the full `specs/` tree: no feature file exists as a direct child of any `gherkin/` directory (all are inside domain/component subdirectories, except CLI specs which are intentionally kept flat)
+- [x] Run `npx nx affected -t test:quick` -- all affected projects pass
+- [x] Run `npm run lint:md` -- no markdown violations
+- [x] Verify the full `specs/` tree: no feature file exists as a direct child of any `gherkin/` directory (all are inside domain/component subdirectories, except CLI specs which are intentionally kept flat)
