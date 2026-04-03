@@ -67,6 +67,4 @@ def alice_get_summary(client: ServiceClient, alice_tokens: dict) -> FakeResponse
 def check_currency_total(response: FakeResponse, currency: str, total: str) -> None:
     body = response.json()
     assert currency in body, f"Currency '{currency}' not found in summary: {body}"
-    assert str(body[currency]) == total, (
-        f"Expected {currency} total={total}, got {body[currency]}"
-    )
+    assert str(body[currency]) == total, f"Expected {currency} total={total}, got {body[currency]}"

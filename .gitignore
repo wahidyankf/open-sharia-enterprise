@@ -93,7 +93,6 @@ generated-reports/
 
 # Cache
 .eslintcache
-.prettierignore
 .cache/
 
 # Link validation cache (note: this file is committed to share verification state)

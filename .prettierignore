@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/build/
+.next/
+.nx/
+
+# Generated files
+**/generated/
+**/generated-contracts/
+generated-reports/
+graph.html
+**/.features-gen/
+
+# Archived (legacy Hugo templates with Go template syntax)
+archived/
+
+# Language-specific build artifacts
+libs/*/deps/
+libs/*/_build/
+apps/*/deps/
+apps/*/_build/
+apps/*/.venv/
+**/.dart_tool/
+
+# Build output (Next.js static export, etc.)
+apps/*/public/
+
+# IDE
+.vscode/
+.idea/
+
+# Cache
+**/.pytest_cache/
+.pytest_cache/
+
+# Testing artifacts
+apps/*/playwright-report/
+apps/*/test-results/
+
+# Coverage
+apps/*/coverage/
+**/cover.out
+**/cover_spec.out
+
+# Experimental
+apps-labs/
+
+# Claude Code worktrees
+.claude/worktrees/

@@ -21,7 +21,7 @@
     "apps/*/playwright-report/**",
     "apps/*/test-results/**",
     "apps/*/.venv/**",
-    ".claude/worktrees/**"
+    ".claude/worktrees/**",
   ],
 
   // Repository-specific markdown linting rules
@@ -32,11 +32,11 @@
     // Formatting Rules (MEDIUM priority)
     "MD004": {
       // Unordered list style
-      "style": "dash" // Use - for unordered lists (consistent with repo)
+      "style": "dash", // Use - for unordered lists (consistent with repo)
     },
     "MD007": {
       // List indentation
-      "indent": 2 // 2 spaces per level (per repository conventions)
+      "indent": 2, // 2 spaces per level (per repository conventions)
     },
     "MD009": true, // Trailing spaces
     "MD010": true, // Hard tabs
@@ -63,6 +63,6 @@
     "MD059": false, // Descriptive link text - some links like "here" are contextually clear
     "MD003": false, // Heading style - allow mixed atx and atx_closed styles
     "MD051": false, // Link fragments - can have false positives with auto-generated anchors
-    "MD001": false // Heading increment - can have false positives with code blocks containing bash comments
-  }
+    "MD001": false, // Heading increment - can have false positives with code blocks containing bash comments
+  },
 }

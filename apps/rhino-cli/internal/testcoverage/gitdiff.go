@@ -8,7 +8,7 @@ import (
 
 // DiffHunk represents a set of changed lines in a file from a git diff.
 type DiffHunk struct {
-	FilePath    string
+	FilePath     string
 	ChangedLines []int // line numbers in the new file
 }
 

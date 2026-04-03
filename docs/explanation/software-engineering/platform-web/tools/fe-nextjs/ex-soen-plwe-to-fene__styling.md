@@ -316,19 +316,17 @@ export default config;
   }
 
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-primary-500 text-white rounded-lg font-semibold
-           hover:bg-primary-600 transition-colors duration-200;
+    @apply bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 font-semibold text-white transition-colors duration-200;
   }
 
   .card {
-    @apply p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md
-           border border-gray-200 dark:border-gray-700;
+    @apply rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800;
   }
 }
 ```

@@ -21,9 +21,7 @@ class UserModel(Base):
 
     __tablename__ = "users"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -55,9 +53,7 @@ class ExpenseModel(Base):
 
     __tablename__ = "expenses"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
@@ -91,9 +87,7 @@ class AttachmentModel(Base):
 
     __tablename__ = "attachments"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     expense_id: Mapped[str] = mapped_column(
         String(36),
         ForeignKey("expenses.id", ondelete="CASCADE"),
@@ -116,9 +110,7 @@ class RefreshTokenModel(Base):
 
     __tablename__ = "refresh_tokens"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
@@ -137,9 +129,7 @@ class RevokedTokenModel(Base):
 
     __tablename__ = "revoked_tokens"
 
-    id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
-    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     jti: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     user_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
     revoked_at: Mapped[datetime] = mapped_column(

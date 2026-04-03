@@ -224,7 +224,7 @@ func TestComputeCoberturaResult_BranchWithNoCoverageAttr(t *testing.T) {
 
 func TestParseBranchCoverage(t *testing.T) {
 	tests := []struct {
-		input           string
+		input            string
 		wantCov, wantTot int
 	}{
 		{"50% (1/2)", 1, 2},

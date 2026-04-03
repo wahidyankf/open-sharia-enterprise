@@ -16,15 +16,15 @@ type coberturaReport struct {
 
 // coberturaPackage represents a <package> element.
 type coberturaPackage struct {
-	Name    string            `xml:"name,attr"`
-	Classes []coberturaClass  `xml:"classes>class"`
+	Name    string           `xml:"name,attr"`
+	Classes []coberturaClass `xml:"classes>class"`
 }
 
 // coberturaClass represents a <class> element.
 type coberturaClass struct {
-	Name     string           `xml:"name,attr"`
-	Filename string           `xml:"filename,attr"`
-	Lines    []coberturaLine  `xml:"lines>line"`
+	Name     string          `xml:"name,attr"`
+	Filename string          `xml:"filename,attr"`
+	Lines    []coberturaLine `xml:"lines>line"`
 }
 
 // coberturaLine represents a <line> element with hit count and optional branch coverage.

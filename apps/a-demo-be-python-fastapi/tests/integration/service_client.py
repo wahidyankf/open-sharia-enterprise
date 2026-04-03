@@ -256,9 +256,7 @@ class ServiceClient:
                 attempts = user_repo.increment_failed_attempts(str(user.id))
                 if attempts >= settings.max_failed_login_attempts:
                     user_repo.update_status(str(user.id), "LOCKED")
-                    raise AccountLockedError(
-                        "Account locked due to too many failed login attempts"
-                    )
+                    raise AccountLockedError("Account locked due to too many failed login attempts")
                 raise UnauthorizedError("Invalid credentials")
 
             from a_demo_be_python_fastapi.auth.jwt_service import create_refresh_token
@@ -649,9 +647,7 @@ class ServiceClient:
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
 
-    def put_expense(
-        self, expense_id: str, authorization: str | None, data: dict
-    ) -> FakeResponse:
+    def put_expense(self, expense_id: str, authorization: str | None, data: dict) -> FakeResponse:
         """PUT /api/v1/expenses/{expense_id}"""
         token = _bearer(authorization)
         if not token:
@@ -722,10 +718,7 @@ class ServiceClient:
             user = _get_current_user(token, self._db)
             expense_repo = get_expense_repo(self._db)
             summaries = expense_repo.summary_by_currency(str(user.id))
-            result = {
-                s["currency"]: _format_amount(s["total"], s["currency"])
-                for s in summaries
-            }
+            result = {s["currency"]: _format_amount(s["total"], s["currency"]) for s in summaries}
             return _ok(result)
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
@@ -788,13 +781,15 @@ class ServiceClient:
                 {"category": cat, "type": "expense", "total": amt}
                 for cat, amt in report["expense_breakdown"].items()
             ]
-            return _ok({
-                "totalIncome": report["totalIncome"],
-                "totalExpense": report["totalExpense"],
-                "net": report["net"],
-                "incomeBreakdown": income_breakdown,
-                "expenseBreakdown": expense_breakdown,
-            })
+            return _ok(
+                {
+                    "totalIncome": report["totalIncome"],
+                    "totalExpense": report["totalExpense"],
+                    "net": report["net"],
+                    "incomeBreakdown": income_breakdown,
+                    "expenseBreakdown": expense_breakdown,
+                }
+            )
         except (UnauthorizedError, ForbiddenError, ValidationError) as exc:
             return _err(exc)
 
