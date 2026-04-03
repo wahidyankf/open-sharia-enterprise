@@ -48,28 +48,28 @@ confirmation and shell access.
 
 All tools checked by `rhino-cli doctor`, plus Playwright browsers:
 
-| #   | Tool           | Required Version       | Version Source                                | Manager        |
-| --- | -------------- | ---------------------- | --------------------------------------------- | -------------- |
-| 1   | git            | Any                    | (no config file)                              | System/Brew    |
-| 2   | volta          | Any                    | (no config file)                              | curl script    |
-| 3   | node           | 24.13.1                | package.json > volta.node                     | Volta          |
-| 4   | npm            | 11.10.1                | package.json > volta.npm                      | Volta          |
-| 5   | java           | 21+ (major)            | apps/organiclever-be-jasb/pom.xml             | SDKMAN         |
-| 6   | maven          | Any                    | (no config file)                              | SDKMAN         |
-| 7   | golang         | >= go.mod directive    | apps/rhino-cli/go.mod                         | Brew/asdf      |
-| 8   | hugo           | >= vercel.json version | apps/oseplatform-web/vercel.json              | Brew           |
-| 9   | python         | >= .python-version     | apps/a-demo-be-python-fastapi/.python-version | pyenv/System   |
-| 10  | rust (rustc)   | Any                    | (no config file)                              | rustup         |
-| 11  | cargo-llvm-cov | Any                    | (no config file)                              | cargo          |
-| 12  | elixir         | >= 1.19.5              | .tool-versions                                | asdf           |
-| 13  | erlang         | >= 27 (major)          | .tool-versions                                | asdf           |
-| 14  | dotnet         | >= global.json major   | apps/a-demo-be-fsharp-giraffe/global.json     | Brew/Script    |
-| 15  | clojure (clj)  | Any                    | (no config file)                              | Brew           |
-| 16  | dart           | >= pubspec.yaml SDK    | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Flutter        |
-| 17  | flutter        | Any                    | (no config file)                              | Manual/Brew    |
-| 18  | docker         | Any                    | (no config file)                              | Docker Desktop |
-| 19  | jq             | Any                    | (no config file)                              | Brew           |
-| 20  | playwright     | (matches npm version)  | node_modules                                  | npx            |
+| #   | Tool           | Required Version      | Version Source                                | Manager        |
+| --- | -------------- | --------------------- | --------------------------------------------- | -------------- |
+| 1   | git            | Any                   | (no config file)                              | System/Brew    |
+| 2   | volta          | Any                   | (no config file)                              | curl script    |
+| 3   | node           | 24.13.1               | package.json > volta.node                     | Volta          |
+| 4   | npm            | 11.10.1               | package.json > volta.npm                      | Volta          |
+| 5   | java           | 25+ (major)           | apps/a-demo-be-java-springboot/pom.xml        | SDKMAN         |
+| 6   | maven          | Any                   | (no config file)                              | SDKMAN         |
+| 7   | golang         | >= go.mod directive   | apps/rhino-cli/go.mod                         | Brew/asdf      |
+| 8   | hugo           | Any                   | (no config file)                              | Brew           |
+| 9   | python         | >= .python-version    | apps/a-demo-be-python-fastapi/.python-version | pyenv/System   |
+| 10  | rust (rustc)   | Any                   | (no config file)                              | rustup         |
+| 11  | cargo-llvm-cov | Any                   | (no config file)                              | cargo          |
+| 12  | elixir         | >= 1.19.5             | .tool-versions                                | asdf           |
+| 13  | erlang         | >= 27 (major)         | .tool-versions                                | asdf           |
+| 14  | dotnet         | >= global.json major  | apps/a-demo-be-fsharp-giraffe/global.json     | Brew/Script    |
+| 15  | clojure (clj)  | Any                   | (no config file)                              | Brew           |
+| 16  | dart           | >= pubspec.yaml SDK   | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Flutter        |
+| 17  | flutter        | Any                   | (no config file)                              | Manual/Brew    |
+| 18  | docker         | Any                   | (no config file)                              | Docker Desktop |
+| 19  | jq             | Any                   | (no config file)                              | Brew           |
+| 20  | playwright     | (matches npm version) | node_modules                                  | npx            |
 
 ## Steps
 
@@ -213,14 +213,15 @@ source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 **Success criteria**: `sdk version` returns a version string.
 
-#### 4.2 Install Java 21+
+#### 4.2 Install Java 25+
 
 ```bash
-sdk install java 21.0.7-tem
+sdk install java 25-tem
 java -version
 ```
 
-**Success criteria**: `java -version` shows major version 21 or higher.
+**Success criteria**: `java -version` shows major version 25 or higher. The required version
+is in `apps/a-demo-be-java-springboot/pom.xml` under `<java.version>`.
 
 #### 4.3 Install Maven
 
@@ -267,7 +268,7 @@ brew install go
 ```
 
 The required minimum version is specified in `apps/rhino-cli/go.mod`. As of this writing,
-Go >= 1.24.
+Go >= 1.26.
 
 **Success criteria**: `go version` shows a version >= the go.mod directive.
 
@@ -439,6 +440,9 @@ flutter doctor
 
 **Condition**: `{input.scope} == full`
 
+Hugo is a legacy doctor entry (oseplatform-web migrated to Next.js). No active projects
+use Hugo, but the doctor still checks for it. Installing it prevents a doctor warning.
+
 #### 11.1 Install Hugo
 
 ```bash
@@ -448,9 +452,7 @@ brew install hugo
 # Linux — download from https://gohugo.io/getting-started/installing/
 ```
 
-The required version is in `apps/oseplatform-web/vercel.json` under `HUGO_VERSION`.
-
-**Success criteria**: `hugo version` shows a version >= the vercel.json value.
+**Success criteria**: `hugo version` returns a version string.
 
 ---
 
