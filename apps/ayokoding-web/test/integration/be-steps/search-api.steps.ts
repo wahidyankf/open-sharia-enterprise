@@ -53,18 +53,19 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
-  Scenario("Search results include page metadata", ({ Given, When, Then }) => {
+  Scenario("Search results include locale information", ({ Given, When, Then }) => {
     let results: SearchResult[];
 
-    Given('published pages indexed under locale "en" include a page with category "programming"', () => {});
+    Given('published pages indexed under locale "en" include content about "programming"', () => {});
 
     When('the client calls search.query with locale "en" and query "programming"', async () => {
       results = await testCaller.search.query({ query: "programming", locale: "en" });
     });
 
-    Then('each result should include a "metadata" field', () => {
+    Then('each result should include a "locale" field matching "en"', () => {
       for (const result of results) {
         expect(result).toHaveProperty("locale");
+        expect(result.locale).toBe("en");
       }
     });
   });
