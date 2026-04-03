@@ -326,7 +326,29 @@ npm install
 2. Runs `npm run doctor` automatically (postinstall script) to verify your toolchain
 3. Sets up Husky git hooks (pre-commit, commit-msg, pre-push)
 
-### Step 14: Install Playwright Browsers
+### Step 14: Restore Environment Files
+
+`.env` files are gitignored but required by many apps. If you have a previous backup,
+restore them:
+
+```bash
+# Restore .env files from default backup location (~/ose-open-env-backup)
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force
+
+# Also restore uncommitted config files (AI tool settings, Docker overrides, etc.)
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-config
+```
+
+If this is a fresh setup with no backup, copy `.env.example` to `.env` in each app you
+plan to work on and fill in the required values.
+
+To create a backup for future use:
+
+```bash
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env backup --include-config
+```
+
+### Step 15: Install Playwright Browsers
 
 ```bash
 npx playwright install
