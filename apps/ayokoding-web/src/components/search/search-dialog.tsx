@@ -16,6 +16,20 @@ import { t } from "@/lib/i18n/translations";
 import { trpcClient } from "@/lib/trpc/client";
 import type { SearchResult } from "@/server/content/types";
 
+function formatSectionPath(slug: string): string {
+  const parts = slug.split("/");
+  if (parts.length <= 1) return "";
+  return parts
+    .slice(0, -1)
+    .map((part) =>
+      part
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+    )
+    .join(" / ");
+}
+
 export function SearchDialog() {
   const { open, setOpen } = useSearchOpen();
   const locale = useLocale();
@@ -87,6 +101,7 @@ export function SearchDialog() {
               >
                 <div className="flex flex-col gap-1">
                   <span className="font-medium">{result.title}</span>
+                  <span className="line-clamp-1 text-xs text-muted-foreground">{formatSectionPath(result.slug)}</span>
                   <span className="line-clamp-1 text-xs text-muted-foreground">{result.excerpt}</span>
                 </div>
               </CommandItem>

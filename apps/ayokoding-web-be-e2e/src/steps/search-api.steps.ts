@@ -6,7 +6,7 @@ const { Given, When, Then } = createBdd();
 
 // Feature-specific Given steps
 Given('published pages indexed under locale "en" include a page titled "Getting Started with Go"', async () => {});
-Given('published pages indexed under locale "en" include a page with category "programming"', async () => {});
+Given('published pages indexed under locale "en" include content about "programming"', async () => {});
 Given('a page exists in locale "en" with title "Security Basics"', async () => {});
 Given('no equivalent page exists in locale "id"', async () => {});
 
@@ -45,10 +45,11 @@ When('the client calls search.query with locale "en" and query "programming"', a
   state.searchResults = extractTrpcData(body);
 });
 
-Then('each result should include a "metadata" field', async () => {
+Then('each result should include a "locale" field matching "en"', async () => {
   const results = state.searchResults as { locale: string }[];
   for (const result of results) {
     expect(result).toHaveProperty("locale");
+    expect(result.locale).toBe("en");
   }
 });
 

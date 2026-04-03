@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source "../../src/**/*.{ts,tsx}";
+@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
 @plugin "@tailwindcss/typography";
 
 @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";

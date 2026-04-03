@@ -15,10 +15,10 @@ Feature: Search API
     And each result should include a "slug" field
     And each result should include an "excerpt" field
 
-  Scenario: Search results include page metadata
-    Given published pages indexed under locale "en" include a page with category "programming"
+  Scenario: Search results include locale information
+    Given published pages indexed under locale "en" include content about "programming"
     When the client calls search.query with locale "en" and query "programming"
-    Then each result should include a "metadata" field
+    Then each result should include a "locale" field matching "en"
 
   Scenario: Search is scoped to the requested locale
     Given a page exists in locale "en" with title "Security Basics"
