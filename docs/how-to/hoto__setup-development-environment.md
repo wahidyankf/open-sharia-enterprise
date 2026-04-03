@@ -174,10 +174,10 @@ Required for `a-demo-be-java-springboot`, `a-demo-be-java-vertx`, `a-demo-be-kot
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-sdk install java 21.0.7-tem
+sdk install java 25-tem
 sdk install maven
 
-java -version    # Expected: 21+
+java -version    # Expected: 25+
 mvn --version
 ```
 
@@ -302,13 +302,13 @@ dart --version
 
 ### Step 12: Hugo
 
-Required for legacy Hugo-based site tooling.
+Hugo is a legacy doctor entry (oseplatform-web migrated to Next.js). No active projects
+use Hugo, but installing it prevents a doctor warning.
 
 ```bash
 # macOS
 brew install hugo
 
-# Verify against version in apps/oseplatform-web/vercel.json
 hugo version
 ```
 
@@ -473,20 +473,20 @@ npx playwright install-deps
 
 All version requirements are auto-detected by `npm run doctor` from these config files:
 
-| Tool          | Version Source                                        |
-| ------------- | ----------------------------------------------------- |
-| Node.js       | `package.json` → `volta.node`                         |
-| npm           | `package.json` → `volta.npm`                          |
-| Java          | `apps/organiclever-be-jasb/pom.xml` → `java.version`  |
-| Go            | `apps/rhino-cli/go.mod` → `go` directive              |
-| Python        | `apps/a-demo-be-python-fastapi/.python-version`       |
-| Hugo          | `apps/oseplatform-web/vercel.json` → `HUGO_VERSION`   |
-| Erlang        | `.tool-versions` → `erlang`                           |
-| Elixir        | `.tool-versions` → `elixir`                           |
-| .NET          | `apps/a-demo-be-fsharp-giraffe/global.json` → `sdk`   |
-| Dart          | `apps/a-demo-fe-dart-flutterweb/pubspec.yaml` → `sdk` |
-| Rust, Clojure | Any (no pinned version)                               |
-| Docker, jq    | Any (no pinned version)                               |
+| Tool          | Version Source                                            |
+| ------------- | --------------------------------------------------------- |
+| Node.js       | `package.json` → `volta.node`                             |
+| npm           | `package.json` → `volta.npm`                              |
+| Java          | `apps/a-demo-be-java-springboot/pom.xml` → `java.version` |
+| Go            | `apps/rhino-cli/go.mod` → `go` directive                  |
+| Python        | `apps/a-demo-be-python-fastapi/.python-version`           |
+| Hugo          | (legacy — no active config file)                          |
+| Erlang        | `.tool-versions` → `erlang`                               |
+| Elixir        | `.tool-versions` → `elixir`                               |
+| .NET          | `apps/a-demo-be-fsharp-giraffe/global.json` → `sdk`       |
+| Dart          | `apps/a-demo-fe-dart-flutterweb/pubspec.yaml` → `sdk`     |
+| Rust, Clojure | Any (no pinned version)                                   |
+| Docker, jq    | Any (no pinned version)                                   |
 
 Never hardcode version numbers in scripts — always read from these source-of-truth files.
 
