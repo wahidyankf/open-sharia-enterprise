@@ -13,10 +13,12 @@ Feature: Navigation
     And the header contains an external link to "Documentation"
     And the header contains an external link to "GitHub"
 
-  Scenario: Breadcrumb navigation shows current location
+  Scenario: Breadcrumb shows ancestor hierarchy without current page
     Given the about page is rendered with breadcrumbs
     Then the breadcrumb shows "Home" linking to "/"
-    And the breadcrumb shows "About" as the current page
+    And the current page should not appear in the breadcrumb
+    And all breadcrumb segments should be clickable links
+    And breadcrumb text should wrap naturally without horizontal truncation
 
   Scenario: Previous and next navigation between updates
     Given an update detail page is rendered with adjacent updates

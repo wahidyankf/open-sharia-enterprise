@@ -107,7 +107,7 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
     });
   });
 
-  Scenario("Breadcrumb navigation shows current location", ({ Given, Then, And }) => {
+  Scenario("Breadcrumb shows ancestor hierarchy without current page", ({ Given, Then, And }) => {
     Given("the about page is rendered with breadcrumbs", () => {
       render(<Breadcrumb segments={[{ label: "About", href: "/about/" }]} />);
     });
@@ -118,10 +118,28 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
       expect(homeLink).toHaveAttribute("href", "/");
     });
 
-    And('the breadcrumb shows "About" as the current page', () => {
-      // "About" as current page renders as a <span> (not a link), with class "truncate font-medium"
-      const currentPage = screen.getByText("About", { selector: "span" });
-      expect(currentPage).toBeInTheDocument();
+    And("the current page should not appear in the breadcrumb", () => {
+      // "About" is the current page and should not appear in the breadcrumb
+      expect(screen.queryByText("About")).not.toBeInTheDocument();
+    });
+
+    And("all breadcrumb segments should be clickable links", () => {
+      const nav = screen.getByLabelText("Breadcrumb");
+      const links = nav.querySelectorAll("a");
+      expect(links.length).toBeGreaterThanOrEqual(1);
+      // No non-link spans should exist
+      const spans = nav.querySelectorAll("span:not(:has(*))");
+      expect(spans.length).toBe(0);
+    });
+
+    And("breadcrumb text should wrap naturally without horizontal truncation", () => {
+      const nav = screen.getByLabelText("Breadcrumb");
+      const ol = nav.querySelector("ol");
+      expect(ol?.className).toContain("flex-wrap");
+      const allLinks = nav.querySelectorAll("a");
+      for (const link of allLinks) {
+        expect(link.className).not.toContain("truncate");
+      }
     });
   });
 

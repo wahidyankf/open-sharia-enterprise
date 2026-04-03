@@ -6,7 +6,8 @@ interface BreadcrumbProps {
 }
 
 export function Breadcrumb({ segments }: BreadcrumbProps) {
-  if (segments.length === 0) return null;
+  // Exclude last segment — the current page title is already shown in the h1
+  const ancestorSegments = segments.slice(0, -1);
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
@@ -16,16 +17,12 @@ export function Breadcrumb({ segments }: BreadcrumbProps) {
             Home
           </Link>
         </li>
-        {segments.map((segment, i) => (
+        {ancestorSegments.map((segment) => (
           <li key={segment.href} className="flex items-center gap-1">
             <ChevronRight className="h-3 w-3 shrink-0" />
-            {i < segments.length - 1 ? (
-              <Link href={segment.href} className="truncate hover:text-foreground">
-                {segment.label}
-              </Link>
-            ) : (
-              <span className="truncate font-medium text-foreground">{segment.label}</span>
-            )}
+            <Link href={segment.href} className="hover:text-foreground">
+              {segment.label}
+            </Link>
           </li>
         ))}
       </ol>

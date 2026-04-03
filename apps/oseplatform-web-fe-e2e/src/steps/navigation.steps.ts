@@ -32,9 +32,24 @@ Then("the breadcrumb shows {string} linking to {string}", async ({ page }, text:
   expect(actual!.replace(/\/$/, "")).toBe(href.replace(/\/$/, ""));
 });
 
-Then("the breadcrumb shows {string} as the current page", async ({ page }, text: string) => {
+Then("the current page should not appear in the breadcrumb", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
-  await expect(breadcrumb.getByText(text)).toBeVisible();
+  // The breadcrumb should only contain links (ancestor segments), no plain text spans for current page
+  const spans = breadcrumb.locator("span:not(:has(*))");
+  const count = await spans.count();
+  expect(count).toBe(0);
+});
+
+Then("all breadcrumb segments should be clickable links", async ({ page }) => {
+  const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
+  const links = breadcrumb.getByRole("link");
+  await expect(links.first()).toBeAttached();
+});
+
+Then("breadcrumb text should wrap naturally without horizontal truncation", async ({ page }) => {
+  const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
+  const ol = breadcrumb.locator("ol");
+  await expect(ol).toHaveCSS("flex-wrap", "wrap");
 });
 
 Given("an update detail page is rendered with adjacent updates", async ({ page }) => {
