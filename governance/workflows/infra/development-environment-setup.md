@@ -480,7 +480,29 @@ This also triggers Husky to install git hooks (pre-commit, commit-msg, pre-push)
 **Success criteria**: `npm install` exits 0. `.husky/pre-commit`, `.husky/commit-msg`,
 `.husky/pre-push` exist.
 
-#### 12.3 Run doctor to verify all tools
+#### 12.3 Restore environment files
+
+`.env` files are gitignored but required by many apps. If you have a previous backup
+(from `rhino-cli env backup`), restore them now:
+
+```bash
+# Restore .env files from default backup location (~/ose-open-env-backup)
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force
+
+# Include uncommitted config files (AI tool settings, Docker overrides, direnv, etc.)
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-config
+```
+
+**Condition**: Skip if this is a brand-new setup with no previous backup. You will need to
+create `.env` files manually from `.env.example` templates in each app directory.
+
+**Success criteria**: Restored files appear in their original app directories (e.g.,
+`apps/ayokoding-web/.env.local`, `apps/organiclever-be/.env`).
+
+**On failure**: If no backup exists, copy `.env.example` to `.env` in each app you plan to
+work on and fill in the required values.
+
+#### 12.4 Run doctor to verify all tools
 
 ```bash
 npm run doctor
@@ -586,15 +608,15 @@ kill %1
 
 For `scope: minimal` (core development only — TypeScript/Go projects, git hooks, unit tests):
 
-| Phase | Steps     | Tools Installed        |
-| ----- | --------- | ---------------------- |
-| 1     | 1.1-1.2   | Homebrew               |
-| 2     | 2.1-2.3   | Git, Docker, jq        |
-| 3     | 3.1-3.2   | Volta, Node.js 24, npm |
-| 5     | 5.1       | Go                     |
-| 12    | 12.1-12.3 | npm deps, git hooks    |
-| 13    | 13.1      | Playwright browsers    |
-| 14    | 14.1-14.2 | Verification           |
+| Phase | Steps     | Tools Installed                  |
+| ----- | --------- | -------------------------------- |
+| 1     | 1.1-1.2   | Homebrew                         |
+| 2     | 2.1-2.3   | Git, Docker, jq                  |
+| 3     | 3.1-3.2   | Volta, Node.js 24, npm           |
+| 5     | 5.1       | Go                               |
+| 12    | 12.1-12.4 | npm deps, env restore, git hooks |
+| 13    | 13.1      | Playwright browsers              |
+| 14    | 14.1-14.2 | Verification                     |
 
 This covers: pre-commit hooks, pre-push hooks, TypeScript/Go unit tests, and basic E2E tests.
 
