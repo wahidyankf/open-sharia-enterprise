@@ -48,9 +48,7 @@ def alice_get_unit_expense(
     parsers.parse("alice sends POST /api/v1/expenses with body {body}"),
     target_fixture="response",
 )
-def alice_post_unit_expense(
-    client: ServiceClient, alice_tokens: dict, body: str
-) -> FakeResponse:
+def alice_post_unit_expense(client: ServiceClient, alice_tokens: dict, body: str) -> FakeResponse:
     data = json.loads(body)
     return client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
 

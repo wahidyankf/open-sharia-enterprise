@@ -234,9 +234,7 @@ class InMemoryExpenseRepository:
     def find_by_id(self, expense_id: str) -> ExpenseModel | None:
         return self._expenses.get(str(expense_id))
 
-    def list_by_user(
-        self, user_id: str, page: int, size: int
-    ) -> tuple[list[ExpenseModel], int]:
+    def list_by_user(self, user_id: str, page: int, size: int) -> tuple[list[ExpenseModel], int]:
         items = [e for e in self._expenses.values() if str(e.user_id) == str(user_id)]
         total = len(items)
         offset = (page - 1) * size
@@ -353,9 +351,7 @@ class InMemoryAttachmentRepository:
         return attachment
 
     def list_by_expense(self, expense_id: str) -> list[AttachmentModel]:
-        return [
-            a for a in self._attachments.values() if str(a.expense_id) == str(expense_id)
-        ]
+        return [a for a in self._attachments.values() if str(a.expense_id) == str(expense_id)]
 
     def find_by_id(self, attachment_id: str) -> AttachmentModel | None:
         return self._attachments.get(str(attachment_id))
@@ -379,9 +375,7 @@ class InMemoryRevokedTokenRepository:
         if jti not in self._revoked:
             self._revoked[jti] = _make_revoked_token(jti, user_id)
 
-    def is_revoked(
-        self, jti: str, user_id: str, issued_at: datetime | None = None
-    ) -> bool:
+    def is_revoked(self, jti: str, user_id: str, issued_at: datetime | None = None) -> bool:
         return jti in self._revoked
 
     def revoke_all_for_user(self, user_id: str) -> None:

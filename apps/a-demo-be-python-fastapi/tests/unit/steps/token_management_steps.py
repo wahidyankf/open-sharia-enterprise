@@ -38,9 +38,7 @@ def admin_login_for_tokens(client: ServiceClient, username: str) -> dict:
 
 
 @given("the admin has disabled alice's account via POST /api/v1/admin/users/{alice_id}/disable")
-def admin_disable_alice(
-    client: ServiceClient, registered_user: dict, admin_tokens: dict
-) -> None:
+def admin_disable_alice(client: ServiceClient, registered_user: dict, admin_tokens: dict) -> None:
     resp = client.post_admin_disable_user(
         registered_user["id"],
         f"Bearer {admin_tokens['accessToken']}",

@@ -313,9 +313,7 @@ class AttachmentRepository:
         return attachment
 
     def list_by_expense(self, expense_id: str) -> list[AttachmentModel]:
-        stmt = select(AttachmentModel).where(
-            AttachmentModel.expense_id == _to_str(expense_id)
-        )
+        stmt = select(AttachmentModel).where(AttachmentModel.expense_id == _to_str(expense_id))
         return list(self._db.execute(stmt).scalars().all())
 
     def find_by_id(self, attachment_id: str) -> AttachmentModel | None:
