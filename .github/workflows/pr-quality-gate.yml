@@ -68,6 +68,14 @@ jobs:
             echo "has-markdown=true" >> "$GITHUB_OUTPUT"
           fi
 
+  format:
+    name: Format check (Prettier)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - run: npx prettier --check .
+
   typescript:
     name: TypeScript quality gate
     needs: detect
@@ -97,6 +105,14 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-golang
+      - name: Check Go formatting
+        run: |
+          UNFORMATTED=$(gofmt -l $(find . -name '*.go' -not -path './node_modules/*' -not -path './.nx/*'))
+          if [ -n "$UNFORMATTED" ]; then
+            echo "The following Go files are not formatted:"
+            echo "$UNFORMATTED"
+            exit 1
+          fi
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:golang'
 
   jvm:
@@ -129,6 +145,18 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
+      - name: Check F# formatting
+        run: |
+          UNFORMATTED=$(find . -name '*.fs' -not -path './node_modules/*' -not -path './.nx/*')
+          if [ -n "$UNFORMATTED" ]; then
+            fantomas --check $UNFORMATTED
+          fi
+      - name: Check C# formatting
+        run: |
+          CS_PROJECTS=$(find . -name '*.csproj' -not -path './node_modules/*' -not -path './.nx/*')
+          for proj in $CS_PROJECTS; do
+            dotnet format whitespace --verify-no-changes "$(dirname "$proj")" || exit 1
+          done
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:fsharp,tag:lang:csharp'
 
   python:
@@ -145,6 +173,8 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-python
+      - name: Check Python formatting
+        run: ruff format --check .
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:python'
 
   rust:
@@ -161,6 +191,11 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - name: Check Rust formatting
+        run: |
+          for dir in $(find . -name 'Cargo.toml' -not -path './node_modules/*' -not -path './.nx/*' -exec dirname {} \;); do
+            (cd "$dir" && cargo fmt --check) || exit 1
+          done
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:rust'
 
   elixir:
@@ -177,6 +212,11 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-elixir
+      - name: Check Elixir formatting
+        run: |
+          for dir in $(find . -name 'mix.exs' -not -path './node_modules/*' -not -path './.nx/*' -not -path './deps/*' -exec dirname {} \;); do
+            (cd "$dir" && mix format --check-formatted) || exit 1
+          done
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:elixir'
 
   clojure:
@@ -193,6 +233,12 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-clojure
+      - name: Check Clojure formatting
+        run: |
+          CLJ_FILES=$(find . -name '*.clj' -not -path './node_modules/*' -not -path './.nx/*')
+          if [ -n "$CLJ_FILES" ] && command -v cljfmt &>/dev/null; then
+            cljfmt check $CLJ_FILES
+          fi
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:clojure'
 
   dart:
@@ -209,6 +255,8 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-flutter
+      - name: Check Dart formatting
+        run: dart format --set-exit-if-changed --output=none .
       - run: npx nx affected -t typecheck lint test:quick spec-coverage --projects='tag:lang:dart'
 
   markdown:
@@ -223,7 +271,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [detect, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown]
+    needs: [detect, format, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown]
     if: always()
     runs-on: ubuntu-latest
     steps:
