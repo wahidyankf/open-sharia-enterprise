@@ -41,7 +41,7 @@ compatible with **git worktrees** (used heavily for AI agent isolation).
 
 ### Current State
 
-- `rhino-cli doctor` checks 19 tools, reads versions from config files, reports ok/warning/missing
+- `rhino-cli doctor` checks 19 tools (18 after Hugo removal + Playwright), reads versions from config files, reports ok/warning/missing
 - Doctor is diagnose-only — no install capability
 - `npm run doctor` rebuilds rhino-cli from source every time (`--skip-nx-cache`)
 - Hugo is still checked despite oseplatform-web migrating to Next.js

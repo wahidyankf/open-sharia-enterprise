@@ -154,7 +154,10 @@ npm run format:md        # Format markdown with Prettier
 npm run format:md:check  # Check markdown formatting
 
 # Verify local development environment
-npm run doctor           # Check all required tools (volta, node, npm, java, maven, golang)
+npm run doctor                    # Check all required tools
+npm run doctor -- --fix           # Auto-install missing tools
+npm run doctor -- --fix --dry-run # Preview what would be installed
+npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm, go, docker, jq)
 ```
 
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.

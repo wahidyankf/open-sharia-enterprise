@@ -233,29 +233,29 @@ libssl-dev ...`) before `asdf install erlang`
 - [x] Update `governance/workflows/infra/development-environment-setup.md` to add `doctor --fix`
       as the recommended setup path
 - [x] Update `docs/how-to/hoto__setup-development-environment.md` to mention `doctor --fix`
-- [ ] Commit: `feat(rhino-cli): add doctor --fix for auto-installing missing tools`
+- [x] Commit: `feat(rhino-cli): add doctor --fix for auto-installing missing tools`
 
 ## Post-Delivery
 
 ### Documentation updates (single commit after all phases)
 
-- [ ] Update CLAUDE.md "Common Development Commands" section to add `npm run doctor -- --fix`
+- [x] Update CLAUDE.md "Common Development Commands" section to add `npm run doctor -- --fix`
       and `npm run doctor -- --scope minimal`
-- [ ] Update CLAUDE.md tool count if it mentions "19 tools"
-- [ ] Update this plan's own `README.md` "checks 19 tools" in Current State section
-- [ ] Verify `governance/workflows/infra/development-environment-setup.md` is consistent with
+- [x] Update CLAUDE.md tool count if it mentions "19 tools"
+- [x] Update this plan's own `README.md` "checks 19 tools" in Current State section
+- [x] Verify `governance/workflows/infra/development-environment-setup.md` is consistent with
       all changes — specifically:
-  - [ ] Quick Start section exists referencing `doctor --fix` and `doctor --fix --dry-run`
-  - [ ] Phase 11 (Hugo) removed, tool inventory renumbered
-  - [ ] Phase 1 mentions `brew bundle` as alternative
-  - [ ] Phase 12.3 mentions `env init` as fallback for fresh setups
-  - [ ] Phase 13 notes that doctor now checks Playwright browsers
-  - [ ] Minimal scope table references `doctor --scope minimal`
-  - [ ] YAML frontmatter `inputs` description updated (no "19 tools")
-  - [ ] Notes section mentions git worktree compatibility
-  - [ ] Ubuntu/Linux install commands are accurate (go.dev tarball for Go, snap for
+  - [x] Quick Start section exists referencing `doctor --fix` and `doctor --fix --dry-run`
+  - [x] Phase 11 (Hugo) removed, tool inventory renumbered
+  - [x] Phase 1 mentions `brew bundle` as alternative
+  - [x] Phase 12.3 mentions `env init` as fallback for fresh setups
+  - [x] Phase 13 notes that doctor now checks Playwright browsers
+  - [x] Minimal scope table references `doctor --scope minimal`
+  - [x] YAML frontmatter `inputs` description updated (no "19 tools")
+  - [x] Notes section mentions git worktree compatibility
+  - [x] Ubuntu/Linux install commands are accurate (go.dev tarball for Go, snap for
         dotnet/flutter, linux-install.sh for Clojure)
-- [ ] Run `npm run lint:md` — verify all markdown passes linting
+- [x] Run `npm run lint:md` — verify all markdown passes linting
 - [ ] Commit: `docs: update setup documentation for doctor improvements`
 
 ## Validation
