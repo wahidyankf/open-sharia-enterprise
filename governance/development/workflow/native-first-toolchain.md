@@ -15,7 +15,7 @@ updated: 2026-04-04
 
 # Native-First Toolchain Management
 
-This document records the architectural decision to use native toolchain management (`rhino-cli doctor` and package managers) instead of infrastructure-as-code tools (Terraform, Ansible, Docker Dev Containers) for development environment setup. The open-sharia-enterprise monorepo spans 19 toolchains across 11 languages (Node.js, Go, Java, Rust, Elixir, Python, .NET, Dart, Clojure, Kotlin, C#), making toolchain management a significant architectural concern.
+This document records the architectural decision to use native toolchain management (`rhino-cli doctor` and package managers) instead of infrastructure-as-code tools (Terraform, Ansible, Docker Dev Containers) for development environment setup. The open-sharia-enterprise monorepo spans 18 toolchains across 11 languages (Node.js, Go, Java, Rust, Elixir, Python, .NET, Dart, Clojure, Kotlin, C#), making toolchain management a significant architectural concern.
 
 ## Principles Implemented/Respected
 

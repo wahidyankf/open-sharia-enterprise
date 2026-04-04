@@ -34,7 +34,6 @@ var allOKChecks = []ToolCheck{
 	{Name: "java", Binary: "java", Status: StatusOK, InstalledVersion: "25", RequiredVersion: "25", Source: "apps/organiclever-be-jasb/pom.xml → <java.version>", Note: "required: 25"},
 	{Name: "maven", Binary: "mvn", Status: StatusOK, InstalledVersion: "3.9.9", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "golang", Binary: "go", Status: StatusOK, InstalledVersion: "1.24.2", RequiredVersion: "1.24.2", Source: "apps/rhino-cli/go.mod → go directive", Note: "required: \u22651.24.2"},
-	{Name: "hugo", Binary: "hugo", Status: StatusOK, InstalledVersion: "0.156.0", RequiredVersion: "0.156.0", Source: "apps/oseplatform-web/vercel.json → HUGO_VERSION", Note: "required: \u22650.156.0"},
 	{Name: "python", Binary: "python3", Status: StatusOK, InstalledVersion: "3.13.1", RequiredVersion: "3.13", Source: "apps/a-demo-be-python-fastapi/.python-version", Note: "required: \u22653.13"},
 	{Name: "rust", Binary: "rustc", Status: StatusOK, InstalledVersion: "1.94.0", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "cargo-llvm-cov", Binary: "cargo", Status: StatusOK, InstalledVersion: "0.8.5", Source: "(no config file)", Note: "no version requirement"},
@@ -60,10 +59,10 @@ func TestFormatText_AllOK(t *testing.T) {
 	}
 	// All checks should show ✓
 	count := strings.Count(out, "✓")
-	if count != 19 {
-		t.Errorf("expected 19 ✓ symbols, got %d", count)
+	if count != 18 {
+		t.Errorf("expected 18 ✓ symbols, got %d", count)
 	}
-	if !strings.Contains(out, "Summary: 19/19 tools OK, 0 warning, 0 missing") {
+	if !strings.Contains(out, "Summary: 18/18 tools OK, 0 warning, 0 missing") {
 		t.Errorf("expected summary line, got: %q", out)
 	}
 }
@@ -138,8 +137,8 @@ func TestFormatJSON_AllOK(t *testing.T) {
 	if parsed.Status != "ok" {
 		t.Errorf("expected status %q, got %q", "ok", parsed.Status)
 	}
-	if parsed.OKCount != 19 {
-		t.Errorf("expected ok_count == 19, got %d", parsed.OKCount)
+	if parsed.OKCount != 18 {
+		t.Errorf("expected ok_count == 18, got %d", parsed.OKCount)
 	}
 	if parsed.WarnCount != 0 {
 		t.Errorf("expected warn_count == 0, got %d", parsed.WarnCount)
@@ -147,8 +146,8 @@ func TestFormatJSON_AllOK(t *testing.T) {
 	if parsed.MissingCount != 0 {
 		t.Errorf("expected missing_count == 0, got %d", parsed.MissingCount)
 	}
-	if len(parsed.Tools) != 19 {
-		t.Errorf("expected 19 tools, got %d", len(parsed.Tools))
+	if len(parsed.Tools) != 18 {
+		t.Errorf("expected 18 tools, got %d", len(parsed.Tools))
 	}
 }
 
@@ -225,7 +224,7 @@ func TestFormatMarkdown(t *testing.T) {
 		t.Error("expected '### Tools' section")
 	}
 	// All tool names should appear
-	for _, name := range []string{"git", "volta", "node", "npm", "java", "maven", "golang", "hugo", "python", "rust", "cargo-llvm-cov", "elixir", "erlang", "dotnet", "clojure", "dart", "flutter", "docker", "jq"} {
+	for _, name := range []string{"git", "volta", "node", "npm", "java", "maven", "golang", "python", "rust", "cargo-llvm-cov", "elixir", "erlang", "dotnet", "clojure", "dart", "flutter", "docker", "jq"} {
 		if !strings.Contains(out, name) {
 			t.Errorf("expected tool name %q in markdown output", name)
 		}

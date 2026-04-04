@@ -631,7 +631,6 @@ func setupCheckAllRepo(t *testing.T) string {
 	for _, dir := range []string{
 		"apps/organiclever-be-jasb",
 		"apps/rhino-cli",
-		"apps/oseplatform-web",
 		"apps/a-demo-be-python-fastapi",
 		"apps/a-demo-be-fsharp-giraffe",
 		"apps/a-demo-fe-dart-flutterweb",
@@ -645,7 +644,6 @@ func setupCheckAllRepo(t *testing.T) string {
 		"package.json":                                  `{"volta":{"node":"24.11.1","npm":"11.6.3"}}`,
 		"apps/organiclever-be-jasb/pom.xml":             `<project><properties><java.version>25</java.version></properties></project>`,
 		"apps/rhino-cli/go.mod":                         "module foo\n\ngo 1.24.2\n",
-		"apps/oseplatform-web/vercel.json":              `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
 		"apps/a-demo-be-python-fastapi/.python-version": "3.13\n",
 		".tool-versions":                                "erlang 27.3\nelixir 1.19.5-otp-27\n",
 		"apps/a-demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
@@ -671,7 +669,6 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		"java":    {stderr: `openjdk version "25" 2025-09-16`, exitCode: 0},
 		"mvn":     {stdout: "Apache Maven 3.9.9 (abc)\nMaven home: /usr\n", exitCode: 0},
 		"go":      {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
-		"hugo":    {stdout: "hugo v0.156.0+extended+withdeploy darwin/arm64\n", exitCode: 0},
 		"python3": {stdout: "Python 3.13.1\n", exitCode: 0},
 		"rustc":   {stdout: "rustc 1.94.0 (4a4ef493e 2026-03-02)\n", exitCode: 0},
 		"cargo":   {stdout: "cargo-llvm-cov 0.8.5\n", exitCode: 0},
@@ -690,8 +687,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.OKCount != 19 {
-		t.Errorf("expected OKCount == 19, got %d", result.OKCount)
+	if result.OKCount != 18 {
+		t.Errorf("expected OKCount == 18, got %d", result.OKCount)
 	}
 	if result.WarnCount != 0 {
 		t.Errorf("expected WarnCount == 0, got %d", result.WarnCount)
@@ -699,8 +696,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 	if result.MissingCount != 0 {
 		t.Errorf("expected MissingCount == 0, got %d", result.MissingCount)
 	}
-	if len(result.Checks) != 19 {
-		t.Errorf("expected 19 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 18 {
+		t.Errorf("expected 18 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -715,8 +712,8 @@ func TestCheckAll_WithMissingTools(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.MissingCount != 19 {
-		t.Errorf("expected MissingCount == 19, got %d", result.MissingCount)
+	if result.MissingCount != 18 {
+		t.Errorf("expected MissingCount == 18, got %d", result.MissingCount)
 	}
 	if result.OKCount != 0 {
 		t.Errorf("expected OKCount == 0, got %d", result.OKCount)
@@ -795,8 +792,8 @@ func TestCheckAll_NilRunner_UsesRealRunner(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected non-nil result")
 	}
-	if len(result.Checks) != 19 {
-		t.Errorf("expected 19 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 18 {
+		t.Errorf("expected 18 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -812,7 +809,6 @@ func TestCheckAll_WithWarningStatus(t *testing.T) {
 		"java":    {stderr: `openjdk version "25" 2025-09-16`, exitCode: 0},
 		"mvn":     {stdout: "Apache Maven 3.9.9 (abc)\nMaven home: /usr\n", exitCode: 0},
 		"go":      {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
-		"hugo":    {stdout: "hugo v0.156.0+extended\n", exitCode: 0},
 		"python3": {stdout: "Python 3.13.1\n", exitCode: 0},
 		"rustc":   {stdout: "rustc 1.94.0 (abc)\n", exitCode: 0},
 		"cargo":   {stdout: "cargo-llvm-cov 0.8.5\n", exitCode: 0},
@@ -837,27 +833,6 @@ func TestCheckAll_WithWarningStatus(t *testing.T) {
 }
 
 // --- Tests for new parser functions ---
-
-func TestParseHugoVersion(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  string
-	}{
-		{"standard", "hugo v0.156.0+extended+withdeploy darwin/arm64 BuildDate=2026-02-18T16:39:55Z", "0.156.0"},
-		{"extended only", "hugo v0.156.0+extended darwin/arm64", "0.156.0"},
-		{"no suffix", "hugo v0.156.0 darwin/arm64", "0.156.0"},
-		{"empty", "", ""},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := parseHugoVersion(tt.input)
-			if got != tt.want {
-				t.Errorf("parseHugoVersion(%q) = %q, want %q", tt.input, got, tt.want)
-			}
-		})
-	}
-}
 
 func TestParsePythonVersion(t *testing.T) {
 	tests := []struct{ input, want string }{
@@ -1013,28 +988,6 @@ func TestParseJqVersion(t *testing.T) {
 }
 
 // --- Tests for new reader functions ---
-
-func TestReadHugoVersion(t *testing.T) {
-	t.Run("valid vercel.json", func(t *testing.T) {
-		path := filepath.Join(t.TempDir(), "vercel.json")
-		if err := os.WriteFile(path, []byte(`{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`), 0644); err != nil {
-			t.Fatalf("write: %v", err)
-		}
-		got, err := readHugoVersion(path)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if got != "0.156.0" {
-			t.Errorf("got %q, want %q", got, "0.156.0")
-		}
-	})
-	t.Run("missing file", func(t *testing.T) {
-		_, err := readHugoVersion("/nonexistent")
-		if err == nil {
-			t.Fatal("expected error")
-		}
-	})
-}
 
 func TestReadPythonVersion(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
@@ -1197,29 +1150,6 @@ func TestCompareMajorGTE(t *testing.T) {
 }
 
 // --- RunOneDef tests for new tools ---
-
-func TestRunOneDef_Hugo_Found(t *testing.T) {
-	runner := makeFakeRunner(map[string]fakeRunnerConfig{
-		"hugo": {stdout: "hugo v0.156.0+extended+withdeploy darwin/arm64\n", exitCode: 0},
-	})
-	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "hugo")
-	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
-	}
-	if check.InstalledVersion != "0.156.0" {
-		t.Errorf("expected version %q, got %q", "0.156.0", check.InstalledVersion)
-	}
-}
-
-func TestRunOneDef_Hugo_Missing(t *testing.T) {
-	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "hugo")
-	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
-	}
-}
 
 func TestRunOneDef_Python_Found(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{

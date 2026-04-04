@@ -220,28 +220,6 @@ func compareGTE(installed, required string) (ToolStatus, string) {
 
 // --- Reader functions for new tool version sources ---
 
-// vercelJSON holds the parts of vercel.json we care about for HUGO_VERSION.
-type vercelJSON struct {
-	Build struct {
-		Env struct {
-			HugoVersion string `json:"HUGO_VERSION"`
-		} `json:"env"`
-	} `json:"build"`
-}
-
-// readHugoVersion reads the required Hugo version from vercel.json.
-func readHugoVersion(vercelJSONPath string) (string, error) {
-	data, err := os.ReadFile(vercelJSONPath)
-	if err != nil {
-		return "", err
-	}
-	var v vercelJSON
-	if err := json.Unmarshal(data, &v); err != nil {
-		return "", err
-	}
-	return v.Build.Env.HugoVersion, nil
-}
-
 // readPythonVersion reads the required Python version from a .python-version file.
 func readPythonVersion(pythonVersionPath string) (string, error) {
 	data, err := os.ReadFile(pythonVersionPath)
@@ -317,27 +295,6 @@ func readDartSDKVersion(pubspecPath string) (string, error) {
 }
 
 // --- Parser functions for new tool version outputs ---
-
-// parseHugoVersion extracts the version from "hugo v0.156.0+extended..." output.
-func parseHugoVersion(output string) string {
-	for _, line := range strings.Split(output, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "hugo") {
-			fields := strings.Fields(trimmed)
-			for _, f := range fields {
-				if strings.HasPrefix(f, "v") && len(f) > 1 {
-					ver := strings.TrimPrefix(f, "v")
-					// Strip +extended or +withdeploy suffix
-					if idx := strings.Index(ver, "+"); idx != -1 {
-						ver = ver[:idx]
-					}
-					return ver
-				}
-			}
-		}
-	}
-	return ""
-}
 
 // parsePythonVersion extracts the version from "Python 3.13.1" output.
 func parsePythonVersion(output string) string {
