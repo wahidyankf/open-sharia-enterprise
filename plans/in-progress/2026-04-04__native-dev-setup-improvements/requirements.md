@@ -88,7 +88,7 @@ appropriate package manager for the current platform (macOS only for initial imp
 
 **Constraints**:
 
-- macOS only (the primary development platform; Linux can be added later)
+- Must support both macOS and Ubuntu/Linux (detected via `runtime.GOOS`)
 - Must be idempotent — running `--fix` when all tools are installed is a no-op (see
   [idempotency contract](../../../governance/development/workflow/native-first-toolchain.md))
 - Must handle tools that require version managers (Volta → Node/npm, SDKMAN → Java/Maven,
@@ -132,8 +132,8 @@ exist, not just that the `npx playwright` command works.
 
 **Constraints**:
 
-- Check should verify browser binaries exist in the Playwright cache directory
-  (`~/Library/Caches/ms-playwright/` on macOS)
+- Check should verify browser binaries exist in the platform-specific Playwright cache directory
+  (macOS: `~/Library/Caches/ms-playwright/`, Linux: `~/.cache/ms-playwright/`)
 - Version should match the Playwright npm package version
 - Status should be `warning` (not `missing`) if browsers aren't installed, since it's not a
   CLI tool — it's a browser binary cache
@@ -193,6 +193,35 @@ Flutter (from `pubspec.yaml` or a new `.flutter-version` file).
 - Flutter: Read from `pubspec.yaml` `environment.flutter` constraint if present, or create
   `.flutter-version` file
 - Use `compareGTE` (not exact match) for both — developers can use newer versions
+
+### Cross-cutting: Git Worktree Compatibility
+
+**Priority**: HIGH
+
+All improvements must work correctly when run from a git worktree. The repo uses worktrees
+heavily for AI agent isolation. `findGitRoot()` already handles worktrees (`.git` file vs
+directory), and all path resolution uses `filepath.Join(repoRoot, ...)` which resolves
+correctly in worktrees.
+
+**Constraints**:
+
+- `doctor`, `doctor --fix`, `doctor --scope`, `env init` must all work from worktrees
+- No assumption that `.git` is a directory (it's a file in worktrees)
+- Config file paths must resolve relative to `findGitRoot()`, not hardcoded paths
+
+### Cross-cutting: Dual-Platform Support (macOS + Ubuntu)
+
+**Priority**: HIGH
+
+All improvements must support both macOS and Ubuntu/Linux. Platform detection via
+`runtime.GOOS`. Install commands differ per platform (Homebrew vs apt/snap/curl scripts).
+
+**Constraints**:
+
+- `doctor --fix` must use platform-appropriate install commands
+- Playwright browser cache detection must use platform-appropriate paths
+- Brewfile is macOS-only (harmless on Linux — no `brew` command)
+- Ubuntu needs system build dependencies before some toolchain installs (Erlang, Python)
 
 ## Acceptance Criteria
 

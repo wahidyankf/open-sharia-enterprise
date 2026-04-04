@@ -59,6 +59,8 @@ Every major package manager handles re-installation gracefully:
 | `curl get.volta.sh \| bash`    | Re-installs                     | Yes         | Noisy but safe         |
 | `rustup-init -y`               | Non-interactive install         | Yes         | Must use `-y` flag     |
 | `brew install --cask flutter`  | Skips if installed              | Yes         | Must use `--cask`      |
+| `sudo apt-get install -y X`    | "already newest version"        | Yes         | Ubuntu/Linux           |
+| `sudo snap install X`          | "already installed"             | Yes         | Ubuntu/Linux           |
 
 No external state file or convergence engine is needed when the underlying tools already guarantee idempotency.
 
@@ -110,6 +112,32 @@ Config files serve as the desired state declarations:
 - Introduce Terraform, Ansible, Nix, or similar IaC tools for dev environment setup
 - Create Docker Dev Containers (`.devcontainer/`) as the primary development mode
 - Add external state files for tracking installed tools
+
+## Platform Support
+
+`doctor --fix` supports both **macOS** and **Ubuntu/Linux**. Platform detection uses `runtime.GOOS`.
+
+Install commands differ per platform:
+
+- **macOS**: Homebrew (`brew install`), Homebrew casks (`brew install --cask`)
+- **Ubuntu**: apt (`sudo apt-get install`), snap (`sudo snap install --classic`), curl scripts (Volta, SDKMAN, rustup, pyenv, Clojure)
+- **Cross-platform**: Volta, SDKMAN, rustup, asdf, cargo — same install commands on both platforms
+
+Ubuntu requires system build dependencies before compiling some toolchains:
+
+```bash
+sudo apt-get install -y build-essential autoconf curl git \
+  libncurses-dev libssl-dev libreadline-dev libsqlite3-dev \
+  libbz2-dev libffi-dev zlib1g-dev
+```
+
+The `Brewfile` is macOS-only (harmless on Linux — `brew` command not available).
+
+## Git Worktree Compatibility
+
+All commands work correctly from git worktrees. `findGitRoot()` uses `os.Stat` to detect `.git`, which succeeds for both directories (main repo) and files (worktrees). All config file paths are constructed relative to the repo root via `filepath.Join(repoRoot, ...)`, which resolves correctly in both contexts.
+
+This is important because the repository uses git worktrees heavily for AI agent isolation (`.claude/worktrees/`).
 
 ## Implementation Notes
 

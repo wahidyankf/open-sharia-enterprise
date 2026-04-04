@@ -28,12 +28,12 @@ apps/rhino-cli/
 
 Add an `installCmd` field to `toolDef` that returns the shell command(s) to install the tool on
 the current platform. The `--fix` flag triggers a second pass after `CheckAll`: for each tool with
-`StatusMissing`, execute its `installCmd`.
+`StatusMissing`, execute its `installCmd`. Platform detection uses `runtime.GOOS`.
 
 ```go
 type toolDef struct {
     // ... existing fields ...
-    installCmd func(required string) []installStep // nil = cannot auto-install
+    installCmd func(required string, platform string) []installStep // nil = cannot auto-install
 }
 
 type installStep struct {
@@ -43,28 +43,40 @@ type installStep struct {
 }
 ```
 
-### Install commands per tool (macOS)
+### Install commands per tool (macOS + Ubuntu)
 
-| Tool           | Install steps                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------- |
-| git            | `xcode-select --install`                                                                                |
-| volta          | `curl https://get.volta.sh \| bash`                                                                     |
-| node           | `volta install node@{required}`                                                                         |
-| npm            | `volta install npm@{required}`                                                                          |
-| java           | `sdk install java {required}-tem` (requires SDKMAN)                                                     |
-| maven          | `sdk install maven` (requires SDKMAN)                                                                   |
-| golang         | `brew install go`                                                                                       |
-| python         | `brew install pyenv && pyenv install {required} && pyenv global {required}`                             |
-| rust           | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh -s -- -y` (non-interactive)            |
-| cargo-llvm-cov | `cargo install cargo-llvm-cov`                                                                          |
-| elixir         | `asdf plugin add elixir && asdf install elixir {required} && asdf global elixir {required}`             |
-| erlang         | `asdf plugin add erlang && asdf install erlang {required} && asdf global erlang {required}`             |
-| dotnet         | `brew install dotnet`                                                                                   |
-| clojure        | `brew install clojure/tools/clojure`                                                                    |
-| dart/flutter   | `brew install --cask flutter` (Flutter is a Homebrew cask, includes Dart)                               |
-| docker         | Print message: "Install Docker Desktop from https://docs.docker.com/desktop/setup/install/mac-install/" |
-| jq             | `brew install jq`                                                                                       |
-| playwright     | `npx playwright install`                                                                                |
+| Tool           | macOS                                        | Ubuntu/Linux                                                                                                                                           |
+| -------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| git            | `xcode-select --install`                     | `sudo apt-get install -y git`                                                                                                                          |
+| volta          | `curl https://get.volta.sh \| bash`          | `curl https://get.volta.sh \| bash` (same)                                                                                                             |
+| node           | `volta install node@{required}`              | `volta install node@{required}` (same)                                                                                                                 |
+| npm            | `volta install npm@{required}`               | `volta install npm@{required}` (same)                                                                                                                  |
+| java           | `sdk install java {required}-tem`            | `sdk install java {required}-tem` (same, requires SDKMAN)                                                                                              |
+| maven          | `sdk install maven`                          | `sdk install maven` (same)                                                                                                                             |
+| golang         | `brew install go`                            | Download tarball from go.dev (`curl -L https://go.dev/dl/go{req}.linux-amd64.tar.gz \| sudo tar -xz -C /usr/local`) — apt `golang-go` is too old       |
+| python         | `brew install pyenv && pyenv install {req}`  | Install pyenv deps + `curl https://pyenv.run \| bash && pyenv install {req}`                                                                           |
+| rust           | `curl ...rustup.rs \| sh -s -- -y`           | `curl ...rustup.rs \| sh -s -- -y` (same)                                                                                                              |
+| cargo-llvm-cov | `cargo install cargo-llvm-cov`               | `cargo install cargo-llvm-cov` (same)                                                                                                                  |
+| elixir         | `asdf plugin add elixir && asdf install ...` | `asdf plugin add elixir && asdf install ...` (same)                                                                                                    |
+| erlang         | `asdf plugin add erlang && asdf install ...` | Install build deps first + `asdf plugin add erlang && asdf install ...`                                                                                |
+| dotnet         | `brew install dotnet`                        | `sudo snap install dotnet-sdk --classic --channel=10.0` (self-contained; apt requires Microsoft APT feed setup)                                        |
+| clojure        | `brew install clojure/tools/clojure`         | `curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh && chmod +x linux-install.sh && sudo ./linux-install.sh` |
+| dart/flutter   | `brew install --cask flutter`                | `sudo snap install flutter --classic`                                                                                                                  |
+| docker         | Print: "Install Docker Desktop"              | `sudo apt-get install -y docker.io docker-compose-v2`                                                                                                  |
+| jq             | `brew install jq`                            | `sudo apt-get install -y jq`                                                                                                                           |
+| playwright     | `npx playwright install`                     | `npx playwright install && npx playwright install-deps` (system libs needed)                                                                           |
+
+**Ubuntu-specific prerequisites** (install before toolchain setup):
+
+```bash
+sudo apt-get update && sudo apt-get install -y \
+  build-essential autoconf curl git unzip zip \
+  libncurses-dev libssl-dev libreadline-dev \
+  libsqlite3-dev libbz2-dev libffi-dev zlib1g-dev
+```
+
+These are needed by pyenv (Python compilation), asdf-erlang (Erlang compilation), and other
+tools that compile from source on Linux.
 
 ### Dependency ordering
 
@@ -210,7 +222,9 @@ Add a new `toolDef` for Playwright. Unlike other tools, Playwright isn't a CLI b
 browser binaries in a cache directory. The check should:
 
 1. Verify `npx playwright --version` works (Playwright npm package installed)
-2. Check if browser binaries exist in `~/Library/Caches/ms-playwright/` (macOS)
+2. Check if browser binaries exist in the platform-specific Playwright cache directory:
+   - macOS: `~/Library/Caches/ms-playwright/`
+   - Linux: `~/.cache/ms-playwright/`
 
 ### Implementation
 
@@ -244,7 +258,13 @@ note.
 ```go
 func checkPlaywrightBrowsers() bool {
     home, _ := os.UserHomeDir()
-    cacheDir := filepath.Join(home, "Library", "Caches", "ms-playwright")
+    // Platform-specific cache directory
+    var cacheDir string
+    if runtime.GOOS == "darwin" {
+        cacheDir = filepath.Join(home, "Library", "Caches", "ms-playwright")
+    } else {
+        cacheDir = filepath.Join(home, ".cache", "ms-playwright")
+    }
     entries, err := os.ReadDir(cacheDir)
     if err != nil {
         return false
@@ -285,7 +305,8 @@ cask "flutter"  # Flutter is a Homebrew cask, not a formula
 
 ### Location
 
-Repository root (`Brewfile`).
+Repository root (`Brewfile`). macOS only — Ubuntu does not use Homebrew. The `Brewfile` is
+harmless on Linux (no `brew` command, so `brew bundle` simply isn't available).
 
 ### Gitignore
 
@@ -399,6 +420,40 @@ Update `tools.go`:
     readReq:  func() string { v, _ := readFlutterVersion(pubspecPath); return v },
 }
 ```
+
+## Git Worktree Compatibility
+
+All improvements must work correctly from git worktrees. This repo uses worktrees heavily for
+AI agent isolation (`.claude/worktrees/`).
+
+### How it works today
+
+`findGitRoot()` in `apps/rhino-cli/cmd/helpers.go` walks up from `cwd` looking for `.git`.
+In a worktree, `.git` is a **file** (not a directory) containing
+`gitdir: /path/to/main/.git/worktrees/<name>`. `os.Stat` succeeds for both files and
+directories, so `findGitRoot()` already works correctly in worktrees.
+
+**Verified**: `npm run doctor` runs successfully from a worktree (19/19 tools OK).
+
+### What each improvement needs for worktree support
+
+| Improvement         | Worktree concern                                              | Resolution                                          |
+| ------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
+| `doctor --fix`      | None — installs tools globally, not per-worktree              | Works as-is                                         |
+| Hugo removal        | None — removes a check, no path changes                       | Works as-is                                         |
+| `env init`          | Scans `infra/dev/` relative to repo root from `findGitRoot()` | Works as-is — worktree contains full working tree   |
+| Playwright check    | Checks global cache dir (`~/.cache/` or `~/Library/Caches/`)  | Works as-is — not repo-relative                     |
+| Brewfile            | Lives at repo root, used manually                             | Works as-is — `brew bundle` runs from any directory |
+| `doctor --scope`    | Filters the existing tool list                                | Works as-is                                         |
+| Postinstall caching | `npm run doctor` invokes Nx which uses `nx.json` at repo root | Works as-is — Nx resolves workspace root            |
+| Version pinning     | Reads config files relative to `findGitRoot()`                | Works as-is — config files exist in worktree        |
+
+### Key invariant
+
+`findGitRoot()` returns the worktree root (the directory containing the `.git` file), which
+IS the working tree root. All paths in `buildToolDefs()` are constructed as
+`filepath.Join(repoRoot, "apps", ...)` — this resolves correctly in both the main repo and
+worktrees because worktrees contain the full file tree.
 
 ### Version reader for Rust MSRV
 

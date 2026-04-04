@@ -13,7 +13,8 @@ pinning.
 
 This plan implements 8 improvements to reduce onboarding friction, remove dead weight, close
 bootstrap gaps, and tighten version consistency — all while keeping the native (non-Docker)
-development workflow.
+development workflow. All improvements support **both macOS and Ubuntu/Linux** and are fully
+compatible with **git worktrees** (used heavily for AI agent isolation).
 
 **Git Workflow**: Commit to `main` (Trunk Based Development)
 

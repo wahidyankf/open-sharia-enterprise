@@ -58,6 +58,7 @@ Hugo removal and Playwright/version additions).
 - [ ] Create `Brewfile` at repository root with Homebrew-installable tools: `brew` formulas
       (go, jq, dotnet, pyenv, asdf, clojure/tools/clojure) and `cask` (flutter)
 - [ ] Add `Brewfile.lock.json` to `.gitignore`
+- [ ] Verify `brew info dotnet` to confirm correct formula name (may be `dotnet@10`)
 - [ ] Verify `brew bundle check` passes on current machine
 - [ ] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
       `brew bundle` as alternative to individual installs
@@ -91,7 +92,8 @@ Hugo removal and Playwright/version additions).
   - binary: `npx`, args: `["playwright", "--version"]`
   - parseVer: custom `parsePlaywrightVersion` (output is `"Version 1.58.2"`, not bare version)
 - [ ] Implement `checkPlaywrightBrowsers()` function in `checker.go` — check for chromium
-      directory in `~/Library/Caches/ms-playwright/`
+      directory in platform-specific cache (macOS: `~/Library/Caches/ms-playwright/`,
+      Linux: `~/.cache/ms-playwright/`)
 - [ ] Implement custom compare function `comparePlaywright()` that returns `StatusWarning`
       with note `"browsers not installed — run: npx playwright install"` when CLI works but
       browsers are missing
@@ -156,8 +158,9 @@ Hugo removal and Playwright/version additions).
 list.
 
 - [ ] Create `apps/rhino-cli/internal/doctor/fixer.go` with `installStep` type and fix logic
-- [ ] Add `installCmd` field to `toolDef` struct in `tools.go`
-- [ ] Implement install commands for each tool (see tech-docs.md table)
+- [ ] Add `installCmd` field to `toolDef` struct in `tools.go` (takes `platform string` param)
+- [ ] Add platform detection: `runtime.GOOS` → `"darwin"` (macOS) or `"linux"` (Ubuntu)
+- [ ] Implement install commands for each tool with platform branching (see tech-docs.md table)
   - [ ] git: `xcode-select --install`
   - [ ] volta: `curl https://get.volta.sh | bash`
   - [ ] node: `volta install node@{required}`
@@ -176,7 +179,19 @@ list.
   - [ ] dart/flutter: `brew install --cask flutter`
   - [ ] docker: print manual install URL
   - [ ] jq: `brew install jq`
-  - [ ] playwright: `npx playwright install`
+  - [ ] playwright: `npx playwright install` (macOS) / `npx playwright install && npx playwright install-deps` (Linux)
+- [ ] Implement Linux-specific install commands for each tool:
+- [ ] Linux — git: `sudo apt-get install -y git`
+- [ ] Linux — golang: download tarball from go.dev (apt `golang-go` is too old)
+- [ ] Linux — jq: `sudo apt-get install -y jq`
+- [ ] Linux — docker: `sudo apt-get install -y docker.io docker-compose-v2`
+- [ ] Linux — dotnet: `sudo snap install dotnet-sdk --classic --channel=10.0`
+- [ ] Linux — flutter: `sudo snap install flutter --classic`
+- [ ] Linux — clojure: `curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh && chmod +x linux-install.sh && sudo ./linux-install.sh`
+- [ ] Linux — pyenv: install build deps + `curl https://pyenv.run | bash`
+- [ ] Linux — erlang (asdf): install build deps (`build-essential autoconf libncurses-dev
+    libssl-dev ...`) before `asdf install erlang`
+- [ ] Linux — playwright: `npx playwright install && npx playwright install-deps`
 - [ ] Add `--fix` flag to `doctor` cobra command in `cmd/doctor.go`
 - [ ] Add `--dry-run` flag to `doctor` cobra command (only effective with `--fix`)
 - [ ] Implement dry-run mode: print "Would install: {tool} via {command}" without executing
@@ -192,7 +207,7 @@ list.
   - [ ] Test: install fails → error logged, continues to next tool
   - [ ] Test: dependency ordering (volta before node)
 - [ ] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for fix
-      (fix missing tool, skip already-installed, fix failure handling)
+      (fix missing tool, skip already-installed, fix failure handling, dry-run preview)
 - [ ] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [ ] Test manually: run `doctor --fix` with all tools installed — verify "nothing to fix"
 - [ ] Test manually: run `doctor --fix --dry-run` — verify it prints what would be installed
