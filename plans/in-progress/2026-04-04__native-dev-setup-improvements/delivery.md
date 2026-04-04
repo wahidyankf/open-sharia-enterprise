@@ -38,6 +38,8 @@ Hugo removal and Playwright/version additions).
 - [ ] Update minimal scope table in workflow doc if Hugo was listed
 - [ ] Update the workflow doc's YAML frontmatter `inputs` description if it references "19 tools"
       (currently says "full: all 19 tools for all projects")
+- [ ] Update `governance/development/workflow/native-first-toolchain.md` opening paragraph
+      "19 toolchains" → "18 toolchains" (or remove hardcoded count)
 - [ ] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [ ] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
 - [ ] Commit: `refactor(rhino-cli): remove legacy Hugo check from doctor`
@@ -74,8 +76,8 @@ Hugo removal and Playwright/version additions).
 - [ ] Add `--force` flag for overwriting existing `.env` files
 - [ ] Print summary: created count, skipped count
 - [ ] Write unit tests in `apps/rhino-cli/cmd/env_init_test.go` — mock filesystem
-- [ ] Create `specs/apps/rhino/cli/gherkin/env-init.feature` with Gherkin scenarios
-      (bootstrap from examples, skip existing, force overwrite, empty infra/dev)
+- [ ] Create `specs/apps/rhino/cli/gherkin/env-init.feature` with `@env-init` tag and Gherkin
+      scenarios (bootstrap from examples, skip existing, force overwrite, empty infra/dev)
 - [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
 - [ ] Test manually: remove one `.env` file, run `env init`, verify it's created
 - [ ] Test manually: run `env init` again, verify existing file is skipped
@@ -136,7 +138,7 @@ Hugo removal and Playwright/version additions).
 
 **Goal**: Add scope filtering to doctor.
 
-- [ ] Define `Scope` type and `minimalTools` set in `checker.go` (or new `scope.go`)
+- [ ] Define `Scope` type and `minimalTools` set in `checker.go`
 - [ ] Add `Scope` field to `CheckOptions` struct
 - [ ] Filter `buildToolDefs()` output based on scope before running checks
 - [ ] Add `--scope` flag to `doctor` cobra command in `cmd/doctor.go`
@@ -145,6 +147,9 @@ Hugo removal and Playwright/version additions).
 - [ ] Add unit test cases: verify full scope checks all tools (default behavior unchanged)
 - [ ] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for scope
       (minimal scope checks subset, full scope is default)
+- [ ] Add new step constants to `apps/rhino-cli/cmd/steps_common_test.go` for scope scenarios
+- [ ] Register new step implementations in `apps/rhino-cli/cmd/doctor_test.go`
+      `InitializeScenario` function
 - [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
 - [ ] Run `npm run doctor -- --scope minimal` — verify only 7 tools checked
 - [ ] Run `npm run doctor` — verify all tools checked (backward compatible)
@@ -190,7 +195,7 @@ list.
 - [ ] Linux — clojure: `curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh && chmod +x linux-install.sh && sudo ./linux-install.sh`
 - [ ] Linux — pyenv: install build deps + `curl https://pyenv.run | bash`
 - [ ] Linux — erlang (asdf): install build deps (`build-essential autoconf libncurses-dev
-    libssl-dev ...`) before `asdf install erlang`
+  libssl-dev ...`) before `asdf install erlang`
 - [ ] Linux — playwright: `npx playwright install && npx playwright install-deps`
 - [ ] Add `--fix` flag to `doctor` cobra command in `cmd/doctor.go`
 - [ ] Add `--dry-run` flag to `doctor` cobra command (only effective with `--fix`)
@@ -208,6 +213,10 @@ list.
   - [ ] Test: dependency ordering (volta before node)
 - [ ] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for fix
       (fix missing tool, skip already-installed, fix failure handling, dry-run preview)
+- [ ] Add new step constants to `apps/rhino-cli/cmd/steps_common_test.go` for fix/dry-run
+      scenarios (follows existing pattern: `stepDeveloperRunsDoctorCommand` etc.)
+- [ ] Register new step implementations in `apps/rhino-cli/cmd/doctor_test.go`
+      `InitializeScenario` function (godog loads all `.feature` files — unregistered steps fail)
 - [ ] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [ ] Test manually: run `doctor --fix` with all tools installed — verify "nothing to fix"
 - [ ] Test manually: run `doctor --fix --dry-run` — verify it prints what would be installed
@@ -224,6 +233,7 @@ list.
 - [ ] Update CLAUDE.md "Common Development Commands" section to add `npm run doctor -- --fix`
       and `npm run doctor -- --scope minimal`
 - [ ] Update CLAUDE.md tool count if it mentions "19 tools"
+- [ ] Update this plan's own `README.md` "checks 19 tools" in Current State section
 - [ ] Verify `governance/workflows/infra/development-environment-setup.md` is consistent with
       all changes
 - [ ] Run `npm run lint:md` — verify all markdown passes linting

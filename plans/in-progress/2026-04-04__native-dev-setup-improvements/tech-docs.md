@@ -160,6 +160,7 @@ state — no external state file needed.
 5. **`reporter_test.go`**: Remove Hugo `ToolCheck` entry, remove "hugo" from name list, update count 19 → 18
    5b. **`cmd/doctor_test.go`**: Remove "hugo" from `makeAllOKChecks()`, update count 19 → 18 in
    `theJSONListsEveryCheckedToolWithItsStatus()`, remove Hugo-specific test scenarios
+   5c. **`cmd/doctor.go`**: Remove Hugo from the Long help string tool list (line ~26)
 6. **Workflow doc**: Remove Phase 11 (Hugo) from
    `governance/workflows/infra/development-environment-setup.md`
 7. **Workflow doc**: Update tool inventory table (remove row 8, renumber)
@@ -316,7 +317,9 @@ harmless on Linux (no `brew` command, so `brew bundle` simply isn't available).
 
 ### Design
 
-Add a `scope` field to `CheckOptions` and filter `buildToolDefs()` output based on scope.
+Add a `Scope` field to `CheckOptions` in `checker.go` and filter `buildToolDefs()` output
+based on scope. All scope logic lives in `checker.go` (no separate `scope.go` file needed — it's
+a single type, a constant set, and a filter in `CheckAll`).
 
 ```go
 type Scope string

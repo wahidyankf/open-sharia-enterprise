@@ -251,7 +251,7 @@ Feature: Doctor auto-install (R1)
   Scenario: Non-interactive rustup install
     Given rust is not installed
     When I run "rhino-cli doctor --fix"
-    Then rust should be installed via "rustup-init -y" without interactive prompts
+    Then rust should be installed via "curl ...rustup.rs | sh -s -- -y" without interactive prompts
 
   Scenario: Handle version manager tools
     Given volta is installed but node is missing
