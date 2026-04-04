@@ -231,6 +231,36 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 4. **Document Changes**: Explain fixes clearly in fix report
 5. **Traceability**: When adding traceability sections, analyze content carefully
 
+### Licensing Convention Fixes
+
+**Fix Categories**:
+
+1. **Missing LICENSE files**: Copy appropriate LICENSE template to directory
+2. **Wrong license type**: Replace LICENSE with correct type (FSL or MIT)
+3. **Cross-document inconsistency**: Update stale licensing language in docs
+
+**Fix Patterns**:
+
+**Missing LICENSE (CRITICAL)**:
+
+1. Re-validate LICENSE file is truly missing
+2. Determine correct license type per [Licensing Convention](../../governance/conventions/structure/licensing.md)
+3. Copy from reference: `cp LICENSE apps/[dir]/LICENSE` (FSL) or `cp libs/golang-commons/LICENSE apps/[dir]/LICENSE` (MIT)
+4. Confidence: HIGH (mechanical check, no ambiguity)
+
+**Wrong License Type (HIGH)**:
+
+1. Re-validate LICENSE content matches wrong type
+2. Replace with correct type
+3. Confidence: HIGH (clear rule from convention)
+
+**Cross-Document Inconsistency (MEDIUM)**:
+
+1. Re-validate inconsistency still exists
+2. Use LICENSING-NOTICE.md as source of truth
+3. Update stale language in CLAUDE.md, README.md, or governance docs
+4. Confidence: MEDIUM (requires semantic judgment on wording)
+
 ## Software Documentation Fixes
 
 **Scope**: Fixes for findings in `docs/explanation/software-engineering/` (~265 files, ~345k lines)
