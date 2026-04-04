@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     "/**": ["./content/**/*", "./generated/**/*"],
   },
   serverExternalPackages: ["flexsearch"],
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
