@@ -168,28 +168,79 @@ To:
   non-compete for 2 years, then converts to MIT
 ```
 
-## LGPL Dependency Handling
+## Production Dependency Compatibility
 
-The LGPL dependency findings from the 2026-03-26 audit are incorporated here. FSL's non-compete
-clause could be interpreted as a "further restriction" under LGPL Section 7.
+A full dependency audit (2026-04-04) examined all production (non-demo) apps. Demo apps (`a-demo-*`)
+are reference implementations only and are excluded — their dependency licenses do not affect the
+project's licensing posture.
 
-### Resolution Strategy
+### Audit Scope
 
-| Dependency           | License  | Strategy                                                         |
-| -------------------- | -------- | ---------------------------------------------------------------- |
-| `psycopg2-binary`    | LGPL-3.0 | Replace with `psycopg[binary]` v3 (ctypes dynamic linking)       |
-| `@img/sharp-libvips` | LGPL-3.0 | Keep — dynamically loaded native binary, strong linking defense  |
-| Hibernate ORM        | LGPL-2.1 | Keep — JPA SPI dynamic linking, industry-standard interpretation |
-| Logback              | EPL/LGPL | Keep — elect EPL-1.0 side of dual license                        |
+| App               | Ecosystem | Result                                       |
+| ----------------- | --------- | -------------------------------------------- |
+| `ayokoding-web`   | npm       | 1 LGPL transitive (see below)                |
+| `oseplatform-web` | npm       | 1 LGPL transitive (see below)                |
+| `organiclever-fe` | npm       | 1 LGPL transitive (see below)                |
+| `organiclever-be` | .NET/F#   | All permissive (MIT, Apache-2.0, PostgreSQL) |
+| `rhino-cli`       | Go        | MPL-2.0 indirect (see below)                 |
+| `ayokoding-cli`   | Go        | MPL-2.0 indirect (see below)                 |
+| `oseplatform-cli` | Go        | MPL-2.0 indirect (see below)                 |
+| `golang-commons`  | Go        | MPL-2.0 indirect (see below)                 |
+| `elixir-cabbage`  | Elixir    | All permissive (MIT, Apache-2.0)             |
+| `elixir-gherkin`  | Elixir    | All permissive (MIT, Apache-2.0)             |
 
-### psycopg2-binary Replacement Details
+### LGPL-3.0: `@img/sharp-libvips-*` (Next.js Apps)
 
-Replace `psycopg2-binary` with `psycopg[binary]` (psycopg3) in `a-demo-be-python-fastapi`:
+**Dependency chain**: `next` (MIT) → `sharp` (Apache-2.0, optional) →
+`@img/sharp-libvips-*` (LGPL-3.0-or-later, optional, platform-specific)
 
-- Change dependency: `psycopg2-binary>=2.9.0` → `psycopg[binary]>=3.1.0`
-- Change SQLAlchemy dialect: `postgresql+psycopg2://` → `postgresql+psycopg://`
-- psycopg3 uses ctypes to call libpq at runtime (true dynamic linking), which unambiguously
-  satisfies LGPL requirements
+**What it is**: Pre-built `libvips` native shared library binaries (`.so`/`.dylib`) for image
+processing. Sharp calls libvips via its C API at runtime (dynamic linking).
+
+**Why it matters**: LGPL Section 7 prohibits imposing "further restrictions on the exercise of
+the rights granted." FSL's non-compete clause could be interpreted as such a restriction when
+applied to a work containing LGPL-licensed components.
+
+**Resolution**: Set `images.unoptimized: true` in all 3 Next.js production apps' `next.config.ts`.
+This eliminates the sharp dependency entirely:
+
+```typescript
+// next.config.ts
+const nextConfig: NextConfig = {
+  images: {
+    unoptimized: true,
+  },
+  // ... other config
+};
+```
+
+**Why this is safe**:
+
+- **Vercel handles image optimization at the edge** — sharp is only used as a local/self-hosted
+  fallback for `next/image`. On Vercel deployments, images are optimized by Vercel's CDN
+  infrastructure, not by sharp.
+- **No performance loss in production** — Vercel's image optimization is faster and more
+  capable than local sharp processing.
+- **Local development**: Images serve at original size without optimization. This is acceptable
+  for development workflows.
+
+### MPL-2.0: HashiCorp Libraries (Go CLI Apps)
+
+**Packages**: `go-immutable-radix`, `go-memdb`, `golang-lru`
+
+**Dependency chain**: `godog` (MIT, test framework) → HashiCorp libs (MPL-2.0, indirect)
+
+**Why MPL-2.0 is compatible with FSL**:
+
+- MPL-2.0 is **file-level copyleft** — it only requires that modifications to MPL-licensed
+  _source files themselves_ be shared under MPL-2.0
+- Your application code is unaffected — MPL-2.0 explicitly permits combining MPL-licensed code
+  with code under different licenses (Section 3.3: "Larger Work")
+- The FSL non-compete clause applies to your code, not to the MPL-licensed files
+- These are indirect dependencies of a test framework — they are compiled into CLI binaries
+  but serve godog's internal data structures
+
+**Resolution**: No action required. Document in the licensing justifications file for transparency.
 
 ## Third-Party Code
 

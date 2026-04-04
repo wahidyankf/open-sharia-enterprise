@@ -57,12 +57,22 @@ Shariah-compliant enterprise systems. FSL-1.1-MIT balances two goals:
 2. **Openness**: Source code is fully visible from day one, and converts to MIT after 2 years —
    guaranteeing eventual full freedom
 
-### Relationship to LGPL Dependency Work
+### Dependency Compatibility
 
-A prior license audit (2026-03-26) identified 3 LGPL runtime dependencies that could conflict with
-FSL's non-compete clause (LGPL Section 7 prohibits "further restrictions"). Those findings are
-incorporated into [tech-docs.md](./tech-docs.md) and the LGPL mitigation steps are included in
-the [delivery plan](./delivery.md).
+A full dependency audit (2026-04-04) of all **production** (non-demo) apps found:
+
+- **0 GPL/AGPL** dependencies — clean
+- **1 LGPL** dependency — `@img/sharp-libvips` (LGPL-3.0), transitive optional via Next.js →
+  `sharp`. Affects `ayokoding-web`, `oseplatform-web`, and `organiclever-fe`. **Resolution**:
+  set `images.unoptimized: true` in all 3 apps to eliminate sharp entirely (Vercel handles image
+  optimization at the edge anyway)
+- **MPL-2.0** — HashiCorp libs (`go-immutable-radix`, `go-memdb`, `golang-lru`), indirect deps
+  via `godog` in Go CLI apps. File-level copyleft only — no conflict with FSL. No action needed.
+- **All other deps** — MIT, Apache-2.0, BSD, ISC, PostgreSQL License (all permissive)
+
+Demo apps (`a-demo-*`) are excluded from this audit — they are reference implementations only and
+do not ship as products. See [tech-docs.md](./tech-docs.md) for the full audit and
+[delivery.md](./delivery.md) for mitigation steps.
 
 ### Change Date
 

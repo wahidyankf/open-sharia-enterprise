@@ -42,29 +42,35 @@ order. Phase 5 (validation) must be last.
   - `archived/ayokoding-web-hugo/LICENSE` — still MIT (Xin)
 - [ ] Commit: `docs(license): update all references from MIT to FSL-1.1-MIT`
 
-### Phase 3: LGPL Dependency Mitigation
+### Phase 3: Remove LGPL Dependencies from Production Apps
 
-**Goal**: Address LGPL dependencies that could conflict with FSL's non-compete clause.
+**Goal**: Eliminate the only LGPL dependency (`@img/sharp-libvips`) from production Next.js apps by
+disabling server-side image optimization. Vercel handles optimization at the edge, so there is no
+production performance impact.
 
-#### 3a: Replace psycopg2-binary
+#### 3a: Disable sharp in Production Next.js Apps
 
-- [ ] In `a-demo-be-python-fastapi`, replace `psycopg2-binary` with `psycopg[binary]>=3.1.0` in
-      dependency file (`pyproject.toml` or `requirements.txt`)
-- [ ] Update database connection URL dialect: `postgresql+psycopg2://` → `postgresql+psycopg://`
-- [ ] Run `nx run a-demo-be-python-fastapi:test:quick` — verify pass
-- [ ] Run `nx run a-demo-be-python-fastapi:test:integration` — verify database operations work
-- [ ] Commit: `fix(a-demo-be-python-fastapi): replace psycopg2-binary with psycopg3`
+- [ ] In `apps/ayokoding-web/next.config.ts`, set `images.unoptimized: true`
+- [ ] In `apps/oseplatform-web/next.config.ts`, set `images.unoptimized: true`
+- [ ] In `apps/organiclever-fe/next.config.ts`, set `images.unoptimized: true`
+- [ ] Run `nx run ayokoding-web:test:quick` — verify pass
+- [ ] Run `nx run oseplatform-web:test:quick` — verify pass
+- [ ] Run `nx run organiclever-fe:test:quick` — verify pass
+- [ ] Run `nx run ayokoding-web:build` — verify build succeeds without sharp
+- [ ] Run `nx run oseplatform-web:build` — verify build succeeds without sharp
+- [ ] Run `nx run organiclever-fe:build` — verify build succeeds without sharp
+- [ ] Commit: `fix(nextjs): disable server-side image optimization for FSL-1.1-MIT LGPL compliance`
 
-#### 3b: Document LGPL Justifications
+#### 3b: Document Dependency Audit and Licensing
 
-- [ ] Create `docs/explanation/software-engineering/licensing/lgpl-justifications.md`:
-  - License audit methodology (date: 2026-03-26, scope: all 11 ecosystems)
-  - LGPL dependency inventory table
-  - Dynamic linking justification for `@img/sharp-libvips`
-  - Dynamic linking justification for Hibernate ORM
-  - Dual-license election: Logback → EPL-1.0
+- [ ] Create `docs/explanation/software-engineering/licensing/dependency-compatibility.md`:
+  - Audit methodology (date: 2026-04-04, scope: all production apps, ~10 projects)
+  - Production dependency license summary table (all permissive except MPL-2.0 noted below)
+  - Why `images.unoptimized: true` was set (LGPL-3.0 elimination)
+  - MPL-2.0 HashiCorp libs: documented as file-level copyleft, no conflict with FSL
+  - Demo apps (`a-demo-*`) excluded from audit with rationale
 - [ ] Create `docs/explanation/software-engineering/licensing/README.md` — Index file
-- [ ] Commit: `docs(licensing): add LGPL dependency justifications`
+- [ ] Commit: `docs(licensing): add production dependency compatibility audit`
 
 ### Phase 4: Create LICENSING-NOTICE.md (Optional)
 
@@ -91,7 +97,8 @@ FSL-1.1-MIT.
 - [ ] Verify `governance/vision/README.md` reflects FSL-1.1-MIT
 - [ ] Verify third-party LICENSE files are unchanged
 - [ ] Search for stale `"MIT License"` or `"license": "MIT"` references in project-owned files
+- [ ] Verify `images.unoptimized: true` is set in all 3 production Next.js apps
+- [ ] Verify `@img/sharp-libvips` is no longer resolved in production app dependency trees
+- [ ] Verify `docs/explanation/software-engineering/licensing/dependency-compatibility.md` exists
 - [ ] Run `npm run doctor` — verify all tools still OK
 - [ ] Run `npx nx affected -t typecheck lint test:quick` — verify no breakage
-- [ ] Verify `psycopg2-binary` is no longer in `a-demo-be-python-fastapi` dependencies
-      (if Phase 3a is done)

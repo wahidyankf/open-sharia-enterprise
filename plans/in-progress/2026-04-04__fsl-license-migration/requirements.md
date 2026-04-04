@@ -39,17 +39,28 @@ Third-party vendored code must retain its original license:
 - `libs/elixir-gherkin/LICENSE` — MIT (Matt Widmann, 2018)
 - `archived/ayokoding-web-hugo/LICENSE` — MIT (Xin, 2023)
 
-### FR-5: LGPL Dependency Awareness
+### FR-5: Production Dependency Compatibility
 
 The FSL-1.1-MIT license includes a non-compete clause. LGPL Section 7 prohibits "further
-restrictions." The following LGPL dependencies must be addressed (findings from the
-2026-03-26 license audit):
+restrictions." All production (non-demo) app dependencies must be compatible with FSL-1.1-MIT.
 
-| Dependency           | License  | App                       | Resolution                        |
-| -------------------- | -------- | ------------------------- | --------------------------------- |
-| `psycopg2-binary`    | LGPL-3.0 | a-demo-be-python-fastapi  | Replace with `psycopg[binary]` v3 |
-| `@img/sharp-libvips` | LGPL-3.0 | ayokoding-web (Next.js)   | Document dynamic linking defense  |
-| Hibernate ORM        | LGPL-2.1 | a-demo-be-java-springboot | Document JPA SPI dynamic linking  |
+**Scope**: Only production apps are audited. Demo apps (`a-demo-*`) are reference implementations
+and do not ship as products — their dependencies are excluded.
+
+**Audit results (2026-04-04)**:
+
+| Dependency              | License    | Affected Apps                                   | Resolution                                   |
+| ----------------------- | ---------- | ----------------------------------------------- | -------------------------------------------- |
+| `@img/sharp-libvips-*`  | LGPL-3.0   | ayokoding-web, oseplatform-web, organiclever-fe | Remove by setting `images.unoptimized: true` |
+| HashiCorp libs (3 pkgs) | MPL-2.0    | rhino-cli, ayokoding-cli, oseplatform-cli       | No action — file-level copyleft, compatible  |
+| All other deps          | Permissive | All production apps                             | No action needed                             |
+
+**Clean production apps** (no copyleft dependencies at all):
+
+- `organiclever-be` (F#/.NET) — all MIT, Apache-2.0, PostgreSQL License
+- `libs/elixir-cabbage` — MIT (vendored fork)
+- `libs/elixir-gherkin` — MIT (vendored fork)
+- `libs/golang-commons` — MIT, Apache-2.0, BSD (+ MPL-2.0 indirect via godog)
 
 ## Non-Functional Requirements
 
@@ -113,11 +124,16 @@ Feature: Repository is licensed under FSL-1.1-MIT
     Then each contains its original MIT license with original copyright holder
     And none reference FSL-1.1-MIT
 
-  Scenario: LGPL dependencies are documented or replaced
-    Given the LGPL dependency inventory
-    When I check each dependency
-    Then "psycopg2-binary" is replaced with "psycopg[binary]" v3
-    Or all LGPL dependencies have documented dynamic linking justifications
+  Scenario: Production apps have no LGPL dependencies
+    Given the 3 production Next.js apps (ayokoding-web, oseplatform-web, organiclever-fe)
+    When I check the npm dependency tree for LGPL licenses
+    Then "@img/sharp-libvips" is not present as a resolved dependency
+    And "images.unoptimized" is set to "true" in each app's next.config.ts
+
+  Scenario: MPL-2.0 dependencies are documented
+    Given the Go CLI apps (rhino-cli, ayokoding-cli, oseplatform-cli)
+    When I check for copyleft dependencies
+    Then MPL-2.0 HashiCorp libs are documented as file-level copyleft with no FSL conflict
 
   Scenario: No stale MIT references remain in project-owned files
     Given all project-owned markdown and config files
@@ -130,10 +146,10 @@ Feature: Repository is licensed under FSL-1.1-MIT
 
 ## Risk Assessment
 
-| Risk                                            | Likelihood | Impact | Mitigation                                                               |
-| ----------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------ |
-| GitHub does not detect FSL-1.1-MIT              | High       | Low    | Expected; license text is authoritative. Add license badge to README.    |
-| npm warns about unrecognized license            | Medium     | Low    | Use `LicenseRef-FSL-1.1-MIT` or accept the warning.                      |
-| LGPL dependencies conflict with FSL non-compete | Medium     | Medium | Replace `psycopg2-binary`; document dynamic linking for others.          |
-| Contributors confused by license change         | Low        | Low    | Clear README section explaining FSL-1.1-MIT and the 2-year conversion.   |
-| Existing forks retain MIT                       | Certain    | None   | Expected behavior — forks created before the change remain MIT-licensed. |
+| Risk                                           | Likelihood | Impact | Mitigation                                                               |
+| ---------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------ |
+| GitHub does not detect FSL-1.1-MIT             | High       | Low    | Expected; license text is authoritative. Add license badge to README.    |
+| npm warns about unrecognized license           | Medium     | Low    | Use `LicenseRef-FSL-1.1-MIT` or accept the warning.                      |
+| `images.unoptimized` degrades local image perf | Low        | Low    | Vercel handles optimization at the edge; local dev impact negligible.    |
+| Contributors confused by license change        | Low        | Low    | Clear README section explaining FSL-1.1-MIT and the 2-year conversion.   |
+| Existing forks retain MIT                      | Certain    | None   | Expected behavior — forks created before the change remain MIT-licensed. |
