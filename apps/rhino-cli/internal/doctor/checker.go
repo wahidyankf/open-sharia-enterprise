@@ -296,6 +296,55 @@ func readDartSDKVersion(pubspecPath string) (string, error) {
 	return "", fmt.Errorf("environment.sdk not found in pubspec.yaml")
 }
 
+// readRustVersion reads the MSRV from Cargo.toml's rust-version field.
+func readRustVersion(cargoTomlPath string) (string, error) {
+	data, err := os.ReadFile(cargoTomlPath)
+	if err != nil {
+		return "", err
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "rust-version") {
+			parts := strings.SplitN(trimmed, "=", 2)
+			if len(parts) == 2 {
+				ver := strings.TrimSpace(parts[1])
+				ver = strings.Trim(ver, "\"")
+				return ver, nil
+			}
+		}
+	}
+	return "", nil
+}
+
+// readFlutterVersion reads the Flutter constraint from pubspec.yaml's environment.flutter field.
+func readFlutterVersion(pubspecPath string) (string, error) {
+	data, err := os.ReadFile(pubspecPath)
+	if err != nil {
+		return "", err
+	}
+	inEnv := false
+	for _, line := range strings.Split(string(data), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "environment:" {
+			inEnv = true
+			continue
+		}
+		if inEnv {
+			if !strings.HasPrefix(line, " ") && !strings.HasPrefix(line, "\t") && trimmed != "" {
+				break
+			}
+			if strings.HasPrefix(trimmed, "flutter:") {
+				ver := strings.TrimSpace(strings.TrimPrefix(trimmed, "flutter:"))
+				ver = strings.Trim(ver, "\"")
+				ver = strings.TrimPrefix(ver, "^")
+				ver = strings.TrimPrefix(ver, ">=")
+				return strings.TrimSpace(ver), nil
+			}
+		}
+	}
+	return "", nil
+}
+
 // --- Parser functions for new tool version outputs ---
 
 // parsePythonVersion extracts the version from "Python 3.13.1" output.

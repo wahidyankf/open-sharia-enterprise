@@ -117,29 +117,29 @@ Hugo removal and Playwright/version additions).
 - [x] Update Phase 13 in workflow doc to note that doctor now checks for Playwright
 - [x] Run `nx run rhino-cli:test:quick` — verify tests pass
 - [x] Run `npm run doctor` — verify playwright appears in output with correct status
-- [ ] Commit: `feat(rhino-cli): add Playwright browser check to doctor`
+- [x] Commit: `feat(rhino-cli): add Playwright browser check to doctor`
 
 ### Phase 8: Pin Rust and Flutter Versions
 
 **Goal**: Add version requirements for Rust and Flutter.
 
-- [ ] Add `rust-version = "1.80"` (MSRV) to `apps/a-demo-be-rust-axum/Cargo.toml` `[package]`
+- [x] Add `rust-version = "1.80"` (MSRV) to `apps/a-demo-be-rust-axum/Cargo.toml` `[package]`
       section (currently has `edition = "2021"` but no MSRV)
-- [ ] Implement `readRustVersion()` function in `checker.go` — read `rust-version` from
+- [x] Implement `readRustVersion()` function in `checker.go` — read `rust-version` from
       `Cargo.toml`
-- [ ] Add `cargoTomlPath` variable to `buildToolDefs()` in `tools.go`
+- [x] Add `cargoTomlPath` variable to `buildToolDefs()` in `tools.go`
       (`filepath.Join(repoRoot, "apps", "a-demo-be-rust-axum", "Cargo.toml")`)
-- [ ] Update Rust `toolDef` in `tools.go`: change `readReq` to use `readRustVersion(cargoTomlPath)`,
+- [x] Update Rust `toolDef` in `tools.go`: change `readReq` to use `readRustVersion(cargoTomlPath)`,
       change `compare` from `compareExact` to `compareGTE`
-- [ ] Add `flutter: ">=3.41.0"` to `apps/a-demo-fe-dart-flutterweb/pubspec.yaml`
+- [x] Add `flutter: ">=3.41.0"` to `apps/a-demo-fe-dart-flutterweb/pubspec.yaml`
       `environment:` section (currently has only `sdk: ^3.11.1`, no flutter constraint)
-- [ ] Implement `readFlutterVersion()` function in `checker.go` — read `environment.flutter`
+- [x] Implement `readFlutterVersion()` function in `checker.go` — read `environment.flutter`
       from `pubspec.yaml`
-- [ ] Update Flutter `toolDef` in `tools.go`: change `readReq` to use `readFlutterVersion()`,
+- [x] Update Flutter `toolDef` in `tools.go`: change `readReq` to use `readFlutterVersion()`,
       change `compare` from `compareExact` to `compareGTE`
-- [ ] Add test cases for `readRustVersion()` and `readFlutterVersion()` in `checker_test.go`
-- [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
-- [ ] Run `npm run doctor` — verify rust and flutter show `required: >=X.Y` instead of
+- [x] Add test cases for `readRustVersion()` and `readFlutterVersion()` in `checker_test.go`
+- [x] Run `nx run rhino-cli:test:quick` — verify tests pass
+- [x] Run `npm run doctor` — verify rust and flutter show `required: >=X.Y` instead of
       `(no version requirement)`
 - [ ] Commit: `feat(rhino-cli): pin Rust and Flutter version requirements in doctor`
 

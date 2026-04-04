@@ -634,6 +634,7 @@ func setupCheckAllRepo(t *testing.T) string {
 		"apps/a-demo-be-python-fastapi",
 		"apps/a-demo-be-fsharp-giraffe",
 		"apps/a-demo-fe-dart-flutterweb",
+		"apps/a-demo-be-rust-axum",
 	} {
 		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
 			t.Fatalf("failed to create dirs: %v", err)
@@ -647,7 +648,8 @@ func setupCheckAllRepo(t *testing.T) string {
 		"apps/a-demo-be-python-fastapi/.python-version": "3.13\n",
 		".tool-versions":                                "erlang 27.3\nelixir 1.19.5-otp-27\n",
 		"apps/a-demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
-		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
+		"apps/a-demo-be-rust-axum/Cargo.toml":           "[package]\nname = \"test\"\nrust-version = \"1.80\"\n",
+		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n  flutter: \">=3.41.0\"\n",
 	}
 	for relPath, content := range files {
 		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {
@@ -1312,4 +1314,78 @@ func TestRunOneDef_Jq_Found(t *testing.T) {
 	if check.InstalledVersion != "1.8.1" {
 		t.Errorf("expected version %q, got %q", "1.8.1", check.InstalledVersion)
 	}
+}
+
+func TestReadRustVersion(t *testing.T) {
+	t.Run("valid Cargo.toml with rust-version", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "Cargo.toml")
+		content := "[package]\nname = \"test\"\nversion = \"0.1.0\"\nedition = \"2021\"\nrust-version = \"1.80\"\n"
+		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+		got, err := readRustVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "1.80" {
+			t.Errorf("got %q, want %q", got, "1.80")
+		}
+	})
+	t.Run("missing rust-version", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "Cargo.toml")
+		content := "[package]\nname = \"test\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"
+		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+		got, err := readRustVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "" {
+			t.Errorf("got %q, want empty string", got)
+		}
+	})
+	t.Run("missing file", func(t *testing.T) {
+		_, err := readRustVersion("/nonexistent")
+		if err == nil {
+			t.Fatal("expected error")
+		}
+	})
+}
+
+func TestReadFlutterVersion(t *testing.T) {
+	t.Run("valid pubspec with flutter constraint", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "pubspec.yaml")
+		content := "name: test\n\nenvironment:\n  sdk: ^3.11.1\n  flutter: \">=3.41.0\"\n"
+		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+		got, err := readFlutterVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "3.41.0" {
+			t.Errorf("got %q, want %q", got, "3.41.0")
+		}
+	})
+	t.Run("no flutter constraint", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "pubspec.yaml")
+		content := "name: test\n\nenvironment:\n  sdk: ^3.11.1\n"
+		if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+		got, err := readFlutterVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "" {
+			t.Errorf("got %q, want empty string", got)
+		}
+	})
+	t.Run("missing file", func(t *testing.T) {
+		_, err := readFlutterVersion("/nonexistent")
+		if err == nil {
+			t.Fatal("expected error")
+		}
+	})
 }

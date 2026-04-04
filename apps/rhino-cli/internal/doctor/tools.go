@@ -34,6 +34,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
 	globalJSONPath := filepath.Join(repoRoot, "apps", "a-demo-be-fsharp-giraffe", "global.json")
 	pubspecPath := filepath.Join(repoRoot, "apps", "a-demo-fe-dart-flutterweb", "pubspec.yaml")
+	cargoTomlPath := filepath.Join(repoRoot, "apps", "a-demo-be-rust-axum", "Cargo.toml")
 
 	noReq := func() string { return "" }
 
@@ -117,11 +118,11 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "rust",
 			binary:   "rustc",
-			source:   "(no config file)",
+			source:   "apps/a-demo-be-rust-axum/Cargo.toml → rust-version",
 			args:     []string{"--version"},
 			parseVer: parseRustVersion,
-			compare:  compareExact,
-			readReq:  noReq,
+			compare:  compareGTE,
+			readReq:  func() string { v, _ := readRustVersion(cargoTomlPath); return v },
 		},
 		{
 			name:     "cargo-llvm-cov",
@@ -195,11 +196,11 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "flutter",
 			binary:   "flutter",
-			source:   "(no config file)",
+			source:   "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter",
 			args:     []string{"--version"},
 			parseVer: parseFlutterVersion,
-			compare:  compareExact,
-			readReq:  noReq,
+			compare:  compareGTE,
+			readReq:  func() string { v, _ := readFlutterVersion(pubspecPath); return v },
 		},
 		// --- Infrastructure ---
 		{
