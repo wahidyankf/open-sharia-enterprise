@@ -604,7 +604,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 **Domain-Specific Exemptions** (DO NOT flag these):
 
 - `apps-ayokoding-web-developing-content` vs `apps-oseplatform-web-developing-content`
-  - **Reason**: Different platforms, different frameworks (Next.js vs Hugo PaperMod)
+  - **Reason**: Different audiences and content types (educational platform vs project landing page), despite both using Next.js 16
   - **Keep Separate**: Platform-specific skills serve different apps
 
 - `repo-assessing-criticality-confidence` vs `repo-generating-validation-reports`
