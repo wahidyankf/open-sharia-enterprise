@@ -88,10 +88,11 @@ Model selection directly affects agent quality, latency, and resource efficiency
 name: swe-typescript-developer
 description: Expert TypeScript/Node.js developer...
 tools: [Read, Write, Edit, Glob, Grep, Bash]
-# model omitted -- inherits opus (creative reasoning, code generation)
 color: purple
 ---
 ```
+
+Note: `model` field is omitted — inherits opus tier (creative reasoning, code generation). Do not add a YAML comment.
 
 ### Sonnet
 
@@ -109,9 +110,8 @@ color: purple
 
 **Agent examples**:
 
-- **All checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, readme-checker, specs-checker, repo-governance-checker, plan-checker, plan-execution-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker)
-- **All fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, repo-governance-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
-- **docs-file-manager** -- manages file operations (move, rename, delete) following documented structure rules
+- **All checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, docs-tutorial-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, repo-governance-checker, repo-workflow-checker, plan-checker, plan-execution-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker)
+- **All fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, docs-file-manager, readme-fixer, specs-fixer, repo-governance-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
 - **social-linkedin-post-maker** -- generates social media posts following a defined template and tone guidelines
 
 **Frontmatter**: Specify `model: sonnet` explicitly.
@@ -205,9 +205,9 @@ For a checker agent:
 > - Structured report generation following the audit report template
 > - Pattern recognition to identify convention violations across files
 
-For a developer agent:
+For a developer agent (omit model field — inherits opus):
 
-> **Model Selection Justification**: This agent uses `model: sonnet` (inherited opus) because it requires:
+> **Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 >
 > - Advanced reasoning to generate idiomatic code across language paradigms
 > - Multi-step problem decomposition for complex refactoring tasks

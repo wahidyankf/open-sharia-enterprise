@@ -37,7 +37,7 @@ See [Repository Governance Architecture](./repository-governance-architecture.md
 ## 📊 Six-Layer Architecture
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Sky Blue #56B4E9
 graph TD
  L0[Layer 0: Vision<br/>WHY WE EXIST]
  L1[Layer 1: Principles<br/>WHY - Values]
@@ -59,7 +59,7 @@ graph TD
  style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
  style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
  style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L5 fill:#56B4E9,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 ## 📋 Contents
