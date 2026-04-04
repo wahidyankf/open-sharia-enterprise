@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-04-04: Native Dev Setup Improvements](./2026-04-04__native-dev-setup-improvements/README.md) — 8 improvements to rhino-cli doctor: --fix auto-install, Hugo removal, env init, Playwright check, Brewfile, --scope minimal, postinstall caching, Rust/Flutter version pinning. Dual-platform (macOS + Ubuntu), git worktree compatible (Completed: 2026-04-04)
 - [2026-04-02: Specs Structure Consistency](./2026-04-02__specs-structure-consistency/README.md) — Standardize specs directory structure across FE gherkin, Go library, and ts-ui specs. Moved 20 feature files into domain subdirectories, added gherkin/ wrapper to Go library specs, updated all test file references. All 35 affected projects pass (Completed: 2026-04-02)
 - [2026-04-02: Spec-Coverage Full Enforcement](./2026-04-02__spec-coverage-full-enforcement/README.md) — Enforce rhino-cli spec-coverage validate across all 30 Nx projects. Fixed BDD parser incompatibilities in 11 languages, added spec-coverage Nx target to all projects, enforced in pre-push hook and all Test\* CI workflows (Completed: 2026-04-02)
 - [2026-03-31: CI/CD Standardization](./2026-03-31__ci-standardization/README.md) — Standardize CI/CD pipeline across git hooks, GitHub Actions, Docker, and testing infrastructure. Created 11 composite actions, 8 reusable workflows, parallel PR quality gate, ci-conventions governance doc, ci-checker/ci-fixer agents, ci-standards skill, ci-quality-gate workflow. All 17 workstreams completed (Completed: 2026-03-31)
