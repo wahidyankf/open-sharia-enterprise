@@ -7,7 +7,7 @@ updated: 2026-01-25
 
 # Validating Markdown Links
 
-This Skill provides comprehensive guidance for validating markdown links across the repository, including internal link validation, external link verification, Hugo-specific patterns (oseplatform-web), and checker implementation strategies.
+This Skill provides comprehensive guidance for validating markdown links across the repository, including internal link validation, external link verification, and checker implementation strategies.
 
 ## Purpose
 
@@ -67,15 +67,7 @@ Use this Skill when:
 ❌ FAIL: [[file-naming]] ← Obsidian wiki link (not GitHub-compatible)
 ❌ FAIL: [file-naming.md](../meta/file-naming.md) ← Using filename as link text
 
-**Hugo content files** (apps/oseplatform-web/content/):
-
-✅ PASS: [Learn AI](/learn/ai)
-✅ PASS: [Chat with PDF Tutorial](/learn/ai/chat-with-pdf)
-
-❌ FAIL: [Learn AI](/learn/ai.md) ← Should omit .md extension in Hugo
-❌ FAIL: [Learn AI](../ai) ← Should use absolute path in Hugo (starts with /)
-
-**Note**: ayokoding-web is a Next.js app (not Hugo). Its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
+**Note**: Both `apps/ayokoding-web/` and `apps/oseplatform-web/` have migrated to Next.js 16. Their content links are validated by their respective CLI tools (`ayokoding-cli links check`, `oseplatform-cli links check`), not by this Skill's Hugo link rules.
 
 ### Validation Methodology
 
@@ -98,7 +90,7 @@ For each internal link:
 
 1. Resolve relative path from current file location
 2. Check target file exists using filesystem
-3. Validate format (has .md extension for docs/, no extension for Hugo content in oseplatform-web)
+3. Validate format (has .md extension for docs/, governance/, plans/ files)
 4. Check link text quality (descriptive, not filename-based)
 
 ### Common Internal Link Errors
@@ -137,23 +129,7 @@ From: governance/conventions/formatting/linking.md (3 levels deep)
 **Criticality**: MEDIUM - Poor accessibility and readability
 **Detection**: Check if link text matches filename pattern or contains file extension
 
-**Error 5: Hugo link with .md extension**
-
-From: apps/oseplatform-web/content/updates/\_index.md
-❌ FAIL: [Feature Release](/updates/feature-release.md) ← Hugo omits .md
-✅ PASS: [Feature Release](/updates/feature-release)
-
-**Criticality**: HIGH - Hugo won't resolve the link correctly
-**Detection**: Check Hugo content files don't use .md in absolute paths
-
-**Error 6: Hugo link using relative path**
-
-From: apps/oseplatform-web/content/updates/\_index.md
-❌ FAIL: [About](../about) ← Hugo needs absolute paths
-✅ PASS: [About](/about)
-
-**Criticality**: CRITICAL - Breaks navigation when page rendered in different contexts
-**Detection**: Check Hugo content uses absolute paths (start with /)
+_(Note: Hugo-specific error examples (Error 5, Error 6) removed — both oseplatform-web and ayokoding-web have migrated to Next.js 16. See Historical section below.)_
 
 ## External Link Validation
 
@@ -219,33 +195,16 @@ From: apps/oseplatform-web/content/updates/\_index.md
 **Criticality**: MEDIUM - May be temporary network issue
 **Action**: Re-verify after TTL expires, flag if persistent
 
-## Hugo-Specific Link Validation (oseplatform-web only)
+## Historical: Hugo-Specific Link Validation (DEPRECATED)
 
-**Note**: Only `oseplatform-web` uses Hugo. `ayokoding-web` is a Next.js app — its content links are validated by `ayokoding-cli links check`, not by Hugo link rules.
+**Note**: Both `oseplatform-web` and `ayokoding-web` have migrated to Next.js 16. Hugo-specific link rules no longer apply to either site. This section is preserved for historical reference only.
 
-### Hugo Link Patterns
+Both sites' content links are validated by their respective CLI tools, not by Hugo link rules:
 
-Hugo internal links use absolute paths without .md extension:
+- `ayokoding-cli links check` — validates ayokoding-web content links
+- `oseplatform-cli links check` — validates oseplatform-web content links
 
-✅ PASS: [About](/about)
-✅ PASS: [Phase 1 Update](/updates/2026-03-08-phase-1-week-4)
-
-❌ FAIL: [About](../about) ← Should be absolute path
-❌ FAIL: [About](/about.md) ← Should omit .md
-
-### Why Hugo Uses Absolute Paths
-
-Hugo renders the same navigation content in different contexts (sidebar, mobile menu, homepage). Relative paths would resolve incorrectly depending on page context. Absolute paths work consistently across all contexts.
-
-### Validation Differences: Hugo vs. Docs
-
-| Aspect      | Docs/ Files                     | Hugo Content (oseplatform-web)     |
-| ----------- | ------------------------------- | ---------------------------------- |
-| Extension   | MUST include .md                | MUST omit .md                      |
-| Path Type   | Relative (../, ./)              | Absolute (/path)                   |
-| Link Format | [Text](../file.md)              | [Text](/path)                      |
-| Validation  | Check file exists on filesystem | Check file exists in content/ tree |
-| Criticality | CRITICAL if missing .md         | CRITICAL if includes .md           |
+For active sites, apply standard docs/ linking rules: relative paths with `.md` extension.
 
 ## Checker Implementation Patterns
 
@@ -281,7 +240,6 @@ Step 5: Finalize Report (summary, grouped by criticality)
 **CRITICAL** (Must fix before publication):
 
 - Broken internal links (404, file not found)
-- Wrong Hugo link format in oseplatform-web (includes .md or uses relative path)
 - Obsidian wiki links (breaks GitHub compatibility)
 
 **HIGH** (Should fix before publication):
@@ -328,7 +286,7 @@ Finding: [BROKEN] - Internal Link to Non-Existent File
 **Linking Standards**:
 
 - Linking Convention - Complete linking standards
-- Hugo Content Convention - Hugo linking patterns (oseplatform-web only)
+- Hugo Content Convention - Historical Hugo linking patterns (DEPRECATED — both sites now on Next.js 16)
 
 **Validation Standards**:
 

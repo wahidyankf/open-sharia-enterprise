@@ -405,7 +405,7 @@ Exception: `README.md` for index files, `docs/metadata/` files
 ### Linking
 
 GitHub-compatible markdown: `Text` with `.md` extension
-Hugo sites use absolute paths without `.md`
+Next.js sites (ayokoding-web, oseplatform-web) use standard GitHub-compatible markdown links with `.md` extension
 
 **See**: [governance/conventions/formatting/linking.md](./governance/conventions/formatting/linking.md)
 
@@ -482,7 +482,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 **Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer
 
-**Meta**: agent-maker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, social-linkedin-post-maker
+**Meta** _(CLAUDE.md grouping — in [agents/README.md](./.claude/agents/README.md) these are distributed by role: Makers, Checkers, Fixers)_: agent-maker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, social-linkedin-post-maker
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
 

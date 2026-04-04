@@ -299,15 +299,17 @@ Start:  governance/conventions/structure/file-naming.md
 Final path: ../../../docs/tutorials/README.md
 ```
 
-## Hugo Content Linking
+## Historical: Hugo Content Linking (DEPRECATED)
 
-**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-web/` and `apps/oseplatform-web/` uses different linking rules:
+**Note**: Both `apps/ayokoding-web/` and `apps/oseplatform-web/` have migrated to Next.js 16. The Hugo-specific linking rules below no longer apply to active sites. This section is preserved for historical reference only.
 
-- **Hugo internal links** use absolute paths starting with `/` (e.g., `/learn/ai/chat-with-pdf`)
-- **Hugo links omit** the `.md` extension
-- **Why different**: Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage), so relative paths would resolve incorrectly
+**Previous Hugo rules** (no longer applicable):
 
-See [Hugo Content Convention - Shared](../hugo/shared.md) for complete Hugo linking standards applicable to all sites, and [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) or [Hugo Content Convention - OSE Platform](../hugo/ose-platform.md) for site-specific linking patterns.
+- **Hugo internal links** used absolute paths starting with `/` (e.g., `/learn/ai/chat-with-pdf`)
+- **Hugo links omitted** the `.md` extension
+- **Why different**: Hugo rendered the same navigation content in different page contexts (sidebar, mobile menu, homepage), so relative paths would resolve incorrectly
+
+Both sites now follow standard GitHub-compatible markdown linking with `.md` extension. See [Hugo Content Convention - Shared](../hugo/shared.md) for historical Hugo standards.
 
 ## Anchor Links (Same Page)
 

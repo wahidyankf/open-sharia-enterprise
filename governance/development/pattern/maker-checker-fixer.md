@@ -75,12 +75,12 @@ Each role is implemented as a separate agent with specific responsibilities and 
 
 ### Scope
 
-This pattern is used across the following agent families:
+This pattern is used across multiple agent families. See [AI Agents Index](../../../.claude/agents/README.md) for the complete list of agent families using this pattern. Key families include:
 
-1. **repo-rules-\*** - Repository-wide consistency
-2. **ayokoding-web-\*** - Hugo content for ayokoding-web
+1. **repo-governance-\*** - Repository-wide consistency
+2. **apps-ayokoding-web-\*** - Next.js 16 content for ayokoding-web
 3. **docs-tutorial-\*** - Tutorial quality validation
-4. **oseplatform-web-content-\*** - Hugo content for oseplatform-web
+4. **apps-oseplatform-web-content-\*** - Next.js 16 content for oseplatform-web
 5. **readme-\*** - README quality standards
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure
@@ -109,7 +109,7 @@ This pattern is used across the following agent families:
 | Agent                               | Creates/Updates                                    | Also Manages                                      | Tools Used            |
 | ----------------------------------- | -------------------------------------------------- | ------------------------------------------------- | --------------------- |
 | repo-governance-maker               | Convention docs, AGENTS.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
-| apps-ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         | Write, Edit           |
+| apps-ayokoding-web-general-maker    | General Next.js learning content, blog posts       | Navigation files, overview pages, indices         | Write, Edit           |
 | apps-ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
 | docs-tutorial-maker                 | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
 | apps-oseplatform-web-content-maker  | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
@@ -130,7 +130,7 @@ This pattern is used across the following agent families:
 **Example Workflow**:
 
 ```markdown
-User: "Add a new Hugo tutorial to ayokoding-web about TypeScript generics"
+User: "Add a new tutorial to ayokoding-web about TypeScript generics"
 
 Maker Agent (apps-ayokoding-web-general-maker):
 
@@ -168,7 +168,7 @@ Maker Agent (apps-ayokoding-web-general-maker):
 | Agent                                 | Validates                                       | Generates Report                                                |
 | ------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
 | repo-governance-checker               | AGENTS.md, agents, conventions, documentation   | `repo-rules__{uuid-chain}__{timestamp}__audit.md`               |
-| apps-ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{uuid-chain}__{timestamp}__audit.md`            |
+| apps-ayokoding-web-general-checker    | General Next.js content (frontmatter, links)    | `ayokoding-web__{uuid-chain}__{timestamp}__audit.md`            |
 | apps-ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
 | docs-tutorial-checker                 | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{uuid-chain}__{timestamp}__audit.md`            |
 | apps-oseplatform-web-content-checker  | Platform content (structure, formatting, links) | `oseplatform-web__{uuid-chain}__{timestamp}__audit.md`          |
@@ -207,7 +207,7 @@ Checker Agent (apps-ayokoding-web-general-checker):
 1. Reads content/en/learn/swe/programming-languages/typescript/generics.md
 2. Validates frontmatter (date format, required fields, weight ordering)
 3. Checks content structure (heading hierarchy, link format)
-4. Validates Hugo conventions (absolute paths, no .md extension)
+4. Validates Next.js content conventions (link format, frontmatter)
 5. Checks content quality (alt text, accessible colors, etc.)
 6. Generates audit report: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
 7. Reports findings in conversation (summary only)
@@ -236,12 +236,12 @@ Checker Agent (apps-ayokoding-web-general-checker):
 
 **Examples**:
 
-| Agent                               | Fixes                                              | Generates Report                                              | Tools Used            |
-| ----------------------------------- | -------------------------------------------------- | ------------------------------------------------------------- | --------------------- |
-| repo-governance-fixer               | Convention violations from repo-governance-checker | `repo-rules__{uuid-chain}__{timestamp}__fix.md`               | Bash (not Edit/Write) |
-| apps-ayokoding-web-general-fixer    | General Hugo content issues from general-checker   | `ayokoding-web__{uuid-chain}__{timestamp}__fix.md`            | Edit, Write, Bash     |
-| apps-ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` | Edit, Write, Bash     |
-| readme-fixer                        | README quality issues from readme-checker          | `readme__{uuid-chain}__{timestamp}__fix.md`                   | Edit, Write, Bash     |
+| Agent                               | Fixes                                               | Generates Report                                              | Tools Used            |
+| ----------------------------------- | --------------------------------------------------- | ------------------------------------------------------------- | --------------------- |
+| repo-governance-fixer               | Convention violations from repo-governance-checker  | `repo-rules__{uuid-chain}__{timestamp}__fix.md`               | Bash (not Edit/Write) |
+| apps-ayokoding-web-general-fixer    | General Next.js content issues from general-checker | `ayokoding-web__{uuid-chain}__{timestamp}__fix.md`            | Edit, Write, Bash     |
+| apps-ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker  | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` | Edit, Write, Bash     |
+| readme-fixer                        | README quality issues from readme-checker           | `readme__{uuid-chain}__{timestamp}__fix.md`                   | Edit, Write, Bash     |
 
 **Note**: `repo-governance-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
 
@@ -379,7 +379,7 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 ## Agent Families
 
-### 1. repo-rules-\* (Repository Consistency)
+### 1. repo-governance-\* (Repository Consistency)
 
 **Domain**: Repository-wide consistency across agents, conventions, AGENTS.md, and documentation
 
@@ -401,17 +401,17 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 3. repo-governance-fixer: Fix non-compliant files found in audit
 ```
 
-### 2. ayokoding-web-\* (Hugo Content for ayokoding-web)
+### 2. apps-ayokoding-web-\* (Next.js 16 Content for ayokoding-web)
 
-**Domain**: Hugo content for ayokoding-web (Hextra theme) - learning content, blog posts, by-example tutorials
+**Domain**: Next.js 16 content for ayokoding-web (App Router, TypeScript, tRPC) - learning content, blog posts, by-example tutorials
 
 **Agents (General/By-Example/In-the-Field)**:
 
-- **apps-ayokoding-web-general-maker** (🟦 Maker) - Creates general Hugo content following conventions
+- **apps-ayokoding-web-general-maker** (🟦 Maker) - Creates general Next.js learning content following conventions
 - **apps-ayokoding-web-by-example-maker** (🟦 Maker) - Creates by-example tutorials with annotated code
-- **apps-ayokoding-web-general-checker** (🟩 Checker) - Validates general Hugo frontmatter, links, quality
+- **apps-ayokoding-web-general-checker** (🟩 Checker) - Validates general Next.js content (frontmatter, links, quality)
 - **apps-ayokoding-web-by-example-checker** (🟩 Checker) - Validates by-example tutorial quality (coverage, annotations)
-- **apps-ayokoding-web-general-fixer** (🟨 Fixer) - Fixes general Hugo content issues
+- **apps-ayokoding-web-general-fixer** (🟨 Fixer) - Fixes general Next.js content issues
 - **apps-ayokoding-web-by-example-fixer** (🟨 Fixer) - Fixes by-example tutorial issues
 - **apps-ayokoding-web-in-the-field-maker** (🟦 Maker) - Creates in-the-field tutorials from real-world experiences
 - **apps-ayokoding-web-in-the-field-checker** (🟩 Checker) - Validates in-the-field tutorial quality
@@ -467,9 +467,9 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 **Note**: docs-tutorial-fixer applies objective/mechanical fixes (missing sections, format violations) automatically. Subjective narrative quality improvements (flow, engagement, tone) require human judgment and manual review.
 
-### 4. oseplatform-web-content-\* (Hugo Content for oseplatform-web)
+### 4. apps-oseplatform-web-content-\* (Next.js 16 Content for oseplatform-web)
 
-**Domain**: Hugo content for oseplatform-web (PaperMod theme) - platform updates, about pages
+**Domain**: Next.js 16 content for oseplatform-web (App Router, TypeScript, tRPC) - platform updates, about pages
 
 **Agents**:
 
@@ -628,7 +628,7 @@ User: "Fix issues from the latest audit report" → Use FIXER (validation-driven
 - PASS: New content created from scratch
 - PASS: Major refactoring or updates
 - PASS: Before publishing to production
-- PASS: Complex content (tutorials, Hugo content)
+- PASS: Complex content (tutorials, Next.js web content)
 - PASS: Critical files (AGENTS.md, convention docs)
 
 **Best Practice**: When in doubt, run the checker. Validation is fast and prevents issues.
@@ -717,7 +717,7 @@ Checker: Improved accuracy in future runs
 
 Pattern scales across **multiple domains** without reinventing the workflow:
 
-- Same pattern for repo rules, Hugo content, tutorials, READMEs
+- Same pattern for repo rules, Next.js web content, tutorials, READMEs
 - Consistent user experience across all content types
 - New families can adopt pattern easily
 
@@ -734,7 +734,7 @@ The maker-checker-fixer pattern integrates with repository conventions:
 | [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
 | [Repository Validation Methodology](../quality/repository-validation.md)    | Standard validation patterns used by checker/fixer              |
 | [Content Quality Principles](../../conventions/writing/quality.md)          | What checkers validate (quality standards)                      |
-| [Hugo Content Convention](../../conventions/hugo/shared.md)                 | What ayokoding/ose-platform makers/checkers enforce             |
+| [Hugo Content Convention](../../conventions/hugo/shared.md)                 | Historical Hugo standards (both sites now on Next.js 16)        |
 | [Tutorial Convention](../../conventions/tutorials/general.md)               | What docs-tutorial-maker/checker enforce                        |
 | [README Quality Convention](../../conventions/writing/readme-quality.md)    | What readme-maker/checker enforce                               |
 | [Temporary Files Convention](../infra/temporary-files.md)                   | Where checker/fixer reports are stored                          |
@@ -807,9 +807,9 @@ If verification fails, log the fix as FAILED (not applied). Do NOT log as "fixed
 **Domain-Specific Standards**:
 
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal content standards
-- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specifics
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web specifics
+- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Historical Hugo standards (DEPRECATED — both sites migrated to Next.js 16)
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - Historical ayokoding-web Hugo specifics (DEPRECATED)
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - Historical oseplatform-web Hugo specifics (DEPRECATED)
 - [Tutorial Convention](../../conventions/tutorials/general.md) - Tutorial quality standards
 - [README Quality Convention](../../conventions/writing/readme-quality.md) - README standards
 
@@ -818,11 +818,11 @@ If verification fails, log the fix as FAILED (not applied). Do NOT log as "fixed
 - `.claude/agents/repo-governance-maker.md` - Example maker agent
 - `.claude/agents/repo-governance-checker.md` - Example checker agent
 - `.claude/agents/repo-governance-fixer.md` - Example fixer agent
-- `.claude/agents/apps-ayokoding-web-general-maker.md` - General Hugo content maker
+- `.claude/agents/apps-ayokoding-web-general-maker.md` - General Next.js content maker
 - `.claude/agents/apps-ayokoding-web-by-example-maker.md` - By-example tutorial maker
-- `.claude/agents/apps-ayokoding-web-general-checker.md` - General Hugo content checker
+- `.claude/agents/apps-ayokoding-web-general-checker.md` - General Next.js content checker
 - `.claude/agents/apps-ayokoding-web-by-example-checker.md` - By-example tutorial checker
-- `.claude/agents/apps-ayokoding-web-general-fixer.md` - General Hugo content fixer
+- `.claude/agents/apps-ayokoding-web-general-fixer.md` - General Next.js content fixer
 - `.claude/agents/apps-ayokoding-web-by-example-fixer.md` - By-example tutorial fixer
 
 ---

@@ -264,12 +264,12 @@ Vercel automatically:
 
 | Aspect              | organiclever-fe          | ayokoding-web                  | oseplatform-web         |
 | ------------------- | ------------------------ | ------------------------------ | ----------------------- |
-| **Framework**       | Next.js 16 (App Router)  | Next.js 16 (App Router)        | Hugo (PaperMod theme)   |
-| **Language**        | TypeScript / React 19    | TypeScript / React 19          | Markdown / Go templates |
-| **Styling**         | TailwindCSS + Radix UI   | TailwindCSS                    | PaperMod built-in       |
+| **Framework**       | Next.js 16 (App Router)  | Next.js 16 (App Router)        | Next.js 16 (App Router) |
+| **Language**        | TypeScript / React 19    | TypeScript / React 19          | TypeScript / React 19   |
+| **Styling**         | TailwindCSS + Radix UI   | TailwindCSS                    | TailwindCSS             |
 | **Auth**            | Cookie-based sessions    | None                           | None                    |
-| **Data**            | JSON files + API routes  | tRPC + database                | Markdown content files  |
-| **Build**           | Next.js (Vercel)         | Next.js (Vercel)               | Hugo SSG (Vercel)       |
+| **Data**            | JSON files + API routes  | tRPC + database                | tRPC + database         |
+| **Build**           | Next.js (Vercel)         | Next.js (Vercel)               | Next.js (Vercel)        |
 | **Prod Branch**     | prod-organiclever-fe     | prod-ayokoding-web             | prod-oseplatform-web    |
 | **Languages**       | English                  | Bilingual (Indonesian/English) | English only            |
 | **Content Types**   | Landing + promo pages    | Tutorials, essays, videos      | Updates, about page     |

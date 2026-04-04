@@ -105,7 +105,7 @@ Vision: "Accessible to everyone"
 Principle: Accessibility First
     ↓ governs
 Convention: Color Accessibility Convention
-Development: Hugo Development Convention (semantic HTML)
+Development: Hugo Development Convention (semantic HTML — DEPRECATED, both sites now Next.js 16)
 ```
 
 ## Layer 2: Conventions (WHAT - Documentation Rules)
@@ -119,7 +119,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - docs/ directory (all markdown)
-- ayokoding-web (Next.js), oseplatform-web (Hugo)
+- ayokoding-web (Next.js), oseplatform-web (Next.js)
 - plans/ directory
 - README files
 
@@ -148,7 +148,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - Source code (JS, TS, future: Java, Kotlin, Python)
-- Hugo themes and layouts
+- Next.js 16 web applications (ayokoding-web, oseplatform-web)
 - Build systems and tooling
 - AI agents (.claude/agents/ primary, .opencode/agent/ auto-generated secondary)
 - Git workflows

@@ -343,7 +343,7 @@ Checker:
 - `Write` for fix report generation
 - `Bash` for timestamps
 
-**Color**: Purple (fixer agents)
+**Color**: Yellow (fixer agents)
 
 **When to Use Fixer**:
 
@@ -647,12 +647,12 @@ Fixer:
 
 ## Agent Families Using This Pattern
 
-Seven agent families implement this pattern:
+Multiple agent families implement this pattern. See [AI Agents Index](../../../.claude/agents/README.md) for the complete list. Key families include:
 
 1. **repo-governance-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Content (ayokoding-web, Next.js)
 3. **docs-tutorial-\*** - Tutorial quality
-4. **apps-oseplatform-web-content-\*** - Hugo content (oseplatform-web)
+4. **apps-oseplatform-web-content-\*** - Next.js 16 content (oseplatform-web)
 5. **readme-\*** - README quality
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure
@@ -661,7 +661,7 @@ Each family has:
 
 - **Maker** (Blue) - Creates/updates content
 - **Checker** (Green) - Validates, generates audits
-- **Fixer** (Purple/Yellow) - Applies validated fixes
+- **Fixer** (Yellow) - Applies validated fixes
 
 ## Best Practices
 
