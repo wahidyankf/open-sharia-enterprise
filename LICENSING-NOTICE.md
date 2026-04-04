@@ -33,10 +33,17 @@ freely use the same code for an educational platform, an enterprise tool, or any
 purpose. The competition boundary is defined by what each specific application does, not by a broad
 umbrella term.
 
+### Specs and Contracts (FSL-1.1-MIT)
+
+The `specs/` directory has its own FSL-1.1-MIT LICENSE file. Specs contain product blueprints
+(Gherkin feature files, OpenAPI contracts, C4 architecture models) that define product behavior —
+including specs for demo apps and shared libraries. All specs are FSL-licensed regardless of whether
+the corresponding code is MIT.
+
 ### MIT-Licensed Code (No Restrictions)
 
-All shared libraries and reference/demo applications are licensed under MIT with no competing-use
-restrictions:
+Shared libraries and reference/demo applications are licensed under MIT with no competing-use
+restrictions, **unless explicitly overridden** by a per-directory LICENSE file stating otherwise.
 
 **Shared Libraries** (`libs/`):
 
@@ -44,6 +51,8 @@ restrictions:
 - `ts-ui`, `ts-ui-tokens` — TypeScript UI component libraries
 - `clojure-openapi-codegen`, `elixir-openapi-codegen` — Code generation libraries
 - `elixir-cabbage`, `elixir-gherkin` — Elixir testing libraries (MIT, original authors)
+
+A new library defaults to MIT. To override, place a different LICENSE file in the library directory.
 
 **Demo/Reference Applications** (`apps/a-demo-*`):
 
@@ -58,7 +67,6 @@ The following fall under the root FSL-1.1-MIT license (no separate per-directory
 - **CLI tools**: `rhino-cli`
 - **E2E test suites**: `*-e2e` apps
 - **Documentation**: `docs/`, `governance/`, `plans/`
-- **Specs and contracts**: `specs/`
 - **AI agent configuration**: `.claude/`, `.opencode/`
 
 ## What Is FSL-1.1-MIT?

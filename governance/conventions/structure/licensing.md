@@ -79,14 +79,20 @@ These directories contain product-specific code with competing-use restrictions 
 
 The standard FSL-1.1-MIT template defines "the Software" as the code included with the license. Placing the LICENSE file inside a specific application directory naturally scopes the competing-use restriction to that application's domain without modifying the template text.
 
-#### Shared Libraries (MIT)
+#### Specs and Contracts (FSL-1.1-MIT)
 
-All directories under `libs/` MUST use the MIT license:
+The `specs/` directory MUST have its own FSL-1.1-MIT LICENSE file at its root. Specs contain product blueprints (Gherkin feature files, OpenAPI contracts, C4 architecture models) that define product behavior. All specs are FSL-licensed regardless of whether the corresponding implementation code is MIT-licensed (e.g., demo app specs are FSL even though demo app code is MIT).
+
+#### Shared Libraries (MIT, unless overridden)
+
+Directories under `libs/` default to the MIT license, unless explicitly overridden by a per-directory LICENSE file stating otherwise:
 
 - `libs/golang-commons/`, `libs/hugo-commons/` -- Go utility libraries
 - `libs/ts-ui/`, `libs/ts-ui-tokens/` -- TypeScript UI component libraries
 - `libs/clojure-openapi-codegen/`, `libs/elixir-openapi-codegen/` -- Code generation libraries
 - `libs/elixir-cabbage/`, `libs/elixir-gherkin/` -- Elixir testing libraries (MIT, original authors)
+
+A new library defaults to MIT. To override, place a different LICENSE file (e.g., FSL-1.1-MIT) in the library directory and document the reason in LICENSING-NOTICE.md.
 
 #### Demo and Reference Applications (MIT)
 
@@ -99,7 +105,6 @@ The root `LICENSE` file MUST remain FSL-1.1-MIT. It serves as the fallback for a
 - Internal CLI tools without their own LICENSE file (e.g., `apps/rhino-cli/`)
 - E2E test suites (`apps/*-e2e/`)
 - Documentation (`docs/`, `governance/`, `plans/`)
-- Specs and contracts (`specs/`)
 - AI agent configuration (`.claude/`, `.opencode/`)
 
 ### FSL-1.1-MIT Template Requirements
