@@ -181,13 +181,17 @@ For complete principles, see [governance/principles/](./governance/principles/RE
 
 ## 📜 License
 
-**FSL-1.1-MIT (Functional Source License)** — Source-available with a non-compete clause.
-You can use, modify, and distribute this software for any purpose except offering a competing
-commercial Sharia-compliant enterprise platform.
+This repository uses **per-directory licensing** with domain-scoped competition protection:
 
-The license converts to MIT on a **rolling per-version basis**: each commit becomes MIT-licensed
-2 years after its first public distribution. Code from 2026-04-04 becomes MIT on 2028-04-04,
-code from 2026-06-15 becomes MIT on 2028-06-15, and so on. To use a fully MIT version, check
-out any commit older than 2 years.
+- **Product apps** ([FSL-1.1-MIT](./LICENSE)): Each product has its own LICENSE scoping the
+  competing-use restriction to its domain — `ayokoding-*` (educational coding platform),
+  `organiclever-*` (non-enterprise productivity), `oseplatform-*` (enterprise platform site)
+- **Shared libraries and demo apps** ([MIT](./libs/golang-commons/LICENSE)): All `libs/` and
+  `apps/a-demo-*` are MIT-licensed with no restrictions
 
-See [LICENSE](./LICENSE) for the full license text.
+The FSL-1.1-MIT license converts to MIT on a **rolling per-version basis**: each commit becomes
+MIT-licensed 2 years after its first public distribution.
+
+See [LICENSING-NOTICE.md](./LICENSING-NOTICE.md) for full details |
+[LICENSE](./LICENSE) for the root license text |
+[Licensing Convention](./governance/conventions/structure/licensing.md) for internal rules.
