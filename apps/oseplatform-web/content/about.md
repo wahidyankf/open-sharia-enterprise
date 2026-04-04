@@ -178,7 +178,7 @@ Our tech stack reflects the progressive complexity approach — chosen for prove
 - **Backend API** - Java + Spring Boot (REST API, enterprise-grade, battle-tested)
 - **Web Frontend** - Next.js 16 + TypeScript (React, App Router, modern full-stack)
 - **Mobile & Web App** - Flutter + Dart (Android, iOS, and web from a single codebase)
-- **Educational Sites** - Hugo static sites (ayokoding.com, oseplatform.com)
+- **Educational Sites** - Next.js 16 (ayokoding.com, oseplatform.com)
 - **CLI Tools** - Go (ayokoding-cli, rhino-cli — automation and repository management)
 - **Future additions** - Elixir (middleware), Kotlin (JVM alternative) under evaluation for Phase 2
 

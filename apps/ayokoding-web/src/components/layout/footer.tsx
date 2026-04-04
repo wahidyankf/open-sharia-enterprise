@@ -11,7 +11,17 @@ export function Footer({ locale }: FooterProps) {
   return (
     <footer className="border-t border-border py-6">
       <div className="mx-auto flex max-w-screen-2xl flex-col items-center gap-2 px-4 text-sm text-muted-foreground sm:flex-row sm:justify-between">
-        <p>&copy; {year} AyoKoding</p>
+        <p>
+          &copy; {year} AyoKoding &middot;{" "}
+          <a
+            href="https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground"
+          >
+            FSL-1.1-MIT
+          </a>
+        </p>
         <a
           href="https://github.com/wahidyankf/open-sharia-enterprise"
           target="_blank"

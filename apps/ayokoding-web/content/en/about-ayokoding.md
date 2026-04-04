@@ -33,6 +33,10 @@ This creates a win-win situation: the Open Sharia Enterprise project benefits fr
 
 So when you read articles on AyoKoding about system design, architectural patterns, or best practices - know that they come from the real struggle of building something complex, not just theoretical knowledge.
 
+## License
+
+AyoKoding is part of the [Open Sharia Enterprise](https://github.com/wahidyankf/open-sharia-enterprise) project, which uses **per-directory licensing**. The AyoKoding website code is licensed under **FSL-1.1-MIT** (Functional Source License), which converts to MIT on a rolling basis — each commit becomes MIT-licensed 2 years after its first public distribution. Shared libraries and demo code are MIT-licensed. See [LICENSING-NOTICE.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSING-NOTICE.md) for full details.
+
 ## Stay Connected
 
 Beyond written articles, AyoKoding also features a [YouTube channel](https://www.youtube.com/ayokoding) where I create videos to help you better understand and engage with the discussed topics (in Bahasa).

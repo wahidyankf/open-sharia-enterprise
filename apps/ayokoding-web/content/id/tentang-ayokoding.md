@@ -33,6 +33,10 @@ Ini win-win solution: proyek Open Sharia Enterprise dapat manfaat dari dokumenta
 
 Jadi ketika kalian baca artikel di AyoKoding tentang system design, architectural patterns, atau best practices - ingat bahwa itu semua adalah hasil dari perjuangan nyata membangun sesuatu yang kompleks, bukan sekadar teori.
 
+## Lisensi
+
+AyoKoding adalah bagian dari proyek [Open Sharia Enterprise](https://github.com/wahidyankf/open-sharia-enterprise), yang menggunakan **lisensi per-direktori**. Kode website AyoKoding dilisensikan di bawah **FSL-1.1-MIT** (Functional Source License), yang berkonversi menjadi MIT secara bergulir — setiap commit menjadi berlisensi MIT 2 tahun setelah distribusi publik pertamanya. Library bersama dan kode demo menggunakan lisensi MIT. Lihat [LICENSING-NOTICE.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSING-NOTICE.md) untuk detail lengkap.
+
 ## Tetap Terhubung
 
 Selain website, AyoKoding juga tersedia di YouTube dengan channel [https://www.youtube.com/ayokoding](https://www.youtube.com/ayokoding). Kalian bisa menemukan video-video tentang software engineering dan topik seputar teknologi lainnya di sana.

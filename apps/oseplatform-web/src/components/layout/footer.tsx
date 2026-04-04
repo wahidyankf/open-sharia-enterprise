@@ -12,7 +12,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="hover:text-foreground"
           >
-            MIT License
+            FSL-1.1-MIT
           </a>
         </p>
         <a href="https://ayokoding.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
