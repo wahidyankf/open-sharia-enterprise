@@ -12,7 +12,7 @@ inputs:
   - name: scope
     type: enum
     values: [full, minimal]
-    description: "full: all 18 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)"
+    description: "full: all 19 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)"
     required: false
     default: full
 outputs:
@@ -46,7 +46,7 @@ confirmation and shell access.
 
 ## Tool Inventory
 
-All tools checked by `rhino-cli doctor`, plus Playwright browsers:
+All tools checked by `rhino-cli doctor`:
 
 | #   | Tool           | Required Version      | Version Source                                | Manager        |
 | --- | -------------- | --------------------- | --------------------------------------------- | -------------- |
@@ -54,18 +54,18 @@ All tools checked by `rhino-cli doctor`, plus Playwright browsers:
 | 2   | volta          | Any                   | (no config file)                              | curl script    |
 | 3   | node           | 24.13.1               | package.json > volta.node                     | Volta          |
 | 4   | npm            | 11.10.1               | package.json > volta.npm                      | Volta          |
-| 5   | java           | 25+ (major)           | apps/a-demo-be-java-springboot/pom.xml        | SDKMAN         |
+| 5   | java           | 25+ (major)           | apps/organiclever-be-jasb/pom.xml             | SDKMAN         |
 | 6   | maven          | Any                   | (no config file)                              | SDKMAN         |
 | 7   | golang         | >= go.mod directive   | apps/rhino-cli/go.mod                         | Brew/asdf      |
 | 8   | python         | >= .python-version    | apps/a-demo-be-python-fastapi/.python-version | pyenv/System   |
-| 9   | rust (rustc)   | Any                   | (no config file)                              | rustup         |
+| 9   | rust (rustc)   | >= 1.80 (MSRV)        | apps/a-demo-be-rust-axum/Cargo.toml           | rustup         |
 | 10  | cargo-llvm-cov | Any                   | (no config file)                              | cargo          |
 | 11  | elixir         | >= 1.19.5             | .tool-versions                                | asdf           |
 | 12  | erlang         | >= 27 (major)         | .tool-versions                                | asdf           |
 | 13  | dotnet         | >= global.json major  | apps/a-demo-be-fsharp-giraffe/global.json     | Brew/Script    |
 | 14  | clojure (clj)  | Any                   | (no config file)                              | Brew           |
 | 15  | dart           | >= pubspec.yaml SDK   | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Flutter        |
-| 16  | flutter        | Any                   | (no config file)                              | Manual/Brew    |
+| 16  | flutter        | >= 3.41.0             | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Manual/Brew    |
 | 17  | docker         | Any                   | (no config file)                              | Docker Desktop |
 | 18  | jq             | Any                   | (no config file)                              | Brew           |
 | 19  | playwright     | (matches npm version) | node_modules                                  | npx            |
@@ -440,7 +440,7 @@ Required for: `a-demo-fe-dart-flutterweb`
 
 ```bash
 # macOS
-brew install flutter
+brew install --cask flutter
 
 # Or manual install: https://docs.flutter.dev/get-started/install
 ```
@@ -648,6 +648,9 @@ This covers: pre-commit hooks, pre-push hooks, TypeScript/Go unit tests, and bas
 - **No Windows support**: Windows is not a supported development platform for this repository.
 - **CI parity**: CI uses Docker containers with all tools pre-installed. This workflow ensures
   your local environment matches CI capabilities.
+- **Git worktree compatible**: All commands (`doctor`, `doctor --fix`, `env init`) work
+  correctly from git worktrees. `findGitRoot()` handles both `.git` directories and worktree
+  `.git` files.
 
 ## Principles Implemented/Respected
 
