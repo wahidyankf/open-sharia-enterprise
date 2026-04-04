@@ -251,3 +251,76 @@ When validating delivery checklists (Step 5), enforce these granularity rules:
 - **Phase transitions must have explicit verification steps** — e.g., "Verify `nx run app:typecheck` passes"
 - **Maximum nesting depth: 2 levels** — top-level checkbox with sub-checkboxes, no deeper
 - **Sub-items should be independently checkable** — completing a parent doesn't auto-complete children
+
+### 8. Operational Readiness Validation (Step 5b — MANDATORY)
+
+After validating delivery checklist structure (Step 5), verify the plan includes **operational readiness** items. These are CRITICAL — plans missing them are incomplete regardless of other quality.
+
+#### What to Validate
+
+1. **Local Quality Gates Before Push**
+   - Plan MUST include steps to run affected tests/checks locally before pushing
+   - Must reference the correct Nx commands: `nx affected -t typecheck lint test:quick spec-coverage`
+   - Must mention the blast radius concept — only affected projects, not the entire repo
+   - Must specify all relevant test levels: unit, integration, e2e (as applicable)
+   - Must include linting and typecheck steps
+
+2. **Post-Push CI/CD Verification**
+   - Plan MUST include steps to manually verify related GitHub Actions/workflows pass after pushing to main
+   - Must specify WHICH workflows to monitor (not just "check CI")
+   - Must include instructions to watch for failures and fix them before moving on
+
+3. **Development Environment Setup**
+   - Plan MUST include steps to set up the development/execution environment for the features being built
+   - Must cover: dependency installation, environment variables, database setup, dev server startup — whatever is needed
+   - Must be specific enough that someone unfamiliar can follow them
+
+4. **Fix-All-Issues Instruction**
+   - Plan MUST instruct the executor to fix ALL issues found during quality gates, even those NOT related to the current changes
+   - Rationale: root cause orientation principle — proactively fix preexisting errors encountered during work
+   - Must explicitly state: "Fix all failures, not just those caused by your changes"
+
+5. **Thematic Commit Guidance**
+   - Plan MUST instruct the executor to commit changes thematically — grouping related changes into logically cohesive commits
+   - Must reference Conventional Commits format
+   - Must instruct splitting different domains/concerns into separate commits
+   - Must NOT bundle unrelated fixes into a single commit
+
+#### Finding Severity
+
+- Missing ALL operational readiness items: **CRITICAL**
+- Missing individual items (1-5 above): **HIGH** per missing item
+- Items present but vague/incomplete: **MEDIUM**
+
+### 9. Manual Behavioral Assertion Validation (Step 5c — MANDATORY)
+
+After validating operational readiness (Step 5b), verify the plan includes manual behavioral assertion steps when applicable.
+
+#### What to Validate
+
+1. **Playwright MCP Assertion Steps for Web UI Plans**
+   - If the plan modifies any web frontend (Next.js app, Flutter Web, or any UI project), the delivery checklist MUST include Playwright MCP assertion steps
+   - Must specify: `browser_navigate`, `browser_snapshot`, `browser_click`/`browser_fill_form`, `browser_console_messages`, `browser_take_screenshot`
+   - Must specify which pages/flows to verify
+   - Missing entirely: **CRITICAL** finding
+
+2. **curl Assertion Steps for API Plans**
+   - If the plan modifies any API endpoint (REST, tRPC, backend service), the delivery checklist MUST include curl assertion steps
+   - Must specify: endpoint URLs, expected response shapes, error case testing
+   - Must include health check and affected endpoint verification
+   - Missing entirely: **CRITICAL** finding
+
+3. **End-to-End Flow Assertion for Full-Stack Plans**
+   - If the plan touches both UI and API, must include full-flow assertion (UI → API → response → UI update)
+   - Missing entirely: **HIGH** finding
+
+4. **Not Applicable Exemption**
+   - If the plan touches ONLY documentation, governance, or non-code files, manual assertions are not required
+   - Checker must verify the exemption is legitimate (plan truly has no UI/API changes)
+
+#### Finding Severity
+
+- Missing Playwright MCP steps for UI plan: **CRITICAL**
+- Missing curl steps for API plan: **CRITICAL**
+- Missing end-to-end flow for full-stack plan: **HIGH**
+- Steps present but vague (no specific pages/endpoints): **MEDIUM**

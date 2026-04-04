@@ -173,3 +173,136 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 - `plan-fixer` - Fixes plan issues
 
 **Remember**: This is the final quality gate. Be thorough, independent, and uncompromising on quality.
+
+### 6. Verify Operational Readiness Execution (Step 5b — MANDATORY)
+
+After assessing code quality (Step 5), verify that the executor followed ALL operational readiness protocols. These are CRITICAL findings if missing.
+
+#### What to Validate
+
+1. **Local Quality Gates Were Executed**
+   - Check git log for evidence that quality gates were run before each push
+   - Verify no lint, typecheck, or test failures remain in the affected projects
+   - Run `npx nx affected -t typecheck lint test:quick spec-coverage` and confirm zero failures
+   - If ANY failure exists, report as CRITICAL finding
+
+2. **Post-Push CI Passed**
+   - Check if GitHub Actions workflows passed for the latest commits on main
+   - If CI status is not all-green, report as CRITICAL finding
+   - This includes workflows that may have been failing before the plan execution
+
+3. **Preexisting Issues Were Fixed**
+   - Review git log for fix commits addressing preexisting issues (e.g., `fix(lint): resolve preexisting ...`)
+   - Run quality gates to confirm no preexisting failures remain
+   - If preexisting failures still exist in affected projects, report as HIGH finding
+   - The root cause orientation principle requires proactive fixing of encountered issues
+
+4. **Delivery.md Was Updated Progressively**
+   - Verify ALL delivery checklist items are ticked (`- [x]`)
+   - Verify each ticked item has implementation notes (Date, Status, Files Changed)
+   - Verify items were ticked in sequential order (not batch-ticked at the end)
+   - Check git history: delivery.md should have been committed progressively, not in one final commit
+   - Missing implementation notes: MEDIUM finding per item
+   - Unticked items: CRITICAL finding per item
+
+5. **Thematic Commits Were Made**
+   - Review git log for the plan execution period
+   - Verify commits follow Conventional Commits format
+   - Verify different concerns are in separate commits (not one giant commit)
+   - Giant monolithic commits: HIGH finding
+   - Missing conventional commit format: MEDIUM finding
+
+6. **Environment Setup Was Performed**
+   - Verify the plan included environment setup steps and they were completed
+   - Check that `npm install` and `npm run doctor` were run (or equivalent)
+   - Missing setup evidence: MEDIUM finding
+
+#### Finding Severity
+
+- Quality gates not run / still failing: **CRITICAL**
+- CI not passing: **CRITICAL**
+- Delivery items not ticked: **CRITICAL**
+- Preexisting issues not fixed: **HIGH**
+- Monolithic commits: **HIGH**
+- Missing implementation notes: **MEDIUM**
+- Missing setup evidence: **MEDIUM**
+
+### 7. Verify Manual Behavioral Assertions (Step 5c — MANDATORY)
+
+After verifying operational readiness (Step 5b), verify that manual behavioral assertions were performed.
+
+#### What to Validate
+
+1. **Playwright MCP Assertions for Web UI Changes**
+   - If the plan touched any web frontend, check delivery.md for "Manual UI Verification" notes
+   - Start the dev server and use Playwright MCP to independently verify key UI flows:
+     - `browser_navigate` to affected pages
+     - `browser_snapshot` to inspect DOM state
+     - `browser_console_messages` to check for JS errors
+     - `browser_network_requests` to verify API integration
+   - If UI is broken or has JS console errors: CRITICAL finding
+   - If no manual UI verification was documented but plan touched UI: HIGH finding
+
+2. **curl Assertions for API Changes**
+   - If the plan touched any API endpoint, check delivery.md for "Manual API Verification" notes
+   - Start the backend server and use curl to independently verify key endpoints:
+
+     ```bash
+     curl -s http://localhost:[port]/api/health | jq .
+     curl -s http://localhost:[port]/api/[affected-endpoint] | jq .
+     ```
+
+   - If API returns errors or unexpected responses: CRITICAL finding
+   - If no manual API verification was documented but plan touched API: HIGH finding
+
+3. **End-to-End Flow Verification**
+   - If the plan touches both UI and API, verify the full flow:
+     - Use Playwright MCP to interact with the UI
+     - Verify that UI actions trigger correct API calls (check `browser_network_requests`)
+     - Verify API responses are correctly rendered in the UI
+   - If end-to-end flow is broken: CRITICAL finding
+
+#### Finding Severity
+
+- Broken UI (JS errors, rendering failures): **CRITICAL**
+- Broken API (error responses, wrong data): **CRITICAL**
+- Missing manual UI verification for UI changes: **HIGH**
+- Missing manual API verification for API changes: **HIGH**
+- End-to-end flow broken: **CRITICAL**
+
+### 8. Verify Plan Archival and README Updates (Step 5d — MANDATORY)
+
+After verifying manual assertions (Step 5c), verify that the plan was properly archived.
+
+#### What to Validate
+
+1. **Plan Moved to done/**
+   - Verify the plan folder exists in `plans/done/` (not in `plans/in-progress/` or `plans/backlog/`)
+   - If plan is still in `in-progress/`: CRITICAL finding
+   - Use `git log` to confirm `git mv` was used (preserves history)
+
+2. **in-progress README Updated**
+   - Read `plans/in-progress/README.md`
+   - Verify the plan entry has been REMOVED
+   - If the plan entry still exists: HIGH finding
+
+3. **done README Updated**
+   - Read `plans/done/README.md`
+   - Verify the plan entry has been ADDED with completion date
+   - If the plan entry is missing: HIGH finding
+
+4. **No Orphaned References**
+   - Search for references to the old `plans/in-progress/[plan-name]` path across the repo
+   - If any broken references exist: MEDIUM finding per reference
+
+5. **Archival Commit Exists**
+   - Check git log for a commit with pattern `chore(plans): move * to done`
+   - If no archival commit: MEDIUM finding
+
+#### Finding Severity
+
+- Plan not moved to done/: **CRITICAL**
+- in-progress README not updated: **HIGH**
+- done README not updated: **HIGH**
+- Orphaned references: **MEDIUM** per reference
+- Missing archival commit: **MEDIUM**

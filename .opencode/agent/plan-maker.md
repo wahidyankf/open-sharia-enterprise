@@ -182,3 +182,150 @@ When creating plans that reference specific technologies, versions, APIs, or too
 6. **Document verification** — when a claim is verified, note it in the plan (e.g., "Validated Dependencies" table)
 
 Use the `docs-validating-factual-accuracy` Skill for systematic verification methodology.
+
+## Mandatory Operational Readiness Sections
+
+Every delivery plan MUST include these sections. Plans without them will be flagged as CRITICAL by plan-checker.
+
+### Required Delivery Sections
+
+When writing the delivery checklist (Step 5), ALWAYS include ALL of the following sections. These are non-negotiable.
+
+**1. Environment Setup** (at the beginning of the delivery checklist):
+
+```markdown
+### Environment Setup
+
+- [ ] Install dependencies: `npm install`
+- [ ] Run doctor to verify tooling: `npm run doctor`
+- [ ] [Project-specific setup: env vars, DB, Docker, etc.]
+- [ ] Verify dev server starts: `nx dev [project-name]`
+- [ ] Run existing tests to establish baseline: `nx run [project-name]:test:quick`
+- [ ] Note any preexisting failures for fixing during execution
+```
+
+**2. Local Quality Gates** (before any push step in each phase):
+
+```markdown
+### Local Quality Gates (Before Push)
+
+- [ ] Run affected typecheck: `npx nx affected -t typecheck`
+- [ ] Run affected linting: `npx nx affected -t lint`
+- [ ] Run affected quick tests: `npx nx affected -t test:quick`
+- [ ] Run affected spec coverage: `npx nx affected -t spec-coverage`
+- [ ] Fix ALL failures — including preexisting issues not caused by your changes
+- [ ] Re-run failing checks to confirm resolution
+- [ ] Verify zero failures before pushing
+```
+
+Add `test:integration` and `test:e2e` if relevant to the plan scope.
+
+**3. Post-Push CI Verification** (after every push step):
+
+```markdown
+### Post-Push CI Verification
+
+- [ ] Push changes to `main`
+- [ ] Monitor ALL GitHub Actions workflows triggered by the push
+- [ ] Verify ALL CI checks pass — no exceptions
+- [ ] If any CI check fails, fix immediately and push a follow-up commit
+- [ ] Repeat until ALL GitHub Actions pass with zero failures
+- [ ] Do NOT proceed to next delivery phase until CI is fully green
+```
+
+**4. Fix-All-Issues Instruction** (in quality gate sections):
+
+```markdown
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your
+> changes. This follows the root cause orientation principle — proactively fix preexisting
+> errors encountered during work. Do not defer or skip existing issues. Commit preexisting
+> fixes separately with appropriate conventional commit messages.
+```
+
+**5. Commit Guidelines** (in each phase):
+
+```markdown
+### Commit Guidelines
+
+- [ ] Commit changes thematically — group related changes into logically cohesive commits
+- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
+- [ ] Split different domains/concerns into separate commits
+- [ ] Preexisting fixes get their own commits, separate from plan work
+- [ ] Do NOT bundle unrelated changes into a single commit
+```
+
+### Adapting to Plan Context
+
+- Customize the specific Nx targets based on which projects the plan affects
+- Include `test:integration` and `test:e2e` when the plan touches backend or frontend code
+- Add Docker setup steps if the plan involves services that require containers
+- Reference specific GitHub Actions workflow names if known
+- Specify project-specific env vars, DB migrations, or setup scripts
+
+## Mandatory Manual Assertion Sections
+
+When the plan touches web UI or API code, the delivery plan MUST include manual behavioral assertion sections. Plans without them will be flagged as CRITICAL by plan-checker.
+
+### For Plans Touching Web UI
+
+ALWAYS include:
+
+```markdown
+### Manual UI Verification (Playwright MCP)
+
+- [ ] Start dev server: `nx dev [project-name]`
+- [ ] Navigate to affected pages via `browser_navigate`
+- [ ] Inspect DOM via `browser_snapshot` — verify correct rendering
+- [ ] Test interactive flows via `browser_click` / `browser_fill_form`
+- [ ] Check for JS errors via `browser_console_messages` — must be zero errors
+- [ ] Verify API integration via `browser_network_requests`
+- [ ] Take screenshots via `browser_take_screenshot` for visual verification
+- [ ] Document verification results in this checklist
+```
+
+### For Plans Touching API Endpoints
+
+ALWAYS include:
+
+```markdown
+### Manual API Verification (curl)
+
+- [ ] Start backend server: `nx dev [project-name]`
+- [ ] Verify health endpoint: `curl -s http://localhost:[port]/api/health | jq .`
+- [ ] Verify affected endpoints return expected responses
+- [ ] Test error cases with invalid payloads — verify proper error responses
+- [ ] Verify response status codes, shapes, and data integrity
+- [ ] Document verification results in this checklist
+```
+
+### For Full-Stack Plans (UI + API)
+
+Include BOTH sections above, PLUS:
+
+```markdown
+### End-to-End Flow Verification
+
+- [ ] Start both frontend and backend dev servers
+- [ ] Use Playwright MCP to interact with the UI
+- [ ] Verify UI actions trigger correct API calls (`browser_network_requests`)
+- [ ] Verify API responses are correctly rendered in the UI
+- [ ] Test complete user flows end-to-end
+- [ ] Document verification results in this checklist
+```
+
+### Plan Archival Section
+
+ALWAYS include at the end of the delivery checklist:
+
+```markdown
+### Plan Archival
+
+- [ ] Verify ALL delivery checklist items are ticked
+- [ ] Verify ALL quality gates pass (local + CI)
+- [ ] Verify ALL manual assertions pass (Playwright MCP / curl)
+- [ ] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`
+- [ ] Update `plans/in-progress/README.md` — remove the plan entry
+- [ ] Update `plans/done/README.md` — add the plan entry with completion date
+- [ ] Update any other READMEs that reference this plan (e.g., plans/README.md)
+- [ ] Commit the archival: `chore(plans): move [plan-name] to done`
+```
