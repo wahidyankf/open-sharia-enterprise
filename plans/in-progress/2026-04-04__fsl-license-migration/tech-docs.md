@@ -22,10 +22,12 @@ Day 0                          Change Date (2 years later)
 ### Per-Version Rolling Conversion
 
 FSL-1.1 converts to the Change License on a **per-version (per-commit) rolling basis**, not as a
-single blanket date for the entire repository. The FSL-1.1 license text (Section 3) states:
+single blanket date for the entire repository. The FSL-1.1 license text ("Grant of Future License"
+section) states:
 
-> "On the Change Date, **or the fourth anniversary of the first publicly available distribution
-> of a specific version** of the Licensed Work under this License, whichever comes first..."
+> "We hereby irrevocably grant you an additional license to use the Software under the [Change
+> > License] that is effective on the **second anniversary** of the date we make the Software
+> available."
 
 In practice, this means:
 
@@ -57,7 +59,8 @@ users understand that:
 
 - **Licensed Work**: The open-sharia-enterprise repository and all code authored by the Licensor
 - **Licensor**: wahidyankf
-- **Change Date**: 2028-04-04 (floor date — 2 years from initial license change)
+- **Change Date**: 2028-04-04 (convenience marker — not a canonical FSL-1.1 template field; the
+  2-year conversion is built into the license text via "Grant of Future License" section)
 - **Change License**: MIT
 - **Per-Version Conversion**: Each commit/release converts to MIT 2 years after its first public
   distribution, or on the Change Date, whichever comes first
@@ -104,76 +107,29 @@ is available at [https://fsl.software/](https://fsl.software/).
 
 ### Template (FSL-1.1-MIT)
 
-**WARNING: The template below is a simplified illustration showing the key parameters. It omits
-several sections present in the canonical FSL-1.1 template (Patent, Redistribution, Trademark).
-DO NOT copy this template into the LICENSE file. Instead, fetch the canonical template from
-[fsl.software](https://fsl.software/) and fill in the parameterized fields.**
+**WARNING: DO NOT use the simplified illustration below as the LICENSE file. The canonical
+FSL-1.1-MIT template must be fetched from [fsl.software](https://fsl.software/) at implementation
+time. The canonical template includes sections (Patent, Redistribution, Trademark, Grant of Future
+License) not shown here.**
+
+**Note on Change Date**: The canonical FSL-1.1 template does NOT have a `Change Date` field — the
+2-year conversion is built into the license text ("Grant of Future License" section: "effective on
+the second anniversary of the date we make the Software available"). However, some FSL adopters
+(Sentry, Codecov) include a `Change Date` header as a convenience marker. We follow this practice
+for clarity, using 2028-04-04 as the floor date.
 
 **Copyright year range**: `2025-2026` covers the original MIT copyright (2025) through the
 FSL relicensing date (2026), preserving continuity of the copyright claim.
 
-```
-Functional Source License, Version 1.1, MIT Future License
+**Parameterized fields to fill in the canonical template**:
 
-Copyright 2025-2026 wahidyankf
+- **Copyright**: `2025-2026 wahidyankf`
+- **Licensor**: `wahidyankf`
+- **Licensed Work**: `open-sharia-enterprise`
+- **Change License**: `MIT`
 
-Licensor:             wahidyankf
-Licensed Work:        open-sharia-enterprise
-Change Date:          2028-04-04
-Change License:       MIT
-
-Use Limitation
-
-You may not use the Licensed Work in a commercial product or service
-that competes with the Licensed Work.
-
-License text below.
-
----
-
-Functional Source License, Version 1.1, MIT Future License
-
-Terms and Conditions
-
-1. Grant of Rights
-
-The Licensor hereby grants you a non-exclusive, worldwide, royalty-free
-license to use, copy, modify, create derivative works, and redistribute
-the Licensed Work, subject to the conditions below.
-
-2. Competing Use
-
-You may not use the Licensed Work to provide a commercial product or
-service that competes with the Licensed Work or any product or service
-provided by the Licensor that utilizes the Licensed Work.
-
-3. Change Date and Change License
-
-On the Change Date, or the fourth anniversary of the first publicly
-available distribution of a specific version of the Licensed Work under
-this License, whichever comes first, the Licensor hereby grants you
-rights under the terms of the Change License.
-
-4. No Other Rights
-
-This License does not grant you any right in any trademark or logo of
-the Licensor or its affiliates.
-
-5. Disclaimer
-
-THE LICENSED WORK IS PROVIDED "AS IS". THE LICENSOR HEREBY DISCLAIMS ALL
-WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
-NONINFRINGEMENT.
-
-6. Limitation of Liability
-
-IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR
-OTHER LIABILITY, ARISING FROM OR RELATED TO THE LICENSED WORK.
-```
-
-**Note**: The exact license text should be sourced from [fsl.software](https://fsl.software/) at
-implementation time to ensure it matches the canonical version. The template above is illustrative.
+**Note**: The exact license text MUST be sourced from [fsl.software](https://fsl.software/) at
+implementation time to ensure it matches the canonical version.
 
 ## Documentation Updates
 
@@ -280,12 +236,15 @@ project's licensing posture.
 **What it is**: Pre-built `libvips` native shared library binaries (`.so`/`.dylib`) for image
 processing. Sharp calls libvips via its C API at runtime (dynamic linking).
 
-**Why it matters**: LGPL Section 7 prohibits imposing "further restrictions on the exercise of
-the rights granted." FSL's non-compete clause could be interpreted as such a restriction when
-applied to a work containing LGPL-licensed components.
+**Why it matters**: GPL-3.0 Section 10 (incorporated by LGPL-3.0) prohibits imposing "further
+restrictions on the exercise of the rights granted or affirmed under this License." GPL-3.0
+Section 7 defines non-permissive additional terms as "further restrictions." FSL's non-compete
+clause could be interpreted as such a restriction when applied to a work containing LGPL-licensed
+components.
 
 **Resolution**: Set `images.unoptimized: true` in all 3 Next.js production apps' `next.config.ts`.
-This eliminates the sharp dependency entirely:
+This prevents sharp from being loaded or bundled into production output (it may remain in
+`node_modules` as an optional dependency of `next`, but is never invoked at runtime):
 
 ```typescript
 // next.config.ts
@@ -299,13 +258,15 @@ const nextConfig: NextConfig = {
 
 **Why this is safe**:
 
-- **Vercel handles image optimization at the edge** — sharp is only used as a local/self-hosted
-  fallback for `next/image`. On Vercel deployments, images are optimized by Vercel's CDN
-  infrastructure, not by sharp.
-- **No performance loss in production** — Vercel's image optimization is faster and more
-  capable than local sharp processing.
-- **Local development**: Images serve at original size without optimization. This is acceptable
-  for development workflows.
+- **Vercel handles image optimization via its own CDN pipeline** — sharp is installed
+  automatically on Vercel but Vercel's own infrastructure handles the actual image processing,
+  not the sharp library in the application code. With `unoptimized: true`, the image optimization
+  pipeline is bypassed entirely.
+- **No performance loss in production** — Vercel's image optimization is handled at the
+  infrastructure level regardless of the sharp setting.
+- **Local development**: Images serve at original size without optimization (the default
+  fallback without sharp would be squoosh, but with `unoptimized: true` no optimization is
+  attempted at all). This is acceptable for development workflows.
 
 ### MPL-2.0: HashiCorp Libraries (Go CLI Apps)
 

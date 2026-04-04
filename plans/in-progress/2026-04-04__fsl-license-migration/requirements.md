@@ -55,8 +55,9 @@ Third-party vendored code must retain its original license:
 
 ### FR-5: Production Dependency Compatibility
 
-The FSL-1.1-MIT license includes a non-compete clause. LGPL Section 7 prohibits "further
-restrictions." All production (non-demo) app dependencies must be compatible with FSL-1.1-MIT.
+The FSL-1.1-MIT license includes a non-compete clause. GPL-3.0 Section 10 (incorporated by
+LGPL-3.0) prohibits "further restrictions." All production (non-demo) app dependencies must be
+compatible with FSL-1.1-MIT.
 
 **Scope**: Only production apps are audited. Demo apps (`a-demo-*`) are reference implementations
 and do not ship as products — their dependencies are excluded.
@@ -95,9 +96,11 @@ reviewed to confirm the project has the right to relicense (e.g., via CLA or cop
 
 ### NFR-2: SPDX Compliance
 
-Use the SPDX identifier `FSL-1.1-MIT` where applicable. Note: FSL-1.1-MIT is not yet in the
-official SPDX license list, so some tools may not recognize it. Use `LicenseRef-FSL-1.1-MIT` as a
-fallback for strict SPDX compliance.
+Use the SPDX identifier `FSL-1.1-MIT` where applicable. FSL-1.1-MIT was added to the official
+SPDX license list on 2025-04-17. However, npm's bundled `spdx-license-ids` package may lag behind
+the official SPDX list and produce a warning ("license should be a valid SPDX license expression").
+This is a warning only (not an error) and will resolve when npm updates its bundled dependency.
+Use `LicenseRef-FSL-1.1-MIT` as a fallback only if strict tooling compliance is required.
 
 ### NFR-3: GitHub License Detection
 
