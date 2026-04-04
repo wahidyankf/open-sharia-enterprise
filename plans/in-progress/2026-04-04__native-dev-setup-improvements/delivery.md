@@ -23,14 +23,23 @@ Hugo removal and Playwright/version additions).
 - [ ] Remove `vercelJSON` struct from `apps/rhino-cli/internal/doctor/checker.go`
 - [ ] Remove `readHugoVersion` function from `checker.go`
 - [ ] Remove `parseHugoVersion` function from `checker.go` (line ~322, not in `tools.go`)
-- [ ] Remove Hugo-related test cases from `apps/rhino-cli/internal/doctor/checker_test.go`
-      (`TestParseHugoVersion`, `TestReadHugoVersion`, Hugo entries in mock data)
+- [ ] Remove Hugo-related test cases from `apps/rhino-cli/internal/doctor/checker_test.go`:
+  - [ ] Remove `TestParseHugoVersion` and `TestReadHugoVersion` functions
+  - [ ] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithFakeRunner` (line ~674),
+        update `OKCount` and `len(Checks)` assertions from 19 to 18
+  - [ ] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithWarningStatus` (line ~815)
+  - [ ] Remove Hugo mock filesystem entries (vercel.json with HUGO_VERSION)
 - [ ] Update `apps/rhino-cli/internal/doctor/reporter_test.go`: remove Hugo `ToolCheck` entry
       from `allOKChecks` slice, remove "hugo" from the name list in `TestFormatMarkdown`, update
       tool count from 19 to 18
-- [ ] Update `apps/rhino-cli/cmd/doctor_test.go`: remove "hugo" from `makeAllOKChecks()` name
-      list, update hardcoded count 19 → 18 in `theJSONListsEveryCheckedToolWithItsStatus()`,
-      remove Hugo-specific test scenarios (missing hugo, warning hugo)
+- [ ] Update `apps/rhino-cli/cmd/doctor_test.go`:
+  - [ ] Remove "hugo" from `makeAllOKChecks()` name list
+  - [ ] Update hardcoded count 19 → 18 in `theJSONListsEveryCheckedToolWithItsStatus()`
+  - [ ] In `aRequiredDevelopmentToolIsNotFoundInTheSystemPATH()`: change hardcoded
+        `Name: "hugo", Binary: "hugo"` to a different tool (e.g., `Name: "golang", Binary: "go"`)
+        — do NOT delete this step implementation (it backs the generic Gherkin scenario)
+  - [ ] Verify `aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion()` uses `"node"`
+        (not `"hugo"`) — no change needed if already correct
 - [ ] Update `cmd/doctor.go` Long help string — remove Hugo from the tool list
 - [ ] Remove Phase 11 (Hugo) from `governance/workflows/infra/development-environment-setup.md`
 - [ ] Remove Hugo row from Tool Inventory table in the workflow doc (row 8)
