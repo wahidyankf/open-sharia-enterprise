@@ -92,7 +92,7 @@ type mockDirEntry struct {
 func (d *mockDirEntry) Name() string               { return d.name }
 func (d *mockDirEntry) IsDir() bool                { return d.isDir }
 func (d *mockDirEntry) Type() fs.FileMode          { return 0 }
-func (d *mockDirEntry) Info() (fs.FileInfo, error) { return nil, nil }
+func (d *mockDirEntry) Info() (fs.FileInfo, error) { return nil, nil } //nolint:nilnil // test mock: Info() is unused in test scenarios
 
 func (s *envInitUnitSteps) setupWalkDir() {
 	envInitWalkDir = func(root string, fn fs.WalkDirFunc) error {

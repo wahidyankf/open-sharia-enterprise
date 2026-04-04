@@ -68,7 +68,7 @@ func runEnvInit(cmd *cobra.Command, _ []string) error {
 
 		if !envInitForce {
 			if _, statErr := envInitStat(envPath); statErr == nil {
-				fmt.Fprintf(cmd.OutOrStdout(), "Skipped: %s (already exists, use --force to overwrite)\n", relPath)
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Skipped: %s (already exists, use --force to overwrite)\n", relPath)
 				skipped++
 				return nil
 			}
@@ -85,7 +85,7 @@ func runEnvInit(cmd *cobra.Command, _ []string) error {
 			return nil
 		}
 
-		fmt.Fprintf(cmd.OutOrStdout(), "Created: %s (from %s)\n", relPath, filepath.Base(path))
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Created: %s (from %s)\n", relPath, filepath.Base(path))
 		created++
 		return nil
 	})
@@ -94,10 +94,10 @@ func runEnvInit(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("failed to walk infra/dev/: %w", walkErr)
 	}
 
-	fmt.Fprintf(cmd.OutOrStdout(), "\nSummary: %d created, %d skipped\n", created, skipped)
+	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\nSummary: %d created, %d skipped\n", created, skipped)
 
 	for _, e := range errs {
-		fmt.Fprintf(cmd.ErrOrStderr(), "Error: %s\n", e)
+		_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "Error: %s\n", e)
 	}
 
 	return nil

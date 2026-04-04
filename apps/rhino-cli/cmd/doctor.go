@@ -102,10 +102,10 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 
 	if fix && result.MissingCount > 0 {
 		printf := func(format string, a ...any) {
-			fmt.Fprintf(cmd.OutOrStdout(), format, a...)
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), format, a...)
 		}
 		fixResult := doctorFixAllFn(result, checkOpts, doctor.FixOptions{DryRun: dryRun}, printf)
-		fmt.Fprint(cmd.OutOrStdout(), doctor.FormatFixSummary(fixResult))
+		_, _ = fmt.Fprint(cmd.OutOrStdout(), doctor.FormatFixSummary(fixResult))
 		if fixResult.Failed > 0 {
 			return fmt.Errorf("%d tool(s) failed to install", fixResult.Failed)
 		}
@@ -115,7 +115,7 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 	}
 
 	if fix && result.MissingCount == 0 {
-		fmt.Fprintf(cmd.OutOrStdout(), "\nNothing to fix — all tools are installed.\n")
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "\nNothing to fix — all tools are installed.\n")
 	}
 
 	// Only missing tools cause non-zero exit; version warnings are advisory
