@@ -1,7 +1,8 @@
 # Plan: Native Development Environment Setup Improvements
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-04-04
+**Completed**: 2026-04-04
 
 ## Overview
 

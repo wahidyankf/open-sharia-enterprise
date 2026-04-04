@@ -43,6 +43,9 @@ func (s *doctorSteps) before(_ context.Context, _ *godog.Scenario) (context.Cont
 	verbose = false
 	quiet = false
 	output = "text"
+	scope = "full"
+	fix = false
+	dryRun = false
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
 }
@@ -127,10 +130,10 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 	dirs := []string{
 		"apps/organiclever-be-jasb",
 		"apps/rhino-cli",
-		"apps/oseplatform-web",
 		"apps/a-demo-be-python-fastapi",
 		"apps/a-demo-be-fsharp-giraffe",
 		"apps/a-demo-fe-dart-flutterweb",
+		"apps/a-demo-be-rust-axum",
 	}
 	for _, dir := range dirs {
 		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
@@ -142,12 +145,12 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 		"package.json":                      fmt.Sprintf(`{"name":"test","volta":{"node":%q,"npm":%q}}`, nodeVer, npmVer),
 		"apps/organiclever-be-jasb/pom.xml": fmt.Sprintf(`<project><properties><java.version>%s</java.version></properties></project>`, javaMajor),
 		"apps/rhino-cli/go.mod":             fmt.Sprintf("module foo\n\ngo %s\n", goVer),
-		// New tool config files — use sensible defaults that match common installed versions
-		"apps/oseplatform-web/vercel.json":              `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		// Tool config files — use sensible defaults that match common installed versions
 		"apps/a-demo-be-python-fastapi/.python-version": "3.13\n",
-		".tool-versions":                                "erlang 27.3\nelixir 1.19.5-otp-27\n",
-		"apps/a-demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
-		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
+		".tool-versions": "erlang 27.3\nelixir 1.19.5-otp-27\n",
+		"apps/a-demo-be-fsharp-giraffe/global.json":   `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
+		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml": "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n  flutter: \">=3.41.0\"\n",
+		"apps/a-demo-be-rust-axum/Cargo.toml":         "[package]\nname = \"test\"\nrust-version = \"1.80\"\n",
 	}
 	for relPath, content := range files {
 		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {
@@ -289,28 +292,63 @@ func (s *doctorSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	return nil
 }
 
-// InitializeDoctorScenario registers all step definitions.
-func InitializeDoctorScenario(sc *godog.ScenarioContext) {
-	s := &doctorSteps{}
-	sc.Before(s.before)
-	sc.After(s.after)
+// Integration step stubs for new scenarios — these features are tested in depth
+// by the unit tests; integration tests only verify the command runs end-to-end.
 
-	// The step "all required development tools are present with matching versions"
-	// needs access to *testing.T for t.Skip. godog passes the scenario context;
-	// we use a closure that captures t from the TestIntegrationDoctor runner.
-	// godog does not expose *testing.T in step funcs, so we use a workaround:
-	// register the step as a no-op here and override it inside the test function.
-	sc.Step(`^all required development tools are present with matching versions$`,
-		func(ctx context.Context) (context.Context, error) {
-			// This placeholder is overridden below via the tWrapper approach.
-			// Returning an error here would fail every scenario — so we return nil
-			// and rely on the test-level registration to replace it.
-			return ctx, nil
-		})
+func (s *doctorSteps) theDeveloperRunsDoctorWithMinimalScope() error {
+	scope = "minimal"
+	return s.theDeveloperRunsTheDoctorCommand()
+}
+
+func (s *doctorSteps) theOutputChecksOnlyTheMinimalToolSet() error {
+	if !strings.Contains(s.cmdOutput, "scope: minimal") {
+		return fmt.Errorf("expected '(scope: minimal)' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *doctorSteps) theDeveloperRunsDoctorWithFix() error {
+	fix = true
+	return s.theDeveloperRunsTheDoctorCommand()
+}
+
+func (s *doctorSteps) theDeveloperRunsDoctorWithFixDryRun() error {
+	fix = true
+	dryRun = true
+	return s.theDeveloperRunsTheDoctorCommand()
+}
+
+func (s *doctorSteps) theOutputContainsFixProgress() error {
+	if !strings.Contains(s.cmdOutput, "Fix summary") && !strings.Contains(s.cmdOutput, "Skip:") && !strings.Contains(s.cmdOutput, "Would install") {
+		return fmt.Errorf("expected fix progress in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *doctorSteps) theOutputContainsDryRunPreview() error {
+	if !strings.Contains(s.cmdOutput, "Would install") && !strings.Contains(s.cmdOutput, "Skip:") {
+		return fmt.Errorf("expected dry-run preview in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *doctorSteps) theOutputReportsNothingToFix() error {
+	if !strings.Contains(s.cmdOutput, "Nothing to fix") {
+		return fmt.Errorf("expected 'Nothing to fix' in output, got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+// registerCommonDoctorSteps registers all step definitions shared between
+// InitializeDoctorScenario and TestIntegrationDoctor.
+func registerCommonDoctorSteps(sc *godog.ScenarioContext, s *doctorSteps) {
 	sc.Step(`^a required development tool is not found in the system PATH$`, s.aRequiredDevelopmentToolIsNotFoundInTheSystemPATH)
 	sc.Step(`^a required development tool is installed with a non-matching version$`, s.aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion)
 	sc.Step(`^the developer runs the doctor command$`, s.theDeveloperRunsTheDoctorCommand)
 	sc.Step(`^the developer runs the doctor command with JSON output$`, s.theDeveloperRunsTheDoctorCommandWithJSONOutput)
+	sc.Step(`^the developer runs the doctor command with minimal scope$`, s.theDeveloperRunsDoctorWithMinimalScope)
+	sc.Step(`^the developer runs the doctor command with the fix flag$`, s.theDeveloperRunsDoctorWithFix)
+	sc.Step(`^the developer runs the doctor command with fix and dry-run flags$`, s.theDeveloperRunsDoctorWithFixDryRun)
 	sc.Step(`^the command exits successfully$`, s.theCommandDoctorExitsSuccessfully)
 	sc.Step(`^the command exits with a failure code$`, s.theCommandDoctorExitsWithAFailureCode)
 	sc.Step(`^the output reports each tool as passing$`, s.theOutputReportsEachToolAsPassing)
@@ -318,6 +356,23 @@ func InitializeDoctorScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^the output reports the tool as a warning rather than a failure$`, s.theOutputReportsTheToolAsAWarningRatherThanAFailure)
 	sc.Step(`^the output is valid JSON$`, s.theOutputIsValidDoctorJSON)
 	sc.Step(`^the JSON lists every checked tool with its status$`, s.theJSONListsEveryCheckedToolWithItsStatus)
+	sc.Step(`^the output checks only the minimal tool set$`, s.theOutputChecksOnlyTheMinimalToolSet)
+	sc.Step(`^the output contains fix progress$`, s.theOutputContainsFixProgress)
+	sc.Step(`^the output contains a dry-run preview$`, s.theOutputContainsDryRunPreview)
+	sc.Step(`^the output reports nothing to fix$`, s.theOutputReportsNothingToFix)
+}
+
+// InitializeDoctorScenario registers all step definitions.
+func InitializeDoctorScenario(sc *godog.ScenarioContext) {
+	s := &doctorSteps{}
+	sc.Before(s.before)
+	sc.After(s.after)
+
+	sc.Step(`^all required development tools are present with matching versions$`,
+		func(ctx context.Context) (context.Context, error) {
+			return ctx, nil
+		})
+	registerCommonDoctorSteps(sc, s)
 }
 
 func TestIntegrationDoctor(t *testing.T) {
@@ -332,17 +387,7 @@ func TestIntegrationDoctor(t *testing.T) {
 				func() error {
 					return s.allRequiredDevelopmentToolsArePresentWithMatchingVersions(t)
 				})
-			sc.Step(`^a required development tool is not found in the system PATH$`, s.aRequiredDevelopmentToolIsNotFoundInTheSystemPATH)
-			sc.Step(`^a required development tool is installed with a non-matching version$`, s.aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion)
-			sc.Step(`^the developer runs the doctor command$`, s.theDeveloperRunsTheDoctorCommand)
-			sc.Step(`^the developer runs the doctor command with JSON output$`, s.theDeveloperRunsTheDoctorCommandWithJSONOutput)
-			sc.Step(`^the command exits successfully$`, s.theCommandDoctorExitsSuccessfully)
-			sc.Step(`^the command exits with a failure code$`, s.theCommandDoctorExitsWithAFailureCode)
-			sc.Step(`^the output reports each tool as passing$`, s.theOutputReportsEachToolAsPassing)
-			sc.Step(`^the output identifies the missing tool$`, s.theOutputIdentifiesTheMissingTool)
-			sc.Step(`^the output reports the tool as a warning rather than a failure$`, s.theOutputReportsTheToolAsAWarningRatherThanAFailure)
-			sc.Step(`^the output is valid JSON$`, s.theOutputIsValidDoctorJSON)
-			sc.Step(`^the JSON lists every checked tool with its status$`, s.theJSONListsEveryCheckedToolWithItsStatus)
+			registerCommonDoctorSteps(sc, s)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
