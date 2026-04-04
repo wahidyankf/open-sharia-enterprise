@@ -12,7 +12,7 @@ This Skill provides comprehensive guidance for applying **universal content qual
 **When to use this Skill:**
 
 - Creating or editing markdown content in docs/
-- Writing content for ayokoding-web (Next.js) or oseplatform-web (Hugo)
+- Writing content for ayokoding-web (Next.js) or oseplatform-web (Next.js)
 - Creating planning documents in plans/
 - Writing repository root files (README.md, CONTRIBUTING.md, etc.)
 - Ensuring accessibility compliance (WCAG AA)

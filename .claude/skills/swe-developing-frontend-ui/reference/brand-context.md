@@ -49,5 +49,5 @@ Per-app brand guidance for UI development decisions.
 
 - **Product**: OSE Platform marketing site
 - **URL**: oseplatform.com
-- **Framework**: Hugo + PaperMod theme
-- **Note**: Not applicable to component design — Hugo-rendered static site, no React
+- **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
+- **Note**: Uses React components — can share UI components following the standard component patterns
