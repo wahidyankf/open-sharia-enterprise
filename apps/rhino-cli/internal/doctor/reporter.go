@@ -58,8 +58,12 @@ func FormatText(result *DoctorResult, verbose, quiet bool) string {
 	}
 
 	total := result.OKCount + result.WarnCount + result.MissingCount
-	_, _ = fmt.Fprintf(&sb, "\nSummary: %d/%d tools OK, %d warning, %d missing\n",
+	summary := fmt.Sprintf("\nSummary: %d/%d tools OK, %d warning, %d missing",
 		result.OKCount, total, result.WarnCount, result.MissingCount)
+	if result.Scope == ScopeMinimal {
+		summary += " (scope: minimal)"
+	}
+	sb.WriteString(summary + "\n")
 
 	if verbose {
 		_, _ = fmt.Fprintf(&sb, "Duration: %v\n", result.Duration.Round(time.Millisecond))
@@ -82,6 +86,7 @@ type JSONToolItem struct {
 // JSONOutput represents the JSON output format for doctor results.
 type JSONOutput struct {
 	Status       string         `json:"status"`
+	Scope        string         `json:"scope,omitempty"`
 	Timestamp    string         `json:"timestamp"`
 	OKCount      int            `json:"ok_count"`
 	WarnCount    int            `json:"warn_count"`
@@ -107,6 +112,7 @@ func FormatJSON(result *DoctorResult) (string, error) {
 
 	out := JSONOutput{
 		Status:       overallStatus(result),
+		Scope:        string(result.Scope),
 		Timestamp:    timeutil.Timestamp(),
 		OKCount:      result.OKCount,
 		WarnCount:    result.WarnCount,

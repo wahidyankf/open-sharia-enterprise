@@ -842,6 +842,80 @@ func TestCheckAll_WithWarningStatus(t *testing.T) {
 	}
 }
 
+func TestCheckAll_MinimalScope(t *testing.T) {
+	tmpDir := setupCheckAllRepo(t)
+	checkPlaywrightBrowsersFn = func() bool { return true }
+	defer func() { checkPlaywrightBrowsersFn = checkPlaywrightBrowsers }()
+
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"git":    {stdout: "git version 2.47.2\n", exitCode: 0},
+		"volta":  {stdout: "2.0.2\n", exitCode: 0},
+		"node":   {stdout: "v24.11.1\n", exitCode: 0},
+		"npm":    {stdout: "11.6.3\n", exitCode: 0},
+		"go":     {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
+		"docker": {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
+		"jq":     {stdout: "jq-1.8.1\n", exitCode: 0},
+	})
+
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: ScopeMinimal})
+	if err != nil {
+		t.Fatalf("CheckAll error: %v", err)
+	}
+	if len(result.Checks) != 7 {
+		t.Errorf("expected 7 checks for minimal scope, got %d", len(result.Checks))
+	}
+	if result.OKCount != 7 {
+		t.Errorf("expected OKCount == 7, got %d", result.OKCount)
+	}
+	if result.Scope != ScopeMinimal {
+		t.Errorf("expected Scope == minimal, got %q", result.Scope)
+	}
+
+	// Verify only minimal tools are present
+	for _, check := range result.Checks {
+		if !MinimalTools[check.Name] {
+			t.Errorf("unexpected tool %q in minimal scope", check.Name)
+		}
+	}
+}
+
+func TestCheckAll_FullScopeDefault(t *testing.T) {
+	tmpDir := setupCheckAllRepo(t)
+	checkPlaywrightBrowsersFn = func() bool { return true }
+	defer func() { checkPlaywrightBrowsersFn = checkPlaywrightBrowsers }()
+
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"git":     {stdout: "git version 2.47.2\n", exitCode: 0},
+		"volta":   {stdout: "2.0.2\n", exitCode: 0},
+		"node":    {stdout: "v24.11.1\n", exitCode: 0},
+		"npm":     {stdout: "11.6.3\n", exitCode: 0},
+		"java":    {stderr: `openjdk version "25" 2025-09-16`, exitCode: 0},
+		"mvn":     {stdout: "Apache Maven 3.9.9 (abc)\nMaven home: /usr\n", exitCode: 0},
+		"go":      {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
+		"python3": {stdout: "Python 3.13.1\n", exitCode: 0},
+		"rustc":   {stdout: "rustc 1.94.0 (abc)\n", exitCode: 0},
+		"cargo":   {stdout: "cargo-llvm-cov 0.8.5\n", exitCode: 0},
+		"elixir":  {stdout: "Elixir 1.19.5 (compiled with Erlang/OTP 27)\n", exitCode: 0},
+		"erl":     {stdout: "27", exitCode: 0},
+		"dotnet":  {stdout: "10.0.103\n", exitCode: 0},
+		"clj":     {stdout: "Clojure CLI version 1.12.4.1582\n", exitCode: 0},
+		"dart":    {stdout: "Dart SDK version: 3.11.3 (stable)\n", exitCode: 0},
+		"flutter": {stdout: "Flutter 3.41.5\n", exitCode: 0},
+		"docker":  {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
+		"jq":      {stdout: "jq-1.8.1\n", exitCode: 0},
+		"npx":     {stdout: "Version 1.58.2\n", exitCode: 0},
+	})
+
+	// Empty scope should behave as full
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: ""})
+	if err != nil {
+		t.Fatalf("CheckAll error: %v", err)
+	}
+	if len(result.Checks) != 19 {
+		t.Errorf("expected 19 checks for default scope, got %d", len(result.Checks))
+	}
+}
+
 // --- Tests for new parser functions ---
 
 func TestParsePythonVersion(t *testing.T) {

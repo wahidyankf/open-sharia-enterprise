@@ -30,6 +30,7 @@ func (s *doctorUnitSteps) before(_ context.Context, _ *godog.Scenario) (context.
 	verbose = false
 	quiet = false
 	output = "text"
+	scope = "full"
 	s.cmdErr = nil
 	s.cmdOutput = ""
 	s.mockResult = nil
@@ -61,7 +62,23 @@ func (s *doctorUnitSteps) allRequiredDevelopmentToolsArePresentWithMatchingVersi
 		OKCount:      19,
 		Checks:       makeAllOKChecks(19),
 	}
-	doctorCheckAllFn = func(_ doctor.CheckOptions) (*doctor.DoctorResult, error) {
+	doctorCheckAllFn = func(opts doctor.CheckOptions) (*doctor.DoctorResult, error) {
+		if opts.Scope == doctor.ScopeMinimal {
+			minimalNames := []string{"git", "volta", "node", "npm", "golang", "docker", "jq"}
+			checks := make([]doctor.ToolCheck, len(minimalNames))
+			for i, name := range minimalNames {
+				checks[i] = doctor.ToolCheck{
+					Name:   name,
+					Binary: name,
+					Status: doctor.StatusOK,
+				}
+			}
+			return &doctor.DoctorResult{
+				OKCount: 7,
+				Checks:  checks,
+				Scope:   doctor.ScopeMinimal,
+			}, nil
+		}
 		return s.mockResult, nil
 	}
 	return nil
@@ -182,6 +199,29 @@ func (s *doctorUnitSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	return nil
 }
 
+func (s *doctorUnitSteps) theDeveloperRunsTheDoctorCommandWithMinimalScope() error {
+	scope = "minimal"
+	return s.theDeveloperRunsTheDoctorCommand()
+}
+
+func (s *doctorUnitSteps) theOutputChecksOnlyTheMinimalToolSet() error {
+	// Minimal scope should check 7 tools: git, volta, node, npm, golang, docker, jq
+	minimalToolNames := []string{"git", "volta", "node", "npm", "golang", "docker", "jq"}
+	for _, name := range minimalToolNames {
+		if !strings.Contains(s.cmdOutput, name) {
+			return fmt.Errorf("expected minimal tool %q in output but not found:\n%s", name, s.cmdOutput)
+		}
+	}
+	// Should NOT contain tools outside the minimal set
+	excludedTools := []string{"java", "maven", "python", "rust", "elixir", "erlang", "dotnet", "clojure", "dart", "flutter"}
+	for _, name := range excludedTools {
+		if strings.Contains(s.cmdOutput, name) {
+			return fmt.Errorf("minimal scope should not contain %q but found it in output:\n%s", name, s.cmdOutput)
+		}
+	}
+	return nil
+}
+
 // makeAllOKChecks creates n tool checks all with StatusOK.
 func makeAllOKChecks(n int) []doctor.ToolCheck {
 	names := []string{"git", "volta", "node", "npm", "java", "maven", "golang",
@@ -220,6 +260,8 @@ func TestUnitDoctor(t *testing.T) {
 			sc.Step(stepOutputReportsToolAsWarning, s.theOutputReportsTheToolAsAWarningRatherThanAFailure)
 			sc.Step(stepOutputIsValidJSON, s.theOutputIsValidJSON)
 			sc.Step(stepJSONListsEveryCheckedToolWithStatus, s.theJSONListsEveryCheckedToolWithItsStatus)
+			sc.Step(stepDeveloperRunsDoctorWithMinimalScope, s.theDeveloperRunsTheDoctorCommandWithMinimalScope)
+			sc.Step(stepOutputChecksOnlyMinimalToolSet, s.theOutputChecksOnlyTheMinimalToolSet)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",

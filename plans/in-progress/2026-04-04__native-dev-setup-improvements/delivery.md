@@ -141,28 +141,28 @@ Hugo removal and Playwright/version additions).
 - [x] Run `nx run rhino-cli:test:quick` — verify tests pass
 - [x] Run `npm run doctor` — verify rust and flutter show `required: >=X.Y` instead of
       `(no version requirement)`
-- [ ] Commit: `feat(rhino-cli): pin Rust and Flutter version requirements in doctor`
+- [x] Commit: `feat(rhino-cli): pin Rust and Flutter version requirements in doctor`
 
 ### Phase 6: `doctor --scope minimal`
 
 **Goal**: Add scope filtering to doctor.
 
-- [ ] Define `Scope` type and `minimalTools` set in `checker.go`
-- [ ] Add `Scope` field to `CheckOptions` struct
-- [ ] Filter `buildToolDefs()` output based on scope before running checks
-- [ ] Add `--scope` flag to `doctor` cobra command in `cmd/doctor.go`
-- [ ] Update reporter to include scope in summary line when scope is not `full`
-- [ ] Add unit test cases: verify minimal scope checks only 7 tools
-- [ ] Add unit test cases: verify full scope checks all tools (default behavior unchanged)
-- [ ] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for scope
+- [x] Define `Scope` type and `minimalTools` set in `checker.go`
+- [x] Add `Scope` field to `CheckOptions` struct
+- [x] Filter `buildToolDefs()` output based on scope before running checks
+- [x] Add `--scope` flag to `doctor` cobra command in `cmd/doctor.go`
+- [x] Update reporter to include scope in summary line when scope is not `full`
+- [x] Add unit test cases: verify minimal scope checks only 7 tools
+- [x] Add unit test cases: verify full scope checks all tools (default behavior unchanged)
+- [x] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for scope
       (minimal scope checks subset, full scope is default)
-- [ ] Add new step constants to `apps/rhino-cli/cmd/steps_common_test.go` for scope scenarios
-- [ ] Register new step implementations in `apps/rhino-cli/cmd/doctor_test.go`
+- [x] Add new step constants to `apps/rhino-cli/cmd/steps_common_test.go` for scope scenarios
+- [x] Register new step implementations in `apps/rhino-cli/cmd/doctor_test.go`
       `InitializeScenario` function
-- [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
-- [ ] Run `npm run doctor -- --scope minimal` — verify only 7 tools checked
-- [ ] Run `npm run doctor` — verify all tools checked (backward compatible)
-- [ ] Update `governance/workflows/infra/development-environment-setup.md` minimal scope
+- [x] Run `nx run rhino-cli:test:quick` — verify tests pass
+- [x] Run `npm run doctor -- --scope minimal` — verify only 7 tools checked
+- [x] Run `npm run doctor` — verify all tools checked (backward compatible)
+- [x] Update `governance/workflows/infra/development-environment-setup.md` minimal scope
       section to reference `doctor --scope minimal`
 - [ ] Commit: `feat(rhino-cli): add --scope flag to doctor for minimal tool checks`
 

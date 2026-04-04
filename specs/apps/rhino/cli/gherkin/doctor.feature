@@ -29,3 +29,15 @@ Feature: Development Environment Health Check
     Then the command exits successfully
     And the output is valid JSON
     And the JSON lists every checked tool with its status
+
+  Scenario: Minimal scope checks only core tools
+    Given all required development tools are present with matching versions
+    When the developer runs the doctor command with minimal scope
+    Then the command exits successfully
+    And the output checks only the minimal tool set
+
+  Scenario: Full scope is the default behavior
+    Given all required development tools are present with matching versions
+    When the developer runs the doctor command
+    Then the command exits successfully
+    And the output reports each tool as passing

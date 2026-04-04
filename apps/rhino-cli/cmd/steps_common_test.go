@@ -20,6 +20,12 @@ const (
 	stepJSONListsEveryCheckedToolWithStatus   = `^the JSON lists every checked tool with its status$`
 )
 
+// Doctor scope step patterns.
+const (
+	stepDeveloperRunsDoctorWithMinimalScope = `^the developer runs the doctor command with minimal scope$`
+	stepOutputChecksOnlyMinimalToolSet      = `^the output checks only the minimal tool set$`
+)
+
 // Test-coverage validate step patterns.
 const (
 	stepGoCoverageFile90Pct                        = `^a Go coverage file recording 90% line coverage$`

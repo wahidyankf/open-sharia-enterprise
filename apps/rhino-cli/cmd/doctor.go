@@ -7,6 +7,8 @@ import (
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/doctor"
 )
 
+var scope string
+
 var doctorCmd = &cobra.Command{
 	Use:   "doctor",
 	Short: "Check required tool versions are installed and correct",
@@ -43,6 +45,9 @@ Status codes:
 	Example: `  # Check all required tools
   rhino-cli doctor
 
+  # Check only core tools (git, volta, node, npm, golang, docker, jq)
+  rhino-cli doctor --scope minimal
+
   # Output as JSON
   rhino-cli doctor -o json
 
@@ -57,6 +62,7 @@ Status codes:
 
 func init() {
 	rootCmd.AddCommand(doctorCmd)
+	doctorCmd.Flags().StringVar(&scope, "scope", "full", "tool scope: full or minimal")
 }
 
 func runDoctor(cmd *cobra.Command, args []string) error {
@@ -65,7 +71,7 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to find git repository root: %w", err)
 	}
 
-	result, err := doctorCheckAllFn(doctor.CheckOptions{RepoRoot: repoRoot})
+	result, err := doctorCheckAllFn(doctor.CheckOptions{RepoRoot: repoRoot, Scope: doctor.Scope(scope)})
 	if err != nil {
 		return fmt.Errorf("doctor check failed: %w", err)
 	}

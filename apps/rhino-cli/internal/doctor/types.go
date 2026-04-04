@@ -26,6 +26,22 @@ type ToolCheck struct {
 	Note             string
 }
 
+// Scope controls which tools doctor checks.
+type Scope string
+
+const (
+	// ScopeFull checks all tools (default).
+	ScopeFull Scope = "full"
+	// ScopeMinimal checks only core tools required for basic development.
+	ScopeMinimal Scope = "minimal"
+)
+
+// MinimalTools lists the tool names included in the minimal scope.
+var MinimalTools = map[string]bool{
+	"git": true, "volta": true, "node": true, "npm": true,
+	"golang": true, "docker": true, "jq": true,
+}
+
 // DoctorResult holds the aggregated results of all tool checks.
 type DoctorResult struct {
 	Checks       []ToolCheck
@@ -33,12 +49,14 @@ type DoctorResult struct {
 	WarnCount    int
 	MissingCount int
 	Duration     time.Duration
+	Scope        Scope
 }
 
 // CheckOptions configures how the doctor check should be performed.
 type CheckOptions struct {
 	RepoRoot string
 	Runner   CommandRunner // nil = use real subprocess runner
+	Scope    Scope         // "" or "full" = all tools; "minimal" = core tools only
 }
 
 // CommandRunner is an injectable function for executing external commands.

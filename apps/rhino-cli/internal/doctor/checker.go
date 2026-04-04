@@ -524,6 +524,18 @@ func CheckAll(opts CheckOptions) (*DoctorResult, error) {
 	}
 
 	defs := buildToolDefs(opts.RepoRoot)
+
+	// Filter by scope
+	if opts.Scope == ScopeMinimal {
+		filtered := make([]toolDef, 0)
+		for _, def := range defs {
+			if MinimalTools[def.name] {
+				filtered = append(filtered, def)
+			}
+		}
+		defs = filtered
+	}
+
 	checks := make([]ToolCheck, 0, len(defs))
 	for _, def := range defs {
 		checks = append(checks, runOneDef(runner, def))
@@ -532,6 +544,7 @@ func CheckAll(opts CheckOptions) (*DoctorResult, error) {
 	result := &DoctorResult{
 		Checks:   checks,
 		Duration: time.Since(start),
+		Scope:    opts.Scope,
 	}
 
 	for _, c := range checks {
