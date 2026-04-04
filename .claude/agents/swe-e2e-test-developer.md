@@ -18,7 +18,7 @@ skills:
 - **Created**: 2026-02-08
 - **Last Updated**: 2026-02-08
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning for complex test scenario design and coverage analysis
 - Sophisticated understanding of Playwright-specific idioms and patterns

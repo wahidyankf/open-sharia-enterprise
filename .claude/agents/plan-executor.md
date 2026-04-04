@@ -18,7 +18,7 @@ skills:
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-04-04
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to execute project plans systematically
 - Sophisticated decision-making for implementation steps

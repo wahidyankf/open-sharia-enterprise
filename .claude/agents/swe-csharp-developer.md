@@ -18,7 +18,7 @@ skills:
 - **Created**: 2026-03-09
 - **Last Updated**: 2026-03-09
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning for ASP.NET Core architecture decisions
 - Sophisticated understanding of C# nullable reference types, records, and pattern matching

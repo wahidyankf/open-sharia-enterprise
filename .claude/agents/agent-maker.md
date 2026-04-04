@@ -17,7 +17,7 @@ skills:
 - **Created**: 2025-12-01
 - **Last Updated**: 2026-01-03
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create well-structured AI agent files
 - Sophisticated frontmatter and prompt generation

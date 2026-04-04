@@ -21,7 +21,7 @@ skills:
 - **Created**: 2026-03-28
 - **Last Updated**: 2026-03-28
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Complex code generation following multiple interlocking conventions
 - Understanding of CVA, Radix UI, and TypeScript component patterns

@@ -17,7 +17,7 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging landing page content
 - Sophisticated content generation for Next.js 16 with tRPC

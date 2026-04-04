@@ -20,7 +20,7 @@ skills:
 - **Created**: 2025-12-15
 - **Last Updated**: 2026-01-03
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging, accessible README content
 - Sophisticated content generation for problem-solution hooks
@@ -84,7 +84,7 @@ Clarify what needs to be written or updated:
 ```bash
 # Read current README
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging, accessible README content
 - Sophisticated content generation for problem-solution hooks
@@ -95,7 +95,7 @@ Read README.md
 
 # Read related docs for context
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging, accessible README content
 - Sophisticated content generation for problem-solution hooks
@@ -142,7 +142,7 @@ Before finalizing, check (see `readme-writing-readme-files` Skill for complete c
 ```bash
 # For new content
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging, accessible README content
 - Sophisticated content generation for problem-solution hooks
@@ -153,7 +153,7 @@ Edit README.md
 
 # Or for complete rewrite
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
 
 - Advanced reasoning to create engaging, accessible README content
 - Sophisticated content generation for problem-solution hooks
