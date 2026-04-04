@@ -8,8 +8,8 @@ When doctor reports `✗ missing golang`, the developer must find Phase 5 in the
 doc, read the install instructions, and run them manually. This is the primary friction point in
 onboarding.
 
-**Impact**: A new developer spends 1-2 hours following 11 manual phases instead of running one
-command.
+**Impact**: A new developer manually follows 11 phases with individual tool installs instead of
+running one command.
 
 ### Gap 2: Hugo is legacy dead weight
 

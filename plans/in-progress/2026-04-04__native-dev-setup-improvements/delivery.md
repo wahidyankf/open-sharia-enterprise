@@ -22,15 +22,22 @@ Hugo removal and Playwright/version additions).
 - [ ] Remove `vercelJSONPath` variable from `buildToolDefs()` (no longer referenced)
 - [ ] Remove `vercelJSON` struct from `apps/rhino-cli/internal/doctor/checker.go`
 - [ ] Remove `readHugoVersion` function from `checker.go`
-- [ ] Remove `parseHugoVersion` function from `tools.go`
+- [ ] Remove `parseHugoVersion` function from `checker.go` (line ~322, not in `tools.go`)
 - [ ] Remove Hugo-related test cases from `apps/rhino-cli/internal/doctor/checker_test.go`
-- [ ] Update expected tool count in `apps/rhino-cli/internal/doctor/reporter_test.go` (19 → 18)
+      (`TestParseHugoVersion`, `TestReadHugoVersion`, Hugo entries in mock data)
+- [ ] Update `apps/rhino-cli/internal/doctor/reporter_test.go`: remove Hugo `ToolCheck` entry
+      from `allOKChecks` slice, remove "hugo" from the name list in `TestFormatMarkdown`, update
+      tool count from 19 to 18
+- [ ] Update `apps/rhino-cli/cmd/doctor_test.go`: remove "hugo" from `makeAllOKChecks()` name
+      list, update hardcoded count 19 → 18 in `theJSONListsEveryCheckedToolWithItsStatus()`,
+      remove Hugo-specific test scenarios (missing hugo, warning hugo)
 - [ ] Update `cmd/doctor.go` Long help string — remove Hugo from the tool list
 - [ ] Remove Phase 11 (Hugo) from `governance/workflows/infra/development-environment-setup.md`
 - [ ] Remove Hugo row from Tool Inventory table in the workflow doc (row 8)
 - [ ] Renumber subsequent tool rows in the inventory table
 - [ ] Update minimal scope table in workflow doc if Hugo was listed
-- [ ] Update the workflow doc's `termination` YAML field if it references tool count
+- [ ] Update the workflow doc's YAML frontmatter `inputs` description if it references "19 tools"
+      (currently says "full: all 19 tools for all projects")
 - [ ] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [ ] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
 - [ ] Commit: `refactor(rhino-cli): remove legacy Hugo check from doctor`
@@ -48,8 +55,8 @@ Hugo removal and Playwright/version additions).
 
 **Goal**: Create declarative Homebrew dependency manifest.
 
-- [ ] Create `Brewfile` at repository root with Homebrew-installable tools (go, jq, dotnet,
-      pyenv, asdf, clojure/tools/clojure, flutter)
+- [ ] Create `Brewfile` at repository root with Homebrew-installable tools: `brew` formulas
+      (go, jq, dotnet, pyenv, asdf, clojure/tools/clojure) and `cask` (flutter)
 - [ ] Add `Brewfile.lock.json` to `.gitignore`
 - [ ] Verify `brew bundle check` passes on current machine
 - [ ] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
@@ -82,14 +89,17 @@ Hugo removal and Playwright/version additions).
 
 - [ ] Add `playwright` `toolDef` entry to `buildToolDefs()` in `tools.go`
   - binary: `npx`, args: `["playwright", "--version"]`
-  - parseVer: `parseTrimVersion`
+  - parseVer: custom `parsePlaywrightVersion` (output is `"Version 1.58.2"`, not bare version)
 - [ ] Implement `checkPlaywrightBrowsers()` function in `checker.go` — check for chromium
       directory in `~/Library/Caches/ms-playwright/`
 - [ ] Implement custom compare function `comparePlaywright()` that returns `StatusWarning`
       with note `"browsers not installed — run: npx playwright install"` when CLI works but
       browsers are missing
 - [ ] Add Playwright test cases to `checker_test.go` — mock both CLI and browser cache
-- [ ] Update expected tool count in `reporter_test.go` (18 → 19, or adjust per current count)
+- [ ] Update `reporter_test.go`: add Playwright `ToolCheck` entry to `allOKChecks` slice,
+      add "playwright" to the name list in `TestFormatMarkdown`, update tool count
+- [ ] Update `cmd/doctor_test.go`: add "playwright" to `makeAllOKChecks()` name list,
+      update hardcoded count in `theJSONListsEveryCheckedToolWithItsStatus()`
 - [ ] Add Playwright row to Tool Inventory table in workflow doc
 - [ ] Update Phase 13 in workflow doc to note that doctor now checks for Playwright
 - [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
@@ -104,7 +114,9 @@ Hugo removal and Playwright/version additions).
       section (currently has `edition = "2021"` but no MSRV)
 - [ ] Implement `readRustVersion()` function in `checker.go` — read `rust-version` from
       `Cargo.toml`
-- [ ] Update Rust `toolDef` in `tools.go`: change `readReq` to use `readRustVersion()`,
+- [ ] Add `cargoTomlPath` variable to `buildToolDefs()` in `tools.go`
+      (`filepath.Join(repoRoot, "apps", "a-demo-be-rust-axum", "Cargo.toml")`)
+- [ ] Update Rust `toolDef` in `tools.go`: change `readReq` to use `readRustVersion(cargoTomlPath)`,
       change `compare` from `compareExact` to `compareGTE`
 - [ ] Add `flutter: ">=3.41.0"` to `apps/a-demo-fe-dart-flutterweb/pubspec.yaml`
       `environment:` section (currently has only `sdk: ^3.11.1`, no flutter constraint)
@@ -132,7 +144,7 @@ Hugo removal and Playwright/version additions).
 - [ ] Add Gherkin scenarios to `specs/apps/rhino/cli/gherkin/doctor.feature` for scope
       (minimal scope checks subset, full scope is default)
 - [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
-- [ ] Run `npm run doctor --scope minimal` — verify only 7 tools checked
+- [ ] Run `npm run doctor -- --scope minimal` — verify only 7 tools checked
 - [ ] Run `npm run doctor` — verify all tools checked (backward compatible)
 - [ ] Update `governance/workflows/infra/development-environment-setup.md` minimal scope
       section to reference `doctor --scope minimal`
@@ -160,12 +172,14 @@ list.
   - [ ] erlang: `asdf plugin add erlang && asdf install erlang {required}`
   - [ ] dotnet: `brew install dotnet`
   - [ ] clojure: `brew install clojure/tools/clojure`
-  - [ ] dart/flutter: `brew install flutter`
+  - [ ] dart/flutter: `brew install --cask flutter`
   - [ ] docker: print manual install URL
   - [ ] jq: `brew install jq`
   - [ ] playwright: `npx playwright install`
 - [ ] Add `--fix` flag to `doctor` cobra command in `cmd/doctor.go`
 - [ ] Implement fix loop: iterate missing tools, execute install commands, re-check after install
+- [ ] After installing Volta/SDKMAN/rustup, source the relevant shell init script so subsequent
+      installs (node via volta, java via sdk, cargo-llvm-cov via cargo) can find the binary
 - [ ] Print progress: `Installing golang via brew install go...`
 - [ ] Print summary: `Fixed: 3, Failed: 1, Already OK: 15`
 - [ ] Return exit code 1 if any tools remain missing after fix
