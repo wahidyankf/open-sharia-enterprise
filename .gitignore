@@ -17,6 +17,9 @@ storybook-static/
 # Nx cache
 .nx/
 
+# Homebrew
+Brewfile.lock.json
+
 # Environment variables
 .env
 .env.local

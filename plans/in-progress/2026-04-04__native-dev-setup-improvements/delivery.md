@@ -60,18 +60,18 @@ Hugo removal and Playwright/version additions).
 - [x] Edit `package.json`: change `"doctor"` script from
       `"nx run rhino-cli:build --skip-nx-cache && ..."` to `"nx run rhino-cli:build && ..."`
 - [x] Run `npm install` twice — verify second run uses Nx cache for rhino-cli build
-- [ ] Commit: `fix(infra): allow Nx cache for rhino-cli build in doctor script`
+- [x] Commit: `fix(infra): allow Nx cache for rhino-cli build in doctor script`
 
 ### Phase 5: Add Brewfile
 
 **Goal**: Create declarative Homebrew dependency manifest.
 
-- [ ] Create `Brewfile` at repository root with Homebrew-installable tools: `brew` formulas
+- [x] Create `Brewfile` at repository root with Homebrew-installable tools: `brew` formulas
       (go, jq, dotnet, pyenv, asdf, clojure/tools/clojure) and `cask` (flutter)
-- [ ] Add `Brewfile.lock.json` to `.gitignore`
-- [ ] Verify `brew info dotnet` to confirm correct formula name (may be `dotnet@10`)
-- [ ] Verify `brew bundle check` passes on current machine
-- [ ] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
+- [x] Add `Brewfile.lock.json` to `.gitignore`
+- [x] Verify `brew info dotnet` to confirm correct formula name (may be `dotnet@10`)
+- [x] Verify `brew bundle check` passes on current machine
+- [x] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
       `brew bundle` as alternative to individual installs
 - [ ] Commit: `feat(infra): add Brewfile for declarative Homebrew dependencies`
 

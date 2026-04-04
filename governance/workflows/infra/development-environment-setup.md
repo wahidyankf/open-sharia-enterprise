@@ -92,6 +92,16 @@ brew --version
 
 **On failure**: Follow manual instructions at <https://brew.sh>.
 
+**Alternative**: After installing Homebrew, you can install all Homebrew-managed dependencies
+at once using the `Brewfile` at the repository root:
+
+```bash
+brew bundle
+```
+
+This installs Go, jq, dotnet, pyenv, asdf, Clojure CLI, and Flutter. Tools managed by other
+installers (Volta, SDKMAN, rustup) still need separate installation in subsequent phases.
+
 #### 1.2 Update system package manager
 
 ```bash
