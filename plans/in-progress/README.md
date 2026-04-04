@@ -4,8 +4,8 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [LGPL Dependency Replacement](./2026-03-26__lgpl-dependency-replacement/) — Replace LGPL
-  dependencies with permissive alternatives
+- [FSL-1.1-MIT License Migration](./2026-04-04__fsl-license-migration/) — Migrate repository
+  license from MIT to FSL-1.1-MIT (converts to MIT after 2 years)
 
 ## Instructions
 
