@@ -58,8 +58,8 @@ func (s *doctorUnitSteps) allRequiredDevelopmentToolsArePresentWithMatchingVersi
 	s.mockResult = &doctor.DoctorResult{
 		MissingCount: 0,
 		WarnCount:    0,
-		OKCount:      19,
-		Checks:       makeAllOKChecks(19),
+		OKCount:      18,
+		Checks:       makeAllOKChecks(18),
 	}
 	doctorCheckAllFn = func(_ doctor.CheckOptions) (*doctor.DoctorResult, error) {
 		return s.mockResult, nil
@@ -71,10 +71,10 @@ func (s *doctorUnitSteps) aRequiredDevelopmentToolIsNotFoundInTheSystemPATH() er
 	s.mockResult = &doctor.DoctorResult{
 		MissingCount: 1,
 		WarnCount:    0,
-		OKCount:      18,
-		Checks: append(makeAllOKChecks(18), doctor.ToolCheck{
-			Name:   "hugo",
-			Binary: "hugo",
+		OKCount:      17,
+		Checks: append(makeAllOKChecks(17), doctor.ToolCheck{
+			Name:   "golang",
+			Binary: "go",
 			Status: doctor.StatusMissing,
 			Note:   "not found in PATH",
 		}),
@@ -89,8 +89,8 @@ func (s *doctorUnitSteps) aRequiredDevelopmentToolIsInstalledWithANonMatchingVer
 	s.mockResult = &doctor.DoctorResult{
 		MissingCount: 0,
 		WarnCount:    1,
-		OKCount:      18,
-		Checks: append(makeAllOKChecks(18), doctor.ToolCheck{
+		OKCount:      17,
+		Checks: append(makeAllOKChecks(17), doctor.ToolCheck{
 			Name:             "node",
 			Binary:           "node",
 			Status:           doctor.StatusWarning,
@@ -176,15 +176,15 @@ func (s *doctorUnitSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	if !ok {
 		return fmt.Errorf("expected 'tools' array in JSON but got: %s", s.cmdOutput)
 	}
-	if len(tools) != 19 {
-		return fmt.Errorf("expected 19 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
+	if len(tools) != 18 {
+		return fmt.Errorf("expected 18 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
 	}
 	return nil
 }
 
 // makeAllOKChecks creates n tool checks all with StatusOK.
 func makeAllOKChecks(n int) []doctor.ToolCheck {
-	names := []string{"git", "volta", "node", "npm", "java", "maven", "golang", "hugo",
+	names := []string{"git", "volta", "node", "npm", "java", "maven", "golang",
 		"python", "rust", "cargo-llvm-cov", "elixir", "erlang", "dotnet",
 		"clojure", "dart", "flutter", "docker", "jq"}
 	checks := make([]doctor.ToolCheck, n)

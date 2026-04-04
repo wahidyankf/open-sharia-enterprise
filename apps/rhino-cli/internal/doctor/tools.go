@@ -30,7 +30,6 @@ func buildToolDefs(repoRoot string) []toolDef {
 	packageJSONPath := filepath.Join(repoRoot, "package.json")
 	pomXMLPath := filepath.Join(repoRoot, "apps", "organiclever-be-jasb", "pom.xml")
 	goModPath := filepath.Join(repoRoot, "apps", "rhino-cli", "go.mod")
-	vercelJSONPath := filepath.Join(repoRoot, "apps", "oseplatform-web", "vercel.json")
 	pythonVersionPath := filepath.Join(repoRoot, "apps", "a-demo-be-python-fastapi", ".python-version")
 	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
 	globalJSONPath := filepath.Join(repoRoot, "apps", "a-demo-be-fsharp-giraffe", "global.json")
@@ -103,16 +102,6 @@ func buildToolDefs(repoRoot string) []toolDef {
 			parseVer: func(s string) string { return parseLineWord(s, "go version ", 2, "go") },
 			compare:  compareGTE,
 			readReq:  func() string { v, _ := readGoVersion(goModPath); return v },
-		},
-		// --- Hugo ---
-		{
-			name:     "hugo",
-			binary:   "hugo",
-			source:   "apps/oseplatform-web/vercel.json → HUGO_VERSION",
-			args:     []string{"version"},
-			parseVer: parseHugoVersion,
-			compare:  compareGTE,
-			readReq:  func() string { v, _ := readHugoVersion(vercelJSONPath); return v },
 		},
 		// --- Python ---
 		{

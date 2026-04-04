@@ -18,39 +18,39 @@ Hugo removal and Playwright/version additions).
 
 **Goal**: Remove the legacy Hugo tool check. Simplest change, reduces tool count from 19 to 18.
 
-- [ ] Remove Hugo `toolDef` entry from `buildToolDefs()` in `apps/rhino-cli/internal/doctor/tools.go`
-- [ ] Remove `vercelJSONPath` variable from `buildToolDefs()` (no longer referenced)
-- [ ] Remove `vercelJSON` struct from `apps/rhino-cli/internal/doctor/checker.go`
-- [ ] Remove `readHugoVersion` function from `checker.go`
-- [ ] Remove `parseHugoVersion` function from `checker.go` (line ~322, not in `tools.go`)
-- [ ] Remove Hugo-related test cases from `apps/rhino-cli/internal/doctor/checker_test.go`:
-  - [ ] Remove `TestParseHugoVersion` and `TestReadHugoVersion` functions
-  - [ ] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithFakeRunner` (line ~674),
+- [x] Remove Hugo `toolDef` entry from `buildToolDefs()` in `apps/rhino-cli/internal/doctor/tools.go`
+- [x] Remove `vercelJSONPath` variable from `buildToolDefs()` (no longer referenced)
+- [x] Remove `vercelJSON` struct from `apps/rhino-cli/internal/doctor/checker.go`
+- [x] Remove `readHugoVersion` function from `checker.go`
+- [x] Remove `parseHugoVersion` function from `checker.go` (line ~322, not in `tools.go`)
+- [x] Remove Hugo-related test cases from `apps/rhino-cli/internal/doctor/checker_test.go`:
+  - [x] Remove `TestParseHugoVersion` and `TestReadHugoVersion` functions
+  - [x] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithFakeRunner` (line ~674),
         update `OKCount` and `len(Checks)` assertions from 19 to 18
-  - [ ] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithWarningStatus` (line ~815)
-  - [ ] Remove Hugo mock filesystem entries (vercel.json with HUGO_VERSION)
-- [ ] Update `apps/rhino-cli/internal/doctor/reporter_test.go`: remove Hugo `ToolCheck` entry
+  - [x] Remove `"hugo"` entry from fake runner map in `TestCheckAll_WithWarningStatus` (line ~815)
+  - [x] Remove Hugo mock filesystem entries (vercel.json with HUGO_VERSION)
+- [x] Update `apps/rhino-cli/internal/doctor/reporter_test.go`: remove Hugo `ToolCheck` entry
       from `allOKChecks` slice, remove "hugo" from the name list in `TestFormatMarkdown`, update
       tool count from 19 to 18
-- [ ] Update `apps/rhino-cli/cmd/doctor_test.go`:
-  - [ ] Remove "hugo" from `makeAllOKChecks()` name list
-  - [ ] Update hardcoded count 19 → 18 in `theJSONListsEveryCheckedToolWithItsStatus()`
-  - [ ] In `aRequiredDevelopmentToolIsNotFoundInTheSystemPATH()`: change hardcoded
+- [x] Update `apps/rhino-cli/cmd/doctor_test.go`:
+  - [x] Remove "hugo" from `makeAllOKChecks()` name list
+  - [x] Update hardcoded count 19 → 18 in `theJSONListsEveryCheckedToolWithItsStatus()`
+  - [x] In `aRequiredDevelopmentToolIsNotFoundInTheSystemPATH()`: change hardcoded
         `Name: "hugo", Binary: "hugo"` to a different tool (e.g., `Name: "golang", Binary: "go"`)
         — do NOT delete this step implementation (it backs the generic Gherkin scenario)
-  - [ ] Verify `aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion()` uses `"node"`
+  - [x] Verify `aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion()` uses `"node"`
         (not `"hugo"`) — no change needed if already correct
-- [ ] Update `cmd/doctor.go` Long help string — remove Hugo from the tool list
-- [ ] Remove Phase 11 (Hugo) from `governance/workflows/infra/development-environment-setup.md`
-- [ ] Remove Hugo row from Tool Inventory table in the workflow doc (row 8)
-- [ ] Renumber subsequent tool rows in the inventory table
-- [ ] Update minimal scope table in workflow doc if Hugo was listed
-- [ ] Update the workflow doc's YAML frontmatter `inputs` description if it references "19 tools"
+- [x] Update `cmd/doctor.go` Long help string — remove Hugo from the tool list
+- [x] Remove Phase 11 (Hugo) from `governance/workflows/infra/development-environment-setup.md`
+- [x] Remove Hugo row from Tool Inventory table in the workflow doc (row 8)
+- [x] Renumber subsequent tool rows in the inventory table
+- [x] Update minimal scope table in workflow doc if Hugo was listed
+- [x] Update the workflow doc's YAML frontmatter `inputs` description if it references "19 tools"
       (currently says "full: all 19 tools for all projects")
-- [ ] Update `governance/development/workflow/native-first-toolchain.md` opening paragraph
+- [x] Update `governance/development/workflow/native-first-toolchain.md` opening paragraph
       "19 toolchains" → "18 toolchains" (or remove hardcoded count)
-- [ ] Run `nx run rhino-cli:test:quick` — verify all tests pass
-- [ ] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
+- [x] Run `nx run rhino-cli:test:quick` — verify all tests pass
+- [x] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
 - [ ] Commit: `refactor(rhino-cli): remove legacy Hugo check from doctor`
 
 ### Phase 7: Fix Postinstall Caching

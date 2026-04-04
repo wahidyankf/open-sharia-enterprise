@@ -23,7 +23,6 @@ Tools checked:
   java           — from apps/organiclever-be-jasb/pom.xml → <java.version>
   maven          — any version (no config file)
   golang         — from apps/rhino-cli/go.mod → go directive
-  hugo           — from apps/oseplatform-web/vercel.json → HUGO_VERSION
   python         — from apps/a-demo-be-python-fastapi/.python-version
   rust           — any version (no config file)
   cargo-llvm-cov — any version (cargo subcommand)

@@ -12,7 +12,7 @@ inputs:
   - name: scope
     type: enum
     values: [full, minimal]
-    description: "full: all 19 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)"
+    description: "full: all 18 tools for all projects; minimal: core tools only (Node.js, Go, Docker, jq)"
     required: false
     default: full
 outputs:
@@ -57,19 +57,18 @@ All tools checked by `rhino-cli doctor`, plus Playwright browsers:
 | 5   | java           | 25+ (major)           | apps/a-demo-be-java-springboot/pom.xml        | SDKMAN         |
 | 6   | maven          | Any                   | (no config file)                              | SDKMAN         |
 | 7   | golang         | >= go.mod directive   | apps/rhino-cli/go.mod                         | Brew/asdf      |
-| 8   | hugo           | Any                   | (no config file)                              | Brew           |
-| 9   | python         | >= .python-version    | apps/a-demo-be-python-fastapi/.python-version | pyenv/System   |
-| 10  | rust (rustc)   | Any                   | (no config file)                              | rustup         |
-| 11  | cargo-llvm-cov | Any                   | (no config file)                              | cargo          |
-| 12  | elixir         | >= 1.19.5             | .tool-versions                                | asdf           |
-| 13  | erlang         | >= 27 (major)         | .tool-versions                                | asdf           |
-| 14  | dotnet         | >= global.json major  | apps/a-demo-be-fsharp-giraffe/global.json     | Brew/Script    |
-| 15  | clojure (clj)  | Any                   | (no config file)                              | Brew           |
-| 16  | dart           | >= pubspec.yaml SDK   | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Flutter        |
-| 17  | flutter        | Any                   | (no config file)                              | Manual/Brew    |
-| 18  | docker         | Any                   | (no config file)                              | Docker Desktop |
-| 19  | jq             | Any                   | (no config file)                              | Brew           |
-| 20  | playwright     | (matches npm version) | node_modules                                  | npx            |
+| 8   | python         | >= .python-version    | apps/a-demo-be-python-fastapi/.python-version | pyenv/System   |
+| 9   | rust (rustc)   | Any                   | (no config file)                              | rustup         |
+| 10  | cargo-llvm-cov | Any                   | (no config file)                              | cargo          |
+| 11  | elixir         | >= 1.19.5             | .tool-versions                                | asdf           |
+| 12  | erlang         | >= 27 (major)         | .tool-versions                                | asdf           |
+| 13  | dotnet         | >= global.json major  | apps/a-demo-be-fsharp-giraffe/global.json     | Brew/Script    |
+| 14  | clojure (clj)  | Any                   | (no config file)                              | Brew           |
+| 15  | dart           | >= pubspec.yaml SDK   | apps/a-demo-fe-dart-flutterweb/pubspec.yaml   | Flutter        |
+| 16  | flutter        | Any                   | (no config file)                              | Manual/Brew    |
+| 17  | docker         | Any                   | (no config file)                              | Docker Desktop |
+| 18  | jq             | Any                   | (no config file)                              | Brew           |
+| 19  | playwright     | (matches npm version) | node_modules                                  | npx            |
 
 ## Steps
 
@@ -436,31 +435,11 @@ flutter doctor
 
 ---
 
-### Phase 11: Hugo (Sequential)
+### Phase 11: Repository Bootstrap (Sequential)
 
-**Condition**: `{input.scope} == full`
+**Depends on**: Phases 1-3 (minimum), Phases 4-10 (for full scope)
 
-Hugo is a legacy doctor entry (oseplatform-web migrated to Next.js). No active projects
-use Hugo, but the doctor still checks for it. Installing it prevents a doctor warning.
-
-#### 11.1 Install Hugo
-
-```bash
-# macOS
-brew install hugo
-
-# Linux — download from https://gohugo.io/getting-started/installing/
-```
-
-**Success criteria**: `hugo version` returns a version string.
-
----
-
-### Phase 12: Repository Bootstrap (Sequential)
-
-**Depends on**: Phases 1-3 (minimum), Phases 4-11 (for full scope)
-
-#### 12.1 Clone the repository
+#### 11.1 Clone the repository
 
 ```bash
 git clone https://github.com/wahidyankf/open-sharia-enterprise.git
@@ -469,7 +448,7 @@ cd open-sharia-enterprise
 
 **Condition**: Skip if already cloned.
 
-#### 12.2 Install npm dependencies
+#### 11.2 Install npm dependencies
 
 ```bash
 npm install
@@ -480,7 +459,7 @@ This also triggers Husky to install git hooks (pre-commit, commit-msg, pre-push)
 **Success criteria**: `npm install` exits 0. `.husky/pre-commit`, `.husky/commit-msg`,
 `.husky/pre-push` exist.
 
-#### 12.3 Restore environment files
+#### 11.3 Restore environment files
 
 `.env` files are gitignored but required by many apps. If you have a previous backup
 (from `rhino-cli env backup`), restore them now:
@@ -502,7 +481,7 @@ create `.env` files manually from `.env.example` templates in each app directory
 **On failure**: If no backup exists, copy `.env.example` to `.env` in each app you plan to
 work on and fill in the required values.
 
-#### 12.4 Run doctor to verify all tools
+#### 11.4 Run doctor to verify all tools
 
 ```bash
 npm run doctor
@@ -515,13 +494,13 @@ Install the missing tool and re-run doctor.
 
 ---
 
-### Phase 13: Playwright Browsers (Sequential)
+### Phase 12: Playwright Browsers (Sequential)
 
-**Depends on**: Phase 12
+**Depends on**: Phase 11
 
 Required for: All E2E tests (`*-e2e` projects)
 
-#### 13.1 Install Playwright browsers
+#### 12.1 Install Playwright browsers
 
 ```bash
 npx playwright install
@@ -536,11 +515,11 @@ This downloads Chromium, Firefox, and WebKit browsers used by Playwright E2E tes
 
 ---
 
-### Phase 14: Verification (Sequential)
+### Phase 13: Verification (Sequential)
 
 **Depends on**: All previous phases
 
-#### 14.1 Verify pre-commit hook
+#### 13.1 Verify pre-commit hook
 
 ```bash
 # Create a test change and attempt a commit
@@ -556,7 +535,7 @@ git checkout README.md
 
 **Success criteria**: Pre-commit hook runs without errors (Prettier, markdownlint).
 
-#### 14.2 Verify pre-push targets (cache warm)
+#### 13.2 Verify pre-push targets (cache warm)
 
 ```bash
 # Run the same targets pre-push would run, for affected projects
@@ -566,7 +545,7 @@ npx nx affected -t typecheck lint test:quick spec-coverage
 **Success criteria**: All affected targets pass. This also warms the Nx cache so subsequent
 pushes are fast.
 
-#### 14.3 Verify integration tests (one backend)
+#### 13.3 Verify integration tests (one backend)
 
 ```bash
 # Pick any backend to validate Docker + PostgreSQL integration
@@ -578,7 +557,7 @@ executes Gherkin scenarios against a real database.
 
 **On failure**: Ensure Docker is running (`docker info`). Check for port conflicts on 5432.
 
-#### 14.4 Verify E2E tests (one backend)
+#### 13.4 Verify E2E tests (one backend)
 
 ```bash
 # Start a backend
@@ -614,17 +593,17 @@ For `scope: minimal` (core development only — TypeScript/Go projects, git hook
 | 2     | 2.1-2.3   | Git, Docker, jq                  |
 | 3     | 3.1-3.2   | Volta, Node.js 24, npm           |
 | 5     | 5.1       | Go                               |
-| 12    | 12.1-12.4 | npm deps, env restore, git hooks |
-| 13    | 13.1      | Playwright browsers              |
-| 14    | 14.1-14.2 | Verification                     |
+| 11    | 11.1-11.4 | npm deps, env restore, git hooks |
+| 12    | 12.1      | Playwright browsers              |
+| 13    | 13.1-13.2 | Verification                     |
 
 This covers: pre-commit hooks, pre-push hooks, TypeScript/Go unit tests, and basic E2E tests.
 
 ## Notes
 
 - **Version pinning**: All version requirements are read from config files in the repo
-  (package.json, go.mod, .tool-versions, global.json, .python-version, pubspec.yaml,
-  vercel.json). The doctor command verifies these automatically.
+  (package.json, go.mod, .tool-versions, global.json, .python-version, pubspec.yaml).
+  The doctor command verifies these automatically.
 - **Idempotency**: Every step can be re-run safely. Running an install command for an
   already-installed tool is a no-op or an upgrade.
 - **macOS focus**: This workflow prioritizes macOS (the primary development platform).
