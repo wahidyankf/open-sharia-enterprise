@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -373,6 +375,47 @@ func parseDockerVersion(output string) string {
 func parseJqVersion(output string) string {
 	trimmed := strings.TrimSpace(output)
 	return strings.TrimPrefix(trimmed, "jq-")
+}
+
+// parsePlaywrightVersion extracts version from "Version 1.58.2" output.
+func parsePlaywrightVersion(output string) string {
+	return parseLineWord(output, "Version ", 1, "")
+}
+
+// checkPlaywrightBrowsers checks if Playwright browser binaries exist in the
+// platform-specific cache directory.
+func checkPlaywrightBrowsers() bool {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return false
+	}
+	var cacheDir string
+	if runtime.GOOS == "darwin" {
+		cacheDir = filepath.Join(home, "Library", "Caches", "ms-playwright")
+	} else {
+		cacheDir = filepath.Join(home, ".cache", "ms-playwright")
+	}
+	entries, err := os.ReadDir(cacheDir)
+	if err != nil {
+		return false
+	}
+	for _, e := range entries {
+		if strings.HasPrefix(e.Name(), "chromium-") {
+			return true
+		}
+	}
+	return false
+}
+
+// checkPlaywrightBrowsersFn is an overridable function variable for testing.
+var checkPlaywrightBrowsersFn = checkPlaywrightBrowsers
+
+// comparePlaywright checks version and warns if browsers are not installed.
+func comparePlaywright(installed, required string) (ToolStatus, string) {
+	if !checkPlaywrightBrowsersFn() {
+		return StatusWarning, "browsers not installed \u2014 run: npx playwright install"
+	}
+	return StatusOK, "no version requirement"
 }
 
 // runOneDef executes a single tool check definition using the provided runner.

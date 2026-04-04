@@ -659,6 +659,9 @@ func setupCheckAllRepo(t *testing.T) string {
 }
 
 func TestCheckAll_WithFakeRunner(t *testing.T) {
+	checkPlaywrightBrowsersFn = func() bool { return true }
+	defer func() { checkPlaywrightBrowsersFn = checkPlaywrightBrowsers }()
+
 	tmpDir := setupCheckAllRepo(t)
 
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
@@ -680,6 +683,7 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		"flutter": {stdout: "Flutter 3.41.5 • channel stable\n", exitCode: 0},
 		"docker":  {stdout: "Docker version 29.2.1, build a5c7197\n", exitCode: 0},
 		"jq":      {stdout: "jq-1.8.1\n", exitCode: 0},
+		"npx":     {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
 	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner})
@@ -687,8 +691,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.OKCount != 18 {
-		t.Errorf("expected OKCount == 18, got %d", result.OKCount)
+	if result.OKCount != 19 {
+		t.Errorf("expected OKCount == 19, got %d", result.OKCount)
 	}
 	if result.WarnCount != 0 {
 		t.Errorf("expected WarnCount == 0, got %d", result.WarnCount)
@@ -696,8 +700,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 	if result.MissingCount != 0 {
 		t.Errorf("expected MissingCount == 0, got %d", result.MissingCount)
 	}
-	if len(result.Checks) != 18 {
-		t.Errorf("expected 18 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 19 {
+		t.Errorf("expected 19 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -712,8 +716,8 @@ func TestCheckAll_WithMissingTools(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.MissingCount != 18 {
-		t.Errorf("expected MissingCount == 18, got %d", result.MissingCount)
+	if result.MissingCount != 19 {
+		t.Errorf("expected MissingCount == 19, got %d", result.MissingCount)
 	}
 	if result.OKCount != 0 {
 		t.Errorf("expected OKCount == 0, got %d", result.OKCount)
@@ -792,12 +796,15 @@ func TestCheckAll_NilRunner_UsesRealRunner(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected non-nil result")
 	}
-	if len(result.Checks) != 18 {
-		t.Errorf("expected 18 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 19 {
+		t.Errorf("expected 19 checks, got %d", len(result.Checks))
 	}
 }
 
 func TestCheckAll_WithWarningStatus(t *testing.T) {
+	checkPlaywrightBrowsersFn = func() bool { return true }
+	defer func() { checkPlaywrightBrowsersFn = checkPlaywrightBrowsers }()
+
 	tmpDir := setupCheckAllRepo(t)
 
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
@@ -820,6 +827,7 @@ func TestCheckAll_WithWarningStatus(t *testing.T) {
 		"flutter": {stdout: "Flutter 3.41.5\n", exitCode: 0},
 		"docker":  {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
 		"jq":      {stdout: "jq-1.8.1\n", exitCode: 0},
+		"npx":     {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
 	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner})
@@ -1249,6 +1257,46 @@ func TestRunOneDef_Docker_Found(t *testing.T) {
 	}
 	if check.InstalledVersion != "29.2.1" {
 		t.Errorf("expected version %q, got %q", "29.2.1", check.InstalledVersion)
+	}
+}
+
+func TestParsePlaywrightVersion(t *testing.T) {
+	tests := []struct{ input, want string }{
+		{"Version 1.58.2\n", "1.58.2"},
+		{"Version 1.50.0\n", "1.50.0"},
+		{"", ""},
+	}
+	for _, tt := range tests {
+		got := parsePlaywrightVersion(tt.input)
+		if got != tt.want {
+			t.Errorf("parsePlaywrightVersion(%q) = %q, want %q", tt.input, got, tt.want)
+		}
+	}
+}
+
+func TestRunOneDef_Playwright_Found(t *testing.T) {
+	checkPlaywrightBrowsersFn = func() bool { return true }
+	defer func() { checkPlaywrightBrowsersFn = checkPlaywrightBrowsers }()
+
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"npx": {stdout: "Version 1.58.2\n", exitCode: 0},
+	})
+	def := findDef(t, buildToolDefs(t.TempDir()), "playwright")
+	check := runOneDef(runner, def)
+	if check.Status != StatusOK {
+		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	}
+	if check.InstalledVersion != "1.58.2" {
+		t.Errorf("expected version %q, got %q", "1.58.2", check.InstalledVersion)
+	}
+}
+
+func TestRunOneDef_Playwright_Missing(t *testing.T) {
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
+	def := findDef(t, buildToolDefs(t.TempDir()), "playwright")
+	check := runOneDef(runner, def)
+	if check.Status != StatusMissing {
+		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
 }
 

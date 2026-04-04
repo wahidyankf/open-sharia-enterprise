@@ -34,6 +34,7 @@ Tools checked:
   flutter        — any version (no config file)
   docker         — any version (no config file)
   jq             — any version (no config file)
+  playwright     — browsers in Playwright cache directory
 
 Status codes:
   ✓ ok      — tool is installed with the correct version

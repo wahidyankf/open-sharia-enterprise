@@ -524,8 +524,11 @@ npx playwright install
 ```
 
 This downloads Chromium, Firefox, and WebKit browsers used by Playwright E2E tests.
+Doctor now checks for Playwright browsers — if browsers are missing, it shows a warning
+with the install command.
 
-**Success criteria**: `npx playwright install` exits 0 without errors.
+**Success criteria**: `npx playwright install` exits 0 without errors. `npm run doctor`
+shows playwright as OK (not warning).
 
 **On failure**: On Linux, install system dependencies first:
 `npx playwright install-deps`

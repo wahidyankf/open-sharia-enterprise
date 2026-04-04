@@ -93,30 +93,30 @@ Hugo removal and Playwright/version additions).
 - [x] Test manually: run `env init --force`, verify file is overwritten
 - [x] Update Phase 12.3 in `governance/workflows/infra/development-environment-setup.md` to
       mention `env init` as fallback when no backup exists
-- [ ] Commit: `feat(rhino-cli): add env init command to bootstrap .env from .env.example`
+- [x] Commit: `feat(rhino-cli): add env init command to bootstrap .env from .env.example`
 
 ### Phase 4: Add Playwright to Doctor
 
 **Goal**: Add Playwright browser check to doctor output.
 
-- [ ] Add `playwright` `toolDef` entry to `buildToolDefs()` in `tools.go`
+- [x] Add `playwright` `toolDef` entry to `buildToolDefs()` in `tools.go`
   - binary: `npx`, args: `["playwright", "--version"]`
   - parseVer: custom `parsePlaywrightVersion` (output is `"Version 1.58.2"`, not bare version)
-- [ ] Implement `checkPlaywrightBrowsers()` function in `checker.go` — check for chromium
+- [x] Implement `checkPlaywrightBrowsers()` function in `checker.go` — check for chromium
       directory in platform-specific cache (macOS: `~/Library/Caches/ms-playwright/`,
       Linux: `~/.cache/ms-playwright/`)
-- [ ] Implement custom compare function `comparePlaywright()` that returns `StatusWarning`
+- [x] Implement custom compare function `comparePlaywright()` that returns `StatusWarning`
       with note `"browsers not installed — run: npx playwright install"` when CLI works but
       browsers are missing
-- [ ] Add Playwright test cases to `checker_test.go` — mock both CLI and browser cache
-- [ ] Update `reporter_test.go`: add Playwright `ToolCheck` entry to `allOKChecks` slice,
+- [x] Add Playwright test cases to `checker_test.go` — mock both CLI and browser cache
+- [x] Update `reporter_test.go`: add Playwright `ToolCheck` entry to `allOKChecks` slice,
       add "playwright" to the name list in `TestFormatMarkdown`, update tool count
-- [ ] Update `cmd/doctor_test.go`: add "playwright" to `makeAllOKChecks()` name list,
+- [x] Update `cmd/doctor_test.go`: add "playwright" to `makeAllOKChecks()` name list,
       update hardcoded count in `theJSONListsEveryCheckedToolWithItsStatus()`
-- [ ] Add Playwright row to Tool Inventory table in workflow doc
-- [ ] Update Phase 13 in workflow doc to note that doctor now checks for Playwright
-- [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
-- [ ] Run `npm run doctor` — verify playwright appears in output with correct status
+- [x] Add Playwright row to Tool Inventory table in workflow doc
+- [x] Update Phase 13 in workflow doc to note that doctor now checks for Playwright
+- [x] Run `nx run rhino-cli:test:quick` — verify tests pass
+- [x] Run `npm run doctor` — verify playwright appears in output with correct status
 - [ ] Commit: `feat(rhino-cli): add Playwright browser check to doctor`
 
 ### Phase 8: Pin Rust and Flutter Versions

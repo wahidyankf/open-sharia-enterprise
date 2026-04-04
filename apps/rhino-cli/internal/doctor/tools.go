@@ -220,5 +220,15 @@ func buildToolDefs(repoRoot string) []toolDef {
 			compare:  compareExact,
 			readReq:  noReq,
 		},
+		// --- Playwright ---
+		{
+			name:     "playwright",
+			binary:   "npx",
+			source:   "node_modules (npx playwright)",
+			args:     []string{"playwright", "--version"},
+			parseVer: parsePlaywrightVersion,
+			compare:  comparePlaywright,
+			readReq:  noReq,
+		},
 	}
 }
