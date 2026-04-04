@@ -79,9 +79,16 @@ These directories contain product-specific code with competing-use restrictions 
 
 The standard FSL-1.1-MIT template defines "the Software" as the code included with the license. Placing the LICENSE file inside a specific application directory naturally scopes the competing-use restriction to that application's domain without modifying the template text.
 
-#### Specs and Contracts (FSL-1.1-MIT)
+#### Behavioral Specifications (FSL-1.1-MIT)
 
-The `specs/` directory MUST have its own FSL-1.1-MIT LICENSE file at its root. Specs contain product blueprints (Gherkin feature files, OpenAPI contracts, C4 architecture models) that define product behavior. All specs are FSL-licensed regardless of whether the corresponding implementation code is MIT-licensed (e.g., demo app specs are FSL even though demo app code is MIT).
+Anything that describes **what the product does** (behavioral specifications) MUST be FSL-licensed, because these materials can be used to clean-room engineer a competing product. The guiding principle: implementation code (HOW) can be MIT; behavioral specifications (WHAT) must be FSL.
+
+This includes:
+
+- **`specs/`** -- MUST have its own FSL-1.1-MIT LICENSE file. Contains Gherkin features, OpenAPI contracts, and C4 architecture models that define product behavior. All specs are FSL regardless of whether the corresponding implementation code is MIT (e.g., demo app specs are FSL even though demo app code is MIT).
+- **E2E test suites** -- E2E tests are executable behavioral specifications. They describe expected HTTP responses, UI states, user flows, and error handling. All E2E test apps MUST be FSL-licensed:
+  - Product E2E tests (`*-e2e` apps for product families) inherit root FSL
+  - Demo E2E tests (`apps/a-demo-be-e2e/`, `apps/a-demo-fe-e2e/`) MUST have their own FSL-1.1-MIT LICENSE file (even though the demo implementation code they test is MIT)
 
 #### Shared Libraries (MIT, unless overridden)
 
@@ -94,9 +101,9 @@ Directories under `libs/` default to the MIT license, unless explicitly overridd
 
 A new library defaults to MIT. To override, place a different LICENSE file (e.g., FSL-1.1-MIT) in the library directory and document the reason in LICENSING-NOTICE.md.
 
-#### Demo and Reference Applications (MIT)
+#### Demo and Reference Implementation Code (MIT)
 
-All directories matching `apps/a-demo-*` MUST use the MIT license. These are reference implementations meant for learning and have no competing-use restrictions.
+All demo application **implementation** directories (`apps/a-demo-be-*`, `apps/a-demo-fe-*`, `apps/a-demo-fs-*`, excluding `*-e2e`) MUST use the MIT license. These are reference implementations meant for learning and have no competing-use restrictions. Note: their E2E tests and specs are FSL (see Behavioral Specifications above).
 
 ### Root LICENSE Fallback
 

@@ -33,17 +33,29 @@ freely use the same code for an educational platform, an enterprise tool, or any
 purpose. The competition boundary is defined by what each specific application does, not by a broad
 umbrella term.
 
-### Specs and Contracts (FSL-1.1-MIT)
+### Specs, Contracts, and E2E Tests (FSL-1.1-MIT)
 
-The `specs/` directory has its own FSL-1.1-MIT LICENSE file. Specs contain product blueprints
-(Gherkin feature files, OpenAPI contracts, C4 architecture models) that define product behavior —
-including specs for demo apps and shared libraries. All specs are FSL-licensed regardless of whether
-the corresponding code is MIT.
+Anything that describes **what the product does** (behavioral specifications) is FSL-licensed,
+because these materials can be used to clean-room engineer a competing product:
+
+- **`specs/`** — Gherkin feature files, OpenAPI contracts, C4 architecture models. Has its own
+  FSL-1.1-MIT LICENSE file. All specs are FSL regardless of whether the corresponding implementation
+  code is MIT.
+- **`apps/a-demo-be-e2e/`** — Playwright E2E tests for demo backends. Describes expected HTTP
+  responses, API behavior, and error handling. Has its own FSL-1.1-MIT LICENSE file.
+- **`apps/a-demo-fe-e2e/`** — Playwright E2E tests for demo frontends. Describes expected UI
+  states, user flows, and rendering behavior. Has its own FSL-1.1-MIT LICENSE file.
+- **Product E2E tests** (`*-e2e` apps not listed above) — Inherit root FSL-1.1-MIT.
+
+**The principle**: Implementation code (HOW) can be MIT. Behavioral specifications (WHAT) must be
+FSL. E2E tests are executable behavioral specs — they reveal what the system does, not just how
+it's built.
 
 ### MIT-Licensed Code (No Restrictions)
 
-Shared libraries and reference/demo applications are licensed under MIT with no competing-use
-restrictions, **unless explicitly overridden** by a per-directory LICENSE file stating otherwise.
+Shared libraries and reference/demo **implementation code** are licensed under MIT with no
+competing-use restrictions, **unless explicitly overridden** by a per-directory LICENSE file
+stating otherwise.
 
 **Shared Libraries** (`libs/`):
 
@@ -54,18 +66,19 @@ restrictions, **unless explicitly overridden** by a per-directory LICENSE file s
 
 A new library defaults to MIT. To override, place a different LICENSE file in the library directory.
 
-**Demo/Reference Applications** (`apps/a-demo-*`):
+**Demo/Reference Implementation Code** (`apps/a-demo-*`, excluding `*-e2e`):
 
-All demo applications (backend implementations in Go, Java, Kotlin, Python, Rust, Elixir, F#, C#,
-Clojure, TypeScript; frontend implementations in Next.js, TanStack Start, Flutter Web; fullstack
-Next.js) are MIT-licensed. These are reference implementations meant for learning — use them freely.
+All demo application implementations (backend code in Go, Java, Kotlin, Python, Rust, Elixir, F#,
+C#, Clojure, TypeScript; frontend code in Next.js, TanStack Start, Flutter Web; fullstack Next.js)
+are MIT-licensed. These are reference implementations meant for learning — use them freely. Note:
+their E2E tests and specs are FSL (see above).
 
 ### Inherited License (Root FSL-1.1-MIT)
 
 The following fall under the root FSL-1.1-MIT license (no separate per-directory LICENSE):
 
 - **CLI tools**: `rhino-cli`
-- **E2E test suites**: `*-e2e` apps
+- **Product E2E test suites**: `ayokoding-web-*-e2e`, `organiclever-*-e2e`, `oseplatform-web-*-e2e`
 - **Documentation**: `docs/`, `governance/`, `plans/`
 - **AI agent configuration**: `.claude/`, `.opencode/`
 
