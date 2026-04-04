@@ -184,11 +184,11 @@ For complete principles, see [governance/principles/](./governance/principles/RE
 This repository uses **per-directory licensing** guided by: implementation code (HOW) can be MIT;
 behavioral specifications (WHAT) must be FSL to prevent clean-room engineering of competing products.
 
-- **Product apps and behavioral specs** ([FSL-1.1-MIT](./LICENSE)): Product apps, `specs/`, and
-  E2E test suites (including `a-demo-be-e2e`, `a-demo-fe-e2e`) are FSL-licensed. Each product
-  app scopes the competing-use restriction to its domain
-- **Shared libraries and demo implementation code** ([MIT](./libs/golang-commons/LICENSE)): All
-  `libs/` and `apps/a-demo-*` implementation directories (excluding `*-e2e`) are MIT-licensed
+- **Product apps and behavioral specs** ([FSL-1.1-MIT](./LICENSE)): Product apps, product specs,
+  and all E2E test suites (including `a-demo-*-e2e`) are FSL-licensed. Each product app scopes
+  the competing-use restriction to its domain
+- **Shared libraries and demo code/specs** ([MIT](./libs/golang-commons/LICENSE)): All `libs/`,
+  `apps/a-demo-*` implementation directories (excluding `*-e2e`), and `specs/apps/a-demo/`
 
 The FSL-1.1-MIT license converts to MIT on a **rolling per-version basis**: each commit becomes
 MIT-licensed 2 years after its first public distribution.
