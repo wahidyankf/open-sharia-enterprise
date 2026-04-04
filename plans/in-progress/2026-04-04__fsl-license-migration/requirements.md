@@ -45,15 +45,6 @@ this project's license.
 Historical plan files in `plans/done/` are NOT updated — they are records of what was true at the
 time of completion.
 
-### FR-6: External Platform Attributes
-
-All external platform attributes that declare the project's license or openness must be updated:
-
-- **GitHub repository description**: Change "Open-source" to "Source-available" via `gh repo edit`
-- **GitHub license detection**: GitHub auto-detects from the LICENSE file. FSL-1.1-MIT is not in
-  GitHub's recognized license list, so the repo will show "Other" or no license badge. This is
-  expected and acceptable — the LICENSE file itself is authoritative.
-
 ### FR-4: Third-Party Code Preservation
 
 Third-party vendored code must retain its original license:
@@ -84,6 +75,15 @@ and do not ship as products — their dependencies are excluded.
 - `libs/elixir-cabbage` — MIT (vendored fork)
 - `libs/elixir-gherkin` — MIT (vendored fork)
 - `libs/golang-commons` — MIT, Apache-2.0, BSD (+ MPL-2.0 indirect via godog)
+
+### FR-6: External Platform Attributes
+
+All external platform attributes that declare the project's license or openness must be updated:
+
+- **GitHub repository description**: Change "Open-source" to "Source-available" via `gh repo edit`
+- **GitHub license detection**: GitHub auto-detects from the LICENSE file. FSL-1.1-MIT is not in
+  GitHub's recognized license list, so the repo will show "Other" or no license badge. This is
+  expected and acceptable — the LICENSE file itself is authoritative.
 
 ## Non-Functional Requirements
 

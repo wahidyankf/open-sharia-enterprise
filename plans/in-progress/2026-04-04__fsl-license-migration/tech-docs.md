@@ -104,6 +104,14 @@ is available at [https://fsl.software/](https://fsl.software/).
 
 ### Template (FSL-1.1-MIT)
 
+**WARNING: The template below is a simplified illustration showing the key parameters. It omits
+several sections present in the canonical FSL-1.1 template (Patent, Redistribution, Trademark).
+DO NOT copy this template into the LICENSE file. Instead, fetch the canonical template from
+[fsl.software](https://fsl.software/) and fill in the parameterized fields.**
+
+**Copyright year range**: `2025-2026` covers the original MIT copyright (2025) through the
+FSL relicensing date (2026), preserving continuity of the copyright claim.
+
 ```
 Functional Source License, Version 1.1, MIT Future License
 

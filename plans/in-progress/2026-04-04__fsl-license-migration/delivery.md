@@ -6,8 +6,8 @@
 
 **Git Workflow**: Trunk Based Development — each phase is one commit
 
-**Phase Order**: Phase 1 must be first (it establishes the license). Phases 2-5 can be done in any
-order. Phase 6 (validation) must be last.
+**Phase Order**: Phase 1 must be first (it establishes the license). Phases 2-4 can be done in any
+order. Phase 5 (validation) must be last.
 
 ## Implementation Phases
 
@@ -70,7 +70,7 @@ project's license in examples or declarations.
 **Goal**: Update external platform metadata to reflect the new license.
 
 - [ ] Update GitHub repository description: change "Open-source" to "Source-available"
-      via `gh repo edit --description "Source-available Sharia-compliant enterprise platform. ..."`
+      via `gh repo edit wahidyankf/open-sharia-enterprise --description "Source-available Sharia-compliant enterprise platform. Phase 1: Building OrganicLever productivity tracker. Learning in public. No timelines—building it right."`
 - [ ] Verify GitHub license badge: after LICENSE file replacement (Phase 1), GitHub will show
       "Other" since FSL-1.1-MIT is not in GitHub's recognized license list — this is expected
 - [ ] Commit: N/A (GitHub API change, no file change needed)
@@ -96,13 +96,14 @@ production performance impact.
 
 #### 3b: Document Dependency Audit and Licensing
 
-- [ ] Create `docs/explanation/software-engineering/licensing/dependency-compatibility.md`:
+- [ ] Create `docs/explanation/software-engineering/licensing/ex-soen-li__dependency-compatibility.md`:
   - Audit methodology (date: 2026-04-04, scope: all production apps, ~10 projects)
   - Production dependency license summary table (all permissive except MPL-2.0 noted below)
   - Why `images.unoptimized: true` was set (LGPL-3.0 elimination)
   - MPL-2.0 HashiCorp libs: documented as file-level copyleft, no conflict with FSL
   - Demo apps (`a-demo-*`) excluded from audit with rationale
-- [ ] Create `docs/explanation/software-engineering/licensing/README.md` — Index file
+- [ ] Update `docs/explanation/software-engineering/licensing/README.md` — add entry for the new
+      dependency compatibility doc (this file already exists)
 - [ ] Commit: `docs(licensing): add production dependency compatibility audit`
 
 ### Phase 4: Create LICENSING-NOTICE.md
@@ -159,8 +160,13 @@ FSL-1.1-MIT.
 #### 5e: LGPL Dependency Elimination
 
 - [ ] Verify `images.unoptimized: true` is set in all 3 production Next.js apps
-- [ ] Verify `@img/sharp-libvips` is no longer resolved in production app dependency trees
-- [ ] Verify `docs/explanation/software-engineering/licensing/dependency-compatibility.md` exists
+- [ ] Verify `@img/sharp-libvips` is no longer resolved in production app dependency trees:
+      `npm ls @img/sharp-libvips-darwin-arm64 2>/dev/null | grep -c sharp-libvips` should return 0
+      (or run `npm ls 2>/dev/null | grep -i lgpl` to confirm no LGPL packages remain)
+- [ ] Verify `docs/explanation/software-engineering/licensing/ex-soen-li__dependency-compatibility.md`
+      exists
+- [ ] Verify `docs/explanation/software-engineering/licensing/README.md` references the new
+      `ex-soen-li__dependency-compatibility.md` file
 
 #### 5f: Stale Reference Sweep
 
@@ -173,5 +179,5 @@ FSL-1.1-MIT.
 #### 5g: Build Verification
 
 - [ ] Run `npm run doctor` — verify all tools still OK
-- [ ] Run `npx nx affected -t typecheck lint test:quick` — verify no breakage
+- [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` — verify no breakage
 - [ ] Verify `LICENSING-NOTICE.md` exists and explains per-version rolling conversion
