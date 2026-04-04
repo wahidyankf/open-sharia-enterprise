@@ -184,7 +184,7 @@ Our tech stack reflects the progressive complexity approach — chosen for prove
 
 ## License
 
-This project is licensed under the **FSL-1.1-MIT (Functional Source License)** — a source-available license with a non-compete clause. You can use, modify, and distribute the code for any purpose except offering a competing commercial Sharia-compliant enterprise platform. The license converts to MIT on a rolling per-version basis: each commit becomes MIT-licensed 2 years after its first public distribution.
+This project uses **per-directory licensing** with the **FSL-1.1-MIT (Functional Source License)** for product applications and **MIT** for shared libraries and demo apps. Each product has its own LICENSE file scoping the competing-use restriction to its specific domain. The FSL-1.1-MIT license converts to MIT on a rolling per-version basis: each commit becomes MIT-licensed 2 years after its first public distribution. See [LICENSING-NOTICE.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSING-NOTICE.md) for full details.
 
 ## Get Involved
 
