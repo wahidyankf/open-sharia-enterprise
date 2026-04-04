@@ -256,6 +256,56 @@ When code files are modified, **Husky + lint-staged** automatically run:
 - **Link validation**: Fix broken links, re-commit
 - **Commit message format**: Rewrite commit message following Conventional Commits
 
+## Development Environment Setup
+
+Before implementing any changes, ensure the development environment is ready. This prevents wasted time on toolchain issues mid-implementation.
+
+### Quick Verification
+
+```bash
+# Verify all tools are installed and at correct versions
+npm run doctor
+
+# If tools are missing, auto-install them
+npm run doctor -- --fix
+
+# Preview what would be installed (dry run)
+npm run doctor -- --fix --dry-run
+
+# Check only core tools (git, volta, node, npm, go, docker, jq)
+npm run doctor -- --scope minimal
+```
+
+### Environment File Management (rhino-cli)
+
+The repository uses `rhino-cli` for environment file management:
+
+```bash
+# Initialize .env files from .env.example templates
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env init
+
+# Backup current .env files
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env backup
+
+# Restore .env files from backup
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force
+
+# Restore including config files (AI tool settings, Docker overrides, etc.)
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-config
+```
+
+### When to Run Environment Setup
+
+- **Before starting any implementation work** — verify tools and env files are ready
+- **After pulling changes** that modify `package.json`, `go.mod`, `.tool-versions`, or other version config
+- **After switching between projects** that use different toolchains
+- **When any build/test/lint command fails with a "not found" or version error** — run `npm run doctor` first
+
+### Full Setup Guide
+
+For complete step-by-step environment setup (new machine, fresh OS, or broken toolchain), see:
+[Development Environment Setup Workflow](../../../governance/workflows/infra/development-environment-setup.md)
+
 ## Development Workflow Pattern
 
 ### Standard 6-Step Workflow
@@ -294,6 +344,7 @@ All language developers follow this pattern:
 - **[Commit Messages Convention](../../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
 - **[Code Quality Convention](../../../governance/development/quality/code.md)**: Git hooks and automation
 - **[Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
+- **[Development Environment Setup](../../../governance/workflows/infra/development-environment-setup.md)**: Complete toolchain setup (doctor, rhino-cli env, all language runtimes)
 
 ### Language-Specific Documentation
 
