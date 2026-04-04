@@ -61,7 +61,7 @@ type installStep struct {
 | erlang         | `asdf plugin add erlang && asdf install erlang {required} && asdf global erlang {required}`             |
 | dotnet         | `brew install dotnet`                                                                                   |
 | clojure        | `brew install clojure/tools/clojure`                                                                    |
-| dart/flutter   | `brew install flutter` (Flutter includes Dart)                                                          |
+| dart/flutter   | `brew install --cask flutter` (Flutter is a Homebrew cask, includes Dart)                               |
 | docker         | Print message: "Install Docker Desktop from https://docs.docker.com/desktop/setup/install/mac-install/" |
 | jq             | `brew install jq`                                                                                       |
 | playwright     | `npx playwright install`                                                                                |
@@ -70,8 +70,19 @@ type installStep struct {
 
 Some tools depend on others (e.g., node requires volta, java requires SDKMAN). The fix loop must
 process tools in the order defined in `buildToolDefs()` (which is already dependency-ordered:
-volta before node, etc.). For SDKMAN, the fixer should check if `sdk` is in PATH and prompt the
-user to install it if missing (SDKMAN install requires shell restart).
+volta before node, etc.).
+
+**Shell restart caveat**: Volta (`curl | bash`), SDKMAN (`curl | bash`), and rustup all modify
+shell profile files (`~/.zshrc`, `~/.bashrc`, or `~/.cargo/env`) to add themselves to `PATH`. After installing any of them,
+the fixer must `source` the relevant profile or the subsequent tool installs (node via volta,
+java via sdk) will fail because the binary isn't in the current shell's PATH. The fixer should:
+
+1. After installing Volta: `source ~/.zshrc` (or detect shell and source accordingly)
+2. After installing SDKMAN: `source "$HOME/.sdkman/bin/sdkman-init.sh"`
+3. After installing rustup: `source "$HOME/.cargo/env"`
+
+If sourcing fails or the tool still isn't in PATH, print a message asking the developer to
+restart their shell and re-run `doctor --fix`.
 
 ### Error handling
 
@@ -106,9 +117,11 @@ New features require new Gherkin scenarios:
 
 1. **`tools.go`**: Remove the Hugo `toolDef` entry from `buildToolDefs()`
 2. **`tools.go`**: Remove `vercelJSONPath` variable (no longer needed)
-3. **`checker.go`**: Remove `readHugoVersion`, `parseHugoVersion`, `vercelJSON` type
-4. **`checker_test.go`**: Remove Hugo-related test cases
-5. **`reporter_test.go`**: Update expected tool count from 19 to 18
+3. **`checker.go`**: Remove `readHugoVersion`, `parseHugoVersion` (line ~322), `vercelJSON` type
+4. **`checker_test.go`**: Remove Hugo-related test cases (`TestParseHugoVersion`, `TestReadHugoVersion`, Hugo mock data)
+5. **`reporter_test.go`**: Remove Hugo `ToolCheck` entry, remove "hugo" from name list, update count 19 → 18
+   5b. **`cmd/doctor_test.go`**: Remove "hugo" from `makeAllOKChecks()`, update count 19 → 18 in
+   `theJSONListsEveryCheckedToolWithItsStatus()`, remove Hugo-specific test scenarios
 6. **Workflow doc**: Remove Phase 11 (Hugo) from
    `governance/workflows/infra/development-environment-setup.md`
 7. **Workflow doc**: Update tool inventory table (remove row 8, renumber)
@@ -181,9 +194,18 @@ browser binaries in a cache directory. The check should:
     binary:   "npx",
     source:   "node_modules (npx playwright)",
     args:     []string{"playwright", "--version"},
-    parseVer: parseTrimVersion,
-    compare:  comparePlaywright, // custom: also checks browser cache dir
-    readReq:  noReq,             // version comes from npm, not a config file
+    parseVer: parsePlaywrightVersion, // output is "Version 1.58.2", not bare version
+    compare:  comparePlaywright,      // custom: also checks browser cache dir
+    readReq:  noReq,                  // version comes from npm, not a config file
+}
+```
+
+**Version parsing**: `npx playwright --version` outputs `"Version 1.58.2\n"` (with "Version "
+prefix), so `parseTrimVersion` won't work. Add a dedicated parser:
+
+```go
+func parsePlaywrightVersion(output string) string {
+    return parseLineWord(output, "Version ", 1, "")
 }
 ```
 
@@ -232,7 +254,7 @@ brew "dotnet"
 brew "pyenv"
 brew "asdf"
 brew "clojure/tools/clojure"
-brew "flutter"
+cask "flutter"  # Flutter is a Homebrew cask, not a formula
 ```
 
 ### Location
