@@ -18,17 +18,20 @@ Each product application has its own FSL-1.1-MIT LICENSE file. The standard FSL 
 "the Software" as the code included with the license, which naturally scopes the competing-use
 restriction to that specific application's domain:
 
-| Application               | Directory               | Domain Protected                   |
-| ------------------------- | ----------------------- | ---------------------------------- |
-| **AyoKoding**             | `apps/ayokoding-web/`   | Educational coding platform        |
-| **OrganicLever Frontend** | `apps/organiclever-fe/` | Personal productivity tracker      |
-| **OrganicLever Backend**  | `apps/organiclever-be/` | Personal productivity tracker      |
-| **OSE Platform**          | `apps/oseplatform-web/` | Enterprise platform marketing site |
+| Application               | Directory               | Domain Protected                                           |
+| ------------------------- | ----------------------- | ---------------------------------------------------------- |
+| **AyoKoding Web**         | `apps/ayokoding-web/`   | Educational coding platform                                |
+| **AyoKoding CLI**         | `apps/ayokoding-cli/`   | Educational coding platform (tooling)                      |
+| **OrganicLever Frontend** | `apps/organiclever-fe/` | Non-enterprise productivity (individual, family, personal) |
+| **OrganicLever Backend**  | `apps/organiclever-be/` | Non-enterprise productivity (individual, family, personal) |
+| **OSE Platform Web**      | `apps/oseplatform-web/` | Enterprise platform site                                   |
+| **OSE Platform CLI**      | `apps/oseplatform-cli/` | Enterprise platform site (tooling)                         |
 
 **What this means in practice**: Someone using the `organiclever-fe` code cannot build a competing
-personal productivity application. But they can freely use the same code for an educational platform
-or any other non-competing purpose. The competition boundary is defined by what each specific
-application does, not by a broad umbrella term.
+non-enterprise productivity application (individual, family, or personal productivity). But they can
+freely use the same code for an educational platform, an enterprise tool, or any other non-competing
+purpose. The competition boundary is defined by what each specific application does, not by a broad
+umbrella term.
 
 ### MIT-Licensed Code (No Restrictions)
 
@@ -52,7 +55,7 @@ Next.js) are MIT-licensed. These are reference implementations meant for learnin
 
 The following fall under the root FSL-1.1-MIT license (no separate per-directory LICENSE):
 
-- **CLI tools**: `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`
+- **CLI tools**: `rhino-cli`
 - **E2E test suites**: `*-e2e` apps
 - **Documentation**: `docs/`, `governance/`, `plans/`
 - **Specs and contracts**: `specs/`
@@ -82,10 +85,10 @@ with no restrictions.
 - Use a **product application's code** to build a competing commercial product in that application's
   domain — this restriction expires after 2 years per the FSL-1.1-MIT terms
 - Specifically:
-  - `ayokoding-web` code cannot be used to build a competing **educational coding platform**
-  - `organiclever-*` code cannot be used to build a competing **personal productivity application**
-  - `oseplatform-web` code cannot be used to build a competing **enterprise platform marketing
-    site**
+  - `ayokoding-*` code cannot be used to build a competing **educational coding platform**
+  - `organiclever-*` code cannot be used to build a competing **non-enterprise productivity
+    application** (individual, family, or personal productivity)
+  - `oseplatform-*` code cannot be used to build a competing **enterprise platform site**
 
 ## Per-Version Rolling Conversion to MIT
 

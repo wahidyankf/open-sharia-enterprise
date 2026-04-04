@@ -68,12 +68,14 @@ Every product application and shared library MUST contain a `LICENSE` file at it
 
 These directories contain product-specific code with competing-use restrictions scoped to each application's domain:
 
-| Application           | Directory               | Domain Protected                   |
-| --------------------- | ----------------------- | ---------------------------------- |
-| AyoKoding             | `apps/ayokoding-web/`   | Educational coding platform        |
-| OrganicLever Frontend | `apps/organiclever-fe/` | Personal productivity tracker      |
-| OrganicLever Backend  | `apps/organiclever-be/` | Personal productivity tracker      |
-| OSE Platform          | `apps/oseplatform-web/` | Enterprise platform marketing site |
+| Application           | Directory               | Domain Protected                                           |
+| --------------------- | ----------------------- | ---------------------------------------------------------- |
+| AyoKoding Web         | `apps/ayokoding-web/`   | Educational coding platform                                |
+| AyoKoding CLI         | `apps/ayokoding-cli/`   | Educational coding platform tooling                        |
+| OrganicLever Frontend | `apps/organiclever-fe/` | Non-enterprise productivity (individual, family, personal) |
+| OrganicLever Backend  | `apps/organiclever-be/` | Non-enterprise productivity (individual, family, personal) |
+| OSE Platform Web      | `apps/oseplatform-web/` | Enterprise platform site                                   |
+| OSE Platform CLI      | `apps/oseplatform-cli/` | Enterprise platform site tooling                           |
 
 The standard FSL-1.1-MIT template defines "the Software" as the code included with the license. Placing the LICENSE file inside a specific application directory naturally scopes the competing-use restriction to that application's domain without modifying the template text.
 
@@ -94,7 +96,7 @@ All directories matching `apps/a-demo-*` MUST use the MIT license. These are ref
 
 The root `LICENSE` file MUST remain FSL-1.1-MIT. It serves as the fallback for any code or content not covered by a more specific per-directory LICENSE file, including:
 
-- CLI tools (`apps/rhino-cli/`, `apps/ayokoding-cli/`, `apps/oseplatform-cli/`)
+- Internal CLI tools without their own LICENSE file (e.g., `apps/rhino-cli/`)
 - E2E test suites (`apps/*-e2e/`)
 - Documentation (`docs/`, `governance/`, `plans/`)
 - Specs and contracts (`specs/`)
@@ -146,7 +148,7 @@ When adding a new product application to `apps/`:
 1. Create a `LICENSE` file in the application directory
 2. Use the exact FSL-1.1-MIT template with only copyright year and licensor name filled in
 3. Update `LICENSING-NOTICE.md` at the repository root to list the new application, its directory, and its protected domain
-4. Document the protected domain clearly (e.g., "personal productivity tracker", "educational coding platform")
+4. Document the protected domain clearly (e.g., "non-enterprise productivity", "educational coding platform", "enterprise platform site")
 
 ### New Shared Libraries
 
@@ -164,9 +166,18 @@ When adding a new demo or reference application matching `apps/a-demo-*`:
 2. Use the standard MIT license text
 3. Use the copyright notice format: `Copyright (c) 2025-2026 wahidyankf`
 
-### New CLI Tools, E2E Suites, and Other Directories
+### New Product-Supporting CLI Tools
 
-CLI tools, E2E test suites, and other supporting directories do NOT require a per-directory LICENSE file. They inherit the root FSL-1.1-MIT license by default.
+When adding a CLI tool that supports a product application (e.g., `ayokoding-cli` supports `ayokoding-web`, `oseplatform-cli` supports `oseplatform-web`):
+
+1. Create a `LICENSE` file in the CLI tool directory
+2. Use the exact FSL-1.1-MIT template with only copyright year and licensor name filled in
+3. Update `LICENSING-NOTICE.md` at the repository root to list the CLI tool, its directory, and its protected domain
+4. Document the protected domain clearly, matching the parent product domain (e.g., "educational coding platform tooling", "enterprise platform site tooling")
+
+### Internal CLI Tools, E2E Suites, and Other Directories
+
+Internal CLI tools (e.g., `apps/rhino-cli/`), E2E test suites, and other supporting directories do NOT require a per-directory LICENSE file. They inherit the root FSL-1.1-MIT license by default.
 
 ## Examples
 
@@ -177,6 +188,10 @@ apps/
   organiclever-fe/
     LICENSE          <-- FSL-1.1-MIT (product app)
     src/
+    ...
+  ayokoding-cli/
+    LICENSE          <-- FSL-1.1-MIT (product-supporting CLI tool)
+    cmd/
     ...
   a-demo-be-golang-gin/
     LICENSE          <-- MIT (reference implementation)
