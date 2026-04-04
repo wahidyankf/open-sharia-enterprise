@@ -51,15 +51,15 @@ Hugo removal and Playwright/version additions).
       "19 toolchains" → "18 toolchains" (or remove hardcoded count)
 - [x] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [x] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
-- [ ] Commit: `refactor(rhino-cli): remove legacy Hugo check from doctor`
+- [x] Commit: `refactor(rhino-cli): remove legacy Hugo check from doctor`
 
 ### Phase 7: Fix Postinstall Caching
 
 **Goal**: Remove unnecessary `--skip-nx-cache` from doctor npm script.
 
-- [ ] Edit `package.json`: change `"doctor"` script from
+- [x] Edit `package.json`: change `"doctor"` script from
       `"nx run rhino-cli:build --skip-nx-cache && ..."` to `"nx run rhino-cli:build && ..."`
-- [ ] Run `npm install` twice — verify second run uses Nx cache for rhino-cli build
+- [x] Run `npm install` twice — verify second run uses Nx cache for rhino-cli build
 - [ ] Commit: `fix(infra): allow Nx cache for rhino-cli build in doctor script`
 
 ### Phase 5: Add Brewfile
