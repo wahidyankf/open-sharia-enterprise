@@ -1,30 +1,30 @@
 ---
 title: "About OSE Platform"
 url: "/about/"
-summary: "Learn about the Open Sharia Enterprise Platform - an open-source Sharia-compliant enterprise solutions platform"
+summary: "Learn about the Open Sharia Enterprise Platform - a source-available Sharia-compliant enterprise solutions platform"
 date: 2026-02-22T00:00:00+07:00
 showtoc: true
 ---
 
 # About Open Sharia Enterprise
 
-Open Sharia Enterprise (OSE) Platform is an **open-source** platform for building Sharia-compliant enterprise solutions. Built for Islamic finance institutions and Sharia-compliant businesses, starting with Indonesian regulations and expanding globally.
+Open Sharia Enterprise (OSE) Platform is a **source-available** platform for building Sharia-compliant enterprise solutions. Built for Islamic finance institutions and Sharia-compliant businesses, starting with Indonesian regulations and expanding globally.
 
 ## The Opportunity
 
 Islamic finance is a multi-trillion dollar industry growing at double-digit rates, creating massive demand for Sharia-compliant enterprise systems. While purpose-built platforms exist, they're typically proprietary and expensive. Many organizations still struggle with legacy systems retrofitted for Sharia compliance.
 
-**The gap?** Accessible, open-source solutions with built-in compliance and radical transparency.
+**The gap?** Accessible, source-available solutions with built-in compliance and radical transparency.
 
 ## Mission
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We're building an open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: OrganicLever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
+We're building a source-available platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: OrganicLever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
 
-## Why Open Source Matters
+## Why Source-Available Matters
 
-**Transparency builds trust in Sharia-compliant systems.** Unlike expensive proprietary solutions, OSE Platform is accessible to all organizations—from small businesses to large enterprises.
+**Transparency builds trust in Sharia-compliant systems.** Unlike expensive proprietary solutions, OSE Platform's source code is publicly visible and auditable by anyone.
 
 ### Trust Through Transparency
 
@@ -33,12 +33,12 @@ We're building an open-source platform with Sharia-compliance at its core—foll
 - **No hidden mechanisms** - Complete transparency in financial calculations and processes
 - **Trust through openness** - Open standards and shared knowledge drive innovation
 
-### Accessible to All
+### Accessible Code
 
-- **No licensing fees** - Free to use, modify, and deploy for any organization
+- **Read and learn** - Full source code is publicly available on GitHub
+- **Self-host freely** - Deploy for your own organization's use
 - **No vendor lock-in** - Own your data, control your infrastructure
-- **Community-driven** - Benefits from collective expertise and contributions
-- **Lower barriers** - Organizations of all sizes can access enterprise-grade solutions
+- **Becomes fully open-source** - Each release converts to MIT license after 2 years
 
 ### Open Standards
 
@@ -143,7 +143,7 @@ Full enterprise capabilities with maximum scale:
 
 - 🕌 **Sharia-compliance as a foundation** - Built in from the ground up, not bolted on later
 - 🔓 **Transparency and openness** - Code transparency builds trust
-- 🌐 **Open source by default** - Radical transparency unless it compromises security/privacy
+- 🌐 **Source-available by default** - Radical transparency unless it compromises security/privacy
 - 🤖 **AI-assisted development** - Leverage AI systematically to enhance productivity
 - 🤝 **Community collaboration** - Accelerate development of accessible tools
 - 🛡️ **Governance and security from day one** - Essential for enterprise solutions
@@ -184,7 +184,14 @@ Our tech stack reflects the progressive complexity approach — chosen for prove
 
 ## License
 
-This project uses **per-directory licensing** with the **FSL-1.1-MIT (Functional Source License)** for product applications and **MIT** for shared libraries and demo apps. Each product has its own LICENSE file scoping the competing-use restriction to its specific domain. The FSL-1.1-MIT license converts to MIT on a rolling per-version basis: each commit becomes MIT-licensed 2 years after its first public distribution. See [LICENSING-NOTICE.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSING-NOTICE.md) for full details.
+This project uses **per-directory licensing**:
+
+- **Product applications** use **FSL-1.1-MIT** (Functional Source License) — a source-available license that lets you read, learn from, and self-host the code, but restricts competing commercial use within each product's domain
+- **Shared libraries and demo apps** use **MIT** — fully open-source with no restrictions
+
+**What is FSL-1.1-MIT?** The [Functional Source License](https://fsl.software/) is a source-available license created to balance openness with sustainable development. You can view, fork, modify, and self-host the code freely. The only restriction: you cannot use it to offer a competing commercial product in the same domain. After 2 years, each commit automatically converts to the MIT license — becoming fully open-source with no restrictions at all.
+
+Each product app has its own LICENSE file scoping the competing-use restriction to its specific domain. See [LICENSING-NOTICE.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/LICENSING-NOTICE.md) for full details.
 
 ## Get Involved
 
@@ -208,7 +215,7 @@ While we're not yet accepting public contributions, you can stay connected and s
 
 - 📢 Share the project with your network
 - 💬 Discuss with colleagues in Islamic finance and fintech
-- 🤝 Connect with others interested in open-source Sharia-compliant solutions
+- 🤝 Connect with others interested in source-available Sharia-compliant solutions
 
 ## Key Resources
 

@@ -15,7 +15,7 @@ Isi AyoKoding sangat beragam, tapi fokusnya adalah tentang kehidupan programmer,
 
 ## Hubungan dengan Open Sharia Enterprise
 
-AyoKoding punya hubungan unik dengan proyek yang gw kerjakan sekarang: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - sebuah platform enterprise yang mematuhi prinsip-prinsip Syariah. Platform ini gw kembangkan secara open-source dan transparan.
+AyoKoding punya hubungan unik dengan proyek yang gw kerjakan sekarang: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - sebuah platform enterprise yang mematuhi prinsip-prinsip Syariah. Platform ini gw kembangkan secara source-available dan transparan.
 
 Kenapa ini penting buat kalian sebagai pembaca?
 
@@ -23,7 +23,7 @@ Kenapa ini penting buat kalian sebagai pembaca?
 
 **Pembelajaran yang praktis dan teruji.** Ketika gw berbagi tentang microservices, event-driven architecture, atau domain-driven design, itu semua berdasarkan implementasi aktual di Open Sharia Enterprise. Bukan hanya teori dari buku atau artikel - tapi pengetahuan yang sudah melalui iterasi, debugging, dan pembelajaran dari kesalahan nyata.
 
-**Transparansi dan knowledge sharing.** Dengan membangun Open Sharia Enterprise secara open-source dan mendokumentasikan prosesnya di AyoKoding, gw bisa:
+**Transparansi dan knowledge sharing.** Dengan membangun Open Sharia Enterprise secara source-available dan mendokumentasikan prosesnya di AyoKoding, gw bisa:
 
 - **Memaksa diri sendiri untuk menulis dengan jelas** - karena kalo gw nggak paham, gw nggak bisa menjelaskan
 - **Berbagi keputusan arsitektur** beserta reasoning-nya, bukan cuma hasil akhirnya
