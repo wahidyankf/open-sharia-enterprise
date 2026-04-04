@@ -10,7 +10,7 @@ tags:
   - development
   - continuous-integration
 created: 2025-11-26
-updated: 2025-12-05
+updated: 2026-04-04
 ---
 
 # Trunk Based Development Convention
@@ -299,6 +299,73 @@ Commit 9: refactor(auth): remove old login code and feature flag
 
 Each commit is small, tested, and doesn't break `main`.
 
+## Main Branch vs Worktree Mode
+
+This section clarifies the two distinct execution modes in this repository and their corresponding git workflows. This distinction is critical for AI agents: the execution mode determines the git workflow.
+
+### Main Branch (Default Mode)
+
+**When working directly on main** -- which is the default for all development in this repository -- the git workflow is:
+
+- **Commit directly to `main`**. No branch. No PR.
+- **Push directly to `main`**. No merge request.
+- **No review step** (unless explicitly requested by the user).
+- Quality gates run via the pre-push hook (typecheck, lint, test:quick, spec-coverage).
+
+This is the standard TBD workflow described throughout this document. It applies to all routine development: features, bug fixes, refactors, documentation, and governance changes.
+
+```bash
+# Default workflow -- direct to main
+git checkout main
+git pull origin main
+# ... make changes ...
+git add .
+git commit -m "feat(auth): add email validation"
+git push origin main
+```
+
+### Worktree Mode (Branch + PR)
+
+**When using git worktrees** -- specifically when an AI agent uses `isolation: "worktree"` in the Agent tool, or when a developer creates a worktree for isolated work -- the **opposite** workflow applies:
+
+- **Create a new branch** for the work.
+- **Use the PR mechanism** for pushing code to the repository.
+- **Get approval before merge** -- merging requires explicit user approval (see [PR Merge Protocol](./pr-merge-protocol.md)).
+- **Delete the branch** after merge.
+
+Worktree mode exists for situations that benefit from isolation: experimental work, parallel tasks, or changes that need review before integration.
+
+```bash
+# Worktree mode -- branch + PR
+git worktree add .claude/worktrees/feature-auth feature/auth
+cd .claude/worktrees/feature-auth
+# ... make changes ...
+git add .
+git commit -m "feat(auth): add email validation"
+git push origin feature/auth
+# Create PR, get approval, merge via PR Merge Protocol
+```
+
+### Decision Table
+
+| Situation                             | Mode          | Git Workflow                             |
+| ------------------------------------- | ------------- | ---------------------------------------- |
+| Routine development on main           | Main branch   | Commit and push directly to main         |
+| AI agent with default isolation       | Main branch   | Commit and push directly to main         |
+| AI agent with `isolation: "worktree"` | Worktree mode | Branch + PR + approval before merge      |
+| Developer using `git worktree add`    | Worktree mode | Branch + PR + approval before merge      |
+| Experimental/spike work               | Either        | Developer's choice; worktree recommended |
+| External contribution                 | Worktree mode | Fork + PR                                |
+
+### Key Principle
+
+The execution mode determines the git workflow:
+
+- **Main branch mode** = direct commit/push to main, no PR
+- **Worktree mode** = branch, PR, approval before merge
+
+AI agents must check which mode they are operating in and follow the corresponding workflow. Mixing modes -- creating a branch while on main, or pushing directly to main from a worktree -- is incorrect.
+
 ## When Branches Are Appropriate
 
 While TBD emphasizes working on `main`, there are legitimate cases for short-lived branches:
@@ -528,6 +595,8 @@ TBD works best when combined with:
 - **Automated Testing**: High test coverage enables confident commits
 - **Small Commits**: [Conventional Commits](./commit-messages.md)
 - **Pair/Mob Programming**: Real-time collaboration and review
+- **PR Merge Protocol**: [PR Merge Protocol](./pr-merge-protocol.md) - Required approval workflow for worktree-mode PRs
+- **Worktree Setup**: [Worktree Setup](./worktree-setup.md) - npm install requirement after worktree creation
 
 ## References and Further Reading
 
@@ -537,4 +606,4 @@ TBD works best when combined with:
 
 ---
 
-**Last Updated**: 2025-12-05
+**Last Updated**: 2026-04-04
