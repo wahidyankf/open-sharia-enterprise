@@ -74,7 +74,11 @@ Demo apps (`a-demo-*`) are excluded from this audit — they are reference imple
 do not ship as products. See [tech-docs.md](./tech-docs.md) for the full audit and
 [delivery.md](./delivery.md) for mitigation steps.
 
-### Change Date
+### Change Date and Per-Version Rolling Conversion
 
-The FSL Change Date will be set to **2028-04-04** (2 years from the license change date). After
-this date, all code released under FSL-1.1-MIT automatically becomes MIT-licensed.
+The FSL Change Date will be set to **2028-04-04** (2 years from the initial license change). FSL
+converts to MIT on a **per-version (per-commit) rolling basis**: each commit becomes MIT-licensed
+2 years after its first public distribution. The Change Date is the floor — the earliest any code
+becomes MIT. Code committed after 2026-04-04 gets its own 2-year window (e.g., a commit from
+2026-06-15 becomes MIT on 2028-06-15). See [tech-docs.md](./tech-docs.md) for the full
+explanation.

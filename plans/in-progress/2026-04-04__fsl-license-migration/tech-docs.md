@@ -19,12 +19,48 @@ Day 0                          Change Date (2 years later)
   Cannot compete commercially     Including competing products
 ```
 
+### Per-Version Rolling Conversion
+
+FSL-1.1 converts to the Change License on a **per-version (per-commit) rolling basis**, not as a
+single blanket date for the entire repository. The FSL-1.1 license text (Section 3) states:
+
+> "On the Change Date, **or the fourth anniversary of the first publicly available distribution
+> of a specific version** of the Licensed Work under this License, whichever comes first..."
+
+In practice, this means:
+
+- The **Change Date** in the LICENSE file (2028-04-04) is a **floor** — all code committed on or
+  before the initial license change date (2026-04-04) converts to MIT on 2028-04-04.
+- Code committed **after** the initial license change date gets its own rolling 2-year window.
+  For example, a commit made on 2026-06-15 converts to MIT on 2028-06-15.
+
+```
+Commit on 2026-04-04  ──FSL──────────────────────> MIT on 2028-04-04
+Commit on 2026-06-15  ──FSL────────────────────────> MIT on 2028-06-15
+Commit on 2026-12-01  ──FSL──────────────────────────────> MIT on 2028-12-01
+Commit on 2027-03-20  ──FSL────────────────────────────────> MIT on 2029-03-20
+```
+
+This rolling mechanism ensures that **new code is always protected for 2 years** from the date it
+is first publicly distributed, while **older code progressively becomes MIT** over time. Users
+looking at a specific commit or release can determine exactly when it becomes unrestricted by
+adding 2 years to its publication date.
+
+The documentation (README, LICENSING-NOTICE) should explain this rolling conversion clearly so
+users understand that:
+
+1. The Change Date in LICENSE is the earliest any code becomes MIT
+2. Each subsequent commit/release has its own 2-year conversion window
+3. To use a fully MIT version, users can check out any commit older than 2 years
+
 ### Key Terms
 
 - **Licensed Work**: The open-sharia-enterprise repository and all code authored by the Licensor
 - **Licensor**: wahidyankf
-- **Change Date**: 2028-04-04 (2 years from license change)
+- **Change Date**: 2028-04-04 (floor date — 2 years from initial license change)
 - **Change License**: MIT
+- **Per-Version Conversion**: Each commit/release converts to MIT 2 years after its first public
+  distribution, or on the Change Date, whichever comes first
 - **Competing Use**: Using the Licensed Work to provide a commercial product or service that
   competes with the Licensed Work (see [Competing Use Definition](#competing-use-definition) below)
 
@@ -140,10 +176,16 @@ Replace the current MIT section:
 ```markdown
 ## License
 
-**FSL-1.1-MIT (Functional Source License)** - Source-available with a non-compete clause.
+**FSL-1.1-MIT (Functional Source License)** — Source-available with a non-compete clause.
 You can use, modify, and distribute this software for any purpose except offering a competing
-commercial Sharia-compliant enterprise platform. On **2028-04-04**, this code automatically
-becomes MIT-licensed with no restrictions. See [LICENSE](./LICENSE) for details.
+commercial Sharia-compliant enterprise platform.
+
+The license converts to MIT on a **rolling per-version basis**: each commit becomes MIT-licensed
+2 years after its first public distribution. Code from 2026-04-04 becomes MIT on 2028-04-04,
+code from 2026-06-15 becomes MIT on 2028-06-15, and so on. To use a fully MIT version, check
+out any commit older than 2 years.
+
+See [LICENSE](./LICENSE) for the full license text.
 ```
 
 ### CLAUDE.md Updates

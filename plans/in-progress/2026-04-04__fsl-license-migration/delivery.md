@@ -80,7 +80,11 @@ FSL-1.1-MIT.
 - [ ] Create `LICENSING-NOTICE.md` in the repository root with:
   - One-paragraph summary of FSL-1.1-MIT
   - What users can and cannot do
-  - The Change Date and what happens after it
+  - Per-version rolling conversion explanation: each commit/release becomes MIT 2 years after
+    its first public distribution (e.g., commit from 2026-04-04 → MIT on 2028-04-04, commit
+    from 2026-06-15 → MIT on 2028-06-15)
+  - How to find a fully MIT version (check out any commit older than 2 years)
+  - The Change Date as the floor (earliest any code becomes MIT)
   - Note about third-party code under different licenses
   - Link to the LICENSE file and fsl.software
 - [ ] Commit: `docs(license): add human-readable LICENSING-NOTICE.md`
