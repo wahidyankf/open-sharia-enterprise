@@ -22,9 +22,9 @@ showtoc: true
 
 Four weeks ago we promised two things: local development and CI improvements, and a backend tech stack evaluation. Both delivered. The CI improvements shipped. The backend evaluation—well, we evaluated eleven of them. That is not a typo. We built the same expense tracker REST API in eleven different backend frameworks spanning ten programming languages, all sharing a single OpenAPI 3.1 contract and a single Gherkin BDD specification suite. AI-assisted development made this practical. Discipline made it useful.
 
-Beyond the backends, both content platforms migrated from Hugo to fullstack Next.js 16, OrganicLever's backend pivoted from Java/Spring Boot to F#/Giraffe with OpenAPI contract enforcement, three demo frontends shipped across different frameworks, the project adopted FSL-1.1-MIT licensing, and CI/CD grew from 7 workflows to 29. The infrastructure that Phase 0 designed and Phase 1 Week 4 began exercising is now carrying serious weight.
+Beyond the backends, both content platforms migrated from Hugo to fullstack Next.js 16, OrganicLever's backend pivoted from Java/Spring Boot to F#/Giraffe with OpenAPI contract enforcement, three demo frontends shipped across different frameworks, the project adopted FSL-1.1-MIT licensing, and CI/CD grew from 7 workflows to 29.
 
-The real value of this period is not the volume of output. The real value is what we learned building the same application eleven times over, and the infrastructure that made it possible to do so without drowning in inconsistency.
+A note on scale: every line of code pushed into a production codebase is a liability as much as an asset. More code means more surface area for things to break, more entropy to manage, more maintenance burden. The demo backends are reference implementations—learning artifacts. But for OrganicLever, the production app, the lesson is the opposite of "build more." The tech stack decision that followed is about keeping the production surface area small and manageable. We went wide to learn. We go narrow to ship.
 
 ## The Polyglot Backend Experiment
 
@@ -170,33 +170,57 @@ Spring Boot remains the most conventional path. JSpecify with NullAway provides 
 
 Vert.x offers a reactive alternative on the same JVM. The programming model differs significantly—event-loop-based, non-blocking by default. Liquibase migrations shared the same tooling as Spring Boot, but the application structure diverged. Interesting for high-concurrency scenarios, but the ecosystem is smaller.
 
-Kotlin/Ktor brings JVM reliability with modern language features. Coroutines make async code readable. Null safety is baked into the type system rather than bolted on. Flyway migrations integrate cleanly. The codebase ended up noticeably more concise than the Java equivalents.
+Kotlin/Ktor brings JVM reliability with modern language features. Coroutines make async code readable. Null safety is baked into the type system rather than bolted on. Flyway migrations integrate cleanly. The codebase ended up noticeably more concise than the Java equivalents. One practical friction point: editor support. Kotlin tooling in VS Code and its forks is improving but still falls short of the JetBrains/IntelliJ experience. We prefer VS Code-compatible editors—they work seamlessly on local machines and remote servers alike, which matters for our development workflow. Not wanting to depend on a paid IDE subscription for a core development language is a real consideration, and it weighs against Kotlin for primary production use.
 
 **Functional Family — F#/Giraffe, Elixir/Phoenix, Clojure/Pedestal**
 
-F# surprised us. The function-record pattern for repository abstraction—defining a record type whose fields are functions—is elegant and testable. Computation expressions handle async and error flows cleanly. AltCover with `--linecover` avoids the BRDA inflation that `task{}` expressions cause in branch coverage. DbUp migrations are simple and reliable. This experience settled the question: F#/Giraffe is the chosen backend for OrganicLever.
+F# surprised us. It is essentially OCaml on top of the .NET ecosystem—a mature functional language with access to the entire .NET library ecosystem, NuGet packages, and native Windows platform support when needed. As an ML-family language, F# code reads like you are writing on a whiteboard: descriptive, minimal ceremony, the intent visible at a glance.
 
-Elixir/Phoenix brings the BEAM's concurrency model. Pattern matching, immutability by default, and the supervision tree are genuinely different from everything else in this list. The Cabbage library for Gherkin required a custom fork (`libs/elixir-cabbage`) to work with our testing patterns, and OpenAPI codegen needed a custom library (`libs/elixir-openapi-codegen`). The ecosystem is smaller but the runtime characteristics are distinctive.
+The function-record pattern for repository abstraction—defining a record type whose fields are functions—is elegant and testable. Computation expressions handle async and error flows cleanly. AltCover with `--linecover` avoids the BRDA inflation that `task{}` expressions cause in branch coverage. DbUp migrations are simple and reliable.
 
-Clojure/Pedestal represents a fundamentally different approach. `defprotocol` for the repository pattern, immutable data structures everywhere, REPL-driven development. Migratus for migrations required locale-aware configuration to handle currency formatting correctly. The codebase is the most concise of all eleven. The learning curve is the steepest.
+The .NET foundation also means that if the product ever needs to target Windows-native enterprise environments—a real possibility for Sharia-compliant business systems—the path is already there. Compile times are reasonable at our current codebase size. Of all eleven backends, F# delivered the best combination of expressiveness, guardrails, ecosystem maturity, and development experience.
+
+Clojure/Pedestal represents a fundamentally different approach. `defprotocol` for the repository pattern, immutable data structures everywhere, REPL-driven development. Migratus for migrations required locale-aware configuration to handle currency formatting correctly. The codebase is the most concise of all eleven—as beautiful and descriptive as an ML-family language in its own way. The learning curve is the steepest. Where Clojure falls short for our purposes is the guardrails needed for AI-assisted coding: dynamic typing means fewer compile-time guarantees, and an AI assistant working without static type feedback produces more errors that only surface at runtime. That said, Clojure runs on both the JVM and CLR, giving it a broader base ecosystem than most dynamic languages.
+
+Elixir/Phoenix brings the BEAM's concurrency model. Pattern matching, immutability by default, and the supervision tree are genuinely different from everything else in this list. The Cabbage library for Gherkin required a custom fork (`libs/elixir-cabbage`) to work with our testing patterns, and OpenAPI codegen needed a custom library (`libs/elixir-openapi-codegen`). Elixir shares Clojure's dynamic typing limitation for AI-assisted guardrails, and has a much smaller base ecosystem—the BEAM runtime is powerful but niche compared to the JVM or .NET platforms that Clojure and F# can draw from.
+
+**C#/ASP.NET Core**
+
+C# shares the .NET foundation with F# but takes the OOP path. EF Core migrations are well-integrated, Coverlet provides LCOV coverage, and Reqnroll handles Gherkin cleanly. The ecosystem is mature and VS Code support is strong. For our purposes, F# on the same platform gives better expressiveness and conciseness—but C# remains a solid choice for teams that prefer object-oriented patterns.
+
+**Python/FastAPI**
+
+FastAPI's type hints give Python the closest thing it has to static typing, and Alembic migrations auto-generate from SQLAlchemy models. The developer experience is fast—rapid prototyping with minimal boilerplate. pytest-bdd integrates well for Gherkin. The limitation is the same as other dynamically typed languages: fewer compile-time guardrails for AI-assisted development, and type hints are advisory rather than enforced.
 
 **Systems Languages — Go/Gin, Rust/Axum**
 
-Go is straightforward in the way Go always is. Interfaces for the repository pattern, GORM for database access, goose for migrations. The testing story with Godog is clean. `go test` with coverage just works. The codebase is verbose but every line is obvious.
+Go is straightforward in the way Go always is. Interfaces for the repository pattern, GORM for database access, goose for migrations. The testing story with Godog is clean. `go test` with coverage just works. Compile times are fast and runtime performance is strong. Where Go falls short is guardrails and domain modeling expressiveness—the type system is intentionally simple, which means fewer compile-time guarantees for complex domain logic. For an enterprise product where we want the type system to encode business rules and guide AI assistants, that simplicity becomes a limitation.
 
-Rust/Axum demands more upfront thought. The ownership model catches real bugs—use-after-free, data races—at compile time. Traits for the repository pattern work well. `cargo-llvm-cov` for coverage and `sqlx` for compile-time SQL verification add safety that other languages cannot match. The trade-off is compilation time and a steeper learning curve for contributors unfamiliar with the borrow checker.
+Rust/Axum demands more upfront thought. The ownership model catches real bugs—use-after-free, data races—at compile time. Traits for the repository pattern work well. `cargo-llvm-cov` for coverage and `sqlx` for compile-time SQL verification add safety that other languages cannot match. The trade-off is verbosity and the longest compile times of any language in this evaluation—too much friction for a general-purpose backend where developer velocity matters. That said, Rust has a future in OSE for a different role: client-side safety-critical components where resource efficiency and correctness are non-negotiable. Think measurement, validation, or computation that needs to run lean and correct on user devices.
 
 **TypeScript/Effect**
 
 Effect brings algebraic effects and structured concurrency to TypeScript. The `@effect/sql` Migrator handles database migrations within the Effect ecosystem. Error handling is type-safe and composable. The codebase reads differently from conventional TypeScript—Effect's pipe-based composition is closer to functional languages than to typical Node.js code. Vitest integration is seamless.
 
+The TypeScript ecosystem produces genuinely interesting work—Effect-TS for typed error handling, XState for state machines, and the possibility of using the same language across web frontend, backend, mobile, and CLI. That cross-platform story is compelling.
+
+That said, TypeScript on the backend carries the npm ecosystem's never-ending security problem—dependency chains are deep, supply chain vulnerabilities are frequent, and the constant churn of packages creates maintenance burden that has nothing to do with your own code. For the frontend, where TypeScript is the natural choice and these libraries shine, we lean in fully. For the backend, where we have the choice and the security surface area matters more, we chose F# on .NET—a platform with a more stable and security-conscious package ecosystem.
+
+**A note on Gherkin library maturity across languages.**
+
+Every application can be built without Gherkin—it is not a technical requirement. We chose Gherkin as an extra layer for domain knowledge and guardrails, readable by both humans and LLMs alike. When an AI assistant generates an implementation, the Gherkin scenarios serve as a specification it can verify against. When a human reviews the code, the same scenarios serve as documentation of what the system should do. That dual value justified the investment.
+
+But the polyglot experiment exposed a wide spectrum of BDD tooling quality. Cucumber JVM (Java, Kotlin) and Godog (Go) are mature, well-maintained, and straightforward to integrate. pytest-bdd (Python) and Cucumber-rs (Rust) work well with minor quirks. Vitest-Cucumber (TypeScript) is newer but functional. TickSpec (F#) and Reqnroll (C#) integrate cleanly with their respective .NET test runners.
+
+The pain points were Elixir and Clojure. Elixir's Cabbage library required a custom fork (`libs/elixir-cabbage`) and a custom Gherkin parser (`libs/elixir-gherkin`) because the existing tooling did not support our test patterns. Clojure's `clj-cucumber` needed careful configuration for locale-aware scenarios. The Gherkin ecosystem maturity of a language directly affects how much infrastructure work you absorb before you can start testing business logic—and that cost compounds across every backend that uses it.
+
 ## Demo Frontends: Three Frameworks, One API
 
 The backend experiment has a frontend counterpart. Three frontend frameworks consume the same backend API, validated by the same OpenAPI contract:
 
-**a-demo-fe-ts-nextjs** — Next.js 16 with React Server Components, TypeScript, and shadcn-ui. The default frontend, exercising the same patterns used in OrganicLever and the content platforms. App Router with server and client components, route-based code splitting, and Vitest for unit tests.
+**a-demo-fe-ts-nextjs** — Next.js 16 with React Server Components, TypeScript, and shadcn-ui. The default frontend, exercising the same patterns used in OrganicLever and the content platforms. App Router with server and client components, route-based code splitting, and Vitest for unit tests. Next.js is more complicated than we would like—the mental model around server components, client boundaries, and caching layers adds real cognitive overhead. But it is the de facto web frontend framework right now, with the broadest ecosystem support and the most mature deployment story. For a production product, pragmatism wins over taste.
 
-**a-demo-fe-ts-tanstack-start** — TanStack Start, a newer full-stack React framework. Evaluating an alternative to Next.js for future projects. Type-safe routing, built-in data loading patterns, and a different mental model from App Router.
+**a-demo-fe-ts-tanstack-start** — TanStack Start, a newer full-stack React framework. Type-safe routing, built-in data loading patterns, and a different mental model from App Router. TanStack is gaining momentum and we included it as a hedge—if the ecosystem shifts, we want hands-on experience with a likely successor rather than scrambling to catch up later. When we ran this experiment, TanStack Start had not yet reached version 1, so the evaluation reflects pre-stable APIs and tooling.
 
 **a-demo-fe-dart-flutterweb** — Flutter Web in Dart. Cross-platform potential is the draw—the same codebase could target mobile and desktop. The web rendering pipeline differs fundamentally from DOM-based frameworks. Evaluating whether Flutter's widget tree model works for our use cases.
 
@@ -305,9 +329,9 @@ OrganicLever—the Phase 1 product that exercises the platform—underwent a sig
 
 The Week 4 update described OrganicLever's backend as Spring Boot 4.0.3 on Java 25. That backend served its purpose: it validated the CI/CD pipeline, E2E testing patterns, and Docker Compose workflows. The polyglot experiment settled the question.
 
-**F#/Giraffe is the chosen backend.** The function-record pattern for repository abstraction, computation expressions for async and error handling, and the .NET ecosystem's maturity for enterprise applications aligned well with the project's functional programming principles. The decision was pragmatic—F#'s strengths matched our domain, and the demo implementation proved those strengths were not theoretical.
+**F#/Giraffe is the chosen backend.** The language observations above detail why—expressiveness, guardrails, .NET ecosystem maturity, Windows platform access, and reasonable compile times. The decision was pragmatic: F#'s strengths matched our domain, and the demo implementation proved those strengths were not theoretical.
 
-**Next.js with Effect-TS and TypeScript is the chosen web frontend.** The combination of React Server Components for rendering, Effect for type-safe error handling and composability, and TypeScript for the full stack gives a frontend that matches the functional discipline of the F# backend. The demo experiments with TanStack Start and Flutter Web informed this decision—both are capable frameworks, but Next.js + Effect-TS gives the strongest alignment with our functional programming principles and the broadest ecosystem support.
+**Next.js with Effect-TS and TypeScript is the chosen web frontend.** Next.js is the de facto standard despite its complexity. Effect-TS brings type-safe error handling that matches the functional discipline of the F# backend. The demo experiments with TanStack Start and Flutter Web informed this decision, but Next.js + Effect-TS gives the broadest ecosystem support and the strongest alignment with our principles.
 
 **Mobile stack remains undecided.** Flutter is a candidate given the demo frontend evaluation, but the decision will come later when OrganicLever's domain features are mature enough to warrant a mobile client.
 
@@ -456,7 +480,7 @@ The `demo-ci-test-standardization` and `ci-standardization` plans tracked the wo
 - **elixir-gherkin** — Gherkin parser for Elixir
 - **elixir-openapi-codegen** — Custom OpenAPI code generator for Elixir
 
-Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment.
+Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment. It also illustrates the entropy cost: each custom library is code we now own and maintain. The Clojure and Elixir libraries serve the demo backends—they are not on the critical path for the production app. The two TypeScript libraries (`ts-ui`, `ts-ui-tokens`) are, and those have the ecosystem support to justify their maintenance cost.
 
 ## FSL-1.1-MIT: Protecting the Mission
 
@@ -521,7 +545,7 @@ These are structural changes—capabilities the project has now that it did not 
 - **Content files migrated**: 1,039 markdown files (915 EN, 124 ID) in ayokoding-web alone
 - **Spec coverage**: enforced across all projects with multi-language step extraction
 
-This was a concentrated push to establish the polyglot foundation. The coming period will shift toward depth over breadth.
+Every item on this list adds to the codebase's surface area. The demo backends and their supporting libraries are learning infrastructure—valuable for evaluation, but each one is code that can break, drift, or rot. The production app (OrganicLever) benefits from the learning without carrying all of the entropy. Going forward, the focus shifts from expanding the surface area to maintaining what matters and letting the rest serve as reference.
 
 ## What's Actually Next
 
