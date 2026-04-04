@@ -287,6 +287,21 @@ const (
 	stepClaudeConfigNotRestoredToRepo                 = `^the \.claude/settings\.local\.json is not restored to the repository$`
 )
 
+// Env init step patterns.
+const (
+	stepEnvExamplesExistButNoEnvFiles   = `^\.env\.example files exist in infra/dev but no \.env files$`
+	stepEnvExamplesAndSomeEnvFilesExist = `^\.env\.example files exist in infra/dev and some \.env files already exist$`
+	stepNoEnvExamplesExist              = `^no \.env\.example files exist in infra/dev$`
+	stepDeveloperRunsEnvInit            = `^the developer runs env init$`
+	stepDeveloperRunsEnvInitWithForce   = `^the developer runs env init with the force flag$`
+	stepEnvFilesCreatedFromExamples     = `^\.env files are created from each \.env\.example$`
+	stepOutputListsEachCreatedFile      = `^the output lists each created file$`
+	stepExistingEnvFilesNotOverwritten  = `^existing \.env files are not overwritten$`
+	stepOutputShowsSkippedFiles         = `^the output shows skipped files$`
+	stepAllEnvFilesCreatedOrOverwritten = `^all \.env files are created or overwritten$`
+	stepOutputReportsZeroFilesCreated   = `^the output reports zero files created$`
+)
+
 // Env restore step patterns.
 const (
 	stepBackupDirWithPreviouslyBackedUpEnvFiles      = `^a backup directory containing previously backed-up \.env files from the repository$`

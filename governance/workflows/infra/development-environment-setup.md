@@ -482,8 +482,15 @@ CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force
 CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-config
 ```
 
-**Condition**: Skip if this is a brand-new setup with no previous backup. You will need to
-create `.env` files manually from `.env.example` templates in each app directory.
+**Condition**: Skip if this is a brand-new setup with no previous backup. Instead, use
+`env init` to bootstrap `.env` files from `.env.example` templates:
+
+```bash
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go env init
+```
+
+This creates `.env` files from all `.env.example` templates in `infra/dev/`. Use `--force`
+to overwrite existing files.
 
 **Success criteria**: Restored files appear in their original app directories (e.g.,
 `apps/ayokoding-web/.env.local`, `apps/organiclever-be/.env`).

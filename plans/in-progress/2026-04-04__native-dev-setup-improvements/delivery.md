@@ -73,25 +73,25 @@ Hugo removal and Playwright/version additions).
 - [x] Verify `brew bundle check` passes on current machine
 - [x] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
       `brew bundle` as alternative to individual installs
-- [ ] Commit: `feat(infra): add Brewfile for declarative Homebrew dependencies`
+- [x] Commit: `feat(infra): add Brewfile for declarative Homebrew dependencies`
 
 ### Phase 3: `rhino-cli env init`
 
 **Goal**: Add command to bootstrap `.env` files from `.env.example` templates.
 
-- [ ] Create `apps/rhino-cli/cmd/env_init.go` with `env init` subcommand
-- [ ] Implement `.env.example` discovery: walk `infra/dev/` for `.env.example` files
-- [ ] Implement copy logic: `.env.example` → `.env` in the same directory
-- [ ] Add `--force` flag for overwriting existing `.env` files
-- [ ] Print summary: created count, skipped count
-- [ ] Write unit tests in `apps/rhino-cli/cmd/env_init_test.go` — mock filesystem
-- [ ] Create `specs/apps/rhino/cli/gherkin/env-init.feature` with `@env-init` tag and Gherkin
+- [x] Create `apps/rhino-cli/cmd/env_init.go` with `env init` subcommand
+- [x] Implement `.env.example` discovery: walk `infra/dev/` for `.env.example` files
+- [x] Implement copy logic: `.env.example` → `.env` in the same directory
+- [x] Add `--force` flag for overwriting existing `.env` files
+- [x] Print summary: created count, skipped count
+- [x] Write unit tests in `apps/rhino-cli/cmd/env_init_test.go` — mock filesystem
+- [x] Create `specs/apps/rhino/cli/gherkin/env-init.feature` with `@env-init` tag and Gherkin
       scenarios (bootstrap from examples, skip existing, force overwrite, empty infra/dev)
-- [ ] Run `nx run rhino-cli:test:quick` — verify tests pass
-- [ ] Test manually: remove one `.env` file, run `env init`, verify it's created
-- [ ] Test manually: run `env init` again, verify existing file is skipped
-- [ ] Test manually: run `env init --force`, verify file is overwritten
-- [ ] Update Phase 12.3 in `governance/workflows/infra/development-environment-setup.md` to
+- [x] Run `nx run rhino-cli:test:quick` — verify tests pass
+- [x] Test manually: remove one `.env` file, run `env init`, verify it's created
+- [x] Test manually: run `env init` again, verify existing file is skipped
+- [x] Test manually: run `env init --force`, verify file is overwritten
+- [x] Update Phase 12.3 in `governance/workflows/infra/development-environment-setup.md` to
       mention `env init` as fallback when no backup exists
 - [ ] Commit: `feat(rhino-cli): add env init command to bootstrap .env from .env.example`
 
