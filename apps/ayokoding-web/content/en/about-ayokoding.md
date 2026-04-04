@@ -15,7 +15,7 @@ Explore a range of topics on AyoKoding, from the life of a programmer and softwa
 
 ## The Connection to Open Sharia Enterprise
 
-AyoKoding has a unique relationship with a project I'm actively building: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - a Sharia-compliant enterprise platform that I'm developing as an open-source project with full transparency.
+AyoKoding has a unique relationship with a project I'm actively building: [**Open Sharia Enterprise**](https://github.com/wahidyankf/open-sharia-enterprise) - a Sharia-compliant enterprise platform that I'm developing as a source-available project with full transparency.
 
 Why does this matter to you as a reader?
 
@@ -23,7 +23,7 @@ Why does this matter to you as a reader?
 
 **Learning that's practical and battle-tested.** When I share about microservices, event-driven architecture, or domain-driven design, these insights come from active implementation in Open Sharia Enterprise. Not just theory from books or articles - but knowledge that has gone through iterations, debugging sessions, and learning from real mistakes.
 
-**Transparency and knowledge sharing.** By building Open Sharia Enterprise as open-source and documenting the process on AyoKoding, I can:
+**Transparency and knowledge sharing.** By building Open Sharia Enterprise as source-available and documenting the process on AyoKoding, I can:
 
 - **Force myself to think and write clearly** - because if I don't understand something deeply, I can't explain it well
 - **Share architectural decisions** along with the reasoning behind them, not just the final results

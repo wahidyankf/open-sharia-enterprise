@@ -35,14 +35,14 @@ describe("translations", () => {
     expect(t("en", "lastUpdated")).toBe("Last updated");
     expect(t("en", "search")).toBe("Search...");
     expect(t("en", "onThisPage")).toBe("On this page");
-    expect(t("en", "openSourceProject")).toBe("Open Source Project");
+    expect(t("en", "openSourceProject")).toBe("Source-Available Project");
   });
 
   it("returns Indonesian translations", () => {
     expect(t("id", "readMore")).toBe("Baca Selengkapnya");
     expect(t("id", "lastUpdated")).toBe("Terakhir diperbarui");
     expect(t("id", "search")).toBe("Cari...");
-    expect(t("id", "openSourceProject")).toBe("Proyek Sumber Terbuka");
+    expect(t("id", "openSourceProject")).toBe("Proyek Source-Available");
   });
 
   it("returns key when translation not found", () => {
