@@ -1,40 +1,98 @@
 # Licensing Notice
 
-This repository is licensed under the **Functional Source License, Version 1.1, MIT Future License
-(FSL-1.1-MIT)**. This notice provides a human-readable summary — see [LICENSE](./LICENSE) for the
-full legal text.
+This repository uses **per-directory licensing** with two license types: **FSL-1.1-MIT** for product
+applications and **MIT** for shared libraries and reference implementations. This notice provides a
+human-readable summary — see the `LICENSE` file in each directory for the applicable legal text.
+
+## License Structure
+
+### Root License (FSL-1.1-MIT)
+
+The root [LICENSE](./LICENSE) covers the overall repository — governance documentation, specs,
+configuration, CI/CD, AI agents, and any code not covered by a more specific per-directory LICENSE
+file.
+
+### Per-App Product Licenses (FSL-1.1-MIT)
+
+Each product application has its own FSL-1.1-MIT LICENSE file. The standard FSL template defines
+"the Software" as the code included with the license, which naturally scopes the competing-use
+restriction to that specific application's domain:
+
+| Application               | Directory               | Domain Protected                   |
+| ------------------------- | ----------------------- | ---------------------------------- |
+| **AyoKoding**             | `apps/ayokoding-web/`   | Educational coding platform        |
+| **OrganicLever Frontend** | `apps/organiclever-fe/` | Personal productivity tracker      |
+| **OrganicLever Backend**  | `apps/organiclever-be/` | Personal productivity tracker      |
+| **OSE Platform**          | `apps/oseplatform-web/` | Enterprise platform marketing site |
+
+**What this means in practice**: Someone using the `organiclever-fe` code cannot build a competing
+personal productivity application. But they can freely use the same code for an educational platform
+or any other non-competing purpose. The competition boundary is defined by what each specific
+application does, not by a broad umbrella term.
+
+### MIT-Licensed Code (No Restrictions)
+
+All shared libraries and reference/demo applications are licensed under MIT with no competing-use
+restrictions:
+
+**Shared Libraries** (`libs/`):
+
+- `golang-commons`, `hugo-commons` — Go utility libraries
+- `ts-ui`, `ts-ui-tokens` — TypeScript UI component libraries
+- `clojure-openapi-codegen`, `elixir-openapi-codegen` — Code generation libraries
+- `elixir-cabbage`, `elixir-gherkin` — Elixir testing libraries (MIT, original authors)
+
+**Demo/Reference Applications** (`apps/a-demo-*`):
+
+All demo applications (backend implementations in Go, Java, Kotlin, Python, Rust, Elixir, F#, C#,
+Clojure, TypeScript; frontend implementations in Next.js, TanStack Start, Flutter Web; fullstack
+Next.js) are MIT-licensed. These are reference implementations meant for learning — use them freely.
+
+### Inherited License (Root FSL-1.1-MIT)
+
+The following fall under the root FSL-1.1-MIT license (no separate per-directory LICENSE):
+
+- **CLI tools**: `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`
+- **E2E test suites**: `*-e2e` apps
+- **Documentation**: `docs/`, `governance/`, `plans/`
+- **Specs and contracts**: `specs/`
+- **AI agent configuration**: `.claude/`, `.opencode/`
 
 ## What Is FSL-1.1-MIT?
 
-FSL-1.1-MIT is a source-available license created by [Sentry](https://blog.sentry.io/lets-talk-about-open-source/).
-It grants broad rights to use, copy, modify, and redistribute the software for any purpose
-**except** offering a competing commercial product or service. After 2 years, the code
-automatically converts to the MIT license with no restrictions.
+FSL-1.1-MIT is a source-available license created by
+[Sentry](https://blog.sentry.io/lets-talk-about-open-source/). It grants broad rights to use,
+copy, modify, and redistribute the software for any purpose **except** offering a competing
+commercial product or service. After 2 years, the code automatically converts to the MIT license
+with no restrictions.
 
 ## What You Can Do
 
 - Read, study, and learn from the source code
 - Use the software internally for any purpose (including commercial)
 - Modify the software for internal use
-- Distribute the software (with the FSL license intact)
+- Distribute the software (with the applicable license intact)
 - Contribute back to the project
 - Build non-competing products and services using the code
 - Use the software for education, research, and evaluation
-- Use individual libraries or components in unrelated projects
+- Use MIT-licensed libraries and demo apps for any purpose without restriction
 
 ## What You Cannot Do
 
-- Offer a commercial product or service that competes with this platform (specifically: a
-  Sharia-compliant enterprise platform with substantially similar functionality) — **this
-  restriction expires after 2 years**
+- Use a **product application's code** to build a competing commercial product in that application's
+  domain — this restriction expires after 2 years per the FSL-1.1-MIT terms
+- Specifically:
+  - `ayokoding-web` code cannot be used to build a competing **educational coding platform**
+  - `organiclever-*` code cannot be used to build a competing **personal productivity application**
+  - `oseplatform-web` code cannot be used to build a competing **enterprise platform marketing
+    site**
 
 ## Per-Version Rolling Conversion to MIT
 
 The FSL-1.1-MIT license converts to MIT on a **per-version (per-commit) rolling basis**, not as a
 single blanket date:
 
-- Each version of the software becomes MIT-licensed **2 years after its first public
-  distribution**
+- Each version of the software becomes MIT-licensed **2 years after its first public distribution**
 - Code committed on 2026-04-04 becomes MIT on 2028-04-04
 - Code committed on 2026-06-15 becomes MIT on 2028-06-15
 - Code committed on 2027-03-20 becomes MIT on 2029-03-20
@@ -67,6 +125,7 @@ Check the `LICENSE` file in each subdirectory for the applicable license.
 
 ## More Information
 
-- [Full license text](./LICENSE)
+- [Root license text](./LICENSE)
 - [FSL official site](https://fsl.software/)
 - [FSL FAQ](https://fsl.software/)
+- [FSL-1.1-MIT template](https://github.com/getsentry/fsl.software/blob/main/FSL-1.1-MIT.template.md)
