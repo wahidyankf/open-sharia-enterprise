@@ -195,7 +195,7 @@ list.
 - [ ] Linux — clojure: `curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh && chmod +x linux-install.sh && sudo ./linux-install.sh`
 - [ ] Linux — pyenv: install build deps + `curl https://pyenv.run | bash`
 - [ ] Linux — erlang (asdf): install build deps (`build-essential autoconf libncurses-dev
-  libssl-dev ...`) before `asdf install erlang`
+libssl-dev ...`) before `asdf install erlang`
 - [ ] Linux — playwright: `npx playwright install && npx playwright install-deps`
 - [ ] Add `--fix` flag to `doctor` cobra command in `cmd/doctor.go`
 - [ ] Add `--dry-run` flag to `doctor` cobra command (only effective with `--fix`)
@@ -235,7 +235,17 @@ list.
 - [ ] Update CLAUDE.md tool count if it mentions "19 tools"
 - [ ] Update this plan's own `README.md` "checks 19 tools" in Current State section
 - [ ] Verify `governance/workflows/infra/development-environment-setup.md` is consistent with
-      all changes
+      all changes — specifically:
+  - [ ] Quick Start section exists referencing `doctor --fix` and `doctor --fix --dry-run`
+  - [ ] Phase 11 (Hugo) removed, tool inventory renumbered
+  - [ ] Phase 1 mentions `brew bundle` as alternative
+  - [ ] Phase 12.3 mentions `env init` as fallback for fresh setups
+  - [ ] Phase 13 notes that doctor now checks Playwright browsers
+  - [ ] Minimal scope table references `doctor --scope minimal`
+  - [ ] YAML frontmatter `inputs` description updated (no "19 tools")
+  - [ ] Notes section mentions git worktree compatibility
+  - [ ] Ubuntu/Linux install commands are accurate (go.dev tarball for Go, snap for
+        dotnet/flutter, linux-install.sh for Clojure)
 - [ ] Run `npm run lint:md` — verify all markdown passes linting
 - [ ] Commit: `docs: update setup documentation for doctor improvements`
 
