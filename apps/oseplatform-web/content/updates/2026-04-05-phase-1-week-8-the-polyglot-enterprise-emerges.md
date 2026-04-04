@@ -36,6 +36,14 @@ AI-assisted development compressed what would have been months of work into week
 
 The goal was never benchmarking. We did not build eleven backends to compare request latency or throughput numbers. The goal was to understand each language and framework through the experience of building a real application with real requirements: authentication, CRUD with business rules, reporting endpoints, admin operations, database migrations, repository abstractions, test coverage enforcement, and CI/CD integration. You learn different things writing a repository pattern in Clojure's `defprotocol` than you do writing one with Go's interfaces or Rust's traits.
 
+Beyond traditional evaluation criteria, we also evaluated each stack through the lens of AI-assisted development—because that is how we build. Three criteria matter when coding with AI:
+
+- **How expressive the type system's guardrails are.** A type system that catches more errors at compile time means an AI coding assistant can work more autonomously, produce more correct code on the first pass, and waste fewer tokens on round-trips fixing type errors. Languages with strong static typing and expressive type systems—F#, Rust, TypeScript, Kotlin—outperform dynamically typed or weakly typed alternatives in this regard.
+- **Ecosystem coverage for the chosen architecture.** Community packages and libraries need to support the patterns we use: OpenAPI codegen, Gherkin BDD testing, database migrations, repository abstractions. Some ecosystems have mature tooling for all of these. Others required us to build custom libraries (Clojure and Elixir OpenAPI codegen, Elixir Gherkin testing). The ecosystem gap directly affects how much infrastructure work competes with product work.
+- **Conciseness and expressiveness of the language.** AI-assisted software development means reviewing large volumes of generated code. A language that expresses the same logic in fewer, clearer lines reduces review burden and makes it easier to spot errors. F#'s computation expressions, Kotlin's coroutines, and Clojure's data-oriented style all score well here. Java's verbosity works against it.
+
+These criteria weighted heavily in the final tech stack decision. A language can have excellent runtime performance but if its type system cannot guide an AI assistant, or if reviewing its output requires reading three times as much code, the practical development experience suffers.
+
 Every backend implements the same domain: an expense tracker with user registration, password-based authentication, JWT token management, expense CRUD with currency and unit handling, attachment management, reporting endpoints, admin operations, and a health check. Realistic enough to exercise real patterns. Consistent enough to compare meaningfully.
 
 ### One Contract, Many Languages
