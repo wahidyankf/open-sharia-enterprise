@@ -337,6 +337,8 @@ The Week 4 update described OrganicLever's backend as Spring Boot 4.0.3 on Java 
 
 **Mobile stack remains undecided.** Flutter is a candidate given the demo frontend evaluation, but the decision will come later when OrganicLever's domain features are mature enough to warrant a mobile client.
 
+These decisions might seem final, but they are not permanent. As the application grows in production, any tech stack can fall short of expectations in ways we cannot predict today. That is why Gherkin specs, OpenAPI contracts, E2E tests, and C4 architecture diagrams are among the most important investments in this project—not because they make the current stack better, but because they make rewriting or porting to a different stack a manageable experience rather than a painful one. The behavioral specifications define what the system does independently of how it is implemented. If F# needs to become something else in two years, the specs, contracts, and tests carry over. The implementation is replaceable. The specification is the asset—which is also why the FSL-1.1-MIT license protects the specifications specifically. More on that below.
+
 The backend now runs F#/Giraffe with PostgreSQL, DbUp migrations, AltCover for test coverage, and the same three-level testing and contract-driven patterns applied to the demo backends. OrganicLever adopted the same OpenAPI contract enforcement—an OpenAPI 3.1 specification at `specs/apps/organiclever/contracts/` with codegen for both `organiclever-be` and `organiclever-fe`.
 
 ### Authentication and OAuth
