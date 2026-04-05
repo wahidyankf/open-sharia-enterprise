@@ -577,13 +577,13 @@ Every item on this list adds to the codebase's surface area. The demo backends a
 
 ## What's Actually Next
 
-The polyglot foundation is laid. The platforms are migrated. The licensing is set. CI is finally taking shape. The next four weeks shift focus from CI to CD, infrastructure exploration, and fundamental building, Insha Allah.
+The polyglot foundation is laid. The platforms are migrated. The licensing is set. CI is finally taking shape. The next four weeks focus on CD and infrastructure—that is the priority. OrganicLever's core domain features will start building on the sideline, but the deployment and infrastructure story comes first, Insha Allah.
 
 **Continuous Deployment** — CI validates code. CD delivers it. The 29 workflows verify quality, but nothing automatically promotes a validated build to production. The next phase builds the deployment pipeline: automated promotion from main to production branches, deployment verification, rollback capabilities, and environment management. The goal is confidence that a green CI run can flow to production without manual intervention.
 
 **Infrastructure exploration** — The monorepo now has 30+ projects across 10+ languages. That scale creates real infrastructure questions. Nx remote caching for faster builds across CI and local development. Container orchestration patterns for the multi-backend landscape. Database provisioning and migration automation in deployment contexts. Observability—knowing what is running, how it is performing, and when something breaks—before users tell us.
 
-**Fundamental building** — OrganicLever has authentication and an API contract. It does not yet have the features that make it a productivity tracker. The next phase builds domain fundamentals: the core data models, business rules, and user workflows that define what OrganicLever actually does. The tech stack decisions are made—F# backend, Next.js + Effect-TS + TypeScript web frontend. The contract-driven pipeline is ready to carry real business logic. It is time to give it something meaningful to carry.
+**Fundamental building (sideline)** — OrganicLever has authentication and an API contract. It does not yet have the features that make it a productivity tracker. While CD and infrastructure take priority, domain fundamentals start building on the sideline: the core data models, business rules, and user workflows that define what OrganicLever actually does. The tech stack decisions are made—F# backend, Next.js + Effect-TS + TypeScript web frontend. The contract-driven pipeline is ready to carry real business logic while the deployment story matures around it.
 
 ## Building in the Open
 

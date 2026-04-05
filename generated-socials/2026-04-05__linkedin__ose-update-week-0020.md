@@ -32,7 +32,7 @@ Governance
 AI agent model selection convention added. Development practices for PRs, verification, completeness, and CI blockers documented. Plan workflow quality gates with manual assertions and archival rules.
 
 What's next:
-CI is taking shape. Next four weeks: CD pipelines, infrastructure exploration, and building OrganicLever's core domain features on the chosen stack. Insha Allah.
+CI is taking shape. Next four weeks focus on CD pipelines and infrastructure — that is the priority. OrganicLever's core domain features will start building on the sideline, but the deployment and infrastructure story comes first. Insha Allah.
 
 Full monthly update (covers all of Phase 1 Weeks 5-8):
 https://www.oseplatform.com/updates/2026-04-05-phase-1-week-8-wide-to-learn-narrow-to-ship
