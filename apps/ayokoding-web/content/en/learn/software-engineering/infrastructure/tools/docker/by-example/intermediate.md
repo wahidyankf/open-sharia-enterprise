@@ -18,6 +18,7 @@ This chapter covers production Docker patterns through 27 examples, achieving 40
 Multi-stage builds use multiple FROM instructions to create optimized production images. Build dependencies stay in build stages while only runtime artifacts reach the final image.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Multi-stage build flow
 graph TD
  A["Builder Stage<br/>node:18-alpine"] --> B["Install all dependencies<br/>npm ci"]
@@ -28,10 +29,10 @@ graph TD
  F --> G["Copy built artifacts<br/>COPY --from=builder"]
  G --> H["Final Image<br/>120MB #40;73% smaller#41;"]
 
- style A fill:#0173B2,color:#fff
- style D fill:#DE8F05,color:#fff
- style E fill:#0173B2,color:#fff
- style H fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```dockerfile
@@ -251,6 +252,7 @@ Complex applications may need multiple languages or tools during build. Multi-st
 **Multi-Runtime Build Pipeline:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Polyglot multi-stage build
 graph TD
  A["Frontend Builder<br/>node:18-alpine"] --> D["Production Stage<br/>nginx:alpine"]
@@ -263,10 +265,10 @@ graph TD
  B1 --> D2["/usr/local/bin/server"]
  C1 --> D3["/usr/share/nginx/html/docs/"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#0173B2,color:#fff
- style C fill:#0173B2,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```dockerfile
@@ -481,6 +483,7 @@ Build-time secrets (API keys, credentials) needed during build should never be c
 **Secret Mount Lifecycle:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Host Secret File<br/>.npmrc"] --> B["--mount=type=secret"]
  B --> C["Mounted in RUN"]
@@ -489,9 +492,9 @@ graph TD
  E --> F["RUN completes"]
  F --> G["Secret Removed<br/>NOT in image layer"]
 
- style A fill:#0173B2,color:#fff
- style D fill:#DE8F05,color:#fff
- style G fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```dockerfile
@@ -638,6 +641,7 @@ Optimize Docker Compose builds with caching strategies, parallel builds, and Bui
 **BuildKit Caching Strategy:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Build caching flow
 graph TD
  A["Local Build"] --> B{Cache Hit?}
@@ -648,10 +652,10 @@ graph TD
  F --> G["Final Image<br/>15 seconds vs 2m30s"]
  C --> G
 
- style A fill:#0173B2,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#DE8F05,color:#fff
- style G fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -795,6 +799,7 @@ Health checks determine when services are ready to receive traffic. They enable 
 **Health Check State Machine:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Container Start"] --> B["Starting<br/>start_period grace"]
  B --> C{Health Check}
@@ -805,9 +810,9 @@ graph TD
  E -->|No| G["Unhealthy<br/>Restart Container"]
  G --> A
 
- style A fill:#0173B2,color:#fff
- style D fill:#029E73,color:#fff
- style G fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1026,6 +1031,7 @@ Combine health checks, restart policies, and dependencies for resilient multi-se
 **Service Dependency and Restart Flow:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Database Starts"] --> B{Health Check}
  B -->|Pass| C["Database Healthy"]
@@ -1040,11 +1046,11 @@ graph TD
  E -->|Fail| J["Restart Queue<br/>restart: unless-stopped"]
  J --> D
 
- style C fill:#029E73,color:#fff
- style F fill:#029E73,color:#fff
- style H fill:#0173B2,color:#fff
- style I fill:#CC78BC,color:#fff
- style J fill:#CC78BC,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style J fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1240,16 +1246,17 @@ CPU limits prevent containers from monopolizing host CPU resources. They ensure 
 **CPU Resource Allocation:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Host CPU: 8 cores"] --> B["video-encoder<br/>Limit: 2.0 cores<br/>Reserved: 0.5 cores"]
  A --> C["api<br/>Limit: 1.0 core<br/>Reserved: 0.25 cores"]
  A --> D["database<br/>Limit: 4.0 cores<br/>Reserved: 1.0 core"]
  A --> E["Remaining: 1.0 core<br/>Available for bursting"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1394,6 +1401,7 @@ Memory limits prevent OOM (Out Of Memory) issues and ensure stable multi-contain
 **Memory Limit Behavior:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Container Memory Usage"] --> B{Below Limit?}
  B -->|Yes| C["Continue Running"]
@@ -1402,9 +1410,9 @@ graph TD
  E -->|Kill Container| F["Container Terminated<br/>Exit Code 137"]
  E -->|Swap Available| G["Use Swap<br/>Performance Degraded"]
 
- style C fill:#029E73,color:#fff
- style D fill:#DE8F05,color:#fff
- style F fill:#CC78BC,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1742,6 +1750,7 @@ Docker supports multiple logging drivers for centralized log aggregation. Choose
 **Centralized Logging Architecture:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Logging drivers flow
 graph TD
  A["Container App"] --> B["Docker Logging Driver"]
@@ -1753,11 +1762,11 @@ graph TD
  C4 --> D
  D --> E["Kibana<br/>Visualization"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C3 fill:#029E73,color:#fff
- style C4 fill:#029E73,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C3 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C4 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2541,6 +2550,7 @@ Custom bridge networks provide network isolation, automatic DNS resolution, and 
 **Network Topology:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["frontend-net<br/>172.20.0.0/16"] --> B["frontend<br/>172.20.0.2"]
  A --> C["api<br/>172.20.0.3"]
@@ -2552,10 +2562,10 @@ graph TD
  B -.x->|Cannot access| E
  C -.->|Can access| E
 
- style A fill:#0173B2,color:#fff
- style D fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2792,6 +2802,7 @@ Init containers run before main application containers to perform setup tasks li
 **Init Container Sequence:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["database starts"] --> B{Health Check}
  B -->|Pass| C["Database Healthy"]
@@ -2802,10 +2813,10 @@ graph TD
  G --> H["api starts"]
  H --> I["Application Running"]
 
- style C fill:#029E73,color:#fff
- style E fill:#029E73,color:#fff
- style G fill:#029E73,color:#fff
- style I fill:#0173B2,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml

@@ -100,6 +100,7 @@ export default JsxDemo;
 Props pass data from parent to child components. Use TypeScript interfaces for type safety.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     P["App (Parent)\n passes props"] -->|"name='Aisha' age=28\nisStudent=false"| C1["Greeting\ncomponent"]
     P -->|"name='Omar' age=22\nisStudent=true"| C2["Greeting\ncomponent"]
@@ -330,6 +331,7 @@ export default App;
 State stores component data that changes over time. `useState` returns current value and setter function.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["useState(0)\n count = 0"] -->|"setCount(1)"| B["Re-render\n count = 1"]
     B -->|"setCount(2)"| C["Re-render\n count = 2"]
@@ -557,6 +559,7 @@ export default UserProfile;
 Arrays in state require creating new arrays for updates. Use array methods that return new arrays.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["todos: [Pray Fajr,\nRead Quran]"] -->|"addTodo(text)"| B["[...todos, newTodo]\nnew array"]
     A -->|"toggleTodo(id)"| C["todos.map(...)\nnew array"]
@@ -750,6 +753,7 @@ export default ZakatCalculator;
 `useEffect` runs side effects after render. Use for DOM manipulation, subscriptions, or data fetching.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Component Renders"] -->|"After paint"| B["useEffect runs"]
     B -->|"No cleanup"| C["Effect executes\n (DOM updates, fetch, timer)"]
@@ -948,6 +952,7 @@ export default App;
 Fetch external data in `useEffect` with proper loading and error states.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Component mounts\nuseEffect fires"] -->|"fetch()"| B["Network request"]
     B -->|"loading"| C["isLoading=true\nUI: spinner"]
@@ -1850,6 +1855,7 @@ export default ValidatedRegistrationForm;
 Render different UI based on state. Use ternary operators, `&&` operator, or early returns.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A{"isAuthenticated?"} -->|"true"| B["Dashboard renders"]
     A -->|"false"| C["Login page renders"]
@@ -1974,6 +1980,7 @@ export default ConditionalRenderingDemo;
 Render arrays of data with `map()`. Provide unique `key` prop for performance.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["prayers array\n[5 items]"] -->|".map()"| B["JSX elements\n[li key=fajr]\n[li key=dhuhr]\n..."]
     B -->|"React reconciliation"| C["DOM list\n5 rendered items"]
@@ -2118,6 +2125,7 @@ export default PrayerTimesList;
 Share state between components by lifting it to common parent.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     Parent["TemperatureConverter\n state: celsius, fahrenheit"] -->|"celsius prop + handler"| C["CelsiusInput"]
     Parent -->|"fahrenheit prop + handler"| F["FahrenheitInput"]
@@ -2412,6 +2420,7 @@ export default IslamicDashboard;
 Combine concepts from all previous examples into practical application.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["WealthCategories\n state: categories[]"] -->|"updateCategory(id, amount)"| A
     A -->|"reduce"| B["totalWealth"]

@@ -32,6 +32,7 @@ This level covers **expert mastery and production optimization** through 28 exam
 ServiceAccounts provide identities for Pods while RBAC (Role-Based Access Control) controls permissions. Roles define permissions, RoleBindings grant permissions to ServiceAccounts.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% RBAC authorization flow
 graph TD
  A[Pod with ServiceAccount] --> B[API Request]
@@ -41,11 +42,11 @@ graph TD
  E -->|Yes| F[Allow: list pods]
  E -->|No| G[Deny: 403 Forbidden]
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#CA9161,color:#fff
- style F fill:#029E73,color:#fff
- style G fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -952,16 +953,17 @@ kubectl get secret test-encryption -o jsonpath='{.data.key}' | base64 -d
 NetworkPolicies control pod-to-pod traffic using label selectors and rules. By default, all traffic is allowed; NetworkPolicies enforce restrictions.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% NetworkPolicy traffic control
 graph TD
  A[Pod: frontend<br/>app=frontend] -->|Allowed| B[Pod: backend<br/>app=backend]
  C[Pod: external<br/>app=external] -->|Denied| B
  D[Pod: database<br/>app=database] -->|Allowed| B
 
- style A fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style C fill:#CC78BC,color:#fff
- style D fill:#DE8F05,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1130,6 +1132,7 @@ kubectl get pods -l app=backend -o wide
 Default deny NetworkPolicies block all traffic to/from Pods, requiring explicit allow rules. This zero-trust approach improves security by denying unexpected traffic.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Default deny with explicit allow
 graph TD
  A[NetworkPolicy: Deny All] --> B[All Pods isolated]
@@ -1139,10 +1142,10 @@ graph TD
  D -->|external → backend| F[Denied]
  D -->|frontend → database| F
 
- style A fill:#CC78BC,color:#fff
- style C fill:#DE8F05,color:#fff
- style E fill:#029E73,color:#fff
- style F fill:#CC78BC,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1288,6 +1291,7 @@ kubectl run test-client -n test-isolation --image=busybox --rm -it -- wget -O- t
 NetworkPolicies can isolate namespaces, allowing traffic only from specific namespaces using namespaceSelector. This enforces environment separation (dev, staging, prod).
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Namespace isolation
 graph TD
  A[Namespace: backend-ns] --> B{NetworkPolicy}
@@ -1298,11 +1302,11 @@ graph TD
  E --> G[Access granted]
  F --> H[Access denied]
 
- style A fill:#0173B2,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#CC78BC,color:#fff
- style G fill:#029E73,color:#fff
- style H fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1618,6 +1622,7 @@ spec:
 CustomResourceDefinitions extend Kubernetes API with custom resource types. CRDs define schema, validation, and versions for custom resources.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% CRD and custom resource relationship
 graph TD
  A[CRD: databases.example.com] --> B[Defines schema]
@@ -1627,9 +1632,9 @@ graph TD
  A --> F[Validation rules]
  F --> G[Accepted by API server]
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2048,6 +2053,7 @@ spec:
 Operators are custom controllers watching custom resources and reconciling actual state to desired state. This example shows a basic operator structure.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Operator reconciliation loop
 graph TD
  A[Watch Database CR] --> B{Event?}
@@ -2059,10 +2065,10 @@ graph TD
  F --> G
  G --> A
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#CA9161,color:#fff
- style F fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2260,6 +2266,7 @@ spec:
 Admission webhooks intercept API requests before persistence, enabling validation and mutation. Use webhooks for custom policies and automatic resource modification.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Admission webhook flow
 graph TD
  A[kubectl create pod] --> B[API Server]
@@ -2271,11 +2278,11 @@ graph TD
  G -->|Valid| H[Persist to etcd]
  G -->|Invalid| I[Reject: 403]
 
- style B fill:#0173B2,color:#fff
- style E fill:#DE8F05,color:#fff
- style G fill:#CA9161,color:#fff
- style H fill:#029E73,color:#fff
- style I fill:#CC78BC,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2456,6 +2463,7 @@ webhooks:
 Helm packages Kubernetes manifests into charts with templating, versioning, and dependency management. Charts enable reusable application definitions.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Helm chart structure
 graph TD
  A[Helm Chart] --> B[Chart.yaml<br/>metadata]
@@ -2466,10 +2474,10 @@ graph TD
  D --> G[ingress.yaml]
  A --> H[charts/<br/>dependencies]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#CA9161,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2611,6 +2619,7 @@ spec: # => Deployment specification
 Helm values provide hierarchical configuration with multiple override mechanisms. Values can be overridden via CLI, files, or --set flags.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Helm values precedence
 graph TD
  A[values.yaml<br/>defaults] --> B[Merge]
@@ -2619,10 +2628,10 @@ graph TD
  B --> E[Final values]
  E --> F[Template rendering]
 
- style A fill:#CC78BC,color:#fff
- style C fill:#CA9161,color:#fff
- style D fill:#DE8F05,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2769,6 +2778,7 @@ dependencies:
 Helm hooks run Jobs at specific points in release lifecycle, enabling pre/post-install tasks like database migrations or cleanup.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Helm hook execution
 graph TD
  A[helm upgrade] --> B[pre-upgrade hook<br/>weight=1]
@@ -2779,11 +2789,11 @@ graph TD
  E --> G[post-upgrade hook]
  G --> H[Cleanup old resources]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#CA9161,color:#fff
- style E fill:#029E73,color:#fff
- style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2890,6 +2900,7 @@ spec: # => Pod specification
 GitOps uses Git as single source of truth for declarative infrastructure and applications. Changes committed to Git trigger automatic synchronization to clusters.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% GitOps workflow
 graph TD
  A[Developer commits<br/>to Git] --> B[CI builds image]
@@ -2899,10 +2910,10 @@ graph TD
  E --> F[ArgoCD syncs cluster]
  F --> G[Deployment updated]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style E fill:#CA9161,color:#fff
- style G fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -3079,6 +3090,7 @@ spec: # => Application specification
 ArgoCD supports multiple sync strategies controlling how and when applications synchronize from Git to cluster.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% ArgoCD sync with self-heal
 graph TD
  A[Git commit] --> B[ArgoCD detects change]
@@ -3090,10 +3102,10 @@ graph TD
  F -->|No selfHeal| H[Alert only]
  G --> I[Cluster matches Git]
 
- style B fill:#0173B2,color:#fff
- style D fill:#DE8F05,color:#fff
- style G fill:#029E73,color:#fff
- style I fill:#029E73,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -3333,6 +3345,7 @@ spec: # => Application specification
 ApplicationSets generate multiple Applications from templates, enabling fleet management and multi-cluster deployments from single definition.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% ApplicationSet multi-cluster deployment
 graph TD
  A[ApplicationSet] --> B[Generator: list]
@@ -3343,11 +3356,11 @@ graph TD
  D --> G[Application: prod-eu-central-app]
  E --> H[Application: staging-app]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style F fill:#029E73,color:#fff
- style G fill:#029E73,color:#fff
- style H fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -3480,6 +3493,7 @@ spec: # => ApplicationSet specification
 Production clusters require comprehensive monitoring, logging, and tracing for observability. Combine Prometheus, Grafana, and Loki for full-stack visibility.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Observability stack
 graph TD
  A[Application Pods] --> B[Metrics endpoint /metrics]
@@ -3492,11 +3506,11 @@ graph TD
  F --> H
  G --> H
 
- style A fill:#0173B2,color:#fff
- style E fill:#DE8F05,color:#fff
- style F fill:#CA9161,color:#fff
- style G fill:#CC78BC,color:#fff
- style H fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml

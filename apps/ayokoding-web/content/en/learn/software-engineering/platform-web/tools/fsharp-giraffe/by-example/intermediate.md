@@ -26,6 +26,7 @@ tags:
 The `>=>` operator (Kleisli composition for `HttpHandler`) chains two handlers so that if the first returns `Some ctx`, the second receives that context. If the first returns `None`, the second is skipped. This is the backbone of Giraffe's composability.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["Handler A<br/>runs first"] -->|"Some ctx"| B["Handler B<br/>runs second"]
     A -->|"None"| C["Skip B<br/>return None"]
@@ -201,6 +202,7 @@ app.Run()
 JWT authentication in Giraffe uses ASP.NET Core's JWT Bearer middleware. After registering the middleware, Giraffe's `requiresAuthentication` handler protects routes.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Request with<br/>Authorization: Bearer token"] --> B["JWT Bearer Middleware<br/>Validates token"]
     B -->|valid token| C["ctx.User populated<br/>IsAuthenticated = true"]

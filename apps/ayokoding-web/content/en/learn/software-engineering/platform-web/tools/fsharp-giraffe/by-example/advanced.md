@@ -352,6 +352,7 @@ app.Run()
 ASP.NET Core SignalR provides a higher-level real-time communication abstraction over WebSocket, Server-Sent Events, and long polling. Giraffe coexists with SignalR hubs.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Client Browser"] -->|"WebSocket/SSE"| B["SignalR Hub<br/>/hubs/notifications"]
     C["Giraffe Handler<br/>POST /api/notify"] --> D["IHubContext<br/>SendAsync"]
@@ -880,6 +881,7 @@ let pageLayout (pageTitle : string) (navItems : (string * string) list) (content
 A multi-stage Dockerfile builds and packages a Giraffe application efficiently, producing a minimal production image.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Build Stage<br/>mcr.microsoft.com/dotnet/sdk:8.0"] -->|"dotnet publish"| B["Runtime Stage<br/>mcr.microsoft.com/dotnet/aspnet:8.0"]
     B --> C["Final Image<br/>~100MB vs 800MB SDK"]

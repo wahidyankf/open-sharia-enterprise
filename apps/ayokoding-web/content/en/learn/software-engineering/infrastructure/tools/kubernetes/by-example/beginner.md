@@ -31,6 +31,7 @@ This level covers **Kubernetes fundamentals** through 28 self-contained examples
 A Pod is the smallest deployable unit in Kubernetes, representing one or more containers that share networking and storage. This example creates a single-container Pod running nginx web server to verify cluster connectivity and basic kubectl functionality.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Simple Pod creation flow
 graph TD
  A[kubectl apply] --> B[API Server]
@@ -38,11 +39,11 @@ graph TD
  C --> D[kubelet on Node]
  D --> E[Pod Running]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#0173B2,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -119,6 +120,7 @@ kubectl delete pod test-pod        # => pod "test-pod" deleted
 Pods can run multiple containers that share the same network namespace and storage volumes. This pattern enables sidecar containers for logging, monitoring, or service mesh proxies alongside application containers.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Multi-container Pod architecture
 graph TD
  A[Pod: multi-app] --> B[Container: nginx]
@@ -128,11 +130,11 @@ graph TD
  B --> E[Shared Volume<br/>/shared-data]
  C --> E
 
- style A fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#DE8F05,color:#fff
- style E fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -364,6 +366,7 @@ spec:
 Init containers run sequentially before application containers start, ensuring prerequisites like data seeding, configuration setup, or dependency checks complete successfully. Application containers only start after all init containers succeed.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Init container execution flow
 graph TD
  A[Pod Created] --> B[Init Container 1]
@@ -374,12 +377,12 @@ graph TD
  F -->|Yes| G[App Containers Start]
  F -->|No| H[Restart Init 2]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style D fill:#DE8F05,color:#fff
- style G fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
- style H fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -500,6 +503,7 @@ spec:
 Deployments manage ReplicaSets to maintain desired Pod replicas with automatic recovery, rolling updates, and rollback capabilities. Unlike bare Pods, Deployments ensure high availability through replica management and self-healing.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Deployment hierarchy
 graph TD
  A[Deployment: web-app] --> B[ReplicaSet: web-app-xxxxx]
@@ -507,11 +511,11 @@ graph TD
  B --> D[Pod: web-app-xxxxx-2]
  B --> E[Pod: web-app-xxxxx-3]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -655,6 +659,7 @@ spec:
 Rolling updates gradually replace old Pods with new ones, ensuring zero downtime during deployments. Kubernetes controls update speed through maxSurge (extra Pods during update) and maxUnavailable (maximum Pods down simultaneously).
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Rolling update process
 graph TD
  A[Old ReplicaSet<br/>3 Pods v1.23] --> B{Update to v1.24}
@@ -665,11 +670,11 @@ graph TD
  F -->|No| D
  F -->|Yes| G[Old ReplicaSet<br/>0 Pods, kept for rollback]
 
- style A fill:#CC78BC,color:#fff
- style C fill:#0173B2,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#DE8F05,color:#fff
- style G fill:#CA9161,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -891,6 +896,7 @@ spec:
 ClusterIP is the default Service type that exposes Pods on an internal cluster IP accessible only from within the cluster. This service type enables inter-service communication in microservices architectures while maintaining network isolation from external traffic.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% ClusterIP Service architecture
 graph TD
  A[ClusterIP Service<br/>10.96.0.10:80] --> B[Pod: web-1<br/>10.244.0.5:8080]
@@ -898,11 +904,11 @@ graph TD
  A --> D[Pod: web-3<br/>10.244.2.7:8080]
  E[Client Pod<br/>in cluster] --> A
 
- style A fill:#DE8F05,color:#fff
- style B fill:#0173B2,color:#fff
- style C fill:#0173B2,color:#fff
- style D fill:#0173B2,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -953,6 +959,7 @@ spec:
 NodePort exposes Services on each node's IP at a static port (30000-32767 range), making Pods accessible from outside the cluster. Kubernetes allocates a port and routes traffic through the Service to backend Pods.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% NodePort Service access flow
 graph TD
  A[External Client] --> B[Node IP:31000]
@@ -961,12 +968,12 @@ graph TD
  C --> E[Pod: app-2]
  F[Another Node IP:31000] --> C
 
- style A fill:#CC78BC,color:#fff
- style B fill:#DE8F05,color:#fff
- style F fill:#DE8F05,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#0173B2,color:#fff
- style E fill:#0173B2,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1300,16 +1307,17 @@ spec:
 ConfigMaps mounted as volumes create files where each key becomes a filename and value becomes file content. This pattern suits configuration files like nginx.conf, application.yaml, or property files.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% ConfigMap volume mount
 graph TD
  A[ConfigMap: nginx-config] --> B[Volume Mount<br/>/etc/nginx/conf.d]
  B --> C[File: default.conf<br/>Contains nginx config]
  C --> D[nginx Container<br/>Reads config from file]
 
- style A fill:#CC78BC,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#0173B2,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1722,6 +1730,7 @@ spec:
 Labels are key-value pairs attached to objects for identification and selection. Selectors query objects by labels, enabling Services to find Pods, Deployments to manage ReplicaSets, and kubectl to filter resources.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Label selector matching
 graph TD
  A[Service Selector<br/>app=web, env=prod] --> B{Match Labels?}
@@ -1729,10 +1738,10 @@ graph TD
  B -->|Yes| D[Pod: web-2<br/>app=web, env=prod]
  B -->|No| E[Pod: api-1<br/>app=api, env=prod]
 
- style A fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
+ style A fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml

@@ -33,17 +33,18 @@ React is a **JavaScript library for building user interfaces** that prioritizes 
 ## Learning Path
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A["Beginner<br/>Core React Concepts<br/>Examples 1-25"] --> B["Intermediate<br/>Production Patterns<br/>Examples 26-50"]
   B --> C["Advanced<br/>Performance & Scale<br/>Examples 51-90"]
   D["0%<br/>No React Knowledge"] -.-> A
   C -.-> E["95%<br/>Framework Mastery"]
 
-  style A fill:#0173B2,color:#fff
-  style B fill:#DE8F05,color:#fff
-  style C fill:#029E73,color:#fff
-  style D fill:#CC78BC,color:#fff
-  style E fill:#029E73,color:#fff
+  style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+  style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+  style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+  style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+  style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ## Coverage Philosophy: 95% Through 75 Examples

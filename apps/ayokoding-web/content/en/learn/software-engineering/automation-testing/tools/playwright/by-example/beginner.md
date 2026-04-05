@@ -24,12 +24,12 @@ graph TD
     Page --> Actions["Test Actions"]
     Actions --> Cleanup["Automatic Cleanup"]
 
-    style Test fill:#0173B2,color:#fff
-    style Browser fill:#DE8F05,color:#fff
-    style Context fill:#029E73,color:#fff
-    style Page fill:#CC78BC,color:#fff
-    style Actions fill:#CA9161,color:#fff
-    style Cleanup fill:#0173B2,color:#fff
+    style Test fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Browser fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style Context fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Page fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+    style Actions fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Cleanup fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -81,12 +81,12 @@ graph TD
     Context1 --> Page2["Page (Tab)"]
     Context2 --> Page3["Page (Tab)"]
 
-    style Browser fill:#0173B2,color:#fff
-    style Context1 fill:#DE8F05,color:#000
-    style Context2 fill:#DE8F05,color:#000
-    style Page1 fill:#029E73,color:#fff
-    style Page2 fill:#029E73,color:#fff
-    style Page3 fill:#029E73,color:#fff
+    style Browser fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Context1 fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Context2 fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Page1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Page2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Page3 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -148,12 +148,12 @@ graph TD
     Idle --> Ready
     Commit --> Ready
 
-    style Nav fill:#0173B2,color:#fff
-    style Decision fill:#DE8F05,color:#000
-    style Load fill:#029E73,color:#fff
-    style Idle fill:#029E73,color:#fff
-    style Commit fill:#CA9161,color:#fff
-    style Ready fill:#CC78BC,color:#000
+    style Nav fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Decision fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Load fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Idle fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Commit fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Ready fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Code**:
@@ -213,11 +213,11 @@ graph LR
     ARIA --> Match["Match accessible<br/>name / aria-label"]
     Match --> Locator["Locator Object<br/>(lazy, re-queryable)"]
 
-    style Code fill:#0173B2,color:#fff
-    style Query fill:#DE8F05,color:#000
-    style ARIA fill:#029E73,color:#fff
-    style Match fill:#CC78BC,color:#000
-    style Locator fill:#CA9161,color:#fff
+    style Code fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Query fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style ARIA fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Match fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Locator fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -284,14 +284,14 @@ graph TD
     Pointer -->|no| Retry
     Pointer -->|yes| Perform["Perform Click"]
 
-    style Click fill:#0173B2,color:#fff
-    style Retry fill:#DE8F05,color:#000
-    style Perform fill:#029E73,color:#fff
-    style Attached fill:#CA9161,color:#fff
-    style Visible fill:#CA9161,color:#fff
-    style Stable fill:#CA9161,color:#fff
-    style Enabled fill:#CA9161,color:#fff
-    style Pointer fill:#CA9161,color:#fff
+    style Click fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Retry fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Perform fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Attached fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Visible fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Stable fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Enabled fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Pointer fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -413,13 +413,13 @@ graph TD
     Timeout -->|"no"| Wait
     Timeout -->|"yes"| Fail["TimeoutError:<br/>assertion failed"]
 
-    style Assert fill:#0173B2,color:#fff
-    style Check fill:#DE8F05,color:#000
-    style Pass fill:#029E73,color:#fff
-    style Wait fill:#CA9161,color:#fff
-    style Retry fill:#CA9161,color:#fff
-    style Timeout fill:#CC78BC,color:#000
-    style Fail fill:#DE8F05,color:#000
+    style Assert fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Check fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Pass fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Wait fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Retry fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Timeout fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Fail fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Code**:
@@ -572,12 +572,12 @@ graph TD
     T2 --> AfterEach
     AfterEach --> Report["Test Report<br/>(grouped by suite)"]
 
-    style Suite fill:#0173B2,color:#fff
-    style BeforeEach fill:#DE8F05,color:#000
-    style T1 fill:#029E73,color:#fff
-    style T2 fill:#029E73,color:#fff
-    style AfterEach fill:#CC78BC,color:#000
-    style Report fill:#CA9161,color:#fff
+    style Suite fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style BeforeEach fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style T1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style T2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style AfterEach fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Report fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -669,12 +669,12 @@ graph LR
     W2 --> Results
     W3 --> Results
 
-    style Config fill:#0173B2,color:#fff
-    style Runner fill:#DE8F05,color:#000
-    style W1 fill:#029E73,color:#fff
-    style W2 fill:#029E73,color:#fff
-    style W3 fill:#029E73,color:#fff
-    style Results fill:#CC78BC,color:#000
+    style Config fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Runner fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style W1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style W2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style W3 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Results fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Code**:
@@ -992,13 +992,13 @@ graph LR
     Sidebar --> Section["sidebar.locator('section').first()"]
     Section --> Heading["section.getByRole('heading')"]
 
-    style Page fill:#0173B2,color:#fff
-    style Nav fill:#DE8F05,color:#000
-    style Sidebar fill:#DE8F05,color:#000
-    style ScopedLink fill:#029E73,color:#fff
-    style ScopedBtn fill:#029E73,color:#fff
-    style Section fill:#CA9161,color:#fff
-    style Heading fill:#CC78BC,color:#000
+    style Page fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Nav fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Sidebar fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style ScopedLink fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style ScopedBtn fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Section fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Heading fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Code**:
@@ -1433,14 +1433,14 @@ graph TD
     Multi --> DOM
     DOM --> Events["Fire change / input events"]
 
-    style Call fill:#0173B2,color:#fff
-    style Type fill:#DE8F05,color:#000
-    style ByVal fill:#029E73,color:#fff
-    style ByLabel fill:#029E73,color:#fff
-    style ByIdx fill:#029E73,color:#fff
-    style Multi fill:#CC78BC,color:#000
-    style DOM fill:#CA9161,color:#fff
-    style Events fill:#CA9161,color:#fff
+    style Call fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Type fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style ByVal fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style ByLabel fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style ByIdx fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Multi fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style DOM fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Events fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -1705,14 +1705,14 @@ graph TD
     PageKey --> Events
     Events --> Handler["Browser event handler<br/>(shortcuts, validation)"]
 
-    style Input fill:#0173B2,color:#fff
-    style PressKey fill:#DE8F05,color:#000
-    style TypeStr fill:#DE8F05,color:#000
-    style FillStr fill:#CC78BC,color:#000
-    style PageKey fill:#DE8F05,color:#000
-    style Events fill:#029E73,color:#fff
-    style SetVal fill:#CA9161,color:#fff
-    style Handler fill:#029E73,color:#fff
+    style Input fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style PressKey fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style TypeStr fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style FillStr fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style PageKey fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Events fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style SetVal fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Handler fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
@@ -1862,17 +1862,17 @@ graph TD
     URLQ --> WaitURL["waitForURL(pattern)"]
     CustomQ --> WaitFn["waitForFunction()<br/>with JS condition"]
 
-    style Need fill:#0173B2,color:#fff
-    style ElementQ fill:#DE8F05,color:#000
-    style NetworkQ fill:#DE8F05,color:#000
-    style URLQ fill:#DE8F05,color:#000
-    style CustomQ fill:#DE8F05,color:#000
-    style WaitSel fill:#029E73,color:#fff
-    style WaitVis fill:#029E73,color:#fff
-    style WaitHid fill:#029E73,color:#fff
-    style WaitResp fill:#CA9161,color:#fff
-    style WaitURL fill:#CA9161,color:#fff
-    style WaitFn fill:#CC78BC,color:#000
+    style Need fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style ElementQ fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style NetworkQ fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style URLQ fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style CustomQ fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style WaitSel fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style WaitVis fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style WaitHid fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style WaitResp fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style WaitURL fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style WaitFn fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Code**:
@@ -1945,12 +1945,12 @@ graph LR
     Assertions["Assertions<br/>(expect().toBeVisible())"] -->|"auto-retry<br/>condition check"| AssertWait["Retries every 100ms<br/>up to assertion timeout (5s default)"]
     StateChecks["State Checks<br/>(isVisible(), isEnabled())"] -->|"NO auto-wait"| Immediate["Returns current<br/>state immediately"]
 
-    style Actions fill:#0173B2,color:#fff
-    style Assertions fill:#DE8F05,color:#000
-    style StateChecks fill:#CC78BC,color:#000
-    style ActionWait fill:#029E73,color:#fff
-    style AssertWait fill:#029E73,color:#fff
-    style Immediate fill:#CA9161,color:#fff
+    style Actions fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Assertions fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style StateChecks fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style ActionWait fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style AssertWait fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Immediate fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:

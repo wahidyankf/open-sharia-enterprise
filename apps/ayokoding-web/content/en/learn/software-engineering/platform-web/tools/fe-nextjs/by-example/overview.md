@@ -37,6 +37,7 @@ Next.js is a **React framework for building production applications** that adds 
 ## Learning Path
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#1e293b','primaryBorderColor':'#005A8C','lineColor':'#64748b','secondaryColor':'#DE8F05','tertiaryColor':'#029E73','fontSize':'14px'}}}%%
 graph TD
   A["Beginner<br/>Core Next.js Concepts<br/>Examples 1-25"] --> B["Intermediate<br/>Production Patterns<br/>Examples 26-50"]
@@ -44,11 +45,11 @@ graph TD
   D["0%<br/>React Knowledge<br/>(Prerequisite)"] -.-> A
   C -.-> E["95%<br/>Framework Mastery"]
 
-  style A fill:#0173B2,color:#fff
-  style B fill:#DE8F05,color:#fff
-  style C fill:#029E73,color:#fff
-  style D fill:#CC78BC,color:#fff
-  style E fill:#029E73,color:#fff
+  style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+  style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+  style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+  style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+  style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Color Legend**: Blue (beginner), Orange (intermediate), Green (advanced/mastery), Purple (prerequisite)
@@ -118,6 +119,7 @@ All examples follow a consistent five-part format:
 2-3 sentence explanation of the Next.js concept.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Component] --> B[Output]
 ```

@@ -145,6 +145,7 @@ Proper dependency installation leverages Docker's layer caching mechanism. By co
 **Layer Caching Strategy:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["FROM node:18-alpine"] --> B["WORKDIR /app"]
  B --> C["COPY package*.json ./"]
@@ -155,10 +156,10 @@ graph TD
  C -.->|Cached if package.json unchanged| D
  D -.->|Reuses cached layer| E
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#DE8F05,color:#fff
- style F fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```dockerfile
@@ -355,6 +356,7 @@ ENV instructions set environment variables that persist in the container at runt
 **Environment Variable Lifecycle:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Dockerfile ENV"] --> B["Build Time"]
  B --> C["Image Layer"]
@@ -364,9 +366,9 @@ graph TD
  B -.->|Available during RUN| F["npm ci uses NODE_ENV"]
  D -.->|Available in container| G["process.env.PORT"]
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```dockerfile
@@ -640,6 +642,7 @@ docker image prune -a
 Understanding container states and lifecycle commands is fundamental for debugging and managing applications. Containers transition between created, running, paused, stopped, and removed states.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Container lifecycle state transitions
 stateDiagram-v2
  [*] --> Created: docker create
@@ -652,10 +655,10 @@ stateDiagram-v2
  Stopped --> [*]: docker rm
  Running --> [*]: docker rm -f
 
- style Created fill:#0173B2,color:#fff
- style Running fill:#029E73,color:#fff
- style Paused fill:#DE8F05,color:#fff
- style Stopped fill:#CC78BC,color:#fff
+ style Created fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style Running fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style Paused fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style Stopped fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -847,14 +850,15 @@ docker exec web-server tail -5 /tmp/heartbeat.log
 Port mapping exposes container services to the host network. Docker supports TCP/UDP protocols and can map multiple ports simultaneously.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Port mapping flow
 graph TD
  A["Host<br/>localhost:8080"] --> B["Docker Bridge<br/>172.17.0.1"]
  B --> C["Container<br/>172.17.0.2:80"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -927,16 +931,17 @@ netstat -tlnp | grep 8080
 Named volumes provide persistent storage managed by Docker. Data survives container removal and can be shared between containers.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Volume architecture
 graph TD
  A["Container 1<br/>/app/data"] --> B["Named Volume<br/>my-data"]
  C["Container 2<br/>/backup/data"] --> B
  B --> D["Host Filesystem<br/>/var/lib/docker/volumes/my-data"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#0173B2,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -1044,14 +1049,15 @@ Bind mounts map host directories into containers, enabling live code reloading d
 **Bind Mount Mapping:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Host Directory<br/>~/myapp"] <--> B["Container Path<br/>/app"]
  A --> C["server.js<br/>message.txt<br/>package.json"]
  B --> D["Live Updates<br/>File changes sync instantly"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style D fill:#DE8F05,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -1270,6 +1276,7 @@ docker exec multi-tmp df -h
 Docker's default bridge network enables container-to-container communication. Containers on the same bridge network can reach each other by container name (automatic DNS).
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Bridge network topology
 graph TD
  A["Host<br/>eth0: 192.168.1.10"] --> B["Docker Bridge<br/>docker0: 172.17.0.1"]
@@ -1279,11 +1286,11 @@ graph TD
  C -.->|"DNS: api"| D
  D -.->|"DNS: db"| E
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2544,6 +2551,7 @@ networks:
 ```
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Network segmentation topology
 graph TD
  A["Internet"] --> B["Host Port 8080"]
@@ -2552,11 +2560,11 @@ graph TD
  D --> E["db<br/>backend network"]
  F["admin<br/>backend network"] --> E
 
- style A fill:#0173B2,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#DE8F05,color:#fff
- style E fill:#CC78BC,color:#fff
- style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash

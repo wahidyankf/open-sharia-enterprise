@@ -25,6 +25,7 @@ Before starting, ensure you understand:
 Use generateStaticParams to pre-render dynamic routes at build time. Creates static HTML for all specified parameter combinations.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[Build time] --> B[generateStaticParams]
   B --> C[params: id 1, 2, 3...]
@@ -100,6 +101,7 @@ export const dynamicParams = false;
 Combine static generation with time-based revalidation. Serve stale content instantly while regenerating in background.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U1 as User (t=0)
   participant U2 as User (t=3700)
@@ -267,6 +269,7 @@ export default function PostPage({
 Stream page sections independently to show content as it loads. Improves perceived performance and user experience.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant B as Browser
   participant N as Next.js
@@ -615,6 +618,7 @@ export default function PostsPage() {
 Use unstable_cache to cache expensive operations with custom keys and revalidation rules. Perfect for database queries or computations.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Request] --> B{Cache hit?}
   B -->|Yes| C[Return cached data]
@@ -806,6 +810,7 @@ export default function UserPage({
 Use dynamic rendering modes to opt out of static generation for specific pages. Perfect for user-specific or time-sensitive content.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   subgraph Static["Static (default)"]
     S[Build time render]
@@ -1115,6 +1120,7 @@ export function CustomWidget() {
 Generate dynamic OpenGraph images for social media sharing. Perfect for blog posts, product pages, dynamic content.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Social share] --> B[GET /api/og?title=...]
   B --> C[ImageResponse JSX]
@@ -1678,6 +1684,7 @@ export function getLocalStorage(key: string) {
 Combine static shell with dynamic content for best of both worlds. Static parts load instantly, dynamic parts stream in.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   subgraph Static["Static (CDN cached)"]
     A[Header]
@@ -1792,6 +1799,7 @@ export default function DashboardPage() {
 Chain multiple middleware functions for composable request processing. Cleaner than single monolithic middleware.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Request] --> B[Auth Check]
   B -->|pass| C[Rate Limit Check]
@@ -1908,6 +1916,7 @@ export const config = {
 Implement multi-step form wizard using Server Actions and session storage. Maintains state across steps with validation.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Step 1: Personal Info] -->|Next| B[Step 2: Donation Amount]
   B -->|Next| C[Step 3: Payment Method]
@@ -2105,6 +2114,7 @@ export default async function Step2Page() {
 Trigger background jobs from Server Actions using queue systems. Returns immediately while job processes asynchronously.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U as User
   participant SA as Server Action
@@ -2287,6 +2297,7 @@ export default function ReportsPage() {
 Implement role-based access control with middleware and Server Components. Restricts access based on user roles.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[Request] --> B[Middleware: check auth]
   B -->|no token| C[Redirect /login]
@@ -2631,6 +2642,7 @@ export async function POST(request: NextRequest) {
 Use Prisma transactions for atomic multi-table operations. Ensures data consistency across related operations.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[prisma.$transaction] --> B[Create donation record]
   B --> C[Update donor total]
