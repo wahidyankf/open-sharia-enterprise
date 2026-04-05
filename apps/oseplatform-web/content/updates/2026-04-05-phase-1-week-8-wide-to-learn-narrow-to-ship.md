@@ -133,8 +133,8 @@ graph LR
 
 Despite the language diversity, every backend implements the same patterns:
 
-- **Contract codegen** — Language-specific code generation from the OpenAPI 3.1 specification. Go uses `oapi-codegen`, Java and Kotlin use the OpenAPI Generator Gradle plugin, Python uses `datamodel-code-generator`, Rust uses a custom build script with `utoipa`, TypeScript uses `openapi-typescript`, F# and C# use NSwag, Elixir uses a custom Mix task, Clojure uses a custom library (`libs/clojure-openapi-codegen`).
-- **Gherkin BDD specs** — All 78 scenarios consumed at unit and integration levels. Go uses Godog, Java and Kotlin use Cucumber JVM, Python uses `pytest-bdd`, Rust uses Cucumber-rs, TypeScript uses Vitest-Cucumber, F# uses TickSpec, C# uses Reqnroll, Elixir uses a custom Cabbage fork (`libs/elixir-cabbage`), Clojure uses `clj-cucumber`.
+- **Contract codegen** — Language-specific code generation from the OpenAPI 3.1 specification. Go uses **`oapi-codegen`**, Java and Kotlin use the OpenAPI Generator Gradle plugin, Python uses **`datamodel-code-generator`**, Rust uses a custom build script with `utoipa`, TypeScript uses **`openapi-typescript`**, F# and C# use NSwag, Elixir uses a custom Mix task, Clojure uses a custom library (**`libs/clojure-openapi-codegen`**).
+- **Gherkin BDD specs** — All 78 scenarios consumed at unit and integration levels. Go uses Godog, Java and Kotlin use Cucumber JVM, Python uses **`pytest-bdd`**, Rust uses Cucumber-rs, TypeScript uses Vitest-Cucumber, F# uses TickSpec, C# uses Reqnroll, Elixir uses a custom Cabbage fork (**`libs/elixir-cabbage`**), Clojure uses **`clj-cucumber`**.
 - **Database migrations** — Each backend manages its own PostgreSQL schema using language-idiomatic tooling. No shared migration files—each stack owns its schema lifecycle independently.
 - **Repository pattern** — Interface-based abstraction separating domain logic from database access. The implementation varies by language paradigm: interfaces in Go, Java, Kotlin, C#, and TypeScript; traits in Rust; protocols in Elixir and Clojure; function-record abstractions in F#.
 - **90%+ test coverage** — Enforced via `rhino-cli test-coverage validate` running as part of `test:quick`. Coverage tools vary by language: Go's built-in cover, JaCoCo for Java, Kover for Kotlin, coverage.py for Python, cargo-llvm-cov for Rust, Vitest v8 for TypeScript, AltCover for F#, Coverlet for C#, ExCoveralls for Elixir, Cloverage for Clojure.
@@ -160,7 +160,7 @@ Each backend uses the migration tool native to its ecosystem:
 | Elixir     | Phoenix      | Ecto                 | Elixir migration modules              |
 | Clojure    | Pedestal     | Migratus             | EDN-configured SQL migrations         |
 
-The migration tooling standardization was its own completed plan (`database-migration-tooling`). Each backend manages schema independently—no shared migration files across languages. The schema is equivalent but owned by each stack's native tooling.
+The migration tooling standardization was its own completed plan (**`database-migration-tooling`**). Each backend manages schema independently—no shared migration files across languages. The schema is equivalent but owned by each stack's native tooling.
 
 ### Lines of Code: Same Domain, Different Languages
 
@@ -238,21 +238,21 @@ Every application can be built without Gherkin—it is not a technical requireme
 
 But the polyglot experiment exposed a wide spectrum of BDD tooling quality. Cucumber JVM (Java, Kotlin) and Godog (Go) are mature, well-maintained, and straightforward to integrate. pytest-bdd (Python) and Cucumber-rs (Rust) work well with minor quirks. Vitest-Cucumber (TypeScript) is newer but functional. TickSpec (F#) and Reqnroll (C#) integrate cleanly with their respective .NET test runners.
 
-The pain points were Elixir and Clojure. Elixir's Cabbage library required a custom fork (`libs/elixir-cabbage`) and a custom Gherkin parser (`libs/elixir-gherkin`) because the existing tooling did not support our test patterns. Clojure's `clj-cucumber` needed careful configuration for locale-aware scenarios. The Gherkin ecosystem maturity of a language directly affects how much infrastructure work you absorb before you can start testing business logic—and that cost compounds across every backend that uses it.
+The pain points were Elixir and Clojure. Elixir's Cabbage library required a custom fork (**`libs/elixir-cabbage`**) and a custom Gherkin parser (**`libs/elixir-gherkin`**) because the existing tooling did not support our test patterns. Clojure's **`clj-cucumber`** needed careful configuration for locale-aware scenarios. The Gherkin ecosystem maturity of a language directly affects how much infrastructure work you absorb before you can start testing business logic—and that cost compounds across every backend that uses it.
 
 ## Demo Frontends: Three Frameworks, One API
 
 The backend experiment has a frontend counterpart. Three frontend frameworks consume the same backend API, validated by the same OpenAPI contract:
 
-**a-demo-fe-ts-nextjs** — Next.js 16 with React Server Components, TypeScript, and shadcn-ui. The default frontend, exercising the same patterns used in OrganicLever and the content platforms. App Router with server and client components, route-based code splitting, and Vitest for unit tests. Next.js is more complicated than we would like—the mental model around server components, client boundaries, and caching layers adds real cognitive overhead. But it is the de facto web frontend framework right now, with the broadest ecosystem support and the most mature deployment story. For a production product, pragmatism wins over taste.
+**`a-demo-fe-ts-nextjs`** — Next.js 16 with React Server Components, TypeScript, and shadcn-ui. The default frontend, exercising the same patterns used in OrganicLever and the content platforms. App Router with server and client components, route-based code splitting, and Vitest for unit tests. Next.js is more complicated than we would like—the mental model around server components, client boundaries, and caching layers adds real cognitive overhead. But it is the de facto web frontend framework right now, with the broadest ecosystem support and the most mature deployment story. For a production product, pragmatism wins over taste.
 
-**a-demo-fe-ts-tanstack-start** — TanStack Start, a newer full-stack React framework. Type-safe routing, built-in data loading patterns, and a different mental model from App Router. TanStack is gaining momentum and we included it as a hedge—if the ecosystem shifts, we want hands-on experience with a likely successor rather than scrambling to catch up later. When we ran this experiment, TanStack Start had not yet reached version 1, so the evaluation reflects pre-stable APIs and tooling.
+**`a-demo-fe-ts-tanstack-start`** — TanStack Start, a newer full-stack React framework. Type-safe routing, built-in data loading patterns, and a different mental model from App Router. TanStack is gaining momentum and we included it as a hedge—if the ecosystem shifts, we want hands-on experience with a likely successor rather than scrambling to catch up later. When we ran this experiment, TanStack Start had not yet reached version 1, so the evaluation reflects pre-stable APIs and tooling.
 
-**a-demo-fe-dart-flutterweb** — Flutter Web in Dart. Cross-platform potential is the draw—the same codebase could target mobile and desktop. The web development experience was startling though—the rendering pipeline differs fundamentally from DOM-based frameworks, and the tooling feels foreign coming from web development. More importantly, Dart currently lacks a mature library equivalent to Effect-TS for typed error handling and composability. Flutter remains a candidate for mobile development, where its cross-platform story is strongest, but the web story is not there yet.
+**`a-demo-fe-dart-flutterweb`** — Flutter Web in Dart. Cross-platform potential is the draw—the same codebase could target mobile and desktop. The web development experience was startling though—the rendering pipeline differs fundamentally from DOM-based frameworks, and the tooling feels foreign coming from web development. More importantly, Dart currently lacks a mature library equivalent to Effect-TS for typed error handling and composability. Flutter remains a candidate for mobile development, where its cross-platform story is strongest, but the web story is not there yet.
 
-**a-demo-fs-ts-nextjs** — A fullstack Next.js 16 demo combining frontend and backend in one application. Route Handlers serve the API, React Server Components render the UI, and the OpenAPI contract governs both sides. Useful for understanding the trade-offs between separate frontend/backend deployments versus a unified fullstack application.
+**`a-demo-fs-ts-nextjs`** — A fullstack Next.js 16 demo combining frontend and backend in one application. Route Handlers serve the API, React Server Components render the UI, and the OpenAPI contract governs both sides. Useful for understanding the trade-offs between separate frontend/backend deployments versus a unified fullstack application.
 
-All frontends have contract codegen from the shared OpenAPI specification and are validated by Playwright E2E tests in `a-demo-fe-e2e`.
+All frontends have contract codegen from the shared OpenAPI specification and are validated by Playwright E2E tests in **`a-demo-fe-e2e`**.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 (frontends), Purple #CC78BC (contract), Orange #DE8F05 (backends), Teal #029E73 (testing)
@@ -305,17 +305,17 @@ The new platform gained capabilities the Hugo site never had:
 - **KaTeX math rendering** — mathematical notation renders correctly in technical content
 - **tRPC API layer** — type-safe API routes for content querying, search, and navigation
 - **React Server Components** — content pages render on the server, shipping minimal JavaScript to the client
-- **Shared UI libraries** — components from `libs/ts-ui` and `libs/ts-ui-tokens` used across ayokoding-web, oseplatform-web, and OrganicLever
+- **Shared UI libraries** — components from **`libs/ts-ui`** and **`libs/ts-ui-tokens`** used across ayokoding-web, oseplatform-web, and OrganicLever
 
-Three completed plans tracked this migration: `ayokoding-web-v2` for the initial rewrite, `ayokoding-web-v1-to-v2-migration` for content migration and URL preservation, and `ayokoding-web-ci-quality-standardization` for test infrastructure.
+Three completed plans tracked this migration: **`ayokoding-web-v2`** for the initial rewrite, **`ayokoding-web-v1-to-v2-migration`** for content migration and URL preservation, and **`ayokoding-web-ci-quality-standardization`** for test infrastructure.
 
-Both backend and frontend E2E test suites were created: `ayokoding-web-be-e2e` validates the tRPC API, and `ayokoding-web-fe-e2e` validates the rendered UI via Playwright.
+Both backend and frontend E2E test suites were created: **`ayokoding-web-be-e2e`** validates the tRPC API, and **`ayokoding-web-fe-e2e`** validates the rendered UI via Playwright.
 
 ### oseplatform-web
 
 The oseplatform-web migration followed the same pattern. The Hugo site used the PaperMod theme—a simpler site with fewer pages but the same architectural limitations. The new Next.js 16 application shares the component library, deployment patterns, and testing infrastructure established by the ayokoding-web migration.
 
-The plan `oseplatform-web-nextjs-rewrite` tracked this work, and `oseplatform-web-e2e-apps` added the E2E test suites.
+The plan **`oseplatform-web-nextjs-rewrite`** tracked this work, and **`oseplatform-web-e2e-apps`** added the E2E test suites.
 
 You are reading this update on the migrated oseplatform-web. The Hugo site that published the Week 4 update no longer exists—this is its Next.js successor.
 
@@ -363,11 +363,11 @@ The Week 4 update described OrganicLever's backend as Spring Boot 4.0.3 on Java 
 
 These decisions might seem final, but they are not permanent. As the application grows in production, any tech stack can fall short of expectations in ways we cannot predict today. That is why Gherkin specs, OpenAPI contracts, E2E tests, and C4 architecture diagrams are among the most important investments in this project—not because they make the current stack better, but because they make rewriting or porting to a different stack a manageable experience rather than a painful one. The behavioral specifications define what the system does independently of how it is implemented. If F# needs to become something else in two years, the specs, contracts, and tests carry over. The implementation is replaceable. The specification is the asset—which is also why the FSL-1.1-MIT license protects the specifications specifically. More on that below.
 
-The backend now runs F#/Giraffe with PostgreSQL, DbUp migrations, AltCover for test coverage, and the same three-level testing and contract-driven patterns applied to the demo backends. OrganicLever adopted the same OpenAPI contract enforcement—an OpenAPI 3.1 specification at `specs/apps/organiclever/contracts/` with codegen for both `organiclever-be` and `organiclever-fe`.
+The backend now runs F#/Giraffe with PostgreSQL, DbUp migrations, AltCover for test coverage, and the same three-level testing and contract-driven patterns applied to the demo backends. OrganicLever adopted the same OpenAPI contract enforcement—an OpenAPI 3.1 specification at `specs/apps/organiclever/contracts/` with codegen for both **`organiclever-be`** and **`organiclever-fe`**.
 
 ### Authentication and OAuth
 
-JWT-based authentication with refresh tokens was implemented initially in Spring Boot, then migrated to F#/Giraffe as part of the pivot. Google OAuth login was integrated for user authentication. The auth flow is end-to-end tested via Playwright in `organiclever-be-e2e` and `organiclever-fe-e2e`.
+JWT-based authentication with refresh tokens was implemented initially in Spring Boot, then migrated to F#/Giraffe as part of the pivot. Google OAuth login was integrated for user authentication. The auth flow is end-to-end tested via Playwright in **`organiclever-be-e2e`** and **`organiclever-fe-e2e`**.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 (frontend), Orange #DE8F05 (backend), Purple #CC78BC (contract), Teal #029E73 (external)
@@ -407,15 +407,15 @@ rhino-cli evolved from v0.10.0 to handle the demands of a monorepo with 30+ proj
 
 **`env init`** — Bootstraps `.env` files from `.env.example` templates. No more manually copying and editing environment files when setting up a new development environment.
 
-**`env backup` and `env restore`** — Environment variable management across the monorepo. Backup captures all `.env` files, restore replays them. Two plans (`env-backup-restore` and `env-enhanced-backup-restore`) refined this workflow.
+**`env backup` and `env restore`** — Environment variable management across the monorepo. Backup captures all `.env` files, restore replays them. Two plans (**`env-backup-restore`** and **`env-enhanced-backup-restore`**) refined this workflow.
 
 **Expanded tool verification** — The doctor command now checks Playwright browser versions, Rust toolchain versions, Flutter SDK versions, and Brewfile dependencies. As the polyglot monorepo grew, so did the list of tools that needed to be present and correctly versioned.
 
-The `native-dev-setup-improvements` and `cli-testing-alignment` plans tracked these changes. All rhino-cli commands are backed by Godog BDD scenarios with mock-based unit tests and real-filesystem integration tests.
+The **`native-dev-setup-improvements`** and **`cli-testing-alignment`** plans tracked these changes. All rhino-cli commands are backed by Godog BDD scenarios with mock-based unit tests and real-filesystem integration tests.
 
 ### Spec Coverage Enforcement
 
-The `spec-coverage` Nx target—which validates that Gherkin specifications are consumed by test implementations—was extended to cover all projects in the monorepo. The `spec-coverage-full-enforcement` plan added multi-language step extraction supporting Go, TypeScript, Java, Kotlin, Python, Rust, F#, C#, Elixir, Clojure, and Dart. The `specs-structure-consistency` plan ensured specification directories follow a consistent structure across all applications.
+The `spec-coverage` Nx target—which validates that Gherkin specifications are consumed by test implementations—was extended to cover all projects in the monorepo. The **`spec-coverage-full-enforcement`** plan added multi-language step extraction supporting Go, TypeScript, Java, Kotlin, Python, Rust, F#, C#, Elixir, Clojure, and Dart. The **`specs-structure-consistency`** plan ensured specification directories follow a consistent structure across all applications.
 
 `rhino-cli spec-coverage validate` now runs as a separate Nx target in the pre-push hook, enforced alongside `typecheck`, `lint`, and `test:quick`. If a Gherkin scenario exists without a corresponding step implementation, the push is blocked.
 
@@ -489,7 +489,7 @@ graph LR
     classDef platform fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-The `demo-ci-test-standardization` and `ci-standardization` plans tracked the workflow buildout. Reusable templates eliminated duplication—each backend workflow is roughly 30 lines composing shared templates, rather than 200+ lines of duplicated YAML.
+The **`demo-ci-test-standardization`** and **`ci-standardization`** plans tracked the workflow buildout. Reusable templates eliminated duplication—each backend workflow is roughly 30 lines composing shared templates, rather than 200+ lines of duplicated YAML.
 
 ### Developer Experience
 
@@ -499,16 +499,16 @@ The `demo-ci-test-standardization` and `ci-standardization` plans tracked the wo
 
 **Shared libraries** — The `libs/` directory grew from 2 to 8 libraries during this period:
 
-- **golang-commons** — Shared Go utilities (existing)
-- **hugo-commons** — Hugo-specific utilities (existing, will be archived when Hugo sites are fully removed)
-- **ts-ui** — Shared React UI components built with shadcn-ui and Radix
-- **ts-ui-tokens** — Design tokens for consistent theming across TypeScript applications
-- **clojure-openapi-codegen** — Custom OpenAPI code generator for Clojure (the ecosystem lacked a suitable one)
-- **elixir-cabbage** — Custom fork of the Cabbage BDD library for Elixir Gherkin testing
-- **elixir-gherkin** — Gherkin parser for Elixir
-- **elixir-openapi-codegen** — Custom OpenAPI code generator for Elixir
+- **`golang-commons`** — Shared Go utilities (existing)
+- **`hugo-commons`** — Hugo-specific utilities (existing, will be archived when Hugo sites are fully removed)
+- **`ts-ui`** — Shared React UI components built with shadcn-ui and Radix
+- **`ts-ui-tokens`** — Design tokens for consistent theming across TypeScript applications
+- **`clojure-openapi-codegen`** — Custom OpenAPI code generator for Clojure (the ecosystem lacked a suitable one)
+- **`elixir-cabbage`** — Custom fork of the Cabbage BDD library for Elixir Gherkin testing
+- **`elixir-gherkin`** — Gherkin parser for Elixir
+- **`elixir-openapi-codegen`** — Custom OpenAPI code generator for Elixir
 
-Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment. It also illustrates the entropy cost: each custom library is code we now own and maintain. The Clojure and Elixir libraries serve the demo backends—they are not on the critical path for the production app. The two TypeScript libraries (`ts-ui`, `ts-ui-tokens`) are, and those have the ecosystem support to justify their maintenance cost.
+Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment. It also illustrates the entropy cost: each custom library is code we now own and maintain. The Clojure and Elixir libraries serve the demo backends—they are not on the critical path for the production app. The two TypeScript libraries (**`ts-ui`**, **`ts-ui-tokens`**) are, and those have the ecosystem support to justify their maintenance cost.
 
 ## FSL-1.1-MIT: Protecting the Mission
 
