@@ -186,11 +186,11 @@ Elixir/Phoenix brings the BEAM's concurrency model. Pattern matching, immutabili
 
 **C#/ASP.NET Core**
 
-C# shares the .NET foundation with F# but takes the OOP path. EF Core migrations are well-integrated, Coverlet provides LCOV coverage, and Reqnroll handles Gherkin cleanly. The ecosystem is mature and VS Code support is strong. For our purposes, F# on the same platform gives better expressiveness and conciseness—but C# remains a solid choice for teams that prefer object-oriented patterns.
+C# shares the .NET foundation with F# but takes the OOP path. EF Core migrations are well-integrated, Coverlet provides LCOV coverage, and Reqnroll handles Gherkin cleanly. A solid language with a solid ecosystem. For our purposes, F# on the same platform gives better expressiveness and conciseness—but knowing C# is there as an escape hatch for F# is reassuring. If we ever hit a wall with F# tooling or need a library that only has C# bindings, we can drop into C# without leaving .NET. That safety net made the F# decision easier.
 
 **Python/FastAPI**
 
-FastAPI's type hints give Python the closest thing it has to static typing, and Alembic migrations auto-generate from SQLAlchemy models. The developer experience is fast—rapid prototyping with minimal boilerplate. pytest-bdd integrates well for Gherkin. The limitation is the same as other dynamically typed languages: fewer compile-time guardrails for AI-assisted development, and type hints are advisory rather than enforced.
+FastAPI's type hints give Python the closest thing it has to static typing, and Alembic migrations auto-generate from SQLAlchemy models. The developer experience is fast—rapid prototyping with minimal boilerplate. pytest-bdd integrates well for Gherkin. The guardrails and typecheck experience is not as refined as TypeScript though—type hints are advisory rather than enforced—and Python's concurrency story still lags behind languages with built-in async runtimes. Python remains the right choice for data analysis and ML workloads, but not for a primary backend where we want strong typing and concurrent request handling.
 
 **Systems Languages — Go/Gin, Rust/Axum**
 
@@ -222,7 +222,7 @@ The backend experiment has a frontend counterpart. Three frontend frameworks con
 
 **a-demo-fe-ts-tanstack-start** — TanStack Start, a newer full-stack React framework. Type-safe routing, built-in data loading patterns, and a different mental model from App Router. TanStack is gaining momentum and we included it as a hedge—if the ecosystem shifts, we want hands-on experience with a likely successor rather than scrambling to catch up later. When we ran this experiment, TanStack Start had not yet reached version 1, so the evaluation reflects pre-stable APIs and tooling.
 
-**a-demo-fe-dart-flutterweb** — Flutter Web in Dart. Cross-platform potential is the draw—the same codebase could target mobile and desktop. The web rendering pipeline differs fundamentally from DOM-based frameworks. Evaluating whether Flutter's widget tree model works for our use cases.
+**a-demo-fe-dart-flutterweb** — Flutter Web in Dart. Cross-platform potential is the draw—the same codebase could target mobile and desktop. The web development experience was startling though—the rendering pipeline differs fundamentally from DOM-based frameworks, and the tooling feels foreign coming from web development. More importantly, Dart currently lacks a mature library equivalent to Effect-TS for typed error handling and composability. Flutter remains a candidate for mobile development, where its cross-platform story is strongest, but the web story is not there yet.
 
 **a-demo-fs-ts-nextjs** — A fullstack Next.js 16 demo combining frontend and backend in one application. Route Handlers serve the API, React Server Components render the UI, and the OpenAPI contract governs both sides. Useful for understanding the trade-offs between separate frontend/backend deployments versus a unified fullstack application.
 
