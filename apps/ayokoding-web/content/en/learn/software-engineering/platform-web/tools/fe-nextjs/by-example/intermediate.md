@@ -26,6 +26,7 @@ Before starting, ensure you understand:
 useFormState hook provides Server Action state and pending status in Client Components. Perfect for showing validation errors and loading states.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U as User
   participant F as Form (Client)
@@ -665,6 +666,7 @@ export default function LoginEnhancedPage() {
 Use revalidate option to set cache lifetime. Next.js regenerates page after expiration, serving stale content while revalidating.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U as User
   participant C as Cache
@@ -748,6 +750,7 @@ export const revalidate = 60;
 Use revalidatePath() to invalidate specific route cache immediately. Perfect for content updates that should be visible instantly.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Server Action: updatePost] --> B[Update Database]
   B --> C[revalidatePath /posts]
@@ -1147,6 +1150,7 @@ export default function DashboardPage() {
 Use @folder syntax to render multiple pages in the same layout simultaneously. Perfect for dashboards with multiple sections.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[app/dashboard/layout.tsx] --> B[@analytics/page.tsx]
   A --> C[@notifications/page.tsx]
@@ -1464,6 +1468,7 @@ export async function submitDonation(formData: FormData) {
 Use useOptimistic hook to show immediate UI feedback while Server Action processes. Reverts on error.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U as User
   participant UI as UI State
@@ -1676,6 +1681,7 @@ export default async function DashboardPage() {
 Use middleware to protect multiple routes at once. More efficient than checking authentication in every page.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Request] --> B{middleware.ts}
   B -->|has auth cookie| C[Protected Route]
@@ -2622,6 +2628,7 @@ export default async function PostsPage({ searchParams }: PageProps) {
 Implement infinite scroll in Client Component using Intersection Observer API. Loads more content as user scrolls.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[Page loads: show posts 1-10] --> B[User scrolls down]
   B --> C{Sentinel div visible?}
@@ -2741,6 +2748,7 @@ export default function InfiniteScrollPage() {
 Implement search with debouncing to reduce API calls. Waits for user to stop typing before searching.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant U as User
   participant D as Debounce Timer

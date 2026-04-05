@@ -25,6 +25,7 @@ Before starting, ensure you understand:
 Server Components are Next.js default. They run on the server and send HTML to the client, enabling direct database access and zero client JavaScript.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Request] --> B[Server Component]
   B --> C[Database/API]
@@ -156,6 +157,7 @@ export default async function PostsPage() {
 Client Components opt-in with 'use client' directive. They enable React hooks, event handlers, and browser APIs.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Server Component<br/>page.tsx] -->|renders| B[Client Component<br/>CounterButton.tsx]
   B -->|useState| C[Browser State]
@@ -401,6 +403,7 @@ export default function MurabahaPage() {
 Layouts wrap page content and persist across route changes. They prevent unnecessary re-renders and enable shared UI.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[RootLayout<br/>app/layout.tsx] --> B[DashboardLayout<br/>app/dashboard/layout.tsx]
   A --> C[MarketingPage<br/>app/page.tsx]
@@ -569,6 +572,7 @@ export default function ProductsLayout({
 Next.js Link component enables client-side navigation with prefetching. It's faster than browser navigation and maintains application state.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Link hover] --> B[Prefetch /about]
   B --> C[Code cached in browser]
@@ -822,6 +826,7 @@ export default function BlogPostPage({ params }: BlogPageProps) {
 Server Actions are async functions that run on the server. They enable backend logic without API routes, with automatic progressive enhancement.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[HTML Form] -->|submit| B[Server Action<br/>use server]
   B --> C[Validate Input]
@@ -1184,6 +1189,7 @@ export default function ZakatCalculatorPage() {
 Server Actions can revalidate cached data after mutations. Use revalidatePath or revalidateTag to refresh specific routes.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Server Action] --> B[Update Database]
   B --> C[revalidatePath '/donations']
@@ -1354,6 +1360,7 @@ export default function NewPostPage() {
 Server Components can fetch multiple data sources in parallel using Promise.all. Improves performance by avoiding sequential waterfalls.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   subgraph Sequential["Sequential (slow)"]
     direction TB
@@ -1686,6 +1693,7 @@ export default function HomePage() {
 Create loading.tsx file to show instant loading states while page data fetches. Automatically wraps page in Suspense boundary.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 sequenceDiagram
   participant B as Browser
   participant N as Next.js Server
@@ -1817,6 +1825,7 @@ export default async function PostsPage() {
 Use React Suspense to show loading states for specific components rather than entire page.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
   A[Page renders immediately] --> B[Fast section: shows at once]
   A --> C[Suspense boundary]
@@ -2338,6 +2347,7 @@ export default function AboutPage() {
 Use generateMetadata function to create metadata based on dynamic route parameters or fetched data.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Request /posts/1] --> B[generateMetadata]
   B --> C[Fetch post data]
@@ -3206,6 +3216,7 @@ export const config = {
 The `template.tsx` file creates a new instance on every navigation, while `layout.tsx` persists. Use templates when you need components to re-mount on navigation.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A[Navigate /a] --> B[layout.tsx persists]
   A --> C[template.tsx remounts]

@@ -416,11 +416,11 @@ graph TD
     B --> D[Pod: web-2]
     B --> E[Pod: web-3]
 
-    style A fill:#DE8F05,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#0173B2,color:#fff
-    style D fill:#0173B2,color:#fff
-    style E fill:#0173B2,color:#fff
+    style A fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style D fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ## Quality Checklist

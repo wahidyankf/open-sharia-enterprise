@@ -106,13 +106,13 @@ graph TD
     Fill --> ChangeBack["Change selection back"]
     ChangeBack --> JS
 
-    style Select fill:#0173B2,color:#fff
-    style JS fill:#DE8F05,color:#000
-    style Cond fill:#CC78BC,color:#000
-    style Show fill:#029E73,color:#fff
-    style Hide fill:#CA9161,color:#fff
-    style Fill fill:#029E73,color:#fff
-    style ChangeBack fill:#0173B2,color:#fff
+    style Select fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style JS fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Cond fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Show fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Hide fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Fill fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style ChangeBack fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```typescript
@@ -492,15 +492,15 @@ graph TD
     Error --> AssertErr["expect(page.getByText('Username taken'))"]
     ServerErr --> AssertErr2["expect(page.getByText('Something went wrong'))"]
 
-    style Submit fill:#0173B2,color:#fff
-    style API fill:#DE8F05,color:#000
-    style Status fill:#CC78BC,color:#000
-    style Success fill:#029E73,color:#fff
-    style Error fill:#CA9161,color:#fff
-    style ServerErr fill:#CA9161,color:#fff
-    style AssertURL fill:#029E73,color:#fff
-    style AssertErr fill:#DE8F05,color:#000
-    style AssertErr2 fill:#DE8F05,color:#000
+    style Submit fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style API fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Status fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Success fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Error fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style ServerErr fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style AssertURL fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style AssertErr fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style AssertErr2 fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 ```typescript
@@ -750,14 +750,14 @@ graph TD
     Diff -->|"within threshold"| Pass["Assertion Passes"]
     Diff -->|"exceeds threshold"| Fail["Fail: attach diff image<br/>to test report"]
 
-    style Assert fill:#0173B2,color:#fff
-    style FirstRun fill:#DE8F05,color:#000
-    style CreateBase fill:#CA9161,color:#fff
-    style Capture fill:#CA9161,color:#fff
-    style PassFirst fill:#029E73,color:#fff
-    style Diff fill:#CC78BC,color:#000
-    style Pass fill:#029E73,color:#fff
-    style Fail fill:#DE8F05,color:#000
+    style Assert fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style FirstRun fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style CreateBase fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Capture fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style PassFirst fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Diff fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Pass fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Fail fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 ```typescript
@@ -813,13 +813,13 @@ graph TD
     Check -->|"== 0"| Pass["All rules pass"]
     Check -->|"> 0"| Fail["Violations found<br/>(rule, impact, element)"]
 
-    style Page fill:#0173B2,color:#fff
-    style Scan fill:#DE8F05,color:#000
-    style Rules fill:#CC78BC,color:#000
-    style Results fill:#CA9161,color:#fff
-    style Check fill:#DE8F05,color:#000
-    style Pass fill:#029E73,color:#fff
-    style Fail fill:#DE8F05,color:#000
+    style Page fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Scan fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Rules fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Results fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Check fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Pass fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Fail fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 **Why this external dependency**: Playwright's built-in `accessibility()` snapshot API provides access to the accessibility tree for assertions on individual elements, but it does not detect WCAG rule violations automatically. `@axe-core/playwright` wraps the industry-standard axe-core engine, which tests pages against WCAG 2.x rules (missing labels, color contrast violations, invalid ARIA, keyboard traps, and more) in a single scan. Install with: `npm install @axe-core/playwright`.
@@ -1349,14 +1349,14 @@ graph TD
     MockResp --> UI["UI renders based<br/>on mock data"]
     UI --> Assert["Assertions on UI state<br/>(loading spinner, error msg)"]
 
-    style Route fill:#0173B2,color:#fff
-    style Navigate fill:#DE8F05,color:#000
-    style BrowserReq fill:#CA9161,color:#fff
-    style Intercept fill:#CC78BC,color:#000
-    style Handler fill:#029E73,color:#fff
-    style MockResp fill:#029E73,color:#fff
-    style UI fill:#DE8F05,color:#000
-    style Assert fill:#0173B2,color:#fff
+    style Route fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Navigate fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style BrowserReq fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Intercept fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Handler fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style MockResp fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style UI fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Assert fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```typescript
@@ -1453,13 +1453,13 @@ graph TD
     Test1 --> Cleanup["Fixture Teardown:<br/>POST /auth/logout"]
     Test2 --> Cleanup
 
-    style Extend fill:#0173B2,color:#fff
-    style FixSetup fill:#DE8F05,color:#000
-    style ConfigReq fill:#CC78BC,color:#000
-    style Use fill:#CA9161,color:#fff
-    style Test1 fill:#029E73,color:#fff
-    style Test2 fill:#029E73,color:#fff
-    style Cleanup fill:#DE8F05,color:#000
+    style Extend fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style FixSetup fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style ConfigReq fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Use fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Test1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Test2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Cleanup fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 ```typescript
@@ -1628,13 +1628,13 @@ graph TD
     Locators --> Page
     Assertions --> Expect["expect() assertions"]
 
-    style Test fill:#0173B2,color:#fff
-    style PO fill:#DE8F05,color:#000
-    style Locators fill:#029E73,color:#fff
-    style Actions fill:#029E73,color:#fff
-    style Assertions fill:#029E73,color:#fff
-    style Page fill:#CC78BC,color:#000
-    style Expect fill:#CA9161,color:#fff
+    style Test fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style PO fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Locators fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Actions fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Assertions fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style Page fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Expect fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```typescript
@@ -1759,13 +1759,13 @@ graph TD
     TestBody --> Teardown["Fixture Teardown Phase<br/>(runs after test, even on failure)"]
     Teardown --> Cleanup["Cleanup actions:<br/>logout, clear state, delete data"]
 
-    style Extend fill:#0173B2,color:#fff
-    style Setup fill:#DE8F05,color:#000
-    style LoginFix fill:#029E73,color:#fff
-    style AuthFix fill:#029E73,color:#fff
-    style TestBody fill:#CC78BC,color:#000
-    style Teardown fill:#CA9161,color:#fff
-    style Cleanup fill:#CA9161,color:#fff
+    style Extend fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Setup fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style LoginFix fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style AuthFix fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style TestBody fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Teardown fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Cleanup fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```typescript
@@ -1889,15 +1889,15 @@ graph TD
     T2 --> AfterEach2["test.afterEach()<br/>After test 2: clear localStorage"]
     AfterEach2 --> AfterAll["test.afterAll()<br/>Runs ONCE: delete test product via API"]
 
-    style Suite fill:#0173B2,color:#fff
-    style BeforeAll fill:#DE8F05,color:#000
-    style BeforeEach1 fill:#CC78BC,color:#000
-    style BeforeEach2 fill:#CC78BC,color:#000
-    style T1 fill:#029E73,color:#fff
-    style T2 fill:#029E73,color:#fff
-    style AfterEach1 fill:#CA9161,color:#fff
-    style AfterEach2 fill:#CA9161,color:#fff
-    style AfterAll fill:#DE8F05,color:#000
+    style Suite fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style BeforeAll fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style BeforeEach1 fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style BeforeEach2 fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style T1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style T2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style AfterEach1 fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style AfterEach2 fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style AfterAll fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
 ```
 
 ```typescript
@@ -2006,14 +2006,14 @@ graph TD
     Slow --> Timeout["Example: known slow operation<br/>timeout multiplied by 3"]
     Info --> Report["Metadata appears in<br/>HTML test report"]
 
-    style Annotations fill:#0173B2,color:#fff
-    style Skip fill:#DE8F05,color:#000
-    style Slow fill:#CC78BC,color:#000
-    style Fail fill:#CA9161,color:#fff
-    style Info fill:#029E73,color:#fff
-    style CI fill:#DE8F05,color:#000
-    style Timeout fill:#CC78BC,color:#000
-    style Report fill:#029E73,color:#fff
+    style Annotations fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Skip fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Slow fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Fail fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+    style Info fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+    style CI fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000
+    style Timeout fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#000
+    style Report fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```typescript

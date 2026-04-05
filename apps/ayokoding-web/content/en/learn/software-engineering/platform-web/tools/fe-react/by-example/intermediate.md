@@ -40,6 +40,7 @@ If you need to review fundamentals, see [Beginner](/en/learn/software-engineerin
 useReducer manages complex state with multiple related values. It accepts reducer function and initial state, returns current state and dispatch function.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["dispatch(increment, 10)"] -->|"counterReducer"| B["New State\n count: 10\n history: [0,10]"]
     C["dispatch(decrement, 5)"] -->|"counterReducer"| D["New State\n count: 5\n history: [0,10,5]"]
@@ -314,6 +315,7 @@ export default TodoList;
 useMemo memoizes expensive computations. Recomputes only when dependencies change.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["useMemo(fn, deps)"] -->|"contracts unchanged"| B["Returns cached result\n(no recompute)"]
     A -->|"contracts changed"| C["Runs fn()\nreturns new result\ncaches it"]
@@ -811,6 +813,7 @@ export default DonationDashboard;
 Custom hooks extract reusable logic. Start with "use" prefix, can use other hooks inside.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["useCounter Hook\n state: count, step"] -->|"increment()"| B["count + step"]
     A -->|"decrement()"| C["count - step"]
@@ -2145,6 +2148,7 @@ Continue to Group 3: Context API and Global State, or explore specific topics:
 Context provides global state without prop drilling. Create context, provide value, consume with useContext hook.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["App\n ThemeProvider\n value: dark, setTheme"] --> B["Sidebar\n no props needed"]
     A --> C["Header\n no props needed"]
@@ -2897,6 +2901,7 @@ export default Root;
 Combine Context with useReducer for complex state management with actions.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["AppContext Provider\nstate: items[]\nactions: add, remove"] --> B["Sidebar\n(consumer)"]
     A --> C["Main Content\n(consumer)"]
@@ -3568,6 +3573,7 @@ npm install @tanstack/react-query
 React Query simplifies server state management with automatic caching, refetching, and background updates.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["Component mounts\nuseQuery fires"] -->|"fetch /api/data"| B["React Query Cache"]
     B -->|"loading state"| C["isLoading: true\nUI: spinner"]
@@ -3738,6 +3744,7 @@ export default Root;
 Mutations handle data modifications (POST, PUT, DELETE). Use useMutation for create/update/delete operations.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["useMutation hook"] -->|"mutate(newDonation)"| B["POST /api/donations"]
     B -->|"onSuccess"| C["queryClient.invalidate\n('donations')"]
@@ -4728,6 +4735,7 @@ npm install react-router-dom
 React Router provides client-side routing for single-page applications. Basic setup with BrowserRouter, Routes, and Route components.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["BrowserRouter\n (URL state)"] --> B["Routes"]
     B -->|"/ path"| C["HomePage component"]
@@ -4903,6 +4911,7 @@ export default Root;
 Dynamic routes accept URL parameters for flexible navigation. Use useParams hook to access route parameters.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["URL: /donations/42"] -->|"useParams()"| B["params.id = '42'"]
     B -->|"useQuery(['donation', id])"| C["fetch /api/donations/42"]
@@ -5160,6 +5169,7 @@ export default Root;
 Implement authentication-based route protection. Redirect unauthenticated users to login page.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Route: /dashboard"] -->|"check auth"| B{"isAuthenticated?"}
     B -->|"false"| C["Navigate to /login\n?returnTo=/dashboard"]

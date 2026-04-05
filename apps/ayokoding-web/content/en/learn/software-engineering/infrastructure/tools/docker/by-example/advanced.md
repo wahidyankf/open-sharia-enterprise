@@ -18,6 +18,7 @@ This chapter covers advanced Docker patterns through 30 examples, achieving 75-9
 Docker Swarm enables orchestrating containers across multiple hosts with built-in load balancing, service discovery, and rolling updates.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Swarm cluster architecture
 graph TD
  A["Manager Node<br/>192.168.1.10"] --> B["Worker Node 1<br/>192.168.1.11"]
@@ -26,12 +27,12 @@ graph TD
  A -.->|"Raft consensus"| E["Manager Node 2<br/>192.168.1.14"]
  A -.->|"Raft consensus"| F["Manager Node 3<br/>192.168.1.15"]
 
- style A fill:#0173B2,color:#fff
- style E fill:#0173B2,color:#fff
- style F fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -118,6 +119,7 @@ Swarm services define desired state for containerized applications. Swarm mainta
 **Service Distribution and Ingress Routing:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Swarm service distribution
 graph TD
  A["Client Request<br/>worker1:8080"] --> B["Ingress Routing Mesh"]
@@ -129,12 +131,12 @@ graph TD
  C3 --> D
  D --> E["Database<br/>1 replica on worker1"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C1 fill:#029E73,color:#fff
- style C2 fill:#029E73,color:#fff
- style C3 fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C3 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -360,6 +362,7 @@ Docker secrets provide secure credential distribution to swarm services. Secrets
 **Secrets Distribution Flow:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Docker secrets flow
 graph TD
  A["Create Secret<br/>docker secret create"] --> B["Raft Store<br/>Encrypted at rest"]
@@ -369,11 +372,11 @@ graph TD
  D1 --> E1["Container<br/>/run/secrets/db_password"]
  D2 --> E2["Container<br/>/run/secrets/api_key"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#0173B2,color:#fff
- style E1 fill:#029E73,color:#fff
- style E2 fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E1 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -841,6 +844,7 @@ Container image scanning detects known vulnerabilities in base images and depend
 **Security Scanning Pipeline:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Image scanning flow
 graph TD
  A["Build Image"] --> B["Trivy Scan"]
@@ -850,10 +854,10 @@ graph TD
  E --> F["Upload to GitHub Security"]
  F --> G["Deploy to Production"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style D fill:#CC78BC,color:#fff
- style G fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -1550,6 +1554,7 @@ Host private Docker registries for storing proprietary images and controlling ac
 **Private Registry Architecture:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Registry infrastructure
 graph TD
  A["Developer Push<br/>docker push"] --> B["Registry<br/>Port 5000"]
@@ -1561,11 +1566,11 @@ graph TD
  B --> F["Redis Cache<br/>Blob descriptors"]
  B --> G["Registry UI<br/>Port 8080"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#CC78BC,color:#fff
- style D fill:#CC78BC,color:#fff
- style E2 fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style E2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1786,6 +1791,7 @@ Automate Docker image builds, tests, scans, and deployments using
 **GitHub Actions CI/CD Pipeline:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% CI/CD workflow
 graph TD
  A["Git Push"] --> B["Build & Test"]
@@ -1797,11 +1803,11 @@ graph TD
  F -->|v tag| H["Deploy Production"]
  H --> I["Create Release"]
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style E fill:#CC78BC,color:#fff
- style G fill:#029E73,color:#fff
- style H fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2089,6 +2095,7 @@ Docker Stack enables declarative multi-service deployment using Compose files wi
 **Stack Deployment Flow:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["docker-compose.yml"] --> B["docker stack deploy"]
  B --> C{Parse Services}
@@ -2099,9 +2106,9 @@ graph TD
  G --> H["Pull Images on Nodes"]
  H --> I["Start Containers"]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style I fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2321,6 +2328,7 @@ Service constraints control task placement based on node attributes, enabling sp
 **Constraint Placement Strategy:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Service Definition"] --> B{Constraints?}
  B -->|Node Role| C["Manager vs Worker"]
@@ -2336,9 +2344,9 @@ graph TD
  G --> H["Filter Nodes"]
  H --> I["Place Containers"]
 
- style A fill:#0173B2,color:#fff
- style H fill:#DE8F05,color:#fff
- style I fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2498,6 +2506,7 @@ Swarm rolling updates enable zero-downtime deployments with automatic health-che
 **Rolling Update Process:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["docker service update"] --> B["Stop 1 Replica"]
  B --> C["Start New Version"]
@@ -2509,10 +2518,10 @@ graph TD
  G -->|No| H["Update Complete"]
  F --> I["Restore Previous Version"]
 
- style A fill:#0173B2,color:#fff
- style D fill:#DE8F05,color:#fff
- style H fill:#029E73,color:#fff
- style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2622,6 +2631,7 @@ docker swarm update --task-history-limit 10 --dispatcher-heartbeat 10s
 Swarm services scale horizontally by adjusting replica count, with the scheduler automatically distributing tasks across available nodes to balance load.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["docker service scale"] --> B["Desired State: 10 replicas"]
     B --> C["Scheduler Assigns Tasks"]
@@ -2632,9 +2642,9 @@ graph TD
     E --> G
     F --> G
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style G fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2750,6 +2760,7 @@ docker service inspect critical-api --format '{{json .Spec.UpdateConfig}}' | jq
 Swarm secrets store sensitive data encrypted in the Raft consensus store, delivering credentials to containers at runtime without exposing them in images, environment variables, or Compose files.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Secret Created<br/>docker secret create"] --> B["Encrypted in Raft Store<br/>AES-256"]
     B --> C["Swarm Manager"]
@@ -2757,10 +2768,10 @@ graph TD
     D --> E["Worker Node tmpfs"]
     E --> F["Container /run/secrets/"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+    style F fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```bash
@@ -2944,6 +2955,7 @@ Implement distributed tracing to debug performance issues across microservices.
 **Tracing Architecture:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Client Request"] --> B["Web Service<br/>Span: /api/users"]
  B --> C["Auth Service<br/>Span: /auth/verify"]
@@ -2958,9 +2970,9 @@ graph TD
  F --> G["Jaeger Storage<br/>Elasticsearch/Cassandra"]
  G --> H["Jaeger UI<br/>Query & Visualize"]
 
- style A fill:#0173B2,color:#fff
- style F fill:#DE8F05,color:#fff
- style H fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -4418,6 +4430,7 @@ Deploy fault-tolerant Docker registry with load balancing and shared storage.
 **HA Registry Architecture:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Clients<br/>docker push/pull"] --> B["Load Balancer<br/>nginx/HAProxy"]
  B --> C["Registry 1<br/>Read/Write"]
@@ -4433,9 +4446,9 @@ graph TD
  D --> G
  E --> G
 
- style B fill:#0173B2,color:#fff
- style F fill:#DE8F05,color:#fff
- style G fill:#029E73,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -5267,6 +5280,7 @@ Deploy comprehensive container resource monitoring for capacity planning and tro
 **Complete Monitoring Stack:**
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
  A["Containers"] --> B["cAdvisor<br/>Metrics Collector"]
  B --> C["Prometheus<br/>Time Series DB"]
@@ -5279,10 +5293,10 @@ graph TD
  E --> H["PagerDuty"]
  E --> I["Email"]
 
- style A fill:#0173B2,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml

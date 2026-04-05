@@ -40,6 +40,7 @@ If you need to review, see [Beginner](/en/learn/software-engineering/platform-we
 Generic components work with multiple data types while maintaining type safety. Use type parameters to make components reusable across different data shapes.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["List<T>\n Generic component"] -->|"T = Donation"| B["List<Donation>\n type-safe"]
     A -->|"T = ZakatPayment"| C["List<ZakatPayment>\n type-safe"]
@@ -307,6 +308,7 @@ export default DonationForm;
 Discriminated unions model mutually exclusive states with type safety. Use a common discriminant property (like `status` or `type`) to distinguish between states.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 stateDiagram-v2
     [*] --> Idle: initial
     Idle --> Loading: fetch()
@@ -826,6 +828,7 @@ npm install zustand xstate @xstate/react
 Zustand provides lightweight global state management without boilerplate. Create stores with TypeScript for type-safe state access.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["useDonationStore\n Zustand store"] --> B["donations: []\ntotalAmount: 0\nisLoading: false"]
     A --> C["addDonation(amount, donor)"]
@@ -992,6 +995,7 @@ export default DonationTracker;
 Slices organize large stores into logical modules. Combine slices for separation of concerns while maintaining single store.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["useAuthStore slice\nuser, isAuthenticated\nlogin(), logout()"] --> Z["Combined store\nRootState"]
     B["useCartSlice\ncart[], total\naddItem(), removeItem()"] --> Z
@@ -2007,6 +2011,7 @@ export default DonationStateMachine;
 Code splitting reduces initial bundle size by loading components on-demand. Use React.lazy for dynamic imports and Suspense for loading states.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Initial bundle\n(small, fast load)"] -->|"user navigates to /admin"| B["Lazy import\nAdminPage chunk"]
     B -->|"loading"| C["Suspense fallback\n<Loading />"]
@@ -2331,6 +2336,7 @@ export default NotFoundPage;
 React.memo prevents unnecessary re-renders of child components. Use for expensive components that receive stable props.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Parent re-renders\n(unrelated state change)"] -->|"React.memo check"| B{"Props changed?"}
     B -->|"No (same reference)"| C["Child skips re-render\n(optimization wins)"]
@@ -3026,6 +3032,7 @@ export default ZakatCalculatorWithWorker;
 Suspense handles async data loading declaratively. Components "suspend" while loading, Suspense boundary shows fallback UI.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Suspense boundary\n fallback=<Loading />"] --> B["DataComponent"]
     B -->|"data not ready"| A
@@ -3191,6 +3198,7 @@ export default SuspenseDemo;
 startTransition marks state updates as low-priority, keeping UI responsive during expensive updates. Use for non-urgent updates like filtering or search results.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["User types in search\nhigh priority input"] -->|"startTransition()"| B["Filter computation\nlow priority"]
     B -->|"React defers"| C["Input stays responsive\nno jank"]
@@ -3392,7 +3400,7 @@ export default TransitionDemo;
 
 **Key Takeaway**: startTransition marks state updates as non-urgent, preventing them from blocking urgent updates like input. React can interrupt transitions for higher-priority work. Keeps UI responsive during expensive updates. Use for filtering, search results, tab switching, and derived state updates.
 
-**Why It Matters**: startTransition is React 18's mechanism for distinguishing urgent updates (typing, clicking) from non-urgent updates (search results filtering, UI transitions). Without this distinction, a slow filter computation on a large list blocks typing in the search input - the UI feels frozen. By wrapping expensive state updates in startTransition, React prioritizes keeping the input responsive and defers the expensive re-render until the main thread is free. Production use cases: search filtering, tab switching with complex tab content, wizard step transitions, and report generation that updates a data visualization. This API prevents the most common form of UI jank in interactive data-heavy applications.
+**Why It Matters**: startTransition is React 18's mechanism for distinguishing urgent updates (typing, clicking) from non-urgent updates (search results filtering, UI transitions). Without this distinction, a slow filter computation on a large list blocks typing in the search input - the UI feels frozen. By wrapping expensive state updates in startTransition, React prioritizes keeping the input responsive and defers the expensive re-render until the main thread is free. Production use cases: search filtering, tab switching with complex tab content, wizard step transitions, and report generation that updates a data visualization.
 
 ### Example 18: useDeferredValue for Expensive Renders
 
@@ -3571,6 +3579,7 @@ export default DeferredValueDemo;
 Error boundaries catch React component errors and show fallback UI. Add retry logic to recover from transient failures.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Component mounts\nfetch fails"] -->|"error caught"| B["Error Boundary\nerrorInfo captured"]
     B -->|"1st retry"| C["Fetch attempt 2\ndelay 1s"]
@@ -4200,6 +4209,7 @@ export default RenderAsFetchDemo;
 Vitest provides fast unit testing for React components. React Testing Library enables user-centric testing focusing on behavior, not implementation.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Component under test"] -->|"render()"| B["React Testing Library\nDOM"]
     B -->|"getByRole('button')"| C["Button element"]
@@ -5342,7 +5352,7 @@ export default CSRFProtectionDemo;
 
 **Key Takeaway**: CSRF attacks exploit authenticated user sessions to perform unauthorized actions. Protect with anti-CSRF tokens (sent with state-changing requests), SameSite cookies (prevent cross-site cookie sending), custom headers (can't be forged), and origin validation. Use secure fetch wrapper to add CSRF tokens automatically. Never rely on cookies alone for authentication.
 
-**Why It Matters**: CSRF protection is a mandatory security requirement for any production application handling state-changing requests (form submissions, API mutations). Without CSRF protection, a malicious website can make authenticated requests to your API using the victim user's browser cookies. The double-submit cookie pattern is a stateless CSRF defense: the server sets a CSRF token in a cookie, the client reads it via JavaScript and sends it as a header, the server verifies they match. This is impossible to forge from cross-origin requests due to the Same-Origin Policy. Production React applications implement CSRF via interceptors (Axios interceptors, fetch wrappers) so protection is automatic rather than manually added to each request.
+**Why It Matters**: CSRF protection is a mandatory security requirement for any production application handling state-changing requests (form submissions, API mutations). Without CSRF protection, a malicious website can make authenticated requests to your API using the victim user's browser cookies. The double-submit cookie pattern is a stateless CSRF defense: the server sets a CSRF token in a cookie, the client reads it via JavaScript and sends it as a header, the server verifies they match. This is impossible to forge from cross-origin requests due to the Same-Origin Policy.
 
 ### Example 25: Complete Zakat Management System (Financial Domain Example)
 

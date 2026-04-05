@@ -665,6 +665,7 @@ Border radius utilities (`rounded-{size}`) control corner rounding from sharp (`
 The `flex` utility enables flexbox layout on an element, making direct children flex items. Direction, alignment, and wrapping control how children arrange themselves.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A["flex container"]:::blue --> B["child 1"]:::orange
   A --> C["child 2"]:::teal
@@ -948,6 +949,7 @@ Auto-fit with `minmax` creates intrinsically responsive grids that adjust column
 Tailwind uses a mobile-first responsive system. Utilities without prefixes apply to all sizes; prefixed utilities (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`) apply at that breakpoint and above.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
   A["0px<br/>Mobile<br/>base utilities"]:::blue --> B["640px sm:<br/>Small tablet"]:::orange
   B --> C["768px md:<br/>Tablet"]:::teal

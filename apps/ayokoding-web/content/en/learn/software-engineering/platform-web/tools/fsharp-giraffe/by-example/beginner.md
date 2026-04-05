@@ -15,6 +15,7 @@ tags:
 The `HttpHandler` type is Giraffe's core abstraction. Every route, middleware, and response in Giraffe is a value of type `HttpFunc -> HttpContext -> Task<HttpContext option>`. Understanding this signature is the key to understanding the entire framework.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A["HttpContext<br/>#40;request#41;"] -->|passed to| B["HttpHandler<br/>function"]
     B -->|Some ctx| C["Next Handler<br/>#40;success#41;"]
@@ -178,6 +179,7 @@ app.Run()
 `choose` takes a list of `HttpHandler` values and tries each in order, returning the first that succeeds (returns `Some`). Combined with `route`, this creates an ordered routing table.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Incoming Request"] --> B["choose #91;handlers#93;"]
     B --> C["route #quot;/#quot;"]
@@ -1864,6 +1866,7 @@ app.Run()
 Understanding the execution order of ASP.NET Core middleware and Giraffe handlers is essential for correct authentication, logging, and error handling behavior.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["HTTP Request"] --> B["HTTPS Redirection<br/>Middleware"]
     B --> C["Static Files<br/>Middleware"]

@@ -30,9 +30,9 @@ graph TD
     A["Beginner<br/>Examples 1-30<br/>Core Fundamentals"] --> B["Intermediate<br/>Examples 31-60<br/>Forms & Advanced Testing"]
     B --> C["Advanced<br/>Examples 61-85<br/>Production Patterns"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
+    style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 Progress from fundamentals through practical form testing to advanced production patterns. Each level builds on the previous, increasing in sophistication and introducing more Playwright-specific features.

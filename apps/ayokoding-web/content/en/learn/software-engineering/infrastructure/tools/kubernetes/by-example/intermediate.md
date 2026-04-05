@@ -31,6 +31,7 @@ This level covers **production patterns and advanced resource types** through 29
 StatefulSets manage stateful applications requiring stable network identities, persistent storage, and ordered deployment/scaling. Unlike Deployments, StatefulSets provide predictable Pod names and persistent storage across restarts.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% StatefulSet architecture with persistent storage
 graph TD
  A[StatefulSet: database] --> B[Pod: database-0]
@@ -40,13 +41,13 @@ graph TD
  C --> F[PVC: data-database-1]
  D --> G[PVC: data-database-2]
 
- style A fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
- style F fill:#CC78BC,color:#fff
- style G fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -579,6 +580,7 @@ spec:
 DaemonSets ensure a Pod runs on every node (or a subset of nodes), suitable for node-level services like log collectors, monitoring agents, or network plugins. Kubernetes automatically schedules DaemonSet Pods on new nodes.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% DaemonSet on all nodes
 graph TD
  A[DaemonSet: log-agent] --> B[Pod on Node 1]
@@ -588,10 +590,10 @@ graph TD
  C --> F[Collect logs from Node 2]
  D --> G[Collect logs from Node 3]
 
- style A fill:#0173B2,color:#fff
- style B fill:#029E73,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -712,6 +714,7 @@ spec:
 DaemonSets can target specific nodes using nodeSelector or node affinity, enabling specialized Pods on GPU nodes, SSD-equipped nodes, or region-specific nodes.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% DaemonSet with node selector
 graph TD
  A[DaemonSet: gpu-monitor] --> B{Node Selector}
@@ -722,10 +725,10 @@ graph TD
  D --> G[Pod created]
  E --> H[No Pod]
 
- style A fill:#0173B2,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -913,6 +916,7 @@ spec:
 Parallel Jobs run multiple Pods simultaneously to process distributed workloads like batch rendering, data processing, or parallel computations. Configure completions and parallelism to control total work items and concurrency.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Parallel job execution
 graph TD
  A[Job: completions=10<br/>parallelism=3] --> B[Wave 1: Pods 1-3]
@@ -924,12 +928,12 @@ graph TD
  G -->|Yes| H[Wave 4: Pod 10]
  H --> I[Job Complete]
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style D fill:#DE8F05,color:#fff
- style F fill:#DE8F05,color:#fff
- style H fill:#DE8F05,color:#fff
- style I fill:#029E73,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style H fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1003,6 +1007,7 @@ spec:
 CronJobs create Jobs on a schedule using cron syntax, suitable for periodic backups, reports, or cleanup tasks. CronJobs maintain job history and support concurrency policies for overlapping executions.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% CronJob scheduling
 graph TD
  A[CronJob: 0 2 * * *] --> B[2:00 AM: Create Job]
@@ -1014,11 +1019,11 @@ graph TD
  F --> G
  G --> A
 
- style A fill:#0173B2,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#CA9161,color:#fff
- style E fill:#029E73,color:#fff
- style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1107,6 +1112,7 @@ spec:
 Ingress manages external HTTP/HTTPS access to Services, providing host-based and path-based routing. Ingress requires an Ingress Controller (nginx, Traefik, HAProxy) to function.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Ingress routing
 graph TD
  A[Client Request<br/>app.example.com/api] --> B[Ingress Controller]
@@ -1116,12 +1122,12 @@ graph TD
  D --> F[Pod: api-1]
  D --> G[Pod: api-2]
 
- style A fill:#CC78BC,color:#fff
- style B fill:#DE8F05,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#029E73,color:#fff
- style F fill:#0173B2,color:#fff
- style G fill:#0173B2,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style F fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1570,6 +1576,7 @@ spec:
 PersistentVolumes (PV) represent cluster storage resources while PersistentVolumeClaims (PVC) are storage requests by users. PVCs bind to PVs matching capacity and access mode requirements.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% PV and PVC binding
 graph TD
  A[PersistentVolume<br/>10Gi, ReadWriteOnce] --> B{Binding}
@@ -1577,10 +1584,10 @@ graph TD
  B --> D[Bound State]
  D --> E[Pod Mounts PVC]
 
- style A fill:#CC78BC,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#029E73,color:#fff
- style E fill:#0173B2,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -1749,6 +1756,7 @@ kubectl get pv                        # => Shows automatically provisioned PV wi
 PersistentVolumeClaims support volume expansion when StorageClass allows it. Expand PVCs by updating the storage size; filesystem resize may require Pod restart depending on volume type.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Volume expansion workflow
 graph TD
  A[PVC: 10Gi] --> B[Edit PVC → 20Gi]
@@ -1758,11 +1766,11 @@ graph TD
  E --> F[kubelet resizes filesystem]
  F --> G[PVC: 20Gi available]
 
- style A fill:#CC78BC,color:#fff
- style B fill:#DE8F05,color:#fff
- style C fill:#0173B2,color:#fff
- style E fill:#CA9161,color:#fff
- style G fill:#029E73,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2001,6 +2009,7 @@ spec:
 Kubernetes assigns Quality of Service (QoS) classes based on resource requests and limits, affecting eviction priority during resource pressure. Guaranteed (highest priority), Burstable (medium), BestEffort (lowest).
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% QoS eviction priority
 graph TD
  A[Node memory pressure] --> B{Eviction order}
@@ -2011,10 +2020,10 @@ graph TD
  D --> G[Evicted second]
  E --> H[Evicted last]
 
- style A fill:#CC78BC,color:#fff
- style C fill:#DE8F05,color:#fff
- style D fill:#CA9161,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2151,6 +2160,7 @@ spec:
 HorizontalPodAutoscaler (HPA) automatically scales Deployment/ReplicaSet replicas based on CPU utilization or custom metrics. Requires metrics-server for CPU/memory metrics.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% HPA scaling decision
 graph TD
  A[HPA checks metrics<br/>every 15s] --> B{CPU > 70%?}
@@ -2161,10 +2171,10 @@ graph TD
  E --> G[Wait for stabilization]
  F --> A
 
- style A fill:#DE8F05,color:#fff
- style B fill:#0173B2,color:#fff
- style C fill:#CA9161,color:#fff
- style E fill:#029E73,color:#fff
+ style A fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2330,15 +2340,16 @@ spec:
 Readiness probes determine when Pods are ready to receive traffic. Failed readiness checks remove Pods from Service endpoints without restarting them, useful during startup or temporary unavailability.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Readiness probe traffic control
 graph TD
  A[Service: web-service] --> B{Readiness Probe}
  B -->|Pass| C[Pod: web-1<br/>Receives Traffic]
  B -->|Fail| D[Pod: web-2<br/>No Traffic]
 
- style A fill:#DE8F05,color:#fff
- style C fill:#029E73,color:#fff
- style D fill:#CC78BC,color:#fff
+ style A fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style C fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
+ style D fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml
@@ -2392,6 +2403,7 @@ spec:
 Startup probes give slow-starting containers extra time to initialize before liveness probes begin. This prevents premature restart of applications with long initialization (legacy apps, large datasets).
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% Probe execution sequence
 graph TD
  A[Container starts] --> B[Startup probe begins]
@@ -2405,11 +2417,11 @@ graph TD
  H -->|Yes| I[Receive traffic]
  H -->|No| J[No traffic]
 
- style A fill:#CC78BC,color:#fff
- style B fill:#DE8F05,color:#fff
- style E fill:#0173B2,color:#fff
- style G fill:#CA9161,color:#fff
- style I fill:#029E73,color:#fff
+ style A fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#fff
+ style B fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+ style E fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+ style G fill:#CA9161,stroke:#000000,stroke-width:2px,color:#fff
+ style I fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 ```yaml

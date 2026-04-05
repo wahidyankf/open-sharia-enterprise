@@ -665,9 +665,9 @@ sequenceDiagram
     Promise-->>-Async Function: Resolve with T
     Async Function-->>-Caller: Return T
 
-    style Caller fill:#0173B2,color:#fff
-    style Async Function fill:#DE8F05,color:#fff
-    style Promise fill:#029E73,color:#fff
+    style Caller fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff
+    style Async Function fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#fff
+    style Promise fill:#029E73,stroke:#000000,stroke-width:2px,color:#fff
 ```
 
 **Code**:
