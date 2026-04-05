@@ -1,5 +1,5 @@
 ---
-title: "Phase 1 Week 8: The Polyglot Enterprise Emerges"
+title: "Phase 1 Week 8: Wide to Learn, Narrow to Ship"
 date: 2026-04-05T19:55:00+07:00
 draft: false
 tags:
