@@ -14,3 +14,5 @@ draft: false
   - [Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup)
   - [Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)
   - [By Example](/en/learn/software-engineering/automation-testing/tools/playwright/by-example)
+- [Vitest](/en/learn/software-engineering/automation-testing/tools/vitest)
+  - [By Example](/en/learn/software-engineering/automation-testing/tools/vitest/by-example)
