@@ -33,6 +33,8 @@ draft: false
   - [Overview](/en/learn/software-engineering/platform-web/tools/fe-nextjs/overview)
   - [Quick Start](/en/learn/software-engineering/platform-web/tools/fe-nextjs/quick-start)
   - [By Example](/en/learn/software-engineering/platform-web/tools/fe-nextjs/by-example)
+- [Fe Radix UI](/en/learn/software-engineering/platform-web/tools/fe-radix-ui)
+  - [By Example](/en/learn/software-engineering/platform-web/tools/fe-radix-ui/by-example)
 - [Ts Trpc](/en/learn/software-engineering/platform-web/tools/ts-trpc)
   - [By Example](/en/learn/software-engineering/platform-web/tools/ts-trpc/by-example)
 - [Ts Zod](/en/learn/software-engineering/platform-web/tools/ts-zod)
