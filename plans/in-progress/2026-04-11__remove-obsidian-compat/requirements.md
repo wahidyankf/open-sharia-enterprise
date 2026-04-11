@@ -301,7 +301,7 @@ Feature: Historical content is preserved verbatim
     Then the file is unchanged
 ```
 
-### US-8: Remove rhino-cli docs naming validator
+### US-7: Remove rhino-cli docs naming validator
 
 **As a** repository maintainer,
 **I want** the `rhino-cli docs validate-naming` command and its prefix-enforcement Go code deleted,
@@ -350,7 +350,7 @@ Feature: rhino-cli docs validate-naming is removed
     Then zero references remain
 ```
 
-### US-9: Update all related agents, skills, conventions, and navigation docs
+### US-8: Update all related agents, skills, conventions, and navigation docs
 
 **As a** contributor reading any part of the repository,
 **I want** every `.claude/` agent, `.claude/` skill, governance file, root navigation file (`CLAUDE.md`, `AGENTS.md`, `README.md`, `ROADMAP.md`), subproject `README.md`, and `playwright.config.ts` that referenced an old prefixed filename or explained the prefix-encoding scheme updated in lockstep,
@@ -410,7 +410,7 @@ Feature: All related references are updated in lockstep
     Because these files contain prefix-pattern strings as intentional teaching examples, not as references
 ```
 
-### US-7: Sync .claude/ to .opencode/
+### US-9: Sync .claude/ to .opencode/
 
 **As a** user of both Claude Code and OpenCode,
 **I want** the OpenCode mirrors regenerated after the `.claude/` agent and skill edits,
@@ -445,7 +445,7 @@ Feature: OpenCode mirrors reflect .claude/ updates
 
 ## Definition of Done
 
-- All acceptance criteria across US-1 through US-7 pass.
+- All acceptance criteria across US-1 through US-9 pass.
 - `git status` is clean after validation.
 - Commits on `main` follow Conventional Commits and split by domain (rename / content edits / config sync).
 - Plan folder is moved from `plans/in-progress/` to `plans/done/` after all validation passes and indices are updated.
