@@ -144,23 +144,23 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 **Goal**: Execute the `git mv` loop against the mapping file.
 
-- [ ] Confirm `local-temp/obsidian-rename-mapping.tsv` is up to date (regenerate if the working tree changed since Phase 1)
-- [ ] Re-run the collision check; confirm zero duplicates
-- [ ] Execute the `git mv` loop from `tech-docs.md` §2.3
-- [ ] Verify `find docs -type f -name '*__*.md'` returns zero results
-- [ ] Verify `find docs/metadata -type f | sort` is unchanged from baseline (metadata exemption honored)
-- [ ] Verify `find docs -type f -name 'README.md' | wc -l` is unchanged from baseline (README exemption honored)
-- [ ] Sample 5 renamed files and run `git log --follow` on each; confirm history is preserved
-- [ ] Commit: `refactor(docs): rename prefixed files to kebab-case (300+ files)`
+- [x] Confirm `local-temp/obsidian-rename-mapping.tsv` is up to date (regenerate if the working tree changed since Phase 1)
+- [x] Re-run the collision check; confirm zero duplicates
+- [x] Execute the `git mv` loop from `tech-docs.md` §2.3
+- [x] Verify `find docs -type f -name '*__*.md'` returns zero results
+- [x] Verify `find docs/metadata -type f | sort` is unchanged from baseline (metadata exemption honored)
+- [x] Verify `find docs -type f -name 'README.md' | wc -l` is unchanged from baseline (README exemption honored)
+- [x] Sample 5 renamed files and run `git log --follow` on each; confirm history is preserved
+- [x] Commit: `refactor(docs): rename prefixed files to kebab-case (300+ files)`
 
 ### Phase 4 gate
 
-- [ ] Zero `*__*.md` files under `docs/`
-- [ ] `README.md` and `docs/metadata/` counts match baseline
-- [ ] Git history continuous on sampled files
-- [ ] Every new filename matches the GitHub-safe regex `^[a-z0-9-]+\.[a-z]+$` (verified via `find docs -type f | awk -F/ '{print $NF}' | grep -vE '^[a-z0-9][a-z0-9-]*\.[a-z]+$|^README\.md$'` returning no results outside `docs/metadata/`)
-- [ ] No two files in the same directory collide after lowercasing (case-insensitive clone safety)
-- [ ] `git status` clean
+- [x] Zero `*__*.md` files under `docs/`
+- [x] `README.md` and `docs/metadata/` counts match baseline
+- [x] Git history continuous on sampled files
+- [x] Every new filename matches the GitHub-safe regex `^[a-z0-9-]+\.[a-z]+$` (verified via `find docs -type f | awk -F/ '{print $NF}' | grep -vE '^[a-z0-9][a-z0-9-]*\.[a-z]+$|^README\.md$'` returning no results outside `docs/metadata/`)
+- [x] No two files in the same directory collide after lowercasing (case-insensitive clone safety)
+- [x] `git status` clean
 
 ## Phase 5 — Update All Internal Links
 
