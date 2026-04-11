@@ -10,7 +10,7 @@ tags:
   - workflow
   - human-approval
 created: 2026-04-04
-updated: 2026-04-04
+updated: 2026-04-11
 ---
 
 # PR Merge Protocol
@@ -79,7 +79,7 @@ If the user explicitly says "merge despite the failing lint check" (or equivalen
 
 This protocol applies whenever a pull request exists as part of the development workflow:
 
-- **Worktree mode**: When agents use `isolation: "worktree"` in the Agent tool, they create branches and PRs. Merging those PRs requires this protocol.
+- **Worktree mode**: When agents use `isolation: "worktree"` in the Agent tool, when an agent is invoked inside an existing worktree session, or when a developer creates a worktree for isolated work, they create branches and PRs. Merging those PRs requires this protocol.
 - **External contributions**: PRs from external contributors follow this protocol.
 - **Code review workflow**: Any short-lived branch created for review purposes follows this protocol.
 
@@ -87,6 +87,22 @@ This protocol does **not** apply to:
 
 - Direct commits to `main` (the default TBD workflow has no PR to merge).
 - Environment branch deployments managed by CI (e.g., `prod-ayokoding-web`), which are governed by their own documented CI workflows.
+
+### Draft PR Lifecycle (Worktree Mode)
+
+Per the [Trunk Based Development Convention](./trunk-based-development.md#worktree-mode-branch--draft-pr), all worktree-mode PRs are **opened as GitHub drafts** (`gh pr create --draft`), not as ready-for-review PRs. This protocol fires at the moment the author flips the draft to ready for review (or at an explicit merge request), not at PR open time.
+
+**Lifecycle**:
+
+1. **Draft opened** -- agent or human runs `gh pr create --draft --base main ...`. No approval gate yet. CI may still run on the draft.
+2. **Iterate on the branch** -- additional commits push to the same draft PR. The PR stays in draft status throughout iteration. No approval gate yet.
+3. **Author flips to ready** -- when the work is complete, the author runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol approval gate fires.** The agent must:
+   - Verify all quality gates have passed (see Quality Gates above).
+   - Present the approval prompt to the user.
+   - Wait for explicit confirmation before merging.
+4. **Merge** -- only after explicit user approval, per the rules above.
+
+An agent that opens a draft PR is **not** authorized to flip it to ready-for-review or merge it without explicit user instruction. The draft-to-ready transition is itself a deliberate human moment.
 
 ## Agent Workflow
 
@@ -208,5 +224,5 @@ This rule applies to:
 - [Git Push Safety Convention](./git-push-safety.md) -- Per-instance approval for destructive git operations
 - [Code Quality Convention](../quality/code.md) -- Quality gates enforced by git hooks
 - [Trunk Based Development Convention](./trunk-based-development.md) -- When PRs are used in TBD
-- [Worktree Setup](./worktree-setup.md) -- Worktree creation and setup
+- [Worktree Toolchain Initialization](./worktree-setup.md) -- Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree
 - [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names for quality gates

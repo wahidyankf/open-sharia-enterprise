@@ -296,6 +296,7 @@ CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-con
 
 ### When to Run Environment Setup
 
+- **Immediately after creating or entering a git worktree** — run BOTH `npm install` AND `npm run doctor -- --fix` in the root repository worktree, in that order. This is a mandatory two-step init; the `postinstall` hook's implicit `doctor || true` does NOT substitute for the explicit `doctor --fix` call. See [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)
 - **Before starting any implementation work** — verify tools and env files are ready
 - **After pulling changes** that modify `package.json`, `go.mod`, `.tool-versions`, or other version config
 - **After switching between projects** that use different toolchains
@@ -374,7 +375,7 @@ docs/explanation/software-engineering/programming-languages/[language]/README.md
 
 **Workflow Conventions**:
 
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow details (main = direct push; worktree = branch + PR)
+- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow details (main = direct push; worktree = feature branch + draft PR targeting `main`, flipped to ready when complete)
 - [PR Merge Protocol](../../../governance/development/workflow/pr-merge-protocol.md) - Explicit user approval required, all quality gates must pass
 - [Commit Messages Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
 - [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Make it work → right → fast

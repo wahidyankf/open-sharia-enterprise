@@ -271,8 +271,8 @@ When removing from `plans/in-progress/README.md`:
 
 Before implementing anything:
 
-1. **Run `npm install`** to ensure dependencies are current
-2. **Run `npm run doctor`** to verify tooling
+1. **Run `npm install`** in the root worktree to ensure Node/Nx dependencies are current
+2. **Run `npm run doctor -- --fix`** in the root worktree to actively converge the full polyglot toolchain (required — the `postinstall` hook uses `doctor || true` and silently tolerates drift; see [Worktree Toolchain Initialization](../../governance/development/workflow/worktree-setup.md))
 3. **Set up project-specific requirements** (env vars, DB, Docker, etc.)
 4. **Verify dev server starts** for affected projects
 5. **Run existing tests** to establish baseline — note any preexisting failures for later fixing
@@ -361,4 +361,4 @@ These governance docs define the authoritative rules behind the Iron Rules:
 - **[Feature Change Completeness](../../governance/development/quality/feature-change-completeness.md)** — specs, contracts, and tests must be updated with every feature change
 - **[CI Blocker Resolution](../../governance/development/quality/ci-blocker-resolution.md)** — preexisting CI failures must be investigated and fixed, never bypassed (Rule 3)
 - **[PR Merge Protocol](../../governance/development/workflow/pr-merge-protocol.md)** — explicit user approval required, all quality gates must pass
-- **[Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)** — main branch = direct push; worktree = branch + PR
+- **[Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)** — main branch = direct push to `main`; worktree = feature branch + draft PR (`gh pr create --draft`) targeting `main`, flipped to ready when complete (see [Worktree Mode (Branch + Draft PR)](../../governance/development/workflow/trunk-based-development.md#worktree-mode-branch--draft-pr)). Never push to `main` from inside a worktree -- the rule is triggered by execution mode, not intent.
