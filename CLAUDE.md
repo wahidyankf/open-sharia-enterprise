@@ -264,7 +264,7 @@ nx affected -t test:quick    # Run pre-push quality gate for affected projects
 nx graph                     # Visualize dependencies
 ```
 
-**See**: [docs/reference/re\_\_monorepo-structure.md](./docs/reference/monorepo-structure.md), [docs/how-to/hoto\_\_add-new-app.md](./docs/how-to/add-new-app.md), [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md)
+**See**: [docs/reference/monorepo-structure.md](./docs/reference/monorepo-structure.md), [docs/how-to/add-new-app.md](./docs/how-to/add-new-app.md), [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md)
 
 ## Git Workflow
 
