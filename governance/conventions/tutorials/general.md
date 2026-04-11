@@ -128,7 +128,7 @@ updated: 2026-01-01
 # [Subject] Quick Start
 ```
 
-**Requirements**: - Title clearly indicates it's a tutorial/quick start - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](../structure/file-naming.md): `tu-*` prefix
+**Requirements**: - Title clearly indicates it's a tutorial/quick start - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](../structure/file-naming.md): kebab-case in `docs/tutorials/`
 
 #### 2. Introduction (The Hook)
 
@@ -340,16 +340,16 @@ The investment grows to $5,955.
 **2. Create Progressive Series**:
 
 ```
-Part 1: Basic Setup (tu__rag-basics.md)
-Part 2: Advanced Features (tu__rag-advanced.md)
-Part 3: Production Deployment (tu__rag-production.md)
+Part 1: Basic Setup (rag-basics.md)
+Part 2: Advanced Features (rag-advanced.md)
+Part 3: Production Deployment (rag-production.md)
 ```
 
 **3. Link Tutorials Together**: - **Part 1 "Next Steps"**: Link to Part 2 - **Part 2 "Prerequisites"**: Link back to Part 1 - **Part 2 "Next Steps"**: Link to Part 3 - Each part should be self-contained but reference the series
 
 **4. Optional: Create Series Index**:
 
-Create a series overview tutorial (e.g., `tu__rag-series.md`):
+Create a series overview tutorial (e.g., `rag-series.md`):
 
 ```markdown
 # RAG Tutorial Series
@@ -360,20 +360,20 @@ Complete guide to building Retrieval-Augmented Generation systems.
 
 **Part 1: RAG Basics** (Beginner)
 
-- [Link to Part 1](./tu__rag-basics.md)
+- [Link to Part 1](./rag-basics.md)
 - Build your first RAG system
 - Coverage: 0-40% of RAG concepts
 
 **Part 2: Advanced RAG** (Intermediate)
 
-- [Link to Part 2](./tu__rag-advanced.md)
+- [Link to Part 2](./rag-advanced.md)
 - Hybrid search, reranking, and optimization
 - Coverage: 40-75% of RAG concepts
 - Prerequisites: Part 1
 
 **Part 3: Production RAG** (Advanced)
 
-- [Link to Part 3](./tu__rag-production.md)
+- [Link to Part 3](./rag-production.md)
 - Deploy RAG to production with monitoring
 - Coverage: 75-100% of RAG concepts
 - Prerequisites: Parts 1 & 2
@@ -676,7 +676,7 @@ Imagine you're the CFO of CloudTech, a growing SaaS company. Your CEO wants to i
 
 **When to Use Diagrams**: - Showing processes or workflows - Illustrating relationships between concepts - Visualizing decision trees - Depicting system architecture or structure
 
-**Requirements**: - Every major concept has a diagram - Diagrams follow [Diagram and Schema Convention](../formatting/diagrams.md) - Use Mermaid for all diagrams (Obsidian vault support) - Prefer vertical orientation for mobile-friendliness - Clear labels and styling - Legend or caption explaining the diagram
+**Requirements**: - Every major concept has a diagram - Diagrams follow [Diagram and Schema Convention](../formatting/diagrams.md) - Use Mermaid for all diagrams - Prefer vertical orientation for mobile-friendliness - Clear labels and styling - Legend or caption explaining the diagram
 
 **Example**:
 
@@ -725,7 +725,6 @@ If NPV is positive, the project creates value. If negative, it destroys value.
  - Follow [Mathematical Notation Convention](../formatting/mathematical-notation.md)
  - **CRITICAL**: Use `$$` for display math (not single `$`)
  - **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters
- - **Obsidian note**: Both `$$...$$` and `$$ ... $$` (with spaces) work, but prefer no spaces for consistency with GitHub
  - Define all variables after displaying formula
  - Show worked examples with step-by-step calculations
 
@@ -1150,7 +1149,7 @@ WACC &= \frac{E}{V} \times r_e
 $
 ```
 
-**Why This Matters**: Single `$` on its own line causes LaTeX to display as raw text instead of rendering properly in both GitHub and Obsidian.
+**Why This Matters**: Single `$` on its own line causes LaTeX to display as raw text instead of rendering properly on GitHub.
 
 ### Code Examples
 
@@ -1179,8 +1178,8 @@ If you're new to finance, start with [Accounting](../business-and-finance/tu-buf
 **Examples**:
 
 ```markdown
-PASS: Good: See [Capital Budgeting Process](./ex-co__capital-budgeting.md)
-FAIL: Bad: See capital budgeting process [here](./ex-co__capital-budgeting.md)
+PASS: Good: See [Capital Budgeting Process](./capital-budgeting.md)
+FAIL: Bad: See capital budgeting process [here](./capital-budgeting.md)
 
 PASS: Good: ![NPV calculation flowchart showing decision logic](./images/npv-flowchart.png)
 FAIL: Bad: ![](./images/npv-flowchart.png)
@@ -1208,7 +1207,7 @@ These criteria define what `docs-tutorial-checker` validates. Every tutorial mus
 
 ### Visual Validation
 
-**Diagrams**: - [ ] At least one diagram per major concept - [ ] Diagrams use Mermaid (for Obsidian compatibility) - [ ] Vertical orientation preferred (mobile-friendly) - [ ] Clear labels and styling - [ ] Captions or legends provided
+**Diagrams**: - [ ] At least one diagram per major concept - [ ] Diagrams use Mermaid - [ ] Vertical orientation preferred (mobile-friendly) - [ ] Clear labels and styling - [ ] Captions or legends provided
 
 **Mathematical Formulas**: - [ ] All formulas use LaTeX notation - [ ] Display-level equations use `$$` delimiters (not single `$`) - [ ] All `\begin{align}` blocks use `$$` delimiters - [ ] Single `$` ONLY for inline math (same line as text) - [ ] Variables defined after formulas - [ ] Worked examples with step-by-step calculations
 
@@ -1228,11 +1227,11 @@ These criteria define what `docs-tutorial-checker` validates. Every tutorial mus
 
 ### Technical Validation
 
-**Mathematical Notation**: - [ ] Follows Mathematical Notation Convention - [ ] LaTeX delimiters used correctly (`$$` for display, single `$` for inline) - [ ] No single `$` on its own line (must use `$$`) - [ ] No single `$` with `\begin{align}` (must use `$$`) - [ ] All variables defined - [ ] Formulas render correctly in both Obsidian and GitHub
+**Mathematical Notation**: - [ ] Follows Mathematical Notation Convention - [ ] LaTeX delimiters used correctly (`$$` for display, single `$` for inline) - [ ] No single `$` on its own line (must use `$$`) - [ ] No single `$` with `\begin{align}` (must use `$$`) - [ ] All variables defined - [ ] Formulas render correctly on GitHub
 
 **Code Quality**: - [ ] Code runs without errors - [ ] Output is correct - [ ] Comments explain logic - [ ] No security vulnerabilities - [ ] Follows language conventions
 
-**File Organization**: - [ ] Follows File Naming Convention (`tu-*` prefix) - [ ] Located in correct directory - [ ] Frontmatter complete and accurate
+**File Organization**: - [ ] Follows File Naming Convention (kebab-case in `docs/tutorials/`) - [ ] Located in correct directory - [ ] Frontmatter complete and accurate
 
 **Cross-References**: - [ ] Links use correct format (relative paths, `.md` extension) - [ ] All internal links are valid - [ ] Prerequisites linked when available - [ ] Next steps include relevant links
 
@@ -1696,7 +1695,7 @@ This tutorial convention builds upon and references:
 - [Diátaxis Framework Convention](../structure/diataxis-framework.md) - Four documentation categories framework
 - [Mathematical Notation Convention](../formatting/mathematical-notation.md) - LaTeX usage standards
 - [Diagram and Schema Convention](../formatting/diagrams.md) - Mermaid diagram standards
-- [File Naming Convention](../structure/file-naming.md) - Tutorial file naming (`tu-*` prefix)
+- [File Naming Convention](../structure/file-naming.md) - Tutorial file naming (kebab-case)
 - [Linking Convention](../formatting/linking.md) - Cross-reference standards
 - [Emoji Usage Convention](../formatting/emoji.md) - Semantic emoji usage
 

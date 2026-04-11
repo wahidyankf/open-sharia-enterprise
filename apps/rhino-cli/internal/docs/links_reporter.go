@@ -27,7 +27,7 @@ func FormatLinkText(result *LinkValidationResult, verbose, quiet bool) string {
 
 	// Category order for report (matches Python version)
 	categoryOrder := []string{
-		"Old ex-ru-* prefixes",
+		"Legacy prefixed paths",
 		"Missing files",
 		"General/other paths",
 		"workflows/ paths",

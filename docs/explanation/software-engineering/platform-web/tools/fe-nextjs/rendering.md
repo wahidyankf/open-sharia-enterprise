@@ -12,9 +12,9 @@ tags:
   - streaming
   - performance
 related:
-  - ./ex-soen-plwe-tsnext__server-components.md
-  - ./ex-soen-plwe-tsnext__data-fetching.md
-  - ./ex-soen-plwe-tsnext__performance.md
+  - ./server-components.md
+  - ./data-fetching.md
+  - ./performance.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

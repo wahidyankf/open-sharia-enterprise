@@ -14,7 +14,7 @@ updated: 2026-03-09
 
 # Documentation Linking Convention
 
-This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links work consistently across GitHub web, Obsidian, and other markdown viewers.
+This document defines the standard syntax and practices for linking between documentation files in the open-sharia-enterprise project. Following these conventions ensures links render correctly on GitHub and work in any standard markdown viewer.
 
 ## Principles Implemented/Respected
 
@@ -47,12 +47,13 @@ This convention establishes the standard linking format for all markdown files i
 
 ## Why GitHub-Compatible Links?
 
-We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to ensure:
+We use standard markdown link syntax with explicit relative paths to ensure:
 
-1. **Universal Compatibility** - Links work on GitHub web interface, Obsidian, VS Code, and other markdown viewers
-2. **Explicit Paths** - Relative paths make it clear where files are located
-3. **Version Control** - Easier to track changes and validate links in CI/CD
-4. **No Ambiguity** - Full paths prevent confusion when files have similar names
+1. **GitHub Rendering** - GitHub does not render wiki-style `[[...]]` links; standard markdown links render correctly on GitHub web and anywhere else
+2. **Universal Compatibility** - Links work in any standard markdown viewer, VS Code, and CI link checkers
+3. **Explicit Paths** - Relative paths make it clear where files are located
+4. **Version Control** - Easier to track changes and validate links in CI/CD
+5. **No Ambiguity** - Full paths prevent confusion when files have similar names
 
 ## Link Syntax Standard
 
@@ -82,11 +83,12 @@ Use standard markdown link syntax with relative paths:
 
 3. **Use descriptive link text instead of filename identifiers**
    - PASS: `[File Naming Convention](../structure/file-naming.md)`
-   - FAIL: `[ex-co__file-naming-convention](../structure/file-naming.md)`
+   - FAIL: `[file-naming](../structure/file-naming.md)`
 
-4. **Avoid Obsidian-only wiki link syntax**
+4. **Avoid wiki-link syntax**
    - FAIL: `[[filename]]`
    - FAIL: `[[filename|Display Text]]`
+   - Reason: GitHub does not render `[[...]]` as links.
 
 ## Examples by Location
 
@@ -111,8 +113,8 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Link to sibling files in same directory -->
 
-[Initial Setup](./tu__initial-setup.md)
-[First Deployment](./tu__first-deployment.md)
+[Initial Setup](./initial-setup.md)
+[First Deployment](./first-deployment.md)
 
 <!-- Link to parent directory -->
 
@@ -165,14 +167,14 @@ For more information, refer to our [automation principle](../../principles/softw
 ### FAIL: Incorrect Examples
 
 ```markdown
-<!-- Obsidian wiki links (not compatible with GitHub web) -->
+<!-- Wiki-link syntax (GitHub does not render these) -->
 
-[[ex-co__diataxis-framework]]
-[[ex-co__diataxis-framework|Diátaxis Framework]]
+[[diataxis-framework]]
+[[diataxis-framework|Diátaxis Framework]]
 
 <!-- Missing .md extension -->
 
-[Diátaxis Framework](./ex-co__diataxis-framework)
+[Diátaxis Framework](./diataxis-framework)
 
 <!-- Absolute paths -->
 
@@ -180,7 +182,7 @@ For more information, refer to our [automation principle](../../principles/softw
 
 <!-- Using filename as link text -->
 
-[ex-co\_\_file-naming-convention.md](../structure/file-naming.md)
+[file-naming.md](../structure/file-naming.md)
 
 <!-- Wrong number of ../ for nesting depth -->
 <!-- From governance/conventions/formatting/linking.md (3 levels deep) -->
@@ -201,7 +203,6 @@ For links to external resources:
 <!-- Standard markdown links -->
 
 [Diátaxis Framework](https://diataxis.fr/)
-[Obsidian](https://obsidian.md/)
 [GitHub](https://github.com/wahidyankf/open-sharia-enterprise)
 ```
 
@@ -330,7 +331,7 @@ For embedding images:
 ```markdown
 <!-- Same directory -->
 
-![Diagram](./ex-co__diagram.png)
+![Diagram](./diagram.png)
 
 <!-- Subdirectory -->
 
@@ -345,7 +346,7 @@ Before committing documentation with links:
 - [ ] All internal links include `.md` extension
 - [ ] All paths are relative (not absolute)
 - [ ] Link text is descriptive (not filename-based)
-- [ ] No Obsidian wiki links (`[[...]]`) used
+- [ ] No wiki-link syntax (`[[...]]`) used
 - [ ] Manually verified links point to existing files
 - [ ] Paths tested from the current file's location
 

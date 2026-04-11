@@ -12,9 +12,9 @@ tags:
   - e2e
   - integration-testing
 related:
-  - ./ex-soen-plwe-tsnext__server-components.md
-  - ./ex-soen-plwe-tsnext__api-routes.md
-  - ./ex-soen-plwe-tsnext__data-fetching.md
+  - ./server-components.md
+  - ./api-routes.md
+  - ./data-fetching.md
 principles:
   - explicit-over-implicit
   - automation-over-manual

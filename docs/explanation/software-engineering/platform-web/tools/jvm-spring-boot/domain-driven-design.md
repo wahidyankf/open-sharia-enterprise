@@ -18,10 +18,10 @@ principles:
   - immutability
   - encapsulation
 related:
-  - ./ex-soen-plwe-jvspbo__idioms.md
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__data-access.md
-  - ./ex-soen-plwe-jvspbo__functional-programming.md
+  - ./idioms.md
+  - ./best-practices.md
+  - ./data-access.md
+  - ./functional-programming.md
 created: 2026-01-25
 updated: 2026-01-26
 ---

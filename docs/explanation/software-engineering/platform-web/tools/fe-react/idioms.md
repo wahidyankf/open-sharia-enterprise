@@ -11,9 +11,9 @@ tags:
   - components
   - typescript
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
-  - ./ex-soen-plwe-fere__anti-patterns.md
-  - ./ex-soen-plwe-fere__component-architecture.md
+  - ./best-practices.md
+  - ./anti-patterns.md
+  - ./component-architecture.md
 principles:
   - explicit-over-implicit
   - immutability

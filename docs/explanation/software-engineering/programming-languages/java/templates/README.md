@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-ja-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-ja` - Explanation, Software Engineering, Programming Language, Java
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `spring-rest-controller`)
+Templates use plain kebab-case filenames (e.g., `spring-rest-controller.md`). The containing directory (`programming-languages/java/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-ja-te__spring-rest-controller.md`
+Suggested starting template: `spring-rest-controller.md`
 
 ## Usage
 

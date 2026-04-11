@@ -895,7 +895,7 @@ All agent colors are from the verified accessible palette:
 1. **Protanopia & Deuteranopia (red-green blindness)**: Blue, yellow, and purple remain distinct. We avoid red and green entirely.
 2. **Tritanopia (blue-yellow blindness)**: Blue appears pink, yellow appears light pink, but shape and text differentiation ensure identification.
 3. **WCAG AA Compliance**: All colors meet minimum contrast requirements against both light and dark backgrounds.
-4. **Cross-Platform Consistency**: Colors render consistently across GitHub, Obsidian, VS Code, and terminals.
+4. **Cross-Platform Consistency**: Colors render consistently across GitHub, VS Code, and terminals.
 
 #### Agent Identification Example
 
@@ -1212,7 +1212,7 @@ PASS: Good:
 
 FAIL: Bad:
 
-- [[ex-de__ai-agents]] - Obsidian wiki link (not GitHub compatible)
+- [[ai-agents]] - Wiki-link syntax (GitHub does not render these)
 - `/governance/development/agents/ai-agents.md` - Absolute path
 - `governance/development/agents/ai-agents` - Missing .md extension
 ```

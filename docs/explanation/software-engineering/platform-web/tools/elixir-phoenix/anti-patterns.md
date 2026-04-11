@@ -11,10 +11,10 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-soen-plwe-elph__idioms.md
-  - ./ex-soen-plwe-elph__best-practices.md
-  - ./ex-soen-plwe-elph__contexts.md
-  - ./ex-soen-plwe-elph__liveview.md
+  - idioms.md
+  - best-practices.md
+  - contexts.md
+  - liveview.md
 principles:
   - explicit-over-implicit
   - immutability

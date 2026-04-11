@@ -22,7 +22,7 @@ This directory contains standards for how documentation is organized, named, and
 ## Documents
 
 - [Diataxis Framework](./diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation). Foundational framework for all documentation structure
-- [File Naming Convention](./file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure. Applies to docs/, governance/, and plans/ directories
+- [File Naming Convention](./file-naming.md) - Kebab-case filename rules for docs/, governance/, and plans/ directories
 - [Per-Directory Licensing](./licensing.md) - Standards for the per-directory licensing strategy using FSL-1.1-MIT for product apps and behavioral specifications, and MIT for shared libraries and reference implementations
 - [Plans Organization](./plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers
 - [Programming Language Documentation Separation](./programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational content (ayokoding-web). Defines scope boundaries, prerequisite requirements, cross-referencing patterns, and DRY principle application
@@ -41,11 +41,7 @@ This directory contains standards for how documentation is organized, named, and
 
 ### File Naming Pattern
 
-```
-[prefix]__[content-identifier].md
-```
-
-Where prefix encodes the directory path (e.g., `tu__` for tutorials, `hoto__` for how-to).
+Files use kebab-case names describing their content (e.g., `getting-started.md`, `configure-api.md`). Category is conveyed by directory location, not filename prefixes. `README.md` is used for directory index files.
 
 ### Plans Lifecycle
 
@@ -66,9 +62,9 @@ This set of conventions implements/respects the following core principles:
 
 - **[Documentation First](../../principles/content/documentation-first.md)**: The Diataxis Framework establishes a systematic four-category documentation structure, making documentation a primary deliverable rather than an afterthought. Plans Organization convention ensures planning work is documented in structured, discoverable locations.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: File Naming Convention encodes directory structure directly into filenames through hierarchical prefixes, making file location and category explicit without requiring navigation. Plans naming patterns (`YYYY-MM-DD__identifier/`) make lifecycle stage and date explicit in folder names.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Plans naming patterns (`YYYY-MM-DD__identifier/`) make lifecycle stage and date explicit in folder names. File Naming Convention uses descriptive kebab-case names so a filename clearly communicates the content without abbreviation lookups.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: The four Diataxis categories provide a complete, minimal taxonomy that covers all documentation types without overlap or excessive granularity. File naming uses a simple, consistent prefix pattern rather than complex metadata systems.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: The four Diataxis categories provide a complete, minimal taxonomy that covers all documentation types without overlap or excessive granularity. File naming uses a single simple kebab-case rule with no prefix encoding to memorize.
 
 ---
 

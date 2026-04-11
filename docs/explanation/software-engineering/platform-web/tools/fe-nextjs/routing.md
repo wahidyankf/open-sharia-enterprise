@@ -10,9 +10,9 @@ tags:
   - dynamic-routes
   - app-router
 related:
-  - ./ex-soen-plwe-tsnext__app-router.md
-  - ./ex-soen-plwe-tsnext__middleware.md
-  - ./ex-soen-plwe-tsnext__idioms.md
+  - ./app-router.md
+  - ./middleware.md
+  - ./idioms.md
 principles:
   - explicit-over-implicit
   - automation-over-manual

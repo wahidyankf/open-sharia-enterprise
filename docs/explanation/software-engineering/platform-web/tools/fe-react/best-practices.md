@@ -10,9 +10,9 @@ tags:
   - typescript
   - production
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__anti-patterns.md
-  - ./ex-soen-plwe-fere__typescript.md
+  - ./idioms.md
+  - ./anti-patterns.md
+  - ./typescript.md
 principles:
   - explicit-over-implicit
   - immutability

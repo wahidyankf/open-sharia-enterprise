@@ -193,109 +193,109 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 ### Governance edits (use Edit tool)
 
-- [ ] `docs/README.md` — remove "optimized for Obsidian" tip block; confirm the rest of the file still reads cleanly
-- [ ] `docs/how-to/organize-work.md` (renamed from `hoto__organize-work.md` in Phase 4) — remove Obsidian references
-- [ ] `docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md` (renamed) — remove Obsidian references
-- [ ] `README.md` (repo root) — confirm/remove any Obsidian references (TBD from Phase 1 inventory)
-- [ ] `ROADMAP.md` — remove Obsidian references
-- [ ] `governance/conventions/README.md` — remove Obsidian mention in the formatting subsection description
-- [ ] `governance/conventions/formatting/linking.md` — rewrite opening paragraph and the "Why GitHub-Compatible Links?" section per `tech-docs.md` §4b, anchoring rationale on "standard markdown + GitHub compatibility"; reframe the wiki-link rejection ("GitHub does not render `[[...]]`") without mentioning Obsidian; keep all existing link-syntax rules intact
-- [ ] `governance/conventions/formatting/linking.md` — verify with `ripgrep -i obsidian` (zero hits), `ripgrep -n 'standard markdown'` (at least one hit), `ripgrep -n 'GitHub'` (multiple hits)
-- [ ] `governance/conventions/formatting/diagrams.md` — remove Obsidian platform mention
-- [ ] `governance/conventions/formatting/emoji.md` — remove "Obsidian" from the render-consistency list
-- [ ] `governance/conventions/formatting/indentation.md` — remove Obsidian references
-- [ ] `governance/conventions/formatting/nested-code-fences.md` — remove Obsidian preview recommendation
-- [ ] `governance/conventions/formatting/mathematical-notation.md` — remove "Obsidian/GitHub dual compatibility" framing
-- [ ] `governance/conventions/formatting/color-accessibility.md` — remove Obsidian mention from cross-platform consistency notes
-- [ ] `governance/conventions/writing/conventions.md` — delete the "TAB indentation for bullet items (Obsidian compatibility)" checklist item
-- [ ] `governance/conventions/writing/quality.md` — remove Obsidian references (if any after re-grep)
-- [ ] `governance/conventions/tutorials/general.md` — remove Obsidian references
-- [ ] `governance/conventions/hugo/shared.md` — remove the docs/-vs-Obsidian contrast language; keep the Hugo-specific rules
-- [ ] `governance/development/agents/ai-agents.md` — delete the `[[ex-de__ai-agents]]` Obsidian wiki-link anti-pattern example and remove Obsidian from the cross-platform-consistency sentence
-- [ ] `governance/workflows/meta/workflow-identifier.md` — replace "especially Obsidian" and the Obsidian YAML-parser sentences with generic "some YAML parsers" language; keep the quoting rule
-- [ ] Run `npm run lint:md`
+- [x] `docs/README.md` — remove "optimized for Obsidian" tip block; confirm the rest of the file still reads cleanly
+- [x] `docs/how-to/organize-work.md` (renamed from `hoto__organize-work.md` in Phase 4) — remove Obsidian references
+- [x] `docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md` (renamed) — remove Obsidian references
+- [x] `README.md` (repo root) — confirm/remove any Obsidian references (TBD from Phase 1 inventory)
+- [x] `ROADMAP.md` — remove Obsidian references
+- [x] `governance/conventions/README.md` — remove Obsidian mention in the formatting subsection description
+- [x] `governance/conventions/formatting/linking.md` — rewrite opening paragraph and the "Why GitHub-Compatible Links?" section per `tech-docs.md` §4b, anchoring rationale on "standard markdown + GitHub compatibility"; reframe the wiki-link rejection ("GitHub does not render `[[...]]`") without mentioning Obsidian; keep all existing link-syntax rules intact
+- [x] `governance/conventions/formatting/linking.md` — verify with `ripgrep -i obsidian` (zero hits), `ripgrep -n 'standard markdown'` (at least one hit), `ripgrep -n 'GitHub'` (multiple hits)
+- [x] `governance/conventions/formatting/diagrams.md` — remove Obsidian platform mention
+- [x] `governance/conventions/formatting/emoji.md` — remove "Obsidian" from the render-consistency list
+- [x] `governance/conventions/formatting/indentation.md` — remove Obsidian references
+- [x] `governance/conventions/formatting/nested-code-fences.md` — remove Obsidian preview recommendation
+- [x] `governance/conventions/formatting/mathematical-notation.md` — remove "Obsidian/GitHub dual compatibility" framing
+- [x] `governance/conventions/formatting/color-accessibility.md` — remove Obsidian mention from cross-platform consistency notes
+- [x] `governance/conventions/writing/conventions.md` — delete the "TAB indentation for bullet items (Obsidian compatibility)" checklist item
+- [x] `governance/conventions/writing/quality.md` — remove Obsidian references (if any after re-grep)
+- [x] `governance/conventions/tutorials/general.md` — remove Obsidian references
+- [x] `governance/conventions/hugo/shared.md` — remove the docs/-vs-Obsidian contrast language; keep the Hugo-specific rules
+- [x] `governance/development/agents/ai-agents.md` — delete the `[[ex-de__ai-agents]]` Obsidian wiki-link anti-pattern example and remove Obsidian from the cross-platform-consistency sentence
+- [x] `governance/workflows/meta/workflow-identifier.md` — replace "especially Obsidian" and the Obsidian YAML-parser sentences with generic "some YAML parsers" language; keep the quoting rule
+- [x] Run `npm run lint:md`
 
 ### Extended governance scrub — prefix-scheme narrative removal
 
 Files from `tech-docs.md` §1.3.b that explain the prefix encoding in narrative prose. The basename sed loop (Phase 5) handled any filename references; this step cleans up the explanations that surrounded them.
 
-- [ ] `governance/conventions/structure/README.md` — rewrite any description of the prefix scheme to describe the new kebab-case rule
-- [ ] `governance/conventions/structure/diataxis-framework.md` — remove prefix examples; keep Diátaxis structure
-- [ ] `governance/conventions/structure/programming-language-docs-separation.md` — update examples to use unprefixed filenames
-- [ ] `governance/conventions/structure/plans.md` — confirm the "not applicable to plans/" note still makes sense after the rewrite; update wording if needed. Also update the table row at ~line 270 (`| **File Naming** | No prefixes inside folders | Prefixes encode directory path |`) which will be stale after the convention rewrite, and verify the Phase 5 sed loop correctly rewrites the inline-code reference to `docs/how-to/hoto__organize-work.md` in the table cell at ~line 340
-- [ ] `governance/conventions/writing/readme-quality.md` — remove prefix-scheme examples
-- [ ] `governance/conventions/tutorials/README.md`, `programming-language-content.md` — remove prefix examples
-- [ ] `governance/conventions/hugo/ayokoding.md` — remove any contrast against the docs/ prefix scheme
-- [ ] `governance/principles/general/simplicity-over-complexity.md` — update any example that cited the prefix scheme as an "explicit over implicit" win
-- [ ] `governance/principles/software-engineering/README.md` — update any linked example
-- [ ] `governance/principles/content/documentation-first.md`, `progressive-disclosure.md` — update examples
-- [ ] `governance/development/agents/skill-context-architecture.md` — update examples
-- [ ] `governance/development/pattern/database-audit-trail.md` — update any linked example
-- [ ] `governance/development/quality/criticality-levels.md`, `three-level-testing-standard.md` — update any linked example
-- [ ] `governance/workflows/infra/development-environment-setup.md` — update any linked example
-- [ ] Run `ripgrep '(hierarchical-prefix|subdirectory code|prefix encoding|\[prefix\])' governance/` — expect zero matches (or matches only in plan archival documentation)
+- [x] `governance/conventions/structure/README.md` — rewrite any description of the prefix scheme to describe the new kebab-case rule
+- [x] `governance/conventions/structure/diataxis-framework.md` — remove prefix examples; keep Diátaxis structure
+- [x] `governance/conventions/structure/programming-language-docs-separation.md` — update examples to use unprefixed filenames
+- [x] `governance/conventions/structure/plans.md` — confirm the "not applicable to plans/" note still makes sense after the rewrite; update wording if needed. Also update the table row at ~line 270 (`| **File Naming** | No prefixes inside folders | Prefixes encode directory path |`) which will be stale after the convention rewrite, and verify the Phase 5 sed loop correctly rewrites the inline-code reference to `docs/how-to/hoto__organize-work.md` in the table cell at ~line 340
+- [x] `governance/conventions/writing/readme-quality.md` — remove prefix-scheme examples
+- [x] `governance/conventions/tutorials/README.md`, `programming-language-content.md` — remove prefix examples
+- [x] `governance/conventions/hugo/ayokoding.md` — remove any contrast against the docs/ prefix scheme
+- [x] `governance/principles/general/simplicity-over-complexity.md` — update any example that cited the prefix scheme as an "explicit over implicit" win
+- [x] `governance/principles/software-engineering/README.md` — update any linked example
+- [x] `governance/principles/content/documentation-first.md`, `progressive-disclosure.md` — update examples
+- [x] `governance/development/agents/skill-context-architecture.md` — update examples
+- [x] `governance/development/pattern/database-audit-trail.md` — update any linked example
+- [x] `governance/development/quality/criticality-levels.md`, `three-level-testing-standard.md` — update any linked example
+- [x] `governance/workflows/infra/development-environment-setup.md` — update any linked example
+- [x] Run `ripgrep '(hierarchical-prefix|subdirectory code|prefix encoding|\[prefix\])' governance/` — expect zero matches (or matches only in plan archival documentation)
 
 ### Root navigation and subproject docs
 
-- [ ] `CLAUDE.md` (repo root) — update any narrative that describes the prefix scheme; confirm all docs/ links resolve
-- [ ] `AGENTS.md` (repo root) — same treatment as CLAUDE.md
-- [ ] `README.md` (repo root) — update any docs/ references
-- [ ] `ROADMAP.md` — update any docs/ references
-- [ ] `apps/README.md` — update any docs/ references
-- [ ] `specs/README.md` — update any docs/ references
-- [ ] All `apps/*/README.md` files containing docs/ references — confirm links resolve (the basename sed loop handled the filename part; narrative text may still need touch-up). Specifically check: `apps/rhino-cli/README.md`, `apps/a-demo-be-*/README.md`, `apps/a-demo-fe-*/README.md`, `apps/organiclever-*/README.md`
-- [ ] All `apps/*/playwright.config.ts` files with docs/ references — confirm paths resolve
-- [ ] `docs/tutorials/README.md`, `docs/how-to/README.md`, `docs/reference/README.md`, `docs/explanation/README.md` — regenerate the children-file lists with new names
-- [ ] Every other `docs/**/README.md` subdirectory index — regenerate children-file lists with new names
+- [x] `CLAUDE.md` (repo root) — update any narrative that describes the prefix scheme; confirm all docs/ links resolve
+- [x] `AGENTS.md` (repo root) — same treatment as CLAUDE.md
+- [x] `README.md` (repo root) — update any docs/ references
+- [x] `ROADMAP.md` — update any docs/ references
+- [x] `apps/README.md` — update any docs/ references
+- [x] `specs/README.md` — update any docs/ references
+- [x] All `apps/*/README.md` files containing docs/ references — confirm links resolve (the basename sed loop handled the filename part; narrative text may still need touch-up). Specifically check: `apps/rhino-cli/README.md`, `apps/a-demo-be-*/README.md`, `apps/a-demo-fe-*/README.md`, `apps/organiclever-*/README.md`
+- [x] All `apps/*/playwright.config.ts` files with docs/ references — confirm paths resolve
+- [x] `docs/tutorials/README.md`, `docs/how-to/README.md`, `docs/reference/README.md`, `docs/explanation/README.md` — regenerate the children-file lists with new names
+- [x] Every other `docs/**/README.md` subdirectory index — regenerate children-file lists with new names
 
 ### Agent edits (Edit tool for targeted edits, Bash sed for bulk substitutions)
 
 The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b) narrative cleanup. The basename sed loop in Phase 5 already fixed their filename references; this step handles anything that survived:
 
-- [ ] `.claude/agents/docs-maker.md` — remove Obsidian wiki-link warning; confirm prefix-scheme descriptions are removed
-- [ ] `.claude/agents/docs-file-manager.md` — remove Obsidian wiki-link rule; confirm prefix-scheme descriptions are removed
-- [ ] `.claude/agents/repo-governance-checker.md` — remove any instructions tied to prefix-validation (no longer a thing)
-- [ ] `.claude/agents/repo-governance-fixer.md` — same treatment as checker
-- [ ] `.claude/agents/swe-typescript-developer.md` — verify all programming-language doc links resolve
-- [ ] `.claude/agents/swe-rust-developer.md` — verify links
-- [ ] `.claude/agents/swe-python-developer.md` — verify links
-- [ ] `.claude/agents/swe-kotlin-developer.md` — verify links
-- [ ] `.claude/agents/swe-java-developer.md` — verify links
-- [ ] `.claude/agents/swe-golang-developer.md` — verify links
-- [ ] `.claude/agents/swe-fsharp-developer.md` — verify links
-- [ ] `.claude/agents/swe-elixir-developer.md` — verify links
-- [ ] `.claude/agents/swe-dart-developer.md` — verify links
-- [ ] `.claude/agents/swe-csharp-developer.md` — verify links
-- [ ] `.claude/agents/swe-clojure-developer.md` — verify links
-- [ ] `.claude/agents/swe-e2e-test-developer.md` — verify links
-- [ ] Run `ripgrep -i obsidian .claude/agents/` — expect zero matches
-- [ ] Run `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-)' .claude/agents/` — expect zero matches
+- [x] `.claude/agents/docs-maker.md` — remove Obsidian wiki-link warning; confirm prefix-scheme descriptions are removed
+- [x] `.claude/agents/docs-file-manager.md` — remove Obsidian wiki-link rule; confirm prefix-scheme descriptions are removed
+- [x] `.claude/agents/repo-governance-checker.md` — remove any instructions tied to prefix-validation (no longer a thing)
+- [x] `.claude/agents/repo-governance-fixer.md` — same treatment as checker
+- [x] `.claude/agents/swe-typescript-developer.md` — verify all programming-language doc links resolve
+- [x] `.claude/agents/swe-rust-developer.md` — verify links
+- [x] `.claude/agents/swe-python-developer.md` — verify links
+- [x] `.claude/agents/swe-kotlin-developer.md` — verify links
+- [x] `.claude/agents/swe-java-developer.md` — verify links
+- [x] `.claude/agents/swe-golang-developer.md` — verify links
+- [x] `.claude/agents/swe-fsharp-developer.md` — verify links
+- [x] `.claude/agents/swe-elixir-developer.md` — verify links
+- [x] `.claude/agents/swe-dart-developer.md` — verify links
+- [x] `.claude/agents/swe-csharp-developer.md` — verify links
+- [x] `.claude/agents/swe-clojure-developer.md` — verify links
+- [x] `.claude/agents/swe-e2e-test-developer.md` — verify links
+- [x] Run `ripgrep -i obsidian .claude/agents/` — expect zero matches
+- [x] Run `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-)' .claude/agents/` — expect zero matches
 
 ### Skill edits (Edit tool for targeted edits, Bash sed for bulk substitutions)
 
-- [ ] `.claude/skills/docs-validating-links/SKILL.md` — remove "Error 3: Obsidian wiki links" block; update error numbering; remove any reference to the rhino-cli `validate-naming` command
-- [ ] `.claude/skills/docs-validating-factual-accuracy/SKILL.md` — remove prefix-scheme references
-- [ ] `.claude/skills/swe-developing-applications-common/SKILL.md` — verify all docs links resolve
-- [ ] `.claude/skills/swe-developing-e2e-test-with-playwright/SKILL.md` — verify all docs links resolve
-- [ ] `.claude/skills/swe-programming-typescript/SKILL.md` — verify all docs links resolve
-- [ ] `.claude/skills/swe-programming-rust/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-python/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-kotlin/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-java/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-golang/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-fsharp/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-elixir/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-dart/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-csharp/SKILL.md` — verify links
-- [ ] `.claude/skills/swe-programming-clojure/SKILL.md` — verify links
-- [ ] `.claude/skills/repo-assessing-criticality-confidence/SKILL.md` — remove any prefix-scheme examples
-- [ ] Run `ripgrep -i obsidian .claude/skills/` — expect zero matches
-- [ ] Run `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-)' .claude/skills/` — expect zero matches
+- [x] `.claude/skills/docs-validating-links/SKILL.md` — remove "Error 3: Obsidian wiki links" block; update error numbering; remove any reference to the rhino-cli `validate-naming` command
+- [x] `.claude/skills/docs-validating-factual-accuracy/SKILL.md` — remove prefix-scheme references
+- [x] `.claude/skills/swe-developing-applications-common/SKILL.md` — verify all docs links resolve
+- [x] `.claude/skills/swe-developing-e2e-test-with-playwright/SKILL.md` — verify all docs links resolve
+- [x] `.claude/skills/swe-programming-typescript/SKILL.md` — verify all docs links resolve
+- [x] `.claude/skills/swe-programming-rust/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-python/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-kotlin/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-java/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-golang/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-fsharp/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-elixir/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-dart/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-csharp/SKILL.md` — verify links
+- [x] `.claude/skills/swe-programming-clojure/SKILL.md` — verify links
+- [x] `.claude/skills/repo-assessing-criticality-confidence/SKILL.md` — remove any prefix-scheme examples
+- [x] Run `ripgrep -i obsidian .claude/skills/` — expect zero matches
+- [x] Run `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-)' .claude/skills/` — expect zero matches
 
 ### Final scrub verification
 
-- [ ] Run the Obsidian-word check: `ripgrep -i obsidian --glob '!plans/done/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**'` — expect zero matches
-- [ ] Run the prefix-pattern check (inline all false-positive globs — see `tech-docs.md §1.3.c` for rationale):
+- [x] Run the Obsidian-word check: `ripgrep -i obsidian --glob '!plans/done/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**'` — expect zero matches
+- [x] Run the prefix-pattern check (inline all false-positive globs — see `tech-docs.md §1.3.c` for rationale):
 
   ```bash
   ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)' \
@@ -318,19 +318,19 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 
   Expect zero matches
 
-- [ ] Run `npm run lint:md`
-- [ ] Commit: `docs(repo): scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation`
+- [x] Run `npm run lint:md`
+- [x] Commit: `docs(repo): scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation`
 
 ### Phase 6 gate
 
-- [ ] Zero active Obsidian references remain outside allowed historical paths
-- [ ] Zero prefix-scheme narrative remains outside the false-positive allowlist
-- [ ] All 12 `.claude/agents/swe-*-developer.md` agents have resolving docs links
-- [ ] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills have resolving docs links
-- [ ] All `docs/**/README.md` index files list children by new filenames
-- [ ] `governance/conventions/formatting/linking.md` cites "standard markdown" and "GitHub" as the sole rationale (verified by ripgrep)
-- [ ] `governance/conventions/structure/file-naming.md` and `governance/conventions/formatting/linking.md` are both internally consistent (the file-naming rules produce filenames that the linking rules can reference)
-- [ ] `npm run lint:md` passes
+- [x] Zero active Obsidian references remain outside allowed historical paths
+- [x] Zero prefix-scheme narrative remains outside the false-positive allowlist
+- [x] All 12 `.claude/agents/swe-*-developer.md` agents have resolving docs links
+- [x] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills have resolving docs links
+- [x] All `docs/**/README.md` index files list children by new filenames
+- [x] `governance/conventions/formatting/linking.md` cites "standard markdown" and "GitHub" as the sole rationale (verified by ripgrep)
+- [x] `governance/conventions/structure/file-naming.md` and `governance/conventions/formatting/linking.md` are both internally consistent (the file-naming rules produce filenames that the linking rules can reference)
+- [x] `npm run lint:md` passes
 
 ## Phase 7 — Sync .claude/ → .opencode/
 

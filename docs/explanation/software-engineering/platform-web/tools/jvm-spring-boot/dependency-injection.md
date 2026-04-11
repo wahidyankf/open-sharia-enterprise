@@ -16,10 +16,10 @@ principles:
   - simplicity-over-complexity
   - testability
 related:
-  - ./ex-soen-plwe-jvspbo__idioms.md
-  - ./ex-soen-plwe-jvspbo__anti-patterns.md
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__testing.md
+  - ./idioms.md
+  - ./anti-patterns.md
+  - ./best-practices.md
+  - ./testing.md
 created: 2026-01-25
 updated: 2026-01-26
 ---

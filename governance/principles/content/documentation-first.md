@@ -241,9 +241,9 @@ FAIL: **Anti-pattern**: "We just follow this convention, everyone knows it"
 
 **Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/structure/file-naming.md) explaining:
 
-- The pattern: `[prefix]__[content-identifier].[extension]`
-- The why: Hierarchical organization, searchability, automation
-- Examples: `tu__getting-started.md`, `ex-co__file-naming-convention.md`
+- The pattern: descriptive kebab-case filenames with category implied by directory location
+- The why: Readability, searchability, no prefix lookup required
+- Examples: `getting-started.md`, `file-naming-convention.md`
 - Principles: Explicit Over Implicit, Simplicity Over Complexity
 
 **Why this works**: New contributors understand WHY the convention exists and can apply it correctly in new contexts.

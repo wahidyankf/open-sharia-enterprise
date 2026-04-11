@@ -14,8 +14,8 @@ tags:
 related:
   - ./otp-supervisor.md
   - ./otp-application.md
-  - ./ex-soen-prla-el__concurrency-and-parallelism.md
-  - ./ex-soen-prla-el__best-practices.md
+  - ./concurrency-standards.md
+  - ./coding-standards.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity

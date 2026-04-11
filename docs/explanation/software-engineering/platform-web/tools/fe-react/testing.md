@@ -10,7 +10,7 @@ tags:
   - jest
   - typescript
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./best-practices.md
 principles:
   - automation-over-manual
 updated: 2026-01-25

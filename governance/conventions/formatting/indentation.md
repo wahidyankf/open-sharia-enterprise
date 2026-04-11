@@ -7,14 +7,13 @@ tags:
   - indentation
   - formatting
   - markdown
-  - obsidian
 created: 2025-12-12
 updated: 2025-12-15
 ---
 
 # Indentation Convention
 
-This convention establishes standard markdown indentation for all files in the repository to ensure compatibility with standard markdown tools and Obsidian.
+This convention establishes standard markdown indentation for all files in the repository to ensure compatibility with standard markdown tools.
 
 ## Principles Implemented/Respected
 
@@ -26,7 +25,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes consistent indentation standards for all markdown files in the repository. It ensures bullet points, code blocks, and YAML frontmatter use appropriate indentation (spaces for bullets, 2 spaces for YAML, 4 spaces for code), improving readability and Obsidian compatibility.
+This convention establishes consistent indentation standards for all markdown files in the repository. It ensures bullet points, code blocks, and YAML frontmatter use appropriate indentation (spaces for bullets, 2 spaces for YAML, 4 spaces for code), improving readability and cross-tool compatibility.
 
 ## Scope
 
@@ -36,7 +35,6 @@ This convention establishes consistent indentation standards for all markdown fi
 - **YAML frontmatter indentation** - 2-space indentation for YAML
 - **Code block indentation** - How to indent code within markdown
 - **Nested list formatting** - Multi-level bullet and numbered lists
-- **Obsidian compatibility** - Indentation patterns that work in Obsidian
 
 ### What This Convention Does NOT Cover
 
@@ -50,8 +48,7 @@ This convention establishes consistent indentation standards for all markdown fi
 
 **Why?**
 
-- **Standard markdown compatibility**: Works in all markdown processors (GitHub, Obsidian, VS Code)
-- **Obsidian compatibility**: Obsidian fully supports standard markdown
+- **Standard markdown compatibility**: Works in all markdown processors (GitHub, VS Code)
 - **Universal compatibility**: Same format works everywhere (GitHub web, local editors, note-taking apps)
 - **Editor consistency**: All text editors handle spaces consistently
 - **Project-wide consistency**: All markdown files follow the same indentation rules
@@ -115,7 +112,6 @@ updated: 2025-12-12
 **Why spaces in frontmatter?**
 
 - **YAML specification**: YAML standard uses spaces for indentation
-- **Obsidian requirement**: Obsidian's frontmatter parser expects spaces
 - **Tool compatibility**: All YAML parsers expect consistent space indentation
 - **Critical for ALL nested frontmatter fields**: This applies to `tags`, any list fields, and any nested objects
 
@@ -257,7 +253,6 @@ Before committing files in `docs/`:
 
 ## External Resources
 
-- [Obsidian Documentation](https://help.obsidian.md/) - Knowledge base tool with frontmatter parsing
 - [YAML Specification](https://yaml.org/spec/) - YAML format specification
 - [CommonMark Specification](https://spec.commonmark.org/) - Standard markdown specification
 

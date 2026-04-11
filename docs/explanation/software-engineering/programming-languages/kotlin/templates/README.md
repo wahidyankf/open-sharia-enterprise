@@ -9,13 +9,7 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-ko-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-ko` - Explanation, Software Engineering, Programming Language, Kotlin
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `ktor-route`, `data-class-value-object`)
+Templates use plain kebab-case filenames (e.g., `ktor-route.md`). The containing directory (`programming-languages/kotlin/templates/`) encodes the category.
 
 ## Templates
 
@@ -23,10 +17,10 @@ This directory is currently a placeholder. Templates will be added as common pat
 
 Suggested starting templates:
 
-- `ex-soen-prla-ko-te__ktor-route.md` - Ktor route handler with coroutines
-- `ex-soen-prla-ko-te__data-class-value-object.md` - Kotlin data class as domain value object
-- `ex-soen-prla-ko-te__sealed-domain-state.md` - Sealed class hierarchy for domain states
-- `ex-soen-prla-ko-te__coroutine-service.md` - Service class with structured concurrency
+- `ktor-route.md` - Ktor route handler with coroutines
+- `data-class-value-object.md` - Kotlin data class as domain value object
+- `sealed-domain-state.md` - Sealed class hierarchy for domain states
+- `coroutine-service.md` - Service class with structured concurrency
 
 ## Usage
 

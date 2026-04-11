@@ -11,8 +11,8 @@ tags:
   - custom-hooks
   - typescript
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./idioms.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
   - pure-functions

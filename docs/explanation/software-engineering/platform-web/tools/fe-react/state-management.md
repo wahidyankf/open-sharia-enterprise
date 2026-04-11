@@ -10,8 +10,8 @@ tags:
   - zustand
   - typescript
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__hooks.md
+  - ./idioms.md
+  - ./hooks.md
 principles:
   - explicit-over-implicit
   - immutability

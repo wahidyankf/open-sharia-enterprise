@@ -103,21 +103,21 @@ Each language directory contains a README.md (language overview and version info
 
 ```
 [language-name]/
-├── README.md                                  # Language overview and version info
-├── ex-soen-prla-[la]__idioms.md          # Language-specific idioms
-├── ex-soen-prla-[la]__best-practices.md  # Best practices
-└── ex-soen-prla-[la]__antipatterns.md    # Common antipatterns
+├── README.md              # Language overview and version info
+├── idioms.md              # Language-specific idioms
+├── best-practices.md      # Best practices
+└── antipatterns.md        # Common antipatterns
 ```
 
 **Domain-Specific Standards Pattern** (Java, Go, Elixir, Dart):
 
 ```
 [language-name]/
-├── README.md                                       # Language overview and version info
-├── ex-soen-prla-[la]__coding-standards.md     # General coding standards
-├── ex-soen-prla-[la]__testing-standards.md    # Testing standards
-├── ex-soen-prla-[la]__security-standards.md   # Security standards
-└── ex-soen-prla-[la]__[domain]-standards.md   # Additional domain-specific files
+├── README.md                  # Language overview and version info
+├── coding-standards.md        # General coding standards
+├── testing-standards.md       # Testing standards
+├── security-standards.md      # Security standards
+└── [domain]-standards.md      # Additional domain-specific files
 ```
 
 ### Document Categories
@@ -406,9 +406,9 @@ To document a new language:
 1. Create directory: `docs/explanation/software-engineering/programming-languages/[language-name]/`
 2. Create README.md with language overview
 3. Create three core documents:
-   - `ex-soen-prla-[abbr]__idioms.md`
-   - `ex-soen-prla-[abbr]__best-practices.md`
-   - `ex-soen-prla-[abbr]__antipatterns.md`
+   - `idioms.md`
+   - `best-practices.md`
+   - `antipatterns.md`
 4. Update this README.md with language section
 5. Cross-reference with relevant documentation
 

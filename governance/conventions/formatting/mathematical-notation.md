@@ -27,7 +27,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes LaTeX notation as the standard for all mathematical expressions in markdown files. It ensures equations render consistently across GitHub, Obsidian, and Hugo sites using `$...$` (inline) and `$$...$$` (display) syntax, providing professional mathematical typography.
+This convention establishes LaTeX notation as the standard for all mathematical expressions in markdown files. It ensures equations render consistently across GitHub and Hugo sites using `$...$` (inline) and `$$...$$` (display) syntax, providing professional mathematical typography.
 
 ## Scope
 
@@ -52,14 +52,14 @@ Mathematical notation appears throughout enterprise documentation - from financi
 
 1. **Readable** - Clear notation that renders properly
 2. **Consistent** - Same syntax across all documentation
-3. **Compatible** - Works in both Obsidian and GitHub
+3. **Compatible** - Renders on GitHub and standard markdown viewers
 4. **Maintainable** - Easy to edit and version control
 
 ## The Core Principle
 
 **Use LaTeX notation for all mathematical equations and formulas in documentation.**
 
-GitHub has supported LaTeX math rendering in markdown since May 2022, and Obsidian has native support. This makes LaTeX the universal standard for mathematical notation in modern documentation.
+GitHub has supported LaTeX math rendering in markdown since May 2022. This makes LaTeX the universal standard for mathematical notation in modern documentation.
 
 ## Why LaTeX?
 
@@ -67,7 +67,6 @@ GitHub has supported LaTeX math rendering in markdown since May 2022, and Obsidi
 
 LaTeX math notation renders natively in:
 
-- **Obsidian** - Native MathJax support (immediate preview)
 - **GitHub** - Native rendering since May 2022 (web interface and mobile)
 - **VS Code** - With Markdown Preview Enhanced extension
 - **Most modern markdown viewers** - Wide ecosystem support
@@ -198,7 +197,7 @@ $
 
 1. **KaTeX Compatibility**: This project uses KaTeX for math rendering (Hugo sites use KaTeX). KaTeX does NOT support the `align` environment - it only supports `aligned`. Always use `\begin{aligned}...\end{aligned}` for multi-line equations.
 
-2. **Delimiter Requirement**: Single `$` on its own line breaks rendering in both GitHub and Obsidian - the LaTeX code displays as raw text instead of rendered math.
+2. **Delimiter Requirement**: Single `$` on its own line breaks rendering on GitHub - the LaTeX code displays as raw text instead of rendered math.
 
 **Rule of thumb:**
 
@@ -668,14 +667,6 @@ Where:
 
 ## Testing LaTeX Rendering
 
-### In Obsidian
-
-1. **Edit mode**: LaTeX appears as source code (`$...$` or `$$...$$`)
-2. **Reading mode**: LaTeX renders as formatted mathematical notation
-3. **Toggle**: Press `Cmd/Ctrl + E` to switch between edit and reading modes
-
-**Verification**: Open any documentation file with LaTeX and toggle to reading mode. Formulas should render clearly with proper spacing and symbols.
-
 ### On GitHub
 
 1. **View any markdown file** on GitHub web interface
@@ -813,7 +804,7 @@ All new documentation MUST use LaTeX for mathematical notation:
 
 - Write formulas in LaTeX from the start
 - Define variables clearly
-- Test rendering in both Obsidian and GitHub
+- Test rendering on GitHub
 
 ### Existing Documentation
 
@@ -933,7 +924,7 @@ When adding or reviewing mathematical notation:
 - [ ] All `\begin{aligned}` blocks use `$$` delimiters (not single `$`)
 - [ ] Variables are defined after formulas
 - [ ] Notation is consistent throughout the document
-- [ ] Formulas render correctly in Obsidian reading mode
+- [ ] Formulas render correctly on GitHub
 - [ ] No LaTeX inside code blocks (use plain text)
 - [ ] No LaTeX inside Mermaid diagrams (use plain text)
 - [ ] Complex formulas have clear alignment and structure
@@ -960,7 +951,7 @@ LaTeX rendering is fast and lightweight:
 - **No server-side processing** - Pure markdown with math syntax
 - **Cacheable** - Rendered math is cached by browsers
 
-Large documents with many formulas render quickly in both Obsidian and GitHub.
+Large documents with many formulas render quickly on GitHub.
 
 ### Accessibility
 
@@ -974,7 +965,7 @@ LaTeX math has good accessibility:
 ### Version History
 
 - **2025-12-02** - Initial convention document created
-- LaTeX math support verified in GitHub (since May 2022) and Obsidian (native)
+- LaTeX math support verified on GitHub (since May 2022)
 
 ## Related Conventions
 
@@ -989,7 +980,6 @@ LaTeX math has good accessibility:
 - [Detexify](https://detexify.kirelabs.org/classify.html) - Draw a symbol to find its LaTeX command
 - [MathJax Documentation](https://www.mathjax.org/) - Rendering engine used by many platforms
 - [GitHub Math Support Announcement](https://github.blog/2022-05-19-math-support-in-markdown/) - Official GitHub blog post (May 2022)
-- [Obsidian Math Documentation](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Math) - Official Obsidian math formatting guide
 
 ---
 

@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-go-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-go` - Explanation, Software Engineering, Programming Language, Go
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `http-handler`)
+Templates use plain kebab-case filenames (e.g., `http-handler.md`). The containing directory (`programming-languages/golang/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-go-te__http-handler.md`
+Suggested starting template: `http-handler.md`
 
 ## Usage
 

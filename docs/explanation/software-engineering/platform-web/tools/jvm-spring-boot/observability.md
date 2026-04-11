@@ -17,9 +17,9 @@ principles:
   - explicit-over-implicit
   - reproducibility
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__performance.md
-  - ./ex-soen-plwe-jvspbo__configuration.md
+  - ./best-practices.md
+  - ./performance.md
+  - ./configuration.md
 created: 2026-01-25
 updated: 2026-01-26
 ---

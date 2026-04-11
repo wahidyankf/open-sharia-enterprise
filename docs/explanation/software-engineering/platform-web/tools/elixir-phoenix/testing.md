@@ -12,10 +12,10 @@ tags:
   - mocking
   - integration
 related:
-  - ex-soen-plwe-elph__channels.md
-  - ex-soen-plwe-elph__liveview.md
-  - ex-soen-plwe-elph__data-access.md
-  - ex-soen-plwe-elph__best-practices.md
+  - channels.md
+  - liveview.md
+  - data-access.md
+  - best-practices.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -1004,4 +1004,4 @@ end
 - **[Data Access Guide](data-access.md)** - Database operations
 - **[Best Practices](best-practices.md)** - Testing patterns
 - **[ExUnit Documentation](https://hexdocs.pm/ex_unit)** - Official testing framework
-- **Test Templates (TODO: ./templates/ex-soen-plwe-elph-te\_\_test-template.md)** - Test starters
+- **Test Templates (TODO: ./templates/test-template.md)** - Test starters

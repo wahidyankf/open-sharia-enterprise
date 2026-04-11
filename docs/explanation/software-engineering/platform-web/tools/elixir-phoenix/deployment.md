@@ -12,9 +12,9 @@ tags:
   - docker
   - kubernetes
 related:
-  - ex-soen-plwe-elph__configuration.md
-  - ex-soen-plwe-elph__performance.md
-  - ex-soen-plwe-elph__observability.md
+  - configuration.md
+  - performance.md
+  - observability.md
 principles:
   - explicit-over-implicit
   - immutability

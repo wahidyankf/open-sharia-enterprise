@@ -10,8 +10,8 @@ tags:
   - code-quality
   - standards
 related:
-  - ./ex-soen-plwe-elph__idioms.md
-  - ./ex-soen-plwe-elph__anti-patterns.md
+  - idioms.md
+  - anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

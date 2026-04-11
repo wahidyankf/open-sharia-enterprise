@@ -10,7 +10,7 @@ tags:
   - vite
   - production
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./best-practices.md
 principles:
   - automation-over-manual
   - reproducibility

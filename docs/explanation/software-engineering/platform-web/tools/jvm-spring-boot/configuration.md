@@ -19,10 +19,10 @@ principles:
 created: 2026-01-25
 updated: 2026-01-26
 related:
-  - ./ex-soen-plwe-jvspbo__idioms.md
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__observability.md
-  - ./ex-soen-plwe-jvspbo__performance.md
+  - ./idioms.md
+  - ./best-practices.md
+  - ./observability.md
+  - ./performance.md
 ---
 
 ## 📋 Quick Reference

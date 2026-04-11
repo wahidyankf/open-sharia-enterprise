@@ -11,8 +11,8 @@ tags:
   - dependency-injection
   - framework
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__anti-patterns.md
+  - ./best-practices.md
+  - ./anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

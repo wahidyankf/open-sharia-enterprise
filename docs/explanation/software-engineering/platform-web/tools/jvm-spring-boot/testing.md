@@ -18,10 +18,10 @@ principles:
   - reproducibility
   - simplicity-over-complexity
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__dependency-injection.md
-  - ./ex-soen-plwe-jvspbo__data-access.md
-  - ./ex-soen-plwe-jvspbo__rest-apis.md
+  - ./best-practices.md
+  - ./dependency-injection.md
+  - ./data-access.md
+  - ./rest-apis.md
 created: 2026-01-25
 updated: 2026-01-26
 ---

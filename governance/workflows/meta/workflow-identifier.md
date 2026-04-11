@@ -144,7 +144,7 @@ Additional context, limitations, or important considerations.
 
 ### YAML Syntax Requirements
 
-**CRITICAL**: All YAML frontmatter values containing special characters MUST be wrapped in quotes to prevent parser errors (especially Obsidian).
+**CRITICAL**: All YAML frontmatter values containing special characters MUST be wrapped in quotes to prevent parser errors in some YAML parsers.
 
 **Characters requiring quotes**:
 
@@ -190,9 +190,9 @@ values: [lax, normal, strict, ocd]  # This is OK - arrays are fine without quote
 
 **Why this matters**:
 
-- Unquoted colons break Obsidian's YAML parser (displays raw frontmatter instead of Properties panel)
+- Unquoted colons break some YAML parsers (they may display raw frontmatter or fail to load)
 - YAML parsers interpret unquoted special characters as syntax, not content
-- Quoted values ensure consistent parsing across all tools (GitHub, Obsidian, static site generators)
+- Quoted values ensure consistent parsing across all tools (GitHub, static site generators, editor previews)
 
 ## File Naming Convention
 

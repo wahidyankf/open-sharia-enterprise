@@ -10,7 +10,7 @@ tags:
   - react-hook-form
   - typescript
 related:
-  - ./ex-soen-plwe-fere__idioms.md
+  - ./idioms.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-25

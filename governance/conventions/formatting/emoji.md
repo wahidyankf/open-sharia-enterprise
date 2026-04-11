@@ -725,7 +725,7 @@ The emoji vocabulary was chosen based on:
 1. **Universal recognition** - Emojis with clear, consistent meanings
 2. **Professional context** - Appropriate for technical/enterprise documentation
 3. **Accessibility** - Screen reader friendly with clear alt text
-4. **Render consistency** - Display consistently across platforms (GitHub, Obsidian, VS Code)
+4. **Render consistency** - Display consistently across platforms (GitHub, VS Code)
 
 ### Cultural Considerations
 

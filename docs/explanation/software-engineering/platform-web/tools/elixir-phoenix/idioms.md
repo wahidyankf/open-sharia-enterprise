@@ -11,8 +11,8 @@ tags:
   - liveview
   - channels
 related:
-  - ./ex-soen-plwe-elph__best-practices.md
-  - ./ex-soen-plwe-elph__anti-patterns.md
+  - best-practices.md
+  - anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

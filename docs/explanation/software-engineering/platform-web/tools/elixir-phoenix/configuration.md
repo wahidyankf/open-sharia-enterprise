@@ -11,9 +11,9 @@ tags:
   - secrets
   - runtime
 related:
-  - ex-soen-plwe-elph__deployment.md
-  - ex-soen-plwe-elph__security.md
-  - ex-soen-plwe-elph__best-practices.md
+  - deployment.md
+  - security.md
+  - best-practices.md
 principles:
   - explicit-over-implicit
   - immutability

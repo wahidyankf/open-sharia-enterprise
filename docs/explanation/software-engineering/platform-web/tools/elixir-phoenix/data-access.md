@@ -13,10 +13,10 @@ tags:
   - queries
   - migrations
 related:
-  - ex-soen-plwe-elph__contexts.md
-  - ex-soen-plwe-elph__performance.md
-  - ex-soen-plwe-elph__testing.md
-  - ex-soen-plwe-elph__best-practices.md
+  - contexts.md
+  - performance.md
+  - testing.md
+  - best-practices.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -1161,4 +1161,4 @@ end
 - **[Testing Guide](testing.md)** - Database testing
 - **[Best Practices](best-practices.md)** - General patterns
 - **[Ecto Documentation](https://hexdocs.pm/ecto)** - Official reference
-- **Schema Template (TODO: ./templates/ex-soen-plwe-elph-te\_\_schema-template.md)** - Schema starter
+- **Schema Template (TODO: ./templates/schema-template.md)** - Schema starter

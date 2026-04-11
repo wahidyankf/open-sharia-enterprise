@@ -19,10 +19,10 @@ principles:
 created: 2026-01-26
 updated: 2026-01-26
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__security.md
-  - ./ex-soen-plwe-jvspbo__data-access.md
-  - ./ex-soen-plwe-jvspbo__anti-patterns.md
+  - ./best-practices.md
+  - ./security.md
+  - ./data-access.md
+  - ./anti-patterns.md
 ---
 
 # Spring Boot REST APIs

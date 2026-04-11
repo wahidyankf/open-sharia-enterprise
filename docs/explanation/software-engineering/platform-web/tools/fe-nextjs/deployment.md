@@ -12,9 +12,9 @@ tags:
   - production
   - monitoring
 related:
-  - ./ex-soen-plwe-tsnext__configuration.md
-  - ./ex-soen-plwe-tsnext__performance.md
-  - ./ex-soen-plwe-tsnext__security.md
+  - ./configuration.md
+  - ./performance.md
+  - ./security.md
 principles:
   - automation-over-manual
   - reproducibility

@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-py-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-py` - Explanation, Software Engineering, Programming Language, Python
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `fastapi-endpoint`)
+Templates use plain kebab-case filenames (e.g., `fastapi-endpoint.md`). The containing directory (`programming-languages/python/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-py-te__fastapi-endpoint.md`
+Suggested starting template: `fastapi-endpoint.md`
 
 ## Usage
 

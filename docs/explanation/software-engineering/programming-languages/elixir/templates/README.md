@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-el-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-el` - Explanation, Software Engineering, Programming Language, Elixir
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `genserver-module`)
+Templates use plain kebab-case filenames (e.g., `genserver-module.md`). The containing directory (`programming-languages/elixir/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-el-te__genserver-module.md`
+Suggested starting template: `genserver-module.md`
 
 ## Usage
 

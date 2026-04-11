@@ -287,7 +287,6 @@ Before publishing a convention document, verify:
 
 - [ ] Follows [File Naming Convention](../formatting/linking.md) - Relative paths with `.md`
 - [ ] Follows [Content Quality Principles](./quality.md) - Active voice, single H1, etc.
-- [ ] Uses TAB indentation for bullet items (Obsidian compatibility)
 - [ ] YAML frontmatter uses 2 spaces for indentation
 
 ### Integration
@@ -573,7 +572,7 @@ When creating a convention:
 
 **File Conventions:**
 
-- [File Naming Convention](../structure/file-naming.md) - How to name files with hierarchical prefixes
+- [File Naming Convention](../structure/file-naming.md) - Kebab-case file naming rules
 - [Linking Convention](../formatting/linking.md) - How to link between documentation files
 
 **Development Practices:**

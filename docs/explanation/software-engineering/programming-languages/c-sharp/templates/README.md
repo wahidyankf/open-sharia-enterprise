@@ -9,13 +9,7 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-cs-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-cs` - Explanation, Software Engineering, Programming Language, C#
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `repository-pattern`, `value-object`)
+Templates use plain kebab-case filenames (e.g., `value-object.md`). The containing directory (`programming-languages/c-sharp/templates/`) encodes the category.
 
 ## Templates
 
@@ -23,10 +17,10 @@ This directory is currently a placeholder. Templates will be added as common pat
 
 Suggested starting templates:
 
-- `ex-soen-prla-cs-te__value-object.md` - Record-based Value Object with validation
-- `ex-soen-prla-cs-te__aggregate-root.md` - Aggregate Root with domain events
-- `ex-soen-prla-cs-te__minimal-api-endpoint.md` - Minimal API endpoint group with filters
-- `ex-soen-prla-cs-te__ef-core-repository.md` - Generic EF Core repository with specification
+- `value-object.md` - Record-based Value Object with validation
+- `aggregate-root.md` - Aggregate Root with domain events
+- `minimal-api-endpoint.md` - Minimal API endpoint group with filters
+- `ef-core-repository.md` - Generic EF Core repository with specification
 
 ## Usage
 

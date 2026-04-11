@@ -13,9 +13,9 @@ tags:
   - tracing
   - monitoring
 related:
-  - ex-soen-plwe-elph__performance.md
-  - ex-soen-plwe-elph__deployment.md
-  - ex-soen-plwe-elph__channels.md
+  - performance.md
+  - deployment.md
+  - channels.md
 principles:
   - explicit-over-implicit
   - immutability

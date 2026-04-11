@@ -10,8 +10,8 @@ tags:
   - authentication
   - authorization
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
-  - ./ex-soen-plwe-fere__anti-patterns.md
+  - ./best-practices.md
+  - ./anti-patterns.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-25

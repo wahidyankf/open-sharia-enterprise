@@ -11,9 +11,9 @@ tags:
   - server-actions
   - api
 related:
-  - ./ex-soen-plwe-tsnext__server-components.md
-  - ./ex-soen-plwe-tsnext__rendering.md
-  - ./ex-soen-plwe-tsnext__api-routes.md
+  - ./server-components.md
+  - ./rendering.md
+  - ./api-routes.md
 principles:
   - pure-functions
   - explicit-over-implicit

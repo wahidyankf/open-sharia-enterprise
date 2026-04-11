@@ -13,10 +13,10 @@ tags:
   - broadcasting
   - pubsub
 related:
-  - ex-soen-plwe-elph__liveview.md
-  - ex-soen-plwe-elph__security.md
-  - ex-soen-plwe-elph__testing.md
-  - ex-soen-plwe-elph__observability.md
+  - liveview.md
+  - security.md
+  - testing.md
+  - observability.md
 principles:
   - explicit-over-implicit
   - immutability

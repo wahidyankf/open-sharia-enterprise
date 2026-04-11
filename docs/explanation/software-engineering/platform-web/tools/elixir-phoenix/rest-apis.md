@@ -12,9 +12,9 @@ tags:
   - versioning
   - pagination
 related:
-  - ex-soen-plwe-elph__security.md
-  - ex-soen-plwe-elph__testing.md
-  - ex-soen-plwe-elph__best-practices.md
+  - security.md
+  - testing.md
+  - best-practices.md
 principles:
   - explicit-over-implicit
   - immutability

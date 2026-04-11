@@ -10,9 +10,9 @@ tags:
   - app-router
   - server-components
 related:
-  - ./ex-soen-plwe-tsnext__best-practices.md
-  - ./ex-soen-plwe-tsnext__app-router.md
-  - ./ex-soen-plwe-tsnext__server-components.md
+  - ./best-practices.md
+  - ./app-router.md
+  - ./server-components.md
 principles:
   - explicit-over-implicit
   - immutability

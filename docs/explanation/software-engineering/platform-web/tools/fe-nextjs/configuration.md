@@ -11,9 +11,9 @@ tags:
   - turbopack
   - environment-variables
 related:
-  - ./ex-soen-plwe-tsnext__deployment.md
-  - ./ex-soen-plwe-tsnext__typescript.md
-  - ./ex-soen-plwe-tsnext__performance.md
+  - ./deployment.md
+  - ./typescript.md
+  - ./performance.md
 principles:
   - explicit-over-implicit
   - reproducibility

@@ -10,7 +10,7 @@ tags:
   - tailwind
   - css-modules
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-25

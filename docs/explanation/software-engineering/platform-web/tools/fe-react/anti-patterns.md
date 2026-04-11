@@ -10,9 +10,9 @@ tags:
   - typescript
   - code-quality
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__best-practices.md
-  - ./ex-soen-plwe-fere__performance.md
+  - ./idioms.md
+  - ./best-practices.md
+  - ./performance.md
 principles:
   - explicit-over-implicit
   - immutability

@@ -57,8 +57,8 @@ flowchart TD
 
 - **Lifecycle:** Permanent, evolves over time
 - **Structure:** Four categories (tutorials, how-to, reference, explanation)
-- **File Naming:** Requires prefixes (`tu__`, `hoto__`, `re__`, `ex__`)
-- **Diagram Format:** Mermaid (inside Obsidian vault)
+- **File Naming:** Kebab-case filenames describing the content
+- **Diagram Format:** Mermaid
 - **Audience:** Anyone who needs to understand, learn, or reference the project
 
 **Subfolders:**
@@ -76,8 +76,8 @@ flowchart TD
 
 - **Lifecycle:** Temporary, moves between states, archived when done
 - **Structure:** Three states (backlog, in-progress, done) plus ideas.md for quick captures
-- **File Naming:** NO prefixes inside plan folders; folder names use `YYYY-MM-DD__[identifier]`
-- **Diagram Format:** ASCII art (outside Obsidian vault)
+- **File Naming:** Folder names use `YYYY-MM-DD__[identifier]`
+- **Diagram Format:** ASCII art
 - **Audience:** Project team, stakeholders tracking progress
 
 **Root Level:**
@@ -250,9 +250,9 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 3. **Document in docs/**
 
    ```
-   docs/explanation/ex-de__[feature-name].md  # How it works
-   docs/how-to/hoto__[task-name].md          # How to use it
-   docs/reference/re__[component-name].md     # Reference documentation
+   docs/explanation/[feature-name].md  # How it works
+   docs/how-to/[task-name].md          # How to use it
+   docs/reference/[component-name].md  # Reference documentation
    ```
 
    - Create permanent documentation
@@ -322,9 +322,9 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
 This project is complete. See the following documentation:
 
-- [[Feature] Explanation](../../docs/explanation/ex-de__[feature-name].md)
-- [How to [Task]](../../docs/how-to/hoto__[task-name].md)
-- [[Component] Reference](../../docs/reference/re__[component-name].md)
+- [[Feature] Explanation](../../docs/explanation/[feature-name].md)
+- [How to [Task]](../../docs/how-to/[task-name].md)
+- [[Component] Reference](../../docs/reference/[component-name].md)
 ```
 
 ## Quick Reference Table
@@ -335,10 +335,10 @@ This project is complete. See the following documentation:
 | Planning a feature                         | `plans/backlog/`     | `2025-11-24__auth-system/`                      |
 | Working on a project                       | `plans/in-progress/` | Move from backlog when starting                 |
 | Archiving completed project                | `plans/done/`        | Move from in-progress when done                 |
-| Writing a tutorial                         | `docs/tutorials/`    | `tu__getting-started.md`                        |
+| Writing a tutorial                         | `docs/tutorials/`    | `getting-started.md`                            |
 | Creating a how-to guide                    | `docs/how-to/`       | `add-new-app.md`                                |
 | Documenting reference material             | `docs/reference/`    | `monorepo-structure.md`                         |
-| Explaining a concept                       | `docs/explanation/`  | `ex-de__ai-agents.md`                           |
+| Explaining a concept                       | `docs/explanation/`  | `ai-agents.md`                                  |
 | Recording project conventions              | `docs/explanation/`  | `meta/file-naming.md`                           |
 | Research documentation                     | `docs/explanation/`  | Final decision and rationale                    |
 | Sprint planning                            | `plans/backlog/`     | One plan per sprint goal                        |

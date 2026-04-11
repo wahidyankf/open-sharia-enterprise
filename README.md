@@ -141,8 +141,6 @@ For demo app CI badges, see [Demo Apps CI & Coverage](./docs/reference/demo-apps
 
 Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./docs/tutorials/) (learning), [How-To](./docs/how-to/) (problem-solving), [Reference](./docs/reference/) (lookup), [Explanation](./docs/explanation/) (understanding).
 
-**Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault.
-
 See [`docs/README.md`](./docs/README.md) for details.
 
 ## 🎯 Motivation

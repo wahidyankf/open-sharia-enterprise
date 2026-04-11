@@ -157,7 +157,7 @@ See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for compl
 
 - Missing "Principles Respected" section in convention doc
 - YAML comments in agent frontmatter (convention violation)
-- Incorrect file naming prefix
+- Filename not following kebab-case convention
 
 **Next.js Content**:
 
@@ -575,7 +575,7 @@ Run `{agent-family}-fixer` on this audit report:
 ```markdown
 ### 1. [Error] - Command Syntax Incorrect in Installation Guide
 
-**File**: `docs/tutorials/tu__quick-start.md:42`
+**File**: `docs/tutorials/quick-start.md:42`
 **Verification**: [Error] - Command syntax verified incorrect via WebSearch
 **Criticality**: CRITICAL - Breaks user quick start experience
 **Category**: Factual Error - Command Syntax
@@ -639,7 +639,7 @@ Update link to current documentation URL or find alternative resource
 **HIGH**:
 
 - Missing "Principles Respected" section in convention (traceability violation)
-- Wrong file naming prefix (convention violation)
+- Filename not in kebab-case (convention violation)
 - Broken internal link to convention document
 
 **MEDIUM**:

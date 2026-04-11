@@ -13,10 +13,10 @@ tags:
   - xss
   - sessions
 related:
-  - ex-soen-plwe-elph__channels.md
-  - ex-soen-plwe-elph__liveview.md
-  - ex-soen-plwe-elph__rest-apis.md
-  - ex-soen-plwe-elph__best-practices.md
+  - channels.md
+  - liveview.md
+  - rest-apis.md
+  - best-practices.md
 principles:
   - explicit-over-implicit
   - immutability

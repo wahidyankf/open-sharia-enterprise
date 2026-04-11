@@ -35,15 +35,15 @@ func TestFormatLinkText_WithBrokenLinks(t *testing.T) {
 		{
 			LineNumber: 20,
 			SourceFile: "docs/file2.md",
-			LinkText:   "./ex-ru-old.md",
-			TargetPath: "/path/to/ex-ru-old.md",
-			Category:   "Old ex-ru-* prefixes",
+			LinkText:   "./legacy-old.md",
+			TargetPath: "/path/to/legacy-old.md",
+			Category:   "Legacy prefixed paths",
 		},
 	}
 
 	byCategory := map[string][]BrokenLink{
-		"General/other paths":  {brokenLinks[0]},
-		"Old ex-ru-* prefixes": {brokenLinks[1]},
+		"General/other paths":   {brokenLinks[0]},
+		"Legacy prefixed paths": {brokenLinks[1]},
 	}
 
 	result := &LinkValidationResult{
@@ -60,12 +60,12 @@ func TestFormatLinkText_WithBrokenLinks(t *testing.T) {
 	expectedStrings := []string{
 		"# Broken Links Report",
 		"**Total broken links**: 2",
-		"## Old ex-ru-* prefixes (1 links)",
+		"## Legacy prefixed paths (1 links)",
 		"## General/other paths (1 links)",
 		"### docs/file1.md",
 		"### docs/file2.md",
 		"- Line 10: `../missing.md`",
-		"- Line 20: `./ex-ru-old.md`",
+		"- Line 20: `./legacy-old.md`",
 	}
 
 	for _, expected := range expectedStrings {

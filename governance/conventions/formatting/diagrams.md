@@ -29,7 +29,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes Mermaid diagrams as the primary visualization format for all markdown files in the repository. It ensures diagrams are accessible, maintainable, and render consistently across GitHub, Obsidian, VS Code, and mobile platforms. This replaces fragmented diagram approaches with a single, universal standard that works everywhere.
+This convention establishes Mermaid diagrams as the primary visualization format for all markdown files in the repository. It ensures diagrams are accessible, maintainable, and render consistently across GitHub, VS Code, and mobile platforms. This replaces fragmented diagram approaches with a single, universal standard that works everywhere.
 
 ## Scope
 
@@ -65,9 +65,8 @@ Mermaid diagram support has become ubiquitous across modern development tools:
 
 - **GitHub**: Native Mermaid rendering in markdown files (since May 2021)
 - **Text Editors**: VS Code, IntelliJ IDEA, Sublime Text (via plugins/extensions)
-- **Obsidian**: Native rendering without plugins
 - **Documentation Platforms**: GitLab, Notion, Confluence all support Mermaid
-- **Mobile Apps**: GitHub mobile, Obsidian mobile render Mermaid correctly
+- **Mobile Apps**: GitHub mobile renders Mermaid correctly
 
 ### Advantages Over ASCII Art
 
@@ -85,7 +84,7 @@ ASCII art is now **optional** and only recommended for rare edge cases:
 - Extremely limited bandwidth scenarios where rendering is disabled
 - Simple directory tree structures (where ASCII is clearer than Mermaid)
 
-**In practice**: Most users will view markdown files through GitHub, Obsidian, or modern text editors, all of which support Mermaid.
+**In practice**: Most users will view markdown files through GitHub or modern text editors, all of which support Mermaid.
 
 ## Mermaid Diagrams: Primary Format for All Markdown Files
 
@@ -113,7 +112,7 @@ open-sharia-enterprise/
 
 ### Why Mermaid?
 
-1. **Universal Support** - GitHub, Obsidian, VS Code, and most platforms render Mermaid natively
+1. **Universal Support** - GitHub, VS Code, and most platforms render Mermaid natively
 2. **Rich Visuals** - Professional-looking diagrams with colors, shapes, and styling
 3. **Interactive** - Diagrams can be zoomed and inspected
 4. **Maintainable** - Text-based source is easy to version control and edit
@@ -375,7 +374,7 @@ graph TD
 1. **Keep it Simple** - Complex diagrams become hard to maintain
 2. **Use Descriptive Labels** - Clear node names improve readability
 3. **Add Comments** - Explain complex logic with inline comments
-4. **Test Rendering** - Preview in Obsidian before committing
+4. **Test Rendering** - Preview on GitHub or in a markdown viewer before committing
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
 6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
 7. **Use Color-Blind Friendly Colors** - REQUIRED: Use accessible hex codes in `classDef` from verified palette (see Color Accessibility below)
@@ -579,7 +578,6 @@ When creating Mermaid diagrams:
 
 - [Official Mermaid Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/) - Test diagrams online
-- [Obsidian Mermaid Docs](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram)
 - [Coblis Color Blindness Simulator](https://www.color-blindness.com/coblis-color-blindness-simulator/) - Test diagrams for accessibility
 - [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) - Verify WCAG compliance
 
@@ -597,11 +595,11 @@ ASCII art is now **optional** and should only be used when:
 
 ### Why ASCII Art Is Now Optional
 
-With widespread Mermaid support across GitHub, Obsidian, VS Code, and other platforms, the original rationale for requiring ASCII art in files outside `docs/` no longer applies:
+With widespread Mermaid support across GitHub, VS Code, and other platforms, the original rationale for requiring ASCII art in files outside `docs/` no longer applies:
 
 1. **GitHub Support**: GitHub has supported Mermaid natively since May 2021
 2. **Editor Support**: Modern text editors (VS Code, IntelliJ, Sublime) all support Mermaid previews
-3. **Mobile Support**: GitHub mobile and Obsidian mobile render Mermaid correctly
+3. **Mobile Support**: GitHub mobile renders Mermaid correctly
 4. **Better Maintainability**: Mermaid is easier to update than manually positioned ASCII art
 
 **Previous approach**: We required ASCII art for files outside `docs/` (README.md, AGENTS.md, plans/) to ensure universal compatibility.
@@ -696,14 +694,14 @@ System architecture overview:
 Structured data representation:
 
 ```
-┌──────────────┬────────────┬──────────────┐
-│   Category   │   Prefix   │   Example    │
-├──────────────┼────────────┼──────────────┤
-│  Tutorials   │    tu__    │  tu__start.md│
-│  How-To      │   hoto__   │ hoto__api.md │
-│  Reference   │    re__    │  re__spec.md │
-│  Explanation │    ex__    │  ex__arch.md │
-└──────────────┴────────────┴──────────────┘
+┌──────────────┬─────────────────────────┐
+│   Category   │         Example         │
+├──────────────┼─────────────────────────┤
+│  Tutorials   │  docs/tutorials/start.md│
+│  How-To      │  docs/how-to/api.md     │
+│  Reference   │  docs/reference/spec.md │
+│  Explanation │  docs/explanation/arch.md│
+└──────────────┴─────────────────────────┘
 ```
 
 ### ASCII Art Best Practices
@@ -746,7 +744,7 @@ Use this quick reference to choose the right format:
 
 | File Location     | Primary Format | Alternative       | Notes                                           |
 | ----------------- | -------------- | ----------------- | ----------------------------------------------- |
-| `docs/**/*.md`    | **Mermaid**    | ASCII (optional)  | Native Obsidian rendering, rich visuals         |
+| `docs/**/*.md`    | **Mermaid**    | ASCII (optional)  | Rich visuals, native GitHub rendering           |
 | `README.md`       | **Mermaid**    | ASCII (optional)  | GitHub renders Mermaid natively                 |
 | `AGENTS.md`       | **Mermaid**    | ASCII (optional)  | Modern text editors support Mermaid             |
 | `plans/**/*.md`   | **Mermaid**    | ASCII (optional)  | GitHub and editors render Mermaid               |
@@ -758,7 +756,7 @@ Use this quick reference to choose the right format:
 
 ### Example 1: API Flow in Documentation
 
-**File**: `docs/explanation/architecture/ex-ar__request-flow.md`
+**File**: `docs/explanation/architecture/request-flow.md`
 
 **Use Mermaid**:
 
@@ -964,7 +962,7 @@ Since Mermaid is now the primary format, consider upgrading existing ASCII art d
 
 1. Identify the diagram type (flowchart, sequence, state machine, etc.)
 2. Use appropriate Mermaid syntax
-3. Test rendering on GitHub preview or Obsidian
+3. Test rendering on GitHub preview or a markdown viewer
 4. Verify all relationships and labels are preserved
 5. Keep vertical orientation (top-down or bottom-top) for mobile-friendliness
 
@@ -1002,7 +1000,7 @@ graph TD
 
 With widespread Mermaid support, there's no reason to convert Mermaid diagrams to ASCII art. If you encounter a situation where Mermaid doesn't render, consider:
 
-1. Using a different viewing platform (GitHub web, VS Code, Obsidian)
+1. Using a different viewing platform (GitHub web, VS Code)
 2. Updating your editor/viewer to support Mermaid
 3. Only in extreme edge cases: create an ASCII fallback
 
@@ -1028,7 +1026,7 @@ Before committing documentation with diagrams:
 - [ ] **Node label lines ≤20 characters** (each line between `<br/>` tags must not exceed 20 characters)
 - [ ] **Edge label strings ≤20 characters** (text inside `|"..."|` must not exceed 20 characters)
 - [ ] **No URL paths or dot-prefixed tokens in edge labels** (leading `.` is parsed as a CSS class selector — describe the action in plain words instead)
-- [ ] Mermaid diagrams tested in GitHub preview or Obsidian
+- [ ] Mermaid diagrams tested in GitHub preview or a markdown viewer
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
 - [ ] All labels and text are clear and readable

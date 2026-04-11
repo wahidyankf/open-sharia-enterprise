@@ -22,13 +22,7 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-cl-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-cl` - Explanation, Software Engineering, Programming Language, Clojure
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `ring-handler`, `integrant-system`)
+Templates use plain kebab-case filenames (e.g., `ring-handler.md`). The containing directory (`programming-languages/clojure/templates/`) encodes the category.
 
 ## Templates
 
@@ -36,10 +30,10 @@ This directory is currently a placeholder. Templates will be added as common pat
 
 Suggested starting templates:
 
-- `ex-soen-prla-cl-te__ring-handler.md` - Ring request/response handler pattern
-- `ex-soen-prla-cl-te__integrant-system.md` - Integrant system lifecycle configuration
-- `ex-soen-prla-cl-te__next-jdbc-query.md` - next.jdbc parameterized query pattern
-- `ex-soen-prla-cl-te__domain-namespace.md` - Domain namespace with spec and pure functions
+- `ring-handler.md` - Ring request/response handler pattern
+- `integrant-system.md` - Integrant system lifecycle configuration
+- `next-jdbc-query.md` - next.jdbc parameterized query pattern
+- `domain-namespace.md` - Domain namespace with spec and pure functions
 
 ## Usage
 

@@ -10,8 +10,8 @@ tags:
   - architecture
   - typescript
 related:
-  - ./ex-soen-plwe-fere__best-practices.md
-  - ./ex-soen-plwe-fere__component-architecture.md
+  - ./best-practices.md
+  - ./component-architecture.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-25

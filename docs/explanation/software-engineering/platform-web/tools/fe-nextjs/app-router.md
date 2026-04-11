@@ -11,9 +11,9 @@ tags:
   - file-system
   - server-components
 related:
-  - ./ex-soen-plwe-tsnext__routing.md
-  - ./ex-soen-plwe-tsnext__server-components.md
-  - ./ex-soen-plwe-tsnext__idioms.md
+  - ./routing.md
+  - ./server-components.md
+  - ./idioms.md
 principles:
   - explicit-over-implicit
   - automation-over-manual

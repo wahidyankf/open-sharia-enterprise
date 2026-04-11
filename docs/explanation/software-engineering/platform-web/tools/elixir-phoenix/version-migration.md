@@ -10,8 +10,8 @@ tags:
   - upgrade
   - version
 related:
-  - ex-soen-plwe-elph__best-practices.md
-  - ex-soen-plwe-elph__liveview.md
+  - best-practices.md
+  - liveview.md
 principles:
   - explicit-over-implicit
   - immutability

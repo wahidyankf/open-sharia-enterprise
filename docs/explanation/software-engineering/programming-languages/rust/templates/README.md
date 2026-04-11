@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-rs-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-rs` - Explanation, Software Engineering, Programming Language, Rust
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `axum-handler`)
+Templates use plain kebab-case filenames (e.g., `axum-handler.md`). The containing directory (`programming-languages/rust/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-rs-te__axum-handler.md`
+Suggested starting template: `axum-handler.md`
 
 ## Usage
 

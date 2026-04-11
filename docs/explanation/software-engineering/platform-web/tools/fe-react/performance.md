@@ -10,8 +10,8 @@ tags:
   - memoization
   - code-splitting
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./idioms.md
+  - ./best-practices.md
 principles:
   - automation-over-manual
 updated: 2026-01-25

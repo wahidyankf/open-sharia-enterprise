@@ -13,9 +13,9 @@ tags:
   - profiling
   - scaling
 related:
-  - ex-soen-plwe-elph__data-access.md
-  - ex-soen-plwe-elph__deployment.md
-  - ex-soen-plwe-elph__observability.md
+  - data-access.md
+  - deployment.md
+  - observability.md
 principles:
   - explicit-over-implicit
   - immutability

@@ -219,8 +219,8 @@ PASS: **Simple (Correct)**:
 
 ```
 governance/conventions/
-  ex-co__file-naming-convention.md
-  ex-co__linking-convention.md
+  file-naming-convention.md
+  linking-convention.md
 ```
 
 **Why this works**: Markdown documents. Searchable. Easy to update. Human-readable.
@@ -461,9 +461,9 @@ Four simple categories:
 Simple markdown documents:
 
 ```
-ex-co__file-naming-convention.md
-ex-co__linking-convention.md
-ex-co__color-accessibility.md
+file-naming-convention.md
+linking-convention.md
+color-accessibility.md
 ```
 
 **Not**:

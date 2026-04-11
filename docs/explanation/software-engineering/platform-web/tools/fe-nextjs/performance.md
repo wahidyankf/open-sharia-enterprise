@@ -11,9 +11,9 @@ tags:
   - caching
   - lazy-loading
 related:
-  - ./ex-soen-plwe-tsnext__rendering.md
-  - ./ex-soen-plwe-tsnext__data-fetching.md
-  - ./ex-soen-plwe-tsnext__server-components.md
+  - ./rendering.md
+  - ./data-fetching.md
+  - ./server-components.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

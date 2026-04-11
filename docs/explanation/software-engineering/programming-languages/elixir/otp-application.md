@@ -16,7 +16,7 @@ tags:
 related:
   - ./otp-genserver.md
   - ./otp-supervisor.md
-  - ./ex-soen-prla-el__concurrency-and-parallelism.md
+  - ./concurrency-standards.md
 principles:
   - modularity
   - explicit-over-implicit

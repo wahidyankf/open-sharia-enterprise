@@ -413,8 +413,7 @@ These conventions from `docs/` are modified for Hugo's specific requirements.
 **Why different from docs/?**
 
 - docs/ uses standard markdown with space indentation (2 spaces per level)
-- Hugo content is published web content, not Obsidian vault
-- Standard markdown practices apply
+- Hugo content is published web content; standard markdown practices apply
 
 **Example (correct indentation)**:
 
@@ -456,7 +455,7 @@ tags:
 
 **Why different from docs/?**
 
-- docs/ uses `.md` extensions for Obsidian compatibility
+- docs/ uses `.md` extensions so links work when browsing the repo on GitHub
 - Hugo generates URLs without `.md` extensions
 - Using `.md` in Hugo links breaks in production builds
 

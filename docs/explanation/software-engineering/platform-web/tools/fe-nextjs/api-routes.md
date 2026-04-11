@@ -11,9 +11,9 @@ tags:
   - backend
   - http
 related:
-  - ./ex-soen-plwe-tsnext__middleware.md
-  - ./ex-soen-plwe-tsnext__data-fetching.md
-  - ./ex-soen-plwe-tsnext__security.md
+  - ./middleware.md
+  - ./data-fetching.md
+  - ./security.md
 principles:
   - explicit-over-implicit
   - pure-functions

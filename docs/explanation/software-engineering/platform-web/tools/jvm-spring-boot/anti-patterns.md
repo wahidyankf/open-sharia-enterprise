@@ -10,8 +10,8 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-soen-plwe-jvspbo__idioms.md
-  - ./ex-soen-plwe-jvspbo__best-practices.md
+  - ./idioms.md
+  - ./best-practices.md
 updated: 2026-01-25
 ---
 

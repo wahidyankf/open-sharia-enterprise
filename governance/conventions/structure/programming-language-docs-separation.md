@@ -230,7 +230,7 @@ Use `errors.New()` to create errors, `fmt.Errorf()` to wrap them...
 
 ````
 
-**docs/explanation/** (`docs/explanation/.../golang/ex-soen-prla-go__error-handling.md`):
+**docs/explanation/** (`docs/explanation/.../golang/error-handling.md`):
 
 ```markdown
 # Go Error Handling - OSE Platform Standards
@@ -414,7 +414,7 @@ Key takeaway: Go supports both explicit types and type inference via `:=`.
 
 ````
 
-**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__best-practices.md`):
+**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/golang/best-practices.md`):
 
 ```markdown
 # Go Best Practices - OSE Platform
@@ -558,7 +558,7 @@ Key takeaway: Use `Optional<T>` to explicitly represent absence, never return nu
 
 ````
 
-**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__type-safety.md`):
+**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/java/type-safety.md`):
 
 ```markdown
 # Java Type Safety - OSE Platform Standards
@@ -621,7 +621,7 @@ Optional<ZakatPayment> findById(UUID id) {
 **FAIL: Duplicating in docs/explanation/**:
 
 ```markdown
-# docs/explanation/.../golang/ex-soen-prla-go__best-practices.md
+# docs/explanation/.../golang/best-practices.md
 
 ## Variables in Go
 
@@ -641,7 +641,7 @@ Use `:=` for local variables, `var` for package-level...
 **PASS: Repository-specific convention**:
 
 ```markdown
-# docs/explanation/.../golang/ex-soen-prla-go__best-practices.md
+# docs/explanation/.../golang/best-practices.md
 
 **Prerequisite**: Complete [ayokoding-web Golang By Example](https://ayokoding.com/en/learn/.../golang/by-example/).
 
@@ -779,7 +779,7 @@ Before publishing programming language documentation:
 **Documentation Organization**:
 
 - [Diátaxis Framework](./diataxis-framework.md) - Four-category documentation organization (docs/ follows this)
-- [File Naming Convention](./file-naming.md) - How to name files with hierarchical prefixes
+- [File Naming Convention](./file-naming.md) - Kebab-case file naming rules
 - [Plans Organization](./plans.md) - Project planning structure (not covered here)
 
 **Tutorial Standards**:

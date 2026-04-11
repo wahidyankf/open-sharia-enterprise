@@ -9,19 +9,13 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-ty-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-ty` - Explanation, Software Engineering, Programming Language, TypeScript
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `service-class`)
+Templates use plain kebab-case filenames (e.g., `service-class.md`). The containing directory (`programming-languages/typescript/templates/`) encodes the category.
 
 ## Templates
 
 This directory is currently a placeholder. Templates will be added as common patterns are identified.
 
-Suggested starting template: `ex-soen-prla-ty-te__service-class.md`
+Suggested starting template: `service-class.md`
 
 ## Usage
 

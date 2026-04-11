@@ -434,10 +434,10 @@ All colors must work in both light and dark rendering contexts.
 
 ### Testing Backgrounds
 
-| Mode           | Background          | Text Color      | Used For                               |
-| -------------- | ------------------- | --------------- | -------------------------------------- |
-| **Light Mode** | #FFFFFF (white)     | #000000 (black) | GitHub web, Obsidian light theme       |
-| **Dark Mode**  | #1E1E2E (dark gray) | #FFFFFF (white) | GitHub dark theme, Obsidian dark theme |
+| Mode           | Background          | Text Color      | Used For               |
+| -------------- | ------------------- | --------------- | ---------------------- |
+| **Light Mode** | #FFFFFF (white)     | #000000 (black) | GitHub web light theme |
+| **Dark Mode**  | #1E1E2E (dark gray) | #FFFFFF (white) | GitHub dark theme      |
 
 ### No Special Adjustments Needed
 

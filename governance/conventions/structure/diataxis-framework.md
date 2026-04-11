@@ -87,8 +87,7 @@ Each category serves a different purpose and addresses different user needs.
 **In our project**:
 
 - Location: `docs/tutorials/`
-- Prefix: `tu__`
-- Examples: `tu__getting-started.md`, `tu__first-deployment.md`
+- Examples: `getting-started.md`, `first-deployment.md`
 
 ### How-To Guides (Problem-Oriented)
 
@@ -114,8 +113,7 @@ Each category serves a different purpose and addresses different user needs.
 **In our project**:
 
 - Location: `docs/how-to/`
-- Prefix: `hoto__`
-- Examples: `hoto__configure-api.md`, `hoto__deploy-docker.md`
+- Examples: `configure-api.md`, `deploy-docker.md`
 
 ### Reference (Information-Oriented)
 
@@ -141,8 +139,7 @@ Each category serves a different purpose and addresses different user needs.
 **In our project**:
 
 - Location: `docs/reference/`
-- Prefix: `re__`
-- Examples: `re__api-reference.md`, `re__configuration-reference.md`
+- Examples: `api-reference.md`, `configuration-reference.md`
 
 ### Explanation (Understanding-Oriented)
 
@@ -168,8 +165,7 @@ Each category serves a different purpose and addresses different user needs.
 **In our project**:
 
 - Location: `docs/explanation/`
-- Prefix: `ex__`
-- Examples: `ex__architecture.md`, `ex-co__file-naming-convention.md`
+- Examples: `architecture.md`, `file-naming-convention.md`
 
 ## Why We Use Diátaxis
 
@@ -200,22 +196,22 @@ Each category serves a different purpose and addresses different user needs.
 
 ```
 docs/
-├── tutorials/                                # tu__ prefix - Learning-oriented
+├── tutorials/                                # Learning-oriented
 │   ├── README.md                            # Category index
 │   └── ...
-├── how-to/                                   # hoto__ prefix - Problem-oriented
+├── how-to/                                   # Problem-oriented
 │   ├── README.md                            # Category index
 │   └── ...
-├── reference/                                # re__ prefix - Information-oriented
+├── reference/                                # Information-oriented
 │   ├── README.md                            # Category index
 │   └── ...
-└── explanation/                              # ex__ prefix - Understanding-oriented
+└── explanation/                              # Understanding-oriented
     ├── README.md                             # Category index
-    └── conventions/                          # ex-co__ prefix
+    └── conventions/
         ├── README.md                         # Subcategory index
-        ├── ex-co__file-naming-convention.md
-        ├── ex-co__linking-convention.md
-        └── ex-co__diataxis-framework.md (this file)
+        ├── file-naming-convention.md
+        ├── linking-convention.md
+        └── diataxis-framework.md (this file)
 ```
 
 **Note on Directory Naming:**
@@ -231,18 +227,7 @@ This is intentional and follows standard documentation naming conventions. See t
 
 ### File Naming Integration
 
-Each category has a unique prefix that encodes the Diátaxis category:
-
-- `tu__` = Tutorials
-- `hoto__` = How-To
-- `re__` = Reference
-- `ex__` = Explanation
-
-For nested directories, add 2-letter abbreviations:
-
-- `ex-co__` = explanation/conventions
-
-See [File Naming Convention](./file-naming.md) for details.
+Category is conveyed by directory location (`docs/tutorials/`, `docs/how-to/`, etc.). Filenames use kebab-case and describe the content directly without prefix codes. See [File Naming Convention](./file-naming.md) for details.
 
 ### Frontmatter Standard
 
@@ -327,7 +312,7 @@ Start here
 
 ### Tutorial Example: Initial Setup
 
-**Location**: `docs/tutorials/tu__initial-setup.md`
+**Location**: `docs/tutorials/initial-setup.md`
 
 **Structure**:
 
@@ -341,7 +326,7 @@ Start here
 
 ### How-To Example: Configure API
 
-**Location**: `docs/how-to/hoto__configure-api.md`
+**Location**: `docs/how-to/configure-api.md`
 
 **Structure**:
 
@@ -384,7 +369,7 @@ Start here
 ## Related Documentation
 
 - [Conventions Index](../README.md) - Overview of all documentation conventions
-- [File Naming Convention](./file-naming.md) - How to name files with category prefixes
+- [File Naming Convention](./file-naming.md) - Kebab-case file naming rules
 - [Linking Convention](../formatting/linking.md) - How to link between documents
 - [OSS Documentation Convention](../writing/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 

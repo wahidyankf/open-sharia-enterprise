@@ -22,13 +22,7 @@ reducing repetition and ensuring consistency across documentation and code examp
 
 ## Template Naming Convention
 
-Templates follow the pattern: `ex-soen-prla-fs-te__[pattern-name].md`
-
-Where:
-
-- `ex-soen-prla-fs` - Explanation, Software Engineering, Programming Language, F#
-- `te` - Template indicator
-- `[pattern-name]` - Descriptive name of the pattern (e.g., `giraffe-handler`, `result-railway`, `expecto-suite`)
+Templates use plain kebab-case filenames (e.g., `giraffe-handler.md`). The containing directory (`programming-languages/f-sharp/templates/`) encodes the category.
 
 ## Templates
 
@@ -36,11 +30,11 @@ This directory is currently a placeholder. Templates will be added as common pat
 
 Suggested starting templates:
 
-- `ex-soen-prla-fs-te__giraffe-handler.md` - Giraffe HttpHandler composition pattern
-- `ex-soen-prla-fs-te__result-railway.md` - Railway-oriented programming with Result type
-- `ex-soen-prla-fs-te__expecto-suite.md` - Expecto test module structure
-- `ex-soen-prla-fs-te__discriminated-union-domain.md` - Domain modeling with discriminated unions
-- `ex-soen-prla-fs-te__mailboxprocessor-actor.md` - MailboxProcessor actor pattern
+- `giraffe-handler.md` - Giraffe HttpHandler composition pattern
+- `result-railway.md` - Railway-oriented programming with Result type
+- `expecto-suite.md` - Expecto test module structure
+- `discriminated-union-domain.md` - Domain modeling with discriminated unions
+- `mailboxprocessor-actor.md` - MailboxProcessor actor pattern
 
 ## Usage
 

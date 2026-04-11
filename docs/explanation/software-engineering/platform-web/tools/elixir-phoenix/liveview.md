@@ -13,10 +13,10 @@ tags:
   - uploads
   - streams
 related:
-  - ex-soen-plwe-elph__channels.md
-  - ex-soen-plwe-elph__testing.md
-  - ex-soen-plwe-elph__security.md
-  - ex-soen-plwe-elph__performance.md
+  - channels.md
+  - testing.md
+  - security.md
+  - performance.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -1384,4 +1384,4 @@ end
 - **[Security Guide](security.md)** - Authentication and authorization
 - **[Performance Guide](performance.md)** - Optimization techniques
 - **[Phoenix LiveView Documentation](https://hexdocs.pm/phoenix_live_view)** - Official reference
-- **LiveView Templates (TODO: ./templates/ex-soen-plwe-elph-te\_\_liveview-template.md)** - Starter templates
+- **LiveView Templates (TODO: ./templates/liveview-template.md)** - Starter templates

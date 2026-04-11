@@ -402,7 +402,6 @@ Before committing markdown with nested fences:
 
 - **GitHub Preview**: View file on GitHub web interface
 - **VS Code**: Use markdown preview (Cmd/Ctrl + Shift + V)
-- **Obsidian**: Native markdown rendering
 - **hugo server**: For Hugo sites, test with local server
 
 ## Integration with Other Conventions

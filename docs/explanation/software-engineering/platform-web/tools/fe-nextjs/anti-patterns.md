@@ -9,8 +9,8 @@ tags:
   - mistakes
   - pitfalls
 related:
-  - ./ex-soen-plwe-tsnext__idioms.md
-  - ./ex-soen-plwe-tsnext__best-practices.md
+  - ./idioms.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
   - immutability

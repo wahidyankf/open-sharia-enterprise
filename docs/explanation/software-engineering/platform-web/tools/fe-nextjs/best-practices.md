@@ -10,9 +10,9 @@ tags:
   - typescript
   - production
 related:
-  - ./ex-soen-plwe-tsnext__idioms.md
-  - ./ex-soen-plwe-tsnext__anti-patterns.md
-  - ./ex-soen-plwe-tsnext__app-router.md
+  - ./idioms.md
+  - ./anti-patterns.md
+  - ./app-router.md
 principles:
   - explicit-over-implicit
   - immutability

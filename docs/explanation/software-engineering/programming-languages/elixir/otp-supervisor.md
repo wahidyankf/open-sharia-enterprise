@@ -15,8 +15,8 @@ tags:
 related:
   - ./otp-genserver.md
   - ./otp-application.md
-  - ./ex-soen-prla-el__error-handling.md
-  - ./ex-soen-prla-el__best-practices.md
+  - ./error-handling-standards.md
+  - ./coding-standards.md
 principles:
   - automation-over-manual
   - simplicity-over-complexity

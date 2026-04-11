@@ -11,10 +11,10 @@ tags:
   - business-logic
   - api-design
 related:
-  - ./ex-soen-plwe-elph__idioms.md
-  - ./ex-soen-plwe-elph__best-practices.md
-  - ./ex-soen-plwe-elph__anti-patterns.md
-  - ./ex-soen-plwe-elph__data-access.md
+  - idioms.md
+  - best-practices.md
+  - anti-patterns.md
+  - data-access.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity

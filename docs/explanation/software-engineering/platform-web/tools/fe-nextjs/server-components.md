@@ -11,9 +11,9 @@ tags:
   - streaming
   - performance
 related:
-  - ./ex-soen-plwe-tsnext__app-router.md
-  - ./ex-soen-plwe-tsnext__data-fetching.md
-  - ./ex-soen-plwe-tsnext__rendering.md
+  - ./app-router.md
+  - ./data-fetching.md
+  - ./rendering.md
 principles:
   - pure-functions
   - immutability

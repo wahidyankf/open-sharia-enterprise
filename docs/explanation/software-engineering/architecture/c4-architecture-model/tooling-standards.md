@@ -88,11 +88,6 @@ code --install-extension bpruitt-goddard.mermaid-markdown-syntax-highlighting
 
 ### Other Editors
 
-**Obsidian**:
-
-- Native Mermaid support in markdown preview
-- No plugins required
-
 **IntelliJ IDEA**:
 
 - Install "Mermaid" plugin from JetBrains Marketplace
@@ -171,7 +166,6 @@ graph TD
 **Use editor preview**:
 
 - VS Code: Open markdown preview (Cmd+Shift+V / Ctrl+Shift+V)
-- Obsidian: Preview mode
 - IntelliJ IDEA: Markdown preview pane
 
 **Verify**:

@@ -254,9 +254,7 @@ Every checkbox in `delivery.md` must represent exactly one concrete, independent
 
 ### Important Note on File Naming
 
-**Files inside plan folders do NOT use naming prefixes** (no `pl-re__`, `pl-td__`, etc.).
-
-The folder structure provides sufficient context, so prefixes are unnecessary and would add noise. This differs from files in `docs/` which use prefixes for organization.
+Files inside plan folders use descriptive kebab-case names (e.g., `requirements.md`, `tech-docs.md`, `delivery.md`). The folder structure provides sufficient context, so the filename only needs to describe its purpose.
 
 ## Key Differences from Documentation
 
@@ -266,7 +264,7 @@ Plans differ from `docs/` in several important ways:
 | ---------------- | ------------------------------------- | ------------------------------------ |
 | **Location**     | Root-level `plans/` folder            | Root-level `docs/` folder            |
 | **Purpose**      | Temporary project planning            | Permanent documentation              |
-| **File Naming**  | No prefixes inside folders            | Prefixes encode directory path       |
+| **File Naming**  | Kebab-case by purpose                 | Kebab-case describing content        |
 | **Lifecycle**    | Move between in-progress/backlog/done | Evolve and update in place           |
 | **Audience**     | Project team, stakeholders            | All users, contributors, maintainers |
 | **Longevity**    | Temporary (archived in done/)         | Permanent (evolves over time)        |

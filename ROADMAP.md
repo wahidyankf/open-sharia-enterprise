@@ -58,7 +58,7 @@ graph TB
 **Repository Infrastructure:**
 
 - 🛠️ **Development Tooling & Processes** - Infrastructure (Volta, formatting, git hooks), CI/CD pipelines
-- 📚 **Documentation Framework** - Diátaxis structure, Obsidian compatibility, markdown standards
+- 📚 **Documentation Framework** - Diátaxis structure, markdown standards
 - 🤖 **AI Agents & Automation** - Specialized agents for content creation, validation, and fixing
 - 📋 **Governance Structure** - Conventions, principles, development practices
 - 📝 **Planning Systems** - Project planning workflows, delivery tracking

@@ -21,10 +21,10 @@ principles:
 created: 2026-01-25
 updated: 2026-01-26
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__observability.md
-  - ./ex-soen-plwe-jvspbo__data-access.md
-  - ./ex-soen-plwe-jvspbo__configuration.md
+  - ./best-practices.md
+  - ./observability.md
+  - ./data-access.md
+  - ./configuration.md
 ---
 
 ## 📋 Quick Reference

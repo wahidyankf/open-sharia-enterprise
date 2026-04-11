@@ -10,8 +10,8 @@ tags:
   - generics
   - props
 related:
-  - ./ex-soen-plwe-fere__idioms.md
-  - ./ex-soen-plwe-fere__best-practices.md
+  - ./idioms.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-25

@@ -145,30 +145,20 @@ FAIL: Tutorial for expert lookup
 
 **Context**: File organization system.
 
-**Progressive Complexity**:
-
-**Level 1 - Simple prefix**:
+**Simple rule**:
 
 ```
-tu__getting-started.md
+docs/tutorials/getting-started.md
+docs/explanation/conventions/file-naming-convention.md
 ```
 
-Simple prefix (`tu` for tutorials). Easy to understand.
-
-**Level 2 - Subdirectory prefix**:
-
-```
-ex-co__file-naming-convention.md
-```
-
-Hyphenated prefix (`ex-co` for explanation/conventions). More context.
+Kebab-case filenames describing the content. Category is conveyed by the directory, not the filename. No lookup tables required to parse a name.
 
 **Why this works**:
 
-- PASS: Basic pattern is simple
-- PASS: Advanced pattern adds context
-- PASS: Prefix encodes location
-- PASS: Understandable at each level
+- PASS: One rule covers every directory
+- PASS: Filenames read as English, not codes
+- PASS: No abbreviation tables to memorize
 
 **Alternative** (what we avoid):
 
@@ -325,9 +315,9 @@ console.log(message);
 **For different audiences**:
 
 ```markdown
-- **New to React?** Start with [Quick Start Tutorial](./tu__react-quick-start.md)
-- **Experienced developer?** See [API Reference](./re__react-api.md)
-- **Migrating from Vue?** Read [Migration Guide](./hoto__migrate-from-vue.md)
+- **New to React?** Start with [Quick Start Tutorial](./react-quick-start.md)
+- **Experienced developer?** See [API Reference](./react-api.md)
+- **Migrating from Vue?** Read [Migration Guide](./migrate-from-vue.md)
 ```
 
 ### 3. Use "Learn More" Links
@@ -335,7 +325,7 @@ console.log(message);
 **Basic content with optional depth**:
 
 ```markdown
-API authentication uses OAuth 2.0. [Learn more about OAuth 2.0](./ex__oauth2.md)
+API authentication uses OAuth 2.0. [Learn more about OAuth 2.0](./oauth2.md)
 ```
 
 **Not** embedding OAuth explanation in basic tutorial.
@@ -443,25 +433,20 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 **Location**: File naming convention
 
-**Progressive complexity**:
+**Kebab-case simplicity**:
 
 ```
-# Level 1: Root directory prefix
-tu__getting-started.md         (2 letters)
-
-# Level 2: Subdirectory prefix
-ex-co__file-naming.md          (5 letters - ex-co)
-
-# Level 3: Deep subdirectory prefix
-ex-inse__security-basics.md    (7 letters - ex-inse)
+docs/tutorials/getting-started.md
+docs/explanation/conventions/file-naming.md
+docs/explanation/infrastructure/security/security-basics.md
 ```
 
 **Progressive disclosure features**:
 
-- PASS: Simple pattern for common case
-- PASS: More context for deeper files
-- PASS: Pattern scales with depth
-- PASS: Learnable incrementally
+- PASS: Single rule for every file — kebab-case describing the content
+- PASS: Category is conveyed by the directory path, which deepens as context grows
+- PASS: Filename meaning is obvious without a prefix lookup table
+- PASS: Easy for new contributors to follow on day one
 
 ## Relationship to Other Principles
 

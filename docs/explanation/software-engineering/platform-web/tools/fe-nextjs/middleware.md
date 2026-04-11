@@ -11,9 +11,9 @@ tags:
   - routing
   - performance
 related:
-  - ./ex-soen-plwe-tsnext__routing.md
-  - ./ex-soen-plwe-tsnext__api-routes.md
-  - ./ex-soen-plwe-tsnext__security.md
+  - ./routing.md
+  - ./api-routes.md
+  - ./security.md
 principles:
   - explicit-over-implicit
   - automation-over-manual

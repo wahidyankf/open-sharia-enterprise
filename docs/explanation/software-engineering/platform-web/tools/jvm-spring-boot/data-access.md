@@ -19,10 +19,10 @@ principles:
 created: 2026-01-26
 updated: 2026-01-26
 related:
-  - ./ex-soen-plwe-jvspbo__best-practices.md
-  - ./ex-soen-plwe-jvspbo__security.md
-  - ./ex-soen-plwe-jvspbo__rest-apis.md
-  - ./ex-soen-plwe-jvspbo__configuration.md
+  - ./best-practices.md
+  - ./security.md
+  - ./rest-apis.md
+  - ./configuration.md
 ---
 
 # Spring Boot Data Access
