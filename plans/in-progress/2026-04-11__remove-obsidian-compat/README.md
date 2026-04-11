@@ -1,0 +1,350 @@
+# Remove Obsidian Compatibility from Docs
+
+**Status**: In Progress
+**Created**: 2026-04-11
+**Priority**: Medium
+**Complexity**: Medium (file renames + convention rewrite + link updates across ~300 files)
+
+## Problem Statement
+
+The `docs/` directory was originally structured as an [Obsidian](https://obsidian.md/) vault. Three artifacts of that decision still exist, but Obsidian is no longer part of the authoring workflow:
+
+1. **Vault config** — `docs/.obsidian/` holds 9 JSON files (plugins, hotkeys, graph settings) for an Obsidian vault nobody opens. The `.gitignore` carries matching ignore rules for Obsidian workspace state, `.trash/`, and `.smart-connections/`.
+2. **Prefix-heavy filenames** — 304 of 352 files in `docs/` follow the `[hierarchical-prefix]__[content-identifier].md` pattern (e.g., `ex-soen-ar-c4armo__tooling-standards.md`). The [File Naming Convention](../../../governance/conventions/structure/file-naming.md) explicitly scopes this rule to "the Obsidian vault" and justifies it with "global uniqueness… across the entire documentation vault" — a concern specific to Obsidian's flat vault model. GitHub, VS Code, and every other tool the team actually uses handle uniqueness through directory structure.
+3. **Cross-cutting Obsidian references** — ~15 governance/convention files and several agent/skill definitions contain Obsidian-specific rules (wiki-link rejection, YAML-parser quirks, TAB indentation "for Obsidian"), cross-platform compatibility callouts, and documentation warnings.
+
+### Key issues
+
+- **Cognitive overhead**: Contributors and agents must learn an encoding scheme (`ex-go-co-st__`, `ex-soen-prla-ty__`, `ex-go-wo-ayfs__`) whose only payoff is Obsidian flat-vault uniqueness.
+- **Ugly file paths in links**: Every cross-link drags a 10–20 character prefix that carries no meaning for the reader.
+- **Dead convention surface**: `file-naming.md` spends ~350 lines documenting a scheme that exists to serve a tool we do not use.
+- **False-positive validators**: The `docs-validating-links` skill flags Obsidian wiki links as errors, adding rules nobody will ever hit.
+- **Drift risk**: Every new docs file or directory rename requires picking a 2–4 letter abbreviation, which is a silent source of inconsistency.
+
+## Proposed Solution
+
+Remove all Obsidian-specific artifacts and conventions from the repository. Concretely:
+
+### 1. Delete Obsidian vault config
+
+- `git rm -r docs/.obsidian/` (removes 9 tracked JSON files).
+- Strip the Obsidian block from `.gitignore` (`docs/.obsidian/*`, `docs/.obsidian-git-data`, `docs/.trash/`, `docs/.smart-connections/`).
+
+### 2. Rename docs/ files to plain kebab-case
+
+- Drop the `[prefix]__` segment from all `docs/` filenames.
+- Example: `docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-ar-c4armo__tooling-standards.md` → `docs/explanation/software-engineering/architecture/c4-architecture-model/tooling-standards.md`.
+- Preserve `README.md` files (already exempt).
+- Preserve `docs/metadata/` (already exempt).
+- **Collision handling**: Audit for cases where stripping the prefix creates a name conflict inside the same directory. Plan expects ≤5 such collisions given the current structure, resolved by descriptive suffixes (no prefix reintroduction).
+- Use `git mv` for every rename to preserve history.
+
+### 3. Update all incoming links
+
+- Use ripgrep to enumerate every markdown reference to a renamed file.
+- Apply bulk `sed` rewrites scoped to the repo, then spot-check relative-path edge cases.
+- Run `npm run lint:md` and `ayokoding-cli links check` (where applicable) to confirm zero broken links.
+
+### 4. Rewrite the File Naming Convention
+
+- Replace `governance/conventions/structure/file-naming.md` with a concise convention that:
+  - Anchors explicitly on **standard markdown + GitHub compatibility** as the guiding rationale (not Obsidian, not any other tool).
+  - Requires lowercase kebab-case filenames for portability across case-sensitive filesystems and GitHub's URL slug behavior.
+  - Forbids characters that break on GitHub web or Windows/macOS case-insensitive filesystems (spaces, uppercase, `:`, `?`, `*`, `<`, `>`, `|`, `"`, backslash, and non-ASCII unless deliberately scoped).
+  - Keeps `README.md` exception for indices (GitHub auto-renders directory indices from `README.md`).
+  - Keeps `docs/metadata/` exemption (operational cache files).
+  - Removes all prefix tables, subdirectory code tables, migration history, and "Obsidian vault" language.
+- Remove references to the convention's prefix rules from dependent docs.
+
+### 4b. Refresh the Linking Convention on the same axis
+
+- Rewrite the opening paragraphs of `governance/conventions/formatting/linking.md` so the rationale is **standard markdown + GitHub compatibility**, full stop. Remove the "works consistently across GitHub web, Obsidian, and other markdown viewers" framing and the "instead of Obsidian wiki links" comparison.
+- Keep the existing GitHub-compatible link rules intact:
+  - `[Display Text](./relative/path.md)` with a mandatory `.md` extension on docs links.
+  - Relative paths only; no absolute filesystem paths.
+  - Descriptive link text (not filenames or wiki-style identifiers).
+  - Anchor links use GitHub's kebab-case heading slugs: `[Text](./file.md#section-heading)`.
+- Explicitly reject wiki-link syntax `[[...]]` on the grounds that **GitHub does not render it**, not on the grounds that it's "Obsidian-specific".
+
+### 5. Delete the `rhino-cli docs validate-naming` command and its prefix enforcement
+
+**Critical blocker discovered during inventory**: `apps/rhino-cli/` ships a Go CLI command that actively enforces the Obsidian prefix scheme. The command's docstring says it "validates that all files in docs/ follow the hierarchical prefix" with pattern `[hierarchical-prefix]__[content-identifier].md`. Removing the prefixes without also removing this validator will break `test:quick` on the pre-push hook for every unprefixed file.
+
+**What to delete**:
+
+- `apps/rhino-cli/cmd/docs_validate_naming.go`
+- `apps/rhino-cli/cmd/docs_validate_naming_test.go`
+- `apps/rhino-cli/cmd/docs_validate_naming.integration_test.go`
+- `apps/rhino-cli/internal/docs/prefix_rules.go`
+- `apps/rhino-cli/internal/docs/prefix_rules_test.go`
+- `apps/rhino-cli/internal/docs/validator.go` and `validator_test.go`
+- `apps/rhino-cli/internal/docs/fixer.go` and `fixer_test.go`
+- `apps/rhino-cli/internal/docs/scanner.go` and `scanner_test.go`
+- `apps/rhino-cli/internal/docs/reporter.go` and `reporter_test.go`
+- `apps/rhino-cli/internal/docs/link_updater.go` and `link_updater_test.go`
+- `apps/rhino-cli/internal/docs/types.go` (only if it becomes orphaned after the removals — verify by grep)
+- Whichever files under `apps/rhino-cli/internal/docs/testdata/` are only referenced by the removed tests
+
+**What to keep**: the `links_*.go` family (`links_scanner.go`, `links_validator.go`, `links_categorizer.go`, `links_reporter.go`, `links_types.go`) plus `docs_validate_links*.go` — these implement GitHub-compatible link validation and remain useful under the new convention.
+
+**What to update**: the `apps/rhino-cli/cmd/docs.go` parent command must stop registering the `validate-naming` subcommand, and the rhino-cli README must drop references to it.
+
+**Coverage threshold**: rhino-cli requires ≥90% Go test coverage. After the removals, verify the remaining code still meets the threshold.
+
+**Timing**: This step MUST execute **before** the `docs/` rename phase so the pre-push hook's `test:quick` passes at every commit.
+
+### 6. Scrub Obsidian mentions and prefix-scheme explanations across the repo
+
+Remove Obsidian-specific rules, callouts, anti-patterns, and any descriptive text that explains the prefix-encoding scheme. The scope expanded significantly once the inventory ran. Full list in `tech-docs.md` §1.3 and §5. Summary:
+
+**Governance — convention and rule files** (~22 files):
+
+- `governance/conventions/README.md`, `structure/README.md`, `tutorials/README.md`
+- `governance/conventions/structure/file-naming.md` (full rewrite — see step 4)
+- `governance/conventions/structure/plans.md`, `diataxis-framework.md`, `programming-language-docs-separation.md`
+- `governance/conventions/formatting/linking.md` (rationale rewrite — see step 4b)
+- `governance/conventions/formatting/{diagrams,emoji,indentation,nested-code-fences,mathematical-notation,color-accessibility}.md`
+- `governance/conventions/writing/{conventions,quality,readme-quality}.md`
+- `governance/conventions/tutorials/{general,programming-language-content}.md`
+- `governance/conventions/hugo/{shared,ayokoding}.md`
+- `governance/principles/general/simplicity-over-complexity.md`
+- `governance/principles/software-engineering/README.md`
+- `governance/principles/content/{documentation-first,progressive-disclosure}.md`
+- `governance/development/agents/{ai-agents,skill-context-architecture}.md`
+- `governance/development/pattern/database-audit-trail.md`
+- `governance/development/quality/{criticality-levels,three-level-testing-standard}.md`
+- `governance/workflows/meta/workflow-identifier.md`
+- `governance/workflows/infra/development-environment-setup.md`
+
+**.claude/ agents** (~16 files with prefix or Obsidian references):
+
+- `docs-maker.md`, `docs-file-manager.md`
+- `repo-governance-checker.md`, `repo-governance-fixer.md`
+- All 12 `swe-*-developer.md` agents (each references prefixed programming-language docs paths)
+
+**.claude/ skills** (~15 files with prefix or Obsidian references):
+
+- `docs-validating-links/SKILL.md` (remove wiki-link detection)
+- `docs-validating-factual-accuracy/SKILL.md`
+- `swe-developing-applications-common/SKILL.md`
+- `swe-developing-e2e-test-with-playwright/SKILL.md`
+- All 11 `swe-programming-*/SKILL.md` skills (each references prefixed language-docs paths)
+- `repo-assessing-criticality-confidence/SKILL.md`
+
+**Root-level navigation and subproject docs**:
+
+- `README.md`, `CLAUDE.md`, `AGENTS.md`, `ROADMAP.md`, `apps/README.md`, `specs/README.md`
+- Subproject `apps/*/README.md` files (many demo-be / demo-fe READMEs cite `docs/how-to/hoto__*.md`)
+- Subproject `playwright.config.ts` files (several E2E configs cite `docs/how-to/hoto__*.md`)
+- `docs/README.md` (remove "optimized for Obsidian" tip)
+- `docs/how-to/README.md` and other `docs/*/README.md` indexes (list children by name — renames cascade automatically via the basename sed loop in step 7, but the index descriptions may reference the prefix scheme as narrative)
+- `docs/how-to/hoto__*.md` files and other docs that contain narrative examples using prefix filenames
+
+**Two classes of edits**:
+
+1. **Automatic (bulk sed loop in step 7)** — every reference to an old prefixed basename in any file across the repo gets rewritten to the new basename. This handles CLAUDE.md, AGENTS.md, READMEs, agents, skills, playwright configs, Go source comments, etc., in one pass.
+2. **Manual (this step)** — removing Obsidian word mentions and narrative that explains the prefix scheme. These cannot be captured by a basename substitution because the text describes the convention itself, not a specific file.
+
+### 7. Sweep link updates via basename mapping
+
+After the rename, run the mapping-driven basename sed loop (`tech-docs.md` §3.2) across the entire repo, excluding only historical paths (`plans/done/`, `apps/oseplatform-web/content/updates/`), `.opencode/` mirrors (regenerated by sync), `local-temp/`, and `docs/metadata/external-links-status.yaml`. This pass covers all the files listed in step 6 automatically for their filename references.
+
+### 8. Sync .claude/ → .opencode/
+
+After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode` so OpenCode mirrors stay aligned.
+
+### 9. Out of scope (do NOT touch)
+
+- **`plans/done/*`** — historical planning records. Obsidian references in past plans are accurate at the time of writing and should remain as-is.
+- **`apps/oseplatform-web/content/updates/2025-12-14-phase-0-week-4-initial-commit.md`** — historical update post; leave intact.
+- **`ose-infra/` sibling repo** — governance mirroring is one-way from `ose-apps`; changes propagate via the existing `governance-sync-*` workflow after this plan lands on `main`. The sibling sync is not part of this plan's delivery checklist.
+- **Apps content** (`apps/ayokoding-web/`, `apps/oseplatform-web/content/`) — these have their own content conventions and do not use the prefix scheme.
+
+## Goals
+
+### Primary goals
+
+1. **Zero Obsidian vault config in-tree** — `docs/.obsidian/` deleted, `.gitignore` cleaned up.
+2. **Zero prefix-encoded filenames in `docs/`** — every non-`README`, non-`metadata` file uses plain kebab-case.
+3. **Zero Obsidian references in active repo content** — no "Obsidian vault", "Obsidian wiki link", "Obsidian YAML parser", "TAB indentation for Obsidian" language remaining in any tracked file outside historical paths.
+4. **Rewritten File Naming Convention** — concise, anchored on **standard markdown + GitHub compatibility** as the sole rationale.
+5. **Refreshed Linking Convention** — same rationale: standard markdown syntax that renders correctly on GitHub web. All existing GitHub-compatible rules (`.md` extensions, relative paths, descriptive link text, kebab-case anchor slugs, no wiki links) preserved but rejustified on pure GitHub-compatibility grounds.
+6. **Zero broken links post-rename** — markdown linters and link checkers pass; every link in the repo renders on GitHub web.
+7. **Git history preserved** — all renames use `git mv`.
+8. **rhino-cli docs naming validator removed** — `docs validate-naming` command and all its supporting Go files deleted; `docs validate-links` preserved; rhino-cli's ≥90% coverage threshold still met.
+9. **All related agents, skills, and governance docs consistent** — every `.claude/agents/*`, `.claude/skills/*`, `governance/**`, root navigation file (`CLAUDE.md`, `AGENTS.md`, `README.md`, `ROADMAP.md`), subproject `apps/*/README.md`, and `playwright.config.ts` that referenced a renamed docs file or explained the prefix scheme has been updated.
+
+### Secondary goals
+
+1. **Minimal churn in `governance/`** — surgical removals, not a rewrite of unrelated content.
+2. **Single-PR-on-main execution** — all commits land on `main` in sequence via Trunk Based Development; each commit is independently revertible.
+3. **Maker-checker-fixer compatible** — no change to agent orchestration patterns; only textual cleanup.
+4. **Updated CLAUDE.md / AGENTS.md references** — both navigation files point at the new filenames after the rename.
+
+## Success Criteria
+
+### File removal success
+
+- [ ] `docs/.obsidian/` directory does not exist
+- [ ] `.gitignore` contains zero lines referencing `.obsidian`, `.smart-connections`, or `docs/.trash/`
+- [ ] `ripgrep -l "\\.obsidian"` over tracked files returns only historical `plans/done/*` matches
+
+### Rename success
+
+- [ ] `find docs -type f -name "*__*.md"` returns zero results
+- [ ] Every docs file uses lowercase kebab-case (verified by regex scan)
+- [ ] `git log --follow` on sampled renamed files shows pre-rename history
+- [ ] No two files in the same directory collide after prefix removal
+
+### Link integrity success
+
+- [ ] `npm run lint:md` passes with zero errors
+- [ ] `ripgrep` for old prefixed filenames across the repo returns zero hits (excluding `plans/done/`)
+- [ ] Manual spot-check of CLAUDE.md, README.md, governance index files confirms all cross-links resolve
+- [ ] `ayokoding-cli links check` (if applicable to `docs/`) reports zero broken links
+
+### Convention rewrite success
+
+- [ ] `governance/conventions/structure/file-naming.md` contains zero occurrences of "Obsidian", "vault", "prefix", `ex-`, `hoto__`, `ex-go-`, etc.
+- [ ] `governance/conventions/structure/file-naming.md` explicitly states "standard markdown" and "GitHub-compatible" as the rationale
+- [ ] The rewritten convention is ≤120 lines
+- [ ] `governance/conventions/formatting/linking.md` opening paragraph states the rationale as "standard markdown + GitHub compatibility" with no Obsidian cross-compat framing
+- [ ] `governance/conventions/formatting/linking.md` retains all GitHub-compatible link rules (`.md` extension, relative paths, descriptive link text, kebab-case anchor slugs, wiki-link rejection on GitHub-rendering grounds)
+- [ ] `governance/conventions/README.md` index entry for file-naming reflects the new scope
+
+### Obsidian scrub success
+
+- [ ] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/` and explicitly allowed historical files
+- [ ] `governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
+- [ ] `governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
+- [ ] `.claude/skills/docs-validating-links/SKILL.md` no longer flags Obsidian wiki links as an error class
+
+### rhino-cli removal success
+
+- [ ] `apps/rhino-cli/cmd/docs_validate_naming*.go` files do not exist
+- [ ] `apps/rhino-cli/internal/docs/{prefix_rules,validator,fixer,scanner,reporter,link_updater}*.go` files do not exist
+- [ ] `apps/rhino-cli/cmd/docs.go` no longer registers the `validate-naming` subcommand
+- [ ] `apps/rhino-cli/README.md` no longer documents `validate-naming`
+- [ ] `nx run rhino-cli:test:quick` passes with coverage ≥90%
+- [ ] `apps/rhino-cli/internal/docs/links_*.go` files are preserved and their tests still pass
+
+### Broader scope sync success
+
+- [ ] All 12 `.claude/agents/swe-*-developer.md` agents reference the new (unprefixed) programming-language doc filenames
+- [ ] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills reference the new filenames
+- [ ] `CLAUDE.md` and `AGENTS.md` at repo root point at the new filenames
+- [ ] All `apps/*/README.md` and `apps/*/playwright.config.ts` files that referenced docs paths point at the new filenames
+- [ ] `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` across the repo (excluding `plans/done/`, `apps/ayokoding-web/content/`, `local-temp/`, `.opencode/` mirrors, tutorial example code files) returns zero hits
+
+### Agent sync success
+
+- [ ] All updated `.opencode/` mirrors match the updated `.claude/` sources after running `npm run sync:claude-to-opencode`
+- [ ] Pre-commit config-validation hook passes
+
+## Risks and Mitigations
+
+### Risk: rhino-cli test coverage drops below 90% after removals
+
+- **Mitigation**: The removed code is tightly coupled (all the prefix/validator/fixer/scanner/reporter files travel together). Removing them as a unit should move coverage roughly proportionally. After the removal commit, run `nx run rhino-cli:test:quick` and confirm the threshold holds. If it fails, add targeted tests to the remaining `links_*` code to make up the delta.
+
+### Risk: rhino-cli `links_*` depends on removed code
+
+- **Mitigation**: Before deletion, run `go build ./...` in `apps/rhino-cli/` to confirm the build passes after each file removal. If `links_*.go` imports a removed type, either keep the minimal supporting file or refactor the import. The `links_*` family is architecturally independent (it shares only generic `types.go` constructs), so this risk is low.
+
+### Risk: ayokoding-web tutorial content files falsely match the prefix regex
+
+- **Mitigation**: The tutorial files under `apps/ayokoding-web/content/en/learn/.../sed/by-example/` and `.../jq/by-example/` teach sed/jq by using strings like `hoto__` as example input. Exclude these directories from the prefix-pattern grep at verification time. Do NOT rewrite them — they are intentional example content.
+
+### Risk: Silent link breakage in deeply nested docs
+
+- **Mitigation**: Drive the rename from a machine-generated mapping file (`old-path → new-path`), then apply the same mapping to link rewrites. Run `npm run lint:md` and the link-checker after each logical phase before proceeding.
+
+### Risk: Filename collisions inside the same directory
+
+- **Mitigation**: Phase 1 inventory step computes prefix-stripped names per directory and fails loudly if any directory would end up with duplicates. Collisions resolved by descriptive suffixes (not by reintroducing prefixes).
+
+### Risk: Loss of git history for renamed files
+
+- **Mitigation**: Use `git mv` exclusively; verify with `git log --follow` on a sampled set before committing the final rename commit. Keep renames in a dedicated commit so reviewers see them as pure renames.
+
+### Risk: External references (PRs, issues, chat) pointing to old filenames
+
+- **Mitigation**: This is unavoidable for a rename. Mitigation is to land the change atomically and document the rename in the commit message so future searches can trace the move.
+
+### Risk: `ose-infra` governance mirror drifts until next sync
+
+- **Mitigation**: Accept the drift. The one-way `governance-sync-*` workflow reconciles on the next run, and that workflow is explicitly out of scope for this plan.
+
+### Risk: Agent behavior change from removed wiki-link validation
+
+- **Mitigation**: The wiki-link error class is a false-positive guard for a syntax nobody writes. Removing it cannot silently pass a real broken link because the existing `[text](path.md)` validation still runs.
+
+## Alternatives Considered
+
+### Alternative 1: Keep prefixes, only remove vault config
+
+- **Pros**: Smallest possible change, zero rename risk.
+- **Cons**: Leaves a naming scheme whose only rationale was the vault we just deleted. Future contributors continue paying the cognitive tax for a benefit that no longer exists.
+- **Decision**: Rejected — half-measure that hides the motivating "why".
+
+### Alternative 2: Keep prefixes but rewrite the rationale
+
+- **Pros**: No rename churn; simpler to execute.
+- **Cons**: Forces us to invent a new justification for a scheme chosen for Obsidian. "Global uniqueness" is weak outside a flat vault; directory structure already provides it.
+- **Decision**: Rejected — builds on a rationalization rather than fixing the root.
+
+### Alternative 3: Migrate `docs/` to a different docs platform (Hugo, Docusaurus, etc.)
+
+- **Pros**: Forces a clean slate.
+- **Cons**: Massively out of scope. User explicitly asked to remove Obsidian, not to pick a replacement.
+- **Decision**: Rejected — not the requested change.
+
+### Alternative 4 (SELECTED): Delete vault, rename files to plain kebab-case, rewrite convention
+
+- **Pros**: Removes the motivating constraint and its downstream artifacts in one coherent change. Aligns `docs/` with how `governance/` already names files. Simplifies future agent and human authoring.
+- **Cons**: ~304 file renames; large single diff.
+- **Decision**: **SELECTED** — addresses the root cause and leaves the repo in a consistent state.
+
+## Plan Structure
+
+This plan uses the multi-file layout:
+
+1. **README.md** (this file) — overview, problem, solution, risks, success criteria
+2. **[requirements.md](./requirements.md)** — user stories with Gherkin acceptance criteria
+3. **[tech-docs.md](./tech-docs.md)** — file inventory, rename strategy, collision handling, link-update approach, convention rewrite outline
+4. **[delivery.md](./delivery.md)** — phase-by-phase execution checklist with validation gates
+
+## Dependencies
+
+### External
+
+- None.
+
+### Internal
+
+- None (this plan is self-contained within `ose-apps`).
+- `ose-infra` will reconcile via the existing cross-repo sync workflow after merge; no coordination required for this plan.
+
+## Constraints
+
+1. **Trunk Based Development** — all work lands on `main` in small, reviewable commits.
+2. **Git history preservation** — every rename uses `git mv`.
+3. **No touching `plans/done/*`** — historical record is immutable for this refactor.
+4. **Pre-push hook must pass** — `typecheck`, `lint`, `test:quick`, `spec-coverage` for affected projects plus markdown linting.
+5. **`.claude/` edits in orchestrator only** — per CLAUDE.md, never delegate `.claude/` or `.opencode/` edits to subagents; use Bash heredoc/sed for modifications.
+
+## Assumptions
+
+1. Nobody currently opens `docs/` as an Obsidian vault; deleting the vault config causes zero workflow disruption.
+2. The `docs-validating-links` skill's GitHub-link validation remains sufficient after removing the wiki-link error class.
+3. `git mv` on 300+ files in a single commit is acceptable to reviewers (the alternative — split by subdirectory — is also fine and is described in `delivery.md`).
+4. No live PR currently depends on the prefixed filename scheme.
+5. Markdown linters in the repo do not enforce the prefix pattern as a rule (verified — the convention is documentation, not lint-enforced).
+
+## References
+
+- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) — the target of the rewrite
+- [Plans Organization](../../../governance/conventions/structure/plans.md) — structure for this plan
+- [Linking Convention](../../../governance/conventions/formatting/linking.md) — target of Obsidian-reference removal
+- [docs-validating-links Skill](../../../.claude/skills/docs-validating-links/SKILL.md) — target of wiki-link rule removal
+- [Prior plan: Move Rules to Root](../../done/2026-01-06__move-rules-to-root/README.md) — historical precedent; its Problem Statement cited "Obsidian constraints" as motivation for separating `governance/` from `docs/`; this plan finishes the job
