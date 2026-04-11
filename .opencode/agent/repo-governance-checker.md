@@ -818,9 +818,9 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 
 4. **Criticality Levels**:
    - **CRITICAL**: File in wrong directory (organizational integrity)
-   - **HIGH**: Missing required prefix (breaks convention severely)
-   - **MEDIUM**: Inconsistent abbreviation usage
-   - **LOW**: Minor variation (e.g., `test-driven-development` vs `tdd`)
+   - **HIGH**: Non-kebab-case filename (uppercase, spaces, or underscores in basename)
+   - **MEDIUM**: Over-specified name when the directory already encodes the category
+   - **LOW**: Minor naming variation that still follows kebab-case (e.g., `test-driven-development` vs `tdd`)
 
 **Report Format**:
 
@@ -831,7 +831,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 **File**: docs/explanation/software-engineering/programming-languages/java/security-practices.md
 **Criticality**: HIGH
 
-**Issue**: Missing required prefix pattern
+**Issue**: Non-standard filename
 
 **Evidence**:
 Current: `sec-prac.md`
