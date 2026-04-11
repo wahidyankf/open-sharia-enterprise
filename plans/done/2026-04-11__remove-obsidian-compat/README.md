@@ -68,7 +68,7 @@ Remove all Obsidian-specific artifacts and conventions from the repository. Conc
   - `[Display Text](./relative/path.md)` with a mandatory `.md` extension on docs links.
   - Relative paths only; no absolute filesystem paths.
   - Descriptive link text (not filenames or wiki-style identifiers).
-  - Anchor links use GitHub's kebab-case heading slugs: `[Text](./file.md#section-heading)`.
+  - Anchor links use GitHub's kebab-case heading slugs (e.g., `[Text](./target.md#section-heading)` where `#section-heading` is the slugified H2/H3).
 - Explicitly reject wiki-link syntax `[[...]]` on the grounds that **GitHub does not render it**, not on the grounds that it's "Obsidian-specific".
 
 ### 5. Delete the `rhino-cli docs validate-naming` command and its prefix enforcement
@@ -189,63 +189,63 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 
 ### File removal success
 
-- [ ] `docs/.obsidian/` directory does not exist
-- [ ] `.gitignore` contains zero lines referencing `.obsidian`, `.smart-connections`, or `docs/.trash/`
-- [ ] `ripgrep -l "\\.obsidian"` over tracked files returns only historical `plans/done/*` matches
+- [x] `docs/.obsidian/` directory does not exist
+- [x] `.gitignore` contains zero lines referencing `.obsidian`, `.smart-connections`, or `docs/.trash/`
+- [x] `ripgrep -l "\\.obsidian"` over tracked files returns only historical `plans/done/*` matches
 
 ### Rename success
 
-- [ ] `find docs -type f -name "*__*.md"` returns zero results
-- [ ] Every docs file uses lowercase kebab-case (verified by regex scan)
-- [ ] `git log --follow` on sampled renamed files shows pre-rename history
-- [ ] No two files in the same directory collide after prefix removal
+- [x] `find docs -type f -name "*__*.md"` returns zero results
+- [x] Every docs file uses lowercase kebab-case (verified by regex scan)
+- [x] `git log --follow` on sampled renamed files shows pre-rename history
+- [x] No two files in the same directory collide after prefix removal
 
 ### Link integrity success
 
-- [ ] `npm run lint:md` passes with zero errors
-- [ ] `ripgrep` for old prefixed filenames across the repo returns zero hits (excluding `plans/done/`)
-- [ ] Manual spot-check of CLAUDE.md, README.md, governance index files confirms all cross-links resolve
-- [ ] `ayokoding-cli links check` (if applicable to `docs/`) reports zero broken links
+- [x] `npm run lint:md` passes with zero errors
+- [x] `ripgrep` for old prefixed filenames across the repo returns zero hits (excluding `plans/done/`)
+- [x] Manual spot-check of CLAUDE.md, README.md, governance index files confirms all cross-links resolve
+- [x] `ayokoding-cli links check` (if applicable to `docs/`) reports zero broken links
 
 ### Convention rewrite success
 
-- [ ] `governance/conventions/structure/file-naming.md` contains zero occurrences of "Obsidian", "vault", "prefix", `ex-`, `hoto__`, `ex-go-`, etc.
-- [ ] `governance/conventions/structure/file-naming.md` explicitly states "standard markdown" and "GitHub-compatible" as the rationale
-- [ ] The rewritten convention is ≤120 lines
-- [ ] `governance/conventions/formatting/linking.md` opening paragraph states the rationale as "standard markdown + GitHub compatibility" with no Obsidian cross-compat framing
-- [ ] `governance/conventions/formatting/linking.md` retains all GitHub-compatible link rules (`.md` extension, relative paths, descriptive link text, kebab-case anchor slugs, wiki-link rejection on GitHub-rendering grounds)
-- [ ] `governance/conventions/README.md` index entry for file-naming reflects the new scope
+- [x] `governance/conventions/structure/file-naming.md` contains zero occurrences of "Obsidian", "vault", "prefix", `ex-`, `hoto__`, `ex-go-`, etc.
+- [x] `governance/conventions/structure/file-naming.md` explicitly states "standard markdown" and "GitHub-compatible" as the rationale
+- [x] The rewritten convention is ≤120 lines
+- [x] `governance/conventions/formatting/linking.md` opening paragraph states the rationale as "standard markdown + GitHub compatibility" with no Obsidian cross-compat framing
+- [x] `governance/conventions/formatting/linking.md` retains all GitHub-compatible link rules (`.md` extension, relative paths, descriptive link text, kebab-case anchor slugs, wiki-link rejection on GitHub-rendering grounds)
+- [x] `governance/conventions/README.md` index entry for file-naming reflects the new scope
 
 ### Obsidian scrub success
 
-- [ ] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/`, this plan folder (`plans/in-progress/2026-04-11__remove-obsidian-compat/`), and other explicitly allowed historical files
-- [ ] `governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
-- [ ] `governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
-- [ ] `.claude/skills/docs-validating-links/SKILL.md` no longer flags Obsidian wiki links as an error class
+- [x] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/`, this plan folder (`plans/in-progress/2026-04-11__remove-obsidian-compat/`), and other explicitly allowed historical files
+- [x] `governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
+- [x] `governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
+- [x] `.claude/skills/docs-validating-links/SKILL.md` no longer flags Obsidian wiki links as an error class
 
 ### rhino-cli removal success
 
-- [ ] `apps/rhino-cli/cmd/docs_validate_naming*.go` files do not exist
-- [ ] `apps/rhino-cli/internal/docs/{prefix_rules,validator,fixer,scanner,reporter,link_updater}*.go` files do not exist
-- [ ] `specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` does not exist
-- [ ] `apps/rhino-cli/cmd/steps_common_test.go` contains no validate-naming step-pattern constants
-- [ ] `apps/rhino-cli/cmd/testable.go` contains no `docsValidateAllFn` or `docsFixFn` declarations
-- [ ] `apps/rhino-cli/README.md` no longer documents `validate-naming`
-- [ ] `nx run rhino-cli:test:quick` passes with coverage ≥90%
-- [ ] `apps/rhino-cli/internal/docs/links_*.go` files are preserved and their tests still pass
+- [x] `apps/rhino-cli/cmd/docs_validate_naming*.go` files do not exist
+- [x] `apps/rhino-cli/internal/docs/{prefix_rules,validator,fixer,scanner,reporter,link_updater}*.go` files do not exist
+- [x] `specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` does not exist
+- [x] `apps/rhino-cli/cmd/steps_common_test.go` contains no validate-naming step-pattern constants
+- [x] `apps/rhino-cli/cmd/testable.go` contains no `docsValidateAllFn` or `docsFixFn` declarations
+- [x] `apps/rhino-cli/README.md` no longer documents `validate-naming`
+- [x] `nx run rhino-cli:test:quick` passes with coverage ≥90%
+- [x] `apps/rhino-cli/internal/docs/links_*.go` files are preserved and their tests still pass
 
 ### Broader scope sync success
 
-- [ ] All 12 `.claude/agents/swe-*-developer.md` agents reference the new (unprefixed) programming-language doc filenames
-- [ ] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills reference the new filenames
-- [ ] `CLAUDE.md` and `AGENTS.md` at repo root point at the new filenames
-- [ ] All `apps/*/README.md` and `apps/*/playwright.config.ts` files that referenced docs paths point at the new filenames
-- [ ] `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` across the repo (excluding `plans/done/`, `apps/ayokoding-web/content/`, `local-temp/`, `.opencode/` mirrors, tutorial example code files, `apps/a-demo-be-python-fastapi/tests/`, `apps/a-demo-be-rust-axum/Cargo.toml`, `apps/a-demo-be-clojure-pedestal/test/step_definitions/steps.clj`) returns zero hits — see `tech-docs.md §1.3.c` for the complete false-positive path list
+- [x] All 12 `.claude/agents/swe-*-developer.md` agents reference the new (unprefixed) programming-language doc filenames
+- [x] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills reference the new filenames
+- [x] `CLAUDE.md` and `AGENTS.md` at repo root point at the new filenames
+- [x] All `apps/*/README.md` and `apps/*/playwright.config.ts` files that referenced docs paths point at the new filenames
+- [x] `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` across the repo (excluding `plans/done/`, `apps/ayokoding-web/content/`, `local-temp/`, `.opencode/` mirrors, tutorial example code files, `apps/a-demo-be-python-fastapi/tests/`, `apps/a-demo-be-rust-axum/Cargo.toml`, `apps/a-demo-be-clojure-pedestal/test/step_definitions/steps.clj`) returns zero hits — see `tech-docs.md §1.3.c` for the complete false-positive path list
 
 ### Agent sync success
 
-- [ ] All updated `.opencode/` mirrors match the updated `.claude/` sources after running `npm run sync:claude-to-opencode`
-- [ ] Pre-commit config-validation hook passes
+- [x] All updated `.opencode/` mirrors match the updated `.claude/` sources after running `npm run sync:claude-to-opencode`
+- [x] Pre-commit config-validation hook passes
 
 ## Risks and Mitigations
 
