@@ -212,7 +212,7 @@ app.MapGroup("api/v1/zakat")
 
 ## ProblemDetails Error Responses
 
-**MUST** return ProblemDetails for all error responses. See [Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md) for global exception handler setup.
+**MUST** return ProblemDetails for all error responses. See [Error Handling Standards](error-handling-standards.md) for global exception handler setup.
 
 ```csharp
 // CORRECT: use built-in Results helpers for standard errors
@@ -402,9 +402,9 @@ public sealed class GetZakatTransactionQueryHandler(
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md) - ProblemDetails exception handler
-- [Security Standards](ex-soen-prla-csh__security-standards.md) - Authentication, authorization, input validation
-- [Framework Integration](ex-soen-prla-csh__framework-integration.md) - Middleware pipeline, DI registration
+- [Error Handling Standards](error-handling-standards.md) - ProblemDetails exception handler
+- [Security Standards](security-standards.md) - Authentication, authorization, input validation
+- [Framework Integration](framework-integration.md) - Middleware pipeline, DI registration
 
 ## Related Documentation
 

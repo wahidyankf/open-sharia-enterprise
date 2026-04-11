@@ -25,10 +25,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - React patterns
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Type safety standards
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Hook patterns
+- [Idioms](idioms.md) - React patterns
+- [Best Practices](best-practices.md) - Type safety standards
+- [Component Architecture](component-architecture.md) - Component patterns
+- [Hooks](hooks.md) - Hook patterns
 
 ## Overview
 
@@ -962,10 +962,10 @@ if (response.success) {
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - React patterns
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Type safety standards
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Hook patterns
+- **[Idioms](idioms.md)** - React patterns
+- **[Best Practices](best-practices.md)** - Type safety standards
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[Hooks](hooks.md)** - Hook patterns
 - **[TypeScript Language Guide](../../../programming-languages/typescript/README.md)** - TypeScript fundamentals
 
 ---

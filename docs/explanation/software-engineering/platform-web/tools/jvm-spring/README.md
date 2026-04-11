@@ -59,11 +59,11 @@ This documentation covers Spring Framework 6.x (latest stable) with Java 17+ and
 
 All Spring Framework applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Spring Framework-specific patterns
-2. **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
-4. **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
-5. **[Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC patterns
+1. **[Idioms](idioms.md)** - Spring Framework-specific patterns
+2. **[Best Practices](best-practices.md)** - Framework standards
+3. **[Anti-Patterns](anti-patterns.md)** - Common mistakes
+4. **[Configuration](configuration.md)** - Configuration approaches
+5. **[Dependency Injection](dependency-injection.md)** - IoC patterns
 
 **For Agents**: Reference this documentation when building Spring applications.
 
@@ -72,11 +72,11 @@ All Spring Framework applications MUST follow the patterns and practices documen
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **IoC Container**: See [Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)
-- **AOP**: See [Aspect-Oriented Programming](ex-soen-plwe-to-jvsp__aop.md)
-- **Data Access**: See [Data Access](ex-soen-plwe-to-jvsp__data-access.md)
-- **Web MVC**: See [Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)
-- **Testing**: See [Testing](ex-soen-plwe-to-jvsp__testing.md)
+- **IoC Container**: See [Dependency Injection](dependency-injection.md)
+- **AOP**: See [Aspect-Oriented Programming](aop.md)
+- **Data Access**: See [Data Access](data-access.md)
+- **Web MVC**: See [Web MVC](web-mvc.md)
+- **Testing**: See [Testing](testing.md)
 
 ## Software Engineering Principles
 
@@ -110,21 +110,21 @@ Spring Framework usage in this platform follows the the software engineering pri
 
 **Core Documentation:**
 
-- [Idioms](ex-soen-plwe-to-jvsp__idioms.md) - Spring Framework patterns (IoC, DI, AOP, bean lifecycle)
-- [Best Practices](ex-soen-plwe-to-jvsp__best-practices.md) - Framework coding standards
-- [Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md) - Common Spring Framework mistakes
-- [Configuration](ex-soen-plwe-to-jvsp__configuration.md) - Java config, XML, annotations, profiles
-- [Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md) - IoC container, bean wiring
-- [AOP](ex-soen-plwe-to-jvsp__aop.md) - Aspect-oriented programming, cross-cutting concerns
-- [Data Access](ex-soen-plwe-to-jvsp__data-access.md) - JDBC, transactions, Spring Data
-- [Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md) - Web layer, controllers, REST
-- [REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md) - RESTful services with Spring MVC
-- [Security](ex-soen-plwe-to-jvsp__security.md) - Spring Security fundamentals
-- [Testing](ex-soen-plwe-to-jvsp__testing.md) - Spring TestContext framework
-- [Performance](ex-soen-plwe-to-jvsp__performance.md) - Optimization, caching
-- [Observability](ex-soen-plwe-to-jvsp__observability.md) - Monitoring and metrics
-- [Deployment](ex-soen-plwe-to-jvsp__deployment.md) - Deployment strategies
-- [Version Migration](ex-soen-plwe-to-jvsp__version-migration.md)- Upgrading Spring versions
+- [Idioms](idioms.md) - Spring Framework patterns (IoC, DI, AOP, bean lifecycle)
+- [Best Practices](best-practices.md) - Framework coding standards
+- [Anti-Patterns](anti-patterns.md) - Common Spring Framework mistakes
+- [Configuration](configuration.md) - Java config, XML, annotations, profiles
+- [Dependency Injection](dependency-injection.md) - IoC container, bean wiring
+- [AOP](aop.md) - Aspect-oriented programming, cross-cutting concerns
+- [Data Access](data-access.md) - JDBC, transactions, Spring Data
+- [Web MVC](web-mvc.md) - Web layer, controllers, REST
+- [REST APIs](rest-apis.md) - RESTful services with Spring MVC
+- [Security](security.md) - Spring Security fundamentals
+- [Testing](testing.md) - Spring TestContext framework
+- [Performance](performance.md) - Optimization, caching
+- [Observability](observability.md) - Monitoring and metrics
+- [Deployment](deployment.md) - Deployment strategies
+- [Version Migration](version-migration.md)- Upgrading Spring versions
 
 ## Spring Framework Version Strategy
 
@@ -182,7 +182,7 @@ timeline
 - Potential breaking changes in core APIs
 - Continued Kotlin evolution
 
-### [Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md)
+### [Spring Framework Idioms](idioms.md)
 
 Framework-specific patterns for writing idiomatic Spring applications.
 
@@ -199,7 +199,7 @@ Framework-specific patterns for writing idiomatic Spring applications.
 - Property resolution with @Value and Environment
 - Resource loading abstractions
 
-### [Spring Framework Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)
+### [Spring Framework Best Practices](best-practices.md)
 
 Proven approaches for building production-ready Spring applications.
 
@@ -216,7 +216,7 @@ Proven approaches for building production-ready Spring applications.
 - Performance optimization
 - Resource management (connection pools, caches)
 
-### [Spring Framework Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)
+### [Spring Framework Anti-Patterns](anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -279,7 +279,7 @@ flowchart TD
 
 Deep-dive documentation on critical Spring Framework areas:
 
-#### [Spring Framework Configuration](ex-soen-plwe-to-jvsp__configuration.md)
+#### [Spring Framework Configuration](configuration.md)
 
 Comprehensive guide to Spring configuration approaches.
 
@@ -296,7 +296,7 @@ Comprehensive guide to Spring configuration approaches.
 - XML configuration (legacy support)
 - Mixed configuration strategies
 
-#### [Spring Framework Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)
+#### [Spring Framework Dependency Injection](dependency-injection.md)
 
 Comprehensive guide to Spring's IoC container and dependency injection.
 
@@ -314,7 +314,7 @@ Comprehensive guide to Spring's IoC container and dependency injection.
 - Circular dependency resolution
 - Dependency lookup vs dependency injection
 
-#### [Spring Framework AOP](ex-soen-plwe-to-jvsp__aop.md)
+#### [Spring Framework AOP](aop.md)
 
 Comprehensive guide to Aspect-Oriented Programming with Spring.
 
@@ -332,7 +332,7 @@ Comprehensive guide to Aspect-Oriented Programming with Spring.
 - Performance monitoring aspects
 - AOP limitations and when to use it
 
-#### [Spring Framework Data Access](ex-soen-plwe-to-jvsp__data-access.md)
+#### [Spring Framework Data Access](data-access.md)
 
 Comprehensive guide to data persistence with Spring.
 
@@ -351,7 +351,7 @@ Comprehensive guide to data persistence with Spring.
 - Multiple datasource configuration
 - Database initialization scripts
 
-#### [Spring Framework Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)
+#### [Spring Framework Web MVC](web-mvc.md)
 
 Comprehensive guide to building web applications with Spring MVC.
 
@@ -370,7 +370,7 @@ Comprehensive guide to building web applications with Spring MVC.
 - Multipart file upload
 - Async request processing
 
-#### [Spring Framework REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)
+#### [Spring Framework REST APIs](rest-apis.md)
 
 Comprehensive guide to building RESTful web services with Spring MVC.
 
@@ -388,7 +388,7 @@ Comprehensive guide to building RESTful web services with Spring MVC.
 - CORS configuration for REST APIs
 - Financial examples: Zakat APIs, Murabaha contracts
 
-#### [Spring Framework Security](ex-soen-plwe-to-jvsp__security.md)
+#### [Spring Framework Security](security.md)
 
 Comprehensive guide to Spring Security fundamentals.
 
@@ -405,7 +405,7 @@ Comprehensive guide to Spring Security fundamentals.
 - Security testing
 - Integration with Spring MVC
 
-#### [Spring Framework Testing](ex-soen-plwe-to-jvsp__testing.md)
+#### [Spring Framework Testing](testing.md)
 
 Comprehensive guide to testing Spring applications.
 
@@ -422,7 +422,7 @@ Comprehensive guide to testing Spring applications.
 - TestContext caching
 - Test execution listeners
 
-#### [Spring Framework Performance](ex-soen-plwe-to-jvsp__performance.md)
+#### [Spring Framework Performance](performance.md)
 
 Comprehensive guide to optimization and performance tuning.
 
@@ -439,7 +439,7 @@ Comprehensive guide to optimization and performance tuning.
 - Profiling Spring applications
 - Memory management
 
-#### [Spring Framework Observability](ex-soen-plwe-to-jvsp__observability.md)
+#### [Spring Framework Observability](observability.md)
 
 Comprehensive guide to monitoring Spring applications.
 
@@ -454,7 +454,7 @@ Comprehensive guide to monitoring Spring applications.
 - Health indicators
 - Performance monitoring
 
-#### [Spring Framework Deployment](ex-soen-plwe-to-jvsp__deployment.md)
+#### [Spring Framework Deployment](deployment.md)
 
 Comprehensive guide to deploying Spring applications.
 
@@ -468,7 +468,7 @@ Comprehensive guide to deploying Spring applications.
 - Production best practices
 - Application packaging strategies
 
-#### [Spring Framework Version Migration](ex-soen-plwe-to-jvsp__version-migration.md)
+#### [Spring Framework Version Migration](version-migration.md)
 
 Comprehensive guide to upgrading Spring Framework versions.
 
@@ -1181,7 +1181,7 @@ class ZakatCalculationControllerTest {
 
 ### 1. Start with IoC and Dependency Injection
 
-Read [Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md) and [Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md) to understand core concepts:
+Read [Spring Framework Idioms](idioms.md) and [Dependency Injection](dependency-injection.md) to understand core concepts:
 
 - Inversion of Control (IoC) principle
 - ApplicationContext and BeanFactory
@@ -1191,7 +1191,7 @@ Read [Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md) and [Dependency 
 
 ### 2. Learn Configuration Approaches
 
-Read [Configuration](ex-soen-plwe-to-jvsp__configuration.md) for setup strategies:
+Read [Configuration](configuration.md) for setup strategies:
 
 - Java-based configuration (recommended)
 - Annotation-based configuration
@@ -1201,7 +1201,7 @@ Read [Configuration](ex-soen-plwe-to-jvsp__configuration.md) for setup strategie
 
 ### 3. Understand AOP
 
-Read [AOP](ex-soen-plwe-to-jvsp__aop.md) for cross-cutting concerns:
+Read [AOP](aop.md) for cross-cutting concerns:
 
 - Aspect, advice, pointcut, join point
 - Declarative transactions
@@ -1210,7 +1210,7 @@ Read [AOP](ex-soen-plwe-to-jvsp__aop.md) for cross-cutting concerns:
 
 ### 4. Master Data Access
 
-Read [Data Access](ex-soen-plwe-to-jvsp__data-access.md) for persistence:
+Read [Data Access](data-access.md) for persistence:
 
 - JdbcTemplate usage
 - Transaction management
@@ -1219,7 +1219,7 @@ Read [Data Access](ex-soen-plwe-to-jvsp__data-access.md) for persistence:
 
 ### 5. Build Web Applications
 
-Read [Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md) and [REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md):
+Read [Web MVC](web-mvc.md) and [REST APIs](rest-apis.md):
 
 - DispatcherServlet and request flow
 - Controller development
@@ -1228,7 +1228,7 @@ Read [Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md) and [REST APIs](ex-soen-plwe-to
 
 ### 6. Apply Best Practices
 
-Read [Best Practices](ex-soen-plwe-to-jvsp__best-practices.md) and [Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md):
+Read [Best Practices](best-practices.md) and [Anti-Patterns](anti-patterns.md):
 
 - Constructor injection preference
 - Bean naming conventions
@@ -1673,30 +1673,30 @@ tasks.test {
 
 ### Core Spring Framework Documentation
 
-- **[Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Spring Framework Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Production standards
-- **[Spring Framework Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
+- **[Spring Framework Idioms](idioms.md)** - Framework patterns
+- **[Spring Framework Best Practices](best-practices.md)** - Production standards
+- **[Spring Framework Anti-Patterns](anti-patterns.md)** - Common mistakes
 
 ### Core Concepts Documentation
 
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration management
-- **[Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC container
-- **[AOP](ex-soen-plwe-to-jvsp__aop.md)** - Aspect-oriented programming
-- **[Data Access](ex-soen-plwe-to-jvsp__data-access.md)** - JDBC and transactions
+- **[Configuration](configuration.md)** - Configuration management
+- **[Dependency Injection](dependency-injection.md)** - IoC container
+- **[AOP](aop.md)** - Aspect-oriented programming
+- **[Data Access](data-access.md)** - JDBC and transactions
 
 ### Application Layer Documentation
 
-- **[Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)** - Web applications
-- **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
-- **[Testing](ex-soen-plwe-to-jvsp__testing.md)** - Testing strategies
-- **[Performance](ex-soen-plwe-to-jvsp__performance.md)** - Optimization
+- **[Web MVC](web-mvc.md)** - Web applications
+- **[REST APIs](rest-apis.md)** - RESTful services
+- **[Testing](testing.md)** - Testing strategies
+- **[Performance](performance.md)** - Optimization
 
 ### Advanced Topics
 
-- **[Security](ex-soen-plwe-to-jvsp__security.md)** - Spring Security fundamentals
-- **[Observability](ex-soen-plwe-to-jvsp__observability.md)** - Monitoring and metrics
-- **[Deployment](ex-soen-plwe-to-jvsp__deployment.md)** - Deployment strategies
-- **[Version Migration](ex-soen-plwe-to-jvsp__version-migration.md)** - Upgrading versions
+- **[Security](security.md)** - Spring Security fundamentals
+- **[Observability](observability.md)** - Monitoring and metrics
+- **[Deployment](deployment.md)** - Deployment strategies
+- **[Version Migration](version-migration.md)** - Upgrading versions
 
 ### Next Steps
 

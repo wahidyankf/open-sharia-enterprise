@@ -101,20 +101,20 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 **Comprehensive Documentation Coverage**:
 
 - **[Framework Overview](./tools/jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
-- **[Idioms](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
-- **[Best Practices](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
-- **[Anti-Patterns](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes to avoid
-- **[Configuration](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__configuration.md)** - Environment management, properties, profiles
-- **[Dependency Injection](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
-- **[REST APIs](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
-- **[Data Access](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
-- **[Security](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
-- **[Testing](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
-- **[Observability](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
-- **[Performance](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__performance.md)** - Optimization, caching, async processing
-- **[Domain-Driven Design](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
-- **[Functional Programming](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP patterns, immutability
-- **[Version Migration](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
+- **[Idioms](tools/jvm-spring-boot/idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
+- **[Best Practices](tools/jvm-spring-boot/best-practices.md)** - Production standards (project structure, error handling, testing)
+- **[Anti-Patterns](tools/jvm-spring-boot/anti-patterns.md)** - Common mistakes to avoid
+- **[Configuration](tools/jvm-spring-boot/configuration.md)** - Environment management, properties, profiles
+- **[Dependency Injection](tools/jvm-spring-boot/dependency-injection.md)** - IoC container, bean scopes, lifecycle
+- **[REST APIs](tools/jvm-spring-boot/rest-apis.md)** - RESTful services, validation, exception handling
+- **[Data Access](tools/jvm-spring-boot/data-access.md)** - Spring Data JPA, repositories, transactions
+- **[Security](tools/jvm-spring-boot/security.md)** - Spring Security, OAuth2, JWT, method security
+- **[Testing](tools/jvm-spring-boot/testing.md)** - Unit, integration, slice tests, TestContainers
+- **[Observability](tools/jvm-spring-boot/observability.md)** - Actuator, metrics, health checks, tracing
+- **[Performance](tools/jvm-spring-boot/performance.md)** - Optimization, caching, async processing
+- **[Domain-Driven Design](tools/jvm-spring-boot/domain-driven-design.md)** - DDD tactical patterns with Spring
+- **[Functional Programming](tools/jvm-spring-boot/functional-programming.md)** - FP patterns, immutability
+- **[Version Migration](tools/jvm-spring-boot/version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
 
 **Key Features**:
 
@@ -131,8 +131,8 @@ Spring Boot applications in the platform follow Domain-Driven Design principles 
 **Quick Start**:
 
 1. Review [Spring Boot README](./tools/jvm-spring-boot/README.md) for version strategy and architecture
-2. Study [Idioms](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md) for framework patterns
-3. Follow [Best Practices](tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md) for production standards
+2. Study [Idioms](tools/jvm-spring-boot/idioms.md) for framework patterns
+3. Follow [Best Practices](tools/jvm-spring-boot/best-practices.md) for production standards
 4. Apply consistent implementation patterns
 5. Apply [Java coding standards](../programming-languages/java/README.md) for language-specific idioms
 
@@ -240,7 +240,7 @@ This framework documentation connects with:
 - **[Architecture](../architecture/README.md)** - C4 model, DDD patterns
 - **[Development Practices](../development/README.md)** - TDD, BDD, testing strategies
 - **[Functional Programming](../../../../governance/development/pattern/functional-programming.md)** - FP principles
-- **[Monorepo Structure](../../../reference/re__monorepo-structure.md)** - Project organization
+- **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
 
 ## Principles Reflected in Framework Documentation
 
@@ -276,7 +276,7 @@ All framework documentation follows the repository's core principles:
 - **[Programming Languages](../programming-languages/README.md)** - Language-specific documentation
 - **[Architecture](../architecture/README.md)** - Architecture patterns and models
 - **[Development Practices](../development/README.md)** - Development methodologies
-- **[Monorepo Structure](../../../reference/re__monorepo-structure.md)** - Nx workspace organization
+- **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Nx workspace organization
 
 ---
 

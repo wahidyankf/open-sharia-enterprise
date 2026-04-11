@@ -79,9 +79,9 @@ FSM in OSE Platform enforces foundational software engineering principles:
 
 **MUST follow these mandatory standards for all FSM implementations in OSE Platform:**
 
-1. **[State Machine Standards](./ex-soen-ar-fistmafs__state-machine-standards.md)** - When to use FSM, state design, Islamic finance state machines
-2. **[Framework Standards](./ex-soen-ar-fistmafs__framework-standards.md)** - Spring State Machine (Java), XState (TypeScript), framework selection
-3. **[Integration Standards](./ex-soen-ar-fistmafs__integration-standards.md)** - DDD aggregate integration, domain event publishing
+1. **[State Machine Standards](./state-machine-standards.md)** - When to use FSM, state design, Islamic finance state machines
+2. **[Framework Standards](./framework-standards.md)** - Spring State Machine (Java), XState (TypeScript), framework selection
+3. **[Integration Standards](./integration-standards.md)** - DDD aggregate integration, domain event publishing
 
 ## When to Use FSM
 
@@ -107,7 +107,7 @@ FSM in OSE Platform enforces foundational software engineering principles:
 - Pure data validation (use value objects)
 - UI state management only (use component state)
 
-**See**: [State Machine Standards](./ex-soen-ar-fistmafs__state-machine-standards.md)
+**See**: [State Machine Standards](./state-machine-standards.md)
 
 ## OSE Platform State Machines
 
@@ -160,7 +160,7 @@ FSM in OSE Platform enforces foundational software engineering principles:
 - Cannot skip approval stages
 - Must log reviewer identity and timestamps
 
-**See**: [State Machine Standards](./ex-soen-ar-fistmafs__state-machine-standards.md#ose-platform-state-machines)
+**See**: [State Machine Standards](./state-machine-standards.md#ose-platform-state-machines)
 
 ## Framework Selection
 
@@ -200,7 +200,7 @@ public class ZakatStateMachineConfig extends StateMachineConfigurerAdapter<
 }
 ```
 
-**See**: [Framework Standards](./ex-soen-ar-fistmafs__framework-standards.md#spring-state-machine)
+**See**: [Framework Standards](./framework-standards.md#spring-state-machine)
 
 ### XState (TypeScript/JavaScript)
 
@@ -236,7 +236,7 @@ const campaignMachine = createMachine({
 });
 ```
 
-**See**: [Framework Standards](./ex-soen-ar-fistmafs__framework-standards.md#xstate)
+**See**: [Framework Standards](./framework-standards.md#xstate)
 
 ## Integration with DDD Aggregates
 
@@ -259,7 +259,7 @@ public class ZakatAssessment {
 }
 ```
 
-**See**: [Integration Standards](./ex-soen-ar-fistmafs__integration-standards.md)
+**See**: [Integration Standards](./integration-standards.md)
 
 ## Documentation Structure
 
@@ -267,9 +267,9 @@ public class ZakatAssessment {
 
 **Mandatory Standards (All developers MUST follow)**:
 
-1. [State Machine Standards](./ex-soen-ar-fistmafs__state-machine-standards.md) - When to use FSM, state design
-2. [Framework Standards](./ex-soen-ar-fistmafs__framework-standards.md) - Spring SSM, XState configuration
-3. [Integration Standards](./ex-soen-ar-fistmafs__integration-standards.md) - DDD aggregate integration
+1. [State Machine Standards](./state-machine-standards.md) - When to use FSM, state design
+2. [Framework Standards](./framework-standards.md) - Spring SSM, XState configuration
+3. [Integration Standards](./integration-standards.md) - DDD aggregate integration
 
 ## Validation and Compliance
 

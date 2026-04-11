@@ -31,10 +31,10 @@ principles:
 
 **Related Guides**:
 
-- [Channels](ex-soen-plwe-to-elph__channels.md) - Channel testing
-- [LiveView](ex-soen-plwe-to-elph__liveview.md) - LiveView testing
-- [Data Access](ex-soen-plwe-to-elph__data-access.md) - Database testing
-- [Best Practices](ex-soen-plwe-to-elph__best-practices.md) - Testing patterns
+- [Channels](channels.md) - Channel testing
+- [LiveView](liveview.md) - LiveView testing
+- [Data Access](data-access.md) - Database testing
+- [Best Practices](best-practices.md) - Testing patterns
 
 ## Overview
 
@@ -999,9 +999,9 @@ end
 
 ## Related Documentation
 
-- **[Channels Guide](ex-soen-plwe-to-elph__channels.md)** - Channel implementation
-- **[LiveView Guide](ex-soen-plwe-to-elph__liveview.md)** - LiveView patterns
-- **[Data Access Guide](ex-soen-plwe-to-elph__data-access.md)** - Database operations
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Testing patterns
+- **[Channels Guide](channels.md)** - Channel implementation
+- **[LiveView Guide](liveview.md)** - LiveView patterns
+- **[Data Access Guide](data-access.md)** - Database operations
+- **[Best Practices](best-practices.md)** - Testing patterns
 - **[ExUnit Documentation](https://hexdocs.pm/ex_unit)** - Official testing framework
 - **Test Templates (TODO: ./templates/ex-soen-plwe-elph-te\_\_test-template.md)** - Test starters

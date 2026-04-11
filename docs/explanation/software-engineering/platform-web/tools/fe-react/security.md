@@ -25,8 +25,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Security standards
-- [Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md) - Security mistakes
+- [Best Practices](best-practices.md) - Security standards
+- [Anti-Patterns](anti-patterns.md) - Security mistakes
 
 ## Overview
 
@@ -1505,10 +1505,10 @@ export const SecureWaqfDonationForm: React.FC = () => {
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Security standards
-- **[Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md)** - Security mistakes
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Secure component design
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - Secure state handling
+- **[Best Practices](best-practices.md)** - Security standards
+- **[Anti-Patterns](anti-patterns.md)** - Security mistakes
+- **[Component Architecture](component-architecture.md)** - Secure component design
+- **[State Management](state-management.md)** - Secure state handling
 
 ---
 

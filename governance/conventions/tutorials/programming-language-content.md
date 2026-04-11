@@ -713,7 +713,7 @@ To add a new programming language:
 9. **Validate against metrics** (line counts, cross-references, code examples)
 10. **Run validation agents** (content-checker, facts-checker, link-checker)
 
-See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) for detailed step-by-step instructions.
+See [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md) for detailed step-by-step instructions.
 
 ## Examples from Benchmark Languages
 
@@ -811,7 +811,7 @@ Even Elixir, the highest standard, has gaps:
 
 ## Related How-To Guides
 
-- [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) - Step-by-step implementation guide
+- [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md) - Step-by-step implementation guide
 
 ## Version History
 

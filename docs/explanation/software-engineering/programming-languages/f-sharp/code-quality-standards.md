@@ -316,9 +316,9 @@ indent_size = 2
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Naming conventions FSharpLint enforces
-- [Build Configuration](ex-soen-prla-fsh__build-configuration.md) - `.fsproj` and `Directory.Build.props` setup
-- [Testing Standards](ex-soen-prla-fsh__testing-standards.md) - Test files also subject to Fantomas
+- [Coding Standards](coding-standards.md) - Naming conventions FSharpLint enforces
+- [Build Configuration](build-configuration.md) - `.fsproj` and `Directory.Build.props` setup
+- [Testing Standards](testing-standards.md) - Test files also subject to Fantomas
 
 ## Related Documentation
 

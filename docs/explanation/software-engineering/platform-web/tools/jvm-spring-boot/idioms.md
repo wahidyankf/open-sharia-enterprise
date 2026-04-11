@@ -47,11 +47,11 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)
-- [Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)
-- [Configuration](ex-soen-plwe-to-jvspbo__configuration.md)
-- [Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)
-- [REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md)
+- [Best Practices](best-practices.md)
+- [Anti-Patterns](anti-patterns.md)
+- [Configuration](configuration.md)
+- [Dependency Injection](dependency-injection.md)
+- [REST APIs](rest-apis.md)
 
 ## Overview
 
@@ -1628,20 +1628,20 @@ public class ThirdRunner implements ApplicationRunner {
 
 ## Related Documentation
 
-- **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
-- **[Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes
-- **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Configuration management
-- **[Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)** - DI patterns
-- **[Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP with Spring Boot
+- **[Spring Boot Best Practices](best-practices.md)** - Production standards
+- **[Spring Boot Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Configuration](configuration.md)** - Configuration management
+- **[Dependency Injection](dependency-injection.md)** - DI patterns
+- **[Functional Programming](functional-programming.md)** - FP with Spring Boot
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md) - Manual Spring setup patterns
-- [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
-- [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Type-safe configuration patterns
-- [Spring Boot Dependency Injection](./ex-soen-plwe-to-jvspbo__dependency-injection.md) - DI best practices
+- [Spring Framework Idioms](../jvm-spring/idioms.md) - Manual Spring setup patterns
+- [Java Best Practices](../../../programming-languages/java/coding-standards.md) - Java baseline standards
+- [Spring Boot Configuration](./configuration.md) - Type-safe configuration patterns
+- [Spring Boot Dependency Injection](./dependency-injection.md) - DI best practices
 
 ---
 

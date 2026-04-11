@@ -189,39 +189,39 @@ stmt.setString(1, userId);
 
 **Core Patterns**:
 
-- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__idioms.md)
-- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__best-practices.md)
-- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__anti-patterns.md)
+- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/idioms.md)
+- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/best-practices.md)
+- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/anti-patterns.md)
 
 **Configuration & Architecture**:
 
-- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__configuration.md)
-- [Dependency Injection](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__dependency-injection.md)
-- [AOP](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__aop.md)
-- [Build Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__build-configuration.md)
+- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/configuration.md)
+- [Dependency Injection](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/dependency-injection.md)
+- [AOP](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/aop.md)
+- [Build Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/build-configuration.md)
 
 **Data & Web**:
 
-- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__data-access.md)
-- [Web MVC](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__web-mvc.md)
-- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__rest-apis.md)
+- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/data-access.md)
+- [Web MVC](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/web-mvc.md)
+- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/rest-apis.md)
 
 **Quality & Operations**:
 
-- [Security](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__security.md)
-- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__testing.md)
-- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__performance.md)
-- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__observability.md)
-- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__deployment.md)
-- [Code Quality](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__code-quality.md)
+- [Security](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/security.md)
+- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/testing.md)
+- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/performance.md)
+- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/observability.md)
+- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/deployment.md)
+- [Code Quality](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/code-quality.md)
 
 **Domain & Design**:
 
-- [DDD Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__ddd-standards.md)
-- [API Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__api-standards.md)
-- [Concurrency Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__concurrency-standards.md)
-- [Error Handling Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__error-handling-standards.md)
-- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ex-soen-plwe-to-jvsp__version-migration.md)
+- [DDD Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/ddd-standards.md)
+- [API Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/api-standards.md)
+- [Concurrency Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/concurrency-standards.md)
+- [Error Handling Standards](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/error-handling-standards.md)
+- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring/version-migration.md)
 
 ---
 
@@ -285,35 +285,35 @@ stmt.setString(1, userId);
 
 **Core Patterns**:
 
-- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md)
-- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md)
-- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__anti-patterns.md)
+- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/idioms.md)
+- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/best-practices.md)
+- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/anti-patterns.md)
 
 **Configuration & Architecture**:
 
-- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__configuration.md)
-- [Dependency Injection](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__dependency-injection.md)
-- [AOP](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__aop.md)
+- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/configuration.md)
+- [Dependency Injection](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/dependency-injection.md)
+- [AOP](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/aop.md)
 
 **Data & Web**:
 
-- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md)
-- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md)
-- [WebFlux Reactive](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__webflux-reactive.md)
+- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/data-access.md)
+- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/rest-apis.md)
+- [WebFlux Reactive](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/webflux-reactive.md)
 
 **Quality & Operations**:
 
-- [Security](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md)
-- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__testing.md)
-- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__performance.md)
-- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__observability.md)
-- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__deployment.md)
+- [Security](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/security.md)
+- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/testing.md)
+- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/performance.md)
+- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/observability.md)
+- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/deployment.md)
 
 **Domain & Design**:
 
-- [Domain-Driven Design](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__domain-driven-design.md)
-- [Functional Programming](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__functional-programming.md)
-- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__version-migration.md)
+- [Domain-Driven Design](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/domain-driven-design.md)
+- [Functional Programming](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/functional-programming.md)
+- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/version-migration.md)
 
 ---
 

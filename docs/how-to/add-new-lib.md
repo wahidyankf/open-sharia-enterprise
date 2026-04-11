@@ -391,7 +391,7 @@ npm install -D tsx
 
 ## Related Documentation
 
-- [Add New App](./hoto__add-new-app.md)
-- [Run Nx Commands](./hoto__run-nx-commands.md)
-- [Monorepo Structure Reference](../reference/re__monorepo-structure.md)
-- [Nx Configuration Reference](../reference/re__nx-configuration.md) - Tag convention for `type:`, `lang:` values
+- [Add New App](./add-new-app.md)
+- [Run Nx Commands](./run-nx-commands.md)
+- [Monorepo Structure Reference](../reference/monorepo-structure.md)
+- [Nx Configuration Reference](../reference/nx-configuration.md) - Tag convention for `type:`, `lang:` values

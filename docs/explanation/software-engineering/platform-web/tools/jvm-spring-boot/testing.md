@@ -1639,27 +1639,27 @@ class CompleteWaqfTest {
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Comprehensive production patterns
-- [Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md) - Understanding Spring DI for testability
-- [Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - Repository and entity testing
-- [REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) - Controller testing patterns
+- [Spring Boot Best Practices](best-practices.md) - Comprehensive production patterns
+- [Dependency Injection](dependency-injection.md) - Understanding Spring DI for testability
+- [Data Access](data-access.md) - Repository and entity testing
+- [REST APIs](rest-apis.md) - Controller testing patterns
 
 ---
 
 **Next Steps:**
 
-- Review [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md) for testing bounded contexts
-- Explore [Observability](ex-soen-plwe-to-jvspbo__observability.md) for monitoring test execution
-- Check [Performance](ex-soen-plwe-to-jvspbo__performance.md) for load testing strategies
+- Review [Domain-Driven Design](domain-driven-design.md) for testing bounded contexts
+- Explore [Observability](observability.md) for monitoring test execution
+- Check [Performance](performance.md) for load testing strategies
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Testing](../jvm-spring/ex-soen-plwe-to-jvsp__testing.md) - Manual Spring testing
-- [Java Testing](../../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Testing patterns
-- [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Test standards
+- [Spring Framework Testing](../jvm-spring/testing.md) - Manual Spring testing
+- [Java Testing](../../../programming-languages/java/testing-standards.md) - Java test baseline
+- [Spring Boot Idioms](./idioms.md) - Testing patterns
+- [Spring Boot Best Practices](./best-practices.md) - Test standards
 
 **Hands-on Learning (AyoKoding)**:
 

@@ -87,22 +87,22 @@ All Go code MUST follow the platform coding standards organized into two categor
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/golang/coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/golang/testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/golang/code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/golang/build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__security-standards.md)** - Input validation, injection prevention, crypto practices (user-facing services)
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__concurrency-standards.md)** - Goroutines, channels, context (concurrent code)
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__ddd-standards.md)** - Domain-Driven Design tactical patterns (business domains)
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__api-standards.md)** - REST conventions, HTTP routing (web services)
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__performance-standards.md)** - Profiling with pprof, benchmarking (optimization needed)
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
-7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__type-safety-standards.md)** - Generics, type parameters (reusable code)
-8. **[Dependency Standards](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__dependency-standards.md)** - Go modules, version selection, replace directives
-9. **[Design Patterns](../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__design-patterns.md)** - Idiomatic Go patterns (functional options, interface design)
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/golang/security-standards.md)** - Input validation, injection prevention, crypto practices (user-facing services)
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/golang/concurrency-standards.md)** - Goroutines, channels, context (concurrent code)
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/golang/ddd-standards.md)** - Domain-Driven Design tactical patterns (business domains)
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/golang/api-standards.md)** - REST conventions, HTTP routing (web services)
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/golang/performance-standards.md)** - Profiling with pprof, benchmarking (optimization needed)
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/golang/error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
+7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/golang/type-safety-standards.md)** - Generics, type parameters (reusable code)
+8. **[Dependency Standards](../../docs/explanation/software-engineering/programming-languages/golang/dependency-standards.md)** - Go modules, version selection, replace directives
+9. **[Design Patterns](../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md)** - Idiomatic Go patterns (functional options, interface design)
 
 **See `swe-programming-golang` Skill** for quick access to coding standards during development.
 
@@ -121,7 +121,7 @@ All Go code MUST follow the platform coding standards organized into two categor
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 

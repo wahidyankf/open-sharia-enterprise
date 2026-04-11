@@ -14,8 +14,8 @@ tags:
   - genstage
   - broadway
 related:
-  - ./ex-soen-prla-el__otp-genserver.md
-  - ./ex-soen-prla-el__otp-supervisor.md
+  - ./otp-genserver.md
+  - ./otp-supervisor.md
   - ./ex-soen-prla-el__concurrency-and-parallelism.md
 principles:
   - modularity
@@ -1441,8 +1441,8 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [GenServer Patterns](ex-soen-prla-el__otp-genserver.md)
-- [Supervisor Patterns](ex-soen-prla-el__otp-supervisor.md)
+- [GenServer Patterns](otp-genserver.md)
+- [Supervisor Patterns](otp-supervisor.md)
 
 ---
 

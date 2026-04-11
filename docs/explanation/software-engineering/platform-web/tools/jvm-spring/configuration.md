@@ -1102,9 +1102,9 @@ class MigrationConfiguration {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Production standards
-- **[Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC container
+- **[Idioms](idioms.md)** - Framework patterns
+- **[Best Practices](best-practices.md)** - Production standards
+- **[Dependency Injection](dependency-injection.md)** - IoC container
 
 ### Development Practices
 
@@ -1114,14 +1114,14 @@ class MigrationConfiguration {
 
 **OSE Explanation Foundation**:
 
-- [Java Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Configuration patterns
-- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Bean wiring
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Configuration standards
+- [Java Configuration](../../../programming-languages/java/build-configuration.md) - Java baseline configuration
+- [Spring Framework Idioms](./idioms.md) - Configuration patterns
+- [Spring Framework Dependency Injection](./dependency-injection.md) - Bean wiring
+- [Spring Framework Best Practices](./best-practices.md) - Configuration standards
 
 **Spring Boot Extension**:
 
-- [Spring Boot Configuration](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__configuration.md) - Auto-configuration patterns
+- [Spring Boot Configuration](../jvm-spring-boot/configuration.md) - Auto-configuration patterns
 
 ---
 

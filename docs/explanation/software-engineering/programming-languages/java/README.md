@@ -121,17 +121,17 @@ OSE Platform follows a three-tier Java versioning strategy:
 
 **MUST follow these mandatory standards for all Java code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-ja__coding-standards.md)** - Naming conventions, package organization, Maven structure
-2. **[Framework Integration](./ex-soen-prla-ja__framework-integration.md)** - Spring Boot 4, Jakarta EE 11 configuration
-3. **[Testing Standards](./ex-soen-prla-ja__testing-standards.md)** - JUnit 6, AssertJ, Mockito, TestContainers, Cucumber
-4. **[Build Configuration](./ex-soen-prla-ja__build-configuration.md)** - Maven POM structure, dependency management
-5. **[Code Quality](./ex-soen-prla-ja__code-quality.md)** - Spotless, Error Prone, NullAway, Checkstyle
-6. **[Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md)** - OSE exception hierarchy, transaction atomicity
-7. **[Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md)** - Virtual threads, structured concurrency
-8. **[Performance Standards](./ex-soen-prla-ja__performance-standards.md)** - SLOs, JVM tuning, GC configuration
-9. **[Security Standards](./ex-soen-prla-ja__security-standards.md)** - OAuth2/JWT, RBAC, PII encryption
-10. **[API Standards](./ex-soen-prla-ja__api-standards.md)** - REST conventions, pagination, idempotency
-11. **[DDD Standards](./ex-soen-prla-ja__ddd-standards.md)** - Domain-Driven Design tactical patterns
+1. **[Coding Standards](./coding-standards.md)** - Naming conventions, package organization, Maven structure
+2. **[Framework Integration](./framework-integration.md)** - Spring Boot 4, Jakarta EE 11 configuration
+3. **[Testing Standards](./testing-standards.md)** - JUnit 6, AssertJ, Mockito, TestContainers, Cucumber
+4. **[Build Configuration](./build-configuration.md)** - Maven POM structure, dependency management
+5. **[Code Quality](./code-quality.md)** - Spotless, Error Prone, NullAway, Checkstyle
+6. **[Error Handling Standards](./error-handling-standards.md)** - OSE exception hierarchy, transaction atomicity
+7. **[Concurrency Standards](./concurrency-standards.md)** - Virtual threads, structured concurrency
+8. **[Performance Standards](./performance-standards.md)** - SLOs, JVM tuning, GC configuration
+9. **[Security Standards](./security-standards.md)** - OAuth2/JWT, RBAC, PII encryption
+10. **[API Standards](./api-standards.md)** - REST conventions, pagination, idempotency
+11. **[DDD Standards](./ddd-standards.md)** - Domain-Driven Design tactical patterns
 
 ## Documentation Structure
 
@@ -139,18 +139,18 @@ OSE Platform follows a three-tier Java versioning strategy:
 
 **Mandatory Standards (All Java Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Naming, package structure, Maven organization
-2. [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot 4, Jakarta EE 11 setup
-3. [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JUnit 6, AssertJ, TestContainers, Cucumber
+1. [Coding Standards](./coding-standards.md) - Naming, package structure, Maven organization
+2. [Framework Integration](./framework-integration.md) - Spring Boot 4, Jakarta EE 11 setup
+3. [Testing Standards](./testing-standards.md) - JUnit 6, AssertJ, TestContainers, Cucumber
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-ja__security-standards.md) - OAuth2, RBAC, encryption for user input/auth
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Virtual threads for multi-threaded code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Tactical patterns for business domains
-- **APIs**: [API Standards](./ex-soen-prla-ja__api-standards.md) - REST conventions for HTTP endpoints
-- **Performance**: [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - SLOs, JVM tuning for optimization
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Exception hierarchy for resilience
+- **Security**: [Security Standards](./security-standards.md) - OAuth2, RBAC, encryption for user input/auth
+- **Concurrency**: [Concurrency Standards](./concurrency-standards.md) - Virtual threads for multi-threaded code
+- **Domain Modeling**: [DDD Standards](./ddd-standards.md) - Tactical patterns for business domains
+- **APIs**: [API Standards](./api-standards.md) - REST conventions for HTTP endpoints
+- **Performance**: [Performance Standards](./performance-standards.md) - SLOs, JVM tuning for optimization
+- **Error Handling**: [Error Handling Standards](./error-handling-standards.md) - Exception hierarchy for resilience
 
 ### Documentation Organization
 
@@ -278,7 +278,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

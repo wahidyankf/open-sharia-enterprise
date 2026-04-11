@@ -129,7 +129,7 @@ void shouldSaveDonation() {
 | Integration | Mocked       | In-memory impl          | MSW / WireMock |
 | E2E         | Real         | Real                    | Real           |
 
-**See**: [Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md) for full definitions and examples.
+**See**: [Three-Tier Testing Model](./three-tier-testing.md) for full definitions and examples.
 
 ## OSE Platform Test Organization
 

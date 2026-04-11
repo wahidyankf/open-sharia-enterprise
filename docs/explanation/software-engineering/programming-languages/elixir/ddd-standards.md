@@ -13,9 +13,9 @@ tags:
   - domain-events
   - functional-programming
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__otp-application.md
-  - ./ex-soen-prla-el__functional-programming-standards.md
+  - ./coding-standards.md
+  - ./otp-application.md
+  - ./functional-programming-standards.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1693,9 +1693,9 @@ end
 
 ## 📚 Related Topics
 
-- [Protocols and Behaviours](ex-soen-prla-el__protocols-behaviours-standards.md) - Polymorphism in DDD
-- [Functional Programming](ex-soen-prla-el__functional-programming-standards.md) - FP approach to DDD
-- [Testing](ex-soen-prla-el__testing-standards.md) - Testing DDD applications
+- [Protocols and Behaviours](protocols-behaviours-standards.md) - Polymorphism in DDD
+- [Functional Programming](functional-programming-standards.md) - FP approach to DDD
+- [Testing](testing-standards.md) - Testing DDD applications
 
 ## 📖 Sources
 

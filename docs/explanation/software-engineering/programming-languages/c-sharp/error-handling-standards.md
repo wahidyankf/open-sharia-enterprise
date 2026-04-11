@@ -411,9 +411,9 @@ if (payerId == Guid.Empty) throw new ArgumentException("PayerId cannot be empty.
 
 ## Related Standards
 
-- [API Standards](ex-soen-prla-csh__api-standards.md) - ProblemDetails in REST API responses
-- [Concurrency Standards](ex-soen-prla-csh__concurrency-standards.md) - CancellationToken best practices
-- [Testing Standards](ex-soen-prla-csh__testing-standards.md) - FluentAssertions exception testing
+- [API Standards](api-standards.md) - ProblemDetails in REST API responses
+- [Concurrency Standards](concurrency-standards.md) - CancellationToken best practices
+- [Testing Standards](testing-standards.md) - FluentAssertions exception testing
 
 ## Related Documentation
 

@@ -75,7 +75,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 1. Red-Green-Refactor Cycle
 
-**[Red-Green-Refactor Cycle Standards](./ex-soen-de-tedrdetd__tdd-cycle-standards.md)**
+**[Red-Green-Refactor Cycle Standards](./tdd-cycle-standards.md)**
 
 - REQUIRED: Follow Red-Green-Refactor rhythm
 - REQUIRED: See red before green
@@ -83,7 +83,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 2. Test Structure and Organization
 
-**[Testing Standards](./ex-soen-de-tedrdetd__testing-standards.md)**
+**[Testing Standards](./testing-standards.md)**
 
 - REQUIRED: FIRST principles (Fast, Independent, Repeatable, Self-validating, Timely)
 - REQUIRED: AAA pattern (Arrange-Act-Assert)
@@ -91,14 +91,14 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 3. Test Doubles
 
-**[Test Doubles Standards](./ex-soen-de-tedrdetd__test-doubles-standards.md)**
+**[Test Doubles Standards](./test-doubles-standards.md)**
 
 - REQUIRED: Use in-memory implementations over mocks when possible
 - REQUIRED: Verify interactions only when testing behavior, not implementation
 
 ### 4. Three-Tier Testing Model
 
-**[Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md)**
+**[Three-Tier Testing Model](./three-tier-testing.md)**
 
 - REQUIRED: Unit and integration tests MUST mock all external I/O
 - REQUIRED: E2E tests MUST NOT mock anything
@@ -106,7 +106,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 5. Integration Testing
 
-**[Integration Testing Standards](./ex-soen-de-tedrdetd__integration-testing-standards.md)**
+**[Integration Testing Standards](./integration-testing-standards.md)**
 
 - REQUIRED: Use in-memory repository implementations (NOT Testcontainers)
 - REQUIRED: Use MSW (TypeScript) or WireMock (Java) for outbound HTTP
@@ -115,7 +115,7 @@ TDD standards in OSE Platform align with core software engineering principles:
 
 ### 6. TDD with Domain-Driven Design
 
-**[TDD with DDD Standards](./ex-soen-de-tedrdetd__tdd-with-ddd-standards.md)**
+**[TDD with DDD Standards](./tdd-with-ddd-standards.md)**
 
 - REQUIRED: Test aggregate invariants
 - REQUIRED: Test value object immutability and equality

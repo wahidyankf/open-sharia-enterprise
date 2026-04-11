@@ -18,7 +18,7 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -39,9 +39,9 @@ Security is paramount in modern application development. Go provides robust tool
 
 **Related Documentation**:
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
-- [Error Handling](./ex-soen-prla-go__error-handling-standards.md)
-- [Web Services](./ex-soen-prla-go__api-standards.md)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
+- [Error Handling](./error-handling-standards.md)
+- [Web Services](./api-standards.md)
 
 ## Security Fundamentals
 
@@ -2794,9 +2794,9 @@ Security in Go requires:
 
 **Next Steps**:
 
-- Read [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
-- Explore [Web Services](./ex-soen-prla-go__api-standards.md)
-- Study [Error Handling](./ex-soen-prla-go__error-handling-standards.md)
+- Read [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
+- Explore [Web Services](./api-standards.md)
+- Study [Error Handling](./error-handling-standards.md)
 
 ---
 

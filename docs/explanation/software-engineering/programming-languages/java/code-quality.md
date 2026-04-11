@@ -435,10 +435,10 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Related Standards
 
-- [Java Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Naming conventions enforced by Checkstyle
-- [Java Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Constructor injection enforced by Error Prone
-- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JaCoCo coverage requirements
-- [Java Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven plugin configuration
+- [Java Coding Standards](./coding-standards.md) - Naming conventions enforced by Checkstyle
+- [Java Framework Integration](./framework-integration.md) - Constructor injection enforced by Error Prone
+- [Java Testing Standards](./testing-standards.md) - JaCoCo coverage requirements
+- [Java Build Configuration](./build-configuration.md) - Maven plugin configuration
 
 ## Software Engineering Principles
 
@@ -467,15 +467,15 @@ These standards enforce the the software engineering principles:
 
 **Enforces**:
 
-- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Checkstyle enforces naming and structure conventions
+- [Coding Standards](./coding-standards.md) - Checkstyle enforces naming and structure conventions
 
 **Build Setup**:
 
-- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven plugin configuration for quality tools
+- [Build Configuration](./build-configuration.md) - Maven plugin configuration for quality tools
 
 **Test Coverage**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JaCoCo coverage requirements and reporting
+- [Testing Standards](./testing-standards.md) - JaCoCo coverage requirements and reporting
 
 **Maintainers**: Platform Documentation Team
 **Last Updated**: 2026-02-04

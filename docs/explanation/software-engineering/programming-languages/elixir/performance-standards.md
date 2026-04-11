@@ -14,9 +14,9 @@ tags:
   - tail-call-optimization
   - ets
 related:
-  - ./ex-soen-prla-el__concurrency-standards.md
-  - ./ex-soen-prla-el__memory-management-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
+  - ./concurrency-standards.md
+  - ./memory-management-standards.md
+  - ./coding-standards.md
 principles:
   - simplicity-over-complexity
   - automation-over-manual
@@ -931,9 +931,9 @@ end
 
 ### OSE Platform Standards
 
-- [Concurrency and Parallelism](./ex-soen-prla-el__concurrency-standards.md) - Concurrency patterns, OTP, supervision trees
-- [Memory Management](./ex-soen-prla-el__memory-management-standards.md) - Memory optimization, garbage collection
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Code organization, naming conventions
+- [Concurrency and Parallelism](./concurrency-standards.md) - Concurrency patterns, OTP, supervision trees
+- [Memory Management](./memory-management-standards.md) - Memory optimization, garbage collection
+- [Best Practices](./coding-standards.md) - Code organization, naming conventions
 
 ### Learning Resources
 

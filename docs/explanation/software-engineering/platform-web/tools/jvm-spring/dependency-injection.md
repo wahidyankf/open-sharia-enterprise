@@ -987,18 +987,18 @@ public class DonationService {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Production standards
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
+- **[Idioms](idioms.md)** - Framework patterns
+- **[Best Practices](best-practices.md)** - Production standards
+- **[Configuration](configuration.md)** - Configuration approaches
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Dependency Management](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - DI patterns
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Bean configuration
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - DI best practices
+- [Java Dependency Management](../../../programming-languages/java/framework-integration.md) - Java baseline DI
+- [Spring Framework Idioms](./idioms.md) - DI patterns
+- [Spring Framework Configuration](./configuration.md) - Bean configuration
+- [Spring Framework Best Practices](./best-practices.md) - DI best practices
 
 **Hands-on Learning (AyoKoding)**:
 
@@ -1006,7 +1006,7 @@ public class DonationService {
 
 **Spring Boot Extension**:
 
-- [Spring Boot Dependency Injection](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__dependency-injection.md) - Auto-wired patterns
+- [Spring Boot Dependency Injection](../jvm-spring-boot/dependency-injection.md) - Auto-wired patterns
 
 ---
 

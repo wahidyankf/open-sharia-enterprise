@@ -594,9 +594,9 @@ api → application → domain ← infrastructure
 
 **OSE Explanation**:
 
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Spring Java config and XML setup
-- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - IoC container fundamentals
-- [Java Build Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
+- [Spring Framework Configuration](./configuration.md) - Spring Java config and XML setup
+- [Spring Framework Dependency Injection](./dependency-injection.md) - IoC container fundamentals
+- [Java Build Configuration](../../../programming-languages/java/build-configuration.md) - Java Maven baseline
 
 ## Software Engineering Principles
 
@@ -622,27 +622,27 @@ api → application → domain ← infrastructure
 
 **OSE Platform Standards**:
 
-- [Java Build Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
-- [Spring Framework Code Quality](./ex-soen-plwe-to-jvsp__code-quality.md) - Spotless, Error Prone, NullAway
+- [Java Build Configuration](../../../programming-languages/java/build-configuration.md) - Java Maven baseline
+- [Spring Framework Code Quality](./code-quality.md) - Spotless, Error Prone, NullAway
 
 **Spring Framework Documentation**:
 
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Spring patterns
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Java config
-- [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
+- [Spring Framework Idioms](./idioms.md) - Spring patterns
+- [Spring Framework Configuration](./configuration.md) - Java config
+- [Spring Framework Testing](./testing.md) - Testing strategies
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Build Tools](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java build baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Build patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Build standards
-- [Spring Framework Deployment](./ex-soen-plwe-to-jvsp__deployment.md) - Packaging
+- [Java Build Tools](../../../programming-languages/java/build-configuration.md) - Java build baseline
+- [Spring Framework Idioms](./idioms.md) - Build patterns
+- [Spring Framework Best Practices](./best-practices.md) - Build standards
+- [Spring Framework Deployment](./deployment.md) - Packaging
 
 **Spring Boot Extension**:
 
-- [Spring Boot Deployment](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__deployment.md) - Boot build configuration
+- [Spring Boot Deployment](../jvm-spring-boot/deployment.md) - Boot build configuration
 
 ---
 

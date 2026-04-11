@@ -466,21 +466,21 @@ record DonationMetrics(double totalDonations, double avgProcessingTime, double m
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration management
-- **[Observability](ex-soen-plwe-to-jvsp__observability.md)** - Monitoring
+- **[Configuration](configuration.md)** - Configuration management
+- **[Observability](observability.md)** - Monitoring
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Deployment](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Deployment patterns
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Environment configuration
-- [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Production tuning
+- [Java Deployment](../../../programming-languages/java/build-configuration.md) - Java packaging baseline
+- [Spring Framework Idioms](./idioms.md) - Deployment patterns
+- [Spring Framework Configuration](./configuration.md) - Environment configuration
+- [Spring Framework Performance](./performance.md) - Production tuning
 
 **Spring Boot Extension**:
 
-- [Spring Boot Deployment](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__deployment.md) - Executable JAR deployment
+- [Spring Boot Deployment](../jvm-spring-boot/deployment.md) - Executable JAR deployment
 
 ---
 

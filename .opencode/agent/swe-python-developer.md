@@ -90,14 +90,14 @@ All Python code MUST follow the platform coding standards:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software-engineering/programming-languages/python/README.md](../../docs/explanation/software-engineering/programming-languages/python/README.md)
-- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_idioms.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__idioms.md)
-- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_best-practices.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__best-practices.md)
-- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__anti-patterns.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_idioms.md](../../docs/explanation/software-engineering/programming-languages/python/idioms.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_best-practices.md](../../docs/explanation/software-engineering/programming-languages/python/best-practices.md)
+- [docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py\_\_anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/python/anti-patterns.md)
 
 **Development Practices**:
 

@@ -13,9 +13,9 @@ tags:
   - dynamic-typing
   - static-analysis
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__testing-standards.md
-  - ./ex-soen-prla-el__code-quality-standards.md
+  - ./coding-standards.md
+  - ./testing-standards.md
+  - ./code-quality-standards.md
 principles:
   - explicit-over-implicit
   - documentation-first
@@ -951,9 +951,9 @@ echo "All checks passed!"
 
 ## Related Standards
 
-- [Elixir Coding Standards](./ex-soen-prla-el__coding-standards.md) - General coding conventions
-- [Elixir Testing Standards](./ex-soen-prla-el__testing-standards.md) - Testing type contracts
-- [Elixir Code Quality Standards](./ex-soen-prla-el__code-quality-standards.md) - Quality enforcement
+- [Elixir Coding Standards](./coding-standards.md) - General coding conventions
+- [Elixir Testing Standards](./testing-standards.md) - Testing type contracts
+- [Elixir Code Quality Standards](./code-quality-standards.md) - Quality enforcement
 
 ## References
 

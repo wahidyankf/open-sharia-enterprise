@@ -364,9 +364,9 @@ Data-driven domain models serialize trivially to EDN/JSON — domain state is re
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Namespaced keyword naming conventions
-- [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - Using `s/generate` for property-based test data
-- [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - `s/explain-data` in ex-info for spec failures
+- [Coding Standards](./coding-standards.md) - Namespaced keyword naming conventions
+- [Testing Standards](./testing-standards.md) - Using `s/generate` for property-based test data
+- [Error Handling Standards](./error-handling-standards.md) - `s/explain-data` in ex-info for spec failures
 
 ## Related Documentation
 

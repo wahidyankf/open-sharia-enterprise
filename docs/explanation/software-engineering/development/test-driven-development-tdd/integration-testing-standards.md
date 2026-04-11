@@ -22,7 +22,7 @@ updated: 2026-03-04
 
 **REQUIRED**: Complete [AyoKoding TDD By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/) before using these standards.
 
-**REQUIRED**: Read [Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md) first. Integration tests are one of three distinct tiers. Understanding all three tiers before applying these standards is essential.
+**REQUIRED**: Read [Three-Tier Testing Model](./three-tier-testing.md) first. Integration tests are one of three distinct tiers. Understanding all three tiers before applying these standards is essential.
 
 ## Purpose
 
@@ -418,10 +418,10 @@ class MemberRepositoryIntegrationTest {
 
 ## Related Standards
 
-- [Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md) — authoritative tier definitions and the mocking boundary
-- [Test Doubles Standards](./ex-soen-de-tedrdetd__test-doubles-standards.md) — in-memory implementations vs. mocks
-- [Java Testing Standards](../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) — Java-specific integration patterns
-- [TypeScript Testing](../../programming-languages/typescript/ex-soen-prla-ty__testing.md) — TypeScript-specific integration patterns
+- [Three-Tier Testing Model](./three-tier-testing.md) — authoritative tier definitions and the mocking boundary
+- [Test Doubles Standards](./test-doubles-standards.md) — in-memory implementations vs. mocks
+- [Java Testing Standards](../../programming-languages/java/testing-standards.md) — Java-specific integration patterns
+- [TypeScript Testing](../../programming-languages/typescript/testing.md) — TypeScript-specific integration patterns
 
 ---
 

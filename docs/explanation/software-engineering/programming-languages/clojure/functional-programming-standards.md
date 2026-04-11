@@ -328,9 +328,9 @@ Pure functional pipelines are deterministic — same input always produces same 
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Threading macros as the primary pipeline idiom
-- [Performance Standards](./ex-soen-prla-cl__performance-standards.md) - Transducers for efficient processing
-- [Concurrency Standards](./ex-soen-prla-cl__concurrency-standards.md) - core.async channels with transducers
+- [Coding Standards](./coding-standards.md) - Threading macros as the primary pipeline idiom
+- [Performance Standards](./performance-standards.md) - Transducers for efficient processing
+- [Concurrency Standards](./concurrency-standards.md) - core.async channels with transducers
 
 ## Related Documentation
 

@@ -399,8 +399,8 @@ invalidate the cache, causing stale generated code.
 
 ## Related Documentation
 
-- [Monorepo Structure Reference](./re__monorepo-structure.md) - Folder organization and file formats
-- [Nx Configuration Reference](./re__nx-configuration.md) - Workspace configuration options
+- [Monorepo Structure Reference](./monorepo-structure.md) - Folder organization and file formats
+- [Nx Configuration Reference](./nx-configuration.md) - Workspace configuration options
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names and caching rules
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) - Unit, integration, and E2E testing requirements
-- [Code Coverage Reference](./re__code-coverage.md) - Coverage measurement, tools, and Codecov integration
+- [Code Coverage Reference](./code-coverage.md) - Coverage measurement, tools, and Codecov integration

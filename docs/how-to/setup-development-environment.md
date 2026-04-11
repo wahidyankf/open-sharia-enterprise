@@ -518,10 +518,10 @@ Never hardcode version numbers in scripts — always read from these source-of-t
 
 - [Development Environment Setup Workflow](../../governance/workflows/infra/development-environment-setup.md) —
   Granular workflow with phases and success criteria
-- [Local Development with Docker](./hoto__local-dev-docker.md) — Running services via
+- [Local Development with Docker](./local-dev-docker.md) — Running services via
   Docker Compose
 - [Reproducible Environments](../../governance/development/workflow/reproducible-environments.md) —
   Volta, npm, Docker reproducibility practices
-- [Running Demo Tests](./hoto__run-a-demo-tests.md) — Integration and E2E test execution
+- [Running Demo Tests](./run-a-demo-tests.md) — Integration and E2E test execution
 - [Code Quality Convention](../../governance/development/quality/code.md) — Git hooks and
   automated formatting

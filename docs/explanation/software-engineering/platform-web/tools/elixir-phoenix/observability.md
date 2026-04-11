@@ -1557,7 +1557,7 @@ end
 
 ## Related Documentation
 
-- **[Performance](ex-soen-plwe-to-elph__performance.md)** - Performance optimization and monitoring
-- **[Deployment](ex-soen-plwe-to-elph__deployment.md)** - Production deployment with health checks
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Security monitoring and audit logging
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing observability instrumentation
+- **[Performance](performance.md)** - Performance optimization and monitoring
+- **[Deployment](deployment.md)** - Production deployment with health checks
+- **[Security](security.md)** - Security monitoring and audit logging
+- **[Testing](testing.md)** - Testing observability instrumentation

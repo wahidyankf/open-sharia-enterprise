@@ -25,9 +25,6 @@ func TestShouldSkipLink(t *testing.T) {
 		{"Placeholder path/to/convention.md", "path/to/convention.md", true},
 		{"Template placeholder", "file[name].md", true},
 		{"Example image path", "/images/logo.png", true},
-		{"Example tutorial prefix", "tu__rag-example.md", true},
-		{"Example ex-co prefix", "ex-co__test.md", true},
-		{"Example ./tu__ prefix", "./tu__example.md", true},
 		{"Example ./overview", "./overview", true},
 		{"Example by-concept", "by-concept/beginner/intro.md", true},
 		{"OpenCode reference", "../../.opencode/agents/test.md", true},
@@ -315,11 +312,11 @@ func TestGetMarkdownFiles_Staged(t *testing.T) {
 	if err := os.MkdirAll(docsDir, 0755); err != nil {
 		t.Fatal(err)
 	}
-	mdFile := filepath.Join(docsDir, "tu__test.md")
+	mdFile := filepath.Join(docsDir, "test.md")
 	if err := os.WriteFile(mdFile, []byte("# Test"), 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := exec.Command("git", "-C", tmpDir, "add", "docs/tu__test.md").Run(); err != nil {
+	if err := exec.Command("git", "-C", tmpDir, "add", "docs/test.md").Run(); err != nil {
 		t.Skipf("git add failed: %v", err)
 	}
 

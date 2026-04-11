@@ -26,10 +26,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - React coding patterns
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Production standards
-- [State Management](ex-soen-plwe-to-fere__state-management.md) - State patterns
-- [TypeScript](ex-soen-plwe-to-fere__typescript.md) - Type safety patterns
+- [Idioms](idioms.md) - React coding patterns
+- [Best Practices](best-practices.md) - Production standards
+- [State Management](state-management.md) - State patterns
+- [TypeScript](typescript.md) - Type safety patterns
 
 ## Overview
 
@@ -1064,12 +1064,12 @@ export const DashboardPage: React.FC = () => (
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - React coding patterns
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - State patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - React Hooks guide
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Optimization techniques
-- **[Testing](ex-soen-plwe-to-fere__testing.md)** - Component testing strategies
+- **[Idioms](idioms.md)** - React coding patterns
+- **[Best Practices](best-practices.md)** - Production standards
+- **[State Management](state-management.md)** - State patterns
+- **[Hooks](hooks.md)** - React Hooks guide
+- **[Performance](performance.md)** - Optimization techniques
+- **[Testing](testing.md)** - Component testing strategies
 
 ---
 

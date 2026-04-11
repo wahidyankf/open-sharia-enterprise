@@ -21,8 +21,8 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__concurrency-standards.md
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
+  - ./concurrency-standards.md
+  - ./coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -3814,8 +3814,8 @@ Key principles:
 
 **Next Steps**:
 
-- Read [Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md)
-- Explore [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
+- Read [Concurrency and Parallelism](./concurrency-standards.md)
+- Explore [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
 
 ---
 

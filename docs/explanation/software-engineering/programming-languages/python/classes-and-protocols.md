@@ -12,9 +12,9 @@ tags:
   - oop
   - composition
 related:
-  - ./ex-soen-prla-py__domain-driven-design.md
-  - ./ex-soen-prla-py__type-safety.md
-  - ./ex-soen-prla-py__best-practices.md
+  - ./domain-driven-design.md
+  - ./type-safety.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -696,9 +696,9 @@ graph TD
 
 ### Related Documentation
 
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - DDD patterns
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Coding standards
+- [Domain-Driven Design](./domain-driven-design.md) - DDD patterns
+- [Type Safety](./type-safety.md) - Type hints
+- [Best Practices](./best-practices.md) - Coding standards
 
 ---
 

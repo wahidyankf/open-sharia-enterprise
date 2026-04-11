@@ -229,7 +229,7 @@ fn build_contract_graph(contracts: &[MurabahaContract]) -> Vec<Rc<ContractNode>>
 
 ### Arc<T> — Multi-Threaded Reference Counting
 
-**MUST** use `Arc<T>` (not `Rc<T>`) for shared ownership across threads or async tasks. See [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md).
+**MUST** use `Arc<T>` (not `Rc<T>`) for shared ownership across threads or async tasks. See [Concurrency Standards](concurrency-standards.md).
 
 ```rust
 use std::sync::Arc;
@@ -382,9 +382,9 @@ struct ContractWithIdx {
 
 ## Related Standards
 
-- [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md) - Arc, Mutex in async
-- [Performance Standards](ex-soen-prla-ru__performance-standards.md) - Allocation patterns
-- [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Smart pointers and generics
+- [Concurrency Standards](concurrency-standards.md) - Arc, Mutex in async
+- [Performance Standards](performance-standards.md) - Allocation patterns
+- [Type Safety Standards](type-safety-standards.md) - Smart pointers and generics
 
 ## Related Documentation
 

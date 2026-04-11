@@ -10,8 +10,8 @@ tags:
   - xstate
   - state-management
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
+  - ./best-practices.md
+  - ./type-safety.md
 principles:
   - explicit-over-implicit
 updated: 2025-01-23
@@ -841,8 +841,8 @@ const campaignFSM = createMachine<CampaignContext>({
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Type patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](type-safety.md)** - Type patterns
 
 ---
 

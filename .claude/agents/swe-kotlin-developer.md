@@ -81,21 +81,21 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__coding-standards.md)** - Naming conventions, Effective Kotlin idioms
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__testing-standards.md)** - JUnit 5, Kotest, MockK, coroutines-test
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__code-quality-standards.md)** - ktlint, Detekt, compiler warnings
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__build-configuration.md)** - Gradle KTS, version catalogs
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/coding-standards.md)** - Naming conventions, Effective Kotlin idioms
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/testing-standards.md)** - JUnit 5, Kotest, MockK, coroutines-test
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/code-quality-standards.md)** - ktlint, Detekt, compiler warnings
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/kotlin/build-configuration.md)** - Gradle KTS, version catalogs
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__security-standards.md)** - Spring Security, JWT, input validation
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__concurrency-standards.md)** - Coroutines, Flow, structured concurrency
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__ddd-standards.md)** - Domain-Driven Design with sealed classes
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__api-standards.md)** - Ktor routing, REST conventions
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__performance-standards.md)** - Inline functions, lazy, sequences
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__error-handling-standards.md)** - Result<T>, sealed error hierarchies
-7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__type-safety-standards.md)** - Null safety, sealed classes, data classes
-8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/kotlin/ex-soen-prla-ko__framework-integration.md)** - Ktor, Spring Boot, Android
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/security-standards.md)** - Spring Security, JWT, input validation
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/concurrency-standards.md)** - Coroutines, Flow, structured concurrency
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/ddd-standards.md)** - Domain-Driven Design with sealed classes
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/api-standards.md)** - Ktor routing, REST conventions
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/performance-standards.md)** - Inline functions, lazy, sequences
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/error-handling-standards.md)** - Result<T>, sealed error hierarchies
+7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/kotlin/type-safety-standards.md)** - Null safety, sealed classes, data classes
+8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/kotlin/framework-integration.md)** - Ktor, Spring Boot, Android
 
 **See `swe-programming-kotlin` Skill** for quick access to coding standards during development.
 
@@ -114,7 +114,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 

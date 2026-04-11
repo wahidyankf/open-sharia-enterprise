@@ -24,9 +24,9 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Testing standards
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Hook patterns
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
+- [Best Practices](best-practices.md) - Testing standards
+- [Hooks](hooks.md) - Hook patterns
+- [Component Architecture](component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -1197,10 +1197,10 @@ test('dashboard shows user info', () => {
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Testing standards
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Hook patterns
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[Accessibility](ex-soen-plwe-to-fere__accessibility.md)** - Accessibility testing
+- **[Best Practices](best-practices.md)** - Testing standards
+- **[Hooks](hooks.md)** - Hook patterns
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[Accessibility](accessibility.md)** - Accessibility testing
 
 ---
 

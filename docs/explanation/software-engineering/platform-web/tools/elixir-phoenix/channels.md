@@ -32,10 +32,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [LiveView](ex-soen-plwe-to-elph__liveview.md) - Modern real-time alternative
-- [Security](ex-soen-plwe-to-elph__security.md) - Channel authentication
-- [Testing](ex-soen-plwe-to-elph__testing.md) - Channel testing patterns
-- [Observability](ex-soen-plwe-to-elph__observability.md) - Monitoring channels
+- [LiveView](liveview.md) - Modern real-time alternative
+- [Security](security.md) - Channel authentication
+- [Testing](testing.md) - Channel testing patterns
+- [Observability](observability.md) - Monitoring channels
 
 ## Overview
 
@@ -1638,10 +1638,10 @@ end
 
 ## Related Documentation
 
-- **[LiveView Guide](ex-soen-plwe-to-elph__liveview.md)** - Modern alternative to channels
-- **[Security Guide](ex-soen-plwe-to-elph__security.md)** - Authentication and authorization
-- **[Testing Guide](ex-soen-plwe-to-elph__testing.md)** - Channel testing strategies
-- **[Observability Guide](ex-soen-plwe-to-elph__observability.md)** - Monitoring and logging
-- **[Performance Guide](ex-soen-plwe-to-elph__performance.md)** - Optimization techniques
-- **[Deployment Guide](ex-soen-plwe-to-elph__deployment.md)** - Production deployment
+- **[LiveView Guide](liveview.md)** - Modern alternative to channels
+- **[Security Guide](security.md)** - Authentication and authorization
+- **[Testing Guide](testing.md)** - Channel testing strategies
+- **[Observability Guide](observability.md)** - Monitoring and logging
+- **[Performance Guide](performance.md)** - Optimization techniques
+- **[Deployment Guide](deployment.md)** - Production deployment
 - **[Phoenix Documentation](https://hexdocs.pm/phoenix/channels.html)** - Official reference

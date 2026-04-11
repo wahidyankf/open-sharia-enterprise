@@ -937,7 +937,7 @@ import Phoenix.HTML
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Modern Phoenix patterns
-- **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - Latest LiveView features
-- **[Components](ex-soen-plwe-to-elph__best-practices.md#components)** - Component patterns
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing migrated code
+- **[Best Practices](best-practices.md)** - Modern Phoenix patterns
+- **[LiveView](liveview.md)** - Latest LiveView features
+- **[Components](best-practices.md#components)** - Component patterns
+- **[Testing](testing.md)** - Testing migrated code

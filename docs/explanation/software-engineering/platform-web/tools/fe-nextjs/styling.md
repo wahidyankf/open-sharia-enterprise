@@ -2022,17 +2022,17 @@ import styles from './Component.module.css'; // Only loaded with component
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview and getting started
-- [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) - next.config.ts and environment setup
-- [Next.js Performance](ex-soen-plwe-to-fene__performance.md) - Optimization strategies
-- [Next.js Accessibility](ex-soen-plwe-to-fene__accessibility.md) - WCAG compliance
-- [TypeScript Guide](ex-soen-plwe-to-fene__typescript.md) - TypeScript integration
-- [React Styling](../fe-react/ex-soen-plwe-to-fere__styling.md) - React styling patterns
+- [Next.js Configuration](configuration.md) - next.config.ts and environment setup
+- [Next.js Performance](performance.md) - Optimization strategies
+- [Next.js Accessibility](accessibility.md) - WCAG compliance
+- [TypeScript Guide](typescript.md) - TypeScript integration
+- [React Styling](../fe-react/styling.md) - React styling patterns
 
 ---
 
 **Next Steps:**
 
-- Explore [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) for type-safe styling
-- Review [Next.js Accessibility](ex-soen-plwe-to-fene__accessibility.md) for WCAG AA compliance
-- Check [Next.js Performance](ex-soen-plwe-to-fene__performance.md) for CSS optimization
-- Read [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) for build setup
+- Explore [Next.js TypeScript](typescript.md) for type-safe styling
+- Review [Next.js Accessibility](accessibility.md) for WCAG AA compliance
+- Check [Next.js Performance](performance.md) for CSS optimization
+- Read [Next.js Configuration](configuration.md) for build setup

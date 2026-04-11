@@ -24,8 +24,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Routing standards
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
+- [Best Practices](best-practices.md) - Routing standards
+- [Component Architecture](component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -370,8 +370,8 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children }) 
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Routing standards
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
+- **[Best Practices](best-practices.md)** - Routing standards
+- **[Component Architecture](component-architecture.md)** - Component patterns
 
 ---
 

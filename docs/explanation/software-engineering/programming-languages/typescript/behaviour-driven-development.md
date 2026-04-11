@@ -12,8 +12,8 @@ tags:
   - playwright
   - e2e-testing
 related:
-  - ./ex-soen-prla-ty__test-driven-development.md
-  - ./ex-soen-prla-ty__best-practices.md
+  - ./test-driven-development.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -490,8 +490,8 @@ test("donation form on mobile", async ({ page }) => {
 
 ## Related Documentation
 
-- **[TypeScript TDD](ex-soen-prla-ty__test-driven-development.md)** - TDD patterns
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
+- **[TypeScript TDD](test-driven-development.md)** - TDD patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
 
 ---
 

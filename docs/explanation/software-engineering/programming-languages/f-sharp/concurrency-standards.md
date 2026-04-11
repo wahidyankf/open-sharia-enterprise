@@ -312,9 +312,9 @@ let recordPayment amount =
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - asyncResult CE for async + Result
-- [Performance Standards](ex-soen-prla-fsh__performance-standards.md) - Tail recursion in MailboxProcessor loops
-- [API Standards](ex-soen-prla-fsh__api-standards.md) - Async Giraffe handlers
+- [Error Handling Standards](error-handling-standards.md) - asyncResult CE for async + Result
+- [Performance Standards](performance-standards.md) - Tail recursion in MailboxProcessor loops
+- [API Standards](api-standards.md) - Async Giraffe handlers
 
 ## Related Documentation
 

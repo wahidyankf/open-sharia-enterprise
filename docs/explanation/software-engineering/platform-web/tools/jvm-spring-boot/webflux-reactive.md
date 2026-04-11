@@ -20,15 +20,15 @@ principles:
 created: 2026-02-06
 updated: 2026-02-06
 related:
-  - ./ex-soen-plwe-to-jvspbo__rest-apis.md
-  - ./ex-soen-plwe-to-jvspbo__performance.md
-  - ./ex-soen-plwe-to-jvspbo__testing.md
-  - ./ex-soen-plwe-to-jvspbo__data-access.md
+  - ./rest-apis.md
+  - ./performance.md
+  - ./testing.md
+  - ./data-access.md
 ---
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand blocking I/O and thread-per-request models before learning reactive programming. Review [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) for blocking model baseline.
+**REQUIRED**: You MUST understand blocking I/O and thread-per-request models before learning reactive programming. Review [Spring Boot REST APIs](rest-apis.md) for blocking model baseline.
 
 **STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path and Reactive Programming module for practical reactive experience.
 
@@ -866,13 +866,13 @@ These reactive programming standards enforce the the software engineering princi
 
 **Prerequisites**:
 
-- **[Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md)** - Blocking REST API baseline
+- **[Spring Boot REST APIs](rest-apis.md)** - Blocking REST API baseline
 
 **Spring Boot Documentation**:
 
-- **[Performance](ex-soen-plwe-to-jvspbo__performance.md)** - Performance tuning and benchmarks
-- **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies including reactive
-- **[Data Access](ex-soen-plwe-to-jvspbo__data-access.md)** - R2DBC and JPA comparison
+- **[Performance](performance.md)** - Performance tuning and benchmarks
+- **[Testing](testing.md)** - Testing strategies including reactive
+- **[Data Access](data-access.md)** - R2DBC and JPA comparison
 
 **External Resources**:
 
@@ -884,10 +884,10 @@ These reactive programming standards enforce the the software engineering princi
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Concurrency](../jvm-spring/ex-soen-plwe-to-jvsp__concurrency-standards.md) - Async patterns
-- [Java Concurrency](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Reactive patterns
-- [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Reactive performance
+- [Spring Framework Concurrency](../jvm-spring/concurrency-standards.md) - Async patterns
+- [Java Concurrency](../../../programming-languages/java/concurrency-standards.md) - Java threading baseline
+- [Spring Boot Idioms](./idioms.md) - Reactive patterns
+- [Spring Boot Performance](./performance.md) - Reactive performance
 
 ---
 

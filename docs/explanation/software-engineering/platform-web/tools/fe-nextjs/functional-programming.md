@@ -1017,13 +1017,13 @@ function calculateZakatBad(wealth: number, nisab: number): number {
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview
-- [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) - Type-safe FP
-- [Next.js Testing](ex-soen-plwe-to-fene__testing.md) - Testing pure functions
+- [Next.js TypeScript](typescript.md) - Type-safe FP
+- [Next.js Testing](testing.md) - Testing pure functions
 
 ---
 
 **Next Steps:**
 
-- Explore [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) for type-safe functional code
-- Review [Next.js Domain-Driven Design](ex-soen-plwe-to-fene__domain-driven-design.md) for FP with DDD
-- Check [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for testing pure functions
+- Explore [Next.js TypeScript](typescript.md) for type-safe functional code
+- Review [Next.js Domain-Driven Design](domain-driven-design.md) for FP with DDD
+- Check [Next.js Testing](testing.md) for testing pure functions

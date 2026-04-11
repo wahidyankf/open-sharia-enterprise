@@ -924,13 +924,13 @@ Before production:
 
 **Core Configuration**:
 
-- [Deployment](ex-soen-plwe-to-fene__deployment.md) - Production deployment
-- [TypeScript](ex-soen-plwe-to-fene__typescript.md) - TypeScript integration
-- [Performance](ex-soen-plwe-to-fene__performance.md) - Optimization
+- [Deployment](deployment.md) - Production deployment
+- [TypeScript](typescript.md) - TypeScript integration
+- [Performance](performance.md) - Optimization
 
 **Security**:
 
-- [Security](ex-soen-plwe-to-fene__security.md) - Security headers and practices
+- [Security](security.md) - Security headers and practices
 
 ---
 

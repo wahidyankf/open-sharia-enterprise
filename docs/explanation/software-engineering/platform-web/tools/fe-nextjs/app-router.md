@@ -1060,16 +1060,16 @@ export default function DashboardPage() {
 
 **Core Next.js**:
 
-- [Next.js Routing](ex-soen-plwe-to-fene__routing.md) - Advanced routing patterns
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - RSC architecture
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Server-side data patterns
-- [Idioms](ex-soen-plwe-to-fene__idioms.md) - Next.js patterns
+- [Next.js Routing](routing.md) - Advanced routing patterns
+- [Server Components](server-components.md) - RSC architecture
+- [Data Fetching](data-fetching.md) - Server-side data patterns
+- [Idioms](idioms.md) - Next.js patterns
 
 **Architecture**:
 
-- [Next.js Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
-- [Performance](ex-soen-plwe-to-fene__performance.md) - Optimization strategies
-- [Testing](ex-soen-plwe-to-fene__testing.md) - Testing App Router
+- [Next.js Best Practices](best-practices.md) - Production standards
+- [Performance](performance.md) - Optimization strategies
+- [Testing](testing.md) - Testing App Router
 
 ---
 

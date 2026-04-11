@@ -11,8 +11,8 @@ tags:
   - memory-profiling
   - optimization
 related:
-  - ./ex-soen-prla-py__performance.md
-  - ./ex-soen-prla-py__concurrency-and-parallelism.md
+  - ./performance.md
+  - ./concurrency-and-parallelism.md
 principles:
   - efficiency
   - resource-management
@@ -451,8 +451,8 @@ for zakat in gen_result:
 
 ### Related Documentation
 
-- [Performance](./ex-soen-prla-py__performance.md) - Performance optimization
-- [Concurrency and Parallelism](./ex-soen-prla-py__concurrency-and-parallelism.md) - Parallel processing
+- [Performance](./performance.md) - Performance optimization
+- [Concurrency and Parallelism](./concurrency-and-parallelism.md) - Parallel processing
 
 ---
 

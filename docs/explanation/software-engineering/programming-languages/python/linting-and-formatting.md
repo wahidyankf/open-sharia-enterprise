@@ -13,8 +13,8 @@ tags:
   - mypy
   - pylint
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__type-safety.md
+  - ./best-practices.md
+  - ./type-safety.md
 principles:
   - automation-over-manual
 updated: 2025-01-23
@@ -577,8 +577,8 @@ jobs:
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Coding standards
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints
+- [Best Practices](./best-practices.md) - Coding standards
+- [Type Safety](./type-safety.md) - Type hints
 
 ---
 

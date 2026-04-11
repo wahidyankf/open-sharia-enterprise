@@ -1915,27 +1915,27 @@ Production guidelines for Spring Data JPA.
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production standards and patterns
-- [Spring Boot Security](ex-soen-plwe-to-jvspbo__security.md) - Security patterns for data access
-- [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) - API integration with repositories
-- [Spring Boot Configuration](ex-soen-plwe-to-jvspbo__configuration.md) - Database configuration
+- [Spring Boot Best Practices](best-practices.md) - Production standards and patterns
+- [Spring Boot Security](security.md) - Security patterns for data access
+- [Spring Boot REST APIs](rest-apis.md) - API integration with repositories
+- [Spring Boot Configuration](configuration.md) - Database configuration
 
 ---
 
 **Next Steps:**
 
-- Review [Testing](ex-soen-plwe-to-jvspbo__testing.md) for repository testing patterns
-- Explore [Performance](ex-soen-plwe-to-jvspbo__performance.md) for optimization techniques
-- Check [Observability](ex-soen-plwe-to-jvspbo__observability.md) for database monitoring
+- Review [Testing](testing.md) for repository testing patterns
+- Explore [Performance](performance.md) for optimization techniques
+- Check [Observability](observability.md) for database monitoring
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Data Access](../jvm-spring/ex-soen-plwe-to-jvsp__data-access.md) - Manual Spring data access
-- [Java Database Access](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Repository patterns
-- [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Query optimization
+- [Spring Framework Data Access](../jvm-spring/data-access.md) - Manual Spring data access
+- [Java Database Access](../../../programming-languages/java/ddd-standards.md) - Java JDBC baseline
+- [Spring Boot Idioms](./idioms.md) - Repository patterns
+- [Spring Boot Performance](./performance.md) - Query optimization
 
 ---
 

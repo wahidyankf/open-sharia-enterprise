@@ -156,7 +156,7 @@ Create `apps/[app-name]/project.json`:
 }
 ```
 
-**Tag values**: See [Tag Convention](../reference/re__nx-configuration.md#tag-convention) for valid `type:`, `platform:`, `lang:`, and `domain:` values.
+**Tag values**: See [Tag Convention](../reference/nx-configuration.md#tag-convention) for valid `type:`, `platform:`, `lang:`, and `domain:` values.
 
 ### Step 5: Configure TypeScript
 
@@ -355,9 +355,9 @@ specs/apps/[domain]/
 
 ## Related Documentation
 
-- [Add New Library](./hoto__add-new-lib.md)
-- [Run Nx Commands](./hoto__run-nx-commands.md)
-- [Monorepo Structure Reference](../reference/re__monorepo-structure.md)
+- [Add New Library](./add-new-lib.md)
+- [Run Nx Commands](./run-nx-commands.md)
+- [Monorepo Structure Reference](../reference/monorepo-structure.md)
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md)
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md)
 - [Specs README](../../specs/README.md) - Standard folder layout for Gherkin specs and contracts

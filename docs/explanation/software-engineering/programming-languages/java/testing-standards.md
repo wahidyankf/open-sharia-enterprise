@@ -251,8 +251,8 @@ void shouldCallValidateBeforeSave() {
 **PROHIBITED**: Testcontainers, real databases, real network calls in integration tests.
 Testcontainers belongs in E2E tests only.
 
-**See**: [Three-Tier Testing Model](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__three-tier-testing.md) and
-[Integration Testing Standards](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md).
+**See**: [Three-Tier Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) and
+[Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md).
 
 ### In-Memory Repository Implementations
 
@@ -510,7 +510,7 @@ public class TaxCalculationSteps {
 
 **Coverage enforcement**: CI/CD pipeline fails if coverage drops below threshold.
 
-**See**: [Java Code Quality](./ex-soen-prla-ja__code-quality.md) for JaCoCo configuration.
+**See**: [Java Code Quality](./code-quality.md) for JaCoCo configuration.
 
 ## Enforcement
 
@@ -536,10 +536,10 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Related Standards
 
-- [Java Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Constructor injection enables easy testing
-- [Java Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Testing Spring Boot and Jakarta EE components
-- [Java Code Quality](./ex-soen-prla-ja__code-quality.md) - JaCoCo coverage configuration
-- [Java Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven test dependencies
+- [Java Coding Standards](./coding-standards.md) - Constructor injection enables easy testing
+- [Java Framework Integration](./framework-integration.md) - Testing Spring Boot and Jakarta EE components
+- [Java Code Quality](./code-quality.md) - JaCoCo coverage configuration
+- [Java Build Configuration](./build-configuration.md) - Maven test dependencies
 
 ## Software Engineering Principles
 
@@ -566,15 +566,15 @@ These standards enforce the the software engineering principles:
 
 **Test Organization**:
 
-- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Test class naming, package structure, and file organization
+- [Coding Standards](./coding-standards.md) - Test class naming, package structure, and file organization
 
 **Domain Testing**:
 
-- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Aggregate testing patterns, domain event verification, and repository testing
+- [DDD Standards](./ddd-standards.md) - Aggregate testing patterns, domain event verification, and repository testing
 
 **Coverage Requirements**:
 
-- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - JaCoCo coverage enforcement and quality gate thresholds
+- [Code Quality Standards](./code-quality.md) - JaCoCo coverage enforcement and quality gate thresholds
 
 ---
 

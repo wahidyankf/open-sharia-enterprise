@@ -54,10 +54,10 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md)
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md)
-- [Performance](ex-soen-plwe-to-fere__performance.md)
-- [Hooks](ex-soen-plwe-to-fere__hooks.md)
+- [Idioms](idioms.md)
+- [Best Practices](best-practices.md)
+- [Performance](performance.md)
+- [Hooks](hooks.md)
 
 ## Overview
 
@@ -997,12 +997,12 @@ const GoodComponent: React.FC = () => {
 
 ## Related Documentation
 
-- **[React Idioms](ex-soen-plwe-to-fere__idioms.md)** - Framework patterns
-- **[React Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Optimization strategies
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Hooks documentation
-- **[TypeScript](ex-soen-plwe-to-fere__typescript.md)** - TypeScript integration
-- **[Security](ex-soen-plwe-to-fere__security.md)** - Security best practices
+- **[React Idioms](idioms.md)** - Framework patterns
+- **[React Best Practices](best-practices.md)** - Production standards
+- **[Performance](performance.md)** - Optimization strategies
+- **[Hooks](hooks.md)** - Hooks documentation
+- **[TypeScript](typescript.md)** - TypeScript integration
+- **[Security](security.md)** - Security best practices
 
 ---
 

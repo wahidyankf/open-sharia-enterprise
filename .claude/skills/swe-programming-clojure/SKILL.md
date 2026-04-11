@@ -157,21 +157,21 @@ Complete the AyoKoding Clojure learning path first:
 
 ### Mandatory Standards
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__coding-standards.md)**
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__testing-standards.md)**
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__code-quality-standards.md)**
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__build-configuration.md)**
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/coding-standards.md)**
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/testing-standards.md)**
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/code-quality-standards.md)**
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/clojure/build-configuration.md)**
 
 ### Context-Specific Standards
 
-1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__error-handling-standards.md)**
-2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__concurrency-standards.md)**
-3. **[Functional Programming](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__functional-programming-standards.md)**
-4. **[Performance](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__performance-standards.md)**
-5. **[Security](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__security-standards.md)**
-6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__api-standards.md)**
-7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__ddd-standards.md)**
-8. **[Java Interop](../../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__interop-standards.md)**
+1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/clojure/error-handling-standards.md)**
+2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/clojure/concurrency-standards.md)**
+3. **[Functional Programming](../../../docs/explanation/software-engineering/programming-languages/clojure/functional-programming-standards.md)**
+4. **[Performance](../../../docs/explanation/software-engineering/programming-languages/clojure/performance-standards.md)**
+5. **[Security](../../../docs/explanation/software-engineering/programming-languages/clojure/security-standards.md)**
+6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/api-standards.md)**
+7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/clojure/ddd-standards.md)**
+8. **[Java Interop](../../../docs/explanation/software-engineering/programming-languages/clojure/interop-standards.md)**
 
 ## Related Skills
 

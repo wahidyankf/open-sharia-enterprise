@@ -12,9 +12,9 @@ tags:
   - functools
   - higher-order-functions
 related:
-  - ./ex-soen-prla-py__idioms.md
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__classes-and-protocols.md
+  - ./idioms.md
+  - ./best-practices.md
+  - ./classes-and-protocols.md
 principles:
   - immutability
   - pure-functions
@@ -694,9 +694,9 @@ graph LR
 
 ### Related Documentation
 
-- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Coding standards
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - OOP patterns
+- [Idioms](./idioms.md) - Pythonic patterns
+- [Best Practices](./best-practices.md) - Coding standards
+- [Classes and Protocols](./classes-and-protocols.md) - OOP patterns
 
 ### Books
 

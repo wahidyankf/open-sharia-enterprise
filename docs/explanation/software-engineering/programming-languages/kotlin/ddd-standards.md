@@ -446,10 +446,10 @@ class ApproveZakatApplicationUseCase(
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Sealed class and data class patterns
-- [Type Safety Standards](./ex-soen-prla-ko__type-safety-standards.md) - Inline value classes, sealed classes
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Domain error hierarchies
-- [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Async repository patterns
+- [Coding Standards](./coding-standards.md) - Sealed class and data class patterns
+- [Type Safety Standards](./type-safety-standards.md) - Inline value classes, sealed classes
+- [Error Handling Standards](./error-handling-standards.md) - Domain error hierarchies
+- [Concurrency Standards](./concurrency-standards.md) - Async repository patterns
 
 ## Related Documentation
 

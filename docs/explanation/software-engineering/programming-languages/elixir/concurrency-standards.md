@@ -14,10 +14,10 @@ tags:
   - actor-model
   - beam-vm
 related:
-  - ./ex-soen-prla-el__error-handling-standards.md
-  - ./ex-soen-prla-el__otp-genserver.md
-  - ./ex-soen-prla-el__otp-supervisor.md
-  - ./ex-soen-prla-el__performance-standards.md
+  - ./error-handling-standards.md
+  - ./otp-genserver.md
+  - ./otp-supervisor.md
+  - ./performance-standards.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -592,11 +592,11 @@ end
 
 ## Related Documentation
 
-- **[Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md)**: "Let it crash" philosophy and supervision
-- **[OTP GenServer Standards](./ex-soen-prla-el__otp-genserver.md)**: Stateful concurrent process requirements
-- **[OTP Supervisor Standards](./ex-soen-prla-el__otp-supervisor.md)**: Process supervision requirements
-- **[Performance Standards](./ex-soen-prla-el__performance-standards.md)**: Optimizing concurrent systems
-- **[Anti-Patterns](./ex-soen-prla-el__coding-standards.md)**: Common concurrency mistakes to avoid
+- **[Error Handling Standards](./error-handling-standards.md)**: "Let it crash" philosophy and supervision
+- **[OTP GenServer Standards](./otp-genserver.md)**: Stateful concurrent process requirements
+- **[OTP Supervisor Standards](./otp-supervisor.md)**: Process supervision requirements
+- **[Performance Standards](./performance-standards.md)**: Optimizing concurrent systems
+- **[Anti-Patterns](./coding-standards.md)**: Common concurrency mistakes to avoid
 
 ## References
 

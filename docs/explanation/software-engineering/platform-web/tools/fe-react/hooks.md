@@ -27,10 +27,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - Hook usage patterns
-- [State Management](ex-soen-plwe-to-fere__state-management.md) - Managing state
-- [Performance](ex-soen-plwe-to-fere__performance.md) - Hook optimization
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Production standards
+- [Idioms](idioms.md) - Hook usage patterns
+- [State Management](state-management.md) - Managing state
+- [Performance](performance.md) - Hook optimization
+- [Best Practices](best-practices.md) - Production standards
 
 ## Overview
 
@@ -1213,11 +1213,11 @@ function ItemComponent({ item }) {
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - Hook usage patterns
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - Managing state
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Hook optimization
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
+- **[Idioms](idioms.md)** - Hook usage patterns
+- **[State Management](state-management.md)** - Managing state
+- **[Performance](performance.md)** - Hook optimization
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[Best Practices](best-practices.md)** - Production standards
 
 ---
 

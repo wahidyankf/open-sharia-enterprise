@@ -423,9 +423,9 @@ class ZakatPayerEntity {
 
 ## Related Standards
 
-- [API Standards](./ex-soen-prla-ko__api-standards.md) - Security plugin configuration in Ktor
-- [Framework Integration](./ex-soen-prla-ko__framework-integration.md) - Spring Security configuration
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Security exception handling
+- [API Standards](./api-standards.md) - Security plugin configuration in Ktor
+- [Framework Integration](./framework-integration.md) - Spring Security configuration
+- [Error Handling Standards](./error-handling-standards.md) - Security exception handling
 
 ## Related Documentation
 

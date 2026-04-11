@@ -1332,20 +1332,20 @@ class DatabaseHealthIndicator(
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Performance](ex-soen-plwe-to-jvsp__performance.md)** - Optimization techniques
+- **[Performance](performance.md)** - Optimization techniques
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Monitoring](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Observability patterns
-- [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Performance metrics
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Monitoring standards
+- [Java Monitoring](../../../programming-languages/java/performance-standards.md) - Java JMX baseline
+- [Spring Framework Idioms](./idioms.md) - Observability patterns
+- [Spring Framework Performance](./performance.md) - Performance metrics
+- [Spring Framework Best Practices](./best-practices.md) - Monitoring standards
 
 **Spring Boot Extension**:
 
-- [Spring Boot Observability](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__observability.md) - Auto-configured metrics
+- [Spring Boot Observability](../jvm-spring-boot/observability.md) - Auto-configured metrics
 
 ---
 

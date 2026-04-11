@@ -2547,27 +2547,27 @@ Production deployment security checklist for Spring Boot applications.
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production standards and patterns
-- [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) - RESTful API design and implementation
-- [Spring Boot Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - JPA, transactions, and database patterns
-- [Spring Boot Configuration](ex-soen-plwe-to-jvspbo__configuration.md) - Application configuration and profiles
+- [Spring Boot Best Practices](best-practices.md) - Production standards and patterns
+- [Spring Boot REST APIs](rest-apis.md) - RESTful API design and implementation
+- [Spring Boot Data Access](data-access.md) - JPA, transactions, and database patterns
+- [Spring Boot Configuration](configuration.md) - Application configuration and profiles
 
 ---
 
 **Next Steps:**
 
-- Review [Testing](ex-soen-plwe-to-jvspbo__testing.md) for security testing patterns
-- Explore [Observability](ex-soen-plwe-to-jvspbo__observability.md) for security monitoring
-- Check [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for secrets management
+- Review [Testing](testing.md) for security testing patterns
+- Explore [Observability](observability.md) for security monitoring
+- Check [Configuration](configuration.md) for secrets management
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Security](../jvm-spring/ex-soen-plwe-to-jvsp__security.md) - Manual Spring security
-- [Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Security patterns
-- [Spring Boot REST APIs](./ex-soen-plwe-to-jvspbo__rest-apis.md) - Securing APIs
+- [Spring Framework Security](../jvm-spring/security.md) - Manual Spring security
+- [Java Security](../../../programming-languages/java/security-standards.md) - Java security baseline
+- [Spring Boot Idioms](./idioms.md) - Security patterns
+- [Spring Boot REST APIs](./rest-apis.md) - Securing APIs
 
 **Hands-on Learning (AyoKoding)**:
 

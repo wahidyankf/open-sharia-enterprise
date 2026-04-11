@@ -395,9 +395,9 @@ void zakatShouldBeTwoPointFivePercent(
 
 ### OSE Platform Standards
 
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - REST API error responses
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Security error handling
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe error propagation
+- [API Standards](./api-standards.md) - REST API error responses
+- [Security Standards](./security-standards.md) - Security error handling
+- [Concurrency Standards](./concurrency-standards.md) - Thread-safe error propagation
 
 ### Learning Resources
 
@@ -452,19 +452,19 @@ Before deploying financial services, verify:
 
 **Domain Errors**:
 
-- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Domain exception hierarchy and aggregate validation errors
+- [DDD Standards](./ddd-standards.md) - Domain exception hierarchy and aggregate validation errors
 
 **Security**:
 
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Secure error messages and PII protection in error responses
+- [Security Standards](./security-standards.md) - Secure error messages and PII protection in error responses
 
 **API Responses**:
 
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - HTTP error response format and status codes
+- [API Standards](./api-standards.md) - HTTP error response format and status codes
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Exception testing patterns with AssertJ and JUnit 6
+- [Testing Standards](./testing-standards.md) - Exception testing patterns with AssertJ and JUnit 6
 
 **Last Updated**: 2026-02-04
 

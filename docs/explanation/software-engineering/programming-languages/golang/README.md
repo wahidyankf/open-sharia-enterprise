@@ -164,19 +164,19 @@ OSE Platform follows a three-tier Go versioning strategy focused on modern featu
 
 **MUST follow these mandatory standards for all Go code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-go__coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
-2. **[Testing Standards](./ex-soen-prla-go__testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
-3. **[Code Quality Standards](./ex-soen-prla-go__code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
-4. **[Build Configuration](./ex-soen-prla-go__build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
-5. **[Error Handling Standards](./ex-soen-prla-go__error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
-6. **[Concurrency Standards](./ex-soen-prla-go__concurrency-standards.md)** - Goroutines, channels, context, race detection
-7. **[Type Safety Standards](./ex-soen-prla-go__type-safety-standards.md)** - Generics, type parameters, constraints, type assertions
-8. **[Performance Standards](./ex-soen-prla-go__performance-standards.md)** - Profiling with pprof, benchmarking, memory optimization
-9. **[Security Standards](./ex-soen-prla-go__security-standards.md)** - Input validation, injection prevention, crypto practices
-10. **[API Standards](./ex-soen-prla-go__api-standards.md)** - REST conventions, HTTP routing, middleware patterns
-11. **[DDD Standards](./ex-soen-prla-go__ddd-standards.md)** - Domain-Driven Design tactical patterns without classes
-12. **[Dependency Standards](./ex-soen-prla-go__dependency-standards.md)** - Go modules, version selection, replace directives
-13. **[Design Patterns](./ex-soen-prla-go__design-patterns.md)** - Common Go patterns (functional options, interface design)
+1. **[Coding Standards](./coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
+2. **[Testing Standards](./testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
+3. **[Code Quality Standards](./code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
+4. **[Build Configuration](./build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
+5. **[Error Handling Standards](./error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
+6. **[Concurrency Standards](./concurrency-standards.md)** - Goroutines, channels, context, race detection
+7. **[Type Safety Standards](./type-safety-standards.md)** - Generics, type parameters, constraints, type assertions
+8. **[Performance Standards](./performance-standards.md)** - Profiling with pprof, benchmarking, memory optimization
+9. **[Security Standards](./security-standards.md)** - Input validation, injection prevention, crypto practices
+10. **[API Standards](./api-standards.md)** - REST conventions, HTTP routing, middleware patterns
+11. **[DDD Standards](./ddd-standards.md)** - Domain-Driven Design tactical patterns without classes
+12. **[Dependency Standards](./dependency-standards.md)** - Go modules, version selection, replace directives
+13. **[Design Patterns](./design-patterns.md)** - Common Go patterns (functional options, interface design)
 
 ## Documentation Structure
 
@@ -184,21 +184,21 @@ OSE Platform follows a three-tier Go versioning strategy focused on modern featu
 
 **Mandatory Standards (All Go Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-go__coding-standards.md) - Naming, package structure, Effective Go compliance
-2. [Testing Standards](./ex-soen-prla-go__testing-standards.md) - Table-driven tests, coverage requirements, TestContainers
-3. [Code Quality Standards](./ex-soen-prla-go__code-quality-standards.md) - golangci-lint configuration, formatting rules
+1. [Coding Standards](./coding-standards.md) - Naming, package structure, Effective Go compliance
+2. [Testing Standards](./testing-standards.md) - Table-driven tests, coverage requirements, TestContainers
+3. [Code Quality Standards](./code-quality-standards.md) - golangci-lint configuration, formatting rules
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-go__security-standards.md) - Input validation, crypto for user-facing services
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-go__concurrency-standards.md) - Goroutines, channels for concurrent code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-go__ddd-standards.md) - Aggregates, value objects for business domains
-- **APIs**: [API Standards](./ex-soen-prla-go__api-standards.md) - REST patterns, HTTP routing for web services
-- **Performance**: [Performance Standards](./ex-soen-prla-go__performance-standards.md) - Profiling, optimization when needed
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-go__error-handling-standards.md) - Error wrapping, custom errors
-- **Type Safety**: [Type Safety Standards](./ex-soen-prla-go__type-safety-standards.md) - Generics, type parameters for reusable code
-- **Dependencies**: [Dependency Standards](./ex-soen-prla-go__dependency-standards.md) - Module management, version selection
-- **Patterns**: [Design Patterns](./ex-soen-prla-go__design-patterns.md) - Idiomatic Go patterns (functional options, etc.)
+- **Security**: [Security Standards](./security-standards.md) - Input validation, crypto for user-facing services
+- **Concurrency**: [Concurrency Standards](./concurrency-standards.md) - Goroutines, channels for concurrent code
+- **Domain Modeling**: [DDD Standards](./ddd-standards.md) - Aggregates, value objects for business domains
+- **APIs**: [API Standards](./api-standards.md) - REST patterns, HTTP routing for web services
+- **Performance**: [Performance Standards](./performance-standards.md) - Profiling, optimization when needed
+- **Error Handling**: [Error Handling Standards](./error-handling-standards.md) - Error wrapping, custom errors
+- **Type Safety**: [Type Safety Standards](./type-safety-standards.md) - Generics, type parameters for reusable code
+- **Dependencies**: [Dependency Standards](./dependency-standards.md) - Module management, version selection
+- **Patterns**: [Design Patterns](./design-patterns.md) - Idiomatic Go patterns (functional options, etc.)
 
 ### Documentation Organization
 
@@ -344,7 +344,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

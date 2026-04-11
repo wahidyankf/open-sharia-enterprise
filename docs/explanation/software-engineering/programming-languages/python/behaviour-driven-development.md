@@ -12,8 +12,8 @@ tags:
   - testing
   - specifications
 related:
-  - ./ex-soen-prla-py__test-driven-development.md
-  - ./ex-soen-prla-py__domain-driven-design.md
+  - ./test-driven-development.md
+  - ./domain-driven-design.md
 principles:
   - documentation-first
   - explicit-over-implicit
@@ -582,8 +582,8 @@ Feature: Zakat Distribution
 
 ### Related Documentation
 
-- [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md) - TDD methodology
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - Ubiquitous language
+- [Test-Driven Development](./test-driven-development.md) - TDD methodology
+- [Domain-Driven Design](./domain-driven-design.md) - Ubiquitous language
 
 ### Books
 

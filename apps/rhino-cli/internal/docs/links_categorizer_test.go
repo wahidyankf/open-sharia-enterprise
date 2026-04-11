@@ -8,18 +8,6 @@ func TestCategorizeBrokenLink(t *testing.T) {
 		link string
 		want string
 	}{
-		// Old ex-ru-* prefixes
-		{
-			name: "ex-ru- prefix",
-			link: "../old/ex-ru-naming.md",
-			want: "Old ex-ru-* prefixes",
-		},
-		{
-			name: "ex__ru__ prefix",
-			link: "./ex__ru__pattern.md",
-			want: "Old ex-ru-* prefixes",
-		},
-
 		// workflows/ paths
 		{
 			name: "workflows/ path",

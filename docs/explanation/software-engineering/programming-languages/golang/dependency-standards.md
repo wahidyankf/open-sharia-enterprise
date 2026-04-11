@@ -18,7 +18,7 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - reproducibility
   - explicit-over-implicit
@@ -1000,9 +1000,9 @@ GONOPROXY=github.com/mycompany go get package
 
 ## Related Documentation
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices) - Code organization and project structure
-- [Linting and Formatting](./ex-soen-prla-go__code-quality-standards.md) - CI/CD integration with modules
-- [Web Services](./ex-soen-prla-go__api-standards.md) - Framework dependencies
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices) - Code organization and project structure
+- [Linting and Formatting](./code-quality-standards.md) - CI/CD integration with modules
+- [Web Services](./api-standards.md) - Framework dependencies
 
 ## Further Reading
 

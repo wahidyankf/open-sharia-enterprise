@@ -22,10 +22,10 @@ principles:
   - pure-functions
   - explicit-over-implicit
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
-  - ./ex-soen-prla-go__coding-standards.md#part-1-core-idioms
-  - ./ex-soen-prla-go__type-safety-standards.md
-  - ./ex-soen-prla-go__concurrency-standards.md
+  - ./coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-1-core-idioms
+  - ./type-safety-standards.md
+  - ./concurrency-standards.md
   - ../../../../../governance/development/pattern/functional-programming.md
 updated: 2026-03-06
 ---
@@ -3953,12 +3953,12 @@ type ReadCloser interface {
 
 **Go-Specific Standards:**
 
-- [Go Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices) - Code quality standards
-- [Go Idioms](./ex-soen-prla-go__coding-standards.md#part-1-core-idioms) - Go-specific patterns
-- [Go Type Safety](./ex-soen-prla-go__type-safety-standards.md) - Type system guarantees
-- [Go Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md) - Goroutine-safe design
-- [Go Error Handling](./ex-soen-prla-go__error-handling-standards.md) - Explicit error patterns
-- [Go Domain-Driven Design](./ex-soen-prla-go__ddd-standards.md) - DDD patterns in Go
+- [Go Best Practices](./coding-standards.md#part-2-naming--organization-best-practices) - Code quality standards
+- [Go Idioms](./coding-standards.md#part-1-core-idioms) - Go-specific patterns
+- [Go Type Safety](./type-safety-standards.md) - Type system guarantees
+- [Go Concurrency and Parallelism](./concurrency-standards.md) - Goroutine-safe design
+- [Go Error Handling](./error-handling-standards.md) - Explicit error patterns
+- [Go Domain-Driven Design](./ddd-standards.md) - DDD patterns in Go
 
 **Cross-Language Comparisons:**
 

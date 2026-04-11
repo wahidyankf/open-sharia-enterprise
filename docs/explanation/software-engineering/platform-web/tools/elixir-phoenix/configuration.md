@@ -45,9 +45,9 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- **[Deployment](ex-soen-plwe-to-elph__deployment.md)** - Production configuration
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Secrets security
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Configuration patterns
+- **[Deployment](deployment.md)** - Production configuration
+- **[Security](security.md)** - Secrets security
+- **[Best Practices](best-practices.md)** - Configuration patterns
 
 ## Overview
 
@@ -903,10 +903,10 @@ config :ose_platform, OsePlatform.Repo,
 
 ## Related Documentation
 
-- **[Deployment](ex-soen-plwe-to-elph__deployment.md)** - Production configuration and releases
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Secrets security and encryption
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Configuration patterns and conventions
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Test configuration and setup
+- **[Deployment](deployment.md)** - Production configuration and releases
+- **[Security](security.md)** - Secrets security and encryption
+- **[Best Practices](best-practices.md)** - Configuration patterns and conventions
+- **[Testing](testing.md)** - Test configuration and setup
 
 ---
 

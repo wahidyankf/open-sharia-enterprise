@@ -13,8 +13,8 @@ tags:
   - repositories
   - domain-events
 related:
-  - ./ex-soen-prla-py__classes-and-protocols.md
-  - ./ex-soen-prla-py__type-safety.md
+  - ./classes-and-protocols.md
+  - ./type-safety.md
   - ./templates/
 principles:
   - explicit-over-implicit
@@ -657,8 +657,8 @@ graph TD
 
 ### Related Documentation
 
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - OOP patterns
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Pydantic validation
+- [Classes and Protocols](./classes-and-protocols.md) - OOP patterns
+- [Type Safety](./type-safety.md) - Pydantic validation
 <!-- TODO: Create templates directory ./templates/ with DDD code templates -->
 
 ---

@@ -1179,10 +1179,10 @@ jobs:
 
 **Elixir Standards**:
 
-- [Coding Standards](./ex-soen-prla-el__coding-standards.md) - Naming conventions, module structure
-- [Testing Standards](./ex-soen-prla-el__testing-standards.md) - ExUnit, doctests, property-based testing
-- [Code Quality Standards](./ex-soen-prla-el__code-quality-standards.md) - mix format, Credo, Dialyzer
-- [Dependency Management](./ex-soen-prla-el__build-configuration-standards.md) - Mix, Hex, umbrella projects
+- [Coding Standards](./coding-standards.md) - Naming conventions, module structure
+- [Testing Standards](./testing-standards.md) - ExUnit, doctests, property-based testing
+- [Code Quality Standards](./code-quality-standards.md) - mix format, Credo, Dialyzer
+- [Dependency Management](./build-configuration-standards.md) - Mix, Hex, umbrella projects
 
 **Software Engineering Principles**:
 

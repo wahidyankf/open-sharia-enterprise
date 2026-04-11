@@ -1263,21 +1263,21 @@ public class QueryPerformanceMonitoringService {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Data Access](ex-soen-plwe-to-jvsp__data-access.md)** - Database optimization
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Performance patterns
+- **[Data Access](data-access.md)** - Database optimization
+- **[Best Practices](best-practices.md)** - Performance patterns
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Performance patterns
-- [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Query optimization
-- [Spring Framework Observability](./ex-soen-plwe-to-jvsp__observability.md) - Performance monitoring
+- [Java Performance](../../../programming-languages/java/performance-standards.md) - Java JVM tuning
+- [Spring Framework Idioms](./idioms.md) - Performance patterns
+- [Spring Framework Data Access](./data-access.md) - Query optimization
+- [Spring Framework Observability](./observability.md) - Performance monitoring
 
 **Spring Boot Extension**:
 
-- [Spring Boot Performance](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__performance.md) - Auto-configured optimization
+- [Spring Boot Performance](../jvm-spring-boot/performance.md) - Auto-configured optimization
 
 ---
 

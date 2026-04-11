@@ -1392,16 +1392,16 @@ These standards are enforced through:
 
 **Core Go Concepts**:
 
-- [Go Idioms](./ex-soen-prla-go__coding-standards.md#part-1-core-idioms) - Comprehensive idiom reference
-- [Go Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices) - Complete best practices guide
-- [Go Anti-Patterns](./ex-soen-prla-go__coding-standards.md#part-3-anti-patterns-to-avoid) - Detailed anti-patterns to avoid
+- [Go Idioms](./coding-standards.md#part-1-core-idioms) - Comprehensive idiom reference
+- [Go Best Practices](./coding-standards.md#part-2-naming--organization-best-practices) - Complete best practices guide
+- [Go Anti-Patterns](./coding-standards.md#part-3-anti-patterns-to-avoid) - Detailed anti-patterns to avoid
 
 **Specialized Topics**:
 
-- [Error Handling](./ex-soen-prla-go__error-handling-standards.md) - Comprehensive error handling patterns
-- [Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md) - Goroutines, channels, sync
-- [Interfaces and Composition](./ex-soen-prla-go__design-patterns.md#part-3-interfaces-and-composition-patterns) - Interface design patterns
-- [Linting and Formatting](./ex-soen-prla-go__code-quality-standards.md) - Tool configuration
+- [Error Handling](./error-handling-standards.md) - Comprehensive error handling patterns
+- [Concurrency and Parallelism](./concurrency-standards.md) - Goroutines, channels, sync
+- [Interfaces and Composition](./design-patterns.md#part-3-interfaces-and-composition-patterns) - Interface design patterns
+- [Linting and Formatting](./code-quality-standards.md) - Tool configuration
 
 **Software Engineering Principles**:
 

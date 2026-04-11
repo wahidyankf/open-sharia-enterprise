@@ -822,11 +822,11 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Testing patterns with package:test
-- [Code Quality Standards](./ex-soen-prla-da__code-quality-standards.md) - dart analyze, lints configuration
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Exception patterns
-- [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Null safety, sealed classes, records
-- [Build Configuration](./ex-soen-prla-da__build-configuration.md) - pubspec.yaml structure
+- [Testing Standards](./testing-standards.md) - Testing patterns with package:test
+- [Code Quality Standards](./code-quality-standards.md) - dart analyze, lints configuration
+- [Error Handling Standards](./error-handling-standards.md) - Exception patterns
+- [Type Safety Standards](./type-safety-standards.md) - Null safety, sealed classes, records
+- [Build Configuration](./build-configuration.md) - pubspec.yaml structure
 
 ## Related Documentation
 

@@ -332,9 +332,9 @@ builder.Services.AddAntiforgery(options =>
 
 ## Related Standards
 
-- [API Standards](ex-soen-prla-csh__api-standards.md) - Authentication middleware placement
-- [Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md) - Validation error responses
-- [Framework Integration](ex-soen-prla-csh__framework-integration.md) - Middleware pipeline order
+- [API Standards](api-standards.md) - Authentication middleware placement
+- [Error Handling Standards](error-handling-standards.md) - Validation error responses
+- [Framework Integration](framework-integration.md) - Middleware pipeline order
 
 ## Related Documentation
 

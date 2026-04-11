@@ -144,18 +144,18 @@ OSE Platform follows a three-tier Clojure versioning strategy:
 
 **MUST follow these mandatory standards for all Clojure code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-cl__coding-standards.md)** - Naming conventions, namespace organization, REPL-driven development, threading macros, destructuring
-2. **[Testing Standards](./ex-soen-prla-cl__testing-standards.md)** - clojure.test, Midje, test.check, cloverage, REPL-based test running
-3. **[Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md)** - clj-kondo configuration, cljfmt formatting, Eastwood linting
-4. **[Build Configuration](./ex-soen-prla-cl__build-configuration.md)** - deps.edn structure, tools.build, Leiningen, Babashka scripting
-5. **[Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md)** - ex-info, structured error data, try/catch patterns, Result-like maps
-6. **[Concurrency Standards](./ex-soen-prla-cl__concurrency-standards.md)** - Atoms, refs with STM, agents, core.async channels
-7. **[Performance Standards](./ex-soen-prla-cl__performance-standards.md)** - Lazy sequences, transducers, type hints, criterium benchmarking, memoize
-8. **[Security Standards](./ex-soen-prla-cl__security-standards.md)** - Input validation with spec, parameterized queries, buddy authentication, secrets management
-9. **[API Standards](./ex-soen-prla-cl__api-standards.md)** - Ring handlers, Reitit routing, middleware composition, content negotiation, REST conventions
-10. **[DDD Standards](./ex-soen-prla-cl__ddd-standards.md)** - Data-driven domain modeling, records, protocols, multimethods, Clojure specs as invariants
-11. **[Functional Programming Standards](./ex-soen-prla-cl__functional-programming-standards.md)** - Transducers, threading macros, higher-order functions, macros for DSLs
-12. **[Interop Standards](./ex-soen-prla-cl__interop-standards.md)** - Java interop syntax, type hints, collection conversion, doto macro
+1. **[Coding Standards](./coding-standards.md)** - Naming conventions, namespace organization, REPL-driven development, threading macros, destructuring
+2. **[Testing Standards](./testing-standards.md)** - clojure.test, Midje, test.check, cloverage, REPL-based test running
+3. **[Code Quality Standards](./code-quality-standards.md)** - clj-kondo configuration, cljfmt formatting, Eastwood linting
+4. **[Build Configuration](./build-configuration.md)** - deps.edn structure, tools.build, Leiningen, Babashka scripting
+5. **[Error Handling Standards](./error-handling-standards.md)** - ex-info, structured error data, try/catch patterns, Result-like maps
+6. **[Concurrency Standards](./concurrency-standards.md)** - Atoms, refs with STM, agents, core.async channels
+7. **[Performance Standards](./performance-standards.md)** - Lazy sequences, transducers, type hints, criterium benchmarking, memoize
+8. **[Security Standards](./security-standards.md)** - Input validation with spec, parameterized queries, buddy authentication, secrets management
+9. **[API Standards](./api-standards.md)** - Ring handlers, Reitit routing, middleware composition, content negotiation, REST conventions
+10. **[DDD Standards](./ddd-standards.md)** - Data-driven domain modeling, records, protocols, multimethods, Clojure specs as invariants
+11. **[Functional Programming Standards](./functional-programming-standards.md)** - Transducers, threading macros, higher-order functions, macros for DSLs
+12. **[Interop Standards](./interop-standards.md)** - Java interop syntax, type hints, collection conversion, doto macro
 
 ## Documentation Structure
 
@@ -163,21 +163,21 @@ OSE Platform follows a three-tier Clojure versioning strategy:
 
 **Mandatory Standards (All Clojure Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Naming, namespace structure, REPL-driven development
-2. [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - clojure.test, coverage requirements, property-based testing
-3. [Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md) - clj-kondo configuration, formatting rules
+1. [Coding Standards](./coding-standards.md) - Naming, namespace structure, REPL-driven development
+2. [Testing Standards](./testing-standards.md) - clojure.test, coverage requirements, property-based testing
+3. [Code Quality Standards](./code-quality-standards.md) - clj-kondo configuration, formatting rules
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-cl__security-standards.md) - Input validation, JWT for user-facing services
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-cl__concurrency-standards.md) - Atoms, STM, core.async for concurrent code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-cl__ddd-standards.md) - Data-driven design for business domains
-- **APIs**: [API Standards](./ex-soen-prla-cl__api-standards.md) - Ring/Reitit patterns for web services
-- **Performance**: [Performance Standards](./ex-soen-prla-cl__performance-standards.md) - Transducers, type hints, benchmarking when needed
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - ex-info, structured errors
-- **Functional Programming**: [FP Standards](./ex-soen-prla-cl__functional-programming-standards.md) - Transducers, higher-order functions, macros
-- **Build**: [Build Configuration](./ex-soen-prla-cl__build-configuration.md) - deps.edn, tools.build for project setup
-- **Java Interop**: [Interop Standards](./ex-soen-prla-cl__interop-standards.md) - JVM library integration
+- **Security**: [Security Standards](./security-standards.md) - Input validation, JWT for user-facing services
+- **Concurrency**: [Concurrency Standards](./concurrency-standards.md) - Atoms, STM, core.async for concurrent code
+- **Domain Modeling**: [DDD Standards](./ddd-standards.md) - Data-driven design for business domains
+- **APIs**: [API Standards](./api-standards.md) - Ring/Reitit patterns for web services
+- **Performance**: [Performance Standards](./performance-standards.md) - Transducers, type hints, benchmarking when needed
+- **Error Handling**: [Error Handling Standards](./error-handling-standards.md) - ex-info, structured errors
+- **Functional Programming**: [FP Standards](./functional-programming-standards.md) - Transducers, higher-order functions, macros
+- **Build**: [Build Configuration](./build-configuration.md) - deps.edn, tools.build for project setup
+- **Java Interop**: [Interop Standards](./interop-standards.md) - JVM library integration
 
 ### Documentation Organization
 
@@ -316,7 +316,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

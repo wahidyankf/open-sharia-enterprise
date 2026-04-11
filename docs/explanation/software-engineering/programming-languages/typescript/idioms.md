@@ -12,10 +12,10 @@ tags:
   - typescript-5.0
   - type-safety
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ./ex-soen-prla-ty__interfaces-and-types.md
-  - ./ex-soen-prla-ty__anti-patterns.md
+  - ./best-practices.md
+  - ./type-safety.md
+  - ./interfaces-and-types.md
+  - ./anti-patterns.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
@@ -117,10 +117,10 @@ type Rate = (typeof RATES)[keyof typeof RATES];
 
 ### Related Documentation
 
-- [Best Practices](ex-soen-prla-ty__best-practices.md)
-- [Type Safety](ex-soen-prla-ty__type-safety.md)
-- [Interfaces and Types](ex-soen-prla-ty__interfaces-and-types.md)
-- [Anti-Patterns](ex-soen-prla-ty__anti-patterns.md)
+- [Best Practices](best-practices.md)
+- [Type Safety](type-safety.md)
+- [Interfaces and Types](interfaces-and-types.md)
+- [Anti-Patterns](anti-patterns.md)
 
 ## Overview
 
@@ -1476,10 +1476,10 @@ function handlePayment(payment: Payment): void {
 
 ### TypeScript Core
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Advanced type system
-- **[TypeScript Interfaces and Types](ex-soen-prla-ty__interfaces-and-types.md)** - Type definitions
-- **[TypeScript Anti-Patterns](ex-soen-prla-ty__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](type-safety.md)** - Advanced type system
+- **[TypeScript Interfaces and Types](interfaces-and-types.md)** - Type definitions
+- **[TypeScript Anti-Patterns](anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

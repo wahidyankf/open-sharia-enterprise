@@ -433,10 +433,10 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Testing Standards](ex-soen-prla-fsh__testing-standards.md) - Expecto test organization mirroring module structure
-- [Code Quality Standards](ex-soen-prla-fsh__code-quality-standards.md) - Fantomas and FSharpLint configuration
-- [DDD Standards](ex-soen-prla-fsh__ddd-standards.md) - Domain modeling with discriminated unions
-- [Type Safety Standards](ex-soen-prla-fsh__type-safety-standards.md) - Single-case DUs and units of measure
+- [Testing Standards](testing-standards.md) - Expecto test organization mirroring module structure
+- [Code Quality Standards](code-quality-standards.md) - Fantomas and FSharpLint configuration
+- [DDD Standards](ddd-standards.md) - Domain modeling with discriminated unions
+- [Type Safety Standards](type-safety-standards.md) - Single-case DUs and units of measure
 
 ## Related Documentation
 

@@ -1365,10 +1365,10 @@ end
 
 ## Related Documentation
 
-- **[Security](ex-soen-plwe-to-elph__security.md)** - API authentication and authorization
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - API testing strategies
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - General Phoenix best practices
-- **[Performance](ex-soen-plwe-to-elph__performance.md)** - API performance optimization
+- **[Security](security.md)** - API authentication and authorization
+- **[Testing](testing.md)** - API testing strategies
+- **[Best Practices](best-practices.md)** - General Phoenix best practices
+- **[Performance](performance.md)** - API performance optimization
 
 ---
 

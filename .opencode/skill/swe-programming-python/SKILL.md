@@ -160,9 +160,9 @@ api_key = os.getenv('API_KEY')
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__idioms.md)** - Python-specific patterns
-- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/python/idioms.md)** - Python-specific patterns
+- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/python/best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/python/anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 

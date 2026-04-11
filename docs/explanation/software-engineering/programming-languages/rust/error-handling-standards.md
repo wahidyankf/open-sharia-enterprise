@@ -367,9 +367,9 @@ pub fn calculate_zakat(wealth: Decimal) -> Result<Decimal, ZakatError> {
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Idiomatic Rust patterns
-- [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Algebraic types for error modeling
-- [API Standards](ex-soen-prla-ru__api-standards.md) - HTTP error response mapping
+- [Coding Standards](coding-standards.md) - Idiomatic Rust patterns
+- [Type Safety Standards](type-safety-standards.md) - Algebraic types for error modeling
+- [API Standards](api-standards.md) - HTTP error response mapping
 
 ## Related Documentation
 

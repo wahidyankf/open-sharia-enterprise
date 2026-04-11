@@ -1060,20 +1060,20 @@ export function ClientComponent() {
 
 **Core Next.js**:
 
-- [App Router](ex-soen-plwe-to-fene__app-router.md) - File-system routing
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Data patterns
-- [Rendering](ex-soen-plwe-to-fene__rendering.md) - Rendering strategies
-- [Streaming](ex-soen-plwe-to-fene__rendering.md#streaming) - Progressive rendering
+- [App Router](app-router.md) - File-system routing
+- [Data Fetching](data-fetching.md) - Data patterns
+- [Rendering](rendering.md) - Rendering strategies
+- [Streaming](rendering.md#streaming) - Progressive rendering
 
 **Performance**:
 
-- [Performance](ex-soen-plwe-to-fene__performance.md) - Optimization strategies
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
+- [Performance](performance.md) - Optimization strategies
+- [Best Practices](best-practices.md) - Production standards
 
 **Integration**:
 
-- [TypeScript](ex-soen-plwe-to-fene__typescript.md) - Type patterns
-- [Testing](ex-soen-plwe-to-fene__testing.md) - Testing Server Components
+- [TypeScript](typescript.md) - Type patterns
+- [Testing](testing.md) - Testing Server Components
 
 ---
 

@@ -24,8 +24,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Styling standards
-- [Accessibility](ex-soen-plwe-to-fere__accessibility.md) - Accessible styling
+- [Best Practices](best-practices.md) - Styling standards
+- [Accessibility](accessibility.md) - Accessible styling
 
 ## Overview
 
@@ -1416,10 +1416,10 @@ const OptimizedComponent = styled.div`
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Styling standards
-- **[Accessibility](ex-soen-plwe-to-fere__accessibility.md)** - Accessible styling
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component design
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Performance optimization
+- **[Best Practices](best-practices.md)** - Styling standards
+- **[Accessibility](accessibility.md)** - Accessible styling
+- **[Component Architecture](component-architecture.md)** - Component design
+- **[Performance](performance.md)** - Performance optimization
 
 ---
 

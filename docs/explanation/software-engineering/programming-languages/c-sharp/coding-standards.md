@@ -686,10 +686,10 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Testing Standards](ex-soen-prla-csh__testing-standards.md) - xUnit, FluentAssertions, Moq patterns
-- [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md) - Roslyn, dotnet format, editorconfig
-- [Type Safety Standards](ex-soen-prla-csh__type-safety-standards.md) - Nullable reference types, generics, pattern matching
-- [DDD Standards](ex-soen-prla-csh__ddd-standards.md) - Value Objects with records, Aggregate roots
+- [Testing Standards](testing-standards.md) - xUnit, FluentAssertions, Moq patterns
+- [Code Quality Standards](code-quality-standards.md) - Roslyn, dotnet format, editorconfig
+- [Type Safety Standards](type-safety-standards.md) - Nullable reference types, generics, pattern matching
+- [DDD Standards](ddd-standards.md) - Value Objects with records, Aggregate roots
 
 ## Related Documentation
 

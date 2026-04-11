@@ -340,9 +340,9 @@ clojure -M:coverage --fail-threshold 95  ;; Coverage gate
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Naming conventions enforced by clj-kondo
-- [Build Configuration](./ex-soen-prla-cl__build-configuration.md) - deps.edn aliases for quality tools
-- [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - Coverage requirements
+- [Coding Standards](./coding-standards.md) - Naming conventions enforced by clj-kondo
+- [Build Configuration](./build-configuration.md) - deps.edn aliases for quality tools
+- [Testing Standards](./testing-standards.md) - Coverage requirements
 
 ## Related Documentation
 

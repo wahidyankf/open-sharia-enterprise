@@ -173,21 +173,21 @@ cargo test           # Run all tests
 
 ### Mandatory Standards
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__coding-standards.md)**
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__testing-standards.md)**
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__code-quality-standards.md)**
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__build-configuration.md)**
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/rust/coding-standards.md)**
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/rust/testing-standards.md)**
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md)**
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/rust/build-configuration.md)**
 
 ### Context-Specific Standards
 
-1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__error-handling-standards.md)**
-2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__concurrency-standards.md)**
-3. **[Memory Management](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__memory-management-standards.md)**
-4. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__type-safety-standards.md)**
-5. **[Performance](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__performance-standards.md)**
-6. **[Security](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__security-standards.md)**
-7. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__api-standards.md)**
-8. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__ddd-standards.md)**
+1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/rust/error-handling-standards.md)**
+2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/rust/concurrency-standards.md)**
+3. **[Memory Management](../../../docs/explanation/software-engineering/programming-languages/rust/memory-management-standards.md)**
+4. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/rust/type-safety-standards.md)**
+5. **[Performance](../../../docs/explanation/software-engineering/programming-languages/rust/performance-standards.md)**
+6. **[Security](../../../docs/explanation/software-engineering/programming-languages/rust/security-standards.md)**
+7. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/rust/api-standards.md)**
+8. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ddd-standards.md)**
 
 ## Related Skills
 

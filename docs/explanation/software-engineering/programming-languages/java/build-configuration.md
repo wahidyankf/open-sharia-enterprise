@@ -385,10 +385,10 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Related Standards
 
-- [Java Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Maven multi-module aligns with package organization
-- [Java Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot and Jakarta EE dependency management
-- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Test dependency configuration
-- [Java Code Quality](./ex-soen-prla-ja__code-quality.md) - Plugin configuration for quality tools
+- [Java Coding Standards](./coding-standards.md) - Maven multi-module aligns with package organization
+- [Java Framework Integration](./framework-integration.md) - Spring Boot and Jakarta EE dependency management
+- [Java Testing Standards](./testing-standards.md) - Test dependency configuration
+- [Java Code Quality](./code-quality.md) - Plugin configuration for quality tools
 
 ## Software Engineering Principles
 
@@ -414,15 +414,15 @@ These standards enforce the the software engineering principles:
 
 **Project Structure**:
 
-- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Maven module organization follows package structure conventions
+- [Coding Standards](./coding-standards.md) - Maven module organization follows package structure conventions
 
 **Quality Tools**:
 
-- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - Maven plugins for Spotless, Error Prone, JaCoCo configuration
+- [Code Quality Standards](./code-quality.md) - Maven plugins for Spotless, Error Prone, JaCoCo configuration
 
 **Framework Setup**:
 
-- [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot and Jakarta EE dependency management
+- [Framework Integration](./framework-integration.md) - Spring Boot and Jakarta EE dependency management
 
 ---
 

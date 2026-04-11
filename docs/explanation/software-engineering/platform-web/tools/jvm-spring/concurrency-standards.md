@@ -608,14 +608,14 @@ management.metrics.enable.jvm=true
 
 ### OSE Platform Standards
 
-- **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Async exception handling
-- **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - Async REST API patterns (this file references the API standards file to be created)
+- **[Spring Error Handling Standards](./error-handling-standards.md)** - Async exception handling
+- **[Spring API Standards](./api-standards.md)** - Async REST API patterns (this file references the API standards file to be created)
 
 ### Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md)** - Spring bean scopes and lifecycle
-- **[Testing](./ex-soen-plwe-to-jvsp__testing.md)** - Async testing patterns
+- **[Dependency Injection](./dependency-injection.md)** - Spring bean scopes and lifecycle
+- **[Testing](./testing.md)** - Async testing patterns
 
 ### Learning Resources
 
@@ -663,14 +663,14 @@ Before deploying Spring-based concurrent financial services, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Concurrency](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Async patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Concurrency standards
-- [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Thread pool tuning
+- [Java Concurrency](../../../programming-languages/java/concurrency-standards.md) - Java threading baseline
+- [Spring Framework Idioms](./idioms.md) - Async patterns
+- [Spring Framework Best Practices](./best-practices.md) - Concurrency standards
+- [Spring Framework Performance](./performance.md) - Thread pool tuning
 
 **Spring Boot Extension**:
 
-- [Spring Boot WebFlux Reactive](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__webflux-reactive.md) - Reactive programming
+- [Spring Boot WebFlux Reactive](../jvm-spring-boot/webflux-reactive.md) - Reactive programming
 
 ---
 

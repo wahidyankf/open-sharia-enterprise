@@ -1808,13 +1808,13 @@ Production patterns using Spring Framework idioms:
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Production standards
-- **[Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
-- **[Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md)** - IoC container deep-dive
-- **[Security](ex-soen-plwe-to-jvsp__security.md)** - Spring Security patterns
-- **[Performance](ex-soen-plwe-to-jvsp__performance.md)** - Optimization techniques
-- **[Observability](ex-soen-plwe-to-jvsp__observability.md)** - Monitoring and tracing
+- **[Best Practices](best-practices.md)** - Production standards
+- **[Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Configuration](configuration.md)** - Configuration approaches
+- **[Dependency Injection](dependency-injection.md)** - IoC container deep-dive
+- **[Security](security.md)** - Spring Security patterns
+- **[Performance](performance.md)** - Optimization techniques
+- **[Observability](observability.md)** - Monitoring and tracing
 
 ### Language Standards
 
@@ -1836,10 +1836,10 @@ Production patterns using Spring Framework idioms:
 
 **OSE Explanation Foundation**:
 
-- [Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Production standards
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Configuration patterns
-- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - DI deep dive
+- [Java Idioms](../../../programming-languages/java/coding-standards.md) - Java baseline patterns
+- [Spring Framework Best Practices](./best-practices.md) - Production standards
+- [Spring Framework Configuration](./configuration.md) - Configuration patterns
+- [Spring Framework Dependency Injection](./dependency-injection.md) - DI deep dive
 
 **Hands-on Learning (AyoKoding)**:
 
@@ -1847,7 +1847,7 @@ Production patterns using Spring Framework idioms:
 
 **Spring Boot Extension**:
 
-- [Spring Boot Idioms](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__idioms.md) - Auto-configured patterns
+- [Spring Boot Idioms](../jvm-spring-boot/idioms.md) - Auto-configured patterns
 
 ---
 

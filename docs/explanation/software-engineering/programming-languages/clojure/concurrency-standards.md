@@ -333,9 +333,9 @@ Deterministic tests for concurrent code use controlled state and property-based 
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - `!` suffix for side-effecting mutation functions
-- [Performance Standards](./ex-soen-prla-cl__performance-standards.md) - Choosing between concurrency approaches for throughput
-- [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - Agent error handling with `agent-error`
+- [Coding Standards](./coding-standards.md) - `!` suffix for side-effecting mutation functions
+- [Performance Standards](./performance-standards.md) - Choosing between concurrency approaches for throughput
+- [Error Handling Standards](./error-handling-standards.md) - Agent error handling with `agent-error`
 
 ## Related Documentation
 

@@ -1581,13 +1581,13 @@ Production accessibility checklist:
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview and getting started
-- [Next.js Styling](ex-soen-plwe-to-fene__styling.md) - Color contrast and focus indicators
-- [Next.js Components](ex-soen-plwe-to-fene__best-practices.md) - Accessible component patterns
+- [Next.js Styling](styling.md) - Color contrast and focus indicators
+- [Next.js Components](best-practices.md) - Accessible component patterns
 
 ---
 
 **Next Steps:**
 
-- Review [Next.js Styling](ex-soen-plwe-to-fene__styling.md) for accessible color usage
-- Explore [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for accessibility testing
-- Check [Next.js Security](ex-soen-plwe-to-fene__security.md) for secure accessible forms
+- Review [Next.js Styling](styling.md) for accessible color usage
+- Explore [Next.js Testing](testing.md) for accessibility testing
+- Check [Next.js Security](security.md) for secure accessible forms

@@ -395,40 +395,40 @@ end
 
 ### Core Framework Patterns
 
-- **[Phoenix Idioms](ex-soen-plwe-to-elph__idioms.md)** - Framework-specific patterns and idiomatic usage
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Production-ready development standards
-- **[Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)** - Common mistakes and how to avoid them
+- **[Phoenix Idioms](idioms.md)** - Framework-specific patterns and idiomatic usage
+- **[Best Practices](best-practices.md)** - Production-ready development standards
+- **[Anti-Patterns](anti-patterns.md)** - Common mistakes and how to avoid them
 
 ### Application Architecture
 
-- **[Contexts](ex-soen-plwe-to-elph__contexts.md)** - Context design, boundaries, and API patterns
-- **[Configuration](ex-soen-plwe-to-elph__configuration.md)** - Application configuration and secrets management
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing strategies and test organization
+- **[Contexts](contexts.md)** - Context design, boundaries, and API patterns
+- **[Configuration](configuration.md)** - Application configuration and secrets management
+- **[Testing](testing.md)** - Testing strategies and test organization
 
 ### Real-Time Features
 
-- **[Phoenix Channels](ex-soen-plwe-to-elph__channels.md)** - WebSocket communication and real-time patterns
-- **[Phoenix LiveView](ex-soen-plwe-to-elph__liveview.md)** - Server-rendered interactive UIs
-- **[PubSub](ex-soen-plwe-to-elph__idioms.md#6-pubsub-broadcasting)** - Event broadcasting and distribution
+- **[Phoenix Channels](channels.md)** - WebSocket communication and real-time patterns
+- **[Phoenix LiveView](liveview.md)** - Server-rendered interactive UIs
+- **[PubSub](idioms.md#6-pubsub-broadcasting)** - Event broadcasting and distribution
 
 ### Data Access and Persistence
 
-- **[Data Access](ex-soen-plwe-to-elph__data-access.md)** - Ecto schemas, queries, and database patterns
-- **[REST APIs](ex-soen-plwe-to-elph__rest-apis.md)** - RESTful API design and JSON standards
+- **[Data Access](data-access.md)** - Ecto schemas, queries, and database patterns
+- **[REST APIs](rest-apis.md)** - RESTful API design and JSON standards
 
 ### Security and Authentication
 
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Authentication, authorization, and security best practices
+- **[Security](security.md)** - Authentication, authorization, and security best practices
 
 ### Production Operations
 
-- **[Performance](ex-soen-plwe-to-elph__performance.md)** - Optimization, caching, and scalability
-- **[Observability](ex-soen-plwe-to-elph__observability.md)** - Logging, metrics, and monitoring
-- **[Deployment](ex-soen-plwe-to-elph__deployment.md)** - Release management and deployment strategies
+- **[Performance](performance.md)** - Optimization, caching, and scalability
+- **[Observability](observability.md)** - Logging, metrics, and monitoring
+- **[Deployment](deployment.md)** - Release management and deployment strategies
 
 ### Migration and Upgrade
 
-- **[Version Migration](ex-soen-plwe-to-elph__version-migration.md)** - Upgrading from Phoenix 1.6 to 1.7+
+- **[Version Migration](version-migration.md)** - Upgrading from Phoenix 1.6 to 1.7+
 
 ## Learning Resources
 

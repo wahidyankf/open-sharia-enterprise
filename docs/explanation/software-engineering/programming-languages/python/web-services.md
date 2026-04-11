@@ -14,9 +14,9 @@ tags:
   - authentication
   - openapi
 related:
-  - ./ex-soen-prla-py__security.md
-  - ./ex-soen-prla-py__concurrency-and-parallelism.md
-  - ./ex-soen-prla-py__type-safety.md
+  - ./security.md
+  - ./concurrency-and-parallelism.md
+  - ./type-safety.md
 principles:
   - explicit-over-implicit
 updated: 2025-01-23
@@ -1987,9 +1987,9 @@ async def create_donation_with_broadcast(
 
 ### Related Documentation
 
-- [Security](./ex-soen-prla-py__security.md) - Authentication and security
-- [Concurrency and Parallelism](./ex-soen-prla-py__concurrency-and-parallelism.md) - Async patterns
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints and validation
+- [Security](./security.md) - Authentication and security
+- [Concurrency and Parallelism](./concurrency-and-parallelism.md) - Async patterns
+- [Type Safety](./type-safety.md) - Type hints and validation
 
 ---
 

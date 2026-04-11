@@ -310,9 +310,9 @@ let result = unsafe {
 
 ## Related Standards
 
-- [Security Standards](ex-soen-prla-ru__security-standards.md) - cargo audit, secrets management
-- [Build Configuration](ex-soen-prla-ru__build-configuration.md) - Cargo.toml, CI integration
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Naming and idioms
+- [Security Standards](security-standards.md) - cargo audit, secrets management
+- [Build Configuration](build-configuration.md) - Cargo.toml, CI integration
+- [Coding Standards](coding-standards.md) - Naming and idioms
 
 ## Related Documentation
 

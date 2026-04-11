@@ -232,8 +232,8 @@ nx graph                # Visualize dependencies
 
 **Learn More**:
 
-- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md)
-- [How to Add New App](../../../docs/how-to/hoto__add-new-app.md)
+- [Monorepo Structure Reference](../../../docs/reference/monorepo-structure.md)
+- [How to Add New App](../../../docs/how-to/add-new-app.md)
 
 ````
 
@@ -549,8 +549,8 @@ This project uses Nx to manage applications and libraries:
 
 **Learn More**:
 
-- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md)
-- [How to Add New App](../../../docs/how-to/hoto__add-new-app.md)
+- [Monorepo Structure Reference](../../../docs/reference/monorepo-structure.md)
+- [How to Add New App](../../../docs/how-to/add-new-app.md)
 ```
 
 **Why it works**:

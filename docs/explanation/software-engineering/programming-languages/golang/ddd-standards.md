@@ -19,8 +19,8 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
-  - ./ex-soen-prla-go__coding-standards.md#part-1-core-idioms
+  - ./coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-1-core-idioms
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -41,8 +41,8 @@ Domain-Driven Design is a software design approach that focuses on modeling soft
 
 **Related Documentation**:
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
-- [Interfaces and Composition](./ex-soen-prla-go__design-patterns.md#part-3-interfaces-and-composition-patterns)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
+- [Interfaces and Composition](./design-patterns.md#part-3-interfaces-and-composition-patterns)
 
 ## DDD Fundamentals
 
@@ -1312,8 +1312,8 @@ Domain-Driven Design in Go emphasizes:
 
 **Related Documentation**:
 
-- Read [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
-- Explore [Interfaces and Composition](./ex-soen-prla-go__design-patterns.md#part-3-interfaces-and-composition-patterns)
+- Read [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
+- Explore [Interfaces and Composition](./design-patterns.md#part-3-interfaces-and-composition-patterns)
 
 ---
 

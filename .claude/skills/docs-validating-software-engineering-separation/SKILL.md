@@ -23,7 +23,7 @@ Use this Skill when:
 
 **CRITICAL**: Only validate relationships **explicitly listed** in the Software Design Reference prerequisite table.
 
-**Authoritative Source**: [Software Design Reference - Specific Prerequisites](../../../docs/explanation/software-engineering/ex-soen__software-design-reference.md#specific-prerequisites)
+**Authoritative Source**: [Software Design Reference - Specific Prerequisites](../../../docs/explanation/software-engineering/software-design-reference.md#specific-prerequisites)
 
 **Current explicit relationships to validate**:
 
@@ -52,7 +52,7 @@ See [Programming Language Documentation Separation Convention](../../../governan
 
 **Validate Software Design Reference table**:
 
-1. Read [Software Design Reference](../../../docs/explanation/software-engineering/ex-soen__software-design-reference.md)
+1. Read [Software Design Reference](../../../docs/explanation/software-engineering/software-design-reference.md)
 2. Extract "Specific Prerequisites" table
 3. For EACH row in table:
    - Verify docs/explanation path exists
@@ -230,7 +230,7 @@ These are OSE Platform-specific style guides, not educational tutorials.
 
 **Supporting**:
 
-- [Software Design Reference](../../../docs/explanation/software-engineering/ex-soen__software-design-reference.md)
+- [Software Design Reference](../../../docs/explanation/software-engineering/software-design-reference.md)
 - [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
 - [Content Quality Standards](../../../governance/conventions/writing/quality.md)
 

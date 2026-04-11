@@ -26,9 +26,9 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - Functional patterns
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Hooks as FP abstractions
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
+- [Idioms](idioms.md) - Functional patterns
+- [Hooks](hooks.md) - Hooks as FP abstractions
+- [Component Architecture](component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -1146,11 +1146,11 @@ export const MurabahaApplicationForm: React.FC = () => {
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - Functional patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Hooks as FP abstractions
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - Immutable state
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
+- **[Idioms](idioms.md)** - Functional patterns
+- **[Hooks](hooks.md)** - Hooks as FP abstractions
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[State Management](state-management.md)** - Immutable state
+- **[Best Practices](best-practices.md)** - Production standards
 
 ---
 

@@ -515,10 +515,10 @@ Build configuration is enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Package naming conventions
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Test execution in CI
-- [Code Quality Standards](./ex-soen-prla-da__code-quality-standards.md) - dart analyze in CI
-- [Security Standards](./ex-soen-prla-da__security-standards.md) - dart pub audit
+- [Coding Standards](./coding-standards.md) - Package naming conventions
+- [Testing Standards](./testing-standards.md) - Test execution in CI
+- [Code Quality Standards](./code-quality-standards.md) - dart analyze in CI
+- [Security Standards](./security-standards.md) - dart pub audit
 
 ## Related Documentation
 

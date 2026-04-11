@@ -12,9 +12,9 @@ tags:
   - financial-systems
   - standards
 related:
-  - ./ex-soen-prla-el__concurrency-standards.md
-  - ./ex-soen-prla-el__otp-supervisor.md
-  - ./ex-soen-prla-el__coding-standards.md
+  - ./concurrency-standards.md
+  - ./otp-supervisor.md
+  - ./coding-standards.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -811,9 +811,9 @@ end
 
 ### OSE Platform Standards
 
-- [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - Process-based concurrency and message passing
-- [OTP Supervisor](./ex-soen-prla-el__otp-supervisor.md) - Supervision strategies and restart policies
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Elixir coding conventions
+- [Concurrency Standards](./concurrency-standards.md) - Process-based concurrency and message passing
+- [OTP Supervisor](./otp-supervisor.md) - Supervision strategies and restart policies
+- [Best Practices](./coding-standards.md) - Elixir coding conventions
 
 ### Learning Resources
 

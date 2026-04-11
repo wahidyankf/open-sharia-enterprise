@@ -426,9 +426,9 @@ management:
 
 ### OSE Platform Standards
 
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread pool sizing, parallel processing
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Error handling performance
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - API performance requirements
+- [Concurrency Standards](./concurrency-standards.md) - Thread pool sizing, parallel processing
+- [Error Handling Standards](./error-handling-standards.md) - Error handling performance
+- [API Standards](./api-standards.md) - API performance requirements
 
 ### Learning Resources
 
@@ -481,15 +481,15 @@ Before deploying financial services, verify:
 
 **Concurrency**:
 
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Virtual threads, async patterns, and thread pool configuration for performance
+- [Concurrency Standards](./concurrency-standards.md) - Virtual threads, async patterns, and thread pool configuration for performance
 
 **Build Configuration**:
 
-- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - JVM tuning parameters and GC configuration in Maven
+- [Build Configuration](./build-configuration.md) - JVM tuning parameters and GC configuration in Maven
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Performance testing, load testing, and profiling patterns
+- [Testing Standards](./testing-standards.md) - Performance testing, load testing, and profiling patterns
 
 **Last Updated**: 2026-02-04
 

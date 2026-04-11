@@ -86,14 +86,14 @@ All Elixir code MUST follow the platform coding standards:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software-engineering/programming-languages/elixir/README.md](../../docs/explanation/software-engineering/programming-languages/elixir/README.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_coding-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__coding-standards.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_functional-programming-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__functional-programming-standards.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_code-quality-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__code-quality-standards.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_coding-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/coding-standards.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_functional-programming-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/functional-programming-standards.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_code-quality-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/code-quality-standards.md)
 
 **Development Practices**:
 

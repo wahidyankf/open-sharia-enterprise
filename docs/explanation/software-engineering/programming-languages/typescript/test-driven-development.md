@@ -12,8 +12,8 @@ tags:
   - unit-testing
   - integration-testing
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__behaviour-driven-development.md
+  - ./best-practices.md
+  - ./behaviour-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -453,7 +453,7 @@ describe("Donor", () => {
 
 **REQUIRED**: Integration tests MUST mock all external I/O. No real database, no real network.
 
-**See**: [Integration Testing Standards](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md) for full patterns.
+**See**: [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) for full patterns.
 
 ### In-Memory Repository Integration
 
@@ -771,8 +771,8 @@ export default defineConfig({
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript BDD](ex-soen-prla-ty__behaviour-driven-development.md)** - BDD patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript BDD](behaviour-driven-development.md)** - BDD patterns
 
 ---
 

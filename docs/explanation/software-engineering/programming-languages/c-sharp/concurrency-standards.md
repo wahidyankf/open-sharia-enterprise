@@ -396,9 +396,9 @@ public void Shutdown() => _isShuttingDown = true;
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md) - CancellationToken and OperationCanceledException handling
-- [Performance Standards](ex-soen-prla-csh__performance-standards.md) - ValueTask for hot paths
-- [API Standards](ex-soen-prla-csh__api-standards.md) - CancellationToken in controller actions
+- [Error Handling Standards](error-handling-standards.md) - CancellationToken and OperationCanceledException handling
+- [Performance Standards](performance-standards.md) - ValueTask for hot paths
+- [API Standards](api-standards.md) - CancellationToken in controller actions
 
 ## Related Documentation
 

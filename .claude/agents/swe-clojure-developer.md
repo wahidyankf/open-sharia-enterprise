@@ -81,21 +81,21 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__coding-standards.md)** - Naming (kebab-case), namespace organization, REPL workflow
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__testing-standards.md)** - clojure.test, Midje, test.check
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__code-quality-standards.md)** - clj-kondo, cljfmt
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__build-configuration.md)** - deps.edn, Leiningen
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/clojure/coding-standards.md)** - Naming (kebab-case), namespace organization, REPL workflow
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/clojure/testing-standards.md)** - clojure.test, Midje, test.check
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/clojure/code-quality-standards.md)** - clj-kondo, cljfmt
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/clojure/build-configuration.md)** - deps.edn, Leiningen
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__security-standards.md)** - Input validation with spec, parameterized queries
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__concurrency-standards.md)** - Atoms, refs, agents, core.async
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__ddd-standards.md)** - Data-driven DDD with maps, protocols, specs
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__api-standards.md)** - Ring, Reitit, middleware composition
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__performance-standards.md)** - Lazy sequences, transducers, type hints
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__error-handling-standards.md)** - ex-info, condition system
-7. **[Functional Programming Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__functional-programming-standards.md)** - Transducers, macros, HOFs
-8. **[Java Interop Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ex-soen-prla-cl__interop-standards.md)** - Java interop patterns
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/clojure/security-standards.md)** - Input validation with spec, parameterized queries
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/clojure/concurrency-standards.md)** - Atoms, refs, agents, core.async
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/clojure/ddd-standards.md)** - Data-driven DDD with maps, protocols, specs
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/clojure/api-standards.md)** - Ring, Reitit, middleware composition
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/clojure/performance-standards.md)** - Lazy sequences, transducers, type hints
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/clojure/error-handling-standards.md)** - ex-info, condition system
+7. **[Functional Programming Standards](../../docs/explanation/software-engineering/programming-languages/clojure/functional-programming-standards.md)** - Transducers, macros, HOFs
+8. **[Java Interop Standards](../../docs/explanation/software-engineering/programming-languages/clojure/interop-standards.md)** - Java interop patterns
 
 **See `swe-programming-clojure` Skill** for quick access to coding standards.
 
@@ -108,7 +108,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 

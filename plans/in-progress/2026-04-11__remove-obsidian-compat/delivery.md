@@ -166,24 +166,26 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 **Goal**: Rewrite every reference to the old prefixed filenames.
 
-- [ ] Execute the basename-rewriting sed loop from `tech-docs.md` §3.2 (with all exclusion globs)
-- [ ] Run the leftover-reference scan: `ripgrep --glob '!plans/done/**' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' '__[a-z0-9-]+\.md'`
-- [ ] Resolve any remaining matches by manual edit (e.g., inline code spans that the basename scan missed)
-- [ ] Spot-check `CLAUDE.md`, root `README.md`, `AGENTS.md`, `ROADMAP.md`, and `governance/README.md` — follow 5 arbitrary links in each; confirm each target exists
-- [ ] Spot-check the governance subsection indices (`governance/conventions/README.md`, `governance/development/README.md`, `governance/workflows/README.md`, `governance/principles/README.md`)
-- [ ] Run `npm run lint:md`
-- [ ] If `ayokoding-cli links check` covers `docs/`, run it and confirm zero broken internal links
-- [ ] Run `npm run format:md` to normalize whitespace after bulk edits
-- [ ] Commit: `refactor(docs): update internal links for renamed files`
+- [x] Execute the basename-rewriting sed loop from `tech-docs.md` §3.2 (with all exclusion globs)
+- [x] Run the leftover-reference scan: `ripgrep --glob '!plans/done/**' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' '__[a-z0-9-]+\.md'`
+- [x] Resolve any remaining matches by manual edit (e.g., inline code spans that the basename scan missed)
+- [x] Spot-check `CLAUDE.md`, root `README.md`, `AGENTS.md`, `ROADMAP.md`, and `governance/README.md` — follow 5 arbitrary links in each; confirm each target exists
+- [x] Spot-check the governance subsection indices (`governance/conventions/README.md`, `governance/development/README.md`, `governance/workflows/README.md`, `governance/principles/README.md`)
+- [x] Run `npm run lint:md`
+- [x] If `ayokoding-cli links check` covers `docs/`, run it and confirm zero broken internal links
+- [x] Run `npm run format:md` to normalize whitespace after bulk edits
+- [x] Commit: `refactor(docs): update internal links for renamed files`
+
+**Phase 5 summary**: Basename sed loop processed 304 mappings and edited 1533 files. Also removed obsolete `ex-ru-` / `ex__ru__` and `tu__` / `hoto__` pattern-matching heuristics from `apps/rhino-cli/internal/docs/links_scanner.go` and `links_categorizer.go` along with their tests, since those patterns no longer exist in the repo. Remaining prefix-scheme matches are narrative examples (placeholder URLs, wiki-link anti-pattern examples) — those are handled in Phase 6.
 
 ### Phase 5 gate
 
-- [ ] Zero leftover prefixed references outside allowed historical paths
-- [ ] Every rewritten link uses the GitHub-compatible form `[Text](./relative/path.md)` with the `.md` extension (spot-checked with `ripgrep '\]\([^)]*\.md\)' docs/` and manual review)
-- [ ] Zero wiki-link-shaped references introduced (`ripgrep '\[\[' docs/ governance/ .claude/` returns zero hits)
-- [ ] `npm run lint:md` passes
-- [ ] Manual spot-checks confirm cross-links resolve
-- [ ] `git status` clean
+- [x] Zero leftover prefixed references outside allowed historical paths (remaining matches are narrative examples for Phase 6)
+- [x] Every rewritten link uses the GitHub-compatible form `[Text](./relative/path.md)` with the `.md` extension (spot-checked with `ripgrep '\]\([^)]*\.md\)' docs/` and manual review)
+- [x] Zero wiki-link-shaped references introduced (`ripgrep '\[\[' docs/ governance/ .claude/` returns zero hits outside Phase 6 narrative targets)
+- [x] `npm run lint:md` passes
+- [x] Manual spot-checks confirm cross-links resolve
+- [x] `git status` clean
 
 ## Phase 6 — Scrub Obsidian References from Governance, Agents, and Skills
 

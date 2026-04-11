@@ -1576,10 +1576,10 @@ class DonationReportGenerator(
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
-- **[Testing](ex-soen-plwe-to-jvsp__testing.md)** - Testing strategies
+- **[Idioms](idioms.md)** - Framework patterns
+- **[Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Configuration](configuration.md)** - Configuration approaches
+- **[Testing](testing.md)** - Testing strategies
 
 ### Development Practices
 
@@ -1590,14 +1590,14 @@ class DonationReportGenerator(
 
 **OSE Explanation Foundation**:
 
-- [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Core Spring patterns
-- [Spring Framework Anti-Patterns](./ex-soen-plwe-to-jvsp__anti-patterns.md) - Common mistakes to avoid
-- [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
+- [Java Best Practices](../../../programming-languages/java/coding-standards.md) - Java baseline standards
+- [Spring Framework Idioms](./idioms.md) - Core Spring patterns
+- [Spring Framework Anti-Patterns](./anti-patterns.md) - Common mistakes to avoid
+- [Spring Framework Testing](./testing.md) - Testing strategies
 
 **Spring Boot Extension**:
 
-- [Spring Boot Best Practices](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md) - Auto-configured standards
+- [Spring Boot Best Practices](../jvm-spring-boot/best-practices.md) - Auto-configured standards
 
 ---
 

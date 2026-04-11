@@ -327,9 +327,9 @@ type DomainValue =
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Discriminated union and record basics
-- [DDD Standards](ex-soen-prla-fsh__ddd-standards.md) - Making illegal states unrepresentable in domain modeling
-- [Security Standards](ex-soen-prla-fsh__security-standards.md) - Single-case DUs for type-driven security
+- [Coding Standards](coding-standards.md) - Discriminated union and record basics
+- [DDD Standards](ddd-standards.md) - Making illegal states unrepresentable in domain modeling
+- [Security Standards](security-standards.md) - Single-case DUs for type-driven security
 
 ## Related Documentation
 

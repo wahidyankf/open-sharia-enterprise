@@ -235,12 +235,11 @@ rhino-cli docs validate-links -q
 
 **Output categories:**
 
-1. **Old ex-ru-\* prefixes** - Links containing `ex-ru-` or `ex__ru__`
-2. **Missing files** - Common files like CODE_OF_CONDUCT.md, CHANGELOG.md
-3. **General/other paths** - All other broken links
-4. **workflows/ paths** - Links to workflows/ (not governance/workflows/)
-5. **vision/ paths** - Links to vision/ (not governance/vision/)
-6. **conventions README** - Links to conventions/README.md
+1. **Missing files** - Common files like CODE_OF_CONDUCT.md, CHANGELOG.md
+2. **General/other paths** - All other broken links
+3. **workflows/ paths** - Links to workflows/ (not governance/workflows/)
+4. **vision/ paths** - Links to vision/ (not governance/vision/)
+5. **conventions README** - Links to conventions/README.md
 
 **Example output (text):**
 

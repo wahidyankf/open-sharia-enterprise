@@ -202,21 +202,21 @@ await storage.write(key: 'api_token', value: token);
 
 ### Mandatory Standards (All Dart Code MUST Follow)
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__coding-standards.md)** - Naming conventions, package organization, Effective Dart
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__testing-standards.md)** - package:test, mockito, coverage >=95%
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__code-quality-standards.md)** - dart analyze, lints, dart format
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__build-configuration.md)** - pubspec.yaml, build_runner
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/dart/coding-standards.md)** - Naming conventions, package organization, Effective Dart
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/dart/testing-standards.md)** - package:test, mockito, coverage >=95%
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/dart/code-quality-standards.md)** - dart analyze, lints, dart format
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/dart/build-configuration.md)** - pubspec.yaml, build_runner
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Error Handling Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__error-handling-standards.md)** - Typed exceptions, Result patterns
-2. **[Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__concurrency-standards.md)** - async/await, Future, Stream, Isolates
-3. **[Type Safety Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__type-safety-standards.md)** - Null safety, sealed classes, records (Dart 3.0+)
-4. **[Performance Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__performance-standards.md)** - const constructors, lazy init, Isolates
-5. **[Security Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__security-standards.md)** - Input validation, secure storage
-6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__api-standards.md)** - shelf HTTP patterns, REST conventions
-7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__ddd-standards.md)** - Domain-Driven Design patterns
-8. **[Framework Integration](../../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__framework-integration.md)** - Flutter, Riverpod, shelf
+1. **[Error Handling Standards](../../../docs/explanation/software-engineering/programming-languages/dart/error-handling-standards.md)** - Typed exceptions, Result patterns
+2. **[Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/dart/concurrency-standards.md)** - async/await, Future, Stream, Isolates
+3. **[Type Safety Standards](../../../docs/explanation/software-engineering/programming-languages/dart/type-safety-standards.md)** - Null safety, sealed classes, records (Dart 3.0+)
+4. **[Performance Standards](../../../docs/explanation/software-engineering/programming-languages/dart/performance-standards.md)** - const constructors, lazy init, Isolates
+5. **[Security Standards](../../../docs/explanation/software-engineering/programming-languages/dart/security-standards.md)** - Input validation, secure storage
+6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/dart/api-standards.md)** - shelf HTTP patterns, REST conventions
+7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/dart/ddd-standards.md)** - Domain-Driven Design patterns
+8. **[Framework Integration](../../../docs/explanation/software-engineering/programming-languages/dart/framework-integration.md)** - Flutter, Riverpod, shelf
 
 ## Related Skills
 

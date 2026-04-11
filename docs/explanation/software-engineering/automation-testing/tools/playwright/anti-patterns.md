@@ -119,7 +119,7 @@ test("login", async ({ page }) => {
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
-- [Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md)
+- [Playwright Best Practices](best-practices.md)
 
 ---
 

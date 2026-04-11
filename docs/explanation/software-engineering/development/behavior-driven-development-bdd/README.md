@@ -77,7 +77,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 1. Gherkin Syntax
 
-**[Gherkin Standards](./ex-soen-de-bedrdebd__gherkin-standards.md)**
+**[Gherkin Standards](./gherkin-standards.md)**
 
 - REQUIRED: Feature files in `features/` directory
 - REQUIRED: Given-When-Then structure
@@ -85,7 +85,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 2. Scenario Structure
 
-**[Scenario Standards](./ex-soen-de-bedrdebd__scenario-standards.md)**
+**[Scenario Standards](./scenario-standards.md)**
 
 - REQUIRED: Scenario independence
 - REQUIRED: Descriptive scenario names
@@ -93,7 +93,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 3. Three Amigos Collaboration
 
-**[Three Amigos Standards](./ex-soen-de-bedrdebd__three-amigos-standards.md)**
+**[Three Amigos Standards](./three-amigos-standards.md)**
 
 - REQUIRED: Weekly Three Amigos sessions
 - REQUIRED: Business + Development + QA participation
@@ -101,7 +101,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 4. Living Documentation
 
-**[Living Documentation Standards](./ex-soen-de-bedrdebd__living-documentation-standards.md)**
+**[Living Documentation Standards](./living-documentation-standards.md)**
 
 - REQUIRED: Scenarios execute in CI/CD
 - REQUIRED: Update scenarios when requirements change
@@ -109,7 +109,7 @@ BDD standards in OSE Platform align with core software engineering principles:
 
 ### 5. BDD with Domain-Driven Design
 
-**[BDD with DDD Standards](./ex-soen-de-bedrdebd__bdd-with-ddd-standards.md)**
+**[BDD with DDD Standards](./bdd-with-ddd-standards.md)**
 
 - REQUIRED: One feature file per bounded context capability
 - REQUIRED: Use ubiquitous language in scenarios

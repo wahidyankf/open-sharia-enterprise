@@ -72,11 +72,11 @@ Test-Driven Development is a software development approach where tests are writt
 **OSE Platform Standards:**
 
 - [TDD Standards Overview](test-driven-development-tdd/README.md) - Complete prescriptive TDD style guide ⭐
-- [TDD Cycle Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-cycle-standards.md) - Red-Green-Refactor requirements
-- [Testing Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__testing-standards.md) - FIRST principles, AAA pattern
-- [Test Doubles Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__test-doubles-standards.md) - When to use mocks, stubs, fakes
-- [Integration Testing Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md) - Testcontainers requirements
-- [TDD with DDD Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-with-ddd-standards.md) - Testing aggregates and domain models
+- [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) - Red-Green-Refactor requirements
+- [Testing Standards](test-driven-development-tdd/testing-standards.md) - FIRST principles, AAA pattern
+- [Test Doubles Standards](test-driven-development-tdd/test-doubles-standards.md) - When to use mocks, stubs, fakes
+- [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) - Testcontainers requirements
+- [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) - Testing aggregates and domain models
 
 **Use TDD when you want to:**
 
@@ -95,11 +95,11 @@ Behavior-Driven Development extends TDD by focusing on behavior specification th
 **OSE Platform Standards:**
 
 - [BDD Standards Overview](behavior-driven-development-bdd/README.md) - Complete prescriptive BDD style guide ⭐
-- [Gherkin Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md) - Feature file structure, Given-When-Then requirements
-- [Scenario Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__scenario-standards.md) - Scenario independence, naming conventions
-- [Three Amigos Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__three-amigos-standards.md) - Collaborative discovery requirements
-- [Living Documentation Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__living-documentation-standards.md) - CI/CD integration requirements
-- [BDD with DDD Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__bdd-with-ddd-standards.md) - Ubiquitous language in scenarios
+- [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md) - Feature file structure, Given-When-Then requirements
+- [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md) - Scenario independence, naming conventions
+- [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md) - Collaborative discovery requirements
+- [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md) - CI/CD integration requirements
+- [BDD with DDD Standards](behavior-driven-development-bdd/bdd-with-ddd-standards.md) - Ubiquitous language in scenarios
 
 **Use BDD when you have:**
 
@@ -177,37 +177,37 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 **Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
-1. **TDD Workflow** - Follow [TDD Cycle Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-cycle-standards.md) for Red-Green-Refactor
-2. **Testing Standards** - Apply [Testing Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__testing-standards.md) for FIRST principles
-3. **Domain Testing** - Follow [TDD with DDD Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-with-ddd-standards.md) for aggregates
-4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md) for Testcontainers
+1. **TDD Workflow** - Follow [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) for Red-Green-Refactor
+2. **Testing Standards** - Apply [Testing Standards](test-driven-development-tdd/testing-standards.md) for FIRST principles
+3. **Domain Testing** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md) for aggregates
+4. **Integration Tests** - Use [Integration Testing Standards](test-driven-development-tdd/integration-testing-standards.md) for Testcontainers
 
 ### For Teams Adopting BDD
 
 **Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
-1. **Collaboration** - Follow [Three Amigos Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__three-amigos-standards.md) for discovery sessions
-2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md) for feature files
-3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__scenario-standards.md) for independence
-4. **Domain Integration** - Use [BDD with DDD Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__bdd-with-ddd-standards.md) for ubiquitous language
+1. **Collaboration** - Follow [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md) for discovery sessions
+2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md) for feature files
+3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md) for independence
+4. **Domain Integration** - Use [BDD with DDD Standards](behavior-driven-development-bdd/bdd-with-ddd-standards.md) for ubiquitous language
 
 ### For Architects and Technical Leads
 
 **Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
 1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md)
-2. **Architecture Integration** - Follow [TDD with DDD Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-with-ddd-standards.md)
+2. **Architecture Integration** - Follow [TDD with DDD Standards](test-driven-development-tdd/tdd-with-ddd-standards.md)
 3. **Testing Strategy** - Use decision matrices above to guide team approach
-4. **Living Documentation** - Implement [Living Documentation Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__living-documentation-standards.md)
+4. **Living Documentation** - Implement [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md)
 
 ### For QA Engineers and Business Analysts
 
 **Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
-1. **Collaboration Standards** - Follow [Three Amigos Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__three-amigos-standards.md)
-2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md)
-3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__scenario-standards.md)
-4. **Living Documentation** - Maintain [Living Documentation Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__living-documentation-standards.md)
+1. **Collaboration Standards** - Follow [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md)
+2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md)
+3. **Scenario Design** - Follow [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md)
+4. **Living Documentation** - Maintain [Living Documentation Standards](behavior-driven-development-bdd/living-documentation-standards.md)
 
 ## Practices in This Repository
 

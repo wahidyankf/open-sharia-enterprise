@@ -13,8 +13,8 @@ tags:
   - restart-strategies
   - let-it-crash
 related:
-  - ./ex-soen-prla-el__otp-genserver.md
-  - ./ex-soen-prla-el__otp-application.md
+  - ./otp-genserver.md
+  - ./otp-application.md
   - ./ex-soen-prla-el__error-handling.md
   - ./ex-soen-prla-el__best-practices.md
 principles:
@@ -1336,8 +1336,8 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [GenServer Patterns](ex-soen-prla-el__otp-genserver.md)
-- [Application Patterns](ex-soen-prla-el__otp-application.md)
+- [GenServer Patterns](otp-genserver.md)
+- [Application Patterns](otp-application.md)
 
 ---
 

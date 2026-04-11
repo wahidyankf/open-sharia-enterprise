@@ -285,5 +285,5 @@ for Go projects instead.
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) - Coverage thresholds and testing levels
-- [Project Dependency Graph](./re__project-dependency-graph.md) - Which projects depend on rhino-cli
-- [Nx Configuration](./re__nx-configuration.md) - How test:quick targets are configured
+- [Project Dependency Graph](./project-dependency-graph.md) - Which projects depend on rhino-cli
+- [Nx Configuration](./nx-configuration.md) - How test:quick targets are configured

@@ -1186,13 +1186,13 @@ class ZakatCalculation {
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview
-- [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) - Type-safe DDD implementation
-- [Next.js Testing](ex-soen-plwe-to-fene__testing.md) - Testing domain logic
+- [Next.js TypeScript](typescript.md) - Type-safe DDD implementation
+- [Next.js Testing](testing.md) - Testing domain logic
 
 ---
 
 **Next Steps:**
 
-- Explore [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) for type-safe domain models
-- Review [Functional Programming](ex-soen-plwe-to-fene__functional-programming.md) for immutable patterns
-- Check [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for domain testing strategies
+- Explore [Next.js TypeScript](typescript.md) for type-safe domain models
+- Review [Functional Programming](functional-programming.md) for immutable patterns
+- Check [Next.js Testing](testing.md) for domain testing strategies

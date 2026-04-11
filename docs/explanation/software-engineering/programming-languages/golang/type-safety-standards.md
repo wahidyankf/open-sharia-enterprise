@@ -17,8 +17,8 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
-  - ./ex-soen-prla-go__coding-standards.md#part-1-core-idioms
+  - ./coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-1-core-idioms
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -39,9 +39,9 @@ Go is a statically typed language with a strong emphasis on type safety. The typ
 
 **Related Documentation**:
 
-- [Interfaces and Composition](./ex-soen-prla-go__design-patterns.md#part-3-interfaces-and-composition-patterns)
-- [Error Handling](./ex-soen-prla-go__error-handling-standards.md)
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
+- [Interfaces and Composition](./design-patterns.md#part-3-interfaces-and-composition-patterns)
+- [Error Handling](./error-handling-standards.md)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
 
 ### Type Hierarchy in Go
 
@@ -2823,9 +2823,9 @@ Type safety makes code more maintainable, refactorable, and less prone to bugs. 
 
 **Next Steps**:
 
-- Read [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
-- Explore [Error Handling](./ex-soen-prla-go__error-handling-standards.md)
-- Study [Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md)
+- Read [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
+- Explore [Error Handling](./error-handling-standards.md)
+- Study [Concurrency and Parallelism](./concurrency-standards.md)
 
 ---
 

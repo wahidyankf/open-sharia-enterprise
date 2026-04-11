@@ -127,21 +127,21 @@ OSE Platform follows a three-tier Elixir versioning strategy:
 
 **MUST follow these mandatory standards for all Elixir code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-el__coding-standards.md)** - Naming conventions, module organization, pattern matching idioms
-2. **[Framework Integration Standards](./ex-soen-prla-el__framework-integration-standards.md)** - Phoenix, Ecto, OTP integration patterns
-3. **[Testing Standards](./ex-soen-prla-el__testing-standards.md)** - ExUnit, doctests, property-based testing, White Bread BDD
-4. **[Build Configuration Standards](./ex-soen-prla-el__build-configuration-standards.md)** - Mix project structure, dependency management, umbrella projects
-5. **[Code Quality Standards](./ex-soen-prla-el__code-quality-standards.md)** - mix format, Credo, Dialyzer integration
-6. **[Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md)** - "Let it crash" philosophy, supervision trees
-7. **[Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md)** - Processes, message passing, Task module, concurrent patterns
-8. **[Performance Standards](./ex-soen-prla-el__performance-standards.md)** - BEAM VM optimization, profiling, benchmarking, ETS tables
-9. **[Security Standards](./ex-soen-prla-el__security-standards.md)** - Input validation, XSS prevention, SQL injection protection
-10. **[Functional Programming Standards](./ex-soen-prla-el__functional-programming-standards.md)** - Pure functions, immutability, recursion, Enum/Stream
-11. **[Type Safety Standards](./ex-soen-prla-el__type-safety-standards.md)** - Typespecs, Dialyzer, pattern matching as type guard
-12. **[Memory Management Standards](./ex-soen-prla-el__memory-management-standards.md)** - BEAM VM garbage collection, process heaps, memory profiling
-13. **[DDD Standards](./ex-soen-prla-el__ddd-standards.md)** - Domain-Driven Design without classes, Ecto schemas as aggregates
-14. **[Protocols and Behaviours Standards](./ex-soen-prla-el__protocols-behaviours-standards.md)** - Polymorphism, protocol implementation, behaviour contracts
-15. **[Finite State Machine Standards](./ex-soen-prla-el__finite-state-machine-standards.md)** - GenServer FSM, gen_statem, functional FSMs
+1. **[Coding Standards](./coding-standards.md)** - Naming conventions, module organization, pattern matching idioms
+2. **[Framework Integration Standards](./framework-integration-standards.md)** - Phoenix, Ecto, OTP integration patterns
+3. **[Testing Standards](./testing-standards.md)** - ExUnit, doctests, property-based testing, White Bread BDD
+4. **[Build Configuration Standards](./build-configuration-standards.md)** - Mix project structure, dependency management, umbrella projects
+5. **[Code Quality Standards](./code-quality-standards.md)** - mix format, Credo, Dialyzer integration
+6. **[Error Handling Standards](./error-handling-standards.md)** - "Let it crash" philosophy, supervision trees
+7. **[Concurrency Standards](./concurrency-standards.md)** - Processes, message passing, Task module, concurrent patterns
+8. **[Performance Standards](./performance-standards.md)** - BEAM VM optimization, profiling, benchmarking, ETS tables
+9. **[Security Standards](./security-standards.md)** - Input validation, XSS prevention, SQL injection protection
+10. **[Functional Programming Standards](./functional-programming-standards.md)** - Pure functions, immutability, recursion, Enum/Stream
+11. **[Type Safety Standards](./type-safety-standards.md)** - Typespecs, Dialyzer, pattern matching as type guard
+12. **[Memory Management Standards](./memory-management-standards.md)** - BEAM VM garbage collection, process heaps, memory profiling
+13. **[DDD Standards](./ddd-standards.md)** - Domain-Driven Design without classes, Ecto schemas as aggregates
+14. **[Protocols and Behaviours Standards](./protocols-behaviours-standards.md)** - Polymorphism, protocol implementation, behaviour contracts
+15. **[Finite State Machine Standards](./finite-state-machine-standards.md)** - GenServer FSM, gen_statem, functional FSMs
 
 ## Documentation Structure
 
@@ -149,24 +149,24 @@ OSE Platform follows a three-tier Elixir versioning strategy:
 
 **Mandatory Standards (All Elixir Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-el__coding-standards.md) - Naming, module structure, pattern matching
-2. [Framework Integration Standards](./ex-soen-prla-el__framework-integration-standards.md) - Phoenix, Ecto, OTP setup
-3. [Testing Standards](./ex-soen-prla-el__testing-standards.md) - ExUnit, doctests, property-based testing
+1. [Coding Standards](./coding-standards.md) - Naming, module structure, pattern matching
+2. [Framework Integration Standards](./framework-integration-standards.md) - Phoenix, Ecto, OTP setup
+3. [Testing Standards](./testing-standards.md) - ExUnit, doctests, property-based testing
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-el__security-standards.md) - Input validation, Phoenix security for user-facing apps
-- **OTP Application**: [OTP Application](./ex-soen-prla-el__otp-application.md) - OTP application structure and supervision trees
-- **OTP GenServer**: [OTP GenServer](./ex-soen-prla-el__otp-genserver.md) - GenServer behavior and stateful process patterns
-- **OTP Supervisor**: [OTP Supervisor](./ex-soen-prla-el__otp-supervisor.md) - Supervisor strategies and fault tolerance
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - Processes, GenServer for concurrent code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-el__ddd-standards.md) - Aggregates, bounded contexts for business domains
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md) - Supervision trees for resilience
-- **Performance**: [Performance Standards](./ex-soen-prla-el__performance-standards.md) - BEAM optimization, ETS for caching
-- **Type Safety**: [Type Safety Standards](./ex-soen-prla-el__type-safety-standards.md) - Typespecs, Dialyzer for type checking
-- **Functional Programming**: [Functional Programming Standards](./ex-soen-prla-el__functional-programming-standards.md) - Pure functions, immutability
-- **Protocols**: [Protocols and Behaviours Standards](./ex-soen-prla-el__protocols-behaviours-standards.md) - Polymorphism patterns
-- **FSM**: [Finite State Machine Standards](./ex-soen-prla-el__finite-state-machine-standards.md) - State machine patterns
+- **Security**: [Security Standards](./security-standards.md) - Input validation, Phoenix security for user-facing apps
+- **OTP Application**: [OTP Application](./otp-application.md) - OTP application structure and supervision trees
+- **OTP GenServer**: [OTP GenServer](./otp-genserver.md) - GenServer behavior and stateful process patterns
+- **OTP Supervisor**: [OTP Supervisor](./otp-supervisor.md) - Supervisor strategies and fault tolerance
+- **Concurrency**: [Concurrency Standards](./concurrency-standards.md) - Processes, GenServer for concurrent code
+- **Domain Modeling**: [DDD Standards](./ddd-standards.md) - Aggregates, bounded contexts for business domains
+- **Error Handling**: [Error Handling Standards](./error-handling-standards.md) - Supervision trees for resilience
+- **Performance**: [Performance Standards](./performance-standards.md) - BEAM optimization, ETS for caching
+- **Type Safety**: [Type Safety Standards](./type-safety-standards.md) - Typespecs, Dialyzer for type checking
+- **Functional Programming**: [Functional Programming Standards](./functional-programming-standards.md) - Pure functions, immutability
+- **Protocols**: [Protocols and Behaviours Standards](./protocols-behaviours-standards.md) - Polymorphism patterns
+- **FSM**: [Finite State Machine Standards](./finite-state-machine-standards.md) - State machine patterns
 
 ### Documentation Organization
 
@@ -314,7 +314,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

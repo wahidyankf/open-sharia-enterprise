@@ -544,10 +544,10 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - Testing patterns using these naming conventions
-- [Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md) - Tool configuration enforcing these rules
-- [Functional Programming Standards](./ex-soen-prla-cl__functional-programming-standards.md) - Advanced FP patterns building on these idioms
-- [DDD Standards](./ex-soen-prla-cl__ddd-standards.md) - Domain modeling with namespaced keywords
+- [Testing Standards](./testing-standards.md) - Testing patterns using these naming conventions
+- [Code Quality Standards](./code-quality-standards.md) - Tool configuration enforcing these rules
+- [Functional Programming Standards](./functional-programming-standards.md) - Advanced FP patterns building on these idioms
+- [DDD Standards](./ddd-standards.md) - Domain modeling with namespaced keywords
 
 ## Related Documentation
 

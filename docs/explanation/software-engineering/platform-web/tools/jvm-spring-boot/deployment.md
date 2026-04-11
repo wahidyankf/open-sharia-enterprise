@@ -19,15 +19,15 @@ principles:
 created: 2026-02-06
 updated: 2026-02-06
 related:
-  - ./ex-soen-plwe-to-jvspbo__configuration.md
-  - ./ex-soen-plwe-to-jvspbo__observability.md
-  - ./ex-soen-plwe-to-jvspbo__performance.md
-  - ../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md
+  - ./configuration.md
+  - ./observability.md
+  - ./performance.md
+  - ../jvm-spring/deployment.md
 ---
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand [Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md) before reading this document. This covers Spring Boot-specific deployment features built on top of Spring Framework.
+**REQUIRED**: You MUST understand [Spring Framework Deployment](../jvm-spring/deployment.md) before reading this document. This covers Spring Boot-specific deployment features built on top of Spring Framework.
 
 **STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path for practical deployment experience.
 
@@ -1041,13 +1041,13 @@ These deployment standards enforce the the software engineering principles:
 
 **Prerequisites**:
 
-- **[Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md)** - Foundation concepts (WAR deployment, servlet containers, standalone apps)
+- **[Spring Framework Deployment](../jvm-spring/deployment.md)** - Foundation concepts (WAR deployment, servlet containers, standalone apps)
 
 **Spring Boot Documentation**:
 
-- **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Environment-specific configuration, profiles, externalized config
-- **[Observability](ex-soen-plwe-to-jvspbo__observability.md)** - Health checks, metrics, monitoring
-- **[Performance](ex-soen-plwe-to-jvspbo__performance.md)** - JVM tuning, connection pools, caching
+- **[Configuration](configuration.md)** - Environment-specific configuration, profiles, externalized config
+- **[Observability](observability.md)** - Health checks, metrics, monitoring
+- **[Performance](performance.md)** - JVM tuning, connection pools, caching
 
 **External Resources**:
 
@@ -1059,10 +1059,10 @@ These deployment standards enforce the the software engineering principles:
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md) - Manual Spring deployment
-- [Java Deployment](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Deployment patterns
-- [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Environment configuration
+- [Spring Framework Deployment](../jvm-spring/deployment.md) - Manual Spring deployment
+- [Java Deployment](../../../programming-languages/java/build-configuration.md) - Java packaging baseline
+- [Spring Boot Idioms](./idioms.md) - Deployment patterns
+- [Spring Boot Configuration](./configuration.md) - Environment configuration
 
 ---
 

@@ -432,9 +432,9 @@ var service = new ZakatService(mockRepository.Object, fakeTime);
 
 ## Related Standards
 
-- [DDD Standards](ex-soen-prla-csh__ddd-standards.md) - Aggregate and Value Object design for EF Core mapping
-- [API Standards](ex-soen-prla-csh__api-standards.md) - Minimal API endpoint groups
-- [Security Standards](ex-soen-prla-csh__security-standards.md) - Authentication middleware placement
+- [DDD Standards](ddd-standards.md) - Aggregate and Value Object design for EF Core mapping
+- [API Standards](api-standards.md) - Minimal API endpoint groups
+- [Security Standards](security-standards.md) - Authentication middleware placement
 
 ## Related Documentation
 

@@ -577,10 +577,10 @@ Type safety is enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Type naming conventions
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Typed exceptions
-- [DDD Standards](./ex-soen-prla-da__ddd-standards.md) - Sealed classes for domain states
-- [Performance Standards](./ex-soen-prla-da__performance-standards.md) - Extension types zero-cost
+- [Coding Standards](./coding-standards.md) - Type naming conventions
+- [Error Handling Standards](./error-handling-standards.md) - Typed exceptions
+- [DDD Standards](./ddd-standards.md) - Sealed classes for domain states
+- [Performance Standards](./performance-standards.md) - Extension types zero-cost
 
 ## Related Documentation
 

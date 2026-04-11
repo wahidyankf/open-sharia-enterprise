@@ -527,9 +527,9 @@ form.getByRole("textbox").nth(2); // Third textbox within specific form
 **Core Playwright Documentation**:
 
 - [Playwright Framework Index](README.md) - Overview and related documentation
-- [Playwright Test Organization](ex-soen-aute-to-pl__test-organization.md) - Test structure standards
-- [Playwright Page Objects](ex-soen-aute-to-pl__page-objects.md) - Page object patterns with selectors
-- [Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md) - Common selector mistakes
+- [Playwright Test Organization](test-organization.md) - Test structure standards
+- [Playwright Page Objects](page-objects.md) - Page object patterns with selectors
+- [Playwright Anti-Patterns](anti-patterns.md) - Common selector mistakes
 
 **Principles**:
 

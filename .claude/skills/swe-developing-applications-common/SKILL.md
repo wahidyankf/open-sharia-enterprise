@@ -340,7 +340,7 @@ All language developers follow this pattern:
 **All language developers reference**:
 
 - **[CLAUDE.md](../../../CLAUDE.md)**: Primary guidance for all agents
-- **[Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)**: Nx workspace organization
+- **[Monorepo Structure](../../../docs/reference/monorepo-structure.md)**: Nx workspace organization
 - **[Commit Messages Convention](../../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
 - **[Code Quality Convention](../../../governance/development/quality/code.md)**: Git hooks and automation
 - **[Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
@@ -389,7 +389,7 @@ docs/explanation/software-engineering/programming-languages/[language]/README.md
 
 **Architecture Conventions**:
 
-- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure Reference](../../../docs/reference/monorepo-structure.md) - Nx workspace organization
 - [Nx Target Standards](../../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
 - [Functional Programming](../../../governance/development/pattern/functional-programming.md) - FP principles across languages
 

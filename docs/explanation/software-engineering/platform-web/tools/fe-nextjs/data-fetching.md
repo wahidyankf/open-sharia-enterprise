@@ -1231,15 +1231,15 @@ export async function updateProduct(productId: string, data: ProductData) {
 
 **Core Next.js**:
 
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - RSC patterns
-- [Rendering](ex-soen-plwe-to-fene__rendering.md) - Rendering strategies
-- [API Routes](ex-soen-plwe-to-fene__api-routes.md) - Route handlers
-- [Caching](ex-soen-plwe-to-fene__performance.md#caching-strategies) - Performance optimization
+- [Server Components](server-components.md) - RSC patterns
+- [Rendering](rendering.md) - Rendering strategies
+- [API Routes](api-routes.md) - Route handlers
+- [Caching](performance.md#caching-strategies) - Performance optimization
 
 **Patterns**:
 
-- [Idioms](ex-soen-plwe-to-fene__idioms.md) - Data fetching patterns
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
+- [Idioms](idioms.md) - Data fetching patterns
+- [Best Practices](best-practices.md) - Production standards
 
 ---
 

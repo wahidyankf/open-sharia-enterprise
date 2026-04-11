@@ -2066,17 +2066,17 @@ export function Button({ variant = "primary", size = "md", children, onClick, di
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview and getting started
-- [Next.js Server Components](ex-soen-plwe-to-fene__server-components.md) - Async component patterns
-- [Next.js API Routes](ex-soen-plwe-to-fene__api-routes.md) - Type-safe API handlers
-- [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) - TypeScript config setup
-- [Next.js Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Type-safe data patterns
-- [React TypeScript](../fe-react/ex-soen-plwe-to-fere__typescript.md) - React-specific typing patterns
+- [Next.js Server Components](server-components.md) - Async component patterns
+- [Next.js API Routes](api-routes.md) - Type-safe API handlers
+- [Next.js Configuration](configuration.md) - TypeScript config setup
+- [Next.js Data Fetching](data-fetching.md) - Type-safe data patterns
+- [React TypeScript](../fe-react/typescript.md) - React-specific typing patterns
 
 ---
 
 **Next Steps:**
 
-- Explore [Next.js Server Components](ex-soen-plwe-to-fene__server-components.md) for async typing patterns
-- Review [Next.js API Routes](ex-soen-plwe-to-fene__api-routes.md) for type-safe handlers
-- Check [Next.js Security](ex-soen-plwe-to-fene__security.md) for validation strategies
-- Read [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for type-safe tests
+- Explore [Next.js Server Components](server-components.md) for async typing patterns
+- Review [Next.js API Routes](api-routes.md) for type-safe handlers
+- Check [Next.js Security](security.md) for validation strategies
+- Read [Next.js Testing](testing.md) for type-safe tests

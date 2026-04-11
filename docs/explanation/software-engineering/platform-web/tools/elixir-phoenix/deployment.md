@@ -1166,10 +1166,10 @@ echo "Deployment complete!"
 
 ## Related Documentation
 
-- **[Configuration](ex-soen-plwe-to-elph__configuration.md)** - Production configuration
-- **[Performance](ex-soen-plwe-to-elph__performance.md)** - Scaling and optimization
-- **[Observability](ex-soen-plwe-to-elph__observability.md)** - Monitoring and logging
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Production security
+- **[Configuration](configuration.md)** - Production configuration
+- **[Performance](performance.md)** - Scaling and optimization
+- **[Observability](observability.md)** - Monitoring and logging
+- **[Security](security.md)** - Production security
 
 ---
 

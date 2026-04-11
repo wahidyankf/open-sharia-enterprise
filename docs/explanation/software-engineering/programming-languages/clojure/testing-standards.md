@@ -303,9 +303,9 @@ test/ose/murabaha/contract_test.clj
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Naming conventions for test namespaces
-- [Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md) - clj-kondo rules for test code
-- [Build Configuration](./ex-soen-prla-cl__build-configuration.md) - deps.edn aliases for test execution
+- [Coding Standards](./coding-standards.md) - Naming conventions for test namespaces
+- [Code Quality Standards](./code-quality-standards.md) - clj-kondo rules for test code
+- [Build Configuration](./build-configuration.md) - deps.edn aliases for test execution
 
 ## Related Documentation
 

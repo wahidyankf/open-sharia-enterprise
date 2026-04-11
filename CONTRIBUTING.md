@@ -119,9 +119,9 @@ open-sharia-enterprise/
 
 For detailed information, see:
 
-- [Monorepo Structure](./docs/reference/re__monorepo-structure.md)
-- [Add New App Guide](./docs/how-to/hoto__add-new-app.md)
-- [Add New Lib Guide](./docs/how-to/hoto__add-new-lib.md)
+- [Monorepo Structure](./docs/reference/monorepo-structure.md)
+- [Add New App Guide](./docs/how-to/add-new-app.md)
+- [Add New Lib Guide](./docs/how-to/add-new-lib.md)
 
 ## Making Changes
 

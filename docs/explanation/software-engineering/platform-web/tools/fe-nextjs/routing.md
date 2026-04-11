@@ -993,15 +993,15 @@ export const config = {
 
 **Core Next.js**:
 
-- [App Router](ex-soen-plwe-to-fene__app-router.md) - File-system routing fundamentals
-- [Middleware](ex-soen-plwe-to-fene__middleware.md) - Request-time routing logic
-- [API Routes](ex-soen-plwe-to-fene__api-routes.md) - Backend routing
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - Component-based routing
+- [App Router](app-router.md) - File-system routing fundamentals
+- [Middleware](middleware.md) - Request-time routing logic
+- [API Routes](api-routes.md) - Backend routing
+- [Server Components](server-components.md) - Component-based routing
 
 **Patterns**:
 
-- [Idioms](ex-soen-plwe-to-fene__idioms.md) - Next.js routing patterns
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
+- [Idioms](idioms.md) - Next.js routing patterns
+- [Best Practices](best-practices.md) - Production standards
 
 ---
 

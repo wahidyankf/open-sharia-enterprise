@@ -322,7 +322,7 @@ Framework integration standards are enforced through:
 - **Code reviews** - Human verification of constructor injection, configuration patterns
 - **Starter templates** - Pre-configured project templates with correct framework setup
 
-See [Java Code Quality](./ex-soen-prla-ja__code-quality.md) for ArchUnit configuration.
+See [Java Code Quality](./code-quality.md) for ArchUnit configuration.
 
 ## Learning Resources
 
@@ -338,10 +338,10 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Related Standards
 
-- [Java Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Package organization, naming conventions
-- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Testing Spring Boot and Jakarta EE components
-- [Java Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven dependency management for frameworks
-- [Java Code Quality](./ex-soen-prla-ja__code-quality.md) - Automated architectural validation
+- [Java Coding Standards](./coding-standards.md) - Package organization, naming conventions
+- [Java Testing Standards](./testing-standards.md) - Testing Spring Boot and Jakarta EE components
+- [Java Build Configuration](./build-configuration.md) - Maven dependency management for frameworks
+- [Java Code Quality](./code-quality.md) - Automated architectural validation
 
 ## Software Engineering Principles
 
@@ -368,16 +368,16 @@ These standards enforce the the software engineering principles:
 
 **Project Organization**:
 
-- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Package structure and hexagonal architecture conventions
-- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Spring Boot and Jakarta EE dependency management
+- [Coding Standards](./coding-standards.md) - Package structure and hexagonal architecture conventions
+- [Build Configuration](./build-configuration.md) - Spring Boot and Jakarta EE dependency management
 
 **Domain Patterns**:
 
-- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Dependency injection for aggregates and domain services
+- [DDD Standards](./ddd-standards.md) - Dependency injection for aggregates and domain services
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Spring Test and TestContainers for integration testing
+- [Testing Standards](./testing-standards.md) - Spring Test and TestContainers for integration testing
 
 **Maintainers**: Platform Documentation Team
 **Last Updated**: 2026-02-04

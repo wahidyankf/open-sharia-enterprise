@@ -499,9 +499,9 @@ mvn clean verify
 
 **OSE Explanation**:
 
-- [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
-- [Spring Framework Build Configuration](./ex-soen-plwe-to-jvsp__build-configuration.md) - Maven plugin setup
-- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline quality standards
+- [Spring Framework Testing](./testing.md) - Testing strategies
+- [Spring Framework Build Configuration](./build-configuration.md) - Maven plugin setup
+- [Java Code Quality](../../../programming-languages/java/code-quality.md) - Java baseline quality standards
 
 ## Software Engineering Principles
 
@@ -527,27 +527,27 @@ mvn clean verify
 
 **OSE Platform Standards**:
 
-- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline
-- [Spring Framework Build Configuration](./ex-soen-plwe-to-jvsp__build-configuration.md) - Maven plugins
-- [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
+- [Java Code Quality](../../../programming-languages/java/code-quality.md) - Java baseline
+- [Spring Framework Build Configuration](./build-configuration.md) - Maven plugins
+- [Spring Framework Testing](./testing.md) - Testing strategies
 
 **Spring Framework Documentation**:
 
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Framework standards
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Spring patterns
+- [Spring Framework Best Practices](./best-practices.md) - Framework standards
+- [Spring Framework Idioms](./idioms.md) - Spring patterns
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java quality baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Quality patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Quality standards
-- [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Test quality
+- [Java Code Quality](../../../programming-languages/java/code-quality.md) - Java quality baseline
+- [Spring Framework Idioms](./idioms.md) - Quality patterns
+- [Spring Framework Best Practices](./best-practices.md) - Quality standards
+- [Spring Framework Testing](./testing.md) - Test quality
 
 **Spring Boot Extension**:
 
-- [Spring Boot Best Practices](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__best-practices.md) - Boot quality standards
+- [Spring Boot Best Practices](../jvm-spring-boot/best-practices.md) - Boot quality standards
 
 ---
 

@@ -626,20 +626,20 @@ class ModifyingTest {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Testing strategies
+- **[Best Practices](best-practices.md)** - Testing strategies
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Testing](../../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Testing patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Test standards
-- [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Repository testing
+- [Java Testing](../../../programming-languages/java/testing-standards.md) - Java test baseline
+- [Spring Framework Idioms](./idioms.md) - Testing patterns
+- [Spring Framework Best Practices](./best-practices.md) - Test standards
+- [Spring Framework Data Access](./data-access.md) - Repository testing
 
 **Spring Boot Extension**:
 
-- [Spring Boot Testing](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__testing.md) - Auto-configured tests
+- [Spring Boot Testing](../jvm-spring-boot/testing.md) - Auto-configured tests
 
 ---
 

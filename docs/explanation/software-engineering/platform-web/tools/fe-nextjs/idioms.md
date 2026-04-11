@@ -812,11 +812,11 @@ NEXT_PUBLIC_API_URL="https://api.example.com"
 
 ## Related Documentation
 
-- **[Next.js Best Practices](ex-soen-plwe-to-fene__best-practices.md)** - Production standards
-- **[Next.js Anti-Patterns](ex-soen-plwe-to-fene__anti-patterns.md)** - Common mistakes
-- **[App Router](ex-soen-plwe-to-fene__app-router.md)** - Routing architecture
-- **[Server Components](ex-soen-plwe-to-fene__server-components.md)** - RSC patterns
-- **[Data Fetching](ex-soen-plwe-to-fene__data-fetching.md)** - Data strategies
+- **[Next.js Best Practices](best-practices.md)** - Production standards
+- **[Next.js Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[App Router](app-router.md)** - Routing architecture
+- **[Server Components](server-components.md)** - RSC patterns
+- **[Data Fetching](data-fetching.md)** - Data strategies
 
 ---
 

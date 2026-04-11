@@ -33,10 +33,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Contexts](ex-soen-plwe-to-elph__contexts.md) - Organizing business logic
-- [Performance](ex-soen-plwe-to-elph__performance.md) - Query optimization
-- [Testing](ex-soen-plwe-to-elph__testing.md) - Database testing
-- [Best Practices](ex-soen-plwe-to-elph__best-practices.md) - General patterns
+- [Contexts](contexts.md) - Organizing business logic
+- [Performance](performance.md) - Query optimization
+- [Testing](testing.md) - Database testing
+- [Best Practices](best-practices.md) - General patterns
 
 ## Overview
 
@@ -1156,9 +1156,9 @@ end
 
 ## Related Documentation
 
-- **[Contexts Guide](ex-soen-plwe-to-elph__contexts.md)** - Organizing data access
-- **[Performance Guide](ex-soen-plwe-to-elph__performance.md)** - Query optimization
-- **[Testing Guide](ex-soen-plwe-to-elph__testing.md)** - Database testing
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - General patterns
+- **[Contexts Guide](contexts.md)** - Organizing data access
+- **[Performance Guide](performance.md)** - Query optimization
+- **[Testing Guide](testing.md)** - Database testing
+- **[Best Practices](best-practices.md)** - General patterns
 - **[Ecto Documentation](https://hexdocs.pm/ecto)** - Official reference
 - **Schema Template (TODO: ./templates/ex-soen-plwe-elph-te\_\_schema-template.md)** - Schema starter

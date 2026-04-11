@@ -1251,10 +1251,10 @@ end
 
 ## Related Documentation
 
-- **[Data Access](ex-soen-plwe-to-elph__data-access.md)** - Ecto query patterns and optimizations
-- **[Deployment](ex-soen-plwe-to-elph__deployment.md)** - Scaling and deployment strategies
-- **[Observability](ex-soen-plwe-to-elph__observability.md)** - Monitoring and metrics
-- **[Configuration](ex-soen-plwe-to-elph__configuration.md)** - Performance-related configuration
+- **[Data Access](data-access.md)** - Ecto query patterns and optimizations
+- **[Deployment](deployment.md)** - Scaling and deployment strategies
+- **[Observability](observability.md)** - Monitoring and metrics
+- **[Configuration](configuration.md)** - Performance-related configuration
 
 ---
 

@@ -12,10 +12,10 @@ tags:
   - static-analysis
   - runtime-validation
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__idioms.md
-  - ./ex-soen-prla-py__classes-and-protocols.md
-  - ./ex-soen-prla-py__domain-driven-design.md
+  - ./best-practices.md
+  - ./idioms.md
+  - ./classes-and-protocols.md
+  - ./domain-driven-design.md
 principles:
   - explicit-over-implicit
   - documentation-first
@@ -923,10 +923,10 @@ zakat3 = calculate_category_zakat("invalid", Decimal("1000.00"))  # Type error
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Python coding standards
-- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - Object-oriented design
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - DDD with Pydantic
+- [Best Practices](./best-practices.md) - Python coding standards
+- [Idioms](./idioms.md) - Pythonic patterns
+- [Classes and Protocols](./classes-and-protocols.md) - Object-oriented design
+- [Domain-Driven Design](./domain-driven-design.md) - DDD with Pydantic
 
 ### Tools
 

@@ -11,10 +11,10 @@ tags:
   - type-guards
   - typescript-5.0
 related:
-  - ./ex-soen-prla-ty__idioms.md
-  - ./ex-soen-prla-ty__interfaces-and-types.md
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__anti-patterns.md
+  - ./idioms.md
+  - ./interfaces-and-types.md
+  - ./best-practices.md
+  - ./anti-patterns.md
   - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
@@ -832,10 +832,10 @@ const handleUSD: USDHandler = handleMoney; // ✓ OK
 
 ### TypeScript Core
 
-- **[TypeScript Idioms](ex-soen-prla-ty__idioms.md)** - TypeScript patterns
-- **[TypeScript Interfaces and Types](ex-soen-prla-ty__interfaces-and-types.md)** - Type definitions
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Anti-Patterns](ex-soen-prla-ty__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Idioms](idioms.md)** - TypeScript patterns
+- **[TypeScript Interfaces and Types](interfaces-and-types.md)** - Type definitions
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Anti-Patterns](anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

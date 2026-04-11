@@ -822,9 +822,9 @@ test("calculates zakat for gold above nisab", async ({ page }) => {
 **Core Playwright Documentation**:
 
 - [Playwright Framework Index](README.md) - Overview and related documentation
-- [Playwright Idioms](ex-soen-aute-to-pl__idioms.md) - Framework-specific patterns
-- [Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md) - Production standards
-- [Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md) - Common mistakes to avoid
+- [Playwright Idioms](idioms.md) - Framework-specific patterns
+- [Playwright Best Practices](best-practices.md) - Production standards
+- [Playwright Anti-Patterns](anti-patterns.md) - Common mistakes to avoid
 
 **Software Engineering Principles**:
 

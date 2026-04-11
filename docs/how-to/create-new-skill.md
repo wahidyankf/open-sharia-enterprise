@@ -451,7 +451,7 @@ wow__understanding-repository-architecture/
 
 ## Related How-To Guides
 
-- [How to Add a New App](./hoto__add-new-app.md) - Creating apps that use Skills-powered agents
+- [How to Add a New App](./add-new-app.md) - Creating apps that use Skills-powered agents
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Creating agents that reference Skills
 
 ---

@@ -1281,27 +1281,27 @@ public class OseApplicationConfig {
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production patterns
-- [Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md) - Framework patterns
-- [Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md) - Common DI mistakes
-- [Testing](ex-soen-plwe-to-jvspbo__testing.md) - Testing with DI
+- [Spring Boot Best Practices](best-practices.md) - Production patterns
+- [Spring Boot Idioms](idioms.md) - Framework patterns
+- [Anti-Patterns](anti-patterns.md) - Common DI mistakes
+- [Testing](testing.md) - Testing with DI
 
 ---
 
 **Next Steps:**
 
-- Review [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md) for domain service injection
-- Explore [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for externalized configuration
-- Check [Observability](ex-soen-plwe-to-jvspbo__observability.md) for monitoring injected beans
+- Review [Domain-Driven Design](domain-driven-design.md) for domain service injection
+- Explore [Configuration](configuration.md) for externalized configuration
+- Check [Observability](observability.md) for monitoring injected beans
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Dependency Injection](../jvm-spring/ex-soen-plwe-to-jvsp__dependency-injection.md) - Manual Spring DI
-- [Java Dependency Management](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - DI patterns
-- [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Bean configuration
+- [Spring Framework Dependency Injection](../jvm-spring/dependency-injection.md) - Manual Spring DI
+- [Java Dependency Management](../../../programming-languages/java/framework-integration.md) - Java baseline DI
+- [Spring Boot Idioms](./idioms.md) - DI patterns
+- [Spring Boot Configuration](./configuration.md) - Bean configuration
 
 **Hands-on Learning (AyoKoding)**:
 

@@ -537,9 +537,9 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Result/Option patterns
-- [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Generics, traits, phantom types
-- [Testing Standards](ex-soen-prla-ru__testing-standards.md) - cargo test, coverage
+- [Error Handling Standards](error-handling-standards.md) - Result/Option patterns
+- [Type Safety Standards](type-safety-standards.md) - Generics, traits, phantom types
+- [Testing Standards](testing-standards.md) - cargo test, coverage
 
 ## Related Documentation
 

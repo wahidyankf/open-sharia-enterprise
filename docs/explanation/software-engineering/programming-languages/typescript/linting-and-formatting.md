@@ -11,8 +11,8 @@ tags:
   - formatting
   - linting
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__test-driven-development.md
+  - ./best-practices.md
+  - ./test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -389,8 +389,8 @@ git commit -m "feat: add donation validation"
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript TDD](ex-soen-prla-ty__test-driven-development.md)** - Testing practices
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript TDD](test-driven-development.md)** - Testing practices
 
 ---
 

@@ -6,11 +6,6 @@ import "strings"
 func CategorizeBrokenLink(link string) string {
 	// Check patterns in order (most specific first)
 
-	// Old ex-ru-* prefixes
-	if strings.Contains(link, "ex-ru-") || strings.Contains(link, "ex__ru__") {
-		return "Old ex-ru-* prefixes"
-	}
-
 	// workflows/ paths (but not governance/workflows/)
 	if strings.Contains(link, "workflows/") && !strings.Contains(link, "governance/workflows/") {
 		return "workflows/ paths"

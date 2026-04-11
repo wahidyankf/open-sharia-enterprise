@@ -367,9 +367,9 @@ Ring request and response maps are immutable. Middleware wraps handlers by retur
 
 ## Related Standards
 
-- [Security Standards](./ex-soen-prla-cl__security-standards.md) - CSRF middleware placement, JWT authentication
-- [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - Converting ex-info to HTTP responses
-- [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - Testing Ring handlers without HTTP
+- [Security Standards](./security-standards.md) - CSRF middleware placement, JWT authentication
+- [Error Handling Standards](./error-handling-standards.md) - Converting ex-info to HTTP responses
+- [Testing Standards](./testing-standards.md) - Testing Ring handlers without HTTP
 
 ## Related Documentation
 

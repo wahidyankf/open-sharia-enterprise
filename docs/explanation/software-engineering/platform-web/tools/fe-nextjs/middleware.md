@@ -750,13 +750,13 @@ const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("dat
 
 **Core Next.js**:
 
-- [Routing](ex-soen-plwe-to-fene__routing.md) - Route configuration
-- [API Routes](ex-soen-plwe-to-fene__api-routes.md) - Backend endpoints
-- [Security](ex-soen-plwe-to-fene__security.md) - Security patterns
+- [Routing](routing.md) - Route configuration
+- [API Routes](api-routes.md) - Backend endpoints
+- [Security](security.md) - Security patterns
 
 **Patterns**:
 
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
+- [Best Practices](best-practices.md) - Production standards
 
 ---
 

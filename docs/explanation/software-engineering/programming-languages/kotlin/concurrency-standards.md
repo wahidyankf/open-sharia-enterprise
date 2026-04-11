@@ -407,9 +407,9 @@ class BadCache {
 
 ## Related Standards
 
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - CoroutineExceptionHandler, supervisorScope
-- [API Standards](./ex-soen-prla-ko__api-standards.md) - Ktor suspend route handlers
-- [Testing Standards](./ex-soen-prla-ko__testing-standards.md) - runTest and coroutine test patterns
+- [Error Handling Standards](./error-handling-standards.md) - CoroutineExceptionHandler, supervisorScope
+- [API Standards](./api-standards.md) - Ktor suspend route handlers
+- [Testing Standards](./testing-standards.md) - runTest and coroutine test patterns
 
 ## Related Documentation
 

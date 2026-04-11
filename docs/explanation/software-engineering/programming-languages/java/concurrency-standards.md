@@ -455,9 +455,9 @@ public void monitorConcurrency() {
 
 ### OSE Platform Standards
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Concurrent error propagation
-- [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - Performance implications of concurrency
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Thread-safe security patterns
+- [Error Handling Standards](./error-handling-standards.md) - Concurrent error propagation
+- [Performance Standards](./performance-standards.md) - Performance implications of concurrency
+- [Security Standards](./security-standards.md) - Thread-safe security patterns
 
 ### Learning Resources
 
@@ -514,15 +514,15 @@ Before deploying concurrent financial services, verify:
 
 **Performance**:
 
-- [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - Thread pool sizing, async performance optimization, and JVM tuning
+- [Performance Standards](./performance-standards.md) - Thread pool sizing, async performance optimization, and JVM tuning
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Concurrency testing patterns and race condition detection
+- [Testing Standards](./testing-standards.md) - Concurrency testing patterns and race condition detection
 
 **Security**:
 
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - Thread-safe security context and concurrent authentication
+- [Security Standards](./security-standards.md) - Thread-safe security context and concurrent authentication
 
 **Last Updated**: 2026-02-04
 

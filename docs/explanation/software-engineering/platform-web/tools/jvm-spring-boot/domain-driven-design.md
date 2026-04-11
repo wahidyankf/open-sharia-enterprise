@@ -1800,27 +1800,27 @@ public class MurabahaApplicationService {
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production patterns
-- [Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - JPA and repository patterns
-- [Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md) - Immutability and pure functions
-- [Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md) - Framework patterns
+- [Spring Boot Best Practices](best-practices.md) - Production patterns
+- [Data Access](data-access.md) - JPA and repository patterns
+- [Functional Programming](functional-programming.md) - Immutability and pure functions
+- [Spring Boot Idioms](idioms.md) - Framework patterns
 
 ---
 
 **Next Steps:**
 
-- Review [Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md) for managing domain services
-- Explore [Testing](ex-soen-plwe-to-jvspbo__testing.md) for testing DDD components
-- Check [Performance](ex-soen-plwe-to-jvspbo__performance.md) for aggregate optimization
+- Review [Dependency Injection](dependency-injection.md) for managing domain services
+- Explore [Testing](testing.md) for testing DDD components
+- Check [Performance](performance.md) for aggregate optimization
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework DDD Standards](../jvm-spring/ex-soen-plwe-to-jvsp__ddd-standards.md) - Manual Spring DDD
-- [Java Domain Modeling](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - DDD patterns
-- [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Repository implementation
+- [Spring Framework DDD Standards](../jvm-spring/ddd-standards.md) - Manual Spring DDD
+- [Java Domain Modeling](../../../programming-languages/java/ddd-standards.md) - Java DDD baseline
+- [Spring Boot Idioms](./idioms.md) - DDD patterns
+- [Spring Boot Data Access](./data-access.md) - Repository implementation
 
 **Hands-on Learning (AyoKoding)**:
 

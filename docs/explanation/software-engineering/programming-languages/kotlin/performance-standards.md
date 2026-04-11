@@ -356,9 +356,9 @@ open class ZakatCalculationBenchmark {
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - General idioms including sequence usage
-- [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Coroutine performance (dispatcher selection)
-- [Type Safety Standards](./ex-soen-prla-ko__type-safety-standards.md) - Inline value classes
+- [Coding Standards](./coding-standards.md) - General idioms including sequence usage
+- [Concurrency Standards](./concurrency-standards.md) - Coroutine performance (dispatcher selection)
+- [Type Safety Standards](./type-safety-standards.md) - Inline value classes
 
 ## Related Documentation
 

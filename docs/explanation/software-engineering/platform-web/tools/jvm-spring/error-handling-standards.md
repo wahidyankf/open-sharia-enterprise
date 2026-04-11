@@ -643,15 +643,15 @@ public class FinancialErrorAuditAspect {
 
 ### OSE Platform Standards
 
-- **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - REST API error response conventions (this file references the API standards file to be created)
-- **[Spring DDD Standards](./ex-soen-plwe-to-jvsp__ddd-standards.md)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
+- **[Spring API Standards](./api-standards.md)** - REST API error response conventions (this file references the API standards file to be created)
+- **[Spring DDD Standards](./ddd-standards.md)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
 
 ### Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md)** - Spring IoC container
-- **[REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md)** - REST API development
-- **[Testing](./ex-soen-plwe-to-jvsp__testing.md)** - Exception testing patterns
+- **[Dependency Injection](./dependency-injection.md)** - Spring IoC container
+- **[REST APIs](./rest-apis.md)** - REST API development
+- **[Testing](./testing.md)** - Exception testing patterns
 
 ### Learning Resources
 
@@ -699,14 +699,14 @@ Before deploying Spring-based financial services, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Error Handling](../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md) - Java exception baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Error patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Error standards
-- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - API error responses
+- [Java Error Handling](../../../programming-languages/java/error-handling-standards.md) - Java exception baseline
+- [Spring Framework Idioms](./idioms.md) - Error patterns
+- [Spring Framework Best Practices](./best-practices.md) - Error standards
+- [Spring Framework REST APIs](./rest-apis.md) - API error responses
 
 **Spring Boot Extension**:
 
-- [Spring Boot REST APIs](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md) - Boot error handling
+- [Spring Boot REST APIs](../jvm-spring-boot/rest-apis.md) - Boot error handling
 
 ---
 

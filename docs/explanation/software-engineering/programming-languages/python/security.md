@@ -11,8 +11,8 @@ tags:
   - cryptography
   - secrets-management
 related:
-  - ./ex-soen-prla-py__web-services.md
-  - ./ex-soen-prla-py__best-practices.md
+  - ./web-services.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
 updated: 2025-01-23
@@ -570,8 +570,8 @@ graph LR
 
 ### Related Documentation
 
-- [Web Services](./ex-soen-prla-py__web-services.md) - FastAPI security
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Secure coding
+- [Web Services](./web-services.md) - FastAPI security
+- [Best Practices](./best-practices.md) - Secure coding
 
 ---
 

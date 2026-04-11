@@ -11,10 +11,10 @@ tags:
   - exceptions
   - type-safety
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ./ex-soen-prla-ty__functional-programming.md
-  - ./ex-soen-prla-ty__anti-patterns.md
+  - ./best-practices.md
+  - ./type-safety.md
+  - ./functional-programming.md
+  - ./anti-patterns.md
   - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
@@ -669,10 +669,10 @@ async function calculateZakatWithContext(wealth: number, nisab: number): Promise
 
 ### TypeScript Core
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Type system features
-- **[TypeScript Functional Programming](ex-soen-prla-ty__functional-programming.md)** - FP patterns
-- **[TypeScript Anti-Patterns](ex-soen-prla-ty__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](type-safety.md)** - Type system features
+- **[TypeScript Functional Programming](functional-programming.md)** - FP patterns
+- **[TypeScript Anti-Patterns](anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

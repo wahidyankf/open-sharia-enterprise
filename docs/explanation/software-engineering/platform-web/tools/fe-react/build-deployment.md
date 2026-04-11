@@ -25,8 +25,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Production standards
-- [Performance](ex-soen-plwe-to-fere__performance.md) - Build optimization
+- [Best Practices](best-practices.md) - Production standards
+- [Performance](performance.md) - Build optimization
 
 ## Overview
 
@@ -1262,10 +1262,10 @@ export default defineConfig({
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Build optimization
-- **[Security](ex-soen-plwe-to-fere__security.md)** - Security configuration
-- **[Testing](ex-soen-plwe-to-fere__testing.md)** - CI/CD testing
+- **[Best Practices](best-practices.md)** - Production standards
+- **[Performance](performance.md)** - Build optimization
+- **[Security](security.md)** - Security configuration
+- **[Testing](testing.md)** - CI/CD testing
 
 ---
 

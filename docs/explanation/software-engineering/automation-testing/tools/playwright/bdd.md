@@ -106,7 +106,7 @@ export default defineConfig({
 });
 ```
 
-**See**: [Configuration Standards](ex-soen-aute-to-pl__configuration.md) for the full BDD config
+**See**: [Configuration Standards](configuration.md) for the full BDD config
 section and the canonical file at `apps/a-demo-be-e2e/playwright.config.ts`.
 
 ## Step Definition Patterns
@@ -295,7 +295,7 @@ npx bddgen && npx playwright test
   requirements, Three Amigos process, coverage rules
 - **[specs/apps/a-demo/be/gherkin/](../../../../../../specs/apps/a-demo/be/gherkin/README.md)** — Feature files
   and their organization
-- **[Configuration Standards](ex-soen-aute-to-pl__configuration.md)** — playwright.config.ts
+- **[Configuration Standards](configuration.md)** — playwright.config.ts
   patterns including the BDD configuration section
 - **[Playwright Framework Index](README.md)** — Playwright standards overview
 - **[apps/a-demo-be-e2e/README.md](../../../../../../apps/a-demo-be-e2e/README.md)** —

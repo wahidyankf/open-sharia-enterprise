@@ -1692,11 +1692,11 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](ex-soen-plwe-to-elph__idioms.md)** - Idiomatic Phoenix patterns
-- **[Phoenix Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Production standards
-- **[Phoenix Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)** - Common mistakes
-- **[Data Access](ex-soen-plwe-to-elph__data-access.md)** - Ecto schemas and queries
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing strategies
+- **[Phoenix Idioms](idioms.md)** - Idiomatic Phoenix patterns
+- **[Phoenix Best Practices](best-practices.md)** - Production standards
+- **[Phoenix Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Data Access](data-access.md)** - Ecto schemas and queries
+- **[Testing](testing.md)** - Testing strategies
 
 ---
 

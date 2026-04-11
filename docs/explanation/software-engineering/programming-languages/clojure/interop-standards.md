@@ -313,10 +313,10 @@ String/1   ;; Refers to String[] (single-element array class)
 
 ## Related Standards
 
-- [Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md) - Reflection warnings as Eastwood checks
-- [Performance Standards](./ex-soen-prla-cl__performance-standards.md) - Type hints in performance-critical paths
-- [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - Converting Java exceptions to ex-info
-- [Build Configuration](./ex-soen-prla-cl__build-configuration.md) - JVM version pinning in deps.edn
+- [Code Quality Standards](./code-quality-standards.md) - Reflection warnings as Eastwood checks
+- [Performance Standards](./performance-standards.md) - Type hints in performance-critical paths
+- [Error Handling Standards](./error-handling-standards.md) - Converting Java exceptions to ex-info
+- [Build Configuration](./build-configuration.md) - JVM version pinning in deps.edn
 
 ## Related Documentation
 

@@ -708,10 +708,10 @@ API standards are enforced through:
 
 ## Related Standards
 
-- [Security Standards](./ex-soen-prla-da__security-standards.md) - Authentication, input validation
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Exception to HTTP status mapping
-- [Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md) - Async handler patterns
-- [Framework Integration](./ex-soen-prla-da__framework-integration.md) - shelf and dio setup
+- [Security Standards](./security-standards.md) - Authentication, input validation
+- [Error Handling Standards](./error-handling-standards.md) - Exception to HTTP status mapping
+- [Concurrency Standards](./concurrency-standards.md) - Async handler patterns
+- [Framework Integration](./framework-integration.md) - shelf and dio setup
 
 ## Related Documentation
 

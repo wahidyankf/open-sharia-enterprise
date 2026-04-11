@@ -274,7 +274,7 @@ Before committing a C4 diagram, verify:
 
 ## Color Consistency (CRITICAL)
 
-**REQUIRED**: All C4 diagrams MUST follow the consistent color mapping defined in [Notation Standards](./ex-soen-ar-c4armo__notation-standards.md).
+**REQUIRED**: All C4 diagrams MUST follow the consistent color mapping defined in [Notation Standards](./notation-standards.md).
 
 **Quick Reference**:
 
@@ -287,9 +287,9 @@ This consistency ensures readers can instantly recognize element types by color 
 
 ## Related Standards
 
-- **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, C4 element color mapping
-- **[Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers
-- **[Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)** - Representing Nx apps and libs
+- **[Notation Standards](./notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, C4 element color mapping
+- **[Bounded Context Visualization](./bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers
+- **[Nx Workspace Visualization](./nx-workspace-visualization.md)** - Representing Nx apps and libs
 - **[Color Accessibility Convention](../../../../../governance/conventions/formatting/color-accessibility.md)** - Verified accessible color palette and WCAG compliance
 
 ## Principles Implemented
