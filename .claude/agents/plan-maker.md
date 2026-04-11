@@ -117,10 +117,11 @@ Break work into executable steps:
 
 Specify branch strategy:
 
-**Default**: Work on `main` (Trunk Based Development)
-**Exception**: Feature branch (requires justification)
+**Default (main checkout)**: Work directly on `main` (Trunk Based Development) -- commit and push to `main` with no PR.
+**Worktree exception**: If the plan will be executed inside a git worktree (`isolation: "worktree"`, an agent invoked in an existing worktree session, or a developer running `git worktree add`), the plan must push to a feature branch and open a **draft** PR targeting `main` (`gh pr create --draft`). The draft is flipped to ready for review when the work is complete; that flip is when the PR Merge Protocol approval gate fires. The rule is triggered by execution mode, not by intent -- even small or docs-only worktree work goes through a draft PR.
+**Other exception**: Plain feature branch (non-worktree) requires justification.
 
-See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for workflow details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) and especially the [Worktree Mode (Branch + Draft PR)](../../governance/development/workflow/trunk-based-development.md#worktree-mode-branch--draft-pr) section for workflow details.
 
 ## Plan Quality Standards
 
@@ -190,8 +191,8 @@ When writing the delivery checklist (Step 5), ALWAYS include ALL of the followin
 ```markdown
 ### Environment Setup
 
-- [ ] Install dependencies: `npm install`
-- [ ] Run doctor to verify tooling: `npm run doctor`
+- [ ] Install dependencies in the root worktree: `npm install`
+- [ ] Converge the full polyglot toolchain in the root worktree: `npm run doctor -- --fix` (required — the `postinstall` hook runs `doctor || true` and silently tolerates drift; see [Worktree Toolchain Initialization](../../governance/development/workflow/worktree-setup.md))
 - [ ] [Project-specific setup: env vars, DB, Docker, etc.]
 - [ ] Verify dev server starts: `nx dev [project-name]`
 - [ ] Run existing tests to establish baseline: `nx run [project-name]:test:quick`
