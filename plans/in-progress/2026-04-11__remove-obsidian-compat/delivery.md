@@ -11,11 +11,13 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 ## Environment Setup (Before Phase 1)
 
-- [ ] Run `npm install` to ensure all dependencies are current
-- [ ] Run `npm run doctor` to verify required tool versions (Node.js, Volta, Go, etc.)
-- [ ] Run `nx run rhino-cli:test:quick` to confirm rhino-cli tests pass before any changes
-- [ ] Run `npm run lint:md` to confirm zero markdown lint errors before any changes
-- [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` to confirm all affected targets pass before changes; fix ALL failures before proceeding
+- [x] Run `npm install` to ensure all dependencies are current
+- [x] Run `npm run doctor` to verify required tool versions (Node.js, Volta, Go, etc.)
+- [x] Run `nx run rhino-cli:test:quick` to confirm rhino-cli tests pass before any changes
+- [x] Run `npm run lint:md` to confirm zero markdown lint errors before any changes
+- [x] Run `npx nx affected -t typecheck lint test:quick spec-coverage` to confirm all affected targets pass before changes; fix ALL failures before proceeding
+
+**Baseline 2026-04-11**: rhino-cli coverage 90.64%. Doctor 19/19 OK. Lint 0 errors (3224 files). Affected: no tasks (main ahead of origin).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
 
@@ -23,39 +25,50 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 **Goal**: Capture the current state and catch collisions before any destructive action.
 
-- [ ] Create `local-temp/` if missing for scratch files
-- [ ] Enumerate all files under `docs/.obsidian/` and save to `local-temp/obsidian-vault-files.txt`
-- [ ] Enumerate all `docs/**/*__*.md` files and save to `local-temp/obsidian-prefixed-files.txt`
-- [ ] Count total docs markdown files and prefixed files; record baseline in the plan's execution notes
-- [ ] Run `ripgrep -il obsidian` across the repo and save the filtered list (excluding `plans/done/`, `.opencode/`, `apps/oseplatform-web/content/updates/`, `docs/metadata/external-links-status.yaml`, `.gitignore`) to `local-temp/obsidian-references.txt` (`.gitignore` excluded here because Phase 2 handles it explicitly)
-- [ ] Generate the rename mapping TSV at `local-temp/obsidian-rename-mapping.tsv` using the command in `tech-docs.md` §2.1
-- [ ] Run the collision check (`awk -F'\t' '{print $2}' ... | sort | uniq -d`); record output to `local-temp/obsidian-rename-collisions.txt`
-- [ ] If collisions exist, edit the mapping file to resolve each with a descriptive suffix (no prefix reintroduction)
-- [ ] Re-run the collision check after edits; confirm zero duplicates
-- [ ] Grep `nx.json`, root `package.json`, `.github/workflows/`, and deploy scripts for any reference to a prefixed `docs/*__*.md` filename; document findings
-- [ ] Verify `ayokoding-cli links check` scope (read its README) and note whether it covers `docs/`
-- [ ] Commit the mapping file contents via a short summary in execution notes (do **not** commit `local-temp/` itself — it is scratch space)
+- [x] Create `local-temp/` if missing for scratch files
+- [x] Enumerate all files under `docs/.obsidian/` and save to `local-temp/obsidian-vault-files.txt`
+- [x] Enumerate all `docs/**/*__*.md` files and save to `local-temp/obsidian-prefixed-files.txt`
+- [x] Count total docs markdown files and prefixed files; record baseline in the plan's execution notes
+- [x] Run `ripgrep -il obsidian` across the repo and save the filtered list (excluding `plans/done/`, `.opencode/`, `apps/oseplatform-web/content/updates/`, `docs/metadata/external-links-status.yaml`, `.gitignore`) to `local-temp/obsidian-references.txt` (`.gitignore` excluded here because Phase 2 handles it explicitly)
+- [x] Generate the rename mapping TSV at `local-temp/obsidian-rename-mapping.tsv` using the command in `tech-docs.md` §2.1
+- [x] Run the collision check (`awk -F'\t' '{print $2}' ... | sort | uniq -d`); record output to `local-temp/obsidian-rename-collisions.txt`
+- [x] If collisions exist, edit the mapping file to resolve each with a descriptive suffix (no prefix reintroduction)
+- [x] Re-run the collision check after edits; confirm zero duplicates
+- [x] Grep `nx.json`, root `package.json`, `.github/workflows/`, and deploy scripts for any reference to a prefixed `docs/*__*.md` filename; document findings
+- [x] Verify `ayokoding-cli links check` scope (read its README) and note whether it covers `docs/`
+- [x] Commit the mapping file contents via a short summary in execution notes (do **not** commit `local-temp/` itself — it is scratch space)
 
 ### Phase 1 gate
 
-- [ ] Baseline counts recorded
-- [ ] Zero collisions remain in the mapping
-- [ ] Open Questions in `tech-docs.md` §10 are resolved or deferred explicitly
+- [x] Baseline counts recorded
+- [x] Zero collisions remain in the mapping
+- [x] Open Questions in `tech-docs.md` §10 are resolved or deferred explicitly
+
+**Phase 1 summary**:
+
+- Vault files: 9 under `docs/.obsidian/`
+- Prefixed files: 304 under `docs/**/*__*.md`
+- Total docs markdown files: 352 (so 48 non-prefixed, matching expectation)
+- Obsidian references (active): 24 files (after filtering historical)
+- Rename mapping: 304 entries
+- Collisions: 0
+- nx.json / package.json / .github/workflows/: zero prefixed references
+- ayokoding-cli: does NOT cover `docs/` (scoped to ayokoding content)
 
 ## Phase 2 — Delete Obsidian Vault Config
 
 **Goal**: Remove `docs/.obsidian/` and its `.gitignore` entries.
 
-- [ ] Run `git rm -r docs/.obsidian/`
-- [ ] Edit `.gitignore` to remove the Obsidian block (the 3-line comment plus all 7 Obsidian-related ignore lines)
-- [ ] Verify `find docs -name .obsidian` returns zero results
-- [ ] Verify `ripgrep -i 'obsidian|smart-connections|\.trash' .gitignore` returns zero matches
-- [ ] Commit: `chore(docs): delete Obsidian vault config and ignore entries`
+- [x] Run `git rm -r docs/.obsidian/`
+- [x] Edit `.gitignore` to remove the Obsidian block (the 3-line comment plus all 7 Obsidian-related ignore lines)
+- [x] Verify `find docs -name .obsidian` returns zero results
+- [x] Verify `ripgrep -i 'obsidian|smart-connections|\.trash' .gitignore` returns zero matches
+- [x] Commit: `chore(docs): delete Obsidian vault config and ignore entries`
 
 ### Phase 2 gate
 
-- [ ] `git status` clean
-- [ ] `npm run lint:md` passes
+- [x] `git status` clean
+- [x] `npm run lint:md` passes
 
 ## Phase 3 — Rewrite the File Naming Convention
 
