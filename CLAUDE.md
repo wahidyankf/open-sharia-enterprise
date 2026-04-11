@@ -313,13 +313,13 @@ Husky + lint-staged enforce quality:
 - **Reference** (`docs/reference/`) - Technical specifications
 - **Explanation** (`docs/explanation/`) - Conceptual understanding
 
-**File Naming**: `[prefix]__[content-identifier].md` where prefix encodes directory path
+**File Naming**: Lowercase kebab-case (standard markdown + GitHub compatibility)
 
 **Examples**:
 
 - `file-naming.md` (governance/conventions/structure)
-- `tu__getting-started.md` (tutorials)
-- `hoto__deploy-docker.md` (how-to)
+- `getting-started.md` (tutorials)
+- `deploy-docker.md` (how-to)
 
 **Exception**: Index files use `README.md` for GitHub compatibility
 
@@ -348,7 +348,7 @@ All work follows foundational principles from `governance/principles/` (key prin
 
 ### File Naming
 
-Pattern: `[prefix]__[content-identifier].md` encoding directory path
+Lowercase kebab-case (`[a-z0-9-]+`) with a standard extension; rule anchored on standard markdown and GitHub compatibility
 Exception: `README.md` for index files, `docs/metadata/` files
 
 **See**: [governance/conventions/structure/file-naming.md](./governance/conventions/structure/file-naming.md)
