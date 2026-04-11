@@ -74,24 +74,26 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 **Goal**: Replace `governance/conventions/structure/file-naming.md` with a concise version anchored on **standard markdown + GitHub compatibility**.
 
-- [ ] Read the current `governance/conventions/structure/file-naming.md` to capture any non-Obsidian content worth preserving (e.g., ISO 8601 date rule, extension list)
-- [ ] Write the new `governance/conventions/structure/file-naming.md` following the outline in `tech-docs.md` §4
-- [ ] Confirm `wc -l` of the new file is ≤120
-- [ ] Run `ripgrep -i 'obsidian|vault|hierarchical-prefix|ex-go-|hoto__|subdirectory code'` against the new file; expect zero hits
-- [ ] Run `ripgrep -n 'standard markdown' governance/conventions/structure/file-naming.md`; expect at least one hit
-- [ ] Run `ripgrep -n 'GitHub' governance/conventions/structure/file-naming.md`; expect multiple hits
-- [ ] Confirm the new convention explicitly forbids GitHub-unsafe characters (`:`, `?`, `*`, `<`, `>`, `|`, `"`, backslash, spaces, uppercase) and requires case-insensitive-unique filenames per directory
-- [ ] Update `governance/conventions/README.md` entry for file-naming to reflect the new scope (no prefix framing; cite markdown + GitHub rationale)
-- [ ] Update `CLAUDE.md` (project root and any subproject) references to the file-naming convention if any cite the prefix scheme
-- [ ] Grep for other files that cite the prefix scheme (e.g., `governance/conventions/structure/plans.md` mentions "not applicable to plans/"); leave that mention intact but confirm it still renders correctly
-- [ ] Run `npm run lint:md`
-- [ ] Commit: `docs(conventions): rewrite file-naming convention on standard-markdown and GitHub basis`
+- [x] Read the current `governance/conventions/structure/file-naming.md` to capture any non-Obsidian content worth preserving (e.g., ISO 8601 date rule, extension list)
+- [x] Write the new `governance/conventions/structure/file-naming.md` following the outline in `tech-docs.md` §4
+- [x] Confirm `wc -l` of the new file is ≤120
+- [x] Run `ripgrep -i 'obsidian|vault|hierarchical-prefix|ex-go-|hoto__|subdirectory code'` against the new file; expect zero hits
+- [x] Run `ripgrep -n 'standard markdown' governance/conventions/structure/file-naming.md`; expect at least one hit
+- [x] Run `ripgrep -n 'GitHub' governance/conventions/structure/file-naming.md`; expect multiple hits
+- [x] Confirm the new convention explicitly forbids GitHub-unsafe characters (`:`, `?`, `*`, `<`, `>`, `|`, `"`, backslash, spaces, uppercase) and requires case-insensitive-unique filenames per directory
+- [x] Update `governance/conventions/README.md` entry for file-naming to reflect the new scope (no prefix framing; cite markdown + GitHub rationale)
+- [x] Update `CLAUDE.md` (project root and any subproject) references to the file-naming convention if any cite the prefix scheme
+- [x] Grep for other files that cite the prefix scheme (e.g., `governance/conventions/structure/plans.md` mentions "not applicable to plans/"); leave that mention intact but confirm it still renders correctly
+- [x] Run `npm run lint:md`
+- [x] Commit: `docs(conventions): rewrite file-naming convention on standard-markdown and GitHub basis`
+
+**Phase 3 summary**: new file is 85 lines, 2 "standard markdown" hits, 6 "GitHub" hits, zero Obsidian/prefix refs. Updated CLAUDE.md narrative at lines 316 and 349 (now 351), updated conventions/README.md file-naming entry and example.
 
 ### Phase 3 gate
 
-- [ ] Rewritten file passes all ripgrep checks (zero Obsidian, positive GitHub + standard markdown)
-- [ ] `npm run lint:md` passes
-- [ ] Cross-references to file-naming.md still resolve
+- [x] Rewritten file passes all ripgrep checks (zero Obsidian, positive GitHub + standard markdown)
+- [x] `npm run lint:md` passes
+- [x] Cross-references to file-naming.md still resolve
 
 ## Phase 3b — Remove rhino-cli docs naming validator
 

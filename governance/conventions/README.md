@@ -61,7 +61,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 **Examples**:
 
-- "File naming must use `prefix__identifier.md` format" - Convention (documentation rule)
+- "Files must use lowercase kebab-case names" - Convention (documentation rule)
 - "Use 2-space indentation for nested lists" - Convention (documentation formatting)
 - "Web app themes use Tailwind CSS" - Development (software practice)
 - "Why we avoid time estimates in tutorials" - Principle (foundational value)
@@ -115,7 +115,7 @@ Content quality standards, validation methodology, and writing guidelines.
 Documentation organization frameworks, file naming, and project planning structure.
 
 - [Diataxis Framework](./structure/diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation)
-- [File Naming Convention](./structure/file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
+- [File Naming Convention](./structure/file-naming.md) - Lowercase kebab-case file names anchored on standard markdown and GitHub compatibility
 - [Per-Directory Licensing](./structure/licensing.md) - Standards for the per-directory licensing strategy using FSL-1.1-MIT for product apps, behavioral specifications (specs, E2E tests), and their supporting CLI tools, and MIT for shared libraries and reference implementations. Guiding principle: implementation code (HOW) can be MIT; behavioral specifications (WHAT) must be FSL to prevent clean-room engineering of competing products. Defines LICENSE file placement rules, template requirements, copyright notice format, and rules for new directories
 - [Plans Organization](./structure/plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers. Defines how plans move from ideas - backlog - in-progress - done
 - [Programming Language Documentation Separation](./structure/programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational programming language content (ayokoding-web). Defines scope boundaries, prerequisite knowledge requirements, cross-referencing patterns, and DRY principle application. Applies to all programming languages (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
