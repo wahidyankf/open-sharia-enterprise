@@ -239,7 +239,7 @@ grep -iE "(\d+ hours?|\d+ minutes?|duration:|time to complete:)" tutorial.md
 
 - Required frontmatter fields present: `title`, `description`, `category`, `tags`
 - `category` should be "tutorials"
-- File follows naming convention: `tu-*-*.md`
+- File follows lowercase kebab-case naming convention (e.g., `beginner.md`, `quick-start.md`, `initial-setup.md`)
 
 **Re-validation method:**
 

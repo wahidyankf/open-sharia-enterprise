@@ -407,7 +407,7 @@ for finding in low_priority:
 
 **HIGH**:
 - Missing "Principles Respected" section (traceability violation)
-- Wrong file naming prefix (convention violation)
+- Non-kebab-case filename in docs/ or governance/ (convention violation)
 
 **MEDIUM**:
 - Missing optional cross-reference

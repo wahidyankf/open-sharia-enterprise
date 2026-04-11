@@ -170,7 +170,7 @@ Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timest
 
 **Actions**:
 
-1. Read docs/explanation/software-engineering/ex-soen\_\_software-design-reference.md
+1. Read docs/explanation/software-engineering/software-design-reference.md
 2. Extract "Prerequisite Knowledge Relationships" section
 3. Extract prerequisite mappings table
 4. For each mapping:
