@@ -354,7 +354,7 @@ Every delivery plan MUST end with a plan archival section:
 
 **Related Conventions**:
 
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow (main = direct push; worktree = branch + PR)
+- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow (main = direct push; worktree = feature branch + draft PR targeting `main`, flipped to ready when complete)
 - [PR Merge Protocol](../../../governance/development/workflow/pr-merge-protocol.md) - Explicit approval required, all quality gates must pass
 - [Feature Change Completeness](../../../governance/development/quality/feature-change-completeness.md) - Specs, contracts, and tests must update with every feature change
 - [Manual Behavioral Verification](../../../governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
