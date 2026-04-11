@@ -153,3 +153,4 @@ specs/apps/a-demo/contracts/generated/
 .claude/settings.local.json
 .claude/settings.local.json.bkup
 .claude/worktrees/
+.claude/*.lock
