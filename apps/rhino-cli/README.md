@@ -997,9 +997,7 @@ apps/rhino-cli/
 │   ├── contracts_java_clean_imports.go / _test.go     # Java import cleaning + unit tests
 │   ├── contracts_java_clean_imports.integration_test.go # godog BDD tests (5 scenarios)
 │   ├── contracts_dart_scaffold.go / _test.go          # Dart scaffolding + unit tests
-│   ├── contracts_dart_scaffold.integration_test.go    # godog BDD tests (3 scenarios)
-│   ├── docs_validate_naming.go / _test.go            # Docs naming validation + unit tests
-│   └── docs_validate_naming.integration_test.go     # godog BDD tests (5 scenarios)
+│   └── contracts_dart_scaffold.integration_test.go    # godog BDD tests (3 scenarios)
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
@@ -1009,20 +1007,7 @@ apps/rhino-cli/
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   ├── reporter_test.go  # Reporter tests
 │   │   └── testdata/         # Test fixtures (package.json, pom.xml, go.mod)
-│   ├── docs/                 # Documentation validation logic (naming + links)
-│   │   ├── types.go          # Core type definitions (naming)
-│   │   ├── scanner.go        # File scanning for naming validation
-│   │   ├── scanner_test.go
-│   │   ├── validator.go      # Naming validation logic
-│   │   ├── validator_test.go
-│   │   ├── reporter.go       # Output formatting (naming)
-│   │   ├── reporter_test.go
-│   │   ├── prefix_rules.go   # Prefix rules for naming
-│   │   ├── prefix_rules_test.go
-│   │   ├── link_updater.go   # Link update logic
-│   │   ├── link_updater_test.go
-│   │   ├── fixer.go          # Fix orchestration
-│   │   ├── fixer_test.go
+│   ├── docs/                 # Documentation link validation logic
 │   │   ├── links_types.go    # Core type definitions (links)
 │   │   ├── links_scanner.go  # Link extraction from markdown
 │   │   ├── links_scanner_test.go
@@ -1031,8 +1016,7 @@ apps/rhino-cli/
 │   │   ├── links_categorizer.go # Link categorization
 │   │   ├── links_categorizer_test.go
 │   │   ├── links_reporter.go # Output formatting (links)
-│   │   ├── links_reporter_test.go
-│   │   └── testdata/         # Test fixtures
+│   │   └── links_reporter_test.go
 │   ├── speccoverage/         # BDD spec coverage validation
 │   │   ├── types.go          # ScanOptions, CoverageGap, ScenarioGap, StepGap, CheckResult
 │   │   ├── parser.go         # Gherkin feature file parser (line-by-line, no external dep)
@@ -1122,7 +1106,7 @@ go test ./...
 
 - `cmd`: Root command tests, docs validate-links integration tests, doctor integration tests
 - `internal/doctor`: 95%+ coverage (checker, reporter — all pure functions tested with fake runner)
-- `internal/docs`: 95%+ coverage (naming: scanner, validator, reporter, prefix_rules, fixer; links: links_scanner, links_validator, links_categorizer, links_reporter)
+- `internal/docs`: 90%+ coverage (links: links_scanner, links_validator, links_categorizer, links_reporter)
 - `internal/agents`: 95%+ coverage (converter, copier, sync_validator, reporter, claude_validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥95% coverage (parser, checker with temp dir fixtures, reporter for all formats)
 - `internal/contracts`: ≥90% coverage (java_clean_imports, dart_scaffold, reporter — all pure functions with temp dir fixtures)
@@ -1359,10 +1343,6 @@ rhino-cli say
 - Integrated into `organiclever-fe` `test:quick` target
 - Three output formats: text, JSON, markdown
 - ≥85% test coverage with temp dir fixtures
-
-### v0.6.0
-
-- Added `docs validate-naming` command for documentation file naming conventions
 
 ### v0.5.0 (2026-02-19)
 

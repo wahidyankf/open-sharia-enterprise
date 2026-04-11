@@ -123,23 +123,6 @@ const (
 	stepOutputIdentifiesFileContainingBrokenLink = `^the output identifies the file containing the broken link$`
 )
 
-// Docs validate-naming step patterns.
-const (
-	stepDocsDirWhereEveryFileFollowsNamingConvention   = `^a docs directory where every file follows the naming convention$`
-	stepDocsDirWithFileWithoutDoubleDashSeparator      = `^a docs directory containing a file without the double-underscore prefix separator$`
-	stepDocsDirWithFilePrefixNotMatchingDirPath        = `^a docs directory containing a file whose prefix does not match its directory path$`
-	stepDocsDirWithNamingViolations                    = `^a docs directory containing files with naming violations$`
-	stepDeveloperRunsValidateDocsNaming                = `^the developer runs docs validate-naming$`
-	stepDeveloperRunsValidateDocsNamingWithFix         = `^the developer runs docs validate-naming with the --fix flag$`
-	stepDeveloperRunsValidateDocsNamingWithFixAndApply = `^the developer runs docs validate-naming with --fix and --apply flags$`
-	stepOutputReportsZeroViolations                    = `^the output reports zero violations$`
-	stepOutputIdentifiesFileWithNamingViolation        = `^the output identifies the file with the naming violation$`
-	stepOutputReportsExpectedPrefixAlongsideFilename   = `^the output reports the expected prefix alongside the actual filename$`
-	stepOutputShowsPlannedRenames                      = `^the output shows the planned renames$`
-	stepNoFilesRenamedOnDisk                           = `^no files are renamed on disk$`
-	stepFilesRenamedToFollowNamingConvention           = `^the files are renamed to follow the naming convention$`
-)
-
 // Contracts java-clean-imports step patterns.
 const (
 	stepGeneratedContractsDirWithUnusedImports       = `^a generated-contracts directory with Java files containing unused imports$`

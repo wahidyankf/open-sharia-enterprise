@@ -34,8 +34,6 @@ type Deps struct {
 	ValidateClaude func(agents.ValidateClaudeOptions) (*agents.ValidationResult, error)
 	SyncAll        func(agents.SyncOptions) (*agents.SyncResult, error)
 	ValidateSync   func(repoRoot string) (*agents.ValidationResult, error)
-	ValidateNaming func(docs.ValidationOptions) (*docs.ValidationResult, error)
-	FixNaming      func(*docs.ValidationResult, docs.FixOptions) (*docs.FixResult, error)
 	ValidateLinks  func(docs.ScanOptions) (*docs.LinkValidationResult, error)
 
 	Stdout io.Writer
@@ -50,8 +48,6 @@ func DefaultDeps() Deps {
 		ValidateClaude: agents.ValidateClaude,
 		SyncAll:        agents.SyncAll,
 		ValidateSync:   agents.ValidateSync,
-		ValidateNaming: docs.ValidateAll,
-		FixNaming:      docs.Fix,
 		ValidateLinks:  docs.ValidateAllLinks,
 		Stdout:         os.Stdout,
 		Stderr:         os.Stderr,
@@ -126,11 +122,6 @@ func Run(gitRoot string, deps Deps) error {
 	}
 	if err := runWithStepTimeout(totalCtx, "step5bSyncLockfiles", deps, func() error {
 		return step5bSyncLockfiles(gitRoot, staged, deps)
-	}); err != nil {
-		return err
-	}
-	if err := runWithStepTimeout(totalCtx, "step6DocsNaming", deps, func() error {
-		return step6DocsNaming(gitRoot, staged, deps)
 	}); err != nil {
 		return err
 	}
@@ -331,49 +322,6 @@ func step5bSyncLockfiles(gitRoot string, staged []string, deps Deps) error {
 	}
 
 	_, _ = fmt.Fprintln(deps.Stdout, "✅ All app lockfiles synced")
-	return nil
-}
-
-// step6DocsNaming validates and auto-fixes docs file naming if any docs/ files are staged.
-func step6DocsNaming(gitRoot string, staged []string, deps Deps) error {
-	hasDocsStagedFile := hasMatch(staged, func(f string) bool {
-		return strings.HasPrefix(f, "docs/")
-	})
-	if !hasDocsStagedFile {
-		_, _ = fmt.Fprintln(deps.Stdout, "⏭️  Skipping docs naming validation (no docs/ changes in staged files)")
-		return nil
-	}
-
-	_, _ = fmt.Fprintln(deps.Stdout, "🔍 Validating and fixing documentation file naming...")
-
-	result, err := deps.ValidateNaming(docs.ValidationOptions{
-		RepoRoot:   gitRoot,
-		StagedOnly: true,
-	})
-	if err != nil {
-		return err
-	}
-
-	if len(result.Violations) > 0 {
-		fixResult, err := deps.FixNaming(result, docs.FixOptions{
-			RepoRoot:    gitRoot,
-			DryRun:      false,
-			UpdateLinks: true,
-		})
-		if err != nil {
-			return err
-		}
-		if len(fixResult.Errors) > 0 {
-			return fmt.Errorf("docs naming fix errors: %s", strings.Join(fixResult.Errors, "; "))
-		}
-	}
-
-	// Stage any files modified by link updates and renames.
-	gitAdd := deps.ExecCommand("git", "add", "docs/", "governance/", ".claude/")
-	gitAdd.Dir = gitRoot
-	_ = gitAdd.Run()
-
-	_, _ = fmt.Fprintln(deps.Stdout, "✅ Documentation naming validation passed")
 	return nil
 }
 

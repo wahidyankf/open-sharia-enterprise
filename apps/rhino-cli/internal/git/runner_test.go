@@ -48,12 +48,6 @@ func fakeDeps() Deps {
 		ValidateSync: func(_ string) (*agents.ValidationResult, error) {
 			return &agents.ValidationResult{}, nil
 		},
-		ValidateNaming: func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-			return &docs.ValidationResult{}, nil
-		},
-		FixNaming: func(_ *docs.ValidationResult, _ docs.FixOptions) (*docs.FixResult, error) {
-			return &docs.FixResult{}, nil
-		},
 		ValidateLinks: func(_ docs.ScanOptions) (*docs.LinkValidationResult, error) {
 			return &docs.LinkValidationResult{}, nil
 		},
@@ -101,9 +95,6 @@ func TestRun_NoStagedFiles_AllConditionalStepsSkipped(t *testing.T) {
 	}
 	if !strings.Contains(o, "Skipping docker-compose") {
 		t.Error("expected docker-compose skip message")
-	}
-	if !strings.Contains(o, "Skipping docs naming") {
-		t.Error("expected docs naming skip message")
 	}
 }
 
@@ -337,100 +328,6 @@ func TestStep5LintStaged_Failure_ReturnsError(t *testing.T) {
 }
 
 // --------------------------------------------------------------------------
-// step6DocsNaming
-// --------------------------------------------------------------------------
-
-func TestStep6DocsNaming_NoDocsStaged_Skips(t *testing.T) {
-	d := fakeDeps()
-	out := &bytes.Buffer{}
-	d.Stdout = out
-	err := step6DocsNaming(t.TempDir(), []string{"README.md"}, d)
-	if err != nil {
-		t.Fatalf("expected no error, got: %v", err)
-	}
-	if !strings.Contains(out.String(), "Skipping docs naming") {
-		t.Error("expected docs naming skip message")
-	}
-}
-
-func TestStep6DocsNaming_DocsStaged_NoViolations_Passes(t *testing.T) {
-	d := fakeDeps()
-	out := &bytes.Buffer{}
-	d.Stdout = out
-	err := step6DocsNaming(t.TempDir(), []string{"docs/tutorials/tu__foo.md"}, d)
-	if err != nil {
-		t.Fatalf("expected no error, got: %v", err)
-	}
-	if !strings.Contains(out.String(), "✅ Documentation naming validation passed") {
-		t.Error("expected success message")
-	}
-}
-
-func TestStep6DocsNaming_ValidateNamingError_ReturnsError(t *testing.T) {
-	d := fakeDeps()
-	d.ValidateNaming = func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-		return nil, errors.New("naming error")
-	}
-	err := step6DocsNaming(t.TempDir(), []string{"docs/foo.md"}, d)
-	if err == nil || !strings.Contains(err.Error(), "naming error") {
-		t.Fatalf("expected naming error, got: %v", err)
-	}
-}
-
-func TestStep6DocsNaming_ViolationsFound_FixApplied(t *testing.T) {
-	d := fakeDeps()
-	d.ValidateNaming = func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-		return &docs.ValidationResult{
-			Violations: []docs.NamingViolation{{FileName: "bad.md"}},
-		}, nil
-	}
-	fixCalled := false
-	d.FixNaming = func(_ *docs.ValidationResult, _ docs.FixOptions) (*docs.FixResult, error) {
-		fixCalled = true
-		return &docs.FixResult{}, nil
-	}
-	err := step6DocsNaming(t.TempDir(), []string{"docs/foo.md"}, d)
-	if err != nil {
-		t.Fatalf("expected no error, got: %v", err)
-	}
-	if !fixCalled {
-		t.Error("expected FixNaming to be called when violations found")
-	}
-}
-
-func TestStep6DocsNaming_FixError_ReturnsError(t *testing.T) {
-	d := fakeDeps()
-	d.ValidateNaming = func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-		return &docs.ValidationResult{
-			Violations: []docs.NamingViolation{{FileName: "bad.md"}},
-		}, nil
-	}
-	d.FixNaming = func(_ *docs.ValidationResult, _ docs.FixOptions) (*docs.FixResult, error) {
-		return nil, errors.New("fix error")
-	}
-	err := step6DocsNaming(t.TempDir(), []string{"docs/foo.md"}, d)
-	if err == nil || !strings.Contains(err.Error(), "fix error") {
-		t.Fatalf("expected fix error, got: %v", err)
-	}
-}
-
-func TestStep6DocsNaming_FixResultErrors_ReturnsError(t *testing.T) {
-	d := fakeDeps()
-	d.ValidateNaming = func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-		return &docs.ValidationResult{
-			Violations: []docs.NamingViolation{{FileName: "bad.md"}},
-		}, nil
-	}
-	d.FixNaming = func(_ *docs.ValidationResult, _ docs.FixOptions) (*docs.FixResult, error) {
-		return &docs.FixResult{Errors: []string{"rename failed"}}, nil
-	}
-	err := step6DocsNaming(t.TempDir(), []string{"docs/foo.md"}, d)
-	if err == nil || !strings.Contains(err.Error(), "rename failed") {
-		t.Fatalf("expected fix result error, got: %v", err)
-	}
-}
-
-// --------------------------------------------------------------------------
 // step7ValidateLinks
 // --------------------------------------------------------------------------
 
@@ -555,9 +452,8 @@ func TestRun_Step5Fails_DoesNotRunStep6DocsNaming(t *testing.T) {
 
 func TestRun_AllStepsSucceed_NoError(t *testing.T) {
 	d := fakeDeps()
-	// Stage docs/ to trigger step 6DocsNaming path, but ValidateNaming returns no violations.
 	d.GetStagedFiles = func(_ string) ([]string, error) {
-		return []string{"docs/tutorials/tu__foo.md"}, nil
+		return []string{"docs/tutorials/getting-started.md"}, nil
 	}
 	if err := Run(t.TempDir(), d); err != nil {
 		t.Fatalf("expected no error, got: %v", err)
@@ -591,30 +487,6 @@ func TestStep8LintMarkdown_CallsNpmRun(t *testing.T) {
 	}
 	if !found {
 		t.Errorf("expected npm run lint:md, got: %v", rec.calls)
-	}
-}
-
-// --------------------------------------------------------------------------
-// Error message formatting
-// --------------------------------------------------------------------------
-
-func TestStep6DocsNaming_MultipleFixErrors_JoinedInMessage(t *testing.T) {
-	d := fakeDeps()
-	d.ValidateNaming = func(_ docs.ValidationOptions) (*docs.ValidationResult, error) {
-		return &docs.ValidationResult{
-			Violations: []docs.NamingViolation{{FileName: "bad.md"}},
-		}, nil
-	}
-	d.FixNaming = func(_ *docs.ValidationResult, _ docs.FixOptions) (*docs.FixResult, error) {
-		return &docs.FixResult{Errors: []string{"err1", "err2"}}, nil
-	}
-	err := step6DocsNaming(t.TempDir(), []string{"docs/foo.md"}, d)
-	if err == nil {
-		t.Fatal("expected error")
-	}
-	msg := err.Error()
-	if !strings.Contains(msg, "err1") || !strings.Contains(msg, "err2") {
-		t.Errorf("expected both errors in message, got: %s", msg)
 	}
 }
 

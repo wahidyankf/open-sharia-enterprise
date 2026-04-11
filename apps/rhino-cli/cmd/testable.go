@@ -38,10 +38,6 @@ var agentsValidateSyncFn = agents.ValidateSync
 // docs validate-links command delegation.
 var docsValidateAllLinksFn = docs.ValidateAllLinks
 
-// docs validate-naming command delegation.
-var docsValidateAllFn = docs.ValidateAll
-var docsFixFn = docs.Fix
-
 // contracts dart-scaffold command delegation.
 var contractsScaffoldDartFn = contracts.ScaffoldDart
 
