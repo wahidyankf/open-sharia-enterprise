@@ -487,9 +487,9 @@ rhino-cli test-coverage validate ./coverage/*/coverage.cobertura.xml 95
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Naming, idioms for production code
-- [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md) - Coverage enforcement
-- [Framework Integration](ex-soen-prla-csh__framework-integration.md) - EF Core, ASP.NET Core setup
+- [Coding Standards](coding-standards.md) - Naming, idioms for production code
+- [Code Quality Standards](code-quality-standards.md) - Coverage enforcement
+- [Framework Integration](framework-integration.md) - EF Core, ASP.NET Core setup
 
 ## Related Documentation
 

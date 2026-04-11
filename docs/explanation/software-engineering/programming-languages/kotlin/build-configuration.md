@@ -466,9 +466,9 @@ zipStorePath=wrapper/dists
 
 ## Related Standards
 
-- [Code Quality Standards](./ex-soen-prla-ko__code-quality-standards.md) - ktlint and Detekt plugin details
-- [Testing Standards](./ex-soen-prla-ko__testing-standards.md) - Test task and Kover configuration
-- [Framework Integration](./ex-soen-prla-ko__framework-integration.md) - Ktor and Spring Boot plugin setup
+- [Code Quality Standards](./code-quality-standards.md) - ktlint and Detekt plugin details
+- [Testing Standards](./testing-standards.md) - Test task and Kover configuration
+- [Framework Integration](./framework-integration.md) - Ktor and Spring Boot plugin setup
 
 ## Related Documentation
 

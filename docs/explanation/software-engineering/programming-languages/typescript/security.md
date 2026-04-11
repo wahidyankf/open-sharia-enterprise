@@ -16,9 +16,9 @@ tags:
   - oauth2
   - data-encryption
 related:
-  - ./ex-soen-prla-ty__web-services.md
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
+  - ./web-services.md
+  - ./best-practices.md
+  - ./type-safety.md
 principles:
   - explicit-over-implicit
 updated: 2026-01-24
@@ -1946,10 +1946,10 @@ describe("DonationController (security)", () => {
 
 ## Related Topics
 
-- [Web Services](ex-soen-prla-ty__web-services.md) - NestJS security features
-- [Type Safety](ex-soen-prla-ty__type-safety.md) - Compile-time safety
-- [Error Handling](ex-soen-prla-ty__error-handling.md) - Secure error messages
-- [Best Practices](ex-soen-prla-ty__best-practices.md) - Security best practices
+- [Web Services](web-services.md) - NestJS security features
+- [Type Safety](type-safety.md) - Compile-time safety
+- [Error Handling](error-handling.md) - Secure error messages
+- [Best Practices](best-practices.md) - Security best practices
 
 ## Sources
 

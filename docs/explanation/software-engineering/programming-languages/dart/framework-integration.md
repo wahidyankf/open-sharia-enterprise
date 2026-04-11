@@ -717,10 +717,10 @@ Framework integration standards are enforced through:
 
 ## Related Standards
 
-- [Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md) - Async patterns in Flutter
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Widget test patterns
-- [API Standards](./ex-soen-prla-da__api-standards.md) - shelf route setup
-- [Security Standards](./ex-soen-prla-da__security-standards.md) - dio interceptors for auth
+- [Concurrency Standards](./concurrency-standards.md) - Async patterns in Flutter
+- [Testing Standards](./testing-standards.md) - Widget test patterns
+- [API Standards](./api-standards.md) - shelf route setup
+- [Security Standards](./security-standards.md) - dio interceptors for auth
 
 ## Related Documentation
 

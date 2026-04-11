@@ -1239,10 +1239,10 @@ ose:
 ## 🔗 Related Documentation
 
 - [Spring Boot README](./README.md) - Framework overview
-- [Idioms](ex-soen-plwe-to-jvspbo__idioms.md) - Configuration patterns
-- [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production best practices
-- [Observability](ex-soen-plwe-to-jvspbo__observability.md) - Metrics and monitoring
-- [Performance](ex-soen-plwe-to-jvspbo__performance.md) - Performance tuning
+- [Idioms](idioms.md) - Configuration patterns
+- [Best Practices](best-practices.md) - Production best practices
+- [Observability](observability.md) - Metrics and monitoring
+- [Performance](performance.md) - Performance tuning
 
 **External Resources**:
 
@@ -1255,15 +1255,15 @@ ose:
 
 **Next Steps:**
 
-- Review [Observability](ex-soen-plwe-to-jvspbo__observability.md) for monitoring configuration
-- Explore [Performance](ex-soen-plwe-to-jvspbo__performance.md) for performance-related configuration
-- Check [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) for configuration management patterns
+- Review [Observability](observability.md) for monitoring configuration
+- Explore [Performance](performance.md) for performance-related configuration
+- Check [Best Practices](best-practices.md) for configuration management patterns
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Configuration](../jvm-spring/ex-soen-plwe-to-jvsp__configuration.md) - Manual Spring configuration
-- [Java Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Configuration patterns
-- [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Config standards
+- [Spring Framework Configuration](../jvm-spring/configuration.md) - Manual Spring configuration
+- [Java Configuration](../../../programming-languages/java/build-configuration.md) - Java baseline configuration
+- [Spring Boot Idioms](./idioms.md) - Configuration patterns
+- [Spring Boot Best Practices](./best-practices.md) - Config standards

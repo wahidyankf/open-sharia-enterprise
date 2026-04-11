@@ -392,9 +392,9 @@ cargo llvm-cov --fail-under-lines 95
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Naming conventions for test functions
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Testing error paths
-- [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md) - Testing async code
+- [Coding Standards](coding-standards.md) - Naming conventions for test functions
+- [Error Handling Standards](error-handling-standards.md) - Testing error paths
+- [Concurrency Standards](concurrency-standards.md) - Testing async code
 
 ## Related Documentation
 

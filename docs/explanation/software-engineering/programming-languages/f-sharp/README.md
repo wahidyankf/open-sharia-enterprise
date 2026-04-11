@@ -143,18 +143,18 @@ OSE Platform follows a three-tier F# versioning strategy aligned with .NET LTS r
 
 **MUST follow these mandatory standards for all F# code in OSE Platform:**
 
-1. **[Coding Standards](ex-soen-prla-fsh__coding-standards.md)** - Naming conventions, module organization, pipeline idioms, discriminated unions
-2. **[Testing Standards](ex-soen-prla-fsh__testing-standards.md)** - Expecto, FsCheck property-based testing, coverage requirements
-3. **[Code Quality Standards](ex-soen-prla-fsh__code-quality-standards.md)** - Fantomas (mandatory), FSharpLint, compiler warnings as errors
-4. **[Build Configuration](ex-soen-prla-fsh__build-configuration.md)** - .fsproj structure, file ordering, Paket, FAKE, global.json
-5. **[Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md)** - Railway-oriented programming, Result type, FsToolkit patterns
-6. **[Concurrency Standards](ex-soen-prla-fsh__concurrency-standards.md)** - Async workflows, MailboxProcessor actor model, Task interop
-7. **[Performance Standards](ex-soen-prla-fsh__performance-standards.md)** - Tail recursion, struct DUs, BenchmarkDotNet, AltCover
-8. **[Security Standards](ex-soen-prla-fsh__security-standards.md)** - Type-driven validation, Giraffe auth, parameterized queries
-9. **[API Standards](ex-soen-prla-fsh__api-standards.md)** - Giraffe HttpHandler composition, Saturn controllers, JSON serialization
-10. **[DDD Standards](ex-soen-prla-fsh__ddd-standards.md)** - Domain modeling with DUs, value objects as records, aggregate pattern
-11. **[Functional Programming Standards](ex-soen-prla-fsh__functional-programming-standards.md)** - Computation expressions, monadic composition, applicative validation
-12. **[Type Safety Standards](ex-soen-prla-fsh__type-safety-standards.md)** - Making illegal states unrepresentable, units of measure, single-case DUs
+1. **[Coding Standards](coding-standards.md)** - Naming conventions, module organization, pipeline idioms, discriminated unions
+2. **[Testing Standards](testing-standards.md)** - Expecto, FsCheck property-based testing, coverage requirements
+3. **[Code Quality Standards](code-quality-standards.md)** - Fantomas (mandatory), FSharpLint, compiler warnings as errors
+4. **[Build Configuration](build-configuration.md)** - .fsproj structure, file ordering, Paket, FAKE, global.json
+5. **[Error Handling Standards](error-handling-standards.md)** - Railway-oriented programming, Result type, FsToolkit patterns
+6. **[Concurrency Standards](concurrency-standards.md)** - Async workflows, MailboxProcessor actor model, Task interop
+7. **[Performance Standards](performance-standards.md)** - Tail recursion, struct DUs, BenchmarkDotNet, AltCover
+8. **[Security Standards](security-standards.md)** - Type-driven validation, Giraffe auth, parameterized queries
+9. **[API Standards](api-standards.md)** - Giraffe HttpHandler composition, Saturn controllers, JSON serialization
+10. **[DDD Standards](ddd-standards.md)** - Domain modeling with DUs, value objects as records, aggregate pattern
+11. **[Functional Programming Standards](functional-programming-standards.md)** - Computation expressions, monadic composition, applicative validation
+12. **[Type Safety Standards](type-safety-standards.md)** - Making illegal states unrepresentable, units of measure, single-case DUs
 
 ## Documentation Structure
 
@@ -162,21 +162,21 @@ OSE Platform follows a three-tier F# versioning strategy aligned with .NET LTS r
 
 **Mandatory Standards (All F# Developers MUST follow)**:
 
-1. [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Naming, module structure, pipeline operator
-2. [Testing Standards](ex-soen-prla-fsh__testing-standards.md) - Expecto framework, FsCheck, coverage >=95%
-3. [Code Quality Standards](ex-soen-prla-fsh__code-quality-standards.md) - Fantomas formatting, exhaustive pattern matching
+1. [Coding Standards](coding-standards.md) - Naming, module structure, pipeline operator
+2. [Testing Standards](testing-standards.md) - Expecto framework, FsCheck, coverage >=95%
+3. [Code Quality Standards](code-quality-standards.md) - Fantomas formatting, exhaustive pattern matching
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Error Handling**: [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - Result type, railway-oriented programming
-- **Concurrency**: [Concurrency Standards](ex-soen-prla-fsh__concurrency-standards.md) - Async workflows, MailboxProcessor for concurrent code
-- **Domain Modeling**: [DDD Standards](ex-soen-prla-fsh__ddd-standards.md) - DU-driven domain modeling for Sharia finance rules
-- **APIs**: [API Standards](ex-soen-prla-fsh__api-standards.md) - Giraffe/Saturn HTTP patterns for web services
-- **Performance**: [Performance Standards](ex-soen-prla-fsh__performance-standards.md) - Tail recursion, profiling when needed
-- **Security**: [Security Standards](ex-soen-prla-fsh__security-standards.md) - Type-driven validation, auth middleware
-- **Type Safety**: [Type Safety Standards](ex-soen-prla-fsh__type-safety-standards.md) - Units of measure, single-case DUs, type providers
-- **Functional Patterns**: [Functional Programming Standards](ex-soen-prla-fsh__functional-programming-standards.md) - CEs, composition, applicative validation
-- **Build**: [Build Configuration](ex-soen-prla-fsh__build-configuration.md) - .fsproj ordering, Paket, Directory.Build.props
+- **Error Handling**: [Error Handling Standards](error-handling-standards.md) - Result type, railway-oriented programming
+- **Concurrency**: [Concurrency Standards](concurrency-standards.md) - Async workflows, MailboxProcessor for concurrent code
+- **Domain Modeling**: [DDD Standards](ddd-standards.md) - DU-driven domain modeling for Sharia finance rules
+- **APIs**: [API Standards](api-standards.md) - Giraffe/Saturn HTTP patterns for web services
+- **Performance**: [Performance Standards](performance-standards.md) - Tail recursion, profiling when needed
+- **Security**: [Security Standards](security-standards.md) - Type-driven validation, auth middleware
+- **Type Safety**: [Type Safety Standards](type-safety-standards.md) - Units of measure, single-case DUs, type providers
+- **Functional Patterns**: [Functional Programming Standards](functional-programming-standards.md) - CEs, composition, applicative validation
+- **Build**: [Build Configuration](build-configuration.md) - .fsproj ordering, Paket, Directory.Build.props
 
 ### Documentation Organization
 
@@ -316,7 +316,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

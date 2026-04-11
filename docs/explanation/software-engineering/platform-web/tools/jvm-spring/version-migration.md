@@ -523,8 +523,8 @@ class ZakatServiceTest {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration management
-- **[Deployment](ex-soen-plwe-to-jvsp__deployment.md)** - Deployment strategies
+- **[Configuration](configuration.md)** - Configuration management
+- **[Deployment](deployment.md)** - Deployment strategies
 
 ### External Resources
 
@@ -536,14 +536,14 @@ class ZakatServiceTest {
 
 **OSE Explanation Foundation**:
 
-- [Java Version Migration](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java version updates
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Modern patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Migration standards
-- [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Config updates
+- [Java Version Migration](../../../programming-languages/java/framework-integration.md) - Java version updates
+- [Spring Framework Idioms](./idioms.md) - Modern patterns
+- [Spring Framework Best Practices](./best-practices.md) - Migration standards
+- [Spring Framework Configuration](./configuration.md) - Config updates
 
 **Spring Boot Extension**:
 
-- [Spring Boot Version Migration](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__version-migration.md) - Boot version updates
+- [Spring Boot Version Migration](../jvm-spring-boot/version-migration.md) - Boot version updates
 
 ---
 

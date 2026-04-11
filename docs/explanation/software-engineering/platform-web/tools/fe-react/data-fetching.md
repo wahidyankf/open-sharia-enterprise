@@ -26,9 +26,9 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - useEffect patterns
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Data fetching hooks
-- [State Management](ex-soen-plwe-to-fere__state-management.md) - Server state
+- [Idioms](idioms.md) - useEffect patterns
+- [Hooks](hooks.md) - Data fetching hooks
+- [State Management](state-management.md) - Server state
 
 ## Overview
 
@@ -1187,11 +1187,11 @@ export const WaqfProjectsGrid: React.FC = () => {
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - useEffect patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Data fetching hooks
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - Server state management
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Performance optimization
-- **[Security](ex-soen-plwe-to-fere__security.md)** - API security
+- **[Idioms](idioms.md)** - useEffect patterns
+- **[Hooks](hooks.md)** - Data fetching hooks
+- **[State Management](state-management.md)** - Server state management
+- **[Performance](performance.md)** - Performance optimization
+- **[Security](security.md)** - API security
 
 ---
 

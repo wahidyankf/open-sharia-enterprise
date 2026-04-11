@@ -2156,11 +2156,11 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](ex-soen-plwe-to-elph__idioms.md)** - Idiomatic patterns
-- **[Phoenix Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Production standards
-- **[Contexts](ex-soen-plwe-to-elph__contexts.md)** - Context design patterns
-- **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - LiveView best practices
-- **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing strategies
+- **[Phoenix Idioms](idioms.md)** - Idiomatic patterns
+- **[Phoenix Best Practices](best-practices.md)** - Production standards
+- **[Contexts](contexts.md)** - Context design patterns
+- **[LiveView](liveview.md)** - LiveView best practices
+- **[Testing](testing.md)** - Testing strategies
 
 ---
 

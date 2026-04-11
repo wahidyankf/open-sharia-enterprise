@@ -188,20 +188,20 @@ test("murabaha contract creation workflow", async ({ page }) => {
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Testing Standards** (Authoritative):
 
 - [docs/explanation/software-engineering/automation-testing/tools/playwright/README.md](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md)
-- [Test Organization](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__test-organization.md)
-- [Selectors](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__selectors.md)
-- [Assertions](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__assertions.md)
-- [Page Objects](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__page-objects.md)
-- [Configuration](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__configuration.md)
-- [Best Practices](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__best-practices.md)
-- [Anti-Patterns](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__anti-patterns.md)
-- [Idioms](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__idioms.md)
-- [Debugging](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__debugging.md)
+- [Test Organization](../../docs/explanation/software-engineering/automation-testing/tools/playwright/test-organization.md)
+- [Selectors](../../docs/explanation/software-engineering/automation-testing/tools/playwright/selectors.md)
+- [Assertions](../../docs/explanation/software-engineering/automation-testing/tools/playwright/assertions.md)
+- [Page Objects](../../docs/explanation/software-engineering/automation-testing/tools/playwright/page-objects.md)
+- [Configuration](../../docs/explanation/software-engineering/automation-testing/tools/playwright/configuration.md)
+- [Best Practices](../../docs/explanation/software-engineering/automation-testing/tools/playwright/best-practices.md)
+- [Anti-Patterns](../../docs/explanation/software-engineering/automation-testing/tools/playwright/anti-patterns.md)
+- [Idioms](../../docs/explanation/software-engineering/automation-testing/tools/playwright/idioms.md)
+- [Debugging](../../docs/explanation/software-engineering/automation-testing/tools/playwright/debugging.md)
 
 **Development Practices**:
 

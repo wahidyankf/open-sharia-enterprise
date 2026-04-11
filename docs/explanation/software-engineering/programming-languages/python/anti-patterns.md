@@ -15,9 +15,9 @@ tags:
   - financial
   - performance
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__idioms.md
-  - ./ex-soen-prla-py__error-handling.md
+  - ./best-practices.md
+  - ./idioms.md
+  - ./error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -3814,9 +3814,9 @@ py-spy top --pid <PID>
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Coding standards
-- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns
-- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exception patterns
+- [Best Practices](./best-practices.md) - Coding standards
+- [Idioms](./idioms.md) - Pythonic patterns
+- [Error Handling](./error-handling.md) - Exception patterns
 
 ### Books
 

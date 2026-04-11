@@ -602,7 +602,7 @@ Every convention is fully documented:
 
 **Examples**:
 
-- [Monorepo Structure](../../../docs/reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
+- [Monorepo Structure](../../../docs/reference/monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
 - [Trunk Based Development](../../development/workflow/trunk-based-development.md) - Git workflow, why main branch, deployment branches
 

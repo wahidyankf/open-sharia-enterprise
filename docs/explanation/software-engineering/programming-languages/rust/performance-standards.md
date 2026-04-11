@@ -278,7 +278,7 @@ let total: Decimal = eligible
 
 ## LTO for Release Builds
 
-**MUST** enable Link-Time Optimization in release profile (see [Build Configuration Standards](ex-soen-prla-ru__build-configuration.md)):
+**MUST** enable Link-Time Optimization in release profile (see [Build Configuration Standards](build-configuration.md)):
 
 ```toml
 [profile.release]
@@ -324,9 +324,9 @@ RUSTFLAGS="-Cprofile-use=/tmp/pgo-data/merged.profdata" cargo build --release
 
 ## Related Standards
 
-- [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md) - Rayon for data parallelism
-- [Memory Management Standards](ex-soen-prla-ru__memory-management-standards.md) - Smart pointer costs
-- [Build Configuration](ex-soen-prla-ru__build-configuration.md) - Release profile settings
+- [Concurrency Standards](concurrency-standards.md) - Rayon for data parallelism
+- [Memory Management Standards](memory-management-standards.md) - Smart pointer costs
+- [Build Configuration](build-configuration.md) - Release profile settings
 
 ## Related Documentation
 

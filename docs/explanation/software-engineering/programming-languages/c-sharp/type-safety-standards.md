@@ -73,7 +73,7 @@ var correctedId = originalId with { Value = Guid.NewGuid() }; // new record, ori
 
 ## Nullable Reference Types
 
-**MUST** enable nullable reference types for all projects (see [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md)).
+**MUST** enable nullable reference types for all projects (see [Code Quality Standards](code-quality-standards.md)).
 
 ### Nullable Annotations
 
@@ -353,9 +353,9 @@ public ZakatResult CalculateZakat(Money wealth, Money nisab) =>
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Record types, pattern matching idioms
-- [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md) - Nullable reference type enforcement
-- [DDD Standards](ex-soen-prla-csh__ddd-standards.md) - Value Objects and strongly-typed IDs
+- [Coding Standards](coding-standards.md) - Record types, pattern matching idioms
+- [Code Quality Standards](code-quality-standards.md) - Nullable reference type enforcement
+- [DDD Standards](ddd-standards.md) - Value Objects and strongly-typed IDs
 
 ## Related Documentation
 

@@ -94,7 +94,7 @@ fn get_transaction(transactions: &[Transaction], index: usize) -> Option<&Transa
 
 **MUST** validate all external input at system boundaries (HTTP handlers, CLI args, file parsing).
 
-**MUST** use domain types to make invalid states unrepresentable (see [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md)):
+**MUST** use domain types to make invalid states unrepresentable (see [Type Safety Standards](type-safety-standards.md)):
 
 ```rust
 // CORRECT: Validate at the boundary, use typed values internally
@@ -253,7 +253,7 @@ async fn find_contract_unsafe(pool: &PgPool, id: &str) -> Result<MurabahaContrac
 
 **MUST** apply `#![forbid(unsafe_code)]` to all application crates.
 
-**MUST** document all `unsafe` blocks with `// SAFETY:` comments in infrastructure crates (see [Code Quality Standards](ex-soen-prla-ru__code-quality-standards.md)).
+**MUST** document all `unsafe` blocks with `// SAFETY:` comments in infrastructure crates (see [Code Quality Standards](code-quality-standards.md)).
 
 When working with external C libraries via FFI:
 
@@ -338,10 +338,10 @@ default = ["rustls"]
 
 ## Related Standards
 
-- [Code Quality Standards](ex-soen-prla-ru__code-quality-standards.md) - Unsafe code policy
-- [Build Configuration](ex-soen-prla-ru__build-configuration.md) - cargo deny configuration
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Handling validation errors
-- [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Making invalid states unrepresentable
+- [Code Quality Standards](code-quality-standards.md) - Unsafe code policy
+- [Build Configuration](build-configuration.md) - cargo deny configuration
+- [Error Handling Standards](error-handling-standards.md) - Handling validation errors
+- [Type Safety Standards](type-safety-standards.md) - Making invalid states unrepresentable
 
 ## Related Documentation
 

@@ -354,7 +354,7 @@ Start here
 
 ### Reference Example: Monorepo Structure
 
-**Location**: `docs/reference/re__monorepo-structure.md`
+**Location**: `docs/reference/monorepo-structure.md`
 
 **Structure**:
 

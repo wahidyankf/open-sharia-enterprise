@@ -1457,10 +1457,10 @@ public class WaqfDonationBatchService {
 ## 🔗 Related Documentation
 
 - [Spring Boot README](./README.md) - Framework overview and getting started
-- [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production best practices
-- [Observability](ex-soen-plwe-to-jvspbo__observability.md) - Monitoring and observability patterns
-- [Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - JPA and database access patterns
-- [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) - Application configuration
+- [Best Practices](best-practices.md) - Production best practices
+- [Observability](observability.md) - Monitoring and observability patterns
+- [Data Access](data-access.md) - JPA and database access patterns
+- [Configuration](configuration.md) - Application configuration
 
 **External Resources**:
 
@@ -1474,15 +1474,15 @@ public class WaqfDonationBatchService {
 
 **Next Steps:**
 
-- Review [Observability](ex-soen-plwe-to-jvspbo__observability.md) for monitoring patterns
-- Explore [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for externalized config
-- Check [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) for production standards
+- Review [Observability](observability.md) for monitoring patterns
+- Explore [Configuration](configuration.md) for externalized config
+- Check [Best Practices](best-practices.md) for production standards
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Performance](../jvm-spring/ex-soen-plwe-to-jvsp__performance.md) - Manual Spring optimization
-- [Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Performance patterns
-- [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Query optimization
+- [Spring Framework Performance](../jvm-spring/performance.md) - Manual Spring optimization
+- [Java Performance](../../../programming-languages/java/performance-standards.md) - Java JVM tuning
+- [Spring Boot Idioms](./idioms.md) - Performance patterns
+- [Spring Boot Data Access](./data-access.md) - Query optimization

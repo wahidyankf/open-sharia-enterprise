@@ -231,9 +231,9 @@ Before committing a bounded context visualization, verify:
 
 ## Related Standards
 
-- **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, required levels
+- **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, required levels
 - **[DDD Standards](../domain-driven-design-ddd/README.md)** - Domain-Driven Design tactical patterns
-- **[DDD Context Mapping](../domain-driven-design-ddd/ex-soen-ar-dodrdedd__bounded-context-standards.md)** - Context mapping pattern details
+- **[DDD Context Mapping](../domain-driven-design-ddd/bounded-context-standards.md)** - Context mapping pattern details
 
 ## Principles Implemented
 

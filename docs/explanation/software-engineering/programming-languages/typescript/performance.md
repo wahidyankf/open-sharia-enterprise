@@ -10,9 +10,9 @@ tags:
   - profiling
   - benchmarking
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__memory-management.md
-  - ./ex-soen-prla-ty__concurrency-and-parallelism.md
+  - ./best-practices.md
+  - ./memory-management.md
+  - ./concurrency-and-parallelism.md
 principles:
   - automation-over-manual
 updated: 2025-01-23
@@ -958,9 +958,9 @@ setInterval(() => {
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Memory Management](ex-soen-prla-ty__memory-management.md)** - Memory optimization
-- **[TypeScript Concurrency](ex-soen-prla-ty__concurrency-and-parallelism.md)** - Async patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Memory Management](memory-management.md)** - Memory optimization
+- **[TypeScript Concurrency](concurrency-and-parallelism.md)** - Async patterns
 
 ---
 

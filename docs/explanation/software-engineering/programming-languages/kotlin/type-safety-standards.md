@@ -430,9 +430,9 @@ fun parseZakatAmount(raw: Any): BigDecimal {
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Null safety idioms and sealed class patterns
-- [DDD Standards](./ex-soen-prla-ko__ddd-standards.md) - Value Objects with data classes and value classes
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Sealed error hierarchies
+- [Coding Standards](./coding-standards.md) - Null safety idioms and sealed class patterns
+- [DDD Standards](./ddd-standards.md) - Value Objects with data classes and value classes
+- [Error Handling Standards](./error-handling-standards.md) - Sealed error hierarchies
 
 ## Related Documentation
 

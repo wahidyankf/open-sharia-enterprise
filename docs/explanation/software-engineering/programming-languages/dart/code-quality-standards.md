@@ -525,10 +525,10 @@ Code quality is enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Naming and idiom standards
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Test coverage requirements
-- [Build Configuration](./ex-soen-prla-da__build-configuration.md) - CI/CD integration details
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - `only_throw_errors` rule
+- [Coding Standards](./coding-standards.md) - Naming and idiom standards
+- [Testing Standards](./testing-standards.md) - Test coverage requirements
+- [Build Configuration](./build-configuration.md) - CI/CD integration details
+- [Error Handling Standards](./error-handling-standards.md) - `only_throw_errors` rule
 
 ## Related Documentation
 

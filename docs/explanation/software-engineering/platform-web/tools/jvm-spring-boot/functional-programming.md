@@ -1304,10 +1304,10 @@ public class WaqfDonationService {
 ## 🔗 Related Documentation
 
 - [Spring Boot README](./README.md) - Framework overview
-- [Idioms](ex-soen-plwe-to-jvspbo__idioms.md) - Common Spring Boot patterns
-- [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production best practices
-- [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md) - DDD patterns
-- [Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - Database access patterns
+- [Idioms](idioms.md) - Common Spring Boot patterns
+- [Best Practices](best-practices.md) - Production best practices
+- [Domain-Driven Design](domain-driven-design.md) - DDD patterns
+- [Data Access](data-access.md) - Database access patterns
 
 **External Resources**:
 
@@ -1320,15 +1320,15 @@ public class WaqfDonationService {
 
 **Next Steps:**
 
-- Review [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md) for DDD patterns
-- Explore [Data Access](ex-soen-plwe-to-jvspbo__data-access.md) for database patterns
-- Check [Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) for production standards
+- Review [Domain-Driven Design](domain-driven-design.md) for DDD patterns
+- Explore [Data Access](data-access.md) for database patterns
+- Check [Best Practices](best-practices.md) for production standards
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Idioms](../jvm-spring/ex-soen-plwe-to-jvsp__idioms.md) - Spring FP patterns
-- [Java Functional Programming](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java FP baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - FP patterns
-- [Spring Boot WebFlux Reactive](./ex-soen-plwe-to-jvspbo__webflux-reactive.md) - Reactive FP
+- [Spring Framework Idioms](../jvm-spring/idioms.md) - Spring FP patterns
+- [Java Functional Programming](../../../programming-languages/java/coding-standards.md) - Java FP baseline
+- [Spring Boot Idioms](./idioms.md) - FP patterns
+- [Spring Boot WebFlux Reactive](./webflux-reactive.md) - Reactive FP

@@ -249,35 +249,35 @@ config :my_app, api_key: System.get_env("API_KEY")
 
 **Core Patterns**:
 
-- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__idioms.md)
-- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__best-practices.md)
-- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__anti-patterns.md)
+- [Idioms](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/idioms.md)
+- [Best Practices](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/best-practices.md)
+- [Anti-Patterns](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/anti-patterns.md)
 
 **Architecture & Configuration**:
 
-- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__configuration.md)
-- [Contexts](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__contexts.md)
-- [Channels](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__channels.md)
+- [Configuration](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/configuration.md)
+- [Contexts](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/contexts.md)
+- [Channels](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/channels.md)
 
 **Data & Web**:
 
-- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__data-access.md)
-- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__rest-apis.md)
+- [Data Access](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/data-access.md)
+- [REST APIs](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/rest-apis.md)
 
 **Quality & Operations**:
 
-- [Security](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__security.md)
-- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__testing.md)
-- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__performance.md)
-- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__observability.md)
-- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__deployment.md)
-- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__version-migration.md)
+- [Security](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/security.md)
+- [Testing](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/testing.md)
+- [Performance](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/performance.md)
+- [Observability](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/observability.md)
+- [Deployment](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/deployment.md)
+- [Version Migration](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/version-migration.md)
 
 ---
 
 ## Phoenix LiveView Standards
 
-**Authoritative Source**: [docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph\_\_liveview.md](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__liveview.md)
+**Authoritative Source**: [docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph\_\_liveview.md](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/liveview.md)
 
 **Foundation**: Builds on Phoenix Framework standards above.
 
@@ -340,7 +340,7 @@ config :my_app, api_key: System.get_env("API_KEY")
 
 ### LiveView Comprehensive Documentation
 
-- [Phoenix LiveView](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/ex-soen-plwe-to-elph__liveview.md) — Complete LiveView patterns, lifecycle, components, testing
+- [Phoenix LiveView](../../../docs/explanation/software-engineering/platform-web/tools/elixir-phoenix/liveview.md) — Complete LiveView patterns, lifecycle, components, testing
 
 ---
 

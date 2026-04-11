@@ -230,7 +230,7 @@ Future<ZakatDashboard> loadDashboardSlowly(String customerId) async {
 
 ### Error Handling in Async Code
 
-**MUST** handle async errors explicitly. See [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) for exception patterns.
+**MUST** handle async errors explicitly. See [Error Handling Standards](./error-handling-standards.md) for exception patterns.
 
 ```dart
 Future<void> processZakatPayment(String customerId, double amount) async {
@@ -535,10 +535,10 @@ Concurrency standards are enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Async naming conventions
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Async error patterns
-- [Performance Standards](./ex-soen-prla-da__performance-standards.md) - Event loop performance
-- [Framework Integration](./ex-soen-prla-da__framework-integration.md) - Flutter async patterns
+- [Coding Standards](./coding-standards.md) - Async naming conventions
+- [Error Handling Standards](./error-handling-standards.md) - Async error patterns
+- [Performance Standards](./performance-standards.md) - Event loop performance
+- [Framework Integration](./framework-integration.md) - Flutter async patterns
 
 ## Related Documentation
 

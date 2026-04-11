@@ -80,11 +80,11 @@ End-to-end testing frameworks and browser automation tools:
 
 License analysis and compliance decisions for open-source dependencies:
 
-- **[Licensing Decisions](licensing/ex-soen-li__licensing-decisions.md)** - Analysis for Liquibase FSL-1.1-ALv2, Hibernate LGPL-2.1, sharp-libvips LGPL-3.0, and Logback EPL-1.0/LGPL-2.1. Includes quarterly audit schedule.
+- **[Licensing Decisions](licensing/licensing-decisions.md)** - Analysis for Liquibase FSL-1.1-ALv2, Hibernate LGPL-2.1, sharp-libvips LGPL-3.0, and Logback EPL-1.0/LGPL-2.1. Includes quarterly audit schedule.
 
 ### 📚 Cross-References
 
-- **[Software Design Reference](./ex-soen__software-design-reference.md)** - Cross-reference index to all software design documentation. Links architecture patterns, development practices, and language-specific standards
+- **[Software Design Reference](./software-design-reference.md)** - Cross-reference index to all software design documentation. Links architecture patterns, development practices, and language-specific standards
 
 ## Why This Structure?
 
@@ -212,14 +212,14 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 ### For Architects and Technical Leads
 
 1. **Understand visualization approaches** - Read [C4 System Context](./architecture/c4-architecture-model/README.md)
-2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__bounded-context-standards.md) and [Context Mapping](./architecture/domain-driven-design-ddd/README.md)
+2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/bounded-context-standards.md) and [Context Mapping](./architecture/domain-driven-design-ddd/README.md)
 3. **Learn integration** - Read [DDD and C4 Integration](./architecture/domain-driven-design-ddd/README.md)
 4. **Apply to projects** - Apply C4 and DDD patterns to your architecture
 
 ### For Developers
 
 1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./architecture/c4-architecture-model/README.md#-5-minute-quick-start-why-c4-matters)
-2. **Understand tactical patterns** - Read [DDD Aggregates](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__aggregate-standards.md) and [Value Objects](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__value-object-standards.md)
+2. **Understand tactical patterns** - Read [DDD Aggregates](./architecture/domain-driven-design-ddd/aggregate-standards.md) and [Value Objects](./architecture/domain-driven-design-ddd/value-object-standards.md)
 3. **Functional programming focus** - Read [DDD and Functional Programming](./architecture/domain-driven-design-ddd/README.md)
 4. **Decision frameworks** - Use [DDD Decision Trees](./architecture/domain-driven-design-ddd/README.md)
 

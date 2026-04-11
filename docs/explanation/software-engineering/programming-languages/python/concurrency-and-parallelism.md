@@ -13,9 +13,9 @@ tags:
   - gil
   - async-await
 related:
-  - ./ex-soen-prla-py__web-services.md
-  - ./ex-soen-prla-py__performance.md
-  - ./ex-soen-prla-py__error-handling.md
+  - ./web-services.md
+  - ./performance.md
+  - ./error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1468,9 +1468,9 @@ print(f"Free-threaded execution: {elapsed:.4f}s")
 
 ### Related Documentation
 
-- [Web Services](./ex-soen-prla-py__web-services.md) - FastAPI async patterns
-- [Performance](./ex-soen-prla-py__performance.md) - Optimization strategies
-- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exception patterns
+- [Web Services](./web-services.md) - FastAPI async patterns
+- [Performance](./performance.md) - Optimization strategies
+- [Error Handling](./error-handling.md) - Exception patterns
 
 ---
 

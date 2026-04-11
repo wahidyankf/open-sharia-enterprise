@@ -486,7 +486,7 @@ nx graph --file=graph.json | jq '.dependencies'
 ## Related Documentation
 
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and execution model
-- [Add New App](./hoto__add-new-app.md)
-- [Add New Library](./hoto__add-new-lib.md)
-- [Monorepo Structure Reference](../reference/re__monorepo-structure.md)
-- [Nx Configuration Reference](../reference/re__nx-configuration.md)
+- [Add New App](./add-new-app.md)
+- [Add New Library](./add-new-lib.md)
+- [Monorepo Structure Reference](../reference/monorepo-structure.md)
+- [Nx Configuration Reference](../reference/nx-configuration.md)

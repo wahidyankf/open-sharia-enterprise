@@ -18,8 +18,8 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
-  - ./ex-soen-prla-go__security-standards.md
+  - ./coding-standards.md#part-2-naming--organization-best-practices
+  - ./security-standards.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -2349,10 +2349,10 @@ app.Use(func(c *fiber.Ctx) error {
 
 ## Related Documentation
 
-- [Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md) - Handling concurrent requests
-- [Error Handling](./ex-soen-prla-go__error-handling-standards.md) - Error handling in web services
-- [Security](./ex-soen-prla-go__security-standards.md) - Web service security
-- [Testing](./ex-soen-prla-go__testing-standards.md#part-1-test-driven-development-tdd-standards) - Testing web services
+- [Concurrency and Parallelism](./concurrency-standards.md) - Handling concurrent requests
+- [Error Handling](./error-handling-standards.md) - Error handling in web services
+- [Security](./security-standards.md) - Web service security
+- [Testing](./testing-standards.md#part-1-test-driven-development-tdd-standards) - Testing web services
 
 ## Further Reading
 

@@ -10,8 +10,8 @@ tags:
   - v8
   - memory-leaks
 related:
-  - ./ex-soen-prla-ty__performance.md
-  - ./ex-soen-prla-ty__best-practices.md
+  - ./performance.md
+  - ./best-practices.md
 principles:
   - automation-over-manual
 updated: 2025-01-23
@@ -646,8 +646,8 @@ async function processAllDonations() {
 
 ## Related Documentation
 
-- **[TypeScript Performance](ex-soen-prla-ty__performance.md)** - Performance optimization
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
+- **[TypeScript Performance](performance.md)** - Performance optimization
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
 
 ---
 

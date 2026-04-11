@@ -185,16 +185,13 @@ func ShouldSkipLink(link string) bool {
 		return true
 	}
 
-	// Skip example tutorial file names (clearly examples)
+	// Skip example file names (clearly examples, not real links)
 	examplePatterns := []string{
-		"tu__rag-", "ex-co__", "ex__", "tu-bufi__",
-		"./tu__", "./re__", "./hoto__", "./ex__",
 		"./overview", "./guide.md", "./examples.md", "./reference.md",
 		"./diagram.png", "./image.png", "./screenshots/",
 		"./auth-guide.md", "by-concept/beginner", "./by-example/beginner",
 		"swe/prog-lang/", "../parent", "./ai/", "../swe/", "../../advanced/",
 		"url", "./LICENSE", "../../features.md",
-		"./tutorials/tu__", // Example tutorial paths
 		"../../.opencode/", // OpenCode references (not part of this repo)
 	}
 	for _, pattern := range examplePatterns {

@@ -1701,16 +1701,16 @@ These standards are enforced through:
 
 **Core Elixir Concepts**:
 
-- [Idioms](./ex-soen-prla-el__coding-standards.md) - Comprehensive idiom reference
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Complete best practices guide
-- [Anti-Patterns](./ex-soen-prla-el__coding-standards.md) - Detailed anti-patterns to avoid
+- [Idioms](./coding-standards.md) - Comprehensive idiom reference
+- [Best Practices](./coding-standards.md) - Complete best practices guide
+- [Anti-Patterns](./coding-standards.md) - Detailed anti-patterns to avoid
 
 **Specialized Topics**:
 
-- [OTP GenServer](./ex-soen-prla-el__otp-genserver.md) - Deep dive into GenServer
-- [OTP Supervisor](./ex-soen-prla-el__otp-supervisor.md) - Supervision tree patterns
-- [Functional Programming](./ex-soen-prla-el__functional-programming-standards.md) - Pure functions and immutability
-- [Testing Standards](./ex-soen-prla-el__testing-standards.md) - Comprehensive testing guide
+- [OTP GenServer](./otp-genserver.md) - Deep dive into GenServer
+- [OTP Supervisor](./otp-supervisor.md) - Supervision tree patterns
+- [Functional Programming](./functional-programming-standards.md) - Pure functions and immutability
+- [Testing Standards](./testing-standards.md) - Comprehensive testing guide
 
 **Software Engineering Principles**:
 

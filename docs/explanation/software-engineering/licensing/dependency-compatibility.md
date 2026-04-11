@@ -119,6 +119,6 @@ Demo apps (`a-demo-*`) are excluded from this audit because:
 
 ## Related Documentation
 
-- [Licensing Decisions](./ex-soen-li__licensing-decisions.md) — Analysis of notable dependency
+- [Licensing Decisions](./licensing-decisions.md) — Analysis of notable dependency
   licenses
 - [Licensing Index](./README.md) — All licensing documentation

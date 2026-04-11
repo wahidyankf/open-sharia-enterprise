@@ -82,11 +82,11 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 
 **MUST follow these mandatory standards for all C4 diagrams in OSE Platform:**
 
-1. **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, diagram levels (Context/Container/Component), OSE-specific patterns
-2. **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, accessibility requirements
-3. **[Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers, context mapping patterns
-4. **[Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)** - Representing Nx apps and libs in C4 container diagrams
-5. **[Tooling Standards](./ex-soen-ar-c4armo__tooling-standards.md)** - Mermaid setup, diagram validation, accessibility testing
+1. **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, diagram levels (Context/Container/Component), OSE-specific patterns
+2. **[Notation Standards](./notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, accessibility requirements
+3. **[Bounded Context Visualization](./bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers, context mapping patterns
+4. **[Nx Workspace Visualization](./nx-workspace-visualization.md)** - Representing Nx apps and libs in C4 container diagrams
+5. **[Tooling Standards](./tooling-standards.md)** - Mermaid setup, diagram validation, accessibility testing
 
 ## C4 Levels in OSE Platform
 
@@ -105,7 +105,7 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 
 **Example**: Zakat Management System context showing donors, beneficiaries, payment gateway, and compliance reporting systems.
 
-**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#system-context-requirements)
+**See**: [Diagram Standards](./diagram-standards.md#system-context-requirements)
 
 ### Level 2: Container (REQUIRED for multi-container systems)
 
@@ -123,7 +123,7 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 
 **Example**: Zakat system showing zakat-calculation-service (Spring Boot), zakat-web-ui (Next.js), zakat-database (PostgreSQL), and message broker (RabbitMQ).
 
-**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#container-requirements)
+**See**: [Diagram Standards](./diagram-standards.md#container-requirements)
 
 ### Level 3: Component (OPTIONAL)
 
@@ -140,7 +140,7 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 
 **When to skip**: Simple containers with obvious structure, CRUD applications, thin API layers.
 
-**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#component-requirements)
+**See**: [Diagram Standards](./diagram-standards.md#component-requirements)
 
 ### Level 4: Code (RARELY USED)
 
@@ -161,7 +161,7 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 - Context mapping patterns visualized as container relationships
 - Each container maintains single ubiquitous language
 
-**See**: [Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)
+**See**: [Bounded Context Visualization](./bounded-context-visualization.md)
 
 ### Nx Workspace Structure
 
@@ -171,7 +171,7 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 - Shared `libs/` = Supporting components in Container diagrams
 - Nx project dependencies visualized as container relationships
 
-**See**: [Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)
+**See**: [Nx Workspace Visualization](./nx-workspace-visualization.md)
 
 ### FSM States
 
@@ -187,14 +187,14 @@ C4 Architecture diagrams in OSE Platform enforce foundational software engineeri
 
 **Mandatory Standards (All architects/developers MUST follow)**:
 
-1. [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md) - When to create diagrams, required levels
-2. [Notation Standards](./ex-soen-ar-c4armo__notation-standards.md) - WCAG colors, Mermaid syntax, labeling
-3. [Tooling Standards](./ex-soen-ar-c4armo__tooling-standards.md) - Mermaid setup, validation tools
+1. [Diagram Standards](./diagram-standards.md) - When to create diagrams, required levels
+2. [Notation Standards](./notation-standards.md) - WCAG colors, Mermaid syntax, labeling
+3. [Tooling Standards](./tooling-standards.md) - Mermaid setup, validation tools
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **DDD Integration**: [Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md) - Mapping bounded contexts to containers
-- **Nx Monorepo**: [Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md) - Representing Nx apps/libs
+- **DDD Integration**: [Bounded Context Visualization](./bounded-context-visualization.md) - Mapping bounded contexts to containers
+- **Nx Monorepo**: [Nx Workspace Visualization](./nx-workspace-visualization.md) - Representing Nx apps/libs
 
 ## Validation and Compliance
 
@@ -255,7 +255,7 @@ graph TD
 
 - **[DDD Standards](../domain-driven-design-ddd/README.md)** - Domain-Driven Design alignment
 - **[Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
-- **[Nx Workspace Structure](../../../../reference/re__monorepo-structure.md)** - Monorepo organization
+- **[Nx Workspace Structure](../../../../reference/monorepo-structure.md)** - Monorepo organization
 
 ## Principles Implemented/Respected
 

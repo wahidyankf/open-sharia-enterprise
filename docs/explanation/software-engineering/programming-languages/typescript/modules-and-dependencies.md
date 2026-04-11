@@ -11,7 +11,7 @@ tags:
   - pnpm
   - bun
 related:
-  - ./ex-soen-prla-ty__best-practices.md
+  - ./best-practices.md
   - ../../../../../governance/principles/software-engineering/reproducibility.md
 principles:
   - reproducibility
@@ -342,7 +342,7 @@ packages:
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
 - **[Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)** - Reproducible builds
 
 ---

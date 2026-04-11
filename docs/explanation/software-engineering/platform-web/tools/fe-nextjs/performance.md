@@ -953,14 +953,14 @@ Before deploying:
 
 **Core Next.js**:
 
-- [Rendering](ex-soen-plwe-to-fene__rendering.md) - Rendering strategies
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Caching strategies
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - Zero-bundle components
+- [Rendering](rendering.md) - Rendering strategies
+- [Data Fetching](data-fetching.md) - Caching strategies
+- [Server Components](server-components.md) - Zero-bundle components
 
 **Deployment**:
 
-- [Deployment](ex-soen-plwe-to-fene__deployment.md) - Production optimization
-- [Configuration](ex-soen-plwe-to-fene__configuration.md) - Performance config
+- [Deployment](deployment.md) - Production optimization
+- [Configuration](configuration.md) - Performance config
 
 ---
 

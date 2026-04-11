@@ -353,9 +353,9 @@ Build configuration standards are enforced through:
 
 ## Related Standards
 
-- [Code Quality Standards](./ex-soen-prla-cl__code-quality-standards.md) - Tool configuration within deps.edn aliases
-- [Testing Standards](./ex-soen-prla-cl__testing-standards.md) - Test runner aliases
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Namespace mirroring directory structure
+- [Code Quality Standards](./code-quality-standards.md) - Tool configuration within deps.edn aliases
+- [Testing Standards](./testing-standards.md) - Test runner aliases
+- [Coding Standards](./coding-standards.md) - Namespace mirroring directory structure
 
 ## Related Documentation
 

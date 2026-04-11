@@ -355,8 +355,8 @@ public static class ZakatRates
 
 ## Related Standards
 
-- [Concurrency Standards](ex-soen-prla-csh__concurrency-standards.md) - ValueTask<T> for hot paths, Parallel.ForEachAsync
-- [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Struct vs record struct decisions
+- [Concurrency Standards](concurrency-standards.md) - ValueTask<T> for hot paths, Parallel.ForEachAsync
+- [Coding Standards](coding-standards.md) - Struct vs record struct decisions
 
 ## Related Documentation
 

@@ -336,10 +336,10 @@ export default async function ZakatPage() {
 
 ## Related Documentation
 
-- **[Next.js Idioms](ex-soen-plwe-to-fene__idioms.md)** - Correct patterns
-- **[Next.js Best Practices](ex-soen-plwe-to-fene__best-practices.md)** - Production standards
-- **[Performance](ex-soen-plwe-to-fene__performance.md)** - Optimization guide
-- **[Server Components](ex-soen-plwe-to-fene__server-components.md)** - RSC patterns
+- **[Next.js Idioms](idioms.md)** - Correct patterns
+- **[Next.js Best Practices](best-practices.md)** - Production standards
+- **[Performance](performance.md)** - Optimization guide
+- **[Server Components](server-components.md)** - RSC patterns
 
 ---
 

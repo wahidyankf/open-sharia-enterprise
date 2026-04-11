@@ -580,10 +580,10 @@ Security standards are enforced through:
 
 ## Related Standards
 
-- [API Standards](./ex-soen-prla-da__api-standards.md) - HTTP security headers, authentication
-- [Build Configuration](./ex-soen-prla-da__build-configuration.md) - dart pub audit in CI
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Security exception types
-- [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Type safety prevents injection
+- [API Standards](./api-standards.md) - HTTP security headers, authentication
+- [Build Configuration](./build-configuration.md) - dart pub audit in CI
+- [Error Handling Standards](./error-handling-standards.md) - Security exception types
+- [Type Safety Standards](./type-safety-standards.md) - Type safety prevents injection
 
 ## Related Documentation
 

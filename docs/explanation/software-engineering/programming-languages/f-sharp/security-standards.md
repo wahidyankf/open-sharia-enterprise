@@ -283,9 +283,9 @@ let findZakatRecords (conn: IDbConnection) (payerId: PayerId) =
 
 ## Related Standards
 
-- [API Standards](ex-soen-prla-fsh__api-standards.md) - Giraffe route-level auth integration
-- [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - Validation errors as Result types
-- [Type Safety Standards](ex-soen-prla-fsh__type-safety-standards.md) - Single-case DUs and type-driven security
+- [API Standards](api-standards.md) - Giraffe route-level auth integration
+- [Error Handling Standards](error-handling-standards.md) - Validation errors as Result types
+- [Type Safety Standards](type-safety-standards.md) - Single-case DUs and type-driven security
 
 ## Related Documentation
 

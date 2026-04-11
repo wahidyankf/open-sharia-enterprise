@@ -338,9 +338,9 @@ cargo deny check
 
 ## Related Standards
 
-- [Code Quality Standards](ex-soen-prla-ru__code-quality-standards.md) - rustfmt, Clippy configuration
-- [Security Standards](ex-soen-prla-ru__security-standards.md) - cargo audit integration
-- [Testing Standards](ex-soen-prla-ru__testing-standards.md) - cargo-nextest usage
+- [Code Quality Standards](code-quality-standards.md) - rustfmt, Clippy configuration
+- [Security Standards](security-standards.md) - cargo audit integration
+- [Testing Standards](testing-standards.md) - cargo-nextest usage
 
 ## Related Documentation
 

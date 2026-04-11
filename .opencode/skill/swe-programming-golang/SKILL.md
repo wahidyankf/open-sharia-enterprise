@@ -202,22 +202,22 @@ defer cancel()
 
 ### Mandatory Standards (All Go Code MUST Follow)
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/golang/coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/golang/testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/golang/code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/golang/build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Error Handling Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
-2. **[Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__concurrency-standards.md)** - Goroutines, channels, context, race detection
-3. **[Type Safety Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__type-safety-standards.md)** - Generics, type parameters, constraints, type assertions
-4. **[Performance Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__performance-standards.md)** - Profiling with pprof, benchmarking, memory optimization
-5. **[Security Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__security-standards.md)** - Input validation, injection prevention, crypto practices
-6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__api-standards.md)** - REST conventions, HTTP routing, middleware patterns
-7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__ddd-standards.md)** - Domain-Driven Design tactical patterns without classes
-8. **[Dependency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__dependency-standards.md)** - Go modules, version selection, replace directives
-9. **[Design Patterns](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__design-patterns.md)** - Common Go patterns (functional options, interface design)
+1. **[Error Handling Standards](../../../docs/explanation/software-engineering/programming-languages/golang/error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
+2. **[Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/concurrency-standards.md)** - Goroutines, channels, context, race detection
+3. **[Type Safety Standards](../../../docs/explanation/software-engineering/programming-languages/golang/type-safety-standards.md)** - Generics, type parameters, constraints, type assertions
+4. **[Performance Standards](../../../docs/explanation/software-engineering/programming-languages/golang/performance-standards.md)** - Profiling with pprof, benchmarking, memory optimization
+5. **[Security Standards](../../../docs/explanation/software-engineering/programming-languages/golang/security-standards.md)** - Input validation, injection prevention, crypto practices
+6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/golang/api-standards.md)** - REST conventions, HTTP routing, middleware patterns
+7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ddd-standards.md)** - Domain-Driven Design tactical patterns without classes
+8. **[Dependency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/dependency-standards.md)** - Go modules, version selection, replace directives
+9. **[Design Patterns](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md)** - Common Go patterns (functional options, interface design)
 
 ## Related Skills
 

@@ -17,10 +17,10 @@ tags:
   - database-toolkit
   - data-pipelines
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__testing-standards.md
-  - ./ex-soen-prla-el__security-standards.md
-  - ./ex-soen-prla-el__concurrency-standards.md
+  - ./coding-standards.md
+  - ./testing-standards.md
+  - ./security-standards.md
+  - ./concurrency-standards.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -1669,11 +1669,11 @@ end
 
 **MUST also follow**:
 
-- [Coding Standards](./ex-soen-prla-el__coding-standards.md) - Naming, module structure
-- [Testing Standards](./ex-soen-prla-el__testing-standards.md) - Testing Phoenix, Ecto, LiveView
-- [Security Standards](./ex-soen-prla-el__security-standards.md) - Authentication, authorization, input validation
-- [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - GenServer, Task, processes
-- [Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md) - Supervision, "let it crash"
+- [Coding Standards](./coding-standards.md) - Naming, module structure
+- [Testing Standards](./testing-standards.md) - Testing Phoenix, Ecto, LiveView
+- [Security Standards](./security-standards.md) - Authentication, authorization, input validation
+- [Concurrency Standards](./concurrency-standards.md) - GenServer, Task, processes
+- [Error Handling Standards](./error-handling-standards.md) - Supervision, "let it crash"
 
 ## Sources
 

@@ -571,10 +571,10 @@ Error handling standards are enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Exception naming conventions
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Testing error paths
-- [API Standards](./ex-soen-prla-da__api-standards.md) - HTTP error response mapping
-- [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Sealed classes for Result types
+- [Coding Standards](./coding-standards.md) - Exception naming conventions
+- [Testing Standards](./testing-standards.md) - Testing error paths
+- [API Standards](./api-standards.md) - HTTP error response mapping
+- [Type Safety Standards](./type-safety-standards.md) - Sealed classes for Result types
 
 ## Related Documentation
 

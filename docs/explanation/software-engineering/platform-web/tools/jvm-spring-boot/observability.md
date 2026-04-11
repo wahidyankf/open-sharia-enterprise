@@ -1095,27 +1095,27 @@ public class ZakatCalculationService {
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production patterns
-- [Performance](ex-soen-plwe-to-jvspbo__performance.md) - Performance monitoring
-- [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) - Externalized configuration
-- [Testing](ex-soen-plwe-to-jvspbo__testing.md) - Testing observability
+- [Spring Boot Best Practices](best-practices.md) - Production patterns
+- [Performance](performance.md) - Performance monitoring
+- [Configuration](configuration.md) - Externalized configuration
+- [Testing](testing.md) - Testing observability
 
 ---
 
 **Next Steps:**
 
-- Review [Security](ex-soen-plwe-to-jvspbo__security.md) for security monitoring
-- Explore [Performance](ex-soen-plwe-to-jvspbo__performance.md) for performance optimization
-- Check [Configuration](ex-soen-plwe-to-jvspbo__configuration.md) for environment-specific settings
+- Review [Security](security.md) for security monitoring
+- Explore [Performance](performance.md) for performance optimization
+- Check [Configuration](configuration.md) for environment-specific settings
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Observability](../jvm-spring/ex-soen-plwe-to-jvsp__observability.md) - Manual Spring monitoring
-- [Java Monitoring](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JMX baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Observability patterns
-- [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Performance metrics
+- [Spring Framework Observability](../jvm-spring/observability.md) - Manual Spring monitoring
+- [Java Monitoring](../../../programming-languages/java/performance-standards.md) - Java JMX baseline
+- [Spring Boot Idioms](./idioms.md) - Observability patterns
+- [Spring Boot Performance](./performance.md) - Performance metrics
 
 **Hands-on Learning (AyoKoding)**:
 

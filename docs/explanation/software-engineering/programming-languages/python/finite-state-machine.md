@@ -12,9 +12,9 @@ tags:
   - workflow
   - event-driven
 related:
-  - ./ex-soen-prla-py__classes-and-protocols.md
-  - ./ex-soen-prla-py__domain-driven-design.md
-  - ./ex-soen-prla-py__best-practices.md
+  - ./classes-and-protocols.md
+  - ./domain-driven-design.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1584,9 +1584,9 @@ machine = Machine(
 
 ### Related Documentation
 
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - State pattern implementation
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - Domain events and aggregates
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Python coding standards
+- [Classes and Protocols](./classes-and-protocols.md) - State pattern implementation
+- [Domain-Driven Design](./domain-driven-design.md) - Domain events and aggregates
+- [Best Practices](./best-practices.md) - Python coding standards
 
 ### Books
 

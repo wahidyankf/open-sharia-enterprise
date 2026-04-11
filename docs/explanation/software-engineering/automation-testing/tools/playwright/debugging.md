@@ -137,7 +137,7 @@ test("debug API calls", async ({ page }) => {
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
-- [Playwright Test Organization](ex-soen-aute-to-pl__test-organization.md)
+- [Playwright Test Organization](test-organization.md)
 
 ---
 

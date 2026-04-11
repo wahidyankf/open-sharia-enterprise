@@ -1193,16 +1193,16 @@ export default async function CalculatePage() {
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview
-- [Next.js App Router](ex-soen-plwe-to-fene__app-router.md) - App Router features
-- [Next.js Server Components](ex-soen-plwe-to-fene__server-components.md) - RSC patterns
-- [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) - Configuration updates
-- [Next.js Testing](ex-soen-plwe-to-fene__testing.md) - Testing migrated code
+- [Next.js App Router](app-router.md) - App Router features
+- [Next.js Server Components](server-components.md) - RSC patterns
+- [Next.js Configuration](configuration.md) - Configuration updates
+- [Next.js Testing](testing.md) - Testing migrated code
 
 ---
 
 **Next Steps:**
 
-- Review [Next.js App Router](ex-soen-plwe-to-fene__app-router.md) for App Router features
-- Check [Next.js Server Components](ex-soen-plwe-to-fene__server-components.md) for RSC patterns
-- Read [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) for config updates
-- Explore [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for migration testing
+- Review [Next.js App Router](app-router.md) for App Router features
+- Check [Next.js Server Components](server-components.md) for RSC patterns
+- Read [Next.js Configuration](configuration.md) for config updates
+- Explore [Next.js Testing](testing.md) for migration testing

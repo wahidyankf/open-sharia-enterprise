@@ -151,7 +151,7 @@ In CI, integration and E2E tests run together in per-service GitHub Actions work
 3. Application server starts
 4. E2E tests run via Playwright
 
-See [CI/CD Reference](../reference/system-architecture/re-syar__ci-cd.md) for workflow details.
+See [CI/CD Reference](../reference/system-architecture/ci-cd.md) for workflow details.
 
 ## Summary
 

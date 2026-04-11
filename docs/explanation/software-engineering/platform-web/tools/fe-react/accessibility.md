@@ -24,8 +24,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Accessibility standards
-- [Styling](ex-soen-plwe-to-fere__styling.md) - Accessible styling
+- [Best Practices](best-practices.md) - Accessibility standards
+- [Styling](styling.md) - Accessible styling
 
 ## Overview
 
@@ -319,9 +319,9 @@ export const DonationProgress: React.FC<{ raised: number; goal: number }> = ({
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Accessibility standards
-- **[Styling](ex-soen-plwe-to-fere__styling.md)** - Accessible styling
-- **[Forms](ex-soen-plwe-to-fere__forms.md)** - Accessible forms
+- **[Best Practices](best-practices.md)** - Accessibility standards
+- **[Styling](styling.md)** - Accessible styling
+- **[Forms](forms.md)** - Accessible forms
 
 ---
 

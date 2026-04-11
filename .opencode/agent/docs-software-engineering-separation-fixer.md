@@ -403,7 +403,7 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Domain Conventions**:
 
-- [Software Design Reference](../../docs/explanation/software-engineering/ex-soen__software-design-reference.md) - Prerequisite mappings table
+- [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
 - [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
@@ -424,7 +424,7 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Authoritative Sources**:
 
-- [Software Design Reference](../../docs/explanation/software-engineering/ex-soen__software-design-reference.md) - Prerequisite mappings table
+- [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
 
 **Skills to Use**:

@@ -552,17 +552,17 @@ public class ZakatCalculatorController {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)** - MVC fundamentals
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - REST API standards
+- **[Web MVC](web-mvc.md)** - MVC fundamentals
+- **[Best Practices](best-practices.md)** - REST API standards
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java API Design](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - REST patterns
-- [Spring Framework Web MVC](./ex-soen-plwe-to-jvsp__web-mvc.md) - MVC foundation
-- [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - API security
+- [Java API Design](../../../programming-languages/java/api-standards.md) - Java API baseline
+- [Spring Framework Idioms](./idioms.md) - REST patterns
+- [Spring Framework Web MVC](./web-mvc.md) - MVC foundation
+- [Spring Framework Security](./security.md) - API security
 
 **Hands-on Learning (AyoKoding)**:
 
@@ -570,7 +570,7 @@ public class ZakatCalculatorController {
 
 **Spring Boot Extension**:
 
-- [Spring Boot REST APIs](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md) - Auto-configured REST
+- [Spring Boot REST APIs](../jvm-spring-boot/rest-apis.md) - Auto-configured REST
 
 ---
 

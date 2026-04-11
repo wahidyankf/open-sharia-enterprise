@@ -14,10 +14,10 @@ tags:
   - rest-api
   - graphql
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__error-handling.md
-  - ./ex-soen-prla-ty__security.md
-  - ./ex-soen-prla-ty__domain-driven-design.md
+  - ./best-practices.md
+  - ./error-handling.md
+  - ./security.md
+  - ./domain-driven-design.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -1283,10 +1283,10 @@ export class DonationModule {}
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Error Handling](ex-soen-prla-ty__error-handling.md)** - Error patterns
-- **[TypeScript Security](ex-soen-prla-ty__security.md)** - Security best practices
-- **[TypeScript DDD](ex-soen-prla-ty__domain-driven-design.md)** - Domain patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Error Handling](error-handling.md)** - Error patterns
+- **[TypeScript Security](security.md)** - Security best practices
+- **[TypeScript DDD](domain-driven-design.md)** - Domain patterns
 
 ---
 

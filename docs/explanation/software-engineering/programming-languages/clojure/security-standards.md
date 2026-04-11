@@ -327,9 +327,9 @@ Pure validation functions (using `s/valid?`) are independently testable and cann
 
 ## Related Standards
 
-- [API Standards](./ex-soen-prla-cl__api-standards.md) - CSRF middleware placement in Ring stack
-- [Error Handling Standards](./ex-soen-prla-cl__error-handling-standards.md) - Not leaking sensitive data in ex-info messages
-- [Build Configuration](./ex-soen-prla-cl__build-configuration.md) - Environment variable management in deps.edn
+- [API Standards](./api-standards.md) - CSRF middleware placement in Ring stack
+- [Error Handling Standards](./error-handling-standards.md) - Not leaking sensitive data in ex-info messages
+- [Build Configuration](./build-configuration.md) - Environment variable management in deps.edn
 
 ## Related Documentation
 

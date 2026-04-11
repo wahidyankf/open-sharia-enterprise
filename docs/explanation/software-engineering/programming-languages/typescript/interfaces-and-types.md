@@ -11,9 +11,9 @@ tags:
   - mapped-types
   - typescript-5.0
 related:
-  - ./ex-soen-prla-ty__idioms.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ./ex-soen-prla-ty__best-practices.md
+  - ./idioms.md
+  - ./type-safety.md
+  - ./best-practices.md
 principles:
   - explicit-over-implicit
 updated: 2025-01-23
@@ -368,9 +368,9 @@ type Currency = ExtractCurrency<Money>; // string
 
 ## Related Documentation
 
-- **[TypeScript Idioms](ex-soen-prla-ty__idioms.md)** - TypeScript patterns
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Advanced types
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
+- **[TypeScript Idioms](idioms.md)** - TypeScript patterns
+- **[TypeScript Type Safety](type-safety.md)** - Advanced types
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
 
 ---
 

@@ -25,10 +25,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Performance standards
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - useMemo/useCallback patterns
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Hook optimization
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
+- [Best Practices](best-practices.md) - Performance standards
+- [Idioms](idioms.md) - useMemo/useCallback patterns
+- [Hooks](hooks.md) - Hook optimization
+- [Component Architecture](component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -918,11 +918,11 @@ export const DonationCard = React.memo<DonationCardProps>(
 
 ## Related Documentation
 
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Performance standards
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - useMemo/useCallback patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Hook optimization
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[Build & Deployment](ex-soen-plwe-to-fere__build-deployment.md)** - Production optimization
+- **[Best Practices](best-practices.md)** - Performance standards
+- **[Idioms](idioms.md)** - useMemo/useCallback patterns
+- **[Hooks](hooks.md)** - Hook optimization
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[Build & Deployment](build-deployment.md)** - Production optimization
 
 ---
 

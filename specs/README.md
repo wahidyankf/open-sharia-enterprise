@@ -31,9 +31,9 @@ Acceptance specs belong at the monorepo root rather than inside app directories 
 
 - **[a-demo/](./apps/a-demo/README.md)** — Demo application specifications
   (platform-agnostic Gherkin — see [be/gherkin](./apps/a-demo/be/gherkin/README.md) and [fe/gherkin](./apps/a-demo/fe/gherkin/README.md) for details)
-- **[rhino-cli/](./apps/rhino-cli/README.md)** — Repository management CLI specifications (Go, godog)
-- **[ayokoding-cli/](./apps/ayokoding-cli/README.md)** — Content automation CLI specifications (Go, godog)
-- **[oseplatform-cli/](./apps/oseplatform-cli/README.md)** — OSE Platform site CLI specifications (Go, godog)
+- **[rhino/](./apps/rhino/README.md)** — Repository management CLI specifications (Go, godog)
+- **[ayokoding/](./apps/ayokoding/README.md)** — Content automation CLI specifications (Go, godog)
+- **[oseplatform/](./apps/oseplatform/README.md)** — OSE Platform site CLI specifications (Go, godog)
 
 ## Experimental App Specs
 
@@ -79,9 +79,9 @@ All feature files follow the OSE Platform BDD standards:
 
 - [BDD Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md) —
   framework requirements, Three Amigos process, coverage rules
-- [Gherkin Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md) —
+- [Gherkin Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/gherkin-standards.md) —
   feature file structure, naming, ubiquitous language
-- [Scenario Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/ex-soen-de-bedrdebd__scenario-standards.md) —
+- [Scenario Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md) —
   scenario independence, naming, assertions
 - [Spec-to-Test Mapping](../governance/development/infra/bdd-spec-test-mapping.md) —
   mandatory 1:1 mapping between CLI commands and feature file `@tags`

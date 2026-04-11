@@ -17,8 +17,8 @@ tags:
   - stream-data
   - property-based-testing
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
+  - ./coding-standards.md
+  - ./coding-standards.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -898,8 +898,8 @@ For learning Elixir fundamentals and concepts referenced in these standards, see
 
 ## Related Standards
 
-- [Elixir Best Practices](./ex-soen-prla-el__coding-standards.md) - Testing best practices
-- [Elixir Anti-patterns](./ex-soen-prla-el__coding-standards.md) - Testing anti-patterns to avoid
+- [Elixir Best Practices](./coding-standards.md) - Testing best practices
+- [Elixir Anti-patterns](./coding-standards.md) - Testing anti-patterns to avoid
 
 ---
 

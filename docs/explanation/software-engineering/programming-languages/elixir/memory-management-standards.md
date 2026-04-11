@@ -13,9 +13,9 @@ tags:
   - ets-tables
   - profiling
 related:
-  - ./ex-soen-prla-el__performance-standards.md
-  - ./ex-soen-prla-el__concurrency-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
+  - ./performance-standards.md
+  - ./concurrency-standards.md
+  - ./coding-standards.md
 principles:
   - simplicity-over-complexity
 updated: 2026-02-05
@@ -687,11 +687,11 @@ end)
 
 ## Related Topics
 
-- [Concurrency Standards](ex-soen-prla-el__concurrency-standards.md) - Process-based concurrency requirements
-- [Performance](ex-soen-prla-el__performance-standards.md) - Performance optimization techniques
-- [Error Handling](ex-soen-prla-el__error-handling-standards.md) - Supervision and fault tolerance
-- [OTP: GenServer](ex-soen-prla-el__otp-genserver.md) - Process memory patterns
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Memory-efficient patterns
+- [Concurrency Standards](concurrency-standards.md) - Process-based concurrency requirements
+- [Performance](performance-standards.md) - Performance optimization techniques
+- [Error Handling](error-handling-standards.md) - Supervision and fault tolerance
+- [OTP: GenServer](otp-genserver.md) - Process memory patterns
+- [Best Practices](./coding-standards.md) - Memory-efficient patterns
 
 ## Sources
 

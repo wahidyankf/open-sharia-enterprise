@@ -336,8 +336,8 @@ This project is complete. See the following documentation:
 | Working on a project                       | `plans/in-progress/` | Move from backlog when starting                 |
 | Archiving completed project                | `plans/done/`        | Move from in-progress when done                 |
 | Writing a tutorial                         | `docs/tutorials/`    | `tu__getting-started.md`                        |
-| Creating a how-to guide                    | `docs/how-to/`       | `hoto__add-new-app.md`                          |
-| Documenting reference material             | `docs/reference/`    | `re__monorepo-structure.md`                     |
+| Creating a how-to guide                    | `docs/how-to/`       | `add-new-app.md`                                |
+| Documenting reference material             | `docs/reference/`    | `monorepo-structure.md`                         |
 | Explaining a concept                       | `docs/explanation/`  | `ex-de__ai-agents.md`                           |
 | Recording project conventions              | `docs/explanation/`  | `meta/file-naming.md`                           |
 | Research documentation                     | `docs/explanation/`  | Final decision and rationale                    |

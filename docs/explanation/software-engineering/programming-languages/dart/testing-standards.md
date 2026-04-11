@@ -647,10 +647,10 @@ Testing standards are enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Naming conventions for test files
-- [Code Quality Standards](./ex-soen-prla-da__code-quality-standards.md) - dart analyze in CI
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Testing exception scenarios
-- [Framework Integration](./ex-soen-prla-da__framework-integration.md) - Flutter test patterns
+- [Coding Standards](./coding-standards.md) - Naming conventions for test files
+- [Code Quality Standards](./code-quality-standards.md) - dart analyze in CI
+- [Error Handling Standards](./error-handling-standards.md) - Testing exception scenarios
+- [Framework Integration](./framework-integration.md) - Flutter test patterns
 
 ## Related Documentation
 

@@ -806,17 +806,17 @@ jobs:
 
 **Enforces**:
 
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Elixir best practices enforced by quality tools
-- [Type Safety](./ex-soen-prla-el__type-safety-standards.md) - Dialyzer type checking
+- [Best Practices](./coding-standards.md) - Elixir best practices enforced by quality tools
+- [Type Safety](./type-safety-standards.md) - Dialyzer type checking
 
 **Build Setup**:
 
-- [OTP Application](./ex-soen-prla-el__otp-application.md) - Application configuration for quality tools
+- [OTP Application](./otp-application.md) - Application configuration for quality tools
 
 **Related Standards**:
 
-- [Testing](./ex-soen-prla-el__testing-standards.md) - Test coverage requirements
-- [Dependencies](./ex-soen-prla-el__build-configuration-standards.md) - Dependency management and coupling
+- [Testing](./testing-standards.md) - Test coverage requirements
+- [Dependencies](./build-configuration-standards.md) - Dependency management and coupling
 
 ## Software Engineering Principles
 

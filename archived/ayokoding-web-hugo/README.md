@@ -439,7 +439,7 @@ The platform is integrated with the @AyoKoding YouTube channel. Video content ca
 
 - [Hugo Documentation](https://gohugo.io/documentation/)
 - [Hextra Theme Documentation](https://imfing.github.io/hextra/)
-- [Monorepo Structure Reference](../../docs/reference/re__monorepo-structure.md)
+- [Monorepo Structure Reference](../../docs/reference/monorepo-structure.md)
 
 ## License
 

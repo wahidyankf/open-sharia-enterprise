@@ -374,9 +374,9 @@ dotnet publish --configuration Release \
 
 ## Related Standards
 
-- [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md) - Roslyn analyzers in Directory.Build.props
-- [Testing Standards](ex-soen-prla-csh__testing-standards.md) - Test project configuration
-- [Framework Integration](ex-soen-prla-csh__framework-integration.md) - EF Core migration commands
+- [Code Quality Standards](code-quality-standards.md) - Roslyn analyzers in Directory.Build.props
+- [Testing Standards](testing-standards.md) - Test project configuration
+- [Framework Integration](framework-integration.md) - EF Core migration commands
 
 ## Related Documentation
 

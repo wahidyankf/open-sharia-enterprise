@@ -12,9 +12,9 @@ tags:
   - hypothesis
   - mocking
 related:
-  - ./ex-soen-prla-py__behaviour-driven-development.md
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__domain-driven-design.md
+  - ./behaviour-driven-development.md
+  - ./best-practices.md
+  - ./domain-driven-design.md
 principles:
   - automation-over-manual
   - documentation-first
@@ -635,9 +635,9 @@ class TestMurabahaContract:
 
 ### Related Documentation
 
-- [Behaviour-Driven Development](./ex-soen-prla-py__behaviour-driven-development.md) - BDD with Gherkin
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Testing standards
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - Testing aggregates
+- [Behaviour-Driven Development](./behaviour-driven-development.md) - BDD with Gherkin
+- [Best Practices](./best-practices.md) - Testing standards
+- [Domain-Driven Design](./domain-driven-design.md) - Testing aggregates
 
 ### Books
 

@@ -288,9 +288,9 @@ let handle (state: ZakatState) (command: ZakatCommand) : Result<ZakatState * Zak
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Discriminated union modeling basics
-- [Type Safety Standards](ex-soen-prla-fsh__type-safety-standards.md) - Single-case DUs and type providers
-- [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - Result type in domain transitions
+- [Coding Standards](coding-standards.md) - Discriminated union modeling basics
+- [Type Safety Standards](type-safety-standards.md) - Single-case DUs and type providers
+- [Error Handling Standards](error-handling-standards.md) - Result type in domain transitions
 
 ## Related Documentation
 

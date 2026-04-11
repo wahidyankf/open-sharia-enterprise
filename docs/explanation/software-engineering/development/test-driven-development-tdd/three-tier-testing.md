@@ -229,11 +229,11 @@ test("user can log in", async ({ page }) => {
 
 ## Related Standards
 
-- [Testing Standards](./ex-soen-de-tedrdetd__testing-standards.md) — FIRST principles, AAA pattern, test naming
-- [Integration Testing Standards](./ex-soen-de-tedrdetd__integration-testing-standards.md) — in-memory repos, MSW, WireMock patterns
-- [Test Doubles Standards](./ex-soen-de-tedrdetd__test-doubles-standards.md) — mocks, stubs, in-memory implementations
-- [Java Testing Standards](../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) — Java-specific tools and patterns
-- [TypeScript Testing](../../programming-languages/typescript/ex-soen-prla-ty__testing.md) — TypeScript-specific tools and patterns
+- [Testing Standards](./testing-standards.md) — FIRST principles, AAA pattern, test naming
+- [Integration Testing Standards](./integration-testing-standards.md) — in-memory repos, MSW, WireMock patterns
+- [Test Doubles Standards](./test-doubles-standards.md) — mocks, stubs, in-memory implementations
+- [Java Testing Standards](../../programming-languages/java/testing-standards.md) — Java-specific tools and patterns
+- [TypeScript Testing](../../programming-languages/typescript/testing.md) — TypeScript-specific tools and patterns
 
 ---
 

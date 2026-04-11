@@ -12,8 +12,8 @@ tags:
   - cython
   - pypy
 related:
-  - ./ex-soen-prla-py__concurrency-and-parallelism.md
-  - ./ex-soen-prla-py__memory-management.md
+  - ./concurrency-and-parallelism.md
+  - ./memory-management.md
 principles:
   - simplicity-over-complexity
 updated: 2025-01-23
@@ -423,8 +423,8 @@ def calculate_zakat_generator(wealth_items: List[Decimal]):
 
 ### Related Documentation
 
-- [Concurrency and Parallelism](./ex-soen-prla-py__concurrency-and-parallelism.md) - Parallel execution
-- [Memory Management](./ex-soen-prla-py__memory-management.md) - Memory optimization
+- [Concurrency and Parallelism](./concurrency-and-parallelism.md) - Parallel execution
+- [Memory Management](./memory-management.md) - Memory optimization
 
 ---
 

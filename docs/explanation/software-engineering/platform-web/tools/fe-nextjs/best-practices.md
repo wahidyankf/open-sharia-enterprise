@@ -575,13 +575,13 @@ export function Modal({ onClose }: { onClose: () => void }) {
 
 ## Related Documentation
 
-- **[Next.js Idioms](ex-soen-plwe-to-fene__idioms.md)** - Framework patterns
-- **[Next.js Anti-Patterns](ex-soen-plwe-to-fene__anti-patterns.md)** - Common mistakes
-- **[App Router](ex-soen-plwe-to-fene__app-router.md)** - Routing architecture
-- **[Server Components](ex-soen-plwe-to-fene__server-components.md)** - RSC patterns
-- **[Performance](ex-soen-plwe-to-fene__performance.md)** - Optimization guide
-- **[Testing](ex-soen-plwe-to-fene__testing.md)** - Testing strategies
-- **[Security](ex-soen-plwe-to-fene__security.md)** - Security practices
+- **[Next.js Idioms](idioms.md)** - Framework patterns
+- **[Next.js Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[App Router](app-router.md)** - Routing architecture
+- **[Server Components](server-components.md)** - RSC patterns
+- **[Performance](performance.md)** - Optimization guide
+- **[Testing](testing.md)** - Testing strategies
+- **[Security](security.md)** - Security practices
 
 ---
 

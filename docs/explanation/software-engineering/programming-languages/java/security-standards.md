@@ -578,9 +578,9 @@ public class CorsConfig implements WebMvcConfigurer {
 
 ### OSE Platform Standards
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Secure error messages
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - API security requirements
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe security patterns
+- [Error Handling Standards](./error-handling-standards.md) - Secure error messages
+- [API Standards](./api-standards.md) - API security requirements
+- [Concurrency Standards](./concurrency-standards.md) - Thread-safe security patterns
 
 ### Learning Resources
 
@@ -636,19 +636,19 @@ Before deploying financial services, verify:
 
 **API Security**:
 
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - OAuth2, rate limiting, and REST API security patterns
+- [API Standards](./api-standards.md) - OAuth2, rate limiting, and REST API security patterns
 
 **Error Handling**:
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Secure error messages and PII protection in exceptions
+- [Error Handling Standards](./error-handling-standards.md) - Secure error messages and PII protection in exceptions
 
 **Concurrency**:
 
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe security context and concurrent authentication
+- [Concurrency Standards](./concurrency-standards.md) - Thread-safe security context and concurrent authentication
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Security testing patterns, penetration testing, and vulnerability scanning
+- [Testing Standards](./testing-standards.md) - Security testing patterns, penetration testing, and vulnerability scanning
 
 **Last Updated**: 2026-02-04
 

@@ -12,10 +12,10 @@ tags:
   - clean-code
   - type-safety
 related:
-  - ./ex-soen-prla-ty__idioms.md
-  - ./ex-soen-prla-ty__anti-patterns.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ../../../reference/re__monorepo-structure.md
+  - ./idioms.md
+  - ./anti-patterns.md
+  - ./type-safety.md
+  - ../../../reference/monorepo-structure.md
   - ../../../../../governance/development/quality/code.md
 principles:
   - automation-over-manual
@@ -142,7 +142,7 @@ class ZakatCalculator {
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers automated tests verifying 2.5% calculation accuracy.
 
-**See Also**: [TypeScript Linting and Formatting](ex-soen-prla-ty__linting-and-formatting.md)
+**See Also**: [TypeScript Linting and Formatting](linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -228,7 +228,7 @@ function createMurabahaContract(
 
 **Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. When a scholar audits the code, they can verify no implicit interest calculations exist.
 
-**See Also**: [TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)
+**See Also**: [TypeScript Best Practices](best-practices.md)
 
 ### 3. Immutability Over Mutability
 
@@ -312,7 +312,7 @@ class ZakatTransaction {
 
 **Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Scholars can verify that no transaction has been retroactively modified.
 
-**See Also**: [TypeScript Functional Programming](ex-soen-prla-ty__functional-programming.md)
+**See Also**: [TypeScript Functional Programming](functional-programming.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -505,7 +505,7 @@ CMD ["npm", "start"]
 
 Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive financial operations like Zakat calculations, Murabaha contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 
-**Companion Document**: Before reading this document, familiarize yourself with common [TypeScript Anti-Patterns](ex-soen-prla-ty__anti-patterns.md) to understand what practices to avoid.
+**Companion Document**: Before reading this document, familiarize yourself with common [TypeScript Anti-Patterns](anti-patterns.md) to understand what practices to avoid.
 
 ## Core Principles
 
@@ -2330,9 +2330,9 @@ class DonationDistributionService {
 
 ### TypeScript Core
 
-- **[TypeScript Idioms](ex-soen-prla-ty__idioms.md)** - TypeScript-specific patterns
-- **[TypeScript Anti-Patterns](ex-soen-prla-ty__anti-patterns.md)** - Mistakes to avoid
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Advanced type system
+- **[TypeScript Idioms](idioms.md)** - TypeScript-specific patterns
+- **[TypeScript Anti-Patterns](anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Type Safety](type-safety.md)** - Advanced type system
 
 ### Development Practices
 
@@ -2343,7 +2343,7 @@ class DonationDistributionService {
 ### Architecture
 
 - **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - DDD patterns
-- **[Monorepo Structure](../../../../reference/re__monorepo-structure.md)** - Project organization
+- **[Monorepo Structure](../../../../reference/monorepo-structure.md)** - Project organization
 
 ---
 

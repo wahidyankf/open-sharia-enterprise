@@ -2349,11 +2349,11 @@ type UnsafeCounter struct {
 
 ## Related Documentation
 
-- [Go Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices) - Concurrency best practices
-- [Go Idioms](./ex-soen-prla-go__coding-standards.md#part-1-core-idioms) - Concurrency patterns
-- [Go Anti-Patterns](./ex-soen-prla-go__coding-standards.md#part-3-anti-patterns-to-avoid) - Common concurrency mistakes
-- [Go Performance](./ex-soen-prla-go__performance-standards.md#part-1-performance-optimization) - Profiling concurrent code
-- [Go Testing](./ex-soen-prla-go__testing-standards.md#part-1-test-driven-development-tdd-standards) - Testing concurrent code
+- [Go Best Practices](./coding-standards.md#part-2-naming--organization-best-practices) - Concurrency best practices
+- [Go Idioms](./coding-standards.md#part-1-core-idioms) - Concurrency patterns
+- [Go Anti-Patterns](./coding-standards.md#part-3-anti-patterns-to-avoid) - Common concurrency mistakes
+- [Go Performance](./performance-standards.md#part-1-performance-optimization) - Profiling concurrent code
+- [Go Testing](./testing-standards.md#part-1-test-driven-development-tdd-standards) - Testing concurrent code
 - [Context Package Documentation](https://pkg.go.dev/context)
 - [Sync Package Documentation](https://pkg.go.dev/sync)
 

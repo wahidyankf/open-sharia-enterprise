@@ -85,21 +85,21 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__coding-standards.md)** - Naming conventions, C# idioms
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__testing-standards.md)** - xUnit, FluentAssertions, Moq
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__code-quality-standards.md)** - Roslyn analyzers, dotnet format
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__build-configuration.md)** - .csproj, NuGet, Directory.Build.props
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/coding-standards.md)** - Naming conventions, C# idioms
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/testing-standards.md)** - xUnit, FluentAssertions, Moq
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/code-quality-standards.md)** - Roslyn analyzers, dotnet format
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/c-sharp/build-configuration.md)** - .csproj, NuGet, Directory.Build.props
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__security-standards.md)** - ASP.NET Core auth, JWT, validation
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__concurrency-standards.md)** - async/await, Task, Channels, PLINQ
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__ddd-standards.md)** - Records, value objects, Clean Architecture
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__api-standards.md)** - ASP.NET Core REST, Minimal API
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__performance-standards.md)** - Span<T>, BenchmarkDotNet
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__error-handling-standards.md)** - ProblemDetails, Result<T>
-7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__type-safety-standards.md)** - NRT, records, pattern matching
-8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__framework-integration.md)** - ASP.NET Core, EF Core, SignalR
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/security-standards.md)** - ASP.NET Core auth, JWT, validation
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/concurrency-standards.md)** - async/await, Task, Channels, PLINQ
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/ddd-standards.md)** - Records, value objects, Clean Architecture
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/api-standards.md)** - ASP.NET Core REST, Minimal API
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/performance-standards.md)** - Span<T>, BenchmarkDotNet
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/error-handling-standards.md)** - ProblemDetails, Result<T>
+7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/c-sharp/type-safety-standards.md)** - NRT, records, pattern matching
+8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/c-sharp/framework-integration.md)** - ASP.NET Core, EF Core, SignalR
 
 **See `swe-programming-csharp` Skill** for quick access to coding standards.
 

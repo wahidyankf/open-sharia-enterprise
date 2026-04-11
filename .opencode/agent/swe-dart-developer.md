@@ -87,22 +87,22 @@ All Dart code MUST follow the platform coding standards:
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__coding-standards.md)** - Naming conventions, package organization, Effective Dart idioms
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__testing-standards.md)** - package:test, mockito, flutter_test, coverage
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__code-quality-standards.md)** - dart analyze, analysis_options.yaml, dart format
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__build-configuration.md)** - pubspec.yaml, dart pub, build_runner
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/dart/coding-standards.md)** - Naming conventions, package organization, Effective Dart idioms
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/dart/testing-standards.md)** - package:test, mockito, flutter_test, coverage
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/dart/code-quality-standards.md)** - dart analyze, analysis_options.yaml, dart format
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/dart/build-configuration.md)** - pubspec.yaml, dart pub, build_runner
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__security-standards.md)** - Input validation, flutter_secure_storage (user-facing services)
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__concurrency-standards.md)** - async/await, Future, Stream, Isolates (concurrent code)
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__ddd-standards.md)** - Domain-Driven Design tactical patterns (business domains)
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__api-standards.md)** - shelf HTTP patterns, REST conventions (web services)
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__performance-standards.md)** - const constructors, Isolates (optimization needed)
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__error-handling-standards.md)** - Typed exceptions, Result patterns
-7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__type-safety-standards.md)** - Null safety, sealed classes, records (Dart 3.0+)
-8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__framework-integration.md)** - Flutter, Riverpod, shelf
-9. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/dart/ex-soen-prla-da__ddd-standards.md)** - Value objects, aggregates, domain events
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/dart/security-standards.md)** - Input validation, flutter_secure_storage (user-facing services)
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/dart/concurrency-standards.md)** - async/await, Future, Stream, Isolates (concurrent code)
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/dart/ddd-standards.md)** - Domain-Driven Design tactical patterns (business domains)
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/dart/api-standards.md)** - shelf HTTP patterns, REST conventions (web services)
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/dart/performance-standards.md)** - const constructors, Isolates (optimization needed)
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/dart/error-handling-standards.md)** - Typed exceptions, Result patterns
+7. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/dart/type-safety-standards.md)** - Null safety, sealed classes, records (Dart 3.0+)
+8. **[Framework Integration](../../docs/explanation/software-engineering/programming-languages/dart/framework-integration.md)** - Flutter, Riverpod, shelf
+9. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/dart/ddd-standards.md)** - Value objects, aggregates, domain events
 
 **See `swe-programming-dart` Skill** for quick access to coding standards during development.
 
@@ -121,7 +121,7 @@ All Dart code MUST follow the platform coding standards:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 

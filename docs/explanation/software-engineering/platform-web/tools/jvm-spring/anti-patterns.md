@@ -1185,9 +1185,9 @@ public class MurabahaContractService {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Production standards
-- **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
+- **[Idioms](idioms.md)** - Framework patterns
+- **[Best Practices](best-practices.md)** - Production standards
+- **[Configuration](configuration.md)** - Configuration approaches
 
 ### Development Practices
 
@@ -1198,14 +1198,14 @@ public class MurabahaContractService {
 
 **OSE Explanation Foundation**:
 
-- [Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Recommended practices
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Correct patterns
-- [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Proper DI usage
+- [Java Anti-Patterns](../../../programming-languages/java/coding-standards.md) - Java baseline anti-patterns
+- [Spring Framework Best Practices](./best-practices.md) - Recommended practices
+- [Spring Framework Idioms](./idioms.md) - Correct patterns
+- [Spring Framework Dependency Injection](./dependency-injection.md) - Proper DI usage
 
 **Spring Boot Extension**:
 
-- [Spring Boot Anti-Patterns](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__anti-patterns.md) - Boot-specific mistakes
+- [Spring Boot Anti-Patterns](../jvm-spring-boot/anti-patterns.md) - Boot-specific mistakes
 
 ---
 

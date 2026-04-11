@@ -692,14 +692,14 @@ public class DonationControllerV2 {
 
 ### OSE Platform Standards
 
-- **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Error response format
-- **[Spring DDD Standards](./ex-soen-plwe-to-jvsp__ddd-standards.md)** - Domain model to DTO conversion (this file references the DDD standards file to be created)
+- **[Spring Error Handling Standards](./error-handling-standards.md)** - Error response format
+- **[Spring DDD Standards](./ddd-standards.md)** - Domain model to DTO conversion (this file references the DDD standards file to be created)
 
 ### Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md)** - REST API development guide
-- **[Web MVC](./ex-soen-plwe-to-jvsp__web-mvc.md)** - Spring MVC patterns
+- **[REST APIs](./rest-apis.md)** - REST API development guide
+- **[Web MVC](./web-mvc.md)** - Spring MVC patterns
 
 ### Learning Resources
 
@@ -747,14 +747,14 @@ Before deploying Spring REST APIs, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java API Design](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - API patterns
-- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - REST implementation
-- [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - API security
+- [Java API Design](../../../programming-languages/java/api-standards.md) - Java API baseline
+- [Spring Framework Idioms](./idioms.md) - API patterns
+- [Spring Framework REST APIs](./rest-apis.md) - REST implementation
+- [Spring Framework Security](./security.md) - API security
 
 **Spring Boot Extension**:
 
-- [Spring Boot REST APIs](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md) - Boot API patterns
+- [Spring Boot REST APIs](../jvm-spring-boot/rest-apis.md) - Boot API patterns
 
 ---
 

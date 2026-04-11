@@ -308,8 +308,8 @@ let main _ =
 
 ## Related Standards
 
-- [Concurrency Standards](ex-soen-prla-fsh__concurrency-standards.md) - `Array.Parallel.map` for parallel performance
-- [Functional Programming Standards](ex-soen-prla-fsh__functional-programming-standards.md) - Seq composition for lazy evaluation
+- [Concurrency Standards](concurrency-standards.md) - `Array.Parallel.map` for parallel performance
+- [Functional Programming Standards](functional-programming-standards.md) - Seq composition for lazy evaluation
 
 ## Related Documentation
 

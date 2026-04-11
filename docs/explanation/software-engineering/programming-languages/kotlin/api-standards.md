@@ -415,9 +415,9 @@ fun errorOf(message: String, code: String = "GENERAL_ERROR") =
 
 ## Related Standards
 
-- [Security Standards](./ex-soen-prla-ko__security-standards.md) - JWT authentication in Ktor
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Domain error mapping to HTTP
-- [Framework Integration](./ex-soen-prla-ko__framework-integration.md) - Full Ktor application setup
+- [Security Standards](./security-standards.md) - JWT authentication in Ktor
+- [Error Handling Standards](./error-handling-standards.md) - Domain error mapping to HTTP
+- [Framework Integration](./framework-integration.md) - Full Ktor application setup
 
 ## Related Documentation
 

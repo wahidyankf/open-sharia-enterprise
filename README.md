@@ -87,13 +87,13 @@ open-sharia-enterprise/
 
 - **Sites**: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-fe`](./apps/organiclever-fe/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-fe-e2e`](./apps/organiclever-fe-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/)
 - **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/)
-- **Demo apps**: 11 backend implementations (Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure) + 3 frontends (Next.js, TanStack Start, Flutter Web) — see [Demo Apps CI & Coverage](./docs/reference/re__demo-apps-ci-coverage.md)
+- **Demo apps**: 11 backend implementations (Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure) + 3 frontends (Next.js, TanStack Start, Flutter Web) — see [Demo Apps CI & Coverage](./docs/reference/demo-apps-ci-coverage.md)
 
 **Libraries** (`libs/`): Reusable shared code
 
 **Labs** (`apps-labs/`): Standalone experiments and POCs (outside Nx)
 
-**Learn More**: [Monorepo Structure Reference](./docs/reference/re__monorepo-structure.md) | [How to Add New App](./docs/how-to/hoto__add-new-app.md) | [How to Add New Library](./docs/how-to/hoto__add-new-lib.md) | [How to Run Nx Commands](./docs/how-to/hoto__run-nx-commands.md)
+**Learn More**: [Monorepo Structure Reference](./docs/reference/monorepo-structure.md) | [How to Add New App](./docs/how-to/add-new-app.md) | [How to Add New Library](./docs/how-to/add-new-lib.md) | [How to Run Nx Commands](./docs/how-to/run-nx-commands.md)
 
 ## 💻 Development
 
@@ -135,7 +135,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 - [`rhino-cli`](./apps/rhino-cli/)
   - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=rhino-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
 
-For demo app CI badges, see [Demo Apps CI & Coverage](./docs/reference/re__demo-apps-ci-coverage.md).
+For demo app CI badges, see [Demo Apps CI & Coverage](./docs/reference/demo-apps-ci-coverage.md).
 
 ## 📚 Documentation
 

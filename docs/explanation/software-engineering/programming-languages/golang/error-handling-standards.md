@@ -2243,8 +2243,8 @@ principles:
 
 **Related Documentation**:
 
-- [Concurrency and Parallelism](./ex-soen-prla-go__concurrency-standards.md)
-- [Interfaces and Composition](./ex-soen-prla-go__design-patterns.md#part-3-interfaces-and-composition-patterns)
+- [Concurrency and Parallelism](./concurrency-standards.md)
+- [Interfaces and Composition](./design-patterns.md#part-3-interfaces-and-composition-patterns)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
 

@@ -905,13 +905,13 @@ export async function GET() {
 
 **Core Next.js**:
 
-- [Middleware](ex-soen-plwe-to-fene__middleware.md) - Request modification
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Calling APIs
-- [Security](ex-soen-plwe-to-fene__security.md) - API security
+- [Middleware](middleware.md) - Request modification
+- [Data Fetching](data-fetching.md) - Calling APIs
+- [Security](security.md) - API security
 
 **Patterns**:
 
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Production standards
+- [Best Practices](best-practices.md) - Production standards
 
 ---
 

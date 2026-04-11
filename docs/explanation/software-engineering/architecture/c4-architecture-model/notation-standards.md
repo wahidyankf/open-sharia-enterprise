@@ -310,7 +310,7 @@ Before committing a C4 diagram, verify:
 
 ## Related Standards
 
-- **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, required levels
+- **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, required levels
 - **[Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
 
 ## Principles Implemented

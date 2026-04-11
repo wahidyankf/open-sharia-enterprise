@@ -10,8 +10,8 @@ tags:
   - immutability
   - composition
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__idioms.md
+  - ./best-practices.md
+  - ./idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - immutability
@@ -229,7 +229,7 @@ function mapEither<L, R, S>(either: Either<L, R>, fn: (value: R) => S): Either<L
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
 - **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
 ---

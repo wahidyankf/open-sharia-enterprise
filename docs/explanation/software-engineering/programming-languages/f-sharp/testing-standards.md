@@ -336,9 +336,9 @@ let ``Zakat calculation returns 2.5 percent`` () =
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Module organization that test files mirror
-- [Code Quality Standards](ex-soen-prla-fsh__code-quality-standards.md) - Fantomas formats test files too
-- [Functional Programming Standards](ex-soen-prla-fsh__functional-programming-standards.md) - Property-based testing for monadic compositions
+- [Coding Standards](coding-standards.md) - Module organization that test files mirror
+- [Code Quality Standards](code-quality-standards.md) - Fantomas formats test files too
+- [Functional Programming Standards](functional-programming-standards.md) - Property-based testing for monadic compositions
 
 ## Related Documentation
 

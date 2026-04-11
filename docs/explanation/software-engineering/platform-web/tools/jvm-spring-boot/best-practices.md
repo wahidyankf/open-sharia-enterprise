@@ -1361,22 +1361,22 @@ public class NisabRateService {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)** - Framework patterns
-- **[Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes
-- **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Configuration management
-- **[REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md)** - RESTful services
-- **[Data Access](ex-soen-plwe-to-jvspbo__data-access.md)** - Spring Data JPA
-- **[Security](ex-soen-plwe-to-jvspbo__security.md)** - Spring Security
-- **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
+- **[Spring Boot Idioms](idioms.md)** - Framework patterns
+- **[Spring Boot Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Configuration](configuration.md)** - Configuration management
+- **[REST APIs](rest-apis.md)** - RESTful services
+- **[Data Access](data-access.md)** - Spring Data JPA
+- **[Security](security.md)** - Spring Security
+- **[Testing](testing.md)** - Testing strategies
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Best Practices](../jvm-spring/ex-soen-plwe-to-jvsp__best-practices.md) - Manual Spring standards
-- [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Boot patterns
-- [Spring Boot Anti-Patterns](./ex-soen-plwe-to-jvspbo__anti-patterns.md) - Common mistakes
+- [Spring Framework Best Practices](../jvm-spring/best-practices.md) - Manual Spring standards
+- [Java Best Practices](../../../programming-languages/java/coding-standards.md) - Java baseline standards
+- [Spring Boot Idioms](./idioms.md) - Boot patterns
+- [Spring Boot Anti-Patterns](./anti-patterns.md) - Common mistakes
 
 ---
 

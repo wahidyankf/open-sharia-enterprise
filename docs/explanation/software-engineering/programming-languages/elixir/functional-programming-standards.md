@@ -15,9 +15,9 @@ tags:
   - pipe-operator
   - standards
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__performance-standards.md
+  - ./coding-standards.md
+  - ./coding-standards.md
+  - ./performance-standards.md
 principles:
   - immutability
   - pure-functions
@@ -902,10 +902,10 @@ result = donations  # List
 
 ## Related Documents
 
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - General Elixir conventions
-- [Idioms](./ex-soen-prla-el__coding-standards.md) - Pattern matching, pipe operator usage
-- [Performance](./ex-soen-prla-el__performance-standards.md) - Optimization techniques
-- [Type Safety](./ex-soen-prla-el__type-safety-standards.md) - Dialyzer and typespecs
+- [Best Practices](./coding-standards.md) - General Elixir conventions
+- [Idioms](./coding-standards.md) - Pattern matching, pipe operator usage
+- [Performance](./performance-standards.md) - Optimization techniques
+- [Type Safety](./type-safety-standards.md) - Dialyzer and typespecs
 
 ## References
 

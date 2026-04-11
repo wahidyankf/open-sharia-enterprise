@@ -324,7 +324,7 @@ Add "See Also" or "Related Documentation" section if missing, then add reference
 ```markdown
 ## See Also
 
-- [Java Coding Standards](../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__coding-standards.md)
+- [Java Coding Standards](../../docs/explanation/software-engineering/programming-languages/java/coding-standards.md)
 ```
 
 **Tool**: Edit

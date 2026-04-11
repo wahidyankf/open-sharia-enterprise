@@ -271,7 +271,7 @@ graph TD
 ### Skills Documentation
 
 - **[.claude/skills/README.md](../../../.claude/skills/README.md)** - Skill modes (inline vs fork) and organization
-- **[How to Create a New Skill](../../../docs/how-to/hoto__create-new-skill.md)** - Step-by-step skill creation guide
+- **[How to Create a New Skill](../../../docs/how-to/create-new-skill.md)** - Step-by-step skill creation guide
 
 ### Related Conventions
 

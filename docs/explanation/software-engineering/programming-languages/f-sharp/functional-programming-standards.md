@@ -351,9 +351,9 @@ let processZakat (processor: ZakatProcessor) = { processor with Status = Process
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Discriminated unions and pipeline usage
-- [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - Computation expressions for Result
-- [DDD Standards](ex-soen-prla-fsh__ddd-standards.md) - Functional aggregate pattern
+- [Coding Standards](coding-standards.md) - Discriminated unions and pipeline usage
+- [Error Handling Standards](error-handling-standards.md) - Computation expressions for Result
+- [DDD Standards](ddd-standards.md) - Functional aggregate pattern
 
 ## Related Documentation
 

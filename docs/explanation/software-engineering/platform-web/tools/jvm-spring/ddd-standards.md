@@ -763,15 +763,15 @@ com.oseplatform.donation/
 
 ### OSE Platform Standards
 
-- **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Domain exception hierarchy
-- **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - DTO to domain model conversion
-- **[Spring Concurrency Standards](./ex-soen-plwe-to-jvsp__concurrency-standards.md)** - Thread-safe domain models
+- **[Spring Error Handling Standards](./error-handling-standards.md)** - Domain exception hierarchy
+- **[Spring API Standards](./api-standards.md)** - DTO to domain model conversion
+- **[Spring Concurrency Standards](./concurrency-standards.md)** - Thread-safe domain models
 
 ### Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md)** - Spring bean scopes
-- **[Data Access](./ex-soen-plwe-to-jvsp__data-access.md)** - Spring Data JPA and JdbcTemplate
+- **[Dependency Injection](./dependency-injection.md)** - Spring bean scopes
+- **[Data Access](./data-access.md)** - Spring Data JPA and JdbcTemplate
 
 ### Learning Resources
 
@@ -819,14 +819,14 @@ Before deploying Spring DDD applications, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Domain Modeling](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java DDD baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - DDD patterns
-- [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Repository implementation
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - DDD standards
+- [Java Domain Modeling](../../../programming-languages/java/ddd-standards.md) - Java DDD baseline
+- [Spring Framework Idioms](./idioms.md) - DDD patterns
+- [Spring Framework Data Access](./data-access.md) - Repository implementation
+- [Spring Framework Best Practices](./best-practices.md) - DDD standards
 
 **Spring Boot Extension**:
 
-- [Spring Boot Domain-Driven Design](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__domain-driven-design.md) - Boot DDD patterns
+- [Spring Boot Domain-Driven Design](../jvm-spring-boot/domain-driven-design.md) - Boot DDD patterns
 
 ---
 

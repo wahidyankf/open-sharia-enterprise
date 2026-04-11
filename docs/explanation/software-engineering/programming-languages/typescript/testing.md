@@ -25,7 +25,7 @@ updated: 2026-03-04
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Read [Three-Tier Testing Model](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__three-tier-testing.md) before applying these standards. This document covers the TypeScript-specific implementation of each tier.
+**REQUIRED**: Read [Three-Tier Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) before applying these standards. This document covers the TypeScript-specific implementation of each tier.
 
 ## The Mocking Boundary
 
@@ -436,10 +436,10 @@ coverage threshold because they test flows, not line-by-line logic.
 
 ## Related Standards
 
-- [Three-Tier Testing Model](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__three-tier-testing.md) — authoritative tier definitions
-- [Integration Testing Standards](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md) — in-memory repos, MSW patterns
-- [TypeScript TDD](./ex-soen-prla-ty__test-driven-development.md) — Red-Green-Refactor cycle, Vitest setup
-- [TypeScript BDD](./ex-soen-prla-ty__behaviour-driven-development.md) — Gherkin, vitest-cucumber, playwright-bdd
+- [Three-Tier Testing Model](../../development/test-driven-development-tdd/three-tier-testing.md) — authoritative tier definitions
+- [Integration Testing Standards](../../development/test-driven-development-tdd/integration-testing-standards.md) — in-memory repos, MSW patterns
+- [TypeScript TDD](./test-driven-development.md) — Red-Green-Refactor cycle, Vitest setup
+- [TypeScript BDD](./behaviour-driven-development.md) — Gherkin, vitest-cucumber, playwright-bdd
 
 ---
 

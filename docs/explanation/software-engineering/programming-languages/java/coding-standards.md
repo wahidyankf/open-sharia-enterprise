@@ -215,14 +215,14 @@ These standards are enforced through:
 - **ArchUnit** - Validates architectural boundaries
 - **Code reviews** - Human verification of standards compliance
 
-See [Java Code Quality](./ex-soen-prla-ja__code-quality.md) for enforcement configuration.
+See [Java Code Quality](./code-quality.md) for enforcement configuration.
 
 ## Related Standards
 
-- [Java Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring Boot and Jakarta EE standards
-- [Java Testing Standards](./ex-soen-prla-ja__testing-standards.md) - JUnit 6 and test naming conventions
-- [Java Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven POM structure
-- [Java Code Quality](./ex-soen-prla-ja__code-quality.md) - Automated quality tools
+- [Java Framework Integration](./framework-integration.md) - Spring Boot and Jakarta EE standards
+- [Java Testing Standards](./testing-standards.md) - JUnit 6 and test naming conventions
+- [Java Build Configuration](./build-configuration.md) - Maven POM structure
+- [Java Code Quality](./code-quality.md) - Automated quality tools
 
 ## Software Engineering Principles
 
@@ -245,16 +245,16 @@ These standards enforce the the software engineering principles:
 
 **Enforced by**:
 
-- [Code Quality Standards](./ex-soen-prla-ja__code-quality.md) - Checkstyle enforces these naming and structure conventions
+- [Code Quality Standards](./code-quality.md) - Checkstyle enforces these naming and structure conventions
 
 **Build Infrastructure**:
 
-- [Build Configuration](./ex-soen-prla-ja__build-configuration.md) - Maven module organization follows package structure defined here
+- [Build Configuration](./build-configuration.md) - Maven module organization follows package structure defined here
 
 **Application**:
 
-- [Framework Integration](./ex-soen-prla-ja__framework-integration.md) - Spring/Jakarta EE package organization
-- [DDD Standards](./ex-soen-prla-ja__ddd-standards.md) - Domain package structure and hexagonal architecture
+- [Framework Integration](./framework-integration.md) - Spring/Jakarta EE package organization
+- [DDD Standards](./ddd-standards.md) - Domain package structure and hexagonal architecture
 
 ---
 

@@ -300,9 +300,9 @@ Error handling is validated automatically via clj-kondo (unused catch bindings, 
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-cl__coding-standards.md) - Side-effecting functions with `!` that may throw
-- [API Standards](./ex-soen-prla-cl__api-standards.md) - Converting ex-info to HTTP error responses
-- [Security Standards](./ex-soen-prla-cl__security-standards.md) - Not leaking sensitive data in error messages
+- [Coding Standards](./coding-standards.md) - Side-effecting functions with `!` that may throw
+- [API Standards](./api-standards.md) - Converting ex-info to HTTP error responses
+- [Security Standards](./security-standards.md) - Not leaking sensitive data in error messages
 
 ## Related Documentation
 

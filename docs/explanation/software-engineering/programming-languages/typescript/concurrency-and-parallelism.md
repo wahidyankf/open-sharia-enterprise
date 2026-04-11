@@ -10,8 +10,8 @@ tags:
   - concurrency
   - web-workers
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__error-handling.md
+  - ./best-practices.md
+  - ./error-handling.md
 principles:
   - automation-over-manual
 updated: 2025-01-23
@@ -650,8 +650,8 @@ const zakatResults = await processBatchesWithDelay(
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Error Handling](ex-soen-prla-ty__error-handling.md)** - Async error patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Error Handling](error-handling.md)** - Async error patterns
 
 ---
 

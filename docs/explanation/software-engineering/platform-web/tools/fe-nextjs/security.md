@@ -1787,16 +1787,16 @@ Production deployment security checklist:
 ## 🔗 Related Documentation
 
 - [Next.js README](./README.md) - Next.js overview and getting started
-- [Next.js API Routes](ex-soen-plwe-to-fene__api-routes.md) - API security patterns
-- [Next.js Middleware](ex-soen-plwe-to-fene__middleware.md) - Authentication middleware
-- [Next.js Configuration](ex-soen-plwe-to-fene__configuration.md) - Security headers setup
-- [Next.js TypeScript](ex-soen-plwe-to-fene__typescript.md) - Type-safe security
+- [Next.js API Routes](api-routes.md) - API security patterns
+- [Next.js Middleware](middleware.md) - Authentication middleware
+- [Next.js Configuration](configuration.md) - Security headers setup
+- [Next.js TypeScript](typescript.md) - Type-safe security
 
 ---
 
 **Next Steps:**
 
-- Review [Next.js API Routes](ex-soen-plwe-to-fene__api-routes.md) for secure API patterns
-- Explore [Next.js Middleware](ex-soen-plwe-to-fene__middleware.md) for authentication
-- Check [Next.js Testing](ex-soen-plwe-to-fene__testing.md) for security tests
-- Read [Next.js Deployment](ex-soen-plwe-to-fene__deployment.md) for production security
+- Review [Next.js API Routes](api-routes.md) for secure API patterns
+- Explore [Next.js Middleware](middleware.md) for authentication
+- Check [Next.js Testing](testing.md) for security tests
+- Read [Next.js Deployment](deployment.md) for production security

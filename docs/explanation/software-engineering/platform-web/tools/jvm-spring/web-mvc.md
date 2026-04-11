@@ -627,21 +627,21 @@ class WebConfig : WebMvcConfigurer {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Web development standards
+- **[REST APIs](rest-apis.md)** - RESTful services
+- **[Best Practices](best-practices.md)** - Web development standards
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Web Standards](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java servlet baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - MVC patterns
-- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - RESTful services
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Web standards
+- [Java Web Standards](../../../programming-languages/java/api-standards.md) - Java servlet baseline
+- [Spring Framework Idioms](./idioms.md) - MVC patterns
+- [Spring Framework REST APIs](./rest-apis.md) - RESTful services
+- [Spring Framework Best Practices](./best-practices.md) - Web standards
 
 **Spring Boot Extension**:
 
-- [Spring Boot REST APIs](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__rest-apis.md) - Auto-configured web
+- [Spring Boot REST APIs](../jvm-spring-boot/rest-apis.md) - Auto-configured web
 
 ---
 

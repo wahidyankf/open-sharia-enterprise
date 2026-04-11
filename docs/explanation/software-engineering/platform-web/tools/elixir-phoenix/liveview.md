@@ -32,10 +32,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Channels](ex-soen-plwe-to-elph__channels.md) - Traditional real-time communication
-- [Testing](ex-soen-plwe-to-elph__testing.md) - LiveView testing strategies
-- [Security](ex-soen-plwe-to-elph__security.md) - Authentication and authorization
-- [Performance](ex-soen-plwe-to-elph__performance.md) - Optimization techniques
+- [Channels](channels.md) - Traditional real-time communication
+- [Testing](testing.md) - LiveView testing strategies
+- [Security](security.md) - Authentication and authorization
+- [Performance](performance.md) - Optimization techniques
 
 ## Overview
 
@@ -1379,9 +1379,9 @@ end
 
 ## Related Documentation
 
-- **[Channels Guide](ex-soen-plwe-to-elph__channels.md)** - Traditional real-time with WebSockets
-- **[Testing Guide](ex-soen-plwe-to-elph__testing.md)** - Comprehensive testing strategies
-- **[Security Guide](ex-soen-plwe-to-elph__security.md)** - Authentication and authorization
-- **[Performance Guide](ex-soen-plwe-to-elph__performance.md)** - Optimization techniques
+- **[Channels Guide](channels.md)** - Traditional real-time with WebSockets
+- **[Testing Guide](testing.md)** - Comprehensive testing strategies
+- **[Security Guide](security.md)** - Authentication and authorization
+- **[Performance Guide](performance.md)** - Optimization techniques
 - **[Phoenix LiveView Documentation](https://hexdocs.pm/phoenix_live_view)** - Official reference
 - **LiveView Templates (TODO: ./templates/ex-soen-plwe-elph-te\_\_liveview-template.md)** - Starter templates

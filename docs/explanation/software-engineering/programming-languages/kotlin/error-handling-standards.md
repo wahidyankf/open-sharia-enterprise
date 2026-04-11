@@ -389,9 +389,9 @@ try {
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Sealed class naming patterns
-- [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Structured concurrency and coroutine scopes
-- [API Standards](./ex-soen-prla-ko__api-standards.md) - HTTP error response mapping from domain errors
+- [Coding Standards](./coding-standards.md) - Sealed class naming patterns
+- [Concurrency Standards](./concurrency-standards.md) - Structured concurrency and coroutine scopes
+- [API Standards](./api-standards.md) - HTTP error response mapping from domain errors
 
 ## Related Documentation
 

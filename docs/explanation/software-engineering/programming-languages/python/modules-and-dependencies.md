@@ -12,8 +12,8 @@ tags:
   - pyproject-toml
   - packaging
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__linting-and-formatting.md
+  - ./best-practices.md
+  - ./linting-and-formatting.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -540,8 +540,8 @@ graph TD
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Project organization
-- [Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md) - Tool configuration
+- [Best Practices](./best-practices.md) - Project organization
+- [Linting and Formatting](./linting-and-formatting.md) - Tool configuration
 
 ---
 

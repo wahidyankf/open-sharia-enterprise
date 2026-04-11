@@ -38,9 +38,9 @@ Playwright is written in TypeScript and provides first-class TypeScript support.
 **1. Master TypeScript First**:
 
 - **[TypeScript Explanation Docs](../../../programming-languages/typescript/README.md)** - Understand type system, async/await, interfaces
-- **[TypeScript Idioms](../../../programming-languages/typescript/ex-soen-prla-ty__idioms.md)** - Core TypeScript patterns and conventions
-- **[TypeScript Type Safety](../../../programming-languages/typescript/ex-soen-prla-ty__type-safety.md)** - Type annotations and inference
-- **[TypeScript Testing](../../../programming-languages/typescript/ex-soen-prla-ty__testing.md)** - Testing patterns with TypeScript
+- **[TypeScript Idioms](../../../programming-languages/typescript/idioms.md)** - Core TypeScript patterns and conventions
+- **[TypeScript Type Safety](../../../programming-languages/typescript/type-safety.md)** - Type annotations and inference
+- **[TypeScript Testing](../../../programming-languages/typescript/testing.md)** - Testing patterns with TypeScript
 
 **2. Learn Playwright Fundamentals**:
 
@@ -64,12 +64,12 @@ You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../app
 
 All Playwright tests MUST follow the patterns and practices documented here:
 
-1. **[Idioms](ex-soen-aute-to-pl__idioms.md)** - Playwright-specific patterns
-2. **[Best Practices](ex-soen-aute-to-pl__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md)** - Common mistakes
-4. **[Configuration](ex-soen-aute-to-pl__configuration.md)** - playwright.config.ts setup
-5. **[Page Objects](ex-soen-aute-to-pl__page-objects.md)** - Page Object Model patterns
-6. **[BDD Integration](ex-soen-aute-to-pl__bdd.md)** — playwright-bdd setup and Gherkin step definitions
+1. **[Idioms](idioms.md)** - Playwright-specific patterns
+2. **[Best Practices](best-practices.md)** - Framework standards
+3. **[Anti-Patterns](anti-patterns.md)** - Common mistakes
+4. **[Configuration](configuration.md)** - playwright.config.ts setup
+5. **[Page Objects](page-objects.md)** - Page Object Model patterns
+6. **[BDD Integration](bdd.md)** — playwright-bdd setup and Gherkin step definitions
 
 **For Agents**: Reference this documentation when writing Playwright tests.
 
@@ -78,10 +78,10 @@ All Playwright tests MUST follow the patterns and practices documented here:
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Test Organization**: See [Test Organization](ex-soen-aute-to-pl__test-organization.md)
-- **Selectors**: See [Selectors](ex-soen-aute-to-pl__selectors.md)
-- **Assertions**: See [Assertions](ex-soen-aute-to-pl__assertions.md)
-- **Debugging**: See [Debugging](ex-soen-aute-to-pl__debugging.md)
+- **Test Organization**: See [Test Organization](test-organization.md)
+- **Selectors**: See [Selectors](selectors.md)
+- **Assertions**: See [Assertions](assertions.md)
+- **Debugging**: See [Debugging](debugging.md)
 
 ## Software Engineering Principles
 
@@ -108,15 +108,15 @@ Playwright usage in this platform follows the the software engineering principle
 
 **Core Documentation:**
 
-- [Idioms](ex-soen-aute-to-pl__idioms.md) - Playwright patterns (auto-waiting, test fixtures, page objects)
-- [Best Practices](ex-soen-aute-to-pl__best-practices.md) - Framework testing standards
-- [Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md) - Common Playwright mistakes
-- [Configuration](ex-soen-aute-to-pl__configuration.md) - playwright.config.ts, CI setup
-- [Page Objects](ex-soen-aute-to-pl__page-objects.md) - Page Object Model, component patterns
-- [Test Organization](ex-soen-aute-to-pl__test-organization.md) - Test structure, naming, grouping
-- [Selectors](ex-soen-aute-to-pl__selectors.md) - Locator strategies, accessibility selectors
-- [Assertions](ex-soen-aute-to-pl__assertions.md) - Web-first assertions, soft assertions
-- [Debugging](ex-soen-aute-to-pl__debugging.md) - Trace viewer, inspector, debug mode
+- [Idioms](idioms.md) - Playwright patterns (auto-waiting, test fixtures, page objects)
+- [Best Practices](best-practices.md) - Framework testing standards
+- [Anti-Patterns](anti-patterns.md) - Common Playwright mistakes
+- [Configuration](configuration.md) - playwright.config.ts, CI setup
+- [Page Objects](page-objects.md) - Page Object Model, component patterns
+- [Test Organization](test-organization.md) - Test structure, naming, grouping
+- [Selectors](selectors.md) - Locator strategies, accessibility selectors
+- [Assertions](assertions.md) - Web-first assertions, soft assertions
+- [Debugging](debugging.md) - Trace viewer, inspector, debug mode
 
 ## Playwright Version Strategy
 
@@ -142,7 +142,7 @@ Playwright usage in this platform follows the the software engineering principle
 
 ## Documentation Structure
 
-### [Playwright BDD Integration](ex-soen-aute-to-pl__bdd.md)
+### [Playwright BDD Integration](bdd.md)
 
 Using playwright-bdd to drive Playwright tests from Gherkin feature files.
 
@@ -157,7 +157,7 @@ Using playwright-bdd to drive Playwright tests from Gherkin feature files.
 - Module-level response-store for API test state
 - Nx project.json integration (bddgen && playwright test)
 
-### [Playwright Idioms](ex-soen-aute-to-pl__idioms.md)
+### [Playwright Idioms](idioms.md)
 
 Framework-specific patterns for writing idiomatic Playwright tests.
 
@@ -172,7 +172,7 @@ Framework-specific patterns for writing idiomatic Playwright tests.
 - Test retries and timeouts
 - Parallel execution with workers
 
-### [Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md)
+### [Playwright Best Practices](best-practices.md)
 
 Proven approaches for building reliable E2E test suites.
 
@@ -187,7 +187,7 @@ Proven approaches for building reliable E2E test suites.
 - Visual regression testing
 - CI/CD integration and parallelization
 
-### [Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md)
+### [Playwright Anti-Patterns](anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -463,7 +463,7 @@ npx playwright test --debug
 
 ### 1. Start with Idioms
 
-Read [Playwright Idioms](ex-soen-aute-to-pl__idioms.md) to understand framework patterns:
+Read [Playwright Idioms](idioms.md) to understand framework patterns:
 
 - Auto-waiting and actionability
 - Test fixtures and contexts
@@ -473,7 +473,7 @@ Read [Playwright Idioms](ex-soen-aute-to-pl__idioms.md) to understand framework 
 
 ### 2. Apply Best Practices
 
-Read [Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md) for production standards:
+Read [Playwright Best Practices](best-practices.md) for production standards:
 
 - Test organization and naming
 - Page object patterns
@@ -483,7 +483,7 @@ Read [Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md) for prod
 
 ### 3. Avoid Anti-Patterns
 
-Read [Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md) to prevent common mistakes:
+Read [Playwright Anti-Patterns](anti-patterns.md) to prevent common mistakes:
 
 - Manual waits and sleeps
 - Overly specific selectors
@@ -503,28 +503,28 @@ Read complementary documentation:
 
 ### Core Playwright Documentation
 
-- **[Playwright Idioms](ex-soen-aute-to-pl__idioms.md)** - Framework patterns
-- **[Playwright Best Practices](ex-soen-aute-to-pl__best-practices.md)** - Production standards
-- **[Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md)** - Common mistakes
+- **[Playwright Idioms](idioms.md)** - Framework patterns
+- **[Playwright Best Practices](best-practices.md)** - Production standards
+- **[Playwright Anti-Patterns](anti-patterns.md)** - Common mistakes
 
 ### Testing Documentation
 
-- **[Configuration](ex-soen-aute-to-pl__configuration.md)** - Configuration management
-- **[Page Objects](ex-soen-aute-to-pl__page-objects.md)** - Page Object Model
-- **[Test Organization](ex-soen-aute-to-pl__test-organization.md)** - Test structure
-- **[Selectors](ex-soen-aute-to-pl__selectors.md)** - Locator strategies
+- **[Configuration](configuration.md)** - Configuration management
+- **[Page Objects](page-objects.md)** - Page Object Model
+- **[Test Organization](test-organization.md)** - Test structure
+- **[Selectors](selectors.md)** - Locator strategies
 
 ### Debugging Documentation
 
-- **[Assertions](ex-soen-aute-to-pl__assertions.md)** - Assertion patterns
-- **[Debugging](ex-soen-aute-to-pl__debugging.md)** - Debugging strategies
+- **[Assertions](assertions.md)** - Assertion patterns
+- **[Debugging](debugging.md)** - Debugging strategies
 
 ### Platform Documentation
 
 - **[Automation Testing Index](../README.md)** - Parent testing documentation
 - **[TypeScript Programming Language](../../../programming-languages/typescript/README.md)** - TypeScript idioms and standards
 - **[Software Engineering Index](../../README.md)** - Software documentation root
-- **[Monorepo Structure](../../../../../reference/re__monorepo-structure.md)** - Nx workspace organization
+- **[Monorepo Structure](../../../../../reference/monorepo-structure.md)** - Nx workspace organization
 
 ---
 

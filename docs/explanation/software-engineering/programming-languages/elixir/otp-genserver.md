@@ -12,8 +12,8 @@ tags:
   - client-server
   - processes
 related:
-  - ./ex-soen-prla-el__otp-supervisor.md
-  - ./ex-soen-prla-el__otp-application.md
+  - ./otp-supervisor.md
+  - ./otp-application.md
   - ./ex-soen-prla-el__concurrency-and-parallelism.md
   - ./ex-soen-prla-el__best-practices.md
 principles:
@@ -1333,8 +1333,8 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Supervisor Patterns](ex-soen-prla-el__otp-supervisor.md)
-- [Application Patterns](ex-soen-prla-el__otp-application.md)
+- [Supervisor Patterns](otp-supervisor.md)
+- [Application Patterns](otp-application.md)
 
 ---
 

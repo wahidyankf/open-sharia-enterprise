@@ -9,9 +9,9 @@ tags:
   - code-smell
   - best-practices
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ./ex-soen-prla-ty__error-handling.md
+  - ./best-practices.md
+  - ./type-safety.md
+  - ./error-handling.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -4251,9 +4251,9 @@ function createDonation(params: {
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Recommended patterns
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Type patterns
-- **[TypeScript Error Handling](ex-soen-prla-ty__error-handling.md)** - Error patterns
+- **[TypeScript Best Practices](best-practices.md)** - Recommended patterns
+- **[TypeScript Type Safety](type-safety.md)** - Type patterns
+- **[TypeScript Error Handling](error-handling.md)** - Error patterns
 
 ---
 

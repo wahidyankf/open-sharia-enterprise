@@ -337,7 +337,7 @@ Plan files sit three directory levels deep from the repository root: `plans/` â†
 | Target from a plan file                     | Correct prefix |
 | ------------------------------------------- | -------------- |
 | `governance/conventions/structure/plans.md` | `../../../`    |
-| `docs/how-to/hoto__organize-work.md`        | `../../../`    |
+| `docs/how-to/organize-work.md`              | `../../../`    |
 | `apps/a-demo-be-golang-gin/README.md`       | `../../../`    |
 | Sibling file in the same plan folder        | `./`           |
 
@@ -367,7 +367,7 @@ Use the verification tip from the [Linking Convention](../formatting/linking.md#
 
 **Decision Guides**:
 
-- [How to Organize Your Work](../../../docs/how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
+- [How to Organize Your Work](../../../docs/how-to/organize-work.md) - Decision guide for choosing between plans/ and docs/
 
 **Related Conventions**:
 

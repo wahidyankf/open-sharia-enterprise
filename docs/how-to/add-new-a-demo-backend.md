@@ -518,7 +518,7 @@ Add coverage validation to `test:quick`:
   rhino-cli test-coverage validate {coverage-file} 90
 ```
 
-See [Code Coverage Reference](../reference/re__code-coverage.md) for per-language coverage
+See [Code Coverage Reference](../reference/code-coverage.md) for per-language coverage
 tools and file formats.
 
 ### 10. Create the per-variant CI workflow
@@ -785,8 +785,8 @@ nx graph
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md)
 - [CI/CD Conventions](../../governance/development/infra/ci-conventions.md)
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md)
-- [Code Coverage Reference](../reference/re__code-coverage.md)
-- [Project Dependency Graph](../reference/re__project-dependency-graph.md)
+- [Code Coverage Reference](../reference/code-coverage.md)
+- [Project Dependency Graph](../reference/project-dependency-graph.md)
 - [BDD Spec-Test Mapping](../../governance/development/infra/bdd-spec-test-mapping.md)
 - [Backend Gherkin Specs](../../specs/apps/a-demo/be/gherkin/README.md)
 - [OpenAPI Contract](../../specs/apps/a-demo/contracts/README.md)

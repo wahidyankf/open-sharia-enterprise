@@ -19,7 +19,7 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -1366,9 +1366,9 @@ func handleNegative(x int) int {
 
 ## Related Documentation
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices) - Code quality and style guidelines
-- [Idioms](./ex-soen-prla-go__coding-standards.md#part-1-core-idioms) - Idiomatic Go patterns
-- [Anti-Patterns](./ex-soen-prla-go__coding-standards.md#part-3-anti-patterns-to-avoid) - Common mistakes to avoid
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices) - Code quality and style guidelines
+- [Idioms](./coding-standards.md#part-1-core-idioms) - Idiomatic Go patterns
+- [Anti-Patterns](./coding-standards.md#part-3-anti-patterns-to-avoid) - Common mistakes to avoid
 
 ## Further Reading
 

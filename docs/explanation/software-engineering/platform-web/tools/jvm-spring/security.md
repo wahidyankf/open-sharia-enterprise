@@ -1911,21 +1911,21 @@ class DonationControllerSecurityTest {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)** - Web layer
-- **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
+- **[Web MVC](web-mvc.md)** - Web layer
+- **[REST APIs](rest-apis.md)** - RESTful services
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Security](../../../programming-languages/java/ex-soen-prla-ja__security-standards.md) - Java security baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Security patterns
-- [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - Securing APIs
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Security standards
+- [Java Security](../../../programming-languages/java/security-standards.md) - Java security baseline
+- [Spring Framework Idioms](./idioms.md) - Security patterns
+- [Spring Framework REST APIs](./rest-apis.md) - Securing APIs
+- [Spring Framework Best Practices](./best-practices.md) - Security standards
 
 **Spring Boot Extension**:
 
-- [Spring Boot Security](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md) - Auto-configured security
+- [Spring Boot Security](../jvm-spring-boot/security.md) - Auto-configured security
 
 ---
 

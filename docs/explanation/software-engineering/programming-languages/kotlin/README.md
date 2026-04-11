@@ -152,18 +152,18 @@ OSE Platform follows a three-tier Kotlin versioning strategy focused on modern, 
 
 **MUST follow these mandatory standards for all Kotlin code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-ko__coding-standards.md)** - Naming conventions, package organization, Effective Kotlin idioms
-2. **[Testing Standards](./ex-soen-prla-ko__testing-standards.md)** - JUnit 5, Kotest, MockK, coroutine testing, coverage requirements
-3. **[Code Quality Standards](./ex-soen-prla-ko__code-quality-standards.md)** - ktlint, Detekt, Kotlin compiler warnings, Gradle build tasks
-4. **[Build Configuration](./ex-soen-prla-ko__build-configuration.md)** - build.gradle.kts structure, Kotlin Gradle DSL, version catalog
-5. **[Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md)** - Result<T>, sealed class hierarchies, coroutine exception handling
-6. **[Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md)** - Coroutines, structured concurrency, Flow, StateFlow, channels
-7. **[Performance Standards](./ex-soen-prla-ko__performance-standards.md)** - Inline functions, reified generics, lazy initialization, sequence vs list
-8. **[Security Standards](./ex-soen-prla-ko__security-standards.md)** - Input validation, Spring Security, JWT, encrypted storage
-9. **[API Standards](./ex-soen-prla-ko__api-standards.md)** - Ktor routing DSL, content negotiation, authentication, REST conventions
-10. **[DDD Standards](./ex-soen-prla-ko__ddd-standards.md)** - Value Objects, sealed domain states, Aggregates, Domain Events
-11. **[Framework Integration](./ex-soen-prla-ko__framework-integration.md)** - Ktor server, Spring Boot with Kotlin, coroutine integration
-12. **[Type Safety Standards](./ex-soen-prla-ko__type-safety-standards.md)** - Null safety, sealed classes, data classes, generics variance
+1. **[Coding Standards](./coding-standards.md)** - Naming conventions, package organization, Effective Kotlin idioms
+2. **[Testing Standards](./testing-standards.md)** - JUnit 5, Kotest, MockK, coroutine testing, coverage requirements
+3. **[Code Quality Standards](./code-quality-standards.md)** - ktlint, Detekt, Kotlin compiler warnings, Gradle build tasks
+4. **[Build Configuration](./build-configuration.md)** - build.gradle.kts structure, Kotlin Gradle DSL, version catalog
+5. **[Error Handling Standards](./error-handling-standards.md)** - Result<T>, sealed class hierarchies, coroutine exception handling
+6. **[Concurrency Standards](./concurrency-standards.md)** - Coroutines, structured concurrency, Flow, StateFlow, channels
+7. **[Performance Standards](./performance-standards.md)** - Inline functions, reified generics, lazy initialization, sequence vs list
+8. **[Security Standards](./security-standards.md)** - Input validation, Spring Security, JWT, encrypted storage
+9. **[API Standards](./api-standards.md)** - Ktor routing DSL, content negotiation, authentication, REST conventions
+10. **[DDD Standards](./ddd-standards.md)** - Value Objects, sealed domain states, Aggregates, Domain Events
+11. **[Framework Integration](./framework-integration.md)** - Ktor server, Spring Boot with Kotlin, coroutine integration
+12. **[Type Safety Standards](./type-safety-standards.md)** - Null safety, sealed classes, data classes, generics variance
 
 ## Documentation Structure
 
@@ -171,21 +171,21 @@ OSE Platform follows a three-tier Kotlin versioning strategy focused on modern, 
 
 **Mandatory Standards (All Kotlin Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Naming, package structure, Effective Kotlin compliance
-2. [Testing Standards](./ex-soen-prla-ko__testing-standards.md) - JUnit 5, Kotest, MockK, coroutine testing, coverage >=95%
-3. [Code Quality Standards](./ex-soen-prla-ko__code-quality-standards.md) - ktlint configuration, Detekt static analysis
+1. [Coding Standards](./coding-standards.md) - Naming, package structure, Effective Kotlin compliance
+2. [Testing Standards](./testing-standards.md) - JUnit 5, Kotest, MockK, coroutine testing, coverage >=95%
+3. [Code Quality Standards](./code-quality-standards.md) - ktlint configuration, Detekt static analysis
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-ko__security-standards.md) - Input validation, JWT, encryption for user-facing services
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Coroutines, Flow for async/reactive code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-ko__ddd-standards.md) - Aggregates, Value Objects for business domains
-- **APIs**: [API Standards](./ex-soen-prla-ko__api-standards.md) - Ktor routing, REST conventions for HTTP endpoints
-- **Performance**: [Performance Standards](./ex-soen-prla-ko__performance-standards.md) - Inline functions, profiling, optimization
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Result<T>, sealed errors, coroutine exceptions
-- **Type Safety**: [Type Safety Standards](./ex-soen-prla-ko__type-safety-standards.md) - Null safety, sealed classes, generics
-- **Framework**: [Framework Integration](./ex-soen-prla-ko__framework-integration.md) - Ktor 3.x, Spring Boot 3.x, Android
-- **Build**: [Build Configuration](./ex-soen-prla-ko__build-configuration.md) - Gradle KTS, version catalog, build tasks
+- **Security**: [Security Standards](./security-standards.md) - Input validation, JWT, encryption for user-facing services
+- **Concurrency**: [Concurrency Standards](./concurrency-standards.md) - Coroutines, Flow for async/reactive code
+- **Domain Modeling**: [DDD Standards](./ddd-standards.md) - Aggregates, Value Objects for business domains
+- **APIs**: [API Standards](./api-standards.md) - Ktor routing, REST conventions for HTTP endpoints
+- **Performance**: [Performance Standards](./performance-standards.md) - Inline functions, profiling, optimization
+- **Error Handling**: [Error Handling Standards](./error-handling-standards.md) - Result<T>, sealed errors, coroutine exceptions
+- **Type Safety**: [Type Safety Standards](./type-safety-standards.md) - Null safety, sealed classes, generics
+- **Framework**: [Framework Integration](./framework-integration.md) - Ktor 3.x, Spring Boot 3.x, Android
+- **Build**: [Build Configuration](./build-configuration.md) - Gradle KTS, version catalog, build tasks
 
 ### Documentation Organization
 
@@ -332,7 +332,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

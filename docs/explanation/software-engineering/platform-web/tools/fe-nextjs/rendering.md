@@ -868,15 +868,15 @@ export async function GET(request: Request) {
 
 **Core Next.js**:
 
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - Component rendering
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Data strategies
-- [Performance](ex-soen-plwe-to-fene__performance.md) - Optimization
-- [Caching](ex-soen-plwe-to-fene__performance.md#caching) - Cache strategies
+- [Server Components](server-components.md) - Component rendering
+- [Data Fetching](data-fetching.md) - Data strategies
+- [Performance](performance.md) - Optimization
+- [Caching](performance.md#caching) - Cache strategies
 
 **Configuration**:
 
-- [Configuration](ex-soen-plwe-to-fene__configuration.md) - next.config.ts
-- [Deployment](ex-soen-plwe-to-fene__deployment.md) - Production deployment
+- [Configuration](configuration.md) - next.config.ts
+- [Deployment](deployment.md) - Production deployment
 
 ---
 

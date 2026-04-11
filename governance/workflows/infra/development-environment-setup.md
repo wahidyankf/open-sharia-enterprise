@@ -676,10 +676,10 @@ This covers: pre-commit hooks, pre-push hooks, TypeScript/Go unit tests, and bas
 
 ## Related Documentation
 
-- [How to Set Up Your Development Environment](../../../docs/how-to/hoto__setup-development-environment.md) —
+- [How to Set Up Your Development Environment](../../../docs/how-to/setup-development-environment.md) —
   Developer-facing companion guide
 - [Reproducible Environments](../../development/workflow/reproducible-environments.md) — Volta,
   npm, Docker reproducibility practices
-- [Local Development with Docker](../../../docs/how-to/hoto__local-dev-docker.md) — Docker
+- [Local Development with Docker](../../../docs/how-to/local-dev-docker.md) — Docker
   Compose setup for running services
 - [Code Quality Convention](../../development/quality/code.md) — Git hooks and formatting

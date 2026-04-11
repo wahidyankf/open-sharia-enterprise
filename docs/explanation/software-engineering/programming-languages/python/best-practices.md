@@ -12,11 +12,11 @@ tags:
   - type-hints
   - documentation
 related:
-  - ./ex-soen-prla-py__idioms.md
-  - ./ex-soen-prla-py__type-safety.md
-  - ./ex-soen-prla-py__error-handling.md
-  - ./ex-soen-prla-py__linting-and-formatting.md
-  - ./ex-soen-prla-py__test-driven-development.md
+  - ./idioms.md
+  - ./type-safety.md
+  - ./error-handling.md
+  - ./linting-and-formatting.md
+  - ./test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -164,7 +164,7 @@ class ZakatCalculator:
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers pytest with 85% coverage requirement.
 
-**See Also**: [Python Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md)
+**See Also**: [Python Linting and Formatting](./linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -272,7 +272,7 @@ def create_murabaha_contract(
 
 **Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. Pydantic validation catches invalid configurations before contracts are created.
 
-**See Also**: [Python Best Practices](./ex-soen-prla-py__best-practices.md)
+**See Also**: [Python Best Practices](./best-practices.md)
 
 ### 3. Immutability Over Mutability
 
@@ -366,7 +366,7 @@ class ZakatTransaction:
 
 **Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Corrections create new transactions with references to originals.
 
-**See Also**: [Python Functional Programming](./ex-soen-prla-py__functional-programming.md)
+**See Also**: [Python Functional Programming](./functional-programming.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -2584,11 +2584,11 @@ Use this checklist to ensure your Python code follows best practices:
 
 ### Related Documentation
 
-- [Python Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints and mypy
-- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exception patterns
-- [Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md) - Automated tools
-- [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md) - Testing practices
+- [Python Idioms](./idioms.md) - Pythonic patterns
+- [Type Safety](./type-safety.md) - Type hints and mypy
+- [Error Handling](./error-handling.md) - Exception patterns
+- [Linting and Formatting](./linting-and-formatting.md) - Automated tools
+- [Test-Driven Development](./test-driven-development.md) - Testing practices
 
 ### Tools
 

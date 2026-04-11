@@ -151,12 +151,12 @@ export default defineConfig({
 - No `projects` array required for API tests — the default single project suffices
 - Always run `npx bddgen` before `npx playwright test` to regenerate `.features-gen/`
 
-**See**: [BDD Integration](ex-soen-aute-to-pl__bdd.md) for full playwright-bdd standards.
+**See**: [BDD Integration](bdd.md) for full playwright-bdd standards.
 
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
-- [BDD Integration](ex-soen-aute-to-pl__bdd.md)
+- [BDD Integration](bdd.md)
 - [Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)
 
 ---

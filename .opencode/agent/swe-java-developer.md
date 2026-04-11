@@ -90,14 +90,14 @@ All Java code MUST follow the platform coding standards:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software-engineering/programming-languages/java/README.md](../../docs/explanation/software-engineering/programming-languages/java/README.md)
-- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_coding-standards.md](../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__coding-standards.md)
-- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_testing-standards.md](../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__testing-standards.md)
-- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_code-quality.md](../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__code-quality.md)
+- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_coding-standards.md](../../docs/explanation/software-engineering/programming-languages/java/coding-standards.md)
+- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_testing-standards.md](../../docs/explanation/software-engineering/programming-languages/java/testing-standards.md)
+- [docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_code-quality.md](../../docs/explanation/software-engineering/programming-languages/java/code-quality.md)
 
 **Development Practices**:
 

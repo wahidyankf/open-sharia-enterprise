@@ -456,4 +456,4 @@ See [Nx Target Standards](../infra/nx-targets.md) for CI schedule details.
 
 ## See Also
 
-- [Code Coverage Reference](../../../docs/reference/re__code-coverage.md) - How coverage is measured (rhino-cli algorithm, per-project tools, exclusion patterns, local vs Codecov differences)
+- [Code Coverage Reference](../../../docs/reference/code-coverage.md) - How coverage is measured (rhino-cli algorithm, per-project tools, exclusion patterns, local vs Codecov differences)

@@ -131,8 +131,8 @@ apps/a-demo-fe-e2e/
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
-- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
-- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Code Coverage Reference](../../docs/reference/code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/project-dependency-graph.md) — Nx dependency visualization
 - [Frontend Gherkin Specs](../../specs/apps/a-demo/fe/gherkin/README.md) — Shared feature files (source of truth)
 - [OpenAPI Contract](../../specs/apps/a-demo/contracts/README.md) — API contract and codegen
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards

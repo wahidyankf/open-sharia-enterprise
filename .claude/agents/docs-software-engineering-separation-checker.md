@@ -305,7 +305,7 @@ Total findings: N (CRITICAL: N, HIGH: N, MEDIUM: N, LOW: N)
 
 ```bash
 # Read Software Design Reference
-Read: docs/explanation/software-engineering/ex-soen__software-design-reference.md
+Read: docs/explanation/software-engineering/software-design-reference.md
 
 # Read docs/explanation README
 Read: docs/explanation/software-engineering/programming-languages/java/README.md
@@ -433,7 +433,7 @@ Validation is successful when:
 
 **Domain Conventions**:
 
-- [Software Design Reference](../../docs/explanation/software-engineering/ex-soen__software-design-reference.md) - Prerequisite mappings table
+- [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
 - [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
 - [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
@@ -454,7 +454,7 @@ Validation is successful when:
 
 **Authoritative Sources**:
 
-- [Software Design Reference](../../docs/explanation/software-engineering/ex-soen__software-design-reference.md) - Prerequisite mappings table
+- [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
 - [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
 
 **Skills to Use**:

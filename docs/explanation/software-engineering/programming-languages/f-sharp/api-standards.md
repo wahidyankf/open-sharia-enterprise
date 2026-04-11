@@ -336,9 +336,9 @@ let handleDomainResult (result: Result<'T, ZakatError>) : HttpHandler =
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-fsh__error-handling-standards.md) - Result to HTTP mapping
-- [Security Standards](ex-soen-prla-fsh__security-standards.md) - Auth middleware in Giraffe pipeline
-- [Testing Standards](ex-soen-prla-fsh__testing-standards.md) - Integration testing Giraffe handlers
+- [Error Handling Standards](error-handling-standards.md) - Result to HTTP mapping
+- [Security Standards](security-standards.md) - Auth middleware in Giraffe pipeline
+- [Testing Standards](testing-standards.md) - Integration testing Giraffe handlers
 
 ## Related Documentation
 

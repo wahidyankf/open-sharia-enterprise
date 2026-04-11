@@ -67,8 +67,11 @@ Use standard markdown link syntax with relative paths:
 ### Key Rules
 
 1. **Always include the `.md` extension**
-   - PASS: `[Initial Setup](./tutorials/tu__initial-setup.md)`
-   - FAIL: `[Initial Setup](./tutorials/tu__initial-setup)`
+
+   ```markdown
+   PASS: [Initial Setup](./tutorials/initial-setup.md)
+   FAIL: [Initial Setup](./tutorials/initial-setup)
+   ```
 
 2. **Use relative paths from the current file's location**
    - Same directory: `./file.md`
@@ -150,7 +153,7 @@ Use standard markdown link syntax with relative paths:
 <!-- Descriptive text with relative path and .md extension -->
 
 [Understanding the Diátaxis Framework](../structure/diataxis-framework.md)
-[Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)
+[Monorepo Structure](../../../docs/reference/monorepo-structure.md)
 [AI Agents Convention](../../development/agents/ai-agents.md)
 
 <!-- Links with context -->

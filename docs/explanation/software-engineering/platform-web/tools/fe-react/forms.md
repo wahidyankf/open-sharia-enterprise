@@ -24,9 +24,9 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - Controlled components pattern
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Form hooks
-- [State Management](ex-soen-plwe-to-fere__state-management.md) - Form state patterns
+- [Idioms](idioms.md) - Controlled components pattern
+- [Hooks](hooks.md) - Form hooks
+- [State Management](state-management.md) - Form state patterns
 
 ## Overview
 
@@ -532,9 +532,9 @@ const Step1: React.FC<{ methods: UseFormReturn<DonationFormData> }> = ({ methods
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - Controlled components pattern
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Form hooks
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - Form state patterns
+- **[Idioms](idioms.md)** - Controlled components pattern
+- **[Hooks](hooks.md)** - Form hooks
+- **[State Management](state-management.md)** - Form state patterns
 
 ---
 

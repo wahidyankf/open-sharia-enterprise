@@ -63,11 +63,11 @@ This separation follows the **DRY principle** (Don't Repeat Yourself) - educatio
 ```
 docs/explanation/software-engineering/programming-languages/golang/
 ├── README.md                                        # Overview + links to ayokoding-web
-├── ex-soen-prla-go__coding-standards.md            # OSE Platform Go conventions
-├── ex-soen-prla-go__code-quality-standards.md      # OSE Platform Go code quality
-├── ex-soen-prla-go__error-handling-standards.md    # OSE Platform error patterns
-├── ex-soen-prla-go__security-standards.md          # OSE Platform security standards
-└── ex-soen-prla-go__testing-standards.md           # OSE Platform testing standards
+├── coding-standards.md            # OSE Platform Go conventions
+├── code-quality-standards.md      # OSE Platform Go code quality
+├── error-handling-standards.md    # OSE Platform error patterns
+├── security-standards.md          # OSE Platform security standards
+└── testing-standards.md           # OSE Platform testing standards
 ```
 
 > **Note**: Go (along with Java and Elixir) follows the "Domain-Specific Standards Pattern" — multiple topic-focused standards files — rather than the "Three-Document Pattern" (idioms/best-practices/anti-patterns) used by TypeScript, Python, and Dart. Both patterns are valid. See `docs/explanation/software-engineering/programming-languages/README.md` for details.
@@ -475,7 +475,7 @@ Key takeaway: Use specific exception types, always handle errors explicitly.
 
 ````
 
-**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/python/ex-soen-prla-py__error-handling.md`):
+**docs/explanation/** (`docs/explanation/software-engineering/programming-languages/python/error-handling.md`):
 
 ```markdown
 # Python Error Handling - OSE Platform Standards

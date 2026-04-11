@@ -11,10 +11,10 @@ tags:
   - logging
   - financial-domain
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__idioms.md
-  - ./ex-soen-prla-py__type-safety.md
-  - ./ex-soen-prla-py__security.md
+  - ./best-practices.md
+  - ./idioms.md
+  - ./type-safety.md
+  - ./security.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -910,10 +910,10 @@ def calculate_zakat_safe(
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Python coding standards
-- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints and validation
-- [Security](./ex-soen-prla-py__security.md) - Secure coding practices
+- [Best Practices](./best-practices.md) - Python coding standards
+- [Idioms](./idioms.md) - Pythonic patterns
+- [Type Safety](./type-safety.md) - Type hints and validation
+- [Security](./security.md) - Secure coding practices
 
 ### Books
 

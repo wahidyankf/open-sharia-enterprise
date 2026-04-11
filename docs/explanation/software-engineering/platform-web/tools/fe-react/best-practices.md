@@ -49,11 +49,11 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md)
-- [Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md)
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)
-- [TypeScript](ex-soen-plwe-to-fere__typescript.md)
-- [Performance](ex-soen-plwe-to-fere__performance.md)
+- [Idioms](idioms.md)
+- [Anti-Patterns](anti-patterns.md)
+- [Component Architecture](component-architecture.md)
+- [TypeScript](typescript.md)
+- [Performance](performance.md)
 
 ## Overview
 
@@ -1048,14 +1048,14 @@ apiClient.interceptors.response.use(
 
 ## Related Documentation
 
-- **[React Idioms](ex-soen-plwe-to-fere__idioms.md)** - Framework patterns
-- **[React Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md)** - Common mistakes
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component design
-- **[TypeScript](ex-soen-plwe-to-fere__typescript.md)** - TypeScript integration
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Optimization strategies
-- **[Testing](ex-soen-plwe-to-fere__testing.md)** - Testing strategies
-- **[Accessibility](ex-soen-plwe-to-fere__accessibility.md)** - WCAG compliance
-- **[Security](ex-soen-plwe-to-fere__security.md)** - Security best practices
+- **[React Idioms](idioms.md)** - Framework patterns
+- **[React Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Component Architecture](component-architecture.md)** - Component design
+- **[TypeScript](typescript.md)** - TypeScript integration
+- **[Performance](performance.md)** - Optimization strategies
+- **[Testing](testing.md)** - Testing strategies
+- **[Accessibility](accessibility.md)** - WCAG compliance
+- **[Security](security.md)** - Security best practices
 
 ---
 

@@ -16,10 +16,10 @@ tags:
   - financial-systems
   - standards
 related:
-  - ./ex-soen-prla-el__otp-genserver.md
-  - ./ex-soen-prla-el__otp-supervisor.md
-  - ./ex-soen-prla-el__error-handling-standards.md
-  - ./ex-soen-prla-el__concurrency-standards.md
+  - ./otp-genserver.md
+  - ./otp-supervisor.md
+  - ./error-handling-standards.md
+  - ./concurrency-standards.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -744,10 +744,10 @@ end
 
 **Elixir-Specific**:
 
-- [OTP GenServer Standards](./ex-soen-prla-el__otp-genserver.md) - GenServer implementation requirements
-- [OTP Supervisor Standards](./ex-soen-prla-el__otp-supervisor.md) - Supervision strategy requirements
-- [Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md) - Tagged tuple requirements
-- [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - Process isolation requirements
+- [OTP GenServer Standards](./otp-genserver.md) - GenServer implementation requirements
+- [OTP Supervisor Standards](./otp-supervisor.md) - Supervision strategy requirements
+- [Error Handling Standards](./error-handling-standards.md) - Tagged tuple requirements
+- [Concurrency Standards](./concurrency-standards.md) - Process isolation requirements
 
 **Principles**:
 

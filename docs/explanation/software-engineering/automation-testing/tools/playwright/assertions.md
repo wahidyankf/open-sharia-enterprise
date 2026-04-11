@@ -477,9 +477,9 @@ await expect(page.getByTestId("zakat-amount")).toHaveText("$250.00");
 **Core Playwright Documentation**:
 
 - [Playwright Framework Index](README.md) - Overview and related documentation
-- [Playwright Test Organization](ex-soen-aute-to-pl__test-organization.md) - Test structure standards
-- [Playwright Selectors](ex-soen-aute-to-pl__selectors.md) - Selector strategies for assertions
-- [Playwright Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md) - Common assertion mistakes
+- [Playwright Test Organization](test-organization.md) - Test structure standards
+- [Playwright Selectors](selectors.md) - Selector strategies for assertions
+- [Playwright Anti-Patterns](anti-patterns.md) - Common assertion mistakes
 
 **Principles**:
 

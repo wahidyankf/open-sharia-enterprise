@@ -681,10 +681,10 @@ These standards are enforced through:
 
 ## Related Standards
 
-- [Testing Standards](./ex-soen-prla-ko__testing-standards.md) - Test structure and coverage requirements
-- [Code Quality Standards](./ex-soen-prla-ko__code-quality-standards.md) - ktlint and Detekt configuration
-- [Type Safety Standards](./ex-soen-prla-ko__type-safety-standards.md) - Null safety and sealed classes
-- [Error Handling Standards](./ex-soen-prla-ko__error-handling-standards.md) - Result<T> and sealed error hierarchies
+- [Testing Standards](./testing-standards.md) - Test structure and coverage requirements
+- [Code Quality Standards](./code-quality-standards.md) - ktlint and Detekt configuration
+- [Type Safety Standards](./type-safety-standards.md) - Null safety and sealed classes
+- [Error Handling Standards](./error-handling-standards.md) - Result<T> and sealed error hierarchies
 
 ## Related Documentation
 

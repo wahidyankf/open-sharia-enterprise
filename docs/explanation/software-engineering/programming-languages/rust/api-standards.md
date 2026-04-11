@@ -390,10 +390,10 @@ mod tests {
 
 ## Related Standards
 
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - AppError design
-- [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md) - Arc/Mutex for AppState
-- [Security Standards](ex-soen-prla-ru__security-standards.md) - Auth middleware, input validation
-- [DDD Standards](ex-soen-prla-ru__ddd-standards.md) - Service layer design
+- [Error Handling Standards](error-handling-standards.md) - AppError design
+- [Concurrency Standards](concurrency-standards.md) - Arc/Mutex for AppState
+- [Security Standards](security-standards.md) - Auth middleware, input validation
+- [DDD Standards](ddd-standards.md) - Service layer design
 
 ## Related Documentation
 

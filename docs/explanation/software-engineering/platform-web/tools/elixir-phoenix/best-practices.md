@@ -997,10 +997,10 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](ex-soen-plwe-to-elph__idioms.md)** - Framework patterns
-- **[Phoenix Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)** - Common mistakes
-- **[Data Access](ex-soen-plwe-to-elph__data-access.md)** - Ecto patterns
-- **[Security](ex-soen-plwe-to-elph__security.md)** - Security practices
+- **[Phoenix Idioms](idioms.md)** - Framework patterns
+- **[Phoenix Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Data Access](data-access.md)** - Ecto patterns
+- **[Security](security.md)** - Security practices
 
 ---
 

@@ -85,7 +85,7 @@ nx affected -t typecheck
 If the contract change adds new endpoints or modifies behavior, add or update Gherkin
 scenarios in `specs/apps/a-demo/be/gherkin/` (and `fe/gherkin/` for frontend changes).
 
-See [How to Add a Gherkin Scenario](./hoto__add-gherkin-scenario.md) for the step-by-step
+See [How to Add a Gherkin Scenario](./add-gherkin-scenario.md) for the step-by-step
 process.
 
 ### 6. Verify
@@ -121,5 +121,5 @@ If the contract change breaks any app, the pre-push hook catches it.
 ## Related Documentation
 
 - [OpenAPI Contract](../../specs/apps/a-demo/contracts/README.md) — Spec structure and conventions
-- [Project Dependency Graph](../reference/re__project-dependency-graph.md) — How contract changes propagate
+- [Project Dependency Graph](../reference/project-dependency-graph.md) — How contract changes propagate
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md) — Codegen target requirements

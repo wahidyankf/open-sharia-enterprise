@@ -20,10 +20,10 @@ tags:
   - type-hints
   - protocols
 related:
-  - ./ex-soen-prla-py__best-practices.md
-  - ./ex-soen-prla-py__functional-programming.md
-  - ./ex-soen-prla-py__classes-and-protocols.md
-  - ./ex-soen-prla-py__error-handling.md
+  - ./best-practices.md
+  - ./functional-programming.md
+  - ./classes-and-protocols.md
+  - ./error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -109,10 +109,10 @@ with timing_context("op"):     # Custom
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md)
-- [Functional Programming](./ex-soen-prla-py__functional-programming.md)
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md)
-- [Error Handling](./ex-soen-prla-py__error-handling.md)
+- [Best Practices](./best-practices.md)
+- [Functional Programming](./functional-programming.md)
+- [Classes and Protocols](./classes-and-protocols.md)
+- [Error Handling](./error-handling.md)
 
 ## Overview
 
@@ -2612,10 +2612,10 @@ total_zakat = calculate_total_zakat(assets)  # Type-safe duck typing
 
 ### Related Documentation
 
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - Python coding standards
-- [Functional Programming](./ex-soen-prla-py__functional-programming.md) - Functional patterns
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - Object-oriented design
-- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exception patterns
+- [Best Practices](./best-practices.md) - Python coding standards
+- [Functional Programming](./functional-programming.md) - Functional patterns
+- [Classes and Protocols](./classes-and-protocols.md) - Object-oriented design
+- [Error Handling](./error-handling.md) - Exception patterns
 
 ### Books
 

@@ -287,8 +287,8 @@ clojure -J-Xmx512m -J-verbose:gc -M:dev
 
 ## Related Standards
 
-- [Concurrency Standards](./ex-soen-prla-cl__concurrency-standards.md) - Transducers in core.async pipelines
-- [Functional Programming Standards](./ex-soen-prla-cl__functional-programming-standards.md) - Transducers and higher-order function composition
+- [Concurrency Standards](./concurrency-standards.md) - Transducers in core.async pipelines
+- [Functional Programming Standards](./functional-programming-standards.md) - Transducers and higher-order function composition
 
 ## Related Documentation
 

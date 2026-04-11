@@ -23,8 +23,8 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - Modern hook patterns
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Current standards
+- [Hooks](hooks.md) - Modern hook patterns
+- [Best Practices](best-practices.md) - Current standards
 
 ## Overview
 
@@ -1104,10 +1104,10 @@ const ZakatCalculator: React.FC = () => {
 
 ## Related Documentation
 
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Modern hook patterns
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Current standards
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - Optimization techniques
-- **[Testing](ex-soen-plwe-to-fere__testing.md)** - Testing strategies
+- **[Hooks](hooks.md)** - Modern hook patterns
+- **[Best Practices](best-practices.md)** - Current standards
+- **[Performance](performance.md)** - Optimization techniques
+- **[Testing](testing.md)** - Testing strategies
 
 ---
 

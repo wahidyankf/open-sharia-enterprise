@@ -458,10 +458,10 @@ class ZakatNotificationListener {
 
 ## Related Standards
 
-- [API Standards](./ex-soen-prla-ko__api-standards.md) - Ktor routing patterns and REST conventions
-- [Security Standards](./ex-soen-prla-ko__security-standards.md) - Spring Security and Ktor authentication
-- [Build Configuration](./ex-soen-prla-ko__build-configuration.md) - Kotlin plugin configuration in Gradle
-- [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Coroutine-Spring bridge patterns
+- [API Standards](./api-standards.md) - Ktor routing patterns and REST conventions
+- [Security Standards](./security-standards.md) - Spring Security and Ktor authentication
+- [Build Configuration](./build-configuration.md) - Kotlin plugin configuration in Gradle
+- [Concurrency Standards](./concurrency-standards.md) - Coroutine-Spring bridge patterns
 
 ## Related Documentation
 

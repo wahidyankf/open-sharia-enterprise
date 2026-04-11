@@ -522,14 +522,14 @@ Performance standards are enforced through:
 - [ ] `const` used for compile-time constant objects
 - [ ] No string concatenation in loops (use `StringBuffer`)
 - [ ] Collection chains use lazy operations (no intermediate `toList()`)
-- [ ] CPU-intensive work uses `Isolate.run()` (see [Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md))
+- [ ] CPU-intensive work uses `Isolate.run()` (see [Concurrency Standards](./concurrency-standards.md))
 - [ ] `Timeline` markers added to operations requiring profiling
 
 ## Related Standards
 
-- [Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md) - Isolates for CPU-bound work
-- [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Typed code enables AOT optimization
-- [Build Configuration](./ex-soen-prla-da__build-configuration.md) - AOT compilation setup
+- [Concurrency Standards](./concurrency-standards.md) - Isolates for CPU-bound work
+- [Type Safety Standards](./type-safety-standards.md) - Typed code enables AOT optimization
+- [Build Configuration](./build-configuration.md) - AOT compilation setup
 
 ## Related Documentation
 

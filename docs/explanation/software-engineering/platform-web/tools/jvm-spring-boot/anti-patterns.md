@@ -1109,18 +1109,18 @@ class ZakatCalculationIntegrationTest {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)** - Correct patterns
-- **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
-- **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
+- **[Spring Boot Idioms](idioms.md)** - Correct patterns
+- **[Spring Boot Best Practices](best-practices.md)** - Production standards
+- **[Testing](testing.md)** - Testing strategies
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Anti-Patterns](../jvm-spring/ex-soen-plwe-to-jvsp__anti-patterns.md) - Manual Spring mistakes
-- [Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
-- [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Recommended practices
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Correct patterns
+- [Spring Framework Anti-Patterns](../jvm-spring/anti-patterns.md) - Manual Spring mistakes
+- [Java Anti-Patterns](../../../programming-languages/java/coding-standards.md) - Java baseline anti-patterns
+- [Spring Boot Best Practices](./best-practices.md) - Recommended practices
+- [Spring Boot Idioms](./idioms.md) - Correct patterns
 
 ---
 

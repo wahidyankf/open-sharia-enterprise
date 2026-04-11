@@ -146,7 +146,7 @@ C4 container diagrams can reference the Nx project graph for detailed dependency
 
 **Add note in diagram documentation**:
 
-> For detailed Nx project dependencies, run `nx graph` or visit the [Nx Project Graph documentation](../../../../reference/re__monorepo-structure.md).
+> For detailed Nx project dependencies, run `nx graph` or visit the [Nx Project Graph documentation](../../../../reference/monorepo-structure.md).
 
 ### Visualization Strategy
 
@@ -175,8 +175,8 @@ Before committing an Nx workspace visualization, verify:
 
 ## Related Standards
 
-- **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, required levels
-- **[Nx Workspace Structure](../../../../reference/re__monorepo-structure.md)** - Monorepo organization reference
+- **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, required levels
+- **[Nx Workspace Structure](../../../../reference/monorepo-structure.md)** - Monorepo organization reference
 
 ## Principles Implemented
 

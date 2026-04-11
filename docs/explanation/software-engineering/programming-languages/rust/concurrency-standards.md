@@ -375,9 +375,9 @@ async fn good_handler() -> String {
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Idiomatic Rust patterns
-- [Performance Standards](ex-soen-prla-ru__performance-standards.md) - Profiling async code
-- [API Standards](ex-soen-prla-ru__api-standards.md) - Axum AppState sharing
+- [Coding Standards](coding-standards.md) - Idiomatic Rust patterns
+- [Performance Standards](performance-standards.md) - Profiling async code
+- [API Standards](api-standards.md) - Axum AppState sharing
 
 ## Related Documentation
 

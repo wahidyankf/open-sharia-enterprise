@@ -16,9 +16,9 @@ tags:
   - authorization
   - data-encryption
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__framework-integration-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
+  - ./coding-standards.md
+  - ./framework-integration-standards.md
+  - ./coding-standards.md
 principles:
   - explicit-over-implicit
 updated: 2026-02-05
@@ -997,9 +997,9 @@ mix hex.outdated
 
 ### OSE Platform Standards
 
-- [Best Practices](./ex-soen-prla-el__coding-standards.md) - Elixir coding standards
-- [Web Services](./ex-soen-prla-el__framework-integration-standards.md) - Phoenix API security
-- [Anti-patterns](./ex-soen-prla-el__coding-standards.md) - Security anti-patterns to avoid
+- [Best Practices](./coding-standards.md) - Elixir coding standards
+- [Web Services](./framework-integration-standards.md) - Phoenix API security
+- [Anti-patterns](./coding-standards.md) - Security anti-patterns to avoid
 
 ### Software Engineering Principles
 

@@ -552,9 +552,9 @@ public class OpenApiConfig {
 
 ### OSE Platform Standards
 
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - API authentication and authorization
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Error response formats
-- [Performance Standards](./ex-soen-prla-ja__performance-standards.md) - API performance requirements
+- [Security Standards](./security-standards.md) - API authentication and authorization
+- [Error Handling Standards](./error-handling-standards.md) - Error response formats
+- [Performance Standards](./performance-standards.md) - API performance requirements
 
 ### Learning Resources
 
@@ -608,15 +608,15 @@ Before deploying APIs, verify:
 
 **Security**:
 
-- [Security Standards](./ex-soen-prla-ja__security-standards.md) - OAuth2, JWT validation, rate limiting, and API authentication
+- [Security Standards](./security-standards.md) - OAuth2, JWT validation, rate limiting, and API authentication
 
 **Error Responses**:
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - HTTP error response format, status codes, and error message structure
+- [Error Handling Standards](./error-handling-standards.md) - HTTP error response format, status codes, and error message structure
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - API contract testing, REST API testing patterns, and integration tests
+- [Testing Standards](./testing-standards.md) - API contract testing, REST API testing patterns, and integration tests
 
 **Last Updated**: 2026-02-04
 

@@ -1323,11 +1323,11 @@ end
 
 ## Related Documentation
 
-- **[REST APIs](ex-soen-plwe-to-elph__rest-apis.md)** - API authentication and authorization patterns
-- **[Channels](ex-soen-plwe-to-elph__channels.md)** - WebSocket security and authentication
-- **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - LiveView security considerations
-- **[Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Security best practices
-- **[Configuration](ex-soen-plwe-to-elph__configuration.md)** - Secure configuration management
+- **[REST APIs](rest-apis.md)** - API authentication and authorization patterns
+- **[Channels](channels.md)** - WebSocket security and authentication
+- **[LiveView](liveview.md)** - LiveView security considerations
+- **[Best Practices](best-practices.md)** - Security best practices
+- **[Configuration](configuration.md)** - Secure configuration management
 
 ---
 

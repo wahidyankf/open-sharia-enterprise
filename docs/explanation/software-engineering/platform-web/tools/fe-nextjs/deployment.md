@@ -887,17 +887,17 @@ docker-compose up -d
 
 **Configuration**:
 
-- [Configuration](ex-soen-plwe-to-fene__configuration.md) - next.config.ts options
-- [Environment Variables](ex-soen-plwe-to-fene__configuration.md#environment-variables) - Config management
+- [Configuration](configuration.md) - next.config.ts options
+- [Environment Variables](configuration.md#environment-variables) - Config management
 
 **Performance**:
 
-- [Performance](ex-soen-plwe-to-fene__performance.md) - Optimization strategies
-- [Caching](ex-soen-plwe-to-fene__rendering.md#caching) - Cache configuration
+- [Performance](performance.md) - Optimization strategies
+- [Caching](rendering.md#caching) - Cache configuration
 
 **Security**:
 
-- [Security](ex-soen-plwe-to-fene__security.md) - Production security
+- [Security](security.md) - Production security
 
 ---
 

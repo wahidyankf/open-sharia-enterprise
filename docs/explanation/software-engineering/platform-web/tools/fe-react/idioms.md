@@ -54,11 +54,11 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md)
-- [Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md)
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)
-- [Hooks](ex-soen-plwe-to-fere__hooks.md)
-- [TypeScript](ex-soen-plwe-to-fere__typescript.md)
+- [Best Practices](best-practices.md)
+- [Anti-Patterns](anti-patterns.md)
+- [Component Architecture](component-architecture.md)
+- [Hooks](hooks.md)
+- [TypeScript](typescript.md)
 
 ## Overview
 
@@ -1642,13 +1642,13 @@ export const EmailInput: React.FC = () => {
 
 ## Related Documentation
 
-- **[React Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Production standards
-- **[React Anti-Patterns](ex-soen-plwe-to-fere__anti-patterns.md)** - Common mistakes
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component design
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - Deep dive into React hooks
-- **[TypeScript](ex-soen-plwe-to-fere__typescript.md)** - TypeScript integration
-- **[State Management](ex-soen-plwe-to-fere__state-management.md)** - State patterns
-- **[Testing](ex-soen-plwe-to-fere__testing.md)** - Testing strategies
+- **[React Best Practices](best-practices.md)** - Production standards
+- **[React Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Component Architecture](component-architecture.md)** - Component design
+- **[Hooks](hooks.md)** - Deep dive into React hooks
+- **[TypeScript](typescript.md)** - TypeScript integration
+- **[State Management](state-management.md)** - State patterns
+- **[Testing](testing.md)** - Testing strategies
 
 ---
 

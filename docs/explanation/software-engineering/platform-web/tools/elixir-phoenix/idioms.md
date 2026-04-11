@@ -48,11 +48,11 @@ updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](ex-soen-plwe-to-elph__best-practices.md)
-- [Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)
-- [Contexts](ex-soen-plwe-to-elph__contexts.md)
-- [LiveView](ex-soen-plwe-to-elph__liveview.md)
-- [Channels](ex-soen-plwe-to-elph__channels.md)
+- [Best Practices](best-practices.md)
+- [Anti-Patterns](anti-patterns.md)
+- [Contexts](contexts.md)
+- [LiveView](liveview.md)
+- [Channels](channels.md)
 
 ## Overview
 
@@ -1114,11 +1114,11 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Best Practices](ex-soen-plwe-to-elph__best-practices.md)** - Production standards
-- **[Phoenix Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)** - Common mistakes
-- **[Contexts](ex-soen-plwe-to-elph__contexts.md)** - Context design patterns
-- **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - LiveView patterns
-- **[Channels](ex-soen-plwe-to-elph__channels.md)** - Real-time communication
+- **[Phoenix Best Practices](best-practices.md)** - Production standards
+- **[Phoenix Anti-Patterns](anti-patterns.md)** - Common mistakes
+- **[Contexts](contexts.md)** - Context design patterns
+- **[LiveView](liveview.md)** - LiveView patterns
+- **[Channels](channels.md)** - Real-time communication
 
 ---
 

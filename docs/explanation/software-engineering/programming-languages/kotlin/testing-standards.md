@@ -473,10 +473,10 @@ kover {
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Naming conventions for test methods
-- [Code Quality Standards](./ex-soen-prla-ko__code-quality-standards.md) - Kover configuration details
-- [Concurrency Standards](./ex-soen-prla-ko__concurrency-standards.md) - Coroutine patterns under test
-- [Build Configuration](./ex-soen-prla-ko__build-configuration.md) - Gradle test task configuration
+- [Coding Standards](./coding-standards.md) - Naming conventions for test methods
+- [Code Quality Standards](./code-quality-standards.md) - Kover configuration details
+- [Concurrency Standards](./concurrency-standards.md) - Coroutine patterns under test
+- [Build Configuration](./build-configuration.md) - Gradle test task configuration
 
 ## Related Documentation
 

@@ -77,19 +77,19 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 All Python code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-soen-prla-py__idioms.md)** - Python-specific patterns and conventions
-2. **[Best Practices](./ex-soen-prla-py__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-soen-prla-py__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./idioms.md)** - Python-specific patterns and conventions
+2. **[Best Practices](./best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Python code. The `swe-programming-python` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-soen-prla-py__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-soen-prla-py__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-soen-prla-py__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-soen-prla-py__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./error-handling.md)
+- **Type Safety**: See [Type Safety](./type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./test-driven-development.md)
+- **Security Practices**: See [Security](./security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -103,7 +103,7 @@ Python development in this platform follows the the software engineering princip
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Python supports through first-class functions, functional tools (map/filter/reduce), and functional core architecture
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Python enables through pyproject.toml, requirements.txt pinning, virtual environments, and deterministic builds
 
-**See Also**: [Functional Programming](./ex-soen-prla-py__functional-programming.md) for pure functions patterns, [Best Practices](./ex-soen-prla-py__best-practices.md) for explicit coding standards, [Type Safety](./ex-soen-prla-py__type-safety.md) for immutable type patterns.
+**See Also**: [Functional Programming](./functional-programming.md) for pure functions patterns, [Best Practices](./best-practices.md) for explicit coding standards, [Type Safety](./type-safety.md) for immutable type patterns.
 
 ## Python Version Strategy
 
@@ -794,44 +794,44 @@ This documentation comprises core documentation files organized into foundation,
 **Foundation**:
 
 - [README.md](./README.md) (this file) - Overview and learning paths
-- [Best Practices](./ex-soen-prla-py__best-practices.md) - PEP 8, PEP 20, modern patterns
-- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns and EAFP
-- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints, mypy, Pydantic
-- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exceptions and context managers
-- [Testing](./ex-soen-prla-py__testing.md) - Testing pyramid, coverage strategy, and test patterns
+- [Best Practices](./best-practices.md) - PEP 8, PEP 20, modern patterns
+- [Idioms](./idioms.md) - Pythonic patterns and EAFP
+- [Type Safety](./type-safety.md) - Type hints, mypy, Pydantic
+- [Error Handling](./error-handling.md) - Exceptions and context managers
+- [Testing](./testing.md) - Testing pyramid, coverage strategy, and test patterns
 
 **Core Patterns**:
 
-- [Functional Programming](./ex-soen-prla-py__functional-programming.md) - Pure functions, itertools, functools
-- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - Classes, protocols, dataclasses, Pydantic
-- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - DDD with Python patterns
-- [Concurrency and Parallelism](./ex-soen-prla-py__concurrency-and-parallelism.md) - asyncio, threading, multiprocessing, GIL
-- [Modules and Dependencies](./ex-soen-prla-py__modules-and-dependencies.md) - pip, Poetry, pyproject.toml
-- [Anti-Patterns](./ex-soen-prla-py__anti-patterns.md) - Common mistakes to avoid
+- [Functional Programming](./functional-programming.md) - Pure functions, itertools, functools
+- [Classes and Protocols](./classes-and-protocols.md) - Classes, protocols, dataclasses, Pydantic
+- [Domain-Driven Design](./domain-driven-design.md) - DDD with Python patterns
+- [Concurrency and Parallelism](./concurrency-and-parallelism.md) - asyncio, threading, multiprocessing, GIL
+- [Modules and Dependencies](./modules-and-dependencies.md) - pip, Poetry, pyproject.toml
+- [Anti-Patterns](./anti-patterns.md) - Common mistakes to avoid
 
 **Development Practices**:
 
-- [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md) - pytest, unittest, hypothesis
-- [Behaviour-Driven Development](./ex-soen-prla-py__behaviour-driven-development.md) - behave, pytest-bdd, Gherkin
-- [Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md) - Ruff, Black, mypy, pylint
-- [Security](./ex-soen-prla-py__security.md) - Injection prevention, auth, secrets management
-- [Performance](./ex-soen-prla-py__performance.md) - Profiling, optimization, Cython, PyPy
-- [Memory Management](./ex-soen-prla-py__memory-management.md) - Reference counting, garbage collection
+- [Test-Driven Development](./test-driven-development.md) - pytest, unittest, hypothesis
+- [Behaviour-Driven Development](./behaviour-driven-development.md) - behave, pytest-bdd, Gherkin
+- [Linting and Formatting](./linting-and-formatting.md) - Ruff, Black, mypy, pylint
+- [Security](./security.md) - Injection prevention, auth, secrets management
+- [Performance](./performance.md) - Profiling, optimization, Cython, PyPy
+- [Memory Management](./memory-management.md) - Reference counting, garbage collection
 
 **Advanced Topics**:
 
-- [Web Services](./ex-soen-prla-py__web-services.md) - FastAPI, Django, Flask, httpx
-- [Finite State Machine](./ex-soen-prla-py__finite-state-machine.md) - FSM patterns with transitions library
+- [Web Services](./web-services.md) - FastAPI, Django, Flask, httpx
+- [Finite State Machine](./finite-state-machine.md) - FSM patterns with transitions library
 
 ### Beginner Path
 
 Learn Python fundamentals and platform conventions:
 
-1. **Start Here**: `ex-soen-prla-py__best-practices.md` - Python style and conventions
-2. **Pythonic Code**: `ex-soen-prla-py__idioms.md` - Write idiomatic Python
-3. **Type Safety**: `ex-soen-prla-py__type-safety.md` - Type hints and validation
-4. **Error Handling**: `ex-soen-prla-py__error-handling.md` - Robust error management
-5. **Testing Basics**: `ex-soen-prla-py__test-driven-development.md` - Write testable code
+1. **Start Here**: `best-practices.md` - Python style and conventions
+2. **Pythonic Code**: `idioms.md` - Write idiomatic Python
+3. **Type Safety**: `type-safety.md` - Type hints and validation
+4. **Error Handling**: `error-handling.md` - Robust error management
+5. **Testing Basics**: `test-driven-development.md` - Write testable code
 
 **Estimated Learning**: Begin with best practices and idioms to establish solid foundations. Type safety and error handling are essential for production code. Testing practices ensure code quality from the start.
 
@@ -839,11 +839,11 @@ Learn Python fundamentals and platform conventions:
 
 Master Python patterns and domain modeling:
 
-1. **Functional Patterns**: `ex-soen-prla-py__functional-programming.md` - Functional Python
-2. **Object-Oriented Design**: `ex-soen-prla-py__classes-and-protocols.md` - Classes and protocols
-3. **Domain Modeling**: `ex-soen-prla-py__domain-driven-design.md` - DDD with Pydantic
-4. **Concurrency**: `ex-soen-prla-py__concurrency-and-parallelism.md` - Async and parallel patterns
-5. **Code Quality**: `ex-soen-prla-py__linting-and-formatting.md` - Automated quality tools
+1. **Functional Patterns**: `functional-programming.md` - Functional Python
+2. **Object-Oriented Design**: `classes-and-protocols.md` - Classes and protocols
+3. **Domain Modeling**: `domain-driven-design.md` - DDD with Pydantic
+4. **Concurrency**: `concurrency-and-parallelism.md` - Async and parallel patterns
+5. **Code Quality**: `linting-and-formatting.md` - Automated quality tools
 
 **Build Skills**: Combine functional and object-oriented paradigms effectively. Domain-driven design provides structure for complex business logic. Concurrency patterns enable scalable applications. Automated tooling maintains consistent code quality.
 
@@ -851,11 +851,11 @@ Master Python patterns and domain modeling:
 
 Build production systems and optimize performance:
 
-1. **Web Services**: `ex-soen-prla-py__web-services.md` - FastAPI, Django, Flask patterns
-2. **State Machines**: `ex-soen-prla-py__finite-state-machine.md` - Complex workflow modeling
-3. **Security**: `ex-soen-prla-py__security.md` - Secure coding practices
-4. **Performance**: `ex-soen-prla-py__performance.md` - Profiling and optimization
-5. **Memory Management**: `ex-soen-prla-py__memory-management.md` - Understanding Python's memory model
+1. **Web Services**: `web-services.md` - FastAPI, Django, Flask patterns
+2. **State Machines**: `finite-state-machine.md` - Complex workflow modeling
+3. **Security**: `security.md` - Secure coding practices
+4. **Performance**: `performance.md` - Profiling and optimization
+5. **Memory Management**: `memory-management.md` - Understanding Python's memory model
 
 **Production Excellence**: Web service patterns enable robust APIs. State machines model complex business processes. Security practices protect sensitive financial data. Performance optimization ensures responsive systems. Memory management prevents resource leaks.
 

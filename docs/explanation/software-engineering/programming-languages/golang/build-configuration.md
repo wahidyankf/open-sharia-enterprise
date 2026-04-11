@@ -1147,10 +1147,10 @@ func main() {
 
 **Core Go Documentation**:
 
-- **[Go Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)** - General Go coding standards
-- **[Go Modules and Dependencies](./ex-soen-prla-go__dependency-standards.md)** - Dependency management deep dive
-- **[Go Linting and Formatting](./ex-soen-prla-go__code-quality-standards.md)** - Code quality automation
-- **[Go Security](./ex-soen-prla-go__security-standards.md)** - Secure build practices
+- **[Go Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)** - General Go coding standards
+- **[Go Modules and Dependencies](./dependency-standards.md)** - Dependency management deep dive
+- **[Go Linting and Formatting](./code-quality-standards.md)** - Code quality automation
+- **[Go Security](./security-standards.md)** - Secure build practices
 
 **Platform Documentation**:
 

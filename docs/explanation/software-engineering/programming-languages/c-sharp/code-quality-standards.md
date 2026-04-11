@@ -319,10 +319,10 @@ SonarAnalyzer.CSharp provides additional rules beyond the built-in Roslyn analyz
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Naming, idioms
-- [Testing Standards](ex-soen-prla-csh__testing-standards.md) - xUnit, coverage collection
-- [Build Configuration](ex-soen-prla-csh__build-configuration.md) - Directory.Build.props, csproj setup
-- [Type Safety Standards](ex-soen-prla-csh__type-safety-standards.md) - Nullable reference types deep dive
+- [Coding Standards](coding-standards.md) - Naming, idioms
+- [Testing Standards](testing-standards.md) - xUnit, coverage collection
+- [Build Configuration](build-configuration.md) - Directory.Build.props, csproj setup
+- [Type Safety Standards](type-safety-standards.md) - Nullable reference types deep dive
 
 ## Related Documentation
 

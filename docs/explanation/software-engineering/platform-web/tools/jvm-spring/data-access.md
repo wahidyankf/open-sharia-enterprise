@@ -616,21 +616,21 @@ public class MultiDataSourceConfig {
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[AOP](ex-soen-plwe-to-jvsp__aop.md)** - AOP for transactions
-- **[Best Practices](ex-soen-plwe-to-jvsp__best-practices.md)** - Transaction patterns
+- **[AOP](aop.md)** - AOP for transactions
+- **[Best Practices](best-practices.md)** - Transaction patterns
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Database Access](../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md) - Java JDBC baseline
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Data access patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Repository standards
-- [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Query optimization
+- [Java Database Access](../../../programming-languages/java/ddd-standards.md) - Java JDBC baseline
+- [Spring Framework Idioms](./idioms.md) - Data access patterns
+- [Spring Framework Best Practices](./best-practices.md) - Repository standards
+- [Spring Framework Performance](./performance.md) - Query optimization
 
 **Spring Boot Extension**:
 
-- [Spring Boot Data Access](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md) - Auto-configured repositories
+- [Spring Boot Data Access](../jvm-spring-boot/data-access.md) - Auto-configured repositories
 
 ---
 

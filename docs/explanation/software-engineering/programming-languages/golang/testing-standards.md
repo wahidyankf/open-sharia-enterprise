@@ -22,7 +22,7 @@ tags:
   - go-1.25
   - go-1.26
 related:
-  - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
+  - ./coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -73,7 +73,7 @@ Test-Driven Development (TDD) is a software development methodology where tests 
 
 **Related Documentation**:
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
 - [Behaviour-Driven Development Standards](#part-2-behaviour-driven-development-bdd-standards)
 
 ### 🔄 TDD Fundamentals
@@ -1774,7 +1774,7 @@ Behaviour-Driven Development (BDD) is an agile software development methodology 
 **Related Documentation**:
 
 - [Test-Driven Development Standards](#part-1-test-driven-development-tdd-standards)
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
 
 ### 🔄 BDD Fundamentals
 
@@ -3497,7 +3497,7 @@ Behaviour-Driven Development in Go emphasizes:
 
 **Related Documentation**:
 
-- [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
+- [Best Practices](./coding-standards.md#part-2-naming--organization-best-practices)
 
 ---
 

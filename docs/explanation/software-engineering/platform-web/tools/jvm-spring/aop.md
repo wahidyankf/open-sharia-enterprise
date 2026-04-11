@@ -441,21 +441,21 @@ Spring AOP only supports method execution join points. Cannot intercept field ac
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
-- **[Idioms](ex-soen-plwe-to-jvsp__idioms.md)** - Framework patterns
-- **[Data Access](ex-soen-plwe-to-jvsp__data-access.md)** - Transaction management
+- **[Idioms](idioms.md)** - Framework patterns
+- **[Data Access](data-access.md)** - Transaction management
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Java Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
-- [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Spring patterns
-- [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - AOP best practices
-- [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - Security aspects
+- [Java Patterns](../../../programming-languages/java/coding-standards.md) - Java baseline patterns
+- [Spring Framework Idioms](./idioms.md) - Spring patterns
+- [Spring Framework Best Practices](./best-practices.md) - AOP best practices
+- [Spring Framework Security](./security.md) - Security aspects
 
 **Spring Boot Extension**:
 
-- [Spring Boot AOP](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__aop.md) - Auto-configured aspects
+- [Spring Boot AOP](../jvm-spring-boot/aop.md) - Auto-configured aspects
 
 ---
 

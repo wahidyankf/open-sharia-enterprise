@@ -345,7 +345,7 @@ Languages in this documentation are chosen based on:
 1. **Learn Java fundamentals** - [AyoKoding Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)
 2. **Apply OSE standards** - [Java Coding Standards](./java/README.md)
 3. **Study best practices** - [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)
-4. **Integrate with DDD** - [DDD Standards](./java/ex-soen-prla-ja__ddd-standards.md)
+4. **Integrate with DDD** - [DDD Standards](./java/ddd-standards.md)
 
 ### For Full-Stack Developers
 
@@ -369,7 +369,7 @@ This language documentation complements other areas:
 - **[Architecture](../architecture/README.md)** - C4 model, DDD patterns
 - **[Functional Programming](../../../../governance/development/pattern/functional-programming.md)** - Cross-language FP principles
 - **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Quality requirements
-- **[Monorepo Structure](../../../reference/re__monorepo-structure.md)** - Project organization
+- **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
 
 ## Principles Reflected in Language Documentation
 
@@ -426,7 +426,7 @@ To document a new language:
 - **[Architecture](../architecture/README.md)** - C4 and DDD documentation
 - **[Development Practices](../development/README.md)** - TDD and BDD documentation
 - **[Explanation Documentation Index](../../README.md)** - All conceptual documentation
-- **[Monorepo Structure](../../../reference/re__monorepo-structure.md)** - Project organization
+- **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
 - **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Quality requirements
 
 ---

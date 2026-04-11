@@ -418,10 +418,10 @@ enum MurabahaContractState {
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Newtype pattern
-- [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Phantom types, sealed traits
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Domain error types
-- [API Standards](ex-soen-prla-ru__api-standards.md) - Mapping domain types to API responses
+- [Coding Standards](coding-standards.md) - Newtype pattern
+- [Type Safety Standards](type-safety-standards.md) - Phantom types, sealed traits
+- [Error Handling Standards](error-handling-standards.md) - Domain error types
+- [API Standards](api-standards.md) - Mapping domain types to API responses
 
 ## Related Documentation
 

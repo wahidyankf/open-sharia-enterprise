@@ -11,9 +11,9 @@ tags:
   - standards
   - validation
 related:
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__coding-standards.md
-  - ./ex-soen-prla-el__type-safety-standards.md
+  - ./coding-standards.md
+  - ./coding-standards.md
+  - ./type-safety-standards.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity

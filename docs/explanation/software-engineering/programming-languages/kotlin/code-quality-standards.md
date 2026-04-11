@@ -446,9 +446,9 @@ git add -A
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-ko__coding-standards.md) - Naming conventions enforced by ktlint
-- [Build Configuration](./ex-soen-prla-ko__build-configuration.md) - Gradle plugin setup details
-- [Testing Standards](./ex-soen-prla-ko__testing-standards.md) - Kover coverage configuration
+- [Coding Standards](./coding-standards.md) - Naming conventions enforced by ktlint
+- [Build Configuration](./build-configuration.md) - Gradle plugin setup details
+- [Testing Standards](./testing-standards.md) - Kover coverage configuration
 
 ## Related Documentation
 

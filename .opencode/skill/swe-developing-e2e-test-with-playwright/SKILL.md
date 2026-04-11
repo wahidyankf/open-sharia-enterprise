@@ -329,12 +329,12 @@ test("murabaha contract workflow", async ({ page }) => {
 
 **See Authoritative Documentation**:
 
-- [Test Organization](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__test-organization.md) - Test structure, fixtures, grouping
-- [Selectors](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__selectors.md) - Accessibility-first selector strategies
-- [Assertions](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__assertions.md) - Web-first assertions
-- [Page Objects](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__page-objects.md) - Page Object Model patterns
-- [Configuration](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__configuration.md) - playwright.config.ts setup
-- [Best Practices](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__best-practices.md) - Production testing standards
-- [Anti-Patterns](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__anti-patterns.md) - Common mistakes
-- [Idioms](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__idioms.md) - Playwright-specific patterns
-- [Debugging](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__debugging.md) - Trace viewer, inspector
+- [Test Organization](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/test-organization.md) - Test structure, fixtures, grouping
+- [Selectors](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/selectors.md) - Accessibility-first selector strategies
+- [Assertions](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/assertions.md) - Web-first assertions
+- [Page Objects](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/page-objects.md) - Page Object Model patterns
+- [Configuration](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/configuration.md) - playwright.config.ts setup
+- [Best Practices](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/best-practices.md) - Production testing standards
+- [Anti-Patterns](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/anti-patterns.md) - Common mistakes
+- [Idioms](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/idioms.md) - Playwright-specific patterns
+- [Debugging](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/debugging.md) - Trace viewer, inspector

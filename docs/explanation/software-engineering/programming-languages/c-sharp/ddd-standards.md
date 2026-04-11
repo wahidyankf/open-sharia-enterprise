@@ -455,9 +455,9 @@ Domain ← Application ← Api → (Application, Domain)
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Record types, immutability patterns
-- [Framework Integration](ex-soen-prla-csh__framework-integration.md) - EF Core owned entities for value objects
-- [API Standards](ex-soen-prla-csh__api-standards.md) - CQRS with MediatR
+- [Coding Standards](coding-standards.md) - Record types, immutability patterns
+- [Framework Integration](framework-integration.md) - EF Core owned entities for value objects
+- [API Standards](api-standards.md) - CQRS with MediatR
 
 ## Related Documentation
 

@@ -18,15 +18,15 @@ principles:
 created: 2026-02-06
 updated: 2026-02-06
 related:
-  - ./ex-soen-plwe-to-jvspbo__observability.md
-  - ./ex-soen-plwe-to-jvspbo__performance.md
-  - ./ex-soen-plwe-to-jvspbo__domain-driven-design.md
-  - ../jvm-spring/ex-soen-plwe-to-jvsp__aop.md
+  - ./observability.md
+  - ./performance.md
+  - ./domain-driven-design.md
+  - ../jvm-spring/aop.md
 ---
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand [Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md) before reading this document. This covers Spring Boot-specific AOP features and auto-configuration.
+**REQUIRED**: You MUST understand [Spring Framework AOP](../jvm-spring/aop.md) before reading this document. This covers Spring Boot-specific AOP features and auto-configuration.
 
 **STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path for practical AOP experience.
 
@@ -830,13 +830,13 @@ These AOP standards enforce the the software engineering principles:
 
 **Prerequisites**:
 
-- **[Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md)** - Foundation concepts (aspects, pointcuts, advice types)
+- **[Spring Framework AOP](../jvm-spring/aop.md)** - Foundation concepts (aspects, pointcuts, advice types)
 
 **Spring Boot Documentation**:
 
-- **[Observability](ex-soen-plwe-to-jvspbo__observability.md)** - Actuator metrics integration
-- **[Performance](ex-soen-plwe-to-jvspbo__performance.md)** - Performance monitoring and optimization
-- **[Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md)** - Domain events and aggregates
+- **[Observability](observability.md)** - Actuator metrics integration
+- **[Performance](performance.md)** - Performance monitoring and optimization
+- **[Domain-Driven Design](domain-driven-design.md)** - Domain events and aggregates
 
 **External Resources**:
 
@@ -848,10 +848,10 @@ These AOP standards enforce the the software engineering principles:
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md) - Manual Spring AOP
-- [Java Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - AOP patterns
-- [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - Security aspects
+- [Spring Framework AOP](../jvm-spring/aop.md) - Manual Spring AOP
+- [Java Patterns](../../../programming-languages/java/coding-standards.md) - Java baseline patterns
+- [Spring Boot Idioms](./idioms.md) - AOP patterns
+- [Spring Boot Security](./security.md) - Security aspects
 
 ---
 

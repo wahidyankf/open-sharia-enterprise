@@ -308,9 +308,9 @@ Key functions provided:
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Discriminated union modeling that error types use
-- [Functional Programming Standards](ex-soen-prla-fsh__functional-programming-standards.md) - Monadic composition and Result CEs
-- [API Standards](ex-soen-prla-fsh__api-standards.md) - Mapping domain Result errors to HTTP responses
+- [Coding Standards](coding-standards.md) - Discriminated union modeling that error types use
+- [Functional Programming Standards](functional-programming-standards.md) - Monadic composition and Result CEs
+- [API Standards](api-standards.md) - Mapping domain Result errors to HTTP responses
 
 ## Related Documentation
 

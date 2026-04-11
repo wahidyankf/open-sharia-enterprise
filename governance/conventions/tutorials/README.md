@@ -53,7 +53,7 @@ The Full Set Tutorial Package consists of 5 mandatory components:
 - [Writing Conventions](../writing/README.md) - Universal content quality standards (foundation)
 - [Structure Conventions](../structure/README.md) - File organization and Diataxis framework
 - [Hugo Conventions](../hugo/README.md) - Hugo site content standards
-- [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) - Step-by-step guide
+- [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md) - Step-by-step guide
 
 ## Principles Implemented/Respected
 

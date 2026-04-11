@@ -1402,7 +1402,7 @@ content/en/learn/swe/programming-languages/golang/
 - Full Set Tutorial Package with 5 mandatory components (foundational tutorials, by-concept track, by-example track, cookbook in tutorials/cookbook/, supporting docs)
 - Coverage philosophy (0-30% foundational, 95% learning tracks, practical recipes)
 - Quality metrics and pedagogical patterns
-- Step-by-step implementation guide: [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md)
+- Step-by-step implementation guide: [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md)
 
 ### Blogging Content Structure (Rants/Celoteh)
 

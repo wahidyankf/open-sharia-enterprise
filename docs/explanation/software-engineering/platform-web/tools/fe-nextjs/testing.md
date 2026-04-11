@@ -915,14 +915,14 @@ export default defineConfig({
 
 **Core Next.js**:
 
-- [Server Components](ex-soen-plwe-to-fene__server-components.md) - Testing RSC
-- [API Routes](ex-soen-plwe-to-fene__api-routes.md) - Testing route handlers
-- [Data Fetching](ex-soen-plwe-to-fene__data-fetching.md) - Testing data patterns
+- [Server Components](server-components.md) - Testing RSC
+- [API Routes](api-routes.md) - Testing route handlers
+- [Data Fetching](data-fetching.md) - Testing data patterns
 
 **Development**:
 
-- [Best Practices](ex-soen-plwe-to-fene__best-practices.md) - Testing standards
-- [TypeScript](ex-soen-plwe-to-fene__typescript.md) - Type-safe testing
+- [Best Practices](best-practices.md) - Testing standards
+- [TypeScript](typescript.md) - Type-safe testing
 
 ---
 

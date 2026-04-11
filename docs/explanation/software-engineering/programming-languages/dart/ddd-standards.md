@@ -645,10 +645,10 @@ DDD standards are enforced through:
 
 ## Related Standards
 
-- [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Naming conventions for domain objects
-- [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Domain exception hierarchy
-- [Testing Standards](./ex-soen-prla-da__testing-standards.md) - Testing invariant enforcement
-- [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Sealed classes and records
+- [Coding Standards](./coding-standards.md) - Naming conventions for domain objects
+- [Error Handling Standards](./error-handling-standards.md) - Domain exception hierarchy
+- [Testing Standards](./testing-standards.md) - Testing invariant enforcement
+- [Type Safety Standards](./type-safety-standards.md) - Sealed classes and records
 
 ## Related Documentation
 

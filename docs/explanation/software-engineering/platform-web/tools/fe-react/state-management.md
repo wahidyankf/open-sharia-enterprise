@@ -26,10 +26,10 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](ex-soen-plwe-to-fere__idioms.md) - useState and useReducer patterns
-- [Hooks](ex-soen-plwe-to-fere__hooks.md) - React Hooks guide
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
-- [Performance](ex-soen-plwe-to-fere__performance.md) - State optimization
+- [Idioms](idioms.md) - useState and useReducer patterns
+- [Hooks](hooks.md) - React Hooks guide
+- [Component Architecture](component-architecture.md) - Component patterns
+- [Performance](performance.md) - State optimization
 
 ## Overview
 
@@ -1180,11 +1180,11 @@ graph TD
 
 ## Related Documentation
 
-- **[Idioms](ex-soen-plwe-to-fere__idioms.md)** - useState and useReducer patterns
-- **[Hooks](ex-soen-plwe-to-fere__hooks.md)** - React Hooks guide
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[Performance](ex-soen-plwe-to-fere__performance.md)** - State optimization
-- **[Data Fetching](ex-soen-plwe-to-fere__data-fetching.md)** - API integration patterns
+- **[Idioms](idioms.md)** - useState and useReducer patterns
+- **[Hooks](hooks.md)** - React Hooks guide
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[Performance](performance.md)** - State optimization
+- **[Data Fetching](data-fetching.md)** - API integration patterns
 
 ---
 

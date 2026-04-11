@@ -392,9 +392,9 @@ ENTRYPOINT ["./ZakatService"]
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-fsh__coding-standards.md) - Module structure that drives file ordering
-- [Code Quality Standards](ex-soen-prla-fsh__code-quality-standards.md) - Fantomas pinned in `.config/dotnet-tools.json`
-- [Testing Standards](ex-soen-prla-fsh__testing-standards.md) - Test project also follows ordering rules
+- [Coding Standards](coding-standards.md) - Module structure that drives file ordering
+- [Code Quality Standards](code-quality-standards.md) - Fantomas pinned in `.config/dotnet-tools.json`
+- [Testing Standards](testing-standards.md) - Test project also follows ordering rules
 
 ## Related Documentation
 

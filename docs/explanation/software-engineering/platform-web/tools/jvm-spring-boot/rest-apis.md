@@ -1616,27 +1616,27 @@ Production guidelines for REST API design.
 
 ## 🔗 Related Documentation
 
-- [Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md) - Production standards and patterns
-- [Spring Boot Security](ex-soen-plwe-to-jvspbo__security.md) - API security patterns
-- [Spring Boot Data Access](ex-soen-plwe-to-jvspbo__data-access.md) - Repository integration
-- [Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md) - Common API mistakes
+- [Spring Boot Best Practices](best-practices.md) - Production standards and patterns
+- [Spring Boot Security](security.md) - API security patterns
+- [Spring Boot Data Access](data-access.md) - Repository integration
+- [Spring Boot Anti-Patterns](anti-patterns.md) - Common API mistakes
 
 ---
 
 **Next Steps:**
 
-- Review [Testing](ex-soen-plwe-to-jvspbo__testing.md) for API testing patterns
-- Explore [Observability](ex-soen-plwe-to-jvspbo__observability.md) for API monitoring
-- Check [Performance](ex-soen-plwe-to-jvspbo__performance.md) for optimization
+- Review [Testing](testing.md) for API testing patterns
+- Explore [Observability](observability.md) for API monitoring
+- Check [Performance](performance.md) for optimization
 
 ## See Also
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework REST APIs](../jvm-spring/ex-soen-plwe-to-jvsp__rest-apis.md) - Manual Spring REST
-- [Java API Design](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - REST patterns
-- [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - API security
+- [Spring Framework REST APIs](../jvm-spring/rest-apis.md) - Manual Spring REST
+- [Java API Design](../../../programming-languages/java/api-standards.md) - Java API baseline
+- [Spring Boot Idioms](./idioms.md) - REST patterns
+- [Spring Boot Security](./security.md) - API security
 
 ---
 

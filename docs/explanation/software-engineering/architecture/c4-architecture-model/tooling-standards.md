@@ -278,8 +278,8 @@ Before committing a C4 diagram, verify:
 
 ## Related Standards
 
-- **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling
-- **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, required levels
+- **[Notation Standards](./notation-standards.md)** - WCAG colors, Mermaid syntax, labeling
+- **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, required levels
 
 ## Principles Implemented
 

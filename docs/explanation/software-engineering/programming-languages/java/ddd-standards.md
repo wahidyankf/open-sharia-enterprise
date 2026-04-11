@@ -559,9 +559,9 @@ class DonationTest {
 
 ### OSE Platform Standards
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Domain exception handling
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Aggregate thread-safety
-- [API Standards](./ex-soen-prla-ja__api-standards.md) - Command/query API design
+- [Error Handling Standards](./error-handling-standards.md) - Domain exception handling
+- [Concurrency Standards](./concurrency-standards.md) - Aggregate thread-safety
+- [API Standards](./api-standards.md) - Command/query API design
 
 ### Learning Resources
 
@@ -618,19 +618,19 @@ Before deploying DDD-based services, verify:
 
 **Project Structure**:
 
-- [Coding Standards](./ex-soen-prla-ja__coding-standards.md) - Domain package structure and hexagonal architecture layers
+- [Coding Standards](./coding-standards.md) - Domain package structure and hexagonal architecture layers
 
 **Error Handling**:
 
-- [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Domain exception patterns and aggregate validation errors
+- [Error Handling Standards](./error-handling-standards.md) - Domain exception patterns and aggregate validation errors
 
 **Testing**:
 
-- [Testing Standards](./ex-soen-prla-ja__testing-standards.md) - Aggregate testing patterns and domain event verification
+- [Testing Standards](./testing-standards.md) - Aggregate testing patterns and domain event verification
 
 **Concurrency**:
 
-- [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread-safe aggregate design and optimistic locking
+- [Concurrency Standards](./concurrency-standards.md) - Thread-safe aggregate design and optimistic locking
 
 **Last Updated**: 2026-02-04
 

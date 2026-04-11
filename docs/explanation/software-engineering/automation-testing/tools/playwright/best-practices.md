@@ -87,7 +87,7 @@ page.getByRole("button", { name: "Calculate Zakat" });
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
-- [Playwright Test Organization](ex-soen-aute-to-pl__test-organization.md)
+- [Playwright Test Organization](test-organization.md)
 
 ---
 

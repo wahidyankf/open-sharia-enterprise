@@ -149,18 +149,18 @@ OSE Platform follows a three-tier Rust edition strategy:
 
 **MUST follow these mandatory standards for all Rust code in OSE Platform:**
 
-1. **[Coding Standards](ex-soen-prla-ru__coding-standards.md)** - Naming conventions, module organization, idiomatic Rust
-2. **[Testing Standards](ex-soen-prla-ru__testing-standards.md)** - cargo test, proptest, mockall, tokio::test, coverage
-3. **[Code Quality Standards](ex-soen-prla-ru__code-quality-standards.md)** - rustfmt, Clippy, cargo audit, cargo deny, unsafe policy
-4. **[Build Configuration](ex-soen-prla-ru__build-configuration.md)** - Cargo.toml, workspaces, Cargo.lock, profiles, cargo-nextest
-5. **[Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md)** - Result/Option, thiserror, anyhow, ? operator
-6. **[Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md)** - Send/Sync, async/await, Tokio, Arc/Mutex, channels
-7. **[Performance Standards](ex-soen-prla-ru__performance-standards.md)** - Zero-cost abstractions, criterion.rs, profiling, allocations
-8. **[Security Standards](ex-soen-prla-ru__security-standards.md)** - Memory safety, cargo audit, secrecy crate, safe code policy
-9. **[API Standards](ex-soen-prla-ru__api-standards.md)** - Axum routing, extractors, Tower middleware, AppState
-10. **[DDD Standards](ex-soen-prla-ru__ddd-standards.md)** - Value objects, aggregates, Repository trait, domain events
-11. **[Memory Management Standards](ex-soen-prla-ru__memory-management-standards.md)** - Ownership, borrowing, lifetimes, smart pointers
-12. **[Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md)** - Traits, generics, algebraic types, phantom types
+1. **[Coding Standards](coding-standards.md)** - Naming conventions, module organization, idiomatic Rust
+2. **[Testing Standards](testing-standards.md)** - cargo test, proptest, mockall, tokio::test, coverage
+3. **[Code Quality Standards](code-quality-standards.md)** - rustfmt, Clippy, cargo audit, cargo deny, unsafe policy
+4. **[Build Configuration](build-configuration.md)** - Cargo.toml, workspaces, Cargo.lock, profiles, cargo-nextest
+5. **[Error Handling Standards](error-handling-standards.md)** - Result/Option, thiserror, anyhow, ? operator
+6. **[Concurrency Standards](concurrency-standards.md)** - Send/Sync, async/await, Tokio, Arc/Mutex, channels
+7. **[Performance Standards](performance-standards.md)** - Zero-cost abstractions, criterion.rs, profiling, allocations
+8. **[Security Standards](security-standards.md)** - Memory safety, cargo audit, secrecy crate, safe code policy
+9. **[API Standards](api-standards.md)** - Axum routing, extractors, Tower middleware, AppState
+10. **[DDD Standards](ddd-standards.md)** - Value objects, aggregates, Repository trait, domain events
+11. **[Memory Management Standards](memory-management-standards.md)** - Ownership, borrowing, lifetimes, smart pointers
+12. **[Type Safety Standards](type-safety-standards.md)** - Traits, generics, algebraic types, phantom types
 
 ## Documentation Structure
 
@@ -168,21 +168,21 @@ OSE Platform follows a three-tier Rust edition strategy:
 
 **Mandatory Standards (All Rust Developers MUST follow)**:
 
-1. [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Naming, module structure, idiomatic Rust compliance
-2. [Testing Standards](ex-soen-prla-ru__testing-standards.md) - cargo test patterns, coverage requirements, async testing
-3. [Code Quality Standards](ex-soen-prla-ru__code-quality-standards.md) - rustfmt configuration, Clippy lint set
+1. [Coding Standards](coding-standards.md) - Naming, module structure, idiomatic Rust compliance
+2. [Testing Standards](testing-standards.md) - cargo test patterns, coverage requirements, async testing
+3. [Code Quality Standards](code-quality-standards.md) - rustfmt configuration, Clippy lint set
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](ex-soen-prla-ru__security-standards.md) - cargo audit, safe code, secrets management
-- **Concurrency**: [Concurrency Standards](ex-soen-prla-ru__concurrency-standards.md) - async/await, Tokio, Send/Sync
-- **Domain Modeling**: [DDD Standards](ex-soen-prla-ru__ddd-standards.md) - Value objects, aggregates, Repository trait
-- **APIs**: [API Standards](ex-soen-prla-ru__api-standards.md) - Axum routing, extractors, middleware
-- **Performance**: [Performance Standards](ex-soen-prla-ru__performance-standards.md) - Profiling, benchmarks, zero-cost abstractions
-- **Error Handling**: [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Result/Option, thiserror, anyhow
-- **Memory**: [Memory Management Standards](ex-soen-prla-ru__memory-management-standards.md) - Ownership, lifetimes, smart pointers
-- **Type Safety**: [Type Safety Standards](ex-soen-prla-ru__type-safety-standards.md) - Traits, generics, algebraic types
-- **Build**: [Build Configuration](ex-soen-prla-ru__build-configuration.md) - Cargo.toml, workspaces, profiles
+- **Security**: [Security Standards](security-standards.md) - cargo audit, safe code, secrets management
+- **Concurrency**: [Concurrency Standards](concurrency-standards.md) - async/await, Tokio, Send/Sync
+- **Domain Modeling**: [DDD Standards](ddd-standards.md) - Value objects, aggregates, Repository trait
+- **APIs**: [API Standards](api-standards.md) - Axum routing, extractors, middleware
+- **Performance**: [Performance Standards](performance-standards.md) - Profiling, benchmarks, zero-cost abstractions
+- **Error Handling**: [Error Handling Standards](error-handling-standards.md) - Result/Option, thiserror, anyhow
+- **Memory**: [Memory Management Standards](memory-management-standards.md) - Ownership, lifetimes, smart pointers
+- **Type Safety**: [Type Safety Standards](type-safety-standards.md) - Traits, generics, algebraic types
+- **Build**: [Build Configuration](build-configuration.md) - Cargo.toml, workspaces, profiles
 
 ### Documentation Organization
 
@@ -327,7 +327,7 @@ graph TD
 **Platform Documentation**:
 
 - [Tech Stack Languages Index](../README.md)
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md)
+- [Monorepo Structure](../../../../reference/monorepo-structure.md)
 
 ---
 

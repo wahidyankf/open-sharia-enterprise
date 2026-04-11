@@ -293,7 +293,7 @@ let response: ContractResponse = contract.into(); // Auto-derived Into works
 
 ## Sealed Traits for Closed Type Families
 
-**SHOULD** use the sealed trait pattern to prevent external types from implementing internal traits (see also [DDD Standards](ex-soen-prla-ru__ddd-standards.md)):
+**SHOULD** use the sealed trait pattern to prevent external types from implementing internal traits (see also [DDD Standards](ddd-standards.md)):
 
 ```rust
 // Prevents external crates from implementing ContractState
@@ -358,10 +358,10 @@ fn configure_service(mode: ServiceMode) -> Service {
 
 ## Related Standards
 
-- [Coding Standards](ex-soen-prla-ru__coding-standards.md) - Newtype pattern for value objects
-- [DDD Standards](ex-soen-prla-ru__ddd-standards.md) - Domain type modeling
-- [Error Handling Standards](ex-soen-prla-ru__error-handling-standards.md) - Error types as algebraic types
-- [Memory Management Standards](ex-soen-prla-ru__memory-management-standards.md) - Smart pointers in generic code
+- [Coding Standards](coding-standards.md) - Newtype pattern for value objects
+- [DDD Standards](ddd-standards.md) - Domain type modeling
+- [Error Handling Standards](error-handling-standards.md) - Error types as algebraic types
+- [Memory Management Standards](memory-management-standards.md) - Smart pointers in generic code
 
 ## Related Documentation
 

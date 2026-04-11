@@ -82,21 +82,21 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ### Core Standards (Mandatory for All Code)
 
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__coding-standards.md)** - Naming, module organization, idiomatic Rust
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__testing-standards.md)** - cargo test, proptest, mockall, async tests
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__code-quality-standards.md)** - rustfmt, Clippy, cargo audit
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__build-configuration.md)** - Cargo.toml, workspaces, release profiles
+1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/rust/coding-standards.md)** - Naming, module organization, idiomatic Rust
+2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/rust/testing-standards.md)** - cargo test, proptest, mockall, async tests
+3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md)** - rustfmt, Clippy, cargo audit
+4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/rust/build-configuration.md)** - Cargo.toml, workspaces, release profiles
 
 ### Context-Specific Standards (Apply When Relevant)
 
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__security-standards.md)** - Memory safety, cargo audit, secrets management
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__concurrency-standards.md)** - Ownership-based concurrency, Tokio, Arc/Mutex
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__ddd-standards.md)** - Newtype pattern, trait-based repository
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__api-standards.md)** - Axum routing, extractors, tower middleware
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__performance-standards.md)** - Zero-cost abstractions, criterion benchmarks
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__error-handling-standards.md)** - Result/Option, thiserror, anyhow
-7. **[Memory Management Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__memory-management-standards.md)** - Ownership, lifetimes, smart pointers
-8. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__type-safety-standards.md)** - Traits, generics, phantom types
+1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/rust/security-standards.md)** - Memory safety, cargo audit, secrets management
+2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/rust/concurrency-standards.md)** - Ownership-based concurrency, Tokio, Arc/Mutex
+3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/rust/ddd-standards.md)** - Newtype pattern, trait-based repository
+4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/rust/api-standards.md)** - Axum routing, extractors, tower middleware
+5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/rust/performance-standards.md)** - Zero-cost abstractions, criterion benchmarks
+6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/rust/error-handling-standards.md)** - Result/Option, thiserror, anyhow
+7. **[Memory Management Standards](../../docs/explanation/software-engineering/programming-languages/rust/memory-management-standards.md)** - Ownership, lifetimes, smart pointers
+8. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/rust/type-safety-standards.md)** - Traits, generics, phantom types
 
 **See `swe-programming-rust` Skill** for quick access to coding standards.
 

@@ -25,9 +25,9 @@ updated: 2026-01-25
 
 **Related Guides**:
 
-- [Component Architecture](ex-soen-plwe-to-fere__component-architecture.md) - Component patterns
-- [TypeScript](ex-soen-plwe-to-fere__typescript.md) - Domain modeling
-- [Best Practices](ex-soen-plwe-to-fere__best-practices.md) - Architecture standards
+- [Component Architecture](component-architecture.md) - Component patterns
+- [TypeScript](typescript.md) - Domain modeling
+- [Best Practices](best-practices.md) - Architecture standards
 
 ## Overview
 
@@ -1491,9 +1491,9 @@ export const ZakatRecordManager: React.FC<{ userId: string; islamicYear: number 
 
 ## Related Documentation
 
-- **[Component Architecture](ex-soen-plwe-to-fere__component-architecture.md)** - Component patterns
-- **[TypeScript](ex-soen-plwe-to-fere__typescript.md)** - Domain modeling
-- **[Best Practices](ex-soen-plwe-to-fere__best-practices.md)** - Architecture standards
+- **[Component Architecture](component-architecture.md)** - Component patterns
+- **[TypeScript](typescript.md)** - Domain modeling
+- **[Best Practices](best-practices.md)** - Architecture standards
 
 ---
 

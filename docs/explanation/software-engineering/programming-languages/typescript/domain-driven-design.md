@@ -13,9 +13,9 @@ tags:
   - domain-events
   - repositories
 related:
-  - ./ex-soen-prla-ty__best-practices.md
-  - ./ex-soen-prla-ty__type-safety.md
-  - ./ex-soen-prla-ty__functional-programming.md
+  - ./best-practices.md
+  - ./type-safety.md
+  - ./functional-programming.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
@@ -1692,8 +1692,8 @@ runZakatDistributionExample().catch(console.error);
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](ex-soen-prla-ty__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](ex-soen-prla-ty__type-safety.md)** - Advanced type patterns
+- **[TypeScript Best Practices](best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](type-safety.md)** - Advanced type patterns
 - **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
 ---

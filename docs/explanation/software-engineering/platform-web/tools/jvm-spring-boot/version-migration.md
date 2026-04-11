@@ -138,10 +138,10 @@ public class SecurityConfig {
 
 **OSE Explanation Foundation**:
 
-- [Spring Framework Version Migration](../jvm-spring/ex-soen-plwe-to-jvsp__version-migration.md) - Spring version updates
-- [Java Version Migration](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java version updates
-- [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Modern patterns
-- [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Migration standards
+- [Spring Framework Version Migration](../jvm-spring/version-migration.md) - Spring version updates
+- [Java Version Migration](../../../programming-languages/java/framework-integration.md) - Java version updates
+- [Spring Boot Idioms](./idioms.md) - Modern patterns
+- [Spring Boot Best Practices](./best-practices.md) - Migration standards
 
 ---
 
