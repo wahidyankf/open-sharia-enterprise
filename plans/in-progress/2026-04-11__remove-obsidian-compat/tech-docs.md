@@ -151,7 +151,7 @@ From `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co
 - All `internal/docs/{prefix_rules,validator,fixer,scanner,reporter,link_updater,types}*.go` — deleted in §6
 - All `cmd/docs_validate_naming*.go` — deleted in §6
 - `internal/docs/testdata/` — audit; keep only fixtures used by `links_*`
-- `cmd/docs.go` — edit to stop registering `validate-naming`
+- `cmd/docs.go` — no edit required; `validate-naming` registration is in `docs_validate_naming.go`'s `init()`, removed by that file's deletion
 
 #### 1.3.c Known false positives — DO NOT edit
 
@@ -252,12 +252,15 @@ while IFS=$'\t' read -r old new; do
   if [ "$old_base" != "$new_base" ]; then
     ripgrep -l --fixed-strings "$old_base" \
       --glob '!plans/done/**' \
+      --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' \
       --glob '!local-temp/**' \
       --glob '!.opencode/**' \
       --glob '!apps/oseplatform-web/content/updates/**' \
       --glob '!docs/metadata/external-links-status.yaml' \
       | while read -r file; do
-          sed -i '' "s|$old_base|$new_base|g" "$file"
+          # Escape dots in old_base so sed treats them as literal characters (not any-char in BRE)
+          escaped_old=$(echo "$old_base" | sed 's/\./\\./g')
+          sed -i '' "s|$escaped_old|$new_base|g" "$file"
         done
   fi
 done < local-temp/obsidian-rename-mapping.tsv
@@ -471,6 +474,7 @@ After all edits, the final check is:
 ```bash
 ripgrep -i obsidian \
   --glob '!plans/done/**' \
+  --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' \
   --glob '!local-temp/**' \
   --glob '!.opencode/**' \
   --glob '!apps/oseplatform-web/content/updates/**' \
@@ -515,6 +519,12 @@ link_updater_test.go
 - `apps/rhino-cli/internal/docs/types.go` — delete only if no remaining file in the package (including `links_*.go`) imports its types. Run `go build ./apps/rhino-cli/...` after removal to confirm.
 - `apps/rhino-cli/internal/docs/testdata/` — keep fixtures referenced by `links_*_test.go`; delete fixtures referenced only by removed tests. Determine by `ripgrep` from each test file.
 
+**Additional deletions and edits** (stale references that become orphaned after the above deletions):
+
+- `specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` — Gherkin feature file consumed by `docs_validate_naming.integration_test.go`; orphaned after that test file is deleted.
+- `apps/rhino-cli/cmd/steps_common_test.go` lines containing the `Docs validate-naming step patterns` const block — the constants `stepDeveloperRunsValidateDocsNaming`, `stepDeveloperRunsValidateDocsNamingWithFix`, `stepDeveloperRunsValidateDocsNamingWithFixAndApply` and all other constants in that block become orphaned after `docs_validate_naming.integration_test.go` is deleted. Remove the entire `// Docs validate-naming step patterns.` const block (lines ~126–141).
+- `apps/rhino-cli/cmd/testable.go` — delete the `// docs validate-naming command delegation.` comment and its two variable declarations (`docsValidateAllFn`, `docsFixFn`) on lines ~41–43; these delegations are used only by the removed command files.
+
 ### 6.2 Files to preserve
 
 **Link validation** — the GitHub-compatible link checker remains valuable and survives the refactor:
@@ -530,7 +540,7 @@ apps/rhino-cli/cmd/docs_validate_links.go               + _test.go + .integratio
 
 ### 6.3 Edits required
 
-1. **`apps/rhino-cli/cmd/docs.go`** — remove the registration of the `validate-naming` subcommand from the parent `docs` cobra command. Keep `validate-links` registration intact.
+1. **`apps/rhino-cli/cmd/docs.go`** — no edit required. The `validate-naming` registration (`docsCmd.AddCommand(validateDocsNamingCmd)`) is in `docs_validate_naming.go`'s `init()` function; it is automatically removed when that file is deleted. The `validate-links` registration remains intact.
 2. **`apps/rhino-cli/README.md`** — delete the section describing `validate-naming`, its flags (`--staged-only`, `-o json`, `-o markdown`, `--fix`, `--apply`, `--no-update-links`), and any example outputs.
 3. **`apps/rhino-cli/internal/docs/README.md` (if present)** — update the package-level docs to describe only the `links_*` surface.
 4. **Any agent or skill that documents the `validate-naming` command** — grep `.claude/` and `governance/` for `validate-naming` and remove instructions pointing at it.

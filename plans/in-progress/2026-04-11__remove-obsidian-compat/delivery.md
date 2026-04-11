@@ -2,6 +2,23 @@
 
 This document is the phase-by-phase execution plan. Each checkbox represents one concrete, independently verifiable action. Phases execute sequentially; validation gates between phases must pass before proceeding.
 
+## Commit Guidelines
+
+- [ ] Commit each phase separately using the message specified at the end of that phase
+- [ ] Follow Conventional Commits: `<type>(<scope>): <description>`
+- [ ] If a single phase's work touches multiple unrelated domains (e.g., rhino-cli + `.claude/` + `governance/`), split into separate commits within that phase rather than producing one multi-domain commit
+- [ ] Review `git log --oneline` before Phase 8 to confirm clean segmentation
+
+## Environment Setup (Before Phase 1)
+
+- [ ] Run `npm install` to ensure all dependencies are current
+- [ ] Run `npm run doctor` to verify required tool versions (Node.js, Volta, Go, etc.)
+- [ ] Run `nx run rhino-cli:test:quick` to confirm rhino-cli tests pass before any changes
+- [ ] Run `npm run lint:md` to confirm zero markdown lint errors before any changes
+- [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` to confirm all affected targets pass before changes; fix ALL failures before proceeding
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 ## Phase 1 — Inventory and Baseline
 
 **Goal**: Capture the current state and catch collisions before any destructive action.
@@ -10,7 +27,7 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 - [ ] Enumerate all files under `docs/.obsidian/` and save to `local-temp/obsidian-vault-files.txt`
 - [ ] Enumerate all `docs/**/*__*.md` files and save to `local-temp/obsidian-prefixed-files.txt`
 - [ ] Count total docs markdown files and prefixed files; record baseline in the plan's execution notes
-- [ ] Run `ripgrep -il obsidian` across the repo and save the filtered list (excluding `plans/done/`, `.opencode/`, `apps/oseplatform-web/content/updates/`, `docs/metadata/external-links-status.yaml`, `.gitignore`) to `local-temp/obsidian-references.txt`
+- [ ] Run `ripgrep -il obsidian` across the repo and save the filtered list (excluding `plans/done/`, `.opencode/`, `apps/oseplatform-web/content/updates/`, `docs/metadata/external-links-status.yaml`, `.gitignore`) to `local-temp/obsidian-references.txt` (`.gitignore` excluded here because Phase 2 handles it explicitly)
 - [ ] Generate the rename mapping TSV at `local-temp/obsidian-rename-mapping.tsv` using the command in `tech-docs.md` §2.1
 - [ ] Run the collision check (`awk -F'\t' '{print $2}' ... | sort | uniq -d`); record output to `local-temp/obsidian-rename-collisions.txt`
 - [ ] If collisions exist, edit the mapping file to resolve each with a descriptive suffix (no prefix reintroduction)
@@ -23,7 +40,7 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 - [ ] Baseline counts recorded
 - [ ] Zero collisions remain in the mapping
-- [ ] Open Questions in `tech-docs.md` §9 are resolved or deferred explicitly
+- [ ] Open Questions in `tech-docs.md` §10 are resolved or deferred explicitly
 
 ## Phase 2 — Delete Obsidian Vault Config
 
@@ -55,7 +72,7 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 - [ ] Update `CLAUDE.md` (project root and any subproject) references to the file-naming convention if any cite the prefix scheme
 - [ ] Grep for other files that cite the prefix scheme (e.g., `governance/conventions/structure/plans.md` mentions "not applicable to plans/"); leave that mention intact but confirm it still renders correctly
 - [ ] Run `npm run lint:md`
-- [ ] Commit: `docs(governance): rewrite file-naming convention on standard-markdown and GitHub basis`
+- [ ] Commit: `docs(conventions): rewrite file-naming convention on standard-markdown and GitHub basis`
 
 ### Phase 3 gate
 
@@ -81,7 +98,10 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 - [ ] `git rm apps/rhino-cli/internal/docs/link_updater.go apps/rhino-cli/internal/docs/link_updater_test.go`
 - [ ] If `types.go` is now orphaned (no `links_*.go` imports remain), `git rm apps/rhino-cli/internal/docs/types.go`; otherwise keep it
 - [ ] Audit `apps/rhino-cli/internal/docs/testdata/` — delete fixtures only referenced by removed tests, keep fixtures referenced by `links_*_test.go`
-- [ ] Edit `apps/rhino-cli/cmd/docs.go` to remove the `validate-naming` subcommand registration; keep `validate-links`
+- [ ] `git rm specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` (Gherkin feature consumed only by the removed integration test)
+- [ ] Edit `apps/rhino-cli/cmd/steps_common_test.go` — remove the entire `// Docs validate-naming step patterns.` const block (the block starting at line ~126 containing `stepDeveloperRunsValidateDocsNaming`, `stepDeveloperRunsValidateDocsNamingWithFix`, `stepDeveloperRunsValidateDocsNamingWithFixAndApply`, and all related step-pattern constants through `stepFilesRenamedToFollowNamingConvention`)
+- [ ] Edit `apps/rhino-cli/cmd/testable.go` — remove the `// docs validate-naming command delegation.` comment and its two variable declarations (`docsValidateAllFn = docs.ValidateAll` and `docsFixFn = docs.Fix`)
+- [ ] Verify `apps/rhino-cli/cmd/docs.go` contains no `validate-naming` references — registration was in `docs_validate_naming.go`'s `init()` and is removed automatically by its deletion above (no edit needed)
 - [ ] Edit `apps/rhino-cli/README.md` to remove the `validate-naming` section and any mention of `--staged-only`, `--fix`, `--apply`, `--no-update-links`, `-o json`, `-o markdown` flags that were specific to that command
 - [ ] Grep `.claude/agents/` and `.claude/skills/` for `validate-naming`; remove any instructions that tell an agent to invoke the removed command
 - [ ] Grep `governance/` for `validate-naming`; remove any references to the removed command
@@ -91,13 +111,15 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 - [ ] Run `nx run rhino-cli:test:quick` — must pass
 - [ ] Confirm coverage is still ≥90%; if not, add targeted tests to `links_*` code
 - [ ] Run `nx affected -t test:quick` to confirm no other project depended on the removed code
-- [ ] Commit: `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement`
+- [ ] Run `nx affected -t spec-coverage` to verify spec coverage is still met for rhino-cli and any other affected project
+- [ ] Commit 1 (Go file deletions): `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement`
+- [ ] Commit 2 (agent/governance cleanup): `refactor(repo): remove validate-naming references from agents, skills, and governance`
 
 ### Phase 3b gate
 
 - [ ] rhino-cli builds and tests pass with coverage ≥90%
 - [ ] `apps/rhino-cli/internal/docs/links_*` files are intact
-- [ ] `apps/rhino-cli/cmd/docs.go` no longer registers `validate-naming`
+- [ ] `apps/rhino-cli/cmd/docs_validate_naming.go` does not exist (its deletion removes the `validate-naming` registration, which was in that file's `init()`)
 - [ ] Zero references to `validate-naming` remain outside `plans/done/` and this plan folder
 - [ ] `git status` clean
 
@@ -128,7 +150,7 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 **Goal**: Rewrite every reference to the old prefixed filenames.
 
 - [ ] Execute the basename-rewriting sed loop from `tech-docs.md` §3.2 (with all exclusion globs)
-- [ ] Run the leftover-reference scan: `ripgrep --glob '!plans/done/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' '__[a-z0-9-]+\.md'`
+- [ ] Run the leftover-reference scan: `ripgrep --glob '!plans/done/**' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' '__[a-z0-9-]+\.md'`
 - [ ] Resolve any remaining matches by manual edit (e.g., inline code spans that the basename scan missed)
 - [ ] Spot-check `CLAUDE.md`, root `README.md`, `AGENTS.md`, `ROADMAP.md`, and `governance/README.md` — follow 5 arbitrary links in each; confirm each target exists
 - [ ] Spot-check the governance subsection indices (`governance/conventions/README.md`, `governance/development/README.md`, `governance/workflows/README.md`, `governance/principles/README.md`)
@@ -181,7 +203,7 @@ Files from `tech-docs.md` §1.3.b that explain the prefix encoding in narrative 
 - [ ] `governance/conventions/structure/README.md` — rewrite any description of the prefix scheme to describe the new kebab-case rule
 - [ ] `governance/conventions/structure/diataxis-framework.md` — remove prefix examples; keep Diátaxis structure
 - [ ] `governance/conventions/structure/programming-language-docs-separation.md` — update examples to use unprefixed filenames
-- [ ] `governance/conventions/structure/plans.md` — confirm the "not applicable to plans/" note still makes sense after the rewrite; update wording if needed
+- [ ] `governance/conventions/structure/plans.md` — confirm the "not applicable to plans/" note still makes sense after the rewrite; update wording if needed. Also update the table row at ~line 270 (`| **File Naming** | No prefixes inside folders | Prefixes encode directory path |`) which will be stale after the convention rewrite, and verify the Phase 5 sed loop correctly rewrites the inline-code reference to `docs/how-to/hoto__organize-work.md` in the table cell at ~line 340
 - [ ] `governance/conventions/writing/readme-quality.md` — remove prefix-scheme examples
 - [ ] `governance/conventions/tutorials/README.md`, `programming-language-content.md` — remove prefix examples
 - [ ] `governance/conventions/hugo/ayokoding.md` — remove any contrast against the docs/ prefix scheme
@@ -192,6 +214,7 @@ Files from `tech-docs.md` §1.3.b that explain the prefix encoding in narrative 
 - [ ] `governance/development/pattern/database-audit-trail.md` — update any linked example
 - [ ] `governance/development/quality/criticality-levels.md`, `three-level-testing-standard.md` — update any linked example
 - [ ] `governance/workflows/infra/development-environment-setup.md` — update any linked example
+- [ ] Run `ripgrep '(hierarchical-prefix|subdirectory code|prefix encoding|\[prefix\])' governance/` — expect zero matches (or matches only in plan archival documentation)
 
 ### Root navigation and subproject docs
 
@@ -253,9 +276,31 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 ### Final scrub verification
 
 - [ ] Run the Obsidian-word check: `ripgrep -i obsidian --glob '!plans/done/**' --glob '!local-temp/**' --glob '!.opencode/**' --glob '!apps/oseplatform-web/content/updates/**' --glob '!docs/metadata/external-links-status.yaml' --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**'` — expect zero matches
-- [ ] Run the prefix-pattern check: `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` with the same exclusions **plus** `--glob '!apps/ayokoding-web/content/en/learn/software-engineering/automation-tools/**'` and the other false-positive paths from `tech-docs.md` §1.3.c — expect zero matches
+- [ ] Run the prefix-pattern check (inline all false-positive globs — see `tech-docs.md §1.3.c` for rationale):
+
+  ```bash
+  ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)' \
+    --glob '!plans/done/**' \
+    --glob '!local-temp/**' \
+    --glob '!.opencode/**' \
+    --glob '!apps/oseplatform-web/content/updates/**' \
+    --glob '!docs/metadata/external-links-status.yaml' \
+    --glob '!plans/in-progress/2026-04-11__remove-obsidian-compat/**' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/automation-tools/**' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/data/databases/datomic/by-example/**' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/data/tools/clojure-migratus/by-example/advanced.md' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/**' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/automation-testing/tools/playwright/by-example/advanced.md' \
+    --glob '!apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/fe-nextjs/by-example/overview.md' \
+    --glob '!apps/a-demo-be-python-fastapi/tests/**' \
+    --glob '!apps/a-demo-be-rust-axum/Cargo.toml' \
+    --glob '!apps/a-demo-be-clojure-pedestal/test/step_definitions/steps.clj'
+  ```
+
+  Expect zero matches
+
 - [ ] Run `npm run lint:md`
-- [ ] Commit: `docs: scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation`
+- [ ] Commit: `docs(repo): scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation`
 
 ### Phase 6 gate
 
@@ -289,6 +334,8 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 
 **Goal**: Make sure everything still works together before pushing.
 
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 - [ ] Run `npm run lint:md`
 - [ ] Run `npm run format:md:check`
 - [ ] Run `npx nx affected -t typecheck lint test:quick spec-coverage` to warm cache (per CLAUDE.md pre-push guidance)
@@ -298,6 +345,14 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 - [ ] Re-run the final Obsidian scrub check from Phase 6
 - [ ] Re-run `find docs -type f -name '*__*.md'` — zero results
 - [ ] Re-run `find docs -name .obsidian` — zero results
+
+### Post-Push Verification
+
+- [ ] Push commits to `main`: `git push origin main`
+- [ ] Navigate to the repository's GitHub Actions page
+- [ ] Monitor the triggered workflows for the push (markdown lint, pre-commit validation, and any project-level CI workflows)
+- [ ] Wait for all checks to complete; if any check fails, fix it immediately and push a follow-up commit before proceeding to Phase 9
+- [ ] Do NOT proceed to Phase 9 until all CI checks are green
 
 ### Phase 8 gate
 
@@ -310,6 +365,7 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 
 **Goal**: Move the completed plan to `done/` and update indices.
 
+- [ ] Verify ALL delivery checklist items in Phases 1–8 are ticked before proceeding with archival
 - [ ] Move `plans/in-progress/2026-04-11__remove-obsidian-compat/` to `plans/done/2026-04-11__remove-obsidian-compat/` using `git mv`
 - [ ] Update `plans/in-progress/README.md` — remove this plan from the active list
 - [ ] Update `plans/done/README.md` — add this plan to the completed list with a one-line summary
@@ -329,15 +385,16 @@ The following `.claude/agents/*` files need both (a) Obsidian word scrub and (b)
 The delivery produces (approximately) this commit history on `main`:
 
 1. `chore(docs): delete Obsidian vault config and ignore entries` — Phase 2
-2. `docs(governance): rewrite file-naming convention on standard-markdown and GitHub basis` — Phase 3
-3. `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement` — Phase 3b
-4. `refactor(docs): rename prefixed files to kebab-case (300+ files)` — Phase 4 (pure rename)
-5. `refactor(docs): update internal links for renamed files` — Phase 5
-6. `docs: scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation` — Phase 6
-7. `chore(opencode): sync agent and skill mirrors after Obsidian and prefix scrub` — Phase 7
-8. `docs(plans): archive remove-obsidian-compat plan` — Phase 9
+2. `docs(conventions): rewrite file-naming convention on standard-markdown and GitHub basis` — Phase 3
+3. `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement` — Phase 3b (Go file deletions)
+4. `refactor(repo): remove validate-naming references from agents, skills, and governance` — Phase 3b (agent/governance cleanup)
+5. `refactor(docs): rename prefixed files to kebab-case (300+ files)` — Phase 4 (pure rename)
+6. `refactor(docs): update internal links for renamed files` — Phase 5
+7. `docs(repo): scrub Obsidian references and prefix-scheme narrative from governance, agents, skills, and navigation` — Phase 6
+8. `chore(opencode): sync agent and skill mirrors after Obsidian and prefix scrub` — Phase 7
+9. `docs(plans): archive remove-obsidian-compat plan` — Phase 9
 
-Each commit is independently revertible (see `tech-docs.md` §9). Phases 3b and 4 are coupled: reverting Phase 4 requires reverting Phase 3b simultaneously to restore consistent state.
+Each commit is independently revertible (see `tech-docs.md` §9). Phases 3b and 4 are coupled: reverting Phase 4 requires reverting Phase 3b (both commits) simultaneously to restore consistent state.
 
 ## Execution Notes
 

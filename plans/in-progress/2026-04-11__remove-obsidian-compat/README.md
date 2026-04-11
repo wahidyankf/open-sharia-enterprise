@@ -88,10 +88,13 @@ Remove all Obsidian-specific artifacts and conventions from the repository. Conc
 - `apps/rhino-cli/internal/docs/link_updater.go` and `link_updater_test.go`
 - `apps/rhino-cli/internal/docs/types.go` (only if it becomes orphaned after the removals — verify by grep)
 - Whichever files under `apps/rhino-cli/internal/docs/testdata/` are only referenced by the removed tests
+- `specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` — Gherkin feature file consumed by `docs_validate_naming.integration_test.go`; becomes orphaned after that test file is deleted
+- The `// Docs validate-naming step patterns.` const block in `apps/rhino-cli/cmd/steps_common_test.go` (lines ~126–141 containing `stepDeveloperRunsValidateDocsNaming`, `stepDeveloperRunsValidateDocsNamingWithFix`, `stepDeveloperRunsValidateDocsNamingWithFixAndApply`, and related constants) — these become orphaned after the integration test file is deleted
+- The `// docs validate-naming command delegation.` comment and its two variable declarations (`docsValidateAllFn`, `docsFixFn`) in `apps/rhino-cli/cmd/testable.go` (lines ~41–43) — these delegate to the removed command's internal functions
 
 **What to keep**: the `links_*.go` family (`links_scanner.go`, `links_validator.go`, `links_categorizer.go`, `links_reporter.go`, `links_types.go`) plus `docs_validate_links*.go` — these implement GitHub-compatible link validation and remain useful under the new convention.
 
-**What to update**: the `apps/rhino-cli/cmd/docs.go` parent command must stop registering the `validate-naming` subcommand, and the rhino-cli README must drop references to it.
+**What to update**: the rhino-cli README must drop references to `validate-naming`. The `apps/rhino-cli/cmd/docs.go` parent command requires no edit — `validate-naming` registration is in `docs_validate_naming.go`'s `init()` function and is automatically removed by that file's deletion.
 
 **Coverage threshold**: rhino-cli requires ≥90% Go test coverage. After the removals, verify the remaining code still meets the threshold.
 
@@ -146,7 +149,7 @@ Remove Obsidian-specific rules, callouts, anti-patterns, and any descriptive tex
 
 **Two classes of edits**:
 
-1. **Automatic (bulk sed loop in step 3)** — every reference to an old prefixed basename in any file across the repo gets rewritten to the new basename. This handles CLAUDE.md, AGENTS.md, READMEs, agents, skills, playwright configs, Go source comments, etc., in one pass.
+1. **Automatic (bulk sed loop in step 3)** — the sed loop rewrites every reference to an old prefixed basename in any file across the repo to the new basename. This handles CLAUDE.md, AGENTS.md, READMEs, agents, skills, playwright configs, Go source comments, etc., in one pass.
 2. **Manual (this step)** — removing Obsidian word mentions and narrative that explains the prefix scheme. These cannot be captured by a basename substitution because the text describes the convention itself, not a specific file.
 
 ### 7. Sync .claude/ → .opencode/
@@ -214,7 +217,7 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 
 ### Obsidian scrub success
 
-- [ ] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/` and explicitly allowed historical files
+- [ ] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/`, this plan folder (`plans/in-progress/2026-04-11__remove-obsidian-compat/`), and other explicitly allowed historical files
 - [ ] `governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
 - [ ] `governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
 - [ ] `.claude/skills/docs-validating-links/SKILL.md` no longer flags Obsidian wiki links as an error class
@@ -223,7 +226,9 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 
 - [ ] `apps/rhino-cli/cmd/docs_validate_naming*.go` files do not exist
 - [ ] `apps/rhino-cli/internal/docs/{prefix_rules,validator,fixer,scanner,reporter,link_updater}*.go` files do not exist
-- [ ] `apps/rhino-cli/cmd/docs.go` no longer registers the `validate-naming` subcommand
+- [ ] `specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` does not exist
+- [ ] `apps/rhino-cli/cmd/steps_common_test.go` contains no validate-naming step-pattern constants
+- [ ] `apps/rhino-cli/cmd/testable.go` contains no `docsValidateAllFn` or `docsFixFn` declarations
 - [ ] `apps/rhino-cli/README.md` no longer documents `validate-naming`
 - [ ] `nx run rhino-cli:test:quick` passes with coverage ≥90%
 - [ ] `apps/rhino-cli/internal/docs/links_*.go` files are preserved and their tests still pass
@@ -234,7 +239,7 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 - [ ] All 11 `.claude/skills/swe-programming-*/SKILL.md` skills reference the new filenames
 - [ ] `CLAUDE.md` and `AGENTS.md` at repo root point at the new filenames
 - [ ] All `apps/*/README.md` and `apps/*/playwright.config.ts` files that referenced docs paths point at the new filenames
-- [ ] `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` across the repo (excluding `plans/done/`, `apps/ayokoding-web/content/`, `local-temp/`, `.opencode/` mirrors, tutorial example code files) returns zero hits
+- [ ] `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co-)'` across the repo (excluding `plans/done/`, `apps/ayokoding-web/content/`, `local-temp/`, `.opencode/` mirrors, tutorial example code files, `apps/a-demo-be-python-fastapi/tests/`, `apps/a-demo-be-rust-axum/Cargo.toml`, `apps/a-demo-be-clojure-pedestal/test/step_definitions/steps.clj`) returns zero hits — see `tech-docs.md §1.3.c` for the complete false-positive path list
 
 ### Agent sync success
 

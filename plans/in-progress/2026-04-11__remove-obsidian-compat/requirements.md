@@ -120,9 +120,10 @@ Feature: All internal links resolve after rename using GitHub-compatible syntax
     When I follow every link
     Then every target file exists
 
-  Scenario: ayokoding-cli link checker passes for docs/
-    Given a link checker run scoped to docs/
-    When the checker completes
+  Scenario: ayokoding-cli link checker passes for docs/ (if applicable)
+    Given a link checker run is applicable to docs/
+    And the ayokoding-cli supports link checking for docs/
+    When the checker is run scoped to docs/
     Then zero broken internal links are reported
 
   Scenario: All rewritten links use standard GitHub-compatible markdown syntax
@@ -337,17 +338,35 @@ Feature: rhino-cli docs validate-naming is removed
     When I grep for "validate-naming"
     Then zero matches are found
 
-  Scenario: rhino-cli build and tests pass after removal
+  Scenario: rhino-cli build passes after removal
     Given the post-removal state
     When I run "nx run rhino-cli:build"
     Then the build succeeds with exit status 0
-    And when I run "nx run rhino-cli:test:quick"
+
+  Scenario: rhino-cli tests pass after removal
+    Given the post-removal state
+    When I run "nx run rhino-cli:test:quick"
     Then tests pass with coverage at least 90%
 
   Scenario: No other code references the removed packages or types
     Given the rest of the monorepo
     When I grep Go sources for imports of the removed files or their exported symbols
     Then zero references remain
+
+  Scenario: The Gherkin feature file for validate-naming is deleted
+    Given the specs/apps/rhino/cli/gherkin/ directory
+    When I list files matching "docs-validate-naming.feature"
+    Then zero results are returned
+
+  Scenario: The validate-naming step patterns const block is removed from steps_common_test.go
+    Given apps/rhino-cli/cmd/steps_common_test.go
+    When I grep for "stepDeveloperRunsValidateDocsNaming"
+    Then zero matches are found
+
+  Scenario: The validate-naming delegation vars are removed from testable.go
+    Given apps/rhino-cli/cmd/testable.go
+    When I grep for "docsValidateAllFn"
+    Then zero matches are found
 ```
 
 ### US-8: Update all related agents, skills, conventions, and navigation docs
