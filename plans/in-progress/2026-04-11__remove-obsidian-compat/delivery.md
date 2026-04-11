@@ -101,42 +101,44 @@ This document is the phase-by-phase execution plan. Each checkbox represents one
 
 **Critical sequencing**: This phase MUST land before Phase 4. See `tech-docs.md` §6.
 
-- [ ] Before deleting anything, run `nx run rhino-cli:build` and `nx run rhino-cli:test:quick` as a baseline; record coverage percentage
-- [ ] Grep `apps/rhino-cli/internal/docs/links_*.go` for imports of types defined in `types.go`, `validator.go`, `fixer.go`, `scanner.go`, `reporter.go`, `link_updater.go`, or `prefix_rules.go`; record which types (if any) must be preserved or relocated
-- [ ] Grep the rest of the monorepo for Go imports of `"apps/rhino-cli/internal/docs"` to identify any external consumers; resolve before deletion
-- [ ] `git rm apps/rhino-cli/cmd/docs_validate_naming.go apps/rhino-cli/cmd/docs_validate_naming_test.go apps/rhino-cli/cmd/docs_validate_naming.integration_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/prefix_rules.go apps/rhino-cli/internal/docs/prefix_rules_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/validator.go apps/rhino-cli/internal/docs/validator_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/fixer.go apps/rhino-cli/internal/docs/fixer_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/scanner.go apps/rhino-cli/internal/docs/scanner_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/reporter.go apps/rhino-cli/internal/docs/reporter_test.go`
-- [ ] `git rm apps/rhino-cli/internal/docs/link_updater.go apps/rhino-cli/internal/docs/link_updater_test.go`
-- [ ] If `types.go` is now orphaned (no `links_*.go` imports remain), `git rm apps/rhino-cli/internal/docs/types.go`; otherwise keep it
-- [ ] Audit `apps/rhino-cli/internal/docs/testdata/` — delete fixtures only referenced by removed tests, keep fixtures referenced by `links_*_test.go`
-- [ ] `git rm specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` (Gherkin feature consumed only by the removed integration test)
-- [ ] Edit `apps/rhino-cli/cmd/steps_common_test.go` — remove the entire `// Docs validate-naming step patterns.` const block (the block starting at line ~126 containing `stepDeveloperRunsValidateDocsNaming`, `stepDeveloperRunsValidateDocsNamingWithFix`, `stepDeveloperRunsValidateDocsNamingWithFixAndApply`, and all related step-pattern constants through `stepFilesRenamedToFollowNamingConvention`)
-- [ ] Edit `apps/rhino-cli/cmd/testable.go` — remove the `// docs validate-naming command delegation.` comment and its two variable declarations (`docsValidateAllFn = docs.ValidateAll` and `docsFixFn = docs.Fix`)
-- [ ] Verify `apps/rhino-cli/cmd/docs.go` contains no `validate-naming` references — registration was in `docs_validate_naming.go`'s `init()` and is removed automatically by its deletion above (no edit needed)
-- [ ] Edit `apps/rhino-cli/README.md` to remove the `validate-naming` section and any mention of `--staged-only`, `--fix`, `--apply`, `--no-update-links`, `-o json`, `-o markdown` flags that were specific to that command
-- [ ] Grep `.claude/agents/` and `.claude/skills/` for `validate-naming`; remove any instructions that tell an agent to invoke the removed command
-- [ ] Grep `governance/` for `validate-naming`; remove any references to the removed command
-- [ ] Grep `nx.json`, root `package.json`, `.github/workflows/`, and `apps/rhino-cli/project.json` for `validate-naming`; remove any task that invokes it
-- [ ] Run `go build ./apps/rhino-cli/...` — must succeed
-- [ ] Run `nx run rhino-cli:build` — must succeed
-- [ ] Run `nx run rhino-cli:test:quick` — must pass
-- [ ] Confirm coverage is still ≥90%; if not, add targeted tests to `links_*` code
-- [ ] Run `nx affected -t test:quick` to confirm no other project depended on the removed code
-- [ ] Run `nx affected -t spec-coverage` to verify spec coverage is still met for rhino-cli and any other affected project
-- [ ] Commit 1 (Go file deletions): `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement`
-- [ ] Commit 2 (agent/governance cleanup): `refactor(repo): remove validate-naming references from agents, skills, and governance`
+- [x] Before deleting anything, run `nx run rhino-cli:build` and `nx run rhino-cli:test:quick` as a baseline; record coverage percentage
+- [x] Grep `apps/rhino-cli/internal/docs/links_*.go` for imports of types defined in `types.go`, `validator.go`, `fixer.go`, `scanner.go`, `reporter.go`, `link_updater.go`, or `prefix_rules.go`; record which types (if any) must be preserved or relocated
+- [x] Grep the rest of the monorepo for Go imports of `"apps/rhino-cli/internal/docs"` to identify any external consumers; resolve before deletion
+- [x] `git rm apps/rhino-cli/cmd/docs_validate_naming.go apps/rhino-cli/cmd/docs_validate_naming_test.go apps/rhino-cli/cmd/docs_validate_naming.integration_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/prefix_rules.go apps/rhino-cli/internal/docs/prefix_rules_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/validator.go apps/rhino-cli/internal/docs/validator_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/fixer.go apps/rhino-cli/internal/docs/fixer_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/scanner.go apps/rhino-cli/internal/docs/scanner_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/reporter.go apps/rhino-cli/internal/docs/reporter_test.go`
+- [x] `git rm apps/rhino-cli/internal/docs/link_updater.go apps/rhino-cli/internal/docs/link_updater_test.go`
+- [x] If `types.go` is now orphaned (no `links_*.go` imports remain), `git rm apps/rhino-cli/internal/docs/types.go`; otherwise keep it
+- [x] Audit `apps/rhino-cli/internal/docs/testdata/` — delete fixtures only referenced by removed tests, keep fixtures referenced by `links_*_test.go`
+- [x] `git rm specs/apps/rhino/cli/gherkin/docs-validate-naming.feature` (Gherkin feature consumed only by the removed integration test)
+- [x] Edit `apps/rhino-cli/cmd/steps_common_test.go` — remove the entire `// Docs validate-naming step patterns.` const block (the block starting at line ~126 containing `stepDeveloperRunsValidateDocsNaming`, `stepDeveloperRunsValidateDocsNamingWithFix`, `stepDeveloperRunsValidateDocsNamingWithFixAndApply`, and all related step-pattern constants through `stepFilesRenamedToFollowNamingConvention`)
+- [x] Edit `apps/rhino-cli/cmd/testable.go` — remove the `// docs validate-naming command delegation.` comment and its two variable declarations (`docsValidateAllFn = docs.ValidateAll` and `docsFixFn = docs.Fix`)
+- [x] Verify `apps/rhino-cli/cmd/docs.go` contains no `validate-naming` references — registration was in `docs_validate_naming.go`'s `init()` and is removed automatically by its deletion above (no edit needed)
+- [x] Edit `apps/rhino-cli/README.md` to remove the `validate-naming` section and any mention of `--staged-only`, `--fix`, `--apply`, `--no-update-links`, `-o json`, `-o markdown` flags that were specific to that command
+- [x] Grep `.claude/agents/` and `.claude/skills/` for `validate-naming`; remove any instructions that tell an agent to invoke the removed command
+- [x] Grep `governance/` for `validate-naming`; remove any references to the removed command
+- [x] Grep `nx.json`, root `package.json`, `.github/workflows/`, and `apps/rhino-cli/project.json` for `validate-naming`; remove any task that invokes it
+- [x] Run `go build ./apps/rhino-cli/...` — must succeed
+- [x] Run `nx run rhino-cli:build` — must succeed
+- [x] Run `nx run rhino-cli:test:quick` — must pass
+- [x] Confirm coverage is still ≥90%; if not, add targeted tests to `links_*` code
+- [x] Run `nx affected -t test:quick` to confirm no other project depended on the removed code
+- [x] Run `nx affected -t spec-coverage` to verify spec coverage is still met for rhino-cli and any other affected project
+- [x] Commit 1 (Go file deletions): `refactor(rhino-cli): remove docs validate-naming command and prefix enforcement`
+- [x] Commit 2 (agent/governance cleanup): `refactor(repo): remove validate-naming references from agents, skills, and governance`
+
+**Phase 3b summary**: rhino-cli coverage 90.24% (baseline 90.64%; 0.4pp drop from removing well-tested naming code). Also removed `step6DocsNaming` function and `ValidateNaming`/`FixNaming` Deps fields from `internal/git/runner.go` and `runner_test.go` (undocumented but required — the pre-commit hook called these). Fixed preexisting Python venv with stale shebang via `uv sync`. Spec-coverage 15 feature files / 96 scenarios after deletion.
 
 ### Phase 3b gate
 
-- [ ] rhino-cli builds and tests pass with coverage ≥90%
-- [ ] `apps/rhino-cli/internal/docs/links_*` files are intact
-- [ ] `apps/rhino-cli/cmd/docs_validate_naming.go` does not exist (its deletion removes the `validate-naming` registration, which was in that file's `init()`)
-- [ ] Zero references to `validate-naming` remain outside `plans/done/` and this plan folder
-- [ ] `git status` clean
+- [x] rhino-cli builds and tests pass with coverage ≥90%
+- [x] `apps/rhino-cli/internal/docs/links_*` files are intact
+- [x] `apps/rhino-cli/cmd/docs_validate_naming.go` does not exist (its deletion removes the `validate-naming` registration, which was in that file's `init()`)
+- [x] Zero references to `validate-naming` remain outside `plans/done/` and this plan folder
+- [x] `git status` clean
 
 ## Phase 4 — Rename Prefixed Files in `docs/`
 

@@ -12,9 +12,9 @@ Hygiene & INtegration Orchestrator CLI. 15 files, 96 scenarios across 9 domains.
 | `contracts-dart-scaffold.feature`      | `contracts dart-scaffold`      | 3         |
 | `contracts-java-clean-imports.feature` | `contracts java-clean-imports` | 5         |
 | `docs-validate-links.feature`          | `docs validate-links`          | 4         |
-| `docs-validate-naming.feature`         | `docs validate-naming`         | 5         |
 | `doctor.feature`                       | `doctor`                       | 4         |
 | `env-backup.feature`                   | `env backup`                   | 18        |
+| `env-init.feature`                     | `env init`                     | 4         |
 | `env-restore.feature`                  | `env restore`                  | 13        |
 | `git-pre-commit.feature`               | `git pre-commit`               | 1         |
 | `java-validate-annotations.feature`    | `java validate-annotations`    | 4         |
