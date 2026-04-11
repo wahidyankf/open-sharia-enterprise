@@ -21,22 +21,19 @@ links:
     statusCode: 200
     finalUrl: https://aws.amazon.com/textract/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://blog.omnistrate.com/posts/30
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://blog.omnistrate.com/posts/30
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/README.md
+    usedIn: []
   - url: https://bytebytego.com/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://bytebytego.com/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 301
@@ -52,8 +49,7 @@ links:
     statusCode: 200
     finalUrl: https://cheatsheetseries.owasp.org/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://cloud.google.com/vision/docs/ocr
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 301
@@ -62,16 +58,13 @@ links:
       - from: https://cloud.google.com/vision/docs/ocr
         to: https://docs.cloud.google.com/vision/docs/ocr
         status: 301
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://cloudsecurityalliance.org/
     lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://cloudsecurityalliance.org/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__defensive-security.md
-      - docs/explanation/information-security/ex-inse__infosec.md
+    usedIn: []
   - url: https://colorbrewer2.org/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -98,15 +91,13 @@ links:
     statusCode: 200
     finalUrl: https://cwe.mitre.org/top25/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__infosec.md
+    usedIn: []
   - url: https://dataintensive.net/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://dataintensive.net/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://detexify.kirelabs.org/classify.html
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -132,7 +123,7 @@ links:
       - governance/conventions/structure/diataxis-framework.md
       - governance/conventions/formatting/emoji.md
       - governance/conventions/formatting/linking.md
-      - docs/how-to/hoto__organize-work.md
+      - docs/how-to/organize-work.md
   - url: https://diataxis.fr/tutorials/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -162,8 +153,7 @@ links:
     statusCode: 403
     finalUrl: https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__offensive-security.md
+    usedIn: []
     note: Wikipedia blocks automated tools (403 Forbidden). Use WebSearch to verify article exists.
   - url: https://en.wikibooks.org/wiki/LaTeX/Mathematics
     lastChecked: 2025-12-05 10:30:00+07:00
@@ -178,8 +168,7 @@ links:
     statusCode: 200
     finalUrl: https://gdpr.eu/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -199,15 +188,13 @@ links:
     statusCode: 200
     finalUrl: https://github.com/donnemartin/system-design-primer
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://github.com/golang/go
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://github.com/golang/go
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__advanced.md
+    usedIn: []
   - url: https://github.com/jehna/readme-best-practices
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -234,8 +221,7 @@ links:
     statusCode: 200
     finalUrl: https://github.com/tesseract-ocr/tesseract
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://github.com/vslinko/obsidian-outliner
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -261,33 +247,25 @@ links:
     statusCode: 200
     finalUrl: https://go.dev/blog
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+    usedIn: []
   - url: https://go.dev/dl
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/dl
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
+    usedIn: []
   - url: https://go.dev/doc
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/doc
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__quick-start.md
+    usedIn: []
   - url: https://go.dev/doc/effective_go
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/doc/effective_go
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+    usedIn: []
   - url: https://go.dev/help
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 301
@@ -296,31 +274,25 @@ links:
       - from: https://golang.org/help
         to: https://go.dev/help
         status: 301
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__initial-setup.md
+    usedIn: []
   - url: https://go.dev/tour/
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/tour/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+    usedIn: []
   - url: https://go.dev/wiki/
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://go.dev/wiki/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+    usedIn: []
   - url: https://gobyexample.com
     lastChecked: 2025-12-03 12:00:00+07:00
     statusCode: 200
     finalUrl: https://gobyexample.com
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__beginner.md
-      - docs/tutorials/software-engineering/programming-languages/golang/tu-soen-prla-gola__cookbook.md
+    usedIn: []
   - url: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -388,8 +360,7 @@ links:
     statusCode: 200
     finalUrl: https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://www.asciiart.eu/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -402,8 +373,7 @@ links:
     statusCode: 200
     finalUrl: https://www.cisecurity.org/controls
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__defensive-security.md
+    usedIn: []
   - url: https://www.color-blindness.com/coblis-color-blindness-simulator/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -478,25 +448,19 @@ links:
     statusCode: 200
     finalUrl: https://www.moderntreasury.com/learn
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://www.nist.gov/cyberframework
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://www.nist.gov/cyberframework
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__dast.md
-      - docs/explanation/information-security/ex-inse__defensive-security.md
-      - docs/explanation/information-security/ex-inse__infosec.md
-      - docs/explanation/information-security/ex-inse__sast.md
+    usedIn: []
   - url: https://www.pcisecuritystandards.org/document_library/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://www.pcisecuritystandards.org/document_library/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://www.readmecodegen.com/blog/beginner-friendly-readme-guide-open-source-projects
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -515,15 +479,13 @@ links:
     statusCode: 200
     finalUrl: https://www.sans.org/training/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__defensive-security.md
+    usedIn: []
   - url: https://www.sans.org/white-papers/
     lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://www.sans.org/white-papers/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__offensive-security.md
+    usedIn: []
   - url: https://www.simplypsychology.org/Zone-of-Proximal-Development.html
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -549,15 +511,13 @@ links:
     statusCode: 200
     finalUrl: https://www.zaproxy.org/docs/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__dast.md
+    usedIn: []
   - url: https://arxiv.org/search/?query=financial+pattern+recognition
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
     finalUrl: https://arxiv.org/search/?query=financial+pattern+recognition
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -610,72 +570,61 @@ links:
     statusCode: 200
     finalUrl: https://plaid.com/blog/
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://owasp.org/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://owasp.org/Top10/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/Top10/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://owasp.org/chapters/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/chapters/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://owasp.org/projects/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/projects/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://owasp.org/www-community/Source_Code_Analysis_Tools
     lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-community/Source_Code_Analysis_Tools
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__sast.md
+    usedIn: []
   - url: https://owasp.org/www-community/Vulnerability_Scanning_Tools
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-community/Vulnerability_Scanning_Tools
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__dast.md
+    usedIn: []
   - url: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__defensive-security.md
+    usedIn: []
   - url: https://owasp.org/www-project-top-ten/
     lastChecked: 2025-11-30 22:45:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-top-ten/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__infosec.md
+    usedIn: []
   - url: https://owasp.org/www-project-web-security-testing-guide/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
     finalUrl: https://owasp.org/www-project-web-security-testing-guide/
     redirectChain: null
-    usedIn:
-      - docs/explanation/information-security/ex-inse__offensive-security.md
-      - docs/explanation/information-security/ex-inse__owasp.md
+    usedIn: []
   - url: https://oauth.net/2/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
@@ -715,8 +664,7 @@ links:
     statusCode: 200
     finalUrl: https://stripe.com/blog/engineering
     redirectChain: null
-    usedIn:
-      - docs/tutorials/software-engineering/system-design/tu-soen-syde__ai-personal-finance-advisor.md
+    usedIn: []
   - url: https://trunkbaseddevelopment.com/
     lastChecked: 2025-11-30 07:00:00+07:00
     statusCode: 200
