@@ -133,4 +133,4 @@ Coverage thresholds: backends >= 90%, frontends >= 70%.
 - **Backend gherkin specs**: [be/gherkin/](../be/gherkin/README.md)
 - **Frontend gherkin specs**: [fe/gherkin/](../fe/gherkin/README.md)
 - **API contract**: [contracts/](../contracts/openapi.yaml)
-- **Project dependency graph**: [docs/reference/re\_\_project-dependency-graph.md](../../../../docs/reference/project-dependency-graph.md)
+- **Project dependency graph**: [docs/reference/project-dependency-graph.md](../../../../docs/reference/project-dependency-graph.md)
