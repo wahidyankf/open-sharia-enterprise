@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-04-03
+updated: 2026-04-11
 ---
 
 # AI Agents Convention
@@ -1808,6 +1808,7 @@ Agents spawned via the Agent tool (subagents) run with a working directory that 
 3. **Read files fresh before verifying** — When a checker or fixer agent verifies that a fix was applied, it must read the file again from the current working directory. It must not rely on a previously cached read from a different path.
 4. **Confirm the working directory when uncertain** — If an agent cannot determine which worktree it runs in, it should use `Bash` (`pwd`) to confirm the working directory before constructing any path.
 5. **Run `npm install` in the root worktree after creating a new worktree** — When an agent creates a worktree via `git worktree add` or the `EnterWorktree` tool, it must immediately run `npm install` in the root repository worktree. This keeps `node_modules/` consistent with `package-lock.json` and ensures Nx task caching, builds, tests, and linting function correctly across all worktrees. See [Worktree Setup](../workflow/worktree-setup.md) for the full rationale and procedure.
+6. **Push worktree work to a feature branch and open a draft PR — never push to `main` from a worktree** — Any commit authored from inside a `.claude/worktrees/` path (or any other `git worktree add` target) MUST land in a draft GitHub pull request, not on `main` directly. The agent pushes to a feature branch and opens the PR with `gh pr create --draft --base main ...`. The PR stays in draft status during iteration and is flipped to ready-for-review only when the author decides the work is complete; that flip is the moment the [PR Merge Protocol](../workflow/pr-merge-protocol.md) approval gate fires. This rule is triggered by execution mode, not by intent — even "small" or "docs-only" worktree commits go through a draft PR, because bypassing the draft PR collapses the isolation that the worktree exists to provide. See the [Worktree Mode (Branch + Draft PR)](../workflow/trunk-based-development.md#worktree-mode-branch--draft-pr) section of the Trunk Based Development Convention for the full workflow.
 
 **Example**:
 

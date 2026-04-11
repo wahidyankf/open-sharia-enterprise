@@ -25,7 +25,7 @@ Instructions for AI agents working with this repository via OpenCode.
 - **Node.js**: 24.13.1 (LTS - Long-Term Support, managed by Volta)
 - **npm**: 11.10.1
 - **Monorepo**: Nx with `apps/` and `libs/` structure
-- **Git Workflow**: Trunk Based Development (all work on `main` branch)
+- **Git Workflow**: Trunk Based Development (default: commit and push directly to `main`). **Worktree exception**: any work performed inside a `git worktree add` path -- including agents using `isolation: "worktree"` and agents invoked inside an existing worktree session -- must push to a feature branch and open a **draft** PR targeting `main` (`gh pr create --draft`), not push to `main` directly. The draft is flipped to ready for review when the author decides the work is complete; that flip is the moment the [PR Merge Protocol](./governance/development/workflow/pr-merge-protocol.md) approval gate fires. See the [Trunk Based Development Convention](./governance/development/workflow/trunk-based-development.md#worktree-mode-branch--draft-pr) for details.
 
 ## Dual-Mode Configuration
 

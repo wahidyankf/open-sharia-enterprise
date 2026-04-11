@@ -103,5 +103,5 @@ Agents that create worktrees via `git worktree add` or `EnterWorktree` must run 
 
 - [Reproducible Environments](./reproducible-environments.md) - Practices for consistent development environments, including Volta pinning and lockfile management
 - [AI Agents Convention](../agents/ai-agents.md) - Git Worktree Awareness rules for agents operating across worktrees
-- [Trunk Based Development](./trunk-based-development.md) - Branch and worktree workflow for this repository
+- [Trunk Based Development](./trunk-based-development.md) - Branch and worktree workflow for this repository, including the requirement that all worktree-mode work pushes to a feature branch and a [draft PR](./trunk-based-development.md#worktree-mode-branch--draft-pr) targeting `main`
 - [Nx Targets](../infra/nx-targets.md) - Canonical Nx target names and caching rules that depend on a consistent dependency state
