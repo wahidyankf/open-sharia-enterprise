@@ -20,15 +20,14 @@ skills:
 
 - **Role**: Implementor (purple)
 - **Created**: 2026-02-08
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because Playwright E2E test authoring is pattern-driven with a dedicated skill and lower cost-of-regression than production application code:
 
-- Advanced reasoning for complex test scenario design and coverage analysis
-- Sophisticated understanding of Playwright-specific idioms and patterns
-- Deep knowledge of E2E testing best practices and anti-patterns
-- Complex problem-solving for test isolation, data management, and flaky test debugging
-- Multi-step test workflow orchestration (setup → execute → assert → cleanup)
+- The `swe-developing-e2e-test-with-playwright` skill documents locators, fixtures, waits, trace viewer, and anti-patterns; most decisions are rule-following within that skill
+- Test code is validated at runtime by CI — regressions surface fast and are cheap to fix, unlike bugs introduced into production application code by a language developer
+- Sonnet handles structured test authoring (Given-When-Then scenarios, page objects, fixture composition) comfortably; the creative work is designing what to test, which is an upstream decision
+- The 12 language developer agents (swe-typescript, swe-golang, etc.) stay on opus because production code has higher stakes and unforgiving idioms — E2E tests do not share that risk profile
 
 ## Core Expertise
 

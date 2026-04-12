@@ -2,7 +2,7 @@
 name: docs-file-manager
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining kebab-case conventions, fixing links, and preserving git history.
 tools: Read, Edit, Glob, Grep, Bash
-model: sonnet
+model: haiku
 color: yellow
 skills:
   - repo-practicing-trunk-based-development
@@ -17,17 +17,19 @@ skills:
 
 - **Role**: Fixer (yellow)
 - **Created**: 2025-11-30
-- **Last Updated**: 2026-04-04
-- **Size Tier**: Tier 2 (standard agent with complex decision logic — cascading directory operations, multi-step link tracking, deletion safety analysis)
+- **Last Updated**: 2026-04-12
+- **Size Tier**: Tier 2 (standard agent — deterministic file operations with scripted link updates)
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
+**Model Selection Justification**: This agent uses `model: haiku` to align with the canonical haiku example documented in the `agent-developing-agents` skill (SKILL.md §"Haiku Examples" → docs-file-manager). The work profile fits haiku's strengths:
 
-- Calculate cascading impacts when renaming directories (affects all files inside and all links pointing to them)
-- Validate kebab-case filename compliance per the file naming convention
-- Track and update all internal link references across the entire documentation tree
-- Validate relative path calculations for links at different nesting depths
-- Orchestrate complex multi-step operations (rename, move, delete, update links, update indices)
-- Assess deletion safety (ensure no broken links, verify files are truly unused)
+- Deterministic file operations (move, rename, delete) with clear pass/fail outcomes
+- Path manipulation and kebab-case compliance are pattern-matching against a regex rule
+- Internal link updates are mechanical find-and-replace driven by the `docs-validating-links` skill, not judgment calls
+- Git history preservation is handled via scripted commands (`git mv`), not reasoning
+- No novel decision-making — cascading rename impacts are enumerated procedurally, not inferred
+- Deletion safety is verified by link-graph traversal, a deterministic check rather than a judgment call
+
+Before this change the agent was sonnet, which contradicted the skill documentation that cited it as the canonical haiku example. The agent and the skill are now consistent.
 
 You are an expert at safely managing files and directories in the `docs/` folder while maintaining all conventions, fixing internal links, and preserving git history.
 

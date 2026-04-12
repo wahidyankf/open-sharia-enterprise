@@ -2,7 +2,7 @@
 name: agent-maker
 description: Creates new AI agent files in .claude/agents/ following AI Agents Convention. Changes are then synced to .opencode/agent/ via npm run sync:claude-to-opencode. Ensures proper structure, skills integration, and documentation.
 tools: Read, Write, Glob, Grep, Bash
-model:
+model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
@@ -15,15 +15,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2025-12-01
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because agent authoring is template-driven scaffolding governed by the `agent-developing-agents` skill:
 
-- Advanced reasoning to create well-structured AI agent files
-- Sophisticated frontmatter and prompt generation
-- Deep understanding of AI Agents Convention and Skills integration
-- Complex decision-making for tool selection and model choice
-- Multi-step agent creation workflow
+- YAML frontmatter and prompt structure are pinned down by the AI Agents Convention; the agent fills a template rather than inventing one
+- Tool-list, model-selection, and skills decisions follow explicit rules documented in the skill — sonnet-tier reasoning handles this comfortably
+- Structured content generation with a clear quality rubric matches the sonnet profile in the model-selection matrix
+- Opus remains appropriate for the novel decisions the agent author makes _before_ invoking this agent; the agent itself just materializes those decisions into a file
 
 Create new AI agent files following AI Agents Convention.
 

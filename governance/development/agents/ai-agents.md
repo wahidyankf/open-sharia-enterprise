@@ -670,9 +670,9 @@ For complete model selection standards, see the [Model Selection Convention](./m
 
 **Three tiers**:
 
-- **Opus** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (makers, developers).
-- **Sonnet** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, and structured pattern-following tasks (checkers, fixers).
-- **Haiku** (`model: haiku`): For purely mechanical tasks with no reasoning required -- URL validation, deployment scripts, simple command execution (deployers, link checkers).
+- **Opus** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers).
+- **Sonnet** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, structured pattern-following tasks, and plan execution (checkers, fixers, structured makers, plan-executor, swe-e2e-test-developer).
+- **Haiku** (`model: haiku`): For purely mechanical tasks with no reasoning required -- URL validation, deployment scripts, deterministic file operations, simple command execution (deployers, link checkers, docs-file-manager).
 
 ### Model Selection Decision Tree
 
@@ -906,7 +906,7 @@ All agent colors are from the verified accessible palette:
 name: docs-maker
 description: Expert documentation writer specializing in GitHub-compatible markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
-model:
+model: sonnet
 color: blue
 ---
 ```
@@ -954,7 +954,7 @@ Colored square emojis follow the [Emoji Usage Convention](../../conventions/form
 name: docs-maker
 description: Expert documentation writer specializing in GitHub-compatible markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
-model:
+model: sonnet
 color: blue
 ---
 ```

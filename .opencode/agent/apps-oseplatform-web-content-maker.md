@@ -18,15 +18,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because oseplatform-web is a flat, English-only content platform with a simpler authoring profile than the bilingual AyoKoding makers:
 
-- Advanced reasoning to create engaging landing page content
-- Sophisticated content generation for Next.js 16 with tRPC
-- Deep understanding of landing page best practices
-- Complex decision-making for content structure and organization
-- Multi-step content creation workflow
+- English-only content removes the bilingual nuance that justifies opus for `apps-ayokoding-web-*-maker` agents
+- The `apps-oseplatform-web-developing-content` skill pins down landing page structure, date-prefixed filenames, frontmatter fields, and flat organization
+- Parity with peer agents: `apps-oseplatform-web-content-checker` and `apps-oseplatform-web-content-fixer` are both sonnet, and the three-agent trio should share a tier
+- Sonnet handles structured content generation with a quality rubric, matching the task profile
 
 Create landing page content for oseplatform-web (Next.js 16 with tRPC, English-only).
 

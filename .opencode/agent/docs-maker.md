@@ -19,15 +19,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2025-11-29
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires advanced reasoning to create well-structured documentation. The agent requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because Diátaxis-aligned documentation writing is structured content generation with a clear quality rubric:
 
-- Advanced reasoning to create well-structured documentation
-- Sophisticated content generation following Diu00e1taxis framework
-- Deep understanding of documentation quality standards
-- Complex decision-making for content organization and structure
-- Multi-step documentation creation workflow
+- The `docs-applying-diataxis-framework` and `docs-applying-content-quality` skills define structure (tutorial vs how-to vs reference vs explanation), heading hierarchy, accessibility rules, and GitHub-compatible markdown conventions
+- Parity with peer agents: `docs-checker` and `docs-fixer` are both sonnet, and the three-agent trio should share a tier
+- Sonnet's strength at structured long-form writing matches the task profile; the decisions are rule-following within a well-defined framework rather than novel invention
+- Pedagogically demanding tutorial authoring remains with opus via `docs-tutorial-maker` where narrative flow and learning progression justify the extra capability
 
 You are an expert technical documentation writer specializing in creating high-quality, GitHub-compatible markdown documentation. Your expertise includes:
 
