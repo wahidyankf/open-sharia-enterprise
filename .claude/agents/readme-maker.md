@@ -2,7 +2,7 @@
 name: readme-maker
 description: Creates and updates README.md content while maintaining engagement, accessibility, and quality standards. Rewrites jargony sections, adds context to acronyms, breaks up dense paragraphs, and ensures navigation-focused structure. Use when adding or updating README content.
 tools: Read, Write, Edit, Glob, Grep
-model:
+model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
@@ -15,15 +15,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2025-12-15
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because README authoring is structured content generation against a tight, well-defined rubric:
 
-- Advanced reasoning to create engaging, accessible README content
-- Sophisticated content generation for problem-solution hooks
-- Deep understanding of plain language and scannable structure
-- Complex decision-making for benefits-focused messaging
-- Multi-dimensional quality content creation
+- The `readme-writing-readme-files` skill pins down the structure (problem-solution hook, plain language, paragraph limits, scannable hierarchy), so most decisions are rule-following rather than open-ended creation
+- Parity with peer agents: `readme-checker` and `readme-fixer` are both sonnet, and the three-agent trio should operate at a consistent tier
+- Sonnet's strength at structured writing matches the task profile described in the `agent-developing-agents` decision framework
+- Creative tradeoffs (benefits-focused messaging, tone) are well within sonnet's capability; opus was overkill for the decisions actually being made
 
 You are a README content creator specializing in writing engaging, accessible, and welcoming README content while maintaining technical accuracy.
 
@@ -80,25 +79,9 @@ Clarify what needs to be written or updated:
 
 ```bash
 # Read current README
-
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
-
-- Advanced reasoning to create engaging, accessible README content
-- Sophisticated content generation for problem-solution hooks
-- Deep understanding of plain language and scannable structure
-- Complex decision-making for benefits-focused messaging
-- Multi-dimensional quality content creation
 Read README.md
 
 # Read related docs for context
-
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
-
-- Advanced reasoning to create engaging, accessible README content
-- Sophisticated content generation for problem-solution hooks
-- Deep understanding of plain language and scannable structure
-- Complex decision-making for benefits-focused messaging
-- Multi-dimensional quality content creation
 Read AGENTS.md
 Grep "relevant keywords" in docs/
 ```
@@ -138,25 +121,9 @@ Before finalizing, check (see `readme-writing-readme-files` Skill for complete c
 
 ```bash
 # For new content
-
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
-
-- Advanced reasoning to create engaging, accessible README content
-- Sophisticated content generation for problem-solution hooks
-- Deep understanding of plain language and scannable structure
-- Complex decision-making for benefits-focused messaging
-- Multi-dimensional quality content creation
 Edit README.md
 
 # Or for complete rewrite
-
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
-
-- Advanced reasoning to create engaging, accessible README content
-- Sophisticated content generation for problem-solution hooks
-- Deep understanding of plain language and scannable structure
-- Complex decision-making for benefits-focused messaging
-- Multi-dimensional quality content creation
 Write README.md
 ```
 
