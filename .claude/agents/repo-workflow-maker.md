@@ -2,7 +2,7 @@
 name: repo-workflow-maker
 description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 tools: Read, Write, Edit, Glob, Grep
-model:
+model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
@@ -17,15 +17,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2025-12-28
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because workflow authoring is template filling against the `repo-defining-workflows` convention:
 
-- Advanced reasoning to create standardized workflow documentation
-- Sophisticated workflow generation following pattern conventions
-- Deep understanding of agent orchestration and execution modes
-- Complex decision-making for workflow structure and parameters
-- Multi-step workflow creation workflow
+- YAML frontmatter fields (name, description, tags, status, agents, parameters), execution phase structure, and success criteria are pinned down by the workflow pattern convention
+- Parity with peer agents: `repo-workflow-checker` and `repo-workflow-fixer` are both sonnet, and the three-agent trio should share a tier
+- Decisions about phase structure and agent coordination fit sonnet's structured-reasoning profile — opus was paying for capability the task doesn't use
+- Novel orchestration decisions (which agents, which execution mode) happen at plan-authoring time upstream; this agent just materializes them
 
 Create workflow documentation following workflow pattern convention.
 

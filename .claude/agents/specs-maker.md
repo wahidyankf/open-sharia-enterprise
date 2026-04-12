@@ -2,7 +2,7 @@
 name: specs-maker
 description: Creates new spec areas, missing README files, and scaffolds Gherkin feature structure at explicitly specified paths under specs/. Use when adding a new app or library to the specs directory.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model:
+model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
@@ -15,9 +15,14 @@ skills:
 
 - **Role**: Maker (blue)
 - **Created**: 2026-03-13
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) for generating well-structured Gherkin specifications and README documentation that follows repository conventions and maintains consistency with existing spec areas.
+**Model Selection Justification**: This agent uses `model: sonnet` because spec scaffolding at explicitly specified paths is structural work, not open-ended creation:
+
+- The agent only creates content at paths the caller names — it never decides _what_ spec areas should exist
+- Gherkin feature structure, README format, and directory layout are defined by the `plan-writing-gherkin-criteria` skill and repository conventions
+- Parity with peer agents: `specs-checker` and `specs-fixer` are both sonnet, and the three-agent trio should share a tier
+- Template-driven scaffolding with a clear quality rubric matches the sonnet profile in the model-selection matrix
 
 ## Core Responsibility
 

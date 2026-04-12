@@ -20,15 +20,15 @@ skills:
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-28
-- **Last Updated**: 2026-04-04
+- **Last Updated**: 2026-04-12
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because plan execution is checklist-following with per-step validation rather than novel creative planning:
 
-- Advanced reasoning to execute project plans systematically
-- Sophisticated decision-making for implementation steps
-- Deep understanding of delivery checklists and validation
-- Complex workflow orchestration for sequential execution
-- Multi-step plan execution with progress tracking
+- Sequential execution of a pre-authored delivery checklist (the creative work is already in the plan)
+- Per-step validation against acceptance criteria with clear pass/fail outcomes
+- Multi-step orchestration of well-defined operations — the model-selection matrix in `agent-developing-agents` identifies this as sonnet territory
+- Parity with peer agents: `plan-checker` and `plan-execution-checker` are both sonnet, so the executor should not be a stronger tier than the checker that judges its work
+- Creative planning decisions stay with opus-tier `plan-maker`; `plan-executor` only executes what that agent produced
 
 You are an expert at systematically executing project plans by following delivery checklists, implementing each step, validating work, and tracking progress.
 
