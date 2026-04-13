@@ -36,10 +36,12 @@ Automation tools are software applications that execute repetitive tasks automat
 Modern AI tools understand natural language and codebases to generate code, explain implementations, and suggest improvements:
 
 - **Claude Code** - Anthropic's AI-powered coding assistant with deep codebase understanding
+- **Hermes Agent** - Nous Research's self-improving open-source AI agent with built-in learning loop
+- **OpenClaw** - Free, open-source, local-first AI agent platform with tool-chaining and JSON5 configuration
 - **GitHub Copilot** - AI pair programmer suggesting code completions
 - **Cursor** - AI-first code editor with context-aware assistance
 
-**Use cases**: Writing boilerplate, explaining complex code, refactoring, test generation
+**Use cases**: Writing boilerplate, explaining complex code, refactoring, test generation, multi-platform automation, persistent knowledge retention
 
 ### Build and Task Runners
 
@@ -127,6 +129,32 @@ AI-powered coding assistant that understands entire codebases:
 
 **Coverage**: Installation, basic commands, advanced workflows, best practices
 
+### Hermes Agent
+
+Self-improving AI agent with built-in learning loop by Nous Research:
+
+- Installation and YAML configuration
+- Persistent memory (`MEMORY.md`, `USER.md`) and FTS5 session search
+- Skill system with autonomous creation and progressive disclosure
+- Messaging gateway (Telegram, Discord, Slack, WhatsApp, Signal, Email)
+- Subagent delegation and parallel workstreams
+- 6 terminal backends (local, Docker, SSH, Modal, Daytona, Singularity)
+
+**Coverage**: 80 heavily annotated examples covering 95% of production use cases
+
+### OpenClaw
+
+Free, open-source, local-first AI agent platform by Peter Steinberger:
+
+- Installation, JSON5 configuration, CLI commands
+- Built-in tools (exec, browser, web_search, cron, canvas)
+- Skill authoring and ClawHub plugin ecosystem
+- Multi-channel messaging (WhatsApp, Telegram, Slack, Discord)
+- Lobster workflow engine for typed automation pipelines
+- Plugin development and production deployment
+
+**Coverage**: 80 heavily annotated examples covering 95% of production use cases
+
 ### Coming Soon
 
 Additional automation tools planned for this section:
@@ -156,7 +184,9 @@ Start with **Claude Code** to experience AI-powered automation firsthand. Modern
 
 Jump directly to specific tools based on your needs:
 
-- Need AI assistance? → **Claude Code**
+- Need AI assistance for coding? → **Claude Code**
+- Want a self-improving autonomous agent? → **Hermes Agent**
+- Need a local-first AI agent platform? → **OpenClaw**
 - Automating deployments? → **GitHub Actions** (coming soon)
 - Managing monorepos? → **Nx** (coming soon)
 
@@ -208,6 +238,8 @@ This makes automation accessible to developers at all skill levels.
 Ready to start automating? Choose your first tool:
 
 - **New to AI coding assistants?** → [Claude Code](/en/learn/software-engineering/automation-tools/claude-code)
+- **Want a self-improving AI agent?** → [Hermes Agent](/en/learn/software-engineering/automation-tools/hermes-agent)
+- **Need a local-first AI agent platform?** → [OpenClaw](/en/learn/software-engineering/automation-tools/openclaw)
 - **Need to automate deployments?** → Coming soon (GitHub Actions)
 - **Managing complex builds?** → Coming soon (Nx)
 

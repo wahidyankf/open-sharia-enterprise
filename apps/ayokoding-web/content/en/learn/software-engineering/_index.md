@@ -29,6 +29,8 @@ weight: 102
 - [Automation Tools](/en/learn/software-engineering/automation-tools)
   - [Overview](/en/learn/software-engineering/automation-tools/overview)
   - [Claude Code](/en/learn/software-engineering/automation-tools/claude-code)
+  - [Hermes Agent](/en/learn/software-engineering/automation-tools/hermes-agent)
+  - [OpenClaw](/en/learn/software-engineering/automation-tools/openclaw)
   - [Git](/en/learn/software-engineering/automation-tools/git)
   - [GitHub Actions](/en/learn/software-engineering/automation-tools/github-actions)
   - [GitHub CLI](/en/learn/software-engineering/automation-tools/gh-cli)
