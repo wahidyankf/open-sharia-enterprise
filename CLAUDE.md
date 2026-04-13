@@ -668,6 +668,6 @@ rtk discover          # Analyze Claude Code history for missed opportunities
 rtk proxy <cmd>       # Execute raw command without filtering (for debugging)
 ```
 
-Full command reference with all workflows and savings: `~/.claude/RTK-reference.md`
+Full command reference with all workflows and savings: <https://github.com/rtk-ai/rtk>
 
 <!-- /rtk-instructions -->
