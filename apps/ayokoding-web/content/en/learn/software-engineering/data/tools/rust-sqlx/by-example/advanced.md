@@ -110,6 +110,10 @@ impl<'s> MigrationSource<'s> for InMemorySource {
                 .into_iter()
                 .map(|(version, description, sql)| {
                     // => Convert each tuple into a Migration struct
+                    // NOTE: Migration::new() with positional parameters is a simplified
+                    // representation. In practice, prefer sqlx::migrate!() macro for
+                    // filesystem migrations or Migrator::new(source) for custom sources.
+                    // The internal Migration struct fields may change between SQLx versions.
                     Ok(Migration::new(
                         version,
                         // => Version number determines execution order
@@ -355,10 +359,12 @@ END $$;
 
 -- IMPORTANT: CONCURRENTLY cannot run inside an explicit transaction block
 -- => SQLx wraps migrations in transactions by default
--- => Use the no_tx annotation or run this migration outside transaction context
+-- => Use the no-transaction annotation or run this migration outside transaction context
 
--- no_tx
+-- no-transaction
 -- => This comment instructs SQLx to NOT wrap this migration in a transaction
+-- => IMPORTANT: the recognized annotation is "-- no-transaction" (with hyphen)
+-- => Using "-- no_tx" (underscore) is silently ignored; migration runs in a transaction and fails
 -- => Required for CONCURRENTLY statements; PostgreSQL enforces this restriction
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS
@@ -375,9 +381,9 @@ ON orders (customer_id, status);
 -- => WHERE indexname = 'idx_orders_customer_id_status';
 ```
 
-**Key Takeaway**: Use `CREATE INDEX CONCURRENTLY` for production tables to avoid write locks during index creation. Mark the migration `no_tx` because PostgreSQL does not allow `CONCURRENTLY` inside a transaction block.
+**Key Takeaway**: Use `CREATE INDEX CONCURRENTLY` for production tables to avoid write locks during index creation. Mark the migration `-- no-transaction` (with hyphen, not underscore) because PostgreSQL does not allow `CONCURRENTLY` inside a transaction block.
 
-**Why It Matters**: A regular `CREATE INDEX` takes an `ShareLock` that blocks all writes for the duration of the build—potentially minutes on a large table. `CONCURRENTLY` trades build time (roughly 2-3x longer) for zero write downtime. The tradeoff is that a failed concurrent index build leaves an invalid index that must be manually dropped and recreated. Production teams should monitor `pg_indexes` after deployment to verify no `INVALID` indexes remain. The `no_tx` annotation in SQLx tells the migration runner to skip the surrounding transaction, which is the only way to run `CONCURRENTLY` inside a migration file.
+**Why It Matters**: A regular `CREATE INDEX` takes an `ShareLock` that blocks all writes for the duration of the build—potentially minutes on a large table. `CONCURRENTLY` trades build time (roughly 2-3x longer) for zero write downtime. The tradeoff is that a failed concurrent index build leaves an invalid index that must be manually dropped and recreated. Production teams should monitor `pg_indexes` after deployment to verify no `INVALID` indexes remain. The `-- no-transaction` annotation in SQLx tells the migration runner to skip the surrounding transaction, which is the only way to run `CONCURRENTLY` inside a migration file.
 
 ---
 
@@ -560,7 +566,8 @@ async fn test_migration_rollback() -> Result<(), sqlx::Error> {
     // => LIMIT 0: validates column exists without fetching data
 
     migrator.undo(&pool, 1).await?;
-    // => undo(pool, count): rolls back `count` migrations from the current version
+    // => 1 is target version (undo migrations back to version 1), not rollback count
+    // => undo(pool, target): rolls back applied migrations down to the target version
     // => Requires .down.sql reversible migration files for each undone migration
     // => Removes the migration record from _sqlx_migrations
 
@@ -576,7 +583,7 @@ async fn test_migration_rollback() -> Result<(), sqlx::Error> {
 }
 ```
 
-**Key Takeaway**: Use `migrator.undo(pool, 1)` in tests to verify rollback SQL in `.down.sql` files. Automated rollback tests prevent deploying migrations that cannot be reversed in emergencies.
+**Key Takeaway**: Use `migrator.undo(pool, target_version)` in tests to verify rollback SQL in `.down.sql` files. The second parameter is a target version to roll back to, not a rollback count. Automated rollback tests prevent deploying migrations that cannot be reversed in emergencies.
 
 **Why It Matters**: Migration rollback is the last line of defense when a production deployment goes wrong. Teams that never test rollbacks discover too late that their `.down.sql` files have syntax errors or leave the database in an inconsistent state. Automated rollback tests catch these failures during development. The test pattern—apply all migrations, assert new schema, roll back one, assert old schema—runs in under a second on SQLite and can be part of the standard unit test suite. Every reversible migration should have a corresponding rollback test.
 

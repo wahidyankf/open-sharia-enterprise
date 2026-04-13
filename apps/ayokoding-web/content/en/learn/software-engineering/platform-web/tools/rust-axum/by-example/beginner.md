@@ -89,10 +89,10 @@ async fn main() {
         .route("/users", get(list_users))     // => GET /users → list_users()
         .route("/users", post(create_user))   // => POST /users → create_user()
         // Chaining on same path is idiomatic in Axum 0.8
-        .route("/users/:id", get(get_user))   // => GET /users/:id → get_user()
-                                               // => :id is a named capture segment
-        .route("/users/:id", put(update_user))  // => PUT /users/:id → update_user()
-        .route("/users/:id", delete(delete_user)); // => DELETE /users/:id → delete_user()
+        .route("/users/{id}", get(get_user))   // => GET /users/{id} → get_user()
+                                               // => {id} is a named capture segment
+        .route("/users/{id}", put(update_user))  // => PUT /users/{id} → update_user()
+        .route("/users/{id}", delete(delete_user)); // => DELETE /users/{id} → delete_user()
                                                     // => CRUD pattern complete
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
@@ -103,9 +103,9 @@ async fn main() {
 // Handlers return &'static str for brevity; real handlers return Json or Html
 async fn list_users() -> &'static str { "list users" }   // => GET /users
 async fn create_user() -> &'static str { "created" }     // => POST /users
-async fn get_user() -> &'static str { "one user" }       // => GET /users/:id
-async fn update_user() -> &'static str { "updated" }     // => PUT /users/:id
-async fn delete_user() -> &'static str { "deleted" }     // => DELETE /users/:id
+async fn get_user() -> &'static str { "one user" }       // => GET /users/{id}
+async fn update_user() -> &'static str { "updated" }     // => PUT /users/{id}
+async fn delete_user() -> &'static str { "deleted" }     // => DELETE /users/{id}
 ```
 
 **Key Takeaway**: Register each HTTP method separately using `routing::get`, `routing::post`, etc. The `Router` is immutable and builder-pattern based—each `.route()` call returns a new `Router`.
@@ -128,19 +128,19 @@ use axum::{
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-        .route("/users/:id", get(get_user))
-        // Multiple segments: /orders/:user_id/items/:item_id
-        .route("/orders/:user_id/items/:item_id", get(get_item));
+        .route("/users/{id}", get(get_user))
+        // Multiple segments: /orders/{user_id}/items/{item_id}
+        .route("/orders/{user_id}/items/{item_id}", get(get_item));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
         .await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
-// Single path param - Axum parses ":id" into the given type
+// Single path param - Axum parses "{id}" into the given type
 async fn get_user(
     Path(user_id): Path<u64>,  // => Destructure Path<u64> directly
-                                // => Axum parses the ":id" segment as u64
+                                // => Axum parses the "{id}" segment as u64
                                 // => Returns 400 Bad Request if parsing fails
                                 // => e.g. GET /users/42 → user_id = 42
 ) -> String {
@@ -150,8 +150,8 @@ async fn get_user(
 // Multiple path params - use a tuple or struct
 async fn get_item(
     Path((user_id, item_id)): Path<(u64, u64)>,  // => Tuple destructuring
-                                                   // => First :user_id → user_id: u64
-                                                   // => Second :item_id → item_id: u64
+                                                   // => First {user_id} → user_id: u64
+                                                   // => Second {item_id} → item_id: u64
 ) -> String {
     format!("User {}, Item {}", user_id, item_id)  // => "User 5, Item 12"
 }
@@ -552,7 +552,7 @@ async fn find_user(
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/users/:id", get(find_user));
+    let app = Router::new().route("/users/{id}", get(find_user));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -572,13 +572,12 @@ Axum provides the `HeaderMap` extractor for raw header access and the `TypedHead
 
 ```rust
 use axum::{
-    extract::TypedHeader,             // => Typed header extractor
     http::{HeaderMap, StatusCode},    // => Raw header map
     routing::get,
     Router,
 };
-use axum_extra::TypedHeader as ExtraTypedHeader;  // => axum-extra crate
-// Note: For axum 0.8, use axum::TypedHeader directly
+use axum_extra::TypedHeader;  // => Requires axum-extra with "typed-header" feature
+                               // => TypedHeader moved from axum to axum-extra in 0.8
 
 #[tokio::main]
 async fn main() {
@@ -1071,15 +1070,15 @@ use axum::{routing::get, Router};
 fn user_router() -> Router {
     Router::new()
         .route("/", get(list_users))         // => GET /users/
-        .route("/:id", get(get_user))        // => GET /users/:id
-        .route("/:id/posts", get(user_posts)) // => GET /users/:id/posts
+        .route("/{id}", get(get_user))        // => GET /users/{id}
+        .route("/{id}/posts", get(user_posts)) // => GET /users/{id}/posts
 }
 
 // Post-related routes
 fn post_router() -> Router {
     Router::new()
         .route("/", get(list_posts))         // => GET /posts/
-        .route("/:id", get(get_post))        // => GET /posts/:id
+        .route("/{id}", get(get_post))        // => GET /posts/{id}
 }
 
 // API v1 router composes user and post routers
@@ -1094,10 +1093,10 @@ async fn main() {
     let app = Router::new()
         .nest("/api/v1", api_v1_router())    // => All v1 routes under /api/v1
         // => GET /api/v1/users/
-        // => GET /api/v1/users/:id
-        // => GET /api/v1/users/:id/posts
+        // => GET /api/v1/users/{id}
+        // => GET /api/v1/users/{id}/posts
         // => GET /api/v1/posts/
-        // => GET /api/v1/posts/:id
+        // => GET /api/v1/posts/{id}
         .route("/health", get(health));      // => Top-level /health (no prefix)
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -1205,7 +1204,7 @@ struct ItemList {
 }
 
 async fn list_user_items(
-    Path(user_id): Path<u64>,         // => Extractor 1: parse :user_id from path
+    Path(user_id): Path<u64>,         // => Extractor 1: parse {user_id} from path
     Query(options): Query<ListOptions>, // => Extractor 2: parse ?limit=&offset=
     State(state): State<Arc<AppState>>, // => Extractor 3: inject shared state
     // All three run in order; any failure returns an error response
@@ -1223,7 +1222,7 @@ async fn list_user_items(
 async fn main() {
     let state = Arc::new(AppState { api_key: "sk-live-abc123".into() });
     let app = Router::new()
-        .route("/users/:user_id/items", get(list_user_items))
+        .route("/users/{user_id}/items", get(list_user_items))
         .with_state(state);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();

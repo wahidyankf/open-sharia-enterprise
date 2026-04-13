@@ -3,13 +3,13 @@ title: "Overview"
 weight: 10000000
 date: 2026-03-19T00:00:00+07:00
 draft: false
-description: "Learn Rust Axum through 80+ production-ready annotated examples covering routing, extractors, middleware, authentication, WebSockets, and deployment - achieving 95% framework mastery"
+description: "Learn Rust Axum through 74 production-ready annotated examples covering routing, extractors, middleware, authentication, WebSockets, and deployment - achieving 95% framework mastery"
 tags: ["axum", "rust", "web-framework", "tutorial", "by-example", "examples", "code-first"]
 ---
 
 ## Want to Master Axum Through Working Code?
 
-This guide teaches you Rust Axum through **80+ production-ready code examples** rather than lengthy explanations. If you are an experienced developer switching to Rust web development, or want to deepen your framework mastery, you will build intuition through actual working patterns.
+This guide teaches you Rust Axum through **74 production-ready code examples** rather than lengthy explanations. If you are an experienced developer switching to Rust web development, or want to deepen your framework mastery, you will build intuition through actual working patterns.
 
 ## What Is By-Example Learning?
 
@@ -35,8 +35,8 @@ Axum is a **web application framework for Rust** built on top of Tokio, Tower, a
 
 ```mermaid
 graph TD
-  A["Beginner<br/>Core Axum Concepts<br/>Examples 1-27"] --> B["Intermediate<br/>Production Patterns<br/>Examples 28-55"]
-  B --> C["Advanced<br/>Scale and Resilience<br/>Examples 56-80"]
+  A["Beginner<br/>Core Axum Concepts<br/>Examples 1-27"] --> B["Intermediate<br/>Production Patterns<br/>Examples 28-49"]
+  B --> C["Advanced<br/>Scale and Resilience<br/>Examples 50-74"]
   D["0%<br/>No Axum Knowledge"] -.-> A
   C -.-> E["95%<br/>Framework Mastery"]
 
@@ -47,15 +47,15 @@ graph TD
   style E fill:#029E73,color:#fff
 ```
 
-## Coverage Philosophy: 95% Through 80+ Examples
+## Coverage Philosophy: 95% Through 74 Examples
 
 The **95% coverage** means you will understand Axum deeply enough to build production systems with confidence. It does not mean you will know every edge case or advanced feature—those come with experience.
 
-The 80 examples are organized progressively:
+The 74 examples are organized progressively:
 
 - **Beginner (Examples 1-27)**: Foundation concepts (routing, handlers, extractors, state, responses, templates, error handling, middleware basics)
-- **Intermediate (Examples 28-55)**: Production patterns (shared state, SQLx, JWT authentication, CORS, rate limiting, WebSockets, SSE, testing, graceful shutdown, tracing)
-- **Advanced (Examples 56-80)**: Scale and resilience (custom extractors, tower middleware, connection pooling, streaming, metrics, distributed tracing, circuit breakers, API versioning, Docker deployment)
+- **Intermediate (Examples 28-49)**: Production patterns (shared state, SQLx, JWT authentication, CORS, rate limiting, WebSockets, SSE, testing, graceful shutdown, tracing)
+- **Advanced (Examples 50-74)**: Scale and resilience (custom extractors, tower middleware, connection pooling, streaming, metrics, distributed tracing, circuit breakers, API versioning, Docker deployment)
 
 Together, these examples cover **95% of what you will use** in production Axum applications.
 
@@ -160,7 +160,7 @@ Use this guide as a reference when building features. Search for relevant exampl
 
 | Tutorial Type               | Approach                       | Coverage            | Best For                       |
 | --------------------------- | ------------------------------ | ------------------- | ------------------------------ |
-| **By Example** (this guide) | Code-first, 80+ examples       | 95% breadth         | Learning framework idioms      |
+| **By Example** (this guide) | Code-first, 74 examples        | 95% breadth         | Learning framework idioms      |
 | **Quick Start**             | Project-based, hands-on        | 5-30% touchpoints   | Getting something working fast |
 | **Beginner Tutorial**       | Narrative, explanation-first   | 0-60% comprehensive | Understanding concepts deeply  |
 | **Cookbook**                | Recipe-based, problem-solution | Problem-specific    | Solving specific problems      |
@@ -194,7 +194,7 @@ You know Rust web development but want Axum's compositional Tower ecosystem:
 - **Map Actix handlers to Axum handlers** - Axum handlers use extractors instead of `web::Data`, `web::Path` annotations; see Examples 1-10
 - **Understand Tower vs Actix middleware** - Tower `Service` trait replaces Actix middleware; see Examples 20-25 for `from_fn` middleware
 - **Learn extractor composition** - Axum composes extractors at compile time; tuple extractors work differently from Actix's parameter injection
-- **Recommended path**: Examples 1-15 (Axum fundamentals) → Examples 20-27 (middleware) → Examples 56-65 (advanced Tower)
+- **Recommended path**: Examples 1-15 (Axum fundamentals) → Examples 20-27 (middleware) → Examples 50-59 (advanced Tower)
 
 ### For Node.js/Express Developers Switching to Rust
 
@@ -207,12 +207,12 @@ You know Express patterns but are new to Rust's ownership model:
 
 ### For Python/Django/FastAPI Developers Switching to Rust
 
-Phoenix's architecture resembles Django but with static types and no garbage collector:
+Axum's architecture offers static types and no garbage collector, replacing runtime validation with compile-time safety:
 
 - **Map FastAPI dependencies to Axum State** - FastAPI's `Depends()` maps to Axum's `State` extractor; see Examples 12-15
 - **Understand compile-time error handling** - No exceptions; `Result<T, E>` forces explicit error handling; see Examples 16-19
 - **Learn ownership before async** - Rust's ownership rules interact with async in non-obvious ways; study Examples 1-5 carefully
-- **Recommended path**: Examples 1-20 (Axum basics) → Examples 28-40 (state and DB) → Examples 44-55 (testing)
+- **Recommended path**: Examples 1-20 (Axum basics) → Examples 28-40 (state and DB) → Examples 44-49 (testing)
 
 ## Structure of Each Example
 
@@ -255,7 +255,7 @@ All examples follow a consistent 5-part format:
 Choose your learning path:
 
 - **[Beginner](/en/learn/software-engineering/platform-web/tools/rust-axum/by-example/beginner)** - Start here if new to Axum. Build foundation understanding through 27 core examples covering routing, handlers, extractors, and basic middleware.
-- **[Intermediate](/en/learn/software-engineering/platform-web/tools/rust-axum/by-example/intermediate)** - Jump here if you know Axum basics. Master production patterns through 28 examples covering databases, authentication, WebSockets, and testing.
+- **[Intermediate](/en/learn/software-engineering/platform-web/tools/rust-axum/by-example/intermediate)** - Jump here if you know Axum basics. Master production patterns through 22 examples covering databases, authentication, WebSockets, and testing.
 - **[Advanced](/en/learn/software-engineering/platform-web/tools/rust-axum/by-example/advanced)** - Expert mastery through 25 advanced examples covering custom extractors, Tower internals, metrics, distributed tracing, and production deployment.
 
 Or jump to specific topics by searching for relevant example keywords (routing, extractors, JWT, SQLx, WebSockets, tracing, Docker, etc.).

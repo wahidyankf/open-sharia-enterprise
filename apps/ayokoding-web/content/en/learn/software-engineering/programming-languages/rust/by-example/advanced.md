@@ -215,8 +215,9 @@ fn main() {
 
     // Example with multiple C functions
     extern "C" {
-        fn strlen(s: *const i8) -> usize; // => C's strlen from string.h
+        fn strlen(s: *const std::ffi::c_char) -> usize; // => C's strlen from string.h
                                      // => Takes C string (null-terminated char*)
+                                     // => c_char is portable (i8 on x86, u8 on ARM)
         fn malloc(size: usize) -> *mut u8; // => C's malloc for heap allocation
         fn free(ptr: *mut u8);       // => C's free to deallocate memory
     }
@@ -224,8 +225,8 @@ fn main() {
     unsafe {
         // Call strlen on C string literal
         let c_str = b"Hello\0";      // => Byte string with null terminator (C requirement)
-        let len = strlen(c_str.as_ptr() as *const i8);
-                                     // => Cast to *const i8 (C's char*)
+        let len = strlen(c_str.as_ptr() as *const std::ffi::c_char);
+                                     // => Cast to *const c_char (C's char*)
                                      // => len is 5 (excludes null terminator)
         println!("Length: {}", len); // => Output: Length: 5
 
@@ -264,8 +265,9 @@ pub extern "C" fn add_numbers(a: i32, b: i32) -> i32 {
 use std::ffi::{CStr, CString};       // => std::ffi types for C string interop
 
 #[no_mangle]
-pub extern "C" fn rust_greeting(name: *const i8) -> *mut i8 {
-                                     // => Takes C string (*const char), returns C string (*mut char)
+pub extern "C" fn rust_greeting(name: *const std::ffi::c_char) -> *mut std::ffi::c_char {
+                                     // => Takes C string (*const c_char), returns C string (*mut c_char)
+                                     // => Using c_char instead of i8 for cross-platform correctness
     if name.is_null() {              // => Null pointer check (defensive programming)
         return std::ptr::null_mut(); // => Return null if input invalid
     }
@@ -2754,14 +2756,17 @@ trait StreamingIterator {
                                      // => Both 'a and T constrain the returned Item
 }
 
-// GATs enable async traits (before async fn in traits)
+// GATs for async patterns (historically needed before Rust 1.75)
+// Note: Since Rust 1.75, async fn in traits is stable — GATs are no longer
+// required for async traits. This pattern remains useful for cases where
+// you need explicit control over the returned future type.
 trait AsyncIterator {
     type Item;
     type NextFuture<'a>: std::future::Future<Output = Option<Self::Item>>
     where
         Self: 'a;                    // => GAT: associated type is a Future
                                      // => Lifetime 'a ties future to &'a mut self
-                                     // => Enables async iterator trait (async fn in trait needs this)
+                                     // => Useful when you need named future types (e.g., for boxing)
 
     fn next<'a>(&'a mut self) -> Self::NextFuture<'a>;
                                      // => Returns future tied to borrow lifetime
@@ -3326,7 +3331,7 @@ impl Process for Vec<u8> {           // => Specialized impl for Vec<u8> specific
     }                                // => Other types still use default impl
 }
 
-// Note: This feature is unstable (as of Rust 1.83)
+// Note: Specialization remains unstable and requires nightly Rust
 // - Soundness issues being worked on    => Type system interactions being refined
 // - API may change before stabilization => Syntax/semantics might evolve
 // - Use only with #![feature(specialization)] on nightly
@@ -3681,10 +3686,15 @@ SIMD (Single Instruction Multiple Data) enables data parallelism at the CPU inst
 // Using portable SIMD (unstable feature, requires nightly)
 // #![feature(portable_simd)]        // => Enable portable_simd feature (nightly only)
                                      // => Unstable API (subject to change)
-use std::simd::f32x4;                // => SIMD vector of 4 f32 values
+use std::simd::prelude::*;           // => Import SIMD types and traits
+                                     // => Provides Simd<T, N> and type aliases
+                                     // => Portable across CPU architectures
+use std::simd::Simd;                 // => Generic SIMD vector type
+                                     // => Simd<f32, 4> = 4-wide f32 SIMD vector
+
+type f32x4 = Simd<f32, 4>;          // => Type alias for 4-wide f32 SIMD vector
                                      // => Single Instruction Multiple Data type
                                      // => Operates on 4 floats simultaneously
-                                     // => Portable across CPU architectures
 
 // SIMD vectorized addition
 fn simd_add(a: &[f32], b: &[f32]) -> Vec<f32> {
@@ -3752,9 +3762,9 @@ fn main() {
                                      // => Output: Scalar result: [1.5, 3.5, 5.5, 7.5, 9.5, 11.5, 13.5, 15.5]
 
     // For stable Rust, use external crates:
-    // - packed_simd: Low-level SIMD operations
+    // - wide: Safe SIMD wrapper (recommended, actively maintained)
     // - simdeez: Platform-agnostic SIMD
-    // - wide: Safe SIMD wrapper
+    // - Note: packed_simd is deprecated in favor of std portable_simd
 }
 ```
 

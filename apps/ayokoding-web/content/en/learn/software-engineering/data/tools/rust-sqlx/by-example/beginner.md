@@ -1254,8 +1254,9 @@ graph TD
 --     success BOOLEAN NOT NULL,
 --     -- => success: TRUE if migration completed; FALSE if it failed partway through
 --
---     checksum BLOB NOT NULL,
+--     checksum BYTEA NOT NULL,
 --     -- => checksum: SHA-384 hash of the migration file contents
+--     -- => BYTEA (PostgreSQL) / BLOB (SQLite); binary type depends on database backend
 --     -- => SQLx verifies this on every run: if file changes after being applied, error raised
 --
 --     execution_time BIGINT NOT NULL

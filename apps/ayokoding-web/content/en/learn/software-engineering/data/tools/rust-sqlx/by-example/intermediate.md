@@ -368,7 +368,7 @@ struct ProductWithTags {
     // => Maps from TEXT NOT NULL
     tags: Vec<String>,
     // => Maps from TEXT[] column; SQLx decodes PostgreSQL array to Vec<String>
-    // => Requires: sqlx = { features = ["runtime-tokio-native-tls", "postgres"] }
+    // => Requires: sqlx = { features = ["runtime-tokio", "postgres"] }
 }
 
 async fn query_products_by_tag(
@@ -831,9 +831,9 @@ The `SQLX_OFFLINE` environment variable controls whether SQLx uses cached query 
 # => Configure SQLx features; offline mode requires specific features
 
 [dependencies]
-sqlx = { version = "0.7", features = [
-    "runtime-tokio-native-tls",
-    # => Async runtime; use runtime-tokio-rustls to avoid OpenSSL dependency
+sqlx = { version = "0.8", features = [
+    "runtime-tokio",
+    # => Async runtime (0.8 convention); add "tls-native-tls" separately if TLS needed
     "postgres",
     # => PostgreSQL driver; include sqlite if needed for tests
     "macros",
@@ -876,7 +876,7 @@ SQLX_OFFLINE=false sqlx prepare --check
 The `#[sqlx::test]` attribute macro creates an isolated test database, applies migrations, and tears down the database after the test. It enables integration-style tests that run real SQL against a real schema.
 
 ```rust
-// => Cargo.toml: sqlx = { features = ["runtime-tokio-native-tls", "postgres", "migrate", "macros"] }
+// => Cargo.toml: sqlx = { features = ["runtime-tokio", "postgres", "migrate", "macros"] }
 // => DATABASE_URL must point to a PostgreSQL server; sqlx::test creates a temp database
 
 #[cfg(test)]
@@ -1419,10 +1419,11 @@ async fn backfill_normalized_email_batch(
 ) -> Result<u64, sqlx::Error> {
     let result = sqlx::query(
         "UPDATE users SET normalized_email = LOWER(email)
-         WHERE normalized_email IS NULL
-         LIMIT 1000"
-        // => WHERE normalized_email IS NULL: only unprocessed rows
-        // => LIMIT 1000: process 1000 rows per call; adjust as needed
+         WHERE id IN (
+             SELECT id FROM users WHERE normalized_email IS NULL LIMIT 1000
+         )"
+        // => Subquery selects up to 1000 unprocessed row IDs; UPDATE targets only those
+        // => PostgreSQL does not support LIMIT directly on UPDATE; use subquery pattern
         // => Each call acquires and releases lock; other queries can proceed between calls
     )
     .execute(pool)

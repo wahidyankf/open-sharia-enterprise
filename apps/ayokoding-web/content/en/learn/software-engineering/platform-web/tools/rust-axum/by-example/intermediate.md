@@ -3,7 +3,7 @@ title: "Intermediate"
 weight: 10000002
 date: 2026-03-19T00:00:00+07:00
 draft: false
-description: "Master production Rust Axum patterns through 28 annotated examples covering SQLx database integration, JWT authentication, CORS, rate limiting, WebSockets, SSE, testing, graceful shutdown, and tracing"
+description: "Master production Rust Axum patterns through 22 annotated examples covering SQLx database integration, JWT authentication, CORS, rate limiting, WebSockets, SSE, testing, graceful shutdown, and tracing"
 tags:
   [
     "axum",
@@ -234,7 +234,7 @@ async fn main() {
     let state = Arc::new(AppState { db: pool });
     let app = Router::new()
         .route("/posts", post(create_post))
-        .route("/posts/:id", get(get_post).put(update_post).delete(delete_post));
+        .route("/posts/{id}", get(get_post).put(update_post).delete(delete_post));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -801,9 +801,10 @@ async fn handle_socket(mut socket: WebSocket) {
 
         match msg {
             Message::Text(text) => {
+                // text is Utf8Bytes in Axum 0.8 — implements Display
                 println!("Received: {}", text);   // => "Received: hello"
                 // Echo the message back to the client
-                if socket.send(Message::Text(format!("Echo: {}", text))).await.is_err() {
+                if socket.send(Message::Text(format!("Echo: {}", text).into())).await.is_err() {
                     break;  // => Client disconnected - stop the loop
                 }
                 // => Client receives: "Echo: hello"
@@ -879,7 +880,7 @@ async fn handle_socket(socket: WebSocket, state: Arc<AppState>) {
     // Spawn a task to forward broadcast messages to this client
     let mut send_task = tokio::spawn(async move {
         while let Ok(msg) = rx.recv().await {      // => Wait for broadcast messages
-            if sender.send(Message::Text(msg)).await.is_err() {
+            if sender.send(Message::Text(msg.into())).await.is_err() {
                 break;  // => Client disconnected - stop forwarding
             }
         }
@@ -1065,7 +1066,7 @@ async fn main() {
         .init();
 
     let app = Router::new()
-        .route("/users/:id", get(get_user))
+        .route("/users/{id}", get(get_user))
         .layer(TraceLayer::new_for_http());
         // => Each request gets a tracing span with method, uri, status, latency
 
@@ -1677,8 +1678,8 @@ async fn validate_username(
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-        .route("/users/:id", get(get_user_handler))
-        .route("/validate/:username", get(validate_username));
+        .route("/users/{id}", get(get_user_handler))
+        .route("/validate/{username}", get(validate_username));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -1692,7 +1693,7 @@ async fn main() {
 
 ## Group 28: Integration Testing
 
-### Example 55: Full Integration Test Setup
+### Example 49: Full Integration Test Setup
 
 Write integration tests that start a real application with test-specific state and send HTTP requests via `reqwest` or `axum`'s own `TestClient`.
 

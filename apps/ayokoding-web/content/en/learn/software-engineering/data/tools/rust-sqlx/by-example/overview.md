@@ -3,13 +3,13 @@ title: "Overview"
 date: 2026-03-27T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Rust SQLx migrations through 30 annotated code examples covering 95% of migration patterns - ideal for experienced developers managing database schema evolution"
+description: "Learn Rust SQLx migrations through 85 annotated code examples covering 95% of migration patterns - ideal for experienced developers managing database schema evolution"
 tags: ["rust-sqlx", "tutorial", "by-example", "migrations", "code-first", "sqlx", "database", "postgresql", "sqlite"]
 ---
 
 ## What is Rust SQLx Migrations By Example?
 
-**Rust SQLx Migrations By Example** is a code-first tutorial series teaching experienced Rust developers how to manage database schema evolution using SQLx's migrate feature. Through 30 heavily annotated, self-contained examples, you will achieve 95% coverage of SQLx migration patterns—from writing your first SQL migration file to embedded migrations, programmatic execution, and advanced constraint patterns.
+**Rust SQLx Migrations By Example** is a code-first tutorial series teaching experienced Rust developers how to manage database schema evolution using SQLx's migrate feature. Through 85 heavily annotated, self-contained examples across three levels (beginner, intermediate, advanced), you will achieve 95% coverage of SQLx migration patterns—from writing your first SQL migration file to embedded migrations, programmatic execution, and advanced constraint patterns.
 
 This tutorial focuses specifically on the migrate feature of SQLx. It assumes familiarity with Rust, async/await, and basic SQL. If you are new to Rust async programming, start with foundational Rust tutorials first.
 
@@ -58,15 +58,17 @@ Traditional tutorials explain concepts then show code. By-example tutorials reve
 
 ## Tutorial Structure
 
-### 30 Examples Across One Level
+### 85 Examples Across Three Levels
 
-**Sequential numbering**: Examples 1-30 (beginner level)
+**Sequential numbering**: Examples 1-85
 
 **Distribution**:
 
 - **Beginner** (Examples 1-30): 0-40% coverage - Migration files, CLI commands, embedded migrations, connection setup, common constraint patterns
+- **Intermediate** (Examples 31-60): 40-75% coverage - Typed queries, compile-time verification, multi-database support, batch migrations, testing patterns
+- **Advanced** (Examples 61-85): 75-95% coverage - Custom migration sources, programmatic migrators, concurrent index creation, blue-green deployments, multi-tenant schemas
 
-**Rationale**: 30 examples provide thorough coverage of the migrate feature specifically, giving you everything needed to manage schema evolution in production Rust applications.
+**Rationale**: 85 examples across three progressive levels provide thorough coverage of the migrate feature, giving you everything needed to manage schema evolution from first migration to production-grade deployment strategies.
 
 ## Five-Part Example Format
 
@@ -237,13 +239,17 @@ DATABASE_URL=postgres://user:pass@localhost/mydb cargo run
 
 1. Work through examples 1-10 for CLI and file fundamentals
 2. Study examples 11-20 for programmatic migration and connection setup
-3. Apply examples 21-30 for advanced constraint and schema patterns
+3. Apply examples 21-30 for constraint and schema patterns
+4. Progress to examples 31-60 for typed queries, compile-time checks, and testing
+5. Master examples 61-85 for production deployment strategies and advanced patterns
 
 **For developers migrating from other tools**:
 
 1. Read the overview to understand SQLx migration philosophy
 2. Jump to Example 12 for embedded migrations (key differentiator from other tools)
 3. Reference beginner examples for SQL pattern specifics
+4. Study intermediate examples 31-60 for SQLx-specific compile-time verification
+5. Review advanced examples 61-85 for production deployment patterns
 
 **For quick reference**:
 
@@ -257,19 +263,25 @@ As you progress through examples, you achieve cumulative coverage:
 
 - **After Example 10**: Can create and run basic migrations with the CLI
 - **After Example 20**: Can embed migrations in Rust binaries with multiple pool types
-- **After Example 30**: Expert-level SQLx migration mastery covering 95% of production patterns
+- **After Example 30**: Solid foundation covering 40% of production migration patterns
+- **After Example 45**: Can use typed queries, compile-time verification, and multi-database setups
+- **After Example 60**: Intermediate mastery covering 75% of production patterns including testing and batch migrations
+- **After Example 75**: Can handle concurrent indexes, blue-green deployments, and multi-tenant schemas
+- **After Example 85**: Expert-level SQLx migration mastery covering 95% of production patterns
 
 ## Example Numbering System
 
-**Sequential numbering**: Examples 1-30 in the beginner tutorial
+**Sequential numbering**: Examples 1-85 across three tutorial levels
 
 **Why sequential?**
 
 - Creates a unified reference system ("See Example 12")
-- Clear progression from CLI fundamentals to advanced schema patterns
+- Clear progression from CLI fundamentals to production deployment patterns
 - Easy to track coverage percentage
 
 **Beginner**: Examples 1-30 (0-40% coverage)
+**Intermediate**: Examples 31-60 (40-75% coverage)
+**Advanced**: Examples 61-85 (75-95% coverage)
 
 ## Code Annotation Philosophy
 
@@ -312,7 +324,7 @@ Every example in this tutorial meets these standards:
 
 ## Next Steps
 
-Ready to start? Begin with [Beginner Examples (1-30)](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/beginner) to build a complete foundation in SQLx migrations.
+Ready to start? Begin with [Beginner Examples (1-30)](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/beginner) to build a complete foundation in SQLx migrations, then continue to [Intermediate Examples (31-60)](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/intermediate) and [Advanced Examples (61-85)](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/advanced).
 
 ## Feedback and Contributions
 
