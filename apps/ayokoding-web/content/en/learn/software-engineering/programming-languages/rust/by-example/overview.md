@@ -3,7 +3,7 @@ title: "Overview"
 date: 2025-12-30T01:23:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Rust through 85+ annotated code examples covering essential concepts of the language - ideal for experienced developers"
+description: "Learn Rust through 85 annotated code examples covering essential concepts of the language - ideal for experienced developers"
 tags: ["rust", "tutorial", "by-example", "examples", "code-first"]
 ---
 
@@ -38,7 +38,7 @@ Progress from ownership fundamentals through production patterns to expert maste
 
 ## Coverage Philosophy
 
-This tutorial provides **comprehensive coverage of Rust** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This tutorial covers core language features comprehensively through practical, annotated examples. The coverage percentage reflects concept breadth, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -164,7 +164,7 @@ After reading each example:
 
 Rust's compiler is your teacher. Error messages explain what's wrong and often suggest fixes.
 
-## Four-Part Example Format
+## Five-Part Example Format
 
 Every example follows a consistent structure:
 
@@ -183,6 +183,10 @@ Runnable Rust code with inline `// =>` comments showing outputs, ownership state
 ### 4. Key Takeaway (1-2 sentences)
 
 The core insight distilled: most important pattern, when to apply it, common pitfalls to avoid.
+
+### 5. Why It Matters (2-3 sentences)
+
+Production relevance connecting the concept to real-world systems, comparing to alternatives, and explaining consequences for quality, performance, or safety.
 
 ## Example Template
 
@@ -220,6 +224,8 @@ fn main() {
 ```
 
 **Key Takeaway**: Rust's move semantics prevent use-after-free bugs by invalidating the original binding when ownership transfers, ensuring only one owner can access heap-allocated data at a time.
+
+**Why It Matters**: Move semantics eliminate double-free and use-after-free vulnerabilities at compile time—bug classes that account for 70% of security vulnerabilities in C/C++ codebases according to Microsoft research. The zero-runtime-cost ownership model makes Rust ideal for performance-critical systems where garbage collection pauses are unacceptable.
 
 ## Learning Strategies
 
@@ -262,7 +268,7 @@ This tutorial prioritizes working code over theoretical discussion:
 - **Learn by doing**: Understanding comes from running and modifying code
 - **Pattern recognition**: See the same patterns in different contexts across 85 examples
 
-If you prefer narrative explanations. By-example learning works best when you learn through experimentation.
+If you prefer narrative explanations, consider the by-concept path instead. By-example learning works best when you learn through experimentation.
 
 ## Next Steps
 

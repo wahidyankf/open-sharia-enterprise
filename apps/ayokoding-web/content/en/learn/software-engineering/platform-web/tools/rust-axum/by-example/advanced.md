@@ -22,7 +22,7 @@ tags:
 
 ## Group 29: Custom Extractors
 
-### Example 56: Implementing `FromRequestParts`
+### Example 50: Implementing `FromRequestParts`
 
 Custom extractors let you encapsulate reusable extraction logic. Implement `FromRequestParts` for extractors that do not consume the request body.
 
@@ -42,7 +42,6 @@ graph TD
 
 ```rust
 use axum::{
-    async_trait,
     extract::{FromRequestParts, State},
     http::{request::Parts, StatusCode},
     RequestPartsExt,  // => Extension trait adding .extract() to Parts
@@ -58,7 +57,7 @@ struct AppState {
     valid_keys: Vec<String>,  // => List of valid API keys (use a HashSet in production)
 }
 
-#[async_trait]
+// async fn in traits is native since Rust 1.75 — no #[async_trait] needed
 impl<S> FromRequestParts<S> for ApiKey
 where
     S: Send + Sync,  // => S is the state type; must be Send + Sync for async
@@ -119,13 +118,12 @@ async fn main() {
 
 ---
 
-### Example 57: Implementing `FromRequest` for Body Extractors
+### Example 51: Implementing `FromRequest` for Body Extractors
 
 `FromRequest` is for extractors that consume the request body. Use it to build custom deserialization logic, such as signature-verified JSON or CBOR.
 
 ```rust
 use axum::{
-    async_trait,
     body::Bytes,
     extract::{FromRequest, Request},
     http::{header, StatusCode},
@@ -148,7 +146,7 @@ impl IntoResponse for StrictJsonRejection {
     }
 }
 
-#[async_trait]
+// async fn in traits is native since Rust 1.75 — no #[async_trait] needed
 impl<T, S> FromRequest<S> for StrictJson<T>
 where
     T: DeserializeOwned,  // => T must be deserializable from JSON
@@ -215,7 +213,7 @@ async fn main() {
 
 ## Group 30: Tower Middleware Deep Dive
 
-### Example 58: Building a Tower `Layer` and `Service`
+### Example 52: Building a Tower `Layer` and `Service`
 
 Tower middleware is the backbone of the Axum ecosystem. Implementing `Layer` and `Service` manually gives you the deepest level of control.
 
@@ -309,7 +307,7 @@ async fn main() {
 
 ---
 
-### Example 59: `tower-http` Compression Middleware
+### Example 53: `tower-http` Compression Middleware
 
 Response compression reduces bandwidth costs and improves perceived performance. `tower-http`'s `CompressionLayer` handles gzip, brotli, and zstd compression transparently.
 
@@ -356,7 +354,7 @@ async fn large_response() -> String {
 
 ## Group 31: Connection Pooling Patterns
 
-### Example 60: Multi-Database Connection Pool Configuration
+### Example 54: Multi-Database Connection Pool Configuration
 
 Production applications often require multiple database pools with different characteristics: a primary read-write pool and a replica read-only pool.
 
@@ -433,7 +431,7 @@ async fn main() {
 
 ## Group 32: Streaming Responses
 
-### Example 61: Large File Streaming
+### Example 55: Large File Streaming
 
 Stream large files from disk to the HTTP client using `tokio::fs` and `Body::from_stream` without loading the entire file into memory.
 
@@ -450,7 +448,7 @@ use tokio_util::io::ReaderStream;  // => Convert AsyncRead into Stream
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/download/:filename", get(download_file));
+    let app = Router::new().route("/download/{filename}", get(download_file));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -506,7 +504,7 @@ async fn download_file(
 
 ## Group 33: Metrics and Observability
 
-### Example 62: Prometheus Metrics with `axum-prometheus`
+### Example 56: Prometheus Metrics with `axum-prometheus`
 
 Expose application metrics in Prometheus format. `axum-prometheus` automatically tracks request counts, latencies, and response sizes.
 
@@ -555,7 +553,7 @@ async fn users_handler() -> &'static str { "users" }
 
 ---
 
-### Example 63: Custom Application Metrics
+### Example 57: Custom Application Metrics
 
 Record business-level metrics alongside HTTP metrics. Use `metrics` crate macros to track domain-specific counters, gauges, and histograms.
 
@@ -635,7 +633,7 @@ async fn main() {
 
 ## Group 34: Distributed Tracing
 
-### Example 64: OpenTelemetry Tracing
+### Example 58: OpenTelemetry Tracing
 
 Distributed tracing propagates context across service boundaries. OpenTelemetry is the standard library for emitting traces to backends like Jaeger, Zipkin, or Honeycomb.
 
@@ -707,7 +705,7 @@ async fn main() {
         .with(otel_layer)                            // => Forward spans to OTel
         .init();
 
-    let app = Router::new().route("/products/:id", get(get_product));
+    let app = Router::new().route("/products/{id}", get(get_product));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 
@@ -724,7 +722,7 @@ async fn main() {
 
 ## Group 35: Caching
 
-### Example 65: In-Memory Caching with `moka`
+### Example 59: In-Memory Caching with `moka`
 
 The `moka` crate provides a high-performance, concurrent in-memory cache with TTL expiration and LRU eviction.
 
@@ -794,7 +792,7 @@ async fn main() {
     let state = Arc::new(AppState { product_cache });
 
     let app = Router::new()
-        .route("/products/:id", get(get_product))
+        .route("/products/{id}", get(get_product))
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -810,7 +808,7 @@ async fn main() {
 
 ## Group 36: API Versioning
 
-### Example 66: URL-Based API Versioning
+### Example 60: URL-Based API Versioning
 
 Manage multiple API versions using nested routers with version prefixes. This enables safe, gradual migration of clients to newer API versions.
 
@@ -854,16 +852,16 @@ async fn get_user_v2() -> Json<UserV2> {
 // Build V1 router - all V1 routes in one function
 fn v1_router() -> Router {
     Router::new()
-        .route("/users/:id", get(get_user_v1))
-        // => GET /api/v1/users/:id
+        .route("/users/{id}", get(get_user_v1))
+        // => GET /api/v1/users/{id}
         // Add more V1 routes here as needed
 }
 
 // Build V2 router - V2 adds and modifies routes
 fn v2_router() -> Router {
     Router::new()
-        .route("/users/:id", get(get_user_v2))
-        // => GET /api/v2/users/:id (breaking change)
+        .route("/users/{id}", get(get_user_v2))
+        // => GET /api/v2/users/{id} (breaking change)
         // Routes that didn't change can call v1 handlers directly
 }
 
@@ -888,7 +886,7 @@ async fn main() {
 
 ## Group 37: Circuit Breaker Pattern
 
-### Example 67: Circuit Breaker for External Services
+### Example 61: Circuit Breaker for External Services
 
 The circuit breaker pattern prevents cascading failures by stopping calls to an unhealthy external service and allowing recovery time.
 
@@ -1016,7 +1014,7 @@ async fn main() {
 
 ## Group 38: Production Deployment
 
-### Example 68: Docker Multi-Stage Build
+### Example 62: Docker Multi-Stage Build
 
 Multi-stage Docker builds produce minimal production images by separating the Rust compilation environment from the runtime environment.
 
@@ -1090,7 +1088,7 @@ docker run -p 3000:3000 \
 
 ---
 
-### Example 69: Kubernetes-Ready Health Configuration
+### Example 63: Kubernetes-Ready Health Configuration
 
 Configure liveness and readiness probes to integrate cleanly with Kubernetes pod lifecycle management.
 
@@ -1180,7 +1178,7 @@ async fn main() {
 
 ---
 
-### Example 70: Environment-Specific Cargo Features
+### Example 64: Environment-Specific Cargo Features
 
 Use Cargo feature flags to enable or disable functionality (debug endpoints, test helpers) based on build profile.
 
@@ -1245,7 +1243,7 @@ async fn main() {
 
 ## Group 39: Advanced Patterns
 
-### Example 71: Request ID Propagation
+### Example 65: Request ID Propagation
 
 Assign a unique ID to every request and propagate it through logs and response headers for end-to-end request tracing.
 
@@ -1322,7 +1320,7 @@ async fn main() {
 
 ---
 
-### Example 72: Conditional Request Handling with ETag
+### Example 66: Conditional Request Handling with ETag
 
 ETags enable conditional GET requests, allowing clients to cache responses and validate freshness with a single round-trip when the data has not changed.
 
@@ -1393,7 +1391,7 @@ async fn main() {
 
 ---
 
-### Example 73: Pagination with Cursor-Based Navigation
+### Example 67: Pagination with Cursor-Based Navigation
 
 Cursor-based pagination scales better than offset-based pagination for large datasets. The cursor is an opaque token encoding the position in the result set.
 
@@ -1505,7 +1503,7 @@ async fn main() {
 
 ---
 
-### Example 74: Background Task Management with `tokio::spawn`
+### Example 68: Background Task Management with `tokio::spawn`
 
 Long-running or periodic tasks run as Tokio tasks. Use channels to communicate between request handlers and background tasks.
 
@@ -1606,7 +1604,7 @@ async fn main() {
 
 ---
 
-### Example 75: API Rate Limiting by User
+### Example 69: API Rate Limiting by User
 
 Implement per-user rate limiting that distinguishes authenticated users from anonymous users, applying different limits based on tier.
 
@@ -1708,7 +1706,7 @@ async fn main() {
 
 ---
 
-### Example 76: Webhook Delivery with Retry Logic
+### Example 70: Webhook Delivery with Retry Logic
 
 Implement reliable outbound webhook delivery with exponential backoff retry using Tokio tasks.
 
@@ -1811,7 +1809,7 @@ async fn main() {
 
 ---
 
-### Example 77: Axum with tokio-console for Async Debugging
+### Example 71: Axum with tokio-console for Async Debugging
 
 `tokio-console` is a real-time debugger for Tokio tasks. Enable it in development to visualize task scheduling, wakeups, and blocking operations.
 
@@ -1874,7 +1872,7 @@ async fn slow_handler() -> &'static str {
 
 ---
 
-### Example 78: Request Deduplication
+### Example 72: Request Deduplication
 
 Prevent duplicate processing of identical requests using idempotency keys—common in payment APIs and at-least-once delivery systems.
 
@@ -1981,7 +1979,7 @@ async fn main() {
 
 ---
 
-### Example 79: WebSocket Ping/Pong Keep-Alive
+### Example 73: WebSocket Ping/Pong Keep-Alive
 
 Maintain long-lived WebSocket connections by sending application-level ping frames and closing stale connections.
 
@@ -1992,6 +1990,7 @@ use axum::{
     routing::get,
     Router,
 };
+use bytes::Bytes;  // => For Ping payload (Axum 0.8 uses Bytes, not Vec<u8>)
 use std::time::Duration;
 use tokio::time::{interval, timeout};
 
@@ -2018,8 +2017,8 @@ async fn handle_socket_with_keepalive(mut socket: WebSocket) {
                 // => 60-second timeout: close if no message received
                 match msg {
                     Ok(Some(Ok(Message::Text(text)))) => {
-                        // Echo text messages
-                        if socket.send(Message::Text(format!("Echo: {}", text))).await.is_err() {
+                        // Echo text messages (text is Utf8Bytes in Axum 0.8)
+                        if socket.send(Message::Text(format!("Echo: {}", text).into())).await.is_err() {
                             break;  // => Client disconnected
                         }
                     }
@@ -2041,7 +2040,7 @@ async fn handle_socket_with_keepalive(mut socket: WebSocket) {
             }
             // Send periodic ping
             _ = ping_interval.tick() => {
-                if socket.send(Message::Ping(vec![])).await.is_err() {
+                if socket.send(Message::Ping(Bytes::new())).await.is_err() {
                     break;  // => Client disconnected (could not send ping)
                 }
                 tracing::debug!("Sent ping to client");
@@ -2057,7 +2056,7 @@ async fn handle_socket_with_keepalive(mut socket: WebSocket) {
 
 ---
 
-### Example 80: Full Production Setup Checklist
+### Example 74: Full Production Setup Checklist
 
 Combine all production concerns into a final, complete application structure demonstrating how everything fits together.
 

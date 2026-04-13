@@ -619,6 +619,10 @@ fn makes_copy(x: i32) {              // => x receives copy of caller's value
 When you need multiple owners of heap data, explicitly clone it. Cloning creates a deep copy with independent ownership. Unlike move semantics, cloning duplicates heap data, which is expensive but sometimes necessary.
 
 ```rust
+fn takes_ownership_clone(s: String) {
+    println!("Function: {}", s);     // => Output: Function: world
+}                                    // => s dropped here, heap memory freed
+
 fn main() {
     let s1 = String::from("hello");  // => s1 owns "hello" on heap (pointer, length, capacity)
 
@@ -627,7 +631,6 @@ fn main() {
 
     println!("s1 = {}, s2 = {}", s1, s2);
                                      // => Output: s1 = hello, s2 = hello
-}                                    // => s1 dropped (frees heap), s2 dropped (frees heap independently)
 
     // Clone vs Copy vs Move comparison
     let v1 = vec![1, 2, 3];          // => v1 owns vector on heap
@@ -647,11 +650,7 @@ fn main() {
     let s4 = s3.clone();             // => s4 owns independent copy of "world"
     takes_ownership_clone(s3);       // => s3 moved into function (s3 invalid after this)
     println!("s4: {}", s4);          // => Output: s4: world (s4 still valid, owns its copy)
-}
-
-fn takes_ownership_clone(s: String) {
-    println!("Function: {}", s);     // => Output: Function: world
-}                                    // => s dropped here, heap memory freed
+}                                    // => s1, s2, v2, v3, v4, n1, n2, s4 dropped (heap freed)
 ```
 
 **Key Takeaway**: Use `.clone()` to create independent copies of heap-allocated data when multiple owners are needed, making expensive deep copy operations explicit in code. Unlike move (free) or Copy (cheap stack copy), Clone performs expensive heap duplication and requires explicit invocation.
