@@ -192,27 +192,27 @@ Use this guide as a reference when building features. Search for relevant exampl
 You know Rust web development but want Axum's compositional Tower ecosystem:
 
 - **Map Actix handlers to Axum handlers** - Axum handlers use extractors instead of `web::Data`, `web::Path` annotations; see Examples 1-10
-- **Understand Tower vs Actix middleware** - Tower `Service` trait replaces Actix middleware; see Examples 20-25 for `from_fn` middleware
+- **Understand Tower vs Actix middleware** - Tower `Service` trait replaces Actix middleware; see Examples 15-17 for `from_fn` middleware
 - **Learn extractor composition** - Axum composes extractors at compile time; tuple extractors work differently from Actix's parameter injection
-- **Recommended path**: Examples 1-15 (Axum fundamentals) → Examples 20-27 (middleware) → Examples 50-59 (advanced Tower)
+- **Recommended path**: Examples 1-14 (Axum fundamentals) → Examples 15-21 (middleware + Extension) → Examples 50-74 (advanced Tower patterns)
 
 ### For Node.js/Express Developers Switching to Rust
 
 You know Express patterns but are new to Rust's ownership model:
 
-- **Map Express middleware to Tower** - Express middleware `(req, res, next)` maps to Tower `Service`; see Examples 20-27
+- **Map Express middleware to Tower** - Express middleware `(req, res, next)` maps to Tower `Service`; see Examples 15-17 and Example 46
 - **Understand async/await differences** - Rust's async is poll-based, not event loop; ownership rules apply to async too; see Examples 1-5
-- **Learn typed extractors** - No `req.body`, `req.params`; everything is compile-time typed via extractors; see Examples 6-15
-- **Recommended path**: Examples 1-10 (basics) → Examples 11-20 (extractors) → Examples 28-40 (state and DB)
+- **Learn typed extractors** - No `req.body`, `req.params`; everything is compile-time typed via extractors; see Examples 3-10
+- **Recommended path**: Examples 1-10 (basics) → Examples 6-7, 20-21 (state + extractors) → Examples 28-30 (DB integration)
 
 ### For Python/Django/FastAPI Developers Switching to Rust
 
 Axum's architecture offers static types and no garbage collector, replacing runtime validation with compile-time safety:
 
-- **Map FastAPI dependencies to Axum State** - FastAPI's `Depends()` maps to Axum's `State` extractor; see Examples 12-15
-- **Understand compile-time error handling** - No exceptions; `Result<T, E>` forces explicit error handling; see Examples 16-19
+- **Map FastAPI dependencies to Axum State** - FastAPI's `Depends()` maps to Axum's `State` extractor; see Examples 6-7
+- **Understand compile-time error handling** - No exceptions; `Result<T, E>` forces explicit error handling; see Examples 9, 47-48
 - **Learn ownership before async** - Rust's ownership rules interact with async in non-obvious ways; study Examples 1-5 carefully
-- **Recommended path**: Examples 1-20 (Axum basics) → Examples 28-40 (state and DB) → Examples 44-49 (testing)
+- **Recommended path**: Examples 1-14 (Axum basics) → Examples 28-30 (state and DB) → Examples 26-27, 49 (testing)
 
 ## Structure of Each Example
 
