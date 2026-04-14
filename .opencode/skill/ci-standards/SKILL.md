@@ -2,10 +2,6 @@
 name: ci-standards
 description: CI/CD standards knowledge for validating project compliance with CI conventions
 context: inline
-tools:
-  - Read
-  - Glob
-  - Grep
 ---
 
 # CI Standards

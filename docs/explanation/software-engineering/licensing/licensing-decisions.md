@@ -2,6 +2,7 @@
 title: Licensing Decisions
 description: License analysis and compliance decisions for notable open-source dependencies in open-sharia-enterprise, including Liquibase FSL-1.1-ALv2, Hibernate LGPL-2.1, sharp-libvips LGPL-3.0, and Logback EPL-1.0/LGPL-2.1
 category: explanation
+subcategory: licensing
 tags:
   - licensing
   - compliance

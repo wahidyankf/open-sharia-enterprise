@@ -2,6 +2,7 @@
 title: Licensing
 description: License analysis and compliance decisions for open-source dependencies used in open-sharia-enterprise
 category: explanation
+subcategory: licensing
 tags:
   - licensing
   - compliance
