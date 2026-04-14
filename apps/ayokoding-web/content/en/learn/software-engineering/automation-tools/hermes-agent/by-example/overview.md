@@ -37,7 +37,7 @@ Hermes Agent is a **free, open-source, self-improving AI agent** built by Nous R
 
 - **[Beginner](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/beginner)** (Examples 1-27): Installation, CLI commands, YAML configuration, basic tools, memory fundamentals — 0-40% coverage
 - **[Intermediate](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/intermediate)** (Examples 28-54): Skills system, messaging channels, delegation, scheduling, browser automation, code execution — 40-75% coverage
-- **[Advanced](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/advanced)** (Examples 55-80): Terminal backends, security hardening, MCP integration, voice mode, production deployment, scaling — 75-95% coverage
+- **[Advanced](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/advanced)** (Examples 55-80 plus four deep-dive hardening patterns): Terminal backends, security hardening (OWASP LLM Top 10 threat model, indirect prompt-injection defense, MCP supply-chain vetting, link-preview exfiltration prevention, network egress isolation), MCP integration, voice mode, production deployment, scaling — 75-95% coverage
 
 ### Example Format
 
