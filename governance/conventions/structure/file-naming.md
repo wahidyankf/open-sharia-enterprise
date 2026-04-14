@@ -53,6 +53,10 @@ monorepo-structure.md
 
 Each directory's index file is named `README.md`. This exception exists because GitHub automatically renders `README.md` as the directory landing page on the web.
 
+### Skill definition files
+
+Skill definition files under `.claude/skills/*/` are named `SKILL.md`. The uppercase convention provides immediate visual distinction from other markdown files in skill directories, and `SKILL.md` is the canonical filename referenced throughout the AI agents convention and governance documentation.
+
 ### Operational metadata
 
 Files under `docs/metadata/` are operational artifacts (caches, validation data). The directory itself provides the context, so only machine-parseability matters.

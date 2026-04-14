@@ -2,6 +2,7 @@
 title: Production Dependency Compatibility with FSL-1.1-MIT
 description: Audit of all production dependency licenses for compatibility with FSL-1.1-MIT, including LGPL elimination and MPL-2.0 analysis
 category: explanation
+subcategory: licensing
 tags:
   - licensing
   - compliance

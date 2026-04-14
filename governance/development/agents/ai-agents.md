@@ -2541,11 +2541,16 @@ model: zai-coding-plan/glm-5-turbo # haiku equivalent
 
 ```yaml
 ---
+name: skill-name
 description: Brief description
+context: inline # optional; defaults to inline
 ---
-#Skill Name
+# Skill Name
 Content...
 ```
+
+**Required fields**: `name` (must match directory name), `description`
+**Optional fields**: `context` (inline or fork)
 
 Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no conversion needed).
 

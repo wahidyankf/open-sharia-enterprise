@@ -446,7 +446,7 @@ rhino-cli agents validate-claude --skills-only
 **Skills (.claude/skills/):**
 
 - SKILL.md file exists
-- Required field: description
+- Required fields: name, description (name must match directory name)
 - YAML syntax validity
 
 **Flags:**
