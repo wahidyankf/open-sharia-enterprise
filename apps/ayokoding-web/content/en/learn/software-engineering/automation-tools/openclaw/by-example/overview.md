@@ -34,7 +34,7 @@ OpenClaw is a **free, open-source, local-first AI agent platform** that connects
 
 - **[Beginner](/en/learn/software-engineering/automation-tools/openclaw/by-example/beginner)** (Examples 1-27): Installation, CLI commands, JSON5 configuration, basic tools, simple skills — 0-40% coverage
 - **[Intermediate](/en/learn/software-engineering/automation-tools/openclaw/by-example/intermediate)** (Examples 28-54): Channel integration, multi-agent patterns, advanced skills, Lobster workflows, tool groups — 40-75% coverage
-- **[Advanced](/en/learn/software-engineering/automation-tools/openclaw/by-example/advanced)** (Examples 55-80): Plugin development, security hardening, production deployment, scaling, monitoring, custom model providers — 75-95% coverage
+- **[Advanced](/en/learn/software-engineering/automation-tools/openclaw/by-example/advanced)** (Examples 55-80 plus four deep-dive hardening patterns): Plugin development, security hardening (OWASP LLM Top 10 threat model, indirect prompt-injection defense, ClawHub supply-chain vetting, link-preview exfiltration prevention, network egress isolation), production deployment, scaling, monitoring, custom model providers — 75-95% coverage
 
 ### Example Format
 

@@ -81,7 +81,7 @@ Learn Hermes Agent through 80 self-contained, heavily annotated examples:
 
 - **[Beginner](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/beginner)** (Examples 1-27) — Installation, CLI, YAML configuration, tools, memory basics (0-40% coverage)
 - **[Intermediate](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/intermediate)** (Examples 28-54) — Skills, messaging channels, delegation, scheduling, browser, code execution (40-75% coverage)
-- **[Advanced](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/advanced)** (Examples 55-80) — Terminal backends, security, MCP, voice, production deployment (75-95% coverage)
+- **[Advanced](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/advanced)** (Examples 55-80 plus four deep-dive hardening patterns) — Terminal backends, security (OWASP LLM Top 10 threat model, indirect prompt-injection defense, MCP supply-chain vetting, link-preview exfiltration prevention, network egress isolation), MCP, voice, production deployment (75-95% coverage)
 
 ## Why Hermes Agent Matters
 
