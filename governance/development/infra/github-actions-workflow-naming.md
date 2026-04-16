@@ -156,15 +156,15 @@ The pattern `(Language/Framework)` in a name maps to `language-framework` in the
 
 ### Version Alignment Policy
 
-`main-ci.yml` is the **source of truth** for language version choices. All scheduled `test-demo-*`
+`main-ci.yml` is the **source of truth** for language version choices. All `test-a-demo-*`
 workflows must use the same language versions as `main-ci.yml`.
 
-**Rule**: When upgrading a language version in `main-ci.yml`, update all scheduled workflows that
-use that language in the same commit. Version drift between `main-ci.yml` and scheduled workflows
-creates inconsistencies where CI passes on main but scheduled integration tests fail (or vice
-versa).
+**Rule**: When upgrading a language version in `main-ci.yml`, update all demo and deploy workflows
+that use that language in the same commit. Version drift between `main-ci.yml` and these workflows
+creates inconsistencies where CI passes on main but manually dispatched integration tests fail
+(or vice versa).
 
-**Scheduled workflows that must stay aligned**:
+**Workflows that must stay aligned**:
 
 | Language | `main-ci.yml` step | Scheduled workflows to update                                                       |
 | -------- | ------------------ | ----------------------------------------------------------------------------------- |
@@ -173,7 +173,7 @@ versa).
 | Python   | `python-version`   | `test-a-demo-be-python-fastapi.yml`                                                 |
 | Node.js  | `node-version`     | All workflows installing Node.js                                                    |
 
-**Frontend workflows install Go for codegen**: The three frontend scheduled workflows
+**Frontend workflows install Go for codegen**: The three demo frontend workflows
 (`test-a-demo-fe-ts-nextjs.yml`, `test-a-demo-fe-ts-tanstack-start.yml`,
 `test-a-demo-fe-dart-flutterweb.yml`) install Go and run `rhino-cli` for contract codegen before
 running tests. The Go version in these workflows must match the version used in `main-ci.yml` and

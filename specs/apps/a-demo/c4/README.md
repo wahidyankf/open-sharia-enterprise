@@ -51,9 +51,9 @@ implementations conform to the same API contract and Gherkin specifications.
 
 - **Main CI** (`main-ci.yml`): Runs `typecheck`, `lint`, `test:quick` for all
   projects on push to `main`. Uploads coverage to Codecov.
-- **Per-app E2E** (`test-a-demo-be-*.yml`, `test-a-demo-fe-*.yml`): Scheduled
-  twice daily (6 AM / 6 PM WIB). Starts full stack via Docker Compose, runs
-  Playwright E2E tests.
+- **Per-app E2E** (`test-a-demo-be-*.yml`, `test-a-demo-fe-*.yml`): Manual
+  `workflow_dispatch` only (cron schedules removed to conserve resources).
+  Starts full stack via Docker Compose, runs Playwright E2E tests.
 - **PR Quality Gate** (`pr-quality-gate.yml`): Runs `typecheck`, `lint`,
   `test:quick` for affected projects on pull requests.
 

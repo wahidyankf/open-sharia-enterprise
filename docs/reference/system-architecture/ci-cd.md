@@ -233,9 +233,9 @@ graph TB
 
 **Backends**: golang-gin, java-springboot, java-vertx, elixir-phoenix, fsharp-giraffe, python-fastapi, rust-axum, kotlin-ktor, ts-effect, csharp-aspnetcore, clojure-pedestal
 
-**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`. The golang-gin workflow also triggers on push to `main` when its paths change.
+**Trigger**: Manual `workflow_dispatch` only. Cron schedules removed to conserve CI resources; trigger from the GitHub Actions UI when needed.
 
-**Language version alignment**: All scheduled demo workflows use the same language versions as `main-ci.yml`:
+**Language version alignment**: All demo workflows use the same language versions as `main-ci.yml`:
 
 - **Go**: 1.26.0 (used in golang-gin backend and all frontend workflows for codegen)
 - **Elixir**: 1.19 (OTP 27)
@@ -267,7 +267,7 @@ Each backend workflow runs its own backend stack — never a different backend.
 
 **File**: `.github/workflows/test-a-demo-fe-ts-nextjs.yml`
 
-**Trigger**: Push to `main` (when frontend/FE E2E/backend paths change), scheduled cron, or manual `workflow_dispatch`
+**Trigger**: Manual `workflow_dispatch` only. Cron schedules removed to conserve CI resources; trigger from the GitHub Actions UI when needed.
 
 **Purpose**: Dedicated FE E2E workflow using the Go/Gin reference backend stack via `infra/dev/a-demo-fe-ts-nextjs/docker-compose.yml`
 
