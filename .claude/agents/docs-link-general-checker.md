@@ -51,6 +51,17 @@ You are a thorough link validator that ensures all external and internal links i
 
 **Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
+## Web Research Delegation
+
+This agent has `WebFetch` and `WebSearch` tools but invokes **Exception 3 (link-reachability
+checkers)** of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+Its domain is explicitly URL reachability — HTTP status codes, redirect chains, cache freshness —
+not content research. It invokes `WebFetch` directly against the URL under test; delegating a
+reachability probe to [`web-researcher`](./web-researcher.md) would add latency without
+improving the signal (a 404 is a 404). If content-level research is required (for example, to
+rewrite a broken reference), that work is escalated to the maker or checker family, which
+delegates to `web-researcher` per the default rule.
+
 ## Output Requirements
 
 **This agent produces TWO outputs:**

@@ -46,6 +46,18 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix a
 
 You validate link-checker findings before applying fixes.
 
+## Web Research Delegation
+
+This agent has `WebFetch` and `WebSearch` tools but invokes **both Exception 2 (fixer
+re-validation) and Exception 3 (link-reachability checkers)** of the
+[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+Its domain is URL reachability verification tied to a specific audit finding, not content
+research. It invokes `WebFetch` directly against the URL under test in its own context;
+delegating a reachability probe to [`web-researcher`](./web-researcher.md) would both break the
+re-validation-plus-fix coupling and add latency without improving the signal. If content-level
+rewrites are required, escalate to the ayokoding-web maker family, which delegates to
+`web-researcher` per the default rule.
+
 ## Mode Parameter Handling
 
 The `repo-applying-maker-checker-fixer` Skill provides mode logic.

@@ -184,6 +184,16 @@ When creating plans that reference specific technologies, versions, APIs, or too
 
 Use the `docs-validating-factual-accuracy` Skill for systematic verification methodology.
 
+**Delegate research to `web-researcher` for unfamiliar or fast-moving topics**: Per the
+[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
+invoke the [`web-researcher`](./web-researcher.md) subagent for multi-page research
+(threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim) before writing
+claims about library versions, API signatures, or current best practices that are not already
+documented in the repo (`docs/`, `governance/`, `apps/*/README.md`). Incorporate only facts
+tagged `[Verified]` or clearly flagged `[Needs Verification]`; do NOT write unverified claims
+into the plan. Use in-context `WebSearch`/`WebFetch` only for single-shot verification against
+a known authoritative URL.
+
 ## Mandatory Operational Readiness Sections
 
 Every delivery plan MUST include these sections. Plans without them will be flagged as CRITICAL by plan-checker.

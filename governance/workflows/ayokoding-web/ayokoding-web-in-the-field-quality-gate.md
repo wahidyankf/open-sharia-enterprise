@@ -140,6 +140,17 @@ graph TB
     style F fill:#CA9161,color:#fff
 ```
 
+## Research Delegation
+
+The `apps-ayokoding-web-in-the-field-maker` and `apps-ayokoding-web-facts-checker` agents invoked
+by this workflow delegate multi-page web research to the
+[`web-researcher`](../../../.claude/agents/web-researcher.md) subagent when composing or
+verifying claims about library versions, API signatures, or production best practices requires
+more than one or two searches, or more than two fetches. In-context `WebSearch`/`WebFetch` remain
+available for single-shot verification against known authoritative URLs. This keeps each agent's
+context lean. The delegation is encoded in each agent's prompt — no workflow-level configuration
+required.
+
 ## Steps
 
 ### 1. Maker - Create/Update Guides (Manual/AI-Assisted)
