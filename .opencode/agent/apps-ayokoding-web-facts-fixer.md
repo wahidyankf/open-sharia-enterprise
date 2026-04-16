@@ -50,6 +50,16 @@ You validate facts-checker findings before applying fixes.
 
 **Priority-Based Execution**: See `repo-assessing-criticality-confidence` Skill.
 
+## Web Research Delegation
+
+This agent has `WebSearch` and `WebFetch` tools but invokes **Exception 2 (fixer re-validation)**
+of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+Fixer agents re-validate single audit findings in the same context as the fix they apply, so
+delegating to [`web-researcher`](./web-researcher.md) would break the re-validation-plus-fix
+coupling. The agent therefore uses in-context `WebSearch`/`WebFetch` for single-finding
+re-validation only; if research expands beyond the audit frame, the agent classifies the
+finding as MEDIUM (manual review) or FALSE_POSITIVE rather than spawning a subagent itself.
+
 ## Mode Parameter Handling
 
 The `repo-applying-maker-checker-fixer` Skill provides mode logic.

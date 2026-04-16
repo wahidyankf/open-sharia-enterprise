@@ -229,6 +229,13 @@ Use `docs-validating-factual-accuracy` Skill methodology:
 - Classify each claim: `[Verified]`, `[Error]`, `[Outdated]`, `[Unverified]`
 - Report unverified claims as MEDIUM findings (may be correct but cannot confirm)
 
+**Delegate multi-page research to `web-researcher`**: Per the
+[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
+invoke the [`web-researcher`](./web-researcher.md) subagent for multi-page research
+(threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim). This keeps the
+plan audit context lean and returns a cited, synthesised summary. Use in-context
+`WebSearch`/`WebFetch` only for single-shot verification against a known authoritative URL.
+
 #### Caching Verified Claims (Iterations 2+)
 
 On re-validation iterations (multi-part UUID chain):

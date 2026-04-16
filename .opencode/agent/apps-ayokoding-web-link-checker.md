@@ -51,6 +51,17 @@ You validate links in ayokoding-web content.
 
 **Criticality Categorization**: See `repo-assessing-criticality-confidence` Skill.
 
+## Web Research Delegation
+
+This agent has `WebFetch` and `WebSearch` tools but invokes **Exception 3 (link-reachability
+checkers)** of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+Its domain is URL reachability — HTTP status codes, redirect chains — not content research. It
+invokes `WebFetch` directly against the URL under test; delegating a reachability probe to
+[`web-researcher`](./web-researcher.md) would add latency without improving the signal. If
+content-level research is required (for example, to rewrite a broken reference), that work is
+escalated to the ayokoding-web maker or checker family, which delegates to `web-researcher`
+per the default rule.
+
 ## Temporary Report Files
 
 Pattern: `ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`

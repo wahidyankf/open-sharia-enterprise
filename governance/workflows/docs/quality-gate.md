@@ -136,6 +136,15 @@ graph TB
     style Step4 fill:#CC78BC,color:#fff
 ```
 
+## Research Delegation
+
+The `docs-checker` and `docs-tutorial-checker` agents invoked by this workflow delegate
+multi-page web research to the [`web-researcher`](../../../.claude/agents/web-researcher.md)
+subagent when verifying a single claim requires more than one or two searches, or more than two
+fetches. Checkers retain in-context `WebSearch`/`WebFetch` only for single-shot verification
+against known authoritative URLs. This keeps each audit context lean. The delegation is encoded
+in each checker agent's prompt — no workflow-level configuration required.
+
 ## Steps
 
 ### 1. Parallel Validation (Parallel)
