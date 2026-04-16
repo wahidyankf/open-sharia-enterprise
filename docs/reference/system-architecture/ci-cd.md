@@ -193,20 +193,23 @@ graph TB
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 
-### Test and Deploy OrganicLever Web Workflow
+### Test and Deploy OrganicLever Workflow
 
-**File**: `.github/workflows/deploy-organiclever-fe.yml`
+**File**: `.github/workflows/test-and-deploy-organiclever.yml`
 
 **Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
 
 **Steps:**
 
-1. Detect changes in `apps/organiclever-fe/` vs `prod-organiclever-web` branch
-2. If changes exist (or `force_deploy=true`): setup Volta, install dependencies
-3. Run `nx build organiclever-fe`
-4. Force-push `main` to `prod-organiclever-web`; Vercel auto-builds
+1. Run `spec-coverage` across all OrganicLever projects (`organiclever-be`, `organiclever-fe`, `organiclever-be-e2e`, `organiclever-fe-e2e`)
+2. Run `fe-lint` for `organiclever-fe`
+3. Run `be-integration` tests with docker-compose (real PostgreSQL)
+4. Run `fe-integration` tests (MSW-mocked)
+5. Run combined `e2e` stage: full stack via docker-compose, then `organiclever-be-e2e` and `organiclever-fe-e2e` Playwright tests
+6. `detect-changes`: check `apps/organiclever-fe/` vs previous commit
+7. `deploy` (gated on all test jobs + `detect-changes == true`): force-push `HEAD` to `prod-organiclever-web`; Vercel auto-builds
 
-**Purpose**: Automated scheduled deployments for www.organiclever.com with change detection to avoid unnecessary builds
+**Purpose**: Automated scheduled deployments for www.organiclever.com, gated on full FE+BE test suite, with change detection to avoid unnecessary builds
 
 ### Main CI Workflow
 

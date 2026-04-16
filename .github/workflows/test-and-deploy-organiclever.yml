@@ -1,4 +1,4 @@
-name: Test - OrganicLever
+name: Test and Deploy - OrganicLever
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   spec-coverage:
@@ -159,3 +159,32 @@ jobs:
       - name: Teardown
         if: always()
         run: docker compose -f infra/dev/organiclever/docker-compose.yml -f infra/dev/organiclever/docker-compose.ci.yml down -v
+
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      has-changes: ${{ steps.check.outputs.has-changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: check
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- "apps/organiclever-fe/" 2>/dev/null || echo "")
+          if [ -n "$CHANGED" ]; then
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    name: Deploy to production
+    needs: [spec-coverage, fe-lint, be-integration, fe-integration, e2e, detect-changes]
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git push origin HEAD:prod-organiclever-web --force

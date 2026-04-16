@@ -129,7 +129,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
   - [`ayokoding-web`](./apps/ayokoding-web/) [![codecov](https://codecov.io/gh/wahidyankf/ose-public/graph/badge.svg?flag=ayokoding-web)](https://codecov.io/gh/wahidyankf/ose-public)
   - [`ayokoding-cli`](./apps/ayokoding-cli/) [![codecov](https://codecov.io/gh/wahidyankf/ose-public/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/ose-public)
 - OrganicLever
-  - [![CI](https://github.com/wahidyankf/ose-public/actions/workflows/test-organiclever.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-organiclever.yml)
+  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever.yml)
   - [`organiclever-fe`](./apps/organiclever-fe/) [![codecov](https://codecov.io/gh/wahidyankf/ose-public/graph/badge.svg?flag=organiclever-fe)](https://codecov.io/gh/wahidyankf/ose-public)
   - [`organiclever-be`](./apps/organiclever-be/) [![codecov](https://codecov.io/gh/wahidyankf/ose-public/graph/badge.svg?flag=organiclever-be)](https://codecov.io/gh/wahidyankf/ose-public)
 - [`rhino-cli`](./apps/rhino-cli/)
