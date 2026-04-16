@@ -345,12 +345,16 @@ variant-specific inputs.
 
 ### CRON Schedule
 
-Scheduled workflows run twice daily aligned to WIB (UTC+7) business hours:
+Scheduled workflows (the production `test-and-deploy-*.yml` trio for ayokoding-web,
+oseplatform-web, and organiclever) run twice daily aligned to WIB (UTC+7) business hours:
 
 | WIB Time | UTC Time             | Purpose                                     |
 | -------- | -------------------- | ------------------------------------------- |
 | 06:00    | 23:00 (previous day) | Morning run — catches overnight regressions |
 | 18:00    | 11:00                | Afternoon run — validates pre-EOD state     |
+
+Demo workflows (`test-a-demo-*.yml`) run only on manual `workflow_dispatch` — cron schedules
+were removed to conserve CI resources. Trigger from the GitHub Actions UI when needed.
 
 ### 5-Track Parallel CRON
 

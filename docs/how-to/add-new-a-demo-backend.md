@@ -532,9 +532,6 @@ integration → E2E), though integration and E2E are sequenced within a single j
 name: Test - Demo BE ({Language}/{Framework})
 
 on:
-  schedule:
-    - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
-    - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
   workflow_dispatch:
 
 permissions:
@@ -611,8 +608,9 @@ jobs:
         run: docker compose -f infra/dev/a-demo-be-{lang}-{framework}/docker-compose.yml -f infra/dev/a-demo-be-{lang}-{framework}/docker-compose.ci.yml down -v
 ```
 
-CRON schedules run twice daily aligned to WIB (UTC+7) business hours: 06:00 WIB (23:00 UTC previous
-day) and 18:00 WIB (11:00 UTC). See
+Demo workflows are manual-dispatch only — cron schedules were removed to conserve CI resources.
+Trigger a run from the GitHub Actions UI when validating a specific backend or before a language
+version bump. See
 [CI/CD Conventions](../../governance/development/infra/ci-conventions.md) for the rationale.
 
 ### 11. Add composite action if using a new language

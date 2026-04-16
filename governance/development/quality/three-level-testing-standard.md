@@ -266,12 +266,12 @@ The following table maps GitHub Actions workflows to the test levels they execut
 | ----------------------- | ---- | ---------------- | ------------- | ---------------- | -------- | -------------- |
 | Pre-push hook           | Yes  | Via `test:quick` | Yes           | No               | No       | Every push     |
 | PR quality gate         | Yes  | Via `test:quick` | No            | No               | No       | Every PR       |
-| `test-a-demo-be-*.yml`  | Yes  | No               | Yes           | Yes              | Yes      | CRON 2x daily  |
-| `test-a-demo-fe-*.yml`  | Yes  | No               | Yes           | No               | Yes      | CRON 2x daily  |
+| `test-a-demo-be-*.yml`  | Yes  | No               | Yes           | Yes              | Yes      | Manual only    |
+| `test-a-demo-fe-*.yml`  | Yes  | No               | Yes           | No               | Yes      | Manual only    |
 | `test-and-deploy-*.yml` | Yes  | Via `test:quick` | Yes           | Yes              | Yes      | CRON 2x daily  |
 | `codecov-upload.yml`    | No   | Via `test:quick` | No            | No               | No       | Push to `main` |
 
-`lint` (including static a11y checks via oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects) runs in all three enforcement gates: the pre-push hook, the PR quality gate, and scheduled CRON workflows. `spec-coverage` runs in the pre-push hook and all scheduled Test CI workflows, ensuring every Gherkin step has a matching step definition. The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Scheduled CRON workflows cover integration, E2E, and spec-coverage on a regular cadence.
+`lint` (including static a11y checks via oxlint jsx-a11y plugin for TypeScript UI projects and `dart analyze` for Dart projects) runs in all three enforcement gates: the pre-push hook, the PR quality gate, and Test CI workflows. `spec-coverage` runs in the pre-push hook and all Test CI workflows, ensuring every Gherkin step has a matching step definition. The pre-push hook intentionally omits integration and E2E tests. These tests require Docker infrastructure (PostgreSQL, running servers) and are too slow and environment-dependent to run on every push. The PR quality gate omits `spec-coverage` because it targets only the fast `test:quick` path used for merge checks. Demo workflows (`test-a-demo-*.yml`) run only on manual `workflow_dispatch` to conserve CI resources; the scheduled `test-and-deploy-*.yml` workflows cover integration, E2E, and spec-coverage on a regular cadence for production apps.
 
 ## Spec-Coverage Validation
 
