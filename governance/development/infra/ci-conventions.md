@@ -379,7 +379,7 @@ services themselves run in parallel across matrix entries.
 | Test workflow       | `test-{app-name}.yml`                                                                     | `test-a-demo-be-golang-gin.yml`           |
 | Reusable workflow   | `_reusable-{purpose}.yml`                                                                 | `_reusable-backend-e2e.yml`               |
 | Composite action    | `.github/actions/{name}/action.yml`                                                       | `.github/actions/setup-golang/action.yml` |
-| Deploy workflow     | `test-and-deploy-{app}.yml`                                                               | `test-and-deploy-organiclever-fe.yml`     |
+| Deploy workflow     | `test-and-deploy-{app}.yml`                                                               | `test-and-deploy-organiclever.yml`        |
 | PR workflow         | `pr-{purpose}.yml`                                                                        | `pr-quality-gate.yml`                     |
 
 See [GitHub Actions Workflow Naming Convention](./github-actions-workflow-naming.md) for the full

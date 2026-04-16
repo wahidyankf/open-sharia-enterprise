@@ -89,6 +89,7 @@ Every workflow currently in the repository follows this rule:
 | `PR - Validate Links`                        | `pr-validate-links.yml`                |
 | `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-web.yml`    |
 | `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-web.yml`  |
+| `Test and Deploy - OrganicLever`             | `test-and-deploy-organiclever.yml`     |
 | `Test - Demo BE (Java/Spring Boot)`          | `test-a-demo-be-java-springboot.yml`   |
 | `Test - Demo BE (Java/Vert.x)`               | `test-a-demo-be-java-vertx.yml`        |
 | `Test - Demo BE (Elixir/Phoenix)`            | `test-a-demo-be-elixir-phoenix.yml`    |
@@ -100,8 +101,6 @@ Every workflow currently in the repository follows this rule:
 | `Test - Demo BE (TypeScript/Effect)`         | `test-a-demo-be-ts-effect.yml`         |
 | `Test - Demo BE (C#/ASP.NET Core)`           | `test-a-demo-be-csharp-aspnetcore.yml` |
 | `Test - Demo BE (Clojure/Pedestal)`          | `test-a-demo-be-clojure-pedestal.yml`  |
-| `Test - OrganicLever FE`                     | `test-organiclever-fe.yml`             |
-| `Test - OrganicLever BE`                     | `test-organiclever-be.yml`             |
 | `Test - Demo FE (TypeScript/Next.js)`        | `test-a-demo-fe-ts-nextjs.yml`         |
 | `Test - Demo FE (TypeScript/TanStack Start)` | `test-a-demo-fe-ts-tanstack-start.yml` |
 | `Test - Demo FE (Dart/Flutter Web)`          | `test-a-demo-fe-dart-flutterweb.yml`   |
