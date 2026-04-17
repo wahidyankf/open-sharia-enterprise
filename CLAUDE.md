@@ -445,7 +445,7 @@ Edit `.claude/` and `.opencode/` files with normal `Write` / `Edit` tools. Both 
 - `.opencode/agent/*.md` — OpenCode agent mirrors
 - `.opencode/skill/*/SKILL.md` — OpenCode skill mirrors
 
-**See**: [.claude/agents/README.md](./.claude/agents/README.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md), [Agent Naming Convention](./governance/conventions/structure/agent-naming.md)
+**See**: [.claude/agents/README.md](./.claude/agents/README.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md), [Agent Naming Convention](./governance/conventions/structure/agent-naming.md), [Workflow Naming Convention](./governance/conventions/structure/workflow-naming.md)
 
 ## Dual-Mode Configuration (Claude Code + OpenCode)
 

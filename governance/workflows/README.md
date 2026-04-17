@@ -102,7 +102,7 @@ Every workflow filename follows: `<scope>(-<qualifier>)*-<type>`
 
 No other structure is permitted. No exceptions, except for reference material under `governance/workflows/meta/` (documented below).
 
-Normative source: **Workflow Naming Convention** (to be added at `governance/conventions/structure/workflow-naming.md`).
+Normative source: [Workflow Naming Convention](../conventions/structure/workflow-naming.md).
 
 ## Type Vocabulary
 
