@@ -18,7 +18,8 @@ Feature: docs-link-checker agent exists under new name
     Then the "name" field equals "docs-link-checker"
 
   Scenario: No live references to old name
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for the string "docs-link-general-checker"
     Then zero matches are returned
 ```
@@ -39,7 +40,8 @@ Feature: swe-e2e-dev agent exists under new name
     Then the "name" field equals "swe-e2e-dev"
 
   Scenario: No live references to old name
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for the string "swe-e2e-test-dev"
     Then zero matches are returned
 ```
@@ -60,7 +62,8 @@ Feature: web-research-maker agent exists under new name
     Then the "name" field equals "web-research-maker"
 
   Scenario: No live references to old name
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for the string "web-researcher"
     Then zero matches are returned
 ```
@@ -85,9 +88,10 @@ Feature: repo-rules-maker/checker/fixer agents exist under new names
       | repo-rules-fixer.md    | repo-rules-fixer   |
 
   Scenario: No live references to old names
-    Given all markdown files outside plans/done/ and generated-reports/
-    When I search for the strings "repo-governance-maker", "repo-governance-checker", "repo-governance-fixer", and "repo-governance-*"
-    Then zero matches are returned for each (the old name, not the hyphenated-glob form, must be absent)
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
+    When I search for the strings "repo-governance-maker", "repo-governance-checker", "repo-governance-fixer", and "repo-governance-" (catches any remaining repo-governance- prefix, regardless of suffix)
+    Then zero matches are returned for each
 
   Scenario: Cross-references updated in governance conventions
     Given the agent-naming and workflow-naming conventions exist
@@ -178,7 +182,8 @@ Feature: docs-quality-gate workflow file aligns with its name field
     Then the "name" field equals "docs-quality-gate"
 
   Scenario: No live references to old path
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for "governance/workflows/docs/quality-gate.md"
     Then zero matches are returned
 ```
@@ -205,7 +210,8 @@ Feature: repo-rules-quality-gate exists under new directory and name
     Then the "name" field equals "repo-rules-quality-gate"
 
   Scenario: No live references to old name or path
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for the strings "repository-rules-validation", "repository-rules-quality-gate", and "workflows/repository/"
     Then zero matches are returned for each
 
@@ -231,7 +237,8 @@ Feature: specs-quality-gate exists under new name
     Then the "name" field equals "specs-quality-gate"
 
   Scenario: No live references to old name
-    Given all markdown files outside plans/done/ and generated-reports/
+    Given all markdown files outside plans/done/, generated-reports/,
+      AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
     When I search for the string "specs-validation"
     Then zero matches are returned
 ```

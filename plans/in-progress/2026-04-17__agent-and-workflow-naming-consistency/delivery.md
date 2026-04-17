@@ -1,5 +1,23 @@
 # Delivery Checklist
 
+## Phase 0: Environment Setup
+
+- [ ] `npm install` — install/update dependencies
+- [ ] `npm run doctor -- --fix` — converge the full polyglot toolchain (required for Go build tooling;
+      `postinstall` runs `doctor || true` and silently tolerates drift)
+- [ ] `nx run rhino-cli:test:quick` passes — verify baseline before changes
+
+### Commit Guidelines
+
+- Follow Conventional Commits format: `<type>(<scope>): <description>`
+- Each phase maps to one commit (per the commit strategy in tech-docs.md)
+- Do NOT bundle changes from separate phases into a single commit
+- Fix unrelated preexisting issues in a separate commit before starting this plan's phases
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your
+> changes. This follows the root cause orientation principle — proactively fix preexisting
+> errors encountered during work.
+
 ## Phase 1: Rename `docs-link-general-checker` → `docs-link-checker`
 
 - [ ] `git mv .claude/agents/docs-link-general-checker.md .claude/agents/docs-link-checker.md`
@@ -9,7 +27,8 @@
 - [ ] Grep sweep live refs across: agent catalogs, all `.claude/agents/*.md`, all `.opencode/agent/*.md`, all `.claude/skills/**` and `.opencode/skill/**`, `CLAUDE.md`, `AGENTS.md`, all of `governance/**`, all of `docs/**`, `apps/**/README.md`, `plans/in-progress/**`, `plans/backlog/**`, `plans/ideas.md` (exhaustive list in [tech-docs.md](./tech-docs.md))
 - [ ] Replace `docs-link-general-checker` → `docs-link-checker` in each live hit
 - [ ] `npm run sync:claude-to-opencode` — confirm no drift
-- [ ] Verify zero live refs remain: `Grep "docs-link-general-checker"` excluding `plans/done`, `generated-reports`, `.git`, `node_modules`
+- [ ] Verify zero live refs remain: `Grep "docs-link-general-checker"` excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(agents): rename docs-link-general-checker to docs-link-checker`
 
@@ -22,7 +41,8 @@
 - [ ] Grep sweep live refs (same path list as Phase 1)
 - [ ] Replace `swe-e2e-test-dev` → `swe-e2e-dev` in each live hit
 - [ ] `npm run sync:claude-to-opencode` — confirm no drift
-- [ ] Verify zero live refs remain
+- [ ] Verify zero live refs remain: `Grep "swe-e2e-test-dev"` excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(agents): rename swe-e2e-test-dev to swe-e2e-dev`
 
@@ -35,7 +55,8 @@
 - [ ] Grep sweep live refs (same path list as Phase 1)
 - [ ] Replace `web-researcher` → `web-research-maker` in each live hit
 - [ ] `npm run sync:claude-to-opencode` — confirm no drift
-- [ ] Verify zero live refs remain
+- [ ] Verify zero live refs remain: `Grep "web-researcher"` excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(agents): rename web-researcher to web-research-maker`
 
@@ -56,7 +77,9 @@
 - [ ] Replace with `repo-rules-maker`, `repo-rules-checker`, `repo-rules-fixer` respectively
 - [ ] **Special attention**: `governance/conventions/structure/agent-naming.md` (created earlier by the previous repo-governance-maker run) already mentions the old names; update those hits here, not later
 - [ ] `npm run sync:claude-to-opencode` — confirm no drift
-- [ ] Verify zero live refs remain: `Grep "repo-governance-(maker|checker|fixer)"` excluding `plans/done`, `generated-reports`, `.git`, `node_modules`
+- [ ] Verify zero live refs remain: `Grep "repo-governance-(maker|checker|fixer)"` excluding `plans/done`,
+      `generated-reports`, `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`,
+      `.git`, `node_modules`
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(agents): rename repo-governance triad to repo-rules`
 
@@ -88,21 +111,30 @@
 - [ ] Confirm frontmatter `name:` is already `docs-quality-gate` (no change needed — filename was the outlier)
 - [ ] Grep sweep live refs for the old path `governance/workflows/docs/quality-gate.md` across: `CLAUDE.md`, `AGENTS.md`, all of `governance/**`, all of `docs/**`, `.claude/agents/**`, `.opencode/agent/**`, `.claude/skills/**`, `.opencode/skill/**`, `plans/in-progress/**`, `plans/backlog/**`
 - [ ] Replace old path → new path in each live hit
-- [ ] Verify zero live refs remain (excluding `plans/done`, `generated-reports`, `.git`, `node_modules`)
+- [ ] Verify zero live refs remain (excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`)
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(workflows): rename docs/quality-gate to docs/docs-quality-gate`
 
 ## Phase 8: Move `workflows/repository/` → `workflows/repo/` and rename to `repo-rules-quality-gate`
 
-- [ ] `git mv governance/workflows/repository/repository-rules-validation.md governance/workflows/repo/repo-rules-quality-gate.md` (git will create the `repo/` directory as part of the move; verify with `ls governance/workflows/`)
-- [ ] Confirm old `governance/workflows/repository/` directory no longer exists (git mv of the sole file removes the empty parent)
-- [ ] Update `name:` frontmatter in the renamed file to `repo-rules-quality-gate`
+- [ ] `mkdir -p governance/workflows/repo/`
+- [ ] `git mv governance/workflows/repository/repository-rules-validation.md governance/workflows/repo/repo-rules-quality-gate.md`
+- [ ] `git mv governance/workflows/repository/README.md governance/workflows/repo/README.md`
+- [ ] Update content of `governance/workflows/repo/README.md`:
+  - [ ] Replace `repo-governance-checker` → `repo-rules-checker`
+  - [ ] Replace `repo-governance-fixer` → `repo-rules-fixer`
+  - [ ] Update the internal file link to `./repo-rules-quality-gate.md`
+- [ ] Verify `governance/workflows/repository/` is now empty and removed by git: `ls governance/workflows/` must not show `repository`
+- [ ] Update `name:` frontmatter in the renamed workflow file to `repo-rules-quality-gate`
 - [ ] Grep sweep live refs (same path list as Phase 6) for all of:
   - string `repository-rules-validation`
   - path `governance/workflows/repository/`
   - string `repository-rules-quality-gate` (in case any earlier draft or cross-ref uses the interim name)
 - [ ] Replace each with `repo-rules-quality-gate` / `governance/workflows/repo/` as appropriate in live hits
 - [ ] Verify zero live refs to `repository-rules-*` or `workflows/repository/` remain
+      (excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`)
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(workflows): move repository/ to repo/ and rename to repo-rules-quality-gate`
 
@@ -112,7 +144,8 @@
 - [ ] Update `name:` frontmatter in the renamed file to `specs-quality-gate`
 - [ ] Grep sweep live refs (same path list as Phase 6)
 - [ ] Replace `specs-validation` → `specs-quality-gate` in each live hit
-- [ ] Verify zero live refs remain
+- [ ] Verify zero live refs remain: `Grep "specs-validation"` excluding `plans/done`, `generated-reports`,
+      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `refactor(workflows): rename specs-validation to specs-quality-gate`
 
@@ -150,21 +183,22 @@
 - [ ] Add godog unit tests (consume Gherkin specs; mocked filesystem via tmpdir fixtures)
 - [ ] Add godog integration tests (`//go:build integration`; exercise real repo tree via `cmd.RunE()`)
 - [ ] Add Nx targets to `apps/rhino-cli/project.json`:
-  - [ ] `validate:naming:agents` with inputs covering `.claude/agents/**` and `.opencode/agent/**`
-  - [ ] `validate:naming:workflows` with inputs covering `governance/workflows/**`
+  - [ ] `validate:naming-agents` with inputs covering `.claude/agents/**` and `.opencode/agent/**`
+  - [ ] `validate:naming-workflows` with inputs covering `governance/workflows/**`
   - [ ] Both cacheable, `outputs: []`
 - [ ] `nx run rhino-cli:test:quick` passes with coverage ≥ 90%
 - [ ] `nx run rhino-cli:test:integration` passes
-- [ ] `nx run rhino-cli:validate:naming:agents` passes on the current tree (expect zero violations after Phases 1-11)
-- [ ] `nx run rhino-cli:validate:naming:workflows` passes on the current tree
+- [ ] `nx run rhino-cli:spec-coverage` passes (new feature files fully covered by step definitions)
+- [ ] `nx run rhino-cli:validate:naming-agents` passes on the current tree (expect zero violations after Phases 1-11)
+- [ ] `nx run rhino-cli:validate:naming-workflows` passes on the current tree
 - [ ] `npm run lint:md` passes (Gherkin specs are plain text, but README updates must lint)
 - [ ] Commit: `feat(rhino-cli): add agents validate-naming and workflows validate-naming`
 
 ## Phase 13: Enforce validators in pre-push and CI
 
 - [ ] Extend `.husky/pre-push` with a gated block:
-  - [ ] If `git diff --cached` (or the push range) touches `.claude/agents/**` or `.opencode/agent/**`, run `nx run rhino-cli:validate:naming:agents`
-  - [ ] If the push range touches `governance/workflows/**`, run `nx run rhino-cli:validate:naming:workflows`
+  - [ ] If `git diff --name-only @{u}..HEAD 2>/dev/null` touches `.claude/agents/**` or `.opencode/agent/**`, run `nx run rhino-cli:validate:naming-agents`
+  - [ ] If the push range touches `governance/workflows/**`, run `nx run rhino-cli:validate:naming-workflows`
   - [ ] Non-zero exit aborts the push with a readable error message
 - [ ] Extend the ose-public CI quality-gate workflow (`.github/workflows/`) with two unconditional steps running both Nx validator targets
 - [ ] Update [governance/development/quality/code.md](../../../governance/development/quality/code.md) to document the new pre-push step
@@ -172,18 +206,49 @@
 - [ ] Dry-run: push a branch touching only `docs/` and confirm the validator does not run (scope gate)
 - [ ] Dry-run: synthesise a naming violation locally, confirm pre-push blocks the push
 - [ ] Open a dummy PR with the synthesised violation, confirm CI blocks the merge
-- [ ] Revert the dry-run artifacts
+- [ ] Revert the dry-run artifacts:
+  - [ ] Delete dry-run branches: `git branch -D <dry-run-branch>`, `git push origin --delete <dry-run-branch>`
+  - [ ] Close the dummy PR if not auto-closed
+  - [ ] Verify no dry-run artifacts remain in git log
 - [ ] `npm run lint:md` passes
 - [ ] Commit: `feat(ci): enforce naming validators in pre-push and PR quality gate`
 
+### Post-Push CI Verification
+
+- [ ] Push all commits to `main`
+- [ ] Navigate to GitHub Actions for ose-public and monitor the triggered workflow run
+- [ ] Verify the quality-gate workflow passes (lint, typecheck, test:quick, and the new validate-naming steps)
+- [ ] If any check fails, fix immediately before moving to Phase 14
+
 ## Phase 14: Final validation
 
+### Local Quality Gates (Before Final Sign-Off)
+
+- [ ] `nx affected -t typecheck` passes
 - [ ] `nx affected -t lint` passes
+- [ ] `nx affected -t test:quick` passes
+- [ ] `nx affected -t spec-coverage` passes
+
+> **Important**: Fix ALL failures found above, not just those caused by your changes. This
+> follows the root cause orientation principle — proactively fix preexisting errors encountered
+> during work.
+
+### Acceptance Criteria Verification
+
 - [ ] Pre-commit hooks pass for all staged changes (already gated above)
 - [ ] Cross-check all 15 acceptance criteria in [requirements.md](./requirements.md) — each scenario satisfied
-- [ ] `nx run rhino-cli:validate:naming:agents` returns zero violations
-- [ ] `nx run rhino-cli:validate:naming:workflows` returns zero violations
+- [ ] `nx run rhino-cli:validate:naming-agents` returns zero violations
+- [ ] `nx run rhino-cli:validate:naming-workflows` returns zero violations
 - [ ] `repo-rules-checker` final pass clean
 - [ ] Pre-push hook fires on a test touch of `.claude/agents/` and completes successfully
 - [ ] CI quality gate passes on a clean PR
-- [ ] Move plan to `plans/done/2026-04-17__agent-and-workflow-naming-consistency/` after merge
+
+### Plan Archival
+
+- [ ] Verify ALL delivery checklist items are ticked
+- [ ] Verify ALL quality gates pass (local + CI)
+- [ ] `git mv plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency plans/done/2026-04-17__agent-and-workflow-naming-consistency`
+- [ ] Update `plans/in-progress/README.md` — remove this plan's entry
+- [ ] Update `plans/done/README.md` — add this plan's entry with completion date
+- [ ] `npm run lint:md` passes
+- [ ] Commit: `chore(plans): archive agent-and-workflow-naming-consistency plan`

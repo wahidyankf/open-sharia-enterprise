@@ -2,7 +2,7 @@
 
 ## Rename mechanics
 
-Three renames. Each rename = five mechanical steps:
+Nine renames total (six agents + three workflows). Each rename applies the following five mechanical steps:
 
 1. `git mv .claude/agents/<old>.md .claude/agents/<new>.md`
 2. `git mv .opencode/agent/<old>.md .opencode/agent/<new>.md`
@@ -233,9 +233,11 @@ Unit test this package directly with ≥90% coverage (pure functions, easy). The
 
 Add Nx targets on the rhino-cli project:
 
-- `nx run rhino-cli:validate:naming:agents` — runs `agents validate-naming`.
-- `nx run rhino-cli:validate:naming:workflows` — runs `workflows validate-naming`.
+- `nx run rhino-cli:validate:naming-agents` — runs `agents validate-naming`.
+- `nx run rhino-cli:validate:naming-workflows` — runs `workflows validate-naming`.
 - Both declared with `inputs` including the relevant source globs so Nx cache keys off only those files. `outputs: []` (pure validation, no artifacts).
+
+**Target-naming rationale**: Matches existing rhino-cli two-segment pattern (`test:quick`, `test:unit`, `test:integration`) — one colon separates category from variant. The shared `validate:` prefix keeps the two sibling targets co-located in `nx list` output. Hyphenated variant (`naming-agents`, `naming-workflows`) avoids a third colon while preserving the `naming-` grouping prefix for visual sorting.
 
 ### Gherkin + godog tests
 
@@ -245,11 +247,11 @@ Specs live under the existing `specs/apps/rhino/cli/gherkin/` layout — one `.f
 - `specs/apps/rhino/cli/gherkin/workflows-validate-naming.feature` — same (type-suffix violation, frontmatter mismatch, meta exemption, happy path).
 - Update `specs/apps/rhino/cli/gherkin/README.md` index to enumerate both new features.
 - If `specs/apps/rhino/README.md` lists available commands, append the two new ones.
-- Step implementations live alongside existing godog suites in `apps/rhino-cli/cmd/` (follow the `agents_validate_claude_test.go` / `agents_validate_claude.integration_test.go` pair pattern). Use tmpdir fixtures with synthetic agent/workflow files for violation scenarios; `test:integration` exercises the real repo tree.
+- Step implementations live alongside existing godog suites in `apps/rhino-cli/cmd/` (follow the `agents_validate_claude.go` / `agents_validate_claude_test.go` / `agents_validate_claude.integration_test.go` three-file pattern: handler + unit test + integration test). Use tmpdir fixtures with synthetic agent/workflow files for violation scenarios; `test:integration` exercises the real repo tree.
 
 ### Pre-push and CI integration (AC14)
 
-- **Husky pre-push** (`.husky/pre-push`): add a gated block that runs `nx run rhino-cli:validate:naming:agents` only if `git diff --cached --name-only @{push}..HEAD` matches `.claude/agents/`, `.opencode/agent/`; same for workflows against `governance/workflows/`. Uses the same affected-based cache warmth strategy as existing pre-push targets.
+- **Husky pre-push** (`.husky/pre-push`): add a gated block that runs `nx run rhino-cli:validate:naming-agents` only if `git diff --name-only @{u}..HEAD 2>/dev/null` matches `.claude/agents/`, `.opencode/agent/`; same for workflows against `governance/workflows/`. Uses the same affected-based cache warmth strategy as existing pre-push targets.
 - **CI** (`.github/workflows/` in ose-public): extend the existing quality-gate workflow with two unconditional steps running the two Nx targets. Cache hits make them nearly free on no-op PRs; forced runs catch drift from hand-edited files that bypassed the local hook.
 
 ## Risks & mitigations
