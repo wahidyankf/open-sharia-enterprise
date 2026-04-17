@@ -115,6 +115,7 @@ Content quality standards, validation methodology, and writing guidelines.
 
 Documentation organization frameworks, file naming, and project planning structure.
 
+- [Agent Naming Convention](./structure/agent-naming.md) - Single exception-free filename rule for agent files in `.claude/agents/` and `.opencode/agent/`. Defines scope vocabulary, role vocabulary (maker, checker, fixer, dev, deployer, executor, manager), and the audit command enforced by `repo-governance-checker`
 - [Diataxis Framework](./structure/diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation)
 - [File Naming Convention](./structure/file-naming.md) - Lowercase kebab-case file names anchored on standard markdown and GitHub compatibility
 - [Per-Directory Licensing](./structure/licensing.md) - Standards for the per-directory licensing strategy using FSL-1.1-MIT for product apps, behavioral specifications (specs, E2E tests), and their supporting CLI tools, and MIT for shared libraries and reference implementations. Guiding principle: implementation code (HOW) can be MIT; behavioral specifications (WHAT) must be FSL to prevent clean-room engineering of competing products. Defines LICENSE file placement rules, template requirements, copyright notice format, and rules for new directories
