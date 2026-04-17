@@ -173,7 +173,7 @@ To validate an agent complies with this convention:
 **Workflows:**
 
 - [Plan Quality Gate](../../workflows/plan/plan-quality-gate.md)
-- [Documentation Quality Gate](../../workflows/docs/quality-gate.md)
+- [Documentation Quality Gate](../../workflows/docs/docs-quality-gate.md)
 - [AyoKoding General Quality Gate](../../workflows/ayokoding-web/ayokoding-web-general-quality-gate.md)
 - [AyoKoding By-Example Quality Gate](../../workflows/ayokoding-web/ayokoding-web-by-example-quality-gate.md)
 - [AyoKoding In-the-Field Quality Gate](../../workflows/ayokoding-web/ayokoding-web-in-the-field-quality-gate.md)
