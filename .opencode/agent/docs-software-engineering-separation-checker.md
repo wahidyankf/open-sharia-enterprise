@@ -451,7 +451,7 @@ Validation is successful when:
 
 - **docs-software-engineering-separation-fixer** - Fixes prerequisite issues from audit reports
 - **apps-ayokoding-web-general-checker** - Validates AyoKoding content quality
-- **docs-link-general-checker** - Validates cross-reference links
+- **docs-link-checker** - Validates cross-reference links
 
 ## Project Guidance
 
@@ -499,7 +499,7 @@ Validation is successful when:
 
 **Link Validation**:
 
-- **docs-link-general-checker** - Validates cross-reference links
+- **docs-link-checker** - Validates cross-reference links
 
 ## Skills Used by This Agent
 

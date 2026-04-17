@@ -60,7 +60,7 @@ Use this agent when:
 - **Files outside docs/** (different conventions apply)
 - **Creating new files** (use `docs-maker` instead)
 - **Editing file content** (use `docs-maker` or Edit tool directly)
-- **Validating links** after operations (use `docs-link-general-checker` for final validation)
+- **Validating links** after operations (use `docs-link-checker` for final validation)
 
 ## File Naming Convention Review
 
@@ -176,7 +176,7 @@ Follow this process for ALL file management operations:
    - Verify no broken references remain
 
 2. **Recommend final validation**
-   - Suggest running `docs-link-general-checker` to verify all links
+   - Suggest running `docs-link-checker` to verify all links
    - Suggest reviewing git diff before committing
    - Note any edge cases or manual checks needed
 
@@ -408,7 +408,7 @@ Before marking an operation complete, verify:
 
 ### Validation Recommendations
 
-- [ ] Suggested running `docs-link-general-checker` to verify all links
+- [ ] Suggested running `docs-link-checker` to verify all links
 - [ ] Suggested reviewing `git diff` before committing
 - [ ] Noted any edge cases or manual checks needed
 
@@ -496,17 +496,17 @@ If files were just created and not committed:
 
 ## Integration with Other Agents
 
-### After File Operations: Run docs-link-general-checker
+### After File Operations: Run docs-link-checker
 
-**Always recommend** running `docs-link-general-checker` after file management:
+**Always recommend** running `docs-link-checker` after file management:
 
 ```
 All files managed and links updated!
 
 Next steps:
 1. Review changes: git diff
-2. Validate links: Use docs-link-general-checker to verify all links
-3. Validate links: Use docs-link-general-checker agent
+2. Validate links: Use docs-link-checker to verify all links
+3. Validate links: Use docs-link-checker agent
 4. Commit changes: git commit -m "refactor(docs): reorganize documentation structure"
 ```
 
@@ -558,8 +558,8 @@ After completing file management operation:
 ### Next Steps
 
 1. Review: git diff --stat
-2. Validate: Use docs-link-general-checker agent
-3. Validate links: Use docs-link-general-checker agent
+2. Validate: Use docs-link-checker agent
+3. Validate links: Use docs-link-checker agent
 4. Commit: git commit -m "refactor(docs): reorganize documentation structure"
 ```
 
@@ -577,16 +577,16 @@ Proceed anyway? (Please confirm)
 
 ## Anti-Patterns
 
-| Anti-Pattern                   | Bad                                 | Good                                                     |
-| ------------------------------ | ----------------------------------- | -------------------------------------------------------- |
-| **Using mv/rm instead of git** | `mv old.md new.md`, `rm file.md`    | `git mv old.md new.md`, `git rm file.md`                 |
-| **Non-kebab-case filenames**   | `MyFile.md`, `my_file.md`           | `my-file.md` (lowercase kebab-case)                      |
-| **Broken links**               | Delete files without updating links | Find and update/remove ALL links to deleted files        |
-| **Skipping indices**           | Delete files but not README.md      | Update all affected README.md files                      |
-| **No user confirmation**       | Delete 50 files without asking      | Present plan and get confirmation                        |
-| **Missing validation**         | Assume links are correct            | Verify with Glob/Grep, suggest docs-link-general-checker |
-| **Unsafe deletion**            | Delete without checking references  | Find all references first, plan cleanup                  |
-| **Orphaned links**             | Delete files, leave broken links    | Remove or update all references to deleted files         |
+| Anti-Pattern                   | Bad                                 | Good                                              |
+| ------------------------------ | ----------------------------------- | ------------------------------------------------- |
+| **Using mv/rm instead of git** | `mv old.md new.md`, `rm file.md`    | `git mv old.md new.md`, `git rm file.md`          |
+| **Non-kebab-case filenames**   | `MyFile.md`, `my_file.md`           | `my-file.md` (lowercase kebab-case)               |
+| **Broken links**               | Delete files without updating links | Find and update/remove ALL links to deleted files |
+| **Skipping indices**           | Delete files but not README.md      | Update all affected README.md files               |
+| **No user confirmation**       | Delete 50 files without asking      | Present plan and get confirmation                 |
+| **Missing validation**         | Assume links are correct            | Verify with Glob/Grep, suggest docs-link-checker  |
+| **Unsafe deletion**            | Delete without checking references  | Find all references first, plan cleanup           |
+| **Orphaned links**             | Delete files, leave broken links    | Remove or update all references to deleted files  |
 
 ## Reference Documentation
 
@@ -608,5 +608,5 @@ Proceed anyway? (Please confirm)
 **Related Agents:**
 
 - `docs-maker.md` - Creates new documentation (use for new index files)
-- `docs-link-general-checker.md` - Validates links (use after file operations to verify)
+- `docs-link-checker.md` - Validates links (use after file operations to verify)
 - `repo-governance-checker.md` - Validates consistency (use for large reorganizations)

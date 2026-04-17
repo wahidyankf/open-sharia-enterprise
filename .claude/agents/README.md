@@ -25,7 +25,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 - **docs-checker** - Factual accuracy validation
 - **docs-tutorial-checker** - Tutorial quality validation
-- **docs-link-general-checker** - Link validity checking
+- **docs-link-checker** - Link validity checking
 - **docs-software-engineering-separation-checker** - Programming language docs separation validation
 - **readme-checker** - README quality validation
 - **apps-ayokoding-web-general-checker** - General content validation

@@ -64,7 +64,7 @@ All checker agents in the following families MUST write audit reports to `genera
 5. **apps-ayokoding-web-link-checker** - Link validation (ayokoding-web)
 6. **apps-oseplatform-web-content-checker** - Content validation (oseplatform-web, Next.js)
 7. **docs-checker** - Documentation factual accuracy validation
-8. **docs-link-general-checker** - External and internal link validation
+8. **docs-link-checker** - External and internal link validation
 9. **docs-tutorial-checker** - Tutorial quality validation
 10. **readme-checker** - README quality validation
 11. **plan-checker** - Plan readiness validation
@@ -165,7 +165,7 @@ To enable accurate parent-child hierarchy tracking across concurrent workflow ru
 | docs-tutorial-checker     | `docs-tutorial` | `.execution-chain-docs-tutorial` |
 | readme-checker            | `readme`        | `.execution-chain-readme`        |
 | plan-checker              | `plan`          | `.execution-chain-plan`          |
-| docs-link-general-checker | `docs-link`     | `.execution-chain-docs-link`     |
+| docs-link-checker         | `docs-link`     | `.execution-chain-docs-link`     |
 | ayokoding-web-\* (golang) | `golang`        | `.execution-chain-golang`        |
 | ayokoding-web-\* (elixir) | `elixir`        | `.execution-chain-elixir`        |
 | oseplatform-web-\*        | `ose-platform`  | `.execution-chain-ose-platform`  |
@@ -403,7 +403,7 @@ ALL \*-checker agents must implement progressive writing:
 5. apps-ayokoding-web-link-checker
 6. apps-oseplatform-web-content-checker
 7. docs-checker
-8. docs-link-general-checker
+8. docs-link-checker
 9. docs-tutorial-checker
 10. readme-checker
 11. plan-checker
@@ -512,7 +512,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 #### Link Validation Reports
 
-**Agent**: docs-link-general-checker
+**Agent**: docs-link-checker
 **Pattern**: `docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 **Example**: `docs-link__a1b2c3__2025-12-14--20-45__audit.md`
 

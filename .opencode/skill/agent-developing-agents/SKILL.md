@@ -738,7 +738,7 @@ model: sonnet
 
 ### Haiku Examples
 
-**docs-link-general-checker** (Straightforward validation):
+**docs-link-checker** (Straightforward validation):
 
 ```yaml
 model: haiku

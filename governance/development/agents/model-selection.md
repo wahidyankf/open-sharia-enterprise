@@ -145,7 +145,7 @@ color: green
 **Agent examples**:
 
 - **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer) -- execute git branch operations and deployment commands following a fixed procedure
-- **Link checkers** (docs-link-general-checker, apps-ayokoding-web-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
+- **Link checkers** (docs-link-checker, apps-ayokoding-web-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
 - **docs-file-manager** -- performs deterministic file operations (move, rename, delete) with `git mv`, kebab-case pattern matching, and mechanical link updates; no judgment calls required
 
 **Frontmatter**: Specify `model: haiku` explicitly.
@@ -257,7 +257,7 @@ Some agents straddle tier boundaries. When uncertain:
 
 ### Link Checkers as Haiku
 
-Link checker agents (docs-link-general-checker, apps-ayokoding-web-link-checker) use haiku despite being categorized as checkers (green). This is because their validation is purely mechanical (HTTP status code checking), not rule-based reasoning. The checker color reflects their role in the maker-checker-fixer workflow, while the model reflects their cognitive requirements.
+Link checker agents (docs-link-checker, apps-ayokoding-web-link-checker) use haiku despite being categorized as checkers (green). This is because their validation is purely mechanical (HTTP status code checking), not rule-based reasoning. The checker color reflects their role in the maker-checker-fixer workflow, while the model reflects their cognitive requirements.
 
 ### Social Media Maker as Sonnet
 

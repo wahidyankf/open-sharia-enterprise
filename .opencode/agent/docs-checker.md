@@ -207,7 +207,7 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 
 ## Distinction from Other Agents
 
-**docs-link-general-checker:**
+**docs-link-checker:**
 
 - Focus: Link validity (URLs work, internal refs exist)
 - Does NOT check: Content accuracy or factual correctness
@@ -546,7 +546,7 @@ Some sites block automation:
 
 ### Out of Scope
 
-- Link validity (use docs-link-general-checker)
+- Link validity (use docs-link-checker)
 - Convention compliance (use repo-governance-checker)
 - Writing style or tone
 - Grammar/spelling (unless affects meaning)
@@ -575,7 +575,7 @@ Some sites block automation:
 
 **Don't use for:**
 
-- Link checking (use docs-link-general-checker)
+- Link checking (use docs-link-checker)
 - File naming/structure (use repo-governance-checker)
 - Writing new docs (use docs-maker)
 - Editing existing docs (use docs-maker)
@@ -603,7 +603,7 @@ Some sites block automation:
 
 **Related Agents:**
 
-- `docs-link-general-checker.md` - Link accessibility validation
+- `docs-link-checker.md` - Link accessibility validation
 - `repo-governance-checker.md` - Convention compliance validation
 - `docs-maker.md` - Documentation creation/editing
 - `docs-fixer.md` - Apply validated fixes

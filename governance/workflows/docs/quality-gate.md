@@ -71,7 +71,7 @@ This workflow implements the **Maker-Checker-Fixer pattern** across three valida
 ## Execution Mode
 
 **Preferred Mode**: Agent Delegation — invoke `docs-checker`, `docs-tutorial-checker`,
-`docs-link-general-checker`, `docs-fixer`, and `docs-tutorial-fixer` via the Agent tool
+`docs-link-checker`, `docs-fixer`, and `docs-tutorial-fixer` via the Agent tool
 with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using
@@ -88,7 +88,7 @@ User: "Run documentation quality gate workflow for docs/tutorials/"
 
 The AI will:
 
-1. Invoke `docs-checker`, `docs-tutorial-checker`, and `docs-link-general-checker` via the Agent tool in parallel (validate, write audits)
+1. Invoke `docs-checker`, `docs-tutorial-checker`, and `docs-link-checker` via the Agent tool in parallel (validate, write audits)
 2. Invoke `docs-fixer` and `docs-tutorial-fixer` via the Agent tool in sequence (read audits, apply fixes, write fix reports)
 3. Iterate until zero findings achieved across all three validators
 4. Show git status with modified files
@@ -112,7 +112,7 @@ graph TB
 
     Step1 --> Check1[docs-checker<br/>Factual Accuracy]
     Step1 --> Check2[docs-tutorial-checker<br/>Pedagogy]
-    Step1 --> Check3[docs-link-general-checker<br/>Links]
+    Step1 --> Check3[docs-link-checker<br/>Links]
 
     Check1 --> Step2{Step 2: Aggregate<br/>Findings}
     Check2 --> Step2
@@ -161,7 +161,7 @@ Run all documentation validators concurrently to identify all issues across diff
 - **Args**: `scope: {input.scope}, EXECUTION_SCOPE: docs`
 - **Output**: `{tutorial-report-N}` - Pedagogical structure, narrative flow, visual completeness
 
-**Agent 1c**: `docs-link-general-checker`
+**Agent 1c**: `docs-link-checker`
 
 - **Args**: `scope: {input.scope}, EXECUTION_SCOPE: docs`
 - **Output**: `{links-report-N}` - Internal/external link validation, cache management
@@ -350,7 +350,7 @@ User: "Run documentation quality gate workflow in normal mode"
 
 The AI will invoke specialized agents via the Agent tool:
 
-- Validate all docs/ content in parallel (`docs-checker`, `docs-tutorial-checker`, `docs-link-general-checker` subagents)
+- Validate all docs/ content in parallel (`docs-checker`, `docs-tutorial-checker`, `docs-link-checker` subagents)
 - Fix CRITICAL/HIGH findings (`docs-fixer`, `docs-tutorial-fixer` subagents)
 - Iterate until zero CRITICAL/HIGH findings achieved
 - Report MEDIUM/LOW findings without fixing them
@@ -512,7 +512,7 @@ Result: SUCCESS (3 iterations)
 - Color-blind friendly diagrams
 - LaTeX delimiter correctness
 
-**Link Validity** (docs-link-general-checker):
+**Link Validity** (docs-link-checker):
 
 - External URL accessibility (HTTP status codes)
 - Internal file reference validity
@@ -619,7 +619,7 @@ Track across executions:
 
 **Concurrency**: Currently validates in parallel (up to max-concurrency) and fixes sequentially. The `max-concurrency` parameter controls parallel checker execution.
 
-**Best Practice**: Run link-checker separately first (`docs-link-general-checker` agent) to fix broken links before running full quality gate. This prevents workflow from blocking on unfixable link issues.
+**Best Practice**: Run link-checker separately first (`docs-link-checker` agent) to fix broken links before running full quality gate. This prevents workflow from blocking on unfixable link issues.
 
 This workflow ensures comprehensive documentation quality through multi-dimensional validation, iterative fixing, and mode-based progressive improvement.
 
