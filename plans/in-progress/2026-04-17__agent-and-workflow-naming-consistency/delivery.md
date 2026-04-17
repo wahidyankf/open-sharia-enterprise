@@ -20,17 +20,16 @@
 
 ## Phase 1: Rename `docs-link-general-checker` → `docs-link-checker`
 
-- [ ] `git mv .claude/agents/docs-link-general-checker.md .claude/agents/docs-link-checker.md`
-- [ ] `git mv .opencode/agent/docs-link-general-checker.md .opencode/agent/docs-link-checker.md`
-- [ ] Update `name:` frontmatter in `.claude/agents/docs-link-checker.md`
-- [ ] Update `name:` frontmatter in `.opencode/agent/docs-link-checker.md`
-- [ ] Grep sweep live refs across: agent catalogs, all `.claude/agents/*.md`, all `.opencode/agent/*.md`, all `.claude/skills/**` and `.opencode/skill/**`, `CLAUDE.md`, `AGENTS.md`, all of `governance/**`, all of `docs/**`, `apps/**/README.md`, `plans/in-progress/**`, `plans/backlog/**`, `plans/ideas.md` (exhaustive list in [tech-docs.md](./tech-docs.md))
-- [ ] Replace `docs-link-general-checker` → `docs-link-checker` in each live hit
-- [ ] `npm run sync:claude-to-opencode` — confirm no drift
-- [ ] Verify zero live refs remain: `Grep "docs-link-general-checker"` excluding `plans/done`, `generated-reports`,
-      `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`
-- [ ] `npm run lint:md` passes
-- [ ] Commit: `refactor(agents): rename docs-link-general-checker to docs-link-checker`
+- [x] `git mv .claude/agents/docs-link-general-checker.md .claude/agents/docs-link-checker.md`
+- [x] `git mv .opencode/agent/docs-link-general-checker.md .opencode/agent/docs-link-checker.md`
+- [x] Update `name:` frontmatter in `.claude/agents/docs-link-checker.md`
+- [x] Update `name:` frontmatter in `.opencode/agent/docs-link-checker.md` (opencode format derives name from filename — no field to update)
+- [x] Grep sweep live refs across repo (excluded plan folder + plans/done)
+- [x] Replace `docs-link-general-checker` → `docs-link-checker` in each live hit (37 files changed)
+- [x] `npm run sync:claude-to-opencode` — no drift
+- [x] Verify zero live refs remain outside plan folder
+- [x] `npm run lint:md` passes
+- [x] Commit: `refactor(agents): rename docs-link-general-checker to docs-link-checker`
 
 ## Phase 2: Rename `swe-e2e-test-dev` → `swe-e2e-dev`
 

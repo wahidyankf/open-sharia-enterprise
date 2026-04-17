@@ -79,7 +79,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **swe-clojure-dev** - Clojure application development
 - **swe-csharp-dev** - C# application development
 - **swe-dart-dev** - Dart application development
-- **swe-e2e-test-dev** - E2E testing with Playwright
+- **swe-e2e-dev** - E2E testing with Playwright
 - **swe-elixir-dev** - Elixir application development
 - **swe-fsharp-dev** - F# application development
 - **swe-golang-dev** - Go application development

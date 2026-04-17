@@ -431,7 +431,7 @@ export default function Counter() {
 
 - `apps-organiclever-fe-deployer` - Deploys organiclever-fe to production
 - `swe-typescript-dev` - TypeScript/Next.js development
-- `swe-e2e-test-dev` - E2E testing with Playwright
+- `swe-e2e-dev` - E2E testing with Playwright
 
 ---
 

@@ -203,4 +203,4 @@ App-specific components (AlertDialog, Table) remain in `src/components/ui/`.
 
 - **Skill**: `apps-organiclever-fe-developing-content` — full development reference
 - **Agent**: `apps-organiclever-fe-deployer` — deploys to production
-- **Agent**: `swe-e2e-test-developer` — E2E testing with Playwright
+- **Agent**: `swe-e2e-developer` — E2E testing with Playwright

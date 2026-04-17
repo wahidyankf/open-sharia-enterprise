@@ -153,7 +153,7 @@
 
 **Specialized**:
 
-- **swe-e2e-test-dev** - E2E testing with Playwright
+- **swe-e2e-dev** - E2E testing with Playwright
 - **swe-code-checker** - Validates projects against platform coding standards
 
 ## Agent Usage

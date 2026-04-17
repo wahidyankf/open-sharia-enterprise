@@ -1,5 +1,5 @@
 ---
-name: swe-e2e-test-dev
+name: swe-e2e-dev
 description: Develops end-to-end tests using Playwright following OSE Platform testing patterns and standards. Use when implementing E2E tests for OSE Platform applications.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet

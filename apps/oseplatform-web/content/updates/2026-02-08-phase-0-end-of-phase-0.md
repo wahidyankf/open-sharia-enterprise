@@ -188,7 +188,7 @@ The most significant addition to our technical stack was comprehensive Playwrigh
 
 This infrastructure is needed for Phase 1. When we build OrganicLever's web application and mobile apps, we'll need automated testing to validate user interactions work correctly. Playwright provides that capability—the knowledge base is established, the patterns are documented, the examples are ready.
 
-We also extended the `swe-e2e-test-developer` agent with Playwright knowledge and created matching TypeScript style guide documentation. The agent can now autonomously implement E2E tests following production patterns we established.
+We also extended the `swe-e2e-developer` agent with Playwright knowledge and created matching TypeScript style guide documentation. The agent can now autonomously implement E2E tests following production patterns we established.
 
 ### Content Quality at Scale
 

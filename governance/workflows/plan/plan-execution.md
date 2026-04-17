@@ -107,7 +107,7 @@ in priority order:
 3. **Match by content type**: If the item involves documentation (`docs/`, `README.md`),
    governance (`governance/`), specs (`specs/`), or E2E tests (`*-e2e`, Playwright), use the
    appropriate content agent (`docs-maker`, `repo-governance-maker`, `readme-maker`,
-   `specs-maker`, `swe-e2e-test-dev`).
+   `specs-maker`, `swe-e2e-dev`).
 
 4. **Match by framework/tool keywords**: If the item mentions a framework (Spring Boot, Ktor,
    FastAPI, Gin, Phoenix, Giraffe, Axum, Pedestal, Hugo, Next.js, Flutter), use the agent for
@@ -582,7 +582,7 @@ Step 2: Execute all items sequentially
     Item 3 → docs-maker              → checkbox ticked
   Phase 2 (Implementation):
     Item 4 → swe-typescript-dev → checkbox ticked
-    Item 5 → swe-e2e-test-dev   → checkbox ticked
+    Item 5 → swe-e2e-dev   → checkbox ticked
     Item 6 → swe-golang-dev     → checkbox ticked
     ...and so on without stopping between phases
 
@@ -590,7 +590,7 @@ Step 3: Validate → 4 findings (quality issues, missing tests)
 
 Step 5: Address findings
   Finding 1 → swe-typescript-dev → resolved
-  Finding 2 → swe-e2e-test-dev   → resolved
+  Finding 2 → swe-e2e-dev   → resolved
   Finding 3 → docs-maker               → resolved
   Finding 4 → swe-typescript-dev → resolved
 
