@@ -92,6 +92,32 @@ All workflows support standard input parameters:
 
 All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/workflow-identifier.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
+## Naming Rule
+
+Every workflow filename follows: `<scope>(-<qualifier>)*-<type>`
+
+- `scope` — top-level domain matching the parent directory (`ci`, `docs`, `plan`, `repo`, `specs`, `ui`, `infra`, `ayokoding-web`, etc.).
+- `qualifier` — zero or more refinement tokens (e.g., `rules`, `by-example`, `software-engineering-separation`).
+- `type` — exactly one trailing token from the Type Vocabulary below.
+
+No other structure is permitted. No exceptions, except for reference material under `governance/workflows/meta/` (documented below).
+
+Normative source: **Workflow Naming Convention** (to be added at `governance/conventions/structure/workflow-naming.md`).
+
+## Type Vocabulary
+
+| Type           | Semantics                                                  | Example workflows                                            |
+| -------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| `quality-gate` | Iterative maker → checker → fixer loop until zero findings | `ci-quality-gate`, `plan-quality-gate`, `specs-quality-gate` |
+| `execution`    | Executes a defined procedure or plan against inputs        | `plan-execution`                                             |
+| `setup`        | One-time environment or resource provisioning              | `development-environment-setup`                              |
+
+## Meta reference exception
+
+Files under `governance/workflows/meta/` are **reference documentation about the workflow system** (e.g., `execution-modes.md`, `workflow-identifier.md`). They describe how workflows work, not workflows themselves. They are exempt from the type-suffix rule.
+
+Enforcement: `rhino-cli workflows validate-naming` (wired into pre-push and CI).
+
 ## Workflow Families
 
 ### Documentation Workflows
