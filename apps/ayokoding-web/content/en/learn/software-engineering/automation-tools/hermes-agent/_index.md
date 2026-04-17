@@ -10,3 +10,7 @@ description: "Learn Hermes Agent - Nous Research's self-improving AI agent platf
 
 - [Overview](/en/learn/software-engineering/automation-tools/hermes-agent/overview)
 - [By Example](/en/learn/software-engineering/automation-tools/hermes-agent/by-example)
+  - [Overview](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/automation-tools/hermes-agent/by-example/advanced)
