@@ -10,7 +10,8 @@
       "Write(/tmp/**)",
       "Read(/tmp/**)",
       "Bash",
-      "Bash(npm run sync\\:claude-to-opencode:*)"
+      "Bash(npm run sync\\:claude-to-opencode:*)",
+      "Skill(update-config)"
     ]
   },
   "hooks": {
