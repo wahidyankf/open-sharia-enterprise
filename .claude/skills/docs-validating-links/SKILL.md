@@ -313,5 +313,5 @@ Finding: [BROKEN] - Internal Link to Non-Existent File
 
 **Link Validation Agents**:
 
-- docs-link-general-checker - Validates links in docs/, governance/, plans/
+- docs-link-checker - Validates links in docs/, governance/, plans/
 - apps-ayokoding-web-link-checker - Validates links in ayokoding-web content

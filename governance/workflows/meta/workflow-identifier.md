@@ -258,7 +258,7 @@ Run all validators concurrently:
 - **Args**: `scope: all`
 - **Output**: `{tutorial-report}`
 
-**Agent**: `docs-link-general-checker`
+**Agent**: `docs-link-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{links-report}`

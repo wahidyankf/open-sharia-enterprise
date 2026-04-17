@@ -32,7 +32,7 @@
 
 **Specialized**:
 
-- **docs-link-general-checker** - Validates links (hybrid: validator + cache manager for external links)
+- **docs-link-checker** - Validates links (hybrid: validator + cache manager for external links)
 - **docs-file-manager** - Manages files/directories in docs/ while preserving conventions
 
 **Software Engineering Separation** (Checker-Fixer):
@@ -242,7 +242,7 @@ opencode agent list
 
 **Purpose**: Combine validation + state management
 **Tools**: Standard + write (for cache only)
-**Examples**: docs-link-general-checker, apps-ayokoding-web-link-checker
+**Examples**: docs-link-checker, apps-ayokoding-web-link-checker
 
 ## Skills Integration
 

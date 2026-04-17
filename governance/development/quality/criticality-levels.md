@@ -35,7 +35,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - `apps-ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
 - `readme-checker`: High/Medium/Low Priority
 - `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
-- `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
+- `docs-link-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
 - `plan-checker`: Critical/Warnings/Recommendations
 
 **Solution**: Universal 4-level system that works orthogonally with existing confidence levels.
@@ -548,7 +548,7 @@ Run `{agent-family}-fixer` on this audit report:
 - `docs-checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
 - `docs-tutorial-checker` - Verification labels
 - `apps-ayokoding-web-facts-checker` - Verification labels
-- `docs-link-general-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
+- `docs-link-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
 - `apps-ayokoding-web-link-checker` - Status labels
 
 **Format for dual-label findings**:
@@ -596,7 +596,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-install
 **Confidence**: HIGH
 ```
 
-**Example from docs-link-general-checker**:
+**Example from docs-link-checker**:
 
 ```markdown
 ### 1. [BROKEN] - Reference Link Returns 404
@@ -710,7 +710,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding tags
 - Potential cross-reference
 
-### Documentation (docs-checker, docs-tutorial-checker, docs-link-general-checker)
+### Documentation (docs-checker, docs-tutorial-checker, docs-link-checker)
 
 **CRITICAL**:
 
@@ -1388,7 +1388,7 @@ Existing agents using different terminology should migrate to this convention.
 - docs-software-engineering-separation-checker
 - apps-ayokoding-web-facts-checker
 - apps-ayokoding-web-link-checker
-- docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
+- docs-link-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
 - repo-governance-checker
 
 **Plan/Priority Family**:
