@@ -28,6 +28,7 @@ This directory contains standards for how documentation is organized, named, and
 - [Plans Organization](./plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers
 - [Programming Language Documentation Separation](./programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational content (ayokoding-web). Defines scope boundaries, prerequisite requirements, cross-referencing patterns, and DRY principle application
 - [Specs Directory Structure](./specs-directory-structure.md) - Canonical directory structure for Gherkin feature files, C4 architecture diagrams, and OpenAPI contracts in the specs/ directory. Defines path patterns, domain subdirectory rules (required for BE/FE, flat for CLI), and lib spec organization
+- [Workflow Naming Convention](./workflow-naming.md) - Single exception-free filename rule for workflow files under `governance/workflows/` (except `meta/` reference docs). Defines scope vocabulary, type vocabulary (quality-gate, execution, setup), and the audit command enforced by `repo-rules-checker` and `rhino-cli workflows validate-naming`
 
 ## Key Concepts
 
