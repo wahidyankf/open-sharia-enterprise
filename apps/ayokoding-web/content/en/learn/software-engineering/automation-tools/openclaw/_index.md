@@ -10,3 +10,7 @@ description: "Learn OpenClaw - the free, open-source, local-first AI agent platf
 
 - [Overview](/en/learn/software-engineering/automation-tools/openclaw/overview)
 - [By Example](/en/learn/software-engineering/automation-tools/openclaw/by-example)
+  - [Overview](/en/learn/software-engineering/automation-tools/openclaw/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/automation-tools/openclaw/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/automation-tools/openclaw/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/automation-tools/openclaw/by-example/advanced)
