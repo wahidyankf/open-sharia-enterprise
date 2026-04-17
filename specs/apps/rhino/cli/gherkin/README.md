@@ -1,7 +1,7 @@
 # rhino-cli Gherkin Specs
 
 Gherkin feature files for [rhino-cli](../../../../../apps/rhino-cli/README.md) — the Repository
-Hygiene & INtegration Orchestrator CLI. 15 files, 96 scenarios across 9 domains.
+Hygiene & INtegration Orchestrator CLI.
 
 ## Feature Files
 
@@ -9,6 +9,7 @@ Hygiene & INtegration Orchestrator CLI. 15 files, 96 scenarios across 9 domains.
 | -------------------------------------- | ------------------------------ | --------- |
 | `agents-sync.feature`                  | `agents sync`                  | 7         |
 | `agents-validate-claude.feature`       | `agents validate-claude`       | 5         |
+| `agents-validate-naming.feature`       | `agents validate-naming`       | 4         |
 | `contracts-dart-scaffold.feature`      | `contracts dart-scaffold`      | 3         |
 | `contracts-java-clean-imports.feature` | `contracts java-clean-imports` | 5         |
 | `docs-validate-links.feature`          | `docs validate-links`          | 4         |
@@ -22,6 +23,7 @@ Hygiene & INtegration Orchestrator CLI. 15 files, 96 scenarios across 9 domains.
 | `test-coverage-diff.feature`           | `test-coverage diff`           | 4         |
 | `test-coverage-merge.feature`          | `test-coverage merge`          | 3         |
 | `test-coverage-validate.feature`       | `test-coverage validate`       | 10        |
+| `workflows-validate-naming.feature`    | `workflows validate-naming`    | 4         |
 
 ## Conventions
 

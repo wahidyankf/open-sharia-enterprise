@@ -71,6 +71,22 @@
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/cli/gherkin apps/rhino-cli --shared-steps",
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/rhino/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+    },
+    "validate:naming-agents": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go agents validate-naming",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.opencode/agent/**/*.md"
+      ],
+      "outputs": []
+    },
+    "validate:naming-workflows": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go workflows validate-naming",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/governance/workflows/**/*.md"],
+      "outputs": []
     }
   }
 }

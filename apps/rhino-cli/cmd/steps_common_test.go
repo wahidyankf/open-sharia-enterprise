@@ -100,6 +100,29 @@ const (
 	stepOutputReportsDuplicateAgentName               = `^the output reports the duplicate agent name$`
 )
 
+// Agents validate-naming step patterns.
+const (
+	stepAgentsTreeAllConform                = `^a repository where every agent filename ends with an allowed role suffix and mirrors across harnesses$`
+	stepAgentsTreeUnknownSuffix             = `^a repository with one agent whose filename ends in an unknown suffix$`
+	stepAgentsTreeFrontmatterMismatch       = `^a repository with a \.claude/agents/ file whose frontmatter name differs from its filename$`
+	stepAgentsTreeMirrorDrift               = `^a repository where one \.claude/agents/ file has no corresponding \.opencode/agent/ file$`
+	stepDeveloperRunsAgentsValidateNaming   = `^the developer runs agents validate-naming$`
+	stepOutputZeroNamingViolations          = `^the output reports zero naming violations$`
+	stepOutputIdentifiesAgentUnknownSuffix  = `^the output identifies the offending agent file and its unknown suffix$`
+	stepOutputIdentifiesFrontmatterMismatch = `^the output identifies the frontmatter mismatch$`
+	stepOutputIdentifiesMirrorDrift         = `^the output identifies the mirror-drift violation$`
+)
+
+// Workflows validate-naming step patterns.
+const (
+	stepWorkflowsTreeAllConform               = `^a repository where every workflow filename ends with an allowed type suffix$`
+	stepWorkflowsTreeUnknownSuffix            = `^a repository with one workflow whose filename ends in an unknown suffix$`
+	stepWorkflowsTreeFrontmatterMismatch      = `^a repository with a workflow file whose frontmatter name differs from its filename$`
+	stepWorkflowsTreeMetaExempt               = `^a repository with a file under governance/workflows/meta/ whose name does not follow the type-suffix rule$`
+	stepDeveloperRunsWorkflowsValidateNaming  = `^the developer runs workflows validate-naming$`
+	stepOutputIdentifiesWorkflowUnknownSuffix = `^the output identifies the offending workflow file and its unknown suffix$`
+)
+
 // Agents validate-sync step patterns.
 const (
 	stepClaudeAndOpenCodeConfigsFullySynchronised      = `^\.claude/ and \.opencode/ configurations that are fully synchronised$`
