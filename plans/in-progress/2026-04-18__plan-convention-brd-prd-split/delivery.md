@@ -55,6 +55,7 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 - [ ] Update `docs/how-to/organize-work.md` to reflect the five-doc layout (if referenced).
 - [ ] Update `AGENTS.md` plan-structure summary if it mentions the four-document layout.
 - [ ] Verify no stale `requirements.md` reference remains in governance/, docs/, AGENTS.md, .claude/agents/, .claude/skills/ (grep returns only historical/migration context).
+- [ ] Run `npm run lint:md` on all Phase 4 updated files and confirm zero violations.
 
 ## Phase 5 — Sync to OpenCode
 
@@ -94,14 +95,15 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 
 - [ ] Verify `plans/in-progress/README.md` has an entry for this plan; add or correct if missing.
 - [ ] Commit changes per Conventional Commits, split by domain:
-  - [ ] Commit 1: `docs(governance): split plan requirements into brd + prd`
+  - [ ] Commit 1: `docs(governance): split plan requirements into brd + prd` (convention doc + cross-reference doc updates: acceptance-criteria.md, docs/how-to/organize-work.md, AGENTS.md)
   - [ ] Commit 2: `chore(agents): update plan-* agents for brd + prd layout`
   - [ ] Commit 3: `docs(workflows): update plan workflows for brd + prd layout`
   - [ ] Commit 4: `chore(skills): update plan-creating-project-plans skill for brd + prd`
   - [ ] Commit 5: `chore(opencode): sync .opencode mirrors`
   - [ ] Commit 6: `docs(plans): migrate organiclever-fe-local-first to brd + prd layout`
+- [ ] Do NOT bundle preexisting fixes into the domain-scoped commits above — commit them separately with an appropriate type/scope.
 - [ ] Do **NOT** push unless the user explicitly asks.
-- [ ] After push (when user explicitly authorizes): monitor GitHub Actions for the push commit.
+- [ ] After push (when user explicitly authorizes): monitor `pr-quality-gate.yml` and `pr-validate-links.yml` in GitHub Actions for the push commit.
 - [ ] Verify all CI checks pass. If any check fails, push a follow-up fix commit before proceeding.
 - [ ] Verify ALL delivery checklist items above are ticked and all quality gates pass.
 - [ ] Move the plan folder: `git mv plans/in-progress/2026-04-18__plan-convention-brd-prd-split plans/done/`.

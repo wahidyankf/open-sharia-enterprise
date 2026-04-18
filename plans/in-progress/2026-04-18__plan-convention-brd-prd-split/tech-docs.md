@@ -30,7 +30,7 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 - Affected roles (which hats the maintainer wears; which agents consume the file) — **not** sign-off mapping
 - Business-level success metrics. The BRD does not require every claim to be data-driven — gut-based reasoning is acceptable **when the logic supports the claim**. What is NOT acceptable: fabricated numeric targets (percentages, durations, counts) presented as though they were already measured, when no baseline exists. Options when writing a benefit or success metric:
   1. **Observable fact** (preferred when available): cite a grep/git/agent-round-trip check that verifies the claim on demand (e.g., "zero plans using the deprecated layout after migration").
-  2. **Cited measurement**: reference an existing dashboard, prior measurement, or external data source.
+  2. **Cited measurement**: reference an existing dashboard, prior measurement, or external data source. For external references (industry norms, reputable blog posts, framework documentation), the author MAY delegate to [`web-research-maker`](../../../.claude/agents/web-research-maker.md) to fetch cited findings — this keeps plan context lean while still letting claims rest on real sources. **When you cite data pulled from the internet, include the data itself in the plan** (the specific number, quote, table, or short excerpt), alongside the source URL. URL-only citations are not enough: links rot, pages change, and a reader or future agent must be able to see the evidence without leaving the plan.
   3. **Qualitative reasoning**: state the structural claim plainly without a number (e.g., "file diffs become narrower per concern").
   4. **Judgment call / gut target**: allowed, but MUST be explicitly labeled as such (e.g., "_Judgment call:_ we expect review time to drop; no baseline measured"). The reader must be able to tell at a glance that this is a gut estimate, not a measured fact.
 - Business-scope Non-Goals
@@ -117,6 +117,37 @@ The single-file exception remains, with updated wording to reflect the five-doc 
 - Same threshold: ≤ 1000 lines combined.
 - README.md in a single-file plan MUST cover Context, Scope, **Business rationale (condensed BRD)**, **Product requirements (condensed PRD)**, Technical approach, Delivery checklist, Quality gates, Verification.
 - If the author cannot comfortably fit both business rationale and product requirements into the single README without overcrowding, promote to the five-doc layout.
+
+## Authoring Aids
+
+The plan author MAY use the following agents and tools to validate claims while writing or revising any of the five plan documents. These aids are optional but encouraged when a claim rests on external references:
+
+- **[`web-research-maker`](../../../.claude/agents/web-research-maker.md)** — delegate to this agent when a BRD/PRD claim should rest on an industry source, framework doc, or reputable blog post. The agent returns cited findings in a sandboxed context so the plan stays lean. Good uses: validating "BRD/PRD is an established industry pattern" language, checking canonical sections of each doc type, finding precedent for embedding Gherkin inside a PRD.
+- **`WebFetch`** — in-context fetch of a specific known-authoritative URL (single-shot verification, no multi-page research). Use when the author already knows the exact URL of the source and only needs to read it once.
+- **`WebSearch`** — in-context search for a narrow, single-claim query. Escalate to `web-research-maker` if verification requires 2 or more `WebSearch` calls or 3 or more `WebFetch` calls.
+
+Use these tools to turn `Judgment call` labels into `Cited measurement` labels over time. Research findings belong inline next to the claim they support, not in a separate research log.
+
+### Inline-evidence rule for internet citations
+
+When a plan claim is backed by data pulled from the internet (a blog post, spec, dashboard screenshot, benchmark, survey, etc.), the plan MUST include the **evidence itself** — not just a link. At minimum, include:
+
+- The specific figure, quote, table row, or short excerpt being cited (verbatim, in quotes).
+- The source URL.
+- The date the source was accessed (link-rot hedge).
+- A one-sentence note on what the evidence establishes, if not obvious from the excerpt.
+
+Rationale: URLs decay, pages are rewritten, and paywalls appear. A future reader — human or agent — must be able to verify the claim from the plan alone, without network access. This rule applies uniformly to `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`, and `README.md`.
+
+Example (acceptable):
+
+> Atlassian's BRD guide lists "business objectives, scope, constraints, stakeholders, assumptions" as the five canonical BRD sections ([www.atlassian.com/agile/product-management/business-requirements-document](https://www.atlassian.com/agile/product-management/business-requirements-document), accessed 2026-04-18).
+
+Example (not acceptable):
+
+> Per Atlassian, BRDs have five canonical sections.
+
+(The second form forces the reader to re-fetch the page to learn what those sections are — and fails when the page is gone.)
 
 ## Verification Strategy
 
