@@ -688,13 +688,9 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 7. **Licensing Convention Compliance** (see [Per-Directory Licensing Convention](../../governance/conventions/structure/licensing.md)):
    - Verify all product app directories have FSL-1.1-MIT LICENSE matching root LICENSE
    - Verify all `libs/*` directories have MIT LICENSE
-   - Verify all `apps/a-demo-*` implementation directories (excluding `*-e2e`) have MIT LICENSE
-   - Verify `apps/a-demo-be-e2e/` and `apps/a-demo-fe-e2e/` have FSL-1.1-MIT LICENSE
    - Verify `specs/` root has FSL-1.1-MIT LICENSE
-   - Verify `specs/apps/a-demo/` has MIT LICENSE (demo specs are educational)
    - Verify LICENSING-NOTICE.md table matches actual LICENSE files on disk
    - Verify CLAUDE.md, README.md, and oseplatform-web about.md license descriptions are consistent with LICENSING-NOTICE.md
-   - Verify no stale "all specs are FSL" language without demo exception
    - **Criticality**: Missing LICENSE = CRITICAL; wrong license type = HIGH; cross-doc inconsistency = MEDIUM
 
 8. **Write findings progressively** using report format above
