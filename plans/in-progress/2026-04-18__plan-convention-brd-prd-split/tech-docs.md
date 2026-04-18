@@ -65,7 +65,6 @@ When a concern is genuinely cross-cutting (e.g., a success criterion is both a b
 | `plan-maker.md`             | Scaffold five files; content-placement guidance for brd/prd              |
 | `plan-checker.md`           | Validate presence + content placement; flag misplacement                 |
 | `plan-fixer.md`             | Move misplaced content into correct file on violation                    |
-| `plan-executor.md`          | No behavioral change (reads `delivery.md`); update doc references        |
 | `plan-execution-checker.md` | Read `prd.md` for acceptance-criteria validation (was `requirements.md`) |
 
 ### Skills (`.claude/skills/`)
@@ -166,7 +165,7 @@ Example (not acceptable):
 Run through agents manually against this plan (`2026-04-18__plan-convention-brd-prd-split/`):
 
 1. `plan-checker` → expects zero findings.
-2. `plan-executor` (dry-read) → resolves `delivery.md` correctly.
+2. plan-execution workflow (dry-read by calling context) → resolves `delivery.md` correctly.
 3. `plan-execution-checker` (after execution) → validates against `prd.md` Gherkin.
 
 ### Markdown lint

@@ -19,7 +19,7 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 | Maintainer (reviewer at PR / cold re-read) | `README.md` → targeted file   | Navigate quickly to the concern relevant to the current review or resumption                  |
 | `plan-maker` agent                         | All five                      | Scaffold the new five-doc layout on request                                                   |
 | `plan-checker` agent                       | All five                      | Validate presence, content, and cross-references                                              |
-| `plan-executor` agent                      | `delivery.md`                 | Drive checklist execution; may read `brd.md` / `prd.md` / `tech-docs.md` for context          |
+| plan-execution workflow (calling context)  | `delivery.md`                 | Drive checklist execution; may read `brd.md` / `prd.md` / `tech-docs.md` for context          |
 | `plan-execution-checker` agent             | `prd.md` + `delivery.md`      | Verify completed work satisfies acceptance criteria                                           |
 
 ## User Stories
@@ -54,10 +54,10 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 **I want** the checker to flag missing `brd.md` or `prd.md`, and flag content-placement errors (business content in PRD, product content in BRD)
 **So that** the split is enforced, not merely documented
 
-### US-6: Plan-executor locates the delivery checklist
+### US-6: Plan-execution workflow locates the delivery checklist
 
-**As a** user running `plan-executor` on a new-layout plan
-**I want** the executor to read `delivery.md` unchanged
+**As a** user running the plan-execution workflow on a new-layout plan
+**I want** the calling context to read `delivery.md` unchanged
 **So that** execution mechanics are not disrupted by the document split
 
 ### US-7: Existing in-progress plan migrates cleanly
@@ -89,7 +89,7 @@ Feature: Plans Organization Convention specifies five-document layout
     And it notes that a single-file plan's README.md must cover both business and product concerns explicitly
 ```
 
-### AC-2: All five plan agents reflect the new layout
+### AC-2: All four plan agents reflect the new layout
 
 ```gherkin
 Feature: Plan agents reference the five-doc layout
@@ -106,11 +106,11 @@ Feature: Plan agents reference the five-doc layout
     Then the checker is instructed to flag missing brd.md or prd.md
     And the checker validates that Gherkin acceptance criteria live in prd.md, not brd.md
 
-  Scenario: plan-executor reads delivery.md
-    Given the file .claude/agents/plan-executor.md
+  Scenario: plan-execution workflow reads delivery.md
+    Given the file governance/workflows/plan/plan-execution.md
     When I search for delivery-checklist location
-    Then the executor is instructed to read delivery.md (unchanged from prior convention)
-    And the executor may consult brd.md, prd.md, tech-docs.md for context
+    Then the calling context is instructed to read delivery.md (unchanged from prior convention)
+    And the calling context may consult brd.md, prd.md, tech-docs.md for context
 
   Scenario: plan-execution-checker validates against prd.md
     Given the file .claude/agents/plan-execution-checker.md

@@ -38,7 +38,8 @@ There is no human sign-off gate. The relevant roles are the maintainer wearing d
 | Maintainer (author mode)                            | All five                                | Drafts each file in its purpose                                        |
 | Maintainer (reviewer mode at code review)           | `README.md` → targeted file per concern | Reviews the file relevant to the concern being raised                  |
 | `plan-maker` / `plan-checker` / `plan-fixer` agents | All five                                | Produce, validate, and remediate each file per content-placement rules |
-| `plan-executor` / `plan-execution-checker` agents   | `delivery.md`, `prd.md`                 | Drive execution; verify completed work against Gherkin in `prd.md`     |
+| plan-execution workflow (calling context)           | `delivery.md`                           | Drive execution — calling context orchestrates per checklist item      |
+| `plan-execution-checker` agent                      | `prd.md`                                | Verify completed work against Gherkin in `prd.md`                      |
 
 Code review (the PR itself) is the approval gate. No separate ceremony exists or is introduced.
 
@@ -48,7 +49,7 @@ Business-level success criteria (product-level criteria live in [prd.md](./prd.m
 
 1. **Zero plans using deprecated four-document layout** after this plan merges. The one active in-progress plan is migrated; archived plans in `plans/done/` are explicitly grandfathered.
 2. **Convention document is self-consistent**: every reference to `requirements.md` in governance, agents, workflows, skills, and docs is updated. Verified by grep.
-3. **Agent round-trip works**: `plan-maker` produces a five-doc plan; `plan-checker` reports zero findings on it; `plan-executor` reads `delivery.md` successfully; `plan-execution-checker` validates it against `prd.md` Gherkin criteria.
+3. **Agent / workflow round-trip works**: `plan-maker` produces a five-doc plan; `plan-checker` reports zero findings on it; the plan-execution workflow (calling context) reads `delivery.md` successfully; `plan-execution-checker` validates it against `prd.md` Gherkin criteria.
 4. **This plan itself passes `plan-checker`** in the new five-doc layout. It is the canonical reference example.
 
 ## Non-Goals (Business)
