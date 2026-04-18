@@ -10,7 +10,7 @@ tags:
   - sync
   - cross-repo
 created: 2026-04-18
-updated: 2026-04-18
+updated: 2026-04-19
 ---
 
 # ose-primer Sync Convention
@@ -79,7 +79,7 @@ The table below is the authoritative classifier. When plan documents or other re
 
 | Path pattern                                                                                                      | Direction                   | Transform                | Rationale                                                                                                                                                  |
 | ----------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/a-demo-*` (excluding `*-e2e`)                                                                               | `neither` (post-extraction) | —                        | Pre-extraction tag was `propagate`; extracted 2026-04-XX; `ose-primer` is authoritative. Retained as zero-match row to tag any accidental re-introduction. |
+| `apps/a-demo-*` (excluding `*-e2e`)                                                                               | `neither` (post-extraction) | —                        | Pre-extraction tag was `propagate`; extracted 2026-04-18; `ose-primer` is authoritative. Retained as zero-match row to tag any accidental re-introduction. |
 | `apps/a-demo-*-e2e`                                                                                               | `neither` (post-extraction) | —                        | Same rationale.                                                                                                                                            |
 | `specs/apps/a-demo/**`                                                                                            | `neither` (post-extraction) | —                        | Demo contract specs extracted alongside the demo apps.                                                                                                     |
 | `apps/organiclever-fe`                                                                                            | `neither`                   | —                        | FSL-1.1-MIT product app.                                                                                                                                   |
