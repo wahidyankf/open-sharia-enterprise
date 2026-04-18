@@ -509,7 +509,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 - `plan-maker` - Creates project plans
 - `plan-checker` - Validates plan quality
-- `plan-executor` - Executes plans
+- [plan-execution workflow](../../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
