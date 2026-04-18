@@ -312,7 +312,7 @@ Result: SUCCESS (4 iterations)
 
 The plan-checker validates:
 
-- **Completeness**: All required sections present (requirements, deliverables, checklists)
+- **Completeness**: All five canonical documents present in multi-file plans — `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`. Required sections populated in each file per the [Content-Placement Rules](../../conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd). Single-file exception is allowed when the plan is trivially small (≤1000 lines) and a single `README.md` covers the eight mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, Delivery Checklist, Quality Gates, Verification.
 - **Technical Accuracy**: Commands, versions, tool names verified via web search
 - **Implementation Readiness**: Plans are actionable and executable
 - **Codebase Alignment**: References to existing files, patterns, and conventions

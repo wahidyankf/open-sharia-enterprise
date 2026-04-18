@@ -202,7 +202,7 @@ Execute all delivery checklist items sequentially, delegating each to the approp
 For each checklist item in reading order (phase by phase, item by item, including nested sub-bullets):
 
 1. **`TaskUpdate in_progress`** on the matching task. At most ONE `in_progress` at a time.
-2. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly.
+2. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly. If the checklist text is ambiguous, the orchestrator MAY consult the plan's `brd.md` / `prd.md` / `tech-docs.md` for additional context — business intent lives in `brd.md`, product scope and Gherkin acceptance criteria in `prd.md`, architecture decisions in `tech-docs.md`.
 3. **Execute the item** — delegate to that agent via the Agent tool, or perform the edit/command directly. Only for THIS one checkbox.
 4. **Verify the work succeeded** — read the produced file, run the command, check the agent's output.
 5. **Atomic Sync Ritual** — all three steps before any next-item work:
