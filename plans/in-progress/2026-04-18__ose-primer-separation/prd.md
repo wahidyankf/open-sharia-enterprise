@@ -275,9 +275,11 @@ Feature: ose-primer sync convention (classifier)
     Given the classifier table
     When the reader inspects the row for "apps/a-demo-*" (excluding e2e)
     Then the "Direction" is "neither (post-extraction)"
-    And the "Rationale" notes that the rows were pre-tagged during Phase 1 because live parity-check was manually substituted and Phase 8 Commit H is a no-op for these rows
+    And the "Rationale" notes that the rows were pre-tagged during Phase 1 because live parity-check was manually substituted and Phase 8 Commit H confirms/finalises the rationale text for these rows
     # Deviation: original plan intended Direction="propagate" until Phase 8 Commit H flipped it;
     # Phase 1 delivery note tagged rows "neither (post-extraction)" upfront to match live state.
+    # Phase 8 Commit H is not a structural flip but is still required to bump updated: frontmatter
+    # and finalise the rationale text — not a no-op.
 
 Feature: Shared sync skill
 
@@ -853,12 +855,12 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 
 The following deviations from acceptance criteria occurred during execution. Each Gherkin scenario marked with a deviation comment in the Acceptance Criteria section above maps to one of these entries. Cross-reference delivery.md for inline deviation notes.
 
-| Scenario                                                             | Deviation                                                                                                                              | Resolution                                                                            |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| "Generic demo apps are tagged propagate"                             | Rows pre-tagged `neither (post-extraction)` in Phase 1; Phase 8 Commit H is a no-op for these rows                                     | Scenario updated to assert `neither (post-extraction)`                                |
-| "Parity verification succeeds before extraction" (verdict line)      | Verdict wording is `parity verified (content-equivalent after primer-side rename)` not `parity verified: ose-public may safely remove` | Operator judgment: rename is structural no-op; gate passed on intent                  |
-| "Adoption-maker produces a report" (sections)                        | Phase 6 abort-notice; no classifier coverage or findings sections                                                                      | Full dry-run deferred to Phase 10; abort-notice evidence is adequate for Phase 6 gate |
-| "Propagation-maker produces a report in dry-run" (findings grouping) | Phase 6 abort-notice; no findings grouping                                                                                             | Same as above                                                                         |
+| Scenario                                                             | Deviation                                                                                                                              | Resolution                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Generic demo apps are tagged propagate"                             | Rows pre-tagged `neither (post-extraction)` in Phase 1; Phase 8 Commit H is a no-op for these rows                                     | Scenario updated to assert `neither (post-extraction)`                                                                                                                                                                                                                                                         |
+| "Parity verification succeeds before extraction" (verdict line)      | Verdict wording is `parity verified (content-equivalent after primer-side rename)` not `parity verified: ose-public may safely remove` | Resolved by strengthened re-evaluation (file-count evidence restores exact verdict string): strengthened report (`parity__phase7-strengthened__2026-04-18--22-10__report.md`, primer SHA `7c34e73f`) `## Verdict line` section body contains the exact expected string; gate no longer passes on intent alone. |
+| "Adoption-maker produces a report" (sections)                        | Phase 6 abort-notice; no classifier coverage or findings sections                                                                      | Full dry-run deferred to Phase 10; abort-notice evidence is adequate for Phase 6 gate                                                                                                                                                                                                                          |
+| "Propagation-maker produces a report in dry-run" (findings grouping) | Phase 6 abort-notice; no findings grouping                                                                                             | Same as above                                                                                                                                                                                                                                                                                                  |
 
 ## Related Documents
 
