@@ -92,6 +92,19 @@ For EACH finding: Read → Re-validate → Assess confidence → Apply (HIGH) or
 
 Apply HIGH_CONFIDENCE fixes automatically, skip others, report summary.
 
+#### BRD/PRD Content-Placement Fixes
+
+When the audit reports misplaced content per the [Content-Placement Rules](../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), apply the following moves (HIGH confidence — mechanical, unambiguous):
+
+- **Business framing found in `prd.md`** (sign-off language, sponsors, stakeholders, KPIs, ceremony language) → **move to `brd.md`**, typically into the Business Impact or Affected Roles subsection. If sign-off / approval-gate language is present at all, **strip it** — this repo is single-maintainer with code-review as the only gate; sign-off ceremonies are forbidden by the convention.
+- **User stories or Gherkin scenarios found in `brd.md`** → **move to `prd.md`**, into User Stories or Acceptance Criteria section.
+- **Personas found in `brd.md`** → **move to `prd.md`** (they belong in the product perspective).
+- **Affected Roles found in `prd.md`** → **move to `brd.md`** (they belong in the business perspective).
+- **Fabricated numeric targets in BRD** (presented as measured, but no baseline exists) → **rewrite** as one of: (a) observable fact (grep/git/agent round-trip), (b) cited measurement with inline excerpt + URL + access date, (c) qualitative reasoning (drop the number), or (d) explicitly labeled `_Judgment call:_ …`. Never invent a plausible-sounding number to satisfy the criterion.
+- **URL-only citation** (internet data cited without inline excerpt) → **fetch and quote** the specific figure/table/excerpt, then include it in the plan alongside the URL and the access date. If unable to fetch, classify the finding MEDIUM and flag for manual authoring rather than applying a half-fix.
+
+After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
+
 ### 4. Fix Report Generation
 
 Use `repo-generating-validation-reports` Skill for comprehensive fix report generation.

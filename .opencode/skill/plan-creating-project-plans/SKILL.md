@@ -1,6 +1,6 @@
 ---
 name: plan-creating-project-plans
-description: Comprehensive project planning standards for plans/ directory including folder structure (ideas.md, backlog/, in-progress/, done/), naming convention (YYYY-MM-DD__identifier/), file organization (README.md for small plans, multi-file for large), and Gherkin acceptance criteria. Essential for creating structured, executable project plans.
+description: Comprehensive project planning standards for plans/ directory including folder structure (ideas.md, backlog/, in-progress/, done/), naming convention (YYYY-MM-DD__identifier/), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, and Gherkin acceptance criteria. Essential for creating structured, executable project plans.
 ---
 
 # Creating Project Plans
@@ -48,37 +48,51 @@ plans/
 - Identifier: Lowercase, hyphen-separated, descriptive
 - Trailing slash indicates directory
 
-## Single-File vs Multi-File Plans
+## Plan Structure
 
-### Single-File Structure (≤1000 lines)
+### Multi-File Structure (default — five documents)
 
-**For small to medium plans:**
+**For any plan with substantive business intent, product scope, and technical design:**
+
+```
+plans/in-progress/2025-11-25__complex-feature/
+├── README.md                 # Context, Scope, Approach Summary, navigation
+├── brd.md                    # Business Requirements Document
+├── prd.md                    # Product Requirements Document
+├── tech-docs.md              # Architecture, design decisions, file impact
+└── delivery.md               # Phased checklist (one checkbox = one action)
+```
+
+**Content-placement split** (authoritative — see [Content-Placement Rules](../../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd)):
+
+- **`brd.md`** — WHY: business goal, impact, affected roles, business-level success metrics, business-scope Non-Goals, business risks. Solo-maintainer repo — no sign-off / sponsor / stakeholder ceremony language.
+- **`prd.md`** — WHAT: product overview, personas, user stories, Gherkin acceptance criteria, product scope (in + out), product risks.
+- **`tech-docs.md`** — HOW: architecture, design decisions with rationale, file-impact, dependencies, rollback.
+- **`delivery.md`** — DO: sequential `- [ ]` checklist organized by phase; one concrete action per checkbox.
+
+**Benefits**: narrow PR diff per concern (business PRs touch brd.md only; product PRs touch prd.md only), sharper agent validation (plan-checker asserts placement per file), industry-norm alignment (BRD + PRD are recognized doc types).
+
+### Single-File Structure (exception, ≤1000 lines)
+
+**Only for trivially small plans** where both condensed BRD and condensed PRD fit without crowding the technical sections:
 
 ```
 plans/in-progress/2025-11-25__simple-feature/
 └── README.md                 # All content in one file
 ```
 
-**README.md contains**:
+**README.md mandatory sections (in order)**:
 
-- Overview (status, goals, git workflow)
-- Requirements (objectives, user stories, acceptance criteria)
-- Technical Documentation (architecture, design decisions)
-- Delivery Plan (implementation steps, validation, completion status)
+1. **Context** — background, non-technical framing
+2. **Scope** — in-scope + out-of-scope; affected apps named
+3. **Business Rationale (condensed BRD)** — why + affected roles + success metrics (gut-based reasoning OK when logic supports it; fabricated KPIs forbidden)
+4. **Product Requirements (condensed PRD)** — user stories + Gherkin acceptance criteria + product scope
+5. **Technical Approach** — architecture, design decisions
+6. **Delivery Checklist** — phased `- [ ]` items
+7. **Quality Gates** — local + CI gates
+8. **Verification** — how to confirm done
 
-### Multi-File Structure (>1000 lines)
-
-**For large, complex plans:**
-
-```
-plans/in-progress/2025-11-25__complex-feature/
-├── README.md                 # Overview only
-├── requirements.md           # Goals, user stories, acceptance criteria
-├── tech-docs.md              # Architecture, design decisions
-└── delivery.md               # Implementation phases, validation
-```
-
-**Benefits**: Better organization, easier navigation, reduced file size.
+If the plan grows past 1000 lines or authoring feels crowded, promote to the five-document multi-file layout before execution begins.
 
 ## Gherkin Acceptance Criteria
 
