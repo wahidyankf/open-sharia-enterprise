@@ -15,14 +15,14 @@ The current [Plans Organization Convention](../../../governance/conventions/stru
 
 Conflating business intent (why this exists, what value it creates, who benefits, what KPIs move) with product specification (user stories, Gherkin criteria, feature scope) inside a single `requirements.md` has two recurring failure modes:
 
-1. **Business context gets crowded out.** When the reader opens `requirements.md`, user stories dominate and business impact degrades into an Overview sentence — so stakeholders reviewing a plan cannot easily answer "why are we doing this?" without hunting.
+1. **Business context gets crowded out.** When the reader opens `requirements.md`, user stories dominate and business impact degrades into an Overview sentence — so the author on cold re-read, or a reviewer at code review time, cannot easily answer "why are we doing this?" without hunting.
 2. **Product scope gets tangled with business framing.** Engineers reading the file for Gherkin scenarios must skim past strategy sections, and product updates touch the same file as business rationale — producing noisy diffs and unclear ownership.
 
 ## Goal
 
 Evolve the canonical plan structure from four documents to **five documents** by splitting `requirements.md` into two purpose-focused files:
 
-- `brd.md` — **Business Requirements Document**. Business impact, goals, KPIs, stakeholders, value proposition, success metrics (business level).
+- `brd.md` — **Business Requirements Document**. Business impact, goals, intent, affected roles, success metrics (business level). Content-placement container, not a sign-off artifact — code review is the only approval gate in this repo.
 - `prd.md` — **Product Requirements Document**. User stories, personas, Gherkin acceptance criteria, product scope, out-of-scope items, UX requirements.
 
 Target plan layout (multi-file default):
@@ -30,7 +30,7 @@ Target plan layout (multi-file default):
 ```
 YYYY-MM-DD__project-id/
 ├── README.md          # Context + scope + overview (entry point)
-├── brd.md             # Business requirements: impact, KPIs, stakeholders, value
+├── brd.md             # Business requirements: impact, intent, affected roles, success metrics
 ├── prd.md             # Product requirements: user stories, Gherkin criteria, scope
 ├── tech-docs.md       # Technical design: architecture, decisions, mechanics
 └── delivery.md        # Step-by-step delivery checklist

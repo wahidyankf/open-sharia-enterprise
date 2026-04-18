@@ -21,19 +21,21 @@ Each file's H1 expands the acronym (`# Business Requirements Document (BRD)` and
 
 Authoritative split between `brd.md` and `prd.md`. These rules go into the convention document and agent instructions verbatim so `plan-maker` / `plan-checker` / `plan-fixer` share one definition.
 
+> **Solo-maintainer framing**: BRD and PRD are **content-placement containers**, not sign-off artifacts. This repo has one maintainer and a set of AI agents; code review (the PR) is the only approval gate. The convention MUST NOT introduce sponsor sign-off, stakeholder approval ceremonies, or role-based gates.
+
 ### Goes in `brd.md` (business perspective)
 
-- Business goal and rationale
+- Business goal and rationale ("why are we doing this")
 - Business impact (pain points, expected benefits)
-- Stakeholders and sign-off mapping
-- Business-level success metrics (KPIs, adoption targets, cost/time savings)
+- Affected roles (which hats the maintainer wears; which agents consume the file) — **not** sign-off mapping
+- Business-level success metrics (adoption targets, cost/time savings, defect reduction, cognitive-load improvements)
 - Business-scope Non-Goals
 - Business risks and mitigations
 
 ### Goes in `prd.md` (product perspective)
 
 - Product overview (what is being built)
-- Personas
+- Personas (hats the maintainer wears; agents that consume the file) — **not** external stakeholder roles
 - User stories (`As a … I want … So that …`)
 - Acceptance criteria in Gherkin
 - Product scope (in-scope features, out-of-scope features)
@@ -41,7 +43,7 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 
 ### Ambiguous cases
 
-When a concern is genuinely cross-cutting (e.g., "success metric" is both a KPI for sponsors and an acceptance criterion for engineering), place the **quantitative assertion** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content.
+When a concern is genuinely cross-cutting (e.g., a success metric is both a business-level target and an acceptance criterion), place the **quantitative assertion** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content.
 
 ## Affected Files
 
@@ -96,7 +98,7 @@ When a concern is genuinely cross-cutting (e.g., "success metric" is both a KPI 
 Step-by-step content transplant:
 
 1. Read `requirements.md`.
-2. Identify business-impact paragraphs (rationale, scope rationale, stakeholders, success metrics) → copy into new `brd.md`.
+2. Identify business-impact paragraphs (rationale, affected roles, success metrics) → copy into new `brd.md`.
 3. Identify user stories / Gherkin scenarios / product scope / personas → copy into new `prd.md`.
 4. Reconcile: any content that is genuinely both (e.g., a success metric phrased as an acceptance criterion) — quantitative version goes in `brd.md`; testable scenario goes in `prd.md`, cross-linked.
 5. Verify via diff: `wc -l requirements.md` vs `wc -l brd.md prd.md` should be approximately equal (minor overhead for cross-links is acceptable; large delta indicates content loss).

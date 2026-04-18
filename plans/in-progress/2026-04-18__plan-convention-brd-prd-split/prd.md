@@ -9,16 +9,18 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 
 ## Personas
 
-| Persona                        | Primary file(s)               | Need                                                                                           |
-| ------------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------- |
-| Business sponsor               | `brd.md`                      | Understand the "why" and success metrics in under 2 minutes                                    |
-| Product owner                  | `prd.md`                      | Author user stories + Gherkin acceptance criteria without business-framing sections in the way |
-| Engineer executing plan        | `tech-docs.md`, `delivery.md` | Know architecture and work the checklist                                                       |
-| Plan reviewer                  | `README.md` → others          | Navigate quickly to the section relevant to review feedback                                    |
-| `plan-maker` agent             | All five                      | Scaffold the new five-doc layout on request                                                    |
-| `plan-checker` agent           | All five                      | Validate presence, content, and cross-references                                               |
-| `plan-executor` agent          | `delivery.md`                 | Drive checklist execution; may read `brd.md` / `prd.md` / `tech-docs.md` for context           |
-| `plan-execution-checker` agent | `prd.md` + `delivery.md`      | Verify completed work satisfies acceptance criteria                                            |
+> This is a single-maintainer repo collaborating with AI agents. "Personas" below are hats the maintainer wears plus the agents that consume plan files. There is no external sponsor or external product owner role; code review is the approval gate.
+
+| Persona                                    | Primary file(s)               | Need                                                                                          |
+| ------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------------- |
+| Maintainer (author, intent mode)           | `brd.md`                      | Capture the "why" and success metrics without tangling them with product scope                |
+| Maintainer (author, product-spec mode)     | `prd.md`                      | Write user stories + Gherkin acceptance criteria without business-framing sections in the way |
+| Maintainer (author, engineering mode)      | `tech-docs.md`, `delivery.md` | Record architecture and a granular checklist                                                  |
+| Maintainer (reviewer at PR / cold re-read) | `README.md` → targeted file   | Navigate quickly to the concern relevant to the current review or resumption                  |
+| `plan-maker` agent                         | All five                      | Scaffold the new five-doc layout on request                                                   |
+| `plan-checker` agent                       | All five                      | Validate presence, content, and cross-references                                              |
+| `plan-executor` agent                      | `delivery.md`                 | Drive checklist execution; may read `brd.md` / `prd.md` / `tech-docs.md` for context          |
+| `plan-execution-checker` agent             | `prd.md` + `delivery.md`      | Verify completed work satisfies acceptance criteria                                           |
 
 ## User Stories
 
@@ -28,17 +30,17 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 **I want** the convention to specify BRD and PRD as distinct documents
 **So that** I can write business rationale without tangling it with user stories
 
-### US-2: Stakeholder reviews business impact
+### US-2: Reviewer assesses business impact at code review
 
-**As a** business sponsor reviewing a proposed plan
+**As a** maintainer reviewing a plan PR (or cold-re-reading an existing plan)
 **I want** a dedicated `brd.md` file
-**So that** I can assess business impact without scrolling past product specifications
+**So that** I can assess business impact and intent without scrolling past product specifications
 
-### US-3: Product owner authors acceptance criteria
+### US-3: Author writes acceptance criteria without business-framing churn
 
-**As a** product owner
-**I want** a dedicated `prd.md` file for Gherkin acceptance criteria
-**So that** I can refine user stories without churning business-rationale sections
+**As a** maintainer authoring user stories and Gherkin acceptance criteria
+**I want** a dedicated `prd.md` file
+**So that** I can iterate on product scope without churning business-rationale sections
 
 ### US-4: Plan agent produces compliant scaffolding
 
@@ -76,8 +78,8 @@ Feature: Plans Organization Convention specifies five-document layout
     When I read the "Multi-File Structure" section
     Then it lists README.md, brd.md, prd.md, tech-docs.md, delivery.md as the five canonical files
     And it describes the purpose of each file
-    And it clarifies that brd.md holds business impact, KPIs, stakeholders, value
-    And it clarifies that prd.md holds user stories, Gherkin acceptance criteria, product scope
+    And it clarifies that brd.md holds business impact, intent, success metrics, and affected roles (no human sign-off gate)
+    And it clarifies that prd.md holds user stories, Gherkin acceptance criteria, and product scope
 
   Scenario: Single-file exception criteria are updated
     Given the file governance/conventions/structure/plans.md
