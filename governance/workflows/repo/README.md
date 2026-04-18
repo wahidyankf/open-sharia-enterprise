@@ -24,6 +24,8 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 ## Workflows
 
 - [Repository Rules Validation](./repo-rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
+- [ose-primer Sync Execution](./repo-ose-primer-sync-execution.md) - Single-pass sync orchestration between `ose-public` and `ose-primer`. Dispatches the adoption-maker or propagation-maker agent, collects its report, and (in apply mode) surfaces the resulting primer PR URL.
+- [ose-primer Extraction Execution](./repo-ose-primer-extraction-execution.md) - One-time orchestration for Phase 8 of the 2026-04-18 ose-primer-separation plan. Runs the primer-parity gate, a bounded catch-up loop, and ten ordered extraction commits (A → J) with per-commit CI verification.
 
 ## Related Documentation
 
@@ -34,4 +36,4 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-04-18
