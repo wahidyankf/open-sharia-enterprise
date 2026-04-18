@@ -56,12 +56,12 @@ Use this agent when:
 
 ## Plan Structure
 
-Plans follow single-file or multi-file structure based on size:
+Plans follow the **five-document multi-file layout** by default; collapse to a single-file `README.md` only when the plan is trivially small (≤1000 lines combined AND both condensed BRD and condensed PRD fit without crowding out the technical sections).
 
-- **Single-File** (≤1000 lines): All content in README.md
-- **Multi-File** (>1000 lines): Separate README.md, requirements.md, tech-docs.md, delivery.md
+- **Multi-File (default)**: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`
+- **Single-File (exception, ≤1000 lines)**: all content in `README.md` with mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, Delivery Checklist, Quality Gates, Verification.
 
-See [Plans Organization Convention](../../governance/conventions/structure/plans.md) for complete structure details.
+See [Plans Organization Convention](../../governance/conventions/structure/plans.md) for complete structure details and the Content-Placement Rules that govern what goes in `brd.md` vs `prd.md`.
 
 ## Planning Workflow
 
@@ -90,15 +90,29 @@ Clarify with user if needed:
 mkdir -p plans/in-progress/YYYY-MM-DD-project-identifier
 ```
 
-### Step 3: Write Requirements
+### Step 3: Write Requirements (BRD + PRD)
 
-Document what needs to be built:
+Document intent and specification in two separate files, per the [Content-Placement Rules](../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd):
 
-**Objectives**: Clear, measurable goals
-**User Stories**: Gherkin format with Given-When-Then
-**Functional Requirements**: What the system must do
-**Non-Functional Requirements**: Performance, security, maintainability
-**Acceptance Criteria**: How we know it's done
+**`brd.md` — Business Requirements Document** (WHY this exists):
+
+- Business goal and rationale
+- Business impact (pain points, expected benefits)
+- Affected roles (which hats the maintainer wears; which agents consume the file) — solo-maintainer repo, no sign-off ceremonies
+- Business-level success metrics. Gut-based reasoning is acceptable when the logic supports the claim; fabricated numeric targets dressed as already-measured facts are forbidden. Options: observable fact / cited measurement (with inline excerpt + URL + access date) / qualitative reasoning / Judgment call (explicitly labeled).
+- Business-scope Non-Goals
+- Business risks and mitigations
+
+**`prd.md` — Product Requirements Document** (WHAT gets built):
+
+- Product overview
+- Personas (hats the maintainer wears; consuming agents)
+- User stories (`As a … I want … So that …`)
+- Acceptance criteria in Gherkin (Given / When / Then)
+- Product scope (in-scope features, out-of-scope features)
+- Product-level risks
+
+**Cross-cutting concerns**: For content that spans both, place the **factual claim or judgment** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content.
 
 ### Step 4: Write Technical Documentation
 

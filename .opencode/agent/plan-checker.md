@@ -54,17 +54,42 @@ Validate project plans against standards defined in [Plans Organization Conventi
 ### 1. Structure Validation
 
 - Plan folder naming: `YYYY-MM-DD-project-identifier`
-- File structure: Single-file (≤1000 lines) or Multi-file (>1000 lines)
-- Required sections present
-- Proper file organization
+- File structure:
+  - **Multi-file (default)** — five files: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`. Flag missing files as HIGH finding.
+  - **Single-file (exception)** — one `README.md` with eight mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, Delivery Checklist, Quality Gates, Verification. Flag missing sections as HIGH.
+- Required sections present per file (BRD: business goal / impact / affected roles / success metrics / non-goals / risks; PRD: product overview / personas / user stories / Gherkin acceptance criteria / product scope / product risks; tech-docs: architecture / decisions / file-impact / rollback; delivery: phased checkboxes with implementation-notes blocks)
+- Proper file organization; folder sits under `plans/backlog/`, `plans/in-progress/`, or `plans/done/`
 
-### 2. Requirements Validation
+### 2. Requirements Validation (BRD + PRD)
 
-- Objectives are clear and measurable
-- User stories follow Gherkin format (Given-When-Then)
-- Functional requirements are specific
-- Non-functional requirements are documented
-- Acceptance criteria are testable
+Per the [Content-Placement Rules](../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), business and product concerns live in separate files. Flag misplacement as distinct findings — content in the wrong file is a structural violation, not a stylistic issue.
+
+**In `brd.md` (business perspective)**:
+
+- Business goal and rationale present
+- Business impact section present (pain points, expected benefits)
+- Affected roles present — **not** sponsor / stakeholder sign-off mapping. If the BRD contains human sign-off / approval-gate / stakeholder-ceremony language, flag HIGH.
+- Business-level success metrics grounded in observable facts, cited measurements (with inline excerpt + URL + access date), qualitative reasoning, or explicitly labeled Judgment calls. **Flag HIGH** any fabricated numeric target presented as already-measured when no baseline exists.
+- Business-scope Non-Goals listed
+- Business risks and mitigations listed
+
+**In `prd.md` (product perspective)**:
+
+- Product overview present
+- Personas listed (solo-maintainer hats + consuming agents; **not** external stakeholder roles — flag HIGH if present)
+- User stories follow `As a … I want … So that …` format
+- Acceptance criteria in Gherkin (Given / When / Then / And); flag if Gherkin lives in a different file
+- Product scope (in-scope + out-of-scope)
+- Product-level risks
+
+**Content-placement violations** (flag HIGH):
+
+- Business framing (sign-off, sponsors, stakeholders, KPIs) in `prd.md`
+- User stories or Gherkin scenarios in `brd.md`
+- Personas in `brd.md` (they belong in `prd.md`)
+- Affected Roles in `prd.md` (they belong in `brd.md`)
+
+**Internet-citation compliance**: If a plan cites external data, verify the cited content is inline (specific excerpt/number/quote + URL + access date). URL-only citations are a finding — links rot, and future readers must verify claims from the plan alone.
 
 ### 3. Technical Documentation Validation
 
