@@ -60,6 +60,97 @@ Emojis should **NOT**:
 - Appear in code, commands, or technical specifications
 - Be overused (causing visual noise)
 
+## Tasteful Usage
+
+Emojis in this repository are **allowed** across documentation (see Usage Rules for the full path list), but permission to use does not mean obligation to use. The goal is scannability — helping readers locate content quickly — not decoration. Tasteful usage aligns with the [Documentation First](../../principles/content/documentation-first.md) and [Progressive Disclosure](../../principles/content/progressive-disclosure.md) principles: emojis must earn their place by adding semantic value, and a reader should grasp the same structure even with emojis stripped.
+
+### Where Emojis Help
+
+Emojis pay for themselves when they do one of these jobs:
+
+- **Section markers in long docs** — a single emoji at the start of an H2/H3 in a 500+ line reference or explanation speeds location-finding on re-read
+- **Status indicators in examples** — PASS `✅` / FAIL `❌` / warning `⚠️` inline in "good vs bad" examples or plan status lines
+- **Navigation signposts in READMEs** — one emoji per top-level section in a README index (Overview, Quick Start, Docs, Contributing)
+- **Plan status in checklists** — `✅` for completed milestones, `🚧` for in-progress, `⏳` for upcoming in plan delivery sections
+- **Criticality or severity tags** — 🟠 HIGH / 🟡 MEDIUM / 🟢 LOW already used in agent and Skill definitions
+
+### Where Emojis Do NOT Help (Anti-Patterns)
+
+These patterns are forbidden because they add visual noise without navigation benefit:
+
+- ❌ **Every bullet prefixed with an emoji** — turns a list into a wall of icons; nothing stands out
+- ❌ **Emojis inside headings on every page section** — if every H2 is emoji-prefixed, emoji loses its "look here" signal
+- ❌ **Decorative emojis with no semantic purpose** — `🎉 Welcome!`, `🌟 Features`, `🚀 Performance` used purely as ornament
+- ❌ **Emoji as a bullet substitute** — replacing `-` with `👉` or `🔹`; Markdown already has bullets
+- ❌ **Stacked emojis for emphasis** — `## 🔥🔥 Important 🔥🔥`
+- ❌ **Emoji in body text for mood** — "This is cool 😎" or "Fixed 🎊"
+
+### Density Cap
+
+Enforce these soft limits; exceeding them is a governance finding:
+
+- **At most ~1 emoji per heading.** If a heading needs two emojis to communicate, the heading is trying to say too much — split it.
+- **At most ~1 emoji per paragraph of body text**, and only for inline status indicators (PASS/FAIL/warning). Plain prose should not contain emojis.
+- **Zero emojis in config files and source code.** This is a hard ban, not a soft cap (see Usage Rules FAIL list).
+- **Zero emojis in YAML frontmatter and file names.**
+
+### Good vs Bad Examples
+
+✅ **Good — one emoji marks a section, one status indicator inside an example:**
+
+```markdown
+## 🔒 Security Considerations
+
+Authentication uses OAuth2 with PKCE. Validate every token server-side.
+
+✅ **Correct:** Validate on every request
+❌ **Incorrect:** Cache auth decisions in localStorage
+```
+
+✅ **Good — plan checklist with status indicators:**
+
+```markdown
+## Delivery Checklist
+
+- ✅ Define API contract in OpenAPI spec
+- ✅ Generate TypeScript types via codegen
+- 🚧 Implement handler with validation
+- ⏳ Add integration tests against real DB
+- ⏳ Update documentation
+```
+
+❌ **Bad — every bullet prefixed, decorative emojis, density too high:**
+
+```markdown
+## 🚀 Getting Started 🎉
+
+🌟 Welcome to our amazing project! 😎
+
+- 📝 Read the docs
+- 🔧 Install dependencies
+- 🏃 Run the dev server
+- 🎨 Customize the theme
+- 🚢 Deploy to production
+```
+
+❌ **Bad — emoji as bullet substitute, emoji in every heading:**
+
+```markdown
+## 📘 Overview
+
+👉 This project does X.
+👉 It integrates with Y.
+👉 It supports Z.
+
+## 📗 Installation
+
+👉 Run `npm install`.
+
+## 📕 Usage
+
+👉 Run `npm start`.
+```
+
 ## Emoji Vocabulary
 
 ### Document Type Markers
