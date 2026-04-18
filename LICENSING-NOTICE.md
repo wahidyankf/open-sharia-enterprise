@@ -40,13 +40,8 @@ because these materials can be used to clean-room engineer a competing product:
 
 - **`specs/`** — Gherkin feature files, OpenAPI contracts, C4 architecture models. Has its own
   FSL-1.1-MIT LICENSE file at the root. Product specs (ayokoding, organiclever, oseplatform, rhino)
-  are FSL. **Exception**: demo app specs (`specs/apps/a-demo/`) are MIT — they have their own MIT
-  LICENSE file, consistent with demo implementation code being educational.
-- **`apps/a-demo-be-e2e/`** — Playwright E2E tests for demo backends. Describes expected HTTP
-  responses, API behavior, and error handling. Has its own FSL-1.1-MIT LICENSE file.
-- **`apps/a-demo-fe-e2e/`** — Playwright E2E tests for demo frontends. Describes expected UI
-  states, user flows, and rendering behavior. Has its own FSL-1.1-MIT LICENSE file.
-- **Product E2E tests** (`*-e2e` apps not listed above) — Inherit root FSL-1.1-MIT.
+  are FSL.
+- **Product E2E tests** (`*-e2e` apps) — Inherit root FSL-1.1-MIT.
 
 **The principle**: Implementation code (HOW) can be MIT. Behavioral specifications (WHAT) must be
 FSL. E2E tests are executable behavioral specs — they reveal what the system does, not just how
@@ -62,17 +57,11 @@ stating otherwise.
 
 - `golang-commons`, `hugo-commons` — Go utility libraries
 - `ts-ui`, `ts-ui-tokens` — TypeScript UI component libraries
-- `clojure-openapi-codegen`, `elixir-openapi-codegen` — Code generation libraries
-- `elixir-cabbage`, `elixir-gherkin` — Elixir testing libraries (MIT, original authors)
 
 A new library defaults to MIT. To override, place a different LICENSE file in the library directory.
 
-**Demo/Reference Implementation Code** (`apps/a-demo-*`, excluding `*-e2e`):
-
-All demo application implementations (backend code in Go, Java, Kotlin, Python, Rust, Elixir, F#,
-C#, Clojure, TypeScript; frontend code in Next.js, TanStack Start, Flutter Web; fullstack Next.js)
-are MIT-licensed. These are reference implementations meant for learning — use them freely. Note:
-their E2E tests and specs are FSL (see above).
+**Polyglot demo apps**: extracted 2026-04-18 to the downstream
+[`ose-primer`](https://github.com/wahidyankf/ose-primer) template (MIT throughout).
 
 ### Inherited License (Root FSL-1.1-MIT)
 

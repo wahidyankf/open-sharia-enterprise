@@ -33,14 +33,12 @@ Where `{part}` describes the role and technology stack:
 - `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
 - `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
 - `ayokoding-cli` - AyoKoding CLI tool for link validation - Go application
-- `rhino-cli` - Repository management CLI tools (includes `java validate-annotations`) - Go application
+- `rhino-cli` - Repository management CLI tools - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-fe` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-be` - OrganicLever backend API (F#/Giraffe) - F# application (port 8202)
 - `organiclever-fe-e2e` - FE E2E tests for organiclever-fe - Playwright (browser testing)
 - `organiclever-be-e2e` - BE E2E tests for organiclever-be - Playwright (API testing)
-- `a-demo-be-golang-gin` - OrganicLever backend API (Go/Gin) - Go application (port 8201)
-- `a-demo-be-e2e` - E2E tests for demo-be REST API - Playwright (API testing)
 
 ## Application Characteristics
 
@@ -103,41 +101,17 @@ apps/oseplatform-cli/
 └── README.md                # App documentation
 ```
 
-### Go/Gin Application (Current Default)
-
-```
-apps/a-demo-be-golang-gin/
-├── cmd/server/              # Main entry point
-│   └── main.go
-├── internal/                # Internal packages
-│   ├── config/              # Configuration (env vars)
-│   ├── handler/             # HTTP handlers
-│   ├── router/              # Gin router setup
-│   ├── server/              # Server startup
-│   └── store/               # Data access layer
-├── go.mod                   # Go module definition
-├── go.sum                   # Dependency checksums
-├── Dockerfile               # Production Docker image
-├── project.json             # Nx configuration
-└── README.md                # App documentation
-```
-
 ### Playwright E2E Test App (Current)
 
 ```
-apps/a-demo-be-e2e/
+apps/organiclever-be-e2e/
 ├── playwright.config.ts         # Playwright configuration (baseURL, reporters)
 ├── package.json                 # Pinned @playwright/test dependency
 ├── tsconfig.json                # TypeScript config (extends workspace base)
 ├── project.json                 # Nx configuration
 ├── tests/
-│   ├── e2e/
-│   │   ├── hello/
-│   │   │   └── hello.spec.ts    # Tests for GET /api/v1/hello
-│   │   └── actuator/
-│   │       └── health.spec.ts   # Tests for GET /actuator/health
-│   └── utils/
-│       └── api-helpers.ts       # Shared request utilities
+│   ├── e2e/                     # Feature-grouped specs
+│   └── utils/                   # Shared request utilities
 └── README.md                    # App documentation
 ```
 
@@ -259,7 +233,7 @@ nx clean oseplatform-web
 nx run organiclever-fe-e2e:test:e2e
 
 # Run API E2E tests (backend must be running first)
-nx run a-demo-be-e2e:test:e2e
+nx run organiclever-be-e2e:test:e2e
 ```
 
 ## Deployment Branches
@@ -299,7 +273,6 @@ Currently:
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **TypeScript/Next.js** (web applications) - organiclever-fe, ayokoding-web
 - **F#/Giraffe** (backend API) - organiclever-be
-- **Go/Gin** (backend API) - a-demo-be-golang-gin
-- **TypeScript/Playwright** (E2E testing) - a-demo-be-e2e, organiclever-fe-e2e, organiclever-be-e2e
+- **TypeScript/Playwright** (E2E testing) - organiclever-fe-e2e, organiclever-be-e2e
 
 Future: Kotlin, Python apps (each language will have language-specific structure and tooling)
