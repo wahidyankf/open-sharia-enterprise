@@ -179,11 +179,11 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
 
-**Related Agents:**
+**Related Agents / Workflows:**
 
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans (generates audit reports)
-- `plan-executor` - Executes plans
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 
 **Related Conventions:**

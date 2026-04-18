@@ -141,7 +141,7 @@ All Go code MUST follow the platform coding standards organized into two categor
 
 **Related Agents**:
 
-- `plan-executor` - Executes project plans systematically
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

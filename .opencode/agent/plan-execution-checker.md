@@ -172,7 +172,7 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans
-- `plan-executor` - Executes plans
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-fixer` - Fixes plan issues
 
 **Remember**: This is the final quality gate. Be thorough, independent, and uncompromising on quality.
