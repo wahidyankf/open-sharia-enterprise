@@ -2,7 +2,7 @@
 
 **Status**: In Progress
 **Created**: 2026-04-18
-**Scope**: `ose-public` — governance convention + plan agents + plan skill + existing in-progress plan migration
+**Scope**: `ose-public` — governance convention + plan agents + plan workflows + plan skill + existing in-progress plan migration
 
 ## Context
 
@@ -42,6 +42,7 @@ YYYY-MM-DD__project-id/
 
 - Update `governance/conventions/structure/plans.md` to define five-document layout, BRD/PRD content rules, and updated single-file exception criteria.
 - Update five plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-executor`, `plan-execution-checker`.
+- Update two plan workflows under `governance/workflows/plan/`: `plan-quality-gate.md` (completeness bullet enumerates five docs) and `plan-execution.md` (adds context-consultation note; verifies no stale `requirements.md` references).
 - Update `.claude/skills/plan-creating-project-plans/SKILL.md` to reflect new structure.
 - Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old three-file split.
 - Sync `.claude/` → `.opencode/` via `npm run sync:claude-to-opencode`.
@@ -57,11 +58,12 @@ YYYY-MM-DD__project-id/
 ## Approach Summary
 
 1. **Author the convention change first** in `governance/conventions/structure/plans.md` so downstream documents have a stable referent.
-2. **Cascade updates into the five plan agents and the creation skill**, keeping wording consistent so `plan-checker` and `plan-execution-checker` agree on what "compliant plan" means.
-3. **Update cross-linked docs** (`AGENTS.md`, `organize-work.md`, `acceptance-criteria.md`) in the same commit set so no reference lags.
-4. **Run the OpenCode sync** and verify `.opencode/` mirrors match.
-5. **Migrate the one active in-progress plan** last — exercises the new structure end-to-end, and confirms `plan-executor` still resolves its delivery checklist correctly after the change.
-6. **Run quality gates** (markdown lint, affected-project tests, plan-checker against this plan itself).
+2. **Cascade updates into the five plan agents**, keeping wording consistent so `plan-checker` and `plan-execution-checker` agree on what "compliant plan" means.
+3. **Update the two plan workflows** (`plan-quality-gate.md`, `plan-execution.md`) so quality-gate validation and execution mechanics stay consistent with the new convention.
+4. **Update the creation skill and cross-linked docs** (`AGENTS.md`, `organize-work.md`, `acceptance-criteria.md`) in the same commit set so no reference lags.
+5. **Run the OpenCode sync** and verify `.opencode/` mirrors match.
+6. **Migrate the one active in-progress plan** last — exercises the new structure end-to-end, and confirms `plan-executor` still resolves its delivery checklist correctly after the change.
+7. **Run quality gates** (markdown lint, affected-project tests, plan-checker against this plan itself).
 
 ## Plan Documents
 

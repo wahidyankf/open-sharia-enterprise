@@ -68,6 +68,13 @@ When a concern is genuinely cross-cutting (e.g., "success metric" is both a KPI 
 | -------------------------------------- | ----------------------------------------------------------- |
 | `plan-creating-project-plans/SKILL.md` | Update plan-structure reference to five-doc; update example |
 
+### Workflows (`governance/workflows/plan/`)
+
+| Workflow               | Change                                                                                                                                                                                                                                                                                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan-quality-gate.md` | Update the "Plan-Specific Validation" completeness bullet (currently `requirements, deliverables, checklists`) to enumerate the five canonical documents for multi-file plans (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) and to clarify that the single-file exception still allows a single `README.md` when eligible. |
+| `plan-execution.md`    | No behavioral change — executor still reads `delivery.md`. Add a short note that the executor MAY consult `brd.md` / `prd.md` / `tech-docs.md` for context when a delivery item is ambiguous. Verify all existing `delivery.md` references remain correct.                                                                                    |
+
 ### Cross-references
 
 | File                                                      | Change                                               |
@@ -157,11 +164,12 @@ Phase ordering is strict:
 
 1. Convention doc first — every downstream file references it.
 2. Agents + skill second — they cite the convention.
-3. Cross-references third — they cite both.
-4. OpenCode sync fourth — mechanical mirror of `.claude/`.
-5. Plan migration last — exercises the new convention end-to-end.
+3. Workflows third — they cite the convention and the agents.
+4. Cross-references fourth — they cite all of the above.
+5. OpenCode sync fifth — mechanical mirror of `.claude/`.
+6. Plan migration last — exercises the new convention end-to-end.
 
-Quality gates run after phase 5 against the whole change set.
+Quality gates run after phase 6 against the whole change set.
 
 ## Risks
 
