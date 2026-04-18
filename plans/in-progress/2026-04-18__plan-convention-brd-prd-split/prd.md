@@ -5,7 +5,7 @@
 
 ## Product Overview
 
-Evolve the canonical plan structure from four documents (`README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`) to five documents (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) across the Plans Organization Convention, five plan agents, one skill, cross-referenced governance docs, and one active in-progress plan.
+Evolve the canonical plan structure from four documents (`README.md`, `requirements.md`, `tech-docs.md`, `delivery.md`) to five documents (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) across the Plans Organization Convention, four plan agents, one skill, cross-referenced governance docs, and one active in-progress plan.
 
 ## Personas
 
@@ -173,7 +173,7 @@ Feature: .opencode/ mirrors match .claude/ sources
     And git status shows all corresponding .opencode/ files updated
 
   Scenario: Mirrored agents and skills match
-    Given the five plan agents in .opencode/agent/ and the plan skill in .opencode/skill/
+    Given the four plan agents in .opencode/agent/ and the plan skill in .opencode/skill/
     When I diff them against their .claude/ sources (ignoring format-level differences per sync rules)
     Then semantic content is equivalent
 ```

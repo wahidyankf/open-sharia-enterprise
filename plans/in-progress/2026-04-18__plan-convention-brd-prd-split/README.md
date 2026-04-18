@@ -51,14 +51,14 @@ YYYY-MM-DD__project-id/
 ### Out of Scope
 
 - **Archived plans in `plans/done/`** — historical records, left as-is.
-- **Parent `ose-projects` plan convention** (`/Users/wkf/ose-projects/governance/conventions/structure/plans.md`) — mirrors the ose-public convention but lives in a different repo. Tracked as follow-up work, not bundled here, because updating it requires a separate parent-repo plan and this plan's Scope is ose-public only.
+- **Parent `ose-projects` plan convention** (the sibling `plans.md` at `governance/conventions/structure/plans.md` inside the `ose-projects` parent repo) — mirrors the ose-public convention but lives in a different repo. Tracked as follow-up work, not bundled here, because updating it requires a separate parent-repo plan and this plan's Scope is ose-public only.
 - **New `brd-` / `prd-` prefix naming for other documents** — this plan does not rename `tech-docs.md` or introduce further taxonomy changes.
 - **Automated migration tooling** — the single active plan migrates by hand; no generator/codemod needed for one artifact.
 
 ## Approach Summary
 
 1. **Author the convention change first** in `governance/conventions/structure/plans.md` so downstream documents have a stable referent.
-2. **Cascade updates into the five plan agents**, keeping wording consistent so `plan-checker` and `plan-execution-checker` agree on what "compliant plan" means.
+2. **Cascade updates into the four plan agents**, keeping wording consistent so `plan-checker` and `plan-execution-checker` agree on what "compliant plan" means.
 3. **Update the two plan workflows** (`plan-quality-gate.md`, `plan-execution.md`) so quality-gate validation and execution mechanics stay consistent with the new convention.
 4. **Update the creation skill and cross-linked docs** (`AGENTS.md`, `organize-work.md`, `acceptance-criteria.md`) in the same commit set so no reference lags.
 5. **Run the OpenCode sync** and verify `.opencode/` mirrors match.
