@@ -192,10 +192,10 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
 - [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
 
-**Related Agents:**
+**Related Agents / Workflows:**
 
 - `plan-maker` - Creates plans
-- `plan-executor` - Executes plans
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 

@@ -1,5 +1,5 @@
 ---
-description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
+description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context).
 model: zai-coding-plan/glm-5.1
 tools:
   bash: true
@@ -37,7 +37,7 @@ You are an expert at creating comprehensive, executable project plans that bridg
 
 ## Core Responsibility
 
-Create detailed project plans in `plans/` directory following the planning convention. Plans must be executable by the plan-executor agent and validatable by plan-checker and plan-execution-checker agents.
+Create detailed project plans in `plans/` directory following the planning convention. Plans must be executable via the [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) (orchestrated directly by the calling context) and validatable by `plan-checker` (authoring-time) and `plan-execution-checker` (post-execution).
 
 ## When to Use This Agent
 
@@ -50,9 +50,9 @@ Use this agent when:
 
 **Do NOT use for:**
 
-- Executing plans (use plan-executor)
-- Validating plans (use plan-checker)
-- Validating completed work (use plan-execution-checker)
+- Executing plans (use the [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) — calling context orchestrates)
+- Validating plans (use `plan-checker`)
+- Validating completed work (use `plan-execution-checker`)
 
 ## Plan Structure
 
@@ -162,10 +162,10 @@ See [Trunk Based Development Convention](../../governance/development/workflow/t
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan structure and organization
 - [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow
 
-**Related Agents:**
+**Related Agents / Workflows:**
 
 - `plan-checker` - Validates plan quality
-- `plan-executor` - Executes plans
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 

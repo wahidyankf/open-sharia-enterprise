@@ -212,7 +212,7 @@ test("murabaha contract creation workflow", async ({ page }) => {
 **Related Agents**:
 
 - `swe-typescript-dev` - Develops TypeScript application code
-- `plan-executor` - Executes project plans systematically
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for test coverage
 
 **Skills**:

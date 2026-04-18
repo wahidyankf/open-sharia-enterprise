@@ -58,8 +58,8 @@
 
 **Execution Workflow**:
 
-- **plan-executor** - Executes delivery checklists systematically (implementor, not maker)
-- **plan-execution-checker** - Final validation of completed plan implementation
+- Orchestrated directly by the [Plan Execution Workflow](../../governance/workflows/plan/plan-execution.md) — the calling context reads the workflow, manages the Task list, and delegates per-item work to specialized agents. No dedicated executor subagent.
+- **plan-execution-checker** - Final validation of completed plan implementation (runs in an isolated subagent context for independent judgment)
 
 ### ayokoding-web Family
 
@@ -194,7 +194,7 @@ opencode agent list
 
 1. plan-maker → Create structured plan
 2. plan-checker → Validate plan before implementation
-3. plan-executor → Execute delivery checklist
+3. Execute delivery checklist via plan-execution workflow (calling context orchestrates)
 4. plan-execution-checker → Final validation
 5. [Move to plans/done/ if validation passes]
    \`\`\`
@@ -236,7 +236,7 @@ opencode agent list
 
 **Purpose**: Execute and orchestrate complex workflows
 **Tools**: Full tool access or bash-only
-**Examples**: plan-executor, deployers
+**Examples**: deployers (plan execution itself is orchestrated directly by the calling context via the [plan-execution workflow](../../governance/workflows/plan/plan-execution.md), not a dedicated subagent)
 
 ### Hybrid Agents (Purple)
 

@@ -108,7 +108,7 @@ All TypeScript code MUST follow the platform coding standards:
 
 **Related Agents**:
 
-- `plan-executor` - Executes project plans systematically
+- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:
