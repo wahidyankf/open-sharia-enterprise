@@ -28,7 +28,11 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 - Business goal and rationale ("why are we doing this")
 - Business impact (pain points, expected benefits)
 - Affected roles (which hats the maintainer wears; which agents consume the file) — **not** sign-off mapping
-- Business-level success metrics, grounded in **directly observable facts** (e.g., "zero plans using the deprecated layout after migration", verifiable by grep or git). **Do not invent KPIs or quantitative targets** for which no baseline data exists. If the only honest answer is qualitative ("file diffs become narrower per concern"), state the qualitative claim and do not dress it up as a numeric target.
+- Business-level success metrics. The BRD does not require every claim to be data-driven — gut-based reasoning is acceptable **when the logic supports the claim**. What is NOT acceptable: fabricated numeric targets (percentages, durations, counts) presented as though they were already measured, when no baseline exists. Options when writing a benefit or success metric:
+  1. **Observable fact** (preferred when available): cite a grep/git/agent-round-trip check that verifies the claim on demand (e.g., "zero plans using the deprecated layout after migration").
+  2. **Cited measurement**: reference an existing dashboard, prior measurement, or external data source.
+  3. **Qualitative reasoning**: state the structural claim plainly without a number (e.g., "file diffs become narrower per concern").
+  4. **Judgment call / gut target**: allowed, but MUST be explicitly labeled as such (e.g., "_Judgment call:_ we expect review time to drop; no baseline measured"). The reader must be able to tell at a glance that this is a gut estimate, not a measured fact.
 - Business-scope Non-Goals
 - Business risks and mitigations
 
@@ -43,7 +47,7 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 
 ### Ambiguous cases
 
-When a concern is genuinely cross-cutting (e.g., a success criterion is both a business-level fact and a product acceptance criterion), place the **factual claim** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content. Do not fabricate quantitative targets to bridge the two — if there is no measurable baseline, keep the statement qualitative.
+When a concern is genuinely cross-cutting (e.g., a success criterion is both a business-level fact and a product acceptance criterion), place the **factual claim or judgment** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content. If the BRD side is a judgment call rather than a measured fact, label it as such — do not fabricate a number and pretend it was measured.
 
 ## Affected Files
 

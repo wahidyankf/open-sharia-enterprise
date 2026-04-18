@@ -22,7 +22,7 @@ Improve plan-document legibility and review efficiency so that (a) the author, o
 
 ### Expected Benefits
 
-Qualitative, structural benefits — no baseline measurements exist, so no numeric targets are claimed here:
+These are reasoned (partly gut-based) structural benefits. The BRD does not require all benefits to be backed by baseline measurements — logical reasoning is sufficient — but any numeric target stated here MUST either cite real data or be clearly labeled as a judgment call, not dressed up as an already-measured fact.
 
 - **Dedicated "why" location**: `brd.md` is the single file that holds business intent, so a cold re-read starts there instead of scanning an omnibus `requirements.md`.
 - **Narrower diff surface per concern**: a PR editing product scope touches `prd.md`; a PR editing business rationale touches `brd.md`. The two no longer share one file.
