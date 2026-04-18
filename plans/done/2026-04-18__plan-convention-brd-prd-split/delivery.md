@@ -328,23 +328,63 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 
 ## Phase 8 — Plan hand-off
 
-- [ ] Verify `plans/in-progress/README.md` has an entry for this plan; add or correct if missing.
+- [x] Verify `plans/in-progress/README.md` has an entry for this plan; add or correct if missing.
+  - **Implementation Notes**: Verified — entry present from plan-creation commit 55a56f4b; will be removed on archival.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (verification only)
 - [ ] Commit changes per Conventional Commits, split by domain:
-  - [ ] Commit 1: `docs(governance): split plan requirements into brd + prd` (convention doc + cross-reference doc updates: acceptance-criteria.md, docs/how-to/organize-work.md, AGENTS.md)
-  - [ ] Commit 2: `chore(agents): update plan-* agents for brd + prd layout`
-  - [ ] Commit 3: `docs(workflows): update plan workflows for brd + prd layout`
-  - [ ] Commit 4: `chore(skills): update plan-creating-project-plans skill for brd + prd`
-  - [ ] Commit 5: `chore(opencode): sync .opencode mirrors`
-  - [ ] Commit 6: `docs(plans): migrate organiclever-fe-local-first to brd + prd layout`
-- [ ] Do NOT bundle preexisting fixes into the domain-scoped commits above — commit them separately with an appropriate type/scope.
-- [ ] Do **NOT** push unless the user explicitly asks.
-- [ ] After push (when user explicitly authorizes): monitor `pr-quality-gate.yml` and `pr-validate-links.yml` in GitHub Actions for the push commit.
-- [ ] Verify all CI checks pass. If any check fails, push a follow-up fix commit before proceeding.
-- [ ] Verify ALL delivery checklist items above are ticked and all quality gates pass.
-- [ ] Move the plan folder: `git mv plans/in-progress/2026-04-18__plan-convention-brd-prd-split plans/done/`.
-- [ ] Update `plans/done/README.md` — add this plan entry with completion date.
-- [ ] Update `plans/in-progress/README.md` — remove this plan entry.
-- [ ] Commit: `chore(plans): archive 2026-04-18__plan-convention-brd-prd-split to done`.
+  - [x] Commit 1: `docs(governance): split plan requirements into brd + prd` — SHA a981df56 (convention + acceptance-criteria + organize-work + docs-maker + ai-agents).
+  - [x] Commit 2: `chore(agents): update plan-* agents for brd + prd layout` — SHA d27639b1.
+  - [x] Commit 3: `docs(workflows): update plan workflows for brd + prd layout` — SHA 3d8f4d03.
+  - [x] Commit 4: `chore(skills): update plan-creating-project-plans skill for brd + prd` — SHA 4120a212.
+  - [x] Commit 5: `chore(opencode): sync .opencode mirrors` — SHA 3319c7fd.
+  - [x] Commit 6: `docs(plans): migrate organiclever-fe-local-first to brd + prd layout` — SHA aa06c474. (+ supplemental SHA 6eef9428 for progressive delivery.md updates in this plan.)
+- [x] Do NOT bundle preexisting fixes into the domain-scoped commits above — commit them separately with an appropriate type/scope.
+  - **Implementation Notes**: No preexisting fixes encountered during execution. All 7 commits strictly domain-scoped.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (discipline check)
+- [x] Do **NOT** push unless the user explicitly asks.
+  - **Implementation Notes**: User pre-authorized push earlier in session ("I am okay with you commit and push. I give you the permission"). Pushed all 7 commits.
+  - **Date**: 2026-04-18
+  - **Status**: Completed (user-authorized)
+  - **Files Changed**: (discipline check)
+- [x] After push (when user explicitly authorizes): monitor `pr-quality-gate.yml` and `pr-validate-links.yml` in GitHub Actions for the push commit.
+  - **Implementation Notes**: Repo has no PR workflow (direct push to main is Trunk Based Development). The workflows triggered by the push are `Test and Deploy - OSE Platform Web` (24590815127), `Test and Deploy - AyoKoding Web` (24590709023), `Test and Deploy - OrganicLever` (24590676786). All three completed with conclusion `success`.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (CI verification)
+- [x] Verify all CI checks pass. If any check fails, push a follow-up fix commit before proceeding.
+  - **Implementation Notes**: All 3 triggered workflows `success`. No follow-up fix commit needed.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (CI verification)
+- [x] Verify ALL delivery checklist items above are ticked and all quality gates pass.
+  - **Implementation Notes**: All Phase 0-7 items ticked with implementation notes; all quality gates pass (0-error lint, plan-checker 0 CRITICAL/HIGH on both plans, rhino-cli test:quick ≥90% threshold MET, CI green on pushed commits).
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (verification only)
+- [x] Move the plan folder: `git mv plans/in-progress/2026-04-18__plan-convention-brd-prd-split plans/done/`.
+  - **Implementation Notes**: Performed below before archival commit.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: folder move
+- [x] Update `plans/done/README.md` — add this plan entry with completion date.
+  - **Implementation Notes**: Entry added below.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: plans/done/README.md
+- [x] Update `plans/in-progress/README.md` — remove this plan entry.
+  - **Implementation Notes**: Entry removed below.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: plans/in-progress/README.md
+- [x] Commit: `chore(plans): archive 2026-04-18__plan-convention-brd-prd-split to done`.
+  - **Implementation Notes**: Performed in final archival commit.
+  - **Date**: 2026-04-18
+  - **Status**: Completed
+  - **Files Changed**: (commit)
 
 ## Quality Gates
 
@@ -366,4 +406,4 @@ All must pass before this plan moves to `plans/done/`:
 - [x] Phase 5 complete — OpenCode synced.
 - [x] Phase 6 complete — legacy plan migrated.
 - [x] Phase 7 complete — all quality gates pass (plan-checker normal mode: 0 CRITICAL, 0 HIGH, MEDIUM fixed).
-- [ ] Phase 8 complete — commits recorded, plan archived.
+- [x] Phase 8 complete — commits recorded, plan archived.
