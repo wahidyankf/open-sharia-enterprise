@@ -5,7 +5,7 @@
 
 ## Overview
 
-Structural change to governance documentation and plan agent/skill behavior. No code is modified. Risk is concentrated in (a) cross-reference drift (stale mentions of `requirements.md`) and (b) agent self-consistency (checker and maker disagreeing on the canonical layout).
+Structural change to governance documentation and plan agent/skill behavior. This plan modifies no code. Risk concentrates in (a) cross-reference drift (stale mentions of `requirements.md`) and (b) agent self-consistency (checker and maker disagreeing on the canonical layout).
 
 ## Filename Decision
 
@@ -148,7 +148,7 @@ All changed files pass.
 nx affected -t typecheck lint test:quick spec-coverage
 ```
 
-No code changes in this plan, so affected graph should be minimal or empty; any failures indicate regression elsewhere and must be investigated per [ci-blocker-resolution.md](../../../governance/development/quality/ci-blocker-resolution.md).
+No code changes in this plan, so affected graph should be minimal or empty; any failures indicate regression elsewhere and must be investigated per [CI Blocker Resolution Convention](../../../governance/development/quality/ci-blocker-resolution.md).
 
 ## Rollback
 

@@ -5,6 +5,12 @@
 
 Granular checkboxes per the [one checkbox = one action](../../../governance/conventions/structure/plans.md#granular-checklist-items-in-deliverymd) rule. Execute phases in order.
 
+## Phase 0 — Environment Setup
+
+- [ ] From the repo root, run `npm install` to install dependencies.
+- [ ] Run `npm run doctor -- --fix` to converge the polyglot toolchain (postinstall silently tolerates drift).
+- [ ] Verify markdown lint runs cleanly before making any changes: `npm run lint:md`.
+
 ## Phase 1 — Update the canonical convention document
 
 - [ ] Read current `governance/conventions/structure/plans.md` in full to map every section touching the four-doc layout.
@@ -47,7 +53,7 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 - [ ] Grep repository for `requirements.md` references and enumerate every hit outside archived plans: `grep -r 'requirements\.md' governance/ docs/ AGENTS.md .claude/ --include='*.md'`.
 - [ ] Update `governance/development/infra/acceptance-criteria.md` to reference `prd.md` as the canonical Gherkin location (if referenced).
 - [ ] Update `docs/how-to/organize-work.md` to reflect the five-doc layout (if referenced).
-- [ ] Update `AGENTS.md` plan-structure summary if it mentions the three-file split.
+- [ ] Update `AGENTS.md` plan-structure summary if it mentions the four-document layout.
 - [ ] Verify no stale `requirements.md` reference remains in governance/, docs/, AGENTS.md, .claude/agents/, .claude/skills/ (grep returns only historical/migration context).
 
 ## Phase 5 — Sync to OpenCode
@@ -73,16 +79,20 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 - [ ] Grep `.claude/` for `requirements.md` → expect only historical/migration context mentions.
 - [ ] Grep `governance/`, `docs/`, `AGENTS.md` for `requirements.md` → expect only historical mentions.
 - [ ] Grep `governance/workflows/plan/` for `requirements.md` → expect zero matches.
+- [ ] Grep `.opencode/` for `requirements.md` → expect only historical/migration context (sync should have removed canonical references).
 - [ ] Confirm `governance/conventions/structure/plans.md` contains both `brd.md` and `prd.md` strings.
 - [ ] Confirm `governance/workflows/plan/plan-quality-gate.md` completeness bullet enumerates the five canonical documents.
 - [ ] Run `plan-checker` against `plans/in-progress/2026-04-18__plan-convention-brd-prd-split/` (this plan) → expect zero findings.
 - [ ] Run `plan-checker` against `plans/in-progress/2026-04-16__organiclever-fe-local-first/` (migrated plan) → expect zero findings.
 - [ ] Run `npm run lint:md` repository-wide → expect zero violations.
 - [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` → expect pass (no code changes, but verify).
+- [ ] Fix ALL failures found during quality gates — not just those caused by this plan's changes.
+      Follow the root-cause orientation principle: proactively fix preexisting errors encountered
+      during work. Do not mention and defer.
 
 ## Phase 8 — Plan hand-off
 
-- [ ] Update `plans/in-progress/README.md` index to include this plan.
+- [ ] Verify `plans/in-progress/README.md` has an entry for this plan; add or correct if missing.
 - [ ] Commit changes per Conventional Commits, split by domain:
   - [ ] Commit 1: `docs(governance): split plan requirements into brd + prd`
   - [ ] Commit 2: `chore(agents): update plan-* agents for brd + prd layout`
@@ -91,7 +101,13 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - [ ] Commit 5: `chore(opencode): sync .opencode mirrors`
   - [ ] Commit 6: `docs(plans): migrate organiclever-fe-local-first to brd + prd layout`
 - [ ] Do **NOT** push unless the user explicitly asks.
-- [ ] When work is verified complete, move the plan folder to `plans/done/` and update `plans/done/README.md` + `plans/in-progress/README.md`.
+- [ ] After push (when user explicitly authorizes): monitor GitHub Actions for the push commit.
+- [ ] Verify all CI checks pass. If any check fails, push a follow-up fix commit before proceeding.
+- [ ] Verify ALL delivery checklist items above are ticked and all quality gates pass.
+- [ ] Move the plan folder: `git mv plans/in-progress/2026-04-18__plan-convention-brd-prd-split plans/done/`.
+- [ ] Update `plans/done/README.md` — add this plan entry with completion date.
+- [ ] Update `plans/in-progress/README.md` — remove this plan entry.
+- [ ] Commit: `chore(plans): archive 2026-04-18__plan-convention-brd-prd-split to done`.
 
 ## Quality Gates
 

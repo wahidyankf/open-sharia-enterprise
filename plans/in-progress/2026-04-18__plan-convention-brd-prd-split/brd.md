@@ -44,9 +44,9 @@ Code review (the PR itself) is the approval gate. No separate ceremony exists or
 
 Business-level success criteria (product-level criteria live in [prd.md](./prd.md)):
 
-1. **Zero plans using deprecated three-part requirements layout** after this plan merges. The one active in-progress plan is migrated; archived plans in `plans/done/` are explicitly grandfathered.
+1. **Zero plans using deprecated four-document layout** after this plan merges. The one active in-progress plan is migrated; archived plans in `plans/done/` are explicitly grandfathered.
 2. **Convention document is self-consistent**: every reference to `requirements.md` in governance, agents, workflows, skills, and docs is updated. Verified by grep.
-3. **Agent round-trip works**: `plan-maker` produces a five-doc plan; `plan-checker` reports zero findings on it; `plan-executor` reads `delivery.md` successfully; `plan-execution-checker` validates it against `brd.md` + `prd.md`.
+3. **Agent round-trip works**: `plan-maker` produces a five-doc plan; `plan-checker` reports zero findings on it; `plan-executor` reads `delivery.md` successfully; `plan-execution-checker` validates it against `prd.md` Gherkin criteria.
 4. **This plan itself passes `plan-checker`** in the new five-doc layout. It is the canonical reference example.
 
 ## Non-Goals (Business)

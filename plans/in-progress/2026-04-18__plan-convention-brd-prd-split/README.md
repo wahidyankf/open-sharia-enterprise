@@ -44,7 +44,7 @@ YYYY-MM-DD__project-id/
 - Update five plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-executor`, `plan-execution-checker`.
 - Update two plan workflows under `governance/workflows/plan/`: `plan-quality-gate.md` (completeness bullet enumerates five docs) and `plan-execution.md` (adds context-consultation note; verifies no stale `requirements.md` references).
 - Update `.claude/skills/plan-creating-project-plans/SKILL.md` to reflect new structure.
-- Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old three-file split.
+- Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old four-document layout.
 - Sync `.claude/` → `.opencode/` via `npm run sync:claude-to-opencode`.
 - Migrate the one active in-progress plan (`2026-04-16__organiclever-fe-local-first/`) from `requirements.md` → `brd.md` + `prd.md` so the repository contains zero plans using the deprecated layout.
 
@@ -64,12 +64,13 @@ YYYY-MM-DD__project-id/
 5. **Run the OpenCode sync** and verify `.opencode/` mirrors match.
 6. **Migrate the one active in-progress plan** last — exercises the new structure end-to-end, and confirms `plan-executor` still resolves its delivery checklist correctly after the change.
 7. **Run quality gates** (markdown lint, affected-project tests, plan-checker against this plan itself).
+8. **Record commits and archive the plan** — commit all changes thematically by domain, then move the plan folder to `plans/done/`.
 
 ## Plan Documents
 
-- [Requirements (BRD)](./brd.md) — business goals, impact, success metrics
+- [Requirements (BRD)](./brd.md) — business goal, impact, affected roles, success metrics, non-goals, risks
 - [Requirements (PRD)](./prd.md) — user stories (Gherkin), product scope
-- [Technical Documentation](./tech-docs.md) — affected files, rename strategy, migration mechanics
+- [Technical Documentation](./tech-docs.md) — filename rationale, affected files, migration mechanics
 - [Delivery Checklist](./delivery.md) — phased step-by-step execution
 
 > **Note**: This plan is itself authored in the **new five-document layout** (README + brd + prd + tech-docs + delivery). It serves as the canonical reference example for the convention it introduces.

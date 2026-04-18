@@ -124,7 +124,7 @@ Feature: Plan agents reference the five-doc layout
     Then the fixer is instructed to move business content into brd.md and product content into prd.md on misplacement findings
 ```
 
-### AC-3a: Plan workflows reflect the five-doc layout
+### AC-3: Plan workflows reflect the five-doc layout
 
 ```gherkin
 Feature: Plan workflows reference the five-doc layout
@@ -143,7 +143,7 @@ Feature: Plan workflows reference the five-doc layout
     And no stale reference to requirements.md remains
 ```
 
-### AC-3: Skill and cross-references stay in sync
+### AC-4: Skill and cross-references stay in sync
 
 ```gherkin
 Feature: Skills and cross-referenced docs reflect the new layout
@@ -158,10 +158,10 @@ Feature: Skills and cross-referenced docs reflect the new layout
     Given the files governance/development/infra/acceptance-criteria.md, docs/how-to/organize-work.md, AGENTS.md
     When I search for references to requirements.md
     Then every reference has been updated to brd.md, prd.md, or removed as appropriate
-    And no stale reference to the three-file split remains
+    And no stale reference to the four-document layout remains
 ```
 
-### AC-4: OpenCode mirrors are synced
+### AC-5: OpenCode mirrors are synced
 
 ```gherkin
 Feature: .opencode/ mirrors match .claude/ sources
@@ -178,7 +178,7 @@ Feature: .opencode/ mirrors match .claude/ sources
     Then semantic content is equivalent
 ```
 
-### AC-5: Existing active plan is migrated
+### AC-6: Existing active plan is migrated
 
 ```gherkin
 Feature: organiclever-fe-local-first plan migrated to new layout
@@ -202,10 +202,10 @@ Feature: organiclever-fe-local-first plan migrated to new layout
     Then it links to brd.md and prd.md (not requirements.md)
 ```
 
-### AC-6: Zero deprecated references remain
+### AC-7: Zero deprecated references remain
 
 ```gherkin
-Feature: Repository is free of stale three-file references
+Feature: Repository is free of stale four-document layout references
 
   Scenario: No in-progress or backlog plan uses requirements.md
     Given the folders plans/in-progress/ and plans/backlog/
@@ -226,3 +226,10 @@ Feature: Repository is free of stale three-file references
 - **Renaming `tech-docs.md` or `delivery.md`** — not part of this change.
 - **Template generator** for scaffolding new plans — `plan-maker` agent covers this.
 - **GitHub Actions or CI enforcement** of the new layout beyond what `plan-checker` / pre-push already cover.
+
+## Product-Level Risks
+
+| Risk                                                                                      | Likelihood | Mitigation                                                                |
+| ----------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------- |
+| Agent round-trip failure — `plan-checker` or `plan-execution-checker` misreads new layout | Low        | Covered by AC-2 agent scenarios; validated against this plan itself       |
+| Convention introduces sign-off ceremony framing unintentionally                           | Low        | BRD scope note and tech-docs Content-Placement Rules explicitly forbid it |
