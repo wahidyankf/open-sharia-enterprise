@@ -546,60 +546,60 @@ Goal: verify `ose-public` is healthy after extraction; catch any dangling refere
 
 ### 9.1 — Nx graph regeneration
 
-- [ ] Run `nx graph --file=graph.json` (or `nx graph` interactively).
-- [ ] Run `jq '.graph.nodes | keys[]' graph.json | grep '^a-demo-' || echo NONE` — must print NONE.
-- [ ] Run `jq '.graph.nodes | keys[]' graph.json` and confirm the remaining project set is product apps + e2e + CLIs + libs only.
+- [x] Run `nx graph --file=graph.json` (or `nx graph` interactively).
+- [x] Run `jq '.graph.nodes | keys[]' graph.json | grep '^a-demo-' || echo NONE` — must print NONE.
+- [x] Run `jq '.graph.nodes | keys[]' graph.json` and confirm the remaining project set is product apps + e2e + CLIs + libs only.
 
 ### 9.2 — Affected-projects green run
 
-- [ ] Run `npm install` (in case package-lock shifted from removed apps).
-- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` from `main` (or a just-created branch). Must pass.
-- [ ] Run `nx run-many -t typecheck lint test:quick spec-coverage --projects='ayokoding-web,oseplatform-web,organiclever-fe,organiclever-be,rhino-cli,oseplatform-cli,ayokoding-cli,golang-commons'` — must pass (explicit product + retained infrastructure; `rhino-cli` run is the definitive Commit-J verification).
+- [x] Run `npm install` (in case package-lock shifted from removed apps).
+- [x] Run `nx affected -t typecheck lint test:quick spec-coverage` from `main` (or a just-created branch). Must pass.
+- [x] Run `nx run-many -t typecheck lint test:quick spec-coverage --projects='ayokoding-web,oseplatform-web,organiclever-fe,organiclever-be,rhino-cli,oseplatform-cli,ayokoding-cli,golang-commons'` — must pass (explicit product + retained infrastructure; `rhino-cli` run is the definitive Commit-J verification).
 
 ### 9.3 — Product E2E green run
 
-- [ ] Run `nx run ayokoding-web-be-e2e:test:e2e` — pass.
-- [ ] Run `nx run ayokoding-web-fe-e2e:test:e2e` — pass.
-- [ ] Run `nx run organiclever-fe-e2e:test:e2e` — pass.
-- [ ] Run `nx run organiclever-be-e2e:test:e2e` — pass.
-- [ ] Run `nx run oseplatform-web-be-e2e:test:e2e` — pass.
-- [ ] Run `nx run oseplatform-web-fe-e2e:test:e2e` — pass.
+- [x] Run `nx run ayokoding-web-be-e2e:test:e2e` — pass.
+- [x] Run `nx run ayokoding-web-fe-e2e:test:e2e` — pass.
+- [x] Run `nx run organiclever-fe-e2e:test:e2e` — pass.
+- [x] Run `nx run organiclever-be-e2e:test:e2e` — pass.
+- [x] Run `nx run oseplatform-web-be-e2e:test:e2e` — pass.
+- [x] Run `nx run oseplatform-web-fe-e2e:test:e2e` — pass.
 
 ### 9.4 — Dangling-reference grep sweep
 
-- [ ] Run the sweep: `grep -rnI 'a-demo' . --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^./plans/done/' | grep -v '^./plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v './governance/conventions/structure/ose-primer-sync.md'`.
-- [ ] The command MUST return zero lines. Any line is a dangling reference; resolve it (Commit I or an amendment to the relevant Phase 8 commit) before proceeding.
+- [x] Run the sweep: `grep -rnI 'a-demo' . --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^./plans/done/' | grep -v '^./plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v './governance/conventions/structure/ose-primer-sync.md'`.
+- [x] The command MUST return zero lines. Any line is a dangling reference; resolve it (Commit I or an amendment to the relevant Phase 8 commit) before proceeding.
 
 ### 9.5 — Link validation
 
-- [ ] Run `docs-link-checker` (or equivalent link-check tool) on the full `ose-public/` tree.
-- [ ] Confirm zero broken links point at `apps/a-demo-*`, `specs/apps/a-demo/`, or `docs/reference/demo-apps-ci-coverage.md`.
-- [ ] Confirm the external link `https://github.com/wahidyankf/ose-primer` is reachable.
+- [x] Run `docs-link-checker` (or equivalent link-check tool) on the full `ose-public/` tree.
+- [x] Confirm zero broken links point at `apps/a-demo-*`, `specs/apps/a-demo/`, or `docs/reference/demo-apps-ci-coverage.md`.
+- [x] Confirm the external link `https://github.com/wahidyankf/ose-primer` is reachable.
 
 ### 9.6 — Markdown lint / format
 
-- [ ] Run `npm run lint:md` — zero violations.
-- [ ] Run `npm run format:md:check` — Prettier-clean.
+- [x] Run `npm run lint:md` — zero violations.
+- [x] Run `npm run format:md:check` — Prettier-clean.
 
 ### 9.7 — Workspace doctor
 
-- [ ] Run `npm run doctor` — retained toolchains still verified. (Doctor may still enforce polyglot toolchains for deleted-demo languages; that is intentional out-of-scope per `brd.md` Non-Goals — do not edit `scripts/doctor/` here.)
+- [x] Run `npm run doctor` — retained toolchains still verified. (Doctor may still enforce polyglot toolchains for deleted-demo languages; that is intentional out-of-scope per `brd.md` Non-Goals — do not edit `scripts/doctor/` here.)
 
 ### 9.8 — OpenCode mirror sanity
 
-- [ ] Run `npm run sync:claude-to-opencode`.
-- [ ] Run `git status --porcelain .opencode/` — confirm either no changes or only expected mirror updates.
-- [ ] If changes, stage and commit with message `chore(opencode): sync mirrors after extraction`.
+- [x] Run `npm run sync:claude-to-opencode`.
+- [x] Run `git status --porcelain .opencode/` — confirm either no changes or only expected mirror updates.
+- [x] If changes, stage and commit with message `chore(opencode): sync mirrors after extraction`.
 
 ### 9.9 — Repo-rules-checker audit
 
-- [ ] Invoke `repo-rules-checker` (dry-run / no auto-fix).
-- [ ] Confirm zero new findings beyond what the checker reported pre-extraction (delta should be zero or reduced).
+- [x] Invoke `repo-rules-checker` (dry-run / no auto-fix).
+- [x] Confirm zero new findings beyond what the checker reported pre-extraction (delta should be zero or reduced).
 
 ### 9.10 — Commit Phase 9 artifacts (if any)
 
-- [ ] If Phase 9 surfaced any residual fixes (dangling references, link fixes, formatting tweaks), commit them with message: `chore(cleanup): post-extraction close-out fixes (Phase 9)`.
-- [ ] **[C] [P]** Final `git log` review of Phase 8 + 9 commits; confirm narrative coherence.
+- [x] If Phase 9 surfaced any residual fixes (dangling references, link fixes, formatting tweaks), commit them with message: `chore(cleanup): post-extraction close-out fixes (Phase 9)`.
+- [x] **[C] [P]** Final `git log` review of Phase 8 + 9 commits; confirm narrative coherence.
 
 ## Phase 10 — First real propagation (apply mode)
 
@@ -607,34 +607,34 @@ Goal: produce one real propagation PR against `wahidyankf/ose-primer:main`, vali
 
 ### 10.1 — Dry run first
 
-- [ ] Refresh primer clone (repeat 6.1 pre-flight).
-- [ ] Invoke `repo-ose-primer-propagation-maker` in dry-run mode.
-- [ ] Review the resulting report. Confirm findings are limited to generic governance updates; no `neither` leakage.
+- [x] Refresh primer clone (repeat 6.1 pre-flight).
+- [x] Invoke `repo-ose-primer-propagation-maker` in dry-run mode.
+- [x] Review the resulting report. Confirm findings are limited to generic governance updates; no `neither` leakage.
 
 ### 10.2 — Apply mode invocation
 
-- [ ] Approve the dry-run proposal explicitly.
-- [ ] Invoke `repo-ose-primer-propagation-maker` in apply mode.
-- [ ] Watch for **git worktree creation** at `$OSE_PRIMER_CLONE/.claude/worktrees/sync-<utc-timestamp>-<short-uuid>/` on branch `sync/<utc-timestamp>-<short-uuid>` tracking `origin/main`. Verify with `git -C "$OSE_PRIMER_CLONE" worktree list` — the worktree appears; main clone is still on `main`.
-- [ ] Confirm the main clone's working tree is unchanged (`git -C "$OSE_PRIMER_CLONE" status --porcelain` returns empty; `git -C "$OSE_PRIMER_CLONE" rev-parse --abbrev-ref HEAD` returns `main`).
-- [ ] Watch for push to `origin/<branch-name>`.
-- [ ] Watch for draft PR creation against `wahidyankf/ose-primer:main`.
-- [ ] Record the PR URL.
+- [x] Approve the dry-run proposal explicitly.
+- [x] Invoke `repo-ose-primer-propagation-maker` in apply mode.
+- [x] Watch for **git worktree creation** at `$OSE_PRIMER_CLONE/.claude/worktrees/sync-<utc-timestamp>-<short-uuid>/` on branch `sync/<utc-timestamp>-<short-uuid>` tracking `origin/main`. Verify with `git -C "$OSE_PRIMER_CLONE" worktree list` — the worktree appears; main clone is still on `main`.
+- [x] Confirm the main clone's working tree is unchanged (`git -C "$OSE_PRIMER_CLONE" status --porcelain` returns empty; `git -C "$OSE_PRIMER_CLONE" rev-parse --abbrev-ref HEAD` returns `main`).
+- [x] Watch for push to `origin/<branch-name>`.
+- [x] Watch for draft PR creation against `wahidyankf/ose-primer:main`.
+- [x] Record the PR URL.
 
 ### 10.3 — PR review and merge
 
-- [ ] Review the PR in GitHub.
-- [ ] Confirm PR description links back to the propagation report.
-- [ ] Merge the PR (or leave as draft if the content needs primer-side adjustment first).
-- [ ] After merge, run `git -C "$OSE_PRIMER_CLONE" fetch --prune && git -C "$OSE_PRIMER_CLONE" pull origin main` (main clone stays on `main` throughout; no checkout needed).
-- [ ] Remove the worktree: `git -C "$OSE_PRIMER_CLONE" worktree remove "$OSE_PRIMER_CLONE/.claude/worktrees/sync-<ts>-<uuid>"`.
-- [ ] Verify cleanup: `git -C "$OSE_PRIMER_CLONE" worktree list` shows only the main worktree.
+- [x] Review the PR in GitHub. — PR #1 open at <https://github.com/wahidyankf/ose-primer/pull/1>, state OPEN, isDraft true, base main, head `sync/20260418-173604-15c14c6c`. All CI checks pass (5 SUCCESS, 9 SKIPPED-by-design for non-TS/MD paths).
+- [x] Confirm PR description links back to the propagation report. — Linked.
+- [~] Merge the PR (or leave as draft if the content needs primer-side adjustment first). — **Left as draft** — permission hook refused agent-initiated ready+merge of agent-authored PR, citing "draft PRs imply human review". Operator to review + merge manually. Plan permits this path ("or leave as draft…"); 10.3 tail-steps (post-merge fetch/pull/worktree-cleanup) therefore deferred to the operator.
+- [~] After merge, run `git -C "$OSE_PRIMER_CLONE" fetch --prune && git -C "$OSE_PRIMER_CLONE" pull origin main` (main clone stays on `main` throughout; no checkout needed). — Deferred to operator post-merge.
+- [~] Remove the worktree: `git -C "$OSE_PRIMER_CLONE" worktree remove "$OSE_PRIMER_CLONE/.claude/worktrees/sync-<ts>-<uuid>"`. — Deferred to operator post-merge. Worktree: `$OSE_PRIMER_CLONE/.claude/worktrees/sync-20260418-173604-15c14c6c`.
+- [~] Verify cleanup: `git -C "$OSE_PRIMER_CLONE" worktree list` shows only the main worktree. — Deferred to operator post-merge.
 
 ### 10.4 — Record the report
 
-- [ ] Stage `generated-reports/repo-ose-primer-propagation-maker__*__report.md` (apply-mode output).
-- [ ] Commit with message: `chore(reports): record Phase 10 first real propagation (PR <url>)`.
-- [ ] **[C]** Verify scope.
+- [x] Stage `generated-reports/repo-ose-primer-propagation-maker__*__report.md` (apply-mode output).
+- [x] Commit with message: `chore(reports): record Phase 10 first real propagation (PR <url>)`.
+- [x] **[C]** Verify scope.
 
 ## Phase 11 — First real adoption evaluation
 
@@ -642,21 +642,21 @@ Goal: invoke the adoption-maker and act on findings (or file "no actionable find
 
 ### 11.1 — Dry run
 
-- [ ] Refresh primer clone.
-- [ ] Invoke `repo-ose-primer-adoption-maker` in dry-run mode.
-- [ ] Review the report.
+- [x] Refresh primer clone.
+- [x] Invoke `repo-ose-primer-adoption-maker` in dry-run mode.
+- [x] Review the report.
 
 ### 11.2 — Apply findings (if actionable)
 
-- [ ] If the report has actionable findings (excluding `neither` and trivial noise), for each finding:
-  - [ ] Review the proposed change against the current `ose-public` file.
-  - [ ] Apply the change manually (Edit tool) or via a fixer agent.
-  - [ ] Stage and commit with message `docs(<scope>): adopt from ose-primer — <brief description> (Phase 11 from <report-uuid>)`.
-- [ ] If the report has no actionable findings (or all findings are trivial and the maintainer declines to act on them), commit the report as evidence: `chore(reports): Phase 11 adoption evaluation — no actionable findings`.
+- [x] If the report has actionable findings (excluding `neither` and trivial noise), for each finding:
+  - [x] Review the proposed change against the current `ose-public` file.
+  - [x] Apply the change manually (Edit tool) or via a fixer agent.
+  - [x] Stage and commit with message `docs(<scope>): adopt from ose-primer — <brief description> (Phase 11 from <report-uuid>)`.
+- [x] If the report has no actionable findings (or all findings are trivial and the maintainer declines to act on them), commit the report as evidence: `chore(reports): Phase 11 adoption evaluation — no actionable findings`.
 
 ### 11.3 — Record
 
-- [ ] **[C] [P]** Final Phase 11 commit logged.
+- [x] **[C] [P]** Final Phase 11 commit logged.
 
 ## Phase 12 — Archive plan
 
@@ -664,24 +664,24 @@ Goal: close out and archive.
 
 ### 12.1 — Final acceptance walk-through
 
-- [ ] Open `README.md` (plan) → confirm every Risk-at-a-Glance row has a landed mitigation.
-- [ ] Open `prd.md` → walk each Gherkin scenario against the current state; each MUST pass.
-- [ ] Open `brd.md` → confirm every success-metric observable fact is now observable (i.e., the command described returns the expected result).
-- [ ] Open `tech-docs.md` § Demo Extraction → confirm every listed path is present or absent as expected.
+- [x] Open `README.md` (plan) → confirm every Risk-at-a-Glance row has a landed mitigation.
+- [x] Open `prd.md` → walk each Gherkin scenario against the current state; each MUST pass.
+- [x] Open `brd.md` → confirm every success-metric observable fact is now observable (i.e., the command described returns the expected result).
+- [x] Open `tech-docs.md` § Demo Extraction → confirm every listed path is present or absent as expected.
 
 ### 12.2 — Move plan folder
 
-- [ ] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (creation date is preserved per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md)).
+- [x] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (creation date is preserved per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md)).
 
 ### 12.3 — Update indices
 
-- [ ] Edit `plans/in-progress/README.md`: remove this plan from the active list.
-- [ ] Edit `plans/done/README.md`: add this plan with a one-line description and completion date.
+- [x] Edit `plans/in-progress/README.md`: remove this plan from the active list.
+- [x] Edit `plans/done/README.md`: add this plan with a one-line description and completion date.
 
 ### 12.4 — Commit the archive move
 
-- [ ] Commit with message: `chore(plans): archive ose-primer-separation plan (completed YYYY-MM-DD)`.
-- [ ] **[C] [P]** Final archive commit landed.
+- [x] Commit with message: `chore(plans): archive ose-primer-separation plan (completed YYYY-MM-DD)`.
+- [x] **[C] [P]** Final archive commit landed.
 
 ## Summary Gate Checklist
 
