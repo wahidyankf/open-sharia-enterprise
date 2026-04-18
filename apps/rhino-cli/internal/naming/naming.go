@@ -5,7 +5,7 @@
 // Two conventions are enforced:
 //
 //   - Agents: filename must end with one of the role suffixes
-//     {maker, checker, fixer, dev, deployer, executor, manager}; the YAML
+//     {maker, checker, fixer, dev, deployer, manager}; the YAML
 //     frontmatter `name:` field (when present) must equal the filename
 //     without the `.md` suffix; and `.claude/agents/*.md` must mirror
 //     `.opencode/agent/*.md` set-wise.

@@ -15,7 +15,7 @@ import (
 // agentRoles enumerates the trailing role tokens permitted by the agent
 // naming convention. Kept in lockstep with
 // `governance/conventions/structure/agent-naming.md`.
-var agentRoles = []string{"maker", "checker", "fixer", "dev", "deployer", "executor", "manager"}
+var agentRoles = []string{"maker", "checker", "fixer", "dev", "deployer", "manager"}
 
 // agentsValidateNamingFn is the indirection point tests use to mock out the
 // filesystem walk and validation. The default implementation reads the real
@@ -31,7 +31,7 @@ governance/conventions/structure/agent-naming.md.
 
 The command enforces three rules:
 - Filename (sans .md) ends with one of: maker, checker, fixer, dev,
-  deployer, executor, manager.
+  deployer, manager.
 - .claude/agents/*.md frontmatter 'name:' field equals the filename
   (without .md). .opencode/agent/*.md files omit the 'name:' field by
   design and skip this check.

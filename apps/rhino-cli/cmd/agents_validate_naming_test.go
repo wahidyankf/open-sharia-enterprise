@@ -64,7 +64,7 @@ func (s *validateAgentsNamingUnitSteps) treeUnknownSuffix() error {
 		return []naming.Violation{{
 			Path:    "/mock-repo/.claude/agents/web-researcher.md",
 			Kind:    "role-suffix",
-			Message: `filename "web-researcher" does not end with any allowed suffix (maker, checker, fixer, dev, deployer, executor, manager)`,
+			Message: `filename "web-researcher" does not end with any allowed suffix (maker, checker, fixer, dev, deployer, manager)`,
 		}}, nil
 	}
 	return nil

@@ -5,7 +5,7 @@ import (
 )
 
 func TestValidateSuffix(t *testing.T) {
-	roles := []string{"maker", "checker", "fixer", "dev", "deployer", "executor", "manager"}
+	roles := []string{"maker", "checker", "fixer", "dev", "deployer", "manager"}
 	types := []string{"quality-gate", "execution", "setup"}
 
 	tests := []struct {
