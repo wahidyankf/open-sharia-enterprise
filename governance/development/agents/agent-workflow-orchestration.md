@@ -333,10 +333,10 @@ After any correction, update `local-temp/lessons.md`. This is the direct applica
 - [AI Agents Convention](./ai-agents.md) - Agent structure, frontmatter, and tool access standards
 - [Skill Context Architecture](./skill-context-architecture.md) - Inline vs fork skills for subagent delegation
 
-**Related Agents:**
+**Related Agents / Workflows:**
 
 - `plan-maker` - Creates structured plans following the plan format in this convention
-- `plan-executor` - Executes plans with progress tracking and verification
+- [plan-execution workflow](../../workflows/plan/plan-execution.md) - Execute plans with progress tracking and verification (calling context orchestrates; no dedicated subagent)
 
 ---
 

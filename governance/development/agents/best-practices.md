@@ -208,7 +208,7 @@ context: |
 ```
 docs-checker.md
 apps-ayokoding-web-general-maker.md
-plan-executor.md
+plan-execution-checker.md
 ```
 
 **Bad Example:**

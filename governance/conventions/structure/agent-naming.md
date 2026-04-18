@@ -70,7 +70,6 @@ Exactly one of the following tokens MUST appear as the last token of every agent
 | `fixer`    | Applies validated checker findings                          | `plan-fixer`, `swe-ui-fixer`                                 |
 | `dev`      | Writes code in a language or test framework                 | `swe-rust-dev`, `swe-e2e-dev`                                |
 | `deployer` | Deploys an application to an environment                    | `apps-ayokoding-web-deployer`                                |
-| `executor` | Executes a defined procedure or checklist                   | `plan-executor`                                              |
 | `manager`  | Performs file or resource operations (rename, move, delete) | `docs-file-manager`                                          |
 
 No other role suffixes are permitted. Introducing a new role requires amending this table first.
@@ -91,7 +90,7 @@ Filenames MUST be identical pair-for-pair between the two directories. Every `.c
 ```bash
 ls .claude/agents/*.md \
   | sed 's|.*/||; s|\.md$||' \
-  | grep -vE -- '-(maker|checker|fixer|dev|deployer|executor|manager)$' \
+  | grep -vE -- '-(maker|checker|fixer|dev|deployer|manager)$' \
   | grep -v '^README$'
 ```
 
@@ -106,7 +105,6 @@ Current agents, grouped by role, all conforming to the rule:
 - **`fixer`** — `plan-fixer` (scope `plan`, role `fixer`), `swe-ui-fixer` (scope `swe`, qualifier `ui`, role `fixer`)
 - **`dev`** — `swe-rust-dev` (scope `swe`, qualifier `rust`, role `dev`), `swe-e2e-dev` (scope `swe`, qualifier `e2e`, role `dev`)
 - **`deployer`** — `apps-ayokoding-web-deployer` (scope `apps`, qualifiers `ayokoding-web`, role `deployer`)
-- **`executor`** — `plan-executor` (scope `plan`, role `executor`)
 - **`manager`** — `docs-file-manager` (scope `docs`, qualifier `file`, role `manager`)
 
 ## Related

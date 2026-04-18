@@ -478,7 +478,7 @@ Where:
 PASS: Good - General agents (no scope prefix):
 - docs-maker.md
 - repo-rules-checker.md
-- plan-executor.md
+- plan-execution-checker.md
 - readme-maker.md
 
 PASS: Good - App-scoped agents:
@@ -523,7 +523,7 @@ FAIL: Bad:
 
 **When NOT to use scope prefixes:**
 
-- **General-purpose agents**: Work across entire repository (docs-maker, repo-rules-checker, plan-executor)
+- **General-purpose agents**: Work across entire repository (docs-maker, repo-rules-checker, plan-execution-checker)
 - **Cross-cutting agents**: Apply to multiple apps/libs (readme-maker, agent-maker, repo-workflow-maker)
 - **Meta-agents**: Manage repository structure (docs-file-manager, repo-rules-maker)
 
@@ -671,7 +671,7 @@ For complete model selection standards, see the [Model Selection Convention](./m
 **Three tiers**:
 
 - **Opus** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers).
-- **Sonnet** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, structured pattern-following tasks, and plan execution (checkers, fixers, structured makers, plan-executor, swe-e2e-dev).
+- **Sonnet** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, and structured pattern-following tasks (checkers, fixers, structured makers, swe-e2e-dev).
 - **Haiku** (`model: haiku`): For purely mechanical tasks with no reasoning required -- URL validation, deployment scripts, deterministic file operations, simple command execution (deployers, link checkers, docs-file-manager).
 
 ### Model Selection Decision Tree
@@ -736,7 +736,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 | 🟦 **Blue**   | **Makers**       | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker<br>repo-rules-maker                                                |
 | 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)\*\*     | repo-rules-checker<br>plan-checker<br>docs-checker<br>docs-link-checker\*\*<br>apps-ayokoding-web-link-checker\*\* |
 | 🟨 **Yellow** | **Fixers**       | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-rules-fixer                                                              |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>deployers\*<br>swe-\*-dev agents                                                                  |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | deployers\*<br>swe-\*-dev agents<br>plan-execution-checker                                                         |
 
 **Edge Case Notes:**
 
@@ -818,7 +818,7 @@ Start: What is the agent's primary capability?
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
-            - Examples: plan-executor
+            - Examples: swe-*-dev agents; plan execution itself is orchestrated by the calling context via the plan-execution workflow (no dedicated subagent)
 ```
 
 **Edge Cases:**
@@ -987,10 +987,9 @@ color: yellow
 
 ```yaml
 ---
-name: plan-executor
-description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-maker agent.
+name: swe-typescript-dev
+description: Develops TypeScript applications following type safety principles, modern patterns, and platform coding standards. Use when implementing TypeScript code for OSE Platform.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
 color: purple
 ---
 ```
@@ -1306,7 +1305,6 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 **Examples**:
 
 - plan-maker (comprehensive project planning)
-- plan-executor (multi-phase implementation)
 - plan-checker (pre-implementation validation)
 - repo-rules-maker (cascading updates across files)
 - repo-rules-checker (comprehensive consistency validation)
@@ -1328,7 +1326,7 @@ Quick categorization for existing agents:
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Tier 1: Simple**   | apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer, social-linkedin-post-maker, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-web-general-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-checker, apps-ayokoding-web-facts-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker, swe-python-dev, swe-typescript-dev, swe-elixir-dev, swe-java-dev, swe-golang-dev, swe-e2e-dev, swe-hugo-dev (DEPRECATED), swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev, swe-code-checker, specs-maker, specs-checker, specs-fixer |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, docs-link-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Tier 3: Complex**  | plan-maker, plan-checker, plan-execution-checker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, docs-link-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ### When to Condense or Split Agents
 
@@ -1585,7 +1583,7 @@ FAIL: Bad: "The content is validated by the agent"
 - `docs-maker`: File naming logic for Diátaxis categories
 - `docs-checker`: What specific validations to perform
 - `docs-fixer`: How to assess confidence levels for doc fixes
-- `plan-executor`: Sequential implementation workflow
+- `plan-execution-checker`: Post-execution validation against plan requirements
 
 **Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge to Skills/Conventions.
 

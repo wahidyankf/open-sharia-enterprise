@@ -21,7 +21,7 @@ updated: 2026-04-11
   1. governance/development/workflow/trunk-based-development.md (this file - comprehensive reference)
   2. AGENTS.md (summary for AI agents)
   3. .opencode/agent/plan-maker.md (context for plan creation)
-  4. .opencode/agent/plan-executor.md (context for plan execution)
+  4. governance/workflows/plan/plan-execution.md (context for plan execution — orchestrated by the calling context)
   When updating, synchronize all four locations.
 -->
 

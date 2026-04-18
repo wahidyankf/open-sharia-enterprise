@@ -51,7 +51,7 @@ This convention establishes the organizational structure for project planning do
 
 - **Plan content format** - How to write plans (covered by plan-checker agent)
 - **Project management methodology** - This is file organization, not PM process
-- **Task tracking** - Covered by plan-executor agent
+- **Task tracking** - Covered by the [plan-execution workflow](../../workflows/plan/plan-execution.md) (orchestrated directly by the calling context)
 - **Deployment scheduling** - Covered in deployment conventions
 
 ## Overview
@@ -376,7 +376,7 @@ Use the verification tip from the [Linking Convention](../formatting/linking.md#
 
 **Development Guides**:
 
-- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including plan-maker and plan-executor)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including `plan-maker`, `plan-checker`, `plan-fixer`, `plan-execution-checker`)
 
 ## Best Practices
 

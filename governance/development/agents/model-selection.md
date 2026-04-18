@@ -113,7 +113,6 @@ Note: `model` field is omitted — inherits opus tier (creative reasoning, code 
 - **Most fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, repo-rules-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
 - **social-linkedin-post-maker** -- generates social media posts following a defined template and tone guidelines
 - **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker)
-- **plan-executor** -- executes pre-authored delivery checklists step-by-step with per-step validation; the creative planning decisions were already made by opus-tier plan-maker
 - **swe-e2e-dev** -- writes Playwright E2E tests following a dedicated skill with defined patterns (locators, fixtures, waits); lower stakes than production code written by language developer agents
 
 **Frontmatter**: Specify `model: sonnet` explicitly.
@@ -266,10 +265,6 @@ The social-linkedin-post-maker uses sonnet despite being a "maker" agent. This i
 ### Structured Makers as Sonnet
 
 Several maker agents use sonnet because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker). Each has a sonnet checker and sonnet fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with opus-tier makers (plan-maker, docs-tutorial-maker, swe-ui-maker, apps-ayokoding-web-\*-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
-
-### Plan Executor as Sonnet
-
-The plan-executor uses sonnet despite being a "purple" implementor. It follows pre-authored delivery checklists step-by-step — the creative planning was already done by opus-tier plan-maker. Both plan-checker and plan-execution-checker are sonnet; the executor should not be a stronger tier than the checker that judges its work.
 
 ### E2E Test Developer as Sonnet
 

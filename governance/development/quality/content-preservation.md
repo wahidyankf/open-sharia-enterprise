@@ -209,7 +209,7 @@ Is this content unique and valuable?
 5. Replace original content with summary + link
 6. Verify convention doc is indexed
 
-**Example:**
+**Example** (historical — `plan-executor.md` was later removed when plan execution moved into the plan-execution workflow orchestrated by the calling context):
 
 - **Before:** TBD workflow details duplicated in `plan-maker.md` and `plan-executor.md`
 - **After:**
@@ -282,7 +282,7 @@ Is this content unique and valuable?
 6. Update development index (`governance/development/README.md`)
 7. Verify all cross-references work
 
-**Example:**
+**Example** (historical — `plan-executor.md` was later removed when plan execution moved into the plan-execution workflow orchestrated by the calling context):
 
 - **Before:** Commit granularity examples in `plan-executor.md`
 - **After:**

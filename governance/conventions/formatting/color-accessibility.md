@@ -314,7 +314,7 @@ graph TD
 | 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content      | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                 |
 | 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency | docs-checker, docs-link-checker, docs-tutorial-checker, plan-checker, repo-rules-checker |
 | 🟨    | Yellow | #F1C40F  | **Fixers** - Agents that apply validated fixes to existing content  | docs-file-manager, repo-rules-fixer                                                      |
-| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans | plan-executor, plan-execution-checker                                                    |
+| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans | plan-execution-checker, deployers                                                        |
 
 #### Implementation in `.opencode/agent/README.md`
 
@@ -333,9 +333,9 @@ Expert documentation validator focusing on factual correctness and consistency. 
 
 Expert at managing files and directories in docs/ (rename, move, delete). Use when reorganizing documentation structure while maintaining conventions.
 
-### 🟪 plan-executor.md
+### 🟪 plan-execution-checker.md
 
-Expert at systematically implementing project plans. Use when executing delivery checklists and implementation steps.
+Expert at validating completed plan implementations against requirements and quality standards. Use for independent post-execution validation.
 ```
 
 #### Color Accessibility for Agent Categorization
