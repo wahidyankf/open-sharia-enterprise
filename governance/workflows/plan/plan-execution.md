@@ -153,7 +153,7 @@ These rules govern ALL execution steps. No exception. No shortcut.
 
 Read the plan in full, reconcile against any prior run's state, and build the live Task list to mirror disk truth — before any implementation work begins.
 
-**Executor action**:
+**Orchestrator action**:
 
 - Read the plan at `{input.plan-path}` — all five docs if present (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) or the legacy four-doc layout (`requirements.md` in place of `brd.md` + `prd.md`).
 - Locate the delivery checklist — typically `delivery.md` adjacent to the plan, or embedded in a single-file plan's `README.md`.
@@ -178,7 +178,7 @@ Read the plan in full, reconcile against any prior run's state, and build the li
 
 Before implementing anything, ensure the development environment is ready.
 
-**Executor action**:
+**Orchestrator action**:
 
 - Run `npm install` to ensure dependencies are current
 - Run `npm run doctor` to verify all tooling is installed
@@ -234,7 +234,7 @@ Nested sub-checkboxes iterate the same loop. A parent `- [ ]` can only be ticked
 
 After completing all items in a delivery phase, run quality gates before proceeding.
 
-**Executor action**:
+**Orchestrator action**:
 
 1. Run local quality gates:
 
@@ -265,7 +265,7 @@ After completing all items in a delivery phase, run quality gates before proceed
 
 After every push to `main`, verify GitHub Actions.
 
-**Executor action**:
+**Orchestrator action**:
 
 1. Identify which GitHub Actions workflows were triggered by the push
 2. Monitor their status until ALL complete
@@ -286,7 +286,7 @@ After every push to `main`, verify GitHub Actions.
 
 After CI is green, manually verify actual application behavior using Playwright MCP and curl.
 
-**Executor action**:
+**Orchestrator action**:
 
 1. **For Web UI changes** — use Playwright MCP tools:
    - Start dev server: `nx dev [project-name]`
@@ -378,13 +378,13 @@ For each finding from the latest validation report:
    checklist (`- [x]`) and the task (`completed`) in the same step
 5. Proceed immediately to the next finding
 
-**Success criteria**: Executor addresses all findings without stopping between them.
+**Success criteria**: The orchestrator addresses all findings without stopping between them.
 
 **On failure**: Log errors, proceed to step 6 for verification.
 
 **Notes**:
 
-- Executor focuses on addressing specific findings while continuing overall plan execution
+- Orchestrator focuses on addressing specific findings while continuing overall plan execution
 - Updates delivery checklist with resolved items
 - May delegate to new requirements or fix quality issues
 - Continues from previous work, does not restart from scratch
