@@ -56,16 +56,6 @@ checker, output formatting).
 
 **`hugo-commons`** - Shared Hugo utilities used by Hugo-based sites.
 
-**`elixir-openapi-codegen`** - Elixir library that reads an OpenAPI 3.1 bundled YAML spec and
-generates Elixir struct modules with `defstruct`, `@enforce_keys`, and `@type` typespecs. Used by
-`a-demo-be-elixir-phoenix` to generate contract types from `specs/apps/a-demo/contracts/`.
-
-**`clojure-openapi-codegen`** - Clojure library that reads an OpenAPI 3.1 bundled YAML spec and
-generates Malli schema definitions. Used by `a-demo-be-clojure-pedestal` to generate contract
-schemas from `specs/apps/a-demo/contracts/`.
-
-**`elixir-cabbage`** / **`elixir-gherkin`** - Elixir Gherkin BDD testing libraries.
-
 ## Library Characteristics
 
 - **Polyglot-Ready** - Designed to support multiple languages (TypeScript now, Java/Kotlin/Python future)
