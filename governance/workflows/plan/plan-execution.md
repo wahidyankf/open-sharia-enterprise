@@ -127,67 +127,82 @@ to its appropriate agent. Execute the implementation agent first, then the docum
 
 ## Task-Checklist Synchronization
 
-The Task list (in-memory via `TaskCreate`/`TaskUpdate`) and the delivery checklist (on-disk in
-`delivery.md`) MUST always be in sync. They are two views of the same state:
+The live Task list (`TaskCreate` / `TaskUpdate`) and the on-disk delivery checklist (`delivery.md`) are two views of the same state. They MUST agree at every moment of execution. Disagreement is a bug the executor MUST detect and fix immediately.
 
-- **Task list**: Ephemeral, in-conversation tracking. Provides progress visibility during
-  execution. Lost when the conversation ends.
-- **Delivery checklist**: Persistent, on-disk record. Survives across conversations. Source of
-  truth for plan completion.
+- **Task list** — ephemeral, in-conversation. Its role is **real-time progress visibility for the user**. A reader watching the Task list is watching execution happen.
+- **Delivery checklist** — persistent, on-disk. Its role is **survival across conversations**. It is the source of truth for plan completion state.
 
-**Sync rules**:
+### 1:1 Mapping (strict)
 
-1. **Create together**: When a task is created via `TaskCreate`, the corresponding `- [ ]` item
-   MUST already exist in `delivery.md` (it was written during planning).
-2. **Update together**: When a task is marked `completed` via `TaskUpdate`, the corresponding
-   `- [ ]` in `delivery.md` MUST be ticked to `- [x]` in the same step — never one without the
-   other.
-3. **Resume from checklist**: When resuming a plan in a new conversation, read `delivery.md` to
-   determine which items are already `- [x]` (done) and which are `- [ ]` (remaining). Create
-   tasks only for remaining items.
-4. **Never diverge**: If a task is completed but the checklist is not ticked (or vice versa), the
-   state is inconsistent. The executor must detect and fix this immediately.
+Every checkbox on disk has exactly ONE matching task in the live list. Every task has exactly ONE matching checkbox on disk. This includes nested `- [ ]` sub-bullets — each sub-bullet is its own task, not rolled into its parent. Task titles short-form the checkbox text so reader sees consistent wording in both views.
+
+Forbidden: coarse tasks ("Execute Phase 2", "Update all agents"), bulk creation ("one task for every phase"), silent completion ("ticked three boxes in one Edit, one `TaskUpdate` at the end"). Each of these breaks the user's monitoring view.
+
+### Atomic Sync Ritual
+
+For each checklist item, the following three steps happen together, in this order, without interleaving other items' work:
+
+1. **Tick the checkbox**: `Edit` delivery.md to change `- [ ]` → `- [x]` for THIS one item (context-unique `old_string`, never `replace_all` on the whole file).
+2. **Persist implementation notes** under the ticked checkbox in the same or an immediately-following `Edit` call — Date, Status, Files Changed, brief notes on what was done.
+3. **`TaskUpdate completed`** the matching task. The live list now matches disk truth.
+
+If any step fails, roll back the other two: untick the checkbox, remove the notes, leave the task in `in_progress`. The item is treated as incomplete.
+
+### Resume Reconciliation (disk is truth)
+
+When execution begins (or re-begins in a new conversation), disk state wins:
+
+1. Read delivery.md top-to-bottom FIRST.
+2. For every `- [x]` — skip, count as done.
+3. For every `- [ ]` — `TaskCreate` one task in reading order.
+4. If stale tasks from a prior run disagree with disk (e.g., task `completed` but checkbox `- [ ]`), delete the stale list and rebuild from current delivery.md.
+5. Flag any `- [x]` lacking implementation notes — possible silent batch-tick; the user may want to audit before continuing.
+
+### Divergence handling
+
+If a task is `completed` but the checkbox is `- [ ]`, OR a checkbox is `- [x]` but the matching task is not `completed`, state is inconsistent. Stop, reconcile disk vs list (disk wins), then resume.
 
 ## Iron Rules (Non-Negotiable)
 
 These rules govern ALL execution steps. No exception. No shortcut.
 
-1. **Granular Task Tracking**: One `TaskCreate` per delivery checklist item. Mark `in_progress` before starting. Mark `completed` only after work is done AND checkbox is ticked. NEVER batch-complete.
+1. **Granular Task Tracking (1:1 with delivery.md)**: One `TaskCreate` per delivery checklist item, including every nested `- [ ]` sub-bullet (never rolled into its parent). Task titles short-form the checkbox text. At most ONE task in `in_progress` at any time. Mark `in_progress` BEFORE any tool call advancing that item. Mark `completed` ONLY after the checkbox is ticked on disk AND implementation notes are persisted. NEVER create coarse tasks ("Execute Phase 2"). NEVER batch-complete. NEVER complete speculatively.
 2. **Never Stop Before All Done**: Execute ALL items from first to last without stopping. No pauses between phases. No skipping items. The only acceptable stop is a hard technical blocker.
 3. **Fix ALL Issues — Including Preexisting**: When ANY test, lint, typecheck, or quality gate fails — fix it. Even if it existed before your changes. Do NOT defer. Do NOT skip. Commit preexisting fixes separately.
-4. **Delivery.md Is Sacred**: Tick checkboxes IMMEDIATELY after each item. Add implementation notes. NEVER move to next item without ticking current. Progress must be visible at ALL times.
+4. **Delivery.md Is Sacred — Atomic Sync Ritual**: After each item's work is done, run the three-step ritual before touching the next item: (a) `Edit` checkbox `- [ ]` → `- [x]` for THIS one item (no `replace_all`), (b) `Edit` implementation-notes block under the ticked checkbox (Date, Status, Files Changed, brief notes), (c) `TaskUpdate completed`. All three MUST land before moving on. If any step fails, roll back the others and leave the task in `in_progress`. Ticking multiple checkboxes in one Edit or deferring notes to end-of-phase is forbidden.
 5. **Local Quality Gates Before Push**: Run `npx nx affected -t typecheck lint test:quick spec-coverage` before every push. Fix ALL failures. Do NOT push with any failing check.
 6. **Post-Push CI Verification**: After every push, monitor ALL GitHub Actions workflows. Fix ALL failures (including preexisting). Do NOT proceed until CI is fully green.
 7. **Thematic Commits**: Group related changes. Split different concerns. Follow Conventional Commits. Preexisting fixes get their own commits.
 8. **Manual Behavioral Assertions**: After quality gates pass, use Playwright MCP for web UI verification and curl for API verification. Fix any broken behavior before proceeding.
+9. **Progress Streaming (Observability)**: The live Task list is the user's monitoring window — keep it fresh in real time. Never run silent for more than one checkbox. After each phase completes, emit a one-line user-visible status: phase name, items ticked / total, files changed, any preexisting fixes.
+10. **Resume Reconciliation (Disk Is Truth)**: When starting or re-entering execution, read delivery.md first. Rebuild the Task list from disk state. If in-memory tasks disagree with disk checkboxes, delete them and rebuild. Never trust in-memory state over disk.
 
 ## Steps
 
-### 1. Load Delivery Checklist (Sequential)
+### 1. Load Delivery Checklist and Materialize Task List (Sequential)
 
-Read the plan and its delivery document to understand all work items before execution begins.
+Read the plan in full, reconcile against any prior run's state, and build the live Task list to mirror disk truth — before any implementation work begins.
 
 **Executor action**:
 
-- Read the plan file at `{input.plan-path}`
-- Locate the delivery checklist, typically in a `delivery.md` file adjacent to the plan or
-  embedded within the plan itself
-- Parse all checklist items in sequential phase and item order
-- Identify already-completed items (`- [x]`) — skip these (plan may be partially complete from a
-  prior conversation)
-- Use `TaskCreate` to create one task per REMAINING (`- [ ]`) checklist item — one task per item, no grouping
-- Use `TaskUpdate` (`in_progress`) on each task as it begins
+- Read the plan at `{input.plan-path}` — all five docs if present (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) or the legacy four-doc layout (`requirements.md` in place of `brd.md` + `prd.md`).
+- Locate the delivery checklist — typically `delivery.md` adjacent to the plan, or embedded in a single-file plan's `README.md`.
+- **Resume Reconciliation (Iron Rule 10)**: parse every checkbox top-to-bottom. For each `- [x]`, count it as done and skip it. For each `- [ ]`, queue it for task creation in reading order. If a stale Task list from a prior run disagrees with disk, delete it and rebuild.
+- **Full granularity parsing (Iron Rule 1)**: identify every `- [ ]` AND every nested `- [ ]` sub-bullet. Nested sub-bullets are NOT rolled into their parent — each gets its own task.
+- **`TaskCreate` one task per remaining checkbox**, in reading order. Task titles short-form the checkbox text for monitoring parity.
+- **Verify 1:1 mapping** before moving on: `count(remaining - [ ] in delivery.md) == count(newly-created tasks)`. Diverging counts indicate a parsing bug — stop and reconcile.
+- Do NOT call `TaskUpdate in_progress` yet; that happens at Step 2 when the loop actually begins on an item.
 
-**Output**: Full task list created for remaining items, delivery document loaded
+**Output**: Live Task list mirrors delivery.md remaining items 1:1, plan context loaded.
 
 **On failure**: Terminate workflow with status `fail`.
 
 **Notes**:
 
-- Tasks map 1:1 to delivery checklist items — NEVER group multiple items into one task
-- Tasks must be granular — one concrete action per task
-- Preserve the phase and sequential ordering from the delivery checklist
-- Already-ticked items are skipped — the plan is resumable across conversations
+- Tasks map 1:1 to checkboxes, including nested sub-bullets — NEVER group multiple items into one task, NEVER roll sub-bullets into their parent.
+- Tasks must be granular — one concrete action per task.
+- Preserve the exact phase and item ordering from delivery.md in the Task list.
+- Already-ticked items are skipped — the plan is resumable across conversations; disk is truth.
 
 ### 1b. Environment Setup (Sequential)
 
@@ -212,36 +227,38 @@ Execute all delivery checklist items sequentially, delegating each to the approp
 
 **Agent**: `plan-executor` (as orchestrator)
 
-**Execution loop**:
+**Execution loop** — single-item, strictly sequential. Rule 1 (granularity) and Rule 4 (atomic sync ritual) are enforced in this loop:
 
-For each checklist item in sequential order (phase by phase, item by item):
+For each checklist item in reading order (phase by phase, item by item, including nested sub-bullets):
 
-1. Mark the corresponding task `in_progress` via `TaskUpdate`
-2. Analyze the item to determine the correct specialized agent (see Agent Selection above)
-3. Delegate the item to that agent via the Agent tool
-4. Verify the agent completed the work successfully
-5. **Atomic sync**: Update BOTH in the same step:
-   - Tick the delivery checklist: `- [ ]` → `- [x]` in `delivery.md` (Edit tool)
-   - Add implementation notes (Date, Status, Files Changed) under the ticked item
-   - Mark the task `completed` via `TaskUpdate`
-6. Proceed IMMEDIATELY to the next item — no pausing, no waiting for approval
+1. **`TaskUpdate in_progress`** on the matching task. At most ONE `in_progress` at a time.
+2. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly.
+3. **Execute the item** — delegate to that agent via the Agent tool, or perform the edit/command directly. Only for THIS one checkbox.
+4. **Verify the work succeeded** — read the produced file, run the command, check the agent's output.
+5. **Atomic Sync Ritual** — all three steps before any next-item work:
+   a. `Edit` delivery.md to change `- [ ]` → `- [x]` for THIS one item (context-unique `old_string`; never `replace_all`; never tick multiple items in one Edit call).
+   b. `Edit` delivery.md to add the implementation-notes block (Date, Status, Files Changed, brief notes) under the ticked checkbox.
+   c. `TaskUpdate completed` on the matching task.
+6. Proceed IMMEDIATELY to the next item — no pausing, no waiting for approval, no deferring notes.
 
-**Output**: `{execution-started}` — all delivery checklist items completed, checklist updated
+Nested sub-checkboxes iterate the same loop. A parent `- [ ]` can only be ticked after all its sub-`- [ ]` items have each completed steps 1–5 of the loop.
 
-**Success criteria**: All checklist items ticked and all delegated agents completed without
-technical errors.
+**Progress streaming**: keep the live Task list fresh by executing the ritual after every item. Never queue up two or three item's worth of `completed` updates. After each phase boundary, emit a one-line user-visible status (phase, items ticked / total, files changed, preexisting fixes).
 
-**On failure**: If a delegated agent fails and cannot resolve the issue, terminate with
-status `fail`. If the failure is recoverable, retry once before escalating.
+**Output**: `{execution-started}` — all delivery checklist items completed, checklist updated, Task list shows disk truth.
+
+**Success criteria**: Every `- [ ]` that started the phase is now `- [x]` with implementation notes; every matching task is `completed`.
+
+**On failure**: If a delegated agent fails and cannot resolve the issue, terminate with status `fail`. If the failure is recoverable, retry once before escalating. If the ritual partially lands (checkbox ticked but notes missing, or task marked completed but checkbox still `- [ ]`), roll back and treat the item as incomplete.
 
 **Stopping rules**:
 
-- Stop ONLY if a task fails and CANNOT be resolved after retry
-- Stop ONLY if a critical decision requires user input that cannot be inferred
-- Stop ONLY when ALL items are complete
-- NEVER stop between phases
-- NEVER batch-complete items without actually delegating and verifying each one
-- NEVER skip an item — if genuinely not applicable, add a note and tick it
+- Stop ONLY if a task fails and CANNOT be resolved after retry.
+- Stop ONLY if a critical decision requires user input that cannot be inferred.
+- Stop ONLY when ALL items are complete.
+- NEVER stop between phases.
+- NEVER batch-tick checkboxes, batch-complete tasks, or defer implementation notes.
+- NEVER skip an item — if genuinely not applicable, add a note explaining why and tick it.
 
 ### 2b. Per-Phase Quality Gate (Sequential, After Each Phase)
 
