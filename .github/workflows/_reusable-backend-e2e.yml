@@ -10,15 +10,19 @@ on:
         required: true
         type: string
         description: "Language runtime (golang, jvm, dotnet, python, rust, elixir, clojure, typescript)"
+      be-e2e-name:
+        required: true
+        type: string
+        description: "Backend E2E Nx project name"
       compose-dir:
         required: true
         type: string
-        description: "Path to infra/dev compose directory (e.g., infra/dev/a-demo-be-golang-gin)"
+        description: "Path to infra/dev compose directory"
       compose-file:
         required: false
         type: string
         default: ""
-        description: "Override compose file path (for backends using non-standard compose like ci-e2e.yml). When set, compose-dir is ignored."
+        description: "Override compose file path (for backends using non-standard compose). When set, compose-dir is ignored."
       health-url:
         required: false
         type: string
@@ -54,11 +58,21 @@ on:
         type: string
         default: ""
         description: "Space-separated paths to clean before npm ci (Docker-created node_modules)"
-      skip-fe-e2e:
+      fe-e2e-name:
         required: false
-        type: boolean
-        default: false
-        description: "Skip FE E2E tests (for fullstack apps where a-demo-fe-e2e is not compatible)"
+        type: string
+        default: ""
+        description: "Frontend E2E Nx project name (empty to skip FE E2E)"
+      fe-codegen-targets:
+        required: false
+        type: string
+        default: ""
+        description: "Space-separated extra codegen Nx targets to run for FE (e.g., 'my-fe:codegen')"
+      playwright-working-directory:
+        required: false
+        type: string
+        default: ""
+        description: "Working directory for Playwright browser install (required when fe-e2e-name is set)"
 
 permissions:
   contents: read
@@ -97,10 +111,10 @@ jobs:
       - name: Generate contract types
         run: |
           npm ci --ignore-scripts
-          npx nx run a-demo-contracts:bundle
           npx nx run ${{ inputs.backend-name }}:codegen
-          npx nx run a-demo-fe-ts-nextjs:codegen
-          npx nx run a-demo-fe-ts-tanstack-start:codegen
+          for target in ${{ inputs.fe-codegen-targets }}; do
+            npx nx run "$target"
+          done
 
       - name: Start full stack
         run: |
@@ -137,6 +151,7 @@ jobs:
           fi
 
       - name: Wait for frontend to be ready
+        if: inputs.fe-e2e-name != ''
         run: |
           echo "Waiting for frontend to be ready on port ${{ inputs.frontend-port }}..."
           for i in $(seq 1 36); do
@@ -170,8 +185,9 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
+        if: inputs.playwright-working-directory != ''
         run: npx playwright install --with-deps chromium
-        working-directory: apps/a-demo-fe-e2e
+        working-directory: ${{ inputs.playwright-working-directory }}
 
       - name: Run BE E2E tests
         run: |
@@ -181,7 +197,7 @@ jobs:
               [ -n "$line" ] && export "$line"
             done <<< "${{ inputs.be-e2e-extra-env }}"
           fi
-          npx nx run a-demo-be-e2e:${{ inputs.be-e2e-target }}
+          npx nx run ${{ inputs.be-e2e-name }}:${{ inputs.be-e2e-target }}
         env:
           BASE_URL: http://localhost:${{ inputs.backend-port }}
 
@@ -190,22 +206,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ inputs.backend-name }}
-          path: apps/a-demo-be-e2e/playwright-report/
+          path: apps/${{ inputs.be-e2e-name }}/playwright-report/
           retention-days: 7
 
       - name: Run FE E2E tests
-        if: ${{ !inputs.skip-fe-e2e }}
-        run: npx nx run a-demo-fe-e2e:test:e2e
+        if: inputs.fe-e2e-name != ''
+        run: npx nx run ${{ inputs.fe-e2e-name }}:test:e2e
         env:
           BASE_URL: http://localhost:${{ inputs.frontend-port }}
           BACKEND_URL: http://localhost:${{ inputs.backend-port }}
 
       - name: Upload FE E2E report
-        if: ${{ always() && !inputs.skip-fe-e2e }}
+        if: ${{ always() && inputs.fe-e2e-name != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-fe-e2e-${{ inputs.backend-name }}
-          path: apps/a-demo-fe-e2e/playwright-report/
+          path: apps/${{ inputs.fe-e2e-name }}/playwright-report/
           retention-days: 7
 
       - name: Stop full stack
