@@ -18,6 +18,8 @@ created: 2026-02-03
 updated: 2026-02-03
 ---
 
+# Java Build Configuration
+
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.

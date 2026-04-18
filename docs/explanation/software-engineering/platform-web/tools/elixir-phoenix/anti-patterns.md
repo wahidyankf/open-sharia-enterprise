@@ -22,34 +22,36 @@ principles:
 updated: 2026-01-25
 ---
 
-### Context Anti-Patterns
+# Phoenix Anti-Patterns
+
+## Context Anti-Patterns
 
 - [Fat Contexts](#1-fat-contexts) - Contexts doing too much
 - [Anemic Contexts](#2-anemic-contexts) - Contexts with no business logic
 - [Cross-Context Database Access](#3-cross-context-database-access) - Bypassing context APIs
 - [God Schemas](#4-god-schemas) - Schemas with too many responsibilities
 
-### LiveView Anti-Patterns
+## LiveView Anti-Patterns
 
 - [Large LiveView Modules](#5-large-liveview-modules) - Monolithic LiveView files
 - [Overusing Assigns](#6-overusing-assigns) - Too much state in assigns
 - [Missing Loading States](#7-missing-loading-states) - Poor UX during async operations
 - [Direct Database Access in LiveView](#8-direct-database-access-in-liveview) - Bypassing contexts
 
-### Data Access Anti-Patterns
+## Data Access Anti-Patterns
 
 - [N+1 Query Problem](#9-n1-query-problem) - Missing preloads
 - [Ecto in Controllers](#10-ecto-in-controllers) - Data access outside contexts
 - [Missing Changesets](#11-missing-changesets) - No data validation
 - [Overusing Bang Functions](#12-overusing-bang-functions) - Improper error handling
 
-### Channel Anti-Patterns
+## Channel Anti-Patterns
 
 - [Missing Authentication](#13-missing-channel-authentication) - Unauthenticated channels
 - [Heavy Processing in Handlers](#14-heavy-processing-in-channel-handlers) - Blocking operations
 - [Not Leveraging PubSub](#15-not-leveraging-pubsub) - Direct process messaging
 
-### Testing Anti-Patterns
+## Testing Anti-Patterns
 
 - [Testing Implementation Details](#16-testing-implementation-details) - Brittle tests
 - [Missing Async Tests](#17-missing-async-tests) - Slow test suites

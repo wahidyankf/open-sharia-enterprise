@@ -26,6 +26,8 @@ principles:
 updated: 2026-01-24
 ---
 
+# Python Best Practices
+
 ## Quick Reference
 
 **Software Engineering Principles**:

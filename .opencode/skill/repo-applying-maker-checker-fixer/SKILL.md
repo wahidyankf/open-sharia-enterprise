@@ -649,7 +649,7 @@ Fixer:
 
 Multiple agent families implement this pattern. See [AI Agents Index](../../../.claude/agents/README.md) for the complete list. Key families include:
 
-1. **repo-governance-\*** - Repository-wide consistency
+1. **repo-rules-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Content (ayokoding-web, Next.js)
 3. **docs-tutorial-\*** - Tutorial quality
 4. **apps-oseplatform-web-content-\*** - Next.js 16 content (oseplatform-web)

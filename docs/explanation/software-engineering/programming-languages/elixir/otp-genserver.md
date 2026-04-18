@@ -22,6 +22,8 @@ principles:
 updated: 2026-01-23
 ---
 
+# OTP GenServer Patterns
+
 ## Overview
 
 GenServer is a behavior module for implementing the server side of a client-server relationship. It provides a standard set of interface functions and manages state, synchronous and asynchronous calls, and process lifecycle.

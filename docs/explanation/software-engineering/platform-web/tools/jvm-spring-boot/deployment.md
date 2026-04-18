@@ -25,6 +25,8 @@ related:
   - ../jvm-spring/deployment.md
 ---
 
+# Spring Boot Deployment
+
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand [Spring Framework Deployment](../jvm-spring/deployment.md) before reading this document. This covers Spring Boot-specific deployment features built on top of Spring Framework.

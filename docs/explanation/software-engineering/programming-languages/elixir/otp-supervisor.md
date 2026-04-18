@@ -23,6 +23,8 @@ principles:
 updated: 2026-01-23
 ---
 
+# OTP Supervisor Patterns
+
 ## Overview
 
 Supervisors are processes that monitor other processes (called child processes) and restart them when they crash. Supervisors form supervision trees that provide fault tolerance and self-healing capabilities to applications.

@@ -414,9 +414,9 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 **Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer
 
-**Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (plan execution is orchestrated directly by the calling context via the [plan-execution workflow](./governance/workflows/plan/plan-execution.md) — no dedicated executor subagent)
+**Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (see [plan-execution workflow](./governance/workflows/plan/plan-execution.md))
 
-**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev, swe-hugo-dev (DEPRECATED)
+**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev
 
 **Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer
 

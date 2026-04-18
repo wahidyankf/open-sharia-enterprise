@@ -19,6 +19,8 @@ created: 2026-02-06
 updated: 2026-02-06
 ---
 
+# Spring Framework Code Quality
+
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).

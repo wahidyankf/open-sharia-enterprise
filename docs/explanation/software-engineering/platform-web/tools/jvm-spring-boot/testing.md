@@ -26,6 +26,8 @@ created: 2026-01-25
 updated: 2026-01-26
 ---
 
+# Spring Boot Testing
+
 ## 📋 Quick Reference
 
 - [Overview](#overview)

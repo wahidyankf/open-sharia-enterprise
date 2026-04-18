@@ -27,6 +27,8 @@ related:
   - ./configuration.md
 ---
 
+# Spring Boot Performance
+
 ## 📋 Quick Reference
 
 - [JVM Performance Tuning](#jvm-performance-tuning) - Heap sizing, GC selection, JVM flags
