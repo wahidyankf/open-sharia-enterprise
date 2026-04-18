@@ -32,9 +32,8 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 - [ ] Update `plan-checker.md` to validate presence of `brd.md` and `prd.md` in multi-file plans.
 - [ ] Add a `plan-checker.md` rule to flag business content in `prd.md` and product content in `brd.md`.
 - [ ] Read `.claude/agents/plan-fixer.md` and update fix instructions to move misplaced content into the correct file.
-- [ ] Read `.claude/agents/plan-executor.md` and update any documentation references to the five-doc layout (behavioral change: none — still reads `delivery.md`).
 - [ ] Read `.claude/agents/plan-execution-checker.md` and update acceptance-criteria validation to read from `prd.md`.
-- [ ] Run `npm run lint:md` on all five updated agent files and confirm zero violations.
+- [ ] Run `npm run lint:md` on the four updated agent files and confirm zero violations.
 
 ## Phase 3 — Update plan workflows under `governance/workflows/plan/`
 

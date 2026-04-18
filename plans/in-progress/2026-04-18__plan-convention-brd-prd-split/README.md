@@ -41,7 +41,7 @@ YYYY-MM-DD__project-id/
 ### In Scope
 
 - Update `governance/conventions/structure/plans.md` to define five-document layout, BRD/PRD content rules, and updated single-file exception criteria.
-- Update five plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-executor`, `plan-execution-checker`.
+- Update four plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-execution-checker` (the prior `plan-executor` agent was removed in a separate refactor; plan execution is now orchestrated directly by the calling context via the [plan-execution workflow](../../../governance/workflows/plan/plan-execution.md)).
 - Update two plan workflows under `governance/workflows/plan/`: `plan-quality-gate.md` (completeness bullet enumerates five docs) and `plan-execution.md` (adds context-consultation note; verifies no stale `requirements.md` references).
 - Update `.claude/skills/plan-creating-project-plans/SKILL.md` to reflect new structure.
 - Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old four-document layout.
@@ -62,7 +62,7 @@ YYYY-MM-DD__project-id/
 3. **Update the two plan workflows** (`plan-quality-gate.md`, `plan-execution.md`) so quality-gate validation and execution mechanics stay consistent with the new convention.
 4. **Update the creation skill and cross-linked docs** (`AGENTS.md`, `organize-work.md`, `acceptance-criteria.md`) in the same commit set so no reference lags.
 5. **Run the OpenCode sync** and verify `.opencode/` mirrors match.
-6. **Migrate the one active in-progress plan** last — exercises the new structure end-to-end, and confirms `plan-executor` still resolves its delivery checklist correctly after the change.
+6. **Migrate the one active in-progress plan** last — exercises the new structure end-to-end, and confirms the plan-execution workflow still resolves its delivery checklist correctly after the change.
 7. **Run quality gates** (markdown lint, affected-project tests, plan-checker against this plan itself).
 8. **Record commits and archive the plan** — commit all changes thematically by domain, then move the plan folder to `plans/done/`.
 
