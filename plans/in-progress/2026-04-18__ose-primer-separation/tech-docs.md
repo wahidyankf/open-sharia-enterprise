@@ -332,10 +332,33 @@ This section documents the one-time extraction of the `a-demo-*` polyglot showca
 
 **Configuration file edits** (demo-entries pruned in place, files retained):
 
-- `codecov.yml` — remove flags keyed on demo project names.
+- `codecov.yml`:
+  - Remove every `flags:` entry keyed on a demo project name (20 entries today: every `a-demo-*` flag including `a-demo-fs-ts-nextjs`, all 11 `a-demo-be-*`, the three `a-demo-fe-*` frontends).
+  - Remove `ignore:` patterns scoped to demo paths (today: `apps/a-demo-be-golang-gin/internal/store/gorm_store.go`, `apps/a-demo-be-golang-gin/internal/server/server.go`, `apps/a-demo-be-golang-gin/cmd/server/**`). Retain generic patterns (`**/types.go`, `**/generated-contracts/**`).
 - `go.work` — remove `use` directives for `apps/a-demo-be-golang-gin`.
 - `open-sharia-enterprise.sln` — remove project references for `apps/a-demo-be-csharp-aspnetcore`.
-- `.github/workflows/_reusable-*.yml` — if any reusable workflow enumerates demo projects as matrix inputs or conditional branches, prune those entries. Reusables called by product pipelines stay.
+- `.github/workflows/_reusable-*.yml` — seven reusable workflow files (`_reusable-backend-coverage.yml`, `_reusable-backend-e2e.yml`, `_reusable-backend-integration.yml`, `_reusable-backend-lint.yml`, `_reusable-backend-spec-coverage.yml`, `_reusable-backend-typecheck.yml`, `_reusable-frontend-e2e.yml`) each enumerate demo projects. Prune those entries; keep the file structure — product pipelines still consume them.
+- `.github/workflows/codecov-upload.yml` — prune the demo project list from the upload matrix; retain product entries (oseplatform-web, ayokoding-web, organiclever-fe, organiclever-be, rhino-cli, oseplatform-cli, ayokoding-cli, golang-commons).
+- `.github/actions/install-language-deps/action.yml` — prune demo-project names from any matrix/dispatch table (today: 9 demo references).
+
+**`.github/actions/` deletions (custom actions unused post-extraction)**:
+
+Custom composite actions whose only consumers were demo backends/frontends are deleted wholesale:
+
+- `.github/actions/setup-clojure/` — only consumer was `a-demo-be-clojure-pedestal` (deleted in Commit B).
+- `.github/actions/setup-elixir/` — only consumer was `a-demo-be-elixir-phoenix`.
+- `.github/actions/setup-flutter/` — only consumer was `a-demo-fe-dart-flutterweb`.
+- `.github/actions/setup-jvm/` — only consumers were `a-demo-be-java-springboot` and `a-demo-be-java-vertx`.
+- `.github/actions/setup-rust/` — only consumer was `a-demo-be-rust-axum`.
+
+Actions explicitly **retained** (consumers remain after extraction):
+
+- `.github/actions/setup-golang/` — consumed by `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `golang-commons` CI.
+- `.github/actions/setup-node/` — consumed by every Node product app.
+- `.github/actions/setup-dotnet/` — consumed by `organiclever-be` (F#/Giraffe runs on .NET).
+- `.github/actions/setup-language/` — generic dispatcher referenced by product workflows.
+- `.github/actions/setup-docker-cache/` — may be consumed by product integration tests; kept pending Phase 9 verification (if zero retained callers, flag as a follow-up deletion rather than force removal in this plan).
+- `.github/actions/install-language-deps/` — kept and pruned (not deleted).
 
 **Prose edits in existing docs** (demo references pruned, docs retained):
 
@@ -755,6 +778,22 @@ report-uuid-chain: <chain>
 7. **External URL freshness**: Both agents cache no network results; each run is independent.
 8. **Classifier consistency**: Agents re-parse the classifier on every invocation; no cached copy.
 
+### Cross-repo branch-policy asymmetry (absolute invariants)
+
+Different rules apply to `ose-public` vs `ose-primer` — explicit by design:
+
+1. **`ose-public`: direct-to-main** (Trunk Based Development). Phase 8 extraction commits A through J land directly on `ose-public`'s `main` branch. No feature branch is created for the extraction. No PR is opened against `ose-public`. This matches the repo-wide [Trunk Based Development](../../../governance/development/workflow/commit-messages.md) practice and the existing environment-branch-only convention for non-main branches. Commits are pushed to `origin/main` as they land; pre-commit + pre-push hooks are the quality gate.
+2. **`ose-primer`: PR-only** (every mutation). Propagation-maker's apply mode is the **only** way any commit reaches `ose-primer`. The flow is mandatory:
+   1. Create a git worktree attached to the primer clone.
+   2. Create a new branch tracking `origin/main` inside the worktree.
+   3. Apply proposed changes inside the worktree.
+   4. Commit with a conventional-commit message referencing the `generated-reports/` report.
+   5. Push the branch to `origin`.
+   6. Open a **draft PR** against `wahidyankf/ose-primer:main` via `gh pr create --draft`.
+   7. Human reviews and merges (or requests changes / closes).
+
+   **Direct commits to `ose-primer`'s `main` are prohibited.** There is no mode, flag, or escape hatch that lets any agent bypass the PR. Every primer-side change — propagation, adoption-apply-back, catch-up before extraction, classifier updates scoped to primer — MUST go through this flow. Parity-check mode is read-only and does not violate this rule. Dry-run mode writes no files outside `generated-reports/` and does not violate this rule. Apply mode opens the PR and does not violate this rule. Any code path that would `git commit` directly on the primer's `main` — or force-push, or reset-with-push — is a governance violation regardless of justification.
+
 ## Agent Naming Choice (Analysis)
 
 The [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md) permits exactly six role suffixes: `maker`, `checker`, `fixer`, `dev`, `deployer`, `manager`. Zero exceptions.
@@ -953,13 +992,27 @@ outputs:
 | `generated-reports/repo-ose-primer-propagation-maker__*__report.md`                        | Generated          | Phase 6 dry-run output.                                                                                                                               |
 | `generated-reports/parity__*__report.md`                                                   | Generated          | Phase 7 primer-parity verification report (gate for Phase 8).                                                                                         |
 | `.github/workflows/test-a-demo-*.yml` (14 files)                                           | **Delete**         | Phase 8, Commit A: demo-specific CI workflows removed.                                                                                                |
+| `.github/actions/setup-clojure/`                                                           | **Delete**         | Phase 8, Commit A: custom action only consumed by `a-demo-be-clojure-pedestal`.                                                                       |
+| `.github/actions/setup-elixir/`                                                            | **Delete**         | Phase 8, Commit A: custom action only consumed by `a-demo-be-elixir-phoenix`.                                                                         |
+| `.github/actions/setup-flutter/`                                                           | **Delete**         | Phase 8, Commit A: custom action only consumed by `a-demo-fe-dart-flutterweb`.                                                                        |
+| `.github/actions/setup-jvm/`                                                               | **Delete**         | Phase 8, Commit A: custom action only consumed by `a-demo-be-java-springboot` and `a-demo-be-java-vertx`.                                             |
+| `.github/actions/setup-rust/`                                                              | **Delete**         | Phase 8, Commit A: custom action only consumed by `a-demo-be-rust-axum`.                                                                              |
 | `apps/a-demo-be-*` and `apps/a-demo-fe-*` and `apps/a-demo-fs-*` (17 dirs)                 | **Delete**         | Phase 8, Commit B: demo app directories removed.                                                                                                      |
 | `specs/apps/a-demo/`                                                                       | **Delete**         | Phase 8, Commit C: demo spec area removed.                                                                                                            |
 | `docs/reference/demo-apps-ci-coverage.md`                                                  | **Delete**         | Phase 8, Commit D: demo-specific reference doc removed.                                                                                               |
-| `codecov.yml`                                                                              | Edit               | Phase 8, Commit E: prune demo project flags.                                                                                                          |
+| `codecov.yml`                                                                              | Edit               | Phase 8, Commit E: prune demo project flags (20 `flags:` entries) AND demo-scoped `ignore:` patterns (`apps/a-demo-be-golang-gin/**`).                |
 | `go.work`                                                                                  | Edit               | Phase 8, Commit E: prune demo Go `use` directives.                                                                                                    |
 | `open-sharia-enterprise.sln`                                                               | Edit               | Phase 8, Commit E: prune demo C# project references.                                                                                                  |
-| `.github/workflows/_reusable-*.yml` (conditional edits)                                    | Edit (conditional) | Phase 8, Commit E: if a reusable enumerates demo matrix inputs, prune those; do NOT delete reusables used by product apps.                            |
+| `.github/workflows/_reusable-backend-coverage.yml`                                         | Edit               | Phase 8, Commit E: prune demo projects from matrix/conditional branches; keep file (product pipelines use it).                                        |
+| `.github/workflows/_reusable-backend-e2e.yml`                                              | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/_reusable-backend-integration.yml`                                      | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/_reusable-backend-lint.yml`                                             | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/_reusable-backend-spec-coverage.yml`                                    | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/_reusable-backend-typecheck.yml`                                        | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/_reusable-frontend-e2e.yml`                                             | Edit               | Phase 8, Commit E: prune demo entries.                                                                                                                |
+| `.github/workflows/codecov-upload.yml`                                                     | Edit               | Phase 8, Commit E: prune demo project list from the upload matrix; retain product entries.                                                            |
+| `.github/actions/install-language-deps/action.yml`                                         | Edit               | Phase 8, Commit E: prune demo-project names from dispatch table (9 refs today).                                                                       |
+| `.github/actions/setup-docker-cache/action.yml`                                            | Edit (conditional) | Phase 8, Commit E: if demo refs remain, prune; if zero retained callers surface post-extraction, flag for follow-up deletion (not in this plan).      |
 | `README.md`                                                                                | Edit               | Phase 8, Commit F: remove demo apps bullet, demo coverage badges; add extraction changelog note.                                                      |
 | `CLAUDE.md`                                                                                | Edit               | Phase 8, Commit F: remove demo apps inventory + coverage table rows + demo-path examples.                                                             |
 | `AGENTS.md`                                                                                | Edit               | Phase 8, Commit F: mirror CLAUDE.md demo-reference removals.                                                                                          |

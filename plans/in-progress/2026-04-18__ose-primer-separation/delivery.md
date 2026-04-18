@@ -307,9 +307,11 @@ Goal: confirm `ose-primer` carries every `a-demo-*` path at byte-equivalent or s
 
 ## Phase 8 — Demo extraction
 
-Goal: execute the one-time removal of demo apps, specs, workflows, and associated references. Granular commits (A → H) for reviewable atomicity. Every commit references the Phase 7 parity report SHA in its message.
+Goal: execute the one-time removal of demo apps, specs, workflows, and associated references. Granular commits (A → J) for reviewable atomicity. Every commit references the Phase 7 parity report SHA in its message.
 
-### 8.A — Commit A: Delete demo CI workflows
+**Branch policy invariant for this phase**: All Phase 8 commits (A → J) land **directly on `ose-public`'s `main` branch** per [Trunk Based Development](../../../governance/development/workflow/commit-messages.md). No feature branch is created; no PR is opened against `ose-public`. Husky pre-commit + pre-push hooks are the only quality gate. Pushes go to `origin/main` as each commit lands. If a commit needs fixing, a new commit is made on top — commits are never amended or force-pushed. (This invariant applies only to the `ose-public` side; every `ose-primer` mutation continues to go through the PR flow per the sync safety rules in `tech-docs.md`.)
+
+### 8.A — Commit A: Delete demo CI workflows + demo-only custom actions
 
 - [ ] `git rm .github/workflows/test-a-demo-be-clojure-pedestal.yml`
 - [ ] `git rm .github/workflows/test-a-demo-be-csharp-aspnetcore.yml`
@@ -326,8 +328,16 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm .github/workflows/test-a-demo-fe-ts-nextjs.yml`
 - [ ] `git rm .github/workflows/test-a-demo-fe-ts-tanstack-start.yml`
 - [ ] Run `ls .github/workflows/test-a-demo-*.yml 2>/dev/null` — must return nothing.
-- [ ] Commit with message: `chore(ci): delete a-demo workflows (Phase 8 Commit A, parity verified per <parity-report-sha>)`.
-- [ ] **[C]** Verify commit scope is only `.github/workflows/`.
+- [ ] `git rm -r .github/actions/setup-clojure` — demo-only custom action.
+- [ ] `git rm -r .github/actions/setup-elixir` — demo-only custom action.
+- [ ] `git rm -r .github/actions/setup-flutter` — demo-only custom action.
+- [ ] `git rm -r .github/actions/setup-jvm` — demo-only custom action.
+- [ ] `git rm -r .github/actions/setup-rust` — demo-only custom action.
+- [ ] Run `ls .github/actions/ | grep -E '^(setup-(clojure|elixir|flutter|jvm|rust))$' || echo NONE` — must print `NONE`.
+- [ ] Verify retained actions are present: `ls .github/actions/ | grep -E '^(setup-(golang|node|dotnet|language|docker-cache)|install-language-deps)$'` — must list all six.
+- [ ] Commit with message: `chore(ci): delete a-demo workflows and demo-only custom actions (Phase 8 Commit A, parity verified per <parity-report-sha>)`.
+- [ ] Push: `git push origin main`.
+- [ ] **[C]** Verify commit scope is only `.github/workflows/test-a-demo-*.yml` + `.github/actions/setup-{clojure,elixir,flutter,jvm,rust}/`.
 
 ### 8.B — Commit B: Delete demo app directories
 
@@ -350,6 +360,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm -r apps/a-demo-fs-ts-nextjs`
 - [ ] Run `ls apps/ | grep '^a-demo-' || echo NONE` — must print `NONE`.
 - [ ] Commit with message: `chore(apps): delete a-demo app directories (Phase 8 Commit B, parity verified per <parity-report-sha>)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope is only `apps/a-demo-*`.
 
 ### 8.C — Commit C: Delete demo spec area
@@ -357,23 +368,32 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm -r specs/apps/a-demo`
 - [ ] Run `ls specs/apps/ | grep '^a-demo' || echo NONE` — must print `NONE`.
 - [ ] Commit with message: `chore(specs): delete a-demo spec area (Phase 8 Commit C, parity verified per <parity-report-sha>)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope is only `specs/apps/a-demo/`.
 
 ### 8.D — Commit D: Delete demo-specific reference doc
 
 - [ ] `git rm docs/reference/demo-apps-ci-coverage.md`
 - [ ] Commit with message: `docs(reference): delete demo-apps-ci-coverage.md (Phase 8 Commit D)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope is only the single file.
 
-### 8.E — Commit E: Prune root configs
+### 8.E — Commit E: Prune root configs + `.github/` non-deletion edits
 
-- [ ] Edit `codecov.yml`: remove every flag keyed on a demo project name. Confirm remaining flags are for product apps + `rhino-cli` + generic libs only.
+- [ ] Edit `codecov.yml`:
+  - [ ] Remove every `flags:` entry keyed on a demo project name. Confirm remaining flags: `oseplatform-web`, `ayokoding-web`, `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `organiclever-fe`, `organiclever-be`, `golang-commons`.
+  - [ ] Remove every `ignore:` pattern scoped to a demo path. Today: `apps/a-demo-be-golang-gin/internal/store/gorm_store.go`, `apps/a-demo-be-golang-gin/internal/server/server.go`, `apps/a-demo-be-golang-gin/cmd/server/**`. Retain generic patterns (`**/types.go`, `**/generated-contracts/**`).
+  - [ ] Confirm `grep 'a-demo' codecov.yml || echo CLEAN` prints `CLEAN`.
 - [ ] Edit `go.work`: remove every `use` directive under `apps/a-demo-be-*` (Go backends: `golang-gin`, and any others). Run `go work sync` and confirm no error.
 - [ ] Edit `open-sharia-enterprise.sln`: remove project reference blocks for `apps/a-demo-be-csharp-aspnetcore`. Run `dotnet sln list` and confirm the remaining project list is product-only.
-- [ ] For each file in `.github/workflows/_reusable-*.yml`, grep for `a-demo` references; if a reusable enumerates demo projects in a matrix or conditional, prune those entries; DO NOT delete the reusable file itself.
+- [ ] For each of the seven `.github/workflows/_reusable-*.yml` files, grep for `a-demo` references and prune; DO NOT delete the file. Files to audit: `_reusable-backend-coverage.yml`, `_reusable-backend-e2e.yml`, `_reusable-backend-integration.yml`, `_reusable-backend-lint.yml`, `_reusable-backend-spec-coverage.yml`, `_reusable-backend-typecheck.yml`, `_reusable-frontend-e2e.yml`.
+- [ ] Edit `.github/workflows/codecov-upload.yml`: prune demo project entries from the upload matrix (if any) and any per-project job steps referencing demos; retain product entries.
+- [ ] Edit `.github/actions/install-language-deps/action.yml`: prune demo-project names from dispatch tables / matrix definitions (today: 9 a-demo references).
+- [ ] Check `.github/actions/setup-docker-cache/action.yml` for demo references: if present, prune inline; if action is entirely unused post-extraction, flag for a follow-up plan (do not delete in this commit).
 - [ ] For each file in `scripts/`, grep for `a-demo` references; prune demo names from any project-enumerating list; leave script structure intact.
-- [ ] Run `grep -rnI 'a-demo' codecov.yml go.work open-sharia-enterprise.sln .github/workflows/_reusable-*.yml scripts/` — must return no matches.
-- [ ] Commit with message: `chore(config): prune a-demo references from codecov/go.work/sln/reusables/scripts (Phase 8 Commit E)`.
+- [ ] Run consolidated grep sweep: `grep -rnI 'a-demo' codecov.yml go.work open-sharia-enterprise.sln .github/ scripts/ 2>/dev/null | grep -v '^.github/actions/setup-docker-cache/' || echo CLEAN` — must print `CLEAN` (any remaining match is a gap to resolve before commit).
+- [ ] Commit with message: `chore(config): prune a-demo references from codecov/go.work/sln/reusables/actions/scripts (Phase 8 Commit E)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope.
 
 ### 8.F — Commit F: Prune root prose references
@@ -393,6 +413,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Edit `ROADMAP.md`: prune phase narratives that reference demos; add a dated note recording the extraction.
 - [ ] Run `grep -rnI 'a-demo' README.md CLAUDE.md AGENTS.md ROADMAP.md` — must return zero matches (or only narrative changelog mentions of the extraction event).
 - [ ] Commit with message: `docs(root): prune a-demo references from README/CLAUDE/AGENTS/ROADMAP (Phase 8 Commit F)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify scope.
 
 ### 8.G — Commit G: Prune governance / docs prose references
@@ -407,6 +428,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Edit `docs/how-to/add-new-lib.md`: same.
 - [ ] Run `grep -rnI 'a-demo' governance/ docs/ --include='*.md'` — remaining matches MUST be limited to: narrative changelog mentions, the classifier row in `governance/conventions/structure/ose-primer-sync.md` (untouched in this commit), and archived plans under `plans/done/`.
 - [ ] Commit with message: `docs(governance,docs): prune a-demo references from docs and governance examples (Phase 8 Commit G)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify scope.
 
 ### 8.H — Commit H: Update classifier to reflect extraction
@@ -419,6 +441,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
   - [ ] In the audit-rule section, confirm the whitelist entries allowing these rows to match zero paths post-extraction.
   - [ ] Bump the convention's `updated:` frontmatter to today.
 - [ ] Commit with message: `docs(governance): flip a-demo and orphan-lib classifier rows to neither (Phase 8 Commit H)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify scope is only the convention file.
 
 ### 8.I — Commit I: Remove orphaned libraries
@@ -436,6 +459,7 @@ Pre-flight checks first; deletion only after both return clean.
 - [ ] Run `ls libs/ | grep -E '^(clojure-openapi-codegen|elixir-(cabbage|gherkin|openapi-codegen))$' || echo NONE` — must print `NONE`.
 - [ ] Run `nx graph` regeneration and confirm no orphan project nodes for the four libs.
 - [ ] Commit with message: `chore(libs): remove orphaned elixir/clojure libs (Phase 8 Commit I, demo extraction)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope is only `libs/` deletions + `libs/README.md` edit.
 
 ### 8.J — Commit J: Trim rhino-cli demo-only commands
@@ -456,6 +480,7 @@ Pre-flight checks first; deletion only after both return clean.
 - [ ] Run integration tests: `nx run rhino-cli:test:integration` — must pass.
 - [ ] Run `rhino-cli --help` (via the built binary) and confirm no subcommand named `java`, `contracts java-clean-imports`, `contracts dart-scaffold`, or `contracts` appears.
 - [ ] Commit with message: `chore(rhino-cli): trim demo-only commands (Phase 8 Commit J, demo extraction)`.
+- [ ] Push: `git push origin main`.
 - [ ] **[C]** Verify commit scope is only `apps/rhino-cli/` + `CLAUDE.md` (+ optional `specs/apps/rhino/` edits).
 
 ### 8.Z — Checkpoint after all 10 commits

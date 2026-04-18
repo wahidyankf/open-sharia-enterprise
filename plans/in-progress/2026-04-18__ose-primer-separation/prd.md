@@ -536,6 +536,38 @@ Feature: Orphaned library removal (Commit I)
     Then "libs/golang-commons/", "libs/hugo-commons/", "libs/ts-ui/", "libs/ts-ui-tokens/" still exist
     And "libs/README.md" still documents them
 
+Feature: Branch-policy asymmetry (ose-public direct-to-main; ose-primer PR-only)
+
+  Scenario: Every Phase 8 commit pushes to ose-public main
+    Given Phase 7 parity verdict is "parity verified"
+    When each of Commits A through J is created
+    Then it is committed directly on the "main" branch
+    And it is pushed to "origin/main" before the next commit begins
+    And no feature branch is created for any extraction commit
+    And no pull request is opened against "ose-public"
+
+  Scenario: Every ose-primer mutation goes through a PR
+    Given the propagation-maker is invoked in apply mode for any purpose (first propagation, parity catch-up, future sync, etc.)
+    When the agent mutates the primer clone
+    Then the mutations happen inside a git worktree under "$OSE_PRIMER_CLONE/.claude/worktrees/"
+    And the mutations land on a new branch "sync/<timestamp>-<short-uuid>", NOT on "main"
+    And the branch is pushed to "origin/sync/<timestamp>-<short-uuid>"
+    And a draft PR is opened against "wahidyankf/ose-primer:main" via "gh pr create --draft"
+    And the PR is merged (or closed) by a human reviewer
+
+  Scenario: Agent cannot bypass the primer PR flow
+    Given any agent or workflow attempts to run `git -C "$OSE_PRIMER_CLONE" commit` directly on the primer clone's main-branch worktree
+    When that code path is reached
+    Then the path does NOT exist in any agent definition, skill, or workflow file (Gherkin static check)
+    And if such a path is ever added, `repo-rules-checker` flags it as a governance violation
+
+  Scenario: Extraction catch-up respects the PR invariant
+    Given Phase 7 parity failed because one demo is ose-public-newer
+    When the catch-up loop invokes the sync workflow with direction=propagate, mode=apply
+    Then a catch-up PR is opened against "wahidyankf/ose-primer:main" — not a direct commit
+    And the catch-up must be merged before parity-check re-runs
+    And the extraction commits (A–J) do NOT begin until parity verdict = verified post-merge
+
 Feature: rhino-cli command trim (Commit J)
 
   Scenario: Demo-only commands removed
