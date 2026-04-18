@@ -12,10 +12,10 @@ What a visitor's browser actually talks to in production.
 
 ```mermaid
 flowchart TD
-    Browser["Browser"] -->|HTTP| Vercel["Vercel edge<br/>(prod-wahidyankf-web)"]
-    Vercel -->|static + RSC| NextApp["apps/wahidyankf-web<br/>Next.js 16 App Router"]
-    NextApp -->|"@next/third-parties"| GA["Google Analytics"]
-    NextApp -->|"@next/third-parties"| GTM["Google Tag Manager"]
+    Browser["Browser"] -->|HTTP| Vercel["Vercel edge<br/>prod-wahidyankf-<br/>web branch"]
+    Vercel -->|static + RSC| NextApp["apps/<br/>wahidyankf-web<br/>Next.js 16<br/>App Router"]
+    NextApp -->|third-parties| GA["Google<br/>Analytics"]
+    NextApp -->|third-parties| GTM["Google Tag<br/>Manager"]
 
     style Browser fill:#0173B2,color:#fff
     style Vercel fill:#DE8F05,color:#fff
@@ -30,10 +30,10 @@ What the maintainer runs on their own machine through Nx targets.
 
 ```mermaid
 flowchart TD
-    Nx["Nx workspace<br/>(ose-public root)"] -->|"nx dev wahidyankf-web"| DevServer["next dev<br/>--port 3201"]
-    Nx -->|"nx run wahidyankf-web:test:quick"| Vitest["Vitest 4 + coverage<br/>threshold 80%"]
-    Nx -->|"nx run wahidyankf-web-e2e:test:e2e"| Playwright["Playwright 1.52+<br/>+ BDD + axe-core"]
-    Nx -->|"nx affected -t typecheck lint test:quick spec-coverage"| PrePush["Pre-push gate"]
+    Nx["Nx workspace<br/>(ose-public root)"] -->|nx dev| DevServer["next dev<br/>--port 3201"]
+    Nx -->|test:quick| Vitest["Vitest 4<br/>+ coverage<br/>threshold 80%"]
+    Nx -->|e2e| Playwright["Playwright 1.52+<br/>+ BDD<br/>+ axe-core"]
+    Nx -->|nx affected| PrePush["Pre-push gate<br/>typecheck / lint<br/>test:quick<br/>spec-coverage"]
 
     style Nx fill:#0173B2,color:#fff
     style DevServer fill:#029E73,color:#fff
@@ -42,25 +42,34 @@ flowchart TD
     style PrePush fill:#DE8F05,color:#fff
 ```
 
-### CI and Deploy Flow
+### Scheduled CI Flow
 
-How scheduled CI drives the same Nx targets, and how the production
-branch receives force-pushes from `main`.
+Scheduled GitHub Actions cron drives the same Nx targets against `main`
+twice a day.
 
 ```mermaid
 flowchart TD
-    Cron["GitHub Actions cron<br/>06:00 / 18:00 WIB"] --> Workflow["test-and-deploy-wahidyankf-web.yml"]
-    Workflow --> Reusable["_reusable-test-and-deploy.yml"]
-    Reusable --> NxCi["nx run wahidyankf-web:test:quick<br/>+ test:integration + test:e2e"]
-
-    Main["origin/main<br/>(latest green commit)"] --> Deployer["apps-wahidyankf-web-deployer<br/>agent"]
-    Deployer -->|"git push --force"| ProdBranch["origin/prod-wahidyankf-web"]
-    ProdBranch -->|Vercel watches| Vercel["Vercel production build"]
+    Cron["GitHub Actions<br/>cron<br/>06:00 / 18:00 WIB"] --> Workflow["test-and-deploy-<br/>wahidyankf-web<br/>.yml"]
+    Workflow --> Reusable["_reusable-test-<br/>and-deploy.yml"]
+    Reusable --> NxCi["nx run<br/>wahidyankf-web:<br/>test:quick<br/>+ test:integration<br/>+ test:e2e"]
 
     style Cron fill:#0173B2,color:#fff
     style Workflow fill:#DE8F05,color:#fff
     style Reusable fill:#DE8F05,color:#fff
     style NxCi fill:#029E73,color:#fff
+```
+
+### Deploy Flow
+
+How the production branch receives force-pushes from `main` and Vercel
+builds from it.
+
+```mermaid
+flowchart TD
+    Main["origin/main<br/>latest green commit"] --> Deployer["apps-wahidyankf-<br/>web-deployer<br/>agent"]
+    Deployer -->|"git push --force"| ProdBranch["origin/<br/>prod-wahidyankf-<br/>web"]
+    ProdBranch -->|Vercel watches| Vercel["Vercel<br/>production<br/>build"]
+
     style Main fill:#0173B2,color:#fff
     style Deployer fill:#CC78BC,color:#fff
     style ProdBranch fill:#DE8F05,color:#fff
