@@ -310,7 +310,7 @@ Goal: confirm `ose-primer` carries every `a-demo-*` path at byte-equivalent or s
 ### 7.1 — Parity-check mode invocation
 
 - [~] Ensure the primer clone is on `main`, clean, up-to-date (repeat 6.1 pre-flight). — Clean-tree precondition FAILED (primer still dirty with 109 uncommitted files from Phase 6); substituted with manual `git -C $OSE_PRIMER_CLONE ls-tree origin/main` inspection.
-- [~] Invoke `repo-ose-primer-propagation-maker` in **parity-check** mode. — **NOT INVOKED LIVE** due to dirty clone. Substituted with manual verification: iterated every scoped path and confirmed primer presence via `git ls-tree origin/main`.
+- [~] Invoke `repo-ose-primer-propagation-maker` in **parity-check** mode. — **Not invoked live** due to dirty clone. Substituted with manual verification: iterated every scoped path and confirmed primer presence via `git ls-tree origin/main`.
 - [x] Verify a new file appears at `generated-reports/parity__<uuid-chain>__<timestamp>__report.md`. — Manual parity report at `generated-reports/parity__phase7__2026-04-18--20-35__report.md`.
 - [~] Open the report. Confirm frontmatter, per-path comparison table, verdict line. — Frontmatter valid; 18-row comparison table; verdict = `parity verified (content-equivalent after primer-side rename)` (wording deviates from Gherkin which expected `parity verified: ose-public may safely remove`; rename-equivalence substitution is an operator decision per `extraction-scope.md`). Gate passed on intent.
 
@@ -335,7 +335,7 @@ Goal: confirm `ose-primer` carries every `a-demo-*` path at byte-equivalent or s
 
 **Phase 7 deviation note**: the parity report was produced manually (live agent invocation blocked by dirty primer clone). Every scoped path confirmed present in primer under `apps/demo-*` (no `a-` prefix). `specs/apps/a-demo/` confirmed present in primer as `specs/apps/demo/` — included in the 18-row comparison table in the parity report. Content-equivalence via rename is an **operator judgment call**: `extraction-scope.md` defines the scope list and verdict rule but does not explicitly name "rename-equivalence" as an accepted classification; the operator decided the rename is a structural no-op and the content is byte-equivalent. Gate passed on that basis.
 
-**Phase 7 strengthened re-evaluation** (2026-04-18 22:10 +0700): operator cleaned the primer clone; a second pass upgraded presence-only evidence to per-directory file-count evidence against primer `origin/main@7c34e73f`. Result: 14 of 18 scoped paths exact match; the 4 remaining (`a-demo-be-e2e`, `a-demo-be-elixir-phoenix`, `a-demo-fe-e2e`, plus one additional pending inspection) diverge by 1 file each for benign reasons (LICENSE drops per primer's MIT-only cleanup commit `d1dda5e75`; macOS temp-file artifact; module namespace rename paired with the directory rename). Verdict unchanged: `parity verified: ose-public may safely remove`. Strengthened report lives at `generated-reports/parity__phase7-strengthened__2026-04-18--22-10__report.md`; it supersedes the original parity report as the authoritative Phase 7 evidence (primer SHA `7c34e73f`; public SHA `ec89373b`). Commit messages for Phase 8.B–J may cite either parity SHA (`a0b98a74` for original, or post-commit SHA of the strengthened report) — both are authoritative.
+**Phase 7 strengthened re-evaluation** (2026-04-18 22:10 +0700): operator cleaned the primer clone; a second pass upgraded presence-only evidence to per-directory file-count evidence against primer `origin/main@7c34e73f`. Result: 14 of 18 scoped paths exact match; the 4 remaining (`a-demo-be-e2e`, `a-demo-be-elixir-phoenix`, `a-demo-fe-e2e`) diverge by 1 file each for benign reasons — 2 paths: LICENSE drop (primer's MIT-only cleanup commit `d1dda5e75`); 1 path: macOS temp-file artifact; 1 path: Elixir module namespace rename paired with the directory rename — all benign. Verdict unchanged: `parity verified: ose-public may safely remove`. Strengthened report lives at `generated-reports/parity__phase7-strengthened__2026-04-18--22-10__report.md`; it supersedes the original parity report as the authoritative Phase 7 evidence (primer SHA `7c34e73f`; public SHA `ec89373b`). Commit messages for Phase 8.B–J use `a0b98a74` — this is the git commit SHA of the Phase 7.3 commit (not the ose-public or ose-primer tree SHAs), consistent with Commit A's convention.
 
 **Primer's independent evolution since plan authoring** (informational, not blocking): primer's `origin/main` advanced independently of this plan with cleanup commits (`cb49fa19b` rename, `d1dda5e75` FSL docs drop, `4b2689c91` product-reference scrub, `7c34e73f8` emoji retrofit). None of these invalidate the plan. The FSL-docs drop explains the `LICENSE` file delta in the parity report. The rename underpins the operator-judgement call. The emoji retrofit is cosmetic and parity-neutral.
 
@@ -395,7 +395,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm -r apps/a-demo-fe-ts-tanstack-start`
 - [ ] `git rm -r apps/a-demo-fs-ts-nextjs`
 - [ ] Run `ls apps/ | grep '^a-demo-' || echo NONE` — must print `NONE`.
-- [ ] Commit with message: `chore(apps): delete a-demo app directories (Phase 8 Commit B, parity verified per <parity-report-sha>)`.
+- [ ] Commit with message: `chore(apps): delete a-demo app directories (Phase 8 Commit B, parity verified per a0b98a74)`.
 - [ ] Push: `git push origin main`.
 - [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit C. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `apps/a-demo-*`.
@@ -404,7 +404,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 
 - [ ] `git rm -r specs/apps/a-demo`
 - [ ] Run `ls specs/apps/ | grep '^a-demo' || echo NONE` — must print `NONE`.
-- [ ] Commit with message: `chore(specs): delete a-demo spec area (Phase 8 Commit C, parity verified per <parity-report-sha>)`.
+- [ ] Commit with message: `chore(specs): delete a-demo spec area (Phase 8 Commit C, parity verified per a0b98a74)`.
 - [ ] Push: `git push origin main`.
 - [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit D. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `specs/apps/a-demo/`.
@@ -693,7 +693,7 @@ Goal: close out and archive.
 | **G3** — Skill present in both harnesses                     | Phase 3 complete; `.claude/skills/` and `.opencode/skill/` mirror.                                                                                                                                             |
 | **G4** — Smoke-test reports readable                         | Phase 6 complete (abort-notice variant); two pre-flight-abort reports committed at `a8cc9fa1`. Live dry-run reschedules for a future primer-quiescent window (Phase 10).                                       |
 | **G5** — Primer parity verified — **hard gate for Phase 8**  | Phase 7 complete; parity report verdict: `parity verified (content-equivalent after primer-side rename)` per report committed at `a0b98a74`.                                                                   |
-| **G6** — Demo paths absent from `ose-public`                 | Phase 8 Z-checkpoint all green (Commits A–J applied). **PENDING**: Commit A only landed (SHA `e3b11371`); Commits B–J pending.                                                                                 |
+| **G6** — Demo paths absent from `ose-public`                 | **Status: PENDING** — Commit A landed (SHA `e3b11371`); Commits B–J not yet started. Gate will pass when Phase 8 Z-checkpoint is all green (all ten commits A–J applied).                                      |
 | **G6.1** — Orphaned libs removed                             | Phase 8 Commit I landed; `ls libs/` contains none of `clojure-openapi-codegen`, `elixir-cabbage`, `elixir-gherkin`, `elixir-openapi-codegen`; `nx graph` has no orphan nodes for those libs.                   |
 | **G6.2** — `rhino-cli` trimmed                               | Phase 8 Commit J landed; `rhino-cli --help` does not list `java validate-annotations`, `contracts java-clean-imports`, or `contracts dart-scaffold`; `nx run rhino-cli:test:quick` passes with ≥ 90% coverage. |
 | **G7** — Product apps still pass                             | Phase 9 `nx affected` and E2E green.                                                                                                                                                                           |
