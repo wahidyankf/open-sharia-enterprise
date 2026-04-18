@@ -4,6 +4,32 @@
 
 Legend: **[P]** = checkpoint; **[C]** = commit boundary; **[G]** = gate that blocks further phases.
 
+## Phase 0 — Environment Setup
+
+Goal: ensure the full polyglot toolchain is converged and the baseline quality gates pass before making any changes.
+
+### Commit Guidelines
+
+- Commit changes thematically — group related changes into logically cohesive commits.
+- Follow Conventional Commits format: `<type>(<scope>): <description>`.
+- Split different domains/concerns into separate commits.
+- Do NOT bundle unrelated fixes into a single commit.
+- Example: separate `fix(lint): …` from `feat(governance): …` commits.
+
+### Environment Setup
+
+- [ ] Install dependencies: `npm install` (from `ose-public/` root).
+- [ ] Converge the full polyglot toolchain: `npm run doctor -- --fix` (required — the `postinstall` hook runs `doctor || true` and silently tolerates drift; explicit `doctor --fix` is the only action guaranteeing 18+ toolchains converge).
+- [ ] Verify the dev environment is clean: `git status` — must show a clean working tree before any Phase 1 work begins.
+
+### Baseline Quality Gate
+
+- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` — all must pass before making changes.
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your
+> changes. This follows the root cause orientation principle — proactively fix preexisting
+> errors encountered during work. Do not defer or mention-and-skip existing issues.
+
 ## Phase 1 — Foundation: Awareness layer + governance convention stub
 
 Goal: ground the plan's anchor docs before any agent is authored. Produces enough context for human readers + AI agents to understand the sync story.
@@ -144,7 +170,7 @@ Goal: author two workflow orchestration documents under `governance/workflows/re
 ### 3.5b — Extraction workflow document
 
 - [ ] Create `governance/workflows/repo/repo-ose-primer-extraction-execution.md` with YAML frontmatter per `tech-docs.md` §Workflow Specifications (name, goal, termination, inputs: extraction-scope/clone-path/max-catch-up-iterations, outputs: parity-report/extraction-commits/final-status).
-- [ ] Write the workflow body with sections: Purpose (one-time orchestration; pattern reusable if a future extraction plan emerges); Phases (pre-flight, parity-check gate, catch-up loop, extraction commits A-H, post-extraction verification, classifier flip, close-out); Gherkin success criteria (parity success, parity failure with catch-up, catch-up exhausted, post-verification failure, complete).
+- [ ] Write the workflow body with sections: Purpose (one-time orchestration; pattern reusable if a future extraction plan emerges); Phases (pre-flight, parity-check gate, catch-up loop, extraction commits A–J, post-extraction verification, classifier flip, close-out); Gherkin success criteria (parity success, parity failure with catch-up, catch-up exhausted, post-verification failure, complete).
 - [ ] Cross-link the propagation agent (parity-check + apply modes), the sync workflow (invoked during catch-up), the shared skill's `extraction-scope.md` reference module, and the tech-docs Demo Extraction section.
 - [ ] Verify basename `repo-ose-primer-extraction-execution` parses as scope=`repo`, qualifier=`ose-primer-extraction`, type=`execution`.
 
@@ -155,7 +181,7 @@ Goal: author two workflow orchestration documents under `governance/workflows/re
 
 ### 3.5d — Naming + markdown validation
 
-- [ ] Run the Workflow Naming Convention audit: both new filenames match `-(quality-gate|execution|setup)$`.
+- [ ] Run the Workflow Naming Convention audit: both new filenames match `-(quality-gate|execution|setup)$`; confirm each ends specifically in `-execution`.
 - [ ] Run `markdownlint-cli2 'governance/workflows/repo/repo-ose-primer-*.md' governance/workflows/repo/README.md` — zero findings.
 - [ ] Confirm the `governance/workflows/README.md` top-level index still lints clean.
 
@@ -309,7 +335,7 @@ Goal: confirm `ose-primer` carries every `a-demo-*` path at byte-equivalent or s
 
 Goal: execute the one-time removal of demo apps, specs, workflows, and associated references. Granular commits (A → J) for reviewable atomicity. Every commit references the Phase 7 parity report SHA in its message.
 
-**Branch policy invariant for this phase**: All Phase 8 commits (A → J) land **directly on `ose-public`'s `main` branch** per [Trunk Based Development](../../../governance/development/workflow/commit-messages.md). No feature branch is created; no PR is opened against `ose-public`. Husky pre-commit + pre-push hooks are the only quality gate. Pushes go to `origin/main` as each commit lands. If a commit needs fixing, a new commit is made on top — commits are never amended or force-pushed. (This invariant applies only to the `ose-public` side; every `ose-primer` mutation continues to go through the PR flow per the sync safety rules in `tech-docs.md`.)
+**Branch policy invariant for this phase**: All Phase 8 commits (A → J) land **directly on `ose-public`'s `main` branch** per [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). No feature branch is created; no PR is opened against `ose-public`. Husky pre-commit + pre-push hooks are the only quality gate. Pushes go to `origin/main` as each commit lands. If a commit needs fixing, a new commit is made on top — commits are never amended or force-pushed. (This invariant applies only to the `ose-public` side; every `ose-primer` mutation continues to go through the PR flow per the sync safety rules in `tech-docs.md`.)
 
 ### 8.A — Commit A: Delete demo CI workflows + demo-only custom actions
 
@@ -327,6 +353,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm .github/workflows/test-a-demo-fe-dart-flutterweb.yml`
 - [ ] `git rm .github/workflows/test-a-demo-fe-ts-nextjs.yml`
 - [ ] `git rm .github/workflows/test-a-demo-fe-ts-tanstack-start.yml`
+- [ ] Check and delete if present: `ls .github/workflows/test-a-demo-fs-ts-nextjs.yml 2>/dev/null && git rm .github/workflows/test-a-demo-fs-ts-nextjs.yml || echo NOT_PRESENT` — delete if found.
 - [ ] Run `ls .github/workflows/test-a-demo-*.yml 2>/dev/null` — must return nothing.
 - [ ] `git rm -r .github/actions/setup-clojure` — demo-only custom action.
 - [ ] `git rm -r .github/actions/setup-elixir` — demo-only custom action.
@@ -334,9 +361,10 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm -r .github/actions/setup-jvm` — demo-only custom action.
 - [ ] `git rm -r .github/actions/setup-rust` — demo-only custom action.
 - [ ] Run `ls .github/actions/ | grep -E '^(setup-(clojure|elixir|flutter|jvm|rust))$' || echo NONE` — must print `NONE`.
-- [ ] Verify retained actions are present: `ls .github/actions/ | grep -E '^(setup-(golang|node|dotnet|language|docker-cache)|install-language-deps)$'` — must list all six.
+- [ ] Verify retained actions are present: `ls .github/actions/ | grep -E '^(setup-(golang|node|dotnet|language|docker-cache|playwright|python)|install-language-deps)$'` — must list all eight.
 - [ ] Commit with message: `chore(ci): delete a-demo workflows and demo-only custom actions (Phase 8 Commit A, parity verified per <parity-report-sha>)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit B. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `.github/workflows/test-a-demo-*.yml` + `.github/actions/setup-{clojure,elixir,flutter,jvm,rust}/`.
 
 ### 8.B — Commit B: Delete demo app directories
@@ -361,6 +389,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Run `ls apps/ | grep '^a-demo-' || echo NONE` — must print `NONE`.
 - [ ] Commit with message: `chore(apps): delete a-demo app directories (Phase 8 Commit B, parity verified per <parity-report-sha>)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit C. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `apps/a-demo-*`.
 
 ### 8.C — Commit C: Delete demo spec area
@@ -369,6 +398,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Run `ls specs/apps/ | grep '^a-demo' || echo NONE` — must print `NONE`.
 - [ ] Commit with message: `chore(specs): delete a-demo spec area (Phase 8 Commit C, parity verified per <parity-report-sha>)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit D. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `specs/apps/a-demo/`.
 
 ### 8.D — Commit D: Delete demo-specific reference doc
@@ -376,6 +406,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] `git rm docs/reference/demo-apps-ci-coverage.md`
 - [ ] Commit with message: `docs(reference): delete demo-apps-ci-coverage.md (Phase 8 Commit D)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit E. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only the single file.
 
 ### 8.E — Commit E: Prune root configs + `.github/` non-deletion edits
@@ -391,9 +422,11 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Edit `.github/actions/install-language-deps/action.yml`: prune demo-project names from dispatch tables / matrix definitions (today: 9 a-demo references).
 - [ ] Check `.github/actions/setup-docker-cache/action.yml` for demo references: if present, prune inline; if action is entirely unused post-extraction, flag for a follow-up plan (do not delete in this commit).
 - [ ] For each file in `scripts/`, grep for `a-demo` references; prune demo names from any project-enumerating list; leave script structure intact.
-- [ ] Run consolidated grep sweep: `grep -rnI 'a-demo' codecov.yml go.work open-sharia-enterprise.sln .github/ scripts/ 2>/dev/null | grep -v '^.github/actions/setup-docker-cache/' || echo CLEAN` — must print `CLEAN` (any remaining match is a gap to resolve before commit).
+- [ ] Inspect `nx.json` for any demo-project-specific `targetDefaults`, `namedInputs` overrides, or cache rules keyed on `a-demo-*` project names: `grep -n 'a-demo' nx.json || echo NONE`. If any exist, prune them in this commit. If none exist, confirm with `echo NONE`.
+- [ ] Run consolidated grep sweep: `grep -rnI 'a-demo' codecov.yml go.work open-sharia-enterprise.sln .github/ scripts/ nx.json 2>/dev/null | grep -v '^.github/actions/setup-docker-cache/' || echo CLEAN` — must print `CLEAN` (any remaining match is a gap to resolve before commit).
 - [ ] Commit with message: `chore(config): prune a-demo references from codecov/go.work/sln/reusables/actions/scripts (Phase 8 Commit E)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit F. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope.
 
 ### 8.F — Commit F: Prune root prose references
@@ -414,6 +447,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Run `grep -rnI 'a-demo' README.md CLAUDE.md AGENTS.md ROADMAP.md` — must return zero matches (or only narrative changelog mentions of the extraction event).
 - [ ] Commit with message: `docs(root): prune a-demo references from README/CLAUDE/AGENTS/ROADMAP (Phase 8 Commit F)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit G. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify scope.
 
 ### 8.G — Commit G: Prune governance / docs prose references
@@ -429,6 +463,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 - [ ] Run `grep -rnI 'a-demo' governance/ docs/ --include='*.md'` — remaining matches MUST be limited to: narrative changelog mentions, the classifier row in `governance/conventions/structure/ose-primer-sync.md` (untouched in this commit), and archived plans under `plans/done/`.
 - [ ] Commit with message: `docs(governance,docs): prune a-demo references from docs and governance examples (Phase 8 Commit G)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit H. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify scope.
 
 ### 8.H — Commit H: Update classifier to reflect extraction
@@ -442,6 +477,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
   - [ ] Bump the convention's `updated:` frontmatter to today.
 - [ ] Commit with message: `docs(governance): flip a-demo and orphan-lib classifier rows to neither (Phase 8 Commit H)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit I. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify scope is only the convention file.
 
 ### 8.I — Commit I: Remove orphaned libraries
@@ -460,6 +496,7 @@ Pre-flight checks first; deletion only after both return clean.
 - [ ] Run `nx graph` regeneration and confirm no orphan project nodes for the four libs.
 - [ ] Commit with message: `chore(libs): remove orphaned elixir/clojure libs (Phase 8 Commit I, demo extraction)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit J. If any CI check fails, fix immediately and push a follow-up commit before continuing.
 - [ ] **[C]** Verify commit scope is only `libs/` deletions + `libs/README.md` edit.
 
 ### 8.J — Commit J: Trim rhino-cli demo-only commands
@@ -481,6 +518,7 @@ Pre-flight checks first; deletion only after both return clean.
 - [ ] Run `rhino-cli --help` (via the built binary) and confirm no subcommand named `java`, `contracts java-clean-imports`, `contracts dart-scaffold`, or `contracts` appears.
 - [ ] Commit with message: `chore(rhino-cli): trim demo-only commands (Phase 8 Commit J, demo extraction)`.
 - [ ] Push: `git push origin main`.
+- [ ] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass. If any CI check fails, fix immediately and push a follow-up commit before proceeding to 8.Z.
 - [ ] **[C]** Verify commit scope is only `apps/rhino-cli/` + `CLAUDE.md` (+ optional `specs/apps/rhino/` edits).
 
 ### 8.Z — Checkpoint after all 10 commits
@@ -521,7 +559,7 @@ Goal: verify `ose-public` is healthy after extraction; catch any dangling refere
 
 ### 9.4 — Dangling-reference grep sweep
 
-- [ ] Run the sweep: `grep -rnI 'a-demo' ose-public/ --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^plans/done/' | grep -v '^plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v 'governance/conventions/structure/ose-primer-sync.md'`.
+- [ ] Run the sweep: `grep -rnI 'a-demo' . --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^./plans/done/' | grep -v '^./plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v './governance/conventions/structure/ose-primer-sync.md'`.
 - [ ] The command MUST return zero lines. Any line is a dangling reference; resolve it (Commit I or an amendment to the relevant Phase 8 commit) before proceeding.
 
 ### 9.5 — Link validation
@@ -625,7 +663,7 @@ Goal: close out and archive.
 
 ### 12.2 — Move plan folder
 
-- [ ] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (optionally updating the date prefix to completion date per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md)).
+- [ ] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (creation date is preserved per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md)).
 
 ### 12.3 — Update indices
 
@@ -647,7 +685,7 @@ Goal: close out and archive.
 | **G3** — Skill present in both harnesses                     | Phase 3 complete; `.claude/skills/` and `.opencode/skill/` mirror.                                                                                                                                             |
 | **G4** — Smoke-test reports readable                         | Phase 6 complete; two reports committed.                                                                                                                                                                       |
 | **G5** — Primer parity verified — **hard gate for Phase 8**  | Phase 7 complete; parity report verdict is `parity verified`.                                                                                                                                                  |
-| **G6** — Demo paths absent from `ose-public`                 | Phase 8 Z-checkpoint all green (Commits A–H applied).                                                                                                                                                          |
+| **G6** — Demo paths absent from `ose-public`                 | Phase 8 Z-checkpoint all green (Commits A–J applied).                                                                                                                                                          |
 | **G6.1** — Orphaned libs removed                             | Phase 8 Commit I landed; `ls libs/` contains none of `clojure-openapi-codegen`, `elixir-cabbage`, `elixir-gherkin`, `elixir-openapi-codegen`; `nx graph` has no orphan nodes for those libs.                   |
 | **G6.2** — `rhino-cli` trimmed                               | Phase 8 Commit J landed; `rhino-cli --help` does not list `java validate-annotations`, `contracts java-clean-imports`, or `contracts dart-scaffold`; `nx run rhino-cli:test:quick` passes with ≥ 90% coverage. |
 | **G7** — Product apps still pass                             | Phase 9 `nx affected` and E2E green.                                                                                                                                                                           |

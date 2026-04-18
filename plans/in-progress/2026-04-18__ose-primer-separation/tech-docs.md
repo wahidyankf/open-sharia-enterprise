@@ -216,6 +216,8 @@ The table below is a **blueprint**; the final authoritative version lives in `go
 | `libs/elixir-cabbage`                                      | `neither` (post-extraction) | —                      | Only consumer was `a-demo-be-elixir-phoenix`; removed in Phase 8 Commit I.                                                                                                                                                                        |
 | `libs/elixir-gherkin`                                      | `neither` (post-extraction) | —                      | Only consumer was `a-demo-be-elixir-phoenix`; removed in Phase 8 Commit I.                                                                                                                                                                        |
 | `libs/elixir-openapi-codegen`                              | `neither` (post-extraction) | —                      | Only consumer was `a-demo-be-elixir-phoenix`; removed in Phase 8 Commit I.                                                                                                                                                                        |
+| `libs/ts-ui`                                               | `neither`                   | —                      | Consumed only by `organiclever-fe` (FSL-1.1-MIT product app); propagating UI design tokens or styling artifacts would leak product-specific theming into the MIT template.                                                                        |
+| `libs/ts-ui-tokens`                                        | `neither`                   | —                      | Consumed only by `organiclever-fe` (FSL-1.1-MIT product app); same rationale as `libs/ts-ui`.                                                                                                                                                     |
 | `libs/*` (other)                                           | `propagate`                 | identity               | Default assumption for generic libs; overridden per-lib if product-specific.                                                                                                                                                                      |
 | `specs/apps/organiclever/**`                               | `neither`                   | —                      | Product specs.                                                                                                                                                                                                                                    |
 | `governance/principles/**`                                 | `bidirectional`             | identity               | Universal values; improvements from either side should surface.                                                                                                                                                                                   |
@@ -308,6 +310,8 @@ This section documents the one-time extraction of the `a-demo-*` polyglot showca
 
 - `specs/apps/a-demo/` (entire subtree: contracts, behavioural features, OpenAPI spec, generated docs).
 
+> **Note on `a-demo-contracts`**: The `a-demo-contracts` Nx project lives at `specs/apps/a-demo/contracts/` and is deleted as part of `specs/apps/a-demo/` in Commit C. Any `a-demo-contracts` entries in `nx.json` or `codecov.yml` are caught by the Config cleanup in Commit E. The Phase 8.E step explicitly greps `nx.json` for `a-demo` references to confirm coverage.
+
 **14 GitHub Actions workflows under `.github/workflows/`** (pattern `test-a-demo-*.yml`):
 
 - `test-a-demo-be-clojure-pedestal.yml`
@@ -358,6 +362,8 @@ Actions explicitly **retained** (consumers remain after extraction):
 - `.github/actions/setup-dotnet/` — consumed by `organiclever-be` (F#/Giraffe runs on .NET).
 - `.github/actions/setup-language/` — generic dispatcher referenced by product workflows.
 - `.github/actions/setup-docker-cache/` — may be consumed by product integration tests; kept pending Phase 9 verification (if zero retained callers, flag as a follow-up deletion rather than force removal in this plan).
+- `.github/actions/setup-playwright/` — consumed by `test-and-deploy-organiclever.yml`, `_reusable-frontend-e2e.yml`, `_reusable-test-and-deploy.yml` (product workflows; none demo).
+- `.github/actions/setup-python/` — consumed by `codecov-upload.yml` and `pr-quality-gate.yml` (product-critical; used for `codecoverage/codecov-action` steps in the PR quality gate).
 - `.github/actions/install-language-deps/` — kept and pruned (not deleted).
 
 **Prose edits in existing docs** (demo references pruned, docs retained):
@@ -502,14 +508,14 @@ for path in classifier.rows_with_direction("propagate"):
         left  = read(ose-public/path)
         right = read(primer-clone/path)
         if byte_equal(left, right):
-            record(path, "equal")
-        elif left is newer than right (commit timestamp on HEAD):
-            record(path, "ose-public ahead — catch-up propagation required")
+            record(path, "equal — safe")
         else:
-            record(path, "primer ahead or equal — safe")
-verdict = "safe" if no "catch-up propagation required" rows else "blocked"
+            record(path, "content differs — catch-up propagation required; human reviews diff")
+verdict = "parity verified" if no "catch-up propagation required" rows else "blocked"
 write_parity_report(verdict, rows)
 ```
+
+> **Note**: Parity is determined by byte-level equality, not commit timestamps. Git commit timestamps are author-settable and unreliable for cross-repo comparison; a file modified with an earlier timestamp in `ose-public` could be incorrectly classified as "older." When files differ, the content diff is recorded and a human decides whether the `ose-public` or primer version is authoritative before extraction proceeds.
 
 If verdict is "blocked", Phase 8 cannot proceed. The maintainer invokes the normal propagation-maker (apply mode) to catch the primer up, waits for the PR to merge, then re-runs parity-check.
 
@@ -782,7 +788,7 @@ report-uuid-chain: <chain>
 
 Different rules apply to `ose-public` vs `ose-primer` — explicit by design:
 
-1. **`ose-public`: direct-to-main** (Trunk Based Development). Phase 8 extraction commits A through J land directly on `ose-public`'s `main` branch. No feature branch is created for the extraction. No PR is opened against `ose-public`. This matches the repo-wide [Trunk Based Development](../../../governance/development/workflow/commit-messages.md) practice and the existing environment-branch-only convention for non-main branches. Commits are pushed to `origin/main` as they land; pre-commit + pre-push hooks are the quality gate.
+1. **`ose-public`: direct-to-main** (Trunk Based Development). Phase 8 extraction commits A through J land directly on `ose-public`'s `main` branch. No feature branch is created for the extraction. No PR is opened against `ose-public`. This matches the repo-wide [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) practice and the existing environment-branch-only convention for non-main branches. Commits are pushed to `origin/main` as they land; pre-commit + pre-push hooks are the quality gate.
 2. **`ose-primer`: PR-only** (every mutation). Propagation-maker's apply mode is the **only** way any commit reaches `ose-primer`. The flow is mandatory:
    1. Create a git worktree attached to the primer clone.
    2. Create a new branch tracking `origin/main` inside the worktree.
@@ -900,7 +906,7 @@ Scope=`repo`, qualifier=`ose-primer-extraction`, type=`execution` → filename `
 ---
 name: repo-ose-primer-extraction-execution
 goal: Execute the one-time extraction of a-demo-* from ose-public after verifying primer parity
-termination: Either "extraction complete" (all 8 commits landed + Phase 9 gates green) or "blocked at parity" (parity report verdict=NOT verified, human decides whether to run catch-up)
+termination: Either "extraction complete" (all 10 commits landed + Phase 9 gates green) or "blocked at parity" (parity report verdict=NOT verified, human decides whether to run catch-up)
 inputs:
   - name: extraction-scope
     type: string
@@ -922,7 +928,7 @@ outputs:
     pattern: "generated-reports/parity__*__report.md"
   - name: extraction-commits
     type: list
-    description: "SHAs of Commit A through Commit H"
+    description: "SHAs of Commits A through J"
   - name: final-status
     type: enum
     values: [complete, blocked-at-parity, aborted]
@@ -934,14 +940,14 @@ outputs:
 1. **Pre-flight** — Clone refresh; extraction-scope parse; verify `ose-public` at `main`.
 2. **Parity-check gate** — Invoke `repo-ose-primer-propagation-maker` in `parity-check` mode. Read verdict. If verified → proceed to Phase 3. If NOT verified → enter catch-up loop.
 3. **Catch-up loop** (blocked path) — For each blocking path, invoke the sync workflow with `direction=propagate mode=apply` scoped to that path; wait for PR merge; re-run parity-check; loop until verified or max-iterations exceeded. On exceeded, emit `blocked-at-parity` and halt.
-4. **Extraction commit sequence** — Execute Commits A → H as documented in [Demo Extraction](#demo-extraction-one-time-event) §Extraction sequencing. Each commit references the parity-report SHA.
+4. **Extraction commit sequence** — Execute Commits A → J as documented in [Demo Extraction](#demo-extraction-one-time-event) §Extraction sequencing. Each commit references the parity-report SHA.
 5. **Post-extraction verification** — Run `nx affected`, product E2E, grep sweep, link checker, markdown lint. On any failure, emit `aborted` and pause for human remediation (extraction commits are not auto-reverted; the maintainer decides).
 6. **Classifier flip** — Commit H: update classifier rows for `apps/a-demo-*` and `specs/apps/a-demo/**` to `neither (post-extraction)`.
 7. **Close-out** — Return `complete` status.
 
 **Gherkin success criteria**:
 
-- Given a primer clone in parity with ose-public, when the workflow is invoked, then the parity-check report is generated first AND its verdict is "parity verified" AND the eight extraction commits follow.
+- Given a primer clone in parity with ose-public, when the workflow is invoked, then the parity-check report is generated first AND its verdict is "parity verified" AND the ten extraction commits follow.
 - Given a primer clone where one demo is older than ose-public's, when the workflow is invoked, then the catch-up loop runs AND the extraction does NOT proceed until parity is re-verified.
 - Given extraction commits have landed, when the post-extraction verification phase runs, then `nx affected -t typecheck lint test:quick spec-coverage` passes AND `grep -rnI 'a-demo' ose-public/` returns only allowed matches (archived plans, this plan, classifier table).
 
@@ -972,7 +978,7 @@ outputs:
 | `governance/conventions/structure/ose-primer-sync.md`                                      | **New**            | Authoritative classifier and sync convention.                                                                                                         |
 | `governance/conventions/structure/README.md`                                               | Edit               | Index link to the new convention.                                                                                                                     |
 | `governance/workflows/repo/repo-ose-primer-sync-execution.md`                              | **New**            | Ongoing sync workflow (direction + mode parameterised; invokes adopter or propagator).                                                                |
-| `governance/workflows/repo/repo-ose-primer-extraction-execution.md`                        | **New**            | One-time extraction workflow (parity-check → catch-up → A-H commits → post-verification).                                                             |
+| `governance/workflows/repo/repo-ose-primer-extraction-execution.md`                        | **New**            | One-time extraction workflow (parity-check → catch-up → A–J commits → post-verification).                                                             |
 | `governance/workflows/repo/README.md`                                                      | Edit               | Index link(s) to the new workflows.                                                                                                                   |
 | `.claude/skills/repo-syncing-with-ose-primer/SKILL.md`                                     | **New**            | Shared skill entry point.                                                                                                                             |
 | `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md`              | **New**            | Skill reference module.                                                                                                                               |

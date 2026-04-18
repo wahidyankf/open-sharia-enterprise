@@ -13,7 +13,7 @@ This plan delivers five product outcomes inside `ose-public`:
 5. **One-time extraction** — removal of the `a-demo-*` polyglot showcase from `ose-public`: 17 app directories under `apps/`, the `specs/apps/a-demo/` spec area, 14 `test-a-demo-*.yml` workflows, the `docs/reference/demo-apps-ci-coverage.md` reference page, all inbound references in `README.md` / `CLAUDE.md` / `AGENTS.md` / `ROADMAP.md` / governance docs, and the demo entries in `codecov.yml`, `go.work`, `open-sharia-enterprise.sln`. Also: four orphaned `libs/` entries (`clojure-openapi-codegen`, `elixir-cabbage`, `elixir-gherkin`, `elixir-openapi-codegen`) whose only consumers were the extracted demos. Also: three `rhino-cli` commands whose only targets were demo apps (`java validate-annotations`, `contracts java-clean-imports`, `contracts dart-scaffold`) plus their supporting code under `apps/rhino-cli/cmd/` and `apps/rhino-cli/internal/java/`. Product apps (OrganicLever, AyoKoding, OSE Platform), `rhino-cli` (trimmed), and the remaining generic libraries remain.
 6. **Two workflow orchestrations** under `governance/workflows/repo/`:
    - `repo-ose-primer-sync-execution.md` — ongoing sync cycle; parameterised by `direction` (adopt|propagate) and `mode` (dry-run|apply); invokes the relevant agent; optional PR creation in apply+propagate mode.
-   - `repo-ose-primer-extraction-execution.md` — one-time extraction orchestrator; gates on parity-check; runs catch-up loop on failure; executes the eight extraction commits; runs post-extraction verification.
+   - `repo-ose-primer-extraction-execution.md` — one-time extraction orchestrator; gates on parity-check; runs catch-up loop on failure; executes the ten extraction commits; runs post-extraction verification.
      Both workflows are `type: execution` per the [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) and follow the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern.
 7. **Agents configured for Opus** — `model: opus` in the frontmatter of both agents. See `tech-docs.md` §Model Choice for rationale.
 
@@ -522,13 +522,17 @@ Feature: Orphaned library removal (Commit I)
     And "libs/README.md" contains no entries for the four deleted libs
     And "nx graph" has no node matching "clojure-openapi-codegen", "elixir-cabbage", "elixir-gherkin", or "elixir-openapi-codegen"
 
-  Scenario: Commit I aborts if a retained app still imports a deleted lib
-    Given Phase 8 Commit I is about to be applied
-    When the pre-flight grep runs "grep -rnl 'libs/(clojure-openapi-codegen|elixir-(cabbage|gherkin|openapi-codegen))' apps/ | grep -v apps/a-demo-"
-    Then the command returns empty (no retained app depends on the four libs)
+  Scenario: Commit I is safe when no retained app imports deleted libs
+    Given Phase 8 Commits A through H have landed
+    When the pre-flight grep runs against the libs to be deleted, excluding a-demo paths
+    Then the command returns empty
     And Commit I is safe to apply
-    If the grep returns any non-a-demo match
-    Then Commit I MUST be blocked until the dependency is resolved
+
+  Scenario: Commit I is blocked when a retained app imports a deleted lib
+    Given a retained app transitively imports a deleted lib
+    When the pre-flight grep runs against the libs to be deleted, excluding a-demo paths
+    Then Commit I MUST be blocked
+    And the executor resolves the dependency before retrying
 
   Scenario: Libraries explicitly kept
     Given Phase 8 Commit I has been applied
@@ -555,10 +559,10 @@ Feature: Branch-policy asymmetry (ose-public direct-to-main; ose-primer PR-only)
     And a draft PR is opened against "wahidyankf/ose-primer:main" via "gh pr create --draft"
     And the PR is merged (or closed) by a human reviewer
 
-  Scenario: Agent cannot bypass the primer PR flow
-    Given any agent or workflow attempts to run `git -C "$OSE_PRIMER_CLONE" commit` directly on the primer clone's main-branch worktree
-    When that code path is reached
-    Then the path does NOT exist in any agent definition, skill, or workflow file (Gherkin static check)
+  Scenario: No direct-commit-to-primer code path exists in any artifact
+    Given the complete set of agent definitions, skill files, and workflow documents is inspected
+    When a static grep for direct git commit patterns inside primer clone paths is run
+    Then no match is found outside the expected dry-run documentation examples
     And if such a path is ever added, `repo-rules-checker` flags it as a governance violation
 
   Scenario: Extraction catch-up respects the PR invariant
@@ -692,18 +696,18 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
     And the workflow halts for human intervention
 
   Scenario: Extraction emits aborted on post-extraction verification failure
-    Given the eight extraction commits have landed
+    Given the ten extraction commits have landed
     And the post-extraction verification phase detects a failure (nx affected red, grep sweep finds dangling references, link checker reports broken links, or markdown lint fails)
     When the workflow's post-verification phase evaluates
     Then the workflow's final-status is "aborted"
     And the maintainer is prompted to remediate (the extraction commits are NOT auto-reverted)
 
   Scenario: Extraction emits complete on green post-verification
-    Given all eight extraction commits land
+    Given all ten extraction commits land
     And all post-extraction gates pass
     When the workflow's close-out phase runs
     Then the workflow's final-status is "complete"
-    And the output "extraction-commits" contains exactly eight SHAs
+    And the output "extraction-commits" contains exactly ten SHAs
 ```
 
 ## Product Scope
