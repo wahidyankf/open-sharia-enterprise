@@ -6,16 +6,19 @@ on:
       frontend-name:
         required: true
         type: string
-        description: "Frontend project name (e.g., a-demo-fe-ts-nextjs)"
+        description: "Frontend Nx project name"
+      fe-e2e-name:
+        required: true
+        type: string
+        description: "Frontend E2E Nx project name"
+      backend-codegen-target:
+        required: true
+        type: string
+        description: "Backend codegen Nx target (e.g., my-be:codegen)"
       compose-dir:
         required: true
         type: string
-        description: "Path to infra/dev compose directory (e.g., infra/dev/a-demo-fe-ts-nextjs)"
-      backend-compose-dir:
-        required: false
-        type: string
-        default: "infra/dev/a-demo-be-golang-gin"
-        description: "Path to backend compose directory for codegen (default: infra/dev/a-demo-be-golang-gin)"
+        description: "Path to infra/dev compose directory"
       extra-language:
         required: false
         type: string
@@ -25,7 +28,22 @@ on:
         required: false
         type: string
         default: ""
-        description: "Space-separated extra codegen Nx targets to run (e.g., 'a-demo-fe-ts-nextjs:codegen a-demo-fe-ts-tanstack-start:codegen')"
+        description: "Space-separated extra codegen Nx targets to run"
+      extra-post-codegen:
+        required: false
+        type: string
+        default: ""
+        description: "Extra shell command to run after codegen (e.g., flutter pub get in a specific dir)"
+      frontend-port:
+        required: false
+        type: number
+        default: 3301
+        description: "Frontend port to wait for"
+      backend-url:
+        required: false
+        type: string
+        default: "http://localhost:8201"
+        description: "Backend URL for Playwright"
       health-timeout:
         required: false
         type: number
@@ -53,16 +71,15 @@ jobs:
 
       - name: Generate contract types
         run: |
-          npx nx run a-demo-contracts:bundle
-          npx nx run a-demo-be-golang-gin:codegen
+          npx nx run ${{ inputs.backend-codegen-target }}
           npx nx run ${{ inputs.frontend-name }}:codegen
           for target in ${{ inputs.extra-codegen-targets }}; do
             npx nx run "$target"
           done
 
-      - name: Flutter pub get (after codegen)
-        if: inputs.extra-language == 'flutter'
-        run: cd apps/a-demo-fe-dart-flutterweb && flutter pub get
+      - name: Extra post-codegen steps
+        if: inputs.extra-post-codegen != ''
+        run: ${{ inputs.extra-post-codegen }}
 
       - name: Start full stack
         run: docker compose -f ${{ inputs.compose-dir }}/docker-compose.yml up --build -d
@@ -71,9 +88,10 @@ jobs:
         run: |
           TIMEOUT=${{ inputs.health-timeout }}
           ITERATIONS=$((TIMEOUT / 10))
-          echo "Waiting for frontend to be ready on port 3301 (timeout: ${TIMEOUT}s)..."
+          PORT=${{ inputs.frontend-port }}
+          echo "Waiting for frontend to be ready on port ${PORT} (timeout: ${TIMEOUT}s)..."
           for i in $(seq 1 $ITERATIONS); do
-            if curl -sf http://localhost:3301 > /dev/null 2>&1; then
+            if curl -sf http://localhost:${PORT} > /dev/null 2>&1; then
               echo "Frontend is ready"
               exit 0
             fi
@@ -87,17 +105,17 @@ jobs:
       - uses: ./.github/actions/setup-playwright
 
       - name: Run FE E2E tests
-        run: npx nx run a-demo-fe-e2e:test:e2e
+        run: npx nx run ${{ inputs.fe-e2e-name }}:test:e2e
         env:
-          BASE_URL: http://localhost:3301
-          BACKEND_URL: http://localhost:8201
+          BASE_URL: http://localhost:${{ inputs.frontend-port }}
+          BACKEND_URL: ${{ inputs.backend-url }}
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: fe-e2e-${{ inputs.frontend-name }}
-          path: apps/a-demo-fe-e2e/playwright-report/
+          path: apps/${{ inputs.fe-e2e-name }}/playwright-report/
           retention-days: 7
 
       - name: Teardown

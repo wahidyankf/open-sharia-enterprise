@@ -10,11 +10,6 @@ coverage:
 # and reports ~7% lower than go-test-coverage's statement coverage.
 ignore:
   - "**/types.go"
-  # a-demo-be-golang-gin infrastructure excluded from coverage (matches
-  # grep -v filter in test:quick — Go has no built-in coverage exclusion)
-  - "apps/a-demo-be-golang-gin/internal/store/gorm_store.go"
-  - "apps/a-demo-be-golang-gin/internal/server/server.go"
-  - "apps/a-demo-be-golang-gin/cmd/server/**"
   - "**/generated-contracts/**"
 
 flags:
@@ -38,14 +33,6 @@ flags:
     paths:
       - apps/oseplatform-cli/
     carryforward: true
-  a-demo-fs-ts-nextjs:
-    paths:
-      - apps/a-demo-fs-ts-nextjs/
-    carryforward: true
-  a-demo-be-java-springboot:
-    paths:
-      - apps/a-demo-be-java-springboot/
-    carryforward: true
   organiclever-fe:
     paths:
       - apps/organiclever-fe/
@@ -61,56 +48,4 @@ flags:
   hugo-commons:
     paths:
       - libs/hugo-commons/
-    carryforward: true
-  a-demo-be-elixir-phoenix:
-    paths:
-      - apps/a-demo-be-elixir-phoenix/
-    carryforward: true
-  a-demo-be-clojure-pedestal:
-    paths:
-      - apps/a-demo-be-clojure-pedestal/
-    carryforward: true
-  a-demo-be-fsharp-giraffe:
-    paths:
-      - apps/a-demo-be-fsharp-giraffe/
-    carryforward: true
-  a-demo-be-golang-gin:
-    paths:
-      - apps/a-demo-be-golang-gin/
-    carryforward: true
-  a-demo-be-python-fastapi:
-    paths:
-      - apps/a-demo-be-python-fastapi/
-    carryforward: true
-  a-demo-be-rust-axum:
-    paths:
-      - apps/a-demo-be-rust-axum/
-    carryforward: true
-  a-demo-be-kotlin-ktor:
-    paths:
-      - apps/a-demo-be-kotlin-ktor/
-    carryforward: true
-  a-demo-be-java-vertx:
-    paths:
-      - apps/a-demo-be-java-vertx/
-    carryforward: true
-  a-demo-be-ts-effect:
-    paths:
-      - apps/a-demo-be-ts-effect/
-    carryforward: true
-  a-demo-be-csharp-aspnetcore:
-    paths:
-      - apps/a-demo-be-csharp-aspnetcore/
-    carryforward: false
-  a-demo-fe-ts-nextjs:
-    paths:
-      - apps/a-demo-fe-ts-nextjs/
-    carryforward: true
-  a-demo-fe-ts-tanstack-start:
-    paths:
-      - apps/a-demo-fe-ts-tanstack-start/
-    carryforward: true
-  a-demo-fe-dart-flutterweb:
-    paths:
-      - apps/a-demo-fe-dart-flutterweb/
     carryforward: true
