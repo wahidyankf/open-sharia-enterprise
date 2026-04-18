@@ -362,6 +362,55 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 - Easy to update and maintain
 - Supports multiple diagram types (flowchart, sequence, class, ER, etc.)
 
+### When a Plan SHOULD Include a Diagram
+
+Add a Mermaid diagram whenever the plan covers one of these concerns and a reader would otherwise have to reconstruct the picture mentally from prose:
+
+- **Component interactions** — which services, agents, apps, or libraries call which, and through what contract (flowchart or C4-style diagram)
+- **Sequence or flow between agents or systems** — order-of-operations across processes, including async hand-offs and timeouts (sequenceDiagram)
+- **State transitions** — lifecycle of an entity (plan folder, request, deployment, entitlement) with named states and triggered transitions (stateDiagram-v2)
+- **Decision branches** — non-trivial conditional logic with more than two outcomes or nested decisions (flowchart with labelled edges)
+
+### When a Plan MAY Skip Diagrams
+
+Text-only is fine when the plan is genuinely linear and small:
+
+- Single-file README-only plans touching one file or one config value
+- Renames, copy edits, documentation fixes
+- Dependency bumps with no behavioural change
+
+If unsure, add the diagram. A redundant diagram costs less than a missed architectural ambiguity.
+
+### Accessibility and Palette Requirements
+
+All plan diagrams MUST follow repository diagram standards — color-blind friendly palette, mobile-friendly orientation, correct Mermaid comment syntax. This convention does **not** redefine those rules.
+
+- **Primary reference** — [Diagram and Schema Convention](../formatting/diagrams.md) for full syntax, ASCII fallback rules, and orientation guidance
+- **Palette and accessibility Skill** — [`docs-creating-accessible-diagrams`](../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md) for the verified WCAG-compliant hex codes, dos and don'ts, and color-blindness coverage
+
+### Example: Plan-Appropriate Flowchart
+
+A plan introducing a multi-step approval flow benefits from a decision-branch diagram:
+
+````markdown
+```mermaid
+flowchart TD
+    A[Plan in backlog/] -->|maker promotes| B[Plan in in-progress/]
+    B --> C{plan-execution-checker passes?}
+    C -->|Yes| D[Move to done/]
+    C -->|No| E[plan-fixer iterates]
+    E --> C
+
+    style A fill:#CA9161,stroke:#000,color:#FFF
+    style B fill:#0173B2,stroke:#000,color:#FFF
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#029E73,stroke:#000,color:#FFF
+    style E fill:#CC78BC,stroke:#000,color:#000
+```
+````
+
+The same scope described only in prose ("plans move from backlog to in-progress to done, with a check-fix loop if validation fails") forces every reader to rebuild the branching mentally; the diagram makes the loop explicit.
+
 For complete diagram standards, see [Diagram and Schema Convention](../formatting/diagrams.md).
 
 ## Relative Link Paths in Plan Files
