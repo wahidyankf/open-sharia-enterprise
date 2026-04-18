@@ -23,6 +23,8 @@ principles:
 updated: 2026-02-05
 ---
 
+# Elixir Performance Standards
+
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md) before using these standards.

@@ -58,7 +58,7 @@ This document defines **authoritative performance standards** for Go development
 
 ---
 
-# Part 1: Performance Optimization
+## Part 1: Performance Optimization
 
 ## Performance Fundamentals
 
@@ -2426,7 +2426,7 @@ func rangeMapGood(m map[string]int) {
 
 ---
 
-# Part 2: Memory Management
+## Part 2: Memory Management
 
 ## Memory Management Fundamentals
 
@@ -2649,7 +2649,7 @@ ptr = new(int)
 
 ## Escape Analysis
 
-#### Escape Analysis Decision Tree
+### Escape Analysis Decision Tree
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC

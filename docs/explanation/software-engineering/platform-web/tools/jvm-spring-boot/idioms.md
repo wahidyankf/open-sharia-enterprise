@@ -19,7 +19,9 @@ principles:
 updated: 2026-01-25
 ---
 
-### Core Spring Boot Patterns
+# Spring Boot Idioms
+
+## Core Spring Boot Patterns
 
 **Auto-Configuration**:
 
@@ -45,7 +47,7 @@ updated: 2026-01-25
 - [Domain Events](#domain-events-with-applicationevent) - Event-driven architecture
 - [Transaction Management](#declarative-transaction-management) - @Transactional boundaries
 
-### Related Documentation
+## Related Documentation
 
 - [Best Practices](best-practices.md)
 - [Anti-Patterns](anti-patterns.md)

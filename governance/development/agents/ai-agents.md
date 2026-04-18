@@ -750,7 +750,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 
 This role-based categorization was chosen because it:
 
-1. **Aligns with naming conventions** - Role suffixes (-maker, -checker, -fixer, -developer, -executor, -deployer) directly map to colors. Note: Purple (Implementor) agents use varied suffixes (-developer, -executor, -deployer) because their implementation contexts differ
+1. **Aligns with naming conventions** - Role suffixes (-maker, -checker, -fixer, -dev, -deployer, -manager) directly map to colors
 2. **Maps to tool permissions** - Clear security boundaries between read-only, edit-only, write-capable, and full-access agents
 3. **Provides clear user guidance** - Users can quickly identify which category of agent they need
 4. **Extensible** - New agents naturally fit into one of the four role categories
@@ -865,7 +865,7 @@ Agents are identified through FIVE independent methods:
 **Users with color blindness can identify agents by:**
 
 - Reading the agent name
-- Recognizing the role suffix pattern (-maker, -checker, -fixer, -developer, -executor, -deployer)
+- Recognizing the role suffix pattern (-maker, -checker, -fixer, -dev, -deployer, -manager)
 - Seeing that the emoji is a square (shape, not color)
 - Reading the description field
 

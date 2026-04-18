@@ -26,6 +26,8 @@ related:
   - ./data-access.md
 ---
 
+# Spring Boot Functional Programming
+
 ## 📋 Quick Reference
 
 - [Immutable Data Structures](#immutable-data-structures) - Records, immutable collections, value objects

@@ -25,6 +25,8 @@ related:
   - ./performance.md
 ---
 
+# Spring Boot Configuration
+
 ## 📋 Quick Reference
 
 - [Application Properties Structure](#application-properties-structure) - Main configuration files

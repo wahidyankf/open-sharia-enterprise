@@ -13,14 +13,16 @@ related:
 updated: 2026-01-25
 ---
 
-### Major Changes
+# Spring Boot Version Migration
+
+## Major Changes
 
 1. **Java 17 Minimum** - Spring Boot 3 requires Java 17+
 2. **Jakarta EE** - javax.\* → jakarta.\* package migration
 3. **Spring Framework 6** - Core framework upgrade
 4. **Native Compilation** - GraalVM support improved
 
-#### 1. Update Java Version
+### 1. Update Java Version
 
 ```kotlin
 // build.gradle.kts
@@ -30,7 +32,7 @@ java {
 }
 ```
 
-#### 2. Update Spring Boot Version
+### 2. Update Spring Boot Version
 
 ```kotlin
 plugins {
@@ -38,7 +40,7 @@ plugins {
 }
 ```
 
-#### 3. Replace javax.\* with jakarta.\*
+### 3. Replace javax.\* with jakarta.\*
 
 ```bash
 # Automated replacement (Linux/Mac)
@@ -59,7 +61,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 ```
 
-#### 4. Update Dependencies
+### 4. Update Dependencies
 
 ```kotlin
 dependencies {
@@ -69,7 +71,7 @@ dependencies {
 }
 ```
 
-#### 5. Configuration Property Changes
+### 5. Configuration Property Changes
 
 ```yaml
 
@@ -86,7 +88,7 @@ spring:
       jakarta.persistence.validation.mode: none
 ```
 
-#### 6. Security Configuration Changes
+### 6. Security Configuration Changes
 
 ```java
 // Before (Spring Boot 2.x)
@@ -115,14 +117,14 @@ public class SecurityConfig {
 }
 ```
 
-### Breaking Changes
+## Breaking Changes
 
 - **Actuator Endpoints** - Some endpoints restructured
 - **MockMvc** - Changes in MockMvc configuration
 - **WebTestClient** - API changes for reactive testing
 - **Property Names** - Some spring.\* properties renamed
 
-### Migration Checklist
+## Migration Checklist
 
 - [ ] Update Java to 17+
 - [ ] Update Spring Boot to 3.3.0+

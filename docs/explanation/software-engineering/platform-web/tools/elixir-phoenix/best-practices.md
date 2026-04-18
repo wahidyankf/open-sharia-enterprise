@@ -21,49 +21,51 @@ principles:
 updated: 2026-01-25
 ---
 
-### Project Organization
+# Phoenix Best Practices
+
+## Project Organization
 
 - [Project Structure](#project-structure) - Directory and module organization
 - [Context Design](#context-design) - Bounded context patterns
 - [Dependency Management](#dependency-management) - Mix dependencies
 
-### Code Quality
+## Code Quality
 
 - [Naming Conventions](#naming-conventions) - Clear, descriptive names
 - [Documentation](#documentation) - Module and function docs
 - [Type Specifications](#type-specifications) - Typespecs and Dialyzer
 
-### Data and Persistence
+## Data and Persistence
 
 - [Schema Design](#schema-design) - Ecto schema patterns
 - [Changeset Validation](#changeset-validation) - Data validation
 - [Query Optimization](#query-optimization) - Efficient queries
 - [Migrations](#migrations) - Database migrations
 
-### API Design
+## API Design
 
 - [REST API Design](#rest-api-design) - RESTful conventions
 - [JSON API Standards](#json-api-standards) - Response formats
 - [Error Handling](#error-handling) - Error responses
 
-### Real-Time Features
+## Real-Time Features
 
 - [Channel Design](#channel-design) - WebSocket patterns
 - [LiveView Optimization](#liveview-optimization) - LiveView best practices
 - [PubSub Usage](#pubsub-usage) - Event broadcasting
 
-### Security
+## Security
 
 - [Authentication](#authentication) - User authentication patterns
 - [Authorization](#authorization) - Access control
 - [Input Validation](#input-validation) - Security boundaries
 
-### Testing
+## Testing
 
 - [Testing Strategy](#testing-strategy) - Test organization
 - [Test Data](#test-data) - Fixtures and factories
 
-### Production Readiness
+## Production Readiness
 
 - [Configuration](#configuration) - Runtime configuration
 - [Logging](#logging) - Structured logging

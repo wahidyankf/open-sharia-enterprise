@@ -21,7 +21,9 @@ principles:
 updated: 2026-01-25
 ---
 
-### Core Phoenix Patterns
+# Phoenix Idioms
+
+## Core Phoenix Patterns
 
 **Context Organization**:
 
@@ -46,7 +48,7 @@ updated: 2026-01-25
 - [Supervision Trees](#10-supervision-trees) - Fault tolerance
 - [GenServer for State](#11-genserver-for-stateful-processes) - State management
 
-### Related Documentation
+## Related Documentation
 
 - [Best Practices](best-practices.md)
 - [Anti-Patterns](anti-patterns.md)

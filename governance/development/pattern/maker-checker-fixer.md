@@ -77,7 +77,7 @@ Each role is implemented as a separate agent with specific responsibilities and 
 
 This pattern is used across multiple agent families. See [AI Agents Index](../../../.claude/agents/README.md) for the complete list of agent families using this pattern. Key families include:
 
-1. **repo-governance-\*** - Repository-wide consistency
+1. **repo-rules-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Next.js 16 content for ayokoding-web
 3. **docs-tutorial-\*** - Tutorial quality validation
 4. **apps-oseplatform-web-content-\*** - Next.js 16 content for oseplatform-web
@@ -379,11 +379,9 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 ## Agent Families
 
-### 1. repo-governance-\* (Repository Consistency)
+### 1. repo-rules-\* (Repository Consistency)
 
 **Domain**: Repository-wide consistency across agents, conventions, AGENTS.md, and documentation
-
-**Note**: The execution scope identifier for this family is `repo-rules` (used in `EXECUTION_SCOPE=repo-rules`), while the agent file names use the prefix `repo-governance-`. This naming difference is intentional: "repo-rules" describes the scope of concern (repository rules), while "repo-governance" describes the agent purpose (governance enforcement).
 
 **Agents**:
 

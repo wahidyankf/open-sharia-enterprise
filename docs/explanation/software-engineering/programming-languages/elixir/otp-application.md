@@ -24,6 +24,8 @@ principles:
 updated: 2026-01-23
 ---
 
+# OTP Application Patterns
+
 ## Overview
 
 Applications are the fundamental unit of code organization in Elixir/OTP. An application groups related modules, provides configuration, manages dependencies, and typically starts a supervision tree for runtime processes.

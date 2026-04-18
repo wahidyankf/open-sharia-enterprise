@@ -978,7 +978,7 @@ end
 
 ## Domain Events Standards
 
-#### 📊 Event-Driven Architecture
+### 📊 Event-Driven Architecture
 
 ```mermaid
 %%{init: {'theme':'base'}}%%
@@ -1180,7 +1180,7 @@ end
 
 ## Phoenix Contexts Standards
 
-#### 🔴 CRITICAL: Context API Requirements
+### 🔴 CRITICAL: Context API Requirements
 
 **MANDATORY**: Phoenix Contexts MUST:
 
@@ -1355,7 +1355,7 @@ end
 
 ## Umbrella Apps Standards
 
-#### 🔴 CRITICAL: Umbrella Structure
+### 🔴 CRITICAL: Umbrella Structure
 
 **MANDATORY** structure for DDD:
 
@@ -1459,7 +1459,7 @@ end
 
 ## CQRS Standards
 
-#### 📊 CQRS Architecture
+### 📊 CQRS Architecture
 
 ```mermaid
 %%{init: {'theme':'base'}}%%
@@ -1598,7 +1598,7 @@ end
 
 ## Testing Standards
 
-#### 🔴 CRITICAL: Testing Requirements
+### 🔴 CRITICAL: Testing Requirements
 
 **MANDATORY**: DDD applications MUST:
 

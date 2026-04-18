@@ -15,31 +15,33 @@ related:
 updated: 2026-01-25
 ---
 
-### Dependency Injection Anti-Patterns
+# Spring Boot Anti-Patterns
+
+## Dependency Injection Anti-Patterns
 
 - [Field Injection](#1-field-injection) - Using @Autowired on fields
 - [Circular Dependencies](#2-circular-dependencies) - Services depending on each other
 - [God Services](#3-god-services) - Services doing too much
 
-### Data Access Anti-Patterns
+## Data Access Anti-Patterns
 
 - [Exposing JPA Entities](#4-exposing-jpa-entities-in-rest-apis) - Returning entities from controllers
 - [N+1 Queries](#5-n1-query-problem) - Missing JOIN FETCH
 - [Overusing @Transactional](#6-overusing-transactional) - Transactions everywhere
 
-### Configuration Anti-Patterns
+## Configuration Anti-Patterns
 
 - [Hardcoded Configuration](#7-hardcoded-configuration-values) - Secrets in code
 - [Missing Validation](#8-missing-configuration-validation) - Unvalidated properties
 - [Profile Misuse](#9-profile-misuse) - Wrong profile usage
 
-### API Anti-Patterns
+## API Anti-Patterns
 
 - [Missing Exception Handling](#10-missing-global-exception-handling) - No @ControllerAdvice
 - [Ignoring HTTP Semantics](#11-ignoring-http-semantics) - Wrong status codes
 - [Missing Validation](#12-missing-request-validation) - No @Valid
 
-### Testing Anti-Patterns
+## Testing Anti-Patterns
 
 - [Overusing @SpringBootTest](#13-overusing-springboottest) - Too many integration tests
 - [Not Using Test Slices](#14-not-using-test-slices) - Loading full context unnecessarily

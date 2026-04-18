@@ -21,44 +21,46 @@ principles:
 updated: 2026-01-25
 ---
 
-### Project Organization
+# Spring Boot Best Practices
+
+## Project Organization
 
 - [Project Structure](#project-structure) - Package organization and layering
 - [Dependency Management](#dependency-management) - Managing dependencies
 - [Configuration Management](#configuration-management) - Externalized config
 
-### Code Quality
+## Code Quality
 
 - [Dependency Injection](#dependency-injection) - Constructor injection patterns
 - [Naming Conventions](#naming-conventions) - Clear, descriptive names
 - [Error Handling](#error-handling) - Exception handling strategies
 - [Logging](#logging) - Effective logging practices
 
-### Data and Persistence
+## Data and Persistence
 
 - [Data Access](#data-access-patterns) - Repository and query patterns
 - [Transaction Management](#transaction-management) - @Transactional usage
 - [Database Migrations](#database-migrations) - Flyway/Liquibase
 
-### API Design
+## API Design
 
 - [REST API Design](#rest-api-design) - RESTful conventions
 - [Request Validation](#request-validation) - Input validation
 - [Response DTOs](#response-dtos) - Proper API responses
 - [Null Safety](#null-safety) - JSpecify + NullAway compile-time null checking
 
-### Security
+## Security
 
 - [Security Configuration](#security-configuration) - Spring Security setup
 - [Authentication](#authentication) - OAuth2, JWT patterns
 - [Input Validation](#input-validation-and-sanitization) - Security boundaries
 
-### Testing
+## Testing
 
 - [Testing Strategy](#testing-strategy) - Unit, integration, E2E tests
 - [Test Organization](#test-organization) - Test structure
 
-### Production Readiness
+## Production Readiness
 
 - [Observability](#observability) - Monitoring and metrics
 - [Performance](#performance-optimization) - Optimization techniques

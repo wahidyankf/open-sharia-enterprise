@@ -24,6 +24,8 @@ related:
   - ../jvm-spring/aop.md
 ---
 
+# Spring Boot AOP
+
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand [Spring Framework AOP](../jvm-spring/aop.md) before reading this document. This covers Spring Boot-specific AOP features and auto-configuration.
