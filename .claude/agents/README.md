@@ -72,7 +72,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-ayokoding-web-deployer** - AyoKoding deployment (Next.js via Vercel)
 - **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-fe-deployer** - organiclever-fe deployment
-- **plan-executor** - Execute project plans
 
 ### 💻 Development
 
@@ -111,7 +110,6 @@ Normative source: [Agent Naming Convention](../../governance/conventions/structu
 | `fixer`    | Applies validated checker findings                        | `plan-fixer`, `swe-ui-fixer`                                 |
 | `dev`      | Writes code in a language or test framework               | `swe-rust-dev`, `swe-e2e-dev`                                |
 | `deployer` | Deploys an application to an environment                  | `apps-ayokoding-web-deployer`                                |
-| `executor` | Executes a defined procedure or checklist                 | `plan-executor`                                              |
 | `manager`  | Performs file or resource operations (rename/move/delete) | `docs-file-manager`                                          |
 
 Enforcement: `rhino-cli agents validate-naming` (wired into pre-push and CI).
