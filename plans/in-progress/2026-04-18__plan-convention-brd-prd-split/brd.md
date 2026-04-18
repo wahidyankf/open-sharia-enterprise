@@ -22,9 +22,11 @@ Improve plan-document legibility and review efficiency so that (a) the author, o
 
 ### Expected Benefits
 
-- **Faster "why" lookup**: A dedicated `brd.md` puts business impact on the first screen the author or reviewer opens. Target: answer "why are we doing this and what does success look like?" in under 90 seconds on a cold re-read.
-- **Cleaner diffs**: Separating product scope from business rationale eliminates unrelated-content churn in PRs touching plans. Target: PRs touching only `prd.md` never modify business rationale and vice versa.
-- **Sharper agent validation**: `plan-checker` can assert each concern against its owning file and flag misplacement as a distinct finding class, rather than validating an omnibus `requirements.md` by keyword heuristics.
+Qualitative, structural benefits — no baseline measurements exist, so no numeric targets are claimed here:
+
+- **Dedicated "why" location**: `brd.md` is the single file that holds business intent, so a cold re-read starts there instead of scanning an omnibus `requirements.md`.
+- **Narrower diff surface per concern**: a PR editing product scope touches `prd.md`; a PR editing business rationale touches `brd.md`. The two no longer share one file.
+- **Sharper agent validation**: `plan-checker` can validate each concern against its owning file and flag misplacement as a distinct finding class, rather than validating an omnibus `requirements.md` by keyword heuristics.
 - **Convention alignment with industry norms**: BRD and PRD are widely recognized document types; mapping the repo's plan structure onto them reduces cognitive overhead when reading plans authored elsewhere and when explaining the structure to future contributors or tools.
 
 ## Affected Roles

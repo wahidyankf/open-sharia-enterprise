@@ -28,7 +28,7 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 - Business goal and rationale ("why are we doing this")
 - Business impact (pain points, expected benefits)
 - Affected roles (which hats the maintainer wears; which agents consume the file) — **not** sign-off mapping
-- Business-level success metrics (adoption targets, cost/time savings, defect reduction, cognitive-load improvements)
+- Business-level success metrics, grounded in **directly observable facts** (e.g., "zero plans using the deprecated layout after migration", verifiable by grep or git). **Do not invent KPIs or quantitative targets** for which no baseline data exists. If the only honest answer is qualitative ("file diffs become narrower per concern"), state the qualitative claim and do not dress it up as a numeric target.
 - Business-scope Non-Goals
 - Business risks and mitigations
 
@@ -43,7 +43,7 @@ Authoritative split between `brd.md` and `prd.md`. These rules go into the conve
 
 ### Ambiguous cases
 
-When a concern is genuinely cross-cutting (e.g., a success metric is both a business-level target and an acceptance criterion), place the **quantitative assertion** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content.
+When a concern is genuinely cross-cutting (e.g., a success criterion is both a business-level fact and a product acceptance criterion), place the **factual claim** in `brd.md` and the **testable scenario** in `prd.md`, cross-linking between them. Do not duplicate the full content. Do not fabricate quantitative targets to bridge the two — if there is no measurable baseline, keep the statement qualitative.
 
 ## Affected Files
 
