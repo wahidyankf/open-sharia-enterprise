@@ -122,6 +122,25 @@ Feature: Plan agents reference the five-doc layout
     Then the fixer is instructed to move business content into brd.md and product content into prd.md on misplacement findings
 ```
 
+### AC-3a: Plan workflows reflect the five-doc layout
+
+```gherkin
+Feature: Plan workflows reference the five-doc layout
+
+  Scenario: plan-quality-gate workflow lists the five canonical documents
+    Given the file governance/workflows/plan/plan-quality-gate.md
+    When I read the "Plan-Specific Validation" section
+    Then the completeness bullet enumerates README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file plans
+    And it clarifies the single-file exception still allows a single README.md when eligible
+
+  Scenario: plan-execution workflow still drives from delivery.md
+    Given the file governance/workflows/plan/plan-execution.md
+    When I read the execution instructions
+    Then the workflow reads delivery.md as the sequential checklist (unchanged)
+    And it notes that the executor may consult brd.md, prd.md, tech-docs.md for context on ambiguous items
+    And no stale reference to requirements.md remains
+```
+
 ### AC-3: Skill and cross-references stay in sync
 
 ```gherkin
