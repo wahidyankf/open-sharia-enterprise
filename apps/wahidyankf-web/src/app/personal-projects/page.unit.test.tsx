@@ -78,6 +78,7 @@ describe("Personal Projects component", () => {
   it("renders all projects initially", async () => {
     const Projects = (await import("./page")).default;
     render(<Projects />);
+    expect(screen.getByText("Open Sharia Enterprise (OSE)")).toBeInTheDocument();
     expect(screen.getByText("AyoKoding")).toBeInTheDocument();
     expect(screen.getByText("Organic Lever")).toBeInTheDocument();
     expect(screen.getByText("The Organic")).toBeInTheDocument();
@@ -125,10 +126,12 @@ describe("Personal Projects component", () => {
     const repositoryLinks = screen.getAllByRole("link", {
       name: /Repository/i,
     });
-    expect(repositoryLinks[0]).toHaveAttribute("href", "https://github.com/organiclever/ayokoding");
+    expect(repositoryLinks[0]).toHaveAttribute("href", "https://github.com/wahidyankf/ose-public");
+    expect(repositoryLinks[1]).toHaveAttribute("href", "https://github.com/organiclever/ayokoding");
 
     const websiteLinks = screen.getAllByRole("link", { name: /Website/i });
-    expect(websiteLinks[0]).toHaveAttribute("href", "https://ayokoding.com/");
+    expect(websiteLinks[0]).toHaveAttribute("href", "https://oseplatform.com/");
+    expect(websiteLinks[1]).toHaveAttribute("href", "https://ayokoding.com/");
 
     const youtubeLink = screen.getByRole("link", { name: /YouTube/i });
     expect(youtubeLink).toHaveAttribute("href", "https://www.youtube.com/@AyoKoding");
