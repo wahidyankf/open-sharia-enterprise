@@ -134,7 +134,7 @@ skills: []
 **Name**: Required field - unique identifier using lowercase letters and hyphens
 **Description**: Required field - when Claude should delegate to this agent
 **Tools**: Comma-separated string with capitalized tool names (only tools the agent needs)
-**Model**: Required field - omit for opus (default), or use \`sonnet\` or \`haiku\`
+**Model**: Required field - omit for opus (default), or use \`sonnet\` or \`haiku\`. Opus-tier agents omit `model` by design (budget-adaptive — inherits session model). Do not add `model: opus`.
 **Color**: Required field - `blue` (makers), `green` (checkers), `yellow` (fixers), `purple` (implementors)
 **Skills**: Required field - list of Skill names (empty array `[]` if no Skills used)
 
