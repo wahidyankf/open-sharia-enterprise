@@ -71,11 +71,11 @@ All four values pass `validate:claude`. No code change needed.
 OpenCode agents use a different model field structure. After sync:
 
 ```yaml
-# .opencode/agent/plan-maker.md (after standardization)
+# .opencode/agent/plan-maker.md (after sync — opus-tier agent with omitted model)
 ---
 name: plan-maker
 description: ...
-model: zai-coding-plan/glm-5.1   # converted from model: opus
+model: zai-coding-plan/glm-5.1   # default — ConvertModel("") returns glm-5.1
 tools:
   read: true
   write: true
@@ -85,86 +85,27 @@ tools:
 
 ## Changes Required
 
-### Change 1: `governance/development/agents/model-selection.md`
+### Change 1: `governance/development/agents/model-selection.md` _(applied 2026-04-19)_
 
-**Section updates**:
+**Section updates applied**:
 
-1. **Opus tier "Frontmatter" block** — change from:
+1. **Budget-Adaptive Inheritance block** — added after the Opus tier frontmatter example.
+   Explains why omitting `model` is intentional (session inheritance adapts to user's account
+   tier and token budget). Includes account-tier table (Max/Team → Opus 4.7, Pro/Standard →
+   Sonnet 4.6). Includes warning: Do NOT add `model: opus`.
 
-   ```yaml
-   # BEFORE: omit model field
-   ---
-   name: swe-typescript-dev
-   description: ...
-   tools: [Read, Write, Edit, Glob, Grep, Bash]
-   color: purple
-   ---
-   ```
+2. **Frontmatter example** — kept as omit (no `model` field). The surrounding explanation
+   clarifies this is intentional budget-adaptive design.
 
-   To:
+3. **New section "OpenCode / GLM Equivalents"** — inserted after "Tier Comparison Summary".
+   Mapping table: omit/sonnet → `zai-coding-plan/glm-5.1`, haiku → `zai-coding-plan/glm-5-turbo`.
+   3-to-2 tier collapse explanation. GLM-5.1 capability context.
 
-   ```yaml
-   # AFTER: explicit model: opus
-   ---
-   name: swe-typescript-dev
-   description: ...
-   tools: Read, Write, Edit, Glob, Grep, Bash
-   model: opus
-   color: purple
-   ---
-   ```
+4. **Model version table** — "Current Model Versions (April 2026)" table added with Opus 4.7,
+   Sonnet 4.6, Haiku 4.5-20251001; Haiku 3 retirement note (2026-04-19).
 
-2. **Opus tier "Justification" example** — change from
-   "uses inherited `model: opus` (omit model field)" to
-   "uses `model: opus`".
-
-3. **New section "OpenCode / GLM Equivalents"** — insert after "Tier Comparison Summary":
-
-   ```markdown
-   ## OpenCode / GLM Equivalents
-
-   Agents in `.claude/agents/` are auto-synced to `.opencode/agent/` by rhino-cli.
-   The sync translates Claude model aliases to Zhipu AI (Z.ai) GLM model IDs.
-
-   ### Model ID Mapping
-
-   | Claude Code     | OpenCode                      | Capability notes                               |
-   | --------------- | ----------------------------- | ---------------------------------------------- |
-   | `model: opus`   | `zai-coding-plan/glm-5.1`     | 744B MoE; SWE-Bench Pro 58.4; ≈ Opus 4.6 class |
-   | `model: sonnet` | `zai-coding-plan/glm-5.1`     | Same model as opus tier in OpenCode            |
-   | `model: haiku`  | `zai-coding-plan/glm-5-turbo` | Purpose-built for agentic tool-calling         |
-   | omit            | `zai-coding-plan/glm-5.1`     | Legacy default; prefer explicit values         |
-
-   ### 3-to-2 Tier Collapse
-
-   Claude Code supports three distinct tiers (Opus 4.7 > Sonnet 4.6 > Haiku 4.5).
-   GLM Coding Plan has two: glm-5.1 (top) and glm-5-turbo (fast/agentic). The collapse means
-   agents differentiated in Claude Code (opus vs sonnet) behave identically in OpenCode.
-   This is an acceptable gap: the Claude Code tier assignment governs behavior in Claude sessions
-   (the primary runtime), and OpenCode uses the best available GLM model for all non-haiku work.
-
-   ### Why No Separate "Opus" GLM Tier
-
-   GLM-5.1 benchmarks at SWE-Bench Pro 58.4, comparable to Claude Opus 4.6 (57.3) but below
-   Opus 4.7. No GLM model currently exceeds Opus 4.7 capability. Using glm-5.1 for opus-tier
-   agents is the best available option, not a perfect equivalence.
-   ```
-
-4. **Model version table** — add a new "Current Model Versions (April 2026)" table:
-
-   ```markdown
-   ## Current Model Versions (April 2026)
-
-   | Claude Code alias | Model ID                    | Context     | Notes                      |
-   | ----------------- | --------------------------- | ----------- | -------------------------- |
-   | `opus`            | `claude-opus-4-7`           | 1M tokens   | Current top tier           |
-   | `sonnet`          | `claude-sonnet-4-6`         | 1M tokens   | Daily driver               |
-   | `haiku`           | `claude-haiku-4-5-20251001` | 200k tokens | Haiku 3 retired 2026-04-19 |
-   ```
-
-5. **Budget-adaptive design note** — add explanation under Opus tier that omitting
-   `model` is intentional: the agent inherits the session's active model to match the
-   user's account tier and token budget. Include warning against adding `model: opus`.
+5. **Common Mistakes row** — "Adding `model: opus` to opus-tier agents" added. Problem:
+   bypasses budget-adaptive inheritance. Correction: omit the field.
 
 ### Change 2: `CLAUDE.md`
 
@@ -214,16 +155,54 @@ nx run rhino-cli:test:quick
 | Missed agent (still has empty model)          | Low        | Low    | `validate:claude` + grep audit catches it   |
 | OpenCode output different from expected       | Low        | Low    | `validate:sync` catches divergence          |
 
-## Worktree Setup
+## Execution Context
 
-Per Scope A rules, execution MUST happen in a subrepo worktree:
+This plan runs directly on `main` — no worktree needed (governance-only changes, no code).
+The Scope declaration in `delivery.md` and `README.md` confirms this; the subrepo worktree
+rule (Scope A) does not apply here.
+
+## Dependencies
+
+Tools required to execute the delivery plan:
+
+- **Node.js 24.x + npm** — for `npm run validate:claude`, `npm run validate:sync`,
+  `npm run sync:claude-to-opencode`. Managed by Volta; `npm install` installs the workspace.
+- **Go toolchain** — required to build rhino-cli before any `npm run validate:*` or
+  `npm run sync:*` script can run (these scripts call the rhino-cli binary). Install via
+  `npm run doctor -- --fix`.
+- **rhino-cli binary** — built from `apps/rhino-cli/` as part of `nx run rhino-cli:build`
+  or implicitly by the npm scripts. `npm run doctor -- --fix` ensures Go is present.
+
+**Setup sequence**:
 
 ```bash
-cd /Users/wkf/ose-projects/ose-public
-claude --worktree agent-model-standardization
-# OR
-git worktree add .claude/worktrees/agent-model-standardization -b worktree-agent-model-standardization origin/HEAD
+npm install                  # install workspace deps
+npm run doctor -- --fix      # converge Go + Node toolchains (required before validate/sync)
 ```
 
-Changes commit to branch `worktree-agent-model-standardization`, then open draft PR against
-`main`.
+## Testing Strategy
+
+Validation commands test that agent frontmatter parses correctly and that Claude↔OpenCode
+sync is consistent:
+
+- `npm run validate:claude` — parses every `.claude/agents/*.md` frontmatter; exit code 0
+  means all model values are in `ValidModels` and no required fields are missing.
+- `npm run validate:sync` — compares `.claude/agents/*.md` with `.opencode/agent/*.md`;
+  exit code 0 means no drift between the two runtime configs.
+- `nx run rhino-cli:test:quick` — runs rhino-cli unit tests including Gherkin BDD scenarios
+  with fixture agents; catches fixture regressions when model values change.
+
+**Pass criterion**: all three commands exit with code 0 and print zero error lines.
+
+## Rollback
+
+Each delivery phase has a corresponding commit. To revert:
+
+- **Phase 1 only** (`model-selection.md`): `git revert <phase-1-sha>`
+- **Phase 2 only** (`CLAUDE.md`): `git revert <phase-2-sha>`
+- **Phase 3 only** (governance docs propagation): `git revert <phase-3-sha>`
+- **Phase 4** (agent tier corrections): `git revert <phase-4-sha>`
+- **Full rollback**: revert all four commits in reverse order
+
+No DB migrations, no infra changes, no compiled artifacts. A revert is safe at any phase
+boundary — each phase commit is self-contained and reversible.
