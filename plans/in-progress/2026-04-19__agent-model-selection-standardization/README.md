@@ -66,7 +66,9 @@ No rhino-cli code changes needed. Fix is documentation + targeted tier correctio
 4. Create `docs/reference/ai-model-benchmarks.md` — cited benchmark reference for all 5 models
 5. Correct 8 agent tiers (7 OMIT→SONNET, 1 SONNET→HAIKU) per benchmark-informed audit
 6. Add benchmark citations to `model-selection.md` + `.claude/agents/README.md` via `repo-rules-maker`
-7. Re-run sync to reflect tier changes in `.opencode/agent/`
+7. Run `repo-rules-checker` OCD validation; fix all findings
+8. Run `validate:claude`, `validate:sync`, `nx run rhino-cli:test:quick` — all must pass
+9. Re-run sync to reflect tier changes in `.opencode/agent/`
 
 ## Plan Documents
 
