@@ -184,6 +184,7 @@ skills: []
    - Specifies which model tier to use for this agent
    - Options: (empty/omitted for opus, the default), `sonnet`, or `haiku`
    - Omit the value (leave `model:` empty) for opus-tier agents; specify `sonnet` or `haiku` only when a lower tier is justified
+   - Opus-tier agents omit `model` for budget-adaptive inheritance — see [model-selection.md](./model-selection.md) for the design rationale
    - See "Model Selection Guidelines" below for decision criteria
 
 5. **`color`** (required)
@@ -672,7 +673,7 @@ For complete model selection standards, see the [Model Selection Convention](./m
 
 **Three tiers**:
 
-- **Opus** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers).
+- **Opus** (default): Omit the `model` field. For creative reasoning, code generation, architectural decisions, and nuanced content creation (creative makers, language developers). Omitting `model` is budget-adaptive: the agent inherits the session's active model (Opus 4.7 on Max/Team Premium, Sonnet 4.6 on Pro/Standard/API). Do NOT add `model: opus` — that overrides budget-adaptive behavior and forces Opus charges regardless of account tier. See [model-selection.md](./model-selection.md) for the full design rationale.
 - **Sonnet** (`model: sonnet`): For rule-based validation, applying validated fixes, template-driven output, and structured pattern-following tasks (checkers, fixers, structured makers, swe-e2e-dev).
 - **Haiku** (`model: haiku`): For purely mechanical tasks with no reasoning required -- URL validation, deployment scripts, deterministic file operations, simple command execution (deployers, link checkers, docs-file-manager).
 

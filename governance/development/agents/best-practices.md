@@ -83,7 +83,7 @@ tools: [Read, Write, Edit, Bash, WebFetch, WebSearch] # Excessive
 
 ### Practice 3: Use Appropriate Model for Task Complexity
 
-**Principle**: Match model to task complexity - use Haiku for simple tasks, Sonnet for complex reasoning.
+**Principle**: Match model to task complexity - use Haiku for simple tasks, Sonnet for structured tasks, and omit `model` for opus-tier agents.
 
 **Good Example:**
 
@@ -93,10 +93,15 @@ tools: [Read, Write, Edit, Bash, WebFetch, WebSearch] # Excessive
 name: link-checker
 model: haiku
 ---
-# Complex reasoning task
+# Structured rule-based task
+---
+name: plan-checker
+model: sonnet
+---
+# Complex reasoning task — omit model (budget-adaptive)
 ---
 name: plan-maker
-model: sonnet
+model:
 ---
 ```
 
@@ -105,6 +110,7 @@ model: sonnet
 - Cost optimization
 - Performance optimization
 - Clear expectations
+- Opus-tier agents omit `model` by design (budget-adaptive — inherits session model). Do not add `model: opus`. See [model-selection.md](./model-selection.md) for the design rationale.
 
 ### Practice 4: Provide Clear, Actionable Descriptions
 
