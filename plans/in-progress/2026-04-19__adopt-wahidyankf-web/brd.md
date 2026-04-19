@@ -89,7 +89,8 @@ plan-execution PR is the only approval gate.
 - **`apps-wahidyankf-web-deployer`** (to be created in P6) — owns the
   production-branch force-push step.
 - **Future content checkers** — `docs-link-checker` and `readme-checker`
-  will run against the adopted README and any content directories.
+  already run across the repo and will apply to the adopted README and
+  any content directories once the app lands on `main`.
 
 ## Success Metrics
 
