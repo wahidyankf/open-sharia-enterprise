@@ -1,4 +1,4 @@
-# wahidyankf-web-e2e
+# wahidyankf-web-fe-e2e
 
 End-to-end tests for [`apps/wahidyankf-web`](../wahidyankf-web/) using
 Playwright and `playwright-bdd`. Consumes the Gherkin feature files at

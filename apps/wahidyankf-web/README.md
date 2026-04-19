@@ -55,7 +55,7 @@ nx run wahidyankf-web:spec-coverage
 - Coverage enforced at ≥80% via `rhino-cli test-coverage validate` —
   aligned to `apps/ayokoding-web` and `apps/oseplatform-web`
 
-End-to-end tests live in the sibling project `apps/wahidyankf-web-e2e/`
+End-to-end tests live in the sibling project `apps/wahidyankf-web-fe-e2e/`
 (lands in P4 of the adoption plan) using Playwright-BDD and
 `@axe-core/playwright` for WCAG 2.1 AA smoke.
 

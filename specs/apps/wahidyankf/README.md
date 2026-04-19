@@ -24,7 +24,7 @@ specs/apps/wahidyankf/
   `@amiceli/vitest-cucumber` (`describeFeature(...)`). Step
   implementations drive rendered component trees via
   `@testing-library/react`.
-- **E2E level** — runs inside `apps/wahidyankf-web-e2e/steps/` using
+- **E2E level** — runs inside `apps/wahidyankf-web-fe-e2e/steps/` using
   `playwright-bdd`. Steps drive a real browser via Playwright. The
   `accessibility.feature` file is E2E-only (uses
   `@axe-core/playwright`).
@@ -36,7 +36,7 @@ Both layers consume the same feature files — this mirrors
 ## Spec-coverage enforcement
 
 `nx run wahidyankf-web:spec-coverage` and
-`nx run wahidyankf-web-e2e:spec-coverage` run
+`nx run wahidyankf-web-fe-e2e:spec-coverage` run
 `rhino-cli spec-coverage validate --shared-steps
 specs/apps/wahidyankf/fe/gherkin apps/wahidyankf-web` against these
 features. Both are wired into the repo's pre-push quality gate.

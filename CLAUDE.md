@@ -31,7 +31,7 @@ Guidance for Claude Code (claude.ai/code) working with code in this repository.
   - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
   - `organiclever-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/contracts/`); generates types + encoders/decoders for organiclever apps via `codegen` Nx target
   - `wahidyankf-web` - Next.js 16 personal portfolio site (www.wahidyankf.com)
-  - `wahidyankf-web-e2e` - Playwright-BDD E2E tests for wahidyankf-web UI
+  - `wahidyankf-web-fe-e2e` - Playwright-BDD E2E tests for wahidyankf-web UI
 
 Polyglot demo apps (11 backend implementations + 3 frontends + 1 fullstack) were extracted 2026-04-18 to the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) template, which is now authoritative for the polyglot showcase.
 
@@ -54,7 +54,7 @@ ose-public/
 │   ├── organiclever-fe-e2e/  # Playwright FE E2E tests for organiclever-fe
 │   ├── organiclever-be-e2e/  # Playwright BE E2E tests for organiclever-be
 │   ├── wahidyankf-web/       # Wahidyan Kresna Fridayoka portfolio (Next.js 16)
-│   ├── wahidyankf-web-e2e/   # Playwright-BDD E2E tests for wahidyankf-web
+│   ├── wahidyankf-web-fe-e2e/   # Playwright-BDD E2E tests for wahidyankf-web
 ├── archived/                 # Archived applications (no longer active)
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -519,7 +519,7 @@ nx run organiclever-fe-e2e:test:e2e:ui    # Run FE E2E tests with Playwright UI
 - **Framework**: Next.js 16 (App Router)
 - **Deployment**: Vercel
 - **Content**: Personal portfolio (Home, CV, Personal Projects)
-- **E2E tests**: `wahidyankf-web-e2e`
+- **E2E tests**: `wahidyankf-web-fe-e2e`
 - **Dev port**: 3201
 
 **Commands**:
@@ -528,8 +528,8 @@ nx run organiclever-fe-e2e:test:e2e:ui    # Run FE E2E tests with Playwright UI
 nx dev wahidyankf-web                      # Development server (localhost:3201)
 nx build wahidyankf-web                    # Production build
 nx run wahidyankf-web:test:quick           # Unit tests + coverage + spec-coverage
-nx run wahidyankf-web-e2e:test:e2e         # Run FE E2E tests headlessly
-nx run wahidyankf-web-e2e:test:e2e:ui      # Run FE E2E tests with Playwright UI
+nx run wahidyankf-web-fe-e2e:test:e2e         # Run FE E2E tests headlessly
+nx run wahidyankf-web-fe-e2e:test:e2e:ui      # Run FE E2E tests with Playwright UI
 ```
 
 **See**: [apps/wahidyankf-web/README.md](./apps/wahidyankf-web/README.md)
