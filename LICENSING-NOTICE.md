@@ -131,8 +131,6 @@ you MIT rights because the second anniversary has passed.
 Some vendored or forked libraries in this repository are licensed under their original licenses
 (typically MIT), not FSL-1.1-MIT. These include:
 
-- `libs/elixir-cabbage/` — MIT (Matt Widmann, 2017)
-- `libs/elixir-gherkin/` — MIT (Matt Widmann, 2018)
 - `archived/ayokoding-web-hugo/` — MIT (Xin, 2023)
 
 Check the `LICENSE` file in each subdirectory for the applicable license.

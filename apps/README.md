@@ -28,7 +28,9 @@ Where `{part}` describes the role and technology stack:
 
 ### Current Apps
 
-- `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
+- `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Next.js 16 content platform (TypeScript, tRPC)
+- `oseplatform-web-be-e2e` - Playwright BE E2E tests for oseplatform-web tRPC API
+- `oseplatform-web-fe-e2e` - Playwright FE E2E tests for oseplatform-web UI
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Next.js 16 fullstack content platform (TypeScript, tRPC)
 - `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
 - `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
@@ -50,19 +52,20 @@ Where `{part}` describes the role and technology stack:
 
 ## App Structure Examples
 
-### Hugo Static Site (oseplatform-web)
+### Next.js App (oseplatform-web)
 
 ```
 apps/oseplatform-web/
 ├── content/                 # Markdown content files
-├── layouts/                 # Hugo templates
-├── static/                  # Static assets (images, CSS, JS)
-├── themes/                  # Hugo themes
-├── public/                  # Build output (gitignored)
-├── hugo.yaml                # Hugo configuration
-├── project.json             # Nx project configuration
-├── build.sh                 # Build script
+├── src/                     # Application source code
+│   ├── app/                 # Next.js App Router pages
+│   ├── components/          # Reusable React components
+│   └── lib/                 # Utility functions and helpers
+├── public/                  # Static assets
+├── next.config.ts           # Next.js configuration
+├── tsconfig.json            # TypeScript configuration
 ├── vercel.json              # Deployment configuration
+├── project.json             # Nx project configuration
 └── README.md                # App documentation
 ```
 
@@ -149,33 +152,31 @@ Kotlin, Python apps will have language-specific structures and tooling.
 
 Each app must have a `project.json` file with Nx configuration.
 
-**Hugo App Example** (`oseplatform-web`):
+**Next.js App Example** (`oseplatform-web`):
 
 ```json
 {
   "name": "oseplatform-web",
-  "sourceRoot": "apps/oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web/src",
   "projectType": "application",
   "targets": {
     "dev": {
-      "executor": "nx:run-commands",
+      "command": "next dev --port 3100",
       "options": {
-        "command": "hugo server --buildDrafts --buildFuture",
         "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
-      "executor": "nx:run-commands",
+      "command": "next build",
       "options": {
-        "command": "bash build.sh",
         "cwd": "apps/oseplatform-web"
       },
-      "outputs": ["{projectRoot}/public"]
+      "outputs": ["{projectRoot}/.next"],
+      "cache": true
     },
-    "clean": {
-      "executor": "nx:run-commands",
+    "start": {
+      "command": "next start --port 3100",
       "options": {
-        "command": "rm -rf public resources",
         "cwd": "apps/oseplatform-web"
       }
     }
@@ -184,7 +185,7 @@ Each app must have a `project.json` file with Nx configuration.
 }
 ```
 
-**Note**: This repository uses vanilla Nx (no plugins), so all executors use `nx:run-commands` to run standard build tools directly (Hugo, Go, etc.).
+**Note**: This repository uses vanilla Nx (no plugins), so all targets use `command` (shorthand for `nx:run-commands`) to run standard build tools directly (Next.js, Go, etc.).
 
 ## How to Add a New App
 
@@ -209,10 +210,8 @@ Path mappings are configured in the workspace `tsconfig.base.json` file.
 Use Nx commands to run apps:
 
 ```bash
-# Development mode (Hugo site)
-nx dev oseplatform-web
-
 # Development mode (Next.js)
+nx dev oseplatform-web
 nx dev organiclever-fe
 nx dev ayokoding-web
 
@@ -269,9 +268,8 @@ Use the corresponding deployer agent (e.g. `apps-organiclever-fe-deployer`) for 
 
 Currently:
 
-- **Hugo** (static sites) - oseplatform-web
-- **Go** (CLI tools) - ayokoding-cli, rhino-cli
-- **TypeScript/Next.js** (web applications) - organiclever-fe, ayokoding-web
+- **Go** (CLI tools) - ayokoding-cli, rhino-cli, oseplatform-cli
+- **TypeScript/Next.js** (web applications) - oseplatform-web, organiclever-fe, ayokoding-web
 - **F#/Giraffe** (backend API) - organiclever-be
 - **TypeScript/Playwright** (E2E testing) - organiclever-fe-e2e, organiclever-be-e2e
 

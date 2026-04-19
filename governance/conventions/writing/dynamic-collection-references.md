@@ -61,7 +61,7 @@ This convention establishes that documentation MUST NOT hardcode counts for dyna
 **FAIL: Hardcoded count**:
 
 ```markdown
-The repository contains 57 specialized AI agents.
+The repository contains 69 specialized AI agents.
 ```
 
 **PASS: Reference by name with link**:
@@ -88,7 +88,7 @@ The six-layer architecture is frequently summarized in documentation. Layer desc
 - **Layer 1: Principles** - WHY we value approaches (11 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (30 standards)
 - **Layer 3: Development** - HOW we develop (30 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (57 specialized agents)
+- **Layer 4: AI Agents** - WHO enforces rules (69 specialized agents)
 ```
 
 **PASS: Layer description without count**:
@@ -109,7 +109,7 @@ Index documents (README files and architecture documents) that list collections 
 ```markdown
 - **Conventions Index** - 30 documentation standards
 - **Development Index** - 17 software practices
-- **Agents Index** - 57 specialized agents
+- **Agents Index** - 69 specialized agents
 ```
 
 **PASS: Description without count**:
@@ -128,8 +128,8 @@ Code blocks showing repository structure often include comments that describe wh
 
 ```
 ├── .claude/
-│   ├── agents/    # 57 specialized AI agents
-│   └── skills/    # 34 skill packages
+│   ├── agents/    # 69 specialized AI agents
+│   └── skills/    # 37 skill packages
 ```
 
 **PASS: Description without count**:
@@ -174,9 +174,9 @@ If a count is needed anywhere, the index document for that collection is the sin
 **Before (FAIL)**:
 
 ```markdown
-## AI Agents (57 Specialized Agents)
+## AI Agents (69 Specialized Agents)
 
-**Skills Infrastructure**: Agents leverage 34 skills providing two modes:
+**Skills Infrastructure**: Agents leverage 37 skills providing two modes:
 ```
 
 **After (PASS)**:
@@ -195,7 +195,7 @@ If a count is needed anywhere, the index document for that collection is the sin
 - **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 30 documentation standards
 - **Development Index**: [governance/development/README.md](./governance/development/README.md) - 17 software practices
 - **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 11 foundational principles
-- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 57 specialized agents
+- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 69 specialized agents
 ```
 
 **After (PASS)**:
@@ -212,7 +212,7 @@ If a count is needed anywhere, the index document for that collection is the sin
 **Before (FAIL)**:
 
 ```markdown
-**Current State**: 34 skills serving 57 agents
+**Current State**: 37 skills serving 69 agents
 ```
 
 **After (PASS)**:

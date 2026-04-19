@@ -35,6 +35,7 @@ Comprehensive documentation on software architecture patterns and models:
 
 - **[C4 Architecture Model](./architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical diagrams
 - **[Domain-Driven Design (DDD)](./architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
+- **[Finite State Machine (FSM)](./architecture/finite-state-machine-fsm/README.md)** - Standards for entity lifecycle management using finite state machines
 
 ### 🧪 [Development](./development/README.md)
 

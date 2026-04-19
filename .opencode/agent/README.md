@@ -85,16 +85,8 @@
 - **apps-ayokoding-web-link-checker** - Validates links (hybrid: validator + cache manager)
 - **apps-ayokoding-web-link-fixer** - Applies validated link fixes
 
-**Structure Management** (Maker-Checker-Fixer):
-
-- **apps-ayokoding-web-structure-maker** - Creates folder structure and \_index.md files
-- **apps-ayokoding-web-structure-checker** - Validates folder organization and navigation depth
-- **apps-ayokoding-web-structure-fixer** - Applies validated structure fixes
-
 **Specialized**:
 
-- **apps-ayokoding-web-navigation-maker** - Updates prev/next navigation links in frontmatter
-- **apps-ayokoding-web-title-maker** - Generates appropriate titles based on content type and level
 - **apps-ayokoding-web-deployer** - Deploys to production branch (prod-ayokoding-web)
 
 **In-the-Field Content** (Maker-Checker-Fixer):
@@ -115,6 +107,12 @@
 
 - **apps-oseplatform-web-deployer** - Deploys to production branch (prod-oseplatform-web)
 
+### organiclever-fe Family
+
+**Deployment**:
+
+- **apps-organiclever-fe-deployer** - Deploys organiclever-fe to production branch (prod-organiclever-web)
+
 ### Repository Governance Family
 
 **Rules Management** (Maker-Checker-Fixer):
@@ -128,6 +126,38 @@
 - **repo-workflow-maker** - Creates workflow documentation
 - **repo-workflow-checker** - Validates workflow pattern compliance
 - **repo-workflow-fixer** - Applies validated workflow fixes
+
+**OSE Primer Sync**:
+
+- **repo-ose-primer-adoption-maker** - Surfaces candidates to adopt from `ose-primer` into `ose-public` (dry-run only)
+- **repo-ose-primer-propagation-maker** - Propagates `ose-public` content to `ose-primer` (dry-run / apply / parity-check modes); apply opens draft PR against primer
+
+### Specs Family
+
+**Maker-Checker-Fixer Pattern**:
+
+- **specs-maker** - Spec area scaffolding and feature file creation
+- **specs-checker** - Gherkin/BDD specs directory structural and content validation
+- **specs-fixer** - Fix specs structural and accuracy issues
+
+### CI/CD Family
+
+**Checker-Fixer Pattern**:
+
+- **ci-checker** - CI/CD standards validation (mandatory Nx targets, coverage thresholds, Docker setup, Gherkin specs)
+- **ci-fixer** - Apply validated CI/CD standards fixes
+
+### UI Family
+
+**Maker-Checker-Fixer Pattern**:
+
+- **swe-ui-maker** - UI component creation
+- **swe-ui-checker** - UI component quality validation
+- **swe-ui-fixer** - Apply validated UI component fixes
+
+### Research (Green)
+
+- **web-research-maker** - Read-only web research specialist; returns cited, structured findings with confidence tags in an isolated context (no file writes, no shell)
 
 ### Meta/Specialized Family
 
