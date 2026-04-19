@@ -190,17 +190,19 @@ the worktree branch, not `main`. Concretely:
 
 ## Phase P5 — Quality Gates
 
-- [ ] Ensure `apps/wahidyankf-web/project.json` `test:quick` inputs include `default` and `{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature`.
-- [ ] Ensure `apps/wahidyankf-web/project.json` `test:unit` inputs include `default` and the same Gherkin glob.
-- [ ] Ensure `apps/wahidyankf-web/project.json` `spec-coverage` input globs include the feature file tree and the app's `src/**/*.{ts,tsx}` tree.
-- [ ] Ensure `apps/wahidyankf-web-e2e/project.json` `spec-coverage` input globs include the same feature tree and the runner's `**/*.ts` tree.
-- [ ] Run `nx run wahidyankf-web:spec-coverage`; fix any missing step definitions.
-- [ ] Run `nx run wahidyankf-web-e2e:spec-coverage`; fix any missing step definitions.
-- [ ] Confirm Nx affected picks up BOTH new projects against `origin/main`: `npx nx show projects --affected --base=origin/main --head=HEAD` must list both `wahidyankf-web` AND `wahidyankf-web-e2e`. If either is missing, the `project.json` `name` / `implicitDependencies` is wrong — fix before the quality gate.
-- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0. Both `wahidyankf-web` and `wahidyankf-web-e2e` must appear in the task list Nx runs — verify by inspecting the affected-tasks summary Nx prints.
-- [ ] Run `npm run lint:md` and fix any markdown issues in new READMEs or spec READMEs.
-- [ ] Commit: `ci(wahidyankf-web): wire typecheck, lint, spec-coverage, pre-push gate`.
-- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
+- [x] Ensure `apps/wahidyankf-web/project.json` `test:quick` inputs include `default` and `{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature`.
+- [x] Ensure `apps/wahidyankf-web/project.json` `test:unit` inputs include `default` and the same Gherkin glob.
+- [x] Ensure `apps/wahidyankf-web/project.json` `spec-coverage` input globs include the feature file tree and the app's `src/**/*.{ts,tsx}` tree.
+- [x] Ensure `apps/wahidyankf-web-e2e/project.json` `spec-coverage` input globs include the same feature tree and the runner's `**/*.ts` tree.
+- [x] Run `nx run wahidyankf-web:spec-coverage`; fix any missing step definitions.
+- [x] Run `nx run wahidyankf-web-e2e:spec-coverage`; fix any missing step definitions.
+- [x] Confirm Nx affected picks up BOTH new projects against `origin/main`: `npx nx show projects --affected --base=origin/main --head=HEAD` must list both `wahidyankf-web` AND `wahidyankf-web-e2e`. If either is missing, the `project.json` `name` / `implicitDependencies` is wrong — fix before the quality gate.
+- [x] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0. Both `wahidyankf-web` and `wahidyankf-web-e2e` must appear in the task list Nx runs — verify by inspecting the affected-tasks summary Nx prints.
+- [x] Run `npm run lint:md` and fix any markdown issues in new READMEs or spec READMEs.
+- [x] Commit: `ci(wahidyankf-web): wire typecheck, lint, spec-coverage, pre-push gate`.
+- [x] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
+
+> **P5 notes (2026-04-19)** — All P5 inputs already shipped in the earlier phases' `project.json` authoring (P1 for `wahidyankf-web`, P4 for `wahidyankf-web-e2e`). Sequential `npx nx affected -t typecheck lint test:quick spec-coverage --parallel=1` passes green across 20 affected projects (44/76 cached). Both `wahidyankf-web` AND `wahidyankf-web-e2e` appear in the affected list. spec-coverage for both projects — wahidyankf-web "7 specs, 36 scenarios, 84 steps — all covered" and wahidyankf-web-e2e "7 specs, 36 scenarios, 84 steps — all covered". `npm run lint:md` clean. P4's buildvcs fix for rhino-cli/ayokoding-cli/oseplatform-cli was the last missing piece — without it, no Go CLI could build from inside a worktree and the whole gate chain would cascade-fail.
 
 ## Phase P6 — Deployment Wiring
 
