@@ -239,14 +239,15 @@ For a deployer agent:
 
 ## Tier Comparison Summary
 
-| Dimension              | Opus (inherit)              | Sonnet                              | Haiku                                  |
-| ---------------------- | --------------------------- | ----------------------------------- | -------------------------------------- |
-| **Reasoning depth**    | Deep, multi-step            | Moderate, rule-based                | Minimal, mechanical                    |
-| **Creativity**         | High (novel solutions)      | Low (follows templates)             | None (fixed procedures)                |
-| **Task ambiguity**     | Handles open-ended problems | Handles structured problems         | Requires deterministic flow            |
-| **Output originality** | Creates new content/code    | Transforms per rules                | Executes predefined steps              |
-| **Error recovery**     | Adapts to unexpected states | Follows fallback rules              | Fails or retries                       |
-| **Typical agents**     | Creative makers, developers | Checkers, fixers, structured makers | Deployers, link checkers, file manager |
+| Dimension              | Opus (inherit)                                                                                        | Sonnet                                                                                                  | Haiku                                                                                                  |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Reasoning depth**    | Deep, multi-step                                                                                      | Moderate, rule-based                                                                                    | Minimal, mechanical                                                                                    |
+| **Creativity**         | High (novel solutions)                                                                                | Low (follows templates)                                                                                 | None (fixed procedures)                                                                                |
+| **Task ambiguity**     | Handles open-ended problems                                                                           | Handles structured problems                                                                             | Requires deterministic flow                                                                            |
+| **Output originality** | Creates new content/code                                                                              | Transforms per rules                                                                                    | Executes predefined steps                                                                              |
+| **Error recovery**     | Adapts to unexpected states                                                                           | Follows fallback rules                                                                                  | Fails or retries                                                                                       |
+| **Typical agents**     | Creative makers, developers                                                                           | Checkers, fixers, structured makers                                                                     | Deployers, link checkers, file manager                                                                 |
+| **SWE-bench Verified** | [87.6%](../../../docs/reference/ai-model-benchmarks.md#claude-opus-47) (Verified, Anthropic Apr 2026) | [79.6%](../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46) (Verified, Anthropic Feb 2026) | [73.3%](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45) (Verified, Anthropic Oct 2025) |
 
 ## Common Mistakes
 
@@ -262,11 +263,11 @@ For a deployer agent:
 
 ## Current Model Versions (April 2026)
 
-| Claude Code alias | Model ID                    | Context     | Notes                      |
-| ----------------- | --------------------------- | ----------- | -------------------------- |
-| `opus` (inherit)  | `claude-opus-4-7`           | 1M tokens   | Current top tier           |
-| `sonnet`          | `claude-sonnet-4-6`         | 1M tokens   | Daily driver               |
-| `haiku`           | `claude-haiku-4-5-20251001` | 200k tokens | Haiku 3 retired 2026-04-19 |
+| Claude Code alias | Model ID                    | Context     | Notes                      | Benchmark                                                                     |
+| ----------------- | --------------------------- | ----------- | -------------------------- | ----------------------------------------------------------------------------- |
+| `opus` (inherit)  | `claude-opus-4-7`           | 1M tokens   | Current top tier           | [Benchmarks](../../../docs/reference/ai-model-benchmarks.md#claude-opus-47)   |
+| `sonnet`          | `claude-sonnet-4-6`         | 1M tokens   | Daily driver               | [Benchmarks](../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46) |
+| `haiku`           | `claude-haiku-4-5-20251001` | 200k tokens | Haiku 3 retired 2026-04-19 | [Benchmarks](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)  |
 
 Aliases (`opus`, `sonnet`, `haiku`) automatically track future model versions within each
 tier. The model IDs above are current as of April 2026.
@@ -284,6 +285,8 @@ Zhipu AI (Z.ai) GLM model IDs.
 | omit (opus-tier inherit) | `zai-coding-plan/glm-5.1`     | 744B MoE; SWE-Bench Pro 58.4; ≈ Opus 4.6 class        |
 | `model: sonnet`          | `zai-coding-plan/glm-5.1`     | Same GLM model as opus-tier (no separate sonnet tier) |
 | `model: haiku`           | `zai-coding-plan/glm-5-turbo` | Purpose-built for agentic tool-calling and throughput |
+
+**Note**: GLM-5-turbo has no published standard benchmark scores (no SWE-bench, GPQA, or HumanEval). See [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#glm-5-turbo) for details.
 
 ### 3-to-2 Tier Collapse
 
