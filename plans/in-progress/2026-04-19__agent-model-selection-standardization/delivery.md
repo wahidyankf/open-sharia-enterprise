@@ -151,6 +151,8 @@ Run `repo-rules-checker` in OCD mode after all changes (Phases 4-6).
 
 - [ ] Run `npm run lint:md` — lint all markdown files
 - [ ] Run `npm run lint:md:fix` — auto-fix any violations
+- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` — the agent file changes
+      trigger rhino-cli as affected; all targets must pass
 - [ ] Fix ALL failures found — including preexisting issues not caused by your changes
 
 > **Important**: Fix ALL failures, not just those caused by your changes. Root cause
@@ -160,7 +162,8 @@ Run `repo-rules-checker` in OCD mode after all changes (Phases 4-6).
 
 ### Post-Push Verification
 
-- [ ] Monitor GitHub Actions CI for the push — verify all checks pass
+- [ ] Monitor the `pr-quality-gate` and `on-push` GitHub Actions workflows for the push
+      to `main` — verify all checks pass
 - [ ] If any CI check fails, fix immediately and push a follow-up commit
 - [ ] Do NOT proceed to archival until CI is green
 

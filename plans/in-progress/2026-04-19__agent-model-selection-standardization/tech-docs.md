@@ -49,7 +49,7 @@ output. The only change is in the source Claude agent files and in the guarantee
 
 **3-to-2 collapse**: Claude has three tiers; GLM (Z.ai Coding Plan) has two. `opus` and
 `sonnet` collapse to the same GLM model because GLM-5.1 is the single top-tier option
-(benchmarks ≈ Claude Opus 4.6, which is below Opus 4.7 but above Sonnet 4.6).
+(benchmarks ≈ Claude Opus 4.6 (a prior-generation model, below current Opus 4.7 but above Sonnet 4.6)).
 
 ### ValidModels in rhino-cli
 
@@ -337,13 +337,16 @@ Phase 4 of delivery. Structure:
  and why each matters for coding agents)
 
 ## Claude Models (Anthropic)
-### Claude Opus 4.7 | ### Claude Sonnet 4.6 | ### Claude Haiku 4.5
+### Claude Opus 4.7
+### Claude Sonnet 4.6
+### Claude Haiku 4.5
 (per-model table: benchmark, score, confidence, source URL, date)
 (pricing and context window)
 (link to official system card)
 
 ## GLM Models (Z.ai Coding Plan / OpenCode)
-### GLM-5.1 | ### GLM-5-turbo
+### GLM-5.1
+### GLM-5-turbo
 (per-model table with confidence levels and self-reported caveats)
 (official source URLs only)
 

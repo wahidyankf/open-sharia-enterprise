@@ -2,10 +2,9 @@
 
 ## Business Goal
 
-Document the intentional budget-adaptive model inheritance design for opus-tier agents
-and extend the model selection policy to cover both Claude Code and OpenCode/GLM in a
-single canonical reference. No agent files change — the existing "omit = inherit" behavior
-is correct by design.
+Documents budget-adaptive design, extends policy to dual-platform coverage, and corrects
+8 agent tier assignments that were over-budgeted (7 opus-inherit agents using rubric-bound
+work) or incorrectly assigned (1 sonnet fixer doing deterministic URL replacement).
 
 ## Background and Pain Points
 
@@ -46,6 +45,14 @@ have no authoritative source for OpenCode model selection.
 retirement (retired 2026-04-19, the day this plan was created). Stale version references
 erode trust in the policy document.
 
+### Pain Point 4: CLAUDE.md Describes the Wrong Plan Format
+
+`CLAUDE.md` says "Default plan layout: four documents — README.md, requirements.md,
+tech-docs.md, delivery.md." The actual plans convention (`governance/conventions/structure/plans.md`,
+updated 2026-04-18) specifies five documents: README.md, brd.md, prd.md, tech-docs.md,
+delivery.md. This discrepancy in the primary developer onboarding document actively misleads
+anyone creating a new plan.
+
 ### Pain Point 5: Benchmark Data Undocumented — Tier Rationale Unverifiable
 
 No authoritative benchmark reference exists in the project. The `model-selection.md`
@@ -67,26 +74,19 @@ The research for this plan (conducted 2026-04-19) surfaced important constraints
 Without a citation-backed benchmark reference, tier assignments look arbitrary. With it,
 they are auditable and defensible.
 
-### Pain Point 4: CLAUDE.md Describes the Wrong Plan Format
-
-`CLAUDE.md` says "Default plan layout: four documents — README.md, requirements.md,
-tech-docs.md, delivery.md." The actual plans convention (`governance/conventions/structure/plans.md`,
-updated 2026-04-18) specifies five documents: README.md, brd.md, prd.md, tech-docs.md,
-delivery.md. This discrepancy in the primary developer onboarding document actively misleads
-anyone creating a new plan.
-
 ## Business Impact
 
-| Affected Role                | Impact today                            | Impact after fix               |
-| ---------------------------- | --------------------------------------- | ------------------------------ |
-| Maintainer on Pro plan       | Opus agents run on Sonnet silently      | Correct tier guaranteed        |
-| Maintainer adding new agent  | No OpenCode model docs to reference     | Clear dual-platform policy     |
-| AI agents creating plans     | Follow stale 4-doc format               | Follow correct 5-doc format    |
-| Any reviewer auditing agents | Cannot verify OpenCode tier from policy | Single authoritative reference |
+| Affected Role                        | Impact today                                                                   | Impact after fix                      |
+| ------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------- |
+| Maintainer on Pro plan               | 7 agents incorrectly on opus-inherit tier, wasting budget on rubric-bound work | Correct tier guaranteed               |
+| Maintainer adding new agent          | No OpenCode model docs to reference                                            | Clear dual-platform policy            |
+| AI agents creating plans             | Follow stale 4-doc format                                                      | Follow correct 5-doc format           |
+| Any reviewer auditing agents         | Cannot verify OpenCode tier from policy                                        | Single authoritative reference        |
+| Any reviewer auditing tier rationale | Cannot verify tier choice without external research                            | Benchmark reference with cited scores |
 
 ## Affected Roles
 
-- **Maintainer (all hats)** — directly affected by model degradation and doc stale-ness
+- **Maintainer (all hats)** — affected by over-budgeted tier assignments and undocumented policy
 - **`plan-maker` agent** — reads CLAUDE.md to determine plan format; currently produces wrong format
 - **`agent-maker` agent** — reads model-selection.md when creating new agents; gets incomplete info
 - **`repo-rules-checker` agent** — validates model selection compliance; policy gaps reduce check quality
@@ -103,7 +103,7 @@ anyone creating a new plan.
 
 ## Business-Scope Non-Goals
 
-- This is not a re-evaluation of which agents belong in which tier — tier assignments are correct
+- This does not change any agent's cognitive task category or purpose — only the model tier where the decision tree clearly indicates over/under-budgeting
 - This is not a rhino-cli source code change — the tooling already supports `model: opus`
 - This is not an agent capability expansion — no new agents, no new features
 - This does not address the GLM-5.1 capability gap vs Claude Opus 4.7 — that is a platform-level constraint outside this plan's scope
