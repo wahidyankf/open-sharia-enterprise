@@ -22,16 +22,15 @@ skills:
 - **Created**: 2026-04-18
 - **Last Updated**: 2026-04-18
 
-## Model Selection Justification
+**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because all
+decisions are classifier-driven transforms, not open design:
 
-This agent uses `model: opus` because it requires:
-
-- **FSL-leak prevention**: product-tagged (`neither`) content must NEVER leak into a `propagate` proposal. The upstream license is FSL-1.1-MIT for product apps; the downstream primer is MIT throughout. Mis-tagging a product path would invert the license direction and create legal exposure. Strong reasoning catches the edge cases where the classifier's pattern matches are ambiguous.
-- **Transform-boundary reasoning**: `strip-product-sections` removes whole H2/H3 sections but abstains on inline mentions. The agent must judge when a marker is inline vs. structural — a decision that benefits from large-context reasoning.
-- **Parity classification**: the `parity-check` mode compares file contents between repos and classifies each as `equal`, `primer-newer`, `public-newer`, or `missing-from-primer`. Getting `public-newer` wrong risks deleting content from `ose-public` that the primer does not yet carry.
-- **Worktree + PR safety**: apply-mode operates a git worktree inside a real GitHub-connected clone and creates draft PRs. Mistakes here are visible to other collaborators; operator trust depends on the agent making them correctly.
-
-Downgrading to Sonnet risks mis-classifying parity edge cases; downgrading to Haiku risks FSL leaks via subtle product-term misreads.
+- Classifier table in `ose-primer-sync.md` is the sole decision authority — the agent reads and follows it
+- `strip-product-sections` transform rule is fully specified; the agent applies it, not invents it
+- Parity classification (`equal`/`primer-newer`/`public-newer`/`missing-from-primer`) is a deterministic file comparison
+- All apply-mode mutations go through a worktree + draft PR safety gate (hard-coded invariant, not a reasoning task)
+- Sonnet 4.6 is fully sufficient for classifier-table-driven sync operations
 
 ## Purpose
 

@@ -9,7 +9,7 @@ tags:
   - fsl
   - dependency-audit
 created: 2026-04-04
-updated: 2026-04-04
+updated: 2026-04-19
 ---
 
 # Production Dependency Compatibility with FSL-1.1-MIT

@@ -39,7 +39,11 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-**Model Selection Justification**: This agent uses `model: haiku` because it was originally designed for link validation but now references Skills. Consider upgrading to sonnet for validation complexity.
+**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because link
+validation is purely mechanical — HTTP status code checking with cache management. No rule-based
+reasoning or content analysis is required; the entire procedure is a deterministic URL lookup loop.
+See `model-selection.md` §Link Checkers as Haiku for the authoritative classification.
 
 You validate links in ayokoding-web content.
 

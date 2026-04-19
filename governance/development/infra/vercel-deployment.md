@@ -10,7 +10,7 @@ tags:
   - build
   - monorepo
 created: 2026-03-26
-updated: 2026-03-26
+updated: 2026-04-19
 ---
 
 # Vercel Deployment Convention
@@ -116,6 +116,7 @@ Include any directory that contains build-time generated files the runtime depen
 | `ayokoding-web`   | `apps/ayokoding-web/vercel.json`   | Set (fixed after incident)                  | Runs `generate-indexes` and `generate-search-data` first |
 | `organiclever-fe` | `apps/organiclever-fe/vercel.json` | Not set (no build-time targets at present)  | At risk if build-time targets are added                  |
 | `oseplatform-web` | `apps/oseplatform-web/vercel.json` | Set (`generate-search-data` + `next build`) | Next.js build with search data generation                |
+| `wahidyankf-web`  | `apps/wahidyankf-web/vercel.json`  | Set                                         | Adopted 2026-04-19; deploys via `prod-wahidyankf-web`    |
 
 ## When to Check
 

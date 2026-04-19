@@ -232,7 +232,7 @@ START: Should I create Indonesian content?
 
 ### Content Creation Agents
 
-**apps-ayokoding-web-general-maker**, **apps-ayokoding-web-by-example-maker**, **ayokoding-web-by-concept-maker**:
+**apps-ayokoding-web-general-maker**, **apps-ayokoding-web-by-example-maker**, **apps-ayokoding-web-in-the-field-maker**:
 
 - **Default behavior**: Create technical tutorials in English under `/en/learn/`
 - **Do NOT automatically mirror** to Indonesian (`/id/belajar/`)
@@ -428,7 +428,7 @@ Before creating Indonesian content, verify:
 
 - `apps-ayokoding-web-general-maker` - Creates ayokoding-web content following this policy
 - `apps-ayokoding-web-by-example-maker` - Creates by-example tutorials (English-first)
-- `ayokoding-web-by-concept-maker` - Creates by-concept tutorials (English-first)
+- `apps-ayokoding-web-in-the-field-maker` - Creates in-the-field production guides (English-first)
 - `apps-ayokoding-web-general-checker` - Validates compliance with this policy
 
 ---

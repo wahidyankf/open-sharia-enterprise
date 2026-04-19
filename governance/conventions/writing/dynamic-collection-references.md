@@ -9,7 +9,7 @@ tags:
   - maintenance
   - collections
 created: 2026-02-22
-updated: 2026-02-22
+updated: 2026-04-19
 ---
 
 # Dynamic Collection References Convention

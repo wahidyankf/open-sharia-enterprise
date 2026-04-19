@@ -16,7 +16,9 @@ skills:
 - **Created**: 2026-04-19
 - **Last Updated**: 2026-04-19
 
-**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
+**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because it
+performs straightforward deployment tasks:
 
 - Sequential git operations (checkout, status check, force push)
 - Simple status checks (branch existence, uncommitted changes)

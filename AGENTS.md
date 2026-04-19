@@ -40,7 +40,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 **Format Differences**:
 
 - **Tools**: Claude Code uses arrays `[Read, Write]`, OpenCode uses `{ read: true, write: true }`
-- **Models**: Claude Code uses `sonnet`/`haiku`, OpenCode uses `zai-coding-plan/glm-5.1` or `zai-coding-plan/glm-5-turbo`
+- **Models**: Claude Code uses `sonnet`/`haiku` or omits `model:` entirely (omit = budget-adaptive opus-inherit); OpenCode uses `zai-coding-plan/glm-5.1` or `zai-coding-plan/glm-5-turbo`
 - **Skills**: Same format for both systems (SKILL.md)
 - **Permissions**: Claude Code uses `settings.json`, OpenCode uses `opencode.json` permission block (equivalent access configured)
 - **MCP/Plugins**: Claude Code uses plugins, OpenCode uses MCP servers (Playwright, Nx, Z.ai, Perplexity)
@@ -56,7 +56,7 @@ Specialized agents organized into families:
 3. **Project Planning**: `plan-maker`, `plan-checker`, `plan-execution-checker`, `plan-fixer` (plan execution itself is orchestrated directly by the calling context via the [plan-execution workflow](./governance/workflows/plan/plan-execution.md); no dedicated executor subagent)
 4. **AyoKoding Web Content**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
 5. **Web Content - oseplatform-web**: Landing page content creators, validators, deployers (migrated from Hugo to Next.js 16)
-6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-ui-maker`, `swe-ui-checker`, `swe-ui-fixer`, `swe-clojure-dev`, `swe-csharp-dev`, `swe-dart-dev`, `swe-e2e-dev`, `swe-elixir-dev`, `swe-fsharp-dev`, `swe-golang-dev`, `swe-hugo-dev` (DEPRECATED), `swe-java-dev`, `swe-kotlin-dev`, `swe-python-dev`, `swe-rust-dev`, `swe-typescript-dev`, `social-linkedin-post-maker`, `apps-organiclever-fe-deployer`
+6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-ui-maker`, `swe-ui-checker`, `swe-ui-fixer`, `swe-clojure-dev`, `swe-csharp-dev`, `swe-dart-dev`, `swe-e2e-dev`, `swe-elixir-dev`, `swe-fsharp-dev`, `swe-golang-dev`, `swe-hugo-dev` (DEPRECATED), `swe-java-dev`, `swe-kotlin-dev`, `swe-python-dev`, `swe-rust-dev`, `swe-typescript-dev`, `social-linkedin-post-maker`, `apps-organiclever-fe-deployer`, `apps-wahidyankf-web-deployer`
 7. **Repository Governance**: `repo-rules-maker`, `repo-rules-checker`, `repo-rules-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`, `repo-ose-primer-adoption-maker`, `repo-ose-primer-propagation-maker`
 8. **Specs Validation**: `specs-maker`, `specs-checker`, `specs-fixer`
 9. **CI/CD**: `ci-checker`, `ci-fixer`
@@ -171,7 +171,7 @@ Product-specific paths are classified `neither` and never sync. Reference: [Rela
 
 ---
 
-**Last Updated**: 2026-04-18
+**Last Updated**: 2026-04-19
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

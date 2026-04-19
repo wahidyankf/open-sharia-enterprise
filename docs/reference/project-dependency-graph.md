@@ -8,7 +8,7 @@ tags:
   - architecture
   - monorepo
 created: 2026-03-22
-updated: 2026-04-18
+updated: 2026-04-19
 ---
 
 # Project Dependency Graph
@@ -67,6 +67,7 @@ graph RL
   %% Content sites
   AKW[ayokoding-web]
   OPW[oseplatform-web]
+  WKF[wahidyankf-web]
 
   %% OrganicLever
   OLF[organiclever-fe]
@@ -154,6 +155,7 @@ Shared Go utilities (time formatting, test helpers, output capture).
 | --------------- | --------------- | ----------- |
 | ayokoding-web   | ayokoding-cli   | (none)      |
 | oseplatform-web | oseplatform-cli | (none)      |
+| wahidyankf-web  | (none)          | (none)      |
 
 ### OrganicLever
 

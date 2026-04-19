@@ -9,7 +9,7 @@ tags:
   - standards
   - development
 created: 2026-04-03
-updated: 2026-04-03
+updated: 2026-04-19
 ---
 
 # AI Agent Model Selection Convention
@@ -74,11 +74,7 @@ Model selection directly affects agent quality, latency, and resource efficiency
 - **SWE developers** (all language-specific agents) -- generate and refactor production code across diverse language ecosystems, requiring deep understanding of idioms, patterns, and trade-offs
 - **plan-maker** -- creates project plans requiring scope analysis, dependency mapping, and strategic sequencing
 - **docs-tutorial-maker** -- produces tutorial content requiring pedagogical reasoning, narrative flow, and learning progression design
-- **apps-ayokoding-web-by-example-maker** -- creates 75-85 heavily annotated code examples requiring pedagogical progression and bilingual content
-- **apps-ayokoding-web-in-the-field-maker** -- produces production implementation guides requiring framework integration and quality bar judgment
-- **apps-ayokoding-web-general-maker** -- creates bilingual educational content requiring audience awareness and language nuance
 - **swe-ui-maker** -- creates UI components requiring CVA variants, Radix composition, accessibility, tests, and stories in one pass
-- **repo-rules-maker** -- creates governance documents requiring architectural reasoning about layer relationships and traceability
 
 **Frontmatter**: Omit the `model` field. This is intentional — the agent inherits the
 session's active model.
@@ -127,7 +123,7 @@ Mistakes).
 - **All checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, docs-tutorial-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, repo-rules-checker, repo-workflow-checker, plan-checker, plan-execution-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker)
 - **Most fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, repo-rules-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
 - **social-linkedin-post-maker** -- generates social media posts following a defined template and tone guidelines
-- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker)
+- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker)
 - **swe-e2e-dev** -- writes Playwright E2E tests following a dedicated skill with defined patterns (locators, fixtures, waits); lower stakes than production code written by language developer agents
 
 **Frontmatter**: Specify `model: sonnet` explicitly.
@@ -158,8 +154,9 @@ color: green
 
 **Agent examples**:
 
-- **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer) -- execute git branch operations and deployment commands following a fixed procedure
+- **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer, apps-wahidyankf-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
 - **Link checkers** (docs-link-checker, apps-ayokoding-web-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
+- **apps-ayokoding-web-link-fixer** -- applies checker-identified broken links via deterministic URL replacement; no independent analysis required
 - **docs-file-manager** -- performs deterministic file operations (move, rename, delete) with `git mv`, kebab-case pattern matching, and mechanical link updates; no judgment calls required
 
 **Frontmatter**: Specify `model: haiku` explicitly.
@@ -324,7 +321,7 @@ The social-linkedin-post-maker uses sonnet despite being a "maker" agent. This i
 
 ### Structured Makers as Sonnet
 
-Several maker agents use sonnet because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker). Each has a sonnet checker and sonnet fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with opus-tier makers (plan-maker, docs-tutorial-maker, swe-ui-maker, apps-ayokoding-web-\*-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
+Several maker agents use sonnet because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker). Each has a sonnet checker and sonnet fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with opus-tier makers (plan-maker, docs-tutorial-maker, swe-ui-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
 
 ### E2E Test Developer as Sonnet
 
@@ -333,6 +330,10 @@ The swe-e2e-dev uses sonnet despite the other 12 language developer agents being
 ### File Manager as Haiku
 
 The docs-file-manager uses haiku despite being categorized as a fixer (yellow). This is because its operations are deterministic file manipulation (`git mv`, `git rm`, find-and-replace link updates) with no judgment calls. The `agent-developing-agents` skill cites it as the canonical haiku example.
+
+### Link Fixer as Haiku
+
+The apps-ayokoding-web-link-fixer uses haiku despite being a fixer (yellow) — previously sonnet. Its work is deterministic URL replacement driven entirely by a checker audit report: no independent link analysis, no content reasoning, just old-URL → new-URL substitution followed by an HTTP status re-check. Haiku 4.5 (73.3% SWE-bench Verified — [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) is fully sufficient and costs 5× less per token than Sonnet. This is the fixer analogue of the Link Checkers as Haiku rule above.
 
 ## Tools and Automation
 

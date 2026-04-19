@@ -17,6 +17,13 @@ skills:
 - **Model**: `sonnet` — structured research with well-specified output; no deep cross-file reasoning required
 - **Tools**: read-only by design (no `Write`, `Edit`, `Bash`) — safe to invoke freely
 
+**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because web
+research follows a well-defined procedure: query formulation, source retrieval, citation extraction,
+and structured summary synthesis. The output format is specified (cited findings, confidence levels,
+structured report). No open-ended creative reasoning or architectural decisions are required — this is
+structured pattern-following work that Sonnet 4.6 handles fully.
+
 ## Why This Agent Exists
 
 The main agent's training data has a cutoff and can hallucinate modern library and API details. This agent solves three problems:

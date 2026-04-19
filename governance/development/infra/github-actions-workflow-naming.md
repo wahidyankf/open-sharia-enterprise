@@ -9,7 +9,7 @@ tags:
   - naming
   - workflow
 created: 2026-03-13
-updated: 2026-03-13
+updated: 2026-04-19
 ---
 
 # GitHub Actions Workflow Naming Convention
@@ -83,13 +83,13 @@ Every workflow currently in the repository follows this rule:
 
 | `name:` field                        | Filename                              |
 | ------------------------------------ | ------------------------------------- |
-| `Main CI`                            | `main-ci.yml`                         |
 | `PR - Quality Gate`                  | `pr-quality-gate.yml`                 |
-| `PR - Format`                        | `pr-format.yml`                       |
 | `PR - Validate Links`                | `pr-validate-links.yml`               |
+| `Codecov Upload`                     | `codecov-upload.yml`                  |
 | `Test and Deploy - AyoKoding Web`    | `test-and-deploy-ayokoding-web.yml`   |
 | `Test and Deploy - OSE Platform Web` | `test-and-deploy-oseplatform-web.yml` |
 | `Test and Deploy - OrganicLever`     | `test-and-deploy-organiclever.yml`    |
+| `Test and Deploy - Wahidyankf Web`   | `test-and-deploy-wahidyankf-web.yml`  |
 
 ## Examples
 
@@ -138,20 +138,20 @@ The pattern `(Language/Framework)` in a name maps to `language-framework` in the
 
 ### Version Alignment Policy
 
-`main-ci.yml` is the **source of truth** for language version choices. All scheduled test and
-deploy workflows must use the same language versions as `main-ci.yml`.
+`pr-quality-gate.yml` is the **source of truth** for language version choices. All scheduled test and
+deploy workflows must use the same language versions as `pr-quality-gate.yml`.
 
-**Rule**: When upgrading a language version in `main-ci.yml`, update all deploy workflows
-that use that language in the same commit. Version drift between `main-ci.yml` and these workflows
+**Rule**: When upgrading a language version in `pr-quality-gate.yml`, update all deploy workflows
+that use that language in the same commit. Version drift between `pr-quality-gate.yml` and these workflows
 creates inconsistencies where CI passes on main but manually dispatched tests fail (or vice versa).
 
 **Workflows that must stay aligned**:
 
-| Language | `main-ci.yml` step | Scheduled workflows to update      |
-| -------- | ------------------ | ---------------------------------- |
-| Go       | `go-version`       | `test-and-deploy-organiclever.yml` |
-| Node.js  | `node-version`     | All workflows installing Node.js   |
-| .NET     | `dotnet-version`   | `test-and-deploy-organiclever.yml` |
+| Language | `pr-quality-gate.yml` step | Scheduled workflows to update      |
+| -------- | -------------------------- | ---------------------------------- |
+| Go       | `go-version`               | `test-and-deploy-organiclever.yml` |
+| Node.js  | `node-version`             | All workflows installing Node.js   |
+| .NET     | `dotnet-version`           | `test-and-deploy-organiclever.yml` |
 
 ### Adding new workflows
 

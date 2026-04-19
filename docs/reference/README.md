@@ -7,7 +7,7 @@ tags:
   - reference
   - technical
 created: 2025-11-22
-updated: 2026-04-18
+updated: 2026-04-19
 ---
 
 # Reference
@@ -27,10 +27,14 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 
 - [Code Coverage](./code-coverage.md) - How coverage is measured locally (rhino-cli) and on Codecov, per-project details, exclusion patterns, and troubleshooting
 
+### AI Models
+
+- [AI Model Benchmarks](./ai-model-benchmarks.md) - Cited benchmark scores for all AI models used in `.claude/agents/` — primary source backing for tier assignments in model-selection.md
+
 ### Ecosystem
 
 - [Related Repositories](./related-repositories.md) - Sibling repositories derived from or related to `ose-public` (notably `ose-primer`), upstream/downstream relationships, and license differences
 
 ---
 
-**Last Updated**: 2026-04-18
+**Last Updated**: 2026-04-19

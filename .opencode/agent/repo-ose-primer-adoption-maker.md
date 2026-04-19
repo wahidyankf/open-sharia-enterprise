@@ -21,16 +21,14 @@ skills:
 - **Created**: 2026-04-18
 - **Last Updated**: 2026-04-18
 
-## Model Selection Justification
+**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because all
+decisions are driven by the classifier table in `ose-primer-sync.md`, not open design:
 
-This agent uses `model: opus` because it requires:
-
-- **Classifier-edge reasoning**: correctly interpreting `bidirectional` rows with transforms (`strip-product-sections`) where the boundary between generic and product-specific content is subtle and context-dependent.
-- **Significance bucketing**: distinguishing `high` (new content that changes behavior) from `medium` (structural reorg) from `low` (style-only) requires reading the actual diff and understanding the semantic weight of each line.
-- **FSL-leak prevention**: the upstream license is FSL-1.1-MIT for product apps; accidentally adopting product-adjacent content into a `propagate`-tagged path would invert the license direction. Getting this wrong has reputational consequences.
-- **Transform-gap judgement**: when the `strip-product-sections` transform cannot handle an inline product mention, the agent must decide whether to abstain (safe) or flag for maintainer review (actionable) — this decision benefits from strong reasoning.
-
-Downgrading to Sonnet risks missing the license-leak edge cases; downgrading to Haiku risks misclassifying transform-gap files as trivial.
+- Classifier table specifies `adopt`, `propagate`, `bidirectional`, or `neither` for every path — the agent reads the table, not invents the rules
+- Significance bucketing (`high`/`medium`/`low`) follows defined criteria in the `repo-assessing-criticality-confidence` skill
+- Dry-run-only mode means no state mutations occur; the agent produces a report for maintainer review
+- Sonnet 4.6 is fully sufficient for classifier-table-driven report generation
 
 ## Purpose
 

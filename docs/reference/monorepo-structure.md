@@ -8,7 +8,7 @@ tags:
   - architecture
   - structure
 created: 2025-11-29
-updated: 2026-03-31
+updated: 2026-04-19
 ---
 
 # Monorepo Structure Reference
@@ -83,7 +83,7 @@ Flat structure - all apps at the same level, no subdirectories.
 
 **Current Apps**:
 
-- `oseplatform-web` - OSE Platform website (Hugo static site)
+- `oseplatform-web` - OSE Platform website (Next.js 16 content platform)
 - `ayokoding-web` - AyoKoding educational platform (Next.js 16 fullstack content platform)
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 - `rhino-cli` - Repository management CLI (Go application)
@@ -92,23 +92,17 @@ Flat structure - all apps at the same level, no subdirectories.
 - `organiclever-be` - OrganicLever REST API backend (F#/Giraffe application)
 - `organiclever-fe-e2e` - Playwright FE E2E tests for organiclever-fe
 - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
+- `wahidyankf-web` - Personal portfolio website (Next.js 16 application, port 3201)
+- `wahidyankf-web-fe-e2e` - Playwright FE E2E tests for wahidyankf-web
 
-### App Structure (Hugo Static Site)
+### App Structure (Next.js Application — oseplatform-web)
 
 ```
 apps/oseplatform-web/
-├── content/                   # Markdown content files
-├── layouts/                   # Hugo templates
-├── static/                    # Static assets (images, CSS, JS)
-├── themes/                    # Hugo themes
-├── data/                      # Data files
-├── i18n/                      # Internationalization
-├── assets/                    # Asset pipeline files
-├── archetypes/                # Content templates
-├── public/                    # Build output (gitignored)
-├── hugo.yaml                  # Hugo configuration
+├── src/                       # Source code (App Router)
+├── public/                    # Static assets
+├── next.config.mjs            # Next.js configuration
 ├── project.json               # Nx project configuration
-├── build.sh                   # Build script
 ├── vercel.json                # Deployment configuration
 └── README.md                  # App documentation
 ```
@@ -263,7 +257,6 @@ The repository contains two distinct project structures with different purposes 
 - Next.js frontend applications
 - Spring Boot backend services
 - Go CLI tools
-- Hugo static sites
 - Reusable TypeScript and Go libraries
 
 ### Experimental Projects (`apps-labs/`)
@@ -288,7 +281,7 @@ The repository contains two distinct project structures with different purposes 
 - Quick prototypes without monorepo integration overhead
 - Temporary experiments that might be deleted after evaluation
 
-**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/oseplatform-web/` as an example of a Hugo static site integrated with Nx monorepo.
+**Note on Nx integration**: Even projects with non-Node.js toolchains (like Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization.
 
 ### Key Differences
 
@@ -325,7 +318,7 @@ The repository contains two distinct project structures with different purposes 
 
 Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
-**Hugo App Example** (`oseplatform-web`):
+**Next.js App Example** (`oseplatform-web`):
 
 ```json
 {
@@ -336,24 +329,17 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "hugo server --buildDrafts --buildFuture",
+        "command": "next dev --port 3100",
         "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "bash build.sh",
+        "command": "next build",
         "cwd": "apps/oseplatform-web"
       },
-      "outputs": ["{projectRoot}/public"]
-    },
-    "clean": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "rm -rf public resources",
-        "cwd": "apps/oseplatform-web"
-      }
+      "outputs": ["{projectRoot}/.next"]
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
@@ -427,16 +413,15 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 All projects use a standard four-dimension tag scheme:
 
-| Dimension   | Values                                                | Required                 | Purpose                 |
-| ----------- | ----------------------------------------------------- | ------------------------ | ----------------------- |
-| `type:`     | `app`, `lib`, `e2e`                                   | Yes                      | Project kind            |
-| `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `playwright`  | For apps/e2e             | Framework/runtime       |
-| `lang:`     | `golang`, `ts`, `java`                                | Where source code exists | Primary language        |
-| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling` | Yes                      | Business/product domain |
+| Dimension   | Values                                                              | Required                 | Purpose                 |
+| ----------- | ------------------------------------------------------------------- | ------------------------ | ----------------------- |
+| `type:`     | `app`, `lib`, `e2e`                                                 | Yes                      | Project kind            |
+| `platform:` | `cli`, `nextjs`, `spring-boot`, `playwright`                        | For apps/e2e             | Framework/runtime       |
+| `lang:`     | `golang`, `ts`, `java`                                              | Where source code exists | Primary language        |
+| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `wahidyankf`, `tooling` | Yes                      | Business/product domain |
 
 **Notes**:
 
-- Hugo sites omit `lang:` — there is no application source code, only templates and markdown
 - Go libs omit `platform:` — they have no framework, only `lang:golang`
 - Use `domain:tooling` for generic dev utilities not tied to a product domain
 
@@ -494,16 +479,6 @@ All projects use a standard four-dimension tag scheme:
 
 ### App Configuration Files
 
-**Hugo Apps** do not require `package.json` as they use Hugo's native configuration:
-
-```yaml
-# apps/oseplatform-web/hugo.yaml
-baseURL: https://oseplatform.com/
-languageCode: en-us
-title: Open Sharia Enterprise Platform
-theme: PaperMod
-```
-
 **Go Apps** use `go.mod` for dependency management:
 
 ```go
@@ -553,7 +528,7 @@ go 1.26
 
 ### Import Patterns
 
-**Note**: Hugo and Go apps do not use TypeScript path mappings. These patterns apply to TypeScript/Next.js apps.
+**Note**: Go apps do not use TypeScript path mappings. These patterns apply to TypeScript/Next.js apps.
 
 **Apps importing libs** (TypeScript apps):
 
@@ -617,7 +592,6 @@ Configured in `tsconfig.base.json`:
 
 ### Apps
 
-- **Hugo**: `apps/[app-name]/public/` (static site files)
 - **Go**: `apps/[app-name]/dist/` (compiled binaries)
 - **Next.js**: `apps/[app-name]/.next/`
 - **Spring Boot**: `apps/[app-name]/target/`

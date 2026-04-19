@@ -74,6 +74,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-ayokoding-web-deployer** - AyoKoding deployment (Next.js via Vercel)
 - **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-fe-deployer** - organiclever-fe deployment
+- **apps-wahidyankf-web-deployer** - wahidyankf-web deployment (Next.js via Vercel)
 
 ### 💻 Development
 
@@ -192,4 +193,4 @@ All agents follow governance principles:
 
 ---
 
-**Last Updated**: 2026-04-02
+**Last Updated**: 2026-04-19

@@ -26,6 +26,7 @@ restriction to that specific application's domain:
 | **OrganicLever Backend**  | `apps/organiclever-be/` | Non-enterprise productivity (individual, family, personal) |
 | **OSE Platform Web**      | `apps/oseplatform-web/` | Enterprise platform site                                   |
 | **OSE Platform CLI**      | `apps/oseplatform-cli/` | Enterprise platform site (tooling)                         |
+| **Wahidyankf Web**        | `apps/wahidyankf-web/`  | Personal portfolio website                                 |
 
 **What this means in practice**: Someone using the `organiclever-fe` code cannot build a competing
 non-enterprise productivity application (individual, family, or personal productivity). But they can
@@ -68,7 +69,7 @@ A new library defaults to MIT. To override, place a different LICENSE file in th
 The following fall under the root FSL-1.1-MIT license (no separate per-directory LICENSE):
 
 - **CLI tools**: `rhino-cli`
-- **Product E2E test suites**: `ayokoding-web-*-e2e`, `organiclever-*-e2e`, `oseplatform-web-*-e2e`
+- **Product E2E test suites**: `ayokoding-web-*-e2e`, `organiclever-*-e2e`, `oseplatform-web-*-e2e`, `wahidyankf-web-fe-e2e`
 - **Documentation**: `docs/`, `governance/`, `plans/`
 - **AI agent configuration**: `.claude/`, `.opencode/`
 

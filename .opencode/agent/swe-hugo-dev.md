@@ -23,7 +23,10 @@ tools:
 
 No Hugo applications exist in the `apps/` directory. This agent is preserved for historical reference only. If Hugo sites are reintroduced in the future, this agent can be reactivated.
 
-**Model Selection Justification**: This agent is DEPRECATED (no active Hugo sites remain). Inherits `model: opus` (omit model field) for historical reference.
+**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because it is
+DEPRECATED — no active Hugo sites remain and no code is generated. Sonnet 4.6 is fully sufficient for
+an agent that only informs users of its deprecated status.
 
 ## Former Responsibilities
 

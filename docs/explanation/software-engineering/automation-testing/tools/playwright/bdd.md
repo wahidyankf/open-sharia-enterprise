@@ -15,7 +15,7 @@ principles:
   - explicit-over-implicit
   - automation-over-manual
 created: 2026-03-04
-updated: 2026-03-04
+updated: 2026-04-19
 ---
 
 # Playwright BDD Integration (playwright-bdd)

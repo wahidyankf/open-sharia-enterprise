@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-04-11
+updated: 2026-04-19
 ---
 
 # AI Agents Convention

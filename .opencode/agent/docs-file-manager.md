@@ -23,7 +23,10 @@ skills:
 - **Last Updated**: 2026-04-12
 - **Size Tier**: Tier 2 (standard agent — deterministic file operations with scripted link updates)
 
-**Model Selection Justification**: This agent uses `model: haiku` to align with the canonical haiku example documented in the `agent-developing-agents` skill (SKILL.md §"Haiku Examples" → docs-file-manager). The work profile fits haiku's strengths:
+**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) to align with
+the canonical haiku example documented in the `agent-developing-agents` skill (SKILL.md §"Haiku
+Examples" → docs-file-manager). The work profile fits haiku's strengths:
 
 - Deterministic file operations (move, rename, delete) with clear pass/fail outcomes
 - Path manipulation and kebab-case compliance are pattern-matching against a regex rule

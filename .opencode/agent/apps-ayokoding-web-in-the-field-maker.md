@@ -22,13 +22,14 @@ skills:
 - **Created**: 2026-02-06
 - **Last Updated**: 2026-04-04
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
+**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
+follows a defined rubric, not open architectural invention:
 
-- Advanced reasoning to create production-ready implementation guides
-- Sophisticated understanding of framework ecosystems and trade-offs
-- Deep knowledge of standard library→framework progression patterns
-- Complex decision-making for when frameworks add value vs complexity
-- Multi-step content creation with production quality standards
+- Standard-library-first progression is a fixed principle enforced by skills
+- Guide count is bounded: 20–40 guides with pre-defined framework integration patterns
+- Production code quality rules and annotation standards are pre-specified
+- Sonnet 4.6 is fully sufficient for rubric-bounded production guide generation
 
 You are an expert at creating In-the-Field production implementation guides for ayokoding-web with framework integration following standard library first principle.
 

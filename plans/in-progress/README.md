@@ -5,6 +5,7 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [2026-04-16\_\_organiclever-fe-local-first](./2026-04-16__organiclever-fe-local-first/README.md) — Pivot `organiclever-fe` to local-first deploy on Vercel; BE kept dormant; add `/system/status/be` diagnostic page with graceful degradation.
+- [2026-04-19\_\_agent-model-selection-standardization](./2026-04-19__agent-model-selection-standardization/README.md) — Standardize AI agent model tier assignments with budget-adaptive inheritance, benchmark reference doc, and OCD-level governance consistency.
 
 ## Instructions
 

@@ -8,7 +8,7 @@ tags:
   - github-actions
   - git-hooks
 created: 2025-11-29
-updated: 2026-03-06
+updated: 2026-04-19
 ---
 
 # CI/CD Pipeline
@@ -140,22 +140,21 @@ graph TB
 
 ## GitHub Actions Workflows
 
-### PR Format Workflow
+### PR Quality Gate Workflow
 
-**File**: `.github/workflows/pr-format.yml`
+**File**: `.github/workflows/pr-quality-gate.yml`
 
 **Trigger**: Pull request opened, synchronized, or reopened
 
 **Steps:**
 
 1. Checkout PR branch
-2. Setup Volta (Node.js version manager)
+2. Setup language runtimes (Node.js, Go, .NET, Python)
 3. Install dependencies
-4. Detect changed files (JS/TS, JSON, MD, YAML, CSS, HTML)
-5. Run Prettier on changed files
-6. Auto-commit formatting changes if any
+4. Run typecheck, lint, test:quick, spec-coverage for affected projects
+5. Validate agent naming and workflow naming conventions
 
-**Purpose**: Ensure all PR code is properly formatted even if local hooks were bypassed
+**Purpose**: Full quality gate on every PR — typecheck, lint, unit tests, coverage, naming validation
 
 ### PR Link Validation Workflow
 
@@ -172,9 +171,13 @@ graph TB
 
 **Purpose**: Prevent merging PRs with broken markdown links
 
-### Deploy AyoKoding Web
+### Test and Deploy AyoKoding Web Workflow
 
-**Deployment**: Force-push `main` to `prod-ayokoding-web` branch; Vercel auto-builds the Next.js application.
+**File**: `.github/workflows/test-and-deploy-ayokoding-web.yml`
+
+**Trigger**: Push to `main` branch (CRON twice daily + manual dispatch)
+
+**Steps**: Full test pipeline via `_reusable-test-and-deploy.yml` (lint, typecheck, test:quick, E2E), then force-push to `prod-ayokoding-web`; Vercel auto-builds.
 
 **Purpose**: Deploy ayokoding.com (Next.js 16 fullstack content platform)
 
@@ -187,11 +190,26 @@ graph TB
 **Steps:**
 
 1. Detect changes in `apps/oseplatform-web/` vs `prod-oseplatform-web` branch
-2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0, Hugo 0.156.0 extended
+2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0
 3. Install dependencies and run `nx build oseplatform-web`
 4. Force-push `main` to `prod-oseplatform-web`; Vercel auto-builds
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
+
+### Test and Deploy wahidyankf-web Workflow
+
+**File**: `.github/workflows/test-and-deploy-wahidyankf-web.yml`
+
+**Trigger**: Scheduled or manual `workflow_dispatch`
+
+**Steps:**
+
+1. Detect changes in `apps/wahidyankf-web/` vs `prod-wahidyankf-web` branch
+2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0
+3. Install dependencies and run `nx build wahidyankf-web`
+4. Force-push `main` to `prod-wahidyankf-web`; Vercel auto-builds
+
+**Purpose**: Automated deployments for www.wahidyankf.com with change detection to avoid unnecessary builds
 
 ### Test and Deploy OrganicLever Workflow
 
@@ -210,14 +228,6 @@ graph TB
 7. `deploy` (gated on all test jobs + `detect-changes == true`): force-push `HEAD` to `prod-organiclever-web`; Vercel auto-builds
 
 **Purpose**: Automated scheduled deployments for www.organiclever.com, gated on full FE+BE test suite, with change detection to avoid unnecessary builds
-
-### Main CI Workflow
-
-**File**: `.github/workflows/main-ci.yml`
-
-**Trigger**: Push to `main` branch
-
-**Purpose**: Runs affected tests and quality checks on every push to main
 
 ### PR Quality Gate Workflow
 
@@ -304,7 +314,7 @@ graph TB
      - Link validation
    - Review and merge
 
-6. **Deploy** (for Hugo sites):
+6. **Deploy** (for Vercel-deployed apps):
 
    ```bash
    git checkout prod-[app-name]

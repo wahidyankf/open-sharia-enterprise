@@ -9,7 +9,7 @@ tags:
   - rhino-cli
   - quality
 created: 2026-03-22
-updated: 2026-04-18
+updated: 2026-04-19
 ---
 
 # Code Coverage Reference
@@ -56,6 +56,7 @@ Partial lines count as NOT covered, matching Codecov's badge calculation.
 | organiclever-fe | >= 70%    | Frontend app with MSW integration tests |
 | ayokoding-web   | >= 80%    | Content platform with UI rendering code |
 | oseplatform-web | >= 80%    | Content platform with UI rendering code |
+| wahidyankf-web  | >= 80%    | Personal portfolio (Next.js)            |
 
 ## Per-Project Coverage Details
 
@@ -82,6 +83,7 @@ Partial lines count as NOT covered, matching Codecov's badge calculation.
 | organiclever-fe | 70%       | None       |
 | ayokoding-web   | 80%       | None       |
 | oseplatform-web | 80%       | None       |
+| wahidyankf-web  | 80%       | None       |
 
 ### F# Projects
 
@@ -146,7 +148,7 @@ main CI) and uploaded to Codecov on push to `main`.
 1. `test:unit` runs tests and generates the coverage file
 2. `rhino-cli test-coverage validate <file> <threshold>` checks locally
 3. Both steps are combined in `test:quick`
-4. On push to `main`, main-ci uploads coverage files to Codecov
+4. On push to `main`, codecov-upload uploads coverage files to Codecov
 5. Codecov applies `codecov.yml` ignore rules and computes percentages
 6. Each project has a Codecov flag with `carryforward: true` so
    non-affected projects retain their previous coverage
@@ -171,7 +173,7 @@ flags:
 
 1. Check if the coverage file excludes files that exist in the source tree
 2. Add matching patterns to `codecov.yml` `ignore:` section
-3. Verify the correct coverage file is uploaded in `main-ci.yml`
+3. Verify the correct coverage file is uploaded in `codecov-upload.yml`
 
 ### Coverage drops after adding a new file
 
