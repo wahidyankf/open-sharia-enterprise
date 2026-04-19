@@ -78,6 +78,19 @@ DDD provides two complementary pattern sets: strategic design for understanding 
 - Long-lived systems expected to evolve over years
 - High cost of defects or regulatory compliance requirements
 
+### 🔄 [Finite State Machine (FSM)](./finite-state-machine-fsm/README.md)
+
+**Standards for entity lifecycle management using finite state machines**
+
+Finite State Machines provide a formal model for managing entity lifecycle transitions with explicit states, events, and guards. OSE Platform uses FSMs for modeling domain entity lifecycles, workflow state management, and business process automation.
+
+**Use FSM when you have:**
+
+- Entities with well-defined lifecycle states (e.g., order: pending → confirmed → shipped)
+- Business processes requiring explicit state transition rules
+- Domain logic that depends on current state
+- Need for auditable state history
+
 ---
 
 ## How C4 and DDD Work Together

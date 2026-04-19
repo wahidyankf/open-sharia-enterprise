@@ -39,6 +39,7 @@ This directory contains skill packages that provide progressive knowledge delive
 - **repo-defining-workflows** - Workflow orchestration and multi-step process patterns
 - **repo-generating-validation-reports** - Progressive report writing with UUID chains
 - **repo-practicing-trunk-based-development** - Trunk-based development workflow
+- **repo-syncing-with-ose-primer** - Directional classification, transforms, and safety invariants for content flow between `ose-public` (upstream) and `ose-primer` (downstream template)
 - **repo-understanding-repository-architecture** - Six-layer governance hierarchy
 
 ### 💻 Development Workflow Skills
