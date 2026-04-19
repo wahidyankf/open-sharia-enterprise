@@ -105,7 +105,8 @@ all 70 agent descriptions.
       _(2026-04-19 · Status: Done · plan-maker/omit, swe-typescript-dev/omit, docs-checker/sonnet, ci-fixer/sonnet, apps-oseplatform-web-deployer/haiku — all consistent)_
 - [x] **5.3** Run `npm run validate:claude` — expect zero errors
       _(2026-04-19 · Status: Done · 1029/1029 checks passed)_
-- [ ] **5.4** Commit: `fix(agents): right-size model tiers — 7 OMIT→SONNET, 1 SONNET→HAIKU`
+- [x] **5.4** Commit: `fix(agents): right-size model tiers — 7 OMIT→SONNET, 1 SONNET→HAIKU`
+      _(2026-04-19 · Status: Done)_
 
 ---
 
@@ -115,16 +116,19 @@ Add benchmark citations (with links to `docs/reference/ai-model-benchmarks.md`) 
 policy docs that make tier-based claims. Use `repo-rules-maker` to identify and update
 all affected governance files.
 
-- [ ] **6.1** Invoke `repo-rules-maker` to update `governance/development/agents/model-selection.md`:
+- [x] **6.1** Invoke `repo-rules-maker` to update `governance/development/agents/model-selection.md`:
   - In the Tier Comparison Summary table, add benchmark score column citing the reference doc
   - In "Current Model Versions", add inline links to the reference doc for each score
   - In the OpenCode / GLM Equivalents section, add caveat about GLM-5-turbo having no
     standard benchmarks (link to reference doc)
-- [ ] **6.2** Invoke `repo-rules-maker` to update `.claude/agents/README.md`:
+    _(2026-04-19 · Status: Done · lint 0 errors)_
+- [x] **6.2** Invoke `repo-rules-maker` to update `.claude/agents/README.md`:
   - Add a "Model Benchmark Context" note (2-3 lines) pointing to the reference doc for
     anyone who wants to understand WHY each tier was chosen
-- [ ] **6.3** Verify every benchmark number cited in `model-selection.md` has a link to
+    _(2026-04-19 · Status: Done · added at line 143, lint 0 errors)_
+- [x] **6.3** Verify every benchmark number cited in `model-selection.md` has a link to
       `docs/reference/ai-model-benchmarks.md` with the anchor for the relevant model
+      _(2026-04-19 · Status: Done · 4 links found: opus-47, sonnet-46, haiku-45 in tier table + current versions, glm-5-turbo caveat)_
 - [ ] **6.4** Commit: `docs(governance): add benchmark citations to model-selection + agents README`
 
 ---

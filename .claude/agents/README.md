@@ -140,6 +140,13 @@ skills: []
 
 Note: Frontmatter MUST NOT contain YAML inline comments (# symbols). Put explanations in the document body.
 
+### Model Benchmark Context
+
+Benchmark scores supporting tier assignments are documented in
+[docs/reference/ai-model-benchmarks.md](../../docs/reference/ai-model-benchmarks.md).
+Opus-tier agents omit the `model` field by design — they inherit the session's active
+model (Max/Team Premium → Opus 4.7; Pro/Standard → Sonnet 4.6). Do NOT add `model: opus`.
+
 ## Maker-Checker-Fixer Pattern
 
 Three-stage quality workflow:
