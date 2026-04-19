@@ -1,17 +1,43 @@
 # Delivery — Adopt wahidyankf-web
 
 Each phase ends with **one Conventional-Commits commit** and **one
-`git push`**, per the user requirement. Every checkbox is one concrete,
-independently verifiable action. The plan-execution workflow drives the
-list top-down; do not re-order within a phase unless a step fails and
-requires triage.
+`git push`** to the worktree branch, per the user requirement. Every
+checkbox is one concrete, independently verifiable action. The
+plan-execution workflow drives the list top-down; do not re-order
+within a phase unless a step fails and requires triage.
+
+## Branching Model
+
+Execution happens inside the existing worktree at
+`ose-public/.claude/worktrees/cached-brewing-cocoa/` on the branch
+`worktree-cached-brewing-cocoa`. A **single draft PR** against
+`origin/main` accumulates every phase commit. Per-phase pushes target
+the worktree branch, not `main`. Concretely:
+
+- Phase P0-P7 commits all land on `worktree-cached-brewing-cocoa`.
+- The draft PR against `main` is opened once (see Preconditions) and
+  stays draft throughout execution; each phase push updates the same
+  PR.
+- The PR moves from draft to "ready for review" only after P5 finishes
+  its quality-gate checks.
+- The PR merges to `main` (squash or merge-commit — user's choice)
+  before P6 creates the `prod-wahidyankf-web` production branch.
+- **P6 is the only phase that touches `main` directly**, and only to
+  push the merged SHA from `origin/main` onto the new production
+  branch. No phase commits land directly on `main` — all commits
+  flow through the PR.
+- P7 closes out the plan on the worktree branch and then that PR-merge
+  flow is re-used for the doc/close-out commit if the PR has already
+  merged; otherwise P7 lands in the same still-draft PR.
 
 ## Preconditions (verified once before P0)
 
-- [ ] Confirm the current session is inside `ose-public/.claude/worktrees/<name>/`.
-- [ ] Confirm the worktree branch follows the `worktree-<name>` naming convention (Subrepo Worktree Workflow, Standard 14).
-- [ ] Confirm the worktree branch is not `main` directly (Standard 14 prohibits direct commits to `main` from a worktree).
-- [ ] Confirm a draft PR against `origin/main` has been or will be opened before the first push from this worktree.
+- [ ] Read `./baseline/README.md` end-to-end. The 17 PNGs + 3 YAML snapshots + behavioural notes in `./baseline/` are the authoritative reference the adopted app must match.
+- [ ] **Acknowledge the no-production-domain-testing constraint.** The Vercel project binding for `www.wahidyankf.com` still points at the upstream `wahidyankf/oss` build during and after this plan; the user swaps the binding to `prod-wahidyankf-web` manually after plan completion. Every baseline-comparison check in this plan compares `./baseline/` (left) to `http://localhost:3201/` (right) — NEVER to the live `https://www.wahidyankf.com/` URL after the port. The live URL will disagree with the adopted app until the user's Vercel swap.
+- [ ] Confirm the current session is inside `ose-public/.claude/worktrees/cached-brewing-cocoa/`.
+- [ ] Confirm the worktree branch is `worktree-cached-brewing-cocoa` (matches the `worktree-<name>` convention; Subrepo Worktree Workflow Standard 14).
+- [ ] Confirm the worktree branch is not `main` directly (Standard 14 prohibits direct commits to `main` from a worktree; only the P6 production-branch push touches `main`'s SHA, and only via `main:prod-wahidyankf-web`).
+- [ ] Confirm exactly one draft PR exists against `origin/main` for this worktree branch. If absent, open it now with `gh pr create --draft --base main --head worktree-cached-brewing-cocoa --title "feat(wahidyankf-web): adopt portfolio app" --body-file plans/in-progress/2026-04-19__adopt-wahidyankf-web/README.md` (or equivalent) before the first phase push. Every phase push in P0-P7 updates this same PR — do NOT open a second PR per phase.
 - [ ] Confirm `origin` points at `wahidyankf/ose-public`.
 - [ ] Confirm `git status` is clean.
 - [ ] Run `npm install` from workspace root to install dependencies.
@@ -19,6 +45,7 @@ requires triage.
 
 ## Phase P0 — Prep & Gap Resolution
 
+- [ ] Confirm `./baseline/` contains 17 PNGs, 3 YAML snapshots, and `README.md`. The baseline was captured during plan authoring (2026-04-19) from the live site at `https://www.wahidyankf.com/` — do NOT recapture wholesale; doing so overwrites the reference the port is validated against. Only recapture individual files if missing.
 - [ ] Fetch the upstream `wahidyankf/oss` repo state at HEAD via `gh api repos/wahidyankf/oss/contents/apps-standalone/wahidyankf-web` and record the commit SHA in `plans/in-progress/2026-04-19__adopt-wahidyankf-web/prep-notes.md` (temporary file; deleted in P7).
 - [ ] Read upstream `LICENSE` file and confirm MIT-compatibility; record the license string in `prep-notes.md`.
 - [ ] Record the confirmed production domain (user-supplied; default placeholder `www.wahidyankf.com`) in `prep-notes.md`.
@@ -38,7 +65,8 @@ requires triage.
 - [ ] Create `apps/wahidyankf-web/oxlint.json` (copy from `apps/organiclever-fe/oxlint.json`).
 - [ ] Create `apps/wahidyankf-web/postcss.config.mjs` (Tailwind 4 style).
 - [ ] Create `apps/wahidyankf-web/vitest.config.ts` by copying `apps/ayokoding-web/vitest.config.ts` as the template — thresholds 80/80/80/80 (lines/functions/branches/statements); projects `unit-fe` (jsdom) + `integration` (node); `setupFiles: ["./src/test/setup.ts"]` on the jsdom project. Omit the `unit` (node) project until node-only code exists in the app.
-- [ ] Create `apps/wahidyankf-web/project.json` with the Nx target shape from `tech-docs.md` (tags include `domain:wahidyankf`; real validity of that tag is fixed in P6 — until then, `repo-rules-checker` is expected to flag it).
+- [ ] Create `apps/wahidyankf-web/project.json` with the Nx target shape from `tech-docs.md` (tags include `domain:wahidyankf`; real validity of that tag is fixed in P6 — until then, `repo-rules-checker` is expected to flag it). The file's `"name": "wahidyankf-web"` and `"sourceRoot": "apps/wahidyankf-web/src"` fields are what make the project visible to Nx auto-discovery — no edit to `nx.json` or root `tsconfig.base.json` needed.
+- [ ] Configure `apps/wahidyankf-web/tsconfig.json` `paths` block with `"@/*": ["./src/*"]` so the ported source's `@/` imports resolve (this is an app-local alias; the workspace `tsconfig.base.json` does NOT carry it — each Next.js app in the repo configures `@/` locally).
 - [ ] Copy upstream `src/app/page.tsx` → `apps/wahidyankf-web/src/app/page.tsx`; update imports to `@/` alias.
 - [ ] Copy upstream `src/app/layout.tsx` → `apps/wahidyankf-web/src/app/layout.tsx`.
 - [ ] Copy upstream `src/app/head.tsx` → `apps/wahidyankf-web/src/app/head.tsx`.
@@ -49,24 +77,37 @@ requires triage.
 - [ ] Copy upstream `src/app/cv/page.tsx`.
 - [ ] Copy upstream `src/app/personal-projects/page.tsx`.
 - [ ] Copy upstream `src/components/HighlightText.tsx`.
+- [ ] Copy upstream `src/components/HighlightText.test.tsx` (the rename to `.unit.test.tsx` happens in P3; copy the file verbatim here).
 - [ ] Copy upstream `src/components/Navigation.tsx`.
+- [ ] Copy upstream `src/components/Navigation.test.tsx`.
 - [ ] Copy upstream `src/components/ScrollToTop.tsx`.
+- [ ] Copy upstream `src/components/ScrollToTop.test.tsx`.
 - [ ] Copy upstream `src/components/SearchComponent.tsx`.
-- [ ] Copy upstream `src/components/ThemeToggle.tsx`.
+- [ ] Copy upstream `src/components/SearchComponent.test.tsx`.
+- [ ] Copy upstream `src/components/ThemeToggle.tsx` (upstream has no test file for this component; the ThemeToggle unit test is authored fresh in P3).
+- [ ] Copy upstream `src/app/page.test.tsx` (verbatim; rename in P3).
+- [ ] Copy upstream `src/app/layout.test.tsx` (verbatim; rename in P3).
+- [ ] Copy upstream `src/app/data.test.ts` (verbatim; rename in P3).
+- [ ] Copy upstream `src/app/cv/page.test.tsx` (verbatim; rename in P3).
+- [ ] Copy upstream `src/app/personal-projects/page.test.tsx` (verbatim; rename in P3).
 - [ ] Copy upstream `src/utils/search.ts`.
+- [ ] Copy upstream `src/utils/search.test.ts` (verbatim; rename in P3).
 - [ ] Copy upstream `src/utils/markdown.tsx` (note: upstream extension is `.tsx`, not `.ts`).
+- [ ] Copy upstream `src/utils/markdown.test.tsx` (verbatim; rename to `markdown.unit.test.tsx` in P3).
 - [ ] Copy upstream `src/utils/style.ts`.
 - [ ] Copy upstream `src/utils/style.test.ts` → `apps/wahidyankf-web/src/utils/style.unit.test.ts` (rename per `.unit.test.*` convention).
 - [ ] Copy upstream `public/` contents.
 - [ ] Create `apps/wahidyankf-web/LICENSE` from upstream (MIT-compatible).
 - [ ] Create `apps/wahidyankf-web/README.md` modelled on `apps/organiclever-fe/README.md` with the app's overview, dev commands, test commands, tech stack.
 - [ ] Create `apps/wahidyankf-web/.gitignore` mirroring `apps/organiclever-fe/.gitignore`.
-- [ ] Run `npm install` from workspace root.
+- [ ] Run `npm install` from workspace root. This re-hydrates the workspace lockfile and picks up `apps/wahidyankf-web/` via the existing root `package.json` `"workspaces": ["apps/*", "libs/*"]` glob — no edit to the root `package.json` needed.
 - [ ] Run `npm run doctor -- --fix` to ensure Go and other polyglot toolchains are available (required for `test:quick` which calls `rhino-cli`).
+- [ ] Confirm Nx sees the new project: `npx nx show projects | grep -E '^wahidyankf-web$'` must return one line. If missing, the `project.json` `"name"` field is wrong or the file is malformed — fix before proceeding.
+- [ ] Confirm `nx affected` picks up the new project against `origin/main`: `npx nx show projects --affected --base=origin/main --head=HEAD | grep wahidyankf-web` must list `wahidyankf-web`. This proves the pre-push `nx affected -t typecheck lint test:quick spec-coverage` hook will exercise the new project once it has those targets.
 - [ ] Run `nx build wahidyankf-web` and confirm success.
 - [ ] Run `nx run wahidyankf-web:typecheck` and confirm success.
 - [ ] Commit: `feat(wahidyankf-web): scaffold Nx app and port source`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
 ## Phase P2 — Upgrade Dependencies
 
@@ -83,8 +124,9 @@ requires triage.
 - [ ] Run `nx run wahidyankf-web:typecheck`; fix failures in place.
 - [ ] Run `nx build wahidyankf-web`; fix failures in place.
 - [ ] Run `nx dev wahidyankf-web` and verify manually that `/`, `/cv`, `/personal-projects` return HTTP 200. Use Playwright MCP if available: `browser_navigate` to each URL, `browser_snapshot` to inspect DOM, `browser_console_messages` to confirm zero JS errors, `browser_take_screenshot` for visual record, `browser_click` on the theme toggle to verify both themes render. Otherwise use `curl http://localhost:3201/` + `curl http://localhost:3201/cv` + `curl http://localhost:3201/personal-projects`.
+- [ ] **Baseline comparison (P2 gate)** — with the dev server running on `http://localhost:3201/`, use Playwright MCP to sweep all 18 target viewport / theme / route combinations (3 viewports × 2 themes × 3 routes): `browser_resize` to 1440×900, 768×1024, 375×812; toggle theme via `browser_click` on the `[aria-label="Switch to ... theme"]` button; navigate to `/`, `/cv`, `/personal-projects`. At each combination: `browser_navigate`, `browser_snapshot`, `browser_take_screenshot` (save into `local-temp/baseline-check-p2/` with a filename mirroring `./baseline/` naming), `browser_console_messages` to confirm zero errors. Compare each new PNG to the matching file in `./baseline/` where a baseline file exists — note that desktop light covers only `/` (no baseline for desktop-light × `/cv` or desktop-light × `/personal-projects`; those 2 combinations are swept for zero-error confirmation only, not baseline comparison). Structural differences (missing section, broken search filter, inoperable theme toggle, nav disappears at a breakpoint, card layout changes) BLOCK the P2 commit; cosmetic Tailwind-4 drift is acceptable and gets a note in the commit body. Explicitly re-verify: (a) URL updates to `/?search=<term>` after typing in the home search, (b) `<mark class="bg-yellow-300 text-gray-900">` wraps matches, (c) clicking a skill pill on `/` navigates to `/cv?search=<skill>&scrollTop=true`, (d) "No matching content in the About Me section." renders for non-matching terms. **Do NOT hit `https://www.wahidyankf.com/`** — the Vercel binding still points at the old upstream build and will give a false-fail comparison.
 - [ ] Commit: `chore(wahidyankf-web): upgrade dependencies to 2026-04 stable`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
 ## Phase P3 — Unit Tests + Gherkin
 
@@ -98,31 +140,36 @@ requires triage.
 - [ ] Create `specs/apps/wahidyankf/fe/gherkin/cv.feature`.
 - [ ] Create `specs/apps/wahidyankf/fe/gherkin/theme.feature`.
 - [ ] Create `specs/apps/wahidyankf/fe/gherkin/personal-projects.feature` matching the Personal projects scenarios from `prd.md`.
+- [ ] Create `specs/apps/wahidyankf/fe/gherkin/responsive.feature` matching the `Feature: Responsive layout across viewports` scenarios from `prd.md`.
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/home.steps.ts` implementing `home.feature` steps against the rendered component tree.
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/search.steps.ts`.
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/cv.steps.ts`.
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/theme.steps.ts`.
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/personal-projects.steps.ts`.
+- [ ] Create `apps/wahidyankf-web/test/unit/steps/responsive.steps.ts` implementing `responsive.feature` steps against the rendered component tree (use `jsdom` viewport simulation or snapshot assertions for sidebar/tab-bar visibility).
 - [ ] Run `nx run wahidyankf-web:test:unit`; fix failures in place.
 - [ ] Run `nx run wahidyankf-web:test:quick`; confirm exit 0 and that `apps/wahidyankf-web/coverage/lcov.info` exists and passes the **80%** line threshold (aligned to `ayokoding-web` / `oseplatform-web`). If coverage falls short, add targeted unit tests for uncovered branches in `src/utils/` and `src/components/` before committing — do NOT lower the threshold.
+- [ ] **Baseline comparison (P3 gate)** — repeat the 18-target-combination Playwright-MCP sweep (3 viewports × 2 themes × 3 routes = 18 combinations; compare against 17 baseline PNGs where they exist — desktop-light covers only `/`) from the P2 gate, this time saving screenshots into `local-temp/baseline-check-p3/`. Focus on the search scenario and the home-to-CV cross-link: type `TypeScript` in the home search, confirm URL = `/?search=TypeScript`, confirm `<mark>TypeScript</mark>` present, diff the screenshot against `baseline/05-home-desktop-dark-search-typescript.png`. Click a skill pill, confirm it lands on `/cv?search=<skill>&scrollTop=true`. Unit tests now cover some of this behaviour, but the end-to-end rendering still needs the sweep to catch integration regressions the unit tests miss. **Do NOT hit the live production URL** — same Vercel-binding reason as P2.
 - [ ] Commit: `test(wahidyankf-web): port unit tests and add Gherkin acceptance specs`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
 ## Phase P4 — E2E Runner
 
 - [ ] Create `apps/wahidyankf-web-e2e/` with files `package.json`, `project.json`, `tsconfig.json`, `playwright.config.ts`, `README.md`, `.gitignore`, `steps/` directory.
 - [ ] `package.json` deps per `tech-docs.md` E2E row.
 - [ ] `playwright.config.ts` mirrors `apps/organiclever-fe-e2e/playwright.config.ts` with `baseURL` default `http://localhost:3201` and `featuresRoot` pointing at `../../specs/apps/wahidyankf/fe/gherkin`.
-- [ ] `project.json` tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`; `implicitDependencies: ["wahidyankf-web"]`.
+- [ ] `project.json` tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`; `implicitDependencies: ["wahidyankf-web"]`. The `implicitDependencies` entry is what lets `nx affected` see the E2E runner as affected whenever `wahidyankf-web` changes — without it, changing an FE component would not invalidate the E2E cache.
+- [ ] Confirm `npx nx show projects | grep -E '^wahidyankf-web-e2e$'` returns one line and that `npx nx graph --file local-temp/graph.json && jq '.graph.dependencies["wahidyankf-web-e2e"]' local-temp/graph.json` lists `wahidyankf-web` (or equivalent arrow) so Nx will rebuild E2E when the FE changes.
 - [ ] Create `specs/apps/wahidyankf/fe/gherkin/accessibility.feature` per the `prd.md` Accessibility feature.
-- [ ] Create `apps/wahidyankf-web-e2e/steps/home.steps.ts`, `cv.steps.ts`, `personal-projects.steps.ts`, `accessibility.steps.ts`.
+- [ ] Create `apps/wahidyankf-web-e2e/steps/home.steps.ts`, `search.steps.ts`, `cv.steps.ts`, `theme.steps.ts`, `personal-projects.steps.ts`, `responsive.steps.ts`, `accessibility.steps.ts`.
 - [ ] `accessibility.steps.ts` uses `@axe-core/playwright` with `.withTags(["wcag2a", "wcag2aa"])`.
 - [ ] Run `nx run wahidyankf-web-e2e:install`.
 - [ ] Start the app in one shell: `nx dev wahidyankf-web`.
 - [ ] Run `nx run wahidyankf-web-e2e:test:e2e` in a second shell; confirm all scenarios pass.
+- [ ] **Baseline comparison (P4 gate)** — with the dev server still running, run the 18-target-combination Playwright-MCP sweep one more time (18 combinations; compare against 17 baseline PNGs — desktop-light covers only `/`; save into `local-temp/baseline-check-p4/`). Confirm no regressions introduced by the E2E scaffolding or axe-core. Document any accepted cosmetic drift in the P4 commit body. Again: `http://localhost:3201/` only; do NOT hit the live production URL.
 - [ ] Stop the dev server.
 - [ ] Commit: `test(wahidyankf-web-e2e): add Playwright-BDD runner with a11y smoke`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
 ## Phase P5 — Quality Gates
 
@@ -132,13 +179,15 @@ requires triage.
 - [ ] Ensure `apps/wahidyankf-web-e2e/project.json` `spec-coverage` input globs include the same feature tree and the runner's `**/*.ts` tree.
 - [ ] Run `nx run wahidyankf-web:spec-coverage`; fix any missing step definitions.
 - [ ] Run `nx run wahidyankf-web-e2e:spec-coverage`; fix any missing step definitions.
-- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0.
+- [ ] Confirm Nx affected picks up BOTH new projects against `origin/main`: `npx nx show projects --affected --base=origin/main --head=HEAD` must list both `wahidyankf-web` AND `wahidyankf-web-e2e`. If either is missing, the `project.json` `name` / `implicitDependencies` is wrong — fix before the quality gate.
+- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0. Both `wahidyankf-web` and `wahidyankf-web-e2e` must appear in the task list Nx runs — verify by inspecting the affected-tasks summary Nx prints.
 - [ ] Run `npm run lint:md` and fix any markdown issues in new READMEs or spec READMEs.
 - [ ] Commit: `ci(wahidyankf-web): wire typecheck, lint, spec-coverage, pre-push gate`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
 ## Phase P6 — Deployment Wiring
 
+- [ ] **Prerequisite**: Confirm the worktree's draft PR has been merged to `origin/main` before creating `prod-wahidyankf-web`. Run `git fetch origin` and `git ls-remote origin main` to verify `origin/main` reflects the P5 commit SHA before proceeding. Do NOT run subsequent push commands from the worktree branch — the production-branch creation below operates on `origin/main`, not the worktree branch. File-creation steps below (vercel.json, Dockerfile, deployer agent, CI workflow) may proceed before the PR merges; do NOT run `git push origin main:prod-wahidyankf-web` until this Prerequisite step passes.
 - [ ] Create `apps/wahidyankf-web/vercel.json` as specified in `tech-docs.md`.
 - [ ] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-fe/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
 - [ ] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-fe/.dockerignore`.
@@ -148,12 +197,11 @@ requires triage.
 - [ ] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
 - [ ] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
 - [ ] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
-- [ ] **Prerequisite**: Confirm the worktree's draft PR has been merged to `origin/main` before creating `prod-wahidyankf-web`. Run `git fetch origin` and `git ls-remote origin main` to verify `origin/main` reflects the P5 commit SHA before proceeding. Do NOT run the next step from the worktree branch — all P6 push commands below operate on `origin/main`, not the worktree branch.
 - [ ] From a clean `main` (after PR merge and local pull), create the production branch: `git push origin main:prod-wahidyankf-web`.
 - [ ] Confirm remote branch exists: `git ls-remote origin prod-wahidyankf-web`.
 - [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` once more; confirm exit 0.
 - [ ] Commit: `ci(wahidyankf-web): add Vercel deploy workflow and deployer agent`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 - [ ] After pushing, monitor the CI run: `gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 1`; then `gh run watch <run-id>`. If the workflow fails, fix the root cause and push a follow-up commit. Do NOT proceed to P7 until CI is green.
 
 ## Phase P7 — Docs & Close-out
@@ -164,13 +212,21 @@ requires triage.
 - [ ] Update `docs/how-to/add-new-app.md` ONLY if the port surfaced a genuinely missing step (do not edit speculatively).
 - [ ] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0.
 - [ ] Run `npm run lint:md`; confirm zero errors.
-- [ ] Run final visual verification on `nx dev wahidyankf-web`: use Playwright MCP — `browser_navigate` to each of `/`, `/cv`, `/personal-projects`; `browser_snapshot` to inspect DOM structure; `browser_console_messages` to confirm zero JS errors; `browser_take_screenshot` for visual record. Toggle theme with `browser_click` on the theme toggle and re-snapshot to verify both dark and light themes render correctly. If Playwright MCP is unavailable, perform the same checks via a regular browser session and record observations in a comment.
+- [ ] **Final Playwright-MCP sanity check (P7 gate)** — with `nx dev wahidyankf-web` running on `http://localhost:3201/`, perform the canonical 18-target-combination sweep (18 combinations; compare against 17 baseline PNGs where they exist — desktop-light covers only `/`) one last time using exactly these tools: `browser_resize` (1440×900, 768×1024, 375×812), `browser_navigate` (`/`, `/cv`, `/personal-projects`), `browser_snapshot`, `browser_take_screenshot`, `browser_click` (theme toggle and a skill pill), `browser_console_messages`. Save into `local-temp/baseline-check-p7/`. Confirmation criteria:
+  - (1) Zero console errors across all 18 combinations.
+  - (2) Every adopted screenshot structurally matches its counterpart under `./baseline/` where a baseline PNG exists (desktop-light × `/cv` and desktop-light × `/personal-projects` are swept for zero-error confirmation only; cosmetic drift tolerated and noted; structural mismatch blocks the commit).
+  - (3) Home search: typing `TypeScript` yields `/?search=TypeScript`, `<mark>` wrap, "No matching content in the About Me section." message.
+  - (4) Clicking a skill pill on `/` navigates to `/cv?search=<skill>&scrollTop=true`.
+  - (5) Theme toggle flips the `light-theme` class on `<html>` and the `aria-label` between "Switch to light theme" and "Switch to dark theme".
+  - (6) Responsive: the desktop 1440-wide viewport shows the left sidebar with "WahidyanKF / Home / CV / Personal Projects"; tablet 768-wide and mobile 375-wide viewports both hide the sidebar and render the bottom tab bar with the same three nav targets.
+  - (7) **No hit against `https://www.wahidyankf.com/`.** The Vercel binding is user-managed and still points at the old upstream build; comparing against it would falsely fail this gate. When the user later swaps the Vercel binding to `prod-wahidyankf-web` (outside this plan), the live URL will serve the adopted app and match the baseline; until then, local-only verification is authoritative.
+- [ ] **Gitlink-bump (parent repo)**: the parent `ose-projects` container tracks `ose-public` as a bare gitlink at a specific commit SHA. After this plan's PR merges to `ose-public`'s `main`, the parent gitlink is stale. Bumping it is out of scope for this worktree (Scope A only touches `ose-public` contents; the parent bump is a parent-rooted-session action). Record this follow-up by appending one line to the parent's `../../../../../ose-projects/plans/ideas.md` (relative path from a plan file; the parent repo is one level up from `ose-public/`): `- Bump ose-public gitlink to include 2026-04-19__adopt-wahidyankf-web merge SHA`. If the parent `ideas.md` is not writable from this session, write the same line into `prep-notes.md` under an "Outstanding follow-ups" heading instead; the user promotes it to the parent repo manually.
 - [ ] Delete the temporary `plans/in-progress/2026-04-19__adopt-wahidyankf-web/prep-notes.md`.
 - [ ] Move `plans/in-progress/2026-04-19__adopt-wahidyankf-web/` → `plans/done/YYYY-MM-DD__adopt-wahidyankf-web/` where `YYYY-MM-DD` is today's date at time of execution: `git mv plans/in-progress/2026-04-19__adopt-wahidyankf-web plans/done/$(date +%Y-%m-%d)__adopt-wahidyankf-web`.
 - [ ] Update `plans/in-progress/README.md` to remove the plan from the active list.
 - [ ] Update `plans/done/README.md` to include the plan in the completed list.
 - [ ] Commit: `docs(wahidyankf-web): add to platform docs and close adoption plan`.
-- [ ] Push.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 - [ ] After pushing, monitor the CI run: `gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 1`; then `gh run watch <run-id>`. If the workflow fails, fix the root cause and push a follow-up commit before declaring the phase done.
 
 ## Quality Gates (enforced every phase)

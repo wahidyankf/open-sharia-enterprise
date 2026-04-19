@@ -102,8 +102,10 @@ stakeholder titles.
   `NEXT_PUBLIC_GTM_ID` are set; the site renders correctly when they are
   absent.
 - **R10** — The Nx project exposes `dev`, `build`, `start`, `typecheck`,
-  `lint`, `test:unit`, `test:quick`, `spec-coverage` (mandatory per Nx
-  Target Standards for all apps).
+  `lint`, `test:unit`, `test:integration` (empty placeholder per the
+  three-level testing standard — no integration tests in scope for this
+  plan), `test:quick`, `spec-coverage` (mandatory per Nx Target Standards
+  for all apps).
 - **R11** — A sibling Nx project `wahidyankf-web-e2e` exposes `install`,
   `typecheck`, `lint`, `test:quick`, `test:e2e`, `test:e2e:ui`,
   `test:e2e:report`, `spec-coverage` matching the `organiclever-fe-e2e`
@@ -111,6 +113,30 @@ stakeholder titles.
 - **R12** — A `prod-wahidyankf-web` environment branch is created
   from `main` after P5 passes, and an `apps-wahidyankf-web-deployer`
   agent supports the force-push-from-main workflow.
+- **R13** — The layout is **responsive** across three reference
+  breakpoints captured in `./baseline/`: desktop (1440 × 900), tablet
+  (768 × 1024), mobile (375 × 812). Desktop shows a left-sidebar
+  nav; tablet and mobile hide the sidebar and render a fixed
+  bottom-tab-bar with the same three nav targets (Home, CV, Personal
+  Projects). Each viewport × page × theme combination MUST
+  structurally match its reference PNG in `./baseline/` after the
+  port.
+- **R14** — Theme toggle exposes two themes — **dark** (default) and
+  **light** — with a fixed circular button at the top-right of the
+  viewport. The button's aria-label flips between `Switch to light
+theme` (when dark is active) and `Switch to dark theme` (when light
+  is active). Light theme adds a `light-theme` class to `<html>`;
+  dark theme removes it. Theme persists across client-side navigation
+  within a single session but does NOT persist across hard reload
+  (upstream does not write to `localStorage`; the port preserves that
+  behaviour).
+- **R15** — **Baseline fidelity**: the adopted app, rendered locally
+  via `nx dev wahidyankf-web` on `http://localhost:3201/`, matches
+  the live-site baseline in `./baseline/` at every viewport × theme ×
+  page combination, as measured by the Playwright-MCP sweep defined
+  in `delivery.md` phases P2/P3/P4/P7. Cosmetic drift from the
+  Tailwind 3 → 4 migration is acceptable and recorded in commit
+  bodies; structural drift blocks the phase commit.
 
 ## Gherkin Acceptance Criteria
 
@@ -198,6 +224,102 @@ Feature: Personal projects page renders the project list
     And the personal-projects list is not empty
 ```
 
+> **Note**: The three Feature blocks below (`Responsive layout across viewports`, `Theme parity with the live-site baseline`, `Baseline fidelity against the live site`) have two authoring outcomes per `delivery.md` P3/P4. `Responsive` and `Theme parity` become runnable `.feature` files under `specs/apps/wahidyankf/fe/gherkin/` with unit-level step definitions. `Baseline fidelity` is a plan-level verification criterion — the Scenario Outline drives the manual Playwright-MCP baseline sweep and is NOT generated as a runnable `.feature` file (the "navigate to, then do NOT navigate to" assertion cannot be automated in step code).
+
+```gherkin
+Feature: Responsive layout across viewports
+  As a visitor on any device
+  I want the layout to adapt to my screen size
+  So that navigation and content remain usable at desktop / tablet / mobile
+
+  Scenario: Desktop shows the left-sidebar nav
+    Given my viewport is 1440 x 900
+    When I navigate to "/"
+    Then I can see a left-sidebar navigation with links "Home", "CV", "Personal Projects"
+    And I cannot see a bottom-tab-bar navigation
+
+  Scenario: Tablet hides the sidebar and shows the bottom tab bar
+    Given my viewport is 768 x 1024
+    When I navigate to "/"
+    Then I cannot see a left-sidebar navigation
+    And I can see a bottom-tab-bar navigation with buttons "Home", "CV", "Personal Projects"
+
+  Scenario: Mobile hides the sidebar and shows the bottom tab bar
+    Given my viewport is 375 x 812
+    When I navigate to "/"
+    Then I cannot see a left-sidebar navigation
+    And I can see a bottom-tab-bar navigation with buttons "Home", "CV", "Personal Projects"
+```
+
+> **Note**: This feature block maps to a runnable `specs/apps/wahidyankf/fe/gherkin/responsive.feature` file created in P3. Step implementations ship in `apps/wahidyankf-web/test/unit/steps/responsive.steps.ts` (unit) and `apps/wahidyankf-web-e2e/steps/responsive.steps.ts` (E2E). See `tech-docs.md` Gherkin Location table.
+
+```gherkin
+Feature: Theme parity with the live-site baseline
+  As a visitor
+  I want light and dark themes to render per the baseline
+  So that my theme preference is preserved per session
+
+  Scenario: Default theme on first load is dark
+    Given I clear my browser state
+    When I navigate to "/"
+    Then the "<html>" element does not have the class "light-theme"
+    And the theme toggle aria-label is "Switch to light theme"
+
+  Scenario: Toggling to light theme adds the light-theme class
+    Given I navigate to "/"
+    When I click the theme toggle button
+    Then the "<html>" element has the class "light-theme"
+    And the theme toggle aria-label becomes "Switch to dark theme"
+
+  Scenario: Theme persists across client-side navigation within a session
+    Given I navigate to "/"
+    And I click the theme toggle to switch to light theme
+    When I click the "CV" nav link
+    Then the "<html>" element still has the class "light-theme"
+```
+
+> **Note**: This feature block maps to the existing runnable `specs/apps/wahidyankf/fe/gherkin/theme.feature` file created in P3 (same file as `Feature: Theme toggle persists preference` above — the deeper theme-parity scenarios are added to that same file). Step implementations ship in `apps/wahidyankf-web/test/unit/steps/theme.steps.ts` (unit) and `apps/wahidyankf-web-e2e/steps/theme.steps.ts` (E2E). See `tech-docs.md` Gherkin Location table.
+
+```gherkin
+Feature: Baseline fidelity against the live site
+  As the maintainer validating the port
+  I want the adopted app to structurally match the live-site baseline
+  So that recruiters see no regression after Vercel cutover
+
+  Scenario Outline: Every viewport / theme / page matches its baseline
+    Given "nx dev wahidyankf-web" is running on "http://localhost:3201/"
+    And my viewport is <width> x <height>
+    And the theme is "<theme>"
+    When I navigate to "<route>"
+    Then the rendered DOM structurally matches the reference at "baseline/<pngfile>"
+    And the browser reports zero console errors
+
+    Examples:
+      | width | height | theme | route              | pngfile                                  |
+      | 1440  | 900    | dark  | /                  | 01-home-desktop-dark.png                 |
+      | 1440  | 900    | dark  | /cv                | 02-cv-desktop-dark.png                   |
+      | 1440  | 900    | dark  | /personal-projects | 03-personal-projects-desktop-dark.png    |
+      | 1440  | 900    | light | /                  | 04-home-desktop-light.png                |
+      | 768   | 1024   | dark  | /                  | 06-home-tablet-dark.png                  |
+      | 768   | 1024   | dark  | /cv                | 07-cv-tablet-dark.png                    |
+      | 768   | 1024   | dark  | /personal-projects | 08-personal-projects-tablet-dark.png     |
+      | 768   | 1024   | light | /personal-projects | 09-personal-projects-tablet-light.png    |
+      | 768   | 1024   | light | /cv                | 10-cv-tablet-light.png                   |
+      | 768   | 1024   | light | /                  | 11-home-tablet-light.png                 |
+      | 375   | 812    | light | /                  | 12-home-mobile-light.png                 |
+      | 375   | 812    | light | /cv                | 13-cv-mobile-light.png                   |
+      | 375   | 812    | light | /personal-projects | 14-personal-projects-mobile-light.png    |
+      | 375   | 812    | dark  | /personal-projects | 15-personal-projects-mobile-dark.png     |
+      | 375   | 812    | dark  | /cv                | 16-cv-mobile-dark.png                    |
+      | 375   | 812    | dark  | /                  | 17-home-mobile-dark.png                  |
+
+  # Policy constraint: Do NOT navigate to https://www.wahidyankf.com/ during validation.
+  # Rationale: Vercel binding still points at upstream build during plan execution.
+  # Compare against "baseline/" PNGs only — never against a refetched live URL.
+```
+
+> **Note**: This feature block describes plan-level verification criteria checked manually by `plan-execution-checker` via the Playwright-MCP sweep in `delivery.md` P2/P3/P4/P7. The Scenario Outline drives a manual visual-comparison workflow, not an automated `.feature` file run by `@amiceli/vitest-cucumber` or `playwright-bdd`. The 16-row Scenario Outline maps to 16 of the 17 baseline PNGs; desktop-light covers only `/` (see `tech-docs.md` "Capture matrix" for rationale). This feature is NOT a runnable `.feature` file — do not create a `baseline-fidelity.feature` for automated execution.
+
 ```gherkin
 Feature: Accessibility AA compliance
   As a visitor using assistive tech
@@ -240,6 +362,8 @@ Feature: Quality gates on the new Nx project
 ```
 
 > **Note**: This feature block describes plan-level verification criteria. It is NOT a runnable `quality-gates.feature` file — it is checked manually by `plan-execution-checker` against the final state of the implementation.
+>
+> The `Production deployment wiring` block directly below is also plan-level verification, not a runnable `.feature` file.
 
 ```gherkin
 Feature: Production deployment wiring
@@ -256,6 +380,8 @@ Feature: Production deployment wiring
     Then the file's frontmatter declares name "apps-wahidyankf-web-deployer"
     And the body describes a force-push from main to "prod-wahidyankf-web"
 ```
+
+> **Note**: This feature block describes plan-level verification criteria. It is NOT a runnable `production-deployment.feature` file — it is checked manually by `plan-execution-checker` against the final state of the implementation. The `git branch -r` and file-existence checks are infrastructure-level assertions that cannot be expressed as automated Gherkin step definitions.
 
 ## Product Scope
 
@@ -285,10 +411,12 @@ Feature: Production deployment wiring
 
 ## Product-Level Risks
 
-| Risk                                                                | Mitigation                                                                                                                  |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Tailwind 3 → 4 migration silently breaks the green-on-black theme   | P2 dedicates a checkbox to running `npx @tailwindcss/upgrade` and Playwright smoke in P4 renders each page at both themes   |
-| React 19 + `useSearchParams` changes Suspense boundaries subtly     | Upstream `page.tsx` already wraps `HomeContent` in `<Suspense>`; port preserves that; Gherkin US-2 ACs re-verify end-to-end |
-| Dev port clashes with an existing app                               | Assign `3201` (first free above `organiclever-fe`'s `3200`) and document in top-level `CLAUDE.md` under the app's section   |
-| axe-core flags upstream contrast (dark background + green-400 text) | Contrast pair `#4ade80` on `#111827` measures above WCAG AA (≈ 6.4:1); if scan reports violations, adjust tokens in P4      |
-| Recruiters hit the site during the deploy-branch creation cutover   | P6 creates the branch from a verified green `main`; Vercel bindings happen post-merge so no partial deploy window           |
+| Risk                                                                                                                                                  | Mitigation                                                                                                                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tailwind 3 → 4 migration silently breaks the green-on-black theme                                                                                     | P2 dedicates a checkbox to running `npx @tailwindcss/upgrade` and Playwright smoke in P4 renders each page at both themes                                                                                                                                |
+| React 19 + `useSearchParams` changes Suspense boundaries subtly                                                                                       | Upstream `page.tsx` already wraps `HomeContent` in `<Suspense>`; port preserves that; Gherkin US-2 ACs re-verify end-to-end                                                                                                                              |
+| Dev port clashes with an existing app                                                                                                                 | Assign `3201` (first free above `organiclever-fe`'s `3200`) and document in top-level `CLAUDE.md` under the app's section                                                                                                                                |
+| axe-core flags upstream contrast (dark background + green-400 text)                                                                                   | Contrast pair `#4ade80` on `#111827` measures above WCAG AA (≈ 6.4:1); if scan reports violations, adjust tokens in P4                                                                                                                                   |
+| Recruiters hit the site during the deploy-branch creation cutover                                                                                     | P6 creates the branch from a verified green `main`; Vercel bindings happen post-merge so no partial deploy window                                                                                                                                        |
+| Responsive regression at tablet or mobile goes unnoticed (e.g. sidebar reappears at 768 px or bottom tab bar disappears at 375 px)                    | Baseline sweep in P2/P3/P4/P7 uses exact reference PNGs at 1440 × 900, 768 × 1024, and 375 × 812 — any structural mismatch blocks the phase commit. R13 in the functional-requirements list makes the three breakpoints first-class acceptance criteria. |
+| Post-port validation accidentally hits `https://www.wahidyankf.com/` and compares against the stale upstream Vercel build, producing false-fail noise | `delivery.md` preconditions explicitly forbid hitting the live URL; every baseline checkpoint re-states the ban; `./baseline/README.md` explains the rationale in one place                                                                              |
