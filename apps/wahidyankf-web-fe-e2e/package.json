@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "wahidyankf-web-e2e",
+  "name": "wahidyankf-web-fe-e2e",
   "version": "0.1.0",
   "private": true,
   "type": "module",

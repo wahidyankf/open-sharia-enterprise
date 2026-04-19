@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "wahidyankf-web-e2e",
-  "sourceRoot": "apps/wahidyankf-web-e2e/steps",
+  "name": "wahidyankf-web-fe-e2e",
+  "sourceRoot": "apps/wahidyankf-web-fe-e2e/steps",
   "projectType": "application",
   "targets": {
     "install": {
@@ -57,7 +57,7 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/wahidyankf/fe/gherkin apps/wahidyankf-web-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/wahidyankf/fe/gherkin apps/wahidyankf-web-fe-e2e",
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
