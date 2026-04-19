@@ -37,29 +37,33 @@ the worktree branch, not `main`. Concretely:
 
 ## Preconditions (verified once before P0)
 
-- [ ] Read `./baseline/README.md` end-to-end. The 17 PNGs + 3 YAML snapshots + behavioural notes in `./baseline/` are the authoritative reference the adopted app must match.
-- [ ] **Acknowledge the no-production-domain-testing constraint.** The Vercel project binding for `www.wahidyankf.com` still points at the upstream `wahidyankf/oss` build during and after this plan; the user swaps the binding to `prod-wahidyankf-web` manually after plan completion. Every baseline-comparison check in this plan compares `./baseline/` (left) to `http://localhost:3201/` (right) — NEVER to the live `https://www.wahidyankf.com/` URL after the port. The live URL will disagree with the adopted app until the user's Vercel swap.
-- [ ] Confirm the current session is inside `ose-public/.claude/worktrees/cached-brewing-cocoa/`.
-- [ ] Confirm the worktree branch is `worktree-cached-brewing-cocoa` (matches the `worktree-<name>` convention; Subrepo Worktree Workflow Standard 14).
-- [ ] Confirm the worktree branch is not `main` directly (Standard 14 prohibits direct commits to `main` from a worktree; only the P6 production-branch push touches `main`'s SHA, and only via `main:prod-wahidyankf-web`).
+- [x] Read `./baseline/README.md` end-to-end. The 17 PNGs + 3 YAML snapshots + behavioural notes in `./baseline/` are the authoritative reference the adopted app must match.
+- [x] **Acknowledge the no-production-domain-testing constraint.** The Vercel project binding for `www.wahidyankf.com` still points at the upstream `wahidyankf/oss` build during and after this plan; the user swaps the binding to `prod-wahidyankf-web` manually after plan completion. Every baseline-comparison check in this plan compares `./baseline/` (left) to `http://localhost:3201/` (right) — NEVER to the live `https://www.wahidyankf.com/` URL after the port. The live URL will disagree with the adopted app until the user's Vercel swap.
+- [x] Confirm the current session is inside `ose-public/.claude/worktrees/cached-brewing-cocoa/`.
+- [x] Confirm the worktree branch is `worktree-cached-brewing-cocoa` (matches the `worktree-<name>` convention; Subrepo Worktree Workflow Standard 14).
+- [x] Confirm the worktree branch is not `main` directly (Standard 14 prohibits direct commits to `main` from a worktree; only the P6 production-branch push touches `main`'s SHA, and only via `main:prod-wahidyankf-web`).
 - [ ] Confirm exactly one draft PR exists against `origin/main` for this worktree branch. If absent, open it now with `gh pr create --draft --base main --head worktree-cached-brewing-cocoa --title "feat(wahidyankf-web): adopt portfolio app" --body-file plans/in-progress/2026-04-19__adopt-wahidyankf-web/README.md` (or equivalent) before the first phase push. Every phase push in P0-P7 updates this same PR — do NOT open a second PR per phase.
-- [ ] Confirm `origin` points at `wahidyankf/ose-public`.
-- [ ] Confirm `git status` is clean.
-- [ ] Run `npm install` from workspace root to install dependencies.
-- [ ] Run `npm run doctor -- --fix` to converge the full polyglot toolchain (Go, F#, etc.). The `postinstall` hook runs `doctor || true` and silently tolerates drift; explicit `doctor --fix` is the only action that guarantees all toolchains are available. This is required before any `test:quick` call because that target invokes `rhino-cli` (Go binary).
+- [x] Confirm `origin` points at `wahidyankf/ose-public`.
+- [x] Confirm `git status` is clean.
+- [x] Run `npm install` from workspace root to install dependencies.
+- [x] Run `npm run doctor -- --fix` to converge the full polyglot toolchain (Go, F#, etc.). The `postinstall` hook runs `doctor || true` and silently tolerates drift; explicit `doctor --fix` is the only action that guarantees all toolchains are available. This is required before any `test:quick` call because that target invokes `rhino-cli` (Go binary).
+
+> **Precondition notes (2026-04-19)** — PR gate deferred: `gh pr create --draft` needs at least one commit on worktree branch ahead of `main`. Draft PR opens immediately after P0 commit lands. All other gates passed: worktree at `ose-public/.claude/worktrees/cached-brewing-cocoa/`, branch `worktree-cached-brewing-cocoa`, origin `wahidyankf/ose-public`, clean status, `npm install` success (1648 packages), `npm run doctor -- --fix` shows 19/19 tools OK. Upstream `wahidyankf/oss` cloned shallow into `local-temp/oss-upstream/` at SHA `9b17637e3d454ade45281474da244148edfc7d57` for use as source material throughout P0-P1. Upstream app dir has no per-app LICENSE (confirmed by `find`); will inherit repo-root MIT terms in P1.
 
 ## Phase P0 — Prep & Gap Resolution
 
-- [ ] Confirm `./baseline/` contains 17 PNGs, 3 YAML snapshots, and `README.md`. The baseline was captured during plan authoring (2026-04-19) from the live site at `https://www.wahidyankf.com/` — do NOT recapture wholesale; doing so overwrites the reference the port is validated against. Only recapture individual files if missing.
-- [ ] Fetch the upstream `wahidyankf/oss` repo state at HEAD via `gh api repos/wahidyankf/oss/contents/apps-standalone/wahidyankf-web` and record the commit SHA in `plans/in-progress/2026-04-19__adopt-wahidyankf-web/prep-notes.md` (temporary file; deleted in P7).
-- [ ] Read upstream `LICENSE` file and confirm MIT-compatibility; record the license string in `prep-notes.md`.
-- [ ] Record the confirmed production domain (user-supplied; default placeholder `www.wahidyankf.com`) in `prep-notes.md`.
-- [ ] Confirm dev port `3201` is unused by any `nx.json` / existing `apps/*/project.json` via `rg -n "3201" nx.json apps`.
-- [ ] For each row of the `tech-docs.md` dependency upgrade matrix, run `npm view <pkg> version` AND `jq -r '.dependencies["<pkg>"] // .devDependencies["<pkg>"]' apps/ayokoding-web/package.json apps/oseplatform-web/package.json apps/organiclever-fe/package.json` and record both live-latest and current sibling pins in `prep-notes.md`. Update `tech-docs.md` rows in-place only when sibling pins have already moved — otherwise preserve sibling parity per the stack-parity rule.
-- [ ] Confirm the tag vocabulary extension (`domain:wahidyankf`) has no conflicting allowlist hard-coded anywhere: run `rg -n "domain:(ayokoding|oseplatform|organiclever|demo-be|demo-fe|tooling)" --type ts --type json --type md | grep -v generated-reports`.
-- [ ] Record the hit list from the previous step in `prep-notes.md` so P6 knows every place to extend the `domain:` allowed values list.
-- [ ] Commit: `docs(plans): record wahidyankf-web adoption prep notes`.
-- [ ] Push to origin worktree branch.
+- [x] Confirm `./baseline/` contains 17 PNGs, 3 YAML snapshots, and `README.md`. The baseline was captured during plan authoring (2026-04-19) from the live site at `https://www.wahidyankf.com/` — do NOT recapture wholesale; doing so overwrites the reference the port is validated against. Only recapture individual files if missing.
+- [x] Fetch the upstream `wahidyankf/oss` repo state at HEAD via `gh api repos/wahidyankf/oss/contents/apps-standalone/wahidyankf-web` and record the commit SHA in `plans/in-progress/2026-04-19__adopt-wahidyankf-web/prep-notes.md` (temporary file; deleted in P7).
+- [x] Read upstream `LICENSE` file and confirm MIT-compatibility; record the license string in `prep-notes.md`.
+- [x] Record the confirmed production domain (user-supplied; default placeholder `www.wahidyankf.com`) in `prep-notes.md`.
+- [x] Confirm dev port `3201` is unused by any `nx.json` / existing `apps/*/project.json` via `rg -n "3201" nx.json apps`.
+- [x] For each row of the `tech-docs.md` dependency upgrade matrix, run `npm view <pkg> version` AND `jq -r '.dependencies["<pkg>"] // .devDependencies["<pkg>"]' apps/ayokoding-web/package.json apps/oseplatform-web/package.json apps/organiclever-fe/package.json` and record both live-latest and current sibling pins in `prep-notes.md`. Update `tech-docs.md` rows in-place only when sibling pins have already moved — otherwise preserve sibling parity per the stack-parity rule.
+- [x] Confirm the tag vocabulary extension (`domain:wahidyankf`) has no conflicting allowlist hard-coded anywhere: run `rg -n "domain:(ayokoding|oseplatform|organiclever|demo-be|demo-fe|tooling)" --type ts --type json --type md | grep -v generated-reports`.
+- [x] Record the hit list from the previous step in `prep-notes.md` so P6 knows every place to extend the `domain:` allowed values list.
+- [x] Commit: `docs(plans): record wahidyankf-web adoption prep notes`.
+- [x] Push to origin worktree branch.
+
+> **P0 notes (2026-04-19)** — Baseline verified (17 PNG + 3 YAML + README = 21 files). Upstream SHA `9b17637e3d454ade45281474da244148edfc7d57`. No upstream LICENSE file; adopted app inherits repo FSL-1.1-MIT (content) + MIT (impl) per `LICENSING-NOTICE.md`. Port 3201 free. Sibling pins recorded in `prep-notes.md` — content-platform siblings agree on every test-stack row. Tag allowlist hits: 9 `project.json` files + `governance/development/infra/nx-targets.md` — recorded in prep-notes for P6 use.
 
 ## Phase P1 — Scaffold & Port Source
 
