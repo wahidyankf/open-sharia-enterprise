@@ -12,7 +12,7 @@ tags:
   - nx
   - coverage
 created: 2026-03-31
-updated: 2026-04-02
+updated: 2026-04-19
 ---
 
 # CI/CD Conventions
@@ -352,8 +352,8 @@ variant-specific inputs.
 
 ### CRON Schedule
 
-Scheduled workflows (the production `test-and-deploy-*.yml` trio for ayokoding-web,
-oseplatform-web, and organiclever) run twice daily aligned to WIB (UTC+7) business hours:
+Scheduled workflows (the production `test-and-deploy-*.yml` quartet for ayokoding-web,
+oseplatform-web, organiclever, and wahidyankf-web) run twice daily aligned to WIB (UTC+7) business hours:
 
 | WIB Time | UTC Time             | Purpose                                     |
 | -------- | -------------------- | ------------------------------------------- |

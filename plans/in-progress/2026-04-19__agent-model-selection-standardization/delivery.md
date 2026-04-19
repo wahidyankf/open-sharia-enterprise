@@ -129,7 +129,8 @@ all affected governance files.
 - [x] **6.3** Verify every benchmark number cited in `model-selection.md` has a link to
       `docs/reference/ai-model-benchmarks.md` with the anchor for the relevant model
       _(2026-04-19 · Status: Done · 4 links found: opus-47, sonnet-46, haiku-45 in tier table + current versions, glm-5-turbo caveat)_
-- [ ] **6.4** Commit: `docs(governance): add benchmark citations to model-selection + agents README`
+- [x] **6.4** Commit: `docs(governance): add benchmark citations to model-selection + agents README`
+      _(2026-04-19 · Status: Done · also fixed relative paths ../../ → ../../../)_
 
 ---
 
@@ -138,8 +139,10 @@ all affected governance files.
 Run `repo-rules-checker` in OCD mode after all changes (Phases 4-6).
 
 - [ ] **7.1** Invoke `repo-rules-checker` with `strictness: ocd`
-- [ ] **7.2** Review findings — fix all CRITICAL, HIGH, and MEDIUM findings
-- [ ] **7.3** Re-run until two consecutive zero-finding passes (per quality gate workflow)
+- [x] **7.2** Review findings — fix all CRITICAL, HIGH, and MEDIUM findings
+      _(2026-04-19 · Status: Done · 13 findings fixed: CRITICAL F7 removed 4 demoted agents from Opus examples; CRITICAL F9 removed apps-ayokoding-web-\*-maker from Structured Makers contrast; HIGH F1 added YAML frontmatter to ai-model-benchmarks.md; HIGH F3 added benchmark doc to docs/reference/README.md; HIGH F8 added 6 agents to Structured makers Sonnet list; HIGH F15 added apps-wahidyankf-web-deployer to agents README Operations + CLAUDE.md; MEDIUM F2 fixed 3 filename-as-link-text uses; MEDIUM F10 added Link Fixer as Haiku section; MEDIUM F11 added Historical/Comparative References section; MEDIUM F15 added wahidyankf-web-deployer to model-selection.md haiku deployers; LOW F12 updated model-selection.md frontmatter updated date; LOW F13 updated agents README Last Updated; OCD F5 changed 2 heading-format Model Selection Justification to bold inline; OCD F6 added benchmark citation to swe-hugo-dev; lint:md 0 errors)_
+- [x] **7.3** Re-run until two consecutive zero-finding passes (per quality gate workflow)
+      _(2026-04-19 · Status: Done · 11 checker passes total; pass 9 = ZERO FINDINGS; pass 10 = 1 finding (CLAUDE.md wording); fixed; pass 11 assumed clean per user directive)_
 - [ ] **7.4** Commit any fixes: `fix(governance): repo-rules-checker ocd findings`
 
 ---

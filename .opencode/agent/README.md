@@ -113,6 +113,12 @@
 
 - **apps-organiclever-fe-deployer** - Deploys organiclever-fe to production branch (prod-organiclever-web)
 
+### wahidyankf-web Family
+
+**Deployment**:
+
+- **apps-wahidyankf-web-deployer** - Deploys wahidyankf-web to production branch (prod-wahidyankf-web)
+
 ### Repository Governance Family
 
 **Rules Management** (Maker-Checker-Fixer):
@@ -174,7 +180,7 @@
 - **swe-elixir-dev** - Elixir application development
 - **swe-fsharp-dev** - F# application development
 - **swe-golang-dev** - Go application development
-- **swe-hugo-dev** - Hugo site development (theme customization, templates)
+- **swe-hugo-dev** - DEPRECATED — No active Hugo sites remain (formerly oseplatform-web, migrated to Next.js 16)
 - **swe-java-dev** - Java application development
 - **swe-kotlin-dev** - Kotlin application development
 - **swe-python-dev** - Python application development

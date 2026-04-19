@@ -10,7 +10,7 @@ tags:
   - mit
   - per-directory
 created: 2026-04-04
-updated: 2026-04-04
+updated: 2026-04-19
 ---
 
 # Per-Directory Licensing Convention
@@ -76,6 +76,7 @@ These directories contain product-specific code with competing-use restrictions 
 | OrganicLever Backend  | `apps/organiclever-be/` | Non-enterprise productivity (individual, family, personal) |
 | OSE Platform Web      | `apps/oseplatform-web/` | Enterprise platform site                                   |
 | OSE Platform CLI      | `apps/oseplatform-cli/` | Enterprise platform site tooling                           |
+| Wahidyankf Web        | `apps/wahidyankf-web/`  | Personal portfolio website                                 |
 
 The standard FSL-1.1-MIT template defines "the Software" as the code included with the license. Placing the LICENSE file inside a specific application directory naturally scopes the competing-use restriction to that application's domain without modifying the template text.
 
@@ -280,4 +281,4 @@ To verify licensing compliance across the repository:
 
 ---
 
-**Last Updated**: 2026-04-04
+**Last Updated**: 2026-04-19

@@ -1,3 +1,15 @@
+---
+title: "AI Model Benchmarks Reference"
+description: Cited benchmark scores for all AI models used in this project — primary source backing for tier assignments in model-selection.md
+category: reference
+tags:
+  - ai-models
+  - benchmarks
+  - model-selection
+created: 2026-04-19
+updated: 2026-04-19
+---
+
 # AI Model Benchmarks Reference
 
 Canonical benchmark reference for all AI models used in this project. Last updated: 2026-04-19.
@@ -6,7 +18,7 @@ Canonical benchmark reference for all AI models used in this project. Last updat
 
 This document provides cited benchmark scores for every model used in `.claude/agents/` and
 `.opencode/agent/`. Its purpose is to make tier assignments in
-[model-selection.md](../../governance/development/agents/model-selection.md) **auditable and
+[AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md) **auditable and
 defensible** — anyone reading a tier decision can follow the citation chain from claim to
 primary source here.
 
@@ -157,7 +169,7 @@ methodology — it cannot be independently verified.
 
 ## Model Selection Mapping
 
-Cross-reference with [model-selection.md](../../governance/development/agents/model-selection.md)
+Cross-reference with [AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md)
 tier assignments.
 
 | Claude Alias | Claude Model (2026)         | Pricing (in/out MTok) | SWE-bench Verified        | OpenCode ID                   |
@@ -170,7 +182,7 @@ tier assignments.
 genuinely open creative reasoning where SWE-bench Verified 87.6% matters. Use `sonnet` for
 structured/rubric-bound work (79.6% is sufficient). Use `haiku` for deterministic mechanical
 tasks (73.3% is sufficient, cost is 5× lower than sonnet, 25× lower than opus). See
-[model-selection.md](../../governance/development/agents/model-selection.md) for the full decision tree.
+[AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md) for the full decision tree.
 
 ---
 
@@ -207,6 +219,23 @@ tasks (73.3% is sufficient, cost is 5× lower than sonnet, 25× lower than opus)
 
 6. **Accuracy as of**: 2026-04-19. Model versions, scores, and pricing change. Re-verify
    when making tier assignment decisions more than 6 months from this date.
+
+---
+
+## Historical / Comparative References
+
+These models are not current tier choices but are referenced in
+[AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md) for comparison or as
+platform fallbacks.
+
+| Model             | SWE-bench Verified | Context            | Notes                                                                   |
+| ----------------- | ------------------ | ------------------ | ----------------------------------------------------------------------- |
+| Claude Sonnet 4.5 | ~72% `[Verified]`  | Bedrock/Vertex API | Platform fallback — Bedrock/Vertex sessions that don't support 4.6      |
+| Claude Opus 4.6   | 57.3% `[Verified]` | GLM comparison     | Used as comparison baseline for GLM-5.1 (SWE-bench Pro 58.4 ≈ Opus 4.6) |
+
+**Note**: Neither model is used as a direct tier target in `.claude/agents/`. Sonnet 4.5 appears
+only in the Budget-Adaptive Inheritance table as the Bedrock/Vertex session fallback. Opus 4.6 is
+cited solely as a benchmark comparison point for GLM-5.1.
 
 ---
 

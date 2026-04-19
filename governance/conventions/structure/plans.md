@@ -9,7 +9,7 @@ tags:
   - project-planning
   - organization
 created: 2025-12-05
-updated: 2025-12-05
+updated: 2026-04-19
 ---
 
 # Plans Organization Convention

@@ -38,7 +38,9 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward tasks:
+**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because it
+performs straightforward tasks:
 
 - Pattern matching to extract URLs and internal links from markdown files
 - Sequential URL validation via web requests

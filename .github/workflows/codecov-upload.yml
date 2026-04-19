@@ -24,12 +24,6 @@ jobs:
       - uses: ./.github/actions/setup-dotnet
       - uses: ./.github/actions/setup-python
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: "0.156.0"
-          extended: true
-
       - name: Generate contract types (required before test:quick)
         run: |
           npx nx run organiclever-contracts:bundle
@@ -48,7 +42,7 @@ jobs:
       # --- Fix LCOV paths for monorepo (vitest/Python emit relative src/ paths) ---
       - name: Prepend app paths to LCOV source files
         run: |
-          for app in oseplatform-web ayokoding-web organiclever-fe; do
+          for app in oseplatform-web ayokoding-web organiclever-fe wahidyankf-web; do
             lcov="apps/${app}/coverage/lcov.info"
             if [ -f "$lcov" ]; then
               sed -i "s|^SF:|SF:apps/${app}/|" "$lcov"
@@ -82,6 +76,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/organiclever-fe/coverage/lcov.info
           flags: organiclever-fe
+          disable_search: true
+          fail_ci_if_error: false
+
+      - name: Upload coverage — wahidyankf-web
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/wahidyankf-web/coverage/lcov.info
+          flags: wahidyankf-web
           disable_search: true
           fail_ci_if_error: false
 

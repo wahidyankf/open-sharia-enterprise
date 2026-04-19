@@ -8,7 +8,7 @@ tags:
   - structure
   - organization
 created: 2026-01-30
-updated: 2026-04-18
+updated: 2026-04-19
 ---
 
 # Structure Conventions

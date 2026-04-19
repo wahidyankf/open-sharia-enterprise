@@ -10,7 +10,7 @@ tags:
   - conventions
   - markdown
 created: 2025-12-04
-updated: 2026-03-04
+updated: 2026-04-19
 ---
 
 # Emoji Usage Convention
