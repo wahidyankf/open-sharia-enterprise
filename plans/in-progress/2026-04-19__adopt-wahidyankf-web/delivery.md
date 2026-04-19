@@ -211,22 +211,24 @@ are performed first — they land in the single PR alongside P0-P5. The
 `prod-wahidyankf-web` branch creation is the only step that requires the PR
 to already be merged; that gate is placed immediately before the push.
 
-- [ ] Create `apps/wahidyankf-web/vercel.json` as specified in `tech-docs.md`.
-- [ ] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-fe/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
-- [ ] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-fe/.dockerignore`.
-- [ ] Create `.github/workflows/test-and-deploy-wahidyankf-web.yml` per `tech-docs.md`.
-- [ ] Verify `.github/workflows/_reusable-test-and-deploy.yml` already handles an arbitrary `app-name` / `prod-branch` input (no change expected; flag if it does not).
-- [ ] Create `.claude/agents/apps-wahidyankf-web-deployer.md` by copying `.claude/agents/apps-organiclever-fe-deployer.md` and replacing `organiclever-fe` → `wahidyankf-web` and `prod-organiclever-web` → `prod-wahidyankf-web` throughout.
-- [ ] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
-- [ ] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
-- [ ] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
-- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` once more; confirm exit 0.
-- [ ] Commit: `ci(wahidyankf-web): add Vercel deploy workflow and deployer agent`.
-- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; this push includes the deployment-infrastructure files created above).
+- [x] Create `apps/wahidyankf-web/vercel.json` as specified in `tech-docs.md`.
+- [x] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-fe/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
+- [x] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-fe/.dockerignore`.
+- [x] Create `.github/workflows/test-and-deploy-wahidyankf-web.yml` per `tech-docs.md`.
+- [x] Verify `.github/workflows/_reusable-test-and-deploy.yml` already handles an arbitrary `app-name` / `prod-branch` input (no change expected; flag if it does not).
+- [x] Create `.claude/agents/apps-wahidyankf-web-deployer.md` by copying `.claude/agents/apps-organiclever-fe-deployer.md` and replacing `organiclever-fe` → `wahidyankf-web` and `prod-organiclever-web` → `prod-wahidyankf-web` throughout.
+- [x] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
+- [x] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
+- [x] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
+- [x] Run `nx affected -t typecheck lint test:quick spec-coverage` once more; confirm exit 0.
+- [x] Commit: `ci(wahidyankf-web): add Vercel deploy workflow and deployer agent`.
+- [x] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; this push includes the deployment-infrastructure files created above).
 - [ ] After pushing, monitor the CI run: `gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 1`; then `gh run watch <run-id>`. If the workflow fails, fix the root cause and push a follow-up commit. Do NOT proceed to the production-branch creation step until CI is green.
 - [ ] **Prerequisite for production-branch creation**: Confirm the worktree's draft PR has been merged to `origin/main`. Run `git fetch origin` and `git ls-remote origin main` to verify `origin/main` reflects the P6 commit SHA before proceeding. Do NOT run `git push origin main:prod-wahidyankf-web` until this check passes.
 - [ ] From a clean `main` (after PR merge and local pull), create the production branch: `git push origin main:prod-wahidyankf-web`.
 - [ ] Confirm remote branch exists: `git ls-remote origin prod-wahidyankf-web`.
+
+> **P6 notes (2026-04-19)** — Infrastructure files created: apps/wahidyankf-web/vercel.json (security headers + prod-wahidyankf-web ignoreCommand), Dockerfile (Next.js standalone build, port 3201, labeled for OCI), .dockerignore, .github/workflows/test-and-deploy-wahidyankf-web.yml (cron 6am/6pm WIB, uses \_reusable-test-and-deploy.yml). Deployer agent at .claude/agents/apps-wahidyankf-web-deployer.md (Haiku model, purple Implementor, force-push to prod-wahidyankf-web). `npm run sync:claude-to-opencode` synced 70 agents + 37 skills; .opencode/agent/apps-wahidyankf-web-deployer.md confirmed present. governance/development/infra/nx-targets.md: added `wahidyankf` to the domain: allowlist row and wahidyankf-web + wahidyankf-web-e2e rows to the Current Project Tags table. Post-push monitoring and production-branch creation left as manual follow-ups — they fire only after the draft PR merges to `origin/main`, which is outside this plan execution's scope (the merge is the user's decision point per the branching model).
 
 ## Phase P7 — Docs & Close-out
 
