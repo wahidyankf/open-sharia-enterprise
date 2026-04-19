@@ -143,32 +143,33 @@ Run `repo-rules-checker` in OCD mode after all changes (Phases 4-6).
       _(2026-04-19 · Status: Done · 13 findings fixed: CRITICAL F7 removed 4 demoted agents from Opus examples; CRITICAL F9 removed apps-ayokoding-web-\*-maker from Structured Makers contrast; HIGH F1 added YAML frontmatter to ai-model-benchmarks.md; HIGH F3 added benchmark doc to docs/reference/README.md; HIGH F8 added 6 agents to Structured makers Sonnet list; HIGH F15 added apps-wahidyankf-web-deployer to agents README Operations + CLAUDE.md; MEDIUM F2 fixed 3 filename-as-link-text uses; MEDIUM F10 added Link Fixer as Haiku section; MEDIUM F11 added Historical/Comparative References section; MEDIUM F15 added wahidyankf-web-deployer to model-selection.md haiku deployers; LOW F12 updated model-selection.md frontmatter updated date; LOW F13 updated agents README Last Updated; OCD F5 changed 2 heading-format Model Selection Justification to bold inline; OCD F6 added benchmark citation to swe-hugo-dev; lint:md 0 errors)_
 - [x] **7.3** Re-run until two consecutive zero-finding passes (per quality gate workflow)
       _(2026-04-19 · Status: Done · 11 checker passes total; pass 9 = ZERO FINDINGS; pass 10 = 1 finding (CLAUDE.md wording); fixed; pass 11 assumed clean per user directive)_
-- [ ] **7.4** Commit any fixes: `fix(governance): repo-rules-checker ocd findings`
+- [x] **7.4** Commit any fixes: `fix(governance): repo-rules-checker ocd findings`
+      _(2026-04-19 · Status: Done · committed "fix(governance): repo-rules-checker OCD quality gate — complete pass"; 68 files, 479 insertions)_
 
 ---
 
 ## Phase 8: Validation
 
-- [ ] **8.1** Run `npm run validate:claude` — expect zero errors
-- [ ] **8.2** Run `npm run validate:sync` — expect zero errors
-- [ ] **8.3** Run `nx run rhino-cli:test:quick` — expect pass
+- [x] **8.1** Run `npm run validate:claude` — expect zero errors _(2026-04-19 · 1029/1029 passed)_
+- [x] **8.2** Run `npm run validate:sync` — expect zero errors _(2026-04-19 · 109/109 passed)_
+- [x] **8.3** Run `nx run rhino-cli:test:quick` — expect pass _(2026-04-19 · 90.07% >= 90% threshold)_
 
 ---
 
 ## Phase 9: Sync + Final Gate
 
-- [ ] **9.1** Run `npm run sync:dry-run` — agents with updated tiers should show
+- [x] **9.1** Run `npm run sync:dry-run` — agents with updated tiers should show
       OpenCode model ID changes (glm-5.1 for all sonnet/omit-to-sonnet; glm-5-turbo for
-      new haiku agents)
-- [ ] **9.2** Run `npm run sync:claude-to-opencode` — apply sync
-- [ ] **9.3** Run `npm run validate:sync` — final pass
+      new haiku agents) _(2026-04-19 · 70 agents converted, SUCCESS)_
+- [x] **9.2** Run `npm run sync:claude-to-opencode` — apply sync _(2026-04-19 · SUCCESS)_
+- [x] **9.3** Run `npm run validate:sync` — final pass _(2026-04-19 · 109/109 passed)_
 
 ### Local Quality Gates (Before Push)
 
-- [ ] Run `npm run lint:md` — lint all markdown files
-- [ ] Run `npm run lint:md:fix` — auto-fix any violations
-- [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` — the agent file changes
-      trigger rhino-cli as affected; all targets must pass
+- [x] Run `npm run lint:md` — lint all markdown files _(2026-04-19 · 0 errors)_
+- [x] Run `npm run lint:md:fix` — auto-fix any violations _(2026-04-19 · clean)_
+- [x] Run `nx affected -t typecheck lint test:quick spec-coverage` — the agent file changes
+      trigger rhino-cli as affected; all targets must pass _(2026-04-19 · all pass, 0 failures)_
 - [ ] Fix ALL failures found — including preexisting issues not caused by your changes
 
 > **Important**: Fix ALL failures, not just those caused by your changes. Root cause
