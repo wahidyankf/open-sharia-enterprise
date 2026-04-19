@@ -141,7 +141,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                   | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
 | Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright` | Apps and e2e projects          | Framework or runtime environment                              |
 | Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`, `dart`                                        | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `demo-be`, `demo-fe`, `tooling`                                           | Always                         | Business or product domain                                    |
+| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `wahidyankf`, `demo-be`, `demo-fe`, `tooling`                             | Always                         | Business or product domain                                    |
 
 ### Special Rules
 
@@ -164,6 +164,8 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `organiclever-be-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `oseplatform-cli`     | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
 | `oseplatform-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
+| `wahidyankf-web`      | `["type:app", "platform:nextjs", "lang:ts", "domain:wahidyankf"]`        |
+| `wahidyankf-web-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`    |
 | `hugo-commons`        | `["type:lib", "lang:golang"]`                                            |
 | `golang-commons`      | `["type:lib", "lang:golang"]`                                            |
 
