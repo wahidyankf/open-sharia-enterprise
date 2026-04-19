@@ -26,7 +26,8 @@ The problem is this design is **nowhere documented**. Someone reading the policy
 adds `model: opus` to an opus-tier agent to "make it more explicit", unknowingly breaking
 the budget-adaptive behavior and forcing Opus charges on users who chose a lower tier.
 
-**Model resolution chain** (official Claude Code docs, verified April 2026):
+**Model resolution chain** (Claude Code agent documentation, anthropic.com/docs/claude-code/agents,
+accessed 2026-04-19):
 env var → caller parameter → frontmatter `model:` → session default (inherit)
 
 Omitting the field uses step 4 (inherit). This is intentional and correct.
@@ -55,7 +56,7 @@ anyone creating a new plan.
 
 ## Business Impact
 
-| Stakeholder                  | Impact today                            | Impact after fix               |
+| Affected Role                | Impact today                            | Impact after fix               |
 | ---------------------------- | --------------------------------------- | ------------------------------ |
 | Maintainer on Pro plan       | Opus agents run on Sonnet silently      | Correct tier guaranteed        |
 | Maintainer adding new agent  | No OpenCode model docs to reference     | Clear dual-platform policy     |
@@ -71,11 +72,11 @@ anyone creating a new plan.
 
 ## Business-Level Success Metrics
 
-1. **Observable**: `for f in .claude/agents/*.md; do grep -qm1 "^model:" "$f" || echo "BLANK: $f"; done` outputs nothing (zero blank model fields)
+1. **Observable**: `model-selection.md` contains a "Budget-Adaptive Inheritance" section explaining why opus-tier agents omit the `model` field
 2. **Observable**: `npm run validate:claude` exits 0 after all changes
 3. **Observable**: `model-selection.md` diff contains an "OpenCode / GLM Equivalents" section and a "Current Model Versions" table
 4. **Observable**: `CLAUDE.md` diff changes "four documents" to "five documents" and removes `requirements.md` from the file list
-5. _Judgment call:_ agent invocations from Pro-tier sessions will produce opus-quality output for reasoning-intensive agents going forward; no baseline measured
+5. _Judgment call:_ documentation now prevents a maintainer from accidentally adding `model: opus` and breaking budget-adaptive behavior
 
 ## Business-Scope Non-Goals
 
@@ -86,9 +87,9 @@ anyone creating a new plan.
 
 ## Business Risks and Mitigations
 
-| Risk                                                                        | Likelihood | Mitigation                                                         |
-| --------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
-| rhino-cli test fixtures hard-code empty model and fail                      | Low        | Update fixture files (not source) if needed                        |
-| An agent missed in the audit still has blank model                          | Low        | Phase 7 audit grep + `validate:claude` catch it                    |
-| CLAUDE.md update conflicts with concurrent plans using old format           | Low        | This is the only in-progress plan currently creating new docs      |
-| Stale model-selection.md wording surfaces in agent outputs until re-indexed | Negligible | Agents re-read files on each invocation; no caching of policy docs |
+| Risk                                                                        | Likelihood | Impact     | Mitigation                                                         |
+| --------------------------------------------------------------------------- | ---------- | ---------- | ------------------------------------------------------------------ |
+| rhino-cli test fixtures hard-code empty model and fail                      | Low        | Low        | Update fixture files (not source) if needed                        |
+| An agent missed in the audit still has blank model                          | Low        | Low        | Phase 7 audit grep + `validate:claude` catch it                    |
+| CLAUDE.md update conflicts with concurrent plans using old format           | Low        | Low        | This is the only in-progress plan currently creating new docs      |
+| Stale model-selection.md wording surfaces in agent outputs until re-indexed | Negligible | Negligible | Agents re-read files on each invocation; no caching of policy docs |
