@@ -83,6 +83,84 @@ Next.js 16 App Router build with `output: "standalone"` so Vercel can
 deploy it directly and a container build remains possible for future
 infra moves.
 
+## Live-Site Baseline Reference
+
+Before the port begins, the live production site at
+<https://www.wahidyankf.com/> was fully captured using Playwright MCP
+and frozen into `./baseline/`. The folder contains 17 PNG screenshots,
+3 YAML accessibility snapshots, and a README documenting observed
+behaviour. The baseline is the **single source of truth** the adopted
+app is validated against in every P2/P3/P4/P7 visual gate.
+
+### Capture matrix (already captured 2026-04-19)
+
+| Viewport | Dimensions | Dark routes                                             | Light routes                     |
+| -------- | ---------- | ------------------------------------------------------- | -------------------------------- |
+| Desktop  | 1440 × 900 | `/`, `/cv`, `/personal-projects`, `/?search=TypeScript` | `/`                              |
+| Tablet   | 768 × 1024 | `/`, `/cv`, `/personal-projects`                        | `/`, `/cv`, `/personal-projects` |
+| Mobile   | 375 × 812  | `/`, `/cv`, `/personal-projects`                        | `/`, `/cv`, `/personal-projects` |
+
+The desktop light theme covers only `/` because that is a sufficient
+structural proof of the light-mode CSS variable swap; by the time the
+sweep reaches desktop tablet and mobile, light-theme coverage is
+already comprehensive across tablet + mobile.
+
+### Local-only post-port verification
+
+The Vercel binding for `www.wahidyankf.com` remains pointed at the
+upstream `wahidyankf/oss` build during AND after this plan executes.
+The user swaps the binding to the new `prod-wahidyankf-web` branch
+manually once the plan is complete. Every post-port visual check in
+this plan therefore:
+
+- Runs the adopted app locally (`nx dev wahidyankf-web` on
+  `http://localhost:3201/`).
+- Uses the Playwright-MCP tools `browser_resize`, `browser_navigate`,
+  `browser_snapshot`, `browser_take_screenshot`, `browser_click`, and
+  `browser_console_messages` against that local URL.
+- Compares the new screenshots to the corresponding file in
+  `./baseline/`, not to a refetched live URL.
+- Explicitly does NOT navigate to `https://www.wahidyankf.com/`
+  post-port — doing so compares against the stale upstream build and
+  produces false-fail noise.
+
+Once the user completes the Vercel binding swap (outside this plan),
+the live URL and the adopted app converge and the baseline becomes
+historical.
+
+### P7 Playwright-MCP sanity check (final gate)
+
+The last checkpoint of the plan is a comprehensive Playwright-MCP
+sanity sweep. The `delivery.md` P7 gate spells out the exact tool
+sequence, but the intent is:
+
+1. Start `nx dev wahidyankf-web` on port 3201.
+2. For each of 3 viewports × 2 themes × 3 routes = 18 combinations:
+   - `browser_resize` to the target viewport.
+   - `browser_navigate` to the route.
+   - `browser_snapshot` to capture the accessibility tree.
+   - `browser_take_screenshot` (save into `local-temp/baseline-check-p7/`).
+   - `browser_console_messages` to confirm zero JS errors.
+3. Additionally exercise these specific interaction flows:
+   - Home search: type `TypeScript`, confirm URL becomes
+     `/?search=TypeScript`, confirm `<mark class="bg-yellow-300
+text-gray-900">TypeScript</mark>` is present in the rendered
+     pills, confirm "No matching content in the About Me section."
+     renders.
+   - Click a skill pill on `/`, confirm navigation to
+     `/cv?search=<skill>&scrollTop=true`.
+   - Theme toggle via `browser_click` on
+     `[aria-label^="Switch to"]` button, confirm the `light-theme`
+     class toggles on `<html>` and the aria-label flips.
+4. Diff every saved screenshot against its counterpart in
+   `./baseline/`.
+
+Structural mismatches (missing section, broken search filter,
+inoperable theme toggle, nav disappearing at a breakpoint) block the
+P7 commit. Cosmetic Tailwind-4 migration drift (border-radius 2 px
+tighter, font-weight shift from the v4 CSS-reset, marginal padding
+adjustments) is acceptable and documented in the P7 commit body.
+
 ## File-by-File Port Map
 
 Source column uses upstream paths relative to
@@ -260,11 +338,7 @@ Targets exposed, modelled on `apps/organiclever-fe/project.json` minus
 - `test:integration` — `npx vitest run --project integration`; cacheable.
   (No integration tests ship in P3/P4, but the target exists per the "all
   apps with unit tests" rule in the three-level testing standard.)
-- `test:quick` — `npx vitest run --coverage && (cd ../../apps/rhino-cli &&
-CGO_ENABLED=0 go run main.go test-coverage validate
-apps/wahidyankf-web/coverage/lcov.info 80)`; cacheable. Threshold `80`
-  matches the two content-platform siblings (`ayokoding-web`,
-  `oseplatform-web`).
+- `test:quick` — `npx vitest run --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/wahidyankf-web/coverage/lcov.info 80)`; cacheable. `--project unit-fe` targets the jsdom unit project only (not `integration`) so the gate stays fast. Threshold `80` matches the two content-platform siblings (`ayokoding-web`, `oseplatform-web`).
 - `spec-coverage` — `rhino-cli spec-coverage validate --shared-steps
 specs/apps/wahidyankf/fe/gherkin apps/wahidyankf-web`; cacheable.
 
@@ -432,7 +506,7 @@ execution mode).
 
 ## Rollback
 
-Each phase commits independently on `main`. To roll back:
+Each phase commits independently on the worktree branch `worktree-cached-brewing-cocoa` and reaches `main` only after the single draft PR merges. To roll back:
 
 - If rollback is needed _before_ P6: `git revert <phase-commit>` on the
   relevant phase. The app is not yet in any deploy path so reversion is
