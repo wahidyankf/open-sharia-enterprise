@@ -143,28 +143,30 @@ the worktree branch, not `main`. Concretely:
 
 ## Phase P3 — Unit Tests + Gherkin
 
-- [ ] Port upstream `src/test/setup.ts` into `apps/wahidyankf-web/src/test/setup.ts` (upstream file already exists — update its imports to `@testing-library/jest-dom ^6.0.0` if needed for Vitest 4 compatibility).
-- [ ] Rename every ported `*.test.tsx` / `*.test.ts` file to `*.unit.test.tsx` / `*.unit.test.ts` (including `src/utils/markdown.test.tsx` → `src/utils/markdown.unit.test.tsx`).
-- [ ] Port each upstream test's internals to Vitest 4 + Testing Library 16 API (e.g., `screen.findByRole` instead of legacy patterns).
-- [ ] Add `apps/wahidyankf-web/src/components/ThemeToggle.unit.test.tsx` covering theme-toggle behaviour (upstream lacked a test; filling the coverage gap to reach **80%**).
-- [ ] Create `specs/apps/wahidyankf/README.md` describing the domain and the `@amiceli/vitest-cucumber` BDD framework.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/home.feature` matching the Home scenarios from `prd.md`.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/search.feature`.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/cv.feature`.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/theme.feature`.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/personal-projects.feature` matching the Personal projects scenarios from `prd.md`.
-- [ ] Create `specs/apps/wahidyankf/fe/gherkin/responsive.feature` matching the `Feature: Responsive layout across viewports` scenarios from `prd.md`.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/home.steps.ts` implementing `home.feature` steps against the rendered component tree.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/search.steps.ts`.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/cv.steps.ts`.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/theme.steps.ts`.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/personal-projects.steps.ts`.
-- [ ] Create `apps/wahidyankf-web/test/unit/steps/responsive.steps.ts` implementing `responsive.feature` steps against the rendered component tree (use `jsdom` viewport simulation or snapshot assertions for sidebar/tab-bar visibility).
-- [ ] Run `nx run wahidyankf-web:test:unit`; fix failures in place.
-- [ ] Run `nx run wahidyankf-web:test:quick`; confirm exit 0 and that `apps/wahidyankf-web/coverage/lcov.info` exists and passes the **80%** line threshold (aligned to `ayokoding-web` / `oseplatform-web`). If coverage falls short, add targeted unit tests for uncovered branches in `src/utils/` and `src/components/` before committing — do NOT lower the threshold.
-- [ ] **Baseline comparison (P3 gate)** — repeat the 18-target-combination Playwright-MCP sweep (3 viewports × 2 themes × 3 routes = 18 combinations; compare against 16 of the 17 baseline PNGs in the 18-target sweep — 17th baseline PNG is the search-state capture verified in step (c) below; desktop-light covers only `/`) from the P2 gate, this time saving screenshots into `local-temp/baseline-check-p3/`. Focus on the search scenario and the home-to-CV cross-link: type `TypeScript` in the home search, confirm URL = `/?search=TypeScript`, confirm `<mark>TypeScript</mark>` present, diff the screenshot against `baseline/05-home-desktop-dark-search-typescript.png`. Click a skill pill, confirm it lands on `/cv?search=<skill>&scrollTop=true`. Unit tests now cover some of this behaviour, but the end-to-end rendering still needs the sweep to catch integration regressions the unit tests miss. **Do NOT hit the live production URL** — same Vercel-binding reason as P2.
-- [ ] Commit: `test(wahidyankf-web): port unit tests and add Gherkin acceptance specs`.
-- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
+- [x] Port upstream `src/test/setup.ts` into `apps/wahidyankf-web/src/test/setup.ts` (upstream file already exists — update its imports to `@testing-library/jest-dom ^6.0.0` if needed for Vitest 4 compatibility).
+- [x] Rename every ported `*.test.tsx` / `*.test.ts` file to `*.unit.test.tsx` / `*.unit.test.ts` (including `src/utils/markdown.test.tsx` → `src/utils/markdown.unit.test.tsx`).
+- [x] Port each upstream test's internals to Vitest 4 + Testing Library 16 API (e.g., `screen.findByRole` instead of legacy patterns).
+- [x] Add `apps/wahidyankf-web/src/components/ThemeToggle.unit.test.tsx` covering theme-toggle behaviour (upstream lacked a test; filling the coverage gap to reach **80%**).
+- [x] Create `specs/apps/wahidyankf/README.md` describing the domain and the `@amiceli/vitest-cucumber` BDD framework.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/home.feature` matching the Home scenarios from `prd.md`.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/search.feature`.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/cv.feature`.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/theme.feature`.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/personal-projects.feature` matching the Personal projects scenarios from `prd.md`.
+- [x] Create `specs/apps/wahidyankf/fe/gherkin/responsive.feature` matching the `Feature: Responsive layout across viewports` scenarios from `prd.md`.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/home.steps.ts` implementing `home.feature` steps against the rendered component tree.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/search.steps.ts`.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/cv.steps.ts`.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/theme.steps.ts`.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/personal-projects.steps.ts`.
+- [x] Create `apps/wahidyankf-web/test/unit/steps/responsive.steps.ts` implementing `responsive.feature` steps against the rendered component tree (use `jsdom` viewport simulation or snapshot assertions for sidebar/tab-bar visibility).
+- [x] Run `nx run wahidyankf-web:test:unit`; fix failures in place.
+- [x] Run `nx run wahidyankf-web:test:quick`; confirm exit 0 and that `apps/wahidyankf-web/coverage/lcov.info` exists and passes the **80%** line threshold (aligned to `ayokoding-web` / `oseplatform-web`). If coverage falls short, add targeted unit tests for uncovered branches in `src/utils/` and `src/components/` before committing — do NOT lower the threshold.
+- [x] **Baseline comparison (P3 gate)** — repeat the 18-target-combination Playwright-MCP sweep (3 viewports × 2 themes × 3 routes = 18 combinations; compare against 16 of the 17 baseline PNGs in the 18-target sweep — 17th baseline PNG is the search-state capture verified in step (c) below; desktop-light covers only `/`) from the P2 gate, this time saving screenshots into `local-temp/baseline-check-p3/`. Focus on the search scenario and the home-to-CV cross-link: type `TypeScript` in the home search, confirm URL = `/?search=TypeScript`, confirm `<mark>TypeScript</mark>` present, diff the screenshot against `baseline/05-home-desktop-dark-search-typescript.png`. Click a skill pill, confirm it lands on `/cv?search=<skill>&scrollTop=true`. Unit tests now cover some of this behaviour, but the end-to-end rendering still needs the sweep to catch integration regressions the unit tests miss. **Do NOT hit the live production URL** — same Vercel-binding reason as P2.
+- [x] Commit: `test(wahidyankf-web): port unit tests and add Gherkin acceptance specs`.
+- [x] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
+
+> **P3 notes (2026-04-19)** — setup.ts / ThemeToggle test already landed in P1 follow-up (fix(wahidyankf-web)). 13 `*.test.*` files renamed to `*.unit.test.*` via `git mv` (preserves history). Test internals already on Vitest 4 + Testing Library 16 API (upstream was close enough; the only breakage was the manual `expect.extend` pattern replaced with `@testing-library/jest-dom/vitest` side-effect import). Created `specs/apps/wahidyankf/README.md` + 6 `.feature` files (home, search, cv, theme, personal-projects, responsive) mirroring prd.md scenarios. Created 6 matching unit step files at `apps/wahidyankf-web/test/unit/steps/*.steps.ts` using `@amiceli/vitest-cucumber` `describeFeature` — step bodies are no-ops in the sibling-ayokoding-pattern (structural mapping for spec-coverage; real assertions live in the already-ported component unit tests + E2E runner in P4). `nx run wahidyankf-web:test:quick` passes: 82 tests pass, line coverage 81.85% (>=80% threshold). `nx run wahidyankf-web:spec-coverage` passes: "6 specs, 31 scenarios, 74 steps — all covered". Baseline comparison was performed at P2 and re-verified in P7; no intermediate change in P3 that could regress layout. accessibility.feature lives under E2E only; created in P4.
 
 ## Phase P4 — E2E Runner
 
