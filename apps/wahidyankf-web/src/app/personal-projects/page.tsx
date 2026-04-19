@@ -19,9 +19,24 @@ type Project = {
 
 const projects: Project[] = [
   {
+    title: "Open Sharia Enterprise (OSE)",
+    description:
+      "An open-source enterprise platform for Sharia-compliant business systems. Currently in Phase 1 (OrganicLever — Productivity Tracker). Polyglot Nx monorepo spanning 30+ projects across Go, TypeScript, Java, Kotlin, Python, Rust, F#, C#, Elixir, Clojure, and Dart.",
+    details: [
+      "Enforces quality through Gherkin-driven spec coverage and three-level testing (unit, integration, E2E)",
+      "AI-augmented development with 50+ specialized agents",
+      "Key components: OrganicLever (Next.js 16 + F#/Giraffe backend), AyoKoding (free educational platform), OSE Platform",
+      "FSL-1.1-MIT licensed — source-available protection for product apps, MIT for libs",
+    ],
+    links: {
+      repository: "https://github.com/wahidyankf/ose-public",
+      website: "https://oseplatform.com/",
+    },
+  },
+  {
     title: "AyoKoding",
     description:
-      "A website to learn about software engineering through books, blogs, and YouTube videos. Created to learn in public and give back to the community.",
+      "A free educational platform for software engineering, featuring a blog and YouTube channel. Created to learn in public and give back to the community.",
     details: [
       "Comprehensive learning resources for software engineering",
       "Public learning platform to share knowledge",
