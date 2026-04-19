@@ -22,6 +22,11 @@ the worktree branch, not `main`. Concretely:
   its quality-gate checks.
 - The PR merges to `main` (squash or merge-commit — user's choice)
   before P6 creates the `prod-wahidyankf-web` production branch.
+- **P6 file-creation** (vercel.json, Dockerfile, deployer agent, CI
+  workflow) commits to the worktree branch and lands in the same
+  single draft PR as P0-P5. The `prod-wahidyankf-web` branch creation
+  step in P6 is the only action that requires the PR to already be
+  merged; it runs after merge and does not create a second PR.
 - **P6 is the only phase that touches `main` directly**, and only to
   push the merged SHA from `origin/main` onto the new production
   branch. No phase commits land directly on `main` — all commits
@@ -149,7 +154,7 @@ the worktree branch, not `main`. Concretely:
 - [ ] Create `apps/wahidyankf-web/test/unit/steps/responsive.steps.ts` implementing `responsive.feature` steps against the rendered component tree (use `jsdom` viewport simulation or snapshot assertions for sidebar/tab-bar visibility).
 - [ ] Run `nx run wahidyankf-web:test:unit`; fix failures in place.
 - [ ] Run `nx run wahidyankf-web:test:quick`; confirm exit 0 and that `apps/wahidyankf-web/coverage/lcov.info` exists and passes the **80%** line threshold (aligned to `ayokoding-web` / `oseplatform-web`). If coverage falls short, add targeted unit tests for uncovered branches in `src/utils/` and `src/components/` before committing — do NOT lower the threshold.
-- [ ] **Baseline comparison (P3 gate)** — repeat the 18-target-combination Playwright-MCP sweep (3 viewports × 2 themes × 3 routes = 18 combinations; compare against 17 baseline PNGs where they exist — desktop-light covers only `/`) from the P2 gate, this time saving screenshots into `local-temp/baseline-check-p3/`. Focus on the search scenario and the home-to-CV cross-link: type `TypeScript` in the home search, confirm URL = `/?search=TypeScript`, confirm `<mark>TypeScript</mark>` present, diff the screenshot against `baseline/05-home-desktop-dark-search-typescript.png`. Click a skill pill, confirm it lands on `/cv?search=<skill>&scrollTop=true`. Unit tests now cover some of this behaviour, but the end-to-end rendering still needs the sweep to catch integration regressions the unit tests miss. **Do NOT hit the live production URL** — same Vercel-binding reason as P2.
+- [ ] **Baseline comparison (P3 gate)** — repeat the 18-target-combination Playwright-MCP sweep (3 viewports × 2 themes × 3 routes = 18 combinations; compare against 16 of the 17 baseline PNGs in the 18-target sweep — 17th baseline PNG is the search-state capture verified in step (c) below; desktop-light covers only `/`) from the P2 gate, this time saving screenshots into `local-temp/baseline-check-p3/`. Focus on the search scenario and the home-to-CV cross-link: type `TypeScript` in the home search, confirm URL = `/?search=TypeScript`, confirm `<mark>TypeScript</mark>` present, diff the screenshot against `baseline/05-home-desktop-dark-search-typescript.png`. Click a skill pill, confirm it lands on `/cv?search=<skill>&scrollTop=true`. Unit tests now cover some of this behaviour, but the end-to-end rendering still needs the sweep to catch integration regressions the unit tests miss. **Do NOT hit the live production URL** — same Vercel-binding reason as P2.
 - [ ] Commit: `test(wahidyankf-web): port unit tests and add Gherkin acceptance specs`.
 - [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
 
@@ -166,7 +171,7 @@ the worktree branch, not `main`. Concretely:
 - [ ] Run `nx run wahidyankf-web-e2e:install`.
 - [ ] Start the app in one shell: `nx dev wahidyankf-web`.
 - [ ] Run `nx run wahidyankf-web-e2e:test:e2e` in a second shell; confirm all scenarios pass.
-- [ ] **Baseline comparison (P4 gate)** — with the dev server still running, run the 18-target-combination Playwright-MCP sweep one more time (18 combinations; compare against 17 baseline PNGs — desktop-light covers only `/`; save into `local-temp/baseline-check-p4/`). Confirm no regressions introduced by the E2E scaffolding or axe-core. Document any accepted cosmetic drift in the P4 commit body. Again: `http://localhost:3201/` only; do NOT hit the live production URL.
+- [ ] **Baseline comparison (P4 gate)** — with the dev server still running, run the 18-target-combination Playwright-MCP sweep one more time (18 combinations; compare against 16 of the 17 baseline PNGs in the 18-target sweep — 17th baseline PNG is the search-state capture verified separately; desktop-light covers only `/`; save into `local-temp/baseline-check-p4/`). Confirm no regressions introduced by the E2E scaffolding or axe-core. Document any accepted cosmetic drift in the P4 commit body. Again: `http://localhost:3201/` only; do NOT hit the live production URL.
 - [ ] Stop the dev server.
 - [ ] Commit: `test(wahidyankf-web-e2e): add Playwright-BDD runner with a11y smoke`.
 - [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
@@ -187,7 +192,11 @@ the worktree branch, not `main`. Concretely:
 
 ## Phase P6 — Deployment Wiring
 
-- [ ] **Prerequisite**: Confirm the worktree's draft PR has been merged to `origin/main` before creating `prod-wahidyankf-web`. Run `git fetch origin` and `git ls-remote origin main` to verify `origin/main` reflects the P5 commit SHA before proceeding. Do NOT run subsequent push commands from the worktree branch — the production-branch creation below operates on `origin/main`, not the worktree branch. File-creation steps below (vercel.json, Dockerfile, deployer agent, CI workflow) may proceed before the PR merges; do NOT run `git push origin main:prod-wahidyankf-web` until this Prerequisite step passes.
+File-creation steps (vercel.json, Dockerfile, deployer agent, CI workflow)
+are performed first — they land in the single PR alongside P0-P5. The
+`prod-wahidyankf-web` branch creation is the only step that requires the PR
+to already be merged; that gate is placed immediately before the push.
+
 - [ ] Create `apps/wahidyankf-web/vercel.json` as specified in `tech-docs.md`.
 - [ ] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-fe/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
 - [ ] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-fe/.dockerignore`.
@@ -197,12 +206,13 @@ the worktree branch, not `main`. Concretely:
 - [ ] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
 - [ ] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
 - [ ] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
-- [ ] From a clean `main` (after PR merge and local pull), create the production branch: `git push origin main:prod-wahidyankf-web`.
-- [ ] Confirm remote branch exists: `git ls-remote origin prod-wahidyankf-web`.
 - [ ] Run `nx affected -t typecheck lint test:quick spec-coverage` once more; confirm exit 0.
 - [ ] Commit: `ci(wahidyankf-web): add Vercel deploy workflow and deployer agent`.
-- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; do not push to `main` directly).
-- [ ] After pushing, monitor the CI run: `gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 1`; then `gh run watch <run-id>`. If the workflow fails, fix the root cause and push a follow-up commit. Do NOT proceed to P7 until CI is green.
+- [ ] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; this push includes the deployment-infrastructure files created above).
+- [ ] After pushing, monitor the CI run: `gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 1`; then `gh run watch <run-id>`. If the workflow fails, fix the root cause and push a follow-up commit. Do NOT proceed to the production-branch creation step until CI is green.
+- [ ] **Prerequisite for production-branch creation**: Confirm the worktree's draft PR has been merged to `origin/main`. Run `git fetch origin` and `git ls-remote origin main` to verify `origin/main` reflects the P6 commit SHA before proceeding. Do NOT run `git push origin main:prod-wahidyankf-web` until this check passes.
+- [ ] From a clean `main` (after PR merge and local pull), create the production branch: `git push origin main:prod-wahidyankf-web`.
+- [ ] Confirm remote branch exists: `git ls-remote origin prod-wahidyankf-web`.
 
 ## Phase P7 — Docs & Close-out
 
@@ -212,7 +222,7 @@ the worktree branch, not `main`. Concretely:
 - [ ] Update `docs/how-to/add-new-app.md` ONLY if the port surfaced a genuinely missing step (do not edit speculatively).
 - [ ] Run `nx affected -t typecheck lint test:quick spec-coverage`; confirm exit 0.
 - [ ] Run `npm run lint:md`; confirm zero errors.
-- [ ] **Final Playwright-MCP sanity check (P7 gate)** — with `nx dev wahidyankf-web` running on `http://localhost:3201/`, perform the canonical 18-target-combination sweep (18 combinations; compare against 17 baseline PNGs where they exist — desktop-light covers only `/`) one last time using exactly these tools: `browser_resize` (1440×900, 768×1024, 375×812), `browser_navigate` (`/`, `/cv`, `/personal-projects`), `browser_snapshot`, `browser_take_screenshot`, `browser_click` (theme toggle and a skill pill), `browser_console_messages`. Save into `local-temp/baseline-check-p7/`. Confirmation criteria:
+- [ ] **Final Playwright-MCP sanity check (P7 gate)** — with `nx dev wahidyankf-web` running on `http://localhost:3201/`, perform the canonical 18-target-combination sweep (18 combinations; compare against 16 of the 17 baseline PNGs in the 18-target sweep — 17th baseline PNG is the search-state capture verified in criterion (3) below; desktop-light covers only `/`) one last time using exactly these tools: `browser_resize` (1440×900, 768×1024, 375×812), `browser_navigate` (`/`, `/cv`, `/personal-projects`), `browser_snapshot`, `browser_take_screenshot`, `browser_click` (theme toggle and a skill pill), `browser_console_messages`. Save into `local-temp/baseline-check-p7/`. Confirmation criteria:
   - (1) Zero console errors across all 18 combinations.
   - (2) Every adopted screenshot structurally matches its counterpart under `./baseline/` where a baseline PNG exists (desktop-light × `/cv` and desktop-light × `/personal-projects` are swept for zero-error confirmation only; cosmetic drift tolerated and noted; structural mismatch blocks the commit).
   - (3) Home search: typing `TypeScript` yields `/?search=TypeScript`, `<mark>` wrap, "No matching content in the About Me section." message.
@@ -236,6 +246,19 @@ the worktree branch, not `main`. Concretely:
 - Markdown-formatted files (including this plan) are auto-formatted by the repo's Prettier pre-commit hook.
 
 > **Important**: Fix ALL failures found during quality gates — including preexisting failures not caused by the current phase's changes. This follows the root cause orientation principle: proactively fix preexisting errors encountered during work. Never use `--no-verify` or lower a coverage threshold to get a push through.
+
+### Commit Guidance
+
+- Commits that touch multiple domains or concerns (e.g., an app change + a
+  governance convention update) split into separate commits with their own
+  Conventional Commits type/scope — even within a single phase.
+- Follow Conventional Commits: `<type>(<scope>): <description>` for every
+  commit.
+- Keep the per-phase commit message as defined (one thematic commit per phase
+  end).
+- For intra-phase fix commits (e.g., fixing a CI failure after the phase
+  push), use `fix(<scope>): <what-was-broken>` — do NOT bundle unrelated
+  changes into a fixup commit.
 
 ## Verification
 

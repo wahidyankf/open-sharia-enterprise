@@ -20,21 +20,25 @@ branch — identical to `ayokoding-web`, `oseplatform-web`, and
 E2E smoke, and an `@amiceli/vitest-cucumber` Gherkin suite mirroring this
 PRD's acceptance criteria.
 
+**Target users of the product** (not plan personas): The primary product
+user is a **visitor / recruiter** who arrives at `/`, reads the About Me
+and top skills, and navigates to CV or projects within a few clicks.
+A secondary audience is a **template adopter** — a future external user
+who forks `apps/wahidyankf-web/` as a starting point for their own
+portfolio, expecting every configuration file (Nx, Vitest, Playwright,
+Tailwind, oxlint, tsconfig) to be either identical to the other three
+Next.js apps or explicitly delta-documented so their fork has zero
+unexplained bespoke behaviour. These are product-audience descriptions,
+not plan personas — user stories can read "As a visitor" without
+"Visitor" being a formal plan persona.
+
 ## Personas
 
 Personas are content-placement hats / agent roles, not external
 stakeholder titles.
 
-- **Visitor / recruiter** — arrives at `/`, wants to read the About Me,
-  the top skills, and navigate to CV or projects within a few clicks.
 - **Maintainer authoring content** — edits `app/data.ts` and
   `public/` assets; expects hot reload on `nx dev wahidyankf-web`.
-- **Template adopter** — a future external user who forks
-  `apps/wahidyankf-web/` as a starting point for their own portfolio.
-  Expects every configuration file (Nx, Vitest, Playwright, Tailwind,
-  oxlint, tsconfig) to be either identical to the other three Next.js
-  apps or explicitly delta-documented, so their fork has zero unexplained
-  bespoke behaviour.
 - **AI agents consuming the file**:
   - `plan-checker` / `plan-execution-checker` — reads the functional
     requirements and Gherkin ACs to decide whether the implementation
