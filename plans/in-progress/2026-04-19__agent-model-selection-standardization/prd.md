@@ -43,6 +43,15 @@ correct number and names of files on the first attempt.
 model values and their OpenCode equivalents, so that I can flag non-compliant agents with
 confidence.
 
+**US-5**: As a maintainer auditing agent tier assignments, I want a single benchmark
+reference document with cited scores for all five models (Claude Opus 4.7, Sonnet 4.6,
+Haiku 4.5, GLM-5.1, GLM-5-turbo), so that I can verify WHY each tier was assigned
+without having to independently research vendor documentation.
+
+**US-6**: As a maintainer reading any policy document that makes a tier claim, I want
+each claim to link to the benchmark reference document, so that I can follow the citation
+chain from claim to primary source in one click.
+
 ## Acceptance Criteria
 
 ```gherkin
@@ -121,6 +130,57 @@ Feature: Budget-adaptive note propagated to related docs
     When I search for "budget-adaptive" or "omit"
     Then I find a note that opus-tier agents omit model by design
 
+Feature: Benchmark reference document
+
+  Scenario: Benchmark reference document exists
+    Given the docs/reference/ directory
+    When I look for ai-model-benchmarks.md
+    Then the file exists
+    And it contains sections for Claude Opus 4.7, Sonnet 4.6, Haiku 4.5, GLM-5.1, and GLM-5-turbo
+
+  Scenario: Every benchmark score is cited
+    Given docs/reference/ai-model-benchmarks.md
+    When I read every benchmark score row
+    Then each row has a source URL
+    And each row has a publication date
+    And each row has a confidence level (Verified, Self-reported, or Needs Verification)
+
+  Scenario: GLM-5-turbo has no-standard-benchmarks flag
+    Given docs/reference/ai-model-benchmarks.md GLM-5-turbo section
+    When I read the benchmark table
+    Then it explicitly states no standard benchmarks are published for this model
+    And it explains ZClawBench is proprietary and unverified
+
+  Scenario: Policy docs link to benchmark reference
+    Given governance/development/agents/model-selection.md
+    When I read the tier sections containing benchmark numbers
+    Then each benchmark number links to docs/reference/ai-model-benchmarks.md
+
+Feature: Agent tier right-sizing
+
+  Scenario: Eight agents change tier
+    Given .claude/agents/ before and after Phase 5
+    When I compare model fields
+    Then apps-ayokoding-web-by-example-maker changes from omit to sonnet
+    And apps-ayokoding-web-general-maker changes from omit to sonnet
+    And apps-ayokoding-web-in-the-field-maker changes from omit to sonnet
+    And repo-rules-maker changes from omit to sonnet
+    And repo-ose-primer-adoption-maker changes from omit to sonnet
+    And repo-ose-primer-propagation-maker changes from omit to sonnet
+    And swe-hugo-dev changes from omit to sonnet
+    And apps-ayokoding-web-link-fixer changes from sonnet to haiku
+
+  Scenario: Opus-inherit count drops from 21 to 14
+    Given all .md files in .claude/agents/ except README.md
+    When I count files with no model field or empty model field
+    Then the count is 14
+
+  Scenario: Justification blocks updated for changed agents
+    Given each of the 8 agents that changed tier
+    When I read its Model Selection Justification block
+    Then the justification references the new tier
+    And it does not contradict the model field value
+
 Feature: Validations pass after changes
 
   Scenario: Claude agent validation passes
@@ -152,24 +212,23 @@ Feature: Validations pass after changes
 
 ### In Scope
 
-- Update `governance/development/agents/model-selection.md`:
-  - Add "Budget-Adaptive Inheritance" block to Opus tier section
-  - Add "Current Model Versions (April 2026)" table
-  - Add "OpenCode / GLM Equivalents" section
-  - Add "Adding `model: opus`" row to Common Mistakes
-  - Add Haiku 3 retirement note
-- Update `CLAUDE.md` Plans section: five-document format, correct file names
-- Propagate budget-adaptive note to `ai-agents.md`, `best-practices.md`, `.claude/agents/README.md`
-- Re-run `npm run sync:claude-to-opencode` to confirm sync consistency
+- Update `governance/development/agents/model-selection.md` _(done)_:
+  - "Budget-Adaptive Inheritance" block, OpenCode section, version table, Common Mistakes row
+- Update `CLAUDE.md` _(done)_: five-document format, opus alias in Format Differences
+- Propagate budget-adaptive note to related governance docs _(done)_
+- Create `docs/reference/ai-model-benchmarks.md`: cited benchmark scores for all 5 models
+- Add benchmark citations (links to reference doc) to `model-selection.md` and `.claude/agents/README.md`
+- Correct 8 agent tier assignments: 7 OMIT→SONNET, 1 SONNET→HAIKU
+- Re-run `npm run sync:claude-to-opencode` to reflect tier changes in `.opencode/agent/`
 
 ### Out of Scope
 
-- Changing any agent's tier assignment
-- Changing any agent's `model` frontmatter field (omit is correct by design)
-- Modifying rhino-cli Go source (no code changes needed)
-- Editing `.opencode/agent/` files directly
+- Changing any agent's cognitive task category (only tier corrections, not re-classification)
+- Modifying rhino-cli Go source (already supports all tiers)
+- Editing `.opencode/agent/` files directly (generated by sync)
 - Adding or removing any agent
-- Addressing GLM-5.1 capability gap vs Claude Opus 4.7
+- Acquiring independent GLM-5.1 benchmark verification (documented as a limitation)
+- Resolving GLM-5-turbo's lack of standard benchmarks (documented as platform constraint)
 
 ## Product-Level Risks
 

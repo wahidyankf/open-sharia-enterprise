@@ -47,108 +47,131 @@
 
 ---
 
-## Phase 4: Agent Tier Audit — Right-Size Every Agent
+## Phase 4: Create Model Benchmark Reference Document
 
-Apply the `model-selection.md` decision tree to every agent in `.claude/agents/` to verify
-tier assignments are correct. **Goal**: no agent over-budgeted (opus when sonnet suffices)
-or under-budgeted (haiku for tasks requiring reasoning).
+Create `docs/reference/ai-model-benchmarks.md` — the project's canonical benchmark
+reference. All subsequent files that cite benchmark numbers link to this document. This
+document links to primary sources. Structure and content are fully specified in
+`tech-docs.md` under "Benchmark Reference Document Specification".
 
-**Decision tree** (from model-selection.md):
-
-- Creative reasoning / code generation / architectural decisions → **Opus (omit)**
-- Rule-based validation / structured procedure / template following → **Sonnet**
-- Purely mechanical / deterministic steps / no reasoning → **Haiku**
-
-**Audit approach**:
-
-For each agent, read its description + Model Selection Justification block. Apply the
-decision tree. If the current tier doesn't match, update frontmatter + justification.
-
-- [ ] **4.1** Glob `.claude/agents/*.md` (excluding `README.md`) — list all agents with
-      current `model:` field (empty = opus-inherit, `sonnet`, `haiku`)
-- [ ] **4.2** For each opus-tier agent (omit), verify it passes the first branch:
-      "open-ended creative work, code generation, multi-step architectural judgment".
-      Flag any that are actually rule-following or mechanical.
-- [ ] **4.3** For each sonnet-tier agent, verify it passes the second branch:
-      "rule application, validation, structured output". Flag any that are mechanical
-      (should be haiku) or genuinely creative (should be opus).
-- [ ] **4.4** For each haiku-tier agent, verify it is truly deterministic with no branching
-      logic. Flag any requiring error-handling reasoning (should be sonnet).
-- [ ] **4.5** Apply all tier corrections:
-  - Update `model:` frontmatter field
-  - Update Model Selection Justification block to match new tier
-  - Do NOT change any agent's color or tools
-- [ ] **4.6** Commit corrections: `fix(agents): right-size model tiers per decision tree audit`
-
-**Special attention agents** (known borderline cases):
-
-| Agent                               | Current | Likely correct | Reason to check                                    |
-| ----------------------------------- | ------- | -------------- | -------------------------------------------------- |
-| `web-research-maker`                | omit    | sonnet         | Structured research pattern; no invention needed   |
-| `plan-executor`                     | omit    | sonnet         | Follows delivery checklist, not architectural work |
-| `repo-ose-primer-adoption-maker`    | omit    | sonnet         | Classify + report per classifier table             |
-| `repo-ose-primer-propagation-maker` | omit    | sonnet/opus    | Transform + PR creation; may need judgment         |
-| `statusline-setup`                  | omit    | haiku          | Single config edit, fully deterministic            |
-| `general-purpose`                   | omit    | omit           | Genuinely open-ended; opus appropriate             |
-
-> **Note**: Confirm by reading each agent's actual description before changing. The table
-> above lists candidates — the agent content is authoritative.
+- [ ] **4.1** Create `docs/reference/ai-model-benchmarks.md` following the spec in
+      `tech-docs.md § Benchmark Reference Document Specification`
+- [ ] **4.2** Verify every benchmark number has: source URL, publication date, confidence
+      level (`[Verified]` / `[Self-reported]` / `[Needs Verification]`)
+- [ ] **4.3** Verify the GLM-5-turbo section prominently flags that no standard benchmarks
+      are published for this model
+- [ ] **4.4** Verify the model capability summary table is present
+- [ ] **4.5** Run `npm run lint:md` — confirm zero errors on new file
+- [ ] **4.6** Commit: `docs(reference): add ai-model-benchmarks reference with cited scores`
 
 ---
 
-## Phase 5: repo-rules-checker OCD Validation
+## Phase 5: Agent Tier Audit — Right-Size All 70 Agents
 
-Run `repo-rules-checker` in OCD mode after Phase 4 agent changes.
+Apply the definitive tier mapping from `tech-docs.md § Complete Agent Tier Mapping`.
+**Do not re-reason the mapping** — the table is the authoritative decision, based on
+benchmark data and the model-selection.md decision tree. The mapping was verified against
+all 70 agent descriptions.
 
-- [ ] **5.1** Invoke `repo-rules-checker` with `strictness: ocd`
-- [ ] **5.2** Review findings — fix all CRITICAL, HIGH, and MEDIUM findings
-- [ ] **5.3** Re-run until two consecutive zero-finding passes (per quality gate workflow)
-- [ ] **5.4** Commit any fixes: `fix(governance): repo-rules-checker ocd findings`
+**8 agents change tier** (from `tech-docs.md § Agents Changing Tier`):
+
+| Agent                                   | Change       | Reason                                                            |
+| --------------------------------------- | ------------ | ----------------------------------------------------------------- |
+| `apps-ayokoding-web-by-example-maker`   | OMIT→SONNET  | Tight rubric (density 1.0-2.25, 75-85 count, five-part structure) |
+| `apps-ayokoding-web-general-maker`      | OMIT→SONNET  | Template-pattern bilingual content                                |
+| `apps-ayokoding-web-in-the-field-maker` | OMIT→SONNET  | Defined rubric (library-first, 20-40 guides)                      |
+| `repo-rules-maker`                      | OMIT→SONNET  | Layer hierarchy templates drive output, not open creativity       |
+| `repo-ose-primer-adoption-maker`        | OMIT→SONNET  | Classifier table drives all decisions                             |
+| `repo-ose-primer-propagation-maker`     | OMIT→SONNET  | Classifier-driven transform; no open design                       |
+| `swe-hugo-dev`                          | OMIT→SONNET  | DEPRECATED — no code to generate                                  |
+| `apps-ayokoding-web-link-fixer`         | SONNET→HAIKU | Deterministic URL replacement, no reasoning                       |
+
+**Result**: opus-inherit 21→14 (−7), sonnet 42→48 (+6), haiku 7→8 (+1), total 70 unchanged.
+
+- [ ] **5.1** For each of the 8 agents in the change table above:
+  - Update `model:` frontmatter field to the new value
+  - Update Model Selection Justification block text to match new tier and cite the
+    benchmark comparison from `docs/reference/ai-model-benchmarks.md` where relevant
+  - Do NOT change color, tools, or any other frontmatter field
+- [ ] **5.2** Verify all 62 unchanged agents — spot-check 5 random ones to confirm their
+      Model Selection Justification blocks are present and consistent with their tier
+- [ ] **5.3** Run `npm run validate:claude` — expect zero errors
+- [ ] **5.4** Commit: `fix(agents): right-size model tiers — 7 OMIT→SONNET, 1 SONNET→HAIKU`
 
 ---
 
-## Phase 6: Validation
+## Phase 6: Propagate Benchmark Citations via repo-rules-maker
 
-- [ ] **6.1** Run `npm run validate:claude` — expect zero errors
-- [ ] **6.2** Run `npm run validate:sync` — expect zero errors
-- [ ] **6.3** Run `nx run rhino-cli:test:quick` — expect pass
+Add benchmark citations (with links to `docs/reference/ai-model-benchmarks.md`) to all
+policy docs that make tier-based claims. Use `repo-rules-maker` to identify and update
+all affected governance files.
+
+- [ ] **6.1** Invoke `repo-rules-maker` to update `governance/development/agents/model-selection.md`:
+  - In the Tier Comparison Summary table, add benchmark score column citing the reference doc
+  - In "Current Model Versions", add inline links to the reference doc for each score
+  - In the OpenCode / GLM Equivalents section, add caveat about GLM-5-turbo having no
+    standard benchmarks (link to reference doc)
+- [ ] **6.2** Invoke `repo-rules-maker` to update `.claude/agents/README.md`:
+  - Add a "Model Benchmark Context" note (2-3 lines) pointing to the reference doc for
+    anyone who wants to understand WHY each tier was chosen
+- [ ] **6.3** Verify every benchmark number cited in `model-selection.md` has a link to
+      `docs/reference/ai-model-benchmarks.md` with the anchor for the relevant model
+- [ ] **6.4** Commit: `docs(governance): add benchmark citations to model-selection + agents README`
 
 ---
 
-## Phase 7: Sync + Final Gate
+## Phase 7: repo-rules-checker OCD Validation
 
-- [ ] **7.1** Run `npm run sync:dry-run` — preview OpenCode output (agents with updated
-      tiers should show model ID changes in .opencode/agent/)
-- [ ] **7.2** Run `npm run sync:claude-to-opencode` — apply sync
-- [ ] **7.3** Run `npm run validate:sync` — final pass
+Run `repo-rules-checker` in OCD mode after all changes (Phases 4-6).
+
+- [ ] **7.1** Invoke `repo-rules-checker` with `strictness: ocd`
+- [ ] **7.2** Review findings — fix all CRITICAL, HIGH, and MEDIUM findings
+- [ ] **7.3** Re-run until two consecutive zero-finding passes (per quality gate workflow)
+- [ ] **7.4** Commit any fixes: `fix(governance): repo-rules-checker ocd findings`
+
+---
+
+## Phase 8: Validation
+
+- [ ] **8.1** Run `npm run validate:claude` — expect zero errors
+- [ ] **8.2** Run `npm run validate:sync` — expect zero errors
+- [ ] **8.3** Run `nx run rhino-cli:test:quick` — expect pass
+
+---
+
+## Phase 9: Sync + Final Gate
+
+- [ ] **9.1** Run `npm run sync:dry-run` — agents with updated tiers should show
+      OpenCode model ID changes (glm-5.1 for all sonnet/omit-to-sonnet; glm-5-turbo for
+      new haiku agents)
+- [ ] **9.2** Run `npm run sync:claude-to-opencode` — apply sync
+- [ ] **9.3** Run `npm run validate:sync` — final pass
 
 ### Local Quality Gates (Before Push)
 
-- [ ] Run `npm run lint:md` — lint all markdown files (all plan files and governance docs
-      are markdown; this is the relevant pre-push gate for documentation-only changes)
-- [ ] Run `npm run lint:md:fix` — auto-fix any markdown violations
+- [ ] Run `npm run lint:md` — lint all markdown files
+- [ ] Run `npm run lint:md:fix` — auto-fix any violations
 - [ ] Fix ALL failures found — including preexisting issues not caused by your changes
 
-> **Important**: Fix ALL failures found during quality gates, not just those caused by your
-> changes. This follows the root cause orientation principle — proactively fix preexisting
-> errors encountered during work. Do not defer or mention-and-skip existing issues.
+> **Important**: Fix ALL failures, not just those caused by your changes. Root cause
+> orientation: proactively fix preexisting errors encountered during work.
 
-- [ ] **7.4** Push directly to `origin/main`
+- [ ] **9.4** Push directly to `origin/main`
 
 ### Post-Push Verification
 
-- [ ] Monitor GitHub Actions CI runs for the push to `main` — verify all checks pass
+- [ ] Monitor GitHub Actions CI for the push — verify all checks pass
 - [ ] If any CI check fails, fix immediately and push a follow-up commit
-- [ ] Do NOT proceed to plan archival until CI is green
+- [ ] Do NOT proceed to archival until CI is green
 
 ### Plan Archival
 
-- [ ] **7.5a** Verify ALL delivery checklist items are ticked
-- [ ] **7.5b** Verify ALL quality gates pass (local + CI)
-- [ ] **7.5c** `git mv plans/in-progress/2026-04-19__agent-model-selection-standardization/ plans/done/`
-- [ ] **7.5d** Update `plans/in-progress/README.md` — remove this plan entry
-- [ ] **7.5e** Update `plans/done/README.md` — add this plan entry with completion date
-- [ ] **7.5f** Commit: `chore(plans): move agent-model-selection-standardization to done`
+- [ ] **9.5a** Verify ALL delivery checklist items are ticked
+- [ ] **9.5b** Verify ALL quality gates pass (local + CI)
+- [ ] **9.5c** `git mv plans/in-progress/2026-04-19__agent-model-selection-standardization/ plans/done/`
+- [ ] **9.5d** Update `plans/in-progress/README.md` — remove this plan entry
+- [ ] **9.5e** Update `plans/done/README.md` — add this plan entry with completion date
+- [ ] **9.5f** Commit: `chore(plans): move agent-model-selection-standardization to done`
 
 ---
 
@@ -159,11 +182,15 @@ Run `repo-rules-checker` in OCD mode after Phase 4 agent changes.
 - [x] `model-selection.md` has "OpenCode / GLM Equivalents" section _(done)_
 - [x] `model-selection.md` has "Current Model Versions (April 2026)" table _(done)_
 - [x] `CLAUDE.md` Format Differences Models row includes `opus` alias _(done)_
-- [x] Related governance docs (`ai-agents.md`, `best-practices.md`, `.claude/agents/README.md`)
-      contain the budget-adaptive design note _(done)_
-- [ ] All agents in `.claude/agents/` have correct tier assignment per decision tree (no over/under-budgeting)
-- [ ] Model Selection Justification blocks match each agent's actual tier
+- [x] Related governance docs propagated with budget-adaptive note _(done)_
+- [ ] `docs/reference/ai-model-benchmarks.md` exists with cited scores for all 5 models
+- [ ] Every benchmark number in the reference doc has source URL + date + confidence level
+- [ ] GLM-5-turbo section notes no standard benchmarks exist for this model
+- [ ] All 8 tier-change agents have updated frontmatter + updated Model Selection Justification
+- [ ] `model-selection.md` benchmark claims link to `docs/reference/ai-model-benchmarks.md`
+- [ ] `.claude/agents/README.md` has "Model Benchmark Context" pointer to reference doc
 - [ ] `repo-rules-checker` OCD passes with zero findings
 - [ ] `npm run validate:claude` passes
 - [ ] `npm run validate:sync` passes
+- [ ] Opus-inherit count = 14 (down from 21)
 - [ ] No `.claude/agents/*.md` opus-tier file has `model: opus` (inherit = correct)

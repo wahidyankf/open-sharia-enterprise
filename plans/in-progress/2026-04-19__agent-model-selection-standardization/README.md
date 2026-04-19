@@ -28,6 +28,11 @@ The sync already handles model translation:
    (retired 2026-04-19).
 4. **CLAUDE.md described wrong plan format** — said "four documents / requirements.md"
    while convention specifies five. Fixed during plan authoring via `repo-rules-maker`.
+5. **Benchmark data undocumented** — no cited benchmark reference in the project. Tier
+   assignments in `model-selection.md` are unverifiable without external research.
+   GLM-5-turbo has no standard benchmarks at all; GLM-5.1 scores are self-reported only.
+   7 agents incorrectly on opus-inherit tier (rubric-bound work) and 1 agent incorrectly
+   on sonnet (deterministic URL replacement).
 
 ## Scope
 
@@ -39,26 +44,29 @@ and names `ose-public` as a target subrepo.
 
 **Files touched**:
 
-- `governance/development/agents/model-selection.md` — primary policy artifact
-- `CLAUDE.md` — plan format description + model Format Differences
-- `governance/development/agents/ai-agents.md` — budget-adaptive propagation
-- `governance/development/agents/best-practices.md` — budget-adaptive propagation
-- `.claude/agents/README.md` — opus-tier omit note
-- `.opencode/agent/*.md` — re-synced (no frontmatter changes → no-op)
+- `governance/development/agents/model-selection.md` — primary policy + benchmark citations _(phases 1, 6)_
+- `CLAUDE.md` — plan format + model aliases _(phase 2)_
+- `governance/development/agents/ai-agents.md` — budget-adaptive propagation _(phase 3)_
+- `governance/development/agents/best-practices.md` — budget-adaptive propagation _(phase 3)_
+- `.claude/agents/README.md` — opus-tier omit note + benchmark pointer _(phases 3, 6)_
+- `docs/reference/ai-model-benchmarks.md` — new benchmark reference doc _(phase 4)_
+- `.claude/agents/*.md` — 8 agents: tier corrections _(phase 5)_
+- `.opencode/agent/*.md` — re-synced to reflect tier changes _(phase 9)_
 
-**Files NOT touched**: `apps/rhino-cli/` source, `.claude/agents/*.md` individual agent
-files (omit-as-inherit is correct, no frontmatter changes needed), sonnet/haiku agents.
+**Files NOT touched**: `apps/rhino-cli/` source (no code changes needed), 62 unchanged agents.
 
 ## Approach Summary
 
-No rhino-cli code changes needed. No agent frontmatter changes needed. Fix is purely
-documentation:
+No rhino-cli code changes needed. Fix is documentation + targeted tier corrections:
 
-1. Update `model-selection.md` — document budget-adaptive inheritance, add OpenCode
-   section + version table + Common Mistakes entry
-2. Update `CLAUDE.md` — fix plan format description + model aliases
-3. Propagate budget-adaptive note to related governance docs
-4. Re-run sync to regenerate `.opencode/agent/` (no agent changes, so sync is no-op)
+1. _(done)_ Update `model-selection.md` — budget-adaptive inheritance, OpenCode section,
+   version table, Common Mistakes entry
+2. _(done)_ Update `CLAUDE.md` — plan format + model aliases
+3. _(done)_ Propagate budget-adaptive note to related governance docs
+4. Create `docs/reference/ai-model-benchmarks.md` — cited benchmark reference for all 5 models
+5. Correct 8 agent tiers (7 OMIT→SONNET, 1 SONNET→HAIKU) per benchmark-informed audit
+6. Add benchmark citations to `model-selection.md` + `.claude/agents/README.md` via `repo-rules-maker`
+7. Re-run sync to reflect tier changes in `.opencode/agent/`
 
 ## Plan Documents
 
