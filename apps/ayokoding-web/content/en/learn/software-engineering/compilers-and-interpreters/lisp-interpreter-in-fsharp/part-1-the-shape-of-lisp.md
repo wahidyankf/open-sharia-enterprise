@@ -50,25 +50,25 @@ Most programming languages are surprisingly hard to parse. Consider a fragment o
 
 A naive left-to-right reading gives `(3 + 4) * 2 = 14`. The correct answer is `3 + (4 * 2) = 11`. The parser must know that `*` binds more tightly than `+` — this is **operator precedence**. Real languages have dozens of precedence levels, associativity rules, and special syntactic forms (`if/else`, `for`, `while`, `match`) that each require dedicated grammar rules and parser branches.
 
+**Infix language parser** — must resolve precedence, associativity, and special forms:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Infix["Infix Language Parser (hard)"]
-        I1["3 + 4 * 2"] --> I2["Precedence table\n15+ levels in Java"]
-        I2 --> I3["Associativity rules"]
-        I3 --> I4["Special form grammar\n(for, while, if/else)"]
-        I4 --> I5["AST"]
-    end
-
-    subgraph Prefix["Lisp Parser (trivial)"]
-        L1["(+ 3 (* 4 2))"] --> L2["One rule:\n( → read list\nelse → read atom"]
-        L2 --> L5["AST"]
-    end
+    I1["3 + 4 * 2"] --> I2["Precedence table\n15+ levels in Java"] --> I3["Associativity\nrules"] --> I4["Special form\ngrammar"] --> I5["AST"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class I1,I2,I3,I4,I5 blue
+```
+
+**Lisp parser** — one recursive rule, no precedence table needed:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    L1["(+ 3 (* 4 2))"] --> L2["One rule:\nLPAREN = read list\nelse = read atom"] --> L5["AST"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class L1,L2,L5 teal
 ```
 
@@ -105,7 +105,7 @@ flowchart LR
     L["List\n'(' S-expr* ')'"]
     N["Number\n42, -7, 3.14"]
     S["Symbol\nx, +, define"]
-    ST["String\n\"hello\""]
+    ST["String\nhello"]
     B["Boolean\n#t, #f"]
 
     SE --> A
@@ -223,25 +223,25 @@ In most languages, source code and runtime data are completely separate. A Java 
 
 Lisp programs are written in the same structure that Lisp uses for lists at runtime:
 
+**Other languages** — code and data are completely separate:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Other["Other Languages"]
-        src["Source code\n(text)"]
-        rt["Runtime data\n(objects, arrays)"]
-        src -. "completely separate" .-> rt
-    end
-
-    subgraph Lisp["Lisp (Homoiconic)"]
-        lsrc["(+ 1 2)\nSource code"]
-        lrt["List [Symbol '+'; 1; 2]\nRuntime data"]
-        lsrc <-->|"same structure"| lrt
-    end
+    src["Source code\n(text)"] -. "completely separate" .-> rt["Runtime data\n(objects, arrays)"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class src,rt blue
+```
+
+**Lisp (homoiconic)** — code and data share the same list structure:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    lsrc["(+ 1 2)\nSource code"] <-->|"same structure"| lrt["List: Symbol + Number Number\nRuntime data"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class lsrc,lrt teal
 ```
 

@@ -13,30 +13,31 @@ With parsing complete, we now have `LispVal` trees. The evaluator's job is to gi
 
 There are two mental models for how a programming language evaluates expressions.
 
+**Substitution model** — replace names with values before evaluating:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Sub["Substitution Model"]
-        S1["(define x 5)\n(+ x 3)"]
-        S2["Substitute x → 5\n(+ 5 3)"]
-        S3["Result: 8"]
-        S1 --> S2 --> S3
-    end
-
-    subgraph Env["Environment Model"]
-        E1["(+ x 3)"]
-        E2["Environment\n{ x → 5 }"]
-        E3["Look up x → 5\nApply + to (5, 3)"]
-        E4["Result: 8"]
-        E1 --> E3
-        E2 --> E3
-        E3 --> E4
-    end
+    S1["(define x 5)\n(+ x 3)"] --> S2["Substitute x → 5\n(+ 5 3)"] --> S3["Result: 8"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class S1,S2,S3 blue
+```
+
+**Environment model** — look up names in an environment chain at runtime:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    E1["(+ x 3)"]
+    E2["Environment\nx → 5"]
+    E3["Look up x → 5\nApply + to (5, 3)"]
+    E4["Result: 8"]
+    E1 --> E3
+    E2 --> E3
+    E3 --> E4
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class E1,E2,E3,E4 teal
 ```
 
@@ -226,25 +227,25 @@ sequenceDiagram
 
 Notice that `apply` for a `Lambda` extends `closureEnv` — the environment captured at the time the lambda was created — not the `env` argument to `apply`. This is **lexical scope**.
 
+**Lexical scope** (Scheme — correct) — closure captures env at definition site:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Lexical["Lexical Scope (Scheme — correct)"]
-        LD["(define f\n  (lambda (x) (+ x n)))"]
-        LE["Closure captures\nenv where lambda was defined\n(where n is bound)"]
-        LD --> LE
-    end
-
-    subgraph Dynamic["Dynamic Scope (wrong for Scheme)"]
-        DD["(define f\n  (lambda (x) (+ x n)))"]
-        DE["Would look up n\nin caller's environment\n(unpredictable!)"]
-        DD --> DE
-    end
+    LD["define f\nas lambda using n"] --> LE["Closure captures env\nwhere lambda was defined\nwhere n is bound"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
-    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
-
     class LD,LE teal
+```
+
+**Dynamic scope** (wrong for Scheme) — would look up n in caller's environment:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    DD["define f\nas lambda using n"] --> DE["Would look up n\nin caller's environment\npredictable!"]
+
+    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
     class DD,DE brown
 ```
 
