@@ -52,7 +52,22 @@ and generates badge clutter with no corresponding quality signal.
   `ose-primer-sync.md` table row for `codecov.yml` to reflect that `ose-public`
   no longer carries the file, but makes no changes to `ose-primer` itself.
 
+### Business Risks
+
+- **Incomplete removal**: If any Codecov references are missed, references to
+  the deleted workflow remain in docs or CI files. Mitigation: Phase 7 grep
+  validation catches this before push.
+- **rhino-cli source changes break tests**: Comment-only changes are low risk,
+  but `nx run rhino-cli:test:quick` in Phase 4a confirms safety before
+  committing.
+
 ## Product Requirements
+
+### Personas
+
+- **Maintainer** — removes third-party service, simplifies CI configuration
+- **Developer** — reads accurate coverage documentation
+- **Reader** — reads accurate ayokoding-web CI/CD guides
 
 ### User Stories
 
@@ -188,14 +203,18 @@ Subtitle (line 17-18) will be fully rewritten to:
 
 ### Update — Markdown Files
 
-| File                                                             | Lines                                         | Change                                                                                                                                                                                                                                                                                                                                 |
-| ---------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `README.md`                                                      | 119, 121, 125–126, 129–130, 133–134, 137, 139 | Remove "uploaded to Codecov" prose (2 prose references), Codecov Upload link in quality gates, all 8 per-project codecov badge lines                                                                                                                                                                                                   |
-| `docs/reference/code-coverage.md`                                | 8, 17–18, 29–30, 37, 97–168, 170–176          | Remove `codecov` frontmatter tag; rewrite subtitle fully; update line 29-30 algorithm sentence (remove "Codecov's line-based"); remove line 37 Codecov badge reference; delete "Local vs Codecov Differences" section; remove Codecov steps from CI Integration; remove Codecov Flags subsection; remove Codecov troubleshooting items |
-| `governance/development/infra/github-actions-workflow-naming.md` | 88                                            | Remove `\| Codecov Upload \| codecov-upload.yml \|` row                                                                                                                                                                                                                                                                                |
-| `governance/development/infra/ci-conventions.md`                 | 418                                           | Remove "Add a coverage upload step to `codecov-upload.yml`" from new-project checklist (one reference only)                                                                                                                                                                                                                            |
-| `governance/conventions/structure/ose-primer-sync.md`            | 148                                           | Remove `codecov.yml` bidirectional entry row                                                                                                                                                                                                                                                                                           |
-| `governance/development/quality/three-level-testing-standard.md` | 446                                           | Update code-coverage.md link description — remove "local vs Codecov differences" text                                                                                                                                                                                                                                                  |
+| File                                                                                           | Lines                                         | Change                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `README.md`                                                                                    | 119, 121, 125–126, 129–130, 133–134, 137, 139 | Remove "uploaded to Codecov" prose (2 prose references), Codecov Upload link in quality gates, all 8 per-project codecov badge lines                                                                                                                                                                                                   |
+| `docs/reference/code-coverage.md`                                                              | 8, 17–18, 29–30, 37, 97–168, 170–176          | Remove `codecov` frontmatter tag; rewrite subtitle fully; update line 29-30 algorithm sentence (remove "Codecov's line-based"); remove line 37 Codecov badge reference; delete "Local vs Codecov Differences" section; remove Codecov steps from CI Integration; remove Codecov Flags subsection; remove Codecov troubleshooting items |
+| `docs/reference/project-dependency-graph.md`                                                   | 216                                           | Reword link description — replace "Coverage measurement, tools, and Codecov integration" with "Coverage measurement and tools"                                                                                                                                                                                                         |
+| `docs/reference/README.md`                                                                     | 28                                            | Reword description — replace "How coverage is measured locally (rhino-cli) and on Codecov, per-project details, exclusion patterns, and troubleshooting" with "How coverage is measured locally (rhino-cli), per-project thresholds, exclusion patterns, and troubleshooting"                                                          |
+| `governance/development/infra/github-actions-workflow-naming.md`                               | 88                                            | Remove `\| Codecov Upload \| codecov-upload.yml \|` row                                                                                                                                                                                                                                                                                |
+| `governance/development/infra/ci-conventions.md`                                               | 418                                           | Remove "Add a coverage upload step to `codecov-upload.yml`" from new-project checklist (one reference only)                                                                                                                                                                                                                            |
+| `governance/conventions/structure/ose-primer-sync.md`                                          | 148                                           | Remove `codecov.yml` bidirectional entry row                                                                                                                                                                                                                                                                                           |
+| `governance/development/quality/three-level-testing-standard.md`                               | 173, 265, 446                                 | Line 173: remove/replace `codecov-upload.yml` CRON reference; line 265: remove `codecov-upload.yml` workflow comparison table row; line 446: update code-coverage.md link description — remove "local vs Codecov differences" text                                                                                                     |
+| `docs/explanation/software-engineering/programming-languages/elixir/code-quality-standards.md` | 799–800                                       | Remove `codecov/codecov-action@v3` step (name + uses lines) from the CI YAML example; preceding `run:` step (Dialyzer) remains intact                                                                                                                                                                                                  |
+| `docs/explanation/software-engineering/programming-languages/golang/build-configuration.md`    | 729–730                                       | Remove `codecov/codecov-action@v4` step (name + uses lines) from the CI YAML example; preceding `run:` step (go test) remains intact                                                                                                                                                                                                   |
 
 ### Update — Educational Content (ayokoding-web in-the-field guides)
 
@@ -235,16 +254,48 @@ accurate description: "standard line-based algorithm".
 | `apps/rhino-cli/internal/testcoverage/lcov_coverage.go`      | 78         | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
 | `apps/rhino-cli/internal/testcoverage/jacoco_coverage.go`    | 50         | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
 
+### Leave As-Is (No Codecov References)
+
+| File                                                 | Reason                                                                                    |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `.github/workflows/test-and-deploy-organiclever.yml` | Zero Codecov references — no `CODECOV_TOKEN` or `codecov` step present; no changes needed |
+
+### Update — Specs C4 Diagrams
+
+Six C4 diagrams embed Codecov as a labeled node in their Mermaid source. Remove
+the "Codecov upload" / "Codecov coverage" label text from each CI node so the
+diagrams reflect the actual pipeline after removal.
+
+| File                                      | Line | Change                                              |
+| ----------------------------------------- | ---- | --------------------------------------------------- |
+| `specs/apps/ayokoding/c4/container.md`    | 28   | Remove "Codecov upload" label from CI node string   |
+| `specs/apps/ayokoding/c4/context.md`      | 18   | Remove "Codecov coverage" label from CI node string |
+| `specs/apps/organiclever/c4/container.md` | 31   | Remove "Codecov upload" label from CI node string   |
+| `specs/apps/organiclever/c4/context.md`   | 15   | Remove "Codecov coverage" label from CI node string |
+| `specs/apps/oseplatform/c4/container.md`  | 28   | Remove "Codecov upload" label from CI node string   |
+| `specs/apps/oseplatform/c4/context.md`    | 18   | Remove "Codecov coverage" label from CI node string |
+
 ### Leave As-Is (Historical Archive)
 
 `plans/done/` files reference codecov in historical plan documents. These are
 immutable records of what was decided and built at the time — do not edit them.
+
+`.claude/skills/repo-syncing-with-ose-primer/reference/extraction-scope.md`
+line 37 records a past-tense operational note about the ose-primer extraction
+("`codecov.yml` flags and ignore patterns keyed on demo paths — pruned inline
+in Phase 8 Commit E"). This is an immutable record of what was done during a
+completed extraction operation; the skill file is read-only reference content
+and must not be edited.
 
 ## Delivery Checklist
 
 ### Environment Setup
 
 - [ ] Confirm working directory is `ose-public/` (all commands below run from there)
+- [ ] Install dependencies: `npm install`
+- [ ] Converge the polyglot toolchain: `npm run doctor -- --fix`
+      (Required — the `postinstall` hook runs `doctor || true` and silently tolerates
+      drift. See `governance/development/workflow/worktree-setup.md` for rationale.)
 - [ ] Verify existing markdown linting passes before making changes: `npm run lint:md`
 
 ### Phase 1 — Delete infrastructure
@@ -361,7 +412,28 @@ occurrences with "standard line-based algorithm" (or equivalent accurate phrase)
 - [ ] `governance/development/infra/github-actions-workflow-naming.md` — remove Codecov Upload table row
 - [ ] `governance/development/infra/ci-conventions.md` — remove new-project checklist item at line 418 referencing `codecov-upload.yml` (one reference only)
 - [ ] `governance/conventions/structure/ose-primer-sync.md` — remove `codecov.yml` table row
-- [ ] `governance/development/quality/three-level-testing-standard.md` — update code-coverage.md link description
+- [ ] `governance/development/quality/three-level-testing-standard.md` line 173 — remove/replace the `codecov-upload.yml` CRON reference
+- [ ] `governance/development/quality/three-level-testing-standard.md` line 265 — remove the `codecov-upload.yml` workflow comparison table row
+- [ ] `governance/development/quality/three-level-testing-standard.md` line 446 — update code-coverage.md link description
+
+### Phase 5a — Update specs C4 diagrams
+
+Six C4 diagrams label a CI node with "Codecov upload" or "Codecov coverage".
+Remove those labels so the diagrams match the actual pipeline after removal.
+
+- [ ] `specs/apps/ayokoding/c4/container.md` line 28 — remove `<br/>Codecov upload` from the CI node label string
+- [ ] `specs/apps/ayokoding/c4/context.md` line 18 — remove `<br/>Codecov coverage` from the CI node label string
+- [ ] `specs/apps/organiclever/c4/container.md` line 31 — remove `<br/>Codecov upload` from the CI node label string
+- [ ] `specs/apps/organiclever/c4/context.md` line 15 — remove `<br/>Codecov coverage` from the CI node label string
+- [ ] `specs/apps/oseplatform/c4/container.md` line 28 — remove `<br/>Codecov upload` from the CI node label string
+- [ ] `specs/apps/oseplatform/c4/context.md` line 18 — remove `<br/>Codecov coverage` from the CI node label string
+
+### Phase 5b — Update docs/reference link descriptions and docs/explanation CI examples
+
+- [ ] `docs/reference/project-dependency-graph.md` line 216 — reword to replace "Coverage measurement, tools, and Codecov integration" with "Coverage measurement and tools"
+- [ ] `docs/reference/README.md` line 28 — reword description to remove "and on Codecov" phrase
+- [ ] `docs/explanation/software-engineering/programming-languages/elixir/code-quality-standards.md` lines 799–800 — remove the two-line `codecov/codecov-action@v3` step from the CI YAML code block (keep the preceding Dialyzer step)
+- [ ] `docs/explanation/software-engineering/programming-languages/golang/build-configuration.md` lines 729–730 — remove the two-line `codecov/codecov-action@v4` step from the CI YAML code block (keep the preceding go test step)
 
 ### Phase 6 — Update educational content
 
@@ -372,8 +444,15 @@ occurrences with "standard line-based algorithm" (or equivalent accurate phrase)
 
 ### Phase 7 — Validate
 
+The grep commands below should return zero hits after all phases complete.
+The `--exclude-dir=plans` flag covers the historical archive in `plans/done/`.
+The `.claude/skills/repo-syncing-with-ose-primer/reference/extraction-scope.md`
+reference (line 37) is excluded by the `--exclude-dir=.claude` flag because it
+is a read-only historical record — not a false positive. All other `*.md` hits
+are resolved by Phases 3–6.
+
 - [ ] `grep -ri "codecov" . --include="*.yml" --include="*.yaml" --exclude-dir=plans` — zero hits outside deleted files
-- [ ] `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules` — zero hits
+- [ ] `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules --exclude-dir=.claude --exclude-dir=generated-reports` — zero hits
 - [ ] `grep -ri "codecov" . --include="*.go" --exclude-dir=vendor --exclude-dir=node_modules` — zero hits
 
 ## Quality Gates
@@ -383,6 +462,7 @@ occurrences with "standard line-based algorithm" (or equivalent accurate phrase)
 - [ ] Run markdown linting: `npm run lint:md`
 - [ ] Fix any markdown violations: `npm run lint:md:fix`
 - [ ] Re-run to confirm clean: `npm run lint:md`
+- [ ] Run pre-push quality gate for affected projects: `nx affected -t typecheck lint test:quick spec-coverage`
 
 > **Note**: This plan touches `.md`, `.yml`, and Go source files (comment-only
 > changes in `apps/rhino-cli/`). After Phase 4a, run
@@ -403,6 +483,8 @@ Commit changes thematically — one commit per domain, in order:
 - [ ] `docs(coverage): remove codecov references from code-coverage.md` — after Phase 4
 - [ ] `chore(rhino-cli): remove codecov algorithm references from source and README` — after Phase 4a
 - [ ] `chore(governance): remove codecov references from governance docs` — after Phase 5
+- [ ] `chore(specs): remove codecov labels from C4 diagrams` — after Phase 5a
+- [ ] `docs(reference): remove codecov references from reference and explanation docs` — after Phase 5b
 - [ ] `docs(ayokoding-web): remove codecov-action steps from CI/CD guides` — after Phase 6
 
 Follow Conventional Commits format: `<type>(<scope>): <description>`. Do NOT
@@ -422,7 +504,7 @@ The plan is complete when all of the following hold:
 
 1. `grep -ri "codecov" . --include="*.yml" --include="*.yaml" --exclude-dir=plans`
    returns zero hits (outside any historical archive paths).
-2. `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules`
+2. `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules --exclude-dir=.claude --exclude-dir=generated-reports`
    returns zero hits.
 3. `grep -ri "codecov" . --include="*.go" --exclude-dir=vendor --exclude-dir=node_modules`
    returns zero hits.
