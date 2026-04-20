@@ -328,8 +328,21 @@ func makeGlobalEnv() *Env {
     env.define("/", numericBinop(func(a, b float64) float64 { return a / b }))
 
     env.define("=", Builtin{Fn: func(args []LispVal) (LispVal, error) {
-        a, b := args[0].(Number), args[1].(Number)
+        a, ok1 := args[0].(Number)
+        b, ok2 := args[1].(Number)
+        if !ok1 || !ok2 {
+            return nil, fmt.Errorf("=: expects two numbers")
+        }
         return Bool{Value: a.Value == b.Value}, nil
+    }})
+
+    env.define(">", Builtin{Fn: func(args []LispVal) (LispVal, error) {
+        a, ok1 := args[0].(Number)
+        b, ok2 := args[1].(Number)
+        if !ok1 || !ok2 {
+            return nil, fmt.Errorf(">: expects two numbers")
+        }
+        return Bool{Value: a.Value > b.Value}, nil
     }})
 
     env.define("car", Builtin{Fn: func(args []LispVal) (LispVal, error) {
@@ -372,6 +385,16 @@ func makeGlobalEnv() *Env {
 ```
 
 ## Testing the Evaluator So Far
+
+The examples below use a small `mustRead` helper that panics on parse errors — convenient for inline test expressions:
+
+```go
+func mustRead(s string) LispVal {
+    v, err := read(s)
+    if err != nil { panic(err) }
+    return v
+}
+```
 
 ```go
 env := makeGlobalEnv()

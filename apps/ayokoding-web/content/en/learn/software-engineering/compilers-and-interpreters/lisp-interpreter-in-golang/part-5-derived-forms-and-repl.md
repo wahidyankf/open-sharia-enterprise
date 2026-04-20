@@ -100,9 +100,7 @@ func desugarLet(args []LispVal) (LispVal, error) {
     }
 
     body := args[1]
-    lambdaExpr := List{Values: append(
-        []LispVal{Symbol{Value: "lambda"}, List{Values: params}, body},
-    )}
+    lambdaExpr := List{Values: []LispVal{Symbol{Value: "lambda"}, List{Values: params}, body}}
     call := List{Values: append([]LispVal{lambdaExpr}, vals...)}
     return call, nil
 }
@@ -265,6 +263,25 @@ env.define("not", Builtin{Fn: func(args []LispVal) (LispVal, error) {
         return Bool{Value: true}, nil
     }
     return Bool{Value: false}, nil
+}})
+
+env.define("map", Builtin{Fn: func(args []LispVal) (LispVal, error) {
+    if len(args) != 2 {
+        return nil, fmt.Errorf("map: expects procedure and list")
+    }
+    lst, ok := args[1].(List)
+    if !ok {
+        return nil, fmt.Errorf("map: second argument must be a list")
+    }
+    results := make([]LispVal, len(lst.Values))
+    for i, v := range lst.Values {
+        r, err := apply(args[0], []LispVal{v})
+        if err != nil {
+            return nil, err
+        }
+        results[i] = r
+    }
+    return List{Values: results}, nil
 }})
 
 env.define("display", Builtin{Fn: func(args []LispVal) (LispVal, error) {

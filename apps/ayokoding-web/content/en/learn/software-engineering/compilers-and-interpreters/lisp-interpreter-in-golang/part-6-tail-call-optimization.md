@@ -113,7 +113,7 @@ flowchart LR
     class SC1,SC2 brown
 ```
 
-Go TCO operates on _Go functions_. Scheme's TCO guarantee must be implemented explicitly by the interpreter — it is a property of the _hosted_ language, not the _host_ language.
+Unlike F# (which emits a `tail.` IL instruction for tail-recursive `let rec` functions), Go provides **no TCO at any level**. Every function call in Go — whether it is `eval` calling itself, `eval` calling `apply`, or `apply` calling back to `eval` — pushes a new goroutine stack frame. Scheme's TCO guarantee must therefore be implemented entirely by the interpreter itself. It is a property of the _hosted_ language (Scheme), not the _host_ language (Go).
 
 ## Identifying Tail Positions in the Evaluator
 
@@ -212,6 +212,9 @@ func eval(expr LispVal, env *Env) (LispVal, error) {
                     continue
 
                 case "begin":
+                    if len(args) == 0 {
+                        return Nil{}, nil
+                    }
                     for _, subExpr := range args[:len(args)-1] {
                         _, err := eval(subExpr, env)  // NOT tail position
                         if err != nil {
