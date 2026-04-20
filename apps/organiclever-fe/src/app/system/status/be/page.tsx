@@ -10,7 +10,7 @@ async function probeBackend(): Promise<Probe> {
   if (!url) return { kind: "unset" };
   const started = performance.now();
   try {
-    const res = await fetch(`${url}/health`, {
+    const res = await fetch(`${url}/api/v1/health`, {
       signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) {
