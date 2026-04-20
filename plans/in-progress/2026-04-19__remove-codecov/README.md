@@ -550,21 +550,30 @@ are resolved by Phases 3–6.
 
 Commit changes thematically — one commit per domain, in order:
 
-- [ ] `chore: delete codecov.yml and codecov-upload workflow` — after Phase 1–2
-- [ ] `chore(readme): remove codecov badges and prose references` — after Phase 3
-- [ ] `docs(coverage): remove codecov references from code-coverage.md` — after Phase 4
-- [ ] `chore(rhino-cli): remove codecov algorithm references from source and README` — after Phase 4a
-- [ ] `chore(governance): remove codecov references from governance docs` — after Phase 5
-- [ ] `chore(specs): remove codecov labels from C4 diagrams` — after Phase 5a
-- [ ] `docs(reference): remove codecov references from reference and explanation docs` — after Phase 5b
-- [ ] `docs(ayokoding-web): remove codecov-action steps from CI/CD guides` — after Phase 6
+- [x] `chore: delete codecov.yml and codecov-upload workflow` — after Phase 1–2
+<!-- Date: 2026-04-20 | Status: done | Commit: 76ebd913f -->
+- [x] `chore(readme): remove codecov badges and prose references` — after Phase 3
+<!-- Date: 2026-04-20 | Status: done | Commit: b5a12e466 -->
+- [x] `docs(coverage): remove codecov references from code-coverage.md` — after Phase 4
+<!-- Date: 2026-04-20 | Status: done | Commit: 58b7111dd -->
+- [x] `chore(rhino-cli): remove codecov algorithm references from source and README` — after Phase 4a
+<!-- Date: 2026-04-20 | Status: done | Commit: f998d8726 -->
+- [x] `chore(governance): remove codecov references from governance docs` — after Phase 5
+<!-- Date: 2026-04-20 | Status: done | Commit: 6578c178f -->
+- [x] `chore(specs): remove codecov labels from C4 diagrams` — after Phase 5a
+<!-- Date: 2026-04-20 | Status: done | Commit: 7dd913c2e -->
+- [x] `docs(reference): remove codecov references from reference and explanation docs` — after Phase 5b
+<!-- Date: 2026-04-20 | Status: done | Commit: 0bd2b3823 -->
+- [x] `docs(ayokoding-web): remove codecov-action steps from CI/CD guides` — after Phase 6
+<!-- Date: 2026-04-20 | Status: done | Commit: 099c5e811 -->
 
 Follow Conventional Commits format: `<type>(<scope>): <description>`. Do NOT
 bundle all changes into a single commit. Split by domain as shown above.
 
 ### Post-Push Verification
 
-- [ ] Push commits to `main`
+- [x] Push commits to `main`
+<!-- Date: 2026-04-20 | Status: in progress -->
 - [ ] Monitor GitHub Actions workflows triggered by the push (check Actions tab)
 - [ ] Verify all CI pipelines pass (`test-and-deploy-*.yml`, `pr-quality-gate.yml`)
 - [ ] If any CI check fails, fix immediately and push a follow-up commit
