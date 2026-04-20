@@ -42,6 +42,39 @@ async function probeBackend(): Promise<Probe> {
     return { kind: "down", url, reason };
   }
 }
+
+export default async function BeStatusPage() {
+  const probe = await probeBackend();
+
+  if (probe.kind === "unset") {
+    return (
+      <main>
+        <p>
+          Not configured — set <code>ORGANICLEVER_BE_URL</code> to probe.
+        </p>
+      </main>
+    );
+  }
+
+  if (probe.kind === "up") {
+    return (
+      <main>
+        <p>
+          UP — {probe.url} responded in {probe.latencyMs} ms
+        </p>
+        <pre>{JSON.stringify(probe.body, null, 2)}</pre>
+      </main>
+    );
+  }
+
+  // probe.kind === "down"
+  return (
+    <main>
+      <p>DOWN — {probe.url}</p>
+      <p>Reason: {probe.reason}</p>
+    </main>
+  );
+}
 ```
 
 Key details:
@@ -84,12 +117,15 @@ change elsewhere.
 
 - **Unit (Vitest + `@amiceli/vitest-cucumber`)**: new feature file
   `specs/apps/organiclever/fe/gherkin/system/system-status-be.feature` covering the four
-  `/system/status/be` scenarios. Mock `fetch` via `vi.stubGlobal`. Remove login/profile/route-protection
+  `/system/status/be` scenarios. Mock `fetch` via `vi.stubGlobal`. Remove google-login/profile/route-protection
   feature files. Also add `specs/apps/organiclever/fe/gherkin/landing/landing.feature` for the
   root landing scenario.
-- **Integration (MSW)**: if an integration harness exists for the removed routes, prune it. Add
-  an MSW handler for `/health` exercising UP/DOWN paths.
-- **E2E (`organiclever-fe-e2e`)**: remove login/profile/route-protection Playwright step files;
+- **Integration**: no `test/integration/` directory exists currently — there is no existing
+  integration harness to prune. Unit tests cover all four `/system/status/be` Gherkin scenarios
+  via `vi.stubGlobal('fetch', ...)` and environment variable stubs. Running
+  `nx run organiclever-fe:test:integration` passes with zero tests because `passWithNoTests: true`
+  is set globally in `vitest.config.ts`. No MSW integration tests are added in this phase.
+- **E2E (`organiclever-fe-e2e`)**: remove google-login/profile/route-protection Playwright step files;
   add three new playwright-bdd step definition files:
   `apps/organiclever-fe-e2e/steps/landing.steps.ts`,
   `apps/organiclever-fe-e2e/steps/disabled-routes.steps.ts`, and
@@ -100,9 +136,17 @@ change elsewhere.
 
 ## Impact on CI
 
-`.github/workflows/test-and-deploy-organiclever.yml` already spins up the full stack
-(DB + BE + FE) via docker-compose before E2E, so `/health` is reachable there. The existing
-`e2e` job continues to gate the `deploy` job unchanged. No workflow edits required for this plan.
+`.github/workflows/test-and-deploy-organiclever.yml` is a **scheduled** workflow (cron at
+`0 23 * * *` and `0 11 * * *` UTC, i.e. 06:00 and 18:00 WIB) with `workflow_dispatch` support.
+It does **not** fire automatically on push to `main` — the delivery checklist requires a manual
+`workflow_dispatch` trigger after pushing.
+
+The workflow spins up the full stack (DB + BE + FE) via docker-compose before E2E, so `/health`
+is reachable during the `e2e` job. The `deploy` job gates on all prior jobs and runs
+`git push origin HEAD:prod-organiclever-web --force` when `detect-changes` finds edits in
+`apps/organiclever-fe/` in the triggered run's `HEAD~1..HEAD` diff.
+
+No workflow edits required for this plan.
 
 ## Impact on Vercel
 
@@ -121,3 +165,17 @@ change elsewhere.
 | Dormant auth code rots because nothing imports it               | Add a `src/services/index.ts` re-export so tree-shaking doesn't panic |
 | BE E2E in CI suddenly breaks because FE no longer hits BE       | BE E2E runs against BE directly via `organiclever-be-e2e`, not via FE |
 | Future rewire blocked by deletions                              | Keep `services/`, `layers/`, `generated-contracts/` intact            |
+
+## Rollback
+
+If the deploy to `prod-organiclever-web` produces unexpected failures after promotion:
+
+1. Identify the last known-good commit SHA on `main` before this plan's changes.
+2. `git revert <first-bad-sha>..<HEAD>` to produce a revert commit, or `git revert <sha>` per
+   commit if multiple commits were made.
+3. Push the revert to `main`, then manually trigger `test-and-deploy-organiclever.yml` via
+   `workflow_dispatch`.
+4. Deleted route files (`src/app/login/`, `src/app/profile/`, `src/app/api/auth/`) are recoverable
+   from Git history: `git checkout <pre-plan-sha> -- apps/organiclever-fe/src/app/login/`.
+5. The diagnostic page (`src/app/system/status/be/page.tsx`) is new — reverting removes it
+   entirely, which is safe because no users depend on it yet.

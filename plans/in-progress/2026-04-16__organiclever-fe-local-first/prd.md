@@ -5,7 +5,7 @@
 
 ## Product Overview
 
-Reshape `organiclever-fe` into a standalone landing site with a single diagnostic page (`/system/status/be`), removing all BE-dependent user routes from the built surface. The existing BFF/auth code (Effect TS service layer + Route Handlers) is preserved as dormant library code in `src/services/` and `src/layers/` so a future rewire is a routes-only change.
+Reshape `organiclever-fe` into a standalone landing site with a single diagnostic page (`/system/status/be`), removing all BE-dependent user routes from the built surface. The existing Effect TS service layer (`src/services/`) and layer implementations (`src/layers/`) are preserved as dormant library code so a future rewire is a routes-only change. Route Handlers (`src/app/api/auth/`) are deleted along with `/login` and `/profile`.
 
 ## Personas
 
@@ -101,8 +101,8 @@ Unset at build time on Vercel is allowed. Nothing in the build pipeline depends 
 ### R6 — Documentation refreshed
 
 - `apps/organiclever-fe/README.md` — rewrite the Architecture section to describe the local-first mode; list `/system/status/be` and its failure modes; note BE code is dormant.
-- `CLAUDE.md` — update the `organiclever-fe` description if it claims a BFF pattern.
-- `docs/reference/system-architecture/applications.md` — update the organiclever-fe section to reflect landing-site scope; explicitly note BE integration is deferred.
+- `CLAUDE.md` — update the `organiclever-fe` description if it claims a BFF pattern (current description does not; verify no prose update needed); update the coverage thresholds table note for `organiclever-fe` from `"API/auth layers fully mocked by design"` to `"dormant BE integration code (services/, layers/) excluded from coverage measurement"`.
+- `docs/reference/system-architecture/applications.md` — update the organiclever-fe section to reflect landing-site scope; remove `"Cookie-based authentication"` from Features; explicitly note BE integration is deferred.
 
 ### R7 — Vercel deploys green without BE
 
@@ -134,7 +134,7 @@ Feature: Local-first organiclever-fe
 
   Scenario: BE status page shows UP when backend healthy
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
-    And GET http://be.example.test/health returns 200 with body {"status":"UP"}
+    And the backend health endpoint returns 200 with body {"status":"UP"}
     When a visitor requests GET /system/status/be
     Then the response status is 200
     And the body contains "UP"
@@ -142,7 +142,7 @@ Feature: Local-first organiclever-fe
 
   Scenario: BE status page shows DOWN when backend unreachable
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
-    And GET http://be.example.test/health fails with connection refused
+    And the backend health endpoint fails with connection refused
     When a visitor requests GET /system/status/be
     Then the response status is 200
     And the body contains "DOWN"
@@ -151,13 +151,14 @@ Feature: Local-first organiclever-fe
 
   Scenario: BE status page shows DOWN when backend times out
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
-    And GET http://be.example.test/health does not respond within 3 seconds
+    And the backend health endpoint does not respond within 3 seconds
     When a visitor requests GET /system/status/be
     Then the response status is 200
     And the body contains "DOWN"
     And the body contains "timeout"
 
   Scenario Outline: Disabled routes return 404
+    Given the application is running in local-first mode
     When a visitor requests <method> <path>
     Then the response status is 404
 
