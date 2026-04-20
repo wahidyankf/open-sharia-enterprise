@@ -15,9 +15,9 @@ Every interpreter starts the same way: raw text goes in, structured data comes o
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    src["\"(+ 1 2)\"\nraw string"]
+    src["(+ 1 2)\nraw string"]
     tok["Tokenizer\nlexical analysis"]
-    tokens["[\"(\"; \"+\"; \"1\"; \"2\"; \")\"]\ntoken list"]
+    tokens["LPAREN · PLUS · 1 · 2 · RPAREN\ntoken list"]
     par["Parser\nrecursive descent"]
     ast["List [Symbol '+'; Number 1; Number 2]\nLispVal tree"]
 
@@ -119,9 +119,9 @@ graph LR
     LV["LispVal\ndiscriminated union"]
 
     N["Number of float\ne.g. Number 42.0"]
-    ST["Str of string\ne.g. Str \"hello\""]
+    ST["Str of string\ne.g. Str 'hello'"]
     B["Bool of bool\nBool true / Bool false"]
-    SY["Symbol of string\ne.g. Symbol \"x\""]
+    SY["Symbol of string\ne.g. Symbol 'x'"]
     LI["List of LispVal list\ne.g. List [Symbol '+'; Number 1]"]
     LA["Lambda of\nstring list × LispVal × Env\nparams · body · captured env"]
     BU["Builtin of\n(LispVal list → LispVal)\nF# function directly"]
@@ -208,27 +208,27 @@ sequenceDiagram
     participant PL as parseList
     participant PA as parseAtom
 
-    T->>PE: ["("; "+"; "1"; "2"; ")"]
-    PE->>PL: sees "(" → delegate ["+" ; "1"; "2"; ")"]
+    T->>PE: LPAREN PLUS 1 2 RPAREN
+    PE->>PL: sees LPAREN, delegate: PLUS 1 2 RPAREN
 
-    PL->>PE: token "+" (not ")")
-    PE->>PA: "+"
-    PA-->>PE: Symbol "+"
-    PE-->>PL: Symbol "+", remaining ["1";"2";")"]
+    PL->>PE: token PLUS (not RPAREN)
+    PE->>PA: PLUS
+    PA-->>PE: Symbol plus
+    PE-->>PL: Symbol plus, remaining: 1 2 RPAREN
 
-    PL->>PE: token "1" (not ")")
-    PE->>PA: "1"
+    PL->>PE: token 1 (not RPAREN)
+    PE->>PA: 1
     PA-->>PE: Number 1.0
-    PE-->>PL: Number 1.0, remaining ["2";")"]
+    PE-->>PL: Number 1.0, remaining: 2 RPAREN
 
-    PL->>PE: token "2" (not ")")
-    PE->>PA: "2"
+    PL->>PE: token 2 (not RPAREN)
+    PE->>PA: 2
     PA-->>PE: Number 2.0
-    PE-->>PL: Number 2.0, remaining [")"]
+    PE-->>PL: Number 2.0, remaining: RPAREN
 
-    PL->>PE: token ")" → done
-    PL-->>PE: [Symbol "+"; Number 1.0; Number 2.0], []
-    PE-->>T: List [Symbol "+"; Number 1.0; Number 2.0]
+    PL->>PE: token RPAREN, done
+    PL-->>PE: List of Symbol-plus Number-1 Number-2
+    PE-->>T: List of Symbol-plus Number-1 Number-2
 ```
 
 ## Recursive Descent = Grammar as Code

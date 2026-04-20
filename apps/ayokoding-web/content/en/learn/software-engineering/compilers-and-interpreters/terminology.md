@@ -182,30 +182,25 @@ The key property: translation happens _before_ execution, and the resulting arti
 
 A program that directly executes source code or an intermediate representation, interleaving translation and execution at runtime.
 
+**Compiler** — translates offline, output runs independently:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Compiler["Compiler"]
-        direction TB
-        CS["Source code"]
-        CC["Compiler\n(offline)"]
-        CA["Binary / machine code"]
-        CR["Runs independently"]
-        CS --> CC --> CA --> CR
-    end
-
-    subgraph Interpreter["Interpreter"]
-        direction TB
-        IS["Source code"]
-        II["Interpreter\n(reads + executes)"]
-        IR["Result"]
-        IS --> II --> IR
-    end
+    CS["Source code"] --> CC["Compiler\n(offline)"] --> CA["Binary /\nmachine code"] --> CR["Runs\nindependently"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class CS,CC,CA,CR blue
+```
+
+**Interpreter** — translates and executes together at runtime:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    IS["Source code"] --> II["Interpreter\n(reads + executes)"] --> IR["Result"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class IS,II,IR teal
 ```
 
@@ -247,25 +242,25 @@ The property of a language in which programs are represented in the **primary da
 
 In Lisp: both code and data are S-expressions (lists). A macro receives its arguments as unevaluated lists and can transform them using the same list operations used on any data.
 
+**Most languages** — code and data are separate representations:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Other["Most languages"]
-        OC["Source code (text)"]
-        OD["Runtime data (objects)"]
-        OC -. "separate representations" .-> OD
-    end
-
-    subgraph Lisp["Lisp (homoiconic)"]
-        LC["Code: (+ 1 2)"]
-        LD["Data: List of Symbol and Numbers"]
-        LC <-->|"same structure"| LD
-    end
+    OC["Source code\n(text)"] -. "separate\nrepresentations" .-> OD["Runtime data\n(objects)"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class OC,OD blue
+```
+
+**Lisp** — code and data share the same S-expression structure:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    LC["Code:\n(+ 1 2)"] <-->|"same structure"| LD["Data:\nList of Symbol and Numbers"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class LC,LD teal
 ```
 
@@ -385,25 +380,25 @@ Scheme, Python, JavaScript, Go, Rust, C, Java, and most modern languages use lex
 
 A scoping rule where a variable's binding is determined by the **runtime call stack** — a name resolves to the most recent binding active at the time of the call, regardless of where the calling or called function was defined in source code.
 
+**Lexical scope** — name resolves at definition site:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Lexical["Lexical scope"]
-        LS1["n=1, define f,\nredefine n=100"]
-        LS2["f sees n=1\n(definition env)"]
-        LS1 --> LS2
-    end
-
-    subgraph Dynamic["Dynamic scope"]
-        DS1["n=1, define f,\nredefine n=100, call f"]
-        DS2["f sees n=100\n(caller's env)"]
-        DS1 --> DS2
-    end
+    LS1["n=1, define f,\nredefine n=100"] --> LS2["f sees n=1\n(definition env)"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
-    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
-
     class LS1,LS2 teal
+```
+
+**Dynamic scope** — name resolves at call site:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    DS1["n=1, define f,\nredefine n=100, call f"] --> DS2["f sees n=100\n(caller's env)"]
+
+    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
     class DS1,DS2 brown
 ```
 
@@ -432,25 +427,25 @@ _Scheme uses call-by-value: all arguments are fully evaluated before the functio
 
 A function call in **tail position** — the final operation performed before a function returns, such that the caller contributes no further computation to the result after the call completes.
 
+**NOT a tail call** — result is used further after the call returns:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph NotTail["NOT a tail call"]
-        NT1["return foo() + 1"]
-        NT2["foo() returns a value\nthen + 1 must still happen\n→ caller frame stays alive"]
-        NT1 --> NT2
-    end
-
-    subgraph IsTail["IS a tail call"]
-        T1["return foo()"]
-        T2["foo() result IS\nthe caller's result\n→ caller frame immediately useless"]
-        T1 --> T2
-    end
+    NT1["return foo() + 1"] --> NT2["foo() returns\nthen + 1 must still happen\ncaller frame stays alive"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class NT1,NT2 brown
+```
+
+**IS a tail call** — result is returned directly, caller frame is immediately useless:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    T1["return foo()"] --> T2["foo() result IS\nthe caller's result\ncaller frame immediately useless"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class T1,T2 teal
 ```
 
@@ -462,32 +457,25 @@ flowchart LR
 
 - **Proper tail calls (PTC)**: A _language specification requirement_ that all tail calls execute in constant stack space. R5RS mandates PTC for all Scheme implementations.
 
+**Without TCO** — each tail call pushes a new frame, stack grows O(n):
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Without["Without TCO — O(n) stack"]
-        direction TB
-        W1["call f(n)"]
-        W2["call f(n-1)"]
-        W3["call f(n-2)"]
-        Wd["... n frames ..."]
-        We["stack overflow"]
-        W1 --> W2 --> W3 --> Wd --> We
-    end
-
-    subgraph With["With TCO — O(1) stack"]
-        direction TB
-        T1["call f(n)\nreuse frame"]
-        T2["update args"]
-        T3["update args"]
-        T4["done"]
-        T1 --> T2 --> T3 --> T4
-    end
+    W1["call f(n)"] --> W2["call f(n-1)"] --> W3["call f(n-2)"] --> Wd["... n frames ..."] --> We["stack overflow"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
     class W1,W2,W3,Wd,We brown
+```
+
+**With TCO** — tail call reuses the same frame, stack stays O(1):
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    T1["call f(n)\nreuse frame"] --> T2["update args"] --> T3["update args"] --> T4["done"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class T1,T2,T3,T4 teal
 ```
 

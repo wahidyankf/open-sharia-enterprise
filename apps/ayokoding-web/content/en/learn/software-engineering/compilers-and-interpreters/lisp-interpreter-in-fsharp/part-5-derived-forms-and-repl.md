@@ -15,27 +15,26 @@ The interpreter from Part 4 is complete — it can express any computable functi
 
 **Derived forms** implement syntactic sugar by transforming the sugared form into a desugared equivalent _before_ evaluation. The evaluator never sees the sugared form.
 
+**Without derived forms** — `eval` must handle every surface form directly:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Without["Without derived forms"]
-        W1["Source"]
-        W2["eval\n(handles everything)"]
-        W1 --> W2
-    end
-
-    subgraph With["With derived forms (two phases)"]
-        S1["Source\n(surface language)"]
-        S2["Expander\nlet · cond → core forms"]
-        S3["eval\n(handles only\ncore forms)"]
-        S1 --> S2 --> S3
-    end
+    W1["Source"] --> W2["eval\n(handles everything)"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
+    class W1,W2 blue
+```
+
+**With derived forms** — an expansion phase rewrites sugar before `eval` ever sees it:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    S1["Source\n(surface language)"] --> S2["Expander\nlet · cond → core"] --> S3["eval\n(core forms only)"]
+
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
-
-    class W1,W2 blue
     class S1 orange
     class S2,S3 teal
 ```
@@ -112,11 +111,11 @@ This desugars to nested `if` expressions:
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    Cond["(cond\n  ((= x 0) \"zero\")\n  ((< x 0) \"negative\")\n  (else \"positive\"))"]
+    Cond["cond:\n  (= x 0) → zero\n  (lt x 0) → negative\n  else → positive"]
 
-    If1["(if (= x 0) \"zero\"\n  ...)"]
-    If2["(if (< x 0) \"negative\"\n  ...)"]
-    Else["\"positive\""]
+    If1["if (= x 0) zero\n  else ..."]
+    If2["if (lt x 0) negative\n  else ..."]
+    Else["positive"]
 
     Cond -->|"desugar"| If1
     If1 -->|"alternate branch"| If2
@@ -160,36 +159,38 @@ The desugared form is passed back to `eval` recursively. The evaluator processes
 
 ## CS Concept: The Expansion Phase
 
+**The phases:**
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Pipeline["Interpreter pipeline with expansion"]
-        R["read\ntext → LispVal"]
-        E["expand\nderived → core"]
-        V["eval\ncore → value"]
-        P["print\nvalue → text"]
-
-        R --> E --> V --> P
-    end
-
-    subgraph Forms["What each phase sees"]
-        RF["(let ((x 5))\n  (cond ...))"]
-        EF["((lambda (x)\n  (if ...)) 5)"]
-        VF["Number 42"]
-        PF["\"42\""]
-
-        RF --> EF --> VF --> PF
-    end
+    R["read\ntext → LispVal"] --> E["expand\nderived → core"] --> V["eval\ncore → value"] --> P["print\nvalue → text"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
+    class R blue
+    class E orange
+    class V teal
+    class P purple
+```
 
-    class R,RF blue
-    class E,EF orange
-    class V,VF teal
-    class P,PF purple
+**What each phase processes:**
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    RF["(let ((x 5))\n  (cond ...))"] --> EF["((lambda (x)\n  (if ...)) 5)"] --> VF["Number 42"] --> PF["42"]
+
+    classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
+    classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
+    classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
+    class RF blue
+    class EF orange
+    class VF teal
+    class PF purple
 ```
 
 What we have implemented manually is a rudimentary **expansion phase**. Production Lisp implementations (Racket, Guile, SBCL) have a full macro expander as a separate phase between parsing and evaluation. A macro expander can apply user-defined transformations (`define-syntax`, `syntax-rules`), not just built-in ones.

@@ -13,39 +13,41 @@ Part 3's evaluator handles function application and symbol lookup. It cannot yet
 
 In Part 3, general application follows one rule: evaluate every subexpression, then apply the operator. This rule breaks for some constructs.
 
+**Normal application** — evaluates ALL arguments before calling:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Normal["Normal Application — evaluate ALL args first"]
-        N1["(+ x y)"]
-        N2["eval x → value"]
-        N3["eval y → value"]
-        N4["apply + to values"]
-        N1 --> N2
-        N1 --> N3
-        N2 --> N4
-        N3 --> N4
-    end
-
-    subgraph If["if — must NOT evaluate both branches"]
-        I1["(if (= x 0)\n  \"zero\"\n  (/ 1 x))"]
-        I2["eval test only"]
-        I3["eval consequent\nOR alternate\nnever both"]
-        I1 --> I2 --> I3
-    end
-
-    subgraph Def["define — must NOT eval the name"]
-        D1["(define x 10)"]
-        D2["x is a name to BIND\nnot a value to LOOK UP"]
-        D1 --> D2
-    end
+    N1["(+ x y)"]
+    N2["eval x"]
+    N3["eval y"]
+    N4["apply + to values"]
+    N1 --> N2 --> N4
+    N1 --> N3 --> N4
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
-    classDef teal fill:#029E73,color:#fff,stroke:#029E73
-    classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
-
     class N1,N2,N3,N4 blue
+```
+
+**`if` special form** — evaluates test first, then exactly one branch:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    I1["if test consequent alternate"] --> I2["eval test only"] --> I3["eval consequent\nOR alternate\nnever both"]
+
+    classDef teal fill:#029E73,color:#fff,stroke:#029E73
     class I1,I2,I3 teal
+```
+
+**`define` special form** — binds a name, never evaluates it as a lookup:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    D1["(define x 10)"] --> D2["x is a name to BIND\nnot a value to LOOK UP"]
+
+    classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
     class D1,D2 orange
 ```
 
@@ -175,27 +177,25 @@ The key is `Lambda (paramNames, body, env)` — `env` here is the environment at
 
 ## CS Concept: Lexical vs Dynamic Scope
 
+**Lexical scope** (Scheme — correct) — f closes over n=1 at definition time:
+
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 flowchart LR
-    subgraph Lexical["Lexical Scope ✓ (Scheme)"]
-        direction TB
-        LS1["(define n 1)\n(define f (lambda (x) (+ x n)))\n(define n 100)\n(f 5)"]
-        LS2["Result: 6\nf closes over n=1\nfrom its definition env"]
-        LS1 --> LS2
-    end
-
-    subgraph Dynamic["Dynamic Scope ✗ (not Scheme)"]
-        direction TB
-        DS1["(define n 1)\n(define f (lambda (x) (+ x n)))\n(define n 100)\n(f 5)"]
-        DS2["Result: 105\nf would see caller's n=100"]
-        DS1 --> DS2
-    end
+    LS1["n=1, define f using n,\nredefine n=100, call f 5"] --> LS2["Result: 6\nf sees n=1\nfrom definition env"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
-    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
-
     class LS1,LS2 teal
+```
+
+**Dynamic scope** (not Scheme) — f would see the caller's n=100:
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+flowchart LR
+    DS1["n=1, define f using n,\nredefine n=100, call f 5"] --> DS2["Result: 105\nf would see n=100\nfrom caller's env"]
+
+    classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
     class DS1,DS2 brown
 ```
 
