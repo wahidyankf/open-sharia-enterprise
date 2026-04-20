@@ -472,7 +472,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     T1["call f(n)\nreuse frame"] --> T2["update args"] --> T3["update args"] --> T4["done"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73

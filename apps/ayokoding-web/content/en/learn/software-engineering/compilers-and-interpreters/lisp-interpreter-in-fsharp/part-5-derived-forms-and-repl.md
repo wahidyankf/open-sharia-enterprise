@@ -19,7 +19,7 @@ The interpreter from Part 4 is complete — it can express any computable functi
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     W1["Source"] --> W2["eval\n(handles everything)"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
@@ -30,7 +30,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     S1["Source\n(surface language)"] --> S2["Expander\nlet · cond → core"] --> S3["eval\n(core forms only)"]
 
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
@@ -58,7 +58,7 @@ This is identical in meaning to immediately invoking a lambda:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     Let["(let ((x 5) (y 3))\n  (+ x y))"]
     Rule["Transformation rule:\n(let ((v1 e1) (v2 e2)) body)\n→\n((lambda (v1 v2) body) e1 e2)"]
     Lambda["((lambda (x y)\n   (+ x y)) 5 3)"]
@@ -110,7 +110,7 @@ This desugars to nested `if` expressions:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     Cond["cond:\n  (= x 0) → zero\n  (lt x 0) → negative\n  else → positive"]
 
     If1["if (= x 0) zero\n  else ..."]
@@ -163,7 +163,7 @@ The desugared form is passed back to `eval` recursively. The evaluator processes
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     R["read\ntext → LispVal"] --> E["expand\nderived → core"] --> V["eval\ncore → value"] --> P["print\nvalue → text"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
@@ -180,7 +180,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     RF["(let ((x 5))\n  (cond ...))"] --> EF["((lambda (x)\n  (if ...)) 5)"] --> VF["Number 42"] --> PF["42"]
 
     classDef blue fill:#0173B2,color:#fff,stroke:#0173B2
@@ -236,7 +236,7 @@ define "newline" (Builtin (fun _ -> printfn ""; Nil))
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     Start["repl()\nCreate global env"]
     Prompt["Print prompt"]
     Read["read input\nfrom stdin"]
@@ -329,7 +329,7 @@ fib
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     subgraph Stack["Interpreter stack"]
         direction TB
         L6["Part 6 (next)\nTail-call optimization"]

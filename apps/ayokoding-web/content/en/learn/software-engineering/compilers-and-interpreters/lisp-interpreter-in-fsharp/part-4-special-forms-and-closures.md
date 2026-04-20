@@ -17,7 +17,7 @@ In Part 3, general application follows one rule: evaluate every subexpression, t
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     N1["(+ x y)"]
     N2["eval x"]
     N3["eval y"]
@@ -33,7 +33,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     I1["if test consequent alternate"] --> I2["eval test only"] --> I3["eval consequent\nOR alternate\nnever both"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -44,7 +44,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     D1["(define x 10)"] --> D2["x is a name to BIND\nnot a value to LOOK UP"]
 
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
@@ -181,7 +181,7 @@ The key is `Lambda (paramNames, body, env)` — `env` here is the environment at
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     LS1["n=1, define f using n,\nredefine n=100, call f 5"] --> LS2["Result: 6\nf sees n=1\nfrom definition env"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -192,7 +192,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     DS1["n=1, define f using n,\nredefine n=100, call f 5"] --> DS2["Result: 105\nf would see n=100\nfrom caller's env"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161

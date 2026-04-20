@@ -28,7 +28,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     E1["(+ x 3)"]
     E2["Environment\nx → 5"]
     E3["Look up x → 5\nApply + to (5, 3)"]
@@ -51,7 +51,7 @@ An environment is not a single flat dictionary. It is a **chain of frames**, whe
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     G["Global Frame\n+ → builtin\n- → builtin\n* → builtin\ndefine → special"]
     L["Local Frame\nn → 5\nx → 10"]
     I["Inner Frame\nz → 15"]
@@ -72,7 +72,7 @@ Variable lookup traverses this chain: check the innermost frame first; if not fo
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     Q["Look up 'n'"]
     F1{"In Inner\nFrame?"}
     F2{"In Local\nFrame?"}
@@ -320,7 +320,7 @@ We cannot yet evaluate `(define x 10)` or `(lambda (x) x)` — those require spe
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     A["LispVal tree\n(from Part 2)"]
     B["eval"]
     C["apply"]
