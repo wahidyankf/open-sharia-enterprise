@@ -220,7 +220,8 @@ See [`README.md`](./README.md) for overview, [`brd.md`](./brd.md) for business i
 > automatically on push to `main`. After pushing, manually trigger it from the GitHub
 > Actions tab using `workflow_dispatch`.
 
-- [ ] Push changes to `main`
+- [x] Push changes to `main`
+  > Date: 2026-04-20 | Status: done | Notes: pushed branch worktree-reflective-stargazing-gray; draft PR #22 opened at https://github.com/wahidyankf/ose-public/pull/22 — merge to main required before CI workflow_dispatch
 - [ ] Trigger `test-and-deploy-organiclever.yml` manually via GitHub Actions `workflow_dispatch`
 - [ ] Monitor the triggered run in GitHub Actions
 - [ ] Verify all CI jobs pass in this dependency order: `spec-coverage`, `fe-lint`, `be-integration`, `fe-integration` → `e2e` → `detect-changes` → `deploy`
