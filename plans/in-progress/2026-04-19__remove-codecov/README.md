@@ -206,6 +206,35 @@ Subtitle (line 17-18) will be fully rewritten to:
 | `apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/ci-cd.md`             | ~450–456, ~1591    | Remove `codecov/codecov-action@v3` step blocks from both CI examples |
 | `apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/build-tools.md`       | ~1276              | Remove `codecov/codecov-action@v3` step                              |
 
+### Update — rhino-cli Source & README
+
+All references say the algorithm belongs to Codecov. The algorithm is standard
+and independent — rhino-cli's implementation predates the Codecov integration.
+Replace every "Codecov's algorithm" / "Codecov-compatible" phrase with the
+accurate description: "standard line-based algorithm".
+
+| File                                                         | Lines      | Change                                                                                                             |
+| ------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------ |
+| `apps/rhino-cli/README.md`                                   | 14         | Comment in Quick Start code block: replace "(Codecov-compatible algorithm)" with "(standard line-based algorithm)" |
+| `apps/rhino-cli/README.md`                                   | 98         | Replace "Codecov's exact line coverage algorithm" with "a standard line-based algorithm"                           |
+| `apps/rhino-cli/README.md`                                   | 121        | Replace "Implements Codecov's line coverage algorithm exactly:" with "Implements a standard line-based algorithm:" |
+| `apps/rhino-cli/README.md`                                   | 126        | Remove "(matching Codecov's badge calculation)" from end of partial-lines bullet                                   |
+| `apps/rhino-cli/README.md`                                   | 127        | Replace "(matching Codecov's file fixes)" with "(standard executable-line filtering)"                              |
+| `apps/rhino-cli/README.md`                                   | 897, 899   | Replace "Codecov algorithm" with "standard line-based algorithm" in architecture tree comments                     |
+| `apps/rhino-cli/README.md`                                   | 1157, 1159 | Replace "Codecov-compatible" / "exact Codecov line coverage algorithm" in v0.10.0 changelog                        |
+| `apps/rhino-cli/cmd/test_coverage_validate.go`               | 20         | Replace "(Codecov-compatible algorithm)" in `Short:` with "(standard line-based algorithm)"                        |
+| `apps/rhino-cli/cmd/test_coverage_validate.go`               | 21         | Replace "using Codecov's algorithm" in `Long:` with "using a standard line-based algorithm"                        |
+| `apps/rhino-cli/cmd/test_coverage_validate.go`               | 34         | Remove "(matching Codecov's badge calculation)" from partial-lines bullet                                          |
+| `apps/rhino-cli/cmd/test_coverage_diff.go`                   | 24         | Replace "Uses Codecov's 3-state algorithm:" with "Uses a standard 3-state algorithm:"                              |
+| `apps/rhino-cli/internal/testcoverage/types.go`              | 1          | Replace "using Codecov's line coverage algorithm" with "using a standard line-based algorithm"                     |
+| `apps/rhino-cli/internal/testcoverage/go_coverage.go`        | 53         | Replace "Matches Codecov's file fixes for Go:" with "Standard Go executable-line filtering:"                       |
+| `apps/rhino-cli/internal/testcoverage/go_coverage.go`        | 58         | Replace "(Codecov only filters { and })" with "(only { and } are filtered)"                                        |
+| `apps/rhino-cli/internal/testcoverage/go_coverage.go`        | 113        | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
+| `apps/rhino-cli/internal/testcoverage/cobertura_coverage.go` | 74         | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
+| `apps/rhino-cli/internal/testcoverage/merge.go`              | 129        | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
+| `apps/rhino-cli/internal/testcoverage/lcov_coverage.go`      | 78         | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
+| `apps/rhino-cli/internal/testcoverage/jacoco_coverage.go`    | 50         | Replace "using Codecov's algorithm" with "using a standard line-based algorithm"                                   |
+
 ### Leave As-Is (Historical Archive)
 
 `plans/done/` files reference codecov in historical plan documents. These are
@@ -248,6 +277,85 @@ immutable records of what was decided and built at the time — do not edit them
 - [ ] Remove Codecov troubleshooting items ("Codecov shows lower coverage than local")
 - [ ] Update "Coverage drops after adding a new file" troubleshooting item — remove Codecov reference
 
+### Phase 4a — Update rhino-cli source & README
+
+These are Go source files and the rhino-cli README — they carry "Codecov's
+algorithm" in comments, CLI help strings, and documentation. Replace all
+occurrences with "standard line-based algorithm" (or equivalent accurate phrase).
+
+**`apps/rhino-cli/cmd/test_coverage_validate.go`**
+
+- [ ] Line 20 `Short:` — replace "(Codecov-compatible algorithm)" with
+      "(standard line-based algorithm)"
+- [ ] Line 21 `Long:` — replace "Compute line coverage using Codecov's algorithm"
+      with "Compute line coverage using a standard line-based algorithm"
+- [ ] Line 34 — remove "(matching Codecov's badge calculation)" from
+      partial-lines bullet
+
+**`apps/rhino-cli/cmd/test_coverage_diff.go`**
+
+- [ ] Line 24 — replace "Uses Codecov's 3-state algorithm:" with
+      "Uses a standard 3-state algorithm:"
+
+**`apps/rhino-cli/internal/testcoverage/types.go`**
+
+- [ ] Line 1 package comment — replace "using Codecov's line coverage algorithm"
+      with "using a standard line-based algorithm"
+
+**`apps/rhino-cli/internal/testcoverage/go_coverage.go`**
+
+- [ ] Line 53 — replace "Matches Codecov's file fixes for Go:" with
+      "Standard Go executable-line filtering:"
+- [ ] Line 58 — replace "(Codecov only filters { and })" with
+      "(only { and } are filtered)"
+- [ ] Line 113 function comment — replace "using Codecov's algorithm" with
+      "using a standard line-based algorithm"
+
+**`apps/rhino-cli/internal/testcoverage/cobertura_coverage.go`**
+
+- [ ] Line 74 function comment — replace "using Codecov's algorithm" with
+      "using a standard line-based algorithm"
+
+**`apps/rhino-cli/internal/testcoverage/merge.go`**
+
+- [ ] Line 129 function comment — replace "using Codecov's algorithm" with
+      "using a standard line-based algorithm"
+
+**`apps/rhino-cli/internal/testcoverage/lcov_coverage.go`**
+
+- [ ] Line 78 function comment — replace "using Codecov's algorithm" with
+      "using a standard line-based algorithm"
+
+**`apps/rhino-cli/internal/testcoverage/jacoco_coverage.go`**
+
+- [ ] Line 50 function comment — replace "using Codecov's algorithm" with
+      "using a standard line-based algorithm"
+
+**`apps/rhino-cli/README.md`**
+
+- [ ] Line 14 Quick Start comment — replace "(Codecov-compatible algorithm)"
+      with "(standard line-based algorithm)"
+- [ ] Line 98 — replace "Codecov's exact line coverage algorithm" with
+      "a standard line-based algorithm"
+- [ ] Line 121 — replace "Implements Codecov's line coverage algorithm exactly:"
+      with "Implements a standard line-based algorithm:"
+- [ ] Line 126 — remove "(matching Codecov's badge calculation)"
+- [ ] Line 127 — replace "(matching Codecov's file fixes)" with
+      "(standard executable-line filtering)"
+- [ ] Line 897 — replace "Codecov algorithm" with "standard line-based algorithm"
+      in architecture tree entry for `go_coverage.go`
+- [ ] Line 899 — replace "Codecov algorithm" with "standard line-based algorithm"
+      in architecture tree entry for `lcov_coverage.go`
+- [ ] Line 1157 changelog — replace "Codecov-compatible line coverage enforcement"
+      with "standard line-based coverage enforcement"
+- [ ] Line 1159 changelog — replace "exact Codecov line coverage algorithm" with
+      "standard line-based coverage algorithm"
+
+**After all source edits:**
+
+- [ ] Run `nx run rhino-cli:test:quick` — must pass (confirms comment-only changes
+      don't break build or tests)
+
 ### Phase 5 — Update governance docs
 
 - [ ] `governance/development/infra/github-actions-workflow-naming.md` — remove Codecov Upload table row
@@ -266,6 +374,7 @@ immutable records of what was decided and built at the time — do not edit them
 
 - [ ] `grep -ri "codecov" . --include="*.yml" --include="*.yaml" --exclude-dir=plans` — zero hits outside deleted files
 - [ ] `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules` — zero hits
+- [ ] `grep -ri "codecov" . --include="*.go" --exclude-dir=vendor --exclude-dir=node_modules` — zero hits
 
 ## Quality Gates
 
@@ -275,10 +384,11 @@ immutable records of what was decided and built at the time — do not edit them
 - [ ] Fix any markdown violations: `npm run lint:md:fix`
 - [ ] Re-run to confirm clean: `npm run lint:md`
 
-> **Note**: This plan only touches `.md` and `.yml` files — no TypeScript/Go/F#
-> source. The `nx affected -t typecheck lint test:quick spec-coverage` targets
-> apply to source code changes; they are not applicable here. The pre-push hook
-> will still run `nx affected` but will report zero affected projects.
+> **Note**: This plan touches `.md`, `.yml`, and Go source files (comment-only
+> changes in `apps/rhino-cli/`). After Phase 4a, run
+> `nx run rhino-cli:test:quick` to confirm the build and tests remain green.
+> The pre-push hook will run `nx affected` and will pick up `rhino-cli` as
+> affected.
 >
 > **Important**: Fix ALL failures found during quality gates, not just those
 > caused by your changes. This follows the root cause orientation principle —
@@ -291,6 +401,7 @@ Commit changes thematically — one commit per domain, in order:
 - [ ] `chore: delete codecov.yml and codecov-upload workflow` — after Phase 1–2
 - [ ] `chore(readme): remove codecov badges and prose references` — after Phase 3
 - [ ] `docs(coverage): remove codecov references from code-coverage.md` — after Phase 4
+- [ ] `chore(rhino-cli): remove codecov algorithm references from source and README` — after Phase 4a
 - [ ] `chore(governance): remove codecov references from governance docs` — after Phase 5
 - [ ] `docs(ayokoding-web): remove codecov-action steps from CI/CD guides` — after Phase 6
 
@@ -313,9 +424,11 @@ The plan is complete when all of the following hold:
    returns zero hits (outside any historical archive paths).
 2. `grep -ri "codecov" . --include="*.md" --exclude-dir=plans --exclude-dir=node_modules`
    returns zero hits.
-3. `npm run lint:md` passes with no errors.
-4. All CI pipelines triggered by the push to `main` are green.
-5. All delivery checklist items above are ticked.
+3. `grep -ri "codecov" . --include="*.go" --exclude-dir=vendor --exclude-dir=node_modules`
+   returns zero hits.
+4. `npm run lint:md` passes with no errors.
+5. All CI pipelines triggered by the push to `main` are green.
+6. All delivery checklist items above are ticked.
 
 ### Plan Archival
 
