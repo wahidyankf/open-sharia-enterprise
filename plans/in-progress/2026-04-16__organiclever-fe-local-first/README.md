@@ -14,8 +14,9 @@ For this phase, the FE runs as a standalone landing site with a single diagnosti
 `/system/status/be`, which probes `organiclever-be`'s `/health` endpoint and degrades gracefully
 when the BE is unconfigured, unreachable, or slow — never blanking the page.
 
-The existing BFF/auth code (Effect TS service layer + Route Handlers) is preserved as dormant
-library code in `src/services/` and `src/layers/` so future rewire is a routes-only change.
+The existing Effect TS service layer (`src/services/`) and layer implementations (`src/layers/`)
+are preserved as dormant library code so future rewire is a routes-only change. Route Handlers
+(`src/app/api/auth/`) are deleted along with `/login` and `/profile`.
 
 ## Context and Motivation
 

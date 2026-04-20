@@ -27,9 +27,11 @@ These are reasoned structural benefits. No baseline measurements exist; numeric 
 - **Live landing site for brand work**: `www.organiclever.com` becomes reachable with a minimal "coming soon" card that can grow without plan revisions. Brand/marketing work is unblocked.
 - **Deploy pipeline validated**: a successful Vercel promote from `prod-organiclever-web` confirms the workflow and env-var wiring are correct before the BE starts depending on them.
 - **Graceful BE-readiness signal**: `/system/status/be` gives ops a predictable public endpoint to watch once the BE deploys, with explicit UP/DOWN/timeout/not-configured states that never blank the page.
-- **Zero rework for rewire**: BFF route handlers, Effect TS service layer, and the BackendClient are preserved as dormant library code. When the BE ships, re-enabling routes is an additive change, not a rebuild.
+- **Zero rework for rewire**: The Effect TS service layer (`src/services/`) and layer implementations (`src/layers/`) are preserved as dormant library code. Route Handlers (`src/app/api/auth/`) are deleted. When the BE ships, re-enabling routes is an additive change, not a rebuild.
 
 ## Affected Roles
+
+> **Note**: The full Personas table (including public-facing and external-consumer personas) is the canonical source in [`prd.md`](./prd.md#personas). The table below lists roles from the business perspective — how they interact with this plan's business artifacts — not a duplicate of the product persona table.
 
 There is no human sign-off gate. The relevant roles are the maintainer wearing different hats and the agents that consume plan files:
 
@@ -44,15 +46,13 @@ There is no human sign-off gate. The relevant roles are the maintainer wearing d
 | plan-execution workflow (calling context)           | `delivery.md`                                        | Drives per-item execution; may read BRD/PRD for ambiguous items.   |
 | `plan-execution-checker` agent                      | `prd.md` + `delivery.md`                             | Validates completed work against Gherkin in `prd.md`.              |
 
-Code review (the PR itself) is the approval gate. No separate ceremony exists or is introduced.
-
 ## Success Metrics
 
 Business-level success criteria (product-level criteria live in [prd.md](./prd.md)):
 
-1. **Landing site reachable at `www.organiclever.com`** after `prod-organiclever-web` promote — verifiable by `curl -sSI https://www.organiclever.com/` returning HTTP 200 with the landing-page heading in the body.
+1. **Landing site reachable at `www.organiclever.com`** after `prod-organiclever-web` promote — verifiable by `curl -sS https://www.organiclever.com/` returning HTTP 200 with the landing-page heading in the body.
 2. **Vercel build succeeds with `ORGANICLEVER_BE_URL` unset** — verifiable by inspecting the Vercel build log for the promote commit.
-3. **`/system/status/be` renders "Not configured"** when env unset and HTTP 200, never 5xx — verifiable by `curl -sSI https://www.organiclever.com/system/status/be`.
+3. **`/system/status/be` renders "Not configured"** when env unset and HTTP 200, never 5xx — verifiable by `curl -sS https://www.organiclever.com/system/status/be`.
 4. **Disabled routes return 404** — verifiable by `curl` against `/login`, `/profile`, `/api/auth/google`, `/api/auth/refresh`, `/api/auth/me` (all 404).
 5. **No Vercel function-log errors** for `/` and `/system/status/be` in the first hour after promote — verifiable from Vercel's log viewer.
 6. **BE code preserved**: `src/services/auth-service.ts`, `src/layers/backend-client-live.ts`, `src/services/backend-client.ts`, `src/services/errors.ts` still present with passing unit tests — verifiable by `ls` + `nx run organiclever-fe:test:unit`.
@@ -61,16 +61,16 @@ Business-level success criteria (product-level criteria live in [prd.md](./prd.m
 
 - **Not deploying `organiclever-be`** in this plan. BE work is deferred.
 - **Not completing the brand/marketing copy** for the landing page — the MVP "coming soon" card is sufficient; content grows post-plan without plan revision.
-- **Not introducing any human sign-off gate**. Code review (PR approval) is the only approval gate.
+- **Not introducing any human sign-off gate**.
 - **Not building auth, profile, or any BFF-dependent feature** — all routes that depend on BE are removed from the built surface.
 - **Not authoring a migration/rewire plan** for when BE comes online — that is a separate future plan.
 
 ## Risks and Mitigations
 
-| Risk                                                                   | Likelihood | Mitigation                                                                                                                  |
-| ---------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Dormant BE client code silently breaks during a dependency bump        | Medium     | Unit tests for `auth-service`, `backend-client`, `backend-client-live`, `errors` stay green in `test:unit`; enforced in CI. |
-| `/system/status/be` throws an uncaught exception and reaches 5xx       | Low        | Fetch is wrapped in try/catch at the page level; all failure modes render 200 with a labelled error state.                  |
-| Vercel deploys a stale build with prior routes still live              | Low        | `test-and-deploy-organiclever.yml` already gates the promote on `main` push; this plan does not modify the workflow.        |
-| Future maintainer re-enables `src/proxy.ts` thinking it was middleware | Medium     | File is removed outright, not renamed or preserved — rewire must author a new `middleware.ts` in its own plan.              |
-| Landing page MVP text is misinterpreted as committed brand voice       | Low        | README's Out-of-Scope explicitly flags the landing copy as minimum viable, expandable without plan revision.                |
+| Risk                                                                   | Likelihood | Mitigation                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dormant BE client code silently breaks during a dependency bump        | Medium     | Unit tests for `auth-service`, `backend-client`, `backend-client-live`, `errors` stay green in `test:unit`; enforced in CI.                                                                                                                                         |
+| `/system/status/be` throws an uncaught exception and reaches 5xx       | Low        | Fetch is wrapped in try/catch at the page level; all failure modes render 200 with a labelled error state.                                                                                                                                                          |
+| Vercel deploys a stale build with prior routes still live              | Low        | `test-and-deploy-organiclever.yml` gates the Vercel promote on all prior CI jobs passing. The workflow must be triggered manually via `workflow_dispatch` after pushing to `main` (it does not fire automatically on push). This plan does not modify the workflow. |
+| Future maintainer re-enables `src/proxy.ts` thinking it was middleware | Medium     | File is removed outright, not renamed or preserved — rewire must author a new `middleware.ts` in its own plan.                                                                                                                                                      |
+| Landing page MVP text is misinterpreted as committed brand voice       | Low        | README's Out-of-Scope explicitly flags the landing copy as minimum viable, expandable without plan revision.                                                                                                                                                        |
