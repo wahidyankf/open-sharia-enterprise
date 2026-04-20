@@ -45,7 +45,7 @@ A **tail call** is a function call that is the _last thing a function does befor
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     NT1["fact uses\n(* n (fact (- n 1)))"] --> NT2["fact returns\nthen multiply by n\ncaller frame stays alive"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
@@ -56,7 +56,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     T1["fact-iter uses\n(fact-iter (- n 1) (* n acc))"] --> T2["result IS the return value\ncaller frame immediately useless"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -69,7 +69,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     A1["fact-iter(5,1)"] --> A2["fact-iter(4,5)"] --> A3["fact-iter(3,20)"] --> A4["..."] --> A5["fact-iter(0,120)"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
@@ -80,7 +80,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     B1["frame: n=5 acc=1"] --> B2["frame: n=4 acc=5"] --> B3["frame: n=3 acc=20"] --> B4["...done"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -159,7 +159,7 @@ Instead of calling `eval` recursively at tail positions, we update `currentExpr`
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     B1["eval consequent env"] --> B2["new F# stack frame"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
@@ -170,7 +170,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     A1["currentExpr ← consequent"] --> A2["currentEnv ← env"] --> A3["continue while loop"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -250,7 +250,7 @@ The loop transform keeps `eval` iterative internally. An alternative that keeps 
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     T1["Call f()"] --> T2{"Result?"}
     T2 -->|"Done"| T3["Done: return value"]
     T2 -->|"Bounce"| T4["Bounce: call thunk()"]
@@ -264,7 +264,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     TC1["Instead of:\neval body closureEnv"] --> TC2["Return:\nBounce (thunk to eval body)"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -289,7 +289,7 @@ let trampoline (f: unit -> EvalResult) : LispVal =
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     LT1["Stack depth: O(1)"] --> LT2["Style: while loop"] --> LT3["Allocation: none"] --> LT4["Explicit, easy to audit"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -300,7 +300,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     TR1["Stack depth: O(1)"] --> TR2["Style: functional"] --> TR3["One thunk per bounce"] --> TR4["Elegant pattern"]
 
     classDef purple fill:#CC78BC,color:#fff,stroke:#CC78BC
@@ -328,7 +328,7 @@ With the loop transform, `count-down` runs in O(1) stack space:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     W1["count-down(1000000)"] --> W2["count-down(999999)"] --> W3["count-down(999998)"] --> Wd["... 999,997 more ..."] --> We["Stack overflow"]
 
     classDef brown fill:#CA9161,color:#fff,stroke:#CA9161
@@ -339,7 +339,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     T1["expr=(count-down 999999)\nn=999999"] --> T2["expr=(count-down 999998)\nn=999998"] --> T3["1,000,000 iterations\nstill ONE frame"] --> T4["done"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -370,7 +370,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     C1["fact_cps(n, k)\n= fact_cps(n-1, fun r → k(n*r))"] --> C2["result passed forward\nto continuation k"] --> C3["no stack growth\nall calls are tail calls"]
 
     classDef orange fill:#DE8F05,color:#fff,stroke:#DE8F05
@@ -381,7 +381,7 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     U1["call/cc\ncapture + resume"] --> U2["async/await\ndesugared CPS"] --> U3["Coroutines\ngenerators"] --> U4["Compiler IR\nCPS intermediate repr"]
 
     classDef teal fill:#029E73,color:#fff,stroke:#029E73
@@ -394,7 +394,7 @@ Our interpreter does not implement `call/cc`, but the trampoline pattern gives a
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     subgraph P2["Part 2: Front End"]
         direction LR
         src["(fact 5)"] --> tok["tokenize"] --> par["parse"] --> ast["LispVal tree"]

@@ -15,7 +15,7 @@ Each part of this series builds on the previous, adding one layer at a time:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     P1["Part 1\nThe Shape of Lisp\nWhy Lisp? S-expressions. REPL."]
     P2["Part 2\nTokenizing & Reading\nText → LispVal tree"]
     P3["Part 3\nEnvironments & Evaluation\neval / apply / env chain"]
@@ -264,7 +264,7 @@ Every Lisp system is traditionally structured as a REPL:
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     R["READ\nparse one S-expression\nfrom input"]
     E["EVAL\nevaluate it in\ncurrent environment"]
     P["PRINT\ndisplay the\nresult"]
@@ -310,7 +310,7 @@ This structure is pedagogically valuable because it exposes each phase as a dist
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     subgraph Why["Why Lisp for interpreter theory"]
         R1["S-expression syntax\ntrivially parseable"]
         R2["Prefix notation\neliminates operator precedence"]

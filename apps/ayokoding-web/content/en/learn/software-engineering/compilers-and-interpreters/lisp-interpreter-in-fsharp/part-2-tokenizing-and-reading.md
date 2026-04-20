@@ -14,7 +14,7 @@ Every interpreter starts the same way: raw text goes in, structured data comes o
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     src["(+ 1 2)\nraw string"]
     tok["Tokenizer\nlexical analysis"]
     tokens["LPAREN · PLUS · 1 · 2 · RPAREN\ntoken list"]
@@ -237,7 +237,7 @@ The mutual recursion between `parseExpr` and `parseList` mirrors the grammar's m
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-flowchart LR
+flowchart TB
     subgraph Grammar
         SE2["s-expr"]
         L2["list"]
