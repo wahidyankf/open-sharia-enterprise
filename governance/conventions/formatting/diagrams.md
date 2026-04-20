@@ -337,36 +337,37 @@ gitGraph
 
 ### Diagram Orientation
 
-**Default Layout: Top-Down (TD)**
+**Default Layout: Left-to-Right (LR)**
 
-**CRITICAL RULE**: Mermaid diagrams MUST use `graph TD` (top-down vertical layout) by default.
+**CRITICAL RULE**: Mermaid flowcharts and graph diagrams MUST use `flowchart LR` or `graph LR` (left-to-right layout) by default.
 
 **Rationale**:
 
-- Better readability on mobile devices (vertical screens)
-- More natural for sequential processes
-- Consistent user experience across all educational content
+- LR diagrams fit within viewport width on mobile screens without horizontal scrolling
+- Nodes stack vertically in LR layout, using the natural scroll direction on mobile
+- Consistent user experience across all documentation content
 
-**Alternative layouts** (`graph LR`, `graph RL`, `graph BT`):
+**Default directive**: Use `flowchart LR` or `graph LR` as the opening line of every flowchart or graph diagram unless a semantic exception applies (see below).
 
-- ONLY use when explicitly requested by the user
-- ONLY use when vertical layout would significantly harm clarity
-- Default assumption is always TD unless stated otherwise
+**When changing existing diagrams**: Replace `flowchart TD`, `graph TD`, `graph BT`, and `flowchart BT` with their `LR` equivalents unless the diagram is semantically justified to remain top-down (see exception below).
 
-**Mobile-First Orientation**: Diagrams should be styled vertically (top to bottom or bottom to top) for optimal mobile viewing:
-
-- **Preferred**: `graph TD` (top-down) or `graph BT` (bottom-top)
-- **Avoid when possible**: `graph LR` (left-right) or `graph RL` (right-left)
-- **Exception**: Use horizontal orientation when vertical layout would significantly harm clarity or readability
-
-**Rationale**: Mobile devices have vertical screens. Vertical diagrams are easier to view without horizontal scrolling.
-
-**Example**:
+**Exception — semantically required TD**: A diagram MAY use `TD` when top-down direction is intrinsic to the meaning of the diagram (for example, a class hierarchy diagram where parent classes appear above child classes to show inheritance direction). Add a `%%` comment on the line immediately before the diagram type directive explaining why TD is required:
 
 ```mermaid
+%% TD required: parent classes must appear above subclasses to show inheritance direction
 graph TD
- A[Start] --> B[Process]
- B --> C[End]
+    Animal --> Dog
+    Animal --> Cat
+```
+
+**sequenceDiagram is unaffected**: The `sequenceDiagram` type has no orientation directive and is not subject to this rule.
+
+**Example (standard LR default)**:
+
+```mermaid
+graph LR
+    A[Start] --> B[Process]
+    B --> C[End]
 ```
 
 ### Mermaid Best Practices
@@ -376,7 +377,7 @@ graph TD
 3. **Add Comments** - Explain complex logic with inline comments
 4. **Test Rendering** - Preview on GitHub or in a markdown viewer before committing
 5. **Version Control Friendly** - Use consistent formatting for easier diffs
-6. **Prefer Vertical Orientation** - Use top-down or bottom-top layouts for mobile-friendly viewing
+6. **Default to LR Orientation** - Use `flowchart LR` or `graph LR` for mobile-friendly viewing; only use TD when semantically required (see Diagram Orientation rule)
 7. **Use Color-Blind Friendly Colors** - REQUIRED: Use accessible hex codes in `classDef` from verified palette (see Color Accessibility below)
 8. **Document Color Scheme** - RECOMMENDED: Add ONE color palette comment at the start listing colors used (aids verification, but somewhat redundant if `classDef` already has correct hex codes). No duplicate comments
 9. **Correct Comment Syntax** - Use `%%` for comments, NOT `%%{ }%%` (see Comment Syntax below)
@@ -964,7 +965,7 @@ Since Mermaid is now the primary format, consider upgrading existing ASCII art d
 2. Use appropriate Mermaid syntax
 3. Test rendering on GitHub preview or a markdown viewer
 4. Verify all relationships and labels are preserved
-5. Keep vertical orientation (top-down or bottom-top) for mobile-friendliness
+5. Use LR orientation by default for mobile-friendliness (see Diagram Orientation rule)
 
 **Example upgrade**:
 
@@ -986,11 +987,11 @@ Since Mermaid is now the primary format, consider upgrading existing ASCII art d
 └─────┘
 ```
 
-**After (Mermaid - vertical orientation)**:
+**After (Mermaid - LR orientation)**:
 
 ````markdown
 ```mermaid
-graph TD
+graph LR
     A[Start] --> B[Process]
     B --> C[End]
 ```
@@ -1009,7 +1010,7 @@ With widespread Mermaid support, there's no reason to convert Mermaid diagrams t
 Before committing documentation with diagrams:
 
 - [ ] Primary format is Mermaid (unless specific reason for ASCII)
-- [ ] Mermaid diagrams use vertical orientation (TD or BT) for mobile-friendliness
+- [ ] Mermaid flowcharts/graphs use LR orientation by default (or TD with a `%%` comment justifying the exception)
 - [ ] Mermaid diagrams use color-blind friendly colors (only accessible palette)
 - [ ] Colors work in both light and dark mode
 - [ ] Shape differentiation used (not relying on color alone)
@@ -1032,7 +1033,7 @@ Before committing documentation with diagrams:
 - [ ] All labels and text are clear and readable
 - [ ] Complex diagrams simplified where possible
 - [ ] Diagram serves the documentation purpose
-- [ ] Vertical orientation preferred (horizontal only if clarity requires it)
+- [ ] LR orientation used by default; TD used only when semantically required and documented with a `%%` comment
 
 ## Common Mermaid Syntax Errors
 
@@ -1753,9 +1754,9 @@ This provides clear context for each focused diagram.
 
 All diagrams should be readable on narrow mobile screens:
 
-- TD (top-down) layout already helps with vertical orientation
-- Splitting ensures each diagram has enough vertical space
-- Reduced horizontal width prevents text truncation
+- LR (left-to-right) layout is the default; nodes stack vertically in the natural scroll direction
+- Splitting ensures each diagram remains focused and readable on small screens
+- Reduced node count per diagram prevents text truncation
 
 ### Real-World Fixes
 
