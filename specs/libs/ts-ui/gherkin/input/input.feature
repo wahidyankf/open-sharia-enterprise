@@ -13,6 +13,10 @@ Feature: Input component
     Given the Input is rendered as disabled with aria-label "disabled input"
     Then the textbox element should have the disabled attribute
 
+  Scenario: Has correct height class
+    Given I render an Input
+    Then the input should have class "h-11"
+
   Scenario: Has no accessibility violations
     Given the Input is rendered with a label "Email" associated via htmlFor
     Then the input should have no accessibility violations

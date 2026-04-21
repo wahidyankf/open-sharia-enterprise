@@ -41,6 +41,18 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
+  Scenario("Has correct height class", ({ Given, Then }) => {
+    Given("I render an Input", () => {
+      // precondition noted
+    });
+
+    Then('the input should have class "h-11"', () => {
+      cleanup();
+      render(<Input aria-label="height test" />);
+      expect(screen.getByRole("textbox").className).toContain("h-11");
+    });
+  });
+
   Scenario("Has no accessibility violations", ({ Given, Then }) => {
     Given('the Input is rendered with a label "Email" associated via htmlFor', () => {
       // precondition noted
