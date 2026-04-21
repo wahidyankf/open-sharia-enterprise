@@ -25,32 +25,6 @@ building blocks.
 
 ---
 
-## Product Scope
-
-### In Scope
-
-- OL warm OKLCH token file (`libs/ts-ui-tokens/src/organiclever.css`) with full palette,
-  radius scale, shadow scale, semantic overrides, and dark mode
-- Dark mode variant fix in `libs/ts-ui-tokens/src/tokens.css` (additive selector change)
-- Typography wiring in `apps/organiclever-fe` — Nunito + JetBrains Mono via `next/font/google`
-- Token import + font `@theme` mapping in `apps/organiclever-fe/src/app/globals.css`
-- Storybook preview import of `organiclever.css` in `libs/ts-ui/.storybook/preview.ts`
-- Updated existing components: Button (teal/sage variants, xl size), Alert (success/warning/info
-  variants), Input (44 px height)
-- 10 new `libs/ts-ui` components with tests and Storybook stories: Icon, Toggle, ProgressRing,
-  Sheet, AppHeader, StatCard, InfoTip, HuePicker, TabBar, SideNav
-
-### Out of Scope
-
-- Workout app screens (Home, Workout, Finish, EditRoutine, History, Progress, Settings) — next plan
-- Data layer (`db.ts`, `types.ts`) — separate plan
-- New routes or pages in `organiclever-fe` — separate plan
-- Landing page content changes — separate plan
-- Changes to `ts-ui-tokens/src/tokens.css` neutral baseline beyond the dark variant selector fix
-- `ose-primer` propagation of OL brand tokens (product-specific, classified `neither`)
-
----
-
 ## User Stories
 
 ### Tokens
@@ -152,26 +126,6 @@ As a developer I want all design system documentation updated — `apps/organicl
 `libs/ts-ui/README.md`, `libs/ts-ui-tokens/README.md`,
 `governance/development/frontend/design-tokens.md`, and the organiclever-fe SKILL — so I can
 understand how to use OL tokens and components without reading source code.
-
----
-
-## Product Risks
-
-- **Coverage regression** — Adding 10 new components to `libs/ts-ui` must maintain the
-  ≥ 70% LCOV coverage threshold enforced by `nx run ts-ui:test:quick`. Mitigation: every
-  new component ships with unit tests in the same delivery phase before the coverage gate
-  runs.
-- **Component API incompatibility** — The dark mode `@custom-variant` selector change
-  (adding `[data-theme="dark"]`) must not break Storybook's `withThemeByClassName`
-  decorator or any existing app that uses `.dark`. Mitigation: change is additive
-  (comma-separated selectors); existing `.dark` path is preserved.
-- **Storybook preview compatibility** — Adding `organiclever.css` import to
-  `libs/ts-ui/.storybook/preview.ts` may cause token conflicts if a story overrides
-  a CSS custom property. Mitigation: `organiclever.css` only overrides `--color-*`,
-  `--radius-*`, and `--shadow-*` in `@theme`; it does not remove or rename any token.
-- **Input height regression** — Changing Input `h-9` → `h-11` (36 px → 44 px) is the
-  only potentially breaking layout change. Mitigation: verify `nx build organiclever-fe`
-  passes; rollback path is `h-11` → `h-9` + adding a size prop.
 
 ---
 
@@ -308,6 +262,12 @@ Feature: New Components
     When the component renders
     Then the "history" nav item has the teal-wash background
 
+  Scenario: Brand row click always calls onChange with "home"
+    Given a SideNav with current="history" and tabs including a tab with id "home"
+    When the user clicks the brand row
+    Then onChange is called with "home"
+    And not with the first tab id (if tabs[0].id is not "home")
+
 Feature: Accessibility
 
   Scenario: All new components pass axe
@@ -347,3 +307,49 @@ Feature: Design System Documentation
     Then it shows the token import chain including organiclever.css
     And it shows ts-ui component usage examples with OL variants
 ```
+
+---
+
+## Product Scope
+
+### In Scope
+
+- OL warm OKLCH token file (`libs/ts-ui-tokens/src/organiclever.css`) with full palette,
+  radius scale, shadow scale, semantic overrides, and dark mode
+- Dark mode variant fix in `libs/ts-ui-tokens/src/tokens.css` (additive selector change)
+- Typography wiring in `apps/organiclever-fe` — Nunito + JetBrains Mono via `next/font/google`
+- Token import + font `@theme` mapping in `apps/organiclever-fe/src/app/globals.css`
+- Storybook preview import of `organiclever.css` in `libs/ts-ui/.storybook/preview.ts`
+- Updated existing components: Button (teal/sage variants, xl size), Alert (success/warning/info
+  variants), Input (44 px height)
+- 10 new `libs/ts-ui` components with tests and Storybook stories: Icon, Toggle, ProgressRing,
+  Sheet, AppHeader, StatCard, InfoTip, HuePicker, TabBar, SideNav
+
+### Out of Scope
+
+- Workout app screens (Home, Workout, Finish, EditRoutine, History, Progress, Settings) — next plan
+- Data layer (`db.ts`, `types.ts`) — separate plan
+- New routes or pages in `organiclever-fe` — separate plan
+- Landing page content changes — separate plan
+- Changes to `ts-ui-tokens/src/tokens.css` neutral baseline beyond the dark variant selector fix
+- `ose-primer` propagation of OL brand tokens (product-specific, classified `neither`)
+
+---
+
+## Product Risks
+
+- **Coverage regression** — Adding 10 new components to `libs/ts-ui` must maintain the
+  ≥ 70% LCOV coverage threshold enforced by `nx run ts-ui:test:quick`. Mitigation: every
+  new component ships with unit tests in the same delivery phase before the coverage gate
+  runs.
+- **Component API incompatibility** — The dark mode `@custom-variant` selector change
+  (adding `[data-theme="dark"]`) must not break Storybook's `withThemeByClassName`
+  decorator or any existing app that uses `.dark`. Mitigation: change is additive
+  (comma-separated selectors); existing `.dark` path is preserved.
+- **Storybook preview compatibility** — Adding `organiclever.css` import to
+  `libs/ts-ui/.storybook/preview.ts` may cause token conflicts if a story overrides
+  a CSS custom property. Mitigation: `organiclever.css` only overrides `--color-*`,
+  `--radius-*`, and `--shadow-*` in `@theme`; it does not remove or rename any token.
+- **Input height regression** — Changing Input `h-9` → `h-11` (36 px → 44 px) is the
+  only potentially breaking layout change. Mitigation: verify `nx build organiclever-fe`
+  passes; rollback path is `h-11` → `h-9` + adding a size prop.

@@ -94,6 +94,119 @@ No `npm install` step is required for this plan beyond the standard `npm install
 
 ---
 
+## Architecture
+
+### Token Layering
+
+The OL brand token system is layered as follows:
+
+1. **`libs/ts-ui-tokens/src/tokens.css`** — shared neutral baseline imported by all apps.
+   Contains Tailwind `@theme` defaults (`--color-background`, `--color-primary`, etc.) using
+   plain grey/neutral values.
+2. **`libs/ts-ui-tokens/src/organiclever.css`** — per-app OL brand override, imported only
+   by `organiclever-fe`. Redefines the same `@theme` tokens with warm OKLCH values. Also
+   defines raw hue vars (`--hue-teal`, `--hue-sage-wash`, etc.) and dark mode block.
+3. **`apps/organiclever-fe/src/app/globals.css`** — imports both token files in order
+   (`tokens.css` then `organiclever.css`) so OL values win. Also maps `next/font` CSS
+   variables into `@theme` font families.
+
+This layering means `ts-ui` components (`<Button>`, `<Alert>`, etc.) automatically adopt
+OL colors in `organiclever-fe` without code changes — the `--color-*` tokens they reference
+resolve to OL values via cascade.
+
+### Component Hierarchy
+
+```
+organiclever-fe (app)
+└── ts-ui components (libs/ts-ui)
+    ├── Updated existing: Button, Alert, Input
+    └── New OL-specific: Icon, Toggle, ProgressRing, Sheet, AppHeader,
+                          StatCard, InfoTip, HuePicker, TabBar, SideNav
+        ├── HuePicker — defines HUES array and HueName type (single source of truth)
+        ├── TabBar — defines TabItem interface (used by SideNav)
+        ├── StatCard — imports HueName from HuePicker; imports InfoTip
+        ├── InfoTip — imports Sheet; manages own open state
+        └── SideNav — imports HueName from HuePicker; imports TabItem from TabBar
+```
+
+### `"use client"` Boundary Policy
+
+Components that manage local state (`useState`) or use browser APIs require `"use client"`.
+Components that only receive event handler props as function parameters do NOT require
+`"use client"` on the component itself — the caller must ensure its own `"use client"`
+boundary if it passes a function.
+
+Additionally, as a `ts-ui` library design convention, fully-controlled components that accept
+`onChange`/`onClick` handler props include `"use client"` so that callers in Next.js App Router
+server component trees do not need to add their own boundary. This is a library ergonomics
+policy, not a Next.js requirement.
+
+| Component       | `"use client"` | Reason                                                              |
+| --------------- | -------------- | ------------------------------------------------------------------- |
+| Icon            | No             | Pure SVG, no hooks                                                  |
+| ProgressRing    | No             | Pure SVG computation, no hooks                                      |
+| AppHeader       | No             | No hooks, no browser APIs; onBack is a passed function — caller's concern |
+| StatCard        | No             | InfoTip has its own client state                                     |
+| Toggle          | Yes            | useState for controlled value                                       |
+| Sheet           | Yes            | Radix Dialog, event handlers                                        |
+| InfoTip         | Yes            | useState for open                                                   |
+| HuePicker       | Yes            | Controlled (caller manages value); ts-ui library convention         |
+| TabBar          | Yes            | Controlled (caller manages current tab); ts-ui library convention   |
+| SideNav         | Yes            | Controlled (caller manages current item); ts-ui library convention  |
+
+---
+
+## Design Decisions
+
+### OKLCH Over HSL
+
+OKLCH is used for all OL color tokens rather than HSL. OKLCH provides perceptual
+uniformity — equal numeric steps produce visually equal perceived differences across
+hues, enabling consistent tint derivation (`-ink`, `-wash` variants). HSL lacks this
+property (e.g., yellow at 50% L appears much lighter than blue at 50% L). The design
+handoff used OKLCH natively; preserving the format avoids conversion rounding errors and
+supports wide-gamut displays.
+
+### `HueName` Single Source of Truth in `HuePicker`
+
+The `HUES` constant and `HueName` type are defined exactly once, in
+`libs/ts-ui/src/components/hue-picker/hue-picker.tsx`. All other components that need
+the type (`StatCard`, `SideNav`) import from that path. This prevents the six-hue list
+from diverging across files — adding a seventh hue in the future requires editing one
+file only.
+
+### Dynamic Hue via Inline Style, Not Tailwind Template Literals
+
+When a component needs `backgroundColor: var(--hue-${hue})`, this is implemented as an
+inline style (`style={{ backgroundColor: \`var(--hue-${hue})\` }}`), NOT as a
+constructed Tailwind class (`bg-[var(--hue-${hue})]`). Tailwind's JIT compiler requires
+complete class strings at build time; dynamically-constructed class names are purged and
+produce invisible elements at runtime. Inline styles bypass the class scanner and resolve
+CSS custom properties correctly. Components affected:`StatCard` (icon box),
+`SideNav` (brand icon box), `HuePicker` (swatch backgrounds).
+
+### `data-theme="dark"` + `.dark` Compound Selector
+
+The `@custom-variant dark` selector in `tokens.css` is extended from `(&:is(.dark *))`
+to `(&:is([data-theme="dark"] *), &:is(.dark *))`. This is an additive change:
+
+- `.dark` path — preserved for Storybook's `withThemeByClassName` addon and all sibling
+  apps (`ayokoding-web`, `oseplatform-web`, `wahidyankf-web`) that use the Tailwind class
+  approach.
+- `data-theme="dark"` path — added for `organiclever-fe` which sets
+  `document.documentElement.setAttribute('data-theme', 'dark')` at runtime to toggle dark
+  mode without a JavaScript class manipulation.
+
+### Direct-to-Main Override (TBD Convention)
+
+This plan commits directly to `main` rather than routing through a draft PR. This is an
+intentional deviation from the subrepo worktree convention's default (draft PR → merge)
+and is documented in `delivery.md` under "Commit and push conventions". The justification
+is that the plan is single-maintainer, all changes are additive (no breaking API changes),
+and the blast-radius quality gate (Phase 17) provides equivalent safety to a PR review.
+
+---
+
 ## Phase 1: `libs/ts-ui-tokens`
 
 ### 1A — Dark mode variant fix (`tokens.css`)
@@ -117,7 +230,7 @@ selector is purely additive — no existing app is broken.
 
 ### 1B — New file: `organiclever.css`
 
-Canonical source: `organic-lever/project/workout-app/colors_and_type.css`.
+Original design source: private Anthropic Design bundle (see README.md). Full token values reproduced below — no source file access required.
 
 > **Do NOT include** the `@import url("https://fonts.googleapis.com/...")` line from
 > the prototype source. Fonts are loaded via `next/font/google` in `layout.tsx` which
@@ -399,6 +512,9 @@ Plus one file in `specs/`: 5. `specs/libs/ts-ui/gherkin/{name}/{name}.feature` �
 
 Direct TypeScript port of `Icon.jsx`. No `"use client"` needed (pure SVG, no hooks).
 
+> **This IS the source.** The SVG path data below is the complete reference implementation
+> — no external file retrieval is required. All 34 icons are reproduced verbatim here.
+
 ```tsx
 export type IconName =
   | "dumbbell"
@@ -446,8 +562,95 @@ export interface IconProps {
 }
 ```
 
-All 34 icons from the `Icon.jsx` switch statement ported verbatim. Unknown name renders
-fallback `<circle cx="12" cy="12" r="8"/>`. All SVGs: `aria-hidden="true"` by default;
+The `switch` implementation maps each `IconName` to its SVG path data. Implement as:
+
+```tsx
+function getIconPaths(name: IconName | (string & {}), filled?: boolean): React.ReactNode {
+  switch (name) {
+    case "dumbbell":
+      return <path d="M6.5 6.5h11M6.5 17.5h11M4 4v16M8 4v16M16 4v16M20 4v16" strokeLinecap="round" strokeLinejoin="round" />;
+    case "check":
+      return <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />;
+    case "check-circle":
+      return filled
+        ? <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-1 14.41-4.7-4.7 1.41-1.42L11 13.59l6.29-6.3 1.42 1.42z" />
+        : <><circle cx="12" cy="12" r="10" /><polyline points="9 12 11 14 15 10" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "clock":
+      return <><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "timer":
+      return <><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2" strokeLinecap="round" strokeLinejoin="round" /><path d="M9 3h6M12 3v2" strokeLinecap="round" /></>;
+    case "flame":
+      return filled
+        ? <path d="M12 2C8 6 6 9 8 13c1 2 3 3 4 5 .5-2 1-3 3-5 2-2 2-5 1-7-1 1-2 2-2 4-1-2-2-5-2-8z" />
+        : <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072 2.143-.224 4.054 2 6" strokeLinecap="round" strokeLinejoin="round" />;
+    case "trend":
+      return <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" strokeLinecap="round" strokeLinejoin="round" />;
+    case "bar-chart":
+      return <><rect x="2" y="14" width="4" height="8" rx="1" /><rect x="9" y="9" width="4" height="13" rx="1" /><rect x="16" y="4" width="4" height="18" rx="1" /></>;
+    case "plus":
+      return <><line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" /><line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" /></>;
+    case "plus-circle":
+      return <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round" /><line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round" /></>;
+    case "minus":
+      return <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />;
+    case "x":
+      return <><line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" /><line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" /></>;
+    case "x-circle":
+      return <><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" strokeLinecap="round" /><line x1="9" y1="9" x2="15" y2="15" strokeLinecap="round" /></>;
+    case "arrow-left":
+      return <><line x1="19" y1="12" x2="5" y2="12" strokeLinecap="round" strokeLinejoin="round" /><polyline points="12 19 5 12 12 5" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "arrow-up":
+      return <><line x1="12" y1="19" x2="12" y2="5" strokeLinecap="round" strokeLinejoin="round" /><polyline points="5 12 12 5 19 12" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "arrow-down":
+      return <><line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" strokeLinejoin="round" /><polyline points="19 12 12 19 5 12" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "chevron-right":
+      return <polyline points="9 18 15 12 9 6" strokeLinecap="round" strokeLinejoin="round" />;
+    case "chevron-down":
+      return <polyline points="6 9 12 15 18 9" strokeLinecap="round" strokeLinejoin="round" />;
+    case "chevron-up":
+      return <polyline points="18 15 12 9 6 15" strokeLinecap="round" strokeLinejoin="round" />;
+    case "home":
+      return <><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" strokeLinecap="round" strokeLinejoin="round" /><polyline points="9 21 9 12 15 12 15 21" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "history":
+      return <><polyline points="12 8 12 12 14 14" strokeLinecap="round" strokeLinejoin="round" /><path d="M3.05 11a9 9 0 1 0 .5-4" strokeLinecap="round" strokeLinejoin="round" /><polyline points="3 3 3 7 7 7" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "calendar":
+      return <><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" strokeLinecap="round" /><line x1="8" y1="2" x2="8" y2="6" strokeLinecap="round" /><line x1="3" y1="10" x2="21" y2="10" strokeLinecap="round" /></>;
+    case "settings":
+      return <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></>;
+    case "user":
+      return <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="7" r="4" /></>;
+    case "pencil":
+      return <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" strokeLinecap="round" strokeLinejoin="round" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "trash":
+      return <><polyline points="3 6 5 6 21 6" strokeLinecap="round" strokeLinejoin="round" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" strokeLinecap="round" strokeLinejoin="round" /><path d="M10 11v6M14 11v6" strokeLinecap="round" strokeLinejoin="round" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "grip":
+      return <><circle cx="9" cy="6" r="1" fill="currentColor" /><circle cx="15" cy="6" r="1" fill="currentColor" /><circle cx="9" cy="12" r="1" fill="currentColor" /><circle cx="15" cy="12" r="1" fill="currentColor" /><circle cx="9" cy="18" r="1" fill="currentColor" /><circle cx="15" cy="18" r="1" fill="currentColor" /></>;
+    case "play":
+      return <polygon points="5 3 19 12 5 21 5 3" strokeLinecap="round" strokeLinejoin="round" />;
+    case "zap":
+      return <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" strokeLinecap="round" strokeLinejoin="round" />;
+    case "moon":
+      return <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" strokeLinecap="round" strokeLinejoin="round" />;
+    case "sun":
+      return <><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" strokeLinecap="round" /><line x1="12" y1="21" x2="12" y2="23" strokeLinecap="round" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeLinecap="round" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeLinecap="round" /><line x1="1" y1="12" x2="3" y2="12" strokeLinecap="round" /><line x1="21" y1="12" x2="23" y2="12" strokeLinecap="round" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" strokeLinecap="round" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" strokeLinecap="round" /></>;
+    case "rotate-ccw":
+      return <><polyline points="1 4 1 10 7 10" strokeLinecap="round" strokeLinejoin="round" /><path d="M3.51 15a9 9 0 1 0 .49-5.66" strokeLinecap="round" strokeLinejoin="round" /></>;
+    case "more-vertical":
+      return <><circle cx="12" cy="5" r="1" fill="currentColor" /><circle cx="12" cy="12" r="1" fill="currentColor" /><circle cx="12" cy="19" r="1" fill="currentColor" /></>;
+    case "info":
+      return <><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" strokeLinecap="round" /><line x1="12" y1="8" x2="12.01" y2="8" strokeLinecap="round" /></>;
+    case "save":
+      return <><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" strokeLinecap="round" strokeLinejoin="round" /><polyline points="17 21 17 13 7 13 7 21" strokeLinecap="round" strokeLinejoin="round" /><polyline points="7 3 7 8 15 8" strokeLinecap="round" strokeLinejoin="round" /></>;
+    default:
+      // Fallback: circle for unknown icon names
+      return <circle cx="12" cy="12" r="8" />;
+  }
+}
+```
+
+The outer `<svg>` wrapper sets `viewBox="0 0 24 24"`, `width={size}`, `height={size}`,
+`fill={filled ? "currentColor" : "none"}`, `stroke="currentColor"`, `strokeWidth={1.5}`.
+Unknown name renders fallback `<circle cx="12" cy="12" r="8"/>`. All SVGs: `aria-hidden="true"` by default;
 when `aria-label` is provided, set `role="img"` and remove `aria-hidden`.
 
 ### 4B — `toggle/toggle.tsx`
@@ -503,8 +706,11 @@ export interface ProgressRingProps {
   aria-valuemin={0}
   aria-valuemax={100}
 >
-  <circle ... stroke={bg} />       {/* track */}
-  <circle ... stroke={color}        {/* arc */}
+  <circle ... stroke={bg} />  {/* track */}
+  {/* arc */}
+  <circle
+    ...
+    stroke={color}
     strokeDasharray={circ}
     strokeDashoffset={circ * (1 - progress)}
     style={{ transition: 'stroke-dashoffset 1s linear, stroke 300ms' }}
@@ -515,6 +721,14 @@ export interface ProgressRingProps {
 ### 4D — `sheet/sheet.tsx`
 
 `"use client"` required (event handlers, Radix Dialog primitive).
+
+```tsx
+export interface SheetProps {
+  title: string;
+  onClose: () => void;
+  children?: React.ReactNode;
+}
+```
 
 Use `radix-ui`'s `Dialog` primitive for focus-trap, Escape-key, and `aria-modal`.
 Match the pattern already used in `dialog.tsx`:
@@ -605,8 +819,10 @@ Sheet body: `<p>{text}</p>` + `<Button variant="outline" onClick={() => setOpen(
 
 ### 4H — `hue-picker/hue-picker.tsx`
 
-`"use client"` required (onChange event handlers; no local state in this component but
-event handlers require client context in Next.js App Router).
+`"use client"` required (controlled component — caller manages state via `value`/`onChange`
+props; `"use client"` is included as a `ts-ui` library design convention so callers in
+Next.js App Router server component trees do not need to add their own `"use client"`
+boundary to pass the `onChange` handler).
 
 ```tsx
 export const HUES = ["terracotta", "honey", "sage", "teal", "sky", "plum"] as const;
@@ -637,10 +853,10 @@ Tailwind class):
 
 ### 4I — `tab-bar/tab-bar.tsx`
 
-`"use client"` — TabBar has an `onChange` event handler prop. Consistent with Toggle and
-HuePicker: all `libs/ts-ui` components with event handler props include `"use client"` so
-they are safe to import directly in Next.js App Router server component trees without
-requiring the caller to add its own `"use client"` boundary.
+`"use client"` required (controlled component — caller manages active tab state via
+`current`/`onChange` props; `"use client"` is included as a `ts-ui` library design
+convention so callers in Next.js App Router server component trees do not need to add their
+own `"use client"` boundary to pass the `onChange` handler).
 
 ```tsx
 export interface TabItem {
@@ -665,10 +881,10 @@ Label: `text-[10px]`.
 
 ### 4J — `side-nav/side-nav.tsx`
 
-`"use client"` — onChange prop requires client context (consistent with §4I TabBar and
-§4B Toggle rationale: all `libs/ts-ui` components with event handler props include
-`"use client"` so they are safe to import directly in Next.js App Router server component
-trees without requiring the caller to add its own `"use client"` boundary).
+`"use client"` required (controlled component — caller manages active item state via
+`current`/`onChange` props; `"use client"` is included as a `ts-ui` library design
+convention so callers in Next.js App Router server component trees do not need to add their
+own `"use client"` boundary to pass the `onChange` handler).
 
 ```tsx
 import type { HueName } from "../hue-picker/hue-picker";
@@ -702,6 +918,21 @@ of tab order).
 Active tab: `bg-[var(--hue-teal-wash)] text-[var(--hue-teal-ink)] rounded-xl font-bold`.
 Inactive: `transparent bg, text-foreground, font-medium`.
 `role="navigation"`, `aria-label={brand.name}`.
+
+**Gherkin scenarios for `side-nav.feature`**:
+
+```gherkin
+  Scenario: renders brand row
+  Scenario: renders tabs
+  Scenario: tab click triggers onChange with tab id
+  Scenario: current tab has active background
+  Scenario: brand row click always calls onChange with "home"
+    Given a SideNav with current="history" and tabs including a tab with id "home"
+    When the user clicks the brand row
+    Then onChange is called with "home"
+    And not with the first tab id (if tabs[0].id is not "home")
+  Scenario: passes axe accessibility audit
+```
 
 ---
 

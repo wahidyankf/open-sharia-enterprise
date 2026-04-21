@@ -1,5 +1,16 @@
 # Delivery Checklist
 
+## Start Execution (Run Once at the Very Beginning)
+
+Before executing any phase, move the plan to in-progress:
+
+- [ ] **S.1** Move plan folder: `git mv plans/backlog/2026-04-21__organiclever-workout-tracker plans/in-progress/2026-04-21__organiclever-workout-tracker`
+- [ ] **S.2** Update `plans/backlog/README.md` — remove this plan entry
+- [ ] **S.3** Update `plans/in-progress/README.md` — add this plan entry
+- [ ] **S.4** Commit and push: `git commit -m "chore(plans): move organiclever-workout-tracker to in-progress" && git push origin main`
+
+---
+
 ## Prerequisites
 
 - [ ] Confirm worktree `organiclever-adopt-design-system` is on **`main` branch** —
@@ -50,6 +61,7 @@
 
 - [ ] **1.1.2** Verify `npm exec nx build organiclever-fe` still passes
 - [ ] **1.1.3** Commit: `fix(ts-ui-tokens): add data-theme="dark" to dark variant selector`
+- [ ] **1.1.4** Push: `git push origin main`
 
 ### 1.2 — Create `organiclever.css`
 
@@ -65,6 +77,7 @@
 - [ ] **1.2.2b** Verify `npm exec nx build organiclever-fe` — CSS is valid and imports
       resolve
 - [ ] **1.2.3** Commit: `feat(ts-ui-tokens): add organiclever warm OKLCH token system`
+- [ ] **1.2.4** Push: `git push origin main`
 
 ---
 
@@ -92,16 +105,19 @@
 
 ### Manual UI Verification (Playwright MCP)
 
-- [ ] **2.6** Start dev server: `npm exec nx dev organiclever-fe`
-- [ ] **2.7** Navigate: `browser_navigate` to `http://localhost:3200`
-- [ ] **2.8** Inspect DOM: `browser_snapshot` — verify warm cream background is applied (not
+> Dev server from step 2.4 should still be running. If it was stopped, restart with
+> `npm exec nx dev organiclever-fe` before proceeding.
+
+- [ ] **2.6** Navigate: `browser_navigate` to `http://localhost:3200`
+- [ ] **2.7** Inspect DOM: `browser_snapshot` — verify warm cream background is applied (not
       pure white), Nunito font visible in computed styles
-- [ ] **2.9** Check console: `browser_console_messages` — must be zero JavaScript errors
-- [ ] **2.10** Screenshot: `browser_take_screenshot` for visual documentation of baseline
+- [ ] **2.8** Check console: `browser_console_messages` — must be zero JavaScript errors
+- [ ] **2.9** Screenshot: `browser_take_screenshot` for visual documentation of baseline
       warm palette
-- [ ] **2.11** Verify teal ring: `browser_click` on an input field, then `browser_snapshot`
+- [ ] **2.10** Verify teal ring: `browser_click` on an input field, then `browser_snapshot`
       to confirm teal focus ring is applied
-- [ ] **2.12** Commit: `feat(organiclever-fe): wire OL tokens and Nunito/JetBrains fonts`
+- [ ] **2.11** Commit: `feat(organiclever-fe): wire OL tokens and Nunito/JetBrains fonts`
+- [ ] **2.12** Push: `git push origin main`
 
 ---
 
@@ -129,6 +145,7 @@
   - Add `VariantTeal`, `VariantSage`, `SizeXL` story exports
 - [ ] **3.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **3.7** Commit: `feat(ts-ui): add teal/sage button variants and xl size`
+- [ ] **3.8** Push: `git push origin main`
 
 ---
 
@@ -149,6 +166,7 @@
   - Add `VariantSuccess`, `VariantWarning`, `VariantInfo` story exports
 - [ ] **4.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **4.7** Commit: `feat(ts-ui): add success/warning/info alert variants`
+- [ ] **4.8** Push: `git push origin main`
 
 ---
 
@@ -161,6 +179,7 @@
 - [ ] **5.5** Update `libs/ts-ui/src/components/input/input.stories.tsx` if height mentioned
 - [ ] **5.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **5.7** Commit: `fix(ts-ui): increase Input height to 44 px (OL touch target)`
+- [ ] **5.8** Push: `git push origin main`
 
 ---
 
@@ -183,6 +202,7 @@
   - AllIcons grid / Sizes (16/20/24/32) / Filled variants
 - [ ] **6.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **6.7** Commit: `feat(ts-ui): add Icon component with 34 OL SVG icons`
+- [ ] **6.8** Push: `git push origin main`
 
 ---
 
@@ -202,6 +222,7 @@
   - On / Off / WithLabel / Disabled
 - [ ] **7.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **7.7** Commit: `feat(ts-ui): add Toggle switch component`
+- [ ] **7.8** Push: `git push origin main`
 
 ---
 
@@ -221,6 +242,7 @@
   - Full / Half / Empty / CustomColor
 - [ ] **8.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **8.7** Commit: `feat(ts-ui): add ProgressRing SVG component`
+- [ ] **8.8** Push: `git push origin main`
 
 ---
 
@@ -241,6 +263,7 @@
   - WithTitle / WithoutTitle / LongContent
 - [ ] **9.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **9.7** Commit: `feat(ts-ui): add Sheet bottom-sheet component`
+- [ ] **9.8** Push: `git push origin main`
 
 ---
 
@@ -259,6 +282,7 @@
   - WithBack / WithoutBack / WithSubtitle / WithTrailing
 - [ ] **10.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **10.7** Commit: `feat(ts-ui): add AppHeader navigation component`
+- [ ] **10.8** Push: `git push origin main`
 
 ---
 
@@ -278,6 +302,7 @@
   - Default (teal selected) / ChangeSelection
 - [ ] **11.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **11.7** Commit: `feat(ts-ui): add HuePicker color swatch selector`
+- [ ] **11.8** Push: `git push origin main`
 
 ---
 
@@ -297,6 +322,7 @@
 - [ ] **12.5** Create `libs/ts-ui/src/components/info-tip/info-tip.stories.tsx`: Default
 - [ ] **12.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **12.7** Commit: `feat(ts-ui): add InfoTip contextual help component`
+- [ ] **12.8** Push: `git push origin main`
 
 ---
 
@@ -317,6 +343,7 @@
   - AllHues grid / WithInfo / WithoutInfo
 - [ ] **13.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **13.7** Commit: `feat(ts-ui): add StatCard dashboard tile component`
+- [ ] **13.8** Push: `git push origin main`
 
 ---
 
@@ -337,6 +364,7 @@
   - FourTabs / HomeActive / HistoryActive
 - [ ] **14.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **14.7** Commit: `feat(ts-ui): add TabBar mobile navigation component`
+- [ ] **14.8** Push: `git push origin main`
 
 ---
 
@@ -352,12 +380,14 @@
   - Full spec in `tech-docs.md § 4J`
 - [ ] **15.2** Create `specs/libs/ts-ui/gherkin/side-nav/side-nav.feature`:
   - Scenario: renders brand / renders tabs / click triggers onChange / active state / a11y
+  - Scenario: brand row click triggers onChange with "home"
 - [ ] **15.3** Create `libs/ts-ui/src/components/side-nav/side-nav.steps.tsx`
 - [ ] **15.4** Create `libs/ts-ui/src/components/side-nav/side-nav.test.tsx`
 - [ ] **15.5** Create `libs/ts-ui/src/components/side-nav/side-nav.stories.tsx`:
   - FourTabs / HistoryActive
 - [ ] **15.6** Run `npm exec nx run ts-ui:test:quick` — passes
 - [ ] **15.7** Commit: `feat(ts-ui): add SideNav desktop navigation component`
+- [ ] **15.8** Push: `git push origin main`
 
 ---
 
@@ -395,6 +425,7 @@
       `browser_snapshot` to verify the teal active state is visible — confirms event handlers
       work in the final integrated build
 - [ ] **16.15** Commit: `feat(ts-ui): wire all new OL component exports`
+- [ ] **16.16** Push: `git push origin main`
 
 ---
 
@@ -410,7 +441,7 @@ each section is accurate against the actual implementation before committing.
 - [ ] **16.5.2** Verify `libs/ts-ui/README.md` — confirm the OrganicLever components table
       lists all 10 newly created components with correct prop signatures
 - [ ] **16.5.3** Verify `libs/ts-ui-tokens/README.md` — confirm the `## Per-App Brand Token
-    Files` section and `organiclever.css` entry are accurate
+  Files` section and `organiclever.css` entry are accurate
 - [ ] **16.5.4** Verify `governance/development/frontend/design-tokens.md` — confirm the
       `## OKLCH Brand Tokens (OrganicLever)` section and updated `@custom-variant dark`
       example are accurate
@@ -419,6 +450,7 @@ each section is accurate against the actual implementation before committing.
       mode activation, and component usage examples
 - [ ] **16.5.6** Run `npm run lint:md` — zero markdown violations across all updated files
 - [ ] **16.5.7** Commit: `docs: update design system documentation across organiclever-fe and ts-ui`
+- [ ] **16.5.8** Push: `git push origin main`
 
 ---
 
@@ -456,10 +488,10 @@ each section is accurate against the actual implementation before committing.
 
 - [ ] **A.1** Verify ALL delivery checklist items are ticked
 - [ ] **A.2** Verify ALL quality gates pass (local + CI)
-- [ ] **A.3** Move plan folder to `plans/done/` via `git mv plans/backlog/2026-04-21__organiclever-workout-tracker plans/done/2026-04-21__organiclever-workout-tracker`
-- [ ] **A.4** Update `plans/backlog/README.md` — remove this plan entry
+- [ ] **A.3** Move plan folder to `plans/done/` via `git mv plans/in-progress/2026-04-21__organiclever-workout-tracker plans/done/2026-04-21__organiclever-workout-tracker`
+- [ ] **A.4** Update `plans/in-progress/README.md` — remove this plan entry
 - [ ] **A.5** Update `plans/done/README.md` — add this plan entry with completion date
-- [ ] **A.6** Commit: `chore(plans): move organiclever-adopt-design-system to done`
+- [ ] **A.6** Commit: `chore(plans): move organiclever-workout-tracker to done`
 - [ ] **A.7** Push archival commit: `git push origin main`
 
 ---
