@@ -22,3 +22,5 @@ export {
 export { Icon, type IconName, type IconProps } from "./components/icon/icon";
 export { Toggle, type ToggleProps } from "./components/toggle/toggle";
 export { ProgressRing, type ProgressRingProps } from "./components/progress-ring/progress-ring";
+export { Sheet, type SheetProps } from "./components/sheet/sheet";
+export { AppHeader, type AppHeaderProps } from "./components/app-header/app-header";
