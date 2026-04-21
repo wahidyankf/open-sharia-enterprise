@@ -8,7 +8,7 @@
  *   @theme { --color-primary: hsl(221.2 83.2% 53.3%); }
  */
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-theme="dark"] *), &:is(.dark *));
 
 @theme {
   /* --- Structural tokens (shared across all apps) --- */
