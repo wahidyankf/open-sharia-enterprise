@@ -662,11 +662,16 @@ Files` section and `organiclever.css` entry are accurate
   - Date: 2026-04-22 | Status: Done | All checkboxes - [x] (only A.1-A.7 remain, being executed now)
 - [x] **A.2** Verify ALL quality gates pass (local + CI)
   - Date: 2026-04-22 | Status: Done | Local: all 4 targets green; CI: run #24719994188 all 6 jobs success
-- [ ] **A.3** Move plan folder to `plans/done/` via `git mv plans/in-progress/2026-04-21__organiclever-design-system plans/done/2026-04-21__organiclever-design-system`
-- [ ] **A.4** Update `plans/in-progress/README.md` — remove this plan entry
-- [ ] **A.5** Update `plans/done/README.md` — add this plan entry with completion date
-- [ ] **A.6** Commit: `chore(plans): move organiclever-design-system to done`
-- [ ] **A.7** Push archival commit: `git push origin main`
+- [x] **A.3** Move plan folder to `plans/done/` via `git mv plans/in-progress/2026-04-21__organiclever-design-system plans/done/2026-04-21__organiclever-design-system`
+  - Date: 2026-04-22 | Status: Done | git mv executed; plan now at plans/done/
+- [x] **A.4** Update `plans/in-progress/README.md` — remove this plan entry
+  - Date: 2026-04-22 | Status: Done | Entry removed; Active Plans now shows (none)
+- [x] **A.5** Update `plans/done/README.md` — add this plan entry with completion date
+  - Date: 2026-04-22 | Status: Done | Added at top of Completed Projects list
+- [x] **A.6** Commit: `chore(plans): move organiclever-design-system to done`
+  - Date: 2026-04-22 | Status: Done
+- [x] **A.7** Push archival commit: `git push origin main`
+  - Date: 2026-04-22 | Status: Done
 
 ---
 
