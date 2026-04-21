@@ -26,6 +26,11 @@ describe("Input", () => {
     expect(screen.getByRole("textbox").getAttribute("type")).toBe("email");
   });
 
+  it("has h-11 height class (44px OL touch target)", () => {
+    render(<Input aria-label="test" />);
+    expect(screen.getByRole("textbox").className).toContain("h-11");
+  });
+
   it("has no accessibility violations with label", async () => {
     const { container } = render(
       <div>
