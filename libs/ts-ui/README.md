@@ -4,14 +4,34 @@ Shared React component library for the open-sharia-enterprise monorepo. Built on
 
 ## Components
 
-| Component | Source                       | Pattern                                     |
-| --------- | ---------------------------- | ------------------------------------------- |
-| Button    | ayokoding-web (reconciled)   | CVA variants, 6 variants, 8 sizes, asChild  |
-| Alert     | ayokoding-web                | CVA variants, role="alert"                  |
-| Dialog    | ayokoding-web                | Radix Dialog, portal, overlay, close button |
-| Input     | ayokoding-web                | focus-visible, aria-invalid                 |
-| Card      | organiclever-fe (modernized) | Subcomponents with data-slot                |
-| Label     | organiclever-fe (modernized) | Radix Label                                 |
+### Base components
+
+| Component | Source                       | Pattern                                                  |
+| --------- | ---------------------------- | -------------------------------------------------------- |
+| Button    | ayokoding-web (reconciled)   | CVA variants, 6 + 2 OL variants, 8 + 1 OL sizes, asChild |
+| Alert     | ayokoding-web                | CVA variants, 3 + 3 OL semantic variants, role="alert"   |
+| Dialog    | ayokoding-web                | Radix Dialog, portal, overlay, close button              |
+| Input     | ayokoding-web                | focus-visible, aria-invalid, 44 px OL touch target       |
+| Card      | organiclever-fe (modernized) | Subcomponents with data-slot                             |
+| Label     | organiclever-fe (modernized) | Radix Label                                              |
+
+### OrganicLever components
+
+Components specific to the OrganicLever warm design system. Import
+`@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css` to activate the warm OKLCH palette.
+
+| Component    | Props                                           | Description                               |
+| ------------ | ----------------------------------------------- | ----------------------------------------- |
+| Icon         | `name`, `size`, `filled`                        | 34-icon inline SVG set                    |
+| Toggle       | `value`, `onChange`, `label`                    | Slide-switch, teal active state           |
+| ProgressRing | `size`, `stroke`, `progress`, `color`, `bg`     | Circular SVG arc                          |
+| Sheet        | `title`, `onClose`, `children`                  | Bottom-anchored modal, slide-up animation |
+| AppHeader    | `title`, `subtitle`, `onBack`, `trailing`       | Back-button + title + optional trailing   |
+| StatCard     | `label`, `value`, `unit`, `hue`, `icon`, `info` | Dashboard stat tile                       |
+| InfoTip      | `title`, `text`                                 | ⓘ button opening a Sheet                  |
+| HuePicker    | `value`, `onChange`                             | 6-hue swatch row                          |
+| TabBar       | `tabs`, `current`, `onChange`                   | 60 px mobile bottom navigation            |
+| SideNav      | `brand`, `tabs`, `current`, `onChange`          | 220 px desktop side navigation            |
 
 ## Usage
 
