@@ -10,11 +10,11 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "destructive", "outline", "secondary", "ghost", "link"],
+      options: ["default", "destructive", "outline", "secondary", "ghost", "link", "teal", "sage"],
     },
     size: {
       control: "select",
-      options: ["default", "xs", "sm", "lg", "icon", "icon-xs", "icon-sm", "icon-lg"],
+      options: ["default", "xs", "sm", "lg", "xl", "icon", "icon-xs", "icon-sm", "icon-lg"],
     },
     disabled: { control: "boolean" },
     children: { control: "text" },
@@ -185,6 +185,21 @@ export const AllVariantsDisabled: Story = {
       </Button>
     </div>
   ),
+};
+
+export const VariantTeal: Story = {
+  name: "Variant / Teal",
+  args: { variant: "teal", children: "Teal" },
+};
+
+export const VariantSage: Story = {
+  name: "Variant / Sage",
+  args: { variant: "sage", children: "Sage" },
+};
+
+export const SizeXL: Story = {
+  name: "Size / XL",
+  args: { size: "xl", children: "Extra Large" },
 };
 
 export const AsChildLink: Story = {
