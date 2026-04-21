@@ -24,3 +24,7 @@ export { Toggle, type ToggleProps } from "./components/toggle/toggle";
 export { ProgressRing, type ProgressRingProps } from "./components/progress-ring/progress-ring";
 export { Sheet, type SheetProps } from "./components/sheet/sheet";
 export { AppHeader, type AppHeaderProps } from "./components/app-header/app-header";
+export { HuePicker, HUES } from "./components/hue-picker/hue-picker";
+export type { HueName, HuePickerProps } from "./components/hue-picker/hue-picker";
+export { InfoTip } from "./components/info-tip/info-tip";
+export type { InfoTipProps } from "./components/info-tip/info-tip";
