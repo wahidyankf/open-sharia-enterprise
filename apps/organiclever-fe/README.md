@@ -75,11 +75,95 @@ Step implementations are in `test/unit/steps/`.
 
 Coverage threshold: 70% lines (enforced by `rhino-cli test-coverage validate`).
 
+## Design System
+
+`organiclever-fe` uses the OrganicLever (OL) warm OKLCH design system, implemented via
+`@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css` and wired into the app's
+`globals.css`.
+
+### Palette
+
+Six semantic hues with three tints each (base / ink / wash):
+
+| Hue        | Base token         | Role                              |
+| ---------- | ------------------ | --------------------------------- |
+| Terracotta | `--hue-terracotta` | Energy, workout CTAs              |
+| Honey      | `--hue-honey`      | Warning, highlights               |
+| Sage       | `--hue-sage`       | Primary brand, success            |
+| Teal       | `--hue-teal`       | Interactive elements, focus rings |
+| Sky        | `--hue-sky`        | Info, links                       |
+| Plum       | `--hue-plum`       | Accent, premium elements          |
+
+Warm neutral scale: `--warm-0` (near-white `oklch(99% 0.005 80)`) through `--warm-900`
+(near-black). Semantic aliases: `--color-background`, `--color-foreground`,
+`--color-primary` (sage), `--color-card`, etc.
+
+### Typography
+
+| Role                  | Font                     | CSS variable                            |
+| --------------------- | ------------------------ | --------------------------------------- |
+| Body / UI text        | Nunito (400–800)         | `--font-nunito` → `--font-sans`         |
+| Numeric / mono values | JetBrains Mono (400–600) | `--font-jetbrains-mono` → `--font-mono` |
+
+Fonts are self-hosted via `next/font/google` and injected as CSS variables on `<html>` by
+`src/app/layout.tsx`.
+
+### Dark mode
+
+Dark mode activates on **either**:
+
+- `data-theme="dark"` attribute on `<html>` (set via JavaScript)
+- `.dark` CSS class on `<html>` (set via Tailwind dark variant)
+
+Both selectors are handled by `@custom-variant dark` in `ts-ui-tokens`.
+
+### Token import
+
+```css
+/* apps/organiclever-fe/src/app/globals.css */
+@import "tailwindcss";
+@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
+@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
+@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css";
+
+@theme {
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+```
+
+`organiclever.css` is opt-in — other apps (`ayokoding-web`, `oseplatform-web`,
+`wahidyankf-web`) do **not** import it. The warm OKLCH tokens do not affect sibling apps.
+
+### Component library
+
+`@open-sharia-enterprise/ts-ui` components automatically adopt the warm tokens.
+OL-specific variants and new components:
+
+| Component      | OL addition                                                    |
+| -------------- | -------------------------------------------------------------- |
+| `Button`       | `variant="teal"` / `variant="sage"` / `size="xl"` (60 px hero) |
+| `Alert`        | `variant="success"` / `variant="warning"` / `variant="info"`   |
+| `Input`        | 44 px default height (WCAG touch target)                       |
+| `Icon`         | 34-icon inline SVG set (`name="dumbbell"` etc.)                |
+| `Toggle`       | Slide-switch with teal active state                            |
+| `ProgressRing` | Circular SVG progress indicator                                |
+| `Sheet`        | Bottom-anchored modal with slide-up animation                  |
+| `AppHeader`    | Back-button + title + trailing action bar                      |
+| `StatCard`     | Dashboard stat tile with hue icon                              |
+| `InfoTip`      | Contextual help button opening a Sheet                         |
+| `HuePicker`    | 6-hue color swatch row                                         |
+| `TabBar`       | 60 px mobile bottom navigation                                 |
+| `SideNav`      | 220 px desktop side navigation                                 |
+
+See [`libs/ts-ui/README.md`](../../libs/ts-ui/README.md) for the complete component catalog.
+
 ## Tech Stack
 
 - **Next.js 16** — App Router, Server Components
 - **Effect TS** — Typed functional effects for dormant server-side service layer
 - **Tailwind CSS v4** — Utility-first CSS
-- **`@open-sharia-enterprise/ts-ui`** — Shared UI component library
+- **`@open-sharia-enterprise/ts-ui`** — Shared UI component library (OL brand tokens)
+- **`@open-sharia-enterprise/ts-ui-tokens`** — OL warm OKLCH design tokens
 - **Vitest** — Unit tests
 - **TypeScript 5** — Strict mode

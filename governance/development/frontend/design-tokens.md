@@ -184,8 +184,13 @@ Every visual token must have a `.dark` counterpart. Omitting a dark-mode value c
 Register the dark variant in your Tailwind v4 config using:
 
 ```css
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-theme="dark"] *), &:is(.dark *));
 ```
+
+The compound selector supports both the `data-theme="dark"` attribute (set via JavaScript,
+e.g., `document.documentElement.setAttribute('data-theme', 'dark')`) and the `.dark` class
+(set via Tailwind's class-based dark mode). Use whichever pattern your app requires — both
+activate the same dark-mode tokens.
 
 Verify WCAG AA contrast (4.5:1 for text, 3:1 for components) independently in both light and dark modes. Do not assume that a passing light-mode contrast automatically satisfies dark mode.
 
@@ -226,6 +231,100 @@ Reference tokens through Tailwind utility classes, never through raw CSS custom 
 ```
 
 This keeps component code free of CSS property names and ensures the token layer is the single place to change values.
+
+## OKLCH Brand Tokens (OrganicLever)
+
+`organiclever-fe` uses a warm OKLCH palette rather than HSL. OKLCH is the CSS Colors Level 4
+perceptual color space — it provides **perceptually uniform chroma** so that hues at the same
+`L%` and `C` level look equally vivid, unlike HSL where `50% saturation` produces wildly
+different perceived intensity across hues.
+
+### Why OKLCH for OrganicLever
+
+- **Perceptual uniformity** — `oklch(68% 0.10 195)` (teal) and `oklch(68% 0.10 25)`
+  (terracotta) have the same perceived lightness at any chroma value. HSL equivalents drift.
+- **Wide-gamut ready** — OKLCH values outside the sRGB gamut are automatically clamped to
+  display-p3 on P3 screens, with no authored fallback needed for modern browsers.
+- **Design handoff fidelity** — the OL design tokens were authored in OKLCH; roundtripping
+  through HSL introduces rounding error. Keeping OKLCH preserves the designer's intent exactly.
+
+### OL Token Structure
+
+OL brand tokens live in `libs/ts-ui-tokens/src/organiclever.css` (opt-in per-app import).
+
+**Six semantic hues × three tints**:
+
+```css
+:root {
+  /* base — full saturation, reading-legible on white */
+  --hue-teal: oklch(68% 0.1 195);
+  --hue-teal-ink: oklch(38% 0.09 195); /* dark text on wash */
+  --hue-teal-wash: oklch(95% 0.03 195); /* light background tint */
+
+  /* repeated for: terracotta (25°), honey (75°), sage (145°), sky (235°), plum (300°) */
+}
+```
+
+**Warm neutral scale** — `--warm-0` through `--warm-900`, all with hue ~80 (warm cream bias):
+
+```css
+:root {
+  --warm-0: oklch(99% 0.005 80); /* near-white cream */
+  --warm-100: oklch(96% 0.008 80);
+  /* … */
+  --warm-900: oklch(18% 0.01 80); /* near-black warm */
+}
+```
+
+**Semantic overrides** (in `@theme`, reference the `:root` vars above):
+
+```css
+@theme {
+  --color-background: var(--warm-0);
+  --color-foreground: var(--warm-900);
+  --color-primary: var(--hue-sage);
+  --color-ring: var(--hue-teal);
+  --radius-md: 12px; /* OL geometry: rounder than the neutral baseline */
+}
+```
+
+**Dark mode** — in `[data-theme="dark"], .dark { … }`:
+
+```css
+[data-theme="dark"],
+.dark {
+  --warm-0: oklch(22% 0.012 80);
+  --color-card: var(--warm-50); /* must be explicit — @theme hex can't auto-derive */
+  --color-popover: var(--warm-50);
+  --hue-teal: oklch(72% 0.12 195); /* lifted for dark-bg legibility */
+}
+```
+
+### Naming Convention for OKLCH Tokens
+
+- `--hue-{name}` — base hue for backgrounds, icon fills, button bg
+- `--hue-{name}-ink` — text/icon color on a white or wash surface
+- `--hue-{name}-wash` — very light background tint for cards, alert backgrounds
+- `--warm-{0,50,100,…,900}` — neutral scale with warm bias
+- Semantic aliases (`--color-primary`, `--color-ring`) map to hue tokens via `var()`
+
+### Do Not Hardcode OKLCH Literals in Components
+
+Components must reference `var(--hue-teal)`, not the literal `oklch(68% 0.10 195)`.
+The token layer is the single authority for color values.
+
+### Dynamic Hue Backgrounds
+
+When a component's hue is determined at runtime (e.g., `<StatCard hue="terracotta">`),
+Tailwind cannot detect constructed class names at build time. Use inline `style` prop:
+
+```tsx
+/* Correct — resolved at runtime via CSS cascade */
+<div style={{ backgroundColor: `var(--hue-${hue})` }} />
+
+/* Wrong — Tailwind cannot detect template literal class names */
+<div className={`bg-[var(--hue-${hue})]`} />
+```
 
 ## When to Create a New Token
 
