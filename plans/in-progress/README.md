@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [OrganicLever Design System Adoption](./2026-04-21__organiclever-workout-tracker/README.md) —
+- [OrganicLever Design System Adoption](./2026-04-21__organiclever-design-system/README.md) —
   Adopt the `organic-lever` Claude Design handoff into `ts-ui-tokens` + `ts-ui`:
   warm OKLCH tokens, 3 updated components (Button/Alert/Input), 10 new components
   (Icon, Toggle, ProgressRing, Sheet, AppHeader, StatCard, InfoTip, HuePicker, TabBar,
