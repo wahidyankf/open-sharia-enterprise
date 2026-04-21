@@ -45,22 +45,17 @@ reproduced verbatim in `tech-docs.md § Phase 1B`):
 
 ```css
 --hue-terracotta: oklch(68% 0.13 35);
---hue-honey:      oklch(78% 0.13 80);
---hue-sage:       oklch(72% 0.1 145);
---hue-teal:       oklch(68% 0.1 195);
---hue-sky:        oklch(70% 0.1 235);
---hue-plum:       oklch(62% 0.11 310);
---warm-0:         oklch(99% 0.005 80);
+--hue-honey: oklch(78% 0.13 80);
+--hue-sage: oklch(72% 0.1 145);
+--hue-teal: oklch(68% 0.1 195);
+--hue-sky: oklch(70% 0.1 235);
+--hue-plum: oklch(62% 0.11 310);
+--warm-0: oklch(99% 0.005 80);
 ```
 
 These values confirm the warm OKLCH palette, 6 semantic hues, and Nunito typography
 claims in this plan. The complete token CSS is in `tech-docs.md` — the private bundle URL
 is cited for provenance only.
-
-> **Note on folder name**: This plan folder is named `organiclever-workout-tracker` for
-> historical reasons (it was originally conceived as part of the workout tracker project).
-> The active worktree is `organiclever-adopt-design-system` and the plan content covers
-> design system adoption only. The workout tracker screens are a separate follow-on plan.
 
 ## Scope
 

@@ -4,10 +4,10 @@
 
 Before executing any phase, move the plan to in-progress:
 
-- [ ] **S.1** Move plan folder: `git mv plans/backlog/2026-04-21__organiclever-workout-tracker plans/in-progress/2026-04-21__organiclever-workout-tracker`
+- [ ] **S.1** Move plan folder: `git mv plans/backlog/2026-04-21__organiclever-design-system plans/in-progress/2026-04-21__organiclever-design-system`
 - [ ] **S.2** Update `plans/backlog/README.md` — remove this plan entry
 - [ ] **S.3** Update `plans/in-progress/README.md` — add this plan entry
-- [ ] **S.4** Commit and push: `git commit -m "chore(plans): move organiclever-workout-tracker to in-progress" && git push origin main`
+- [ ] **S.4** Commit and push: `git commit -m "chore(plans): move organiclever-design-system to in-progress" && git push origin main`
 
 ---
 
@@ -441,7 +441,7 @@ each section is accurate against the actual implementation before committing.
 - [ ] **16.5.2** Verify `libs/ts-ui/README.md` — confirm the OrganicLever components table
       lists all 10 newly created components with correct prop signatures
 - [ ] **16.5.3** Verify `libs/ts-ui-tokens/README.md` — confirm the `## Per-App Brand Token
-  Files` section and `organiclever.css` entry are accurate
+Files` section and `organiclever.css` entry are accurate
 - [ ] **16.5.4** Verify `governance/development/frontend/design-tokens.md` — confirm the
       `## OKLCH Brand Tokens (OrganicLever)` section and updated `@custom-variant dark`
       example are accurate
@@ -488,10 +488,10 @@ each section is accurate against the actual implementation before committing.
 
 - [ ] **A.1** Verify ALL delivery checklist items are ticked
 - [ ] **A.2** Verify ALL quality gates pass (local + CI)
-- [ ] **A.3** Move plan folder to `plans/done/` via `git mv plans/in-progress/2026-04-21__organiclever-workout-tracker plans/done/2026-04-21__organiclever-workout-tracker`
+- [ ] **A.3** Move plan folder to `plans/done/` via `git mv plans/in-progress/2026-04-21__organiclever-design-system plans/done/2026-04-21__organiclever-design-system`
 - [ ] **A.4** Update `plans/in-progress/README.md` — remove this plan entry
 - [ ] **A.5** Update `plans/done/README.md` — add this plan entry with completion date
-- [ ] **A.6** Commit: `chore(plans): move organiclever-workout-tracker to done`
+- [ ] **A.6** Commit: `chore(plans): move organiclever-design-system to done`
 - [ ] **A.7** Push archival commit: `git push origin main`
 
 ---
