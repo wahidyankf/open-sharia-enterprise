@@ -78,4 +78,34 @@ describe("Button", () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+
+  it("renders with variant teal", () => {
+    render(<Button variant="teal">Click</Button>);
+    const button = screen.getByRole("button", { name: "Click" });
+    expect(button.getAttribute("data-variant")).toBe("teal");
+  });
+
+  it("renders with variant sage", () => {
+    render(<Button variant="sage">Click</Button>);
+    const button = screen.getByRole("button", { name: "Click" });
+    expect(button.getAttribute("data-variant")).toBe("sage");
+  });
+
+  it("renders with size xl", () => {
+    render(<Button size="xl">Click</Button>);
+    const button = screen.getByRole("button", { name: "Click" });
+    expect(button.getAttribute("data-size")).toBe("xl");
+  });
+
+  it("teal variant has no accessibility violations", async () => {
+    const { container } = render(<Button variant="teal">Teal Button</Button>);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it("sage variant has no accessibility violations", async () => {
+    const { container } = render(<Button variant="sage">Sage Button</Button>);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
 });

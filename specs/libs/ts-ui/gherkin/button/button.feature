@@ -78,3 +78,15 @@ Feature: Button component
   Scenario: Has no accessibility violations
     Given the Button is rendered with label "Accessible Button"
     Then the button should have no accessibility violations
+
+  Scenario: Renders variant teal
+    Given I render a Button with variant "teal"
+    Then the button should have data-variant "teal"
+
+  Scenario: Renders variant sage
+    Given I render a Button with variant "sage"
+    Then the button should have data-variant "sage"
+
+  Scenario: Renders size xl
+    Given I render a Button with size "xl"
+    Then the button should have data-size "xl"

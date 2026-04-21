@@ -285,4 +285,50 @@ describeFeature(feature, ({ Scenario }) => {
       expect(results).toHaveNoViolations();
     });
   });
+
+  Scenario("Renders variant teal", ({ Given, Then }) => {
+    let variantValue: string;
+
+    Given('I render a Button with variant "teal"', () => {
+      variantValue = "teal";
+    });
+
+    Then('the button should have data-variant "teal"', () => {
+      cleanup();
+      render(<Button variant={variantValue as "teal"}>{variantValue}</Button>);
+      expect(screen.getByRole("button", { name: variantValue }).getAttribute("data-variant")).toBe(variantValue);
+    });
+  });
+
+  Scenario("Renders variant sage", ({ Given, Then }) => {
+    let variantValue: string;
+
+    Given('I render a Button with variant "sage"', () => {
+      variantValue = "sage";
+    });
+
+    Then('the button should have data-variant "sage"', () => {
+      cleanup();
+      render(<Button variant={variantValue as "sage"}>{variantValue}</Button>);
+      expect(screen.getByRole("button", { name: variantValue }).getAttribute("data-variant")).toBe(variantValue);
+    });
+  });
+
+  Scenario("Renders size xl", ({ Given, Then }) => {
+    let sizeValue: string;
+
+    Given('I render a Button with size "xl"', () => {
+      sizeValue = "xl";
+    });
+
+    Then('the button should have data-size "xl"', () => {
+      cleanup();
+      render(
+        <Button size={sizeValue as "xl"} aria-label={`button-${sizeValue}`}>
+          X
+        </Button>,
+      );
+      expect(screen.getByRole("button", { name: `button-${sizeValue}` }).getAttribute("data-size")).toBe(sizeValue);
+    });
+  });
 });
