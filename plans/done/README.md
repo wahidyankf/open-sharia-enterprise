@@ -4,6 +4,13 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-04-21: OrganicLever Design System Adoption](./2026-04-21__organiclever-design-system/README.md) —
+  Adopted the `organic-lever` Claude Design handoff into `ts-ui-tokens` + `ts-ui`:
+  OL warm OKLCH tokens (6 hues × 3 tints, warm neutral scale, data-theme dark variant), 3 updated
+  components (Button +teal/sage/xl, Alert +success/warning/info, Input +44px), 10 new OL components
+  (Icon, Toggle, ProgressRing, Sheet, AppHeader, StatCard, InfoTip, HuePicker, TabBar, SideNav),
+  Nunito/JetBrains Mono typography wired into `organiclever-fe`. 314 tests, 97.02% coverage.
+  CI green. (Completed: 2026-04-22)
 - [2026-04-16: OrganicLever FE Local-First](./2026-04-16__organiclever-fe-local-first/README.md) — Pivot `organiclever-fe` to local-first mode: remove BFF auth routes, add static landing page, add `/system/status/be` diagnostic page probing `ORGANICLEVER_BE_URL` at request time with graceful Not-configured/UP/DOWN states. Dormant BE integration code preserved. WCAG AA contrast, health path corrected to `/api/v1/health`, CI e2e env-sensitive scenarios skipped. All BRD metrics verified on production. (Completed: 2026-04-21)
 - [2026-04-19: Remove Codecov](./2026-04-19__remove-codecov/README.md) — Remove Codecov infrastructure (codecov.yml, codecov-upload.yml workflow, CODECOV_TOKEN secrets) and all references from README, docs, governance, specs C4 diagrams, rhino-cli source/README, and ayokoding-web in-the-field guides. Replace "Codecov's algorithm" with "standard line-based algorithm" throughout. Pre-existing ayokoding-web index regeneration fix included. All 8 thematic commits clean; local quality gates pass. (Completed: 2026-04-20)
 - [2026-04-19: Agent Model Selection Standardization](./2026-04-19__agent-model-selection-standardization/README.md) — Standardize AI agent model tier assignments with budget-adaptive opus-inherit behavior (omit = inherit session model), benchmark reference doc (`docs/reference/ai-model-benchmarks.md`) with cited SWE-bench scores for all 5 models, 8 agent tier corrections (7 OMIT→SONNET, 1 SONNET→HAIKU), benchmark citations in model-selection.md and all haiku/changed agents, OCD-level governance consistency pass fixing wahidyankf-web adoption gaps across 40+ files. validate:claude 1029/1029, validate:sync 109/109, rhino-cli test:quick 90.07%. (Completed: 2026-04-19)
