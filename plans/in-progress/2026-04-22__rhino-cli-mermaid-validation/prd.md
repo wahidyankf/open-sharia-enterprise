@@ -1,5 +1,68 @@
 # PRD: Mermaid Diagram Validation
 
+## Product Overview
+
+This product addition extends `rhino-cli` with a `docs validate-mermaid` sub-command that
+enforces three structural rules on Mermaid flowchart diagrams embedded in markdown files.
+The command is integrated into the pre-push hook so only changed `.md` files are checked
+during each push, keeping the gate fast. It also supports `--staged-only` for manual
+pre-commit invocation and direct path arguments for targeted validation.
+
+## Personas
+
+| Persona                    | Description                                                                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Documentation Author       | Writes markdown with embedded Mermaid diagrams; pushes to `main`; wants immediate feedback on diagrams before they render badly in GitHub or Hugo/Hextra |
+| rhino-cli Consumer         | Invokes `rhino-cli docs validate-mermaid` directly from the command line for targeted validation of specific files or directories                        |
+| Pre-push / Pre-commit Hook | Automated invocation via `.husky/pre-push` (with `--changed-only`) or manually via pre-commit (with `--staged-only`) — needs fast, reliable exit codes   |
+| Plan Executor Agent        | Runs the delivery checklist steps; invokes the CLI commands and quality gates as specified in this plan                                                  |
+
+## User Stories
+
+**Story 1 — Documentation Author**
+
+As a documentation author,
+I want to receive immediate feedback when a Mermaid flowchart diagram in my markdown
+file has a label that is too long, a rank that is too wide, or contains two diagrams in
+one block,
+so that I can fix the issue before it renders badly on GitHub or the production website.
+
+**Story 2 — CI / Pre-push Hook Consumer**
+
+As the pre-push hook,
+I want to validate only the markdown files changed in the current push range using the
+`--changed-only` flag,
+so that the gate is fast and only relevant files are checked without slowing down every push.
+
+## Product Scope
+
+### In Scope
+
+- CLI sub-command `rhino-cli docs validate-mermaid` with three enforced rules:
+  Rule 1 (label length), Rule 2 (max parallel rank width), Rule 3 (single diagram per block)
+- Configurable thresholds via `--max-label-len` and `--max-width` flags
+- Three output formats: text (default), JSON (`-o json`), markdown (`-o markdown`)
+- Selective file scanning: `--staged-only`, `--changed-only`, positional path arguments
+- Integration into `.husky/pre-push` via `--changed-only`
+- Nx target `validate:mermaid` for direct invocation
+- Both `flowchart` and `graph` keyword aliases supported
+
+### Out of Scope
+
+- Auto-fixing diagram violations (validator reports only)
+- Validating non-flowchart Mermaid types (sequenceDiagram, classDiagram, gantt, etc.)
+- Validating Mermaid syntax correctness beyond the three structural rules
+- Edge-weight labels or link text length validation
+- Automatic pre-commit hook wiring (flag available for manual/future use)
+
+## Product Risks
+
+| Risk                                 | Description                                                                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| False negatives for new shapes       | Custom regex parser may not detect labels in new Mermaid node shapes added in future versions, causing silent false negatives   |
+| Unexpected `--changed-only` fallback | When no upstream is set (`@{u}` fails), `--changed-only` silently falls back to full scan; callers may not expect this behavior |
+| JSON schema forward-compatibility    | The JSON output schema adds a surface area that consumers may depend on; future schema changes risk breaking downstream tools   |
+
 ## Command API
 
 ```
@@ -112,9 +175,10 @@ Feature: Mermaid Flowchart Structural Validation
     And the output identifies the file and block with multiple diagrams
 
   Scenario: A mermaid block using the graph keyword alias is validated identically
-    Given a markdown file containing a mermaid block using the graph keyword instead of flowchart
+    Given a markdown file containing a mermaid block using the graph keyword instead of flowchart with no violations
     When the developer runs docs validate-mermaid
-    Then the command validates it using the same three rules
+    Then the command exits successfully
+    And the output reports no violations
 
   # ── Non-flowchart blocks ─────────────────────────────────────────────────
 
@@ -149,6 +213,23 @@ Feature: Mermaid Flowchart Structural Validation
     When the developer runs docs validate-mermaid with -o json
     Then the output is valid JSON
     And the JSON contains the violation kind, file path, block index, and node id
+
+  Scenario: Markdown output produces a formatted table
+    Given a markdown file containing a flowchart with a label length violation
+    When the developer runs docs validate-mermaid with -o markdown
+    Then the output contains a table with File, Block, Line, Kind, and Detail columns
+
+  Scenario: Verbose flag includes per-file detail in text output
+    Given a markdown file containing a flowchart with no violations
+    When the developer runs docs validate-mermaid with --verbose
+    Then the command exits successfully
+    And the output includes per-file scan detail lines
+
+  Scenario: Quiet flag suppresses non-error output when there are no violations
+    Given a markdown file containing a flowchart with no violations
+    When the developer runs docs validate-mermaid with --quiet
+    Then the command exits successfully
+    And the output contains no text
 ```
 
 ---
