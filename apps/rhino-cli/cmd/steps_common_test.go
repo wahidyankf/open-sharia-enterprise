@@ -178,6 +178,49 @@ const (
 	stepExcludedFilesDoNotAffectDiffResult             = `^the excluded files do not affect the diff coverage result$`
 )
 
+// Docs validate-mermaid step patterns.
+const (
+	stepMermaidFileCleanFlowchart                      = `^a markdown file containing a flowchart where every node label is within the limit$`
+	stepMermaidFileLabelTooLong                        = `^a markdown file containing a flowchart with a node label longer than the limit$`
+	stepMermaidFileNodeLabel35Chars                    = `^a markdown file containing a flowchart with a node label of 35 characters$`
+	stepMermaidFileTBChainedSequentially               = `^a markdown file containing a TB flowchart with 10 nodes chained sequentially$`
+	stepMermaidFileTBNoRankMoreThan3                   = `^a markdown file containing a TB flowchart where no rank has more than 3 nodes$`
+	stepMermaidFileTBOneRank4Nodes                     = `^a markdown file containing a TB flowchart where one rank has 4 parallel nodes$`
+	stepMermaidFileLRNoRankMoreThan3                   = `^a markdown file containing an LR flowchart where no rank has more than 3 nodes$`
+	stepMermaidFileLR4NodesSameDepth                   = `^a markdown file containing an LR flowchart where one rank has 4 nodes at the same depth$`
+	stepMermaidFileFlowchart4NodesOneRank              = `^a markdown file containing a flowchart with 4 nodes at one rank$`
+	stepMermaidFile4NodesMoreThan5Ranks                = `^a markdown file containing a flowchart with 4 nodes at one rank and more than 5 ranks deep$`
+	stepMermaidFile4NodesExactly4RanksDeep             = `^a markdown file containing a flowchart with 4 nodes at one rank and exactly 4 ranks deep$`
+	stepMermaidFileSingleFlowchart                     = `^a markdown file containing a mermaid code block with exactly one flowchart diagram$`
+	stepMermaidFileTwoFlowchartDeclarations            = `^a markdown file containing a mermaid code block with two flowchart declarations$`
+	stepMermaidFileGraphKeywordNoViolations            = `^a markdown file containing a mermaid block using the graph keyword instead of flowchart with no violations$`
+	stepMermaidFileOnlyNonFlowchart                    = `^a markdown file containing only sequenceDiagram and classDiagram mermaid blocks$`
+	stepMermaidFileNoMermaidBlocks                     = `^a markdown file containing no mermaid code blocks$`
+	stepMermaidViolationNotStagedInGit                 = `^a markdown file with a mermaid violation that has not been staged in git$`
+	stepMermaidViolationNotInPushRange                 = `^a markdown file with a mermaid violation that is not in the push range$`
+	stepMermaidFileLabelLengthViolation                = `^a markdown file containing a flowchart with a label length violation$`
+	stepMermaidFileNoViolations                        = `^a markdown file containing a flowchart with no violations$`
+	stepDeveloperRunsDocsValidateMermaid               = `^the developer runs docs validate-mermaid$`
+	stepDeveloperRunsDocsValidateMermaidMaxLabelLen40  = `^the developer runs docs validate-mermaid with --max-label-len 40$`
+	stepDeveloperRunsDocsValidateMermaidMaxWidth5      = `^the developer runs docs validate-mermaid with --max-width 5$`
+	stepDeveloperRunsDocsValidateMermaidMaxDepth3      = `^the developer runs docs validate-mermaid with --max-depth 3$`
+	stepDeveloperRunsDocsValidateMermaidStagedOnly     = `^the developer runs docs validate-mermaid with the --staged-only flag$`
+	stepDeveloperRunsDocsValidateMermaidChangedOnly    = `^the developer runs docs validate-mermaid with the --changed-only flag$`
+	stepDeveloperRunsDocsValidateMermaidJSONOutput     = `^the developer runs docs validate-mermaid with -o json$`
+	stepDeveloperRunsDocsValidateMermaidMarkdownOutput = `^the developer runs docs validate-mermaid with -o markdown$`
+	stepDeveloperRunsDocsValidateMermaidVerbose        = `^the developer runs docs validate-mermaid with --verbose$`
+	stepDeveloperRunsDocsValidateMermaidQuiet          = `^the developer runs docs validate-mermaid with --quiet$`
+	stepMermaidOutputNoViolations                      = `^the output reports no violations$`
+	stepMermaidOutputIdentifiesOversizedLabel          = `^the output identifies the file, block, and node with the oversized label$`
+	stepMermaidOutputIdentifiesExcessiveWidth          = `^the output identifies the file and block with the excessive width$`
+	stepMermaidOutputIdentifiesMultipleDiagrams        = `^the output identifies the file and block with multiple diagrams$`
+	stepMermaidOutputContainsWarning                   = `^the output contains a warning about diagram complexity$`
+	stepMermaidJSONContainsViolationFields             = `^the JSON contains the violation kind, file path, block index, and node id$`
+	stepMermaidOutputContainsTable                     = `^the output contains a table with File, Block, Line, Severity, Kind, and Detail columns$`
+	stepMermaidOutputIncludesPerFileDetail             = `^the output includes per-file scan detail lines$`
+	stepMermaidOutputContainsNoText                    = `^the output contains no text$`
+)
+
 // Git pre-commit step patterns.
 const (
 	stepDeveloperIsOutsideGitRepository     = `^the developer is outside a git repository$`
