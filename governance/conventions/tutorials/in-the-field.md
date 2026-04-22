@@ -1005,7 +1005,7 @@ stateDiagram-v2
     class Red redState
     class Green greenState
     class Refactor refactorState
-````
+```
 
 **Example 2a: Authentication Flow - Standard Library (Basic Auth)**
 
@@ -1029,18 +1029,20 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    B1[Client] -->|1. Username + Password| B2[Auth Server]
-    B2 -->|2. Validates once| B3[Database]
-    B3 -->|3. User found| B2
-    B2 -->|4. JWT token<br/>signed time-limited| B1
-    B1 -->|5. JWT in header| B4[App Server]
-    B4 -->|6. Verifies signature<br/>no DB hit| B4
-    B4 -->|7. Protected resource| B1
+    B1[Client] -- credentials --> B2[Auth Server]
+    B2 -- validates --> B3[Database]
+    B3 -- user found --> B4[Auth Server: JWT]
+    B4 -- JWT token --> B5[Client: JWT]
+    B5 -- JWT in header --> B6[App Server]
+    B6 -- verify + respond --> B7[Protected Resource]
 
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
     style B3 fill:#DE8F05,stroke:#000,color:#fff
     style B4 fill:#DE8F05,stroke:#000,color:#fff
+    style B5 fill:#DE8F05,stroke:#000,color:#fff
+    style B6 fill:#DE8F05,stroke:#000,color:#fff
+    style B7 fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Improvement**: Single database query during login, subsequent requests use cryptographic verification (fast, stateless).
@@ -1110,23 +1112,19 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    C1[Application] -->|entityManager.find| C2[L1 Cache<br/>EntityManager]
-    C2 -->|Cache miss| C3[L2 Cache<br/>SessionFactory]
-    C3 -->|Cache miss| C4[HikariCP Pool]
-    C4 -->|SQL query| C5[Database]
-    C5 -->|ResultSet| C4
-    C4 -->|Automatic mapping| C3
-    C3 -->|Cache entity| C2
-    C2 -->|Return User object| C1
-
-    note1[Subsequent find calls<br/>hit L1 cache<br/>no database query]
-    C2 -.-> note1
+    C1[Application] -- entityManager.find --> C2[L1 Cache<br/>EntityManager]
+    C2 -- Cache miss --> C3[L2 Cache<br/>SessionFactory]
+    C3 -- Cache miss --> C4[HikariCP Pool]
+    C4 -- SQL query --> C5[Database]
+    C5 -- ResultSet --> C6[Return Object]
+    C2 -.-> note1[L1 hit: no DB query]
 
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
     style C4 fill:#029E73,stroke:#000,color:#fff
     style C5 fill:#029E73,stroke:#000,color:#fff
+    style C6 fill:#029E73,stroke:#000,color:#fff
     style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
@@ -1137,15 +1135,16 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    A1[Build with javac] -->|Compile .java to .class| A2[JAR file]
-    A2 -->|java -jar app.jar| A3[JVM Process]
-    A3 -->|Listens on port 8080| A4[Host Machine]
-    A4 -->|Shared dependencies<br/>version conflicts| A3
+    A1[Build with javac] -- Compile .java --> A2[JAR file]
+    A2 -- java -jar app.jar --> A3[JVM Process]
+    A3 -- Listens port 8080 --> A4[Host Machine]
+    A4 -- Shared deps conflicts --> A5[Version Issues]
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
     style A3 fill:#0173B2,stroke:#000,color:#fff
     style A4 fill:#0173B2,stroke:#000,color:#fff
+    style A5 fill:#0173B2,stroke:#000,color:#fff
 ```
 
 **Limitation**: Dependency conflicts on host machine, manual deployment, no isolation.
@@ -1155,11 +1154,11 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    B1[Build with Maven] -->|mvn clean package| B2[JAR file]
-    B2 -->|Copy to Dockerfile| B3[Dockerfile]
-    B3 -->|docker build| B4[Docker Image<br/>JRE + JAR + deps]
-    B4 -->|docker run -p 8080:8080| B5[Container Process]
-    B5 -->|Isolated filesystem<br/>network namespace| B6[Container Runtime]
+    B1[Build with Maven] -- mvn clean package --> B2[JAR file]
+    B2 -- Copy to Dockerfile --> B3[Dockerfile]
+    B3 -- docker build --> B4[Docker Image<br/>JRE + JAR + deps]
+    B4 -- docker run --> B5[Container Process]
+    B5 -- Isolated namespace --> B6[Container Runtime]
 
     style B1 fill:#DE8F05,stroke:#000,color:#fff
     style B2 fill:#DE8F05,stroke:#000,color:#fff
@@ -1176,23 +1175,17 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    C1[CI/CD Pipeline] -->|Build & push image| C2[Container Registry<br/>ECR/Docker Hub]
-    C2 -->|kubectl apply| C3[Deployment<br/>3 replicas]
-    C3 -->|Creates| C4[Pod 1]
-    C3 -->|Creates| C5[Pod 2]
-    C3 -->|Creates| C6[Pod 3]
-    C4 & C5 & C6 -->|Load balanced| C7[Service<br/>ClusterIP]
-    C7 -->|External traffic| C8[Ingress<br/>HTTPS endpoint]
-
-    note1[Auto-scaling<br/>Rolling updates<br/>Health checks<br/>Self-healing]
-    C3 -.-> note1
+    C1[CI/CD Pipeline] -- push image --> C2[Container Registry]
+    C2 -- kubectl apply --> C3[Deployment<br/>3 replicas]
+    C3 -- creates --> C4[Pod 1]
+    C4 -- load balanced --> C7[Service<br/>ClusterIP]
+    C7 -- external traffic --> C8[Ingress<br/>HTTPS endpoint]
+    C3 -.-> note1[Auto-scaling<br/>Self-healing]
 
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
     style C4 fill:#029E73,stroke:#000,color:#fff
-    style C5 fill:#029E73,stroke:#000,color:#fff
-    style C6 fill:#029E73,stroke:#000,color:#fff
     style C7 fill:#029E73,stroke:#000,color:#fff
     style C8 fill:#029E73,stroke:#000,color:#fff
     style note1 fill:#CC78BC,stroke:#000,color:#fff
@@ -1205,24 +1198,19 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    A[Developer commits] -->|git push| B[Source Control<br/>GitHub/GitLab]
-    B -->|Webhook triggers| C[CI Server<br/>Jenkins/GitHub Actions]
-
-    C -->|Stage 1| D[Compile & Build<br/>mvn clean package]
-    D -->|Stage 2| E[Run Tests<br/>mvn test]
-    E -->|Stage 3| F[Quality Gates<br/>SonarQube/Checkstyle]
-    F -->|Stage 4| G[Build Docker Image<br/>docker build]
-    G -->|Stage 5| H[Push to Registry<br/>ECR/Docker Hub]
-
-    H -->|Deployment| I[Deploy to Staging<br/>kubectl apply]
-    I -->|Integration Tests| J[Smoke Tests<br/>Postman/Newman]
-    J -->|Manual Approval| K[Deploy to Production<br/>Blue-Green]
-
-    K -->|Rollout| L[Load Balancer<br/>Route traffic]
-    L -->|Monitoring| M[Observability<br/>Prometheus/Grafana]
-
-    note1[Rollback on failure<br/>to previous version]
-    M -.-> note1
+    A[Developer commits] -- git push --> B[Source Control<br/>GitHub/GitLab]
+    B -- webhook --> C[CI Server<br/>Jenkins/GitHub Actions]
+    C -- Stage 1 --> D[Compile & Build]
+    D -- Stage 2 --> E[Run Tests]
+    E -- Stage 3 --> F[Quality Gates]
+    F -- Stage 4 --> G[Build Docker Image]
+    G -- Stage 5 --> H[Push to Registry]
+    H -- deploy --> I[Deploy to Staging]
+    I -- smoke tests --> J[Manual Approval]
+    J -- approved --> K[Deploy to Production]
+    K -- rollout --> L[Load Balancer]
+    L -- monitoring --> M[Observability]
+    M -.-> note1[Rollback on failure]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#0173B2,stroke:#000,color:#fff
@@ -1245,13 +1233,11 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    A1[Producer 1] -->|Send message| A2[Queue<br/>OrderQueue]
-    A3[Producer 2] -->|Send message| A2
-    A2 -->|Consume once| A4[Consumer 1]
-    A2 -->|Waits for Consumer 1| A5[Consumer 2]
-
-    note1[Message deleted<br/>after processing<br/>Single consumer gets message]
-    A4 -.-> note1
+    A1[Producer 1] -- send message --> A2[Queue<br/>OrderQueue]
+    A3[Producer 2] -- send message --> A2
+    A2 -- consume once --> A4[Consumer 1]
+    A2 -- waits --> A5[Consumer 2]
+    A4 -.-> note1[Message deleted<br/>after processing]
 
     style A1 fill:#0173B2,stroke:#000,color:#fff
     style A2 fill:#0173B2,stroke:#000,color:#fff
@@ -1293,31 +1279,26 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
-    C1[Producer] -->|Key-based routing<br/>orderId % 3| C2[Topic: Orders<br/>Partition 0]
-    C1 -->|Key-based routing<br/>orderId % 3| C3[Topic: Orders<br/>Partition 1]
-    C1 -->|Key-based routing<br/>orderId % 3| C4[Topic: Orders<br/>Partition 2]
-    C2 -->|Assigned to| C5[Consumer 1]
-    C3 -->|Assigned to| C6[Consumer 2]
-    C4 -->|Assigned to| C7[Consumer 3]
-    C5 & C6 & C7 -->|Part of| C8[Consumer Group]
-
-    note1[Parallel processing<br/>Order preserved<br/>within partition]
-    C2 -.-> note1
+    C1[Producer] -- key routing --> C2[Partition 0]
+    C1 -- key routing --> C3[Partition 1]
+    C2 -- assigned --> C5[Consumer 1]
+    C3 -- assigned --> C6[Consumer 2]
+    C5 -- part of --> C8[Consumer Group]
+    C6 -- part of --> C8
+    C2 -.-> note1[Parallel processing<br/>Order within partition]
 
     style C1 fill:#029E73,stroke:#000,color:#fff
     style C2 fill:#029E73,stroke:#000,color:#fff
     style C3 fill:#029E73,stroke:#000,color:#fff
-    style C4 fill:#029E73,stroke:#000,color:#fff
     style C5 fill:#029E73,stroke:#000,color:#fff
     style C6 fill:#029E73,stroke:#000,color:#fff
-    style C7 fill:#029E73,stroke:#000,color:#fff
     style C8 fill:#029E73,stroke:#000,color:#fff
     style note1 fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Production benefit**: Parallel processing with ordering guarantees within partition, horizontal scalability.
 
-`````
+````
 
 ### Part 5: Production Patterns and Best Practices
 
@@ -1356,7 +1337,7 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
     assertEquals(Money.of(80), target.balance());
 }
 ```
-`````
+````
 
 ### Test Naming Conventions
 

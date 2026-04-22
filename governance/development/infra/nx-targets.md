@@ -29,12 +29,10 @@ flowchart TD
     A[Developer pushes code] --> B[Pre-push hook]
     B --> C["typecheck<br/>nx affected -t typecheck"]
     B --> D["lint<br/>nx affected -t lint"]
-    B --> E["test:quick<br/>nx affected -t test:quick"]
-    B --> SC["spec-coverage<br/>nx affected -t spec-coverage"]
-    C --> F{All pass?}
-    D --> F
-    E --> F
-    SC --> F
+    C --> E["test:quick<br/>nx affected -t test:quick"]
+    D --> E
+    E --> SC["spec-coverage<br/>nx affected -t spec-coverage"]
+    SC --> F{All pass?}
     F -- No --> G[Push blocked]
     F -- Yes --> H[Push succeeds]
 
@@ -70,7 +68,7 @@ flowchart TD
 
     J[On demand / CI matrix] --> K[test:unit]
     J --> L[test:integration]
-    J --> M[test:e2e]
+    L --> M[test:e2e]
 
     style H2 fill:#0173B2,color:#fff
     style I2 fill:#CA9161,color:#fff
