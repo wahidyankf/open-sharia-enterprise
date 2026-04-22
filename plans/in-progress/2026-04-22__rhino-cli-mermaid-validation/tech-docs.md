@@ -74,6 +74,24 @@ type ParsedDiagram struct {
     Edges     []Edge
 }
 
+type WarningKind string
+
+const (
+    WarningComplexDiagram WarningKind = "complex_diagram"
+)
+
+// Warning is non-blocking (exit 0). Emitted when BOTH span > MaxWidth AND depth > MaxDepth.
+type Warning struct {
+    Kind        WarningKind
+    FilePath    string
+    BlockIndex  int
+    StartLine   int
+    ActualWidth int
+    ActualDepth int
+    MaxWidth    int
+    MaxDepth    int
+}
+
 type Violation struct {
     Kind        ViolationKind
     FilePath    string
@@ -88,9 +106,10 @@ type Violation struct {
 }
 
 type ValidationResult struct {
-    FilesScanned int
+    FilesScanned  int
     BlocksScanned int
-    Violations   []Violation
+    Violations    []Violation
+    Warnings      []Warning // non-blocking; exit 0 even when non-empty
 }
 ````
 
@@ -146,7 +165,10 @@ only returns parsed data and the count.
 If count > 1 → `ValidateBlocks` emits `ViolationMultipleDiagrams`; still parses first
 diagram for Rules 1 and 2.
 
-If count == 0 → block is not a flowchart; skip all validation (non-flowchart mermaid).
+If count == 0 → block is not a flowchart (`sequenceDiagram`, `classDiagram`, `gantt`,
+`gitGraph`, `pie`, `mindmap`, etc.); **skip all validation**. These types are outside
+scope and must never be flagged. The validator passes them silently — no violation, no
+warning, no output line for that block.
 
 ### Step 2 — Extract direction
 
@@ -223,7 +245,13 @@ identically for all five direction keywords.
 
 ```
 Input:  nodes []Node, edges []Edge
-Output: maxWidth int
+Output: maxWidth int  (MaxWidth)
+        depth    int  (Depth — number of distinct rank values, i.e. longest path + 1)
+
+Two exported functions share the same rank-assignment core:
+  MaxWidth(nodes []Node, edges []Edge) int — returns max(len(rank-group))
+  Depth(nodes []Node, edges []Edge) int    — returns len(distinct-rank-values)
+Both call an unexported rankAssign helper to avoid duplicate logic.
 
 Algorithm (longest-path rank assignment on DAG):
 
@@ -265,6 +293,7 @@ passes Rule 2 regardless of its length. Only the perpendicular span is checked.
 type ValidateOptions struct {
     MaxLabelLen int // default 30 — tied to Mermaid wrappingWidth:200px at 16px font (~28–30 chars)
     MaxWidth    int // default 3
+    MaxDepth    int // default 5 — used only in the both-exceeded warning path
 }
 
 func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResult
@@ -279,8 +308,15 @@ For each block:
    emits this violation, not the parser. The parser only returns the count.)
 3. **Rule 1**: for each node, if `len([]rune(node.Label)) > opts.MaxLabelLen` →
    emit `ViolationLabelTooLong`.
-4. **Rule 2**: call `graph.MaxWidth(diagram.Nodes, diagram.Edges)`. If result >
-   `opts.MaxWidth` → emit `ViolationWidthExceeded`.
+4. **Rule 2**:
+   - Compute `span = graph.MaxWidth(diagram.Nodes, diagram.Edges)`
+   - Compute `depth = graph.Depth(diagram.Nodes, diagram.Edges)`
+   - If `span > opts.MaxWidth && depth > opts.MaxDepth` →
+     emit `Warning{Kind: WarningComplexDiagram, ActualWidth: span, ActualDepth: depth, ...}`
+     (non-blocking; exit 0).
+   - Else if `span > opts.MaxWidth` →
+     emit `ViolationWidthExceeded` (blocking; exit 1).
+   - Depth alone exceeding `opts.MaxDepth` produces no output.
 
 ---
 
@@ -293,9 +329,12 @@ For each block:
 ✗  docs/explanation/architecture.md — 3 blocks, 2 violations
      Block 1 (line 42): label_too_long — node "A" label "Deploy to production Kubernetes" (31 chars, max 30)
      Block 2 (line 87): width_exceeded — max width 5, limit 3
+⚠  docs/explanation/big-overview.md — 1 block, 1 warning
+     Block 0 (line 10): complex_diagram — width 4 (limit 3) and depth 7 (limit 5); consider simplifying
 ```
 
-Summary line: `Found N violation(s) in M file(s) (K block(s) scanned).`
+Summary line: `Found N violation(s) and W warning(s) in M file(s) (K block(s) scanned).`
+When W > 0 and N == 0, command exits 0 but prints the warning lines.
 
 ### JSON
 
@@ -314,17 +353,34 @@ Summary line: `Found N violation(s) in M file(s) (K block(s) scanned).`
       "labelLen": 31,
       "maxLabelLen": 30
     }
+  ],
+  "warnings": [
+    {
+      "kind": "complex_diagram",
+      "filePath": "docs/explanation/big-overview.md",
+      "blockIndex": 0,
+      "startLine": 10,
+      "actualWidth": 4,
+      "actualDepth": 7,
+      "maxWidth": 3,
+      "maxDepth": 5
+    }
   ]
 }
 ```
 
 ### Markdown
 
-Table with columns: File | Block | Line | Kind | Detail.
+Table with columns: File | Block | Line | Severity | Kind | Detail.
+Severity column is `error` for violations, `warning` for warnings.
 
 ---
 
 ## Command (`cmd/docs_validate_mermaid.go`)
+
+**The command is read-only.** It opens files for reading only and never modifies any file
+under any code path. `ValidateBlocks` is a pure function: it returns a `ValidationResult`
+with no side effects. The command writes only to `cmd.OutOrStdout()` / `cmd.OutOrStderr()`.
 
 The testable function variable `docsValidateMermaidFn` is declared in `cmd/testable.go`
 (alongside `docsValidateAllLinksFn` and other internal-package delegations), consistent
@@ -336,6 +392,7 @@ var (
     validateMermaidChangedOnly bool
     validateMermaidMaxLabelLen int
     validateMermaidMaxWidth    int
+    validateMermaidMaxDepth    int
 )
 
 var validateMermaidCmd = &cobra.Command{
@@ -355,6 +412,8 @@ func init() {
         "max characters in a node label (default 30 ≈ Mermaid wrappingWidth:200px at 16px font)")
     validateMermaidCmd.Flags().IntVar(&validateMermaidMaxWidth, "max-width", 3,
         "max nodes at the same rank")
+    validateMermaidCmd.Flags().IntVar(&validateMermaidMaxDepth, "max-depth", 5,
+        "depth threshold for the both-exceeded warning: when span>max-width AND depth>max-depth, emit warning not error")
 }
 ```
 
@@ -456,10 +515,28 @@ Three-level standard (matching all other rhino-cli commands):
 ### Key unit test cases for `graph.go`
 
 ```
-Linear chain A→B→C          → maxWidth = 1
-Fan-out A→B, A→C, A→D       → maxWidth = 3 (B,C,D all rank 1)
-Fan-out A→B, A→C, A→D, A→E  → maxWidth = 4
-Diamond A→B, A→C, B→D, C→D  → maxWidth = 2 (B,C both rank 1)
-Disconnected nodes           → rank 0, counted in rank-0 group
-Cycle A→B→A                  → fallback rank 0 for both
+MaxWidth:
+  Linear chain A→B→C          → maxWidth = 1
+  Fan-out A→B, A→C, A→D       → maxWidth = 3 (B,C,D all rank 1)
+  Fan-out A→B, A→C, A→D, A→E  → maxWidth = 4
+  Diamond A→B, A→C, B→D, C→D  → maxWidth = 2 (B,C both rank 1)
+  Disconnected nodes           → rank 0, counted in rank-0 group
+  Cycle A→B→A                  → fallback rank 0 for both
+
+Depth:
+  Empty graph                  → depth = 0
+  Single node, no edges        → depth = 1 (one rank: rank 0)
+  Linear chain A→B→C           → depth = 3 (ranks 0, 1, 2)
+  Fan-out A→B, A→C, A→D        → depth = 2 (ranks 0, 1)
+  Diamond A→B, A→C, B→D, C→D  → depth = 3 (ranks 0, 1, 2)
+  Cycle A→B→A                  → depth = 1 (both rank 0 after fallback)
+```
+
+### Key unit test cases for `validator.go` (warning path)
+
+```
+span=4, depth=6, max-width=3, max-depth=5 → Warning{WarningComplexDiagram}; no Violation
+span=4, depth=4, max-width=3, max-depth=5 → Violation{ViolationWidthExceeded}; no Warning
+span=2, depth=6, max-width=3, max-depth=5 → no Warning, no Violation (depth alone ignored)
+span=4, depth=4, max-width=3, max-depth=3 → Warning (depth=4 > max-depth=3, span=4 > max-width=3)
 ```

@@ -17,8 +17,11 @@ Mermaid flowchart diagrams in repository markdown files degrade silently:
    rank (e.g., 6 nodes at rank 2 in a TB diagram) compress each node so small that the
    diagram is illegible at normal viewing sizes. A maximum of 3 parallel nodes per rank
    keeps diagrams readable at standard document widths. **The sequential depth (chain
-   length along the primary flow axis) is not limited** — authors can have as many
-   sequential steps as needed.
+   length along the primary flow axis) is not independently limited** — authors can have
+   as many sequential steps as needed. However, a diagram that is _both_ too wide AND too
+   deep is an intentionally complex architectural overview with no single clear fix; the
+   validator emits a non-blocking **warning** in that case (both span > `--max-width` AND
+   depth > `--max-depth`) so authors are advised to simplify without being blocked.
 
 3. **Accidental multi-diagram blocks**: A second `flowchart`/`graph` keyword inside the
    same fenced code block produces undefined parser behavior (some renderers silently
@@ -63,7 +66,12 @@ the documentation author's workflow.
 
 ## Out of Scope
 
-- Fixing diagram violations automatically (validator reports only; no auto-fix).
-- Validating non-flowchart Mermaid diagram types (sequenceDiagram, classDiagram, etc.).
+- **Auto-fixing**: The command is a read-only checker. It reads files and reports
+  conformance. It never modifies any file. Auto-fixing is out of scope for all versions.
+- **Other Mermaid diagram types**: `sequenceDiagram`, `classDiagram`, `gantt`, `gitGraph`,
+  `pie`, `mindmap`, `timeline`, and all other non-flowchart Mermaid types are silently ignored —
+  they pass through the validator without any checks. This is a hard design constraint.
 - Validating Mermaid syntax correctness beyond the three structural rules.
 - Edge-weight labels / link text length validation.
+- Independent enforcement of depth alone: depth > `--max-depth` with no width violation
+  does not produce a warning or error.
