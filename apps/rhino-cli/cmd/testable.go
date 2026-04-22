@@ -8,6 +8,7 @@ import (
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/doctor"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/envbackup"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/git"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/mermaid"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/speccoverage"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/testcoverage"
 )
@@ -63,3 +64,15 @@ var confirmFn = envbackup.DefaultConfirmFn
 // git pre-commit command delegation.
 var gitRunFn = git.Run
 var gitDefaultDepsFn = git.DefaultDeps
+
+// docs validate-mermaid command delegation.
+var docsValidateMermaidFn = mermaid.ValidateBlocks
+
+// readFileFn is a variable for dependency injection of os.ReadFile in tests.
+var readFileFn = os.ReadFile
+
+// getMermaidStagedFilesFn is injectable for unit tests (avoids real git call).
+var getMermaidStagedFilesFn = getMermaidStagedFiles
+
+// getMermaidChangedFilesFn is injectable for unit tests (avoids real git call).
+var getMermaidChangedFilesFn = getMermaidChangedFiles
