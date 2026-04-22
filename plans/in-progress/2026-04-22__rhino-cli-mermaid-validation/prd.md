@@ -74,23 +74,24 @@ and repo root `*.md`.
 
 ### Flags
 
-| Flag                | Default | Description                                                |
-| ------------------- | ------- | ---------------------------------------------------------- |
-| `--staged-only`     | false   | Only validate files staged in git (pre-commit use)         |
-| `--changed-only`    | false   | Only validate files changed in `@{u}..HEAD` (pre-push use) |
-| `--max-label-len N` | 30      | Max chars in a node label before violation                 |
-| `--max-width N`     | 3       | Max nodes at the same rank before violation                |
-| `-o, --output`      | text    | Output format: `text`, `json`, `markdown`                  |
-| `-v, --verbose`     | false   | Include per-file detail in text output                     |
-| `-q, --quiet`       | false   | Suppress non-error output                                  |
+| Flag                | Default | Description                                                                                                             |
+| ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `--staged-only`     | false   | Only validate files staged in git (pre-commit use)                                                                      |
+| `--changed-only`    | false   | Only validate files changed in `@{u}..HEAD` (pre-push use)                                                              |
+| `--max-label-len N` | 30      | Max chars in a node label before violation                                                                              |
+| `--max-width N`     | 3       | Max nodes at the same rank before violation                                                                             |
+| `--max-depth N`     | 5       | Depth threshold for the both-exceeded warning path: when span > max-width AND depth > max-depth, emit warning not error |
+| `-o, --output`      | text    | Output format: `text`, `json`, `markdown`                                                                               |
+| `-v, --verbose`     | false   | Include per-file detail in text output                                                                                  |
+| `-q, --quiet`       | false   | Suppress non-error output                                                                                               |
 
 ### Exit codes
 
-| Code | Meaning                      |
-| ---- | ---------------------------- |
-| 0    | No violations                |
-| 1    | One or more violations found |
-| 2    | Command invocation error     |
+| Code | Meaning                                                              |
+| ---- | -------------------------------------------------------------------- |
+| 0    | No violations (may include warnings — warnings do not cause failure) |
+| 1    | One or more violations found                                         |
+| 2    | Command invocation error                                             |
 
 ---
 
@@ -123,7 +124,7 @@ Feature: Mermaid Flowchart Structural Validation
     When the developer runs docs validate-mermaid with --max-label-len 40
     Then the command exits successfully
 
-  # ── Rule 2: Flowchart width (perpendicular span only — depth is unlimited) ──
+  # ── Rule 2: Flowchart width (perpendicular span; depth only matters in combination) ──
 
   Scenario: A deep sequential flowchart (long chain) passes validation regardless of depth
     Given a markdown file containing a TB flowchart with 10 nodes chained sequentially
@@ -159,6 +160,18 @@ Feature: Mermaid Flowchart Structural Validation
     Given a markdown file containing a flowchart with 4 nodes at one rank
     When the developer runs docs validate-mermaid with --max-width 5
     Then the command exits successfully
+
+  Scenario: A flowchart exceeding both width and depth thresholds passes with a warning
+    Given a markdown file containing a flowchart with 4 nodes at one rank and more than 5 ranks deep
+    When the developer runs docs validate-mermaid
+    Then the command exits successfully
+    And the output contains a warning about diagram complexity
+
+  Scenario: The max depth threshold for the both-exceeded warning is configurable via flag
+    Given a markdown file containing a flowchart with 4 nodes at one rank and exactly 4 ranks deep
+    When the developer runs docs validate-mermaid with --max-depth 3
+    Then the command exits successfully
+    And the output contains a warning about diagram complexity
 
   # ── Rule 3: Single diagram per code block ────────────────────────────────
 
@@ -236,12 +249,16 @@ Feature: Mermaid Flowchart Structural Validation
 
 ## Definition of Done
 
-- All Gherkin scenarios above have passing unit tests (godog, no build tag) and
+- All 22 Gherkin scenarios above have passing unit tests (godog, no build tag) and
   integration tests (`//go:build integration`).
 - `nx run rhino-cli:test:quick` passes with ≥ 90% coverage.
 - `nx run rhino-cli:spec-coverage` passes (all scenarios covered by step definitions).
 - Pre-push hook updated; a branch with a bad `.md` diagram is rejected at push time.
 - `specs/apps/rhino/cli/gherkin/README.md` feature-file table updated with new entry.
-- `apps/rhino-cli/README.md` docs subcommand section updated with `validate-mermaid`.
+- `apps/rhino-cli/README.md` docs subcommand section updated with `validate-mermaid`
+  including `--max-depth` flag documentation.
 - `governance/conventions/formatting/diagrams.md` updated to reference the new CLI
   validator (so authors know to run it, not just read the convention manually).
+- Command is verified to be read-only: it never modifies any file under any code path.
+- Both-exceeded warning path verified: diagram with span > max-width AND depth > max-depth
+  exits 0 with warning; diagram with span > max-width only exits 1.

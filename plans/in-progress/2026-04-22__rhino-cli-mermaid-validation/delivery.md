@@ -39,8 +39,10 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
   - [ ] Scenario: markdown output produces table with File, Block, Line, Kind, Detail columns
   - [ ] Scenario: `--verbose` includes per-file detail lines in text output
   - [ ] Scenario: `--quiet` suppresses all output when no violations
+  - [ ] Scenario: flowchart exceeding both width AND depth thresholds passes with a warning
+  - [ ] Scenario: `--max-depth` flag configures the depth threshold for the both-exceeded warning
 - [ ] Update `specs/apps/rhino/cli/gherkin/README.md`:
-  - [ ] Add row to Feature Files table: `docs-validate-mermaid.feature` | `docs validate-mermaid` | 20
+  - [ ] Add row to Feature Files table: `docs-validate-mermaid.feature` | `docs validate-mermaid` | 22
 - [ ] Verify feature file lint passes: `npm run lint:md`
 
 ---
@@ -51,9 +53,13 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
   - [ ] `Direction` type + constants (TB, TD, BT, LR, RL)
   - [ ] `ViolationKind` type + constants (label_too_long, width_exceeded,
         multiple_diagrams)
+  - [ ] `WarningKind` type + constant `complex_diagram`
   - [ ] `MermaidBlock`, `Node`, `Edge`, `ParsedDiagram` structs
   - [ ] `Violation` struct with all fields per tech-docs spec
-  - [ ] `ValidationResult` struct
+  - [ ] `Warning` struct (Kind, FilePath, BlockIndex, StartLine, ActualWidth,
+        ActualDepth, MaxWidth, MaxDepth)
+  - [ ] `ValidationResult` struct with both `Violations []Violation` and
+        `Warnings []Warning`
 
 - [ ] Create `internal/mermaid/extractor.go`
   - [ ] `ExtractBlocks(filePath string, content string) []MermaidBlock`
@@ -109,58 +115,78 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
   - [ ] Subgraph block does not produce a node with subgraph name
 
 - [ ] Create `internal/mermaid/graph.go`
-  - [ ] `MaxWidth(nodes []Node, edges []Edge) int`
-  - [ ] Build adjacency list + in-degree map from edges
-  - [ ] Kahn's topological sort for rank assignment
-    - [ ] Sources (in-degree 0) keep initialized rank of 0 — no assignment needed
-    - [ ] `rank[v] = max(rank[v], rank[u]+1)` for each edge u→v
-  - [ ] Cycle fallback: unvisited nodes after Kahn's assigned rank 0
-  - [ ] Group nodes by rank; return `max(len(group))`
+  - [ ] Unexported `rankAssign(nodes []Node, edges []Edge) map[string]int` — shared
+        core: builds adjacency list, computes in-degrees, runs Kahn's BFS, applies
+        cycle fallback (unvisited nodes assigned rank 0)
+  - [ ] `MaxWidth(nodes []Node, edges []Edge) int` — calls rankAssign; groups nodes
+        by rank; returns max group size
+  - [ ] `Depth(nodes []Node, edges []Edge) int` — calls rankAssign; returns count of
+        distinct rank values (= longest path length + 1; 0 for empty graph)
 
 - [ ] Create `internal/mermaid/graph_test.go`
-  - [ ] Empty graph → maxWidth 0
-  - [ ] Single disconnected node with no edges → maxWidth 1 (node stays at rank 0)
-  - [ ] Linear chain A→B→C → maxWidth 1 (depth=2, width=1 — depth irrelevant)
-  - [ ] Long sequential chain (10 nodes) → maxWidth 1 (confirms depth is unlimited)
-  - [ ] Fan-out A→B, A→C, A→D → maxWidth 3
-  - [ ] Fan-out A→B, A→C, A→D, A→E → maxWidth 4
-  - [ ] Diamond A→B, A→C, B→D, C→D → maxWidth 2
-  - [ ] Two disconnected chains → maxWidth = max of the two widths
-  - [ ] Cycle A→B→A → no panic, returns fallback maxWidth
+  - [ ] MaxWidth tests:
+    - [ ] Empty graph → maxWidth 0
+    - [ ] Single disconnected node with no edges → maxWidth 1 (node stays at rank 0)
+    - [ ] Linear chain A→B→C → maxWidth 1 (depth=2, width=1)
+    - [ ] Long sequential chain (10 nodes) → maxWidth 1
+    - [ ] Fan-out A→B, A→C, A→D → maxWidth 3
+    - [ ] Fan-out A→B, A→C, A→D, A→E → maxWidth 4
+    - [ ] Diamond A→B, A→C, B→D, C→D → maxWidth 2
+    - [ ] Two disconnected chains → maxWidth = max of the two widths
+    - [ ] Cycle A→B→A → no panic, returns fallback maxWidth
+  - [ ] Depth tests:
+    - [ ] Empty graph → depth 0
+    - [ ] Single disconnected node → depth 1
+    - [ ] Linear chain A→B→C → depth 3
+    - [ ] Fan-out A→B, A→C, A→D → depth 2
+    - [ ] Diamond A→B, A→C, B→D, C→D → depth 3
+    - [ ] Cycle A→B→A → depth 1 (both rank 0 after fallback)
 
 - [ ] Create `internal/mermaid/validator.go`
-  - [ ] `ValidateOptions` struct (MaxLabelLen int, MaxWidth int)
-  - [ ] `DefaultValidateOptions() ValidateOptions` → {30, 3}
+  - [ ] `ValidateOptions` struct (MaxLabelLen int, MaxWidth int, MaxDepth int)
+  - [ ] `DefaultValidateOptions() ValidateOptions` → {30, 3, 5}
   - [ ] `ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResult`
   - [ ] Call `ParseDiagram` → receive `(ParsedDiagram, count, error)`
   - [ ] Rule 3 check: if count > 1 → emit `ViolationMultipleDiagrams`
         (validator emits this, not the parser)
   - [ ] Skip non-flowchart blocks (diagram count == 0)
   - [ ] Rule 1 check: label length > MaxLabelLen → ViolationLabelTooLong
-  - [ ] Rule 2 check: MaxWidth(nodes, edges) > MaxWidth → ViolationWidthExceeded
-  - [ ] Populate all Violation fields correctly
+  - [ ] Rule 2 check:
+    - [ ] Compute `span = graph.MaxWidth(nodes, edges)`
+    - [ ] Compute `depth = graph.Depth(nodes, edges)`
+    - [ ] If `span > MaxWidth && depth > MaxDepth` → emit `Warning{WarningComplexDiagram, ...}`
+    - [ ] Else if `span > MaxWidth` → emit `ViolationWidthExceeded`
+    - [ ] Depth alone exceeding MaxDepth → no output
+  - [ ] Populate all Violation and Warning fields correctly
 
 - [ ] Create `internal/mermaid/validator_test.go`
-  - [ ] Clean block → zero violations
+  - [ ] Clean block → zero violations, zero warnings
   - [ ] Label exactly at limit → no violation; label at limit+1 → violation
   - [ ] Width exactly at limit → no violation; width at limit+1 → violation
-  - [ ] Non-flowchart block → zero violations
+  - [ ] Non-flowchart block → zero violations, zero warnings
   - [ ] Multiple diagrams block → ViolationMultipleDiagrams regardless of other rules
-  - [ ] Custom opts respected (MaxLabelLen=40, MaxWidth=5)
+  - [ ] Custom opts respected (MaxLabelLen=40, MaxWidth=5, MaxDepth=10)
+  - [ ] Both-exceeded warning: span=4, depth=6, max-width=3, max-depth=5 →
+        Warning{WarningComplexDiagram}, zero violations
+  - [ ] Width-only: span=4, depth=4, max-width=3, max-depth=5 →
+        ViolationWidthExceeded, zero warnings
+  - [ ] Depth-only: span=2, depth=6, max-width=3, max-depth=5 →
+        zero violations, zero warnings
 
 - [ ] Create `internal/mermaid/reporter.go`
   - [ ] `FormatText(result ValidationResult, verbose, quiet bool) string`
   - [ ] `FormatJSON(result ValidationResult) (string, error)`
   - [ ] `FormatMarkdown(result ValidationResult) string`
-  - [ ] Text: per-file summary lines + violation detail lines + summary footer
-  - [ ] JSON: matches schema in tech-docs
-  - [ ] Markdown: table with File | Block | Line | Kind | Detail columns
+  - [ ] Text: per-file summary lines (✓/✗/⚠) + violation/warning detail lines + summary footer
+  - [ ] JSON: matches schema in tech-docs — includes both `violations` and `warnings` arrays
+  - [ ] Markdown: table with File | Block | Line | Severity | Kind | Detail columns
 
 - [ ] Create `internal/mermaid/reporter_test.go`
-  - [ ] Zero violations → success message, no table rows
+  - [ ] Zero violations, zero warnings → success message, no table rows
   - [ ] One of each ViolationKind renders correct detail string
-  - [ ] JSON output is valid JSON and contains all required fields
-  - [ ] Markdown output contains table header row
+  - [ ] WarningComplexDiagram renders correct ⚠ line with width/depth/limit detail
+  - [ ] JSON output is valid JSON and contains both `violations` and `warnings` arrays
+  - [ ] Markdown output contains Severity column in table header
 
 ---
 
@@ -172,13 +198,15 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
 
 - [ ] Create `cmd/docs_validate_mermaid.go`
   - [ ] Declare `validateMermaidStagedOnly`, `validateMermaidChangedOnly`,
-        `validateMermaidMaxLabelLen`, `validateMermaidMaxWidth` package-level vars
+        `validateMermaidMaxLabelLen`, `validateMermaidMaxWidth`,
+        `validateMermaidMaxDepth` package-level vars
   - [ ] Reference `docsValidateMermaidFn` from `cmd/testable.go` (do not re-declare)
   - [ ] Define `validateMermaidCmd` cobra command with Use, Short, Long, Example,
         SilenceErrors, RunE
-  - [ ] `init()`: register under `docsCmd`, register all four flags
+  - [ ] `init()`: register under `docsCmd`, register all five flags (including `--max-depth`)
   - [ ] `runValidateMermaid`: resolve file list (staged / changed / default / args),
         call `docsValidateMermaidFn`, format output, return error if violations found
+        (exit 1 only for violations — warnings alone do not cause exit 1)
   - [ ] `--staged-only`: call `git diff --cached --name-only --diff-filter=ACMR`,
         filter to `*.md`
   - [ ] `--changed-only`: call `git diff --name-only @{u}..HEAD`, filter to `*.md`;
@@ -303,7 +331,9 @@ Direct CLI invocation to verify the command works end-to-end:
 
 - [ ] Add `validate-mermaid` entry to `apps/rhino-cli/README.md` docs subcommand table
       with all flags documented (including `--max-label-len` default 30, `--max-width` default 3,
-      `--staged-only`, `--changed-only`)
+      `--max-depth` default 5, `--staged-only`, `--changed-only`); note the command is
+      read-only and only validates `flowchart`/`graph` blocks — all other Mermaid diagram
+      types (sequenceDiagram, classDiagram, gantt, etc.) are silently skipped
 - [ ] Update `governance/conventions/formatting/diagrams.md`:
   - [ ] Add a note in the relevant section that `rhino-cli docs validate-mermaid` enforces
         the label-length and width rules mechanically — authors should run it instead of
