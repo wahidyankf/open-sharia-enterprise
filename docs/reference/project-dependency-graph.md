@@ -47,7 +47,7 @@ invalidated and `nx affected` flags the project.
 ```json
 "inputs": [
   "default",
-  "{workspaceRoot}/specs/apps/organiclever-fe/**/*.feature"
+  "{workspaceRoot}/specs/apps/organiclever-web/**/*.feature"
 ]
 ```
 
@@ -70,10 +70,10 @@ graph RL
   WKF[wahidyankf-web]
 
   %% OrganicLever
-  OLF[organiclever-fe]
+  OLF[organiclever-web]
   OLB[organiclever-be]
   OLC[organiclever-contracts]
-  OLFE2E[organiclever-fe-e2e]
+  OLFE2E[organiclever-web-e2e]
   OLBE2E[organiclever-be-e2e]
 
   %% --- Dependency edges ---
@@ -131,7 +131,7 @@ graph RL
 Repository management CLI used by most projects for coverage validation
 (`test-coverage validate`) and spec coverage (`spec-coverage validate`).
 
-- **Dependents**: CLI tools, libs, content platforms, organiclever-fe
+- **Dependents**: CLI tools, libs, content platforms, organiclever-web
 - **Mechanism**: `implicitDependencies`
 - **Own dependency**: `golang-commons`
 - **Note**: `golang-commons` does NOT depend on `rhino-cli` to avoid a circular
@@ -159,13 +159,13 @@ Shared Go utilities (time formatting, test helpers, output capture).
 
 ### OrganicLever
 
-| Project                | Dependencies                      | Spec Inputs                                |
-| ---------------------- | --------------------------------- | ------------------------------------------ |
-| organiclever-contracts | (none)                            | (self — project root is spec dir)          |
-| organiclever-fe        | rhino-cli, organiclever-contracts | organiclever-fe/\* (test:integration)      |
-| organiclever-be        | organiclever-contracts            | organiclever-be/\* (test:integration)      |
-| organiclever-fe-e2e    | organiclever-fe                   | organiclever-fe/\* (typecheck, test:quick) |
-| organiclever-be-e2e    | organiclever-be                   | organiclever-be/\* (typecheck, test:quick) |
+| Project                | Dependencies                      | Spec Inputs                                 |
+| ---------------------- | --------------------------------- | ------------------------------------------- |
+| organiclever-contracts | (none)                            | (self — project root is spec dir)           |
+| organiclever-web       | rhino-cli, organiclever-contracts | organiclever-web/\* (test:integration)      |
+| organiclever-be        | organiclever-contracts            | organiclever-be/\* (test:integration)       |
+| organiclever-web-e2e   | organiclever-web                  | organiclever-web/\* (typecheck, test:quick) |
+| organiclever-be-e2e    | organiclever-be                   | organiclever-be/\* (typecheck, test:quick)  |
 
 ### CLI Tools
 
@@ -187,15 +187,15 @@ Shared Go utilities (time formatting, test helpers, output capture).
 All Gherkin specs and API contracts live under `specs/` and are consumed via
 `{workspaceRoot}` inputs.
 
-| Spec Directory                       | Consumed By                          | Targets                                 |
-| ------------------------------------ | ------------------------------------ | --------------------------------------- |
-| `specs/apps/organiclever/contracts/` | organiclever-fe, organiclever-be     | codegen                                 |
-| `specs/apps/organiclever-fe/`        | organiclever-fe, organiclever-fe-e2e | test:integration, typecheck, test:quick |
-| `specs/apps/rhino/`                  | rhino-cli                            | test:integration                        |
-| `specs/apps/ayokoding/`              | ayokoding-cli, ayokoding-web         | test:integration                        |
-| `specs/apps/oseplatform/`            | oseplatform-cli, oseplatform-web     | test:integration                        |
-| `specs/libs/golang-commons/`         | golang-commons                       | test:integration                        |
-| `specs/libs/hugo-commons/`           | hugo-commons                         | test:integration                        |
+| Spec Directory                       | Consumed By                            | Targets                                 |
+| ------------------------------------ | -------------------------------------- | --------------------------------------- |
+| `specs/apps/organiclever/contracts/` | organiclever-web, organiclever-be      | codegen                                 |
+| `specs/apps/organiclever-web/`       | organiclever-web, organiclever-web-e2e | test:integration, typecheck, test:quick |
+| `specs/apps/rhino/`                  | rhino-cli                              | test:integration                        |
+| `specs/apps/ayokoding/`              | ayokoding-cli, ayokoding-web           | test:integration                        |
+| `specs/apps/oseplatform/`            | oseplatform-cli, oseplatform-web       | test:integration                        |
+| `specs/libs/golang-commons/`         | golang-commons                         | test:integration                        |
+| `specs/libs/hugo-commons/`           | hugo-commons                           | test:integration                        |
 
 ## Design Decisions
 

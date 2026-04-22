@@ -7,7 +7,7 @@
 | 1     | Unified Specifications         | Create `specs/apps/organiclever/`, migrate health + auth specs    |
 | 2     | OpenAPI Contract               | Contract with codegen for F# and TypeScript                       |
 | 3     | Backend (`organiclever-be`)    | F#/Giraffe app with health + auth endpoints                       |
-| 4     | Frontend (`organiclever-fe`)   | Next.js + Effect TS with /login + /profile (protected)            |
+| 4     | Frontend (`organiclever-web`)  | Next.js + Effect TS with /login + /profile (protected)            |
 | 5     | E2E Test Apps + Infrastructure | Playwright E2E for backend and frontend; local dev Docker Compose |
 | 6     | CI Pipelines                   | GitHub Actions workflows for all 4 apps (CI only, no CD)          |
 | 7     | Documentation Updates          | CLAUDE.md, agents, skills, governance, docs                       |
@@ -136,21 +136,21 @@ follow-up plan.
 - [x] Verify `nx run organiclever-be:typecheck` passes
 - [x] Verify `nx run organiclever-be:build` passes
 
-## Phase 4: Frontend (`organiclever-fe`)
+## Phase 4: Frontend (`organiclever-web`)
 
 ### Milestone 4.1: Project Scaffold
 
-- [x] Create `apps/organiclever-fe/` with Next.js 16 scaffold
-- [x] Create `apps/organiclever-fe/project.json` with all Nx targets
+- [x] Create `apps/organiclever-web/` with Next.js 16 scaffold
+- [x] Create `apps/organiclever-web/project.json` with all Nx targets
       (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, storybook,
       build-storybook, dev, start)
-- [x] Create `apps/organiclever-fe/package.json` (next, react, effect, typescript,
+- [x] Create `apps/organiclever-web/package.json` (next, react, effect, typescript,
       `@open-sharia-enterprise/ts-ui` workspace dependency)
-- [x] Create `apps/organiclever-fe/next.config.ts`
-- [x] Create `apps/organiclever-fe/tsconfig.json` (strict mode)
-- [x] Create `apps/organiclever-fe/vitest.config.ts`
-- [x] Create `apps/organiclever-fe/README.md`
-- [x] Create `apps/organiclever-fe/.gitignore`
+- [x] Create `apps/organiclever-web/next.config.ts`
+- [x] Create `apps/organiclever-web/tsconfig.json` (strict mode)
+- [x] Create `apps/organiclever-web/vitest.config.ts`
+- [x] Create `apps/organiclever-web/README.md`
+- [x] Create `apps/organiclever-web/.gitignore`
 
 ### Milestone 4.2: Effect TS Service Layer (Server-Side BFF Proxy)
 
@@ -183,8 +183,8 @@ follow-up plan.
 - [x] Create stories for login page components (`.stories.tsx`)
 - [x] Create stories for profile page components (`.stories.tsx`)
 - [x] Create stories for shared UI components (layout, buttons)
-- [x] Verify `nx run organiclever-fe:storybook` starts on port 6006
-- [x] Verify `nx run organiclever-fe:build-storybook` produces static export
+- [x] Verify `nx run organiclever-web:storybook` starts on port 6006
+- [x] Verify `nx run organiclever-web:build-storybook` produces static export
 
 ### Milestone 4.5: Frontend Testing
 
@@ -193,16 +193,16 @@ follow-up plan.
 - [x] Create unit tests for accessibility consuming `fe/gherkin/layout/accessibility.feature`
       (heading hierarchy, form labels, ARIA attributes via Testing Library)
 - [x] Create integration tests for profile page using MSW + Gherkin specs
-- [x] Verify `nx run organiclever-fe:test:quick` passes with 70% coverage
-- [x] Verify `nx run organiclever-fe:lint` passes (includes jsx-a11y checks)
-- [x] Verify `nx run organiclever-fe:typecheck` passes
-- [x] Verify `nx run organiclever-fe:build` passes
-- [x] Verify `nx run organiclever-fe:codegen` generates contracts
+- [x] Verify `nx run organiclever-web:test:quick` passes with 70% coverage
+- [x] Verify `nx run organiclever-web:lint` passes (includes jsx-a11y checks)
+- [x] Verify `nx run organiclever-web:typecheck` passes
+- [x] Verify `nx run organiclever-web:build` passes
+- [x] Verify `nx run organiclever-web:codegen` generates contracts
 
 ### Milestone 4.6: UI Quality Gate
 
 - [x] Run UI quality gate workflow (`governance/workflows/ui/ui-quality-gate.md`) for
-      `apps/organiclever-fe/src/components/` -- validates token compliance, accessibility,
+      `apps/organiclever-web/src/components/` -- validates token compliance, accessibility,
       component patterns, dark mode, responsive design
 - [x] Resolve all findings from `swe-ui-checker` (iterate with `swe-ui-fixer` until zero findings)
       — resolved all 7 HIGH findings: token compliance (text-muted-foreground, destructive tokens),
@@ -226,9 +226,9 @@ follow-up plan.
 - [x] Verify `nx run organiclever-be-e2e:test:e2e` passes against running backend
       (18/18 passed with docker-compose CI overlay)
 
-### Milestone 5.2: Frontend E2E (`organiclever-fe-e2e`)
+### Milestone 5.2: Frontend E2E (`organiclever-web-e2e`)
 
-- [x] Create `apps/organiclever-fe-e2e/` directory
+- [x] Create `apps/organiclever-web-e2e/` directory
 - [x] Create `project.json` with targets: install, lint, typecheck, test:quick, test:e2e,
       test:e2e:ui
 - [x] Create `package.json` (playwright, @playwright/test, playwright-bdd)
@@ -237,8 +237,8 @@ follow-up plan.
 - [x] Create step definitions for google-login, profile, route-protection, and accessibility
       features
 - [x] Create `README.md`
-- [x] Verify `nx run organiclever-fe-e2e:test:quick` passes
-- [x] Verify `nx run organiclever-fe-e2e:test:e2e` passes against running frontend + backend
+- [x] Verify `nx run organiclever-web-e2e:test:quick` passes
+- [x] Verify `nx run organiclever-web-e2e:test:e2e` passes against running frontend + backend
       (13/13 pass — auth tests use BFF proxy with backend test-mode tokens to set httpOnly
       cookies, bypassing Google OAuth UI while testing the full auth integration boundary)
 
@@ -251,11 +251,11 @@ follow-up plan.
 - [x] Create `infra/dev/organiclever/Dockerfile.be.dev` (F# backend dev image)
 - [x] Create `infra/dev/organiclever/Dockerfile.fe.dev` (Next.js frontend dev image)
 - [x] Create `infra/dev/organiclever/docker-compose.yml`
-      (organiclever-db + organiclever-be + organiclever-fe)
+      (organiclever-db + organiclever-be + organiclever-web)
 - [x] Create `infra/dev/organiclever/docker-compose.ci.yml` (CI variant for integration + E2E)
 - [x] Add `organiclever:dev` npm script to root `package.json`
 - [x] Add `organiclever:dev:restart` npm script to root `package.json`
-- [x] Remove `organiclever-fe:dev` and `organiclever-fe:dev:restart` npm scripts
+- [x] Remove `organiclever-web:dev` and `organiclever-web:dev:restart` npm scripts
       (already absent — never created under that name)
 - [x] Verify `npm run organiclever:dev` starts all 3 services (db, be, fe)
 - [x] Verify frontend can reach backend via `ORGANICLEVER_BE_URL=http://organiclever-be:8202`
@@ -267,7 +267,7 @@ follow-up plan.
 - [x] Create `.github/workflows/test-organiclever.yml` (combined BE+FE workflow:
       cron 2x daily, BE integration + FE integration + E2E jobs, environment
       "Development - Organic Lever" for Google OAuth secrets)
-- [x] Delete `.github/workflows/test-organiclever-fe.yml`
+- [x] Delete `.github/workflows/test-organiclever-web.yml`
 - [x] Verify `main-ci.yml` picks up all 4 organiclever projects via `nx affected`
       (added organiclever-contracts:bundle, codegen, and .NET restore steps)
 - [x] Verify `pr-quality-gate.yml` picks up all 4 organiclever projects via `nx affected`
@@ -277,15 +277,15 @@ follow-up plan.
 
 ### Milestone 7.1: CLAUDE.md
 
-- [x] Replace all `organiclever-web` references with `organiclever-fe`
+- [x] Replace all `organiclever-web` references with `organiclever-web`
 - [x] Add `organiclever-be` to Current Apps list (F#/Giraffe REST API backend)
-- [x] Add `organiclever-be-e2e` and `organiclever-fe-e2e` to Current Apps list
+- [x] Add `organiclever-be-e2e` and `organiclever-web-e2e` to Current Apps list
 - [x] Update Project Structure tree
 - [x] Update F# coverage section to include `organiclever-be`
-- [x] Update TypeScript coverage section (organiclever-fe at 70%, not 90%)
-- [x] Update `test:integration` caching section (organiclever-fe uses MSW)
+- [x] Update TypeScript coverage section (organiclever-web at 70%, not 90%)
+- [x] Update `test:integration` caching section (organiclever-web uses MSW)
 - [x] Update Git Workflow section (production branch name)
-- [x] Rename organiclever-web section to organiclever-fe with updated details
+- [x] Rename organiclever-web section to organiclever-web with updated details
 - [x] Add organiclever-be section with framework, port, commands
 - [x] Update AI Agents section (deployer agent name)
 - [x] Add codegen/contract information for organiclever apps
@@ -293,7 +293,7 @@ follow-up plan.
 ### Milestone 7.2: Agents
 
 - [x] Rename `.claude/agents/apps-organiclever-web-deployer.md` to
-      `apps-organiclever-fe-deployer.md`
+      `apps-organiclever-web-deployer.md`
 - [x] Update deployer agent content (branch name, app name)
 - [x] Update `.claude/agents/README.md` agent listings
 - [x] Update `.claude/agents/specs-maker.md` example references
@@ -302,7 +302,7 @@ follow-up plan.
 ### Milestone 7.3: Skills
 
 - [x] Rename `.claude/skills/apps-organiclever-web-developing-content/` to
-      `apps-organiclever-fe-developing-content/`
+      `apps-organiclever-web-developing-content/`
 - [x] Rewrite `SKILL.md` for new architecture (Effect TS, backend integration, codegen,
       no API routes, no JSON data files)
 - [x] Sync `.opencode/` mirrors via `npm run sync:claude-to-opencode`
@@ -335,7 +335,7 @@ follow-up plan.
 - [x] Grep entire repo for `organiclever-web` -- only matches should be in
       `archived/`, `plans/`, and git history
 - [x] Verify `nx graph` shows correct dependency relationships for all 4+1 projects
-      (organiclever-be, organiclever-fe, organiclever-be-e2e, organiclever-fe-e2e,
+      (organiclever-be, organiclever-web, organiclever-be-e2e, organiclever-web-e2e,
       organiclever-contracts)
 - [x] Verify `nx affected -t typecheck lint test:quick` passes for all projects
 - [x] Verify pre-push hook works for organiclever changes

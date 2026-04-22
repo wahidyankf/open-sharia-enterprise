@@ -123,13 +123,13 @@ change elsewhere.
 - **Integration**: no `test/integration/` directory exists currently — there is no existing
   integration harness to prune. Unit tests cover all four `/system/status/be` Gherkin scenarios
   via `vi.stubGlobal('fetch', ...)` and environment variable stubs. Running
-  `nx run organiclever-fe:test:integration` passes with zero tests because `passWithNoTests: true`
+  `nx run organiclever-web:test:integration` passes with zero tests because `passWithNoTests: true`
   is set globally in `vitest.config.ts`. No MSW integration tests are added in this phase.
-- **E2E (`organiclever-fe-e2e`)**: remove google-login/profile/route-protection Playwright step files;
+- **E2E (`organiclever-web-e2e`)**: remove google-login/profile/route-protection Playwright step files;
   add three new playwright-bdd step definition files:
-  `apps/organiclever-fe-e2e/steps/landing.steps.ts`,
-  `apps/organiclever-fe-e2e/steps/disabled-routes.steps.ts`, and
-  `apps/organiclever-fe-e2e/steps/system-status-be.steps.ts`.
+  `apps/organiclever-web-e2e/steps/landing.steps.ts`,
+  `apps/organiclever-web-e2e/steps/disabled-routes.steps.ts`, and
+  `apps/organiclever-web-e2e/steps/system-status-be.steps.ts`.
   The `system-status-be` step file hits `/system/status/be` with and without
   `ORGANICLEVER_BE_URL` via compose env override.
   The gherkin feature files under `specs/` are shared by both unit and e2e runners.
@@ -144,14 +144,14 @@ It does **not** fire automatically on push to `main` — the delivery checklist 
 The workflow spins up the full stack (DB + BE + FE) via docker-compose before E2E, so `/health`
 is reachable during the `e2e` job. The `deploy` job gates on all prior jobs and runs
 `git push origin HEAD:prod-organiclever-web --force` when `detect-changes` finds edits in
-`apps/organiclever-fe/` in the triggered run's `HEAD~1..HEAD` diff.
+`apps/organiclever-web/` in the triggered run's `HEAD~1..HEAD` diff.
 
 No workflow edits required for this plan.
 
 ## Impact on Vercel
 
 - Project on Vercel: `prod-organiclever-web` branch → www.organiclever.com
-- Build command: default Next.js build via Nx (`nx build organiclever-fe`)
+- Build command: default Next.js build via Nx (`nx build organiclever-web`)
 - Env vars: none required. `ORGANICLEVER_BE_URL` may be left unset.
 - Functions: `/system/status/be` runs as a dynamic Node.js server render on each request.
 
@@ -161,7 +161,7 @@ No workflow edits required for this plan.
 | --------------------------------------------------------------- | --------------------------------------------------------------------- |
 | Build-time SSR tries to fetch BE and fails                      | `export const dynamic = 'force-dynamic'` on the status page           |
 | SSR hangs 30 s when BE host is slow, Vercel times out whole req | `AbortSignal.timeout(3000)` inside `fetch`                            |
-| Removed routes leave dead imports, failing typecheck/lint       | Run `nx run organiclever-fe:typecheck` and `:lint` before commit      |
+| Removed routes leave dead imports, failing typecheck/lint       | Run `nx run organiclever-web:typecheck` and `:lint` before commit     |
 | Dormant auth code rots because nothing imports it               | Add a `src/services/index.ts` re-export so tree-shaking doesn't panic |
 | BE E2E in CI suddenly breaks because FE no longer hits BE       | BE E2E runs against BE directly via `organiclever-be-e2e`, not via FE |
 | Future rewire blocked by deletions                              | Keep `services/`, `layers/`, `generated-contracts/` intact            |
@@ -176,6 +176,6 @@ If the deploy to `prod-organiclever-web` produces unexpected failures after prom
 3. Push the revert to `main`, then manually trigger `test-and-deploy-organiclever.yml` via
    `workflow_dispatch`.
 4. Deleted route files (`src/app/login/`, `src/app/profile/`, `src/app/api/auth/`) are recoverable
-   from Git history: `git checkout <pre-plan-sha> -- apps/organiclever-fe/src/app/login/`.
+   from Git history: `git checkout <pre-plan-sha> -- apps/organiclever-web/src/app/login/`.
 5. The diagnostic page (`src/app/system/status/be/page.tsx`) is new — reverting removes it
    entirely, which is safe because no users depend on it yet.

@@ -58,9 +58,9 @@ Then npx nx run a-demo-fe-e2e:spec-coverage reports 0 gaps
 ```
 
 ```gherkin
-Given organiclever-fe-e2e has 15 missing steps (auth flows, accessibility)
+Given organiclever-web-e2e has 15 missing steps (auth flows, accessibility)
 When the swe-e2e-test-developer agent implements the missing step definitions
-Then npx nx run organiclever-fe-e2e:spec-coverage reports 0 gaps
+Then npx nx run organiclever-web-e2e:spec-coverage reports 0 gaps
 ```
 
 ```gherkin

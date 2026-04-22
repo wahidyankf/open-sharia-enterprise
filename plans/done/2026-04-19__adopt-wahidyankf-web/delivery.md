@@ -57,7 +57,7 @@ the worktree branch, not `main`. Concretely:
 - [x] Read upstream `LICENSE` file and confirm MIT-compatibility; record the license string in `prep-notes.md`.
 - [x] Record the confirmed production domain (user-supplied; default placeholder `www.wahidyankf.com`) in `prep-notes.md`.
 - [x] Confirm dev port `3201` is unused by any `nx.json` / existing `apps/*/project.json` via `rg -n "3201" nx.json apps`.
-- [x] For each row of the `tech-docs.md` dependency upgrade matrix, run `npm view <pkg> version` AND `jq -r '.dependencies["<pkg>"] // .devDependencies["<pkg>"]' apps/ayokoding-web/package.json apps/oseplatform-web/package.json apps/organiclever-fe/package.json` and record both live-latest and current sibling pins in `prep-notes.md`. Update `tech-docs.md` rows in-place only when sibling pins have already moved — otherwise preserve sibling parity per the stack-parity rule.
+- [x] For each row of the `tech-docs.md` dependency upgrade matrix, run `npm view <pkg> version` AND `jq -r '.dependencies["<pkg>"] // .devDependencies["<pkg>"]' apps/ayokoding-web/package.json apps/oseplatform-web/package.json apps/organiclever-web/package.json` and record both live-latest and current sibling pins in `prep-notes.md`. Update `tech-docs.md` rows in-place only when sibling pins have already moved — otherwise preserve sibling parity per the stack-parity rule.
 - [x] Confirm the tag vocabulary extension (`domain:wahidyankf`) has no conflicting allowlist hard-coded anywhere: run `rg -n "domain:(ayokoding|oseplatform|organiclever|demo-be|demo-fe|tooling)" --type ts --type json --type md | grep -v generated-reports`.
 - [x] Record the hit list from the previous step in `prep-notes.md` so P6 knows every place to extend the `domain:` allowed values list.
 - [x] Commit: `docs(plans): record wahidyankf-web adoption prep notes`.
@@ -71,7 +71,7 @@ the worktree branch, not `main`. Concretely:
 - [x] Create `apps/wahidyankf-web/package.json` with initial deps at `apps/ayokoding-web/package.json` test-stack pins (the closest sibling content platform) — use that file as the source of truth for `vitest`, `jsdom`, `@vitejs/plugin-react`, `vite-tsconfig-paths`, `@amiceli/vitest-cucumber`, `tailwindcss`, `@tailwindcss/postcss`, `@testing-library/*`, `@vitest/coverage-v8`, `@types/node`, `@types/react*`, `typescript`. We bump as needed in P2; this commit's lock must be internally consistent.
 - [x] Create `apps/wahidyankf-web/tsconfig.json` extending `../../tsconfig.base.json`.
 - [x] Create `apps/wahidyankf-web/next.config.ts` with `output: "standalone"` and `images.unoptimized: true`.
-- [x] Create `apps/wahidyankf-web/oxlint.json` (copy from `apps/organiclever-fe/oxlint.json`).
+- [x] Create `apps/wahidyankf-web/oxlint.json` (copy from `apps/organiclever-web/oxlint.json`).
 - [x] Create `apps/wahidyankf-web/postcss.config.mjs` (Tailwind 4 style).
 - [x] Create `apps/wahidyankf-web/vitest.config.ts` by copying `apps/ayokoding-web/vitest.config.ts` as the template — thresholds 80/80/80/80 (lines/functions/branches/statements); projects `unit-fe` (jsdom) + `integration` (node); `setupFiles: ["./src/test/setup.ts"]` on the jsdom project. Omit the `unit` (node) project until node-only code exists in the app.
 - [x] Create `apps/wahidyankf-web/project.json` with the Nx target shape from `tech-docs.md` (tags include `domain:wahidyankf`; real validity of that tag is fixed in P6 — until then, `repo-rules-checker` is expected to flag it). The file's `"name": "wahidyankf-web"` and `"sourceRoot": "apps/wahidyankf-web/src"` fields are what make the project visible to Nx auto-discovery — no edit to `nx.json` or root `tsconfig.base.json` needed.
@@ -107,8 +107,8 @@ the worktree branch, not `main`. Concretely:
 - [x] Copy upstream `src/utils/style.test.ts` → `apps/wahidyankf-web/src/utils/style.unit.test.ts` (rename per `.unit.test.*` convention).
 - [x] Copy upstream `public/` contents.
 - [x] Create `apps/wahidyankf-web/LICENSE` from upstream (MIT-compatible).
-- [x] Create `apps/wahidyankf-web/README.md` modelled on `apps/organiclever-fe/README.md` with the app's overview, dev commands, test commands, tech stack.
-- [x] Create `apps/wahidyankf-web/.gitignore` mirroring `apps/organiclever-fe/.gitignore`.
+- [x] Create `apps/wahidyankf-web/README.md` modelled on `apps/organiclever-web/README.md` with the app's overview, dev commands, test commands, tech stack.
+- [x] Create `apps/wahidyankf-web/.gitignore` mirroring `apps/organiclever-web/.gitignore`.
 - [x] Run `npm install` from workspace root. This re-hydrates the workspace lockfile and picks up `apps/wahidyankf-web/` via the existing root `package.json` `"workspaces": ["apps/*", "libs/*"]` glob — no edit to the root `package.json` needed.
 - [x] Run `npm run doctor -- --fix` to ensure Go and other polyglot toolchains are available (required for `test:quick` which calls `rhino-cli`).
 - [x] Confirm Nx sees the new project: `npx nx show projects | grep -E '^wahidyankf-web$'` must return one line. If missing, the `project.json` `"name"` field is wrong or the file is malformed — fix before proceeding.
@@ -172,7 +172,7 @@ the worktree branch, not `main`. Concretely:
 
 - [x] Create `apps/wahidyankf-web-e2e/` with files `package.json`, `project.json`, `tsconfig.json`, `playwright.config.ts`, `README.md`, `.gitignore`, `steps/` directory.
 - [x] `package.json` deps per `tech-docs.md` E2E row.
-- [x] `playwright.config.ts` mirrors `apps/organiclever-fe-e2e/playwright.config.ts` with `baseURL` default `http://localhost:3201` and `featuresRoot` pointing at `../../specs/apps/wahidyankf/fe/gherkin`.
+- [x] `playwright.config.ts` mirrors `apps/organiclever-web-e2e/playwright.config.ts` with `baseURL` default `http://localhost:3201` and `featuresRoot` pointing at `../../specs/apps/wahidyankf/fe/gherkin`.
 - [x] `project.json` tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`; `implicitDependencies: ["wahidyankf-web"]`. The `implicitDependencies` entry is what lets `nx affected` see the E2E runner as affected whenever `wahidyankf-web` changes — without it, changing an FE component would not invalidate the E2E cache.
 - [x] Confirm `npx nx show projects | grep -E '^wahidyankf-web-e2e$'` returns one line and that `npx nx graph --file local-temp/graph.json && jq '.graph.dependencies["wahidyankf-web-e2e"]' local-temp/graph.json` lists `wahidyankf-web` (or equivalent arrow) so Nx will rebuild E2E when the FE changes.
 - [x] Create `specs/apps/wahidyankf/fe/gherkin/accessibility.feature` per the `prd.md` Accessibility feature.
@@ -212,11 +212,11 @@ are performed first — they land in the single PR alongside P0-P5. The
 to already be merged; that gate is placed immediately before the push.
 
 - [x] Create `apps/wahidyankf-web/vercel.json` as specified in `tech-docs.md`.
-- [x] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-fe/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
-- [x] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-fe/.dockerignore`.
+- [x] Create `apps/wahidyankf-web/Dockerfile` by copying `apps/organiclever-web/Dockerfile` and updating `WORKDIR`/port/app-name tokens.
+- [x] Create `apps/wahidyankf-web/.dockerignore` by copying `apps/organiclever-web/.dockerignore`.
 - [x] Create `.github/workflows/test-and-deploy-wahidyankf-web.yml` per `tech-docs.md`.
 - [x] Verify `.github/workflows/_reusable-test-and-deploy.yml` already handles an arbitrary `app-name` / `prod-branch` input (no change expected; flag if it does not).
-- [x] Create `.claude/agents/apps-wahidyankf-web-deployer.md` by copying `.claude/agents/apps-organiclever-fe-deployer.md` and replacing `organiclever-fe` → `wahidyankf-web` and `prod-organiclever-web` → `prod-wahidyankf-web` throughout.
+- [x] Create `.claude/agents/apps-wahidyankf-web-deployer.md` by copying `.claude/agents/apps-organiclever-web-deployer.md` and replacing `organiclever-web` → `wahidyankf-web` and `prod-organiclever-web` → `prod-wahidyankf-web` throughout.
 - [x] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
 - [x] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
 - [x] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.

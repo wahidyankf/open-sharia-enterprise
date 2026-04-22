@@ -1,13 +1,13 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "organiclever-fe",
-  "sourceRoot": "apps/organiclever-fe/src",
+  "name": "organiclever-web",
+  "sourceRoot": "apps/organiclever-web/src",
   "projectType": "application",
   "targets": {
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/contracts/generated/openapi-bundled.yaml -o apps/organiclever-fe/src/generated-contracts -s"
+        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/contracts/generated/openapi-bundled.yaml -o apps/organiclever-web/src/generated-contracts -s"
       },
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
@@ -63,7 +63,7 @@
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "command": "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-fe/coverage/lcov.info 70)",
+        "command": "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-web/coverage/lcov.info 70)",
         "cwd": "{projectRoot}"
       }
     },
@@ -107,7 +107,7 @@
       "outputs": ["{projectRoot}/storybook-static"]
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-fe",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-web",
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
     }

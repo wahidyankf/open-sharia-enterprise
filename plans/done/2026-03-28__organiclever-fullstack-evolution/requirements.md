@@ -97,7 +97,7 @@
 - **FR-2.4.8**: `dev` (optional) -- `dotnet watch run`
 - **FR-2.4.9**: `start` (optional) -- `dotnet run`
 
-### FR-3: Frontend Application (`apps/organiclever-fe`)
+### FR-3: Frontend Application (`apps/organiclever-web`)
 
 #### FR-3.1: BFF Proxy Pattern
 
@@ -147,7 +147,7 @@
 #### FR-3.5: Shared UI Library (`@open-sharia-enterprise/ts-ui`)
 
 - **FR-3.5.1**: Import shared components from `@open-sharia-enterprise/ts-ui` (Button, Card,
-  Alert, Input, Label, Dialog, `cn` utility) -- same as current `organiclever-fe`
+  Alert, Input, Label, Dialog, `cn` utility) -- same as current `organiclever-web`
 - **FR-3.5.2**: App-specific components in `src/components/` build on top of `ts-ui` primitives
   with OrganicLever-specific styling (colors, spacing, brand)
 - **FR-3.5.3**: No duplicate component implementations -- use `ts-ui` for all base UI primitives
@@ -165,16 +165,16 @@
   via `bddgen` (third level of the three-level testing standard)
 - **FR-4.3**: Nx targets: `install`, `lint`, `typecheck`, `test:quick`, `test:e2e`, `test:e2e:ui`
 
-### FR-5: Frontend E2E Tests (`apps/organiclever-fe-e2e`)
+### FR-5: Frontend E2E Tests (`apps/organiclever-web-e2e`)
 
-- **FR-5.1**: Playwright-based E2E tests against running `organiclever-fe` + `organiclever-be`
+- **FR-5.1**: Playwright-based E2E tests against running `organiclever-web` + `organiclever-be`
 - **FR-5.2**: Consumes `specs/apps/organiclever/fe/gherkin/` specs via `bddgen`
 - **FR-5.3**: Nx targets: `install`, `lint`, `typecheck`, `test:quick`, `test:e2e`, `test:e2e:ui`
 
 ### FR-6: Local Development Infrastructure (`infra/dev/organiclever/`)
 
-- **FR-6.1**: Docker Compose with 3 services: PostgreSQL, organiclever-be, organiclever-fe
-- **FR-6.2**: Replaces `infra/dev/organiclever-fe/`
+- **FR-6.1**: Docker Compose with 3 services: PostgreSQL, organiclever-be, organiclever-web
+- **FR-6.2**: Replaces `infra/dev/organiclever-web/`
 - **FR-6.3**: `npm run organiclever:dev` starts the full stack locally
 - **FR-6.4**: Frontend connects to backend via Docker network
   (`ORGANICLEVER_BE_URL=http://organiclever-be:8202`)
@@ -184,7 +184,7 @@
 
 - **FR-7.1**: GitHub Actions workflow `test-organiclever-be.yml` -- Scheduled 2x daily
   (integration + E2E tests for backend)
-- **FR-7.2**: GitHub Actions workflow `test-organiclever-fe.yml` -- Scheduled 2x daily
+- **FR-7.2**: GitHub Actions workflow `test-organiclever-web.yml` -- Scheduled 2x daily
   (integration + E2E tests for frontend)
 - **FR-7.3**: Both workflows follow same pattern as `test-a-demo-be-*.yml` / `test-a-demo-fe-*.yml`
 - **FR-7.4**: All 4 apps included in `main-ci.yml` affected targets (`typecheck`, `lint`,
@@ -197,29 +197,29 @@
 
 #### FR-8.1: CLAUDE.md
 
-- **FR-8.1.1**: Replace `organiclever-fe` entries with `organiclever-fe`
+- **FR-8.1.1**: Replace `organiclever-web` entries with `organiclever-web`
 - **FR-8.1.2**: Add `organiclever-be` entry (F#/Giraffe REST API)
-- **FR-8.1.3**: Replace `organiclever-fe-e2e` with `organiclever-fe-e2e` and `organiclever-be-e2e`
+- **FR-8.1.3**: Replace `organiclever-web-e2e` with `organiclever-web-e2e` and `organiclever-be-e2e`
 - **FR-8.1.4**: Update coverage sections (BE 90%, FE 70%)
 - **FR-8.1.5**: Update dev port and deployment sections
 - **FR-8.1.6**: Add codegen/contract information
 
 #### FR-8.2: Agents (`.claude/agents/`)
 
-- **FR-8.2.1**: Rename/update `apps-organiclever-fe-deployer.md` -> `apps-organiclever-fe-deployer.md`
+- **FR-8.2.1**: Rename/update `apps-organiclever-web-deployer.md` -> `apps-organiclever-web-deployer.md`
 - **FR-8.2.2**: Update `README.md` agent listings
 - **FR-8.2.3**: Update `specs-maker.md` example references
 
 #### FR-8.3: Skills (`.claude/skills/`)
 
-- **FR-8.3.1**: Rename/update `apps-organiclever-fe-developing-content/` ->
-  `apps-organiclever-fe-developing-content/`
+- **FR-8.3.1**: Rename/update `apps-organiclever-web-developing-content/` ->
+  `apps-organiclever-web-developing-content/`
 - **FR-8.3.2**: Rewrite SKILL.md for new architecture (Effect TS, backend integration, codegen)
 
 #### FR-8.4: Governance and Docs
 
-- **FR-8.4.1**: Update all 14+ governance files referencing `organiclever-fe`
-- **FR-8.4.2**: Update all 14+ docs files referencing `organiclever-fe`
+- **FR-8.4.1**: Update all 14+ governance files referencing `organiclever-web`
+- **FR-8.4.2**: Update all 14+ docs files referencing `organiclever-web`
 - **FR-8.4.3**: Add `organiclever-be` to technology stack, CI/CD, and deployment docs
 - **FR-8.4.4**: Update `governance/development/infra/github-actions-workflow-naming.md`
 
@@ -248,7 +248,7 @@
 ### NFR-3: Developer Experience
 
 - **NFR-3.1**: `nx dev organiclever-be` starts backend on port 8202
-- **NFR-3.2**: `nx dev organiclever-fe` starts frontend on port 3200
+- **NFR-3.2**: `nx dev organiclever-web` starts frontend on port 3200
 - **NFR-3.3**: Contract changes trigger codegen for both apps via Nx dependency graph
 - **NFR-3.4**: Docker Compose for backend PostgreSQL in integration tests
 
@@ -273,7 +273,7 @@ Scenario: Unified spec structure exists
     | fe/gherkin/    |
     | contracts/     |
   And specs/apps/organiclever-be/ no longer exists
-  And specs/apps/organiclever-fe/ no longer exists
+  And specs/apps/organiclever-web/ no longer exists
 ```
 
 ### AC-2: Backend Auth + Health
@@ -301,7 +301,7 @@ Scenario: Backend quality gate passes
 ```gherkin
 Scenario: Profile page requires login
   Given organiclever-be is running on port 8202
-  And organiclever-fe is running on port 3200
+  And organiclever-web is running on port 3200
   When I navigate to /profile without being logged in
   Then I am redirected to /login
 
@@ -311,7 +311,7 @@ Scenario: Profile page shows user info after login
   Then the page displays my name, email, and avatar
 
 Scenario: Frontend quality gate passes
-  Given I run nx run organiclever-fe:test:quick
+  Given I run nx run organiclever-web:test:quick
   Then all unit tests pass
   And line coverage is at least 70%
 ```
@@ -324,15 +324,15 @@ Scenario: All 4 apps have standard targets
   Then the output includes:
     | Project              |
     | organiclever-be      |
-    | organiclever-fe      |
+    | organiclever-web      |
     | organiclever-be-e2e  |
-    | organiclever-fe-e2e  |
+    | organiclever-web-e2e  |
 ```
 
 Note: `organiclever-contracts` has `lint`, `bundle`, `docs` targets but not `test:quick` —
 this is expected. It is an OpenAPI spec project, not an app with unit tests.
 
-Note: For E2E apps (`organiclever-be-e2e`, `organiclever-fe-e2e`), `test:quick` runs
+Note: For E2E apps (`organiclever-be-e2e`, `organiclever-web-e2e`), `test:quick` runs
 `lint + typecheck` only — there is no unit test suite or coverage validation for E2E
 projects. This matches the pattern in `a-demo-be-e2e` and `a-demo-fe-e2e`.
 
@@ -343,21 +343,21 @@ Scenario: Contract changes trigger codegen
   Given I modify specs/apps/organiclever/contracts/openapi.yaml
   When I run nx affected -t typecheck
   Then organiclever-be codegen runs
-  And organiclever-fe codegen runs
+  And organiclever-web codegen runs
   And typecheck validates generated types
 ```
 
 ### AC-6: Documentation Complete
 
 ```gherkin
-Scenario: No stale references to organiclever-fe
-  Given I search the repository for "organiclever-fe"
+Scenario: No stale references to organiclever-web
+  Given I search the repository for "organiclever-web"
   Then no results are found in CLAUDE.md
   And no results are found in .claude/agents/
   And no results are found in .claude/skills/
   And no results are found in governance/
   And no results are found in docs/
-  And the only results are in archived/organiclever-fe/ or plans/
+  And the only results are in archived/organiclever-web/ or plans/
 ```
 
 ### AC-7: Local Dev Stack Works
@@ -366,8 +366,8 @@ Scenario: No stale references to organiclever-fe
 Scenario: Local development stack starts successfully
   Given infra/dev/organiclever/ directory exists with Docker Compose files
   When I run npm run organiclever:dev
-  Then all 3 services start (organiclever-db, organiclever-be, organiclever-fe)
+  Then all 3 services start (organiclever-db, organiclever-be, organiclever-web)
   And organiclever-be is reachable at http://localhost:8202/api/v1/health
-  And organiclever-fe is reachable at http://localhost:3200
+  And organiclever-web is reachable at http://localhost:3200
   And the frontend can reach the backend via ORGANICLEVER_BE_URL=http://organiclever-be:8202
 ```

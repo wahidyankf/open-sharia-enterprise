@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "organiclever-fe-e2e",
+  "name": "organiclever-web-e2e",
   "version": "0.1.0",
   "private": true,
   "type": "module",

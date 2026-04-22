@@ -13,12 +13,12 @@ Ship a live `www.organiclever.com` landing site while the F#/Giraffe backend (`o
 
 ### Pain Points Addressed
 
-| Pain Point                                      | Current State                                                                                                    | Impact                                                                                |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| No live landing site for OrganicLever brand     | `organiclever-fe` root redirects to `/login` or `/profile` based on cookie; `/profile` hits BE; BE not deployed. | Vercel deploy blocked on BE; no public-facing surface exists.                         |
-| Deploy pipeline unverified against real surface | `test-and-deploy-organiclever.yml` workflow exists but has never deployed a running FE to Vercel.                | No confidence the pipeline works end-to-end when BE finally comes online.             |
-| BE readiness opaque to ops                      | No way to observe whether `organiclever-be` is reachable from Vercel without logging into infrastructure.        | Debugging BE rollout later will require infra access instead of a public status page. |
-| Dead code in repo                               | `src/proxy.ts` exports a `proxy` function but is never imported and is not wired as Next.js middleware.          | Reader confusion; false impression of route-protection logic that does not execute.   |
+| Pain Point                                      | Current State                                                                                                     | Impact                                                                                |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| No live landing site for OrganicLever brand     | `organiclever-web` root redirects to `/login` or `/profile` based on cookie; `/profile` hits BE; BE not deployed. | Vercel deploy blocked on BE; no public-facing surface exists.                         |
+| Deploy pipeline unverified against real surface | `test-and-deploy-organiclever.yml` workflow exists but has never deployed a running FE to Vercel.                 | No confidence the pipeline works end-to-end when BE finally comes online.             |
+| BE readiness opaque to ops                      | No way to observe whether `organiclever-be` is reachable from Vercel without logging into infrastructure.         | Debugging BE rollout later will require infra access instead of a public status page. |
+| Dead code in repo                               | `src/proxy.ts` exports a `proxy` function but is never imported and is not wired as Next.js middleware.           | Reader confusion; false impression of route-protection logic that does not execute.   |
 
 ### Expected Benefits
 
@@ -55,7 +55,7 @@ Business-level success criteria (product-level criteria live in [prd.md](./prd.m
 3. **`/system/status/be` renders "Not configured"** when env unset and HTTP 200, never 5xx — verifiable by `curl -sS https://www.organiclever.com/system/status/be`.
 4. **Disabled routes return 404** — verifiable by `curl` against `/login`, `/profile`, `/api/auth/google`, `/api/auth/refresh`, `/api/auth/me` (all 404).
 5. **No Vercel function-log errors** for `/` and `/system/status/be` in the first hour after promote — verifiable from Vercel's log viewer.
-6. **BE code preserved**: `src/services/auth-service.ts`, `src/layers/backend-client-live.ts`, `src/services/backend-client.ts`, `src/services/errors.ts` still present with passing unit tests — verifiable by `ls` + `nx run organiclever-fe:test:unit`.
+6. **BE code preserved**: `src/services/auth-service.ts`, `src/layers/backend-client-live.ts`, `src/services/backend-client.ts`, `src/services/errors.ts` still present with passing unit tests — verifiable by `ls` + `nx run organiclever-web:test:unit`.
 
 ## Non-Goals (Business)
 

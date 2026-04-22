@@ -392,7 +392,7 @@ Backed up 3 files to /Users/dev/ose-env-bkup
   .env
 
 Skipped 1 file:
-  apps/organiclever-fe/.env.symlink (symlink)
+  apps/organiclever-web/.env.symlink (symlink)
 ```
 
 With `--verbose`:
@@ -418,7 +418,7 @@ Backed up 3 files to /Users/dev/ose-env-bkup
   "dir": "/Users/dev/ose-env-bkup",
   "files": [
     { "relPath": "apps/ayokoding-web/.env.local", "size": 245, "skipped": false },
-    { "relPath": "apps/organiclever-fe/.env.symlink", "size": 0, "skipped": true, "reason": "symlink" }
+    { "relPath": "apps/organiclever-web/.env.symlink", "size": 0, "skipped": true, "reason": "symlink" }
   ],
   "copied": 3,
   "skipped": 1
@@ -434,10 +434,10 @@ Backed up 3 files to /Users/dev/ose-env-bkup
 **Directory**: `/Users/dev/ose-env-bkup`
 **Copied**: 3 | **Skipped**: 1
 
-| File                                | Size  | Status            |
-| ----------------------------------- | ----- | ----------------- |
-| `apps/ayokoding-web/.env.local`     | 245 B | copied            |
-| `apps/organiclever-fe/.env.symlink` | —     | skipped (symlink) |
+| File                                 | Size  | Status            |
+| ------------------------------------ | ----- | ----------------- |
+| `apps/ayokoding-web/.env.local`      | 245 B | copied            |
+| `apps/organiclever-web/.env.symlink` | —     | skipped (symlink) |
 ```
 
 ## Test Strategy

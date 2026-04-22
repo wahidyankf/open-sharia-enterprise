@@ -28,7 +28,7 @@ but:
 - **be**: HTTP-semantic (GET, POST, status codes, response bodies)
 - **fe**: UI-semantic (clicks, types, sees, navigates, form submissions)
 
-`apps/organiclever-fe` consumes these specs, just as `apps/organiclever-be` consumes
+`apps/organiclever-web` consumes these specs, just as `apps/organiclever-be` consumes
 `specs/apps/organiclever/be/gherkin/`. Step definitions translate UI actions into component
 renders and API call verifications.
 

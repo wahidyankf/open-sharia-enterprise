@@ -25,13 +25,13 @@ specs/apps/organiclever/
 
 ## Backend vs Frontend
 
-| Aspect      | Backend (be/)                                 | Frontend (fe/)                                 |
-| ----------- | --------------------------------------------- | ---------------------------------------------- |
-| Perspective | HTTP-semantic (GET, POST, status codes)       | UI-semantic (clicks, types, sees)              |
-| Background  | `Given the API is running`                    | `Given the app is running`                     |
-| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)     | See [fe/gherkin/](./fe/gherkin/README.md)      |
-| Domains     | 2 domains                                     | 3 domains (2 shared + layout)                  |
-| Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec) | `apps/organiclever-fe` (Next.js 16, Effect TS) |
+| Aspect      | Backend (be/)                                 | Frontend (fe/)                                  |
+| ----------- | --------------------------------------------- | ----------------------------------------------- |
+| Perspective | HTTP-semantic (GET, POST, status codes)       | UI-semantic (clicks, types, sees)               |
+| Background  | `Given the API is running`                    | `Given the app is running`                      |
+| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)     | See [fe/gherkin/](./fe/gherkin/README.md)       |
+| Domains     | 2 domains                                     | 3 domains (2 shared + layout)                   |
+| Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec) | `apps/organiclever-web` (Next.js 16, Effect TS) |
 
 Both spec sets cover the same functional surface from different perspectives. The frontend app
 consumes the backend API.

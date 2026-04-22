@@ -363,21 +363,21 @@ The Week 4 update described OrganicLever's backend as Spring Boot 4.0.3 on Java 
 
 These decisions might seem final, but they are not permanent. As the application grows in production, any tech stack can fall short of expectations in ways we cannot predict today. That is why Gherkin specs, OpenAPI contracts, E2E tests, and C4 architecture diagrams are among the most important investments in this project—not because they make the current stack better, but because they make rewriting or porting to a different stack a manageable experience rather than a painful one. The behavioral specifications define what the system does independently of how it is implemented. If F# needs to become something else in two years, the specs, contracts, and tests carry over. The implementation is replaceable. The specification is the asset—which is also why the FSL-1.1-MIT license protects the specifications specifically. More on that below.
 
-The backend now runs F#/Giraffe with PostgreSQL, DbUp migrations, AltCover for test coverage, and the same three-level testing and contract-driven patterns applied to the demo backends. OrganicLever adopted the same OpenAPI contract enforcement—an OpenAPI 3.1 specification at `specs/apps/organiclever/contracts/` with codegen for both **`organiclever-be`** and **`organiclever-fe`**.
+The backend now runs F#/Giraffe with PostgreSQL, DbUp migrations, AltCover for test coverage, and the same three-level testing and contract-driven patterns applied to the demo backends. OrganicLever adopted the same OpenAPI contract enforcement—an OpenAPI 3.1 specification at `specs/apps/organiclever/contracts/` with codegen for both **`organiclever-be`** and **`organiclever-web`**.
 
 ### Authentication and OAuth
 
-JWT-based authentication with refresh tokens was implemented initially in Spring Boot, then migrated to F#/Giraffe as part of the pivot. Google OAuth login was integrated for user authentication. The auth flow is end-to-end tested via Playwright in **`organiclever-be-e2e`** and **`organiclever-fe-e2e`**.
+JWT-based authentication with refresh tokens was implemented initially in Spring Boot, then migrated to F#/Giraffe as part of the pivot. Google OAuth login was integrated for user authentication. The auth flow is end-to-end tested via Playwright in **`organiclever-be-e2e`** and **`organiclever-web-e2e`**.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 (frontend), Orange #DE8F05 (backend), Purple #CC78BC (contract), Teal #029E73 (external)
 graph LR
-    FE["organiclever-fe<br/>Next.js 16 + React 19"]:::frontend
+    FE["organiclever-web<br/>Next.js 16 + React 19"]:::frontend
     BE["organiclever-be<br/>F# / Giraffe"]:::backend
     CT["organiclever-contracts<br/>OpenAPI 3.1"]:::contract
     PG["PostgreSQL"]:::external
     GA["Google OAuth"]:::external
-    FEE["organiclever-fe-e2e<br/>Playwright"]:::frontend
+    FEE["organiclever-web-e2e<br/>Playwright"]:::frontend
     BEE["organiclever-be-e2e<br/>Playwright"]:::backend
 
     CT -->|"codegen"| FE
@@ -530,7 +530,7 @@ This is not proprietary. This is not closed-source. This is time-delayed open so
 
 The restriction is scoped per application domain, not blanket across the repository:
 
-- **organiclever-fe, organiclever-be** — Restricted domain: productivity tracking for Sharia-compliant businesses
+- **organiclever-web, organiclever-be** — Restricted domain: productivity tracking for Sharia-compliant businesses
 - **oseplatform-web** — Restricted domain: Sharia-compliant enterprise platform marketing and content
 - **Behavioral specs** (`specs/`) — FSL-1.1-MIT protecting the WHAT (behavioral contracts that define our product)
 - **Demo apps** (`a-demo-*`) — MIT license. Reference implementations meant for learning. No restrictions.

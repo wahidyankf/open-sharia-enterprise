@@ -85,13 +85,13 @@ production performance impact.
 
 - [x] In `apps/ayokoding-web/next.config.ts`, set `images.unoptimized: true`
 - [x] In `apps/oseplatform-web/next.config.ts`, set `images.unoptimized: true`
-- [x] In `apps/organiclever-fe/next.config.ts`, set `images.unoptimized: true`
+- [x] In `apps/organiclever-web/next.config.ts`, set `images.unoptimized: true`
 - [x] Run `nx run ayokoding-web:test:quick` — verify pass
 - [x] Run `nx run oseplatform-web:test:quick` — verify pass
-- [x] Run `nx run organiclever-fe:test:quick` — verify pass
+- [x] Run `nx run organiclever-web:test:quick` — verify pass
 - [x] Run `nx run ayokoding-web:build` — verify build succeeds without sharp
 - [x] Run `nx run oseplatform-web:build` — verify build succeeds without sharp
-- [x] Run `nx run organiclever-fe:build` — verify build succeeds without sharp
+- [x] Run `nx run organiclever-web:build` — verify build succeeds without sharp
 - [x] Commit: `fix(nextjs): disable server-side image optimization for FSL-1.1-MIT LGPL compliance`
 
 #### 3b: Document Dependency Audit and Licensing

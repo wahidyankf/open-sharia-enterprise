@@ -401,7 +401,7 @@ marked are modified in Phase 5.
 | `apps-ayokoding-web-in-the-field-maker`        | Content/Maker   | omit    | sonnet      | **OMIT→SONNET**  | Standard-library-first pattern, 20-40 guides, defined rubric                                         |
 | `apps-ayokoding-web-link-checker`              | Content/Checker | haiku   | haiku       | —                | HTTP status code checking only                                                                       |
 | `apps-ayokoding-web-link-fixer`                | Content/Fixer   | sonnet  | haiku       | **SONNET→HAIKU** | Deterministic URL replacement per checker report — no reasoning                                      |
-| `apps-organiclever-fe-deployer`                | Ops/Deployer    | haiku   | haiku       | —                | Deterministic git branch operations                                                                  |
+| `apps-organiclever-web-deployer`               | Ops/Deployer    | haiku   | haiku       | —                | Deterministic git branch operations                                                                  |
 | `apps-oseplatform-web-content-checker`         | Content/Checker | sonnet  | sonnet      | —                | Next.js content layer compliance rules                                                               |
 | `apps-oseplatform-web-content-fixer`           | Content/Fixer   | sonnet  | sonnet      | —                | Apply content fixes                                                                                  |
 | `apps-oseplatform-web-content-maker`           | Content/Maker   | sonnet  | sonnet      | —                | Date-based content following Next.js conventions                                                     |

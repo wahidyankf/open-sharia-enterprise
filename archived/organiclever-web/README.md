@@ -1,4 +1,4 @@
-# organiclever-fe
+# organiclever-web
 
 Landing and promotional website for [OrganicLever](https://www.organiclever.com/) — an individual productivity tracker with Sharia-compliant features.
 
@@ -27,28 +27,28 @@ This app serves as the public-facing landing page for OrganicLever. It introduce
 
 ```bash
 # Start development server (http://localhost:3200)
-nx dev organiclever-fe
+nx dev organiclever-web
 
 # Build for production (local verification)
-nx build organiclever-fe
+nx build organiclever-web
 
 # Type checking
-nx run organiclever-fe:typecheck
+nx run organiclever-web:typecheck
 
 # Lint (oxlint)
-nx run organiclever-fe:lint
+nx run organiclever-web:lint
 
 # Run unit tests (pre-push gate)
-nx run organiclever-fe:test:quick
+nx run organiclever-web:test:quick
 
 # Run unit tests explicitly
-nx run organiclever-fe:test:unit
+nx run organiclever-web:test:unit
 
 # Run integration tests
-nx run organiclever-fe:test:integration
+nx run organiclever-web:test:integration
 
 # Run E2E tests (app must be running first)
-nx run organiclever-fe-e2e:test:e2e
+nx run organiclever-web-e2e:test:e2e
 ```
 
 ### Option 2: Docker Compose (containerized)
@@ -57,10 +57,10 @@ Runs the app inside a Node.js 24 Alpine container. Useful when you want an envir
 
 ```bash
 # From repository root
-npm run organiclever-fe:dev
+npm run organiclever-web:dev
 
 # Or start the frontend container only
-docker compose -f infra/dev/organiclever-fe/docker-compose.yml up organiclever-fe
+docker compose -f infra/dev/organiclever-web/docker-compose.yml up organiclever-web
 ```
 
 **First startup** (~2-4 min): installs npm dependencies inside the container.
@@ -72,7 +72,7 @@ docker compose -f infra/dev/organiclever-fe/docker-compose.yml up organiclever-f
 ## Project Structure
 
 ```
-apps/organiclever-fe/
+apps/organiclever-web/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── dashboard/          # Dashboard route
@@ -117,7 +117,7 @@ Components are split across two levels with a strict boundary:
 
 - Compose `ui/` primitives with business logic and app content
 - May have hardcoded routes, brand strings, or prop contracts tied to this app
-- Not portable — tightly coupled to organiclever-fe's domain
+- Not portable — tightly coupled to organiclever-web's domain
 - Examples: `Navigation` (hardcodes `/dashboard` routes and "Organic Lever" brand), `Breadcrumb` (reads live pathname)
 
 **Why keep them separate:**
@@ -139,20 +139,20 @@ Vercel monitors `prod-organiclever-web` and auto-builds on every push. Never com
 git push origin main:prod-organiclever-web --force
 ```
 
-Use the `apps-organiclever-fe-deployer` agent for guided deployment.
+Use the `apps-organiclever-web-deployer` agent for guided deployment.
 
 ### Docker (Production Image)
 
 Build a production container image using the multi-stage Dockerfile (from repo root):
 
 ```bash
-docker build -f apps/organiclever-fe/Dockerfile -t organiclever-fe:latest .
+docker build -f apps/organiclever-web/Dockerfile -t organiclever-web:latest .
 ```
 
 Run the image:
 
 ```bash
-docker run --rm -p 3200:3200 organiclever-fe:latest
+docker run --rm -p 3200:3200 organiclever-web:latest
 ```
 
 **Image characteristics**:
@@ -164,14 +164,14 @@ docker run --rm -p 3200:3200 organiclever-fe:latest
 
 ## Testing
 
-`organiclever-fe` uses a three-tier testing strategy. Integration and E2E share the same Gherkin
+`organiclever-web` uses a three-tier testing strategy. Integration and E2E share the same Gherkin
 specs from [`specs/apps/organiclever/`](../../specs/apps/organiclever/).
 
 | Tier        | Tool                     | Location                                      | Command                                   | Requires service? | Cached? |
 | ----------- | ------------------------ | --------------------------------------------- | ----------------------------------------- | ----------------- | ------- |
-| Unit        | Vitest + RTL             | `src/components/*.unit.test.tsx`              | `nx run organiclever-fe:test:unit`        | No                | Yes     |
-| Integration | Vitest + vitest-cucumber | `src/test/integration/*.integration.test.tsx` | `nx run organiclever-fe:test:integration` | No                | Yes     |
-| E2E         | playwright-bdd           | `apps/organiclever-fe-e2e/`                   | `nx run organiclever-fe-e2e:test:e2e`     | Yes (port 3200)   | No      |
+| Unit        | Vitest + RTL             | `src/components/*.unit.test.tsx`              | `nx run organiclever-web:test:unit`        | No                | Yes     |
+| Integration | Vitest + vitest-cucumber | `src/test/integration/*.integration.test.tsx` | `nx run organiclever-web:test:integration` | No                | Yes     |
+| E2E         | playwright-bdd           | `apps/organiclever-web-e2e/`                   | `nx run organiclever-web-e2e:test:e2e`     | Yes (port 3200)   | No      |
 
 `test:quick` runs unit + integration in parallel (no running server needed).
 
@@ -186,7 +186,7 @@ scenario.
 
 ## E2E Tests
 
-E2E tests live in [`apps/organiclever-fe-e2e/`](../../apps/organiclever-fe-e2e/). See that directory's README for details.
+E2E tests live in [`apps/organiclever-web-e2e/`](../../apps/organiclever-web-e2e/). See that directory's README for details.
 
 ## Shared UI Components
 
@@ -201,6 +201,6 @@ App-specific components (AlertDialog, Table) remain in `src/components/ui/`.
 
 ## Related
 
-- **Skill**: `apps-organiclever-fe-developing-content` — full development reference
-- **Agent**: `apps-organiclever-fe-deployer` — deploys to production
+- **Skill**: `apps-organiclever-web-developing-content` — full development reference
+- **Agent**: `apps-organiclever-web-deployer` — deploys to production
 - **Agent**: `swe-e2e-developer` — E2E testing with Playwright

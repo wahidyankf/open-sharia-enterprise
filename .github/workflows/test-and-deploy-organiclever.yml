@@ -21,9 +21,9 @@ jobs:
       - name: Run spec-coverage for all OrganicLever projects
         run: |
           npx nx run organiclever-be:spec-coverage
-          npx nx run organiclever-fe:spec-coverage
+          npx nx run organiclever-web:spec-coverage
           npx nx run organiclever-be-e2e:spec-coverage
-          npx nx run organiclever-fe-e2e:spec-coverage
+          npx nx run organiclever-web-e2e:spec-coverage
 
   fe-lint:
     name: FE lint
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
-      - run: npx nx run organiclever-fe:lint
+      - run: npx nx run organiclever-web:lint
 
   be-integration:
     name: BE integration tests
@@ -70,10 +70,10 @@ jobs:
       - name: Generate contract types
         run: |
           npx nx run organiclever-contracts:bundle
-          npx nx run organiclever-fe:codegen
+          npx nx run organiclever-web:codegen
 
       - name: Run integration tests
-        run: npx nx run organiclever-fe:test:integration
+        run: npx nx run organiclever-web:test:integration
 
   e2e:
     name: E2E tests (BE + FE)
@@ -90,7 +90,7 @@ jobs:
         run: |
           npx nx run organiclever-contracts:bundle
           npx nx run organiclever-be:codegen
-          npx nx run organiclever-fe:codegen
+          npx nx run organiclever-web:codegen
 
       - name: Start full stack (DB + backend + frontend)
         run: docker compose -f infra/dev/organiclever/docker-compose.yml -f infra/dev/organiclever/docker-compose.ci.yml up --build -d
@@ -125,7 +125,7 @@ jobs:
             sleep 10
           done
           echo "Frontend did not start within 6 minutes"
-          docker compose -f infra/dev/organiclever/docker-compose.yml -f infra/dev/organiclever/docker-compose.ci.yml logs organiclever-fe
+          docker compose -f infra/dev/organiclever/docker-compose.yml -f infra/dev/organiclever/docker-compose.ci.yml logs organiclever-web
           exit 1
 
       - uses: ./.github/actions/setup-playwright
@@ -144,7 +144,7 @@ jobs:
           retention-days: 7
 
       - name: Run FE E2E tests
-        run: npx nx run organiclever-fe-e2e:test:e2e
+        run: npx nx run organiclever-web-e2e:test:e2e
         env:
           BASE_URL: http://localhost:3200
 
@@ -152,8 +152,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-organiclever-fe
-          path: apps/organiclever-fe-e2e/playwright-report/
+          name: playwright-report-organiclever-web
+          path: apps/organiclever-web-e2e/playwright-report/
           retention-days: 7
 
       - name: Teardown
@@ -171,7 +171,7 @@ jobs:
           fetch-depth: 2
       - id: check
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- "apps/organiclever-fe/" 2>/dev/null || echo "")
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- "apps/organiclever-web/" 2>/dev/null || echo "")
           if [ -n "$CHANGED" ]; then
             echo "has-changes=true" >> "$GITHUB_OUTPUT"
           else

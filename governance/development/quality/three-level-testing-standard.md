@@ -183,7 +183,7 @@ Different project types carry different coverage thresholds, reflecting the prac
 | --------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | 90%       | API backends (`organiclever-be`), CLI apps (Go), Go libs | Core business logic with high mock isolation; all execution paths reachable in unit tests           |
 | 80%       | Content platforms (`ayokoding-web`, `oseplatform-web`)   | Significant UI rendering code; some React rendering paths are hard to unit-test                     |
-| 70%       | FE apps (`organiclever-fe`)                              | API/auth/query layers are fully mocked by design; threshold reflects intentional mocking boundaries |
+| 70%       | FE apps (`organiclever-web`)                             | API/auth/query layers are fully mocked by design; threshold reflects intentional mocking boundaries |
 
 ## Mandatory Test Levels Matrix
 
@@ -316,7 +316,7 @@ All UI projects must include static accessibility checks in their `lint` target.
 common accessibility violations at compile time and are enforced at all three gates: pre-push hook,
 PR quality gate, and scheduled Test CI workflows.
 
-- **TypeScript UI projects** (`organiclever-fe`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui`):
+- **TypeScript UI projects** (`organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui`):
   `oxlint --jsx-a11y-plugin`
 
 ### Runtime Accessibility E2E Tests (via `test:e2e`)
@@ -345,7 +345,7 @@ linting and the enforcement gates.
 
 The following gaps are known and tracked for future resolution:
 
-- **FE unit tests lack Gherkin**: `organiclever-fe` does not yet consume Gherkin specs at the unit level. A BDD runner compatible with Vitest-based unit tests needs to be selected.
+- **FE unit tests lack Gherkin**: `organiclever-web` does not yet consume Gherkin specs at the unit level. A BDD runner compatible with Vitest-based unit tests needs to be selected.
 - **Content platform Gherkin pending**: `ayokoding-web` and `oseplatform-web` do not yet consume Gherkin specs at any test level. Gherkin consumption for content platforms is planned as part of the same standardization effort.
 - **Spec-coverage deferred for some projects**: Some projects have `spec-coverage` temporarily deferred until step implementations are complete. See "Spec-Coverage Validation" above and [Nx Target Standards](../infra/nx-targets.md) for the deferred project list.
 
@@ -392,7 +392,7 @@ The three-level standard applies universally, with adaptations per project type:
 | Project Type                    | Unit                            | Integration                      | E2E                | test:quick | Gherkin Specs                          |
 | ------------------------------- | ------------------------------- | -------------------------------- | ------------------ | ---------- | -------------------------------------- |
 | API backend (`organiclever-be`) | All mocked + specs              | Real PostgreSQL, no HTTP + specs | Playwright + specs | Yes        | `specs/apps/<backend-name>/`           |
-| Web UI app (`organiclever-fe`)  | Vitest mocks                    | MSW in-process (cacheable)       | Playwright         | Yes        | Project-specific                       |
+| Web UI app (`organiclever-web`) | Vitest mocks                    | MSW in-process (cacheable)       | Playwright         | Yes        | Project-specific                       |
 | Content platform                | Vitest mocks                    | MSW/tRPC in-process (cacheable)  | Playwright + specs | Yes        | `specs/apps/{domain}/{be,fe}/gherkin/` |
 | CLI app (Go)                    | Go test mocks + Gherkin (godog) | Godog BDD in-process (cacheable) | N/A                | Yes        | `specs/apps/<cli-name>/`               |
 | Library (Go)                    | Go test mocks                   | Godog BDD in-process (cacheable) | N/A                | Yes        | `specs/libs/<lib-name>/`               |

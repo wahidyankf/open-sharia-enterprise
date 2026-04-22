@@ -14,7 +14,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Verify `cucumber-js` available or confirm it will be invoked via `npx cucumber-js`
 - [ ] Verify `oxlint` available or confirm it will be invoked via `npx oxlint`
 - [ ] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe`, `a-demo-be-python-fastapi`, and `a-demo-be-rust-axum`)
+      `organiclever-web`, `a-demo-be-python-fastapi`, and `a-demo-be-rust-axum`)
 - [ ] Confirm `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [ ] Confirm Cucumber.js is compatible with the current Gherkin syntax in
       `specs/apps/a-demo/be/gherkin/` (Given/When/Then with doc string and data table parameters)

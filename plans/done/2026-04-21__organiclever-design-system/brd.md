@@ -12,14 +12,14 @@ than deriving values ad hoc.
 
 The current `ts-ui` components (Button, Card, Input, Alert, Dialog, Label) use neutral
 HSL tokens and generic geometry. Once the OL tokens are in place and the missing
-components added, `organiclever-fe` will render OL's brand exactly — and future app
+components added, `organiclever-web` will render OL's brand exactly — and future app
 screens can be built purely from `ts-ui` imports without reinventing visual primitives.
 
 ## Business Impact
 
 ### Pain Points
 
-- `organiclever-fe` currently renders with neutral HSL tokens and generic geometry.
+- `organiclever-web` currently renders with neutral HSL tokens and generic geometry.
   Every new screen must hardcode OL brand values inline or approximate them, leading
   to inconsistency and rework as the design evolves.
 - The existing `ts-ui` component set (Button, Card, Input, Alert, Dialog, Label) lacks
@@ -55,7 +55,7 @@ screens can be built purely from `ts-ui` imports without reinventing visual prim
 
 - `nx run ts-ui:test:quick` passes with coverage ≥ 70% after all new components added.
 - `nx run ts-ui-tokens:typecheck` passes (no TypeScript errors in the token index).
-- `nx build organiclever-fe` passes with zero type errors.
+- `nx build organiclever-web` passes with zero type errors.
 - OrganicLever brand tokens visible at `localhost:3200`: warm cream background,
   Nunito body font, JetBrains Mono for numerics, teal ring on focused inputs.
 - Dark mode toggle (future app) sets `data-theme="dark"` on `<html>` and the palette
@@ -67,7 +67,7 @@ screens can be built purely from `ts-ui` imports without reinventing visual prim
 - **Workout app screens** — Home, Workout, Finish, EditRoutine, History, Progress,
   Settings are a separate follow-on plan. This plan delivers only the building blocks.
 - **Data layer** (`db.ts`, `types.ts`) — separate plan.
-- **New routes** in `organiclever-fe` — separate plan.
+- **New routes** in `organiclever-web` — separate plan.
 - **Changes to the landing page content** — separate plan.
 - **`ts-ui-tokens` neutral baseline changes** — must not break other apps.
 - **`ose-primer` propagation** — OL brand tokens are product-specific (`neither`);

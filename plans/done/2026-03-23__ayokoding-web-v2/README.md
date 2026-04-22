@@ -46,7 +46,7 @@ This is the first **content platform** rewrite in the monorepo. Unlike demo apps
 
 ## Deployment
 
-- **Platform**: Vercel (same as current ayokoding-web and organiclever-fe)
+- **Platform**: Vercel (same as current ayokoding-web and organiclever-web)
 - **Production branch**: `prod-ayokoding-web-v2` (Vercel listens for pushes)
 - **Local dev / CI E2E**: Docker Compose (no Vercel dependency)
 

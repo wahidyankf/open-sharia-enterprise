@@ -5,7 +5,7 @@ OpenAPI 3.1 specification for the OrganicLever productivity platform REST API.
 ## Purpose
 
 This contract defines the exact shape of every request and response for the OrganicLever backend
-(`organiclever-be`) and frontend (`organiclever-fe`). It is the **single source of truth** for API
+(`organiclever-be`) and frontend (`organiclever-web`). It is the **single source of truth** for API
 types — code generators produce language-specific types from this spec.
 
 ## Quick Start
@@ -57,15 +57,15 @@ contracts/
 ## Nx Cache Integration
 
 Generated contract paths are explicit Nx cache inputs for `test:unit` and `test:quick` in both
-`organiclever-be` and `organiclever-fe`. This ensures that re-running codegen (which changes the
+`organiclever-be` and `organiclever-web`. This ensures that re-running codegen (which changes the
 generated files) triggers a cache miss and re-runs affected test targets.
 
 ## Adoption Status
 
-| App             | Codegen target | generated-contracts in inputs |
-| --------------- | :------------: | :---------------------------: |
-| organiclever-be |      yes       |              yes              |
-| organiclever-fe |      yes       |              yes              |
+| App              | Codegen target | generated-contracts in inputs |
+| ---------------- | :------------: | :---------------------------: |
+| organiclever-be  |      yes       |              yes              |
+| organiclever-web |      yes       |              yes              |
 
 ## Rules
 

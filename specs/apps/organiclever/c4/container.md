@@ -67,9 +67,9 @@ graph TD
 
 ### Frontend
 
-| App             | Language   | Framework  | Coverage |
-| --------------- | ---------- | ---------- | -------- |
-| organiclever-fe | TypeScript | Next.js 16 | >= 70%   |
+| App              | Language   | Framework  | Coverage |
+| ---------------- | ---------- | ---------- | -------- |
+| organiclever-web | TypeScript | Next.js 16 | >= 70%   |
 
 ## Related
 

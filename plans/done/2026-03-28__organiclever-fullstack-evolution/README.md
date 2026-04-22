@@ -11,49 +11,49 @@ Rebuild the OrganicLever product as a proper fullstack application with four app
 same patterns as `apps/demo-*`:
 
 - **`organiclever-be`** -- F#/Giraffe REST API backend
-- **`organiclever-fe`** -- Next.js 16 + TypeScript + Effect TS frontend (replaces `organiclever-fe`)
+- **`organiclever-web`** -- Next.js 16 + TypeScript + Effect TS frontend (replaces `organiclever-web`)
 - **`organiclever-be-e2e`** -- Playwright E2E tests for backend API
-- **`organiclever-fe-e2e`** -- Playwright E2E tests for frontend UI
+- **`organiclever-web-e2e`** -- Playwright E2E tests for frontend UI
 
 The initial scope is intentionally minimal: Google OAuth login with a protected `/profile` page
 as the core feature (first real database-backed feature), plus a health endpoint. This establishes
 the fullstack scaffold, CI/CD pipelines, contract-driven codegen, and three-level testing standard
 before adding domain features.
 
-Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are merged into a unified
+Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are merged into a unified
 `specs/apps/organiclever/` following the `specs/apps/a-demo/` structure (c4, be, fe, contracts).
 
 ## Problem Statement
 
-1. **No real backend** -- `organiclever-fe` uses Next.js API routes with JSON files; no database,
+1. **No real backend** -- `organiclever-web` uses Next.js API routes with JSON files; no database,
    no persistent state, no formal API contract
 2. **Non-standard structure** -- Unlike demo apps, there is no separated backend, no contract
    codegen, no E2E test apps, and no standard CI/CD workflows
 3. **Fragmented specs** -- Backend and frontend specs live in separate top-level directories
    without C4 diagrams or OpenAPI contracts
 4. **No Effect TS** -- Frontend lacks structured error handling and composability
-5. **Naming mismatch** -- `organiclever-fe` should be `organiclever-fe` to match the
+5. **Naming mismatch** -- `organiclever-web` should be `organiclever-web` to match the
    `[domain]-[type]` naming convention used by demo apps
 
 ## Current State
 
-| Aspect         | Details                                                             |
-| -------------- | ------------------------------------------------------------------- |
-| **Apps**       | `organiclever-fe` (Next.js 16), `organiclever-fe-e2e` (Playwright)  |
-| **Backend**    | None (API routes inside organiclever-fe)                            |
-| **Specs**      | Split: `specs/apps/organiclever-be/`, `specs/apps/organiclever-fe/` |
-| **Data**       | JSON files (`members.json`, `users.json`)                           |
-| **Auth**       | Cookie-based, plaintext password comparison                         |
-| **CI/CD**      | `.github/workflows/test-organiclever-fe.yml` (single workflow)      |
-| **Agents**     | `apps-organiclever-fe-deployer`                                     |
-| **Skills**     | `apps-organiclever-fe-developing-content`                           |
-| **Deployment** | Vercel via `prod-organiclever-web` branch                           |
+| Aspect         | Details                                                              |
+| -------------- | -------------------------------------------------------------------- |
+| **Apps**       | `organiclever-web` (Next.js 16), `organiclever-web-e2e` (Playwright) |
+| **Backend**    | None (API routes inside organiclever-web)                            |
+| **Specs**      | Split: `specs/apps/organiclever-be/`, `specs/apps/organiclever-web/` |
+| **Data**       | JSON files (`members.json`, `users.json`)                            |
+| **Auth**       | Cookie-based, plaintext password comparison                          |
+| **CI/CD**      | `.github/workflows/test-organiclever-web.yml` (single workflow)      |
+| **Agents**     | `apps-organiclever-web-deployer`                                     |
+| **Skills**     | `apps-organiclever-web-developing-content`                           |
+| **Deployment** | Vercel via `prod-organiclever-web` branch                            |
 
 ## Target State
 
 | Aspect          | Details                                                                                                         |
 | --------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Apps**        | `organiclever-be`, `organiclever-fe`, `organiclever-be-e2e`, `organiclever-fe-e2e`                              |
+| **Apps**        | `organiclever-be`, `organiclever-web`, `organiclever-be-e2e`, `organiclever-web-e2e`                            |
 | **Backend**     | F#/Giraffe REST API with PostgreSQL                                                                             |
 | **Frontend**    | Next.js 16 + TypeScript + Effect TS                                                                             |
 | **Specs**       | Unified `specs/apps/organiclever/` (c4, be, fe, contracts)                                                      |
@@ -78,17 +78,17 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are mer
   - `GET /api/v1/health` -> `{"status":"UP"}`
   - `POST /api/v1/auth/google`, `POST /api/v1/auth/refresh`, `GET /api/v1/auth/me`
   - Three-level testing, OpenAPI codegen, Docker support
-- **`apps/organiclever-fe`** -- Next.js 16 + Effect TS (replaces `organiclever-fe`)
+- **`apps/organiclever-web`** -- Next.js 16 + Effect TS (replaces `organiclever-web`)
   - `/login` page (Google OAuth), `/profile` page (protected)
   - `@open-sharia-enterprise/ts-ui` for shared UI primitives with OrganicLever styling
   - Effect TS service layer for API calls via BFF proxy
   - Three-level testing, OpenAPI codegen
 - **`apps/organiclever-be-e2e`** -- Playwright E2E for backend API
-- **`apps/organiclever-fe-e2e`** -- Playwright E2E for frontend UI (replaces `organiclever-fe-e2e`)
+- **`apps/organiclever-web-e2e`** -- Playwright E2E for frontend UI (replaces `organiclever-web-e2e`)
 - **CI/CD** -- GitHub Actions workflows for all 4 apps (matching demo-\* patterns)
 - **`infra/dev/organiclever/`** -- Docker Compose for local development (replaces
-  `infra/dev/organiclever-fe/`), supporting both backend + frontend + PostgreSQL
-- **Cleanup** -- Archive `organiclever-fe`, remove `organiclever-fe-e2e`, delete old spec dirs
+  `infra/dev/organiclever-web/`), supporting both backend + frontend + PostgreSQL
+- **Cleanup** -- Archive `organiclever-web`, remove `organiclever-web-e2e`, delete old spec dirs
 - **Documentation updates** -- CLAUDE.md, agents, skills, governance, docs references
 
 ### Out of Scope
@@ -104,7 +104,7 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are mer
 
 | Decision           | Choice                            | Rationale                                                  |
 | ------------------ | --------------------------------- | ---------------------------------------------------------- |
-| **FE name**        | `organiclever-fe` (not `-web`)    | Matches `[domain]-[type]` convention (`a-demo-fe-*`)       |
+| **FE name**        | `organiclever-web` (not `-web`)   | Matches `[domain]-[type]` convention (`a-demo-fe-*`)       |
 | **Initial scope**  | Google login + protected profile  | First DB-backed feature, establishes scaffold + CI         |
 | **Auth provider**  | Google OAuth 2.0                  | Widely used, well-documented, free, no password management |
 | **Backend lang**   | F# / Giraffe                      | Functional-first, proven by `a-demo-be-fsharp-giraffe`     |
@@ -116,7 +116,7 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are mer
 | **FE port**        | 3200                              | Unchanged from current                                     |
 | **BE coverage**    | 90%                               | Standard for backends                                      |
 | **FE coverage**    | 70%                               | Standard for frontends (a-demo-fe-ts-nextjs uses 70%)      |
-| **Archive**        | `archived/organiclever-fe/`       | Preserves git history of current app                       |
+| **Archive**        | `archived/organiclever-web/`      | Preserves git history of current app                       |
 
 ## Prerequisites (Manual Setup Before Development)
 
@@ -153,15 +153,15 @@ document the required variables without values.
 
 ## Related Files
 
-- Current frontend: [`apps/organiclever-fe/`](../../../apps/organiclever-fe/)
-- Current E2E: [`apps/organiclever-fe-e2e/`](../../../apps/organiclever-fe-e2e/)
-- Reference backend: [`apps/a-demo-be-fsharp-giraffe/`](../../../apps/a-demo-be-fsharp-giraffe/)
-- Reference frontend: [`apps/a-demo-fe-ts-nextjs/`](../../../apps/a-demo-fe-ts-nextjs/)
-- Reference BE E2E: [`apps/a-demo-be-e2e/`](../../../apps/a-demo-be-e2e/)
-- Reference FE E2E: [`apps/a-demo-fe-e2e/`](../../../apps/a-demo-fe-e2e/)
-- Reference specs: [`specs/apps/a-demo/`](../../../specs/apps/a-demo/)
+- Current frontend: [`apps/organiclever-web/`](../../../apps/organiclever-web/)
+- Current E2E: [`apps/organiclever-web-e2e/`](../../../apps/organiclever-web-e2e/)
+- Reference backend: `apps/a-demo-be-fsharp-giraffe/` (extracted to ose-primer 2026-04-18)
+- Reference frontend: `apps/a-demo-fe-ts-nextjs/` (extracted to ose-primer 2026-04-18)
+- Reference BE E2E: `apps/a-demo-be-e2e/` (extracted to ose-primer 2026-04-18)
+- Reference FE E2E: `apps/a-demo-fe-e2e/` (extracted to ose-primer 2026-04-18)
+- Reference specs: `specs/apps/a-demo/` (extracted to ose-primer 2026-04-18)
 - Current BE specs: [`specs/apps/organiclever/be/`](../../../specs/apps/organiclever/be/) (to be merged)
 - Current FE specs: [`specs/apps/organiclever/fe/`](../../../specs/apps/organiclever/fe/) (to be merged)
-- Deployer agent: [`.claude/agents/apps-organiclever-fe-deployer.md`](../../../.claude/agents/apps-organiclever-fe-deployer.md)
-- Content skill: [`.claude/skills/apps-organiclever-fe-developing-content/`](../../../.claude/skills/apps-organiclever-fe-developing-content/)
-- GitHub workflow: [`.github/workflows/test-organiclever.yml`](../../../.github/workflows/test-organiclever.yml)
+- Deployer agent: [`.claude/agents/apps-organiclever-web-deployer.md`](../../../.claude/agents/apps-organiclever-web-deployer.md)
+- Content skill: [`.claude/skills/apps-organiclever-web-developing-content/`](../../../.claude/skills/apps-organiclever-web-developing-content/)
+- GitHub workflow: [`.github/workflows/test-and-deploy-organiclever.yml`](../../../.github/workflows/test-and-deploy-organiclever.yml)

@@ -1,11 +1,11 @@
-# organiclever-fe
+# organiclever-web
 
 Next.js 16 frontend for the OrganicLever productivity tracker — currently running in **local-first
 mode** as a standalone landing site while the backend is offline.
 
 ## Overview
 
-`organiclever-fe` serves a static landing page at `/` and a diagnostic page at
+`organiclever-web` serves a static landing page at `/` and a diagnostic page at
 `/system/status/be`. The existing Effect TS service layer (`src/services/`) and layer
 implementations (`src/layers/`) are preserved as dormant library code — re-enabling BFF routes is
 a future additive change, not a rebuild.
@@ -16,7 +16,7 @@ Route Handlers (`/api/auth/*`), `/login`, and `/profile` are removed from the bu
 ## Architecture
 
 ```
-Browser ──── Next.js (organiclever-fe)
+Browser ──── Next.js (organiclever-web)
                     │
                     ├── /                   Static landing page (no network dependency)
                     └── /system/status/be   Server-rendered diagnostic page (force-dynamic)
@@ -57,12 +57,12 @@ Preserved — no changes — as library code for the future rewire:
 ## Development
 
 ```bash
-nx dev organiclever-fe          # Start development server (localhost:3200)
-nx build organiclever-fe        # Production build
-nx run organiclever-fe:test:quick  # Unit tests + coverage validation (70%)
-nx run organiclever-fe:test:unit   # Unit tests only
-nx run organiclever-fe:typecheck   # TypeScript type check
-nx run organiclever-fe:lint        # Lint with oxlint
+nx dev organiclever-web          # Start development server (localhost:3200)
+nx build organiclever-web        # Production build
+nx run organiclever-web:test:quick  # Unit tests + coverage validation (70%)
+nx run organiclever-web:test:unit   # Unit tests only
+nx run organiclever-web:typecheck   # TypeScript type check
+nx run organiclever-web:lint        # Lint with oxlint
 ```
 
 ## Testing
@@ -77,7 +77,7 @@ Coverage threshold: 70% lines (enforced by `rhino-cli test-coverage validate`).
 
 ## Design System
 
-`organiclever-fe` uses the OrganicLever (OL) warm OKLCH design system, implemented via
+`organiclever-web` uses the OrganicLever (OL) warm OKLCH design system, implemented via
 `@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css` and wired into the app's
 `globals.css`.
 
@@ -120,7 +120,7 @@ Both selectors are handled by `@custom-variant dark` in `ts-ui-tokens`.
 ### Token import
 
 ```css
-/* apps/organiclever-fe/src/app/globals.css */
+/* apps/organiclever-web/src/app/globals.css */
 @import "tailwindcss";
 @source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
 @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";

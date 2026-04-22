@@ -86,15 +86,15 @@ The platform consists of the following applications across its technology stacks
 
 ### OrganicLever Applications
 
-#### organiclever-fe
+#### organiclever-web
 
 - **Purpose**: Landing site for OrganicLever — local-first mode; BE integration deferred
 - **URL**: <https://www.organiclever.com>
 - **Technology**: Next.js 16 (App Router) + React 19 + TailwindCSS
 - **Deployment**: Vercel (via `prod-organiclever-web` branch)
-- **Build Command**: `nx build organiclever-fe`
-- **Dev Command**: `nx dev organiclever-fe`
-- **Location**: `apps/organiclever-fe/`
+- **Build Command**: `nx build organiclever-web`
+- **Dev Command**: `nx dev organiclever-web`
+- **Location**: `apps/organiclever-web/`
 - **Features**:
   - Static landing page at `/` (no network dependency)
   - `/system/status/be` diagnostic page (probes `ORGANICLEVER_BE_URL` at request time)
@@ -153,12 +153,12 @@ The platform consists of the following applications across its technology stacks
 - **Run Command**: `nx run wahidyankf-web-fe-e2e:test:e2e`
 - **Location**: `apps/wahidyankf-web-fe-e2e/`
 
-#### organiclever-fe-e2e
+#### organiclever-web-e2e
 
-- **Purpose**: End-to-end tests for organiclever-fe
+- **Purpose**: End-to-end tests for organiclever-web
 - **Technology**: Playwright
-- **Run Command**: `nx run organiclever-fe-e2e:test:e2e`
-- **Location**: `apps/organiclever-fe-e2e/`
+- **Run Command**: `nx run organiclever-web-e2e:test:e2e`
+- **Location**: `apps/organiclever-web-e2e/`
 
 #### organiclever-be-e2e
 
@@ -180,9 +180,9 @@ graph TB
     end
 
     subgraph "OrganicLever Platform"
-        OL_FE[organiclever-fe<br/>Next.js App]
+        OL_FE[organiclever-web<br/>Next.js App]
         OL_BE[organiclever-be<br/>F#/Giraffe API]
-        OL_FE_E2E[organiclever-fe-e2e<br/>Playwright E2E]
+        OL_FE_E2E[organiclever-web-e2e<br/>Playwright E2E]
         OL_BE_E2E[organiclever-be-e2e<br/>Playwright E2E]
     end
 

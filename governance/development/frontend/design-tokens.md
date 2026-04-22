@@ -106,7 +106,7 @@ Brand tokens express each app's visual identity. Apps define these in their own 
 
 **App-specific extensions**
 
-- `organiclever-fe`: chart tokens `--chart-1` through `--chart-5`
+- `organiclever-web`: chart tokens `--chart-1` through `--chart-5`
 - `ayokoding-web`: sidebar tokens `--sidebar-background`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--sidebar-ring`
 
 ## Naming Convention
@@ -135,7 +135,7 @@ The `--color-{name}` form is what Tailwind v4 resolves to utility classes like `
 
 The monorepo currently has two formatting approaches in production apps.
 
-**Double indirection** (`organiclever-fe`):
+**Double indirection** (`organiclever-web`):
 
 ```css
 /* globals.css */
@@ -234,7 +234,7 @@ This keeps component code free of CSS property names and ensures the token layer
 
 ## OKLCH Brand Tokens (OrganicLever)
 
-`organiclever-fe` uses a warm OKLCH palette rather than HSL. OKLCH is the CSS Colors Level 4
+`organiclever-web` uses a warm OKLCH palette rather than HSL. OKLCH is the CSS Colors Level 4
 perceptual color space — it provides **perceptually uniform chroma** so that hues at the same
 `L%` and `C` level look equally vivid, unlike HSL where `50% saturation` produces wildly
 different perceived intensity across hues.

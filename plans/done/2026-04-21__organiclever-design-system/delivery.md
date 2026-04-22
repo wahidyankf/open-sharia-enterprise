@@ -31,7 +31,7 @@ Before executing any phase, move the plan to in-progress:
   - Date: 2026-04-21 | Status: Done | 19/19 tools OK, 0 warnings, 0 missing
 - [x] Baseline passes: `npm exec nx run ts-ui:test:quick` — note current coverage %
   - Date: 2026-04-21 | Status: Done | 12 test files, 102 tests passed, 95.88% coverage (≥70% threshold)
-- [x] Baseline passes: `npm exec nx build organiclever-fe`
+- [x] Baseline passes: `npm exec nx build organiclever-web`
   - Date: 2026-04-21 | Status: Done | Build passes; pre-existing lockfile warning (non-blocking)
 
 ### Commit and push conventions
@@ -42,7 +42,7 @@ Before executing any phase, move the plan to in-progress:
 > This is a deliberate product decision, not a governance violation.
 
 - Conventional Commits, imperative mood, no period
-- Scope: `ts-ui-tokens` for token lib, `ts-ui` for component lib, `organiclever-fe` for app,
+- Scope: `ts-ui-tokens` for token lib, `ts-ui` for component lib, `organiclever-web` for app,
   `docs` for documentation-only changes
 - One commit per phase group below; do NOT bundle unrelated changes from different phases
   or domains into a single commit
@@ -70,7 +70,7 @@ Before executing any phase, move the plan to in-progress:
   @custom-variant dark (&:is([data-theme="dark"] *), &:is(.dark *));
   ```
 
-- [x] **1.1.2** Verify `npm exec nx build organiclever-fe` still passes
+- [x] **1.1.2** Verify `npm exec nx build organiclever-web` still passes
   - Date: 2026-04-21 | Status: Done | Build successful
 - [x] **1.1.3** Commit: `fix(ts-ui-tokens): add data-theme="dark" to dark variant selector`
   - Date: 2026-04-21 | Status: Done | Committed to worktree-organiclever-adopt-design-system
@@ -90,7 +90,7 @@ Before executing any phase, move the plan to in-progress:
     (these are hardcoded `#ffffff` in `@theme` so CSS cannot auto-derive them in dark)
 - [x] **1.2.2a** Verify `npm exec nx run ts-ui-tokens:typecheck` — no TS errors
   - Date: 2026-04-21 | Status: Done | Typecheck passed
-- [x] **1.2.2b** Verify `npm exec nx build organiclever-fe` — CSS is valid and imports
+- [x] **1.2.2b** Verify `npm exec nx build organiclever-web` — CSS is valid and imports
       resolve
   - Date: 2026-04-21 | Status: Done | Build successful
 - [x] **1.2.3** Commit: `feat(ts-ui-tokens): add organiclever warm OKLCH token system`
@@ -100,16 +100,16 @@ Before executing any phase, move the plan to in-progress:
 
 ---
 
-## Phase 2: `organiclever-fe` — typography + token wiring
+## Phase 2: `organiclever-web` — typography + token wiring
 
-- [x] **2.1** Update `apps/organiclever-fe/src/app/layout.tsx`:
+- [x] **2.1** Update `apps/organiclever-web/src/app/layout.tsx`:
   - Date: 2026-04-21 | Status: Done | Added Nunito + JetBrains_Mono, applied CSS vars to html className
   - Import `Nunito` with `variable: '--font-nunito'`, weights `['400','500','600','700','800']`,
     `display: 'swap'`, `subsets: ['latin']`
   - Import `JetBrains_Mono` with `variable: '--font-jetbrains-mono'`, weights
     `['400','500','600']`, `display: 'swap'`, `subsets: ['latin']`
   - Add `${nunito.variable} ${jetbrainsMono.variable}` to `<html>` className
-- [x] **2.2** Update `apps/organiclever-fe/src/app/globals.css`:
+- [x] **2.2** Update `apps/organiclever-web/src/app/globals.css`:
   - Date: 2026-04-21 | Status: Done | Added organiclever.css import + @theme font-sans/font-mono + font-sans on body
   - Add `@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css"` after
     the base tokens import
@@ -118,19 +118,19 @@ Before executing any phase, move the plan to in-progress:
   - Date: 2026-04-21 | Status: Done | Added organiclever.css import after tokens.css
   - Add `import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css";` after
     the existing `tokens.css` import so Storybook stories render with OL warm palette
-- [x] **2.4** Start dev server (`npm exec nx dev organiclever-fe`) and verify at `localhost:3200`:
+- [x] **2.4** Start dev server (`npm exec nx dev organiclever-web`) and verify at `localhost:3200`:
   - [x] Background is warm cream (not pure white)
   - [x] Body font is Nunito
   - [x] DevTools shows `--hue-teal` resolving to an OKLCH value
   - [x] Focused input ring is teal
   - Date: 2026-04-21 | Status: Done | Playwright screenshot confirmed warm cream bg + Nunito rounded font
-- [x] **2.5** Run `npm exec nx build organiclever-fe` — passes
+- [x] **2.5** Run `npm exec nx build organiclever-web` — passes
   - Date: 2026-04-21 | Status: Done | Build successful (verified at Phase 2 execution)
 
 ### Manual UI Verification (Playwright MCP)
 
 > Dev server from step 2.4 should still be running. If it was stopped, restart with
-> `npm exec nx dev organiclever-fe` before proceeding.
+> `npm exec nx dev organiclever-web` before proceeding.
 
 - [x] **2.6** Navigate: `browser_navigate` to `http://localhost:3200`
   - Date: 2026-04-21 | Status: Done | Page loaded, title: OrganicLever
@@ -145,7 +145,7 @@ Before executing any phase, move the plan to in-progress:
 - [x] **2.10** Verify teal ring: `browser_click` on an input field, then `browser_snapshot`
       to confirm teal focus ring is applied
   - Date: 2026-04-21 | Status: Done | Landing page has no input; --color-ring: var(--hue-teal) confirmed in organiclever.css; re-verified at Phase 16
-- [x] **2.11** Commit: `feat(organiclever-fe): wire OL tokens and Nunito/JetBrains fonts`
+- [x] **2.11** Commit: `feat(organiclever-web): wire OL tokens and Nunito/JetBrains fonts`
   - Date: 2026-04-21 | Status: Done | 3 files changed (layout.tsx, globals.css, preview.ts)
 - [x] **2.12** Push: `git push origin main`
   - Date: 2026-04-21 | Status: Done | Pushed to origin/main
@@ -538,9 +538,9 @@ Before executing any phase, move the plan to in-progress:
   - Date: 2026-04-21 | Status: Done | Lint passed
 - [x] **16.4** Run `npm exec nx run ts-ui:test:quick` — passes, coverage ≥ 70%
   - Date: 2026-04-21 | Status: Done | 32 test files, 314 tests, 97.02% coverage
-- [x] **16.5** Run `npm exec nx build organiclever-fe` — passes, zero type errors
+- [x] **16.5** Run `npm exec nx build organiclever-web` — passes, zero type errors
   - Date: 2026-04-21 | Status: Done | Build successful
-- [x] **16.6** Run `npm exec nx run organiclever-fe:test:quick` — passes
+- [x] **16.6** Run `npm exec nx run organiclever-web:test:quick` — passes
   - Date: 2026-04-21 | Status: Done | 4 test files, 60 tests, 80% coverage
 - [x] **16.7** Run `npm run lint:md` — zero markdown violations
   - Date: 2026-04-21 | Status: Done | 2154 files, 0 errors
@@ -550,7 +550,7 @@ Before executing any phase, move the plan to in-progress:
   - [x] Dark mode toggle (`.dark` class via Storybook addon-themes) shifts to warm-dark
   - [x] Warm cream background visible in light mode (confirms `organiclever.css` loaded)
   - Date: 2026-04-21 | Status: Done | Verified via typecheck (all stories compile) + organiclever.css imported in preview.ts
-- [x] **16.9** Browser smoke test — `npm exec nx dev organiclever-fe` at `localhost:3200`:
+- [x] **16.9** Browser smoke test — `npm exec nx dev organiclever-web` at `localhost:3200`:
   - [x] Warm cream background
   - [x] Nunito body font
   - [x] Teal focus ring on inputs
@@ -586,7 +586,7 @@ Update all related `.md` files so developers can understand the design system wi
 reading source code. These files were pre-written to describe the target state; verify
 each section is accurate against the actual implementation before committing.
 
-- [x] **16.5.1** Verify `apps/organiclever-fe/README.md` — confirm the `## Design System`
+- [x] **16.5.1** Verify `apps/organiclever-web/README.md` — confirm the `## Design System`
       section accurately reflects the implemented palette table, font table, dark mode
       instructions, token import snippet, and component catalog
   - Date: 2026-04-21 | Status: Done | Section present; updated palette role descriptions to match spec
@@ -600,13 +600,13 @@ Files` section and `organiclever.css` entry are accurate
       `## OKLCH Brand Tokens (OrganicLever)` section and updated `@custom-variant dark`
       example are accurate
   - Date: 2026-04-21 | Status: Done | Section already present and accurate — no changes needed
-- [x] **16.5.5** Verify `.claude/skills/apps-organiclever-fe-developing-content/SKILL.md` —
+- [x] **16.5.5** Verify `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` —
       confirm the `## Design System` section accurately reflects imports, font usage, dark
       mode activation, and component usage examples
   - Date: 2026-04-21 | Status: Done | Section already present and accurate — no changes needed
 - [x] **16.5.6** Run `npm run lint:md` — zero markdown violations across all updated files
   - Date: 2026-04-21 | Status: Done | 2154 files, 0 errors
-- [x] **16.5.7** Commit: `docs: update design system documentation across organiclever-fe and ts-ui`
+- [x] **16.5.7** Commit: `docs: update design system documentation across organiclever-web and ts-ui`
   - Date: 2026-04-21 | Status: Done | 2 files changed
 - [x] **16.5.8** Push: `git push origin main`
   - Date: 2026-04-21 | Status: Done | Pushed to origin/main
@@ -624,7 +624,7 @@ Files` section and `organiclever.css` entry are accurate
 - [x] **17.2** Run affected linting: `npm exec nx affected -t lint`
   - Date: 2026-04-21 | Status: Done | Passed
 - [x] **17.3** Run affected quick tests: `npm exec nx affected -t test:quick`
-  - Date: 2026-04-21 | Status: Done | ts-ui 97.02%, organiclever-fe 80.00% — both PASS
+  - Date: 2026-04-21 | Status: Done | ts-ui 97.02%, organiclever-web 80.00% — both PASS
 - [x] **17.4** Run affected spec coverage: `npm exec nx affected -t spec-coverage`
   - Date: 2026-04-21 | Status: Done | Passed
 - [x] **17.5** Fix ALL failures found — including preexisting issues not caused by your
@@ -683,4 +683,4 @@ Files` section and `organiclever.css` entry are accurate
   story, test, or component API is changed in a breaking way. Removing the exports from
   `index.ts` reverts without side effects.
 - **Input h-11 change**: the only potentially breaking change. If height regression occurs
-  in any organiclever-fe layout, revert `h-11` → `h-9` and add a size prop instead.
+  in any organiclever-web layout, revert `h-11` → `h-9` and add a size prop instead.

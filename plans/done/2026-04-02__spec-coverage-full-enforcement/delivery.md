@@ -141,7 +141,7 @@ ones. This confirms the parser (after the Background step fix) reports correct c
 - [x] Run `npx nx run a-demo-fe-e2e:spec-coverage` and confirm 0 gaps.
 - [x] Commit: `feat(a-demo-fe-e2e): implement missing viewport BDD step definitions and restore spec-coverage`.
 
-### 2.2 organiclever-fe-e2e (15 missing steps)
+### 2.2 organiclever-web-e2e (15 missing steps)
 
 **Agent**: `swe-e2e-test-developer`
 **Feature areas**: Auth flows (Google sign-in, profile, redirects), accessibility (keyboard
@@ -149,14 +149,14 @@ navigation, form labels)
 
 - [x] Identify all 15 missing step texts against `specs/apps/organiclever/fe/gherkin/`.
 - [x] Add auth flow steps (Google sign-in mock/stub, profile page access, redirect assertions)
-      to the appropriate step files under `apps/organiclever-fe-e2e/`.
+      to the appropriate step files under `apps/organiclever-web-e2e/`.
 - [x] Add accessibility steps (keyboard navigation via `locator.press()`, form label assertions
       via `locator.getAttribute('aria-label')`).
-- [x] Run `npx nx run organiclever-fe-e2e:typecheck` and `npx nx run organiclever-fe-e2e:lint`.
-- [x] Add the `spec-coverage` target to `apps/organiclever-fe-e2e/project.json` using the
+- [x] Run `npx nx run organiclever-web-e2e:typecheck` and `npx nx run organiclever-web-e2e:lint`.
+- [x] Add the `spec-coverage` target to `apps/organiclever-web-e2e/project.json` using the
       organiclever FE E2E pattern from tech-docs.md.
-- [x] Run `npx nx run organiclever-fe-e2e:spec-coverage` and confirm 0 gaps.
-- [x] Commit: `feat(organiclever-fe-e2e): implement missing BDD step definitions and restore spec-coverage`.
+- [x] Run `npx nx run organiclever-web-e2e:spec-coverage` and confirm 0 gaps.
+- [x] Commit: `feat(organiclever-web-e2e): implement missing BDD step definitions and restore spec-coverage`.
 
 ### 2.3 a-demo-be-clojure-pedestal (22 missing steps)
 

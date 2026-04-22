@@ -130,7 +130,7 @@ A full dependency audit (2026-04-04) of all **production** (non-demo) apps found
 
 - **0 GPL/AGPL** dependencies — clean
 - **1 LGPL** dependency — `@img/sharp-libvips` (LGPL-3.0), transitive optional via Next.js →
-  `sharp`. Affects `ayokoding-web`, `oseplatform-web`, and `organiclever-fe`. **Resolution**:
+  `sharp`. Affects `ayokoding-web`, `oseplatform-web`, and `organiclever-web`. **Resolution**:
   set `images.unoptimized: true` in all 3 apps to eliminate sharp entirely (Vercel handles image
   optimization at the edge anyway)
 - **MPL-2.0** — HashiCorp libs (`go-immutable-radix`, `go-memdb`, `golang-lru`), indirect deps
