@@ -158,9 +158,9 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `ayokoding-web`         | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
 | `ayokoding-cli`         | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`        |
 | `rhino-cli`             | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`          |
-| `organiclever-fe`       | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
+| `organiclever-web`      | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
 | `organiclever-be`       | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |
-| `organiclever-fe-e2e`   | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `organiclever-web-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `organiclever-be-e2e`   | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `oseplatform-cli`       | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
 | `oseplatform-web`       | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
@@ -305,10 +305,10 @@ Spring Boot, Python apps, TypeScript apps:
 
 Two integration test patterns exist depending on project type:
 
-| Pattern             | Projects                                                  | Requirement                                                                                                                                                | Cacheable |
-| ------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| Docker + PostgreSQL | API backends (`organiclever-be`)                          | Real PostgreSQL via `docker-compose.integration.yml`; calls application code directly (no HTTP layer); runs all shared Gherkin scenarios; fresh DB per run | No        |
-| In-process mocking  | `organiclever-fe` (MSW), Go CLIs (Godog), Go libs (Godog) | In-process mocking only (MSW / godog `RunE` / mock fixtures); no real database or external services; fully deterministic                                   | Yes       |
+| Pattern             | Projects                                                   | Requirement                                                                                                                                                | Cacheable |
+| ------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| Docker + PostgreSQL | API backends (`organiclever-be`)                           | Real PostgreSQL via `docker-compose.integration.yml`; calls application code directly (no HTTP layer); runs all shared Gherkin scenarios; fresh DB per run | No        |
+| In-process mocking  | `organiclever-web` (MSW), Go CLIs (Godog), Go libs (Godog) | In-process mocking only (MSW / godog `RunE` / mock fixtures); no real database or external services; fully deterministic                                   | Yes       |
 
 **API backends** expose `test:integration` which runs `docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build`. This starts a fresh PostgreSQL container, runs migrations, and executes all shared Gherkin scenarios by calling application service/repository functions directly — no HTTP layer. Each backend has a `docker-compose.integration.yml` (postgres + test runner services) and a `Dockerfile.integration` (language runtime + test execution). Coverage is NOT measured at the integration level — coverage comes from `test:unit` only.
 
@@ -387,9 +387,9 @@ the project's feature files has a matching step definition in the implementation
 | ------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
 | Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                    |
 | API backends (`organiclever-be`)                              | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
-| E2E runners (`organiclever-be-e2e`, `organiclever-fe-e2e`)    | Enforced | `--shared-steps` only; test-support steps are implemented here                              |
+| E2E runners (`organiclever-be-e2e`, `organiclever-web-e2e`)   | Enforced | `--shared-steps` only; test-support steps are implemented here                              |
 | Content platforms (`ayokoding-web`, `oseplatform-web`)        | Enforced | `--shared-steps`                                                                            |
-| Web UI apps (`organiclever-fe`)                               | Enforced | `--shared-steps`                                                                            |
+| Web UI apps (`organiclever-web`)                              | Enforced | `--shared-steps`                                                                            |
 | Libraries (`golang-commons`, `hugo-commons`)                  | Enforced | `--shared-steps`                                                                            |
 | Projects with genuine step gaps                               | Deferred | `spec-coverage` target exists but validation deferred until step implementation is complete |
 
@@ -423,9 +423,9 @@ Accessibility testing is compulsory for all UI-related projects. It operates at 
 **Static a11y linting** (enforced via the `lint` target at all three gates: pre-push hook, PR
 quality gate, and scheduled Test CI workflows):
 
-| Project                                                             | Static a11y tool           |
-| ------------------------------------------------------------------- | -------------------------- |
-| `organiclever-fe`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui` | `oxlint --jsx-a11y-plugin` |
+| Project                                                              | Static a11y tool           |
+| -------------------------------------------------------------------- | -------------------------- |
+| `organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui` | `oxlint --jsx-a11y-plugin` |
 
 Static a11y linting catches common accessibility violations at compile time: missing alt text,
 missing ARIA labels, invalid ARIA attributes, missing form labels, and incorrect role usage.

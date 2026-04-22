@@ -154,7 +154,7 @@ color: green
 
 **Agent examples**:
 
-- **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer, apps-wahidyankf-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
+- **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
 - **Link checkers** (docs-link-checker, apps-ayokoding-web-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
 - **apps-ayokoding-web-link-fixer** -- applies checker-identified broken links via deterministic URL replacement; no independent analysis required
 - **docs-file-manager** -- performs deterministic file operations (move, rename, delete) with `git mv`, kebab-case pattern matching, and mechanical link updates; no judgment calls required

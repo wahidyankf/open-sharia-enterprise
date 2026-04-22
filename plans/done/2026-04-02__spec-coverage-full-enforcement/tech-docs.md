@@ -57,12 +57,12 @@ For E2E apps using FE gherkin specs:
 }
 ```
 
-For organiclever-fe-e2e (uses organiclever fe gherkin):
+For organiclever-web-e2e (uses organiclever fe gherkin):
 
 ```json
 {
   "spec-coverage": {
-    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-fe-e2e",
+    "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-web-e2e",
     "cache": true,
     "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
   }
@@ -436,7 +436,7 @@ Example: `Given the viewport is set to "desktop" (1280x800)`.
 `page.setViewportSize({ width: 1280, height: 800 })` etc. Reference the existing passing FE
 step definition files in `a-demo-fe-ts-nextjs` for how viewport steps are implemented.
 
-#### organiclever-fe-e2e (15 missing steps)
+#### organiclever-web-e2e (15 missing steps)
 
 Steps span auth flows (Google sign-in, profile access, redirects) and accessibility (keyboard
 navigation, form labels).
@@ -523,7 +523,7 @@ interacts with the widget tree via `WidgetTester` (finders, taps, text input).
 | ---------------------------------------------------------------------------------------------- | ------------------------------------- |
 | All `a-demo-be-*` apps                                                                         | `specs/apps/a-demo/be/gherkin/`       |
 | `a-demo-fe-e2e`, `a-demo-fe-dart-flutterweb`, `a-demo-fe-ts-nextjs`\*, `a-demo-fs-ts-nextjs`\* | `specs/apps/a-demo/fe/gherkin/`       |
-| `organiclever-fe-e2e`                                                                          | `specs/apps/organiclever/fe/gherkin/` |
+| `organiclever-web-e2e`                                                                         | `specs/apps/organiclever/fe/gherkin/` |
 
 \*Already passing spec-coverage — listed for reference only, not in scope for this plan.
 
@@ -560,4 +560,4 @@ npx nx run <project>:lint
 | `a-demo-be-kotlin-ktor`      | ≥90% (Kover JaCoCo)     |
 | `a-demo-fe-dart-flutterweb`  | ≥70% (LCOV)             |
 | `a-demo-fe-e2e`              | No coverage (E2E only)  |
-| `organiclever-fe-e2e`        | No coverage (E2E only)  |
+| `organiclever-web-e2e`       | No coverage (E2E only)  |

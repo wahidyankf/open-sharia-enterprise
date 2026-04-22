@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "organiclever-fe",
+  "name": "organiclever-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {

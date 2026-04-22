@@ -107,11 +107,11 @@
 
 - **apps-oseplatform-web-deployer** - Deploys to production branch (prod-oseplatform-web)
 
-### organiclever-fe Family
+### organiclever-web Family
 
 **Deployment**:
 
-- **apps-organiclever-fe-deployer** - Deploys organiclever-fe to production branch (prod-organiclever-web)
+- **apps-organiclever-web-deployer** - Deploys organiclever-web to production branch (prod-organiclever-web)
 
 ### wahidyankf-web Family
 

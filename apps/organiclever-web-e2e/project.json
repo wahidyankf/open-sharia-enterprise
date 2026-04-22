@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "organiclever-fe-e2e",
-  "sourceRoot": "apps/organiclever-fe-e2e/steps",
+  "name": "organiclever-web-e2e",
+  "sourceRoot": "apps/organiclever-web-e2e/steps",
   "projectType": "application",
   "targets": {
     "install": {
@@ -57,11 +57,11 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-fe-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-web-e2e",
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"],
-  "implicitDependencies": ["organiclever-fe", "organiclever-be"]
+  "implicitDependencies": ["organiclever-web", "organiclever-be"]
 }

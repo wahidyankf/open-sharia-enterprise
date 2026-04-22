@@ -46,7 +46,7 @@ YYYY-MM-DD__project-id/
 - Update `.claude/skills/plan-creating-project-plans/SKILL.md` to reflect new structure.
 - Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old four-document layout.
 - Sync `.claude/` → `.opencode/` via `npm run sync:claude-to-opencode`.
-- Migrate the one active in-progress plan (`2026-04-16__organiclever-fe-local-first/`) from `requirements.md` → `brd.md` + `prd.md` so the repository contains zero plans using the deprecated layout.
+- Migrate the one active in-progress plan (`2026-04-16__organiclever-web-local-first/`) from `requirements.md` → `brd.md` + `prd.md` so the repository contains zero plans using the deprecated layout.
 
 ### Out of Scope
 

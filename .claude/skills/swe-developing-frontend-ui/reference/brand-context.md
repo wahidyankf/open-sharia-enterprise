@@ -2,7 +2,7 @@
 
 Per-app brand guidance for UI development decisions.
 
-## organiclever-fe
+## organiclever-web
 
 - **Product**: Business productivity tracker (OrganicLever)
 - **URL**: www.organiclever.com

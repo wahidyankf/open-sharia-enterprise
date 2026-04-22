@@ -10,7 +10,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Verify `dotnet-ef` tool available globally (`dotnet ef --version`); install if missing
       (`dotnet tool install -g dotnet-ef`)
 - [ ] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe`, `a-demo-be-elixir-phoenix`, `a-demo-be-python-fastapi`, `a-demo-be-rust-axum`, `a-demo-be-fsharp-giraffe`)
+      `organiclever-web`, `a-demo-be-elixir-phoenix`, `a-demo-be-python-fastapi`, `a-demo-be-rust-axum`, `a-demo-be-fsharp-giraffe`)
 - [ ] Confirm Reqnroll supports current Gherkin syntax in `specs/apps/a-demo/be/gherkin/`
       (Given/When/Then with doc_string and data table parameters)
 - [ ] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)

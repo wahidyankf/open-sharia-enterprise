@@ -2,11 +2,11 @@
 
 **Status**: In Progress
 **Created**: 2026-04-16
-**Scope**: `apps/organiclever-fe/` (and supporting docs/specs); `apps/organiclever-be/` untouched
+**Scope**: `apps/organiclever-web/` (and supporting docs/specs); `apps/organiclever-be/` untouched
 
 ## Overview
 
-Pivot `organiclever-fe` to a local-first mode so it can deploy to Vercel
+Pivot `organiclever-web` to a local-first mode so it can deploy to Vercel
 (`prod-organiclever-web` → www.organiclever.com) without depending on the F#/Giraffe backend at
 `apps/organiclever-be/`. The backend is not deployed yet and will be re-wired in a future phase.
 
@@ -20,7 +20,7 @@ are preserved as dormant library code so future rewire is a routes-only change. 
 
 ## Context and Motivation
 
-Current state (`apps/organiclever-fe/`):
+Current state (`apps/organiclever-web/`):
 
 - Root `/` → redirects to `/profile` or `/login` based on cookie
 - `/login` → Google Identity Services → posts to `/api/auth/google` (BFF route)
@@ -49,12 +49,12 @@ Motivation:
 
 **In scope:**
 
-- `apps/organiclever-fe/src/` route and middleware changes
-- `apps/organiclever-fe/` docs (README, env)
+- `apps/organiclever-web/src/` route and middleware changes
+- `apps/organiclever-web/` docs (README, env)
 - `specs/apps/organiclever/fe/gherkin/` additions and removals
-- `apps/organiclever-fe/test/unit/` additions and removals
-- `apps/organiclever-fe-e2e/` spec changes for removed/added pages
-- Top-level doc touch-ups referring to organiclever-fe BFF pattern
+- `apps/organiclever-web/test/unit/` additions and removals
+- `apps/organiclever-web-e2e/` spec changes for removed/added pages
+- Top-level doc touch-ups referring to organiclever-web BFF pattern
 
 **Out of scope (explicitly preserved):**
 
@@ -62,7 +62,7 @@ Motivation:
 - `specs/apps/organiclever/contracts/` OpenAPI spec
 - `organiclever-contracts` Nx project
 - `organiclever-be-e2e` workflow — still runs against local BE in CI
-- The `codegen` Nx target on `organiclever-fe` (kept for future rewire)
+- The `codegen` Nx target on `organiclever-web` (kept for future rewire)
 - `.github/workflows/test-and-deploy-organiclever.yml` (already correctly gates deploy)
 
 ## Plan Documents
@@ -76,8 +76,8 @@ Motivation:
 
 ## References
 
-- `apps/organiclever-fe/` — affected app
+- `apps/organiclever-web/` — affected app
 - `apps/organiclever-be/` — untouched; future re-enablement target
 - `.github/workflows/test-and-deploy-organiclever.yml` — deploy pipeline
 - [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
-- [CLAUDE.md](../../../CLAUDE.md) — `organiclever-fe` section
+- [CLAUDE.md](../../../CLAUDE.md) — `organiclever-web` section

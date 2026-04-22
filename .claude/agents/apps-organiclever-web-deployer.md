@@ -1,15 +1,15 @@
 ---
-name: apps-organiclever-fe-deployer
-description: Deploys organiclever-fe to production environment branch (prod-organiclever-web) after validation. Vercel listens to production branch for automatic builds.
+name: apps-organiclever-web-deployer
+description: Deploys organiclever-web to production environment branch (prod-organiclever-web) after validation. Vercel listens to production branch for automatic builds.
 tools: Bash, Grep
 model: haiku
 color: purple
 skills:
   - repo-practicing-trunk-based-development
-  - apps-organiclever-fe-developing-content
+  - apps-organiclever-web-developing-content
 ---
 
-# Deployer for organiclever-fe
+# Deployer for organiclever-web
 
 ## Agent Metadata
 
@@ -27,11 +27,11 @@ performs straightforward deployment tasks:
 - No build required (Vercel handles builds automatically)
 - No complex reasoning or content generation required
 
-Deploy organiclever-fe to production by force pushing main branch to prod-organiclever-web.
+Deploy organiclever-web to production by force pushing main branch to prod-organiclever-web.
 
 ## Core Responsibility
 
-Deploy organiclever-fe to production environment:
+Deploy organiclever-web to production environment:
 
 1. **Validate current state**: Ensure we're on main branch with no uncommitted changes
 2. **Force push to production**: Push main branch to prod-organiclever-web
@@ -143,7 +143,7 @@ git pull origin main
 
 **Related Agents**:
 
-- `swe-typescript-dev` - Develops organiclever-fe Next.js code
+- `swe-typescript-dev` - Develops organiclever-web Next.js code
 
 **Related Conventions**:
 

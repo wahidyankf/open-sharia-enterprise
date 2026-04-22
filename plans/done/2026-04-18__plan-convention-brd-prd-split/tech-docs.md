@@ -94,9 +94,9 @@ When a concern is genuinely cross-cutting (e.g., a success criterion is both a b
 
 ### Plan migration
 
-`plans/in-progress/2026-04-16__organiclever-fe-local-first/` — split `requirements.md` into `brd.md` + `prd.md`; update `README.md` "Plan Documents" links; remove `requirements.md`.
+`plans/in-progress/2026-04-16__organiclever-web-local-first/` — split `requirements.md` into `brd.md` + `prd.md`; update `README.md` "Plan Documents" links; remove `requirements.md`.
 
-## Migration Mechanics (organiclever-fe-local-first plan)
+## Migration Mechanics (organiclever-web-local-first plan)
 
 Step-by-step content transplant:
 

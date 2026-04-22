@@ -345,9 +345,9 @@ Feature: Propagation agent (repo-ose-primer-propagation-maker)
     # with abort summary (no findings grouping). Full dry-run with findings deferred to Phase 10.
 
   Scenario: Propagation-maker refuses to emit changes for "neither" paths
-    Given a change in "ose-public/apps/organiclever-fe/" (classifier: neither)
+    Given a change in "ose-public/apps/organiclever-web/" (classifier: neither)
     When the maintainer runs the propagation-maker in dry-run mode
-    Then the main findings list contains no entry for any path under "apps/organiclever-fe/"
+    Then the main findings list contains no entry for any path under "apps/organiclever-web/"
     And if a classifier-coverage appendix is included, the appendix may list the path as "skipped: neither" with no diff content
 
   Scenario: Propagation-maker can optionally open a draft PR
@@ -495,7 +495,7 @@ Feature: Post-extraction health (Phase 9)
 
   Scenario: Product app E2E remains green
     Given extraction has executed
-    When the maintainer runs "nx run ayokoding-web-be-e2e:test:e2e", "nx run ayokoding-web-fe-e2e:test:e2e", "nx run organiclever-fe-e2e:test:e2e", "nx run organiclever-be-e2e:test:e2e", "nx run oseplatform-web-be-e2e:test:e2e", "nx run oseplatform-web-fe-e2e:test:e2e"
+    When the maintainer runs "nx run ayokoding-web-be-e2e:test:e2e", "nx run ayokoding-web-fe-e2e:test:e2e", "nx run organiclever-web-e2e:test:e2e", "nx run organiclever-be-e2e:test:e2e", "nx run oseplatform-web-be-e2e:test:e2e", "nx run oseplatform-web-fe-e2e:test:e2e"
     Then each suite passes
 
   Scenario: Nx graph has no a-demo projects

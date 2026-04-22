@@ -30,8 +30,8 @@ specs/apps/wahidyankf/
   `@axe-core/playwright`).
 
 Both layers consume the same feature files — this mirrors
-`apps/organiclever-fe` / `specs/apps/organiclever/fe/gherkin/` /
-`apps/organiclever-fe-e2e/` pattern.
+`apps/organiclever-web` / `specs/apps/organiclever/fe/gherkin/` /
+`apps/organiclever-web-e2e/` pattern.
 
 ## Spec-coverage enforcement
 

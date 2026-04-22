@@ -439,10 +439,10 @@ public class GlobalExceptionHandler {
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    // Explicit whitelist: organiclever-fe only. No wildcards.
+    // Explicit whitelist: organiclever-web only. No wildcards.
     config.setAllowedOrigins(List.of(
-        "http://localhost:3200",          // organiclever-fe dev
-        "https://www.organiclever.com"    // organiclever-fe production
+        "http://localhost:3200",          // organiclever-web dev
+        "https://www.organiclever.com"    // organiclever-web production
     ));
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
@@ -727,7 +727,7 @@ organiclever-be:
 
 ```yaml
 volumes:
-  organiclever-fe-node-modules:
+  organiclever-web-node-modules:
   organiclever-db-data:
 ```
 
@@ -1403,7 +1403,7 @@ eliminates any injection risk even in test fixtures.
 `setAllowedOrigins(List.of("http://localhost:3200", "https://www.organiclever.com"))` is used
 instead of `setAllowedOriginPatterns(List.of("*"))` or `setAllowedOriginPatterns(List.of("http://localhost:*"))`.
 Wildcards allow any origin to make cross-origin requests to the API, which violates the
-principle of least privilege and defeats CORS as a security layer. Only `organiclever-fe`
+principle of least privilege and defeats CORS as a security layer. Only `organiclever-web`
 (port 3200 in dev, `www.organiclever.com` in production) is the legitimate consumer of this
 API. Explicitly listing origins ensures an attacker cannot use a different origin to issue
 authenticated requests from a user's browser.

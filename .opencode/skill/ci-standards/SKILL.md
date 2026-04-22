@@ -33,7 +33,7 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 | --------- | -------------------------------------------------- |
 | 90%       | organiclever-be, CLI apps, Go libs                 |
 | 80%       | Content platforms (ayokoding-web, oseplatform-web) |
-| 70%       | organiclever-fe                                    |
+| 70%       | organiclever-web                                   |
 
 ## Docker Setup Requirements
 

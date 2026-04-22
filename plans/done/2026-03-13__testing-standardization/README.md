@@ -41,8 +41,8 @@ These rules determine the mandatory test levels for each project. Integration te
 | `a-demo-be-csharp-aspnetcore` | App — API Backend | 1+2+3 | Yes  | Yes (PG)    | Yes | Gherkin at all 3 levels                     |
 | `a-demo-be-clojure-pedestal`  | App — API Backend | 1+2+3 | Yes  | Yes (PG)    | Yes | Gherkin at all 3 levels                     |
 | `a-demo-be-e2e`               | App — E2E Runner  | —     | —    | —           | Yes | Shared Playwright suite for all backends    |
-| `organiclever-fe`             | App — Web UI      | 1+2+3 | Yes  | Yes (MSW)   | Yes | E2E via `organiclever-fe-e2e`               |
-| `organiclever-fe-e2e`         | App — E2E Runner  | —     | —    | —           | Yes | Playwright E2E for organiclever-fe          |
+| `organiclever-web`            | App — Web UI      | 1+2+3 | Yes  | Yes (MSW)   | Yes | E2E via `organiclever-web-e2e`              |
+| `organiclever-web-e2e`        | App — E2E Runner  | —     | —    | —           | Yes | Playwright E2E for organiclever-web         |
 | `oseplatform-web`             | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
 | `ayokoding-web`               | App — Hugo Site   | —     | —    | —           | —   | Build + link validation only (`test:quick`) |
 | `ayokoding-cli`               | App — CLI         | 1+2   | Yes  | Yes (BDD)   | —   | Godog BDD integration tests                 |

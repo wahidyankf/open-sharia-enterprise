@@ -64,11 +64,11 @@ and do not ship as products — their dependencies are excluded.
 
 **Audit results (2026-04-04)**:
 
-| Dependency              | License    | Affected Apps                                   | Resolution                                   |
-| ----------------------- | ---------- | ----------------------------------------------- | -------------------------------------------- |
-| `@img/sharp-libvips-*`  | LGPL-3.0   | ayokoding-web, oseplatform-web, organiclever-fe | Remove by setting `images.unoptimized: true` |
-| HashiCorp libs (3 pkgs) | MPL-2.0    | rhino-cli, ayokoding-cli, oseplatform-cli       | No action — file-level copyleft, compatible  |
-| All other deps          | Permissive | All production apps                             | No action needed                             |
+| Dependency              | License    | Affected Apps                                    | Resolution                                   |
+| ----------------------- | ---------- | ------------------------------------------------ | -------------------------------------------- |
+| `@img/sharp-libvips-*`  | LGPL-3.0   | ayokoding-web, oseplatform-web, organiclever-web | Remove by setting `images.unoptimized: true` |
+| HashiCorp libs (3 pkgs) | MPL-2.0    | rhino-cli, ayokoding-cli, oseplatform-cli        | No action — file-level copyleft, compatible  |
+| All other deps          | Permissive | All production apps                              | No action needed                             |
 
 **Clean production apps** (no copyleft dependencies at all):
 
@@ -176,7 +176,7 @@ Feature: Repository is licensed under FSL-1.1-MIT
     And none reference FSL-1.1-MIT
 
   Scenario: Production apps have no LGPL dependencies
-    Given the 3 production Next.js apps (ayokoding-web, oseplatform-web, organiclever-fe)
+    Given the 3 production Next.js apps (ayokoding-web, oseplatform-web, organiclever-web)
     When I check the npm dependency tree for LGPL licenses
     Then "@img/sharp-libvips" is not present as a resolved dependency
     And "images.unoptimized" is set to "true" in each app's next.config.ts

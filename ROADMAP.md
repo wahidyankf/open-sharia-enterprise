@@ -89,19 +89,19 @@ graph TB
 
 **Product Deliverables:**
 
-- 🌐 [**organiclever.com**](https://www.organiclever.com/) - Landing and promotional website (organiclever-fe)
+- 🌐 [**organiclever.com**](https://www.organiclever.com/) - Landing and promotional website (organiclever-web)
 
 **Repository Apps (In Development):**
 
-- 🌐 [`organiclever-fe`](./apps/organiclever-fe/) - Next.js landing/promotional website (www.organiclever.com)
+- 🌐 [`organiclever-web`](./apps/organiclever-web/) - Next.js landing/promotional website (www.organiclever.com)
 - 🔧 [`organiclever-be`](./apps/organiclever-be/) - F#/Giraffe REST API backend (port 8202)
-- 🧪 [`organiclever-fe-e2e`](./apps/organiclever-fe-e2e/) - Playwright FE E2E tests for organiclever-fe
+- 🧪 [`organiclever-web-e2e`](./apps/organiclever-web-e2e/) - Playwright FE E2E tests for organiclever-web
 - 🧪 [`organiclever-be-e2e`](./apps/organiclever-be-e2e/) - Playwright BE E2E tests for organiclever-be
 
 **Tech Stack:**
 
 - 🔧 **Backend**: F# + Giraffe REST API (`organiclever-be`)
-- ⚛️ **Frontend (landing)**: Next.js + TypeScript → www.organiclever.com (`organiclever-fe`)
+- ⚛️ **Frontend (landing)**: Next.js + TypeScript → www.organiclever.com (`organiclever-web`)
 
 **Architecture:**
 

@@ -9,7 +9,7 @@ The monorepo uses a two-tier token system:
 
 ## Current Token Values
 
-### organiclever-fe (Neutral/Professional)
+### organiclever-web (Neutral/Professional)
 
 ```css
 /* Brand — neutral grayscale */
@@ -73,7 +73,7 @@ The monorepo uses a two-tier token system:
 
 ## Token Format Differences
 
-**organiclever-fe (double indirection)**:
+**organiclever-web (double indirection)**:
 
 ```css
 @theme {

@@ -17,8 +17,8 @@ Where `{part}` describes the role and technology stack:
 | `fs-{lang}-{framework}` | `fs-ts-nextjs`                                        | Fullstack application (FE + BE combined) |
 | `cli`                   | `ayokoding-cli`, `rhino-cli`, `oseplatform-cli`       | CLI tool                                 |
 | `web`                   | `ayokoding-web`, `oseplatform-web`                    | Web platform (content site)              |
-| `{role}-e2e`            | `be-e2e`, `fe-e2e`, `organiclever-fe-e2e`             | E2E test project for the named role      |
-| `be` / `fe`             | `organiclever-be`, `organiclever-fe`                  | Simple single-technology projects        |
+| `{role}-e2e`            | `be-e2e`, `fe-e2e`, `organiclever-web-e2e`            | E2E test project for the named role      |
+| `be` / `fe`             | `organiclever-be`, `organiclever-web`                 | Simple single-technology projects        |
 
 **Language abbreviations** (`{lang}`): `ts` (TypeScript), `golang` (Go), `java` (Java), `kt` (Kotlin),
 `py` (Python), `rs` (Rust), `cs` (C#), `fs` (F#), `clj` (Clojure), `dart` (Dart), `ex` (Elixir).
@@ -37,9 +37,9 @@ Where `{part}` describes the role and technology stack:
 - `ayokoding-cli` - AyoKoding CLI tool for link validation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
-- `organiclever-fe` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
+- `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-be` - OrganicLever backend API (F#/Giraffe) - F# application (port 8202)
-- `organiclever-fe-e2e` - FE E2E tests for organiclever-fe - Playwright (browser testing)
+- `organiclever-web-e2e` - FE E2E tests for organiclever-web - Playwright (browser testing)
 - `organiclever-be-e2e` - BE E2E tests for organiclever-be - Playwright (API testing)
 - `wahidyankf-web` - Wahidyankf personal portfolio ([www.wahidyankf.com](https://www.wahidyankf.com)) - Next.js 16 app (port 3201)
 - `wahidyankf-web-fe-e2e` - FE E2E tests for wahidyankf-web - Playwright-BDD with axe-core
@@ -123,7 +123,7 @@ apps/organiclever-be-e2e/
 ### Next.js Application (Current)
 
 ```
-apps/organiclever-fe/
+apps/organiclever-web/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── dashboard/          # Dashboard route
@@ -214,7 +214,7 @@ Use Nx commands to run apps:
 ```bash
 # Development mode (Next.js)
 nx dev oseplatform-web
-nx dev organiclever-fe
+nx dev organiclever-web
 nx dev ayokoding-web
 
 # Build for production
@@ -222,7 +222,7 @@ nx build oseplatform-web
 nx build ayokoding-web
 nx build ayokoding-cli
 nx build rhino-cli
-nx build organiclever-fe
+nx build organiclever-web
 
 # Run CLI applications
 nx run rhino-cli
@@ -230,8 +230,8 @@ nx run rhino-cli
 # Clean build artifacts
 nx clean oseplatform-web
 
-# Run E2E tests for organiclever-fe (organiclever-fe must be running first)
-nx run organiclever-fe-e2e:test:e2e
+# Run E2E tests for organiclever-web (organiclever-web must be running first)
+nx run organiclever-web-e2e:test:e2e
 
 # Run API E2E tests (backend must be running first)
 nx run organiclever-be-e2e:test:e2e
@@ -241,11 +241,11 @@ nx run organiclever-be-e2e:test:e2e
 
 Vercel-deployed apps use dedicated production branches (deployment-only — never commit directly):
 
-| Branch                  | Production URL                                        | App             |
-| ----------------------- | ----------------------------------------------------- | --------------- |
-| `prod-ayokoding-web`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-web   |
-| `prod-oseplatform-web`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-web |
-| `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-fe |
+| Branch                  | Production URL                                        | App              |
+| ----------------------- | ----------------------------------------------------- | ---------------- |
+| `prod-ayokoding-web`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-web    |
+| `prod-oseplatform-web`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-web  |
+| `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-web |
 
 **ayokoding-web**: Deploy by force-pushing `main` to the production branch:
 
@@ -258,21 +258,21 @@ workflow (`test-and-deploy-oseplatform-web.yml`) running at 6 AM and 6 PM
 WIB. The workflow detects changes scoped to the app directory before building and deploying.
 Trigger on-demand from the GitHub Actions UI (set `force_deploy=true` to skip change detection).
 
-**organiclever-fe**: Deploy by force-pushing `main` to the production branch:
+**organiclever-web**: Deploy by force-pushing `main` to the production branch:
 
 ```bash
 git push origin main:prod-organiclever-web --force
 ```
 
-Use the corresponding deployer agent (e.g. `apps-organiclever-fe-deployer`) for guided deployment.
+Use the corresponding deployer agent (e.g. `apps-organiclever-web-deployer`) for guided deployment.
 
 ## Language Support
 
 Currently:
 
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli, oseplatform-cli
-- **TypeScript/Next.js** (web applications) - oseplatform-web, organiclever-fe, ayokoding-web
+- **TypeScript/Next.js** (web applications) - oseplatform-web, organiclever-web, ayokoding-web
 - **F#/Giraffe** (backend API) - organiclever-be
-- **TypeScript/Playwright** (E2E testing) - organiclever-fe-e2e, organiclever-be-e2e
+- **TypeScript/Playwright** (E2E testing) - organiclever-web-e2e, organiclever-be-e2e
 
 Future: Kotlin, Python apps (each language will have language-specific structure and tooling)

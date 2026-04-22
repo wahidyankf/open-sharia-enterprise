@@ -29,7 +29,7 @@
 
 ## Phase 4: Specs Validation Gate (OCD Mode)
 
-Run the [specs-validation workflow](../../../governance/workflows/specs/specs-validation.md) in
+Run the [specs-validation workflow](../../../governance/workflows/specs/specs-quality-gate.md) in
 **OCD mode** on the newly merged `specs/apps/a-demo/` to catch all issues before propagating paths
 to 11 backends. This is the quality gate — fix everything in the specs themselves before touching
 any application code.
@@ -129,7 +129,7 @@ radius contained to `specs/apps/a-demo/` only.
 - [x] `governance/development/infra/nx-targets.md`
 - [x] `docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md`
 - [x] `governance/conventions/formatting/diagrams.md`
-- [x] `governance/workflows/specs/specs-validation.md` (update example paths)
+- [x] `governance/workflows/specs/specs-quality-gate.md` (update example paths)
 - [x] `specs/apps-labs/README.md`
 - [x] `.claude/agents/specs-checker.md` (update example folder paths)
 - [x] `.claude/agents/specs-maker.md` (update example target paths)
@@ -170,7 +170,7 @@ radius contained to `specs/apps/a-demo/` only.
 
 ## Phase 11: Local Validation — Non-Backend Projects
 
-- [x] `nx run organiclever-fe:test:quick` passes
+- [x] `nx run organiclever-web:test:quick` passes
 - [x] `nx run rhino-cli:test:quick` passes
 - [x] `nx run ayokoding-cli:test:quick` passes
 - [x] `nx run oseplatform-cli:test:quick` passes
@@ -198,7 +198,7 @@ Trigger all 11 integration + E2E workflows manually and verify they pass:
 
 ## Phase 14: GitHub Actions — Other Workflows
 
-- [x] `test-integration-e2e-organiclever-fe` — SUCCESS
+- [x] `test-integration-e2e-organiclever-web` — SUCCESS
 - [x] `pr-validate-links` — no broken links from path changes (verified via Main CI)
 - [x] `pr-format` — no formatting issues (verified via Main CI)
 - [x] `pr-quality-gate` — passes (verified via Main CI)

@@ -214,5 +214,5 @@ grep '"license"' package.json   # expect "MIT"
 
 # Spot-check LICENSE files
 head -3 LICENSE
-head -3 apps/organiclever-fe/LICENSE
+head -3 apps/organiclever-web/LICENSE
 ```

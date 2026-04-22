@@ -4,7 +4,7 @@
 
 Adopt the complete design system from the `organic-lever` Claude Design handoff bundle
 into `libs/ts-ui-tokens` and `libs/ts-ui`, then wire the tokens into
-`apps/organiclever-fe`.
+`apps/organiclever-web`.
 
 **This plan covers design system only.** Workout app screens, data layer, and routing are
 a separate follow-on plan.
@@ -25,11 +25,11 @@ a separate follow-on plan.
    `StatCard`, `InfoTip`, `HuePicker`, `TabBar`, `SideNav`. Each ships with a unit test
    file and a Storybook story.
 
-4. **Typography wiring** — `organiclever-fe/layout.tsx` loads Nunito + JetBrains Mono via
-   `next/font/google`; `organiclever-fe/globals.css` imports the OL token file and
+4. **Typography wiring** — `organiclever-web/layout.tsx` loads Nunito + JetBrains Mono via
+   `next/font/google`; `organiclever-web/globals.css` imports the OL token file and
    maps font variables into Tailwind's `@theme`.
 
-5. **Documentation** — design system reference in organiclever-fe README, ts-ui component
+5. **Documentation** — design system reference in organiclever-web README, ts-ui component
    catalog, ts-ui-tokens per-app brand files, governance OKLCH section, SKILL design
    system guide.
 
@@ -61,7 +61,7 @@ is cited for provenance only.
 
 **Subrepo**: `ose-public` — worktree `organiclever-adopt-design-system`.
 **Modified libs**: `libs/ts-ui-tokens`, `libs/ts-ui`
-**Modified app**: `apps/organiclever-fe` (layout + globals only — no new routes or screens)
+**Modified app**: `apps/organiclever-web` (layout + globals only — no new routes or screens)
 
 All commits go directly to `main` (trunk-based development) — no feature branches, no draft
 PRs.

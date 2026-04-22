@@ -33,7 +33,7 @@ rhino-cli docs validate-links
 rhino-cli docs validate-links --staged-only
 
 # Validate BDD spec coverage (all specs have matching test files)
-rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
+rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web
 
 # Echo a message
 rhino-cli --say "hello world"
@@ -103,7 +103,7 @@ Supports Go `cover.out`, LCOV, JaCoCo XML, and Cobertura XML formats; auto-detec
 rhino-cli test-coverage validate apps/rhino-cli/cover.out 85
 
 # Check LCOV coverage from Vitest
-rhino-cli test-coverage validate apps/organiclever-fe/coverage/lcov.info 85
+rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 85
 
 # Output as JSON
 rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o json
@@ -517,17 +517,17 @@ Validate that all BDD feature spec files have matching test implementations. Des
 the spec-to-test direction for test suites that use explicit file loading (e.g. vitest-cucumber).
 
 ```bash
-# Check organiclever-fe spec coverage
-rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
+# Check organiclever-web spec coverage
+rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web
 
 # Output as JSON
-rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -o json
+rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web -o json
 
 # Output as markdown
-rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -o markdown
+rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web -o markdown
 
 # Quiet mode
-rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -q
+rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web -q
 
 # Shared steps mode (for E2E projects with shared step files)
 rhino-cli spec-coverage validate specs/apps/organiclever/be/gherkin apps/organiclever-be-e2e --shared-steps
@@ -563,8 +563,8 @@ This command closes that gap for any app using explicit feature loading.
 
 **Arguments:**
 
-- `<specs-dir>` - Path to specs folder (relative to repo root, e.g. `specs/apps/organiclever-fe`)
-- `<app-dir>` - Path to app folder (relative to repo root, e.g. `apps/organiclever-fe`)
+- `<specs-dir>` - Path to specs folder (relative to repo root, e.g. `specs/apps/organiclever-web`)
+- `<app-dir>` - Path to app folder (relative to repo root, e.g. `apps/organiclever-web`)
 
 **Flags:**
 
@@ -589,15 +589,15 @@ This command closes that gap for any app using explicit feature loading.
 ✗ Spec coverage gaps found!
 
 Missing test files (1):
-  - specs/apps/organiclever-fe/auth/new-feature.feature
+  - specs/apps/organiclever-web/auth/new-feature.feature
     (expected test file with stem: new-feature)
 
 Missing scenarios (1):
-  - specs/apps/organiclever-fe/auth/user-login.feature
+  - specs/apps/organiclever-web/auth/user-login.feature
     → Scenario: "Login with SSO"
 
 Missing steps (2):
-  - specs/apps/organiclever-fe/members/member-list.feature
+  - specs/apps/organiclever-web/members/member-list.feature
     → Scenario: "Export member list"
       · Given the member list has been loaded
       · When the user clicks "Export CSV"
@@ -1160,7 +1160,7 @@ rhino-cli say
 - Go-specific line filtering: excludes blank, comment-only, and brace-only lines
 - Three output formats: text, JSON, markdown
 - Replaces `scripts/validate-test-coverage.py`, eliminating the Python dependency
-- Integrated into `test:quick` targets for all Go projects and `organiclever-fe`
+- Integrated into `test:quick` targets for all Go projects and `organiclever-web`
 
 ### v0.9.0 (2026-03-05)
 
@@ -1188,7 +1188,7 @@ rhino-cli say
 - Added `spec-coverage validate` command for BDD spec-to-test coverage validation
 - Walks any `<specs-dir>` for `.feature` files and checks for matching test files under `<app-dir>`
 - Closes the vitest-cucumber gap: new specs silently ignored unless matched by an integration test
-- Integrated into `organiclever-fe` `test:quick` target
+- Integrated into `organiclever-web` `test:quick` target
 - Three output formats: text, JSON, markdown
 - ≥85% test coverage with temp dir fixtures
 

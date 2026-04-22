@@ -40,10 +40,10 @@ services:
       retries: 3
       start_period: 120s
 
-  organiclever-fe:
+  organiclever-web:
     build:
       context: ../../..
-      dockerfile: apps/organiclever-fe/Dockerfile
+      dockerfile: apps/organiclever-web/Dockerfile
       args:
         ORGANICLEVER_BE_URL: http://organiclever-be:8202
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}

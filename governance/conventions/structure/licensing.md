@@ -71,20 +71,20 @@ all use the same MIT text.
 
 #### Current Directory LICENSE Inventory
 
-| Directory               | License |
-| ----------------------- | ------- |
-| `LICENSE` (root)        | MIT     |
-| `apps/ayokoding-cli/`   | MIT     |
-| `apps/ayokoding-web/`   | MIT     |
-| `apps/organiclever-be/` | MIT     |
-| `apps/organiclever-fe/` | MIT     |
-| `apps/oseplatform-cli/` | MIT     |
-| `apps/oseplatform-web/` | MIT     |
-| `apps/wahidyankf-web/`  | MIT     |
-| `specs/`                | MIT     |
-| `libs/golang-commons/`  | MIT     |
-| `libs/ts-ui/`           | MIT     |
-| `libs/ts-ui-tokens/`    | MIT     |
+| Directory                | License |
+| ------------------------ | ------- |
+| `LICENSE` (root)         | MIT     |
+| `apps/ayokoding-cli/`    | MIT     |
+| `apps/ayokoding-web/`    | MIT     |
+| `apps/organiclever-be/`  | MIT     |
+| `apps/organiclever-web/` | MIT     |
+| `apps/oseplatform-cli/`  | MIT     |
+| `apps/oseplatform-web/`  | MIT     |
+| `apps/wahidyankf-web/`   | MIT     |
+| `specs/`                 | MIT     |
+| `libs/golang-commons/`   | MIT     |
+| `libs/ts-ui/`            | MIT     |
+| `libs/ts-ui-tokens/`     | MIT     |
 
 Third-party code in `archived/` retains its original license (see LICENSING-NOTICE.md).
 
@@ -145,7 +145,7 @@ the root MIT license by default.
 
 ```
 apps/
-  organiclever-fe/
+  organiclever-web/
     LICENSE          <-- MIT (product app)
     src/
     ...

@@ -219,12 +219,12 @@ graph TB
 
 **Steps:**
 
-1. Run `spec-coverage` across all OrganicLever projects (`organiclever-be`, `organiclever-fe`, `organiclever-be-e2e`, `organiclever-fe-e2e`)
-2. Run `fe-lint` for `organiclever-fe`
+1. Run `spec-coverage` across all OrganicLever projects (`organiclever-be`, `organiclever-web`, `organiclever-be-e2e`, `organiclever-web-e2e`)
+2. Run `fe-lint` for `organiclever-web`
 3. Run `be-integration` tests with docker-compose (real PostgreSQL)
 4. Run `fe-integration` tests (MSW-mocked)
-5. Run combined `e2e` stage: full stack via docker-compose, then `organiclever-be-e2e` and `organiclever-fe-e2e` Playwright tests
-6. `detect-changes`: check `apps/organiclever-fe/` vs previous commit
+5. Run combined `e2e` stage: full stack via docker-compose, then `organiclever-be-e2e` and `organiclever-web-e2e` Playwright tests
+6. `detect-changes`: check `apps/organiclever-web/` vs previous commit
 7. `deploy` (gated on all test jobs + `detect-changes == true`): force-push `HEAD` to `prod-organiclever-web`; Vercel auto-builds
 
 **Purpose**: Automated scheduled deployments for www.organiclever.com, gated on full FE+BE test suite, with change detection to avoid unnecessary builds

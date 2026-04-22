@@ -6,7 +6,7 @@ Fold the maintainer's personal portfolio site (`wahidyankf-web`) — currently
 living standalone in `wahidyankf/oss` — into `ose-public` so it runs under
 the same monorepo quality gates, CI pipeline, Vercel deploy mechanism,
 and AI-agent content toolchain used by `ayokoding-web`, `oseplatform-web`,
-and `organiclever-fe`.
+and `organiclever-web`.
 
 The site is a recruiter-facing portfolio and an evolving demo surface for
 the maintainer's public-facing engineering output. Four concrete business
@@ -111,7 +111,7 @@ affected -t typecheck lint test:quick spec-coverage` exits zero on the
    fact_: `rhino-cli test-coverage validate
 apps/wahidyankf-web/coverage/lcov.info 80` exits zero. The 80% floor
    matches `ayokoding-web` and `oseplatform-web` (both are content
-   platforms with no API/auth mock layer); `organiclever-fe` uses a 70%
+   platforms with no API/auth mock layer); `organiclever-web` uses a 70%
    floor because it mocks API/auth layers by design, which does not
    apply here.
 4. **Stack parity with the other three Next.js apps** — _Observable
@@ -169,12 +169,12 @@ apps/wahidyankf-web/coverage/lcov.info 80` exits zero. The 80% floor
 
 ## Business Risks and Mitigations
 
-| Risk                                                                                              | Likelihood | Impact | Mitigation                                                                                                                                                                                                              |
-| ------------------------------------------------------------------------------------------------- | ---------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Dependency upgrade introduces runtime regression (Tailwind v4 config shift, React 19 API changes) | Medium     | Medium | Phase P2 dedicated to upgrade + codemod runs; Playwright smoke in P4 catches regressions before P6 deploy wiring.                                                                                                       |
-| Production branch accidentally created with stale content                                         | Low        | Medium | P6 creates `prod-wahidyankf-web` from `main` only _after_ P5 quality gates are green. The deployer agent's workflow (force-push main→prod branch) matches siblings.                                                     |
-| Tag-vocabulary extension (`domain:wahidyankf`) breaks existing tag-query consumers                | Low        | Low    | The tag convention explicitly allows extensions via doc update; checker agents read the live file. A grep sweep in P6 confirms no hard-coded allowlist anywhere.                                                        |
-| Maintainer abandons the plan mid-way leaving the repo in a partial state                          | Low        | Medium | Phase boundaries are commit points on `main`. At any phase boundary the app is either absent (pre-P1) or internally consistent. No phase leaves a broken test suite.                                                    |
-| Upstream license on portfolio content is not MIT-compatible                                       | Low        | High   | P0 checks the upstream `LICENSE` file; both `ose-public` app and scaffolding directories accept MIT per the root licensing notice. Block the plan if incompatible.                                                      |
-| Stack drift from the other three Next.js apps at adoption time                                    | Medium     | Medium | The README's Stack Parity table and the `tech-docs.md` upgrade matrix pin exact shared versions for every test-stack package. P2 verification grep confirms parity before the phase commit.                             |
-| Adopted app's configuration is too bespoke to be usable as a fork template for others             | Low        | Low    | Every config file in `apps/wahidyankf-web/` is either identical to its sibling in `ayokoding-web` / `oseplatform-web` / `organiclever-fe` or explicitly delta-documented in `tech-docs.md`. No hidden bespoke defaults. |
+| Risk                                                                                              | Likelihood | Impact | Mitigation                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Dependency upgrade introduces runtime regression (Tailwind v4 config shift, React 19 API changes) | Medium     | Medium | Phase P2 dedicated to upgrade + codemod runs; Playwright smoke in P4 catches regressions before P6 deploy wiring.                                                                                                        |
+| Production branch accidentally created with stale content                                         | Low        | Medium | P6 creates `prod-wahidyankf-web` from `main` only _after_ P5 quality gates are green. The deployer agent's workflow (force-push main→prod branch) matches siblings.                                                      |
+| Tag-vocabulary extension (`domain:wahidyankf`) breaks existing tag-query consumers                | Low        | Low    | The tag convention explicitly allows extensions via doc update; checker agents read the live file. A grep sweep in P6 confirms no hard-coded allowlist anywhere.                                                         |
+| Maintainer abandons the plan mid-way leaving the repo in a partial state                          | Low        | Medium | Phase boundaries are commit points on `main`. At any phase boundary the app is either absent (pre-P1) or internally consistent. No phase leaves a broken test suite.                                                     |
+| Upstream license on portfolio content is not MIT-compatible                                       | Low        | High   | P0 checks the upstream `LICENSE` file; both `ose-public` app and scaffolding directories accept MIT per the root licensing notice. Block the plan if incompatible.                                                       |
+| Stack drift from the other three Next.js apps at adoption time                                    | Medium     | Medium | The README's Stack Parity table and the `tech-docs.md` upgrade matrix pin exact shared versions for every test-stack package. P2 verification grep confirms parity before the phase commit.                              |
+| Adopted app's configuration is too bespoke to be usable as a fork template for others             | Low        | Low    | Every config file in `apps/wahidyankf-web/` is either identical to its sibling in `ayokoding-web` / `oseplatform-web` / `organiclever-web` or explicitly delta-documented in `tech-docs.md`. No hidden bespoke defaults. |

@@ -1,27 +1,27 @@
 ---
-name: apps-organiclever-fe-developing-content
-description: Comprehensive guide for developing organiclever-fe, the landing and promotional website at www.organiclever.com. Covers Next.js 16 App Router, React 19, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-fe.
+name: apps-organiclever-web-developing-content
+description: Comprehensive guide for developing organiclever-web, the landing and promotional website at www.organiclever.com. Covers Next.js 16 App Router, React 19, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-web.
 ---
 
-# organiclever-fe Development Skill
+# organiclever-web Development Skill
 
 ## Purpose
 
-This Skill provides guidance for developing and managing the **organiclever-fe** Next.js 16 application — the landing and promotional website at www.organiclever.com, featuring cookie-based authentication and Radix UI components.
+This Skill provides guidance for developing and managing the **organiclever-web** Next.js 16 application — the landing and promotional website at www.organiclever.com, featuring cookie-based authentication and Radix UI components.
 
 **When to use this Skill:**
 
-- Developing features for organiclever-fe
+- Developing features for organiclever-web
 - Understanding the App Router structure
 - Working with authentication or data patterns
 - Configuring Vercel deployment
-- Understanding organiclever-fe specific conventions
+- Understanding organiclever-web specific conventions
 
 ## Core Concepts
 
 ### App Overview
 
-**organiclever-fe** (`apps/organiclever-fe/`):
+**organiclever-web** (`apps/organiclever-web/`):
 
 - **Framework**: Next.js 16 with App Router
 - **React**: React 19
@@ -48,7 +48,7 @@ This Skill provides guidance for developing and managing the **organiclever-fe**
 ## Directory Structure
 
 ```
-apps/organiclever-fe/
+apps/organiclever-web/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── dashboard/          # Dashboard route
@@ -114,14 +114,14 @@ import settings from "@/data/settings.json";
 
 ## Design System
 
-`organiclever-fe` uses the OrganicLever warm OKLCH design system. All visual tokens come
+`organiclever-web` uses the OrganicLever warm OKLCH design system. All visual tokens come
 from `@open-sharia-enterprise/ts-ui-tokens`, and all UI components from
 `@open-sharia-enterprise/ts-ui`.
 
 ### Token import chain
 
 ```css
-/* apps/organiclever-fe/src/app/globals.css */
+/* apps/organiclever-web/src/app/globals.css */
 @import "tailwindcss";
 @source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
 @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css"; /* shared neutral baseline */
@@ -227,7 +227,7 @@ Components are split across two levels with a strict boundary.
 
 - Compose `ui/` primitives with business logic and app content
 - May contain hardcoded routes, brand strings, or prop contracts tied to this app
-- Not portable — tightly coupled to organiclever-fe's domain
+- Not portable — tightly coupled to organiclever-web's domain
 - Examples: `Navigation` (hardcodes `/dashboard` routes, "Organic Lever" brand, `logout` prop), `Breadcrumb` (reads live pathname)
 
 ### Why keep them separate
@@ -360,7 +360,7 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-fe          | ayokoding-web                  | oseplatform-web         |
+| Aspect              | organiclever-web         | ayokoding-web                  | oseplatform-web         |
 | ------------------- | ------------------------ | ------------------------------ | ----------------------- |
 | **Framework**       | Next.js 16 (App Router)  | Next.js 16 (App Router)        | Next.js 16 (App Router) |
 | **Language**        | TypeScript / React 19    | TypeScript / React 19          | TypeScript / React 19   |
@@ -381,13 +381,13 @@ Vercel automatically:
 
 ```bash
 # Start development server (http://localhost:3200)
-nx dev organiclever-fe
+nx dev organiclever-web
 
 # Build for production (local verification)
-nx build organiclever-fe
+nx build organiclever-web
 
 # Type checking
-npx tsc --noEmit --project apps/organiclever-fe/tsconfig.json
+npx tsc --noEmit --project apps/organiclever-web/tsconfig.json
 ```
 
 ### Option 2: Docker Compose (containerized, or running alongside the backend)
@@ -396,11 +396,11 @@ Runs the app inside a Node.js 24 Alpine container. Useful when you need the back
 frontend, or want an environment closer to CI.
 
 ```bash
-# From repository root — starts organiclever-fe in Docker
-npm run organiclever-fe:dev
+# From repository root — starts organiclever-web in Docker
+npm run organiclever-web:dev
 
 # Or start the frontend container only
-docker compose -f infra/dev/organiclever-fe/docker-compose.yml up organiclever-fe
+docker compose -f infra/dev/organiclever-web/docker-compose.yml up organiclever-web
 ```
 
 **First startup** (~2-4 min): installs npm dependencies inside the container.
@@ -510,15 +510,15 @@ export default function Counter() {
 
 **Project Configuration**:
 
-- [apps/organiclever-fe/project.json](../../../apps/organiclever-fe/project.json) - Nx project config
-- [apps/organiclever-fe/next.config.mjs](../../../apps/organiclever-fe/next.config.mjs) - Next.js config
-- [apps/organiclever-fe/vercel.json](../../../apps/organiclever-fe/vercel.json) - Vercel deployment config
+- [apps/organiclever-web/project.json](../../../apps/organiclever-web/project.json) - Nx project config
+- [apps/organiclever-web/next.config.mjs](../../../apps/organiclever-web/next.config.mjs) - Next.js config
+- [apps/organiclever-web/vercel.json](../../../apps/organiclever-web/vercel.json) - Vercel deployment config
 
 **Infrastructure**:
 
-- [infra/dev/organiclever-fe/README.md](../../../infra/dev/organiclever-fe/README.md) - Docker Compose setup for frontend
-- [infra/dev/organiclever-fe/docker-compose.yml](../../../infra/dev/organiclever-fe/docker-compose.yml) - Service definition
-- [infra/dev/organiclever-fe/Dockerfile.web.dev](../../../infra/dev/organiclever-fe/Dockerfile.web.dev) - Frontend container image
+- [infra/dev/organiclever-web/README.md](../../../infra/dev/organiclever-web/README.md) - Docker Compose setup for frontend
+- [infra/dev/organiclever-web/docker-compose.yml](../../../infra/dev/organiclever-web/docker-compose.yml) - Service definition
+- [infra/dev/organiclever-web/Dockerfile.web.dev](../../../infra/dev/organiclever-web/Dockerfile.web.dev) - Frontend container image
 
 **Related Skills**:
 
@@ -527,10 +527,10 @@ export default function Counter() {
 
 **Related Agents**:
 
-- `apps-organiclever-fe-deployer` - Deploys organiclever-fe to production
+- `apps-organiclever-web-deployer` - Deploys organiclever-web to production
 - `swe-typescript-dev` - TypeScript/Next.js development
 - `swe-e2e-dev` - E2E testing with Playwright
 
 ---
 
-This Skill packages essential organiclever-fe development knowledge for building and deploying the OrganicLever landing and promotional website at www.organiclever.com.
+This Skill packages essential organiclever-web development knowledge for building and deploying the OrganicLever landing and promotional website at www.organiclever.com.

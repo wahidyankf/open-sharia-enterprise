@@ -62,7 +62,7 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 
 ### US-7: Existing in-progress plan migrates cleanly
 
-**As a** user of the `organiclever-fe-local-first` plan (currently in-progress)
+**As a** user of the `organiclever-web-local-first` plan (currently in-progress)
 **I want** its `requirements.md` split into `brd.md` + `prd.md` without losing content
 **So that** the repository has zero plans on the deprecated layout and the migration proves the approach
 
@@ -181,10 +181,10 @@ Feature: .opencode/ mirrors match .claude/ sources
 ### AC-6: Existing active plan is migrated
 
 ```gherkin
-Feature: organiclever-fe-local-first plan migrated to new layout
+Feature: organiclever-web-local-first plan migrated to new layout
 
   Scenario: Directory structure after migration
-    Given the folder plans/in-progress/2026-04-16__organiclever-fe-local-first/
+    Given the folder plans/in-progress/2026-04-16__organiclever-web-local-first/
     When I list files
     Then the folder contains README.md, brd.md, prd.md, tech-docs.md, delivery.md
     And it does not contain requirements.md

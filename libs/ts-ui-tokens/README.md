@@ -54,7 +54,7 @@ For apps with a distinctive brand identity, a dedicated brand token file lives a
 
 ### `organiclever.css`
 
-Warm OKLCH design system for OrganicLever apps (`organiclever-fe`):
+Warm OKLCH design system for OrganicLever apps (`organiclever-web`):
 
 - **6 semantic hues × 3 tints** — terracotta, honey, sage, teal, sky, plum (base / ink / wash)
 - **Warm neutral scale** — `--warm-0` through `--warm-900` (OKLCH with hue ~80)
@@ -64,7 +64,7 @@ Warm OKLCH design system for OrganicLever apps (`organiclever-fe`):
 - **Dark mode block** — `[data-theme="dark"], .dark { … }` with warm hue lifts
 
 ```css
-/* apps/organiclever-fe/src/app/globals.css */
+/* apps/organiclever-web/src/app/globals.css */
 @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
 @import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css";
 ```

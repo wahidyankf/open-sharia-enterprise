@@ -46,15 +46,15 @@ Partial lines count as NOT covered.
 
 ## Thresholds
 
-| Project Type    | Threshold | Rationale                               |
-| --------------- | --------- | --------------------------------------- |
-| CLI tools (Go)  | >= 90%    | Core business logic                     |
-| Go libraries    | >= 90%    | Shared utilities                        |
-| organiclever-be | >= 90%    | F#/Giraffe backend API                  |
-| organiclever-fe | >= 70%    | Frontend app with MSW integration tests |
-| ayokoding-web   | >= 80%    | Content platform with UI rendering code |
-| oseplatform-web | >= 80%    | Content platform with UI rendering code |
-| wahidyankf-web  | >= 80%    | Personal portfolio (Next.js)            |
+| Project Type     | Threshold | Rationale                               |
+| ---------------- | --------- | --------------------------------------- |
+| CLI tools (Go)   | >= 90%    | Core business logic                     |
+| Go libraries     | >= 90%    | Shared utilities                        |
+| organiclever-be  | >= 90%    | F#/Giraffe backend API                  |
+| organiclever-web | >= 70%    | Frontend app with MSW integration tests |
+| ayokoding-web    | >= 80%    | Content platform with UI rendering code |
+| oseplatform-web  | >= 80%    | Content platform with UI rendering code |
+| wahidyankf-web   | >= 80%    | Personal portfolio (Next.js)            |
 
 ## Per-Project Coverage Details
 
@@ -76,12 +76,12 @@ Partial lines count as NOT covered.
 **Tool**: Vitest with `@vitest/coverage-v8`
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project         | Threshold | Exclusions |
-| --------------- | --------- | ---------- |
-| organiclever-fe | 70%       | None       |
-| ayokoding-web   | 80%       | None       |
-| oseplatform-web | 80%       | None       |
-| wahidyankf-web  | 80%       | None       |
+| Project          | Threshold | Exclusions |
+| ---------------- | --------- | ---------- |
+| organiclever-web | 70%       | None       |
+| ayokoding-web    | 80%       | None       |
+| oseplatform-web  | 80%       | None       |
+| wahidyankf-web   | 80%       | None       |
 
 ### F# Projects
 

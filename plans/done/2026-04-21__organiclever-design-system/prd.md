@@ -6,9 +6,9 @@ This plan adopts the OrganicLever (OL) design system — warm OKLCH palette, Nun
 JetBrains Mono typography, rounded geometry, and semantic dark mode — from the Claude
 Design handoff bundle into the shared `ts-ui-tokens` and `ts-ui` component libraries.
 The adoption covers: one new token file (`organiclever.css`) opt-in imported by
-`organiclever-fe`; updates to three existing components (Button, Alert, Input) adding
+`organiclever-web`; updates to three existing components (Button, Alert, Input) adding
 OL-brand variants; and ten new components (Icon, Toggle, ProgressRing, Sheet, AppHeader,
-StatCard, InfoTip, HuePicker, TabBar, SideNav). Typography is wired into `organiclever-fe`
+StatCard, InfoTip, HuePicker, TabBar, SideNav). Typography is wired into `organiclever-web`
 via `next/font/google`. App screens are out of scope — this plan delivers only the
 building blocks.
 
@@ -16,7 +16,7 @@ building blocks.
 
 ## Personas
 
-- **Developer hat** — imports `ts-ui` components to build `organiclever-fe` screens.
+- **Developer hat** — imports `ts-ui` components to build `organiclever-web` screens.
   Wants typed, accessible components with correct OL tokens already applied, so building
   a new screen requires only composition — no inline style derivation.
 - **Designer hat** — opens Storybook to verify that rendered components match the Claude
@@ -38,7 +38,7 @@ anywhere without copy-pasting values.
 **US-T-2**
 As a developer I want the existing Tailwind semantic utilities (`bg-primary`,
 `text-muted-foreground`, `rounded-md`, `shadow-sm`, etc.) to resolve to OL values in
-`organiclever-fe` so that `ts-ui` components auto-adopt the brand without code changes
+`organiclever-web` so that `ts-ui` components auto-adopt the brand without code changes
 to the components themselves.
 
 **US-T-3**
@@ -50,7 +50,7 @@ activation method that fits my runtime context without maintaining parallel CSS 
 
 **US-TY-1**
 As a user I want to see Nunito as the body font and JetBrains Mono for numeric values
-in `organiclever-fe` so the site matches the design exactly.
+in `organiclever-web` so the site matches the design exactly.
 
 ### Updated Existing Components
 
@@ -122,9 +122,9 @@ state.
 ### Documentation
 
 **US-D-1**
-As a developer I want all design system documentation updated — `apps/organiclever-fe/README.md`,
+As a developer I want all design system documentation updated — `apps/organiclever-web/README.md`,
 `libs/ts-ui/README.md`, `libs/ts-ui-tokens/README.md`,
-`governance/development/frontend/design-tokens.md`, and the organiclever-fe SKILL — so I can
+`governance/development/frontend/design-tokens.md`, and the organiclever-web SKILL — so I can
 understand how to use OL tokens and components without reading source code.
 
 ---
@@ -134,8 +134,8 @@ understand how to use OL tokens and components without reading source code.
 ```gherkin
 Feature: OL Token Adoption
 
-  Scenario: Warm palette available in organiclever-fe
-    Given organiclever-fe globals.css imports organiclever.css
+  Scenario: Warm palette available in organiclever-web
+    Given organiclever-web globals.css imports organiclever.css
     When the page is loaded
     Then the CSS custom property "--hue-teal" resolves to an OKLCH value
     And the CSS custom property "--warm-0" resolves to a near-white warm value
@@ -149,7 +149,7 @@ Feature: OL Token Adoption
     And "--hue-teal" resolves to the lifted dark-mode value
 
   Scenario: Nunito font applied
-    Given organiclever-fe layout.tsx loads Nunito via next/font/google
+    Given organiclever-web layout.tsx loads Nunito via next/font/google
     When the page is loaded
     Then the computed font-family of body includes "Nunito"
 
@@ -277,8 +277,8 @@ Feature: Accessibility
 
 Feature: Design System Documentation
 
-  Scenario: organiclever-fe README has Design System section
-    Given the file apps/organiclever-fe/README.md is read
+  Scenario: organiclever-web README has Design System section
+    Given the file apps/organiclever-web/README.md is read
     When the Design System section is located
     Then it contains a palette table with all 6 OL hues
     And it contains a typography table with Nunito and JetBrains Mono
@@ -302,7 +302,7 @@ Feature: Design System Documentation
     And it shows the data-theme="dark" selector in the @custom-variant example
 
   Scenario: SKILL file documents design system
-    Given the organiclever-fe SKILL.md is read
+    Given the organiclever-web SKILL.md is read
     When the Design System section is located
     Then it shows the token import chain including organiclever.css
     And it shows ts-ui component usage examples with OL variants
@@ -317,8 +317,8 @@ Feature: Design System Documentation
 - OL warm OKLCH token file (`libs/ts-ui-tokens/src/organiclever.css`) with full palette,
   radius scale, shadow scale, semantic overrides, and dark mode
 - Dark mode variant fix in `libs/ts-ui-tokens/src/tokens.css` (additive selector change)
-- Typography wiring in `apps/organiclever-fe` — Nunito + JetBrains Mono via `next/font/google`
-- Token import + font `@theme` mapping in `apps/organiclever-fe/src/app/globals.css`
+- Typography wiring in `apps/organiclever-web` — Nunito + JetBrains Mono via `next/font/google`
+- Token import + font `@theme` mapping in `apps/organiclever-web/src/app/globals.css`
 - Storybook preview import of `organiclever.css` in `libs/ts-ui/.storybook/preview.ts`
 - Updated existing components: Button (teal/sage variants, xl size), Alert (success/warning/info
   variants), Input (44 px height)
@@ -329,7 +329,7 @@ Feature: Design System Documentation
 
 - Workout app screens (Home, Workout, Finish, EditRoutine, History, Progress, Settings) — next plan
 - Data layer (`db.ts`, `types.ts`) — separate plan
-- New routes or pages in `organiclever-fe` — separate plan
+- New routes or pages in `organiclever-web` — separate plan
 - Landing page content changes — separate plan
 - Changes to `ts-ui-tokens/src/tokens.css` neutral baseline beyond the dark variant selector fix
 - `ose-primer` propagation of OL brand tokens (product-specific, classified `neither`)
@@ -351,5 +351,5 @@ Feature: Design System Documentation
   a CSS custom property. Mitigation: `organiclever.css` only overrides `--color-*`,
   `--radius-*`, and `--shadow-*` in `@theme`; it does not remove or rename any token.
 - **Input height regression** — Changing Input `h-9` → `h-11` (36 px → 44 px) is the
-  only potentially breaking layout change. Mitigation: verify `nx build organiclever-fe`
+  only potentially breaking layout change. Mitigation: verify `nx build organiclever-web`
   passes; rollback path is `h-11` → `h-9` + adding a size prop.

@@ -16,7 +16,7 @@
 
 After adoption the site is deployed via Vercel on the `prod-wahidyankf-web`
 branch — identical to `ayokoding-web`, `oseplatform-web`, and
-`organiclever-fe`. It ships its own unit tests, an axe-core accessibility
+`organiclever-web`. It ships its own unit tests, an axe-core accessibility
 E2E smoke, and an `@amiceli/vitest-cucumber` Gherkin suite mirroring this
 PRD's acceptance criteria.
 
@@ -112,7 +112,7 @@ stakeholder titles.
   for all apps).
 - **R11** — A sibling Nx project `wahidyankf-web-e2e` exposes `install`,
   `typecheck`, `lint`, `test:quick`, `test:e2e`, `test:e2e:ui`,
-  `test:e2e:report`, `spec-coverage` matching the `organiclever-fe-e2e`
+  `test:e2e:report`, `spec-coverage` matching the `organiclever-web-e2e`
   shape.
 - **R12** — A `prod-wahidyankf-web` environment branch is created
   from `main` after P5 passes, and an `apps-wahidyankf-web-deployer`
@@ -419,7 +419,7 @@ Feature: Production deployment wiring
 | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Tailwind 3 → 4 migration silently breaks the green-on-black theme                                                                                     | P2 dedicates a checkbox to running `npx @tailwindcss/upgrade` and Playwright smoke in P4 renders each page at both themes                                                                                                                                |
 | React 19 + `useSearchParams` changes Suspense boundaries subtly                                                                                       | Upstream `page.tsx` already wraps `HomeContent` in `<Suspense>`; port preserves that; Gherkin US-2 ACs re-verify end-to-end                                                                                                                              |
-| Dev port clashes with an existing app                                                                                                                 | Assign `3201` (first free above `organiclever-fe`'s `3200`) and document in top-level `CLAUDE.md` under the app's section                                                                                                                                |
+| Dev port clashes with an existing app                                                                                                                 | Assign `3201` (first free above `organiclever-web`'s `3200`) and document in top-level `CLAUDE.md` under the app's section                                                                                                                               |
 | axe-core flags upstream contrast (dark background + green-400 text)                                                                                   | Contrast pair `#4ade80` on `#111827` measures above WCAG AA (≈ 6.4:1); if scan reports violations, adjust tokens in P4                                                                                                                                   |
 | Recruiters hit the site during the deploy-branch creation cutover                                                                                     | P6 creates the branch from a verified green `main`; Vercel bindings happen post-merge so no partial deploy window                                                                                                                                        |
 | Responsive regression at tablet or mobile goes unnoticed (e.g. sidebar reappears at 768 px or bottom tab bar disappears at 375 px)                    | Baseline sweep in P2/P3/P4/P7 uses exact reference PNGs at 1440 × 900, 768 × 1024, and 375 × 812 — any structural mismatch blocks the phase commit. R13 in the functional-requirements list makes the three breakpoints first-class acceptance criteria. |

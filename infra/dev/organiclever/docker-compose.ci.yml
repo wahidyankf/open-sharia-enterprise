@@ -13,7 +13,7 @@ services:
       ENABLE_TEST_API: "true"
       ASPNETCORE_URLS: "http://+:8202"
 
-  organiclever-fe:
+  organiclever-web:
     environment:
       ORGANICLEVER_BE_URL: "http://organiclever-be:8202"
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: test

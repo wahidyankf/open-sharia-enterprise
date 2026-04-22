@@ -13,7 +13,7 @@ login, protected user profile, route protection, and accessibility.
 
 ## Relationship to organiclever-be
 
-| Aspect      | organiclever-be                                  | organiclever-fe                         |
+| Aspect      | organiclever-be                                  | organiclever-web                        |
 | ----------- | ------------------------------------------------ | --------------------------------------- |
 | Perspective | Backend API — HTTP-semantic                      | Frontend UI — user interaction-semantic |
 | Steps       | `sends GET/POST`, `status code`, `response body` | `clicks`, `types`, `sees`, `navigates`  |
@@ -29,9 +29,9 @@ step definitions translate UI actions into API calls and verify the rendered out
 Frontend implementations consume these shared Gherkin scenarios at **two test levels**. The
 feature files are the shared contract — only the step implementations differ per level.
 
-| Implementation    | Framework               | BDD Tool                 |
-| ----------------- | ----------------------- | ------------------------ |
-| `organiclever-fe` | Next.js 16 (App Router) | @amiceli/vitest-cucumber |
+| Implementation     | Framework               | BDD Tool                 |
+| ------------------ | ----------------------- | ------------------------ |
+| `organiclever-web` | Next.js 16 (App Router) | @amiceli/vitest-cucumber |
 
 | Level    | Nx Target   | What Happens                                         | Dependencies                |
 | -------- | ----------- | ---------------------------------------------------- | --------------------------- |

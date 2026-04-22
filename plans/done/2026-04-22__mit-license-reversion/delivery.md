@@ -19,8 +19,8 @@
 <!-- Date: 2026-04-22 | Status: done | Files Changed: apps/ayokoding-web/LICENSE -->
 - [x] Replace `apps/organiclever-be/LICENSE` with MIT text
 <!-- Date: 2026-04-22 | Status: done | Files Changed: apps/organiclever-be/LICENSE -->
-- [x] Replace `apps/organiclever-fe/LICENSE` with MIT text
-<!-- Date: 2026-04-22 | Status: done | Files Changed: apps/organiclever-fe/LICENSE -->
+- [x] Replace `apps/organiclever-web/LICENSE` with MIT text
+<!-- Date: 2026-04-22 | Status: done | Files Changed: apps/organiclever-web/LICENSE -->
 - [x] Replace `apps/oseplatform-cli/LICENSE` with MIT text
 <!-- Date: 2026-04-22 | Status: done | Files Changed: apps/oseplatform-cli/LICENSE -->
 - [x] Replace `apps/oseplatform-web/LICENSE` with MIT text
@@ -98,8 +98,8 @@
 <!-- Date: 2026-04-22 | Status: done | Notes: package.json shows "MIT" -->
 - [x] Spot-check: `head -3 LICENSE` — expect `MIT License`
 <!-- Date: 2026-04-22 | Status: done | Notes: root LICENSE starts with MIT License -->
-- [x] Spot-check: `head -3 apps/organiclever-fe/LICENSE` — expect `MIT License`
-<!-- Date: 2026-04-22 | Status: done | Notes: apps/organiclever-fe/LICENSE starts with MIT License -->
+- [x] Spot-check: `head -3 apps/organiclever-web/LICENSE` — expect `MIT License`
+<!-- Date: 2026-04-22 | Status: done | Notes: apps/organiclever-web/LICENSE starts with MIT License -->
 - [x] Run markdown lint: `npm run lint:md` — expect no violations
 <!-- Date: 2026-04-22 | Status: done | Notes: 0 errors across 2160 files -->
 - [x] Run markdown format check: `npm run format:md:check` — expect clean
@@ -138,7 +138,7 @@
 ### Staging and Committing
 
 - [x] Stage modified LICENSE files, configuration, and documentation explicitly:
-    `git add LICENSE apps/ayokoding-cli/LICENSE apps/ayokoding-web/LICENSE apps/organiclever-be/LICENSE apps/organiclever-fe/LICENSE apps/oseplatform-cli/LICENSE apps/oseplatform-web/LICENSE apps/wahidyankf-web/LICENSE specs/LICENSE`
+    `git add LICENSE apps/ayokoding-cli/LICENSE apps/ayokoding-web/LICENSE apps/organiclever-be/LICENSE apps/organiclever-web/LICENSE apps/oseplatform-cli/LICENSE apps/oseplatform-web/LICENSE apps/wahidyankf-web/LICENSE specs/LICENSE`
     `git add package.json package-lock.json`
     `git add LICENSING-NOTICE.md CLAUDE.md README.md`
     `git add governance/ docs/ apps/oseplatform-web/content/`

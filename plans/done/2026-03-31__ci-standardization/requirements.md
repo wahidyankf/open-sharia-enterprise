@@ -20,7 +20,7 @@ extended with language and framework: `{service-name}-{part}-{lang}-{framework}`
 | framework (optional) | `gin`, `springboot`, `vertx`, `effect`, `fastapi`, `axum`, `ktor`, `giraffe`, `aspnetcore`, `pedestal`, `phoenix`, `nextjs`, `tanstack-start`, `flutterweb` |          |
 
 **Examples**: `a-demo-be-golang-gin`, `a-demo-fe-ts-nextjs`, `organiclever-be`,
-`organiclever-fe`, `ayokoding-web`, `rhino-cli`
+`organiclever-web`, `ayokoding-web`, `rhino-cli`
 
 **Inconsistencies**:
 
@@ -51,7 +51,7 @@ E2E naming `ayokoding-web-be-e2e` correctly derives from the app name. This is a
 
 **Inconsistency**: `test-organiclever.yml` covers both BE and FE testing in a single workflow.
 All other apps have separate per-component workflows. Should be either split into
-`test-organiclever-be.yml` + `test-organiclever-fe.yml` or explicitly documented as the
+`test-organiclever-be.yml` + `test-organiclever-web.yml` or explicitly documented as the
 multi-component pattern.
 
 #### Docker File Naming
@@ -87,7 +87,7 @@ multi-component pattern.
 
 **Inconsistency**: OrganicLever uses a single `infra/dev/organiclever/` directory containing both
 `Dockerfile.be.dev` and `Dockerfile.fe.dev`, while all other apps have one directory per app.
-This works because organiclever-be and organiclever-fe share a single docker-compose.yml for
+This works because organiclever-be and organiclever-web share a single docker-compose.yml for
 full-stack local development. **No rename needed** -- the combined directory is intentional for
 co-dependent services.
 
@@ -231,7 +231,7 @@ mandatory at **all gates** (pre-push, PR quality gate, CRON).
 
 | App                         | Lint (jsx-a11y) | Unit A11y     | E2E Axe-Core               | Gap                             |
 | --------------------------- | --------------- | ------------- | -------------------------- | ------------------------------- |
-| organiclever-fe             | Yes             | Yes (Gherkin) | Yes (@axe-core/playwright) | Complete                        |
+| organiclever-web            | Yes             | Yes (Gherkin) | Yes (@axe-core/playwright) | Complete                        |
 | a-demo-fe-ts-nextjs         | Yes             | Yes (Gherkin) | Yes (@axe-core/playwright) | Complete                        |
 | a-demo-fe-ts-tanstack-start | Yes             | Yes (Gherkin) | Yes (shared e2e)           | Complete                        |
 | a-demo-fs-ts-nextjs         | Yes             | Yes (Gherkin) | No axe-core                | Add @axe-core/playwright        |
@@ -350,7 +350,7 @@ development and CI. This includes:
 | App                   | Has `infra/dev/`                    | Gap                                |
 | --------------------- | ----------------------------------- | ---------------------------------- |
 | `organiclever-be`     | Yes (via `infra/dev/organiclever/`) | OK                                 |
-| `organiclever-fe`     | Yes (via `infra/dev/organiclever/`) | OK                                 |
+| `organiclever-web`    | Yes (via `infra/dev/organiclever/`) | OK                                 |
 | `ayokoding-web`       | Yes                                 | OK                                 |
 | `oseplatform-web`     | Yes                                 | OK                                 |
 | All `a-demo-be-*`     | Yes                                 | OK                                 |
@@ -630,7 +630,7 @@ npm run lint:md
 | CLIs              | 90%                | rhino-cli, ayokoding-cli, oseplatform-cli |
 | Content platforms | 80%                | ayokoding-web, oseplatform-web            |
 | Fullstack (FS)    | 75%                | a-demo-fs-ts-nextjs                       |
-| Frontends (FE)    | 70%                | 3 demo frontends, organiclever-fe         |
+| Frontends (FE)    | 70%                | 3 demo frontends, organiclever-web        |
 
 **Gap**: Coverage threshold rationale is undocumented. Now addressed in
 [R0.2 Coverage Thresholds](#coverage-thresholds-with-rationale).
@@ -716,12 +716,12 @@ FE requires unit + e2e.
 
 - **organiclever-be**: Unit (mocked, 90%, Gherkin), Integration (real PostgreSQL, Docker, Gherkin),
   E2E (Playwright via `organiclever-be-e2e`, Gherkin).
-- **organiclever-fe**: Unit (MSW, 70%), E2E (full stack + Playwright via `organiclever-fe-e2e`).
+- **organiclever-web**: Unit (MSW, 70%), E2E (full stack + Playwright via `organiclever-web-e2e`).
 
 **Gaps**:
 
-- organiclever-fe unit tests do **not** consume Gherkin specs. Must be remediated.
-- organiclever-fe currently has a `test:integration` target (MSW-based) that is redundant.
+- organiclever-web unit tests do **not** consume Gherkin specs. Must be remediated.
+- organiclever-web currently has a `test:integration` target (MSW-based) that is redundant.
   Should be removed per the FE standard (unit + e2e only).
 
 ### R4: Specs Folder Structure
@@ -856,7 +856,7 @@ The current PR quality gate installs ALL runtimes in a single job:
 - Clojure CLI
 - golangci-lint, oapi-codegen, datamodel-code-generator, Fantomas, dotnet-fsharplint
 
-**Problem**: A PR touching only `organiclever-fe` (TypeScript) still installs Go, Java, .NET,
+**Problem**: A PR touching only `organiclever-web` (TypeScript) still installs Go, Java, .NET,
 Elixir, Python, Rust, Flutter, and Clojure. This wastes ~5-8 minutes of setup time.
 
 **Solution**: Split into parallel, language-scoped jobs. Use `nx show projects --affected` to

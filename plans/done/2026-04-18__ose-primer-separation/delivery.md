@@ -420,7 +420,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 ### 8.E — Commit E: Prune root configs + `.github/` non-deletion edits
 
 - [x] Edit `codecov.yml`:
-  - [x] Remove every `flags:` entry keyed on a demo project name. Confirm remaining flags: `oseplatform-web`, `ayokoding-web`, `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `organiclever-fe`, `organiclever-be`, `golang-commons`.
+  - [x] Remove every `flags:` entry keyed on a demo project name. Confirm remaining flags: `oseplatform-web`, `ayokoding-web`, `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `organiclever-web`, `organiclever-be`, `golang-commons`.
   - [x] Remove every `ignore:` pattern scoped to a demo path. Today: `apps/a-demo-be-golang-gin/internal/store/gorm_store.go`, `apps/a-demo-be-golang-gin/internal/server/server.go`, `apps/a-demo-be-golang-gin/cmd/server/**`. Retain generic patterns (`**/types.go`, `**/generated-contracts/**`).
   - [x] Confirm `grep 'a-demo' codecov.yml || echo CLEAN` prints `CLEAN`.
 - [x] Edit `go.work`: remove every `use` directive under `apps/a-demo-be-*` (Go backends: `golang-gin`, and any others). Run `go work sync` and confirm no error.
@@ -554,13 +554,13 @@ Goal: verify `ose-public` is healthy after extraction; catch any dangling refere
 
 - [x] Run `npm install` (in case package-lock shifted from removed apps).
 - [x] Run `nx affected -t typecheck lint test:quick spec-coverage` from `main` (or a just-created branch). Must pass.
-- [x] Run `nx run-many -t typecheck lint test:quick spec-coverage --projects='ayokoding-web,oseplatform-web,organiclever-fe,organiclever-be,rhino-cli,oseplatform-cli,ayokoding-cli,golang-commons'` — must pass (explicit product + retained infrastructure; `rhino-cli` run is the definitive Commit-J verification).
+- [x] Run `nx run-many -t typecheck lint test:quick spec-coverage --projects='ayokoding-web,oseplatform-web,organiclever-web,organiclever-be,rhino-cli,oseplatform-cli,ayokoding-cli,golang-commons'` — must pass (explicit product + retained infrastructure; `rhino-cli` run is the definitive Commit-J verification).
 
 ### 9.3 — Product E2E green run
 
 - [x] Run `nx run ayokoding-web-be-e2e:test:e2e` — pass.
 - [x] Run `nx run ayokoding-web-fe-e2e:test:e2e` — pass.
-- [x] Run `nx run organiclever-fe-e2e:test:e2e` — pass.
+- [x] Run `nx run organiclever-web-e2e:test:e2e` — pass.
 - [x] Run `nx run organiclever-be-e2e:test:e2e` — pass.
 - [x] Run `nx run oseplatform-web-be-e2e:test:e2e` — pass.
 - [x] Run `nx run oseplatform-web-fe-e2e:test:e2e` — pass.

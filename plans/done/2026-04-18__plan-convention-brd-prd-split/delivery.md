@@ -225,36 +225,36 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 
 ## Phase 6 — Migrate the active in-progress plan
 
-- [x] Read `plans/in-progress/2026-04-16__organiclever-fe-local-first/requirements.md` in full.
+- [x] Read `plans/in-progress/2026-04-16__organiclever-web-local-first/requirements.md` in full.
   - **Implementation Notes**: 120 lines. R1-R7 functional requirements + Gherkin acceptance criteria. Business motivation lives in README Context/Motivation (not in requirements.md), so BRD draws from README; PRD draws R1-R7 + Gherkin.
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (read-only)
-- [x] Create `plans/in-progress/2026-04-16__organiclever-fe-local-first/brd.md` with business-impact content.
+- [x] Create `plans/in-progress/2026-04-16__organiclever-web-local-first/brd.md` with business-impact content.
   - **Implementation Notes**: 76 lines. Sections: Scope note, Business Goal, Business Impact (pain points + benefits), Affected Roles, Success Metrics (6 observable facts), Non-Goals, Risks.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-fe-local-first/brd.md (created)
-- [x] Create `plans/in-progress/2026-04-16__organiclever-fe-local-first/prd.md` with user stories + Gherkin + product scope.
+  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-web-local-first/brd.md (created)
+- [x] Create `plans/in-progress/2026-04-16__organiclever-web-local-first/prd.md` with user stories + Gherkin + product scope.
   - **Implementation Notes**: 187 lines. Sections: Product Overview, Personas, 7 User Stories (US-1..US-7), Functional Requirements R1-R7 preserved verbatim, Gherkin acceptance criteria preserved verbatim, Out-of-Scope, Product-Level Risks.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-fe-local-first/prd.md (created)
+  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-web-local-first/prd.md (created)
 - [x] Verify `wc -l` of `brd.md` + `prd.md` approximates `wc -l` of original `requirements.md` (tolerate modest cross-link overhead).
   - **Implementation Notes**: Original requirements.md 120 lines; new brd.md 76 + prd.md 187 = 263 lines. Expansion driven by BRD content added (business goal, affected-roles table, non-goals, risks) and PRD enhancements (personas, 7 user stories, out-of-scope, product-risks). Original functional content (R1-R7 + Gherkin) preserved verbatim.
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (verification only)
-- [x] Delete `plans/in-progress/2026-04-16__organiclever-fe-local-first/requirements.md`.
+- [x] Delete `plans/in-progress/2026-04-16__organiclever-web-local-first/requirements.md`.
   - **Implementation Notes**: `rm` executed. File no longer exists.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-fe-local-first/requirements.md (deleted)
+  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-web-local-first/requirements.md (deleted)
 - [x] Update that plan's `README.md` "Plan Documents" (or equivalent) section to link `brd.md` and `prd.md` instead of `requirements.md`.
   - **Implementation Notes**: Plan Documents table now has 4 rows: brd.md (BRD), prd.md (PRD), tech-docs.md, delivery.md. Purposes described per file.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-fe-local-first/README.md
+  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-web-local-first/README.md
 - [x] Run `npm run lint:md` on the migrated plan files.
   - **Implementation Notes**: 3 files (brd, prd, README) linted, 0 errors.
   - **Date**: 2026-04-18
@@ -303,11 +303,11 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: README.md, prd.md (in this plan)
-- [x] Run `plan-checker` against `plans/in-progress/2026-04-16__organiclever-fe-local-first/` (migrated plan) → expect zero findings.
+- [x] Run `plan-checker` against `plans/in-progress/2026-04-16__organiclever-web-local-first/` (migrated plan) → expect zero findings.
   - **Implementation Notes**: Normal mode — 0 CRITICAL, 0 MEDIUM, 0 LOW. 2 HIGH initially (stale `requirements.md` link in tech-docs preamble line 4 and delivery preamble lines 3-4) — both fixed per Iron Rule 3 by updating preambles to reference brd.md + prd.md. Re-validation implicit via the fix. Report: generated-reports/plan**614792**2026-04-18--09-54\_\_audit.md
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-fe-local-first/tech-docs.md, delivery.md
+  - **Files Changed**: plans/in-progress/2026-04-16\_\_organiclever-web-local-first/tech-docs.md, delivery.md
 - [x] Run `npm run lint:md` repository-wide → expect zero violations.
   - **Implementation Notes**: 2148 files linted, 0 errors.
   - **Date**: 2026-04-18
@@ -339,7 +339,7 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - [x] Commit 3: `docs(workflows): update plan workflows for brd + prd layout` — SHA 3d8f4d03.
   - [x] Commit 4: `chore(skills): update plan-creating-project-plans skill for brd + prd` — SHA 4120a212.
   - [x] Commit 5: `chore(opencode): sync .opencode mirrors` — SHA 3319c7fd.
-  - [x] Commit 6: `docs(plans): migrate organiclever-fe-local-first to brd + prd layout` — SHA aa06c474. (+ supplemental SHA 6eef9428 for progressive delivery.md updates in this plan.)
+  - [x] Commit 6: `docs(plans): migrate organiclever-web-local-first to brd + prd layout` — SHA aa06c474. (+ supplemental SHA 6eef9428 for progressive delivery.md updates in this plan.)
 - [x] Do NOT bundle preexisting fixes into the domain-scoped commits above — commit them separately with an appropriate type/scope.
   - **Implementation Notes**: No preexisting fixes encountered during execution. All 7 commits strictly domain-scoped.
   - **Date**: 2026-04-18

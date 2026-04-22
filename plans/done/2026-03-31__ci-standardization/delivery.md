@@ -352,12 +352,12 @@ This must be fixed so all test levels verify behavioral specs.
   - [x] `ayokoding-web`: wire vitest to consume `specs/apps/ayokoding/{be,fe}/gherkin/*.feature`
   - [x] `oseplatform-web`: wire vitest to consume `specs/apps/oseplatform/{be,fe}/gherkin/*.feature`
 - [x] Add Gherkin consumption to OrganicLever FE unit tests:
-  - [x] `organiclever-fe`: wire vitest to consume `specs/apps/organiclever/fe/gherkin/*.feature`
+  - [x] `organiclever-web`: wire vitest to consume `specs/apps/organiclever/fe/gherkin/*.feature`
 - [x] Remove redundant FE `test:integration` targets:
   - [x] Remove from `a-demo-fe-ts-nextjs/project.json`
   - [x] Remove from `a-demo-fe-ts-tanstack-start/project.json`
   - [x] Remove from `a-demo-fe-dart-flutterweb/project.json`
-  - [x] Remove from `organiclever-fe/project.json`
+  - [x] Remove from `organiclever-web/project.json`
   - [x] Update nx.json if FE integration targets have special caching rules
 - [x] Verify all unit test suites now consume Gherkin specs:
   - [x] Run `rhino-cli spec-coverage validate` for each project
@@ -540,7 +540,7 @@ specs), update rhino-cli first.
   - [x] `a-demo-fe-ts-nextjs/project.json`
   - [x] `a-demo-fe-ts-tanstack-start/project.json`
   - [x] `a-demo-fe-dart-flutterweb/project.json`
-  - [x] `organiclever-fe/project.json`
+  - [x] `organiclever-web/project.json`
 - [x] Add `spec-coverage` Nx target to fullstack and content platform projects:
   - [x] `a-demo-fs-ts-nextjs/project.json`
   - [x] `ayokoding-web/project.json`
@@ -549,7 +549,7 @@ specs), update rhino-cli first.
   - [x] `a-demo-be-e2e/project.json`
   - [x] `a-demo-fe-e2e/project.json`
   - [x] `organiclever-be-e2e/project.json`
-  - [x] `organiclever-fe-e2e/project.json`
+  - [x] `organiclever-web-e2e/project.json`
 - [x] Add `spec-coverage` Nx target to CLI projects:
   - [x] `rhino-cli/project.json`
   - [x] `ayokoding-cli/project.json`
@@ -658,21 +658,21 @@ conventions.
 
 ## Success Metrics
 
-| Metric                                                                           | Before                                                                | Target                                                                     |
-| -------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| GitHub Actions workflow files                                                    | 22                                                                    | ~30 (15 workflows rewritten + 7 updated + 8 new reusable workflows)        |
-| Caller workflow YAML lines                                                       | ~4,500 (~150 lines × 22 files + 6 others)                             | ~1,500 (~40 lines × 15 BE/FE/FS callers, -67% per caller)                  |
-| PR quality gate (TS-only PR)                                                     | 1 monolithic job (13+ runtimes installed)                             | 1-2 language-scoped parallel jobs                                          |
-| CRON parallel tracks                                                             | 2 (integration, e2e)                                                  | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e)                    |
-| Adding a new backend to CI                                                       | Copy ~150 lines, make 5-10 manual substitutions                       | Create ~40-line workflow calling reusable + follow checklist               |
-| Programming languages with auto-format on commit (markup/config already covered) | 4 (JS/TS, Go, F#, Elixir)                                             | 9 (+5: adds Python, Rust, C#, Clojure, Dart)                               |
-| Apps with spec-coverage in CI                                                    | 0                                                                     | All testable projects                                                      |
-| Projects with Gherkin at all test levels                                         | ~15 (BE + CLI only)                                                   | All testable projects                                                      |
-| UI apps with @axe-core/playwright E2E                                            | 3 (organiclever-fe, a-demo-fe-ts-nextjs, a-demo-fe-ts-tanstack-start) | All UI apps                                                                |
-| UI apps with a11y Gherkin specs                                                  | 3                                                                     | All UI apps                                                                |
-| `infra/dev/` dirs with `.env.example`                                            | 5                                                                     | All (18+)                                                                  |
-| Apps with `infra/dev/` Docker Compose                                            | 18                                                                    | 21 (+3 CLIs)                                                               |
-| Redundant FE `test:integration` targets                                          | 5                                                                     | 0 (removed)                                                                |
-| CI Docker cache hit rate                                                         | 0%                                                                    | 80%+                                                                       |
-| Governance docs covering CI                                                      | 0                                                                     | 3 new docs                                                                 |
-| CI compliance enforcement (agents + workflow)                                    | 0                                                                     | ci-checker + ci-fixer agents, ci-quality-gate workflow, ci-standards skill |
+| Metric                                                                           | Before                                                                 | Target                                                                     |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| GitHub Actions workflow files                                                    | 22                                                                     | ~30 (15 workflows rewritten + 7 updated + 8 new reusable workflows)        |
+| Caller workflow YAML lines                                                       | ~4,500 (~150 lines × 22 files + 6 others)                              | ~1,500 (~40 lines × 15 BE/FE/FS callers, -67% per caller)                  |
+| PR quality gate (TS-only PR)                                                     | 1 monolithic job (13+ runtimes installed)                              | 1-2 language-scoped parallel jobs                                          |
+| CRON parallel tracks                                                             | 2 (integration, e2e)                                                   | 5 (lint, typecheck, test:quick, spec-coverage, int→e2e)                    |
+| Adding a new backend to CI                                                       | Copy ~150 lines, make 5-10 manual substitutions                        | Create ~40-line workflow calling reusable + follow checklist               |
+| Programming languages with auto-format on commit (markup/config already covered) | 4 (JS/TS, Go, F#, Elixir)                                              | 9 (+5: adds Python, Rust, C#, Clojure, Dart)                               |
+| Apps with spec-coverage in CI                                                    | 0                                                                      | All testable projects                                                      |
+| Projects with Gherkin at all test levels                                         | ~15 (BE + CLI only)                                                    | All testable projects                                                      |
+| UI apps with @axe-core/playwright E2E                                            | 3 (organiclever-web, a-demo-fe-ts-nextjs, a-demo-fe-ts-tanstack-start) | All UI apps                                                                |
+| UI apps with a11y Gherkin specs                                                  | 3                                                                      | All UI apps                                                                |
+| `infra/dev/` dirs with `.env.example`                                            | 5                                                                      | All (18+)                                                                  |
+| Apps with `infra/dev/` Docker Compose                                            | 18                                                                     | 21 (+3 CLIs)                                                               |
+| Redundant FE `test:integration` targets                                          | 5                                                                      | 0 (removed)                                                                |
+| CI Docker cache hit rate                                                         | 0%                                                                     | 80%+                                                                       |
+| Governance docs covering CI                                                      | 0                                                                      | 3 new docs                                                                 |
+| CI compliance enforcement (agents + workflow)                                    | 0                                                                      | ci-checker + ci-fixer agents, ci-quality-gate workflow, ci-standards skill |

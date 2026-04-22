@@ -30,17 +30,17 @@ against `main`.
 
 ### LICENSE Files (FSL → MIT)
 
-| File                           | Current     | Change |
-| ------------------------------ | ----------- | ------ |
-| `LICENSE`                      | FSL-1.1-MIT | MIT    |
-| `apps/ayokoding-cli/LICENSE`   | FSL-1.1-MIT | MIT    |
-| `apps/ayokoding-web/LICENSE`   | FSL-1.1-MIT | MIT    |
-| `apps/organiclever-be/LICENSE` | FSL-1.1-MIT | MIT    |
-| `apps/organiclever-fe/LICENSE` | FSL-1.1-MIT | MIT    |
-| `apps/oseplatform-cli/LICENSE` | FSL-1.1-MIT | MIT    |
-| `apps/oseplatform-web/LICENSE` | FSL-1.1-MIT | MIT    |
-| `apps/wahidyankf-web/LICENSE`  | FSL-1.1-MIT | MIT    |
-| `specs/LICENSE`                | FSL-1.1-MIT | MIT    |
+| File                            | Current     | Change |
+| ------------------------------- | ----------- | ------ |
+| `LICENSE`                       | FSL-1.1-MIT | MIT    |
+| `apps/ayokoding-cli/LICENSE`    | FSL-1.1-MIT | MIT    |
+| `apps/ayokoding-web/LICENSE`    | FSL-1.1-MIT | MIT    |
+| `apps/organiclever-be/LICENSE`  | FSL-1.1-MIT | MIT    |
+| `apps/organiclever-web/LICENSE` | FSL-1.1-MIT | MIT    |
+| `apps/oseplatform-cli/LICENSE`  | FSL-1.1-MIT | MIT    |
+| `apps/oseplatform-web/LICENSE`  | FSL-1.1-MIT | MIT    |
+| `apps/wahidyankf-web/LICENSE`   | FSL-1.1-MIT | MIT    |
+| `specs/LICENSE`                 | FSL-1.1-MIT | MIT    |
 
 ### Configuration / Metadata
 

@@ -1,6 +1,6 @@
-# organiclever-fe-e2e
+# organiclever-web-e2e
 
-End-to-end tests for the [OrganicLever frontend](../organiclever-fe/README.md),
+End-to-end tests for the [OrganicLever frontend](../organiclever-web/README.md),
 using [playwright-bdd](https://github.com/vitalets/playwright-bdd) to drive tests from Gherkin
 feature files.
 
@@ -45,7 +45,7 @@ nx dev organiclever-be
 **Start the frontend**:
 
 ```bash
-nx dev organiclever-fe
+nx dev organiclever-web
 ```
 
 ## Setup
@@ -53,32 +53,32 @@ nx dev organiclever-fe
 Install Playwright and its browser dependencies (one-time setup):
 
 ```bash
-nx run organiclever-fe-e2e:install
+nx run organiclever-web-e2e:install
 ```
 
 ## Running Tests
 
 ```bash
 # Run all BDD E2E tests headlessly (generates specs then runs)
-nx run organiclever-fe-e2e:test:e2e
+nx run organiclever-web-e2e:test:e2e
 
 # Run with interactive Playwright UI
-nx run organiclever-fe-e2e:test:e2e:ui
+nx run organiclever-web-e2e:test:e2e:ui
 
 # View HTML report from last run
-nx run organiclever-fe-e2e:test:e2e:report
+nx run organiclever-web-e2e:test:e2e:report
 
 # Generate spec files only (without running tests)
-cd apps/organiclever-fe-e2e && npx bddgen
+cd apps/organiclever-web-e2e && npx bddgen
 
 # Lint TypeScript source files (oxlint)
-nx run organiclever-fe-e2e:lint
+nx run organiclever-web-e2e:lint
 
 # Type check
-nx run organiclever-fe-e2e:typecheck
+nx run organiclever-web-e2e:typecheck
 
 # Pre-push quality gate (typecheck + lint)
-nx run organiclever-fe-e2e:test:quick
+nx run organiclever-web-e2e:test:quick
 ```
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E
@@ -94,7 +94,7 @@ target names. `test:e2e` runs on a scheduled cron (not on pre-push).
 Override the base URL to test a different deployment:
 
 ```bash
-BASE_URL=http://localhost:3200 nx run organiclever-fe-e2e:test:e2e
+BASE_URL=http://localhost:3200 nx run organiclever-web-e2e:test:e2e
 ```
 
 ## Google OAuth Testing Strategy
@@ -111,7 +111,7 @@ credentials. The step implementations use a simulation strategy:
 ## Project Structure
 
 ```
-apps/organiclever-fe-e2e/
+apps/organiclever-web-e2e/
 ├── playwright.config.ts           # Playwright + playwright-bdd configuration
 ├── package.json                   # Dependencies (playwright, playwright-bdd, axe-core)
 ├── tsconfig.json                  # TypeScript config

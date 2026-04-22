@@ -53,7 +53,7 @@ specs/libs/ts-ui/gherkin/
     ├── tab-bar/tab-bar.feature   ← NEW
     └── side-nav/side-nav.feature ← NEW
 
-apps/organiclever-fe/src/app/
+apps/organiclever-web/src/app/
     ├── layout.tsx                ← CHANGE: add Nunito + JetBrains Mono
     └── globals.css               ← CHANGE: import organiclever.css + @theme font vars
 
@@ -61,11 +61,11 @@ libs/ts-ui/.storybook/
     └── preview.ts                ← CHANGE: also import organiclever.css
 
 Documentation files (pre-written, verify accuracy during Phase 16.5):
-    apps/organiclever-fe/README.md                           ← CHANGE: add Design System section
+    apps/organiclever-web/README.md                           ← CHANGE: add Design System section
     libs/ts-ui/README.md                                     ← CHANGE: add OL component catalog
     libs/ts-ui-tokens/README.md                              ← CHANGE: add per-app brand files section
     governance/development/frontend/design-tokens.md         ← CHANGE: add OKLCH section, update dark variant
-    .claude/skills/apps-organiclever-fe-developing-content/SKILL.md  ← CHANGE: add Design System section
+    .claude/skills/apps-organiclever-web-developing-content/SKILL.md  ← CHANGE: add Design System section
 ```
 
 > **Note on test artifacts per component**: Every ts-ui component needs four files:
@@ -84,7 +84,7 @@ new dependencies need to be installed.
 | Package                    | Where used                       | Already present in                                              |
 | -------------------------- | -------------------------------- | --------------------------------------------------------------- |
 | `radix-ui`                 | Sheet (Dialog primitive)         | `libs/ts-ui/package.json` (already used by dialog.tsx)          |
-| `next/font/google`         | organiclever-fe layout.tsx       | `apps/organiclever-fe/package.json` (Next.js built-in)          |
+| `next/font/google`         | organiclever-web layout.tsx      | `apps/organiclever-web/package.json` (Next.js built-in)         |
 | `@amiceli/vitest-cucumber` | All `.steps.tsx` files           | `libs/ts-ui/package.json` (already used by existing step files) |
 | `class-variance-authority` | button.tsx, alert.tsx extensions | `libs/ts-ui/package.json` (already used)                        |
 | `tailwind-merge` + `clsx`  | All components via `cn()`        | `libs/ts-ui/package.json` (already used)                        |
@@ -104,20 +104,20 @@ The OL brand token system is layered as follows:
    Contains Tailwind `@theme` defaults (`--color-background`, `--color-primary`, etc.) using
    plain grey/neutral values.
 2. **`libs/ts-ui-tokens/src/organiclever.css`** — per-app OL brand override, imported only
-   by `organiclever-fe`. Redefines the same `@theme` tokens with warm OKLCH values. Also
+   by `organiclever-web`. Redefines the same `@theme` tokens with warm OKLCH values. Also
    defines raw hue vars (`--hue-teal`, `--hue-sage-wash`, etc.) and dark mode block.
-3. **`apps/organiclever-fe/src/app/globals.css`** — imports both token files in order
+3. **`apps/organiclever-web/src/app/globals.css`** — imports both token files in order
    (`tokens.css` then `organiclever.css`) so OL values win. Also maps `next/font` CSS
    variables into `@theme` font families.
 
 This layering means `ts-ui` components (`<Button>`, `<Alert>`, etc.) automatically adopt
-OL colors in `organiclever-fe` without code changes — the `--color-*` tokens they reference
+OL colors in `organiclever-web` without code changes — the `--color-*` tokens they reference
 resolve to OL values via cascade.
 
 ### Component Hierarchy
 
 ```
-organiclever-fe (app)
+organiclever-web (app)
 └── ts-ui components (libs/ts-ui)
     ├── Updated existing: Button, Alert, Input
     └── New OL-specific: Icon, Toggle, ProgressRing, Sheet, AppHeader,
@@ -192,7 +192,7 @@ to `(&:is([data-theme="dark"] *), &:is(.dark *))`. This is an additive change:
 - `.dark` path — preserved for Storybook's `withThemeByClassName` addon and all sibling
   apps (`ayokoding-web`, `oseplatform-web`, `wahidyankf-web`) that use the Tailwind class
   approach.
-- `data-theme="dark"` path — added for `organiclever-fe` which sets
+- `data-theme="dark"` path — added for `organiclever-web` which sets
   `document.documentElement.setAttribute('data-theme', 'dark')` at runtime to toggle dark
   mode without a JavaScript class manipulation.
 
@@ -372,11 +372,11 @@ Structure:
 > **Why separate file, not merged into `tokens.css`**: `tokens.css` is imported by all
 > apps. Merging the warm OKLCH values would replace neutral defaults globally, breaking
 > `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`. A separate `organiclever.css`
-> gives `organiclever-fe` opt-in override without affecting siblings.
+> gives `organiclever-web` opt-in override without affecting siblings.
 
 ---
 
-## Phase 2: `apps/organiclever-fe`
+## Phase 2: `apps/organiclever-web`
 
 ### 2A — `layout.tsx`
 
@@ -1163,7 +1163,7 @@ The following documentation files are pre-written (target state) as part of this
 During Phase 16.5 execution, verify each section against the actual implementation and
 correct any divergence before committing.
 
-### `apps/organiclever-fe/README.md` — Design System section
+### `apps/organiclever-web/README.md` — Design System section
 
 Target content:
 
@@ -1207,7 +1207,7 @@ Target content:
 - Updated `@custom-variant dark` example using compound selector
   `(&:is([data-theme="dark"] *), &:is(.dark *))` with explanation of both activation methods
 
-### `.claude/skills/apps-organiclever-fe-developing-content/SKILL.md` — Design System section
+### `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` — Design System section
 
 Target content:
 
@@ -1244,7 +1244,7 @@ step as the `.steps.tsx` file.
 ## Rollback
 
 - **Token file only**: Remove `@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css"`
-  from `apps/organiclever-fe/src/app/globals.css` — immediate revert, zero other files
+  from `apps/organiclever-web/src/app/globals.css` — immediate revert, zero other files
   affected.
 - **Font wiring**: Remove Nunito and JetBrains Mono imports from `layout.tsx` and the
   `@theme` font-family overrides from `globals.css`.
@@ -1252,7 +1252,7 @@ step as the `.steps.tsx` file.
   story, test, or component API is changed in a breaking way. Removing the exports from
   `libs/ts-ui/src/index.ts` reverts component availability without side effects.
 - **Input h-11 change**: The only potentially breaking change. If height regression
-  occurs in any `organiclever-fe` layout, revert `h-11` → `h-9` and add a size prop
+  occurs in any `organiclever-web` layout, revert `h-11` → `h-9` and add a size prop
   instead.
 - **Dark variant selector**: The `@custom-variant dark` change is additive (adds a
   comma-separated selector). Reverting to `(&:is(.dark *))` alone is safe for all

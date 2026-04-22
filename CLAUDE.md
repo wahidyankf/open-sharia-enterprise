@@ -25,9 +25,9 @@ Guidance for Claude Code (claude.ai/code) working with code in this repository.
   - `ayokoding-cli` - Go CLI tool for content link validation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
-  - `organiclever-fe` - Next.js 16 landing and promotional website (www.organiclever.com)
+  - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-be` - F#/Giraffe REST API backend for OrganicLever
-  - `organiclever-fe-e2e` - Playwright FE E2E tests for organiclever-fe
+  - `organiclever-web-e2e` - Playwright FE E2E tests for organiclever-web
   - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
   - `organiclever-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/contracts/`); generates types + encoders/decoders for organiclever apps via `codegen` Nx target
   - `wahidyankf-web` - Next.js 16 personal portfolio site (www.wahidyankf.com)
@@ -49,9 +49,9 @@ ose-public/
 │   ├── ayokoding-cli/       # Content link validation CLI
 │   ├── rhino-cli/          # Repository management CLI
 │   ├── oseplatform-cli/     # OSE Platform site CLI
-│   ├── organiclever-fe/      # OrganicLever landing website (Next.js)
+│   ├── organiclever-web/      # OrganicLever landing website (Next.js)
 │   ├── organiclever-be/      # OrganicLever F#/Giraffe REST API backend
-│   ├── organiclever-fe-e2e/  # Playwright FE E2E tests for organiclever-fe
+│   ├── organiclever-web-e2e/  # Playwright FE E2E tests for organiclever-web
 │   ├── organiclever-be-e2e/  # Playwright BE E2E tests for organiclever-be
 │   ├── wahidyankf-web/       # Wahidyan Kresna Fridayoka portfolio (Next.js 16)
 │   ├── wahidyankf-web-fe-e2e/   # Playwright-BDD E2E tests for wahidyankf-web
@@ -140,9 +140,9 @@ npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm
 | Go CLI projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`, `libs/golang-commons`, `libs/hugo-commons`) | ≥90%      | `cover.out` (go test)         |                                                                                     |
 | `organiclever-be`                                                                                             | ≥90%      | AltCover LCOV (`altcov.info`) | Uses `--linecover` to avoid F# `task{}` BRDA inflation                              |
 | `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`                                                          | ≥80%      | LCOV (Vitest)                 |                                                                                     |
-| `organiclever-fe`                                                                                             | ≥70%      | LCOV                          | dormant BE integration code (services/, layers/) excluded from coverage measurement |
+| `organiclever-web`                                                                                            | ≥70%      | LCOV                          | dormant BE integration code (services/, layers/) excluded from coverage measurement |
 
-**`test:integration` caching**: Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`: `organiclever-fe` (no integration tests; cache: true with passWithNoTests prevents unnecessary re-runs), Go CLI apps (Godog at both unit and integration levels), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
+**`test:integration` caching**: Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`: `organiclever-web` (no integration tests; cache: true with passWithNoTests prevents unnecessary re-runs), Go CLI apps (Godog at both unit and integration levels), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
 
 **Three-level testing standard** (Go CLI apps):
 
@@ -152,7 +152,7 @@ npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm
 
 Both unit and integration levels consume same Gherkin specs — step implementations differ (mocked I/O vs real filesystem). `test:quick` includes `test:unit` (with godog BDD scenarios) + coverage validation.
 
-**OrganicLever contract enforcement**: `organiclever-be` and `organiclever-fe` share OpenAPI 3.1 contract spec at `specs/apps/organiclever/contracts/`. `organiclever-contracts` project lints and bundles spec. Both apps have `codegen` Nx target generating types into `generated-contracts/` (gitignored). `codegen` is a dependency of `typecheck` and `build` — contract violations caught by `nx affected -t typecheck` and `test:quick` in pre-push hook and PR quality gate.
+**OrganicLever contract enforcement**: `organiclever-be` and `organiclever-web` share OpenAPI 3.1 contract spec at `specs/apps/organiclever/contracts/`. `organiclever-contracts` project lints and bundles spec. Both apps have `codegen` Nx target generating types into `generated-contracts/` (gitignored). `codegen` is a dependency of `typecheck` and `build` — contract violations caught by `nx affected -t typecheck` and `test:quick` in pre-push hook and PR quality gate.
 
 For the broader polyglot three-level testing examples (demo backends in Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure), see the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) repository.
 
@@ -371,7 +371,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 **Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev
 
-**Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer, apps-wahidyankf-web-deployer
+**Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer
 
 **Meta** _(CLAUDE.md grouping — in [agents/README.md](./.claude/agents/README.md) distributed by role: Makers, Checkers, Fixers)_: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
 
@@ -491,26 +491,26 @@ nx run ayokoding-web-fe-e2e:test:e2e           # Frontend E2E tests
 
 **See**: [apps/ayokoding-web/README.md](./apps/ayokoding-web/README.md)
 
-### organiclever-fe
+### organiclever-web
 
 - **URL**: <https://www.organiclever.com/>
 - **Production branch**: `prod-organiclever-web` → www.organiclever.com
 - **Framework**: Next.js 16 (App Router)
 - **Deployment**: Vercel
 - **Content**: Landing and promotional website for OrganicLever
-- **E2E tests**: `organiclever-fe-e2e`
+- **E2E tests**: `organiclever-web-e2e`
 - **Dev port**: 3200
 
 **Commands**:
 
 ```bash
-nx dev organiclever-fe                     # Development server (localhost:3200)
-nx build organiclever-fe                   # Production build
-nx run organiclever-fe-e2e:test:e2e        # Run FE E2E tests headlessly
-nx run organiclever-fe-e2e:test:e2e:ui    # Run FE E2E tests with Playwright UI
+nx dev organiclever-web                     # Development server (localhost:3200)
+nx build organiclever-web                   # Production build
+nx run organiclever-web-e2e:test:e2e        # Run FE E2E tests headlessly
+nx run organiclever-web-e2e:test:e2e:ui    # Run FE E2E tests with Playwright UI
 ```
 
-**See**: [apps/organiclever-fe/README.md](./apps/organiclever-fe/README.md), [.claude/skills/apps-organiclever-fe-developing-content/SKILL.md](./.claude/skills/apps-organiclever-fe-developing-content/SKILL.md)
+**See**: [apps/organiclever-web/README.md](./apps/organiclever-web/README.md), [.claude/skills/apps-organiclever-web-developing-content/SKILL.md](./.claude/skills/apps-organiclever-web-developing-content/SKILL.md)
 
 ### wahidyankf-web
 
