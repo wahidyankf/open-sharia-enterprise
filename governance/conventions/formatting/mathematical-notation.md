@@ -293,7 +293,7 @@ Mermaid diagrams don't process LaTeX. Use plain text notation:
 
 ```mermaid
 graph TD
- A[Input: r_f, beta, r_m] --> B[Calculate: r_e = r_f + beta * market_premium]
+ A[Input: r_f, beta, r_m] --> B[r_e = r_f + β * mkt_premium]
  B --> C[Output: Cost of Equity]
 ```
 

@@ -30,7 +30,7 @@ graph TD
     C[Conventions - WHAT rules]
     D[Development - HOW we build]
     E[Agents - WHO implements]
-    F[Workflows - WHEN we orchestrate]
+    F[Workflows - WHEN we run]
 
     A -->|inspires| B
     B --> C

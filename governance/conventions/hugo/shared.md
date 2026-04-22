@@ -77,14 +77,14 @@ graph TD
     A --> D[oseplatform-web<br/>Site-Specific]
 
     B --> B1[Inherited<br/>Standards]
-    B --> B2[Adapted<br/>Standards]
-    B --> B3[Hugo-Specific<br/>Concepts]
+    B1 --> B2[Adapted<br/>Standards]
+    B2 --> B3[Hugo-Specific<br/>Concepts]
 
     C --> C1[Hextra Theme]
-    C --> C2[Bilingual Educational]
+    C1 --> C2[Bilingual Educational]
 
     D --> D1[PaperMod Theme]
-    D --> D2[Landing Page]
+    D1 --> D2[Landing Page]
 
     style B fill:#0173B2,stroke:#000,color:#fff
     style C fill:#DE8F05,stroke:#000,color:#000

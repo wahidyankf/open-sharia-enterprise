@@ -229,19 +229,12 @@ For complex cases, spawn the analyzer agent... [delegation content]
 
 ```mermaid
 graph TD
-    MC[Main Conversation]
-    SA[Subagent Forked Context]
-    IS[Inline Skills<br/>.claude/skills/]
-    FS[Fork Skills<br/>project-specific dir]
-    CONV[Convention Documents<br/>governance/]
-
-    MC -->|spawns| SA
-    MC -->|uses| IS
-    MC -->|uses| FS
+    MC[Main Conversation] -->|spawns| SA[Subagent Forked Context]
+    MC -->|uses| IS[Inline Skills<br/>.claude/skills/]
+    MC -->|uses| FS[Fork Skills<br/>project-specific dir]
     SA -->|uses| IS
     SA -->|CANNOT use| FS
-    IS -->|references| CONV
-    FS -->|spawns| SA
+    IS -->|references| CONV[Convention Documents<br/>governance/]
 
     style MC fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style SA fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px

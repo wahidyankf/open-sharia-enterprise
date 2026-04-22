@@ -112,10 +112,9 @@ graph TB
 
     Step1 --> Check1[docs-checker<br/>Factual Accuracy]
     Step1 --> Check2[docs-tutorial-checker<br/>Pedagogy]
-    Step1 --> Check3[docs-link-checker<br/>Links]
+    Check1 --> Check3[docs-link-checker<br/>Links]
 
-    Check1 --> Step2{Step 2: Aggregate<br/>Findings}
-    Check2 --> Step2
+    Check2 --> Step2{Step 2: Aggregate<br/>Findings}
     Check3 --> Step2
 
     Step2 -->|Zero findings| Step1
@@ -125,7 +124,7 @@ graph TB
     Step4 --> Step5{Step 5: Iteration<br/>Control}
 
     Step5 -->|Continue| Step1
-    Step5 -->|Done| Step6
+    Step5 -->|Done| Step6[Step 6: Report]
 
     Step6 --> End([End: pass/partial/fail])
 

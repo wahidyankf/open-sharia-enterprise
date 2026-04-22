@@ -118,26 +118,18 @@ context — use this when agent delegation is unavailable.
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
 graph TB
-    A[Maker: Create/Update Guides]
-    B[Checker: Validate Quality]
-    C{User Review}
-    D[Fixer: Apply Fixes]
-    E[Publication Ready]
-    F[Iterate]
-
-    A -->|apps-ayokoding-web-in-the-field-maker or manual| B
-    B -->|apps-ayokoding-web-in-the-field-checker| C
-    C -->|Issues found| D
-    D -->|apps-ayokoding-web-in-the-field-fixer| B
-    C -->|Quality approved| E
-    C -->|Major rework needed| F
-    F --> A
+    A[Maker: Create/Update Guides] -- maker or manual --> B[Checker: Validate Quality]
+    B -- checker --> C{User Review}
+    C -- Issues found --> D[Fixer: Apply Fixes]
+    D -- re-check --> E[Re-validate Quality]
+    C -- Quality approved --> F[Publication Ready]
+    C -- Major rework needed --> G[Iterate via Maker]
 
     style A fill:#0173B2,color:#fff
     style B fill:#DE8F05,color:#fff
     style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#CA9161,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CA9161,color:#fff
 ```
 
 ## Research Delegation

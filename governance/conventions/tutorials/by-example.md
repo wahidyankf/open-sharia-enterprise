@@ -723,14 +723,9 @@ Go is a compiled language - you write source code, compile it into a binary exec
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Source Code<br/>main.go"]
-    B["Go Compiler"]
-    C["Binary Executable<br/>main"]
-    D["Running Binary<br/>Output"]
-
-    A -->|go build| B
-    B -->|code generation| C
-    C -->|./main| D
+    A["Source Code<br/>main.go"] -->|go build| B["Go Compiler"]
+    B -->|code generation| C["Binary Executable<br/>main"]
+    C -->|./main| D["Running Binary<br/>Output"]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff

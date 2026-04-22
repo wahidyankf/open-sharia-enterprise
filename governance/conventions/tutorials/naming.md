@@ -410,39 +410,27 @@ Example-driven learning path for experienced developers (seasonal programmers/so
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TB
- START[Need to learn a topic?]
- Q1{Never used before?}
- Q2{Quick 5-min verification?}
- Q3{Experienced developer?}
- Q4{Learn enough to explore?}
- Q5{Need comprehensive foundation?}
- Q6{Building production systems?}
- Q7{Need expert mastery?}
- Q8{Solving specific problem?}
+ START[Need to learn a topic?] --> Q1{Never used before?}
+ Q1 -- Yes --> Q2{Quick 5-min check?}
+ Q1 -- No --> CB[Cookbook]
 
- START --> Q1
- Q1 -->|Yes| Q2
- Q1 -->|No| Q8
+ Q2 -- Yes --> IS[Initial Setup]
+ Q2 -- No --> Q3{Experienced dev?}
 
- Q2 -->|Yes| IS[Initial Setup]
- Q2 -->|No| Q3
+ Q3 -- Yes --> BE[By Example]
+ Q3 -- No --> Q4{Enough to explore?}
 
- Q3 -->|Yes| BE[By Example]
- Q3 -->|No| Q4
+ Q4 -- Yes --> QS[Quick Start]
+ Q4 -- No --> Q5{Full foundation?}
 
- Q4 -->|Yes| QS[Quick Start]
- Q4 -->|No| Q5
+ Q5 -- Yes --> BEG[Beginner]
+ Q5 -- No --> Q6{Production systems?}
 
- Q5 -->|Yes| BEG[Beginner]
- Q5 -->|No| Q6
+ Q6 -- Yes --> INT[Intermediate]
+ Q6 -- No --> Q7{Expert mastery?}
 
- Q6 -->|Yes| INT[Intermediate]
- Q6 -->|No| Q7
-
- Q7 -->|Yes| ADV[Advanced]
- Q7 -->|No| CB[Cookbook]
-
- Q8 -->|Yes| CB
+ Q7 -- Yes --> ADV[Advanced]
+ Q7 -- No --> CB
 
  style IS fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
  style QS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px

@@ -45,35 +45,42 @@ These principles apply to markdown content in:
 graph TD
     A[Content Quality Principles] --> B[Writing Style & Tone]
     A --> C[Heading Hierarchy]
-    A --> D[Accessibility Standards]
-    A --> E[Formatting Conventions]
 
     B --> B1[Active Voice]
-    B --> B2[Professional Tone]
-    B --> B3[Clarity & Conciseness]
-    B --> B4[Audience Awareness]
+    B1 --> B2[Professional Tone]
+    B2 --> B3[Clarity & Conciseness]
+    B3 --> B4[Audience Awareness]
 
     C --> C1[Single H1 Rule]
-    C --> C2[Proper Nesting H2-H6]
-    C --> C3[Descriptive Headings]
-    C --> C4[Semantic Structure]
-
-    D --> D1[Alt Text Required]
-    D --> D2[Semantic HTML]
-    D --> D3[ARIA Labels]
-    D --> D4[Color Contrast]
-    D --> D5[Screen Reader Support]
-
-    E --> E1[Code Block Formatting]
-    E --> E2[Text Formatting]
-    E --> E3[List Formatting]
-    E --> E4[Blockquotes & Callouts]
-    E --> E5[Table Formatting]
-    E --> E6[Line Length Guidelines]
+    C1 --> C2[Proper Nesting H2-H6]
+    C2 --> C3[Descriptive Headings]
+    C3 --> C4[Semantic Structure]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
     style C fill:#029E73,stroke:#000,color:#fff
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161 %%
+graph TD
+    A[Content Quality Principles] --> D[Accessibility Standards]
+    A --> E[Formatting Conventions]
+
+    D --> D1[Alt Text Required]
+    D1 --> D2[Semantic HTML]
+    D2 --> D3[ARIA Labels]
+    D3 --> D4[Color Contrast]
+    D4 --> D5[Screen Reader Support]
+
+    E --> E1[Code Block Formatting]
+    E1 --> E2[Text Formatting]
+    E2 --> E3[List Formatting]
+    E3 --> E4[Blockquotes & Callouts]
+    E4 --> E5[Table Formatting]
+    E5 --> E6[Line Length Guidelines]
+
+    style A fill:#0173B2,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#000
     style E fill:#CA9161,stroke:#000,color:#000
 ```

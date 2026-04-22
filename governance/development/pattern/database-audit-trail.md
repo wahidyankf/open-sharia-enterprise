@@ -44,26 +44,22 @@ Every table MUST include all six columns in the order listed below.
 
 ```mermaid
 graph TD
-    T["Table<br/>(any domain entity)"]
-    C1["created_at<br/>TIMESTAMPTZ NOT NULL<br/>DEFAULT NOW()"]
-    C2["created_by<br/>VARCHAR(255) NOT NULL<br/>DEFAULT 'system'"]
-    C3["updated_at<br/>TIMESTAMPTZ NOT NULL<br/>DEFAULT NOW()"]
-    C4["updated_by<br/>VARCHAR(255) NOT NULL<br/>DEFAULT 'system'"]
-    C5["deleted_at<br/>TIMESTAMPTZ NULL<br/>(soft-delete marker)"]
-    C6["deleted_by<br/>VARCHAR(255) NULL<br/>(soft-delete actor)"]
+    T["Table<br/>(any domain entity)"] --> R[Required Audit Columns]
+    T --> O[Optional Audit Columns]
 
-    T --> C1
-    T --> C2
-    T --> C3
-    T --> C4
-    T --> C5
-    T --> C6
+    R --> C1["created_at<br/>TIMESTAMPTZ NOT NULL"]
+    C1 --> C2["created_by<br/>VARCHAR NOT NULL"]
+    C2 --> C3["updated_at<br/>TIMESTAMPTZ NOT NULL"]
+    C3 --> C4["updated_by<br/>VARCHAR NOT NULL"]
+
+    O --> C5["deleted_at<br/>TIMESTAMPTZ NULL"]
+    C5 --> C6["deleted_by<br/>VARCHAR NULL"]
 
     classDef required fill:#0173B2,color:#ffffff,stroke:#0173B2
     classDef optional fill:#029E73,color:#ffffff,stroke:#029E73
 
-    class C1,C2,C3,C4 required
-    class C5,C6 optional
+    class R,C1,C2,C3,C4 required
+    class O,C5,C6 optional
 ```
 
 | Column       | Type           | Nullable | Default    | Description                         |
