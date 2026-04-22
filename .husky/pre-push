@@ -19,4 +19,7 @@ if [ -n "$RANGE" ]; then
   if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
     npx nx run rhino-cli:validate:naming-workflows
   fi
+  if echo "$CHANGED" | grep -qE '\.md$'; then
+    npx nx run rhino-cli:validate:mermaid --args="--changed-only"
+  fi
 fi
