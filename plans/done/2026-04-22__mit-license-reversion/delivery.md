@@ -128,33 +128,49 @@
 
 ### Commit Guidelines
 
-- [ ] Group changes thematically — this relicensing is one logical unit; a single commit is appropriate
-- [ ] Follow Conventional Commits format: `chore(license): revert to MIT from FSL-1.1-MIT`
-- [ ] Do NOT bundle unrelated fixes into the same commit
+- [x] Group changes thematically — this relicensing is one logical unit; a single commit is appropriate
+<!-- Date: 2026-04-22 | Status: done | Notes: single commit chore(license): revert to MIT from FSL-1.1-MIT -->
+- [x] Follow Conventional Commits format: `chore(license): revert to MIT from FSL-1.1-MIT`
+<!-- Date: 2026-04-22 | Status: done | Notes: commit 029cfef1e -->
+- [x] Do NOT bundle unrelated fixes into the same commit
+<!-- Date: 2026-04-22 | Status: done | Notes: only license reversion changes in commit -->
 
 ### Staging and Committing
 
-- [ ] Stage modified LICENSE files, configuration, and documentation explicitly:
-      `git add LICENSE apps/ayokoding-cli/LICENSE apps/ayokoding-web/LICENSE apps/organiclever-be/LICENSE apps/organiclever-fe/LICENSE apps/oseplatform-cli/LICENSE apps/oseplatform-web/LICENSE apps/wahidyankf-web/LICENSE specs/LICENSE`
-      `git add package.json package-lock.json`
-      `git add LICENSING-NOTICE.md CLAUDE.md README.md`
-      `git add governance/ docs/ apps/oseplatform-web/content/`
-- [ ] Commit: `chore(license): revert to MIT from FSL-1.1-MIT`
-- [ ] Push branch and open draft PR against `main`
+- [x] Stage modified LICENSE files, configuration, and documentation explicitly:
+    `git add LICENSE apps/ayokoding-cli/LICENSE apps/ayokoding-web/LICENSE apps/organiclever-be/LICENSE apps/organiclever-fe/LICENSE apps/oseplatform-cli/LICENSE apps/oseplatform-web/LICENSE apps/wahidyankf-web/LICENSE specs/LICENSE`
+    `git add package.json package-lock.json`
+    `git add LICENSING-NOTICE.md CLAUDE.md README.md`
+    `git add governance/ docs/ apps/oseplatform-web/content/`
+<!-- Date: 2026-04-22 | Status: done | Notes: 39 files staged -->
+- [x] Commit: `chore(license): revert to MIT from FSL-1.1-MIT`
+<!-- Date: 2026-04-22 | Status: done | Notes: commit 029cfef1e -->
+- [x] Push branch and open draft PR against `main`
+<!-- Date: 2026-04-22 | Status: done | Notes: pushed worktree-mit-license; PR #23 at https://github.com/wahidyankf/ose-public/pull/23 -->
 
 ### Post-Push Verification
 
-- [ ] Monitor GitHub Actions checks on the draft PR
-- [ ] Verify all CI checks pass (pre-push hook runs: typecheck, lint, test:quick, spec-coverage
-      for affected projects)
-- [ ] If any CI check fails, fix immediately and push a follow-up commit before proceeding
-- [ ] Do NOT proceed to Phase 8 until CI is green
+- [x] Monitor GitHub Actions checks on the draft PR
+<!-- Date: 2026-04-22 | Status: done | Notes: all checks completed -->
+- [x] Verify all CI checks pass (pre-push hook runs: typecheck, lint, test:quick, spec-coverage
+    for affected projects)
+<!-- Date: 2026-04-22 | Status: done | Notes: TypeScript, Go, .NET, Markdown gates all SUCCESS; JVM/Python/Rust/Elixir/Clojure/Dart SKIPPED (no affected files) -->
+- [x] If any CI check fails, fix immediately and push a follow-up commit before proceeding
+<!-- Date: 2026-04-22 | Status: done | Notes: no failures -->
+- [x] Do NOT proceed to Phase 8 until CI is green
+<!-- Date: 2026-04-22 | Status: done | Notes: CI green —> proceeding -->
 
 ## Phase 8: Plan Archival
 
-- [ ] Verify ALL delivery checklist items (Phases 0–7) are ticked
-- [ ] Verify ALL quality gates pass (local + CI)
-- [ ] Move plan folder: `git mv plans/in-progress/2026-04-22__mit-license-reversion plans/done/2026-04-22__mit-license-reversion`
-- [ ] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] Commit: `chore(plans): move mit-license-reversion to done`
+- [x] Verify ALL delivery checklist items (Phases 0–7) are ticked
+<!-- Date: 2026-04-22 | Status: done | Notes: all Phase 0-7 checkboxes ticked with implementation notes -->
+- [x] Verify ALL quality gates pass (local + CI)
+<!-- Date: 2026-04-22 | Status: done | Notes: local typecheck/lint/test:quick/spec-coverage pass; CI all SUCCESS/SKIPPED -->
+- [x] Move plan folder: `git mv plans/in-progress/2026-04-22__mit-license-reversion plans/done/2026-04-22__mit-license-reversion`
+<!-- Date: 2026-04-22 | Status: done | Notes: git mv executed -->
+- [x] Update `plans/in-progress/README.md` — remove the plan entry
+<!-- Date: 2026-04-22 | Status: done | Files Changed: plans/in-progress/README.md -->
+- [x] Update `plans/done/README.md` — add the plan entry with completion date
+<!-- Date: 2026-04-22 | Status: done | Files Changed: plans/done/README.md -->
+- [x] Commit: `chore(plans): move mit-license-reversion to done`
+<!-- Date: 2026-04-22 | Status: done | Notes: committing now -->
