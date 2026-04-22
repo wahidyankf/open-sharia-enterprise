@@ -1,5 +1,13 @@
 # Tech Docs: Mermaid Diagram Validation
 
+## Dependencies
+
+No new Go module dependencies. Uses only Go stdlib (`regexp`, `os`, `bufio`, `encoding/json`,
+`strings`) plus the existing `github.com/spf13/cobra` already present in `go.mod`. Zero new
+entries in `go.mod` or `go.sum` are expected.
+
+---
+
 ## Architecture
 
 Follows the existing rhino-cli layered pattern:
@@ -108,6 +116,11 @@ Edge cases:
   docs.
 - Empty mermaid blocks: emit block with empty source; validator treats as no-diagram.
 
+**Known Limitation**: A 4-backtick ` ````mermaid ` fence that contains a 3-backtick
+code block inside it will be mishandled — the extractor closes the outer fence early
+on the inner ` ``` ` line. In practice, this pattern does not appear in the repository's
+documentation. Treating this as out of scope for v1.
+
 ---
 
 ## Parser (`internal/mermaid/parser.go`)
@@ -117,17 +130,28 @@ Edge cases:
 Count matches of the regex:
 
 ```
-(?m)^\s*(flowchart|graph)\s+(TB|TD|BT|LR|RL)\s*$
+(?m)^\s*(flowchart|graph)(\s+(TB|TD|BT|LR|RL))?\s*$
 ```
 
-If count > 1 → emit `ViolationMultipleDiagrams` immediately; still parse first diagram
-for Rules 1 and 2.
+The direction keyword is optional — `flowchart` alone (no direction token) is valid
+Mermaid v9+ syntax and defaults to `TD`. The regex captures direction in group 3;
+when group 3 is empty, default to `TB` (same layout axis as `TD`).
+
+`ParseDiagram` returns the diagram count as a second return value
+(`func ParseDiagram(block MermaidBlock) (ParsedDiagram, int, error)`). The caller
+(`ValidateBlocks` in `validator.go`) checks `count > 1` and emits
+`ViolationMultipleDiagrams` there. The parser does not emit violations directly — it
+only returns parsed data and the count.
+
+If count > 1 → `ValidateBlocks` emits `ViolationMultipleDiagrams`; still parses first
+diagram for Rules 1 and 2.
 
 If count == 0 → block is not a flowchart; skip all validation (non-flowchart mermaid).
 
 ### Step 2 — Extract direction
 
-Capture group 2 from the first match of the regex above.
+Capture group 3 from the first match of the regex above.
+If empty (direction-optional form), default to `TB`.
 Normalize `TD` → treated same as `TB` in the graph algorithm (identical layout axis).
 
 ### Step 3 — Extract nodes and labels
@@ -208,7 +232,7 @@ Algorithm (longest-path rank assignment on DAG):
 3. Topological sort (Kahn's algorithm):
    - Queue all nodes with in-degree 0 (sources).
    - Process in BFS order; for each node u dequeued:
-       rank[u] = max(rank[u], 0) if source
+       // source nodes keep their initialized rank of 0; no assignment needed
        for each v in outgoing[u]:
            rank[v] = max(rank[v], rank[u]+1)
            in-degree[v]--
@@ -248,9 +272,11 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 
 For each block:
 
-1. Parse → `ParsedDiagram`. If parse error, record as internal warning (not user
-   violation); continue.
-2. **Rule 3**: diagram count check (done inside parser; violation emitted there).
+1. Call `ParseDiagram(block)` → `(ParsedDiagram, int, error)`. The second return value
+   is the diagram count. If parse error, record as internal warning (not user violation);
+   continue.
+2. **Rule 3**: if diagram count > 1 → emit `ViolationMultipleDiagrams`. (The validator
+   emits this violation, not the parser. The parser only returns the count.)
 3. **Rule 1**: for each node, if `len([]rune(node.Label)) > opts.MaxLabelLen` →
    emit `ViolationLabelTooLong`.
 4. **Rule 2**: call `graph.MaxWidth(diagram.Nodes, diagram.Edges)`. If result >
@@ -300,6 +326,10 @@ Table with columns: File | Block | Line | Kind | Detail.
 
 ## Command (`cmd/docs_validate_mermaid.go`)
 
+The testable function variable `docsValidateMermaidFn` is declared in `cmd/testable.go`
+(alongside `docsValidateAllLinksFn` and other internal-package delegations), consistent
+with the existing pattern for commands that delegate to internal packages.
+
 ```go
 var (
     validateMermaidStagedOnly  bool
@@ -348,26 +378,66 @@ File discovery mirrors `docs validate-links`:
     "{projectRoot}/**/*.go",
     "{workspaceRoot}/docs/**/*.md",
     "{workspaceRoot}/governance/**/*.md",
-    "{workspaceRoot}/.claude/**/*.md"
+    "{workspaceRoot}/.claude/**/*.md",
+    "{workspaceRoot}/*.md"
   ],
   "outputs": []
 }
 ```
 
+The `"{workspaceRoot}/*.md"` entry ensures root-level markdown files (e.g., `README.md`)
+invalidate the cache when changed, since the default scan includes repo root `*.md`.
+
 ---
 
 ## Pre-push Hook Integration (`.husky/pre-push`)
 
-Add after the existing naming-validator block:
+The new block must be placed **inside** the existing `if [ -n "$RANGE" ]; then` guard
+so that the `$CHANGED` variable (which is set only inside that block) is in scope.
+
+Add inside the `if [ -n "$RANGE" ]; then` block, after the existing naming-validator
+conditionals:
 
 ```bash
-if echo "$CHANGED" | grep -qE '\.md$'; then
-  npx nx run rhino-cli:validate:mermaid -- --changed-only
+if [ -n "$RANGE" ]; then
+  CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || echo "")
+  if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agent/)'; then
+    npx nx run rhino-cli:validate:naming-agents
+  fi
+  if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
+    npx nx run rhino-cli:validate:naming-workflows
+  fi
+  # ADD THIS BLOCK:
+  if echo "$CHANGED" | grep -qE '\.md$'; then
+    npx nx run rhino-cli:validate:mermaid -- --changed-only
+  fi
 fi
 ```
 
 The `-- --changed-only` passes the flag through `npx nx run` to the underlying
 `rhino-cli docs validate-mermaid --changed-only` invocation.
+
+**Note on `--staged-only`**: The `--staged-only` flag is built and tested but is **not**
+wired into any hook in this plan iteration. It is available for manual invocation
+(`rhino-cli docs validate-mermaid --staged-only`) or future pre-commit integration.
+The README.md Key Decisions section mentions pre-commit as the intended use context;
+wiring it is left to a follow-up.
+
+---
+
+## Rollback
+
+If the `validate:mermaid` gate causes false-positive rejections after deployment:
+
+1. **Revert the `.husky/pre-push` change**: Remove the `if echo "$CHANGED" | grep -qE '\.md$'`
+   block from inside the `if [ -n "$RANGE" ]; then` guard. Commit with
+   `chore(husky): temporarily disable mermaid validation in pre-push`.
+2. **Leave the Nx target in place**: The `validate:mermaid` target is non-destructive;
+   removing it from the hook does not require removing it from `project.json`.
+3. **Leave the command code in place**: The `docs validate-mermaid` command can remain;
+   it is only invoked explicitly or via the hook.
+4. **Diagnose and fix**: Identify the false-positive pattern, update the regex or add a
+   `--ignore` flag, then re-enable the hook block.
 
 ---
 

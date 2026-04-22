@@ -1,6 +1,17 @@
 # Delivery Checklist: Mermaid Diagram Validation
 
-All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless noted.
+All work in `ose-public` subrepo. Run commands from the repo root unless noted.
+
+---
+
+## Phase 0 — Environment Setup
+
+- [ ] Install dependencies in the repo root: `npm install`
+- [ ] Converge the full polyglot toolchain: `npm run doctor -- --fix`
+      (required — `postinstall` runs `doctor || true` and silently tolerates drift)
+- [ ] Verify existing rhino-cli tests pass before making changes:
+      `nx run rhino-cli:test:quick`
+- [ ] Verify existing lint passes: `nx run rhino-cli:lint`
 
 ---
 
@@ -19,14 +30,17 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
   - [ ] Scenario: `--max-width` flag overrides default (4-wide flowchart passes at 5)
   - [ ] Scenario: single diagram per block passes
   - [ ] Scenario: two `flowchart` declarations in one block are flagged
-  - [ ] Scenario: `graph` keyword alias validates identically to `flowchart`
+  - [ ] Scenario: `graph` keyword alias validates identically to `flowchart` (exits 0, no violations)
   - [ ] Scenario: non-flowchart mermaid blocks (sequenceDiagram, classDiagram) ignored
   - [ ] Scenario: markdown file with no mermaid blocks passes
   - [ ] Scenario: `--staged-only` skips unstaged files with violations
   - [ ] Scenario: `--changed-only` skips files not in push range
   - [ ] Scenario: JSON output contains structured violation fields
+  - [ ] Scenario: markdown output produces table with File, Block, Line, Kind, Detail columns
+  - [ ] Scenario: `--verbose` includes per-file detail lines in text output
+  - [ ] Scenario: `--quiet` suppresses all output when no violations
 - [ ] Update `specs/apps/rhino/cli/gherkin/README.md`:
-  - [ ] Add row to Feature Files table: `docs-validate-mermaid.feature` | `docs validate-mermaid` | count
+  - [ ] Add row to Feature Files table: `docs-validate-mermaid.feature` | `docs validate-mermaid` | 20
 - [ ] Verify feature file lint passes: `npm run lint:md`
 
 ---
@@ -57,9 +71,10 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
 
 - [ ] Create `internal/mermaid/parser.go`
   - [ ] `ParseDiagram(block MermaidBlock) (ParsedDiagram, int, error)`
-    - [ ] Returns diagram count as second value (for Rule 3 detection)
-  - [ ] Flowchart header regex: `(?m)^\s*(flowchart|graph)\s+(TB|TD|BT|LR|RL)\s*$`
-  - [ ] Direction extraction from first header match
+    - [ ] Returns diagram count as second value (caller `ValidateBlocks` emits violation)
+  - [ ] Flowchart header regex: `(?m)^\s*(flowchart|graph)(\s+(TB|TD|BT|LR|RL))?\s*$`
+        (direction keyword optional — `flowchart` alone defaults to TB)
+  - [ ] Direction extraction from group 3; default `TB` when empty
   - [ ] Node label extraction — Pass A (standalone declarations):
     - [ ] Rectangle `[...]`
     - [ ] Round edges `(...)`
@@ -69,8 +84,9 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
     - [ ] Circle `((...))` and double-circle `(((...)))`
     - [ ] Diamond `{...}` and hexagon `{{...}}`
     - [ ] Asymmetric `>...]`
-    - [ ] Parallelogram `[/.../]`, `[\...\]`
-    - [ ] Trapezoid `[/...\]`, `[\/.../]`
+    - [ ] Parallelogram down `[/.../]` and up `[\...\]`
+    - [ ] Trapezoid down `[/text\]` (`\w+\[/([^/\\]*)\\]`) and
+          trapezoid up `[\text/]` (`\w+\[\\([^/\\]*)/\]`)
     - [ ] Modern API `@{ ... label: "..." ... }`
   - [ ] Node label extraction — Pass B (inline in edge lines)
   - [ ] Label normalization: strip outer quotes, strip backtick-markdown wrapper
@@ -89,21 +105,21 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
   - [ ] Edge with link text `A -- text --> B` → edge From=A To=B
   - [ ] Two flowchart headers → diagram count 2
   - [ ] `graph LR` keyword → Direction LR
+  - [ ] `flowchart` alone (no direction) → Direction TB (default)
   - [ ] Subgraph block does not produce a node with subgraph name
 
 - [ ] Create `internal/mermaid/graph.go`
   - [ ] `MaxWidth(nodes []Node, edges []Edge) int`
   - [ ] Build adjacency list + in-degree map from edges
   - [ ] Kahn's topological sort for rank assignment
-    - [ ] Sources (in-degree 0) start at rank 0
+    - [ ] Sources (in-degree 0) keep initialized rank of 0 — no assignment needed
     - [ ] `rank[v] = max(rank[v], rank[u]+1)` for each edge u→v
   - [ ] Cycle fallback: unvisited nodes after Kahn's assigned rank 0
   - [ ] Group nodes by rank; return `max(len(group))`
-  - [ ] Disconnected nodes (no edges) return maxWidth = total node count at rank 0
 
 - [ ] Create `internal/mermaid/graph_test.go`
   - [ ] Empty graph → maxWidth 0
-  - [ ] Single node, no edges → maxWidth 1
+  - [ ] Single disconnected node with no edges → maxWidth 1 (node stays at rank 0)
   - [ ] Linear chain A→B→C → maxWidth 1 (depth=2, width=1 — depth irrelevant)
   - [ ] Long sequential chain (10 nodes) → maxWidth 1 (confirms depth is unlimited)
   - [ ] Fan-out A→B, A→C, A→D → maxWidth 3
@@ -116,7 +132,9 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
   - [ ] `ValidateOptions` struct (MaxLabelLen int, MaxWidth int)
   - [ ] `DefaultValidateOptions() ValidateOptions` → {30, 3}
   - [ ] `ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResult`
-  - [ ] Rule 3 check: diagram count > 1 → ViolationMultipleDiagrams
+  - [ ] Call `ParseDiagram` → receive `(ParsedDiagram, count, error)`
+  - [ ] Rule 3 check: if count > 1 → emit `ViolationMultipleDiagrams`
+        (validator emits this, not the parser)
   - [ ] Skip non-flowchart blocks (diagram count == 0)
   - [ ] Rule 1 check: label length > MaxLabelLen → ViolationLabelTooLong
   - [ ] Rule 2 check: MaxWidth(nodes, edges) > MaxWidth → ViolationWidthExceeded
@@ -148,11 +166,14 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
 
 ## Phase 3 — Command
 
+- [ ] Add `docsValidateMermaidFn` to `cmd/testable.go`
+      (alongside `docsValidateAllLinksFn` — this is where internal-package delegation
+      function variables are declared, consistent with existing pattern)
+
 - [ ] Create `cmd/docs_validate_mermaid.go`
   - [ ] Declare `validateMermaidStagedOnly`, `validateMermaidChangedOnly`,
         `validateMermaidMaxLabelLen`, `validateMermaidMaxWidth` package-level vars
-  - [ ] Declare `docsValidateMermaidFn` testable function variable
-        (mirrors `docsValidateAllLinksFn` pattern)
+  - [ ] Reference `docsValidateMermaidFn` from `cmd/testable.go` (do not re-declare)
   - [ ] Define `validateMermaidCmd` cobra command with Use, Short, Long, Example,
         SilenceErrors, RunE
   - [ ] `init()`: register under `docsCmd`, register all four flags
@@ -167,8 +188,10 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
   - [ ] Mock `docsValidateMermaidFn`
   - [ ] godog step definitions for all scenarios in feature file (unit level, no build
         tag, mock filesystem)
-  - [ ] Test `--staged-only` flag wires through to file-list resolver
-  - [ ] Test `--changed-only` flag wires through to file-list resolver
+  - [ ] Test that `--staged-only=true` causes the mock file-list resolver to be called
+        with `stagedOnly: true`
+  - [ ] Test that `--changed-only=true` causes the mock file-list resolver to be called
+        with `changedOnly: true`
   - [ ] Test JSON output flag
 
 - [ ] Create `cmd/docs_validate_mermaid.integration_test.go`
@@ -192,11 +215,15 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
       "{projectRoot}/**/*.go",
       "{workspaceRoot}/docs/**/*.md",
       "{workspaceRoot}/governance/**/*.md",
-      "{workspaceRoot}/.claude/**/*.md"
+      "{workspaceRoot}/.claude/**/*.md",
+      "{workspaceRoot}/*.md"
     ],
     "outputs": []
   }
   ```
+
+  The `"{workspaceRoot}/*.md"` entry ensures root-level markdown changes invalidate
+  the cache (the default scan includes repo root `*.md`).
 
 - [ ] Verify `nx run rhino-cli:validate:mermaid` runs without error on current repo
 
@@ -204,17 +231,71 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
 
 ## Phase 5 — Pre-push Hook
 
-- [ ] Edit `.husky/pre-push` — add after the existing naming-validator block:
+- [ ] Edit `.husky/pre-push` — add the new block **inside** the existing
+      `if [ -n "$RANGE" ]; then` guard (after the naming-workflow conditional):
 
   ```bash
-  if echo "$CHANGED" | grep -qE '\.md$'; then
-    npx nx run rhino-cli:validate:mermaid -- --changed-only
+  if [ -n "$RANGE" ]; then
+    CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || echo "")
+    if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agent/)'; then
+      npx nx run rhino-cli:validate:naming-agents
+    fi
+    if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
+      npx nx run rhino-cli:validate:naming-workflows
+    fi
+    # ADD THIS BLOCK:
+    if echo "$CHANGED" | grep -qE '\.md$'; then
+      npx nx run rhino-cli:validate:mermaid -- --changed-only
+    fi
   fi
   ```
 
-- [ ] Manual smoke test: create branch, add a `.md` file with a label-too-long
+  **Important**: The block must be inside the `if [ -n "$RANGE" ]` guard because
+  `$CHANGED` is only set inside that block. Placing it outside would leave `$CHANGED`
+  empty and the condition would never trigger.
+
+- [ ] Manual smoke test: create a branch, add a `.md` file with a label-too-long
       violation, attempt push → confirm pre-push rejects with clear error message
 - [ ] Manual smoke test: same branch but fix the violation → confirm push succeeds
+
+---
+
+## Phase 5.5 — Manual Behavioral Verification
+
+Direct CLI invocation to verify the command works end-to-end:
+
+- [ ] Create a temporary markdown file with a known label-too-long violation.
+      Run this command — note the inner backtick fence is part of the heredoc content:
+
+  ````bash
+  printf '# Test\n\n```mermaid\nflowchart TD\n  A[This label is way too long and exceeds thirty characters]\n```\n' \
+    > /tmp/test-mermaid-violation.md
+  ````
+
+- [ ] Run directly and verify exit code 1 + correct output:
+
+  ```bash
+  go run apps/rhino-cli/main.go docs validate-mermaid /tmp/test-mermaid-violation.md
+  echo "Exit code: $?"
+  ```
+
+- [ ] Run with `-o json` and verify valid JSON output:
+
+  ```bash
+  go run apps/rhino-cli/main.go docs validate-mermaid -o json /tmp/test-mermaid-violation.md | jq .
+  ```
+
+- [ ] Create a clean file and verify exit code 0:
+
+  ````bash
+  printf '# Test\n\n```mermaid\nflowchart TD\n  A[Short label] --> B[Another short]\n```\n' \
+    > /tmp/test-mermaid-clean.md
+  go run apps/rhino-cli/main.go docs validate-mermaid /tmp/test-mermaid-clean.md
+  echo "Exit code: $?"
+  ````
+
+- [ ] Run with `-o markdown` on the violation file and verify table output format
+- [ ] Clean up temp files: `rm /tmp/test-mermaid-violation.md /tmp/test-mermaid-clean.md`
 
 ---
 
@@ -228,6 +309,9 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
         the label-length and width rules mechanically — authors should run it instead of
         checking manually
   - [ ] Note that `--max-label-len 20` matches the stricter 20-char Hugo/Hextra production limit
+- [ ] Update `README.md` Key Decisions to clarify `--staged-only` scope:
+      note that `--staged-only` is available for manual invocation or future pre-commit
+      integration but is not wired into any hook in this plan iteration
 
 ---
 
@@ -240,14 +324,53 @@ All work in `ose-public` subrepo. Run commands from `apps/rhino-cli/` unless not
 - [ ] `nx run rhino-cli:lint` passes
 - [ ] `nx run rhino-cli:validate:mermaid` passes on current `ose-public` repo
       (no pre-existing violations, or document and fix any found)
+- [ ] `npm run lint:md` passes (plan modifies markdown files; verify no lint regressions)
+- [ ] Alternatively, use `nx affected -t typecheck lint test:quick spec-coverage` to run
+      all affected targets (should resolve to rhino-cli only for this change)
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by
+> your changes. This follows the root cause orientation principle — proactively fix
+> preexisting errors encountered during work. Do not defer or mention-and-skip existing
+> issues.
 
 ---
 
-## Commit Plan
+## Phase 8 — Post-Push Verification
 
-Split into four commits (Trunk Based Development):
+- [ ] Push changes to `main`
+- [ ] Monitor GitHub Actions workflows for the push (relevant workflows: Nx affected
+      build/test CI, markdown lint)
+- [ ] Verify all CI checks pass
+- [ ] If any CI check fails, fix immediately and push a follow-up commit
+- [ ] Do NOT proceed to plan archival until CI is green
+
+---
+
+## Commit Guidelines
+
+Commit changes thematically — group related changes into logically cohesive commits.
+Follow Conventional Commits format: `<type>(<scope>): <description>`.
+Split different domains/concerns into separate commits.
+Do NOT bundle unrelated fixes into a single commit.
+
+Suggested four-commit split:
 
 1. `feat(rhino-cli): add internal/mermaid package (extractor, parser, graph, validator, reporter)`
 2. `feat(rhino-cli): add docs validate-mermaid command with staged-only and changed-only flags`
 3. `chore(rhino-cli): wire validate-mermaid into pre-push hook and Nx target`
 4. `docs(rhino-cli): update specs README, rhino-cli README, and diagrams convention to reference validator`
+
+If the pre-push hook catches issues mid-commit sequence (e.g., commit 3 triggers the
+new validator on changed `.md` files), fix the violation before amending or adding a
+fixup commit.
+
+---
+
+## Phase 9 — Plan Archival
+
+- [ ] Verify ALL delivery checklist items above are ticked
+- [ ] Verify ALL quality gates pass (local + CI)
+- [ ] Move plan folder: `git mv plans/in-progress/2026-04-22__rhino-cli-mermaid-validation plans/done/2026-04-22__rhino-cli-mermaid-validation`
+- [ ] Update `plans/in-progress/README.md` — remove the plan entry
+- [ ] Update `plans/done/README.md` — add the plan entry with completion date
+- [ ] Commit: `chore(plans): move rhino-cli-mermaid-validation to done`

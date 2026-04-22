@@ -25,24 +25,41 @@ Mermaid flowchart diagrams in repository markdown files degrade silently:
    drop the second diagram; others show a parse error). Authors rarely do this
    intentionally — when it happens it is always a mistake.
 
-## Business Value
+## Business Impact
 
-| Stakeholder           | Benefit                                                                  |
+Mermaid diagram quality has a direct impact on documentation legibility. Undetected
+structural violations create a poor reader experience and require manual post-merge
+fixes. An automated gate prevents regressions from reaching `main` without slowing
+the documentation author's workflow.
+
+## Affected Roles
+
+| Role                  | How they are affected                                                    |
 | --------------------- | ------------------------------------------------------------------------ |
 | Documentation authors | Immediate feedback on diagrams that will render badly                    |
 | Reviewers             | Catch diagram issues in CI before merge — no manual visual review needed |
 | Readers               | Consistently readable, correctly rendered diagrams across all docs       |
 
-## Success Criteria
+## Success Metrics
 
 - Zero truncated-label or overcrowded-width diagrams reach `main` after the validator
   is in the pre-push hook.
 - False-positive rate: non-flowchart mermaid blocks (sequence, class, gantt) never
   flagged.
-- Performance: full-repo scan completes in under 2 seconds on a typical laptop
-  (all `.md` files in `ose-public` ≈ 400 files).
-- `--changed-only` mode enables pre-push gate to complete in < 500 ms for a typical
-  PR (1–10 changed `.md` files).
+- _Judgment call:_ full-repo scan completes in under 2 seconds on a typical laptop
+  (all `.md` files in `ose-public` ≈ 400 files — estimate based on I/O-bound file
+  scanning at typical SSD speeds; no formal baseline measured).
+- _Judgment call:_ `--changed-only` mode enables pre-push gate to complete in < 500 ms
+  for a typical PR (1–10 changed `.md` files — estimate from linear extrapolation of
+  full-scan estimate).
+
+## Business Risks
+
+| Risk                      | Description                                                                                                         | Mitigation                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| False-positive violations | Custom regex parser may misidentify valid label syntax (e.g., markdown-in-labels, escaped characters) as violations | Thorough unit test coverage of all node shape regexes; authors can increase limit via flag |
+| Performance regression    | Validator adds latency to the pre-push hook; if scan is slow, developers may skip it                                | Conditional execution on `--changed-only`; limit applies only to changed `.md` files       |
+| Parser maintenance burden | New Mermaid node shapes or keyword syntax in future Mermaid versions will not be detected until regex is updated    | Document as known limitation in tech-docs; monitor Mermaid release notes                   |
 
 ## Out of Scope
 

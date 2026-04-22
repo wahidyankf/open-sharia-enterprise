@@ -60,7 +60,7 @@ stricter 20-char limit for Hugo/Hextra production diagrams; use `--max-label-len
 
 - **No external library**: Both available Go Mermaid parsers (`sammcj/go-mermaid`, `tetrafolium/mermaid-check`) are pre-v0.1 with low adoption. Custom regex + recursive-descent parser used instead.
 - **Both `flowchart` and `graph` keywords**: Mermaid treats them as full aliases; validator accepts both.
-- **`--staged-only`** for pre-commit hooks; **`--changed-only`** (checks `@{u}..HEAD`) for pre-push hooks.
+- **`--staged-only`** available for manual invocation or future pre-commit integration; **`--changed-only`** (checks `@{u}..HEAD`) is wired into the pre-push hook in this plan. Pre-commit hook wiring for `--staged-only` is out of scope for this iteration.
 - **Non-flowchart blocks ignored**: `sequenceDiagram`, `classDiagram`, `gantt`, etc. are skipped.
 - **Subgraph headers not counted as nodes** in width calculation (only actual node declarations count).
 - **Subgraph direction override**: Per Mermaid docs, a subgraph `direction LR` override is
