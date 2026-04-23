@@ -22,7 +22,7 @@ vi.mock("@/components/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
-vi.mock("@/components/SearchComponent", () => ({
+vi.mock("@open-sharia-enterprise/ts-ui", () => ({
   SearchComponent: ({
     searchTerm,
     setSearchTerm,
@@ -39,9 +39,6 @@ vi.mock("@/components/SearchComponent", () => ({
       placeholder={placeholder}
     />
   ),
-}));
-
-vi.mock("@/components/HighlightText", () => ({
   HighlightText: ({ text }: { text: string }) => <span>{text}</span>,
 }));
 

@@ -5,8 +5,7 @@ import { filterItems } from "@/utils/search";
 import { Github, Globe, Youtube } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SearchComponent } from "@/components/SearchComponent";
-import { HighlightText } from "@/components/HighlightText";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
 
 type Project = {
   title: string;

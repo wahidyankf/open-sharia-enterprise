@@ -1,5 +1,5 @@
 import React from "react";
-import { HighlightText } from "@/components/HighlightText";
+import { HighlightText } from "@open-sharia-enterprise/ts-ui";
 
 export const parseMarkdownLinks = (text: string, searchTerm: string): React.ReactNode => {
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;

@@ -3,19 +3,14 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import RootLayout from "./layout";
 
-// Mock the ScrollToTop component
-vi.mock("@/components/ScrollToTop", () => ({
-  default: () => <div data-testid="scroll-to-top">ScrollToTop</div>,
+vi.mock("@open-sharia-enterprise/ts-ui", () => ({
+  ScrollToTop: () => <div data-testid="scroll-to-top">ScrollToTop</div>,
+  ThemeToggle: () => <div data-testid="theme-toggle">ThemeToggle</div>,
 }));
 
 // Mock the Inter font
 vi.mock("next/font/google", () => ({
   Inter: () => ({ className: "inter-font" }),
-}));
-
-// Mock the ThemeToggle component
-vi.mock("@/components/ThemeToggle", () => ({
-  default: () => <div data-testid="theme-toggle">ThemeToggle</div>,
 }));
 
 describe("RootLayout", () => {

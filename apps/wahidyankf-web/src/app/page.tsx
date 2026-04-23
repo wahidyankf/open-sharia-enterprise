@@ -13,8 +13,7 @@ import {
 import { Navigation } from "@/components/Navigation";
 import { useState, useEffect } from "react";
 import { filterItems } from "@/utils/search";
-import { SearchComponent } from "@/components/SearchComponent";
-import { HighlightText } from "@/components/HighlightText";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
 import { Suspense } from "react";
 import { parseMarkdownLinks } from "@/utils/markdown";
 

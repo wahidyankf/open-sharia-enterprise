@@ -21,26 +21,28 @@ vi.mock("@/components/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
-vi.mock("@/components/SearchComponent", () => ({
+vi.mock("@open-sharia-enterprise/ts-ui", () => ({
   SearchComponent: ({
     searchTerm,
     setSearchTerm,
+    updateURL,
     placeholder,
   }: {
     searchTerm: string;
     setSearchTerm: (term: string) => void;
+    updateURL: (term: string) => void;
     placeholder: string;
   }) => (
     <input
       data-testid="search-component"
       value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
+      onChange={(e) => {
+        setSearchTerm(e.target.value);
+        updateURL(e.target.value);
+      }}
       placeholder={placeholder}
     />
   ),
-}));
-
-vi.mock("@/components/HighlightText", () => ({
   HighlightText: ({ text }: { text: string }) => <span>{text}</span>,
 }));
 
@@ -148,5 +150,26 @@ describe("Home component", () => {
     const skillButtons = screen.getAllByText("React");
     fireEvent.click(skillButtons[0]);
     expect(mockPush).toHaveBeenCalledWith("/cv?search=React&scrollTop=true");
+  });
+
+  it("handles language button click and navigates to CV page", () => {
+    render(<Home />);
+    const languageButton = screen.getByText("JavaScript");
+    fireEvent.click(languageButton);
+    expect(mockPush).toHaveBeenCalledWith("/cv?search=JavaScript&scrollTop=true");
+  });
+
+  it("handles framework button click and navigates to CV page", () => {
+    render(<Home />);
+    const frameworkButton = screen.getByText("Next.js");
+    fireEvent.click(frameworkButton);
+    expect(mockPush).toHaveBeenCalledWith("/cv?search=Next.js&scrollTop=true");
+  });
+
+  it("updates URL when typing in search", () => {
+    render(<Home />);
+    const searchInput = screen.getByTestId("search-component") as HTMLInputElement;
+    fireEvent.change(searchInput, { target: { value: "test" } });
+    expect(mockPush).toHaveBeenCalledWith("/?search=test", { scroll: false });
   });
 });
