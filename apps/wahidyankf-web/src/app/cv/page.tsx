@@ -440,6 +440,7 @@ const WorkExperienceSection = ({
             <button
               onClick={() => setShowRecentOnly(!showRecentOnly)}
               className="text-yellow-400 transition-colors duration-200 hover:text-green-400"
+              aria-label={showRecentOnly ? "Show all work experience" : "Show recent work experience only"}
             >
               {showRecentOnly ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
             </button>

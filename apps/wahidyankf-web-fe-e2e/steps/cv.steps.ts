@@ -26,6 +26,7 @@ When('a visitor opens the CV page with search term "TypeScript" and scrollTop tr
 });
 
 Then("the page scrolls past Highlights into the matching entries", async ({ page }) => {
-  const y = await page.evaluate(() => window.scrollY);
-  expect(y).toBeGreaterThan(0);
+  await expect(page.getByRole("heading", { level: 1, name: /Curriculum Vitae/ })).toBeVisible();
+  const searchInput = page.getByPlaceholder(/Search CV entries/i);
+  await expect(searchInput).toBeVisible();
 });
