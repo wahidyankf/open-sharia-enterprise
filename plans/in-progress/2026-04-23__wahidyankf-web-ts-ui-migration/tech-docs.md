@@ -46,6 +46,32 @@ After:
     Navigation.unit.test.tsx   ← unchanged
 ```
 
+`Navigation.tsx` is excluded — it imports `next/link` and `next/navigation`. The four
+migrated components move with copy + refactor (not byte-for-byte copy):
+
+<!-- Uses colors: Orange #DE8F05 (source), Blue #0173B2 (target) -->
+
+```mermaid
+graph LR
+    ht["wahidyankf-web<br/>HighlightText"]:::src
+    st["wahidyankf-web<br/>ScrollToTop"]:::src
+    sc["wahidyankf-web<br/>SearchComponent"]:::src
+    tt["wahidyankf-web<br/>ThemeToggle"]:::src
+
+    htt["ts-ui<br/>highlight-text"]:::dst
+    stt["ts-ui<br/>scroll-to-top"]:::dst
+    sct["ts-ui<br/>search-component"]:::dst
+    ttt["ts-ui<br/>theme-toggle"]:::dst
+
+    ht -->|"copy + refactor"| htt
+    st -->|"copy + refactor"| stt
+    sc -->|"copy + refactor"| sct
+    tt -->|"copy + refactor"| ttt
+
+    classDef src fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef dst fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Design Decisions
 
 ### Flexible refactoring — same visual output, configurable props
@@ -89,6 +115,30 @@ consumers always use named imports — consistent with the rest of ts-ui's publi
 | `ScrollToTop`     | `export default ScrollToTop`   | `export { default as ScrollToTop }`       |
 | `SearchComponent` | `export const SearchComponent` | `export { SearchComponent }`              |
 | `ThemeToggle`     | `export default ThemeToggle`   | `export { default as ThemeToggle }`       |
+
+After migration, `wahidyankf-web` consumes all four components through `ts-ui/index.ts`:
+
+<!-- Uses colors: Orange #DE8F05 (consumer), Blue #0173B2 (hub), Teal #029E73 (exports) -->
+
+```mermaid
+graph LR
+    pages["wahidyankf-web<br/>5 import sites"]:::consumer
+    idx["ts-ui<br/>index.ts"]:::hub
+    ht["highlight-text"]:::export
+    st["scroll-to-top"]:::export
+    sc["search-component"]:::export
+    tt["theme-toggle"]:::export
+
+    pages -->|"import"| idx
+    idx --> ht
+    idx --> st
+    idx --> sc
+    idx --> tt
+
+    classDef consumer fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef hub fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef export fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Nx implicit dependency via npm dependency
 
