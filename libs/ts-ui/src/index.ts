@@ -34,3 +34,7 @@ export { TabBar } from "./components/tab-bar/tab-bar";
 export type { TabItem, TabBarProps } from "./components/tab-bar/tab-bar";
 export { SideNav } from "./components/side-nav/side-nav";
 export type { SideNavBrand, SideNavProps } from "./components/side-nav/side-nav";
+export { HighlightText, highlightText } from "./components/highlight-text/highlight-text";
+export { default as ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
+export { SearchComponent } from "./components/search-component/search-component";
+export { default as ThemeToggle } from "./components/theme-toggle/theme-toggle";

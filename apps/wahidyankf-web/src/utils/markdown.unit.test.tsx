@@ -3,8 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { parseMarkdownLinks } from "./markdown";
 import { describe, it, expect, vi } from "vitest";
 
-// Mock HighlightText component
-vi.mock("@/components/HighlightText", () => ({
+vi.mock("@open-sharia-enterprise/ts-ui", () => ({
   HighlightText: ({ text }: { text: string }) => <span>{text}</span>,
 }));
 

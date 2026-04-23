@@ -1,8 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
-import ScrollToTop from "@/components/ScrollToTop";
-import ThemeToggle from "@/components/ThemeToggle";
+import { ScrollToTop, ThemeToggle } from "@open-sharia-enterprise/ts-ui";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });

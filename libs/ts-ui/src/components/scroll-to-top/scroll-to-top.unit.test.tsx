@@ -1,11 +1,9 @@
-import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
-import ScrollToTop from "./ScrollToTop";
+import ScrollToTop from "./scroll-to-top";
 
 describe("ScrollToTop", () => {
   beforeEach(() => {
-    // Mock window.scrollTo
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
   });
 
@@ -21,11 +19,9 @@ describe("ScrollToTop", () => {
   it("renders button when page is scrolled down", async () => {
     const { queryByRole } = render(<ScrollToTop />);
 
-    // Simulate scrolling down
     vi.spyOn(window, "pageYOffset", "get").mockReturnValue(400);
     fireEvent.scroll(window);
 
-    // Wait for state update
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(queryByRole("button")).not.toBeNull();
@@ -34,11 +30,9 @@ describe("ScrollToTop", () => {
   it("scrolls to top when button is clicked", async () => {
     const { getByRole } = render(<ScrollToTop />);
 
-    // Simulate scrolling down
     vi.spyOn(window, "pageYOffset", "get").mockReturnValue(400);
     fireEvent.scroll(window);
 
-    // Wait for state update
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     const button = getByRole("button");
@@ -53,14 +47,42 @@ describe("ScrollToTop", () => {
   it("has correct accessibility attributes", async () => {
     const { getByRole } = render(<ScrollToTop />);
 
-    // Simulate scrolling down
     vi.spyOn(window, "pageYOffset", "get").mockReturnValue(400);
     fireEvent.scroll(window);
 
-    // Wait for state update
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     const button = getByRole("button");
     expect(button.getAttribute("aria-label")).toBe("Scroll to top");
+  });
+
+  it("respects custom threshold prop", async () => {
+    const { queryByRole } = render(<ScrollToTop threshold={500} />);
+
+    vi.spyOn(window, "pageYOffset", "get").mockReturnValue(400);
+    fireEvent.scroll(window);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(queryByRole("button")).toBeNull();
+
+    vi.spyOn(window, "pageYOffset", "get").mockReturnValue(600);
+    fireEvent.scroll(window);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(queryByRole("button")).not.toBeNull();
+  });
+
+  it("applies custom buttonClassName when provided", async () => {
+    const { getByRole } = render(<ScrollToTop buttonClassName="custom-btn" />);
+
+    vi.spyOn(window, "pageYOffset", "get").mockReturnValue(400);
+    fireEvent.scroll(window);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const button = getByRole("button");
+    expect(Array.from(button.classList)).toContain("custom-btn");
   });
 });

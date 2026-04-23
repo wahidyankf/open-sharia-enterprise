@@ -1,7 +1,6 @@
-import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, fireEvent, screen } from "@testing-library/react";
-import { SearchComponent } from "./SearchComponent";
+import { SearchComponent } from "./search-component";
 
 describe("SearchComponent", () => {
   const mockSetSearchTerm = vi.fn();
@@ -21,7 +20,7 @@ describe("SearchComponent", () => {
 
   it("renders with correct placeholder", () => {
     renderComponent();
-    expect(screen.getByPlaceholderText(placeholder)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(placeholder)).toBeDefined();
   });
 
   it("updates search term on input change", () => {
@@ -42,17 +41,31 @@ describe("SearchComponent", () => {
 
   it("does not show clear button when search term is empty", () => {
     renderComponent();
-    expect(screen.queryByLabelText("Clear search")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Clear search")).toBeNull();
   });
 
   it("shows clear button when search term is not empty", () => {
     renderComponent("test");
-    expect(screen.getByLabelText("Clear search")).toBeInTheDocument();
+    expect(screen.getByLabelText("Clear search")).toBeDefined();
   });
 
   it("has correct accessibility attributes", () => {
     renderComponent("test");
     const clearButton = screen.getByLabelText("Clear search");
-    expect(clearButton).toHaveAttribute("aria-label", "Clear search");
+    expect(clearButton.getAttribute("aria-label")).toBe("Clear search");
+  });
+
+  it("accepts custom className for container", () => {
+    const { container } = render(
+      <SearchComponent
+        searchTerm=""
+        setSearchTerm={mockSetSearchTerm}
+        updateURL={mockUpdateURL}
+        placeholder={placeholder}
+        className="custom-container"
+      />,
+    );
+    const firstChild = container.firstChild as HTMLElement;
+    expect(Array.from(firstChild.classList)).toContain("custom-container");
   });
 });

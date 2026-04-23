@@ -1,13 +1,13 @@
 import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { HighlightText, highlightText } from "./HighlightText";
+import { HighlightText, highlightText } from "./highlight-text";
 
 describe("HighlightText", () => {
   it("renders text without highlighting when no search term is provided", () => {
     render(<HighlightText text="Hello, world!" searchTerm="" />);
-    expect(screen.getByText("Hello, world!")).toBeInTheDocument();
-    expect(screen.queryByRole("mark")).not.toBeInTheDocument();
+    expect(screen.getByText("Hello, world!")).toBeDefined();
+    expect(screen.queryByRole("mark")).toBeNull();
   });
 
   it("highlights matching text when search term is provided", () => {
@@ -15,8 +15,9 @@ describe("HighlightText", () => {
     const highlightedText = screen.getByText((content, element) => {
       return element?.tagName.toLowerCase() === "mark" && content === "world";
     });
-    expect(highlightedText).toBeInTheDocument();
-    expect(highlightedText).toHaveClass("bg-yellow-300", "text-gray-900");
+    expect(highlightedText).toBeDefined();
+    expect(Array.from(highlightedText.classList)).toContain("bg-yellow-300");
+    expect(Array.from(highlightedText.classList)).toContain("text-gray-900");
   });
 
   it("is case-insensitive when highlighting", () => {
@@ -24,7 +25,7 @@ describe("HighlightText", () => {
     const highlightedText = screen.getByText((content, element) => {
       return element?.tagName.toLowerCase() === "mark" && content === "World";
     });
-    expect(highlightedText).toBeInTheDocument();
+    expect(highlightedText).toBeDefined();
   });
 
   it("handles multiple occurrences of search term", () => {
@@ -33,6 +34,14 @@ describe("HighlightText", () => {
       return element?.tagName.toLowerCase() === "mark" && content.toLowerCase() === "hello";
     });
     expect(highlightedTexts).toHaveLength(3);
+  });
+
+  it("accepts custom highlightClassName override", () => {
+    render(<HighlightText text="Hello, world!" searchTerm="world" highlightClassName="custom-class" />);
+    const highlightedText = screen.getByText((content, element) => {
+      return element?.tagName.toLowerCase() === "mark" && content === "world";
+    });
+    expect(Array.from(highlightedText.classList)).toContain("custom-class");
   });
 });
 
@@ -53,6 +62,20 @@ describe("highlightText", () => {
       expect(React.isValidElement(highlightedPart)).toBe(true);
       expect(highlightedPart.type).toBe("mark");
       expect(highlightedPart.props.children).toBe("world");
+    }
+  });
+
+  it("uses custom highlightClassName when provided", () => {
+    const result = highlightText("Hello, world!", "world", "custom-class");
+
+    expect(Array.isArray(result)).toBe(true);
+
+    if (Array.isArray(result)) {
+      const highlightedPart = result[1] as React.ReactElement<{
+        children: string;
+        className: string;
+      }>;
+      expect(highlightedPart.props.className).toBe("custom-class");
     }
   });
 });

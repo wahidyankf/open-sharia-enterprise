@@ -32,8 +32,7 @@ import {
   getTopLanguagesLastFiveYears,
   getTopFrameworksLastFiveYears,
 } from "../data";
-import { SearchComponent } from "@/components/SearchComponent";
-import { HighlightText } from "@/components/HighlightText";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
 import { Suspense } from "react";
 import { parseMarkdownLinks } from "@/utils/markdown";
 
