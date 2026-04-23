@@ -8,9 +8,10 @@
 
 Migrate four pure-React components (`HighlightText`, `ScrollToTop`, `SearchComponent`,
 `ThemeToggle`) from `apps/wahidyankf-web/src/components/` into the shared `libs/ts-ui`
-component library. Export them from the library's public index, wire the workspace dependency
-in `wahidyankf-web`, and update every import site. Visual appearance must be identical after
-migration — files move verbatim with no behaviour changes.
+component library. Each component is refactored to accept flexible props so any OSE app can
+consume it with different styles or behaviour — `wahidyankf-web` passes props that reproduce
+its current appearance exactly. Export the components from the library's public index, wire the
+workspace dependency in `wahidyankf-web`, and update every import site.
 
 `Navigation.tsx` stays local because it imports Next.js-specific packages that would contaminate
 the framework-agnostic library.
