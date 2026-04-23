@@ -28,9 +28,7 @@ Then("a left sidebar is visible with Home, CV, and Personal Projects links", asy
 });
 
 Then("no bottom tab bar is rendered", async ({ page }) => {
-  const tabBarCandidate = page.locator('nav[aria-label="Mobile navigation"], .fixed.bottom-0');
-  const count = await tabBarCandidate.count();
-  expect(count).toBe(0);
+  await expect(page.locator('[data-testid="mobile-nav"]')).not.toBeVisible();
 });
 
 Then("no left sidebar is visible", async ({ page }) => {
