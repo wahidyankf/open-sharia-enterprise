@@ -3,6 +3,7 @@ import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
   featuresRoot: "../../specs/apps/wahidyankf/fe/gherkin",
+  steps: "./steps/**/*.ts",
 });
 
 export default defineConfig({

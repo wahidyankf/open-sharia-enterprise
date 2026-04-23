@@ -38,13 +38,13 @@ Then("a Quick Links card is visible", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /Quick Links/i })).toBeVisible();
 });
 
-Then('the card contains a "View My CV" link to /cv', async ({ page }) => {
+Then('the card contains a "View My CV" link to \\/cv', async ({ page }) => {
   const link = page.getByRole("link", { name: /View My CV/i });
   await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", "/cv");
 });
 
-Then('the card contains a "Browse My Personal Projects" link to /personal-projects', async ({ page }) => {
+Then('the card contains a "Browse My Personal Projects" link to \\/personal-projects', async ({ page }) => {
   const link = page.getByRole("link", { name: /Browse My Personal Projects/i });
   await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", "/personal-projects");

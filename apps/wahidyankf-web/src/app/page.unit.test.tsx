@@ -169,7 +169,14 @@ describe("Home component", () => {
   it("updates URL when typing in search", () => {
     render(<Home />);
     const searchInput = screen.getByTestId("search-component") as HTMLInputElement;
-    fireEvent.change(searchInput, { target: { value: "test" } });
-    expect(mockPush).toHaveBeenCalledWith("/?search=test", { scroll: false });
+    fireEvent.change(searchInput, { target: { value: "TypeScript" } });
+    expect(mockPush).toHaveBeenCalledWith("/?search=TypeScript", { scroll: false });
+  });
+
+  it("handles TypeScript skill pill click navigates with scrollTop", () => {
+    render(<Home />);
+    const languageButton = screen.getByText("TypeScript");
+    fireEvent.click(languageButton);
+    expect(mockPush).toHaveBeenCalledWith("/cv?search=TypeScript&scrollTop=true");
   });
 });
