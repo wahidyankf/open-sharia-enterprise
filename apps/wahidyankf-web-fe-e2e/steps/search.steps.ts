@@ -8,8 +8,12 @@ When('the visitor types "TypeScript" in the search input', async ({ page }) => {
   await input.fill("TypeScript");
 });
 
-Then("the URL becomes /?search=TypeScript", async ({ page }) => {
+Then("the URL becomes \\/?search=TypeScript", async ({ page }) => {
   await expect(page).toHaveURL(/\?search=TypeScript$/);
+});
+
+Then("the URL becomes \\/cv?search=TypeScript&scrollTop=true", async ({ page }) => {
+  await expect(page).toHaveURL(/\/cv\?search=TypeScript&scrollTop=true/);
 });
 
 When('a visitor opens the home page with search term "TypeScript"', async ({ page }) => {
@@ -42,8 +46,4 @@ When('the visitor clicks the "TypeScript" skill pill', async ({ page }) => {
     .filter({ hasText: /^TypeScript$/ })
     .first();
   await pill.click();
-});
-
-Then("the URL becomes /cv?search=TypeScript&scrollTop=true", async ({ page }) => {
-  await expect(page).toHaveURL(/\/cv\?search=TypeScript&scrollTop=true/);
 });
