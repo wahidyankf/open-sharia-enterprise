@@ -85,7 +85,9 @@ Import sites updated in `apps/wahidyankf-web/src/`:
   as a peer dependency to `ts-ui` would contaminate a framework-agnostic library. See
   [brd.md](./brd.md) for the full rationale.
 - No changes to any other app (`ayokoding-web`, `oseplatform-web`, `organiclever-web`, etc.).
-- No design or behaviour changes to the migrated components — verbatim file copy only.
+- No visual changes to `wahidyankf-web`'s rendered output — components are refactored for
+  reusability (flexible props, configurable defaults) but `wahidyankf-web` call-sites pass props
+  that reproduce the current appearance exactly.
 - No new Gherkin feature files for ts-ui component coverage — separate future concern.
 
 ## Product-Level Risks

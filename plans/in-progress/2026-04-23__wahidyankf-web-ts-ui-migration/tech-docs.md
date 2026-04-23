@@ -43,11 +43,15 @@ After:
 
 ## Design Decisions
 
-### Verbatim file copy — no code edits inside components
+### Flexible refactoring — same visual output, configurable props
 
-The migrated `.tsx` files are copied byte-for-byte. No refactoring, no style changes, no
-interface additions. This eliminates the risk of introducing regressions and keeps the diff
-reviewable as a pure file move.
+Each migrated component is refactored to accept props for the values that are currently
+hardcoded (className overrides, colour tokens, thresholds, etc.). Hardcoded values become
+prop defaults so existing behaviour is preserved when no override is supplied. `wahidyankf-web`
+passes the same values it currently renders as explicit props, producing identical visual
+output. Future OSE apps consume the same components with different prop values without
+forking or copy-pasting. The refactoring scope is limited to the prop surface — no new
+abstractions, no behavioural logic changes beyond what props control.
 
 ### kebab-case subdirectory naming
 
@@ -62,15 +66,14 @@ The four new subdirectories follow the same convention:
 
 ### `"use client"` directives stay at the top of migrated files
 
-`ScrollToTop.tsx` and `ThemeToggle.tsx` both begin with `"use client";`. Because the files are
-copied verbatim, these directives remain in place. This is correct: `ts-ui` is consumed by
-Next.js apps that use the App Router, and Client Component boundaries must be declared in the
-file that contains the interactive logic, not at the library boundary. No special handling is
-required.
+`ScrollToTop.tsx` and `ThemeToggle.tsx` both begin with `"use client";`. These directives must
+remain at the top of the refactored files. `ts-ui` is consumed by Next.js apps that use the
+App Router, and Client Component boundaries must be declared in the file that contains the
+interactive logic, not at the library boundary. No special handling is required.
 
 ### Named vs default export promotion
 
-The original export styles are preserved in the component files themselves (verbatim copy). The
+The original export styles are preserved in the refactored component files. The
 `libs/ts-ui/src/index.ts` re-export lines adapt default exports to named exports so library
 consumers always use named imports — consistent with the rest of ts-ui's public API:
 

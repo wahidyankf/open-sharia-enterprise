@@ -34,7 +34,9 @@
 
 - [ ] Create directory `libs/ts-ui/src/components/highlight-text/`
 - [ ] Copy `apps/wahidyankf-web/src/components/HighlightText.tsx` to
-      `libs/ts-ui/src/components/highlight-text/highlight-text.tsx` — verbatim, no edits
+      `libs/ts-ui/src/components/highlight-text/highlight-text.tsx` and refactor to accept
+      flexible props (e.g. `highlightClassName` for the mark element styles) with current
+      hardcoded values as defaults
 - [ ] Copy `apps/wahidyankf-web/src/components/HighlightText.unit.test.tsx` to
       `libs/ts-ui/src/components/highlight-text/highlight-text.unit.test.tsx`
 - [ ] In `libs/ts-ui/src/components/highlight-text/highlight-text.unit.test.tsx`, update line 4:
@@ -138,7 +140,9 @@
 
 - [ ] Create directory `libs/ts-ui/src/components/scroll-to-top/`
 - [ ] Copy `apps/wahidyankf-web/src/components/ScrollToTop.tsx` to
-      `libs/ts-ui/src/components/scroll-to-top/scroll-to-top.tsx` — verbatim, no edits
+      `libs/ts-ui/src/components/scroll-to-top/scroll-to-top.tsx` and refactor to accept
+      flexible props (e.g. `threshold`, `className`, `buttonClassName`) with current hardcoded
+      values as defaults
       (the `"use client";` directive at line 1 remains in place)
 - [ ] Copy `apps/wahidyankf-web/src/components/ScrollToTop.unit.test.tsx` to
       `libs/ts-ui/src/components/scroll-to-top/scroll-to-top.unit.test.tsx`
@@ -194,7 +198,9 @@
 
 - [ ] Create directory `libs/ts-ui/src/components/search-component/`
 - [ ] Copy `apps/wahidyankf-web/src/components/SearchComponent.tsx` to
-      `libs/ts-ui/src/components/search-component/search-component.tsx` — verbatim, no edits
+      `libs/ts-ui/src/components/search-component/search-component.tsx` and refactor to accept
+      flexible props (e.g. `className`, `inputClassName`, `clearButtonClassName`) with current
+      hardcoded values as defaults
 - [ ] Copy `apps/wahidyankf-web/src/components/SearchComponent.unit.test.tsx` to
       `libs/ts-ui/src/components/search-component/search-component.unit.test.tsx`
 - [ ] In `libs/ts-ui/src/components/search-component/search-component.unit.test.tsx`, update
@@ -250,7 +256,8 @@
 
 - [ ] Create directory `libs/ts-ui/src/components/theme-toggle/`
 - [ ] Copy `apps/wahidyankf-web/src/components/ThemeToggle.tsx` to
-      `libs/ts-ui/src/components/theme-toggle/theme-toggle.tsx` — verbatim, no edits
+      `libs/ts-ui/src/components/theme-toggle/theme-toggle.tsx` and refactor to accept
+      flexible props (e.g. `className`) with current hardcoded values as defaults
       (the `"use client";` directive at line 1 remains in place)
 - [ ] Copy `apps/wahidyankf-web/src/components/ThemeToggle.unit.test.tsx` to
       `libs/ts-ui/src/components/theme-toggle/theme-toggle.unit.test.tsx`
