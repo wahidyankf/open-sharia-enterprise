@@ -46,7 +46,6 @@ export default defineConfig({
           name: "integration",
           exclude: ["node_modules", "**/*.unit.test.tsx"],
           environment: "node",
-          passWithNoTests: true,
         },
       },
     ],
