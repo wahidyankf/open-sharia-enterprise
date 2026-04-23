@@ -82,7 +82,7 @@ The original export styles are preserved in the refactored component files. The
 `libs/ts-ui/src/index.ts` re-export lines adapt default exports to named exports so library
 consumers always use named imports — consistent with the rest of ts-ui's public API:
 
-| Component         | Source file export             | ts-ui index.ts re-export                  |
+| Export            | Source file export             | ts-ui index.ts re-export                  |
 | ----------------- | ------------------------------ | ----------------------------------------- |
 | `HighlightText`   | `export const HighlightText`   | `export { HighlightText, highlightText }` |
 | `highlightText`   | `export const highlightText`   | (included in same line above)             |

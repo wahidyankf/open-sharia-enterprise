@@ -67,8 +67,8 @@ Scenario: Migrated components are general-purpose and prop-configurable
   Given the migration delivery checklist is complete
   When I inspect each migrated component in libs/ts-ui/src/components/
   Then HighlightText accepts a prop to override the highlight mark className
-  And ScrollToTop accepts props to override the scroll threshold and button className
-  And SearchComponent accepts props to override input and clear-button className
+  And ScrollToTop accepts props to override the scroll threshold, container className, and button className
+  And SearchComponent accepts props to override the container className, input className, and clear-button className
   And ThemeToggle accepts a prop to override the button className
   And each prop has the original wahidyankf-web hardcoded value as its default
   And wahidyankf-web call-sites compile and render correctly without passing those props
