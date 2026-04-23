@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/third-parties": "^16.0.0",
+    "@open-sharia-enterprise/ts-ui": "*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.447.0",
