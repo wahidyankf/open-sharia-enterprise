@@ -1,7 +1,8 @@
 # wahidyankf-web Component Migration to ts-ui
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-04-23
+**Completed**: 2026-04-23
 **Scope**: `ose-public` — `apps/wahidyankf-web`, `libs/ts-ui`
 
 ## Description
