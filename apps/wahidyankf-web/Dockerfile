@@ -2,8 +2,22 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 
+# Copy app package.json and strip workspace dependency before install
 COPY apps/wahidyankf-web/package.json ./
-RUN npm install --ignore-scripts
+RUN node -e " \
+  const pkg = JSON.parse(require('fs').readFileSync('package.json','utf8')); \
+  delete pkg.dependencies['@open-sharia-enterprise/ts-ui']; \
+  require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2)); \
+" && npm install --ignore-scripts
+
+# Install ts-ui transitive dependencies not already in wahidyankf-web
+RUN npm install --save radix-ui@^1.0.0 --ignore-scripts
+
+# Copy workspace libs as resolvable node_modules packages
+COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
+COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
+COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
+COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
 
 COPY apps/wahidyankf-web/src/ ./src/
 COPY apps/wahidyankf-web/public/ ./public/
