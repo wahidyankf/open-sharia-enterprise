@@ -72,6 +72,16 @@ Scenario: Migrated components are general-purpose and prop-configurable
   And ThemeToggle accepts a prop to override the button className
   And each prop has the original wahidyankf-web hardcoded value as its default
   And wahidyankf-web call-sites compile and render correctly without passing those props
+
+Scenario: GitHub Actions CI passes and production is deployed
+  Given all local quality gates pass and changes are pushed to main
+  When the test-and-deploy-wahidyankf-web workflow is triggered via workflow_dispatch
+  Then all CI jobs pass with zero failures
+  And the Detect changes job confirms has-changes is true
+  And the Deploy to production job force-pushes HEAD to prod-wahidyankf-web
+  And the prod-wahidyankf-web branch tip matches the main HEAD SHA
+  And www.wahidyankf.com serves the migrated build with visually identical output
+  And no JavaScript errors appear in the production browser console
 ```
 
 ## Product Scope

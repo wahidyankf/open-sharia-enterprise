@@ -39,12 +39,18 @@ dependencies. Keeping them local to one app creates two problems:
 
 - `apps/wahidyankf-web/src/components/` contains exactly two files: `Navigation.tsx` and
   `Navigation.unit.test.tsx`.
-- All quality gates (`typecheck`, `lint`, `test:quick`, `spec-coverage`) pass green for both
-  `wahidyankf-web` and `ts-ui` with zero errors.
+- All local quality gates (`typecheck`, `lint`, `test:quick`, `spec-coverage`) pass green for
+  both `wahidyankf-web` and `ts-ui` with zero errors.
 - No import in `apps/wahidyankf-web/src/` references the local component paths that were
   deleted.
+- `test-and-deploy-wahidyankf-web.yml` GitHub Actions workflow completes with all jobs green
+  — Lint, Unit tests, Spec coverage, Integration tests, E2E tests, Detect changes, and
+  Deploy to production.
+- `prod-wahidyankf-web` branch tip matches the `main` HEAD SHA; Vercel deployment for
+  `www.wahidyankf.com` succeeds and the production site renders visually identical to the
+  pre-migration baseline.
 
-Judgment call: these three observable conditions fully capture the business goal. No KPI
+Judgment call: these five observable conditions fully capture the business goal. No KPI
 targets are appropriate for a structural migration with bounded, prop-surface refactoring.
 
 ## Business-Scope Non-Goals

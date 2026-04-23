@@ -1,5 +1,55 @@
 # Delivery Checklist — wahidyankf-web Component Migration to ts-ui
 
+## Delivery Overview
+
+**Migration phases** — each phase must complete and typecheck clean before the next starts:
+
+<!-- Uses colors: Orange #DE8F05 (migration), Blue #0173B2 (dep/verify), Gray #808080 (setup), Teal #029E73 (verify) -->
+
+```mermaid
+graph LR
+    setup["Env Setup"]:::gray
+    p1["Phase 1<br/>ts-ui dep"]:::blue
+    p2["Phase 2<br/>HighlightText"]:::orange
+    p3["Phase 3<br/>ScrollToTop"]:::orange
+    p4["Phase 4<br/>SearchComponent"]:::orange
+    p5["Phase 5<br/>ThemeToggle"]:::orange
+    p6["Phase 6<br/>Verify"]:::teal
+
+    setup --> p1 --> p2 --> p3 --> p4 --> p5 --> p6
+
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Quality gates and deployment** — all local gates pass before push; CI triggered manually
+after push; deploy runs automatically when CI is green and changes detected:
+
+<!-- Uses colors: Blue #0173B2 (local), Purple #CC78BC (CI/push), Teal #029E73 (prod), Brown #CA9161 (archive) -->
+
+```mermaid
+graph LR
+    lqa["Local QA"]:::blue
+    commit["Atomic Commit<br/>Phases 2-5"]:::blue
+    ui["Manual UI<br/>Verify"]:::blue
+    push["Push to main"]:::purple
+    ci["GitHub Actions<br/>CI trigger"]:::purple
+    deploy["Deploy<br/>prod branch"]:::teal
+    smoke["Prod Smoke<br/>Test"]:::teal
+    archive["Plan Archival"]:::brown
+
+    lqa --> commit --> ui --> push --> ci --> deploy --> smoke --> archive
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+---
+
 ## Environment Setup
 
 - [ ] Confirm working directory is `ose-public` subrepo root
@@ -508,14 +558,102 @@ Suggested commit sequence:
 
 ---
 
-## Post-Push CI Verification
+## Post-Push: Trigger GitHub Actions CI
 
-- [ ] Push changes to `main`
-- [ ] Monitor ALL GitHub Actions workflows triggered by the push
-- [ ] Verify ALL CI checks pass — no exceptions
-- [ ] If any CI check fails, fix immediately and push a follow-up commit
-- [ ] Repeat until ALL GitHub Actions pass with zero failures
-- [ ] Do NOT proceed to plan archival until CI is fully green
+`test-and-deploy-wahidyankf-web.yml` triggers on schedule (6 AM/6 PM WIB) and
+`workflow_dispatch` — it does **not** auto-trigger on push to `main`. Trigger it manually
+immediately after the final migration commit lands on `main`.
+
+> **Critical timing constraint:** The `detect-changes` job inspects only the `HEAD~1 → HEAD`
+> diff for `apps/wahidyankf-web/`. If any commit that does not touch `apps/wahidyankf-web/`
+> lands on `main` between the migration push and the workflow trigger, the `deploy` job will
+> be skipped (`has-changes: false`). Trigger the workflow immediately — before pushing any
+> unrelated commits.
+
+- [ ] Confirm migration commits are at `HEAD` on `main`:
+
+  ```bash
+  rtk git log --oneline -3
+  ```
+
+  The most recent commit must be one of the migration commits (Phase 1 or Phase 2–5).
+
+- [ ] Push the migration commits to `origin/main` if not already done:
+
+  ```bash
+  rtk git push origin main
+  ```
+
+- [ ] Trigger the workflow via GitHub CLI:
+
+  ```bash
+  gh workflow run test-and-deploy-wahidyankf-web.yml
+  ```
+
+- [ ] Monitor the run (poll until all jobs complete):
+
+  ```bash
+  gh run list --workflow=test-and-deploy-wahidyankf-web.yml --limit 3
+  ```
+
+  Or watch interactively until completion:
+
+  ```bash
+  gh run watch
+  ```
+
+- [ ] Verify each CI job passes green:
+  - [ ] **Lint** — `npx nx run wahidyankf-web:lint` — zero violations
+  - [ ] **Unit tests** — `npx nx run wahidyankf-web:test:quick` — zero failures
+  - [ ] **Spec coverage** — `npx nx run wahidyankf-web:spec-coverage` — threshold met (runs
+        in parallel; not a `deploy` dependency but must be green for full CI pass)
+  - [ ] **Integration tests** — `npx nx run wahidyankf-web:test:integration` — zero failures
+  - [ ] **E2E tests** — Playwright FE E2E against Docker-built app; zero failures
+        (`be-e2e` runs with `|| true`, so FE E2E is the gate)
+  - [ ] **Detect changes** — output `has-changes: true` (migration touches `apps/wahidyankf-web/`)
+  - [ ] **Deploy to production** — force-pushes `main` HEAD to `prod-wahidyankf-web`; job
+        must complete with exit 0
+
+- [ ] If any CI job fails, diagnose root cause, push a follow-up fix commit, re-trigger:
+
+  ```bash
+  gh workflow run test-and-deploy-wahidyankf-web.yml
+  ```
+
+- [ ] Repeat until ALL GitHub Actions jobs are green (including `spec-coverage`)
+- [ ] Do NOT proceed to production verification or plan archival until all jobs pass
+
+---
+
+## Production Deployment Verification
+
+The `deploy` job force-pushes `main` to `prod-wahidyankf-web`; Vercel listens to
+`prod-wahidyankf-web` and auto-builds the new version.
+
+- [ ] Confirm `prod-wahidyankf-web` tip matches `main` HEAD:
+
+  ```bash
+  rtk git fetch origin
+  rtk git log --oneline origin/prod-wahidyankf-web -1
+  rtk git log --oneline origin/main -1
+  ```
+
+  Both lines must show the same commit SHA.
+
+- [ ] Monitor the Vercel deployment for `www.wahidyankf.com` until it reports success
+- [ ] Once Vercel deployment is complete, run production smoke test via browser:
+  - [ ] Navigate to `https://www.wahidyankf.com` — home page loads without errors
+  - [ ] Type a query in the search bar — verify highlighted matches appear
+  - [ ] Navigate to `https://www.wahidyankf.com/cv` — search bar renders; highlight works on
+        CV entries
+  - [ ] Navigate to `https://www.wahidyankf.com/personal-projects` — search bar renders;
+        highlight works on project entries
+  - [ ] Click ThemeToggle — dark/light mode switches correctly
+  - [ ] Scroll down — ScrollToTop button appears; click — page scrolls to top
+  - [ ] Check browser console for JS errors — must be zero errors
+
+- [ ] Document any production issues found; fix and re-trigger workflow if needed
+- [ ] Do NOT proceed to plan archival until production smoke test passes
 
 ---
 
