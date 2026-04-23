@@ -59,7 +59,10 @@
   export { HighlightText, highlightText } from "./components/highlight-text/highlight-text";
   ```
 
-- [ ] Update `apps/wahidyankf-web/src/app/page.tsx` — replace lines 16–17:
+- [ ] Update `apps/wahidyankf-web/src/app/page.tsx` — add a new import for `HighlightText`
+      from ts-ui and retain the existing `SearchComponent` local import (the `SearchComponent`
+      import line stays unchanged in this phase and will be consolidated in Phase 4). Replace
+      lines 16–17:
 
   Before:
 
@@ -68,18 +71,18 @@
   import { HighlightText } from "@/components/HighlightText";
   ```
 
-  After (merge into one import; `SearchComponent` will be updated again in Phase 4 — add
-  `HighlightText` to the existing SearchComponent import line for now, or replace both at once
-  in Phase 4):
+  After (intermediate state — `HighlightText` now comes from ts-ui; `SearchComponent` keeps
+  its local import path until Phase 4):
 
   ```ts
   import { HighlightText } from "@open-sharia-enterprise/ts-ui";
   import { SearchComponent } from "@/components/SearchComponent";
   ```
 
-  > **Note:** `SearchComponent` still references the local path here and will be fully resolved
-  > in Phase 4. It is acceptable to update both on this file in Phase 4 in one pass. The
-  > important constraint is that by the end of Phase 4, `page.tsx` reads:
+  > **Multi-phase note:** Only the `HighlightText` import changes in this phase. Keep the local
+  > `SearchComponent` import on its own line — do not remove or consolidate it here.
+  > `SearchComponent` will be resolved in Phase 4. The important constraint is that by the end
+  > of Phase 4, `page.tsx` reads:
   >
   > ```ts
   > import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
@@ -94,12 +97,22 @@
   import { HighlightText } from "@/components/HighlightText";
   ```
 
-  After (same two-pass note applies as page.tsx above):
+  After (intermediate state — `HighlightText` now comes from ts-ui; `SearchComponent` keeps
+  its local import path until Phase 4):
 
   ```ts
   import { HighlightText } from "@open-sharia-enterprise/ts-ui";
   import { SearchComponent } from "@/components/SearchComponent";
   ```
+
+  > **Multi-phase note:** Only the `HighlightText` import changes in this phase. Keep the local
+  > `SearchComponent` import on its own line — do not remove or consolidate it here.
+  > `SearchComponent` will be resolved in Phase 4. The important constraint is that by the end
+  > of Phase 4, `cv/page.tsx` reads:
+  >
+  > ```ts
+  > import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
+  > ```
 
 - [ ] Update `apps/wahidyankf-web/src/app/personal-projects/page.tsx` — replace lines 8–9:
 
@@ -110,12 +123,22 @@
   import { HighlightText } from "@/components/HighlightText";
   ```
 
-  After:
+  After (intermediate state — `HighlightText` now comes from ts-ui; `SearchComponent` keeps
+  its local import path until Phase 4):
 
   ```ts
   import { HighlightText } from "@open-sharia-enterprise/ts-ui";
   import { SearchComponent } from "@/components/SearchComponent";
   ```
+
+  > **Multi-phase note:** Only the `HighlightText` import changes in this phase. Keep the local
+  > `SearchComponent` import on its own line — do not remove or consolidate it here.
+  > `SearchComponent` will be resolved in Phase 4. The important constraint is that by the end
+  > of Phase 4, `personal-projects/page.tsx` reads:
+  >
+  > ```ts
+  > import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
+  > ```
 
 - [ ] Update `apps/wahidyankf-web/src/utils/markdown.tsx` — replace line 2:
 
@@ -131,8 +154,25 @@
   import { HighlightText } from "@open-sharia-enterprise/ts-ui";
   ```
 
+- [ ] Verify the new ts-ui file compiles before deleting the source:
+
+  ```bash
+  npx nx run ts-ui:typecheck
+  ```
+
+  Confirm zero type errors before proceeding to the delete steps.
+
 - [ ] Delete `apps/wahidyankf-web/src/components/HighlightText.tsx`
 - [ ] Delete `apps/wahidyankf-web/src/components/HighlightText.unit.test.tsx`
+
+- [ ] Run affected typecheck to catch any type errors introduced in this phase before
+      proceeding:
+
+  ```bash
+  npx nx affected -t typecheck
+  ```
+
+  Fix ALL failures before moving on to Phase 3.
 
 ---
 
@@ -183,14 +223,31 @@
   import ThemeToggle from "@/components/ThemeToggle";
   ```
 
-  > **Note:** By end of Phase 5, `layout.tsx` must read:
+  > **Multi-phase note:** By end of Phase 5, `layout.tsx` must read:
   >
   > ```ts
   > import { ScrollToTop, ThemeToggle } from "@open-sharia-enterprise/ts-ui";
   > ```
 
+- [ ] Verify the new ts-ui file compiles before deleting the source:
+
+  ```bash
+  npx nx run ts-ui:typecheck
+  ```
+
+  Confirm zero type errors before proceeding to the delete steps.
+
 - [ ] Delete `apps/wahidyankf-web/src/components/ScrollToTop.tsx`
 - [ ] Delete `apps/wahidyankf-web/src/components/ScrollToTop.unit.test.tsx`
+
+- [ ] Run affected typecheck to catch any type errors introduced in this phase before
+      proceeding:
+
+  ```bash
+  npx nx affected -t typecheck
+  ```
+
+  Fix ALL failures before moving on to Phase 4.
 
 ---
 
@@ -247,8 +304,25 @@
   import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
   ```
 
+- [ ] Verify the new ts-ui file compiles before deleting the source:
+
+  ```bash
+  npx nx run ts-ui:typecheck
+  ```
+
+  Confirm zero type errors before proceeding to the delete steps.
+
 - [ ] Delete `apps/wahidyankf-web/src/components/SearchComponent.tsx`
 - [ ] Delete `apps/wahidyankf-web/src/components/SearchComponent.unit.test.tsx`
+
+- [ ] Run affected typecheck to catch any type errors introduced in this phase before
+      proceeding:
+
+  ```bash
+  npx nx affected -t typecheck
+  ```
+
+  Fix ALL failures before moving on to Phase 5.
 
 ---
 
@@ -289,15 +363,39 @@
   import { ScrollToTop, ThemeToggle } from "@open-sharia-enterprise/ts-ui";
   ```
 
+- [ ] Verify the new ts-ui file compiles before deleting the source:
+
+  ```bash
+  npx nx run ts-ui:typecheck
+  ```
+
+  Confirm zero type errors before proceeding to the delete steps.
+
 - [ ] Delete `apps/wahidyankf-web/src/components/ThemeToggle.tsx`
 - [ ] Delete `apps/wahidyankf-web/src/components/ThemeToggle.unit.test.tsx`
 
-- [ ] Commit after Phases 2–5:
-      `feat(ts-ui): migrate HighlightText, ScrollToTop, SearchComponent, ThemeToggle from wahidyankf-web`
+- [ ] Run affected typecheck to catch any type errors introduced in this phase before
+      committing:
+
+  ```bash
+  npx nx affected -t typecheck
+  ```
+
+  Fix ALL failures before committing.
 
 ---
 
 ## Phase 6 — Verify Remaining components/
+
+- [ ] Confirm `lucide-react` is present in `libs/ts-ui/package.json` dependencies (required by
+      `SearchComponent` and `ScrollToTop` — pre-verified during plan authoring, but a
+      defensive check prevents silent breakage):
+
+  ```bash
+  grep "lucide-react" libs/ts-ui/package.json
+  ```
+
+  Expected: one line showing `"lucide-react": "^0.447.0"` (or similar semver).
 
 - [ ] Confirm `apps/wahidyankf-web/src/components/` contains exactly two files:
   - `Navigation.tsx`
@@ -317,6 +415,14 @@
   ```
 
   Expected: four lines, one per component.
+
+- [ ] Confirm ts-ui index.ts exports all four components by name:
+
+  ```bash
+  grep -E "HighlightText|ScrollToTop|SearchComponent|ThemeToggle" libs/ts-ui/src/index.ts
+  ```
+
+  Expected: four lines, one per export name.
 
 ---
 
@@ -369,7 +475,14 @@ Suggested commit sequence:
 
 1. `chore(wahidyankf-web): add @open-sharia-enterprise/ts-ui workspace dependency`
 2. `feat(ts-ui): migrate HighlightText, ScrollToTop, SearchComponent, ThemeToggle from wahidyankf-web`
+   (All four component migrations — Phases 2–5 — are bundled into one atomic commit. This is
+   intentional: intermediate states leave ts-ui exports incomplete and wahidyankf-web still
+   referencing deleted files, which would break typecheck between phases. The single commit
+   avoids shipping a broken intermediate state to `main`.)
 3. Any preexisting fix commits (separate, labelled accordingly)
+
+- [ ] After completing Phase 5 quality checks above, make the Phase 2–5 atomic commit:
+      `feat(ts-ui): migrate HighlightText, ScrollToTop, SearchComponent, ThemeToggle from wahidyankf-web`
 
 ---
 
@@ -388,7 +501,8 @@ Suggested commit sequence:
       scroll-to-top behaviour
 - [ ] Enter text in the search bar on any listing page — verify highlighted matches appear
       using `HighlightText`
-- [ ] Check for JS errors via `browser_console_messages` — must be zero errors
+- [ ] Check for JS errors via `browser_console_messages` — must be zero errors (this is a pure
+      UI migration with no API changes, so no network-request verification is needed)
 - [ ] Take screenshots via `browser_take_screenshot` for visual reference
 - [ ] Document verification results in this checklist
 
