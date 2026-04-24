@@ -114,7 +114,7 @@ function ProjectsContent() {
 
       {filteredProjects.length > 0 ? (
         filteredProjects.map((project, index) => (
-          <div id={`project-${index}`} key={index} className="mb-8 rounded-lg border border-green-400 p-4">
+          <div id={`project-${index}`} key={index} className="mb-8 border border-green-400 p-4">
             <h2 className="mb-2 text-xl text-yellow-400 sm:text-2xl md:text-3xl">
               <HighlightText text={project.title} searchTerm={searchTerm} />
             </h2>
