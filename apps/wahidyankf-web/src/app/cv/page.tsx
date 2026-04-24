@@ -57,7 +57,7 @@ const ClickableItem = ({
 }) => (
   <button
     onClick={() => handleItemClick(name)}
-    className="group flex w-full items-center justify-between rounded-md bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+    className="group flex w-full items-center justify-between bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
   >
     <div className="flex items-center">
       {icon}
@@ -152,7 +152,7 @@ const CVEntryComponent = ({
   topFrameworks?: TopItem[];
   handleItemClick: (item: string) => void;
 }) => (
-  <div className="mb-4 rounded-lg border border-green-400 p-4">
+  <div className="mb-4 border border-green-400 p-4">
     <h3 className="mb-2 text-lg text-yellow-400 sm:text-xl md:text-2xl">
       <HighlightText text={entry.title} searchTerm={searchTerm} />
     </h3>
@@ -451,7 +451,7 @@ const WorkExperienceSection = ({
         </div>
       </StickyHeader>
       {filteredOrganizations.map((organization) => (
-        <div key={organization} className="mb-6 rounded-lg border border-green-400 p-4">
+        <div key={organization} className="mb-6 border border-green-400 p-4">
           <h3 className="mb-2 flex items-center justify-between text-lg text-yellow-400 sm:text-xl md:text-2xl">
             <span>
               <HighlightText text={organization} searchTerm={searchTerm} />

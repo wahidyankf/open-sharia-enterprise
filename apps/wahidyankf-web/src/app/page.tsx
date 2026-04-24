@@ -87,7 +87,7 @@ function HomeContent() {
         />
 
         {/* About Me section */}
-        <section className="mb-8 rounded-lg border border-green-400 p-4">
+        <section className="mb-8 border border-green-400 p-4">
           <h2 className="mb-4 text-xl text-yellow-400 sm:text-2xl md:text-3xl">About Me</h2>
           {filteredAboutMe && filteredAboutMe.details.length > 0 ? (
             filteredAboutMe.details.map((detail: string, index: number) => (
@@ -101,7 +101,7 @@ function HomeContent() {
         </section>
 
         {/* Skills & Expertise section */}
-        <section className="mb-8 rounded-lg border border-green-400 p-4">
+        <section className="mb-8 border border-green-400 p-4">
           <h2 className="mb-4 text-xl text-yellow-400 sm:text-2xl md:text-3xl">Skills & Expertise</h2>
           <div className="space-y-4">
             {/* Top Skills */}
@@ -112,7 +112,7 @@ function HomeContent() {
                   <button
                     key={name}
                     onClick={() => handleItemClick(name)}
-                    className="group flex items-center rounded-md bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+                    className="group flex items-center bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
                   >
                     <Star className="mr-2 h-4 w-4 text-yellow-400" />
                     <span className="mr-2 transition-colors duration-200 group-hover:text-white">
@@ -135,7 +135,7 @@ function HomeContent() {
                   <button
                     key={name}
                     onClick={() => handleItemClick(name)}
-                    className="group flex items-center rounded-md bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+                    className="group flex items-center bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
                   >
                     <Code className="mr-2 h-4 w-4 text-yellow-400" />
                     <span className="transition-colors duration-200 group-hover:text-white">
@@ -155,7 +155,7 @@ function HomeContent() {
                   <button
                     key={name}
                     onClick={() => handleItemClick(name)}
-                    className="group flex items-center rounded-md bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
+                    className="group flex items-center bg-gray-800 px-2 py-1 text-sm text-green-400 transition-colors duration-200 hover:bg-gray-700"
                   >
                     <Package className="mr-2 h-4 w-4 text-yellow-400" />
                     <span className="transition-colors duration-200 group-hover:text-white">
@@ -169,7 +169,7 @@ function HomeContent() {
         </section>
 
         {/* Quick Links section */}
-        <section className="mb-8 rounded-lg border border-green-400 p-4">
+        <section className="mb-8 border border-green-400 p-4">
           <h2 className="mb-4 text-xl text-yellow-400 sm:text-2xl md:text-3xl">Quick Links</h2>
           <div className="flex flex-wrap gap-4">
             <Link
@@ -190,7 +190,7 @@ function HomeContent() {
         </section>
 
         {/* Connect With Me section */}
-        <section className="mb-8 rounded-lg border border-green-400 p-4">
+        <section className="mb-8 border border-green-400 p-4">
           <h2 className="mb-4 text-xl text-yellow-400 sm:text-2xl md:text-3xl">Connect With Me</h2>
           <div className="flex flex-wrap gap-4">
             {aboutMe?.links &&
