@@ -50,14 +50,14 @@ export function LandingFeatures() {
         margin: "0 auto",
         paddingTop: 60,
         paddingBottom: 100,
-        borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
+        borderTop: "1px solid oklch(18% 0.018 60 / 0.18)",
       }}
       className="px-10 max-sm:px-5 max-sm:py-12"
     >
       <div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 700,
             letterSpacing: ".12em",
             textTransform: "uppercase",
@@ -111,7 +111,7 @@ export function LandingFeatures() {
           display: "grid",
           gap: 2,
           marginTop: 48,
-          border: "1px solid oklch(18% 0.018 60 / 0.10)",
+          border: "1px solid oklch(18% 0.018 60 / 0.20)",
           borderRadius: 20,
           overflow: "hidden",
         }}
@@ -123,7 +123,7 @@ export function LandingFeatures() {
             style={{
               padding: "28px 22px",
               background: "oklch(97% 0.008 80)",
-              borderRight: "1px solid oklch(18% 0.018 60 / 0.08)",
+              borderRight: "1px solid oklch(18% 0.018 60 / 0.18)",
             }}
           >
             <div
@@ -155,7 +155,7 @@ export function LandingFeatures() {
             <div
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: 14,
+                fontSize: 15,
                 lineHeight: 1.6,
                 color: "oklch(42% 0.015 70)",
               }}
@@ -166,9 +166,9 @@ export function LandingFeatures() {
               style={{
                 marginTop: 14,
                 paddingTop: 14,
-                borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
+                borderTop: "1px solid oklch(18% 0.018 60 / 0.18)",
                 fontFamily: "var(--font-mono)",
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 600,
                 color: "oklch(62% 0.012 70)",
                 letterSpacing: ".02em",
