@@ -48,10 +48,11 @@ export function LandingFeatures() {
       style={{
         maxWidth: 1200,
         margin: "0 auto",
-        padding: "60px 40px 100px",
+        paddingTop: 60,
+        paddingBottom: 100,
         borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
       }}
-      className="max-sm:px-6 max-sm:py-12"
+      className="px-10 max-sm:px-2.5 max-sm:py-12"
     >
       <div>
         <div

@@ -7,14 +7,15 @@ export function LandingFooter({ onGoApp }: LandingFooterProps) {
     <footer
       style={{
         borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
-        padding: "28px 40px",
+        paddingTop: 28,
+        paddingBottom: 28,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         maxWidth: 1200,
         margin: "0 auto",
       }}
-      className="max-sm:flex-col max-sm:gap-3 max-sm:px-6 max-sm:py-6 max-sm:text-center"
+      className="px-10 max-sm:flex-col max-sm:gap-3 max-sm:px-2.5 max-sm:py-6 max-sm:text-center"
     >
       <span
         style={{
