@@ -1165,7 +1165,7 @@ end
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
+graph LR
     subgraph "Domain Contexts"
         Zakat[Zakat Context<br/>Obligatory Charity]
         Donations[Donations Context<br/>Voluntary Giving]
@@ -1179,15 +1179,15 @@ graph TD
         Uploads[Uploads Context<br/>File Storage]
     end
 
-    Zakat -.->|Public API| Accounts
-    Zakat -.->|Public API| Notifications
-    Donations -.->|Public API| Accounts
-    Donations -.->|Public API| Notifications
-    Murabaha -.->|Public API| Accounts
-    Murabaha -.->|Public API| Notifications
-    Murabaha -.->|Public API| Uploads
-    Waqf -.->|Public API| Accounts
-    Waqf -.->|Public API| Notifications
+    Zakat -.-> Accounts
+    Zakat -.-> Notifications
+    Donations -.-> Accounts
+    Donations -.-> Notifications
+    Murabaha -.-> Accounts
+    Murabaha -.-> Notifications
+    Murabaha -.-> Uploads
+    Waqf -.-> Accounts
+    Waqf -.-> Notifications
 
     style Zakat fill:#0173B2,color:#fff
     style Donations fill:#0173B2,color:#fff

@@ -54,68 +54,86 @@ Phoenix applications can handle millions of concurrent connections, but performa
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
-    A[Performance Issue Identified] --> B{Bottleneck Type?}
-
-    B -->|Slow Queries| C[Database Optimization]
-    B -->|High Latency| D[Response Time]
-    B -->|Memory Issues| E[Memory Optimization]
-    B -->|CPU Intensive| F[Computation]
-
-    C --> C1{Query Analysis}
-    C1 -->|N+1 Queries| C2[Add Preloads]
-    C1 -->|Missing Index| C3[Add Database Index]
-    C1 -->|Slow Join| C4[Optimize Query Structure]
-    C1 -->|Large Dataset| C5[Add Pagination]
-
-    D --> D1{Latency Source?}
-    D1 -->|External API| D2[Async Tasks + Cache]
-    D1 -->|Multiple Queries| D3[Batch Operations]
-    D1 -->|Computation| D4[Move to Background Job]
-    D1 -->|Network| D5[Enable HTTP/2 + Compression]
-
-    E --> E1{Memory Type?}
-    E1 -->|Process Memory| E2[Reduce Process State]
-    E1 -->|Binary Leaks| E3[Binary Optimization]
-    E1 -->|Cache Overflow| E4[Add TTL to Cache]
-    E1 -->|Too Many Processes| E5[Pool Connections]
-
-    F --> F1{Computation Type?}
-    F1 -->|Repeated Calc| F2[Add Caching #40;ETS/Redis#41;]
-    F1 -->|Heavy Logic| F3[Optimize Algorithm]
-    F1 -->|Serialization| F4[Use :erlang.term_to_binary]
-    F1 -->|Parallel Work| F5[Use Task.async_stream]
-
-    C2 --> G[Profile After Fix]
-    C3 --> G
-    C4 --> G
-    C5 --> G
-    D2 --> G
-    D3 --> G
-    D4 --> G
-    D5 --> G
-    E2 --> G
-    E3 --> G
-    E4 --> G
-    E5 --> G
-    F2 --> G
-    F3 --> G
-    F4 --> G
-    F5 --> G
-
-    G --> H{Target Met?}
-    H -->|No| I[Identify Next Bottleneck]
-    H -->|Yes| J[Monitor in Production]
-    I --> B
+graph LR
+    A[Performance Issue] --> B{Bottleneck Type?}
+    B --> C[Database Optimization]
+    B --> D[Response Time]
+    B --> E[Memory Optimization]
+    B --> F[Computation]
 
     style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#029E73,color:#fff
+```
+
+Database and latency optimizations:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    C[Database Optimization] --> C1{Query Analysis}
+    C1 --> C2[Add Preloads]
+    C1 --> C3[Add Database Index]
+    C1 --> C4[Optimize Query Structure]
+    C1 --> C5[Add Pagination]
+
+    D[Response Time] --> D1{Latency Source?}
+    D1 --> D2[Async Tasks + Cache]
+    D1 --> D3[Batch Operations]
+    D1 --> D4[Move to Background Job]
+    D1 --> D5[Enable HTTP/2]
+
     style C fill:#DE8F05,color:#fff
     style D fill:#DE8F05,color:#fff
+    style C2 fill:#029E73,color:#fff
+    style C3 fill:#029E73,color:#fff
+    style C4 fill:#029E73,color:#fff
+    style C5 fill:#029E73,color:#fff
+    style D2 fill:#029E73,color:#fff
+    style D3 fill:#029E73,color:#fff
+    style D4 fill:#029E73,color:#fff
+    style D5 fill:#029E73,color:#fff
+```
+
+Memory and computation optimizations:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    E[Memory Optimization] --> E1{Memory Type?}
+    E1 --> E2[Reduce Process State]
+    E1 --> E3[Binary Optimization]
+    E2 --> G[Profile After Fix]
+    E3 --> G
+
+    F[Computation] --> F1{Computation Type?}
+    F1 --> F2[Add Caching #40;ETS/Redis#41;]
+    F1 --> F3[Optimize Algorithm]
+    F2 --> G
+    F3 --> G
+
+    G --> H{Target Met?}
+    H --> I[Identify Next Bottleneck]
+    H --> J[Monitor in Production]
+
     style E fill:#DE8F05,color:#fff
     style F fill:#DE8F05,color:#fff
     style G fill:#029E73,color:#fff
     style J fill:#CC78BC,color:#fff
+    style E2 fill:#029E73,color:#fff
+    style E3 fill:#029E73,color:#fff
+    style F2 fill:#029E73,color:#fff
+    style F3 fill:#029E73,color:#fff
 ```
+
+Additional memory strategies: Pool Connections (E1→Pool Connections→G), Add TTL to Cache (E1→Add TTL to Cache→G). Additional computation strategies: Optimize Algorithm (F1→Optimize Algorithm→G), Use :erlang.term_to_binary (F1→Use :erlang.term_to_binary→G), Use Task.async_stream (F1→Use Task.async_stream→G).
 
 **Optimization Process**:
 

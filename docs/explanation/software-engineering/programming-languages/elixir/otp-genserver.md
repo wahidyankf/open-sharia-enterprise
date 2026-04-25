@@ -225,7 +225,7 @@ end
 The following diagram illustrates how GenServer processes messages from its mailbox:
 
 ```mermaid
-graph LR
+graph TD
     Senders[Message Senders<br/>Multiple Clients]
     Mailbox[Process Mailbox<br/>FIFO Queue]
     GS[GenServer Process]

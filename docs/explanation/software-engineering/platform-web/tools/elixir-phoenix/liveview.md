@@ -156,33 +156,31 @@ end
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
+graph LR
     A[HTTP Request] --> B[mount/3 #40;HTTP#41;]
     B --> C{connected?}
-    C -->|false| D[Initial HTML Render]
+    C --> D[Initial HTML Render]
     D --> E[Send to Client]
     E --> F[WebSocket Connection]
     F --> G[mount/3 #40;WebSocket#41;]
     G --> H{connected?}
-    H -->|true| I[Subscribe to Events]
+    H --> I[Subscribe to Events]
     I --> J[handle_params/3]
     J --> K[render/1]
     K --> L[Interactive UI]
 
     L --> M{User Event?}
-    M -->|phx-click| N[handle_event/3]
-    M -->|phx-change| N
-    M -->|phx-submit| N
+    M --> N[handle_event/3]
     N --> O[Update Socket Assigns]
     O --> K
 
     L --> P{External Event?}
-    P -->|PubSub| Q[handle_info/2]
+    P --> Q[handle_info/2]
     Q --> O
 
     L --> R{Navigation?}
-    R -->|push_navigate| S[New LiveView]
-    R -->|push_patch| J
+    R --> S[New LiveView]
+    R --> J
 
     S --> A
 

@@ -88,26 +88,25 @@ end
 The following diagram shows the complete application supervision tree:
 
 ```mermaid
-graph TD
+graph LR
     App[Financial.Application<br/>Root Supervisor]
 
-    Repo[Financial.Repo<br/>Database Connection]
-    PubSub[Phoenix.PubSub<br/>Message Bus]
-    Registry[Registry<br/>Process Registry]
+    subgraph "Infrastructure"
+        Repo[Financial.Repo<br/>Database Connection]
+        PubSub[Phoenix.PubSub<br/>Message Bus]
+        Registry[Registry<br/>Process Registry]
+    end
 
-    CampSup[CampaignSupervisor]
-    PaySup[PaymentSupervisor]
-    DonSup[DonationSupervisor]
+    subgraph "Domain Supervisors"
+        CampSup[CampaignSupervisor]
+        PaySup[PaymentSupervisor]
+        DonSup[DonationSupervisor]
+    end
 
-    CampW1[Campaign Workers]
-    CampW2[Campaign Cache]
-    PayW1[Payment Gateway]
-    PayW2[Payment Processors]
-    DonW1[Donation Validators]
-    DonW2[Donation Processors]
-
-    Oban[Oban<br/>Background Jobs]
-    Endpoint[FinancialWeb.Endpoint<br/>Phoenix HTTP Server]
+    subgraph "Services"
+        Oban[Oban<br/>Background Jobs]
+        Endpoint[FinancialWeb.Endpoint<br/>Phoenix HTTP Server]
+    end
 
     App --> Repo
     App --> PubSub
@@ -118,12 +117,12 @@ graph TD
     App --> Oban
     App --> Endpoint
 
-    CampSup -.-> CampW1
-    CampSup -.-> CampW2
-    PaySup -.-> PayW1
-    PaySup -.-> PayW2
-    DonSup -.-> DonW1
-    DonSup -.-> DonW2
+    CampSup -.-> CampW1[Campaign Workers]
+    CampSup -.-> CampW2[Campaign Cache]
+    PaySup -.-> PayW1[Payment Gateway]
+    PaySup -.-> PayW2[Payment Processors]
+    DonSup -.-> DonW1[Donation Validators]
+    DonSup -.-> DonW2[Donation Processors]
 
     style App fill:#0173B2,stroke:#023B5A,color:#FFF
     style Repo fill:#029E73,stroke:#01593F,color:#FFF
@@ -423,7 +422,7 @@ graph TD
     Runtime --> Financial
     Crypto --> Financial
 
-    Note1[Start Order:<br/>1. kernel, stdlib<br/>2. logger, crypto, runtime_tools<br/>3. phoenix, ecto, postgrex<br/>4. financial]
+    Note1[Start Order:<br/>1. kernel, stdlib<br/>2. logger, crypto, runtime<br/>3. phoenix, ecto, postgrex<br/>4. financial]
 
     Financial -.-> Note1
 
@@ -461,37 +460,33 @@ end
 
 The following diagram shows how configuration is loaded at different stages:
 
+Compile-time: static values and development defaults baked into `.beam` files, cannot change without recompile. Runtime: environment variables, secrets from vault, can change between deployments.
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 flowchart TD
     START[Mix Project Start] --> COMPILE{Compile Time}
 
-    COMPILE -->|config.exs| BASE[Base Configuration<br/>Common settings]
-    COMPILE -->|dev.exs/test.exs/prod.exs| ENV[Environment-Specific<br/>Config merged into base]
+    COMPILE --> BASE[Base Configuration<br/>Common settings]
+    COMPILE --> ENV[Environment-Specific<br/>Config]
 
     BASE --> MERGED[Merged Compile-Time Config]
     ENV --> MERGED
 
-    MERGED --> BUILD[Application Built<br/>Config baked into .beam files]
+    MERGED --> BUILD[Application Built<br/>Config baked in .beam]
 
     BUILD --> RUNTIME{Runtime}
 
-    RUNTIME -->|runtime.exs| RUNTIME_CONFIG[Runtime Configuration<br/>System.get_env]
-    RUNTIME -->|Application.put_env| DYNAMIC[Dynamic Configuration<br/>At application start]
+    RUNTIME --> RUNTIME_CONFIG[Runtime Config<br/>System.get_env]
+    RUNTIME --> DYNAMIC[Dynamic Config<br/>At application start]
 
     RUNTIME_CONFIG --> FINAL[Final Configuration]
     DYNAMIC --> FINAL
 
     FINAL --> ACCESS[Application.get_env<br/>Application.fetch_env!]
 
-    ACCESS --> APP[Running Application<br/>Uses configuration]
-
-    Note1[Compile-Time:<br/>- Static values<br/>- Development defaults<br/>- Cannot change without recompile]
-    Note2[Runtime:<br/>- Environment variables<br/>- Secrets from vault<br/>- Can change between deployments]
-
-    COMPILE -.-> Note1
-    RUNTIME -.-> Note2
+    ACCESS --> APP[Running Application]
 
     style START fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style COMPILE fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -505,8 +500,6 @@ flowchart TD
     style FINAL fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style ACCESS fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style APP fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Note2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Structure
@@ -516,7 +509,7 @@ The following diagram shows the relationships between umbrella applications:
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
-graph TD
+graph LR
     ROOT[Financial Umbrella<br/>Root Project]
 
     CORE[financial_core<br/>Business Logic & Domain]
@@ -531,10 +524,30 @@ graph TD
     ROOT --> WORKER
     ROOT --> ANALYTICS
 
-    WEB -->|depends on| CORE
-    API -->|depends on| CORE
-    WORKER -->|depends on| CORE
-    ANALYTICS -->|depends on| CORE
+    WEB --> CORE
+    API --> CORE
+    WORKER --> CORE
+    ANALYTICS --> CORE
+
+    style ROOT fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CORE fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WEB fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style API fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WORKER fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ANALYTICS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+Dependency rule: `financial_core` has no dependencies on other apps. All other apps (`financial_web`, `financial_api`, `financial_worker`, `financial_analytics`) depend on Core. Web/API/Worker/Analytics are independent of each other.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph LR
+    CORE[financial_core]
+    WEB[financial_web]
+    API[financial_api]
+    WORKER[financial_worker]
+    ANALYTICS[financial_analytics]
 
     CORE_MODULES[Campaigns<br/>Donations<br/>Payments<br/>Zakat<br/>Repo]
     WEB_MODULES[Controllers<br/>LiveViews<br/>Templates<br/>Endpoint]
@@ -548,11 +561,6 @@ graph TD
     WORKER -.-> WORKER_MODULES
     ANALYTICS -.-> ANALYTICS_MODULES
 
-    Note1[Dependency Rule:<br/>Core has NO dependencies on other apps<br/>All other apps depend on Core<br/>Web/API/Worker/Analytics are independent]
-
-    ROOT -.-> Note1
-
-    style ROOT fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CORE fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style WEB fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style API fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -563,7 +571,6 @@ graph TD
     style API_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style WORKER_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style ANALYTICS_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ```

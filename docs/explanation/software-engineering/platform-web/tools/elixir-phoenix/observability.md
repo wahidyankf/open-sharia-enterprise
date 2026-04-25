@@ -311,18 +311,9 @@ end
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    subgraph "Application Layer"
-        CTX[Context Modules]
-        CH[Channels/LiveView]
-        CTRL[Controllers]
-        BG[Background Jobs]
-    end
-
-    subgraph "Phoenix Framework"
-        EP[Endpoint]
-        RT[Router]
-        REPO[Ecto.Repo]
-        LV[LiveView]
+    subgraph "Event Sources"
+        APP[App Code<br/>Context/Channel/Controller]
+        PHX[Phoenix Framework<br/>Endpoint/Router/Repo]
     end
 
     subgraph "Telemetry Core"
@@ -330,34 +321,24 @@ graph TD
         TH[Telemetry Handlers]
     end
 
-    subgraph "Metrics & Reporting"
+    subgraph "Backends"
         TM[Telemetry.Metrics]
-        LD[Phoenix.LiveDashboard]
         PROM[Prometheus Exporter]
         OTEL[OpenTelemetry]
         SENT[Sentry]
     end
 
-    subgraph "Storage & Visualization"
+    subgraph "Storage"
         PS[(Prometheus)]
         GF[Grafana]
         JAEG[Jaeger Tracing]
-        LOG[Structured Logs]
     end
 
-    CTX -->|custom events| TE
-    CH -->|phoenix.channel.*| TE
-    CTRL -->|phoenix.router.*| TE
-    BG -->|custom events| TE
-
-    EP -->|phoenix.endpoint.*| TE
-    RT -->|phoenix.router.*| TE
-    REPO -->|repo.query.*| TE
-    LV -->|phoenix.live_view.*| TE
+    APP --> TE
+    PHX --> TE
 
     TE --> TH
     TH --> TM
-    TH --> LD
     TH --> PROM
     TH --> OTEL
     TH --> SENT
@@ -365,13 +346,11 @@ graph TD
     PROM --> PS
     PS --> GF
     OTEL --> JAEG
-    TM --> LD
-    TH --> LOG
 
-    style CTX fill:#CC78BC,color:#fff
+    style APP fill:#CC78BC,color:#fff
+    style PHX fill:#CC78BC,color:#fff
     style TE fill:#DE8F05,color:#fff
     style TH fill:#DE8F05,color:#fff
-    style LD fill:#029E73,color:#fff
     style PROM fill:#029E73,color:#fff
     style PS fill:#0173B2,color:#fff
     style GF fill:#0173B2,color:#fff

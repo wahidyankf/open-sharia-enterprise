@@ -199,7 +199,7 @@ financial_platform/
 
 ```mermaid
 %%{init: {'theme':'base'}}%%
-graph TD
+graph LR
     App[Financial Platform<br/>Umbrella Application]
 
     subgraph DonationBC["Donation Bounded Context"]
@@ -216,6 +216,31 @@ graph TD
         ZakS[Zakat Service]
     end
 
+    App --> DonationBC
+    App --> ZakatBC
+
+    DonD --> DonE
+    DonD --> DonR
+    DonD --> DonS
+
+    ZakD --> ZakC
+    ZakD --> ZakN
+    ZakD --> ZakS
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    class App blue
+    class DonD,ZakD teal
+```
+
+Each context owns its database tables, domain logic, and has clear API boundaries.
+
+```mermaid
+%%{init: {'theme':'base'}}%%
+graph LR
+    App[Financial Platform<br/>Umbrella Application]
+
     subgraph PaymentBC["Payment Bounded Context"]
         PayD[Payment Domain]
         PayT[Transaction Entity]
@@ -229,39 +254,22 @@ graph TD
         WebL[LiveViews]
     end
 
-    App --> DonationBC
-    App --> ZakatBC
     App --> PaymentBC
     App --> WebLayer
 
-    WebLayer -.->|uses API| DonD
-    WebLayer -.->|uses API| ZakD
-    WebLayer -.->|uses API| PayD
-
-    DonD --> DonE
-    DonD --> DonR
-    DonD --> DonS
-
-    ZakD --> ZakC
-    ZakD --> ZakN
-    ZakD --> ZakS
+    WebLayer -.-> PayD
 
     PayD --> PayT
     PayD --> PayG
     PayD --> PayR
-
-    Note1[Each context:<br/>• Own database tables<br/>• Own domain logic<br/>• Clear API boundaries]
-
-    App -.-> Note1
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
 
     class App blue
-    class DonD,ZakD,PayD teal
+    class PayD teal
     class WebLayer orange
-    class Note1 blue
 ```
 
 ### Context Mapping
@@ -349,53 +357,62 @@ end
 
 ```mermaid
 %%{init: {'theme':'base'}}%%
-graph TD
+graph LR
     subgraph SharedKernel["Shared Kernel Pattern"]
         SK1[Donation Context]
         SK2[Zakat Context]
         SKTypes[Shared Types:<br/>Money, DonorId]
-        SK1 -.->|shares| SKTypes
-        SK2 -.->|shares| SKTypes
+        SK1 -.-> SKTypes
+        SK2 -.-> SKTypes
     end
 
     subgraph ACL["Anti-Corruption Layer ACL"]
         ACL1[Donation Context]
         ACLLayer[Translation Layer<br/>PaymentACL]
         ACL2[Payment Context<br/>External]
-        ACL1 -->|translates via| ACLLayer
-        ACLLayer -->|protects from| ACL2
-    end
-
-    subgraph PublishedLang["Published Language"]
-        PL1[Donation Context]
-        PLEvents[Domain Events<br/>JSON API]
-        PL2[Analytics Context]
-        PL3[Notification Context]
-        PL1 -->|publishes| PLEvents
-        PLEvents -.->|consumes| PL2
-        PLEvents -.->|consumes| PL3
-    end
-
-    subgraph CustomerSupplier["Customer-Supplier"]
-        CS1[Campaign Context<br/>Upstream]
-        CSAPI[Well-defined API]
-        CS2[Donation Context<br/>Downstream]
-        CS1 -->|provides| CSAPI
-        CSAPI -->|serves| CS2
+        ACL1 --> ACLLayer
+        ACLLayer --> ACL2
     end
 
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 
-    class SK1,SK2,ACL1,PL1,CS1,CS2 teal
-    class SKTypes,CSAPI blue
+    class SK1,SK2,ACL1 teal
+    class SKTypes blue
     class ACLLayer orange
     class ACL2 purple
+```
+
+```mermaid
+%%{init: {'theme':'base'}}%%
+graph LR
+    subgraph PublishedLang["Published Language"]
+        PL1[Donation Context]
+        PLEvents[Domain Events<br/>JSON API]
+        PL2[Analytics Context]
+        PL3[Notification Context]
+        PL1 --> PLEvents
+        PLEvents -.-> PL2
+        PLEvents -.-> PL3
+    end
+
+    subgraph CustomerSupplier["Customer-Supplier"]
+        CS1[Campaign Context<br/>Upstream]
+        CSAPI[Well-defined API]
+        CS2[Donation Context<br/>Downstream]
+        CS1 --> CSAPI
+        CSAPI --> CS2
+    end
+
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    class PL1,CS1,CS2 teal
+    class CSAPI,PLEvents blue
     class PL2,PL3 brown
-    class PLEvents blue
 ```
 
 ### Ubiquitous Language

@@ -54,7 +54,7 @@ Channels operate on a publish-subscribe model with several key components:
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
+graph LR
     subgraph "Client Layer"
         C1[WebSocket Client 1]
         C2[WebSocket Client 2]

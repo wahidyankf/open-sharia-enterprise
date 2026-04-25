@@ -65,6 +65,8 @@ Phoenix uses Elixir's configuration system with compile-time (`config.exs`) and 
 
 ### Configuration Loading Hierarchy
 
+Compile-time (Mix): `config.exs` → environment-specific config → merged → compiled into `.beam` files. Runtime (Release): `runtime.exs` loads environment variables to override compiled config.
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
@@ -73,24 +75,36 @@ graph TD
     A[Application Startup] --> B[Load config/config.exs]
     B --> C{MIX_ENV?}
 
-    C -->|dev| D[Load config/dev.exs]
-    C -->|test| E[Load config/test.exs]
-    C -->|prod| F[Load config/prod.exs]
+    C --> D[Load dev.exs]
+    C --> E[Load test.exs]
+    C --> F[Load prod.exs]
 
     D --> G[Merge Configurations]
     E --> G
     F --> G
 
     G --> H[Compile Application]
-
     H --> I[Release Build]
-    I --> J[Load config/runtime.exs]
 
-    J --> K{Environment Variables?}
-    K -->|DATABASE_URL| L[Override Database Config]
-    K -->|SECRET_KEY_BASE| M[Override Secret Config]
-    K -->|PHX_HOST| N[Override Endpoint Config]
-    K -->|Custom Vars| O[Override Custom Config]
+    style B fill:#0173B2,color:#fff
+    style D fill:#0173B2,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#0173B2,color:#fff
+    style H fill:#029E73,color:#fff
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    I[Release Build] --> J[Load config/runtime.exs]
+    J --> K{Env Variables?}
+
+    K --> L[Override Database]
+    K --> M[Override Secret]
+    K --> N[Override Endpoint]
+    K --> O[Override Custom]
 
     L --> P[Final Application Config]
     M --> P
@@ -100,31 +114,6 @@ graph TD
     P --> Q[Application.get_env#40;#41;]
     Q --> R[Running Application]
 
-    subgraph "Compile Time #40;Mix#41;"
-        B
-        C
-        D
-        E
-        F
-        G
-        H
-    end
-
-    subgraph "Runtime #40;Release#41;"
-        I
-        J
-        K
-        L
-        M
-        N
-        O
-        P
-    end
-
-    style B fill:#0173B2,color:#fff
-    style D fill:#0173B2,color:#fff
-    style E fill:#0173B2,color:#fff
-    style F fill:#0173B2,color:#fff
     style J fill:#029E73,color:#fff
     style L fill:#029E73,color:#fff
     style M fill:#029E73,color:#fff
