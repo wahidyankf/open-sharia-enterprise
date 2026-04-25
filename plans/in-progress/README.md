@@ -7,8 +7,6 @@ Active project plans currently being worked on.
 - [`2026-04-25__organiclever-web-app`](./2026-04-25__organiclever-web-app/README.md) —
   OrganicLever web app v0: local-first life-event tracker (workouts, quick logs, analytics,
   bilingual UI) behind the landing page CTA
-- [`2026-04-25__organiclever-web-landing-uikit`](./2026-04-25__organiclever-web-landing-uikit/README.md) —
-  OrganicLever landing page UI kit: Textarea + Badge ts-ui additions (prerequisite for above)
 
 ## Instructions
 
