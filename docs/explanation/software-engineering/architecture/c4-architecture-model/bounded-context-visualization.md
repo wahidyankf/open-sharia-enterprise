@@ -116,18 +116,18 @@ This document defines **authoritative standards** for visualizing DDD bounded co
 ### System Context (Enterprise Context Map)
 
 ```mermaid
-graph TD
+graph LR
     ZC["Zakat Calculation<br/>Context"]:::blue
     DM["Donation Management<br/>Context"]:::blue
     BR["Beneficiary Registry<br/>Context"]:::blue
     PM["Payment<br/>Context"]:::teal
     CompRep["Compliance Reporting<br/>(External)"]:::orange
 
-    DM -->|"Requests beneficiary<br/>data<br/>[Customer/Supplier]<br/>[HTTPS/REST]"| BR
-    ZC -->|"Collaborates on<br/>payment processing<br/>[Partnership]<br/>[HTTPS/REST]"| PM
-    DM -->|"Collaborates on<br/>payment processing<br/>[Partnership]<br/>[HTTPS/REST]"| PM
-    ZC -->|"Reports obligations<br/>[Conformist]<br/>[HTTPS/JSON]"| CompRep
-    DM -->|"Reports distributions<br/>[Conformist]<br/>[HTTPS/JSON]"| CompRep
+    DM --> BR
+    ZC --> PM
+    DM --> PM
+    ZC --> CompRep
+    DM --> CompRep
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef teal fill:#029E73,stroke:#000,color:#FFF
@@ -136,29 +136,38 @@ graph TD
 
 ### Container Diagram (Single System with Multiple Contexts)
 
+**Frontend and API layer:**
+
 ```mermaid
-graph TD
+graph LR
     ZakatWeb["Zakat Web UI<br/>[Container: Next.js]<br/>User interface"]:::blue
+    ZakatAPI["Zakat Calculation Context<br/>[Container: Spring Boot]<br/>Calculate Zakat"]:::blue
+    DonationAPI["Donation Management<br/>[Container: Spring Boot]<br/>Manage campaigns"]:::blue
+    BeneficiaryAPI["Beneficiary Registry<br/>[Container: Spring Boot]<br/>Register beneficiaries"]:::blue
 
-    ZakatAPI["Zakat Calculation Context<br/>[Container: Spring Boot]<br/>Calculate Zakat obligations"]:::blue
+    ZakatWeb --> ZakatAPI
+    ZakatWeb --> DonationAPI
+    DonationAPI --> BeneficiaryAPI
+
+    classDef blue fill:#0173B2,stroke:#000,color:#FFF
+```
+
+**Persistence and messaging layer:**
+
+```mermaid
+graph LR
+    ZakatAPI["Zakat Calculation<br/>[Container: Spring Boot]"]:::blue
+    DonationAPI["Donation Management<br/>[Container: Spring Boot]"]:::blue
     ZakatDB["Zakat Database<br/>[Container: PostgreSQL]<br/>Zakat assessment storage"]:::teal
-
-    DonationAPI["Donation Management Context<br/>[Container: Spring Boot]<br/>Manage campaigns"]:::blue
     DonationDB["Donation Database<br/>[Container: PostgreSQL]<br/>Campaign storage"]:::teal
-
-    BeneficiaryAPI["Beneficiary Registry Context<br/>[Container: Spring Boot]<br/>Register beneficiaries"]:::blue
     BeneficiaryDB["Beneficiary Database<br/>[Container: PostgreSQL]<br/>Beneficiary storage"]:::teal
-
     MQ["Event Bus<br/>[Container: RabbitMQ]<br/>Domain events"]:::teal
 
-    ZakatWeb -->|"Makes API calls<br/>[HTTPS/REST]"| ZakatAPI
-    ZakatWeb -->|"Makes API calls<br/>[HTTPS/REST]"| DonationAPI
-    ZakatAPI -->|"Reads/writes<br/>[TCP/SQL]"| ZakatDB
-    DonationAPI -->|"Requests beneficiary data<br/>[Customer/Supplier]<br/>[HTTPS/REST]"| BeneficiaryAPI
-    DonationAPI -->|"Reads/writes<br/>[TCP/SQL]"| DonationDB
-    BeneficiaryAPI -->|"Reads/writes<br/>[TCP/SQL]"| BeneficiaryDB
-    ZakatAPI -->|"Publishes ZakatCalculated<br/>[AMQP]"| MQ
-    DonationAPI -->|"Publishes DonationReceived<br/>[AMQP]"| MQ
+    ZakatAPI --> ZakatDB
+    ZakatAPI --> MQ
+    DonationAPI --> DonationDB
+    DonationAPI --> BeneficiaryDB
+    DonationAPI --> MQ
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef teal fill:#029E73,stroke:#000,color:#FFF
@@ -173,7 +182,7 @@ graph TD
 **Example: Zakat Calculation Context Internals**
 
 ```mermaid
-graph TD
+graph LR
     Controller["Zakat Controller<br/>[Component: REST Controller]<br/>HTTP endpoints"]:::blue
     CalcService["Calculation Service<br/>[Component: Domain Service]<br/>Orchestrates calculations"]:::blue
     Assessment["Assessment Aggregate<br/>[Component: Aggregate Root]<br/>Zakat assessment lifecycle"]:::blue
@@ -181,11 +190,11 @@ graph TD
     AssessmentRepo["Assessment Repository<br/>[Component: Repository]<br/>Persistence"]:::teal
     EventPublisher["Event Publisher<br/>[Component: Infrastructure]<br/>Domain events"]:::teal
 
-    Controller -->|"Calls"| CalcService
-    CalcService -->|"Creates/updates"| Assessment
-    CalcService -->|"Uses"| Calculator
-    Assessment -->|"Persists via"| AssessmentRepo
-    Assessment -->|"Publishes events via"| EventPublisher
+    Controller --> CalcService
+    CalcService --> Assessment
+    CalcService --> Calculator
+    Assessment --> AssessmentRepo
+    Assessment --> EventPublisher
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef teal fill:#029E73,stroke:#000,color:#FFF

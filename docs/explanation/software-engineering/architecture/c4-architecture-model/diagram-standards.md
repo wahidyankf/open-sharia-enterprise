@@ -139,7 +139,7 @@ Donor -->|"Submits Zakat<br/>calculation<br/>[HTTPS/JSON]"| ZMS
 **Example Context Diagram**:
 
 ```mermaid
-graph TD
+graph LR
     ZMS["Zakat Management System"]:::blue
     Donor["Donor<br/>(Person)"]:::orange
     Beneficiary["Beneficiary<br/>(Person)"]:::orange
@@ -147,12 +147,12 @@ graph TD
     PayGW["Payment Gateway<br/>(External System)"]:::teal
     CompRep["Compliance Reporting<br/>(External System)"]:::teal
 
-    Donor -->|"Submits Zakat<br/>calculation<br/>[HTTPS/JSON]"| ZMS
-    ZMS -->|"Displays Zakat<br/>obligations<br/>[HTTPS/JSON]"| Donor
-    Admin -->|"Manages<br/>distributions<br/>[HTTPS/JSON]"| ZMS
-    ZMS -->|"Processes<br/>payments<br/>[HTTPS/JSON]"| PayGW
-    ZMS -->|"Reports<br/>distributions<br/>[HTTPS/JSON]"| CompRep
-    ZMS -->|"Disburses funds<br/>[HTTPS/JSON]"| Beneficiary
+    Donor --> ZMS
+    ZMS --> Donor
+    Admin --> ZMS
+    ZMS --> PayGW
+    ZMS --> CompRep
+    ZMS --> Beneficiary
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef orange fill:#DE8F05,stroke:#000,color:#000
@@ -201,18 +201,18 @@ All Container diagrams MUST include:
 **Example Container Diagram**:
 
 ```mermaid
-graph TD
+graph LR
     Web["Zakat Web UI<br/>[Container: Next.js]<br/>User interface"]:::blue
     API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic"]:::blue
     CalcService["Calculation Service<br/>[Container: Spring Boot]<br/>Zakat calculations"]:::blue
     DB["Zakat Database<br/>[Container: PostgreSQL]<br/>Assessment storage"]:::teal
     MQ["Message Broker<br/>[Container: RabbitMQ]<br/>Event distribution"]:::teal
 
-    Web -->|"Makes API calls<br/>[HTTPS/REST]"| API
-    API -->|"Reads/writes<br/>[TCP/SQL]"| DB
-    API -->|"Calls calculation<br/>[HTTPS/REST]"| CalcService
-    CalcService -->|"Publishes events<br/>[AMQP]"| MQ
-    API -->|"Subscribes to events<br/>[AMQP]"| MQ
+    Web --> API
+    API --> DB
+    API --> CalcService
+    CalcService --> MQ
+    API --> MQ
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
     classDef teal fill:#029E73,stroke:#000,color:#FFF

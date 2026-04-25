@@ -215,7 +215,7 @@ C4 diagrams MUST pass the following validation checks:
 ### System Context
 
 ```mermaid
-graph TD
+graph LR
     ZMS["Zakat Management System"]:::blue
     Donor["Donor<br/>(Person)"]:::orange
     Beneficiary["Beneficiary<br/>(Person)"]:::orange

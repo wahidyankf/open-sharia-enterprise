@@ -16,7 +16,7 @@ Deployment architecture, environment branches, and Vercel configuration for the 
 ## Deployment Diagram
 
 ```mermaid
-graph TB
+graph LR
     subgraph "Source Control"
         MAIN[main branch<br/>Trunk-Based Dev]
         PROD_OSE[prod-oseplatform-web<br/>Deploy Only]

@@ -20,7 +20,7 @@ Shows the internal components within each container. Components are groupings of
 ### oseplatform-web Components (Hugo Static Site)
 
 ```mermaid
-graph TB
+graph LR
     subgraph "Content"
         MD_CONTENT[Markdown Content<br/>Platform documentation]
         FRONTMATTER_OSE[Frontmatter<br/>Page metadata]
