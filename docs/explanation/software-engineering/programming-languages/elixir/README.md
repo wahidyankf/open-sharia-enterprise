@@ -173,38 +173,81 @@ OSE Platform follows a three-tier Elixir versioning strategy:
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
+graph LR
     A["Elixir Standards Index<br/>#40;OSE Platform#41;"]:::blue
+
     B["Core Standards"]:::orange
-    C["Specialized Standards"]:::teal
-    D["Learning Resources<br/>#40;AyoKoding#41;"]:::purple
+    E["Coding Standards"]:::orange
+    F["Framework Integration"]:::orange
+    G["Testing Standards"]:::orange
+    H["Build & Quality"]:::orange
 
     A --> B
-    A --> C
-    A --> D
-
-    B --> E["Coding Standards"]:::orange
-    B --> F["Framework Integration"]:::orange
-    B --> G["Testing Standards"]:::orange
-    B --> H["Build & Quality"]:::orange
-
-    C --> I["Security Standards"]:::teal
-    C --> J["Concurrency Standards"]:::teal
-    C --> K["DDD Standards"]:::teal
-    C --> L["Error Handling"]:::teal
-    C --> M["Performance Standards"]:::teal
-    C --> N["Functional Programming"]:::teal
-    C --> O["Type Safety"]:::teal
-    C --> P["Protocols & Behaviours"]:::teal
-    C --> Q["FSM Standards"]:::teal
-
-    D --> R["By Example<br/>#40;75-85 examples#41;"]:::purple
-    D --> S["In Practice<br/>#40;Production patterns#41;"]:::purple
+    B --> E
+    B --> F
+    B --> G
+    B --> H
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Elixir Standards Index<br/>#40;OSE Platform#41;"]:::blue
+
+    C["Specialized Standards"]:::teal
+    I["Security Standards"]:::teal
+    J["Concurrency Standards"]:::teal
+    K["DDD Standards"]:::teal
+    L["Error Handling"]:::teal
+    M["Performance Standards"]:::teal
+    N["Functional Programming"]:::teal
+    O["Type Safety"]:::teal
+    P["Protocols & Behaviours"]:::teal
+    Q["FSM Standards"]:::teal
+
+    D["Learning Resources<br/>#40;AyoKoding#41;"]:::purple
+    R["By Example<br/>#40;75-85 examples#41;"]:::purple
+    S["In Practice<br/>#40;Production patterns#41;"]:::purple
+
+    A --> C
+    C --> I
+    C --> J
+    C --> K
+    C --> L
+
+    A --> D
+    D --> R
+    D --> S
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    C["Specialized Standards"]:::teal
+    M["Performance Standards"]:::teal
+    N["Functional Programming"]:::teal
+    O["Type Safety"]:::teal
+    P["Protocols & Behaviours"]:::teal
+    Q["FSM Standards"]:::teal
+
+    C --> M
+    C --> N
+    C --> O
+    C --> P
+    C --> Q
+
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Primary Use Cases in OSE Platform

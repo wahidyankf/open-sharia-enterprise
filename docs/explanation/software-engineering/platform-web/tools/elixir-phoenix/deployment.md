@@ -350,80 +350,99 @@ docker-compose down
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
-graph TD
+graph LR
     subgraph "External Traffic"
         U[Users]
         LB[Load Balancer]
     end
 
-    subgraph "Kubernetes Cluster"
-        subgraph "Ingress Layer"
-            ING[Ingress Controller<br/>nginx/Traefik]
-        end
-
-        subgraph "Application Layer"
-            SVC[Service<br/>ClusterIP]
-            POD1[Phoenix Pod 1<br/>4000:4000]
-            POD2[Phoenix Pod 2<br/>4000:4000]
-            POD3[Phoenix Pod 3<br/>4000:4000]
-        end
-
-        subgraph "Data Layer"
-            PGSVC[PostgreSQL Service]
-            PG[(PostgreSQL<br/>StatefulSet)]
-            REDISSVC[Redis Service]
-            RD[(Redis<br/>StatefulSet)]
-        end
-
-        subgraph "Configuration"
-            CM[ConfigMaps<br/>Runtime Config]
-            SEC[Secrets<br/>Credentials]
-        end
-
-        subgraph "Storage"
-            PV[Persistent Volumes]
-        end
+    subgraph "Ingress Layer"
+        ING[Ingress Controller<br/>nginx/Traefik]
     end
 
-    U -->|HTTPS| LB
-    LB -->|HTTP/WS| ING
-    ING -->|Route| SVC
-    SVC -->|Round Robin| POD1
-    SVC -->|Round Robin| POD2
-    SVC -->|Round Robin| POD3
+    subgraph "Application Layer"
+        SVC[Service<br/>ClusterIP]
+        POD1[Phoenix Pod 1<br/>4000:4000]
+        POD2[Phoenix Pod 2<br/>4000:4000]
+        POD3[Phoenix Pod 3<br/>4000:4000]
+    end
 
-    POD1 -.->|Env Vars| CM
-    POD1 -.->|Secrets| SEC
-    POD2 -.->|Env Vars| CM
-    POD2 -.->|Secrets| SEC
-    POD3 -.->|Env Vars| CM
-    POD3 -.->|Secrets| SEC
+    U --> LB
+    LB --> ING
+    ING --> SVC
+    SVC --> POD1
+    SVC --> POD2
+    SVC --> POD3
 
-    POD1 -->|SQL| PGSVC
-    POD2 -->|SQL| PGSVC
-    POD3 -->|SQL| PGSVC
-    PGSVC --> PG
-
-    POD1 -->|Cache| REDISSVC
-    POD2 -->|Cache| REDISSVC
-    POD3 -->|Cache| REDISSVC
-    REDISSVC --> RD
-
-    PG -.->|Mount| PV
-    RD -.->|Mount| PV
-
-    POD1 -.Clustering.-> POD2
-    POD2 -.Clustering.-> POD3
-    POD3 -.Clustering.-> POD1
+    POD1 -.-> POD2
+    POD2 -.-> POD3
+    POD3 -.-> POD1
 
     style U fill:#0173B2,color:#fff
     style LB fill:#0173B2,color:#fff
     style ING fill:#029E73,color:#fff
+    style SVC fill:#029E73,color:#fff
     style POD1 fill:#DE8F05,color:#fff
     style POD2 fill:#DE8F05,color:#fff
     style POD3 fill:#DE8F05,color:#fff
+```
+
+Pods connect to data and configuration layers:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    subgraph "Application Pods"
+        POD1[Phoenix Pod 1]
+        POD2[Phoenix Pod 2]
+        POD3[Phoenix Pod 3]
+    end
+
+    subgraph "Data Layer"
+        PGSVC[PostgreSQL Service]
+        PG[(PostgreSQL<br/>StatefulSet)]
+        REDISSVC[Redis Service]
+        RD[(Redis<br/>StatefulSet)]
+        PV[Persistent Volumes]
+    end
+
+    subgraph "Configuration"
+        CM[ConfigMaps<br/>Runtime Config]
+        SEC[Secrets<br/>Credentials]
+    end
+
+    POD1 -.-> CM
+    POD1 -.-> SEC
+    POD2 -.-> CM
+    POD2 -.-> SEC
+    POD3 -.-> CM
+    POD3 -.-> SEC
+
+    POD1 --> PGSVC
+    POD2 --> PGSVC
+    POD3 --> PGSVC
+    PGSVC --> PG
+
+    POD1 --> REDISSVC
+    POD2 --> REDISSVC
+    POD3 --> REDISSVC
+    REDISSVC --> RD
+
+    PG -.-> PV
+    RD -.-> PV
+
+    style POD1 fill:#DE8F05,color:#fff
+    style POD2 fill:#DE8F05,color:#fff
+    style POD3 fill:#DE8F05,color:#fff
+    style PGSVC fill:#029E73,color:#fff
     style PG fill:#CC78BC,color:#fff
+    style REDISSVC fill:#029E73,color:#fff
     style RD fill:#CC78BC,color:#fff
+    style CM fill:#0173B2,color:#fff
+    style SEC fill:#0173B2,color:#fff
+    style PV fill:#0173B2,color:#fff
 ```
 
 **Architecture Components**:

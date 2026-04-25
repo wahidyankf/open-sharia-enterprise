@@ -185,21 +185,21 @@ The following diagram illustrates REQUIRED runtime dispatch behavior:
 
 ```mermaid
 graph TD
-    Call["Protocol Call<br/>Auditable.audit_trail#40;entity#41;"]
+    Call["Protocol Call<br/>Auditable.audit_trail#40;e#41;"]
     TypeDetect["Runtime Type Detection"]
 
-    Donation["Donation Implementation<br/>defimpl Auditable, for: Donation"]
-    Zakat["ZakatPayment Implementation<br/>defimpl Auditable, for: ZakatPayment"]
-    Campaign["Campaign Implementation<br/>defimpl Auditable, for: Campaign"]
-    Fallback["Fallback: Any<br/>defimpl Auditable, for: Any"]
+    Donation["Donation Impl<br/>defimpl Auditable<br/>for: Donation"]
+    Zakat["ZakatPayment Impl<br/>defimpl Auditable<br/>for: ZakatPayment"]
+    Campaign["Campaign Impl<br/>defimpl Auditable<br/>for: Campaign"]
+    Fallback["Fallback: Any<br/>defimpl Auditable<br/>for: Any"]
 
     Result["Execute Implementation<br/>Return Result"]
 
     Call --> TypeDetect
-    TypeDetect -->|%Donation{}| Donation
-    TypeDetect -->|%ZakatPayment{}| Zakat
-    TypeDetect -->|%Campaign{}| Campaign
-    TypeDetect -->|Other types| Fallback
+    TypeDetect --> Donation
+    TypeDetect --> Zakat
+    TypeDetect --> Campaign
+    TypeDetect --> Fallback
 
     Donation --> Result
     Zakat --> Result
@@ -398,18 +398,14 @@ end
 The following diagram illustrates REQUIRED compile-time verification:
 
 ```mermaid
-graph TD
-    Behaviour["PaymentGateway Behaviour<br/>@callback Definitions"]
+graph LR
+    Behaviour["PaymentGateway<br/>@callback Definitions"]
 
-    CB1["@callback init_payment<br/>amount, metadata<br/>→ {:ok, tx_id} | {:error, reason}"]
-    CB2["@callback process_payment<br/>transaction_id<br/>→ {:ok, result} | {:error, reason}"]
-    CB3["@callback refund_payment<br/>transaction_id, amount<br/>→ {:ok, refund_id} | {:error, reason}"]
-    CB4["@callback get_status<br/>transaction_id<br/>→ {:ok, status} | {:error, reason}"]
-    CB5["@callback validate_credentials<br/>credentials<br/>→ :ok | {:error, reason}"]
-
-    Impl1["Stripe Implementation<br/>@behaviour PaymentGateway<br/>@impl true"]
-    Impl2["Midtrans Implementation<br/>@behaviour PaymentGateway<br/>@impl true"]
-    Impl3["Custom Gateway<br/>@behaviour PaymentGateway<br/>@impl true"]
+    CB1["@callback init_payment<br/>→ {:ok, tx_id}"]
+    CB2["@callback process_payment<br/>→ {:ok, result}"]
+    CB3["@callback refund_payment<br/>→ {:ok, refund_id}"]
+    CB4["@callback get_status<br/>→ {:ok, status}"]
+    CB5["@callback validate_credentials<br/>→ :ok | error"]
 
     Behaviour --> CB1
     Behaviour --> CB2
@@ -417,37 +413,32 @@ graph TD
     Behaviour --> CB4
     Behaviour --> CB5
 
-    CB1 -.->|MUST implement| Impl1
-    CB2 -.->|MUST implement| Impl1
-    CB3 -.->|MUST implement| Impl1
-    CB4 -.->|MUST implement| Impl1
-    CB5 -.->|MUST implement| Impl1
-
-    CB1 -.->|MUST implement| Impl2
-    CB2 -.->|MUST implement| Impl2
-    CB3 -.->|MUST implement| Impl2
-    CB4 -.->|MUST implement| Impl2
-    CB5 -.->|MUST implement| Impl2
-
-    CB1 -.->|MUST implement| Impl3
-    CB2 -.->|MUST implement| Impl3
-    CB3 -.->|MUST implement| Impl3
-    CB4 -.->|MUST implement| Impl3
-    CB5 -.->|MUST implement| Impl3
-
-    Note1["Compile-time verification:<br/>Missing callbacks = compiler error"]
-    Behaviour -.-> Note1
-
     style Behaviour fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CB1 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CB2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CB3 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CB4 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CB5 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+Each implementation (Stripe, Midtrans, Custom Gateway) MUST implement all five callbacks using `@behaviour PaymentGateway` and `@impl true`. Missing callbacks cause a compiler error at compile time (compile-time verification).
+
+```mermaid
+graph LR
+    Callbacks["All 5 Callbacks<br/>MUST implement"]
+
+    Impl1["Stripe<br/>@behaviour PaymentGateway"]
+    Impl2["Midtrans<br/>@behaviour PaymentGateway"]
+    Impl3["Custom Gateway<br/>@behaviour PaymentGateway"]
+
+    Callbacks -.-> Impl1
+    Callbacks -.-> Impl2
+    Callbacks -.-> Impl3
+
+    style Callbacks fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Impl1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Impl2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Impl3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Optional Callbacks

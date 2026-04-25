@@ -215,7 +215,7 @@ sequenceDiagram
 The diagram below shows how each supervision strategy behaves when Worker C crashes:
 
 ```mermaid
-graph TD
+graph LR
     subgraph one_for_one["one_for_one Strategy"]
         A1[Worker A ✅]
         B1[Worker B ✅]
@@ -325,7 +325,7 @@ Financial.Application (Supervisor)
 The following diagram illustrates the hierarchical supervision tree architecture:
 
 ```mermaid
-graph TD
+graph LR
     App[Financial.Application<br/>Supervisor]
     Repo[Financial.Repo<br/>Database]
     CampSup[CampaignSupervisor<br/>Supervisor]
@@ -576,7 +576,7 @@ end
 The following diagram illustrates how restart intensity limits work:
 
 ```mermaid
-graph LR
+graph TD
     subgraph Normal["Normal Operation (Within Limits)"]
         T1[0s: Crash 1 ✅] --> T2[20s: Crash 2 ✅]
         T2 --> T3[40s: Crash 3 ✅]
