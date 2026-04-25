@@ -26,10 +26,7 @@ and `Badge` from ts-ui are consumed throughout this plan.
 
 ## Git Workflow
 
-This plan executes inside a worktree named `organiclever-v0` branching off `main`. All
-work commits to branch `worktree-organiclever-v0`. After Phase 9 quality gates pass, the
-branch is rebased onto `origin/main` and a draft PR is opened targeting `main`. Direct
-commits to `main` from the worktree are prohibited — the PR gate is the merge point.
+Commits go directly to `main` per Trunk Based Development.
 
 ## Phases at a Glance
 
