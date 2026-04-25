@@ -170,19 +170,14 @@ The platform consists of the following applications across its technology stacks
 
 Shows the high-level technical building blocks (containers) of the system. In C4 terminology, a "container" is a deployable/executable unit (web app, database, file system, etc.), not a Docker container.
 
+**Content and tooling applications:**
+
 ```mermaid
-graph TB
-    subgraph "Marketing & Education Sites"
+graph LR
+    subgraph "Marketing & Education"
         OSE[oseplatform-web<br/>Next.js App]
         AYO[ayokoding-web<br/>Next.js App]
         WKF[wahidyankf-web<br/>Next.js App]
-    end
-
-    subgraph "OrganicLever Platform"
-        OL_FE[organiclever-web<br/>Next.js App]
-        OL_BE[organiclever-be<br/>F#/Giraffe API]
-        OL_FE_E2E[organiclever-web-e2e<br/>Playwright E2E]
-        OL_BE_E2E[organiclever-be-e2e<br/>Playwright E2E]
     end
 
     subgraph "CLI Tools"
@@ -193,38 +188,56 @@ graph TB
 
     subgraph "Shared Infrastructure"
         NX[Nx Workspace<br/>Build Orchestration]
-        LIBS[Shared Libraries<br/>golang-commons, hugo-commons]
+        LIBS[Shared Libraries<br/>golang-commons]
     end
 
     AYOCLI -->|Validates links| AYO
     RHINO -->|Repository automation| NX
     OSECLI -->|Validates links| OSE
-    OL_FE_E2E -->|Tests| OL_FE
-    OL_BE_E2E -->|Tests| OL_BE
-
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
     NX -.->|Manages| WKF
     NX -.->|Manages| AYOCLI
     NX -.->|Manages| RHINO
-    NX -.->|Manages| OL_FE
-    NX -.->|Manages| OL_BE
-
     OSE -.->|May import| LIBS
     AYO -.->|May import| LIBS
 
     style OSE fill:#0077b6,stroke:#03045e,color:#ffffff
     style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
     style WKF fill:#0077b6,stroke:#03045e,color:#ffffff
-    style OL_FE fill:#0077b6,stroke:#03045e,color:#ffffff
-    style OL_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
-    style OL_FE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
-    style OL_BE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
     style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
     style OSECLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
     style LIBS fill:#457b9d,stroke:#1d3557,color:#ffffff
+```
+
+**OrganicLever platform applications:**
+
+```mermaid
+graph LR
+    subgraph "OrganicLever Platform"
+        OL_FE[organiclever-web<br/>Next.js App]
+        OL_BE[organiclever-be<br/>F#/Giraffe API]
+    end
+
+    subgraph "E2E Test Suites"
+        OL_FE_E2E[organiclever-web-e2e<br/>Playwright E2E]
+        OL_BE_E2E[organiclever-be-e2e<br/>Playwright E2E]
+    end
+
+    NX[Nx Workspace<br/>Build Orchestration]
+
+    OL_FE_E2E -->|Tests| OL_FE
+    OL_BE_E2E -->|Tests| OL_BE
+    NX -.->|Manages| OL_FE
+    NX -.->|Manages| OL_BE
+
+    style OL_FE fill:#0077b6,stroke:#03045e,color:#ffffff
+    style OL_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style OL_FE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
+    style OL_BE_E2E fill:#457b9d,stroke:#1d3557,color:#ffffff
+    style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
 ```
 
 ## Application Interactions

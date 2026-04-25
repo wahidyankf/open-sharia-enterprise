@@ -36,14 +36,14 @@ The system architecture is documented using the C4 model (Context, Container, Co
 Shows how the Open Sharia Enterprise platform fits into the world, including users and external systems.
 
 ```mermaid
-graph TB
+graph LR
     subgraph "External Users"
         DEVS[Developers<br/>Building enterprise apps]
         AUTHORS[Content Authors<br/>Writing educational content]
-        LEARNERS[Learners<br/>Studying programming/AI/security]
+        LEARNERS[Learners<br/>Studying prog/AI/security]
     end
 
-    OSE_PLATFORM[Open Sharia Enterprise Platform<br/>Monorepo with 9 applications<br/>Nx workspace]
+    OSE_PLATFORM[OSE Platform<br/>Monorepo - 9 apps<br/>Nx workspace]
 
     subgraph "External Systems"
         GITHUB[GitHub<br/>Source control & CI/CD]
