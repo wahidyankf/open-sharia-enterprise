@@ -553,10 +553,10 @@ graph TD
     A[Context Function] --> B[Ecto.Query]
     B --> C{Query Type}
 
-    C -->|Simple| D[Repo.all#40;schema#41;]
-    C -->|Filtered| E[from#40;s in Schema,<br/>where: condition#41;]
-    C -->|Joined| F[from#40;s in Schema,<br/>join: assoc#41;]
-    C -->|Aggregate| G[from#40;s in Schema,<br/>select: aggregate#41;]
+    C --> D[Repo.all simple]
+    C --> E[Filtered query]
+    C --> F[Joined query]
+    C --> G[Aggregate query]
 
     D --> H[Ecto.Adapters.Postgres]
     E --> H
@@ -565,8 +565,8 @@ graph TD
 
     H --> I[SQL Generation]
     I --> J{Prepared?}
-    J -->|No| K[Prepare Statement]
-    J -->|Yes| L[Use Cached]
+    J --> K[Prepare Statement]
+    J --> L[Use Cached]
     K --> M[Query Cache]
     L --> N[Execute Query]
     M --> N
@@ -574,12 +574,12 @@ graph TD
     N --> O[PostgreSQL Database]
     O --> P{Result}
 
-    P -->|Success| Q[Parse Rows]
-    P -->|Error| R[Ecto.QueryError]
+    P --> Q[Parse Rows]
+    P --> R[Ecto.QueryError]
 
     Q --> S{Preload?}
-    S -->|Yes| T[Additional Queries]
-    S -->|No| U[Return Structs]
+    S --> T[Additional Queries]
+    S --> U[Return Structs]
     T --> U
 
     U --> V[Context Returns Result]

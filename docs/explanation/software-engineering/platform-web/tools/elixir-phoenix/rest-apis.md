@@ -56,8 +56,8 @@ Phoenix excels at building high-performance RESTful APIs with clean architecture
 graph TD
     A[HTTP Request] --> B[Endpoint]
     B --> C{Content-Type?}
-    C -->|application/json| D[Plug.Parsers<br/>JSON Parser]
-    C -->|Other| E[Skip Parser]
+    C --> D[Plug.Parsers<br/>JSON Parser]
+    C --> E[Skip Parser]
 
     D --> F[Router]
     E --> F
@@ -68,8 +68,8 @@ graph TD
     I --> J[CORS Headers]
 
     J --> K{Route Match?}
-    K -->|Yes| L[Controller Action]
-    K -->|No| M[404 Not Found]
+    K --> L[Controller Action]
+    K --> M[404 Not Found]
 
     L --> N[Action Function]
     N --> O[Context Call]
@@ -77,8 +77,8 @@ graph TD
     P --> Q[(Database)]
 
     Q --> R{Result?}
-    R -->|{:ok, data}| S[Render JSON View]
-    R -->|{:error, changeset}| T[FallbackController]
+    R --> S[Render JSON View]
+    R --> T[FallbackController]
 
     T --> U[render_error#40;422#41;]
     S --> V[Format Response]
