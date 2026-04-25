@@ -25,7 +25,7 @@ const projects: Project[] = [
       "Enforces quality through Gherkin-driven spec coverage and three-level testing (unit, integration, E2E)",
       "AI-augmented development with 50+ specialized agents",
       "Key components: OrganicLever (Next.js 16 + F#/Giraffe backend), AyoKoding (free educational platform), OSE Platform",
-      "FSL-1.1-MIT licensed — source-available protection for product apps, MIT for libs",
+      "MIT licensed — fully open-source across all apps and libs",
     ],
     links: {
       repository: "https://github.com/wahidyankf/ose-public",
