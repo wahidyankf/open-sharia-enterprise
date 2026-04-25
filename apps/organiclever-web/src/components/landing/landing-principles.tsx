@@ -22,7 +22,7 @@ export function LandingPrinciples() {
         margin: "0 auto",
         paddingBottom: 100,
       }}
-      className="px-10 max-sm:px-2.5 max-sm:pb-20"
+      className="px-10 max-sm:px-5 max-sm:pb-20"
     >
       <div>
         <div
@@ -76,14 +76,13 @@ export function LandingPrinciples() {
             key={title}
             style={{
               display: "grid",
-              gridTemplateColumns: "72px 1fr 1.5fr",
               gap: 20,
               padding: "24px 28px",
               background: "oklch(97% 0.008 80)",
               borderBottom: i < PRINCIPLES.length - 1 ? "1px solid oklch(18% 0.018 60 / 0.08)" : "none",
               alignItems: "baseline",
             }}
-            className="max-sm:grid-cols-1 max-sm:gap-2"
+            className="[grid-template-columns:72px_1fr_1.5fr] max-sm:grid-cols-1 max-sm:gap-2"
           >
             <div
               style={{

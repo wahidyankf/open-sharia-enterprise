@@ -33,7 +33,7 @@ export function LandingNav({ onGoApp }: LandingNavProps) {
         paddingBottom: 24,
         borderBottom: "1px solid oklch(18% 0.018 60 / 0.08)",
       }}
-      className="px-10 max-sm:px-2.5 max-sm:py-5"
+      className="px-10 max-sm:px-5 max-sm:py-5"
     >
       <button
         onClick={onGoApp}

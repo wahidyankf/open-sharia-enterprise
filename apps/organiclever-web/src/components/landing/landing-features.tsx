@@ -52,7 +52,7 @@ export function LandingFeatures() {
         paddingBottom: 100,
         borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
       }}
-      className="px-10 max-sm:px-2.5 max-sm:py-12"
+      className="px-10 max-sm:px-5 max-sm:py-12"
     >
       <div>
         <div
@@ -109,14 +109,13 @@ export function LandingFeatures() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
           gap: 2,
           marginTop: 48,
           border: "1px solid oklch(18% 0.018 60 / 0.10)",
           borderRadius: 20,
           overflow: "hidden",
         }}
-        className="max-sm:grid-cols-1"
+        className="[grid-template-columns:repeat(5,1fr)] max-sm:grid-cols-1"
       >
         {MODULES.map((m) => (
           <div

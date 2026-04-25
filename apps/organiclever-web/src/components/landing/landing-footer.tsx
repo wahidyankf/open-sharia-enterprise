@@ -15,7 +15,7 @@ export function LandingFooter({ onGoApp }: LandingFooterProps) {
         maxWidth: 1200,
         margin: "0 auto",
       }}
-      className="px-10 max-sm:flex-col max-sm:gap-3 max-sm:px-2.5 max-sm:py-6 max-sm:text-center"
+      className="px-10 max-sm:flex-col max-sm:gap-3 max-sm:px-5 max-sm:py-6 max-sm:text-center"
     >
       <span
         style={{
