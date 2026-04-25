@@ -38,3 +38,6 @@ export { HighlightText, highlightText } from "./components/highlight-text/highli
 export { default as ScrollToTop } from "./components/scroll-to-top/scroll-to-top";
 export { SearchComponent } from "./components/search-component/search-component";
 export { default as ThemeToggle } from "./components/theme-toggle/theme-toggle";
+export { Textarea } from "./components/textarea/textarea";
+export { Badge, badgeVariants } from "./components/badge/badge";
+export type { BadgeProps } from "./components/badge/badge";
