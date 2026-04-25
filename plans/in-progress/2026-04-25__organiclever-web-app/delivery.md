@@ -558,16 +558,11 @@ and `Badge` must be exported from ts-ui before Phase 3+.
 
 ### 9.9 Post-Push CI/CD Verification
 
-- [ ] Rebase onto latest main to maintain linear history:
-      `git fetch origin && git rebase origin/main`
-- [ ] Push branch `worktree-organiclever-v0` to origin:
-      `git push origin worktree-organiclever-v0`
-- [ ] Open draft PR from `worktree-organiclever-v0` → `main` on GitHub for review
+- [ ] Push directly to `main`: `git push origin main`
 - [ ] Monitor GitHub Actions workflows for the push
 - [ ] Verify all CI checks pass (typecheck, lint, test:quick, spec-coverage, e2e)
-- [ ] If any CI check fails, fix immediately and push a follow-up commit
-- [ ] Do NOT proceed to archival until CI is green and PR is merged
-- [ ] After PR merged: proceed to Plan Archival
+- [ ] If any CI check fails, fix immediately and push a follow-up commit to `main`
+- [ ] Do NOT proceed to archival until CI is green
 
 ### Plan Archival
 
