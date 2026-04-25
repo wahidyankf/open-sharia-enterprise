@@ -264,14 +264,12 @@
 
 ### Post-Push Verification
 
-- [ ] Push changes to `main` via PR from worktree branch `worktree-organiclever-v0`
-- [ ] In the PR on GitHub, monitor the CI workflow (the `nx affected` typecheck + lint +
+- [ ] Push changes directly to `main` (`git push origin main`)
+- [ ] In GitHub Actions, monitor the CI workflow (the `nx affected` typecheck + lint +
       test + coverage workflow)
 - [ ] Verify all checks pass — typecheck, lint, test:quick, spec-coverage for
       `organiclever-web` and `ts-ui` (affected projects)
-- [ ] If any CI check fails, fix immediately and push a follow-up commit to the worktree
-      branch
-- [ ] Do NOT merge the PR until all CI checks are green
+- [ ] If any CI check fails, fix immediately and push a follow-up commit to `main`
 
 ### Plan Archival
 
