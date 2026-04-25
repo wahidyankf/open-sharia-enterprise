@@ -15,9 +15,8 @@ function AlphaBanner() {
       style={{
         maxWidth: 1200,
         margin: "0 auto 60px",
-        padding: "0 40px",
       }}
-      className="max-sm:px-6"
+      className="px-10 max-sm:px-2.5"
     >
       <div
         style={{

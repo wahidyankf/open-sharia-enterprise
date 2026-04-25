@@ -67,9 +67,9 @@ export function LandingRhythmDemo() {
       style={{
         maxWidth: 1200,
         margin: "0 auto",
-        padding: "0 40px 100px",
+        paddingBottom: 100,
       }}
-      className="max-sm:px-6 max-sm:pb-20"
+      className="px-10 max-sm:px-2.5 max-sm:pb-20"
     >
       <div>
         <div

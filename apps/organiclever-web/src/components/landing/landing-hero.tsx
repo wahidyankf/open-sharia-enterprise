@@ -47,13 +47,14 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
   return (
     <section
       style={{
-        padding: "80px 40px 100px",
+        paddingTop: 80,
+        paddingBottom: 100,
         display: "grid",
         gridTemplateColumns: "1fr",
         maxWidth: 900,
         margin: "0 auto",
       }}
-      className="max-sm:px-6 max-sm:pt-12 max-sm:pb-20"
+      className="px-10 max-sm:px-2.5 max-sm:pt-12 max-sm:pb-20"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
         <div
