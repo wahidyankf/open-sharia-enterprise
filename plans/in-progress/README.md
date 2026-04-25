@@ -7,7 +7,6 @@ Active project plans currently being worked on.
 - [`2026-04-25__organiclever-web-app`](./2026-04-25__organiclever-web-app/README.md) —
   OrganicLever web app v0: local-first life-event tracker (workouts, quick logs, analytics,
   bilingual UI) behind the landing page CTA
-- [Fix Mermaid Validation and Violations](./2026-04-25__fix-mermaid-validation-and-violations/README.md) — Direction-aware validator fix and docs cleanup
 
 ## Instructions
 
