@@ -73,7 +73,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 		switch diagram.Direction {
 		case DirectionLR, DirectionRL: // named constants from types.go
 			horizontal, vertical = depth, span
-		default: // TD, TB, BT, and unspecified
+		case DirectionTB, DirectionTD, DirectionBT: // named constants from types.go
 			horizontal, vertical = span, depth
 		}
 
