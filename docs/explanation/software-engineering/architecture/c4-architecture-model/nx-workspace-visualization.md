@@ -105,34 +105,36 @@ If `ayokoding-cli` has an Nx dependency on `ayokoding-web` (builds it), show thi
 
 ### Full Platform View
 
+**Current platform containers and deployment:**
+
 ```mermaid
-graph TD
-    %% Hugo Sites
+graph LR
     OseWeb["OSE Platform Web<br/>[Container: Hugo/PaperMod]<br/>Landing page"]:::blue
     AyoWeb["AyoKoding Web<br/>[Container: Hugo/Hextra]<br/>Educational content"]:::blue
-
-    %% CLI Tools
     AyoCLI["AyoKoding CLI<br/>[Container: Go]<br/>Content automation"]:::blue
     RhinoCLI["Rhino CLI<br/>[Container: Go]<br/>Repository management"]:::blue
-
-    %% Future Apps (example)
-    ZakatAPI["Zakat API<br/>[Container: Spring Boot]<br/>Zakat calculations"]:::purple
-    ZakatWeb["Zakat Web UI<br/>[Container: Next.js]<br/>User interface"]:::purple
-
-    %% Deployment
     Vercel["Vercel<br/>[Platform]<br/>Static site hosting"]:::teal
 
-    %% Relationships
-    AyoCLI -->|"Generates content<br/>[File system]"| AyoWeb
-    RhinoCLI -->|"Validates structure<br/>[File system]"| OseWeb
-    RhinoCLI -->|"Validates structure<br/>[File system]"| AyoWeb
-    OseWeb -->|"Deployed to<br/>[Git push]"| Vercel
-    AyoWeb -->|"Deployed to<br/>[Git push]"| Vercel
-    ZakatWeb -.->|"Future: Calls API<br/>[HTTPS/REST]"| ZakatAPI
+    AyoCLI --> AyoWeb
+    RhinoCLI --> OseWeb
+    RhinoCLI --> AyoWeb
+    OseWeb --> Vercel
+    AyoWeb --> Vercel
 
     classDef blue fill:#0173B2,stroke:#000,color:#FFF
-    classDef purple fill:#CC78BC,stroke:#000,color:#000
     classDef teal fill:#029E73,stroke:#000,color:#FFF
+```
+
+**Future containers (planned):**
+
+```mermaid
+graph LR
+    ZakatWeb["Zakat Web UI<br/>[Container: Next.js]<br/>User interface"]:::purple
+    ZakatAPI["Zakat API<br/>[Container: Spring Boot]<br/>Zakat calculations"]:::purple
+
+    ZakatWeb -.-> ZakatAPI
+
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
 ```
 
 **Note**: Use purple for future/planned containers with dashed lines (`-.->`) for planned relationships.
