@@ -69,7 +69,7 @@ export function LandingRhythmDemo() {
         margin: "0 auto",
         paddingBottom: 100,
       }}
-      className="px-10 max-sm:px-2.5 max-sm:pb-20"
+      className="px-10 max-sm:px-5 max-sm:pb-20"
     >
       <div>
         <div
@@ -293,10 +293,10 @@ export function LandingRhythmDemo() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
             gap: 12,
             marginTop: 24,
           }}
+          className="[grid-template-columns:repeat(4,1fr)] max-sm:grid-cols-2"
         >
           {(
             [

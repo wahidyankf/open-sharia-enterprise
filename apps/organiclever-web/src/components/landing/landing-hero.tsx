@@ -54,7 +54,7 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
         maxWidth: 900,
         margin: "0 auto",
       }}
-      className="px-10 max-sm:px-2.5 max-sm:pt-12 max-sm:pb-20"
+      className="px-10 max-sm:px-5 max-sm:pt-12 max-sm:pb-20"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
         <div
