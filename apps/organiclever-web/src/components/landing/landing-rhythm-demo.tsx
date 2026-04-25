@@ -74,7 +74,7 @@ export function LandingRhythmDemo() {
       <div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 700,
             letterSpacing: ".12em",
             textTransform: "uppercase",
@@ -127,7 +127,7 @@ export function LandingRhythmDemo() {
         style={{
           marginTop: 48,
           background: "oklch(97% 0.008 80)",
-          border: "1px solid oklch(18% 0.018 60 / 0.08)",
+          border: "1px solid oklch(18% 0.018 60 / 0.18)",
           borderRadius: 20,
           padding: 32,
         }}
@@ -139,7 +139,7 @@ export function LandingRhythmDemo() {
             justifyContent: "space-between",
             marginBottom: 24,
             paddingBottom: 14,
-            borderBottom: "1px solid oklch(18% 0.018 60 / 0.08)",
+            borderBottom: "1px solid oklch(18% 0.018 60 / 0.18)",
           }}
         >
           <div
@@ -154,7 +154,7 @@ export function LandingRhythmDemo() {
           </div>
           <div
             style={{
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 700,
               letterSpacing: ".1em",
               textTransform: "uppercase",
@@ -219,20 +219,20 @@ export function LandingRhythmDemo() {
               key={d.day}
               style={{
                 textAlign: "center",
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: 700,
                 letterSpacing: ".06em",
                 textTransform: "uppercase",
                 color: d.today ? "var(--hue-teal)" : "oklch(62% 0.012 70)",
                 paddingTop: 10,
-                borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
+                borderTop: "1px solid oklch(18% 0.018 60 / 0.18)",
               }}
             >
               {d.day}
               {d.today && (
                 <div
                   style={{
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: 600,
                     marginTop: 2,
                     color: "var(--hue-teal)",
@@ -254,7 +254,7 @@ export function LandingRhythmDemo() {
             gap: 18,
             marginTop: 22,
             paddingTop: 18,
-            borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
+            borderTop: "1px solid oklch(18% 0.018 60 / 0.18)",
           }}
         >
           {(
@@ -272,7 +272,7 @@ export function LandingRhythmDemo() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: 700,
                 color: "oklch(42% 0.015 70)",
               }}
@@ -312,7 +312,7 @@ export function LandingRhythmDemo() {
                 padding: "18px 18px",
                 background: "white",
                 borderRadius: 14,
-                border: "1px solid oklch(18% 0.018 60 / 0.08)",
+                border: "1px solid oklch(18% 0.018 60 / 0.18)",
               }}
             >
               <div
@@ -327,7 +327,7 @@ export function LandingRhythmDemo() {
               </div>
               <div
                 style={{
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: 700,
                   letterSpacing: ".08em",
                   textTransform: "uppercase",

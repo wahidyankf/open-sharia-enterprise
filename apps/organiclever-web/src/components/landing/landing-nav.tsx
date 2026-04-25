@@ -31,7 +31,7 @@ export function LandingNav({ onGoApp }: LandingNavProps) {
         justifyContent: "space-between",
         paddingTop: 24,
         paddingBottom: 24,
-        borderBottom: "1px solid oklch(18% 0.018 60 / 0.08)",
+        borderBottom: "1px solid oklch(18% 0.018 60 / 0.18)",
       }}
       className="px-10 max-sm:px-5 max-sm:py-5"
     >
@@ -76,7 +76,7 @@ export function LandingNav({ onGoApp }: LandingNavProps) {
 
       <span
         style={{
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: 800,
           letterSpacing: ".1em",
           textTransform: "uppercase",

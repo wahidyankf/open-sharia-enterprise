@@ -6,7 +6,7 @@ export function LandingFooter({ onGoApp }: LandingFooterProps) {
   return (
     <footer
       style={{
-        borderTop: "1px solid oklch(18% 0.018 60 / 0.08)",
+        borderTop: "1px solid oklch(18% 0.018 60 / 0.18)",
         paddingTop: 28,
         paddingBottom: 28,
         display: "flex",
@@ -19,7 +19,7 @@ export function LandingFooter({ onGoApp }: LandingFooterProps) {
     >
       <span
         style={{
-          fontSize: 13,
+          fontSize: 15,
           color: "oklch(42% 0.015 70)",
         }}
       >
@@ -35,7 +35,7 @@ export function LandingFooter({ onGoApp }: LandingFooterProps) {
           border: "none",
           cursor: "pointer",
           fontFamily: "inherit",
-          fontSize: 13,
+          fontSize: 15,
         }}
       >
         Open app →

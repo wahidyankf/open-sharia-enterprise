@@ -44,7 +44,7 @@ function AlphaBanner() {
           <div
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 14,
+              fontSize: 15,
               lineHeight: 1.6,
               color: "oklch(42% 0.10 80)",
             }}

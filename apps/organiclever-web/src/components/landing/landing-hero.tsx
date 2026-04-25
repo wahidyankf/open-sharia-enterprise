@@ -59,7 +59,7 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 700,
             letterSpacing: ".12em",
             textTransform: "uppercase",
@@ -135,7 +135,7 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
 
           <div
             style={{
-              fontSize: 13,
+              fontSize: 15,
               color: "#3d3630",
               fontWeight: 500,
               display: "flex",
@@ -154,9 +154,9 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
                 gap: 7,
                 padding: "8px 14px",
                 borderRadius: 10,
-                border: "1px solid oklch(18% 0.018 60 / 0.12)",
+                border: "1px solid oklch(18% 0.018 60 / 0.22)",
                 background: "oklch(97% 0.008 80)",
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: 700,
                 color: "#3d3630",
               }}
@@ -170,9 +170,9 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
                 gap: 7,
                 padding: "8px 14px",
                 borderRadius: 10,
-                border: "1px solid oklch(18% 0.018 60 / 0.12)",
+                border: "1px solid oklch(18% 0.018 60 / 0.22)",
                 background: "oklch(97% 0.008 80)",
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: 700,
                 color: "#3d3630",
               }}
@@ -190,9 +190,9 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
                 gap: 7,
                 padding: "8px 14px",
                 borderRadius: 10,
-                border: "1px solid oklch(18% 0.018 60 / 0.12)",
+                border: "1px solid oklch(18% 0.018 60 / 0.22)",
                 background: "oklch(97% 0.008 80)",
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: 700,
                 color: "#3d3630",
               }}
@@ -210,9 +210,9 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
                 gap: 7,
                 padding: "8px 14px",
                 borderRadius: 10,
-                border: "1px solid oklch(18% 0.018 60 / 0.12)",
+                border: "1px solid oklch(18% 0.018 60 / 0.22)",
                 background: "oklch(97% 0.008 80)",
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: 700,
                 color: "#3d3630",
               }}

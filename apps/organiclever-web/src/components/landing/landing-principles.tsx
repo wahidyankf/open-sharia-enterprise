@@ -27,7 +27,7 @@ export function LandingPrinciples() {
       <div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 700,
             letterSpacing: ".12em",
             textTransform: "uppercase",
@@ -66,7 +66,7 @@ export function LandingPrinciples() {
       <div
         style={{
           marginTop: 48,
-          border: "1px solid oklch(18% 0.018 60 / 0.10)",
+          border: "1px solid oklch(18% 0.018 60 / 0.20)",
           borderRadius: 20,
           overflow: "hidden",
         }}
@@ -79,7 +79,7 @@ export function LandingPrinciples() {
               gap: 20,
               padding: "24px 28px",
               background: "oklch(97% 0.008 80)",
-              borderBottom: i < PRINCIPLES.length - 1 ? "1px solid oklch(18% 0.018 60 / 0.08)" : "none",
+              borderBottom: i < PRINCIPLES.length - 1 ? "1px solid oklch(18% 0.018 60 / 0.18)" : "none",
               alignItems: "baseline",
             }}
             className="[grid-template-columns:72px_1fr_1.5fr] max-sm:grid-cols-1 max-sm:gap-2"
@@ -107,7 +107,7 @@ export function LandingPrinciples() {
             <div
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: 14,
+                fontSize: 15,
                 lineHeight: 1.6,
                 color: "oklch(42% 0.015 70)",
               }}
