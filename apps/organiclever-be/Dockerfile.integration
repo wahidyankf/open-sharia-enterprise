@@ -35,6 +35,6 @@ COPY apps/organiclever-be/tests/ tests/
 RUN dotnet build tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj --no-restore
 
 # Run all tests against real PostgreSQL.
-# DATABASE_URL, APP_JWT_SECRET, APP_ENV, and GOOGLE_CLIENT_ID are supplied by docker-compose.
+# DATABASE_URL, APP_JWT_SECRET, and APP_ENV are supplied by docker-compose.
 # The TestFixture detects DATABASE_URL and uses Npgsql instead of SQLite.
 CMD ["dotnet", "test", "tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj", "--no-build", "--filter", "Category=Integration", "--logger", "console;verbosity=normal"]
