@@ -298,23 +298,23 @@ Commit 9: refactor(auth): remove old login code and feature flag
 
 Each commit is small, tested, and doesn't break `main`.
 
-## Main Branch vs Worktree Mode
+## Default Push and Worktree Execution
 
-This section clarifies the two distinct execution modes in this repository and their corresponding git workflows. This distinction is critical for AI agents: the execution mode determines the git workflow.
+This section clarifies the default push behavior and how git worktrees relate to it. The default is consistent across all execution contexts.
 
-### Main Branch (Default Mode)
+### Default Mode: Direct Push to main
 
-**When working directly on main** -- which is the default for all development in this repository -- the git workflow is:
+**The default for all development in this repository -- including when running from a git worktree -- is to commit and push directly to `main`.**
 
 - **Commit directly to `main`**. No branch. No PR.
 - **Push directly to `main`**. No merge request.
-- **No review step** (unless explicitly requested by the user).
+- **No review step** unless explicitly requested by the user.
 - Quality gates run via the pre-push hook (typecheck, lint, test:quick, spec-coverage).
 
-This is the standard TBD workflow described throughout this document. It applies to all routine development: features, bug fixes, refactors, documentation, and governance changes.
+This applies to all routine development: features, bug fixes, refactors, documentation, governance changes, and work executed inside a git worktree.
 
 ```bash
-# Default workflow -- direct to main
+# Default workflow -- direct to main (applies in worktrees too)
 git checkout main
 git pull origin main
 # ... make changes ...
@@ -323,21 +323,25 @@ git commit -m "feat(auth): add email validation"
 git push origin main
 ```
 
-### Worktree Mode (Branch + Draft PR)
+### Worktree Execution Does Not Change the Default
 
-**When using git worktrees** -- specifically when an AI agent uses `isolation: "worktree"` in the Agent tool, when an agent is invoked inside an existing worktree session, or when a developer creates a worktree for isolated work -- the **opposite** workflow applies:
+Running from inside a git worktree -- whether the agent uses `isolation: "worktree"`, the session starts inside a `git worktree add` path, or the working directory is under `.claude/worktrees/` -- does **not** automatically trigger branch + draft PR behavior. The default remains the same: commit and push directly to `origin main`.
+
+Branch + PR from a worktree is opt-in. It applies only when the user's prompt or the plan's delivery checklist explicitly requests it (see [Git Push Default Convention](./git-push-default.md) Standard 2 for the full list of opt-in signals).
+
+### Branch + Draft PR (Opt-In)
+
+When a branch + draft PR is **explicitly requested**, the workflow is:
 
 - **Create a new branch** for the work.
-- **Push to the feature branch only.** Direct push to `main` from a worktree is forbidden.
+- **Push to the feature branch only.**
 - **Open a draft pull request** targeting `main` (`gh pr create --draft`). The PR is opened as a GitHub draft, not "ready for review".
 - **Flip to ready for review** when the author decides the work is ready. This is the explicit human moment where the [PR Merge Protocol](./pr-merge-protocol.md) merge-approval gate fires.
 - **Get approval before merge** -- merging requires explicit user approval (see [PR Merge Protocol](./pr-merge-protocol.md)).
 - **Delete the branch** after merge.
 
-Worktree mode exists for situations that benefit from isolation: experimental work, parallel tasks, or changes that need review before integration. **The rule is triggered by execution mode, not by intent.** Any commit authored from inside a worktree path belongs in a draft PR, even if the change looks "small", "trivial", or "docs-only" -- the point of the worktree is isolation, and bypassing the draft PR collapses that isolation.
-
 ```bash
-# Worktree mode -- branch + draft PR
+# Branch + draft PR -- only when explicitly requested
 git worktree add .claude/worktrees/feature-auth feature/auth
 cd .claude/worktrees/feature-auth
 # ... make changes ...
@@ -348,44 +352,49 @@ git push origin feature/auth
 # Open the PR as a DRAFT (not ready for review)
 gh pr create --draft --base main \
   --title "feat(auth): add email validation" \
-  --body "Worktree-mode PR. Will be flipped to ready for review when complete."
+  --body "Draft PR opened as requested."
 
-# When ready, the author flips it to ready for review:
+# When ready, flip it to ready for review:
 gh pr ready
 # At that point, the PR Merge Protocol approval gate applies.
 ```
 
+Situations where someone might explicitly request this workflow:
+
+- Experimental or spike work where isolation before review is desired.
+- External contributions requiring documented review.
+- Regulatory or compliance contexts requiring a PR audit trail.
+
 ### Why Draft, Not Ready-for-Review, on Open?
 
-Opening worktree-mode PRs as drafts is deliberate:
+When a branch + PR is explicitly requested, opening it as a draft is deliberate:
 
 - **Signals in-progress status** to humans and CI -- the branch is not yet soliciting review.
 - **Prevents accidental auto-merge paths** that some "ready" PRs can trigger.
-- **Matches the worktree framing** -- worktrees exist for isolated experimental or parallel work that needs review before merging, and draft status reflects that lifecycle.
 - **Preserves the explicit human moment** when the author flips the PR to ready, which is the natural place for the PR Merge Protocol approval prompt to fire.
 
 ### Decision Table
 
-| Situation                             | Mode          | Git Workflow                                               |
-| ------------------------------------- | ------------- | ---------------------------------------------------------- |
-| Routine development on main           | Main branch   | Commit and push directly to main                           |
-| AI agent with default isolation       | Main branch   | Commit and push directly to main                           |
-| AI agent with `isolation: "worktree"` | Worktree mode | Branch + draft PR + flip to ready -> approval before merge |
-| Agent invoked inside a worktree       | Worktree mode | Branch + draft PR + flip to ready -> approval before merge |
-| Developer using `git worktree add`    | Worktree mode | Branch + draft PR + flip to ready -> approval before merge |
-| Experimental/spike work               | Either        | Developer's choice; worktree (draft PR) recommended        |
-| External contribution                 | Worktree mode | Fork + draft PR                                            |
+| Situation                             | Default Git Workflow                                       |
+| ------------------------------------- | ---------------------------------------------------------- |
+| Routine development on main           | Commit and push directly to main                           |
+| AI agent with default isolation       | Commit and push directly to main                           |
+| AI agent with `isolation: "worktree"` | Commit and push directly to main (same default)            |
+| Agent invoked inside a worktree       | Commit and push directly to main (same default)            |
+| Developer using `git worktree add`    | Commit and push directly to main (same default)            |
+| Any context + explicit PR request     | Branch + draft PR + flip to ready -> approval before merge |
+| External contribution                 | Fork + draft PR                                            |
 
 ### Key Principle
 
-The execution mode determines the git workflow:
+The default push behavior is constant regardless of execution context:
 
-- **Main branch mode** = direct commit/push to main, no PR
-- **Worktree mode** = branch, draft PR, flip to ready, approval before merge
+- **All contexts (including worktrees)**: commit and push directly to main, no PR -- unless a PR is explicitly requested.
+- **Explicit PR request**: branch, draft PR, flip to ready, approval before merge.
 
-AI agents must check which mode they are operating in and follow the corresponding workflow. Mixing modes -- creating a branch while on main, or pushing directly to main from a worktree -- is incorrect. This rule applies equally to humans and AI agents: any commit authored from inside a `.claude/worktrees/` path (or any other `git worktree add` target) must land in a draft PR, never directly on `main`.
+AI agents must not infer a branch + PR workflow from execution context alone. The triggering signal is always an explicit instruction in the user's prompt or delivery checklist.
 
-Note: this rule does **not** affect environment branches (`prod-ayokoding-web`, `prod-oseplatform-web`, `prod-organiclever-web`). Those remain CI-managed and follow their own documented deployment workflows.
+Note: this does **not** affect environment branches (`prod-ayokoding-web`, `prod-oseplatform-web`, `prod-organiclever-web`). Those remain CI-managed and follow their own documented deployment workflows.
 
 ## When Branches Are Appropriate
 
@@ -618,6 +627,7 @@ TBD works best when combined with:
 - **Pair/Mob Programming**: Real-time collaboration and review
 - **PR Merge Protocol**: [PR Merge Protocol](./pr-merge-protocol.md) - Required approval workflow for worktree-mode PRs
 - **Git Push Default Convention**: [Git Push Default Convention](./git-push-default.md) — Makes PR-opt-in explicit for AI agents; governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior
+- **CI Post-Push Verification**: [CI Post-Push Verification Convention](./ci-post-push-verification.md) — Mandatory verification step after every push to main covering integration tests, E2E tests, and deployment workflows
 - **Worktree Toolchain Initialization**: [Worktree Toolchain Initialization](./worktree-setup.md) - Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree
 
 ## References and Further Reading

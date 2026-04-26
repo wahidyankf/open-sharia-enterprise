@@ -105,8 +105,10 @@ Per the [Content-Placement Rules](../../governance/conventions/structure/plans.m
 
 Flag as **HIGH** any delivery checklist containing a `- [ ] Create PR`, `- [ ] Open PR`, or equivalent PR creation step unless EITHER:
 
-1. The plan's `README.md` or `prd.md` explicitly states that a PR is required (e.g., worktree-based flow, external contribution)
-2. The plan's Git Workflow section explicitly documents a worktree/branch-based flow
+1. The plan's `README.md` or `prd.md` contains an explicit statement that a PR is required (e.g., "This plan requires review via PR", external contribution, regulatory requirement)
+2. The plan's Git Workflow section explicitly documents a branch-based flow and explicitly requests a PR
+
+Note: executing in a worktree context does NOT authorize a PR step. The authorizing signal must be an explicit PR instruction, not the use of worktrees.
 
 Unsolicited PR steps conflict with Trunk Based Development and must be removed.
 

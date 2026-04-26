@@ -122,6 +122,23 @@ This applies Standard 4 of [Proactive Preexisting Error Resolution](../practice/
 
 **Scope of "fix now"**: remove the unsolicited PR step from the checklist and, if the plan is in `plans/in-progress/`, note the fix in the same commit message. If the plan is in `plans/done/` (archived), leave it — historical records are read-only.
 
+### Standard 6: Worktree Execution Does Not Change the Default
+
+Running from inside a git worktree does not automatically trigger branch + draft PR behavior. The default remains direct push to `origin main` regardless of execution context.
+
+This standard covers all worktree execution patterns:
+
+- An AI agent using `isolation: "worktree"` in the Agent tool.
+- An agent or developer session started inside a path created by `git worktree add`.
+- Any working directory under `.claude/worktrees/` or any other `git worktree add` target.
+
+Branch + PR from a worktree is opt-in. It is triggered only by:
+
+- An explicit user instruction ("create a PR", "use a branch", "open a pull request", or equivalent phrasing in the prompt).
+- An explicit `- [ ] Create PR` or `- [ ] Open PR` step in the plan's delivery checklist that satisfies Standard 3.
+
+Absent one of those explicit signals, an agent executing from inside a worktree MUST commit and push directly to `origin main`, not open a branch or PR.
+
 ## Examples
 
 ### PASS: Correct behavior — direct push without PR
@@ -214,17 +231,19 @@ Correct behavior: remove `- [ ] Create PR` inline, include in the same commit as
 
 ## Agent Responsibilities
 
-| Agent                   | Responsibility                                                                                                         |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `plan-maker`            | Must not insert PR steps in delivery checklists unless explicitly instructed.                                          |
-| `plan-checker`          | Must flag unsolicited PR steps in delivery checklists as a HIGH finding.                                               |
-| `plan-fixer`            | Must remove unsolicited PR steps from delivery checklists.                                                             |
-| plan-execution workflow | Must push directly to `main`; must rebase to maintain linear history; must fix preexisting unsolicited PR steps found. |
+| Agent                                       | Responsibility                                                                                                                            |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan-maker`                                | Must not insert PR steps in delivery checklists unless explicitly instructed.                                                             |
+| `plan-checker`                              | Must flag unsolicited PR steps in delivery checklists as a HIGH finding.                                                                  |
+| `plan-fixer`                                | Must remove unsolicited PR steps from delivery checklists.                                                                                |
+| plan-execution workflow                     | Must push directly to `main`; must rebase to maintain linear history; must fix preexisting unsolicited PR steps found.                    |
+| plan-execution workflow in worktree context | Same as above — worktree execution context does not change the push default; push directly to `main` unless a PR is explicitly requested. |
 
 ## Related Documentation
 
 - [Trunk Based Development Convention](./trunk-based-development.md) — Git workflow establishing `main` as the trunk and direct commits as the default.
 - [Git Push Safety Convention](./git-push-safety.md) — Approval rules for force-push and `--no-verify`.
 - [PR Merge Protocol Convention](./pr-merge-protocol.md) — Approval rules when a PR is opened (applies in the opt-in PR case).
+- [CI Post-Push Verification Convention](./ci-post-push-verification.md) — Because direct push to main is the default, CI post-push verification is the mechanism that catches what the pre-push hook missed.
 - [Proactive Preexisting Error Resolution](../practice/proactive-preexisting-error-resolution.md) — Practice governing proactive fixes of discovered violations.
 - [Plans Organization Convention](../../conventions/structure/plans.md) — Delivery checklist authoring standards.
