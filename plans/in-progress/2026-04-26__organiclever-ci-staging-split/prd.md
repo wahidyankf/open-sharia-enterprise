@@ -1,5 +1,14 @@
 # Product Requirements Document
 
+## Product Overview
+
+This plan splits the existing monolithic `test-and-deploy-organiclever.yml` CI workflow
+into three focused workflows: a development pipeline that auto-deploys to staging, a
+scheduled staging smoke-test, and a gated production-promotion workflow. It also renames
+the Playwright E2E env var from `BASE_URL` to `WEB_BASE_URL` for clarity, and updates
+eight documentation files that reference the old workflow filename or describe the
+now-inaccurate deployment model.
+
 ## Personas
 
 **Maintainer as CI author** — owns `.github/workflows/`. Needs three independently
@@ -41,13 +50,13 @@ As the deployer I want no automated workflow pushing to `prod-organiclever-web`,
 that every production change is a deliberate, traceable human action.
 
 **US-5 — Unambiguous staging URL env var**
-As the CI author I want the staging URL environment variable named `WEB_BASE_URL` so
+As the CI author I want the staging URL environment variable named `WEB_BASE_URL` so that
 its scope is unambiguous across the polyglot workspace and clearly distinct from any
 backend `BASE_URL`.
 
 **US-6 — Documentation stays accurate**
 As the CI author I want all `.md` files that reference `test-and-deploy-organiclever.yml`
-updated to the new workflow names, so runbooks and governance docs remain correct.
+updated to the new workflow names, so that runbooks and governance docs remain correct.
 
 ## Acceptance Criteria
 
@@ -159,6 +168,14 @@ Those jobs run against `localhost` and require `GOOGLE_CLIENT_ID` and
 **No codegen or Go toolchain in staging-facing E2E workflows.** Neither
 `test-organiclever-web-staging.yml` nor `deploy-organiclever-web-to-production.yml`
 need `setup-golang` or codegen — they run Playwright against an already-deployed URL.
+
+## Product Risks
+
+| Risk                                         | Description                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| False production-safety signal               | The staging E2E gate in `deploy-organiclever-web-to-production.yml` runs against the staging URL at dispatch time. If staging state diverges from what was last verified (e.g., a new development deploy lands between the manual trigger and the gate run), the gate result may not reflect the code the deployer intended to promote.   |
+| Operator confusion between dispatch commands | Two workflows accept `workflow_dispatch`: `test-organiclever-web-staging.yml` (smoke test only) and `deploy-organiclever-web-to-production.yml` (E2E gate + push to prod). A deployer who runs the wrong one gets a test result but no production deploy, with no error message. Agent and runbook descriptions must be unambiguous.      |
+| `WEB_BASE_URL` unset silently failing        | If `WEB_BASE_URL` is absent from `organiclever-web-staging`, Playwright will use `undefined` as the base URL and every test will fail with a URL parse error rather than a clear "env var missing" message. Environment gate enforcement (product constraint) mitigates this, but only if the environment is correctly linked to the job. |
 
 ## Out of Scope
 
