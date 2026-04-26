@@ -394,7 +394,7 @@ The default push behavior is constant regardless of execution context:
 
 AI agents must not infer a branch + PR workflow from execution context alone. The triggering signal is always an explicit instruction in the user's prompt or delivery checklist.
 
-Note: this does **not** affect environment branches (`prod-ayokoding-web`, `prod-oseplatform-web`, `prod-organiclever-web`). Those remain CI-managed and follow their own documented deployment workflows.
+Note: this does **not** affect environment branches (`prod-ayokoding-web`, `prod-oseplatform-web`, `prod-organiclever-web`, `stag-organiclever-web`). Those follow their own documented deployment workflows. The OrganicLever staging branch (`stag-organiclever-web`) is CI-automated; the production branch (`prod-organiclever-web`) is promoted on demand via `deploy-organiclever-web-to-production.yml` (dispatch-only).
 
 ## When Branches Are Appropriate
 

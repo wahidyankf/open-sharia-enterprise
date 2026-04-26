@@ -100,8 +100,14 @@ graph LR
 ### Environment Branches
 
 - **Purpose**: Deployment triggers only
-- **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`, `prod-organiclever-web`
+- **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`, `stag-organiclever-web`, `prod-organiclever-web`
 - **Policy**: NEVER commit directly to these branches outside CI automation
-- **Workflow**: Automated by scheduled GitHub Actions workflows (`test-and-deploy-ayokoding-web.yml`,
-  `test-and-deploy-oseplatform-web.yml`, `test-and-deploy-organiclever.yml`) running at 6 AM and 6 PM WIB; or
-  trigger manually from GitHub Actions UI
+- **Workflows**:
+  - `test-and-deploy-ayokoding-web.yml` (6 AM / 6 PM WIB) → `prod-ayokoding-web`
+  - `test-and-deploy-oseplatform-web.yml` (6 AM / 6 PM WIB) → `prod-oseplatform-web`
+  - `test-and-deploy-organiclever-web-development.yml` (3 AM / 3 PM WIB) → `stag-organiclever-web`
+    (deploys to **staging**, not production)
+  - `deploy-organiclever-web-to-production.yml` (`workflow_dispatch` only) →
+    `prod-organiclever-web` (gated by FE E2E against staging; promotes from
+    `stag-organiclever-web`)
+  - All workflows can also be triggered manually from the GitHub Actions UI
