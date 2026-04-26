@@ -80,14 +80,16 @@ The result must exactly match the filename (without path).
 
 Every workflow currently in the repository follows this rule:
 
-| `name:` field                        | Filename                              |
-| ------------------------------------ | ------------------------------------- |
-| `PR - Quality Gate`                  | `pr-quality-gate.yml`                 |
-| `PR - Validate Links`                | `pr-validate-links.yml`               |
-| `Test and Deploy - AyoKoding Web`    | `test-and-deploy-ayokoding-web.yml`   |
-| `Test and Deploy - OSE Platform Web` | `test-and-deploy-oseplatform-web.yml` |
-| `Test and Deploy - OrganicLever`     | `test-and-deploy-organiclever.yml`    |
-| `Test and Deploy - Wahidyankf Web`   | `test-and-deploy-wahidyankf-web.yml`  |
+| `name:` field                                    | Filename                                           |
+| ------------------------------------------------ | -------------------------------------------------- |
+| `PR - Quality Gate`                              | `pr-quality-gate.yml`                              |
+| `PR - Validate Links`                            | `pr-validate-links.yml`                            |
+| `Test and Deploy - AyoKoding Web`                | `test-and-deploy-ayokoding-web.yml`                |
+| `Test and Deploy - OSE Platform Web`             | `test-and-deploy-oseplatform-web.yml`              |
+| `Test and Deploy - OrganicLever Web Development` | `test-and-deploy-organiclever-web-development.yml` |
+| `Test - OrganicLever Web Staging`                | `test-organiclever-web-staging.yml`                |
+| `Deploy - OrganicLever Web to Production`        | `deploy-organiclever-web-to-production.yml`        |
+| `Test and Deploy - Wahidyankf Web`               | `test-and-deploy-wahidyankf-web.yml`               |
 
 ## Examples
 
@@ -103,11 +105,11 @@ Derivation: `PR - Quality Gate` → lowercase → `pr - quality gate` → spaces
 ---
 
 ```yaml
-# File: .github/workflows/test-and-deploy-organiclever.yml
-name: Test and Deploy - OrganicLever
+# File: .github/workflows/test-and-deploy-organiclever-web-development.yml
+name: Test and Deploy - OrganicLever Web Development
 ```
 
-Derivation: `Test and Deploy - OrganicLever` → lowercase → `test and deploy - organiclever` → spaces to hyphens → `test-and-deploy---organiclever` → collapse hyphens → `test-and-deploy-organiclever` → append `.yml` → `test-and-deploy-organiclever.yml`. Matches filename.
+Derivation: `Test and Deploy - OrganicLever Web Development` → lowercase → `test and deploy - organiclever web development` → spaces to hyphens → `test-and-deploy---organiclever-web-development` → collapse hyphens → `test-and-deploy-organiclever-web-development` → append `.yml` → `test-and-deploy-organiclever-web-development.yml`. Matches filename.
 
 ### FAIL: Misaligned name and filename
 
@@ -145,11 +147,11 @@ creates inconsistencies where CI passes on main but manually dispatched tests fa
 
 **Workflows that must stay aligned**:
 
-| Language | `pr-quality-gate.yml` step | Scheduled workflows to update      |
-| -------- | -------------------------- | ---------------------------------- |
-| Go       | `go-version`               | `test-and-deploy-organiclever.yml` |
-| Node.js  | `node-version`             | All workflows installing Node.js   |
-| .NET     | `dotnet-version`           | `test-and-deploy-organiclever.yml` |
+| Language | `pr-quality-gate.yml` step | Scheduled workflows to update                      |
+| -------- | -------------------------- | -------------------------------------------------- |
+| Go       | `go-version`               | `test-and-deploy-organiclever-web-development.yml` |
+| Node.js  | `node-version`             | All workflows installing Node.js                   |
+| .NET     | `dotnet-version`           | `test-and-deploy-organiclever-web-development.yml` |
 
 ### Adding new workflows
 

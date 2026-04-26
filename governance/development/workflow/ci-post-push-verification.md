@@ -46,13 +46,13 @@ After pushing app or library code to `origin main`, you MUST:
 
 ## Workflow Mapping
 
-| App(s) Changed                                              | Workflow to Trigger                    |
-| ----------------------------------------------------------- | -------------------------------------- |
-| `apps/ayokoding-web/`                                       | `test-and-deploy-ayokoding-web.yml`    |
-| `apps/oseplatform-web/`                                     | `test-and-deploy-oseplatform-web.yml`  |
-| `apps/organiclever-web/`, `apps/organiclever-be/`           | `test-and-deploy-organiclever.yml`     |
-| `apps/wahidyankf-web/`                                      | `test-and-deploy-wahidyankf-web.yml`   |
-| `libs/`, shared infrastructure, or cross-cutting governance | All workflows for apps in blast radius |
+| App(s) Changed                                              | Workflow to Trigger                                |
+| ----------------------------------------------------------- | -------------------------------------------------- |
+| `apps/ayokoding-web/`                                       | `test-and-deploy-ayokoding-web.yml`                |
+| `apps/oseplatform-web/`                                     | `test-and-deploy-oseplatform-web.yml`              |
+| `apps/organiclever-web/`, `apps/organiclever-be/`           | `test-and-deploy-organiclever-web-development.yml` |
+| `apps/wahidyankf-web/`                                      | `test-and-deploy-wahidyankf-web.yml`               |
+| `libs/`, shared infrastructure, or cross-cutting governance | All workflows for apps in blast radius             |
 
 When a change touches shared code (a lib, a shared type, a contract), trigger every workflow for every app that imports that code — not just the app most obviously related to the change.
 
@@ -139,10 +139,10 @@ Agent: Pushed feat(organiclever-web): update hero section to origin main.
 Identifying blast radius: apps/organiclever-web/ changed.
 
 Triggering CI:
-  gh workflow run test-and-deploy-organiclever.yml
+  gh workflow run test-and-deploy-organiclever-web-development.yml
 
 Monitoring:
-  gh run list --workflow=test-and-deploy-organiclever.yml --limit=3
+  gh run list --workflow=test-and-deploy-organiclever-web-development.yml --limit=3
   gh run watch 12345678
 
 Result: All steps passed. Work is complete.
@@ -175,7 +175,7 @@ The pre-push hook does not run integration tests, E2E tests, or deployment workf
 Agent: Pushed feat(organiclever-be): update auth endpoint to origin main.
 
 Triggering CI:
-  gh workflow run test-and-deploy-organiclever.yml
+  gh workflow run test-and-deploy-organiclever-web-development.yml
 
 Monitoring: run 12345679 failed — integration test failure in organiclever-be.
 
@@ -187,7 +187,7 @@ Fix:
   git push origin main
 
 Re-triggering CI:
-  gh workflow run test-and-deploy-organiclever.yml
+  gh workflow run test-and-deploy-organiclever-web-development.yml
 
 Result: All steps passed. Work is complete.
 ```

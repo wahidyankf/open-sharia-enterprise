@@ -376,17 +376,17 @@ services themselves run in parallel across matrix entries.
 
 ## Naming Conventions
 
-| Entity              | Pattern                                                                                   | Example                                   |
-| ------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------- |
-| Backend app         | `{domain}-be` or `{domain}-be-{lang}-{framework}`                                         | `organiclever-be`                         |
-| Frontend app        | `{domain}-fe` or `{domain}-fe-{lang}-{framework}`                                         | `organiclever-web`                        |
-| Infra dev directory | `infra/dev/{app-name}/`                                                                   | `infra/dev/organiclever-be/`              |
-| Specs directory     | See [Specs Directory Structure](../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/gherkin/`     |
-| Test workflow       | `test-{app-name}.yml`                                                                     | `test-and-deploy-organiclever.yml`        |
-| Reusable workflow   | `_reusable-{purpose}.yml`                                                                 | `_reusable-backend-e2e.yml`               |
-| Composite action    | `.github/actions/{name}/action.yml`                                                       | `.github/actions/setup-golang/action.yml` |
-| Deploy workflow     | `test-and-deploy-{app}.yml`                                                               | `test-and-deploy-organiclever.yml`        |
-| PR workflow         | `pr-{purpose}.yml`                                                                        | `pr-quality-gate.yml`                     |
+| Entity              | Pattern                                                                                   | Example                                            |
+| ------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Backend app         | `{domain}-be` or `{domain}-be-{lang}-{framework}`                                         | `organiclever-be`                                  |
+| Frontend app        | `{domain}-fe` or `{domain}-fe-{lang}-{framework}`                                         | `organiclever-web`                                 |
+| Infra dev directory | `infra/dev/{app-name}/`                                                                   | `infra/dev/organiclever-be/`                       |
+| Specs directory     | See [Specs Directory Structure](../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/gherkin/`              |
+| Test workflow       | `test-{app-name}.yml`                                                                     | `test-and-deploy-organiclever-web-development.yml` |
+| Reusable workflow   | `_reusable-{purpose}.yml`                                                                 | `_reusable-backend-e2e.yml`                        |
+| Composite action    | `.github/actions/{name}/action.yml`                                                       | `.github/actions/setup-golang/action.yml`          |
+| Deploy workflow     | `test-and-deploy-{app}.yml`                                                               | `test-and-deploy-organiclever-web-development.yml` |
+| PR workflow         | `pr-{purpose}.yml`                                                                        | `pr-quality-gate.yml`                              |
 
 See [GitHub Actions Workflow Naming Convention](./github-actions-workflow-naming.md) for the full
 derivation rule between workflow `name:` fields and filenames.

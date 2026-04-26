@@ -125,7 +125,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`.
 - AyoKoding
   - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ayokoding-web.yml)
 - OrganicLever
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever.yml)
+  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever-web-development.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-organiclever-web-development.yml)
 - Wahidyankf
   - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-wahidyankf-web.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-wahidyankf-web.yml)
 - [`rhino-cli`](./apps/rhino-cli/)
