@@ -15,19 +15,19 @@ graph TD
 
     CI("CI Pipeline<br/>──────────────────<br/>Main CI: test:quick<br/>E2E: Playwright<br/>PR Quality Gate"):::ci
 
-    SPEC("Specifications<br/>──────────────────<br/>Backend Gherkin features<br/>Frontend Gherkin features"):::spec
-
     EU -->|"browse and interact"| SYSTEM
     OPS -->|"health check"| SYSTEM
     CI -->|"typecheck, lint, test"| SYSTEM
-    SPEC -->|"BDD specs"| SYSTEM
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef actor_ops fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef system fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
     classDef ci fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef spec fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
 ```
+
+The `specs/apps/organiclever/{be,fe}/gherkin/` Gherkin features feed both the Main CI gate
+(`test:quick`) and the cron-scheduled E2E pipeline. They are not modeled as a separate actor in
+this diagram; see the [Container](./container.md) diagram for spec-to-container wiring.
 
 ## Related
 
