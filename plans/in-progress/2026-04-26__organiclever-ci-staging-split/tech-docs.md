@@ -569,3 +569,71 @@ their own documented deployment workflows. The OrganicLever staging branch
 (`stag-organiclever-web`) is CI-automated; the production branch (`prod-organiclever-web`)
 is promoted on demand via `deploy-organiclever-web-to-production.yml` (dispatch-only).
 ```
+
+## Rollback
+
+If this plan introduces regressions after merging to `main`, revert using one of these
+procedures depending on what has been completed:
+
+### Option A — Full revert (all phases complete)
+
+```bash
+# Find the commit that deleted test-and-deploy-organiclever.yml and created the three new workflows
+git log --oneline --all | grep "organiclever"
+
+# Revert the workflow commit (creates a new revert commit on main)
+git revert <workflow-commit-sha>
+
+# Revert the playwright.config.ts rename commit
+git revert <playwright-config-commit-sha>
+
+# Revert the doc updates commit
+git revert <docs-commit-sha>
+
+git push origin main
+```
+
+### Option B — Targeted file restores (partial revert)
+
+**Restore the old workflow file** from git history:
+
+```bash
+git show <pre-deletion-commit>:.github/workflows/test-and-deploy-organiclever.yml \
+  > .github/workflows/test-and-deploy-organiclever.yml
+git add .github/workflows/test-and-deploy-organiclever.yml
+git commit -m "revert(ci): restore test-and-deploy-organiclever.yml"
+```
+
+**Remove the three new workflow files** created by this plan:
+
+```bash
+git rm .github/workflows/test-and-deploy-organiclever-web-development.yml
+git rm .github/workflows/test-organiclever-web-staging.yml
+git rm .github/workflows/deploy-organiclever-web-to-production.yml
+git commit -m "revert(ci): remove split workflow files"
+```
+
+**Revert `playwright.config.ts`** env var rename:
+
+```bash
+# Change WEB_BASE_URL back to BASE_URL in apps/organiclever-web-e2e/playwright.config.ts
+git commit -m "revert(organiclever-web-e2e): restore BASE_URL in playwright config"
+```
+
+**Restore deployer agent** to its push-based mechanism: revert
+`.claude/agents/apps-organiclever-web-deployer.md` and
+`.opencode/agent/apps-organiclever-web-deployer.md` to their pre-plan content, then:
+
+```bash
+git commit -m "revert(agents): restore apps-organiclever-web-deployer to direct push model"
+```
+
+### Notes
+
+- Doc updates in Phase 2 are cosmetic — leaving them post-rollback is safe; they describe
+  the now-reverted model but do not affect runtime behavior.
+- After restoring `test-and-deploy-organiclever.yml`, confirm `GOOGLE_CLIENT_ID` and
+  `GOOGLE_CLIENT_SECRET` are still available in the original `"Development - Organic Lever"`
+  GitHub Environment (the old workflow's environment name).
+- If the original environment was deleted, recreate it or update the old workflow's
+  `environment:` field to point to `organiclever-web-development`.

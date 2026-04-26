@@ -169,9 +169,12 @@ grep -rn "test-and-deploy-organiclever\.yml" . \
   | `Test - OrganicLever Web Staging`                | `test-organiclever-web-staging.yml`                |
   | `Deploy - OrganicLever Web to Production`        | `deploy-organiclever-web-to-production.yml`        |
 
-- [ ] **PASS example comment** (`# File: ...`): update to
-      `test-and-deploy-organiclever-web-development.yml`; update `name:` value;
-      update the derivation walkthrough sentence
+- [ ] **PASS example — `# File:` comment**: replace with
+      `test-and-deploy-organiclever-web-development.yml`
+- [ ] **PASS example — `name:` value**: update to
+      `Test and Deploy - OrganicLever Web Development`
+- [ ] **PASS example — derivation walkthrough sentence**: update to reflect the new
+      filename derivation (`test-and-deploy` prefix + `-organiclever-web-development` suffix)
 - [ ] **Version alignment table Go row**: replace →
       `test-and-deploy-organiclever-web-development.yml`
 - [ ] **Version alignment table .NET row**: replace →
@@ -223,6 +226,14 @@ Expected: **no matches**.
 
 > Fix ALL failures found here, not just those caused by your changes. Commit
 > preexisting fixes separately.
+
+### 3.0 Nx affected quality gates (run after Phase 1 code changes)
+
+- [ ] `npx nx affected -t typecheck`
+- [ ] `npx nx affected -t lint`
+- [ ] `npx nx affected -t test:quick`
+- [ ] `npx nx affected -t spec-coverage`
+- [ ] Fix ALL failures found — including pre-existing issues not caused by your changes
 
 ### 3.1 Markdown lint
 
