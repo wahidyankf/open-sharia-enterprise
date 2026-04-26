@@ -193,10 +193,31 @@ func (s *validateMermaidIntSteps) aMarkdownFileContainingFlowchartNoViolationsIn
 	return s.writeMD("docs/clean.md", "# Clean\n\n```mermaid\nflowchart TB\n  A[Short] --> B[Label]\n```\n")
 }
 
+func (s *validateMermaidIntSteps) aMarkdownFileUnderPlansLongLabel() error {
+	// 35-char label exceeds default MaxLabelLen=30.
+	return s.writeMD("plans/sample/diagram.md",
+		"# Plan\n\n```mermaid\nflowchart TB\n  A[This is exactly thirty-five chars!!] --> B[ok]\n```\n")
+}
+
 // --- When steps ---
 
 func (s *validateMermaidIntSteps) theDeveloperRunsDocsValidateMermaid() error {
 	s.runCmd([]string{})
+	return nil
+}
+
+func (s *validateMermaidIntSteps) theDeveloperRunsDocsValidateMermaidNoArgs() error {
+	s.runCmd([]string{})
+	return nil
+}
+
+func (s *validateMermaidIntSteps) theOutputIdentifiesFileUnderPlans() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected violation, got success; output: %s", s.cmdOutput)
+	}
+	if !strings.Contains(s.cmdOutput, "plans/") {
+		return fmt.Errorf("expected output to mention plans/, got: %s", s.cmdOutput)
+	}
 	return nil
 }
 
@@ -379,9 +400,11 @@ func InitializeValidateMermaidScenario(sc *godog.ScenarioContext) {
 	sc.Step(stepMermaidViolationNotInPushRange, s.aMarkdownFileWithMermaidViolationNotInPushRange)
 	sc.Step(stepMermaidFileLabelLengthViolation, s.aMarkdownFileContainingFlowchartWithLabelLengthViolation)
 	sc.Step(stepMermaidFileNoViolations, s.aMarkdownFileContainingFlowchartNoViolationsInt)
+	sc.Step(stepMermaidFileUnderPlansLongLabel, s.aMarkdownFileUnderPlansLongLabel)
 
 	// When.
 	sc.Step(stepDeveloperRunsDocsValidateMermaid, s.theDeveloperRunsDocsValidateMermaid)
+	sc.Step(stepDeveloperRunsDocsValidateMermaidNoArgs, s.theDeveloperRunsDocsValidateMermaidNoArgs)
 	sc.Step(stepDeveloperRunsDocsValidateMermaidMaxLabelLen40, s.theDeveloperRunsDocsValidateMermaidWithMaxLabelLen40)
 	sc.Step(stepDeveloperRunsDocsValidateMermaidMaxWidth5, s.theDeveloperRunsDocsValidateMermaidWithMaxWidth5)
 	sc.Step(stepDeveloperRunsDocsValidateMermaidMaxDepth3, s.theDeveloperRunsDocsValidateMermaidWithMaxDepth3)
@@ -405,6 +428,7 @@ func InitializeValidateMermaidScenario(sc *godog.ScenarioContext) {
 	sc.Step(stepMermaidOutputContainsTable, s.theOutputContainsTableWithExpectedColumns)
 	sc.Step(stepMermaidOutputIncludesPerFileDetail, s.theOutputIncludesPerFileScanDetailLines)
 	sc.Step(stepMermaidOutputContainsNoText, s.theOutputContainsNoText)
+	sc.Step(stepMermaidOutputIdentifiesFileUnderPlans, s.theOutputIdentifiesFileUnderPlans)
 }
 
 func TestIntegrationValidateMermaid(t *testing.T) {
@@ -419,5 +443,67 @@ func TestIntegrationValidateMermaid(t *testing.T) {
 	}
 	if suite.Run() != 0 {
 		t.Fatal("non-zero status returned, failed to run feature tests")
+	}
+}
+
+// TestIntegrationValidateMermaid_PlansDirScanned verifies that without path
+// arguments, the validator scans plans/ and reports violations on diagrams there.
+// Mirrors the new Gherkin scenario "Plans directory is scanned by default".
+func TestIntegrationValidateMermaid_PlansDirScanned(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	tmpDir, err := os.MkdirTemp("", "validate-mermaid-plans-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		_ = os.Chdir(originalWd)
+		_ = os.RemoveAll(tmpDir)
+		validateMermaidStagedOnly = false
+		validateMermaidChangedOnly = false
+		validateMermaidMaxLabelLen = 30
+		validateMermaidMaxWidth = 3
+		validateMermaidMaxDepth = 5
+		output = "text"
+		verbose = false
+		quiet = false
+	}()
+
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	planDir := filepath.Join(tmpDir, "plans", "sample")
+	if err := os.MkdirAll(planDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	// 35-char label exceeds default MaxLabelLen=30.
+	planMD := filepath.Join(planDir, "diagram.md")
+	content := "# Plan\n\n```mermaid\nflowchart TB\n  A[This is exactly thirty-five chars!!] --> B[ok]\n```\n"
+	if err := os.WriteFile(planMD, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	verbose = false
+	quiet = false
+	output = "text"
+	validateMermaidStagedOnly = false
+	validateMermaidChangedOnly = false
+	validateMermaidMaxLabelLen = 30
+	validateMermaidMaxWidth = 3
+	validateMermaidMaxDepth = 5
+
+	buf := new(bytes.Buffer)
+	validateMermaidCmd.SetOut(buf)
+	validateMermaidCmd.SetErr(buf)
+	cmdErr := validateMermaidCmd.RunE(validateMermaidCmd, []string{})
+
+	if cmdErr == nil {
+		t.Fatalf("expected violation for plans/ diagram, got success; output:\n%s", buf.String())
+	}
+	if !strings.Contains(buf.String(), filepath.Join("plans", "sample", "diagram.md")) {
+		t.Errorf("expected output to identify plans/sample/diagram.md; got:\n%s", buf.String())
 	}
 }

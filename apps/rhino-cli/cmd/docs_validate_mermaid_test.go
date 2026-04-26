@@ -336,6 +336,25 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchartNoViolations(
 	return nil
 }
 
+func (s *validateMermaidUnitSteps) aMarkdownFileUnderPlansLongLabel() error {
+	docsValidateMermaidFn = func(_ []mermaid.MermaidBlock, _ mermaid.ValidateOptions) mermaid.ValidationResult {
+		return mermaid.ValidationResult{
+			Violations: []mermaid.Violation{
+				{
+					Kind:        mermaid.ViolationLabelTooLong,
+					FilePath:    "/mock-repo/plans/sample/diagram.md",
+					BlockIndex:  0,
+					NodeID:      "A",
+					LabelText:   "This is exactly thirty-five chars!!",
+					LabelLen:    35,
+					MaxLabelLen: 30,
+				},
+			},
+		}
+	}
+	return nil
+}
+
 // --- When steps ---
 
 func (s *validateMermaidUnitSteps) theDeveloperRunsDocsValidateMermaid() error {
@@ -344,6 +363,20 @@ func (s *validateMermaidUnitSteps) theDeveloperRunsDocsValidateMermaid() error {
 	validateMermaidCmd.SetErr(buf)
 	s.cmdErr = validateMermaidCmd.RunE(validateMermaidCmd, []string{})
 	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *validateMermaidUnitSteps) theDeveloperRunsDocsValidateMermaidNoArgs() error {
+	return s.theDeveloperRunsDocsValidateMermaid()
+}
+
+func (s *validateMermaidUnitSteps) theOutputIdentifiesFileUnderPlans() error {
+	if s.cmdErr == nil {
+		return fmt.Errorf("expected violation, got success; output: %s", s.cmdOutput)
+	}
+	if !strings.Contains(s.cmdOutput, "plans/") {
+		return fmt.Errorf("expected output to mention plans/, got: %s", s.cmdOutput)
+	}
 	return nil
 }
 
@@ -565,9 +598,11 @@ func TestUnitDocsValidateMermaid(t *testing.T) {
 			sc.Step(stepMermaidViolationNotInPushRange, s.aMarkdownFileWithMermaidViolationNotInPushRange)
 			sc.Step(stepMermaidFileLabelLengthViolation, s.aMarkdownFileContainingFlowchartWithLabelLengthViolation)
 			sc.Step(stepMermaidFileNoViolations, s.aMarkdownFileContainingFlowchartNoViolations)
+			sc.Step(stepMermaidFileUnderPlansLongLabel, s.aMarkdownFileUnderPlansLongLabel)
 
 			// When steps.
 			sc.Step(stepDeveloperRunsDocsValidateMermaid, s.theDeveloperRunsDocsValidateMermaid)
+			sc.Step(stepDeveloperRunsDocsValidateMermaidNoArgs, s.theDeveloperRunsDocsValidateMermaidNoArgs)
 			sc.Step(stepDeveloperRunsDocsValidateMermaidMaxLabelLen40, s.theDeveloperRunsDocsValidateMermaidWithMaxLabelLen40)
 			sc.Step(stepDeveloperRunsDocsValidateMermaidMaxWidth5, s.theDeveloperRunsDocsValidateMermaidWithMaxWidth5)
 			sc.Step(stepDeveloperRunsDocsValidateMermaidMaxDepth3, s.theDeveloperRunsDocsValidateMermaidWithMaxDepth3)
@@ -591,6 +626,7 @@ func TestUnitDocsValidateMermaid(t *testing.T) {
 			sc.Step(stepMermaidOutputContainsTable, s.theOutputContainsTableWithExpectedColumns)
 			sc.Step(stepMermaidOutputIncludesPerFileDetail, s.theOutputIncludesPerFileScanDetailLines)
 			sc.Step(stepMermaidOutputContainsNoText, s.theOutputContainsNoText)
+			sc.Step(stepMermaidOutputIdentifiesFileUnderPlans, s.theOutputIdentifiesFileUnderPlans)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
