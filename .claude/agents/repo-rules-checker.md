@@ -304,7 +304,7 @@ When a UUID chain exists from a previous iteration (re-validation mode, identifi
 
 This prevents scanning all ~265 software documentation files when only 3-4 agent files were changed by the fixer.
 
-Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Last Updated Convention](../../governance/conventions/structure/no-last-updated.md).
+Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Manual Date Metadata Convention](../../governance/conventions/structure/no-date-metadata.md).
 
 ### Step 2: Agent-to-Agent Duplication Detection
 
