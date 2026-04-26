@@ -1,20 +1,21 @@
 # Context Diagram: OrganicLever
 
 Level 1 of the C4 model. Shows the OrganicLever system as a single boundary with two external
-actors. The system contains both the Next.js frontend and the F#/Giraffe backend REST API.
+actors. The system contains both the Next.js frontend (landing site + system-status pages) and
+the F#/Giraffe backend REST API (health endpoint only). v0 has no authenticated screens.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080
 graph TD
-    EU("End User<br/>──────────────────<br/>Login via Google OAuth<br/>View profile<br/><br/>Desktop, Mobile"):::actor
+    EU("End User<br/>──────────────────<br/>Browse landing page<br/>Open the local-first app<br/><br/>Desktop, Mobile"):::actor
 
     OPS("Operations Engineer<br/>──────────────────<br/>Health monitoring"):::actor_ops
 
-    SYSTEM["OrganicLever<br/>──────────────────────<br/>Frontend SPA + Backend API<br/><br/>Google OAuth login<br/>Protected user profile<br/>Service health status"]:::system
+    SYSTEM["OrganicLever<br/>──────────────────────<br/>Frontend SPA + Backend API<br/><br/>Landing site + system status<br/>Service health status"]:::system
 
     CI("CI Pipeline<br/>──────────────────<br/>Main CI: test:quick<br/>E2E: Playwright<br/>PR Quality Gate"):::ci
 
-    SPEC("Specifications<br/>──────────────────<br/>3 BE Gherkin features<br/>4 FE Gherkin features"):::spec
+    SPEC("Specifications<br/>──────────────────<br/>Backend Gherkin features<br/>Frontend Gherkin features"):::spec
 
     EU -->|"browse and interact"| SYSTEM
     OPS -->|"health check"| SYSTEM

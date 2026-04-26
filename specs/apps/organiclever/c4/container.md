@@ -1,11 +1,13 @@
 # Container Diagram: OrganicLever
 
 Level 2 of the C4 model. Shows the runtime containers inside the OrganicLever system boundary:
-the Next.js 16 frontend, the F#/Giraffe backend REST API, and the PostgreSQL database.
+the Next.js 16 frontend (landing site + system-status diagnostic page) and the F#/Giraffe backend
+REST API (health endpoint only).
 
-The frontend runs server-side in Next.js. Protected page routes proxy API calls to the backend
-via Next.js API route handlers. All authentication and data storage flows through the backend to
-the database.
+The frontend is a Next.js App Router application. v0 has no authenticated screens, no
+client-side state machine, no remote sync — every productivity-tracking feature in the v0
+storyboard lives in the user's browser via `localStorage`. The backend exposes only the health
+endpoint; future work will add the productivity-tracking API surface.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080
@@ -14,11 +16,9 @@ graph TD
     OPS("Operations Engineer"):::actor_ops
 
     subgraph SYSTEM["OrganicLever"]
-        FE["Next.js Frontend<br/>──────────────────<br/>Next.js 16, TypeScript<br/>Effect TS<br/><br/>Google OAuth login<br/>Protected /profile route<br/>Server-side rendering<br/>API route handlers"]:::container_fe
+        FE["Next.js Frontend<br/>──────────────────<br/>Next.js 16, TypeScript<br/><br/>Landing page<br/>System status diagnostics<br/>Server-side rendering"]:::container_fe
 
-        BE["F#/Giraffe Backend<br/>──────────────────<br/>F#, Giraffe<br/><br/>Health endpoint<br/>Google OAuth login<br/>Token refresh<br/>User profile (me)"]:::container_be
-
-        DB[("PostgreSQL<br/>──────────────────<br/>PostgreSQL<br/><br/>Users<br/>Refresh tokens")]:::datastore
+        BE["F#/Giraffe Backend<br/>──────────────────<br/>F#, Giraffe<br/><br/>Health endpoint"]:::container_be
     end
 
     subgraph SPECS["Specifications"]
@@ -36,9 +36,7 @@ graph TD
     EU -->|"HTTPS"| FE
     OPS -->|"health check"| BE
 
-    FE -->|"server-side proxy<br/>HTTP/JSON"| BE
-
-    BE -->|"users, refresh tokens<br/>TCP/SQL"| DB
+    FE -->|"system-status diagnostic<br/>HTTP/JSON"| BE
 
     BE_GHERKIN -->|"BDD scenarios"| BE
     FE_GHERKIN -->|"BDD scenarios"| FE
@@ -52,7 +50,6 @@ graph TD
     classDef actor_ops fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef container_fe fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef container_be fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef datastore fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef spec fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
     classDef ci fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
@@ -61,9 +58,9 @@ graph TD
 
 ### Backend
 
-| App             | Language | Framework | Database   | Coverage |
-| --------------- | -------- | --------- | ---------- | -------- |
-| organiclever-be | F#       | Giraffe   | PostgreSQL | >= 90%   |
+| App             | Language | Framework | Database | Coverage |
+| --------------- | -------- | --------- | -------- | -------- |
+| organiclever-be | F#       | Giraffe   | none     | >= 90%   |
 
 ### Frontend
 
