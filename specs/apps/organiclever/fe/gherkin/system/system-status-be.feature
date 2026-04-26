@@ -6,6 +6,7 @@ Feature: BE Status Page
     Then the response status is 200
     And the body contains "Not configured"
 
+  @local-fullstack
   Scenario: BE status page shows UP when backend healthy
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
     And the backend health endpoint returns 200 with body {"status":"UP"}
@@ -14,6 +15,7 @@ Feature: BE Status Page
     And the body contains "UP"
     And the body contains the backend URL
 
+  @local-fullstack
   Scenario: BE status page shows DOWN when backend unreachable
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
     And the backend health endpoint fails with connection refused
@@ -23,6 +25,7 @@ Feature: BE Status Page
     And the body contains the failure reason
     And no uncaught exception reaches the Next.js error boundary
 
+  @local-fullstack
   Scenario: BE status page shows DOWN when backend times out
     Given ORGANICLEVER_BE_URL is "http://be.example.test"
     And the backend health endpoint does not respond within 3 seconds

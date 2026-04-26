@@ -28,8 +28,9 @@ When(
       const response = await page.goto(routePath);
       expect(response?.status()).toBe(404);
     } else {
-      const baseURL = "http://localhost:3200";
-      const response = await request.post(`${baseURL}${routePath}`);
+      // Playwright resolves the relative path against `use.baseURL`, so this
+      // works for local dev (localhost:3200) and any deployed staging URL.
+      const response = await request.post(routePath);
       expect(response.status()).toBe(404);
     }
   },
