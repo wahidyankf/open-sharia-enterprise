@@ -219,6 +219,9 @@ const (
 	stepMermaidOutputContainsTable                     = `^the output contains a table with File, Block, Line, Severity, Kind, and Detail columns$`
 	stepMermaidOutputIncludesPerFileDetail             = `^the output includes per-file scan detail lines$`
 	stepMermaidOutputContainsNoText                    = `^the output contains no text$`
+	stepMermaidFileUnderPlansLongLabel                 = `^a markdown file under plans/ containing a Mermaid flowchart with a label longer than 30 characters$`
+	stepDeveloperRunsDocsValidateMermaidNoArgs         = `^the developer runs docs validate-mermaid without path arguments$`
+	stepMermaidOutputIdentifiesFileUnderPlans          = `^the output identifies the file under plans/$`
 )
 
 // Git pre-commit step patterns.

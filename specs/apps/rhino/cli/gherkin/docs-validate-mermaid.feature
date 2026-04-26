@@ -131,3 +131,9 @@ Feature: Mermaid Flowchart Structural Validation
     When the developer runs docs validate-mermaid with --quiet
     Then the command exits successfully
     And the output contains no text
+
+  Scenario: Plans directory is scanned by default
+    Given a markdown file under plans/ containing a Mermaid flowchart with a label longer than 30 characters
+    When the developer runs docs validate-mermaid without path arguments
+    Then the command exits with a failure code
+    And the output identifies the file under plans/

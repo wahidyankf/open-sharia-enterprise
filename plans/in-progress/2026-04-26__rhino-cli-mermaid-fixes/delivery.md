@@ -26,49 +26,67 @@
 
 ### 1.1 Update `collectMDDefaultDirs`
 
-- [ ] Read `apps/rhino-cli/cmd/docs_validate_mermaid.go` around line 202
-- [ ] Add `filepath.Join(repoRoot, "plans")` to the `dirs` slice
-- [ ] Update the function comment to mention `plans/`
+- [x] Read `apps/rhino-cli/cmd/docs_validate_mermaid.go` around line 202
+- [x] Add `filepath.Join(repoRoot, "plans")` to the `dirs` slice
+- [x] Update the function comment to mention `plans/`
+
+**Implementation Notes** (2026-04-26)
+Status: done. Files: `apps/rhino-cli/cmd/docs_validate_mermaid.go`. Added `filepath.Join(repoRoot, "plans")` to dirs slice; updated comment to mention `plans/`.
 
 ### 1.2 Add Gherkin scenario
 
-- [ ] Read `specs/apps/rhino/cli/gherkin/docs-validate-mermaid.feature` in full
-- [ ] Add scenario:
+- [x] Read `specs/apps/rhino/cli/gherkin/docs-validate-mermaid.feature` in full
+- [x] Add scenario:
 
-  ```gherkin
-  Scenario: Plans directory is scanned by default
-    Given a markdown file under plans/ containing a Mermaid flowchart with a label
-      longer than 30 characters
-    When the developer runs docs validate-mermaid without path arguments
-    Then the command exits with a failure code
-    And the output identifies the file under plans/
-  ```
+**Implementation Notes** (2026-04-26)
+Status: done. Files: `specs/apps/rhino/cli/gherkin/docs-validate-mermaid.feature`. Added "Plans directory is scanned by default" scenario.
+
+```gherkin
+Scenario: Plans directory is scanned by default
+  Given a markdown file under plans/ containing a Mermaid flowchart with a label
+    longer than 30 characters
+  When the developer runs docs validate-mermaid without path arguments
+  Then the command exits with a failure code
+  And the output identifies the file under plans/
+```
 
 ### 1.3 Add unit test
 
-- [ ] In `apps/rhino-cli/cmd/docs_validate_mermaid_test.go`:
-  - [ ] Test `collectMDDefaultDirs(repoRoot)` includes
+- [x] In `apps/rhino-cli/cmd/docs_validate_mermaid_test.go`:
+  - [x] Test `collectMDDefaultDirs(repoRoot)` includes
         `filepath.Join(repoRoot, "plans")`
-  - [ ] Use a temp `repoRoot` with `plans/foo/bar.md` and verify file picked up
+  - [x] Use a temp `repoRoot` with `plans/foo/bar.md` and verify file picked up
+
+**Implementation Notes** (2026-04-26)
+Status: done. Files: `apps/rhino-cli/cmd/docs_validate_mermaid_helpers_test.go`. Added `TestCollectMDDefaultDirs_IncludesPlans` writing `plans/in-progress/sample/diagram.md` and asserting collected.
 
 ### 1.4 Add integration test
 
-- [ ] In `apps/rhino-cli/cmd/docs_validate_mermaid.integration_test.go`:
-  - [ ] Create temp repo with `plans/sample/diagram.md` containing a node label
+- [x] In `apps/rhino-cli/cmd/docs_validate_mermaid.integration_test.go`:
+  - [x] Create temp repo with `plans/sample/diagram.md` containing a node label
         of 35 characters
-  - [ ] Run `validate-mermaid` with no path args
-  - [ ] Assert exit code != 0 and output names `plans/sample/diagram.md`
+  - [x] Run `validate-mermaid` with no path args
+  - [x] Assert exit code != 0 and output names `plans/sample/diagram.md`
+
+**Implementation Notes** (2026-04-26)
+Status: done. Files: `apps/rhino-cli/cmd/docs_validate_mermaid.integration_test.go`. Added `TestIntegrationValidateMermaid_PlansDirScanned` (non-godog) — writes `plans/sample/diagram.md`, runs validator, asserts violation + path in output.
 
 ### 1.5 Implement BDD step (if needed)
 
-- [ ] If the new Gherkin scenario needs new step definitions, add them in
+- [x] If the new Gherkin scenario needs new step definitions, add them in
       `apps/rhino-cli/cmd/steps_*.go`. Reuse existing helpers where possible.
+
+**Implementation Notes** (2026-04-26)
+Status: done. Files: `apps/rhino-cli/cmd/steps_common_test.go`, `docs_validate_mermaid_test.go`, `docs_validate_mermaid.integration_test.go`. Added 3 step constants (`stepMermaidFileUnderPlansLongLabel`, `stepDeveloperRunsDocsValidateMermaidNoArgs`, `stepMermaidOutputIdentifiesFileUnderPlans`); registered handlers in unit (mocked violation) and integration (real plans/sample/diagram.md) suites.
 
 ### 1.6 Test + commit
 
-- [ ] `nx run rhino-cli:test:unit` — all green
-- [ ] `nx run rhino-cli:test:quick` — coverage ≥ 90%
-- [ ] Commit: `feat(rhino-cli): add plans/ to mermaid validator default scan dirs`
+- [x] `nx run rhino-cli:test:unit` — all green
+- [x] `nx run rhino-cli:test:quick` — coverage ≥ 90% (90.10%)
+- [x] Commit: `feat(rhino-cli): add plans/ to mermaid validator default scan dirs`
+
+**Implementation Notes** (2026-04-26)
+Status: done. test:quick passing 90.10% coverage. Phase 1 commit pending below.
 
 ---
 
