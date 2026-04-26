@@ -536,7 +536,7 @@ Before pushing to `main`:
 Create a PR only when ONE of the following conditions is satisfied:
 
 1. **User explicitly requests a PR** in their prompt (e.g., "open a PR", "create a PR for this")
-2. **Plan document explicitly documents a worktree/branch-based flow** — the plan's `README.md`, `prd.md`, or Git Workflow section specifies a branch + PR workflow
+2. **Plan document explicitly specifies a branch + PR workflow** — the plan's `README.md`, `prd.md`, or Git Workflow section explicitly states a branch + PR workflow is required
 
 ### What This Means for Plans
 

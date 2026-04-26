@@ -78,7 +78,7 @@ If the user explicitly says "merge despite the failing lint check" (or equivalen
 
 This protocol applies whenever a pull request exists as part of the development workflow:
 
-- **Worktree mode**: When agents use `isolation: "worktree"` in the Agent tool, when an agent is invoked inside an existing worktree session, or when a developer creates a worktree for isolated work, they create branches and PRs. Merging those PRs requires this protocol.
+- **Opt-in PR mode**: When the user's prompt or plan explicitly requests a branch + pull request (worktree execution context does NOT automatically trigger this), the resulting PR follows this protocol at merge time.
 - **External contributions**: PRs from external contributors follow this protocol.
 - **Code review workflow**: Any short-lived branch created for review purposes follows this protocol.
 
