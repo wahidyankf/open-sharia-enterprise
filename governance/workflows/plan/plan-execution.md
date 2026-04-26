@@ -337,13 +337,13 @@ Validate the implementation against plan requirements.
 - Validates implementation against plan requirements
 - Checks all deliverables meet quality standards
 - Verifies delivery checklist completion
-- Generates progressive report with all findings (HIGH, MEDIUM, MINOR)
+- Generates progressive report with all findings (CRITICAL, HIGH, MEDIUM, LOW)
 
 ### 4. Check for Findings (Sequential)
 
 Analyze validation report to determine if further execution is needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step3.outputs.audit-report-1}`
+**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, and LOW) in `{step3.outputs.audit-report-1}`
 
 - If findings > 0: Proceed to step 5 (Continue Execution)
 - If findings = 0: Skip to step 8 (Finalization - Success)
@@ -415,7 +415,7 @@ Determine whether to continue execution or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step6.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
+- Count ALL findings in `{step6.outputs.audit-report-N}` (CRITICAL, HIGH, MEDIUM, LOW)
 - If findings = 0: Proceed to step 8 (Finalization - Success)
 - If findings > 0 AND iterations < max-iterations: Loop back to step 5 with new report
 - If findings > 0 AND iterations >= max-iterations: Proceed to step 8 (Finalization - Partial)
@@ -425,7 +425,7 @@ Determine whether to continue execution or terminate.
 **Notes**:
 
 - Prevents infinite loops with max-iterations limit
-- Continues until ZERO findings of any confidence level
+- Continues until ZERO findings of any criticality level
 - Each iteration uses the latest validation report
 - Tracks iteration count for observability
 
@@ -499,7 +499,7 @@ with a note explaining why it was skipped rather than silently omitting it.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation, all deliverables complete, plan archived to `plans/done/`
+- PASS: **Success** (`pass`): Zero findings of ANY criticality level (CRITICAL, HIGH, MEDIUM, LOW) in final validation, all deliverables complete, plan archived to `plans/done/`
 - **Partial** (`partial`): Findings remain after max-iterations cycles, plan requires manual intervention
 - FAIL: **Failure** (`fail`): Orchestrator or checker encountered technical errors preventing completion
 

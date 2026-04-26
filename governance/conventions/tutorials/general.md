@@ -1680,10 +1680,6 @@ Test your understanding with these realistic scenarios.
 
 - [Resource] - [Description]
 
----
-
-**Last Updated**: YYYY-MM-DD
-
 ## Related Conventions
 
 This tutorial convention builds upon and references:
