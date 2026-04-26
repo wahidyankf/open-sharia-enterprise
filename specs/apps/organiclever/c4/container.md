@@ -21,38 +21,29 @@ graph TD
         BE["F#/Giraffe Backend<br/>──────────────────<br/>F#, Giraffe<br/><br/>Health endpoint"]:::container_be
     end
 
-    subgraph SPECS["Specifications"]
-        BE_GHERKIN["Backend Gherkin<br/>──────────────────<br/>specs/apps/organiclever/be/gherkin/<br/><br/>See be/gherkin/README"]:::spec
-
-        FE_GHERKIN["Frontend Gherkin<br/>──────────────────<br/>specs/apps/organiclever/fe/gherkin/<br/><br/>See fe/gherkin/README"]:::spec
-    end
-
-    subgraph CICD["CI Pipelines"]
-        MAIN_CI["Main CI<br/>──────────────────<br/>typecheck, lint, test:quick<br/>On push to main"]:::ci
-
-        E2E_CI["E2E CI<br/>──────────────────<br/>Docker Compose stack<br/>Playwright tests"]:::ci
-    end
-
     EU -->|"HTTPS"| FE
     OPS -->|"health check"| BE
 
     FE -->|"system-status diagnostic<br/>HTTP/JSON"| BE
 
-    BE_GHERKIN -->|"BDD scenarios"| BE
-    FE_GHERKIN -->|"BDD scenarios"| FE
-
-    MAIN_CI -->|"test all"| BE
-    MAIN_CI -->|"test all"| FE
-    E2E_CI -->|"full stack test"| BE
-    E2E_CI -->|"full stack test"| FE
-
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef actor_ops fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef container_fe fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef container_be fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef spec fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
-    classDef ci fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
+
+## Specifications and CI Pipelines
+
+The Gherkin specs and CI pipelines are not rendered in this diagram (each container is exercised
+by both, so adding them would clutter the rank without adding signal). Their wiring:
+
+- **Backend Gherkin** (`specs/apps/organiclever/be/gherkin/`) feeds `organiclever-be` BDD
+  scenarios at the `test:unit` and `test:integration` levels.
+- **Frontend Gherkin** (`specs/apps/organiclever/fe/gherkin/`) feeds `organiclever-web` BDD
+  scenarios at the `test:unit` level and `organiclever-web-e2e` Playwright scenarios at the
+  `test:e2e` level.
+- **Main CI** runs `typecheck`, `lint`, `test:quick` on push to `main` for both containers.
+- **E2E CI** runs the full Docker Compose stack on a twice-daily cron.
 
 ## Container Implementations
 
