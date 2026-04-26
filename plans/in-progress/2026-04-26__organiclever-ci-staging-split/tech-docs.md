@@ -444,9 +444,42 @@ can appear in workflow logs without security risk.
 `git push origin stag-organiclever-web:prod-organiclever-web --force` — use only when
 the E2E gate is broken and production must ship urgently. Documented in delivery.md.
 
+## Agent Change — `apps-organiclever-web-deployer`
+
+**File**: `.claude/agents/apps-organiclever-web-deployer.md`
+**Sync target**: `.opencode/agent/apps-organiclever-web-deployer.md`
+
+The current agent pushes `main:prod-organiclever-web` directly — wrong after this plan
+executes. New deployment model uses the GitHub Actions workflow with an E2E gate.
+
+### What changes
+
+| Aspect           | Before                                               | After                                                                 |
+| ---------------- | ---------------------------------------------------- | --------------------------------------------------------------------- |
+| Deploy mechanism | `git push origin main:prod-organiclever-web --force` | `gh workflow run deploy-organiclever-web-to-production.yml`           |
+| Source branch    | `main`                                               | `stag-organiclever-web` (workflow checks it out)                      |
+| E2E gate         | none                                                 | `organiclever-web-e2e:test:e2e` against staging (blocking)            |
+| Emergency bypass | n/a                                                  | `git push origin stag-organiclever-web:prod-organiclever-web --force` |
+
+### New agent body (summary)
+
+1. **Step 1 — Trigger workflow**: `gh workflow run deploy-organiclever-web-to-production.yml --repo wahidyankf/ose-public`
+2. **Step 2 — Monitor**: `gh run list --workflow=deploy-organiclever-web-to-production.yml --limit=3`
+3. **Step 3 — Watch**: `gh run watch <run-id>`
+
+**Emergency bypass** (skip E2E gate, use only in genuine emergencies):
+
+```bash
+git push origin stag-organiclever-web:prod-organiclever-web --force
+```
+
+Sync to `.opencode/` after updating: `npm run sync:claude-to-opencode`
+
 ## Related `.md` Files — Update Inventory
 
-Six files reference `test-and-deploy-organiclever.yml`. Run to confirm line numbers:
+Eight files need updating. Six reference `test-and-deploy-organiclever.yml` by filename;
+two others describe the deployment model in ways that become inaccurate. Run to confirm
+line numbers for the filename-based ones:
 
 ```bash
 grep -rn "test-and-deploy-organiclever\.yml" . \
@@ -499,3 +532,40 @@ table, add rows for the two new workflows.
 
 All five occurrences: replace `test-and-deploy-organiclever.yml` with
 `test-and-deploy-organiclever-web-development.yml`.
+
+### `docs/reference/system-architecture/applications.md` — 1 occurrence (~line 93)
+
+The `organiclever-web` entry currently reads:
+
+```
+- **Deployment**: Vercel (via `prod-organiclever-web` branch)
+```
+
+Update to reflect both Vercel environments:
+
+```
+- **Deployment**: Vercel — staging via `stag-organiclever-web` branch (CI-automated by
+  `test-and-deploy-organiclever-web-development.yml`); production via `prod-organiclever-web`
+  branch (promoted on demand by `deploy-organiclever-web-to-production.yml`)
+```
+
+### `governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
+
+Current text lists `prod-organiclever-web` as a CI-managed environment branch:
+
+```
+Note: this does **not** affect environment branches (`prod-ayokoding-web`,
+`prod-oseplatform-web`, `prod-organiclever-web`). Those remain CI-managed and follow
+their own documented deployment workflows.
+```
+
+Update to add `stag-organiclever-web` and clarify that `prod-organiclever-web` is
+**dispatch-only** (not automatically CI-managed):
+
+```
+Note: this does **not** affect environment branches (`prod-ayokoding-web`,
+`prod-oseplatform-web`, `prod-organiclever-web`, `stag-organiclever-web`). Those follow
+their own documented deployment workflows. The OrganicLever staging branch
+(`stag-organiclever-web`) is CI-automated; the production branch (`prod-organiclever-web`)
+is promoted on demand via `deploy-organiclever-web-to-production.yml` (dispatch-only).
+```

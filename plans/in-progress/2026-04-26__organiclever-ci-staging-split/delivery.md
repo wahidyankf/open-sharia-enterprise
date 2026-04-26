@@ -98,11 +98,30 @@
 
 - [ ] `ci(organiclever): replace test-and-deploy with development + staging + production workflows`
 
+### 1.8 Rewrite `apps-organiclever-web-deployer` agent
+
+- [ ] Read `.claude/agents/apps-organiclever-web-deployer.md` in full
+- [ ] Rewrite using the new deployment model from [tech-docs.md — Agent Change](./tech-docs.md):
+  - [ ] `description:` updated to reflect workflow-dispatch deploy with E2E gate
+  - [ ] Core responsibility: `gh workflow run deploy-organiclever-web-to-production.yml`
+  - [ ] Step 1 — trigger workflow via `gh workflow run`
+  - [ ] Step 2 — monitor: `gh run list --workflow=deploy-organiclever-web-to-production.yml`
+  - [ ] Step 3 — watch: `gh run watch <run-id>`
+  - [ ] Emergency bypass section: `git push origin stag-organiclever-web:prod-organiclever-web --force`
+  - [ ] Remove all references to `git push origin main:prod-organiclever-web`
+  - [ ] Remove all references to "push main branch to prod"
+- [ ] Sync agent to `.opencode/`: `npm run sync:claude-to-opencode`
+- [ ] Verify `.opencode/agent/apps-organiclever-web-deployer.md` reflects the new content
+- [ ] `chore(agents): update apps-organiclever-web-deployer for new CI staging deploy model`
+
 ---
 
-## Phase 2 — Update Referencing `.md` Files
+## Phase 2 — Update Eight `.md` Files
 
-Confirm current line numbers first:
+Eight files need updating: six reference `test-and-deploy-organiclever.yml` by filename;
+two others describe the deployment model in ways that become inaccurate after this plan.
+
+Confirm current line numbers for the filename-based six first:
 
 ```bash
 grep -rn "test-and-deploy-organiclever\.yml" . \
@@ -163,7 +182,26 @@ grep -rn "test-and-deploy-organiclever\.yml" . \
 - [ ] Read the file around all five occurrences (~lines 53, 142, 145, 178, 190)
 - [ ] Replace all five → `test-and-deploy-organiclever-web-development.yml`
 
-### 2.7 Verify sweep is complete
+### 2.7 `docs/reference/system-architecture/applications.md` — 1 occurrence (~line 93)
+
+- [ ] Read the `organiclever-web` section
+- [ ] Update the `Deployment` bullet to reflect both Vercel environments:
+      `Vercel — staging via \`stag-organiclever-web\` branch (CI-automated by
+      \`test-and-deploy-organiclever-web-development.yml\`); production via
+      \`prod-organiclever-web\` branch (promoted on demand by
+      \`deploy-organiclever-web-to-production.yml\`)`
+
+### 2.8 `governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
+
+- [ ] Read the paragraph around line 397
+- [ ] Add `stag-organiclever-web` to the environment branches list
+- [ ] Clarify that `prod-organiclever-web` is dispatch-only (not auto CI-managed):
+  - Add: staging branch is CI-automated; production branch is promoted on demand via
+    `deploy-organiclever-web-to-production.yml`
+- [ ] See exact replacement text in [tech-docs.md — applications.md and
+      trunk-based-development.md sections](./tech-docs.md)
+
+### 2.9 Verify filename sweep is complete
 
 ```bash
 grep -rn "test-and-deploy-organiclever\.yml" . \
@@ -175,7 +213,7 @@ grep -rn "test-and-deploy-organiclever\.yml" . \
 
 Expected: **no matches**.
 
-### 2.8 Commit doc updates
+### 2.10 Commit doc updates
 
 - [ ] `docs(ci): update .md references for organiclever workflow rename and staging split`
 
@@ -254,6 +292,9 @@ Before archiving, all of the following must hold:
       → no matches
 - [ ] `apps/organiclever-web-e2e/playwright.config.ts` uses `process.env.WEB_BASE_URL`
 - [ ] `grep -rn "test-and-deploy-organiclever\.yml" . --include="*.md" --exclude-dir=plans --exclude-dir=generated-reports --exclude-dir=node_modules` → no matches
+- [ ] `.claude/agents/apps-organiclever-web-deployer.md` uses `gh workflow run` as primary
+      deploy mechanism; no `main:prod-organiclever-web` push present
+- [ ] `.opencode/agent/apps-organiclever-web-deployer.md` synced and consistent
 - [ ] `npm run lint:md` exits 0
 - [ ] All GitHub Actions triggered by the push to `main` are green
 

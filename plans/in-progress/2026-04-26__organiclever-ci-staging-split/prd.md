@@ -118,11 +118,16 @@ Feature: OrganicLever CI Staging Split
         process.env.WEB_BASE_URL || "http://localhost:3200"
 
   Scenario: All referencing documentation updated
-    Given six .md files reference test-and-deploy-organiclever.yml by filename
+    Given eight .md files contain inaccurate references to the old deployment model
     When the plan delivery Phase 2 is complete
     Then grep -r "test-and-deploy-organiclever\.yml" . --include="*.md"
         --exclude-dir=plans --exclude-dir=generated-reports
         --exclude-dir=node_modules returns no matches
+    And docs/reference/system-architecture/applications.md reflects both
+        stag-organiclever-web and prod-organiclever-web Vercel deployments
+    And governance/development/workflow/trunk-based-development.md lists
+        stag-organiclever-web as an environment branch and notes
+        prod-organiclever-web is dispatch-only
 ```
 
 ## Product Constraints

@@ -23,10 +23,13 @@ Single subrepo: `ose-public`. Files changed:
 
 - `.github/workflows/` — delete 1 old workflow, create 3 new ones
 - `apps/organiclever-web-e2e/playwright.config.ts` — rename env var
-- Six `.md` files that reference `test-and-deploy-organiclever.yml` by name
+- `.claude/agents/apps-organiclever-web-deployer.md` — rewrite for new deployment model
+- `.opencode/agent/apps-organiclever-web-deployer.md` — synced from `.claude/`
+- Eight `.md` files — six reference `test-and-deploy-organiclever.yml` by filename;
+  two others describe the deployment model in ways that become inaccurate
   (full inventory in [tech-docs.md](./tech-docs.md))
 
-No new Nx projects, no agents, no conventions, no specs added.
+No new Nx projects, no new agents, no conventions, no specs added.
 
 ## Navigation
 
@@ -52,6 +55,6 @@ No new Nx projects, no agents, no conventions, no specs added.
 | Phase | Work                                                              | Status |
 | ----- | ----------------------------------------------------------------- | ------ |
 | 1     | playwright.config.ts rename + delete old + create 3 new workflows | todo   |
-| 2     | Update six referencing `.md` files                                | todo   |
+| 2     | Update eight `.md` files (6 filename refs + 2 model changes)      | todo   |
 | 3     | Local quality gates (markdown lint, YAML validation)              | todo   |
 | 4     | Push to `main` + CI verification                                  | todo   |
