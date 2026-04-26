@@ -129,11 +129,11 @@ Break work into executable steps:
 
 Specify branch strategy:
 
-**Default (main checkout)**: Work directly on `main` (Trunk Based Development) -- commit and push to `main` with no PR.
-**Worktree exception**: If the plan will be executed inside a git worktree (`isolation: "worktree"`, an agent invoked in an existing worktree session, or a developer running `git worktree add`), the plan must push to a feature branch and open a **draft** PR targeting `main` (`gh pr create --draft`). The draft is flipped to ready for review when the work is complete; that flip is when the PR Merge Protocol approval gate fires. The rule is triggered by execution mode, not by intent -- even small or docs-only worktree work goes through a draft PR.
+**Default (all contexts including worktrees)**: Work directly on `main` (Trunk Based Development) -- commit and push to `main` with no PR. Running inside a git worktree does NOT change this default. The same direct-push-to-main rule applies whether the plan executes in a worktree session or in the main checkout.
+**PR (opt-in only)**: A draft PR is used only when the user's prompt explicitly requests a PR, or when the plan's delivery.md contains an explicit `- [ ] Create PR` step that the user has confirmed. The trigger is an explicit instruction, not the execution context.
 **Other exception**: Plain feature branch (non-worktree) requires justification.
 
-See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) and especially the [Worktree Mode (Branch + Draft PR)](../../governance/development/workflow/trunk-based-development.md#worktree-mode-branch--draft-pr) section for workflow details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) and especially the [Default Push and Worktree Execution](../../governance/development/workflow/trunk-based-development.md#default-push-and-worktree-execution) section for workflow details.
 
 ## Plan Quality Standards
 
@@ -165,7 +165,7 @@ See [Trunk Based Development Convention](../../governance/development/workflow/t
 Do NOT include `- [ ] Create PR`, `- [ ] Open PR`, `- [ ] Submit PR`, or equivalent PR creation steps in delivery.md unless EITHER:
 
 1. The user's prompt explicitly requests a PR.
-2. The plan's Git Workflow section explicitly documents a worktree/branch-based flow.
+2. The plan's Git Workflow section contains an explicit PR instruction (not merely worktree execution).
 
 Unsolicited PR steps conflict with Trunk Based Development. `plan-checker` will flag them as HIGH findings.
 

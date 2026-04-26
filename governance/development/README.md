@@ -108,6 +108,7 @@ Development practices in this directory fall into several categories:
 - [Git Push Safety Convention](./workflow/git-push-safety.md) - Requires explicit per-instance user approval before any AI agent or automation executes `git push --force`, `--force-with-lease`, or `--no-verify`; prior approval does not carry forward
 - [Native-First Toolchain Management Convention](./workflow/native-first-toolchain.md) - Architectural decision to use native package managers and `rhino-cli doctor` instead of Terraform, Ansible, or Docker Dev Containers for development environment setup
 - [PR Merge Protocol Convention](./workflow/pr-merge-protocol.md) - Practice requiring explicit user approval before merging pull requests and mandating all quality gates pass before merge
+- [CI Post-Push Verification Convention](./workflow/ci-post-push-verification.md) - After pushing app or lib code to `origin main`, manually trigger all related GitHub CI workflows and verify they pass before declaring work done. Covers the gap between pre-push hook coverage (typecheck, lint, test:quick) and what only CI covers (integration tests, E2E tests, deployment workflows)
 
 ### Quality Standards Documentation
 

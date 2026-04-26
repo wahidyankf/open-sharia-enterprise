@@ -108,8 +108,8 @@ After moving content, update any cross-references that pointed at the old locati
 When plan-checker flags a HIGH finding for an unsolicited PR step in a delivery checklist, remove such steps (HIGH confidence — mechanical, unambiguous):
 
 - **`- [ ] Create PR`**, **`- [ ] Open PR`**, **`- [ ] Submit PR`**, or equivalent PR creation steps in `delivery.md` → **remove the line** unless EITHER:
-  1. The plan's `README.md` or `prd.md` explicitly states that a PR is required (e.g., worktree-based flow, external contribution)
-  2. The plan's Git Workflow section explicitly documents a worktree/branch-based flow
+  1. The plan's `README.md` or `prd.md` explicitly states that a PR is required (e.g., "This plan requires review via PR", external contribution, regulatory requirement)
+  2. The plan's Git Workflow section contains an explicit PR instruction (not merely worktree execution)
 - After removal, verify the delivery checklist remains logically sequential without the removed step.
 
 ### 4. Fix Report Generation

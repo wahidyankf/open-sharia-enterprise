@@ -87,9 +87,9 @@ This protocol does **not** apply to:
 - Direct commits to `main` (the default TBD workflow has no PR to merge).
 - Environment branch deployments managed by CI (e.g., `prod-ayokoding-web`), which are governed by their own documented CI workflows.
 
-### Draft PR Lifecycle (Worktree Mode)
+### Draft PR Lifecycle (Opt-In PR Mode)
 
-Per the [Trunk Based Development Convention](./trunk-based-development.md#worktree-mode-branch--draft-pr), all worktree-mode PRs are **opened as GitHub drafts** (`gh pr create --draft`), not as ready-for-review PRs. This protocol fires at the moment the author flips the draft to ready for review (or at an explicit merge request), not at PR open time.
+Per the [Trunk Based Development Convention](./trunk-based-development.md#branch--draft-pr-opt-in), when a PR is explicitly requested (opt-in only — not triggered by worktree context), all such PRs are **opened as GitHub drafts** (`gh pr create --draft`), not as ready-for-review PRs. This protocol fires at the moment the author flips the draft to ready for review (or at an explicit merge request), not at PR open time.
 
 **Lifecycle**:
 
