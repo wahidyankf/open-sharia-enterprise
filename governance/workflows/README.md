@@ -67,7 +67,7 @@ Workflows support two execution modes (see [Workflow Execution Mode Convention](
 
 All workflows support standard input parameters:
 
-- **mode**: Quality threshold (lax/normal/strict/ocd) - default: normal
+- **mode**: Quality threshold (lax/normal/strict/ocd) - default: strict (for workflows that have a `mode` parameter)
 - **max-concurrency**: Parallel execution limit - default: 2
 - **min-iterations**: Minimum check-fix cycles - optional
 - **max-iterations**: Maximum check-fix cycles - optional

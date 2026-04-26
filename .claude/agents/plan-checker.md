@@ -236,7 +236,7 @@ If a finding was flagged in iteration N, marked FALSE_POSITIVE by fixer, and re-
 
 ### Convergence Target
 
-Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations, log a warning in the audit report: "Convergence not achieved after 7 iterations — likely non-deterministic findings or scope expansion. Remaining findings may require manual review."
+Workflow should stabilize in 3-5 iterations. If not converged after 5 iterations, log a warning in the audit report: "Convergence not achieved after 5 iterations — likely non-deterministic findings or scope expansion. Remaining findings may require manual review."
 
 **Remember**: Good validation identifies issues early, before execution. Be thorough, specific, and constructive.
 

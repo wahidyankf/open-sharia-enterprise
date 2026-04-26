@@ -210,7 +210,7 @@ All workflow files follow the plain-name pattern (no prefix), organized by subdi
 
 - `repo-rules-quality-gate.md` (in `governance/workflows/repo/`)
 - `plan-quality-gate.md` (in `governance/workflows/plan/`)
-- `quality-gate.md` (in `governance/workflows/docs/`)
+- `docs-quality-gate.md` (in `governance/workflows/docs/`)
 
 **Note**: Workflow files use plain kebab-case names in their respective subdirectories. See [File Naming Convention](../../conventions/structure/file-naming.md) for the current naming rules.
 
@@ -476,7 +476,7 @@ inputs:
     values: [lax, normal, strict, ocd]
     description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
     required: false
-    default: normal
+    default: strict
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -490,7 +490,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 10
+    default: 7
 
 outputs:
   - name: final-status
@@ -636,7 +636,7 @@ the quality standard for the active mode.
 
 - The minimum iterations to achieve success is **2** (initial zero + confirmation zero), even
   when `min-iterations` is not explicitly set
-- Each confirmation re-check counts toward `max-iterations`, so the default `max-iterations: 15`
+- Each confirmation re-check counts toward `max-iterations`, so the default `max-iterations: 7`
   allows ample room for fix cycles and confirmation checks
 - Workflows with `max-iterations: 1` can never achieve `pass` — they will always terminate
   with `partial` at best
@@ -648,7 +648,7 @@ No mode is exempt.
 
 **Infinite Loop Prevention**:
 
-- MUST include `max-iterations` parameter (default: 10)
+- MUST include `max-iterations` parameter (default: 7)
 - MUST terminate with `partial` if limit reached
 - MUST track iteration count
 
@@ -670,7 +670,7 @@ User: "Run [workflow-name] in lax mode"
 
 Fixes CRITICAL only, reports HIGH/MEDIUM/LOW. Success when zero CRITICAL findings remain.
 
-**Normal Mode** (default - everyday validation):
+**Normal Mode** (everyday validation):
 
 ```
 User: "Run [workflow-name] in normal mode"
@@ -697,7 +697,7 @@ Fixes all levels, zero tolerance. Success when zero findings at all levels.
 **Combined with iteration bounds**:
 
 ```
-User: "Run [workflow-name] in strict mode with min-iterations=2 and max-iterations=10"
+User: "Run [workflow-name] in strict mode with min-iterations=2 and max-iterations=7"
 ```
 
 Applies mode-based fixing with iteration limits.
@@ -740,7 +740,7 @@ inputs:
     values: [lax, normal, strict, ocd]
     description: "Quality threshold"
     required: false
-    default: normal
+    default: strict
 outputs:
   - name: validation-status
     type: enum
