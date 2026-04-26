@@ -3,7 +3,6 @@
 ## Overview
 
 - **Status**: Done
-- **Created**: 2026-03-17
 - **Goal**: Build a new TypeScript frontend app (`apps/a-demo-fe-ts-tanstack-start`) using
   TanStack Start that mirrors `apps/a-demo-fe-ts-nextjs` with full feature parity, passing
   all 92 Gherkin E2E scenarios from `a-demo-fe-e2e`, and following the same CI and Docker
