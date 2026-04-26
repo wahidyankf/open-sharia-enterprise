@@ -32,7 +32,7 @@ Reads `ORGANICLEVER_BE_URL` at request time and probes `GET /health` with a 3-se
 | UP             | `GET /health` returns 2xx within 3 s            | URL, latency, response body                  |
 | DOWN           | Non-2xx, connection error, timeout, parse error | URL, failure reason                          |
 
-The page is marked `export const dynamic = "force-dynamic"` — Vercel never prerender it at build
+The page is marked `export const dynamic = "force-dynamic"` — Vercel never prerenders it at build
 time. All failure paths are caught at the page level; the page never returns non-200 or throws to
 the error boundary.
 
