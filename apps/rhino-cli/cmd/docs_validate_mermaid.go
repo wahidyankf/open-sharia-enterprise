@@ -198,12 +198,13 @@ func collectMDFiles(repoRoot string, paths []string) ([]string, error) {
 	return files, nil
 }
 
-// collectMDDefaultDirs scans docs/, governance/, .claude/, and root *.md files.
+// collectMDDefaultDirs scans docs/, governance/, .claude/, plans/, and root *.md files.
 func collectMDDefaultDirs(repoRoot string) ([]string, error) {
 	dirs := []string{
 		filepath.Join(repoRoot, "docs"),
 		filepath.Join(repoRoot, "governance"),
 		filepath.Join(repoRoot, ".claude"),
+		filepath.Join(repoRoot, "plans"),
 	}
 	var files []string
 	for _, dir := range dirs {
