@@ -1,13 +1,19 @@
 ---
 name: ui-quality-gate
 goal: Validate UI component quality against frontend conventions, apply fixes iteratively until zero findings achieved
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 10, escalation warning at 7)"
+termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: scope
     type: string
     description: Files or directories to validate (e.g., "libs/ts-ui/", "apps/organiclever-web/src/components/")
     required: false
     default: all frontend components
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ocd]
+    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
+    required: false
+    default: strict
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination
@@ -16,7 +22,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 10
+    default: 7
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently
@@ -119,8 +125,8 @@ User: "Run UI quality gate for apps/organiclever-web/src/components/ui/"
 
 ## Safety Features
 
-- **Max iterations**: Default 10, prevents infinite loops
-- **Escalation**: Warning at iteration 7 — suggests manual review
+- **Max iterations**: Default 7, prevents infinite loops
+- **Escalation**: Warning at iteration 5 — suggests manual review
 - **Convergence monitoring**: If finding count increases between iterations, pause and flag
 - **False-positive persistence**: Findings marked FALSE_POSITIVE are tracked and skipped in subsequent iterations
 

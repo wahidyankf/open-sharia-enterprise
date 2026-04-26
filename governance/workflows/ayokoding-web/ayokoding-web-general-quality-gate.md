@@ -1,13 +1,19 @@
 ---
 name: ayokoding-web-general-quality-gate
 goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings
-termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 10, escalation warning at 7)"
+termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: scope
     type: string
     description: Content to validate (e.g., "all", "ayokoding-web/content/en/", "specific-file.md")
     required: false
     default: all
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ocd]
+    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
+    required: false
+    default: strict
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -16,7 +22,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 10
+    default: 7
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -137,7 +143,7 @@ Run all ayokoding validators concurrently to identify all issues across differen
 
 Analyze all audit reports to determine if fixes are needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) across all four reports
+**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, and LOW) across all four reports
 
 - If total findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
 - If total findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
@@ -148,7 +154,7 @@ Analyze all audit reports to determine if fixes are needed.
 **Notes**:
 
 - Considers ALL findings from all four validation dimensions
-- Fixes everything: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
+- Fixes everything: HIGH (objective), MEDIUM (structural), LOW (style/formatting)
 - Tracks findings by category for observability
 - Achieves perfect content quality state
 
@@ -195,7 +201,7 @@ Determine whether to continue fixing or move to finalization.
 **Logic**:
 
 - Re-run all checkers (step 1) to get fresh reports
-- Count ALL findings (HIGH, MEDIUM, MINOR) across all new reports
+- Count ALL findings (CRITICAL, HIGH, MEDIUM, LOW) across all new reports
 - Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
 - If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Final Validation — double-zero confirmed)
 - If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 1 (re-validate)
@@ -207,7 +213,7 @@ Determine whether to continue fixing or move to finalization.
 
 **Notes**:
 
-- **Default behavior**: Runs up to 15 iterations (default max-iterations). Override with higher value for more attempts
+- **Default behavior**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
 - **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
 - Each iteration gets fresh validation reports across all four validators
@@ -249,7 +255,7 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) across all validators on **two consecutive** validations (consecutive pass requirement)
+- PASS: **Success** (`pass`): Zero findings of ANY level (CRITICAL, HIGH, MEDIUM, LOW) across all validators on **two consecutive** validations (consecutive pass requirement)
 - **Partial** (`partial`): Any findings remain after max-iterations OR final validation found issues
 - FAIL: **Failure** (`fail`): Checkers, fixers, or finalization agents encountered technical errors
 
@@ -329,7 +335,7 @@ Result: SUCCESS (2 iterations)
 
 **Infinite Loop Prevention**:
 
-- max-iterations defaults to 10 (override with higher value for more attempts)
+- max-iterations defaults to 7 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count and finding trends
 - Use max-iterations when fix convergence is uncertain

@@ -1,13 +1,19 @@
 ---
 name: plan-quality-gate
 goal: Validate plan completeness and technical accuracy, apply fixes iteratively until zero findings achieved
-termination: "Zero findings on two consecutive validations (max-iterations defaults to 10, escalation warning at 7)"
+termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: scope
     type: string
     description: Plan files to validate (e.g., "all", "plans/in-progress/", "specific-plan.md")
     required: false
     default: all
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ocd]
+    description: "Quality threshold (lax: CRITICAL only, normal: CRITICAL/HIGH, strict: +MEDIUM, ocd: all levels)"
+    required: false
+    default: strict
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
@@ -16,7 +22,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 10
+    default: 7
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -111,7 +117,7 @@ Run plan validation to identify completeness and accuracy issues.
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, and LOW) in `{step1.outputs.audit-report-1}`
 
 - If findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
 - If findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
@@ -121,8 +127,8 @@ Analyze audit report to determine if fixes are needed.
 
 **Notes**:
 
-- Fixes ALL findings, not just critical ones
-- Includes minor issues like formatting, style improvements
+- Fixes ALL findings, not just CRITICAL/HIGH ones
+- Includes LOW-level issues like formatting, style improvements
 - Ensures plans achieve perfect quality state
 
 ### 3. Apply Fixes (Sequential, Conditional)
@@ -143,7 +149,7 @@ Apply all validated fixes from the audit report.
 **Notes**:
 
 - Fixer re-validates findings before applying (prevents false positives)
-- Fixes ALL confidence levels: HIGH (objective), MEDIUM (structural), MINOR (style/formatting)
+- Fixes ALL criticality levels: CRITICAL (blocking), HIGH (objective), MEDIUM (structural), LOW (style/formatting)
 - Achieves perfect plan quality with zero findings
 
 ### 4. Re-validate (Sequential)
@@ -168,7 +174,7 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step4.outputs.audit-report-N}` (HIGH, MEDIUM, MINOR)
+- Count ALL findings in `{step4.outputs.audit-report-N}` (CRITICAL, HIGH, MEDIUM, LOW)
 - Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
 - If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success — double-zero confirmed)
 - If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 4 (re-validate)
@@ -180,10 +186,10 @@ Determine whether to continue fixing or terminate.
 
 **Notes**:
 
-- **Default behavior**: Runs up to 10 iterations (default max-iterations). Override with higher value for more attempts
+- **Default behavior**: Runs up to 7 iterations (default max-iterations). Override with higher value for more attempts
 - **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Convergence target**: Workflow should stabilize in 3-5 iterations with convergence safeguards (scoped re-validation, cached verification, false positive tracking)
-- **Escalation threshold**: If findings count is not monotonically decreasing after iteration 7, log a warning: "Convergence not achieved — likely non-deterministic findings or scope expansion"
+- **Escalation threshold**: If findings count is not monotonically decreasing after iteration 5, log a warning: "Convergence not achieved — likely non-deterministic findings or scope expansion"
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
 - Each iteration uses the latest audit report
 - Tracks iteration count for observability
@@ -204,7 +210,7 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) on **two consecutive** validations (consecutive pass requirement)
+- PASS: **Success** (`pass`): Zero findings of ANY level (CRITICAL, HIGH, MEDIUM, LOW) on **two consecutive** validations (consecutive pass requirement)
 - **Partial** (`partial`): Any findings remain after max-iterations cycles
 - FAIL: **Failure** (`fail`): Checker or fixer encountered technical errors
 
@@ -282,10 +288,10 @@ Result: SUCCESS (4 iterations)
 
 **Infinite Loop Prevention**:
 
-- max-iterations defaults to 10 (override with higher value for more attempts)
+- max-iterations defaults to 7 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count for monitoring
-- Escalation warning at iteration 7 if not converging
+- Escalation warning at iteration 5 if not converging
 
 **Convergence Safeguards**:
 
