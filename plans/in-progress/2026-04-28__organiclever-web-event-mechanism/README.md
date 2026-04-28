@@ -1,0 +1,94 @@
+# OrganicLever — Generic Event Mechanism (Gear-Up)
+
+## Overview
+
+Build the smallest end-to-end client-side event primitive in `apps/organiclever-web/`:
+a `/app` page with a plus-button that submits a **batch** of generic events of shape
+`{ id, kind, payload, createdAt, updatedAt }` to a PGlite-backed store (Postgres-WASM over IndexedDB), plus a
+list view (sorted newest-first by `createdAt`) with per-row **edit**, **delete**, and
+**bring-to-top** (rearrange). No event-type-specific schemas, no analytics, no
+routines — just the round-trip skeleton that proves the data path works.
+
+**Submission**: an array `[{kind, payload}, ...]`. The batch is **flattened** into the
+existing list (appended in storage; sorted on render). All events in one batch share
+the same `createdAt` (the submission timestamp); `updatedAt` is set equal to
+`createdAt` on creation.
+
+**Edit**: refreshes `updatedAt` only; `createdAt` is preserved, so order does not
+change. UI shows "edited Xm ago" when `updatedAt > createdAt`.
+
+**Rearrange (bring-to-top)**: the only rearrangement primitive is "bump" — one
+action per row that mutates the event's `createdAt = updatedAt = now`. Because sort
+is `createdAt` desc, a bumped event becomes the newest. Drag-to-arbitrary-position
+is out of scope; bump-to-top covers the "make this current again" use case with a
+single deterministic operation.
+
+This plan is the **gear-up** for
+[`2026-04-25__organiclever-web-app/`](../2026-04-25__organiclever-web-app/README.md).
+That plan adds typed payloads (`workout`, `reading`, `learning`, `meal`, `focus`,
+`custom`), screens, charts, i18n, and routines on top of the primitive landed here.
+
+**Relationship to the bigger plan**:
+
+| Concern                         | This plan (gear-up)                                                                                           | `2026-04-25__organiclever-web-app/` (next)                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Event shape                     | Generic `{id, kind: string, payload, createdAt, updatedAt}`                                                   | Discriminated union (6 typed payloads)                              |
+| Mutations                       | Append (batch), update (single), delete (single), bump (single, sets `createdAt`)                             | Append + computed views; edit via typed sheets                      |
+| Persistence layer               | PGlite (Postgres-WASM) over IndexedDB; `lib/events/event-store.ts` (db `ol_events_v1`); migration registry v1 | Same PGlite store + bigger schema (v2 migration adds typed columns) |
+| `/app/page.tsx`                 | Provisional (plus button + list with edit/delete)                                                             | Replaced by `<AppRoot />` (full shell)                              |
+| Tabs / hash routing / dark mode | Not in scope                                                                                                  | Phase 1                                                             |
+| Typed loggers / workout session | Not in scope                                                                                                  | Phases 3–4                                                          |
+| Survives into bigger plan?      | `lib/events/*` survives as primitive                                                                          | bigger plan wraps or migrates                                       |
+
+**Scope (additive, ose-public single-repo)**:
+
+- `apps/organiclever-web/src/app/app/page.tsx` — new `/app` route (provisional)
+- `apps/organiclever-web/src/lib/events/` — types, store, migration registry,
+  hook, unit + integration tests
+- `apps/organiclever-web/src/components/app/` — plus button, event-form sheet,
+  event list, event card (with edit / delete-confirm / bump affordances)
+- `apps/organiclever-web/package.json` — add `@electric-sql/pglite` (and
+  `@electric-sql/pglite-react` if we adopt the official hook)
+- `apps/organiclever-web-e2e/steps/` — Playwright-BDD step bindings
+- `specs/apps/organiclever/fe/gherkin/events-mechanism.feature` — Gherkin
+  scenarios for batch submit, edit, delete, bump, reload, and PGlite/IndexedDB
+  persistence verification
+- No backend changes, no ts-ui changes, no new Nx projects
+
+## Navigation
+
+| Document                       | Contents                                            |
+| ------------------------------ | --------------------------------------------------- |
+| [brd.md](./brd.md)             | Business rationale, why gear-up, success criteria   |
+| [prd.md](./prd.md)             | Page behavior + Gherkin acceptance criteria         |
+| [tech-docs.md](./tech-docs.md) | Generic event shape, store API, file map, decisions |
+| [delivery.md](./delivery.md)   | Granular phased checklist                           |
+
+## Git Workflow
+
+Single-repo plan touching `ose-public` only. Commits go directly to `main` per
+Trunk Based Development. No subrepo worktree needed (parent-rooted session is fine
+since this is `ose-public`-only work; a `ose-public` worktree under
+`ose-public/.claude/worktrees/event-mechanism/` is optional for parallel-safety).
+
+## Phases at a Glance
+
+| Phase | Scope                                                                                                                                         | Status |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 0     | Foundation — install PGlite, types, migration registry v1, async `event-store` (append batch / update / delete / bump / sort) + unit tests    | todo   |
+| 1     | Integration tests — real PGlite in-memory: migration runner, batch atomicity, sort tiebreaker, edit preserves order, bump reorders, stats SQL | todo   |
+| 2     | UI primitives — `<AddEventButton>`, `<EventFormSheet>` (batch / edit modes), `<EventList>`, `<EventCard>` (edit / delete-confirm / bump)      | todo   |
+| 3     | Page wiring — `<EventsPage>` + `/app/page.tsx` with `dynamic(...)` PGlite import; Playwright MCP smoke test in dev                            | todo   |
+| 4     | E2E — Gherkin feature + Playwright-BDD step bindings (batch / edit / delete / bump / reload + IndexedDB persistence assertion)                | todo   |
+| 5     | Quality gate — `typecheck`, `lint`, `test:quick` (≥ 70 % LCOV), `test:integration`, `test:e2e`, `spec-coverage`, post-push CI verification    | todo   |
+
+## Out of Scope (defer to bigger plan)
+
+- Typed payload validation (Zod, Effect Schema, etc.) — bigger plan introduces
+  discriminated union; gear-up keeps `payload` as `Record<string, unknown>`
+- Hash routing / TabBar / SideNav / dark mode toggle
+- Drag-to-arbitrary-position reorder (only "bump to top" is supported, which sets
+  `createdAt = updatedAt = now`)
+- Bilingual UI (English-only strings; i18n layer arrives in bigger plan Phase 0)
+- Analytics, charts, weekly rhythm, streaks
+- PWA, accessibility audit beyond keyboard-reachable plus button
