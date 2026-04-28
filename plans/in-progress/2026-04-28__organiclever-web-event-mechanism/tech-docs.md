@@ -657,6 +657,40 @@ is portable when the PWA sync plan ships.
 becomes a hard blocker, switching to it is mechanical because the public
 `event-store.ts` API is dialect-neutral (only the SQL strings change).
 
+### No ORM — raw SQL by default; query builder permitted
+
+ORMs (Prisma, Drizzle's ORM mode, TypeORM, MikroORM, etc.) are **forbidden**
+in this layer and in any future layer that wraps PGlite. Reason: their
+performance characteristics are unpredictable — N+1 patterns, hidden eager
+loading, query-plan opacity, and runtime reflection all surface as
+hard-to-diagnose latency once the dataset grows. The point of choosing
+PGlite was a SQL-queryable store with predictable plans; an ORM defeats it.
+
+Allowed:
+
+- **Raw SQL** (parameterised) — what the gear-up uses. Six functions, ~5
+  statements, zero extra dependency, smallest bundle, fully transparent
+  query plans.
+- **Query builder** (Kysely, Drizzle's query-builder-only mode, etc.) — fine
+  if call-sites multiply or column-typo safety becomes valuable. Constraint:
+  the library must be a **builder**, not an ORM — no entity classes, no
+  lazy associations, no implicit joins, no runtime hydration of related
+  records. The builder must emit the SQL it generated for inspection.
+
+Forbidden (illustrative, not exhaustive):
+
+- Prisma (ORM with query engine binary)
+- Drizzle in ORM mode (when used as an ORM with relations)
+- TypeORM, Sequelize, MikroORM, Objection.js (full-fat ORMs)
+- Active-record–style row wrappers that fetch on property access
+
+The gear-up sticks with raw parameterised SQL because the surface is small
+enough that a builder would add net cost. If the bigger plan or PWA-sync
+plan later finds the SQL strings noisy, swapping to **Kysely** (MIT,
+~22 KB gzipped, type-safe, builder-only) is the recommended escape hatch —
+its `Compilable` API exposes the generated SQL string for plan-inspection
+and audit.
+
 ### Free-form JSON textarea vs. structured form
 
 Structured forms per kind require a kind-aware schema, which is what the bigger

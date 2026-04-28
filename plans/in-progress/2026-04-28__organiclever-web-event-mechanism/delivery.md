@@ -61,6 +61,13 @@ starts after this gear-up archives.
 - [ ] Inspect bundle impact: `nx build organiclever-web --analyze` (or temporarily
       add `withBundleAnalyzer` to `next.config.ts`); confirm the `/app` page chunk
       contains `@electric-sql/pglite` and the landing-page chunk does not
+- [ ] **No-ORM guardrail**: do NOT install Prisma, Drizzle ORM mode, TypeORM,
+      MikroORM, Sequelize, Objection.js, or any other full-fat ORM at any phase
+      of this plan. ORMs are forbidden in the persistence layer per the
+      tech-docs "No ORM" design decision (unpredictable performance, hidden
+      query patterns). If a future phase finds raw SQL noisy, a query
+      builder (Kysely, Drizzle query-builder-only) is permitted — but it must
+      expose the generated SQL string for plan-inspection
 
 ### 0.2 TypeScript types
 

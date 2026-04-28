@@ -99,6 +99,11 @@ to be widened across the whole codebase.
 ## Non-Goals
 
 - Typed payload schemas (no Zod, no discriminated union) — bigger plan owns this
+- ORMs in the persistence layer (Prisma, Drizzle ORM mode, TypeORM, MikroORM,
+  Sequelize, Objection.js, etc.) — performance characteristics are unpredictable
+  (N+1 patterns, hidden eager loads, opaque plans). Query builders (Kysely,
+  Drizzle query-builder-only mode) are permitted; the gear-up uses raw
+  parameterised SQL because the surface is small. See tech-docs "No ORM" decision.
 - Drag-to-arbitrary-position reorder; the only rearrange primitive is "bring to
   top" which mutates `createdAt = updatedAt = now`
 - Undo for delete (one-shot confirm; bigger plan can layer undo on top)
