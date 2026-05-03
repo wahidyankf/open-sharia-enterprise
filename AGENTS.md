@@ -223,7 +223,7 @@ nx graph                     # Visualize dependencies
 
 ### Worktree Path
 
-Worktrees in this repo land at **`worktrees/<name>/`** in the repo root — not at the Claude Code default `.claude/worktrees/<name>/`. Routing is handled by `.claude/hooks/worktree-create.sh` (`WorktreeCreate` hook). Both paths are gitignored.
+Worktrees in this repo land at **`worktrees/<name>/`** in the repo root, overriding the upstream coding-agent default that would otherwise place them under the platform binding directory. Routing is handled by a repo-local `WorktreeCreate` hook. Both paths are gitignored.
 
 **See**: [governance/conventions/structure/worktree-path.md](./governance/conventions/structure/worktree-path.md)
 
@@ -378,14 +378,20 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Web Research Default**: `web-research-maker` is the default primitive for public-web information gathering. See [Web Research Delegation Convention](./governance/conventions/writing/web-research-delegation.md) for delegation threshold and exceptions.
 
-**Agent Skills Infrastructure**: Agents leverage Agent Skills providing two modes:
+**Agent skills infrastructure**: Agents leverage agent skills providing two modes:
 
 - **Inline skills** (default) — Inject knowledge into current conversation
 - **Fork skills** (`context: fork`) — Trigger delegated agent spawning, delegate tasks to isolated agent contexts, return summarized results
 
-Agent Skills serve agents with knowledge and execution services but don't govern them (service relationship, not governance).
+Agent skills serve agents with knowledge and execution services but don't govern them (service relationship, not governance).
 
-**Agent definition files** live in platform-binding directories (e.g., `.claude/agents/` for the Claude Code binding). Agent Skill files live at `.claude/skills/<name>/SKILL.md` and are read natively by supported coding agents.
+**Agent definition files** live in platform-binding directories. Agent skill files live in the per-binding skill search path and are read natively by the supported coding agent.
+
+```binding-example
+# Primary platform binding (Claude Code) layout
+.claude/agents/<name>.md            # Agent definitions
+.claude/skills/<name>/SKILL.md      # Agent skill files
+```
 
 **See**: [governance/development/agents/ai-agents.md](./governance/development/agents/ai-agents.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md), [Agent Naming Convention](./governance/conventions/structure/agent-naming.md), [Workflow Naming Convention](./governance/conventions/structure/workflow-naming.md)
 
@@ -400,7 +406,7 @@ Six-layer governance hierarchy:
 - **Layer 4: AI Agents** — WHO enforces rules
 - **Layer 5: Workflows** — WHEN we run processes (orchestrated sequences)
 
-**Agent Skills**: Delivery infrastructure (inline and fork modes) serving agents — not a governance layer. See AI Agents section above.
+**Agent skills**: Delivery infrastructure (inline and fork modes) serving agents — not a governance layer. See AI Agents section above.
 
 **See**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md)
 
@@ -550,7 +556,7 @@ Project planning in `plans/` folder:
 - **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) — Documentation writing and org standards
 - **Development Index**: [governance/development/README.md](./governance/development/README.md) — Software dev practices and workflows
 - **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) — Foundational values governing all layers
-- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) — Specialized agents organized by role
+- **Primary Binding Agents Index**: [agent catalog](./.claude/agents/README.md) — Specialized agents organized by role
 - **Workflows Index**: [governance/workflows/README.md](./governance/workflows/README.md) — Orchestrated processes
 - **Repository Architecture**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md) — Six-layer governance hierarchy
 
@@ -567,18 +573,6 @@ Product-specific paths (`apps/organiclever-*`, `apps/ayokoding-*`, `apps/oseplat
 
 See: [Related Repositories reference](./docs/reference/related-repositories.md), [ose-primer sync convention](./governance/conventions/structure/ose-primer-sync.md).
 
-## Platform Bindings
-
-Concrete tool integrations live **outside** `governance/` in platform-binding directories:
-
-- **Claude Code** → `.claude/`, with `CLAUDE.md` as the Claude-Code-discoverable shim importing this file
-- **OpenCode** → `.opencode/agents/` (auto-synced from `.claude/`); reads this file (`AGENTS.md`) natively; reads Agent Skill files at `.claude/skills/<name>/SKILL.md` natively
-- **OpenAI Codex CLI** → reads `AGENTS.md` natively (no dotdir required)
-- **Aider** → reads `AGENTS.md` natively (no dotdir required)
-- **Future**: `.cursor/`, `.github/copilot-instructions.md`, `GEMINI.md`, `CONVENTIONS.md` (Aider)
-
-See [docs/reference/platform-bindings.md](./docs/reference/platform-bindings.md) for the full catalog of binding directories, root instruction files, and mechanical translation artifacts.
-
 ## Models
 
 This repo describes model selection by capability tier, not by vendor product name:
@@ -587,7 +581,7 @@ This repo describes model selection by capability tier, not by vendor product na
 - **Execution-grade**: strong capability, used for standard coding and review tasks
 - **Fast**: lower latency, used for simple/fast tasks
 
-Concrete vendor model IDs resolve in each platform binding's agent definition files (e.g., `.claude/agents/<name>.md` frontmatter for the Claude Code binding).
+Concrete vendor model IDs resolve in each platform binding's agent definition files (see the Platform Binding Examples section near the end of this file for the canonical layout).
 
 See [governance/development/agents/model-selection.md](./governance/development/agents/model-selection.md) for the capability tier definitions and how they map to agent roles.
 
@@ -610,13 +604,36 @@ See [governance/development/agents/model-selection.md](./governance/development/
 - DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
 - The `nx-generate` skill handles generator discovery internally — don't call nx_docs just to look up generator syntax
 
+## Platform Binding Examples
+
+The content under this heading is intentionally vendor-specific. Per the
+[Governance Vendor-Independence Convention](./governance/conventions/structure/governance-vendor-independence.md),
+the vendor-audit scanner skips every line under a "Platform Binding Examples"
+heading until the next same-level heading or end of file.
+
+### Platform Bindings Catalog
+
+Concrete tool integrations live **outside** `governance/` in platform-binding directories:
+
+- **Claude Code** → `.claude/`, with `CLAUDE.md` as the Claude-Code-discoverable shim importing this file
+- **OpenCode** → `.opencode/agents/` (auto-synced from `.claude/`); reads this file (`AGENTS.md`) natively; reads agent skill files at `.claude/skills/<name>/SKILL.md` natively
+- **OpenAI Codex CLI** → reads `AGENTS.md` natively (no dotdir required)
+- **Aider** → reads `CONVENTIONS.md` natively per Aider's own docs (<https://aider.chat/docs/usage/conventions.html>); the agents.md standard site lists Aider as a supported tool but Aider's own documentation does not document AGENTS.md specifically
+- **Future**: `.cursor/`, `.github/copilot-instructions.md`, `GEMINI.md`, `CONVENTIONS.md` (Aider)
+
+See [docs/reference/platform-bindings.md](./docs/reference/platform-bindings.md) for the full catalog of binding directories, root instruction files, and mechanical translation artifacts.
+
+### Concrete Vendor Model IDs
+
+Concrete vendor model IDs live in each platform binding's agent definition files (e.g., `.claude/agents/<name>.md` frontmatter for the primary platform binding).
+
 <!-- rtk-instructions v2 -->
 
-## RTK (Rust Token Killer) — Token-Optimized Commands
+### RTK (Rust Token Killer) — Token-Optimized Commands
 
 RTK is a CLI wrapper that reduces token usage by filtering AI output. See [github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk) for full details.
 
-### Golden Rule
+#### Golden Rule
 
 **Always prefix commands with `rtk`**. If RTK has a dedicated filter, it uses it. If not, passes through unchanged. RTK is always safe to use.
 
@@ -630,7 +647,7 @@ git add . && git commit -m "msg" && git push
 rtk git add . && rtk git commit -m "msg" && rtk git push
 ```
 
-### Meta Commands
+#### Meta Commands
 
 ```bash
 rtk gain              # Show token savings analytics
@@ -641,7 +658,7 @@ rtk proxy <cmd>       # Execute raw command without filtering (for debugging)
 
 <!-- /rtk-instructions -->
 
-## caveman — Token Compression
+### caveman — Token Compression
 
 **caveman** compresses agent output by ~75% via terse caveman-speak. Works with OpenCode via skill injection. Stacks with RTK (output filtering) for compounded savings. MIT licensed. Installed 2026-05-03.
 

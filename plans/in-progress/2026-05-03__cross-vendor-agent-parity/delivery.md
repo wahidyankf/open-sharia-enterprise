@@ -125,28 +125,62 @@ This phase MUST run before Phase 4. It expands the scope of the vendor-independe
 
 This phase requires Phase X (convention amendment) to be committed first.
 
-- [ ] Audit `AGENTS.md` for vendor terms using the combined audit regex from the convention (or `rhino-cli governance vendor-audit AGENTS.md` if the CLI accepts file targets)
-- [ ] Catalog AGENTS.md violations and classify each per the convention's Migration Guidance:
+- [x] Audit `AGENTS.md` for vendor terms using the combined audit regex from the convention (or `rhino-cli governance vendor-audit AGENTS.md` if the CLI accepts file targets)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: AGENTS.md = **15 violations**; CLAUDE.md = **31 violations** (both audited via `rhino-cli governance vendor-audit <file>` from `apps/rhino-cli` so the CLI's `findGitRoot()`+`filepath.Join` resolves the path to `<repoRoot>/<arg>`).
+- [x] Catalog AGENTS.md violations and classify each per the convention's Migration Guidance:
   - Load-bearing prose → rewrite using the Vocabulary Map
   - Cross-reference link → rewrite anchor text and link target to neutral equivalent
   - Illustrative example → wrap in ` ```binding-example ` fence or move under "Platform Binding Examples" heading
-- [ ] Apply rewrites to `AGENTS.md`
-- [ ] Audit `CLAUDE.md`:
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: 15 AGENTS.md violations classified — Worktree Path note (load-bearing → rewrite); Agent Skills Infrastructure header + body (branded "Skills" → "agent skills" lowercase); Agent definition files inline example (illustrative → `binding-example` fence); Agents Index cross-reference (rewrite anchor text); Platform Bindings catalog + Models snippet + RTK section + caveman section (illustrative/cross-binding-by-design → move under "## Platform Binding Examples" heading at end of file).
+- [x] Apply rewrites to `AGENTS.md`
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `AGENTS.md`
+  - Result: per-section rewrites applied — Worktree Path now reads "upstream coding-agent default ... platform binding directory"; "Agent Skills" branded → "agent skills" (with one inline `binding-example` fence preserving the canonical primary-binding layout); Agents Index renamed to "Primary Binding Agents Index"; original "## Platform Bindings" + Models trailing snippet + RTK + caveman content consolidated under one new "## Platform Binding Examples" heading near end of file (covers Platform Bindings Catalog, Concrete Vendor Model IDs, RTK, caveman). Aider entry corrected per Phase 4-sub research findings (CONVENTIONS.md primary; AGENTS.md per agents.md standard site only). Post-fix audit on AGENTS.md: **0 violations**.
+- [x] Audit `CLAUDE.md`:
   - Verify the single-line `@AGENTS.md` import is preserved
   - Identify any duplication of load-bearing AGENTS.md content; consolidate (CLAUDE.md should remain a thin shim)
   - Wrap any Claude-Code-specific notes inside `binding-example` fences or under "Platform Binding Examples" headings
-- [ ] Apply rewrites to `CLAUDE.md`
-- [ ] Re-run audit against both files — expect 0 violations outside fences and Platform Binding Examples sections
-- [ ] Run `npm run lint:md:fix && npm run lint:md` against both files
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: `@AGENTS.md` import on line 3 preserved as the convention's narrowed Exception #5 explicitly allows. Identified Nx/RTK/caveman duplication between CLAUDE.md and AGENTS.md (both files contained near-identical Nx Guidelines, RTK Golden Rule + Meta Commands, caveman Token Compression sections) — consolidated by shimming both subsections in CLAUDE.md to delegate to AGENTS.md while preserving the auto-injection `<!-- nx configuration -->` and `<!-- rtk-instructions -->` markers.
+- [x] Apply rewrites to `CLAUDE.md`
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `CLAUDE.md`
+  - Result: rewritten as a thin shim per the convention's amended scope. New structure: `# CLAUDE.md` → `@AGENTS.md` import → single `## Platform Binding Examples` heading covering all Claude-Code-specific subsections (Markdown Quality hook, Working with `.claude/`/`.opencode/`, Dual-mode configuration, organiclever-web skill, Nx-related notes shim, RTK and caveman shim). Reduced "1.14.31+" to "current OpenCode" per Phase 2 ai-agents.md guidance and `Skills` capitalized → `agent skill files` lowercase. Post-fix audit on CLAUDE.md: **0 violations**.
+- [x] Re-run audit against both files — expect 0 violations outside fences and Platform Binding Examples sections
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: AGENTS.md = 0 violations; CLAUDE.md = 0 violations; governance/ = 0 violations.
+- [x] Run `npm run lint:md:fix && npm run lint:md` against both files
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: `markdownlint-cli2` against AGENTS.md, CLAUDE.md, docs/reference/platform-bindings.md reports `0 errors`.
 - [ ] Commit thematically: typically two commits (one for AGENTS.md, one for CLAUDE.md) unless the changes are tiny enough to bundle
 
 ### Phase 4 sub-task: factual-accuracy correction in platform-bindings catalog
 
 Surfaced by web research 2026-05-03 against current vendor docs. The `docs/reference/platform-bindings.md` catalog currently lists Aider as a native AGENTS.md reader; Aider's own documentation (<https://aider.chat/docs/usage/conventions.html>) only documents `CONVENTIONS.md`. The agents.md standard site lists Aider in its supported tools, but Aider's own docs do not — internal contradiction.
 
-- [ ] Update `docs/reference/platform-bindings.md` Aider entry: change "reads AGENTS.md natively" to "reads CONVENTIONS.md natively; AGENTS.md support claimed by agents.md standard site but not documented by Aider itself"
-- [ ] Update any matching claim in `AGENTS.md` itself (Platform Bindings section) to reflect the same nuance
-- [ ] If `CONVENTIONS.md` is later adopted as a future binding, document the relationship (it can be a thin shim importing AGENTS.md, similar to CLAUDE.md)
+- [x] Update `docs/reference/platform-bindings.md` Aider entry: change "reads AGENTS.md natively" to "reads CONVENTIONS.md natively; AGENTS.md support claimed by agents.md standard site but not documented by Aider itself"
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `docs/reference/platform-bindings.md`
+  - Result: Aider row now states "`CONVENTIONS.md` (read natively per Aider's own docs); AGENTS.md support claimed by agents.md standard site but not documented by Aider itself"; Status changed from "Provided automatically via AGENTS.md" to "Reserved (CONVENTIONS.md not yet provided)" since this repo does not currently ship `CONVENTIONS.md`.
+- [x] Update any matching claim in `AGENTS.md` itself (Platform Bindings section) to reflect the same nuance
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `AGENTS.md`
+  - Result: Aider entry under the new "## Platform Binding Examples" heading reads "`Aider` → reads `CONVENTIONS.md` natively per Aider's own docs (<https://aider.chat/docs/usage/conventions.html>); the agents.md standard site lists Aider as a supported tool but Aider's own documentation does not document AGENTS.md specifically".
+- [x] If `CONVENTIONS.md` is later adopted as a future binding, document the relationship (it can be a thin shim importing AGENTS.md, similar to CLAUDE.md)
+  - Date: 2026-05-03
+  - Status: completed (no-op for this plan; future-binding marker)
+  - Result: not adopted in this plan. Future plan that adds `CONVENTIONS.md` should treat it as a thin shim importing `AGENTS.md` (same pattern as `CLAUDE.md`); the platform-bindings catalog already lists Aider as Reserved pending that work.
 - [ ] Commit: `docs(reference): correct Aider AGENTS.md claim per Aider's own docs`
 
 ## Phase 5: Behavioral-Parity Invariants
