@@ -14,6 +14,9 @@ Feature: Disabled Routes
 
   # AC-8 — /app permanent-redirect to /app/home (308). Listed alongside disabled-routes
   # so the redirect contract is colocated with the 404 guard rows.
+  # @local-fullstack — Verified in dev-workflow E2E against the real Docker stack.
+  # See app-routes.feature for the rationale; staging E2E skips it.
+  @local-fullstack
   Scenario: Old /app URL permanent-redirects to /app/home
     Given the application is running in local-first mode
     When a visitor requests GET "/app"

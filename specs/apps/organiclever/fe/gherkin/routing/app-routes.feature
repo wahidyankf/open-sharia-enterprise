@@ -51,6 +51,11 @@ Feature: App Routes URL Scheme
     And the Home screen is visible
 
   # AC-8 — Old /app bookmark redirects to /app/home with 308
+  # @local-fullstack — Verified in dev-workflow E2E against the real Docker stack.
+  # On Vercel staging the Deployment Protection auth wall and edge redirect handling
+  # can intercept the request before Next.js runs, returning a non-308 status; the
+  # contract itself (next.config.ts redirects()) is exercised by dev E2E.
+  @local-fullstack
   Scenario: Old /app URL permanent-redirects to /app/home
     When a visitor requests GET "/app"
     Then the response is a 308 redirect to "/app/home"
