@@ -187,19 +187,40 @@ Surfaced by web research 2026-05-03 against current vendor docs. The `docs/refer
 
 This phase verifies the binding-sync layer is in a known-good state. It runs verification commands and remediates any drift surfaced.
 
-- [ ] Run `npm run sync:claude-to-opencode` — must complete with no file modifications (no-op)
-- [ ] If drift exists: commit the synced changes with `chore(opencode): re-sync agents from .claude/` and re-run sync to confirm idempotence
-- [ ] Compare counts: `ls .claude/agents/*.md | wc -l` vs `ls .opencode/agents/*.md | wc -l` — must be equal (currently 70 vs 71; `.opencode` has orphan `ci-monitor-subagent.md` — investigate root cause before running sync, as sync may delete the orphan)
-- [ ] If counts differ, diff the agent sets: `diff <(ls .claude/agents/ | sort) <(ls .opencode/agents/ | sort)` — investigate why each missing agent is missing; fix root cause (re-run sync, or remove orphaned files, or add missing agent definitions)
-- [ ] Verify color-translation map coverage:
+- [x] Run `npm run sync:claude-to-opencode` — must complete with no file modifications (no-op)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: sync ran successfully (`Agents: 70 converted; Skills: 0 copied; Status: SUCCESS`); no `.opencode/agents/*.md` modified.
+- [x] If drift exists: commit the synced changes with `chore(opencode): re-sync agents from .claude/` and re-run sync to confirm idempotence
+  - Date: 2026-05-03
+  - Status: completed (no-op)
+  - Result: no drift surfaced — sync was a clean no-op for tracked binding files.
+- [x] Compare counts: `ls .claude/agents/*.md | wc -l` vs `ls .opencode/agents/*.md | wc -l` — must be equal (currently 70 vs 71; `.opencode` has orphan `ci-monitor-subagent.md` — investigate root cause before running sync, as sync may delete the orphan)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: pre-fix counts were 71 (.claude: 70 agents + README.md) vs 71 (.opencode: 70 agents + 1 orphan `ci-monitor-subagent.md`, no README). After resolving the orphan and adding `.opencode/agents/README.md` mirror, counts are **71 = 71** with the same 70 agent files (per-name diff: empty) plus one README.md on each side.
+- [x] If counts differ, diff the agent sets: `diff <(ls .claude/agents/ | sort) <(ls .opencode/agents/ | sort)` — investigate why each missing agent is missing; fix root cause (re-run sync, or remove orphaned files, or add missing agent definitions)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: investigation: the orphan `ci-monitor-subagent.md` was added in commit `8e569d99a` ("chore: add Nx-generated AI agent configs for Copilot, Codex, and OpenCode") by an Nx generator and never had a `.claude` counterpart — it carries OpenCode-specific frontmatter (`mode: subagent`) and references MCP tool calls. With no Claude Code counterpart and no consumer in `.claude/commands/`, the file was a true orphan. Resolution: deleted via `git rm .opencode/agents/ci-monitor-subagent.md`. Added `.opencode/agents/README.md` as a thin mirror of the canonical `.claude/agents/README.md` (so directory-level navigation and the raw `*.md` count parity both hold).
+- [x] Verify color-translation map coverage:
   - Extract distinct colors from `.claude/agents/*.md` frontmatter: `grep -h "^color:" .claude/agents/*.md | sort -u`
   - Compare against the Dual-Mode Color Translation table in `governance/development/agents/ai-agents.md`
   - Any gap is a finding — add missing color entries to the map; commit the map update
-- [ ] Verify capability-tier map coverage:
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: distinct colors in agent frontmatter: `blue`, `green`, `purple`, `yellow` — all four covered by the Color Translation Table in `governance/development/agents/ai-agents.md` (lines 759-768) under "## Platform Binding Examples". No gaps; 4 reserved-future colors (`red`/`orange`/`pink`/`cyan`) also documented in the same table.
+- [x] Verify capability-tier map coverage:
   - Extract distinct model tiers from agent frontmatter (both bindings): `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u`
   - Compare against the capability-tier map in `governance/development/agents/model-selection.md`
   - Any gap is a finding — add missing tier entries to the map; commit the map update
-- [ ] If `rhino-cli` exposes a `validate:sync` Nx target or equivalent, run it and resolve any findings; if absent, document the gap (a future plan can add the automated check)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: distinct values: omitted (planning-grade), `haiku` (fast — primary binding), `opencode-go/glm-5` (fast — secondary binding), `opencode-go/minimax-m2.7` (planning/execution — secondary binding), `sonnet` (execution-grade — primary binding). All five covered by the capability-tier map in `model-selection.md` ("Platform Binding Equivalents" subsection); no gaps.
+- [x] If `rhino-cli` exposes a `validate:sync` Nx target or equivalent, run it and resolve any findings; if absent, document the gap (a future plan can add the automated check)
+  - Date: 2026-05-03
+  - Status: completed (gap documented; addressed in Phase 6.2)
+  - Result: `apps/rhino-cli/project.json` does NOT currently expose a `validate:sync` Nx target (existing targets: `validate:naming-agents`, `validate:naming-workflows`, `validate:mermaid`, `validate:governance-vendor-audit`, plus `test:*` and coverage targets). Gap is intentionally addressed by Phase 6.2 of this plan, which adds a new `validate:cross-vendor-parity` Nx target wiring sync no-op + count parity + color-map + tier-map invariants. No separate future plan needed.
 
 ## Phase 6: Operationalize Parity (new agent + Nx gate)
 
