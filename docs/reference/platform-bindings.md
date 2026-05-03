@@ -18,17 +18,17 @@ bindings live in their own directories and are explicitly excluded from the
 
 ## Platform Binding Directories
 
-| Platform         | Binding location                                | Root instruction file                           | Status                                       |
-| ---------------- | ----------------------------------------------- | ----------------------------------------------- | -------------------------------------------- |
-| Claude Code      | `.claude/`                                      | `CLAUDE.md` (shim → `AGENTS.md`)                | Active                                       |
-| OpenCode         | `.opencode/agents/`, `.claude/skills/` (native) | `AGENTS.md` (read natively)                     | Active                                       |
-| OpenAI Codex CLI | (no dotdir)                                     | `AGENTS.md` (read natively)                     | Provided automatically via `AGENTS.md`       |
-| Aider            | n/a                                             | `AGENTS.md` (read natively) or `CONVENTIONS.md` | Provided automatically via `AGENTS.md`       |
-| Cursor           | `.cursor/rules/*.mdc`                           | `AGENTS.md` (also reads `.cursor/rules/`)       | Reserved (not yet provided)                  |
-| GitHub Copilot   | `.github/copilot-instructions.md`               | `AGENTS.md` (coding agent mode)                 | Reserved (not yet provided)                  |
-| Gemini CLI       | (no dotdir)                                     | `GEMINI.md` or `AGENTS.md`                      | Reserved                                     |
-| Continue         | TBD                                             | TBD                                             | Not researched conclusively; see plan brd.md |
-| Sourcegraph Cody | search-based context                            | none                                            | Not applicable (no instruction file)         |
+| Platform         | Binding location                                | Root instruction file                                                                                                                          | Status                                       |
+| ---------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Claude Code      | `.claude/`                                      | `CLAUDE.md` (shim → `AGENTS.md`)                                                                                                               | Active                                       |
+| OpenCode         | `.opencode/agents/`, `.claude/skills/` (native) | `AGENTS.md` (read natively)                                                                                                                    | Active                                       |
+| OpenAI Codex CLI | (no dotdir)                                     | `AGENTS.md` (read natively)                                                                                                                    | Provided automatically via `AGENTS.md`       |
+| Aider            | n/a                                             | `CONVENTIONS.md` (read natively per Aider's own docs); AGENTS.md support claimed by agents.md standard site but not documented by Aider itself | Reserved (`CONVENTIONS.md` not yet provided) |
+| Cursor           | `.cursor/rules/*.mdc`                           | `AGENTS.md` (also reads `.cursor/rules/`)                                                                                                      | Reserved (not yet provided)                  |
+| GitHub Copilot   | `.github/copilot-instructions.md`               | `AGENTS.md` (coding agent mode)                                                                                                                | Reserved (not yet provided)                  |
+| Gemini CLI       | (no dotdir)                                     | `GEMINI.md` or `AGENTS.md`                                                                                                                     | Reserved                                     |
+| Continue         | TBD                                             | TBD                                                                                                                                            | Not researched conclusively; see plan brd.md |
+| Sourcegraph Cody | search-based context                            | none                                                                                                                                           | Not applicable (no instruction file)         |
 
 **Root instruction file hierarchy**: Any platform that reads `AGENTS.md` natively requires no
 additional binding directory. Platforms that predate `AGENTS.md` (e.g., the Claude Code binding,
