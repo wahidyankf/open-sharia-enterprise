@@ -7,6 +7,7 @@ color: green
 skills:
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans
+  - docs-validating-factual-accuracy
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
@@ -305,3 +306,108 @@ After verifying manual assertions (Step 5c), verify that the plan was properly a
 - done README not updated: **HIGH**
 - Orphaned references: **MEDIUM** per reference
 - Missing archival commit: **MEDIUM**
+
+### 9. Verify Worktree Was Used (Step 5e — MANDATORY)
+
+After verifying archival (Step 5d), verify that execution actually happened inside the declared worktree per the [plan-execution Step 0 gate](../../governance/workflows/plan/plan-execution.md#0-verify-worktree-specification-sequential-hard-gate). The plan-execution workflow refuses to start without a worktree, but this step independently confirms the gate held.
+
+#### What to Validate
+
+1. **Plan declares a `## Worktree` section**
+   - Multi-file plan: `delivery.md` contains `## Worktree`. Single-file plan: `README.md` contains it.
+   - Missing: **HIGH** finding (the executor should have refused to start; if it ran, that itself is a CRITICAL workflow violation).
+
+2. **Declared worktree path matches the convention**
+   - Path follows `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the folder name minus the date prefix.
+   - Wrong format: **HIGH** finding (counts as a `## Worktree` section misuse).
+
+3. **Git history evidence the work happened in the worktree**
+   - Commits authored during the plan execution window should show authorship from the worktree branch (`worktree-<plan-identifier>`) before merging to `main`, OR commit messages should reference the worktree.
+   - When the publish path was direct-to-main (no worktree branch trace), confirm the commits cluster within the plan-execution timeframe and reference the plan identifier.
+   - No worktree evidence at all: **MEDIUM** finding (could be a legitimate fast-forward; flag for manual review).
+
+#### Finding Severity
+
+- Plan ran without a `## Worktree` section: **CRITICAL** (Step 0 gate breach)
+- Wrong worktree-path format in plan: **HIGH**
+- No worktree evidence in git history: **MEDIUM**
+
+### 10. Anti-Hallucination Post-Execution Validation (Step 5f — MANDATORY HARD RULE)
+
+After verifying worktree usage (Step 5e), verify that every factual claim in `delivery.md` (file paths, Nx targets, package versions, function names, agent names, test names, behavior claims) still holds against the post-execution repo state. Hallucinated claims that survived authoring may have been silently fabricated by the executor — this step catches them.
+
+#### What to Validate
+
+**A. File-path claims**
+
+For every file path mentioned in delivery.md (in checkbox prose and implementation-notes blocks):
+
+- Run `Bash test -f <path>`. If the path is missing AND the implementation notes do not document deletion/move: **HIGH** finding per missing path.
+- If the file was newly created, verify `git log --diff-filter=A` shows the creation in the plan-execution timeframe.
+
+**B. Nx-target claims**
+
+For every Nx target invoked in delivery.md commands (e.g., `nx run oseplatform-web:test:quick`):
+
+- Read `apps/<project>/project.json`. Confirm the target appears under `targets`. Missing: **HIGH** per occurrence.
+
+**C. Package-version claims**
+
+For every package version cited in delivery.md or tech-docs.md:
+
+- `jq` the relevant manifest (`package.json`, `go.mod`, `Cargo.toml`, etc.). Confirm the cited version matches the post-execution lockfile. Mismatch: **MEDIUM** per occurrence (may be legitimate version bump during execution; flag for review).
+
+**D. Test-name claims**
+
+For every test name cited in delivery.md:
+
+- `Grep` test files in the affected project. Missing: **HIGH** per occurrence (the test was claimed but never written).
+
+**E. Agent-name claims**
+
+For every agent name cited in delivery.md (especially in `_Suggested executor:_` annotations):
+
+- `Bash test -f .claude/agents/<name>.md`. Missing: **HIGH** per occurrence (Anti-Pattern AP-7).
+
+**F. Behavior claims**
+
+For every claim about library or framework behavior in tech-docs.md:
+
+- Verify the claim is either backed by a `[Web-cited]` inline excerpt + URL + access date, or by a repo-doc reference. Missing source: **MEDIUM** per occurrence.
+
+**G. KPI claims**
+
+For every numeric KPI in brd.md or implementation-notes:
+
+- Confirm the number is either an observable check, a cited measurement, qualitative reasoning, or explicitly labeled `_Judgment call:_`. Bare unlabeled percentage or duration: **HIGH** per occurrence (Anti-Pattern AP-5).
+
+**H. Cross-link integrity**
+
+For every relative cross-link in plan files:
+
+- Resolve and `Bash test -f`. Broken: **HIGH** per occurrence (Anti-Pattern AP-10).
+
+#### How to Audit
+
+1. Read all plan files top-to-bottom.
+2. For each factual claim, run the recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
+3. Compare results against the post-execution repo state.
+4. File findings per severity table below.
+5. For external behavior claims, delegate multi-page verification to `web-research-maker` per the lower threshold in [Plan Anti-Hallucination Convention §Web-Research Delegation](../../governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
+
+#### Finding Severity
+
+- Missing file path / missing Nx target / missing test / missing agent / unlabeled KPI / broken cross-link: **HIGH** per occurrence
+- Version mismatch / behavior claim without source / suggested-executor mismatch: **MEDIUM** per occurrence
+- Stale `[Unverified]` labels remaining post-execution: **MEDIUM** per occurrence (plan-execution should have resolved them)
+
+#### Why Post-Execution Anti-Hallucination Matters
+
+`plan-checker` runs anti-hallucination at authoring time. `plan-execution-checker` runs it again at archival time because:
+
+- The executor may have written fabricated implementation-notes when work was incomplete.
+- File renames or refactors during execution may have stranded path references.
+- Nx target additions/removals during execution may have stranded command references.
+- Library upgrades during execution may have outdated cited versions.
+
+Both gates exist for a reason; do not skip Step 5f under time pressure.

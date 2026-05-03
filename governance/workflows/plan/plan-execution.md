@@ -59,15 +59,16 @@ User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md"
 
 The calling context will:
 
-1. Read the delivery checklist from the plan's `delivery.md` to understand all items
-2. Create granular tasks using `TaskCreate` — one per remaining checkbox (including nested sub-bullets)
-3. For each item: mark `in_progress`, analyze it, delegate to the appropriate specialized agent (or execute directly for trivial edits), verify the result
-4. Perform the Atomic Sync Ritual after each item — tick `- [ ]` → `- [x]` in `delivery.md`, add implementation notes, `TaskUpdate completed`
-5. Invoke `plan-execution-checker` via the Agent tool to validate the implementation
-6. Iterate execution and validation until zero findings achieved
-7. Move plan folder to plans/done/ using git mv
-8. Show git status with modified files
-9. Wait for user commit approval
+1. **Verify worktree gate** (Step 0): refuse to start if the plan lacks a `## Worktree` section or if the working directory is not the declared worktree path
+2. Read the delivery checklist from the plan's `delivery.md` to understand all items
+3. Create granular tasks using `TaskCreate` — one per remaining checkbox (including nested sub-bullets)
+4. For each item: mark `in_progress`, **repo-ground its file paths and commands** (refuse-on-uncertainty if grounding fails), analyze it, **prefer the `_Suggested executor:_` annotation** if present (else fall back to Agent Selection heuristics), delegate to the chosen agent (or execute directly for trivial edits), verify the result
+5. Perform the Atomic Sync Ritual after each item — tick `- [ ]` → `- [x]` in `delivery.md`, add implementation notes, `TaskUpdate completed`
+6. Invoke `plan-execution-checker` via the Agent tool to validate the implementation
+7. Iterate execution and validation until zero findings achieved
+8. Move plan folder to plans/done/ using git mv
+9. Show git status with modified files
+10. Wait for user commit approval
 
 ## Orchestration Model
 
@@ -79,6 +80,8 @@ The orchestrator never implements code or documentation in bulk by itself — it
 
 The orchestrator selects the best agent for each delivery checklist item using these rules, applied in priority order:
 
+0. **Suggested-executor annotation (HIGHEST priority)**: If the checkbox carries a `_Suggested executor: <agent-name>_` annotation per [Plan Anti-Hallucination Convention §Specialized-Agent Delegation](../../development/quality/plan-anti-hallucination.md#specialized-agent-delegation-hallucination-reduction), verify the agent file exists at `.claude/agents/<name>.md` and use that agent. The annotation is the plan author's explicit choice — it overrides heuristics 1–4 below. If the annotated agent does not exist, terminate the item with status `fail` and surface the missing-agent error to the user (do not silently fall back).
+
 1. **Match by project/app name**: If the checklist item names a specific app (e.g., `organiclever-be`), use the agent for that app's language (e.g., `swe-fsharp-dev`). Refer to [CLAUDE.md](../../../CLAUDE.md) for the full app list and their tech stacks.
 
 2. **Match by file extension**: If the item references files with a recognizable extension (`.ts`, `.java`, `.py`, `.go`, `.kt`, `.fs`, `.cs`, `.clj`, `.ex`, `.rs`, `.dart`), use the corresponding `swe-{language}-dev` agent.
@@ -88,6 +91,8 @@ The orchestrator selects the best agent for each delivery checklist item using t
 4. **Match by framework/tool keywords**: If the item mentions a framework (Spring Boot, Ktor, FastAPI, Gin, Phoenix, Giraffe, Axum, Pedestal, Hugo, Next.js, Flutter), use the agent for that framework's language.
 
 5. **Fallback (direct execution)**: If no specialized agent cleanly matches — e.g., a one-line edit to a governance doc, a grep or file-move operation, an `npm` command — the orchestrator executes the item directly via `Edit` / `Bash` without delegating. Direct execution is only for trivial, context-bounded work; substantive changes always route through an agent.
+
+**Rationale**: Domain-specialized agents hallucinate less than generic orchestration because they carry deeper language and framework context. The Suggested-executor annotation is the plan author's hallucination-reduction lever; respect it before falling back to heuristics.
 
 **The above are heuristics, not a closed list.** As new agents or apps are added to the repository, the orchestrator adapts automatically by reading the available agent list from the agent definition directory and matching based on the agent's description and the checklist item's content. The orchestrator should always check what agents are currently available rather than relying on a static table.
 
@@ -107,6 +112,27 @@ The live Task list (`TaskCreate` / `TaskUpdate`) and the on-disk delivery checkl
 Every checkbox on disk has exactly ONE matching task in the live list. Every task has exactly ONE matching checkbox on disk. This includes nested `- [ ]` sub-bullets — each sub-bullet is its own task, not rolled into its parent. Task titles short-form the checkbox text so reader sees consistent wording in both views.
 
 Forbidden: coarse tasks ("Execute Phase 2", "Update all agents"), bulk creation ("one task for every phase"), silent completion ("ticked three boxes in one Edit, one `TaskUpdate` at the end"). Each of these breaks the user's monitoring view.
+
+### Harness Task List as Primary Observability Surface
+
+The harness task list (`TaskCreate` to add, `TaskUpdate` to mutate) is the user's only real-time view of execution. It is the **primary observability surface**, not a side artifact. The on-disk `delivery.md` checklist is the persistent source of truth; the harness list is its live mirror.
+
+**Non-negotiable invariants**:
+
+- **One checkbox = one harness task**. Every `- [ ]` in `delivery.md` (including every nested sub-bullet) maps to exactly one harness task created via `TaskCreate`. Every harness task maps back to exactly one checkbox.
+- **Title short-form rule**. The task `subject` is a short-form of the checkbox prose: drop articles, keep verb + object, ≤80 characters. The reader watching the spinner MUST recognize the checkbox at a glance.
+- **At most one `in_progress` task at any time**. Multiple `in_progress` tasks indicate the orchestrator is interleaving items — forbidden.
+- **Sync lag ≤ one Edit call**. The on-disk checkbox state never lags more than a single `Edit` call behind the harness task state. If `TaskUpdate completed` fires before the matching `Edit` ticks the checkbox, the system is in an inconsistent state — roll back per the Atomic Sync Ritual below.
+
+**Forbidden patterns** (violations of the above):
+
+- Coarse tasks ("Execute Phase 2", "Update all agents", "Apply fixes")
+- Bulk creation ("one task per phase" instead of one task per checkbox)
+- Silent batch completion (multiple checkboxes ticked in one `Edit` while only one `TaskUpdate completed` fires)
+- Late notes (closing a task before its implementation-notes block lands on disk under the ticked checkbox)
+- Renaming a task to summarize multiple done items instead of leaving the original 1:1 mapping
+
+If any of the above occur, the orchestrator MUST stop, reconcile (disk wins per the Resume Reconciliation rule below), and resume one checkbox at a time.
 
 ### Atomic Sync Ritual
 
@@ -136,7 +162,7 @@ If a task is `completed` but the checkbox is `- [ ]`, OR a checkbox is `- [x]` b
 
 These rules govern ALL execution steps. No exception. No shortcut.
 
-1. **Granular Task Tracking (1:1 with delivery.md)**: One `TaskCreate` per delivery checklist item, including every nested `- [ ]` sub-bullet (never rolled into its parent). Task titles short-form the checkbox text. At most ONE task in `in_progress` at any time. Mark `in_progress` BEFORE any tool call advancing that item. Mark `completed` ONLY after the checkbox is ticked on disk AND implementation notes are persisted. NEVER create coarse tasks ("Execute Phase 2"). NEVER batch-complete. NEVER complete speculatively.
+1. **Granular Task Tracking (1:1 with delivery.md) — NON-NEGOTIABLE**: The harness task list IS the user's primary observability surface (see [Harness Task List as Primary Observability Surface](#harness-task-list-as-primary-observability-surface) above). Exactly ONE `TaskCreate` per delivery checklist item, including every nested `- [ ]` sub-bullet — sub-bullets are NEVER rolled into their parent. Task `subject` MUST short-form the checkbox text (drop articles, keep verb + object, ≤80 chars). At most ONE task in `in_progress` at any moment. Mark `in_progress` BEFORE any tool call advancing that item. Mark `completed` ONLY after the checkbox is ticked on disk AND the implementation-notes block is persisted under the ticked checkbox. FORBIDDEN: coarse tasks ("Execute Phase 2", "Apply fixes"), bulk creation ("one task per phase"), silent batch-completion (multiple checkboxes ticked in one `Edit` while one `TaskUpdate` closes), speculative completion (closing a task before disk reflects done state), title rewriting (renaming a task to summarize multiple items). Violations corrupt the user's view of execution and MUST trigger immediate rollback + reconciliation (disk wins).
 2. **Never Stop Before All Done**: Execute ALL items from first to last without stopping. No pauses between phases. No skipping items. The only acceptable stop is a hard technical blocker.
 3. **Fix ALL Issues — Including Preexisting**: When ANY test, lint, typecheck, or quality gate fails — fix it. Even if it existed before your changes. Do NOT defer. Do NOT skip. Commit preexisting fixes separately.
 4. **Delivery.md Is Sacred — Atomic Sync Ritual**: After each item's work is done, run the three-step ritual before touching the next item: (a) `Edit` checkbox `- [ ]` → `- [x]` for THIS one item (no `replace_all`), (b) `Edit` implementation-notes block under the ticked checkbox (Date, Status, Files Changed, brief notes), (c) `TaskUpdate completed`. All three MUST land before moving on. If any step fails, roll back the others and leave the task in `in_progress`. Ticking multiple checkboxes in one Edit or deferring notes to end-of-phase is forbidden.
@@ -148,6 +174,29 @@ These rules govern ALL execution steps. No exception. No shortcut.
 10. **Resume Reconciliation (Disk Is Truth)**: When starting or re-entering execution, read delivery.md first. Rebuild the Task list from disk state. If in-memory tasks disagree with disk checkboxes, delete them and rebuild. Never trust in-memory state over disk.
 
 ## Steps
+
+### 0. Verify Worktree Specification (Sequential, Hard Gate)
+
+Before reading the delivery checklist, verify that the plan declares a worktree and that execution is happening inside it. This gate is non-recoverable — the executor does NOT auto-create worktrees.
+
+**Orchestrator action**:
+
+1. **Locate the `## Worktree` section** in the plan:
+   - **Multi-file plans**: in `delivery.md` (top-level `## Worktree` heading, before any phase).
+   - **Single-file plans**: in `README.md` (top-level `## Worktree` heading, before `## Delivery Checklist`).
+2. **If the section is missing**: terminate immediately with status `fail`. Emit a single user-visible line: `Worktree specification missing — add a "## Worktree" section to <delivery.md|README.md> per governance/conventions/structure/plans.md#worktree-specification before re-invoking plan execution.`
+3. **Parse the declared worktree path** (format: `worktrees/<plan-identifier>/`).
+4. **Verify the current working directory** matches the declared path:
+   - Run `pwd` (or read the orchestrator's `workingDirectory`).
+   - Resolve the expected absolute path: `<repo-root>/worktrees/<plan-identifier>`.
+   - **If mismatched**: terminate with status `fail`. Emit a single user-visible line: `Working directory mismatch — expected <expected-path>, got <actual-path>. Provision the worktree via "claude --worktree <plan-identifier>" from the repo root and re-invoke plan execution from inside the worktree.`
+5. **If matched**: log a one-line confirmation (`Worktree gate: passed (<expected-path>)`) and proceed to Step 1.
+
+**Output**: Worktree existence and identity confirmed.
+
+**On failure**: Terminate workflow with status `fail`. Do NOT attempt auto-provisioning — worktree creation is an explicit user action via `claude --worktree <plan-identifier>`.
+
+**Why this is a hard gate**: Plan execution that runs outside a worktree pollutes the main checkout with in-flight work, breaks the parallel-safety guarantee, and risks dirty-gitlink hazards in any subrepo context. The cost of failing fast (one user command to provision) is far smaller than the cost of recovering from a polluted main checkout mid-execution.
 
 ### 1. Load Delivery Checklist and Materialize Task List (Sequential)
 
@@ -202,14 +251,20 @@ Execute all delivery checklist items sequentially, delegating each to the approp
 For each checklist item in reading order (phase by phase, item by item, including nested sub-bullets):
 
 1. **`TaskUpdate in_progress`** on the matching task. At most ONE `in_progress` at a time.
-2. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly. If the checklist text is ambiguous, the orchestrator MAY consult the plan's `brd.md` / `prd.md` / `tech-docs.md` for additional context — business intent lives in `brd.md`, product scope and Gherkin acceptance criteria in `prd.md`, architecture decisions in `tech-docs.md`.
-3. **Execute the item** — delegate to that agent via the Agent tool, or perform the edit/command directly. Only for THIS one checkbox.
-4. **Verify the work succeeded** — read the produced file, run the command, check the agent's output.
-5. **Atomic Sync Ritual** — all three steps before any next-item work:
+2. **Pre-Item Repo-Grounding (HARD GATE — Anti-Hallucination)**: before delegating, repo-ground every claim in the checkbox per the [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard):
+   - For each cited file path: `Bash test -f <path>`. If missing AND not marked `_New file_`: HALT the item, escalate to user with the failing path (do not invent a substitute).
+   - For each cited Nx target: `jq -r '.targets | keys[]' apps/<project>/project.json | grep -qx '<target>'`. If missing AND not marked `_New target_`: HALT the item.
+   - For each cited agent: `test -f .claude/agents/<name>.md`. If missing: HALT (no fabricating).
+   - For each cited symbol: `Grep` for evidence. Missing AND not marked `_New symbol_`: HALT.
+   - **Refuse-on-uncertainty**: if a cited fact cannot be grounded and the checkbox does not mark it as new, the orchestrator MUST escalate rather than guess. Surface the failure to the user with the specific claim and the missing artifact.
+3. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly. If the checkbox carries a `_Suggested executor:_` annotation, use that agent (Priority 0). If the checklist text is otherwise ambiguous, the orchestrator MAY consult the plan's `brd.md` / `prd.md` / `tech-docs.md` for additional context — business intent lives in `brd.md`, product scope and Gherkin acceptance criteria in `prd.md`, architecture decisions in `tech-docs.md`.
+4. **Execute the item** — delegate to that agent via the Agent tool, or perform the edit/command directly. Only for THIS one checkbox.
+5. **Verify the work succeeded** — read the produced file, run the command, check the agent's output. The verification MUST match the acceptance criterion stated in the checkbox (Execution-Grade Clarity rule from the plans convention).
+6. **Atomic Sync Ritual** — all three steps before any next-item work:
    a. `Edit` delivery.md to change `- [ ]` → `- [x]` for THIS one item (context-unique `old_string`; never `replace_all`; never tick multiple items in one Edit call).
-   b. `Edit` delivery.md to add the implementation-notes block (Date, Status, Files Changed, brief notes) under the ticked checkbox.
+   b. `Edit` delivery.md to add the implementation-notes block (Date, Status, Files Changed, brief notes) under the ticked checkbox. Notes MUST themselves be repo-grounded — only state files actually modified, only quote commands actually run.
    c. `TaskUpdate completed` on the matching task.
-6. Proceed IMMEDIATELY to the next item — no pausing, no waiting for approval, no deferring notes.
+7. Proceed IMMEDIATELY to the next item — no pausing, no waiting for approval, no deferring notes.
 
 Nested sub-checkboxes iterate the same loop. A parent `- [ ]` can only be ticked after all its sub-`- [ ]` items have each completed steps 1–5 of the loop.
 

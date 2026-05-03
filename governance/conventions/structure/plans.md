@@ -213,9 +213,10 @@ If any criterion is unmet, use the five-document layout. If the plan grows past 
 3. **Business rationale (condensed BRD)** — why this matters, business goals, affected roles, success metrics (gut-based reasoning OK; judgment calls labeled; fabricated KPIs forbidden; internet citations inline with excerpt + URL + access date)
 4. **Product requirements (condensed PRD)** — user stories (`As a … I want … So that …`), Gherkin acceptance criteria, product scope
 5. **Technical approach** — architecture, design decisions, implementation approach
-6. **Delivery checklist** — phased `- [ ]` items with one concrete action per checkbox
-7. **Quality gates** — local gates + CI gates that must pass
-8. **Verification** — how to confirm the plan is done
+6. **Worktree** — declared worktree path (`worktrees/<plan-identifier>/`) and provisioning command (see [Worktree Specification](#worktree-specification))
+7. **Delivery checklist** — phased `- [ ]` items with one concrete action per checkbox
+8. **Quality gates** — local gates + CI gates that must pass
+9. **Verification** — how to confirm the plan is done
 
 If the author cannot comfortably fit both the condensed BRD and condensed PRD sections into the README without crowding out the technical sections, promote the plan to the five-document multi-file layout before execution begins.
 
@@ -291,7 +292,71 @@ Every checkbox in `delivery.md` must represent exactly one concrete, independent
 
 **Test for granularity**: Each checkbox must pass this test — can you verify it is done without completing anything else on the list? If the answer is no, the item is too coarse.
 
+### Execution-Grade Clarity (HARD RULE)
+
+Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade agents. Authoring-grade clarity is not sufficient — every checkbox MUST be unambiguous at execution time without consulting additional context.
+
+**Each checkbox MUST contain all of the following that apply:**
+
+- **Explicit file path(s)**: Name the exact file path(s) when known (e.g., `apps/oseplatform-web/src/server/trpc.ts`). When the path cannot be determined at authoring time (e.g., a new file whose location is implementation-dependent), provide the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
+- **Explicit shell command(s)**: State the verbatim invocation when a command is involved (e.g., `npx nx run oseplatform-web:test:quick`), not a vague instruction like "run the lint".
+- **Concrete acceptance criterion**: State the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass" or "`nx run oseplatform-web:typecheck` exits 0"). No bare "implement X", "set up Y", or "configure Z" without a concrete verifiable outcome.
+
+**HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
+
+**Bad** (missing path, missing command, missing criterion):
+
+```markdown
+- [ ] Add caching
+```
+
+**Good** (explicit path, explicit command, explicit criterion):
+
+```markdown
+- [ ] Edit `apps/oseplatform-web/src/server/trpc.ts`: wrap the public router with
+      `unstable_cache(..., { revalidate: 300 })`. Verify by running
+      `npx nx run oseplatform-web:test:quick` — all tests pass.
+```
+
 **Acceptance Criteria**: All user stories in `prd.md` (or the condensed PRD section of a single-file plan's `README.md`) must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) for complete details.
+
+### Worktree Specification
+
+Every plan MUST declare the worktree path in its content so the executor can verify the execution environment before reading the delivery checklist.
+
+**Where to declare**:
+
+- **Multi-file plans**: Add a top-level `## Worktree` section in `delivery.md`, placed before any phase heading.
+- **Single-file plans**: Add a `## Worktree` section in `README.md`, placed before the `## Delivery Checklist` section.
+
+**Worktree path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` is the folder identifier stripped of its date prefix.
+
+- Plan folder `2026-05-15__auth-rewrite/` → worktree path `worktrees/auth-rewrite/`
+- Plan folder `2026-03-01__add-user-search/` → worktree path `worktrees/add-user-search/`
+
+**Provisioning command** (run from repo root before invoking plan execution):
+
+```bash
+claude --worktree <plan-identifier>
+```
+
+**This requirement applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
+
+See [Worktree Path Convention](./worktree-path.md) for the full routing and directory structure specification.
+
+**Example `## Worktree` block** (delivery.md or README.md):
+
+````markdown
+## Worktree
+
+Worktree path: `worktrees/auth-rewrite/`
+
+Provision before execution:
+
+\```bash
+claude --worktree auth-rewrite
+\```
+````
 
 ### Important Note on File Naming
 
@@ -473,6 +538,8 @@ Use the verification tip from the [Linking Convention](../formatting/linking.md#
 - [File Naming Convention](./file-naming.md) - Naming files within `docs/` (not applicable to plans/)
 - [Diagram and Schema Convention](../formatting/diagrams.md) - Standards for Mermaid diagrams
 - [Color Accessibility Convention](../formatting/color-accessibility.md) - Verified accessible palette, WCAG AA requirements, and color-blindness coverage for all diagram fills
+- [Worktree Path Convention](./worktree-path.md) - Worktree routing to `worktrees/<name>/` (referenced by the Worktree Specification rule above)
+- [Plan Anti-Hallucination Convention](../../development/quality/plan-anti-hallucination.md) - Pre-write verification recipes, repo-grounding rule, refuse-on-uncertainty, anti-pattern catalog (AP-1 through AP-10), specialized-executor annotation; consumed by the Execution-Grade Clarity rule above and by the four plan agents
 
 **Development Guides**:
 

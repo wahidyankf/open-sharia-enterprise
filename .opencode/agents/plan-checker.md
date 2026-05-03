@@ -115,6 +115,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - Acceptance criteria are testable
 - Git workflow is specified
 - **TDD-shaped steps**: Any checklist item that ships code MUST have a corresponding test-first step (Red→Green→Refactor structure). Flag as **HIGH** any code delivery item that does not include a failing-test step before the implementation step. See [Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md) for required TDD step shapes.
+- **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
 
 #### PR Step Authorization Check (per [Git Push Default Convention](../../governance/development/workflow/git-push-default.md))
 
@@ -379,3 +380,131 @@ After validating operational readiness (Step 5b), verify the plan includes manua
 - Missing curl steps for API plan: **CRITICAL**
 - Missing end-to-end flow for full-stack plan: **HIGH**
 - Steps present but vague (no specific pages/endpoints): **MEDIUM**
+
+### 10. Worktree Specification Validation (Step 5d — MANDATORY)
+
+After validating manual assertions (Step 5c), verify the plan declares a worktree path. This rule applies to ALL plans regardless of size — pure-docs, single-file, and trivial plans included.
+
+#### What to Validate
+
+1. **`## Worktree` section exists**
+   - **Multi-file plans**: a top-level `## Worktree` section MUST exist in `delivery.md`, placed before any phase heading.
+   - **Single-file plans**: a top-level `## Worktree` section MUST exist in `README.md`, placed before `## Delivery Checklist`.
+   - Missing section: **HIGH** finding (plan-execution Step 0 hard gate would refuse to start).
+
+2. **Path format**
+   - The declared path MUST follow `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (folder name minus the `YYYY-MM-DD__` date prefix).
+   - Wrong format (e.g., `.claude/worktrees/...`, missing `worktrees/` prefix, identifier mismatch with folder name): **HIGH** finding.
+
+3. **Provisioning command present**
+   - The section MUST show the `claude --worktree <plan-identifier>` command verbatim so the user knows how to provision the worktree before invoking plan execution.
+   - Missing or wrong command: **MEDIUM** finding.
+
+4. **Cross-reference**
+   - The section SHOULD link to [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../governance/conventions/structure/plans.md#worktree-specification).
+   - Missing cross-reference: **LOW** finding.
+
+#### Finding Severity
+
+- Missing `## Worktree` section entirely: **HIGH**
+- Wrong path format or identifier mismatch: **HIGH**
+- Missing provisioning command: **MEDIUM**
+- Missing cross-reference link: **LOW**
+
+### 11. Execution-Grade Clarity Validation (Step 5e — MANDATORY HARD RULE)
+
+After validating the worktree specification (Step 5d), audit every delivery checkbox for execution-grade clarity. Plans are executed by sonnet-tier agents — authoring-grade hand-waving is a HARD RULE violation.
+
+#### What to Validate
+
+Every checkbox in `delivery.md` (or the Delivery Checklist section of a single-file plan's `README.md`) MUST satisfy ALL of the following that apply to the action:
+
+1. **Explicit file path(s)** when the action touches a known file
+   - Acceptable: `apps/oseplatform-web/src/server/trpc.ts`, `governance/conventions/structure/plans.md`, etc.
+   - When the path cannot be determined at authoring time, the checkbox MUST give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
+   - Bare "the auth file", "the relevant config", "wherever needed": **HIGH** finding.
+
+2. **Explicit shell command(s)** when the action involves a command
+   - Acceptable: `npx nx run oseplatform-web:test:quick`, `git mv plans/in-progress/2026-05-15__foo plans/done/`, etc.
+   - Bare "run the lint", "run tests", "validate": **HIGH** finding.
+
+3. **Concrete acceptance criterion** stating the observable change that proves done
+   - Acceptable: "all assertions in `trpc.test.ts` pass", "`nx run oseplatform-web:typecheck` exits 0", "`grep -c 'old-string' file.md` returns `0`".
+   - Bare "implement X", "set up Y", "configure Z", "add caching", "fix the bug": **HIGH** finding.
+
+#### How to Audit
+
+For each `- [ ]` line:
+
+1. Identify whether the action involves (a) editing a file, (b) running a command, (c) verifying an outcome.
+2. Check that the checkbox text names the file path(s) for (a), the verbatim command for (b), and the acceptance criterion for (c).
+3. Treat every missing element as a separate **HIGH** finding (one finding per missing element per checkbox is acceptable — plan-fixer batch-resolves).
+
+#### Finding Severity
+
+- Bare action verbs without path/command/criterion ("implement", "set up", "configure", "add", "fix"): **HIGH** per offending checkbox
+- Path placeholder without resolution (e.g., `the file`, `the relevant module`): **HIGH**
+- Command placeholder without verbatim invocation (e.g., `run tests`): **HIGH**
+- Missing acceptance criterion on a checkbox whose action could complete partially without external proof: **HIGH**
+- Multiple missing elements on the same checkbox: still ONE finding (the fixer rewrites the line as a whole)
+
+### 12. Anti-Hallucination Scan (Step 5f — MANDATORY HARD RULE)
+
+After validating execution-grade clarity (Step 5e), scan the entire plan for unverified factual claims that match any pattern in the [Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog). This is the dedicated hallucination-detection step.
+
+#### What to Validate
+
+**A. Confidence-label coverage**
+
+Every non-trivial factual claim about a file path, Nx target, package version, API signature, agent name, skill name, behavior claim, external standard, or numeric KPI MUST carry one of `[Repo-grounded]` / `[Web-cited]` / `[Judgment call]` / `[Unverified]` inline OR appear inside a code-fence quoting a repo file. Bare unlabeled claims default to `[Unverified]` and are MEDIUM findings — one per claim.
+
+**B. Anti-Pattern Catalog scan**
+
+For each Anti-Pattern below, scan the plan and flag occurrences:
+
+- **AP-1** — version cited without `package.json` / lockfile evidence: **HIGH** per occurrence
+- **AP-2** — file path cited that does not exist on the current commit AND is not marked `_New file_`: **HIGH** per occurrence
+- **AP-3** — Nx target cited that does not appear in the project's `project.json`: **HIGH** per occurrence
+- **AP-4** — function or method name cited without import-path evidence or web citation: **HIGH** per occurrence
+- **AP-5** — numeric KPI presented as measured fact when no baseline exists: **HIGH** per occurrence
+- **AP-6** — test name cited that does not exist AND is not marked `_New test_`: **HIGH** per occurrence
+- **AP-7** — agent or skill name cited that does not resolve to `.claude/agents/<name>.md` or `.claude/skills/<name>/SKILL.md`: **HIGH** per occurrence
+- **AP-8** — CLI flag cited without `<cmd> --help` evidence or repo-doc reference: **MEDIUM** per occurrence
+- **AP-9** — behavior claim cited without a source (URL or repo-doc): **MEDIUM** per occurrence
+- **AP-10** — cross-link target that resolves to a non-existent file: **HIGH** per occurrence
+
+**C. Suggested-executor annotation validity**
+
+Where a delivery checkbox carries `_Suggested executor: <agent-name>_`, verify:
+
+- The agent file exists at `.claude/agents/<name>.md`. Missing agent: **HIGH** finding (counts as AP-7).
+- The agent's role suits the action (e.g., `swe-fsharp-dev` for an `.fs` edit, not `swe-typescript-dev`). Mismatch: **MEDIUM** finding.
+
+**D. Web-citation completeness**
+
+Every `[Web-cited]` claim MUST include URL + access date + excerpt inline. Missing any element: **MEDIUM** per occurrence. URL-only citation (no excerpt) is forbidden — links rot.
+
+#### How to Audit
+
+1. Read each file in the plan top-to-bottom.
+2. For every sentence asserting a file path, Nx target, version, API surface, agent/skill name, behavior claim, or numeric metric: check the corresponding row of the verification recipe table from the [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
+3. Run the recipe (`Bash test -f`, `Glob`, `Grep`, `jq` against `project.json`, etc.) to confirm the claim.
+4. If the recipe fails, file a finding under the appropriate Anti-Pattern.
+5. For external claims, verify the inline citation includes URL + access date + excerpt. If the claim warranted multi-page research, verify the plan documents `web-research-maker` delegation (output linked or summarized).
+
+#### Re-validation Caching (Iterations 2+)
+
+On re-validation iterations, reuse the iteration 1 verification cache:
+
+- For claims marked `[Repo-grounded]` in iteration 1: re-run only if the corresponding file changed.
+- For claims marked `[Web-cited]` in iteration 1: trust unless explicitly invalidated by a new finding.
+- For NEW claims introduced by fixer edits: verify normally.
+
+This prevents re-verification thrash and keeps the audit deterministic.
+
+#### Finding Severity
+
+- AP-1, AP-2, AP-3, AP-4, AP-5, AP-6, AP-7, AP-10: **HIGH** per occurrence
+- AP-8, AP-9, missing inline excerpt on `[Web-cited]`, executor-mismatch: **MEDIUM** per occurrence
+- Bare unlabeled non-trivial claim (defaults to `[Unverified]`): **MEDIUM** per claim
+- Missing `web-research-maker` delegation when threshold (any external claim not single-shot URL) was crossed: **MEDIUM** finding

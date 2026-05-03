@@ -182,6 +182,24 @@ When plan content (any of `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `deli
   "implement X, then write tests." See
   [Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
   for required step shapes. `plan-checker` flags code items without TDD structure as HIGH findings.
+- **Execution-grade clarity (HARD RULE)**: every checkbox MUST contain explicit file path(s)
+  when known (or maximum-possible-detail target — parent dir + naming pattern + sibling reference
+  — when path is unknowable at authoring time), explicit verbatim shell command(s) where
+  applicable, and a concrete acceptance criterion (the observable change that proves done). Bare
+  "implement X" / "set up Y" / "configure Z" wording is FORBIDDEN. Plans are executed by
+  execution-grade (sonnet-tier) agents — authoring-grade hand-waving makes execution ambiguous.
+  See
+  [Plans Organization Convention §Execution-Grade Clarity](../../governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule)
+  for the rule, examples, and the bad/good pair. `plan-checker` flags violations as HIGH findings;
+  `plan-fixer` rewrites offending items with maximum detail.
+- **Suggested executor annotation**: when a delivery checkbox names a domain that maps cleanly
+  to a specialized agent (a specific language file extension, a specific app context, a content
+  domain, a governance concern), add a `_Suggested executor: <agent-name>_` annotation under the
+  checkbox. Domain-specialized agents hallucinate less than generic orchestration. The annotation
+  takes priority over plan-execution Agent Selection heuristics. Skip annotation for trivial
+  one-line edits or shell commands. See
+  [Plan Anti-Hallucination Convention §Specialized-Agent Delegation](../../governance/development/quality/plan-anti-hallucination.md#specialized-agent-delegation-hallucination-reduction)
+  for the annotation format and when to skip.
 
 #### PR Step Authoring Rule (per [Git Push Default Convention](../../governance/development/workflow/git-push-default.md))
 
@@ -223,14 +241,114 @@ When creating plans that reference specific technologies, versions, APIs, or too
 Use the `docs-validating-factual-accuracy` Skill for systematic verification methodology.
 
 **Delegate research to `web-research-maker` for unfamiliar or fast-moving topics**: Per the
-[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
-invoke the [`web-research-maker`](./web-research-maker.md) subagent for multi-page research
-(threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim) before writing
-claims about library versions, API signatures, or current best practices that are not already
-documented in the repo (`docs/`, `governance/`, `apps/*/README.md`). Incorporate only facts
-tagged `[Verified]` or clearly flagged `[Needs Verification]`; do NOT write unverified claims
-into the plan. Use in-context `WebSearch`/`WebFetch` only for single-shot verification against
-a known authoritative URL.
+[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md)
+and the LOWER plan-content threshold defined in
+[Plan Anti-Hallucination Convention §Web-Research Delegation](../../governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans),
+invoke the [`web-research-maker`](./web-research-maker.md) subagent for ANY external claim
+that is not already documented in the repo (`docs/`, `governance/`, `apps/*/README.md`,
+`package.json`, `go.mod`, `Cargo.toml`, etc.) and that requires more than a single `WebFetch`
+against a known authoritative URL. Incorporate only facts tagged `[Verified]` (web-cited with
+inline excerpt + URL + access date) or clearly flagged `[Needs Verification]`; do NOT write
+unverified claims into the plan. Use in-context `WebSearch`/`WebFetch` only for single-shot
+verification against a known authoritative URL.
+
+## Pre-Write Verification Rituals (Anti-Hallucination — HARD)
+
+Before writing any non-trivial factual claim into a plan, run the verification recipe for
+the claim's category. This is non-negotiable per the
+[Plan Anti-Hallucination Convention](../../governance/development/quality/plan-anti-hallucination.md).
+Hallucinated content turns the plan into broken work; verification at authoring time is
+the cheapest place to catch it.
+
+### Verification Recipes by Claim Category
+
+| Claim Category        | Verification Command                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------- |
+| **File path**         | `Bash test -f <path>` or `Glob` — if NEW, mark inline as `_New file_` and add a creation step |
+| **Directory path**    | `Bash test -d <path>` or `Glob` for sibling                                                   |
+| **Symbol / function** | `Grep` against the codebase or quote the import path that defines it                          |
+| **Nx target**         | Read the project's `project.json` and confirm the target name in `targets`                    |
+| **Package version**   | `Grep` the relevant manifest (`package.json`, `go.mod`, `Cargo.toml`, `*.csproj`, etc.)       |
+| **API signature**     | Delegate to `web-research-maker` with the authoritative-doc URL                               |
+| **Command flag**      | `<cmd> --help` OR repo-documented usage in `package.json` scripts / governance docs           |
+| **Test name**         | If pre-existing, `Grep` test files; if NEW, mark `_New test_`                                 |
+| **Agent / skill**     | `Bash test -f .claude/agents/<name>.md` or `Bash test -f .claude/skills/<name>/SKILL.md`      |
+| **External standard** | Delegate to `web-research-maker` with cited excerpt + URL + access date inline                |
+| **Behavior claim**    | `web-research-maker` with cited official-doc excerpt OR repo-doc reference                    |
+| **Cross-link target** | `Bash test -f` on the resolved relative path                                                  |
+| **Numeric KPI**       | Forbidden as bare fact unless observable check / cited measurement / `_Judgment call:_` label |
+
+### Confidence Labels (write inline next to the claim)
+
+- **`[Repo-grounded]`** — verified in current commit via `Glob` / `Grep` / `Bash` / `Read`. Omit
+  when the claim is contained inside a code-fence quoting a repo file.
+- **`[Web-cited]`** — verified externally; URL + access date + excerpt inline.
+- **`[Judgment call]`** — explicitly subjective claim; numeric gut targets MUST use this label.
+- **`[Unverified]`** — flagged for follow-up; `plan-checker` reports as MEDIUM.
+
+### Refuse-on-Uncertainty
+
+When verification fails or is impossible: refuse to write the claim as a fact. Acceptable
+refusals (in order of preference):
+
+1. **Skip the claim** — plan is shorter and accurate.
+2. **Use `[Unverified]` label** — flagged for verification before execution.
+3. **Use `[Judgment call]` label** — claim explicitly subjective.
+4. **Use placeholder** — `_Unknown — verify before authoring_` and treat as a delivery item
+   under Open Questions rather than a stated fact.
+
+Forbidden: writing the claim without a label and hoping it is correct.
+
+### Anti-Pattern Catalog (MUST NOT)
+
+Reject these patterns at authoring time. `plan-checker` flags occurrences as HIGH:
+
+- **AP-1**: citing a version without `Grep`'ing the manifest
+- **AP-2**: inventing a file path that "should exist"
+- **AP-3**: citing an Nx target that may not exist (read `project.json` first)
+- **AP-4**: inventing a function or method name (delegate to `web-research-maker`)
+- **AP-5**: fabricating a numeric KPI presented as already-measured
+- **AP-6**: inventing a test name (mark `_New test_` when applicable)
+- **AP-7**: citing an agent or skill that does not exist
+- **AP-8**: citing a CLI flag without `--help` or repo-doc reference
+- **AP-9**: citing a behavior claim without a source
+- **AP-10**: cross-linking to a file that does not exist
+
+See
+[Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog)
+for full descriptions and example rewrites.
+
+## Mandatory Worktree Specification (Top-Level Section)
+
+Every plan MUST declare its worktree path before the delivery checklist begins. This is a structural requirement enforced by both `plan-checker` (HIGH finding when missing) and the
+[plan-execution workflow Step 0 hard gate](../../governance/workflows/plan/plan-execution.md#0-verify-worktree-specification-sequential-hard-gate)
+(execution refuses to start if the section is absent).
+
+**Where to write it**:
+
+- **Multi-file plans**: top-level `## Worktree` section in `delivery.md`, placed before any phase heading.
+- **Single-file plans**: top-level `## Worktree` section in `README.md`, placed before `## Delivery Checklist`.
+
+**Path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (strip the date prefix). Example: plan folder `2026-05-15__auth-rewrite/` → worktree path `worktrees/auth-rewrite/`.
+
+**Required content** (template):
+
+````markdown
+## Worktree
+
+Worktree path: `worktrees/<plan-identifier>/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree <plan-identifier>
+```
+````
+
+**This applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions. See
+[Plans Organization Convention §Worktree Specification](../../governance/conventions/structure/plans.md#worktree-specification)
+and
+[Worktree Path Convention](../../governance/conventions/structure/worktree-path.md).
 
 ## Mandatory Operational Readiness Sections
 
