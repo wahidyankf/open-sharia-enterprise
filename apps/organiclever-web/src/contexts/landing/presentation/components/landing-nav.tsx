@@ -75,6 +75,7 @@ export function LandingNav({ onGoApp }: LandingNavProps) {
       </button>
 
       <span
+        title="Pre-Alpha — active early development. Expect bugs, broken flows, and breaking changes."
         style={{
           fontSize: 13,
           fontWeight: 800,

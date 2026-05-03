@@ -39,7 +39,7 @@ function AlphaBanner() {
               marginBottom: 6,
             }}
           >
-            Pre-Alpha — expect breaking changes
+            Pre-Alpha — expect bugs, rough edges, and breaking changes
           </div>
           <div
             style={{
@@ -49,14 +49,19 @@ function AlphaBanner() {
               color: "oklch(42% 0.10 80)",
             }}
           >
-            OrganicLever is in active early development. It currently tracks{" "}
-            <strong style={{ color: "#6b4a00", fontWeight: 700 }}>five event types</strong> — workouts, reading,
-            learning, meals, and focus sessions — plus your own custom types. Data is stored locally —
+            OrganicLever is in active early development.{" "}
+            <strong style={{ color: "#6b4a00", fontWeight: 700 }}>
+              You will encounter bugs, broken flows, missing features, and occasional unstable behavior.
+            </strong>{" "}
+            It currently tracks <strong style={{ color: "#6b4a00", fontWeight: 700 }}>five event types</strong> —
+            workouts, reading, learning, meals, and focus sessions — plus your own custom types. Data is stored locally
+            —
             <strong style={{ color: "#6b4a00", fontWeight: 700 }}>
               {" "}
               clearing browser storage will erase your history.
             </strong>{" "}
-            The data model may change between versions without migration.
+            The data model may change between versions without migration. Treat this as an experimental preview, not a
+            production-ready tool.
           </div>
         </div>
       </div>

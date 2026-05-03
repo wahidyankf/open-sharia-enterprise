@@ -22,7 +22,7 @@ Feature: OrganicLever landing page
     Then I see text "Pre-Alpha"
 
   Scenario: Alpha warning banner visible
-    Then I see text "Pre-Alpha — expect breaking changes"
+    Then I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"
 
   Scenario: All five event type cards visible
     Then I see text "Workouts"

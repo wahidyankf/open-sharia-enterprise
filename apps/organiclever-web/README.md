@@ -3,6 +3,11 @@
 Next.js 16 frontend for the OrganicLever life journal — local-first productivity tracker with
 PGlite (Postgres-WASM) for in-browser data storage.
 
+> **Status: Pre-Alpha.** OrganicLever is in active early development. Expect bugs, broken flows,
+> missing features, and occasional unstable behavior. The data model may change between versions
+> without migration, and clearing browser storage will erase your history. Treat this as an
+> experimental preview, not a production-ready tool.
+
 ## Overview
 
 `organiclever-web` serves a landing page at `/` and the full OrganicLever app under `/app/`. Each

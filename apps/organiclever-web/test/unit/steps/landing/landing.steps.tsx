@@ -77,10 +77,10 @@ describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {
   });
 
   Scenario("Alpha warning banner visible", ({ Then }) => {
-    Then('I see text "Pre-Alpha — expect breaking changes"', () => {
+    Then('I see text "Pre-Alpha — expect bugs, rough edges, and breaking changes"', () => {
       cleanup();
       render(<LandingPage />);
-      expect(screen.getByText(/Pre-Alpha — expect breaking changes/i)).toBeDefined();
+      expect(screen.getByText(/Pre-Alpha — expect bugs, rough edges, and breaking changes/i)).toBeDefined();
     });
   });
 
