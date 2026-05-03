@@ -25,4 +25,8 @@ if [ -n "$RANGE" ]; then
   if echo "$CHANGED" | grep -qE '^governance/.*\.md$'; then
     npx nx run rhino-cli:validate:governance-vendor-audit
   fi
+  # Cross-vendor behavioral-parity gate: run when any of the parity-relevant surfaces change.
+  if echo "$CHANGED" | grep -qE '^(governance/.*\.md$|AGENTS\.md$|CLAUDE\.md$|\.claude/agents/|\.opencode/agents/)'; then
+    npx nx run rhino-cli:validate:cross-vendor-parity
+  fi
 fi
