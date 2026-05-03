@@ -66,7 +66,7 @@ Worktree creation is routed via a `WorktreeCreate` hook:
 
 - **Location**: `.claude/hooks/worktree-create.sh`
 - **Naming**: kebab-case with `.sh` extension
-- **Protocol** (per the [Claude Code Hooks reference](https://code.claude.com/docs/en/hooks)): reads a JSON payload from **stdin** with fields `hook_event_name`, `cwd`, `name`; prints the absolute worktree path to stdout (last line); writes any informational output to stderr; exits `0` on success (non-zero fails creation).
+- **Protocol**: reads a JSON payload from **stdin** with fields `hook_event_name`, `cwd`, `name`; prints the absolute worktree path to stdout (last line); writes any informational output to stderr; exits `0` on success (non-zero fails creation). The exact field names and stdin transport are dictated by the coding agent platform under which the hook runs — see Platform Binding Compatibility below for the binding-specific reference.
 - **Behaviour**: routes the new worktree to `<repo-root>/worktrees/<name>/` instead of the default `.claude/worktrees/<name>/`.
 
 **Hook contract:**
@@ -151,7 +151,7 @@ FAIL: worktree-create           # missing .sh extension
 ### Platform Binding Compatibility
 
 ```binding-example
-The WorktreeCreate hook is registered in ~/.claude/settings.json. The coding agent reads skills and definitions natively and supports Claude Code hooks, so a single hook serves both platforms.
+The WorktreeCreate hook is registered in ~/.claude/settings.json. The Claude Code coding agent supports this hook event natively (see https://code.claude.com/docs/en/hooks for the field schema and transport contract); other coding agent platforms that support a `WorktreeCreate` hook with the same JSON-on-stdin contract reuse the same shell script without modification.
 ```
 
 The hook script itself is platform-agnostic bash with `jq` for JSON parsing (`jq` is part of the doctor minimal toolchain per AGENTS.md), ensuring compatibility across platforms.
