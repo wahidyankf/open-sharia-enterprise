@@ -32,9 +32,9 @@ Given("the settings screen is loaded", async ({ page }) => {
   await page.waitForLoadState("domcontentloaded");
   // Navigate to Settings via TabBar
   const settingsBtn = page.getByRole("link", { name: "Settings" }).first();
-  if (await settingsBtn.isVisible()) {
-    await settingsBtn.click();
-  }
+  await settingsBtn.click();
+  // Wait for settings-screen to render before subsequent steps interact with it.
+  await expect(page.locator("[data-testid='settings-screen']")).toBeVisible({ timeout: 10000 });
 });
 
 Then("the user name input is visible", async ({ page }) => {
@@ -50,9 +50,8 @@ When("the user selects 30s rest", async ({ page }) => {
     .locator("[data-testid='rest-chip-30']")
     .or(page.getByRole("button", { name: "30s" }))
     .first();
-  if (await chip.isVisible()) {
-    await chip.click();
-  }
+  await expect(chip).toBeVisible({ timeout: 10000 });
+  await chip.click();
 });
 
 Then("the 30s rest chip is active", async ({ page }) => {
@@ -73,9 +72,8 @@ When("the user saves settings", async ({ page }) => {
     .locator("[data-testid='rest-chip-60']")
     .or(page.getByRole("button", { name: "60s" }))
     .first();
-  if (await chip.isVisible()) {
-    await chip.click();
-  }
+  await expect(chip).toBeVisible({ timeout: 10000 });
+  await chip.click();
 });
 
 Then("the saved toast appears", async ({ page }) => {
@@ -91,9 +89,8 @@ Given("the settings screen shows dark mode is off", async ({ page }) => {
   await page.goto(appPath("home"));
   await page.waitForLoadState("domcontentloaded");
   const settingsBtn = page.getByRole("link", { name: "Settings" }).first();
-  if (await settingsBtn.isVisible()) {
-    await settingsBtn.click();
-  }
+  await settingsBtn.click();
+  await expect(page.locator("[data-testid='settings-screen']")).toBeVisible({ timeout: 10000 });
 });
 
 When("the user toggles dark mode", async ({ page }) => {
