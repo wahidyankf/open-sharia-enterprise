@@ -36,6 +36,7 @@ These standards define **HOW to maintain and validate quality**, covering automa
 - [Manual Behavioral Verification Convention](./manual-behavioral-verification.md) - Practice requiring manual verification of UI features and API endpoints using Playwright MCP tools and curl after implementing changes
 - [Feature Change Completeness Convention](./feature-change-completeness.md) - Practice requiring all related specs, contracts, tests, and documentation to be updated as part of any feature change
 - [CI Blocker Resolution Convention](./ci-blocker-resolution.md) - Practice mandating that preexisting CI blockers are investigated at the root cause and fixed properly, never bypassed
+- [Plan Anti-Hallucination Convention](./plan-anti-hallucination.md) - Mandatory pre-write verification rituals, repo-grounding rule, refuse-on-uncertainty, confidence labels, anti-pattern catalog (AP-1 through AP-10), and specialized-executor annotation for AI agents authoring plan content
 
 ## Companion Documents
 
