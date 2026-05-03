@@ -66,19 +66,24 @@ Worktree creation is routed via a `WorktreeCreate` hook:
 
 - **Location**: `.claude/hooks/worktree-create.sh`
 - **Naming**: kebab-case with `.sh` extension
-- **Protocol**: Accepts JSON payload as `argv[1]`, prints absolute path to stdout, exits `0`
-- **Behavior**: Resolves `worktrees/<name>/` in the repo root instead of `.claude/worktrees/<name>/`
+- **Protocol** (per the [Claude Code Hooks reference](https://code.claude.com/docs/en/hooks)): reads a JSON payload from **stdin** with fields `hook_event_name`, `cwd`, `name`; prints the absolute worktree path to stdout (last line); writes any informational output to stderr; exits `0` on success (non-zero fails creation).
+- **Behaviour**: routes the new worktree to `<repo-root>/worktrees/<name>/` instead of the default `.claude/worktrees/<name>/`.
 
 **Hook contract:**
 
 ```bash
-# Input: JSON payload via argv[1]
-WorktreeCreate '{"sessionId":"...","worktreeName":"...","workingDirectory":"..."}'
+# Input: JSON payload on stdin, e.g.
+#   {"hook_event_name":"WorktreeCreate","cwd":"/path/to/project","name":"my-feature"}
+#
+# Bash idiom for parsing:
+INPUT=$(cat)
+NAME=$(printf '%s' "$INPUT" | jq -r '.name // empty')
+CWD=$(printf '%s' "$INPUT" | jq -r '.cwd // empty')
 
-# Output: Absolute path to stdout
-# /path/to/repo/worktrees/<name>
+# Output: absolute path of the created worktree on stdout (last line)
+echo "/path/to/repo/worktrees/$NAME"
 
-# Exit code: 0 on success
+# Exit code: 0 on success; non-zero fails worktree creation
 ```
 
 ### Naming Requirements
@@ -149,7 +154,7 @@ FAIL: worktree-create           # missing .sh extension
 The WorktreeCreate hook is registered in ~/.claude/settings.json. The coding agent reads skills and definitions natively and supports Claude Code hooks, so a single hook serves both platforms.
 ```
 
-The hook script itself is platform-agnostic bash with Node.js for JSON parsing, ensuring compatibility across platforms.
+The hook script itself is platform-agnostic bash with `jq` for JSON parsing (`jq` is part of the doctor minimal toolchain per AGENTS.md), ensuring compatibility across platforms.
 
 ### Industry Convention vs. Chosen Approach
 
@@ -165,7 +170,7 @@ This approach avoids nested-`.git` issues, keeps tools that walk up the director
 
 **Why `/worktrees/` inside the repo instead:**
 
-- **Hook constraint**: The `WorktreeCreate` hook receives `workingDirectory` (the repo root) and resolves paths relative to it. Routing to a sibling path requires computing `..` from repo root, which is messier and less portable across machines.
+- **Hook constraint**: The `WorktreeCreate` hook receives `cwd` (the project root) and resolves paths relative to it. Routing to a sibling path requires computing `..` from the repo root, which is messier and less portable across machines.
 - **Dual-platform support**: A single hook registered in `~/.claude/settings.json` serves both platforms without duplication.
 - **Simplicity**: Keeping worktrees inside the repo root makes `git worktree list` output scannable and keeps all repo-related state in one place.
 - **Future-proofing**: If either platform adds native sibling-path support, this convention can be updated without changing the hook logic.
