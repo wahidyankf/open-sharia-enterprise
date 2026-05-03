@@ -1,5 +1,11 @@
 name: Test - OrganicLever Web Staging
 
+# Runs FE E2E tests against the deployed staging URL. When chaining after
+# `test-and-deploy-organiclever-web-development.yml`, wait ~5 minutes after
+# that workflow's deploy job before dispatching this one — Vercel needs that
+# long to build and route the new commit on `stag-organiclever-web` to the
+# staging URL. Dispatching earlier hits the previous build.
+
 on:
   schedule:
     - cron: "0 22 * * *" # 5 AM WIB (UTC+7)

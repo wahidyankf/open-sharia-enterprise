@@ -165,4 +165,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # Vercel listens to `stag-organiclever-web` and starts a build on every
+      # push. Allow ~5 minutes after this push completes before triggering
+      # `test-organiclever-web-staging.yml` — running the staging E2E earlier
+      # will hit the previous deploy or the Vercel build wall.
       - run: git push origin HEAD:stag-organiclever-web --force
