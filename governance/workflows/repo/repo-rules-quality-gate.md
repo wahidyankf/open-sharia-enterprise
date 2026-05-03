@@ -47,11 +47,14 @@ outputs:
 
 **IMPORTANT - Scope Clarification**:
 
-This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
+This workflow validates **source definitions only**. Source includes governance docs, primary agent definitions, and primary skill packages — all of which live under version control and are authored by hand. It does NOT validate generated directories:
 
-- PASS: **Validates**: `governance/` (principles, conventions, development practices)
-- FAIL: **Skips**: secondary platform binding directories (e.g., `.opencode/agents/`) — auto-generated from primary, validate via sync script
-- FAIL: **Skips**: platform binding skill directories (e.g., `.claude/skills/`) — auto-synced to secondary directories, validate via sync script
+- PASS: **Validates**: `governance/` (principles, conventions, development practices, workflows, vision)
+- PASS: **Validates**: `.claude/agents/` (primary agent source definitions — agent-to-agent duplication, agent-Skill duplication, frontmatter compliance)
+- PASS: **Validates**: `.claude/skills/` (primary skill source — Skill-to-Skill consolidation opportunities, skill content quality). Skills are NOT mirrored to secondary bindings; OpenCode reads `.claude/skills/<name>/SKILL.md` natively per [opencode.ai/docs/skills](https://opencode.ai/docs/skills/), so `.claude/skills/` IS the source of truth and IS in scope.
+- PASS: **Validates (partial)**: `docs/explanation/README.md` (Diátaxis explanation index — Step 1 Rules Governance scope) and `docs/explanation/software-engineering/` (~265 files / 345k lines — Step 8 dedicated validation: governance-principle alignment, cross-reference completeness, file naming, document structure, template completeness, diagram accessibility, README index accuracy, version documentation).
+- FAIL: **Skips**: the rest of `docs/` (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`, `docs/explanation/` non-software-engineering subtrees, `docs/metadata/`) — out of scope for this workflow today; validated by the specialized `docs/` agent family (`docs-checker`, `docs-tutorial-checker`, `docs-link-checker`, `docs-software-engineering-separation-checker`). Extending coverage to all of `docs/` is a backlog item — see Backlog below.
+- FAIL: **Skips**: secondary platform binding agent directories (e.g., `.opencode/agents/`) — auto-generated from `.claude/agents/` via `npm run sync:claude-to-opencode`. Validate via the sync script + `validate:cross-vendor-parity` Nx target, not this workflow.
 
 **Generated Output Validation**: Use CLI validation commands for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
 
