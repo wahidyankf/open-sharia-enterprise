@@ -334,7 +334,7 @@ To validate a plan complies with this convention:
 - [Plan Quality Gate](../../workflows/plan/plan-quality-gate.md)
 - [Plan Execution](../../workflows/plan/plan-execution.md)
 
-**Skills:**
+**Agent skills:**
 
 - [`plan-creating-project-plans`](../../../.claude/skills/plan-creating-project-plans/SKILL.md) — authoring guide that consumes this convention.
 - [`docs-validating-factual-accuracy`](../../../.claude/skills/docs-validating-factual-accuracy/SKILL.md) — universal factual-validation methodology.
