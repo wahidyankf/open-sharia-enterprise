@@ -611,6 +611,18 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 17. swe-code-checker
 18. ci-checker
 19. swe-ui-checker
+20. repo-parity-checker
+
+> **Cross-vendor behavioral parity**: `repo-parity-checker` (green) and
+> `repo-parity-fixer` (yellow) validate the cross-vendor parity invariants
+> (governance prose vendor-neutrality; AGENTS.md / CLAUDE.md vendor-neutrality;
+> binding sync no-op; agent count parity; color-translation map and
+> capability-tier map coverage). They are orchestrated by the
+> [`repo-cross-vendor-parity-quality-gate` workflow](../../workflows/repo/repo-cross-vendor-parity-quality-gate.md)
+> and gated automatically on every push that touches a parity-relevant surface
+> via the `validate:cross-vendor-parity` Nx target wired into `.husky/pre-push`.
+> The fixer auto-remediates only sync drift; all other invariant violations are
+> surfaced as findings requiring human resolution.
 
 **NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain enables parallel execution without file collisions.
 
