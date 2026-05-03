@@ -1,13 +1,16 @@
 /**
- * Shared E2E helper for OrganicLever web. Centralises the dev base URL and
- * exposes a `appPath` builder for the new URL-routed shell so each step file
+ * Shared E2E helper for OrganicLever web. Centralises the base URL and
+ * exposes a `appPath` builder for the URL-routed shell so each step file
  * does not hard-code the base URL.
  *
- * Step files import the constant or helper they need; this keeps the diff per
- * step file small (one import line + one URL change).
+ * Reads `WEB_BASE_URL` (same env var Playwright's `baseURL` reads) so step
+ * files can run against staging via `vars.WEB_BASE_URL`. Falls back to
+ * `http://localhost:3200` for local dev. Trailing slash trimmed so concat
+ * never produces `//app/...`.
  */
 
-export const APP_BASE_URL = "http://localhost:3200";
+const RAW_BASE_URL = process.env.WEB_BASE_URL || "http://localhost:3200";
+export const APP_BASE_URL = RAW_BASE_URL.replace(/\/+$/, "");
 
 /**
  * Build a fully-qualified URL for a /app/<tab> path or any sub-path under /app.
