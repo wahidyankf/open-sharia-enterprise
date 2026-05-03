@@ -28,7 +28,7 @@ The `governance/` directory groups all governance documentation together:
 - **Layer 1: Principles** - WHY we value specific approaches
 - **Layer 2: Conventions** - WHAT documentation rules we follow
 - **Layer 3: Development** - HOW we develop software
-- **Layer 4: AI Agents** - WHO enforces rules (see [agent catalog](../.claude/agents/README.md))
+- **Layer 4: AI Agents** - WHO enforces rules (see platform-binding agent catalogs in [`.claude/agents/`](../.claude/agents/README.md) — primary binding)
 - **Layer 5: Workflows** - WHEN we run multi-step orchestrated processes
 
 See [Repository Governance Architecture](./repository-governance-architecture.md) for complete explanation of the six-layer architecture, layer characteristics, traceability examples, and usage guidance.
@@ -91,11 +91,12 @@ graph TD
 
 #### Layer 4: AI Agents (WHO - Atomic Executors)
 
-- **[AI Agents](../.claude/agents/README.md)** - Specialized automated agents enforcing conventions and development practices
+- **AI Agents** - Specialized automated agents enforcing conventions and development practices
   - Organized by role (Makers, Checkers, Fixers, Operations, Development)
   - Single-purpose agents with explicit tool permissions
   - Each agent enforces specific conventions and development practices
   - Orchestrated by Layer 5 workflows
+  - Vendor-neutral: agent definitions live in **platform-binding directories**, with the canonical catalog in [`.claude/agents/`](../.claude/agents/README.md) (primary binding) and auto-synced mirror in `.opencode/agents/` (secondary binding); both are read by their respective coding agents
 
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
@@ -167,7 +168,17 @@ Use these questions to determine the correct subdirectory:
 **Question**: Can you ask "**WHEN do we orchestrate multiple agents?**" about the content?
 
 - ✅ **YES** → Place in `governance/workflows/` - It's a multi-step process
-- ❌ **NO** → It doesn't belong in governance/ - consider how-to/ or reference/
+- ❌ **NO** → Continue to next test
+
+### Vendor-Specific Content Test
+
+**Question**: Does this content reference specific vendors, products, or platform implementations (e.g., concrete model IDs, named CSS color tokens, vendor schema requirements, named coding-agent products)?
+
+- ✅ **YES** → It does **not** belong in `governance/` (governance prose is vendor-neutral by [Governance Vendor-Independence Convention](./conventions/structure/governance-vendor-independence.md)). Choose by intent:
+  - **Platform binding details** (agent definitions, sync configs, vendor schema notes) → place in the platform-binding directory (e.g., `.claude/`, `.opencode/`)
+  - **Cited reference data** (benchmark scores, primary-source citations, version histories) → place in `docs/reference/` (e.g., `docs/reference/ai-model-benchmarks.md`)
+  - **Vendor-specific examples inside an otherwise neutral governance doc** → wrap in a `binding-example` fenced code block or move under a "Platform Binding Examples" heading per the convention's Migration Guidance
+- ❌ **NO** → Place per the prior tests; if no test matched, consider `docs/how-to/` or `docs/reference/`
 
 ## 📐 Quick Decision Tree
 
@@ -182,7 +193,9 @@ Is it about WHY the project exists?
             ├─ YES → development/
             └─ NO → Is it about WHEN to orchestrate agents?
                 ├─ YES → workflows/
-                └─ NO → Wrong category (try how-to/ or reference/)
+                └─ NO → Is the content vendor-specific?
+                    ├─ YES → platform-binding dir (.claude/, .opencode/) OR docs/reference/
+                    └─ NO  → Wrong category (try docs/how-to/ or docs/reference/)
 ```
 
 ## 🔑 Key Principles

@@ -35,14 +35,17 @@ This convention separates **vendor-neutral governance** (the rules) from **platf
 
 ## Scope
 
-**Applies to**: every `.md` file under `governance/`.
+**Applies to**: every `.md` file under `governance/`, **plus the canonical root instruction surfaces**:
+
+- `AGENTS.md` — canonical root instruction file (read natively by OpenCode, OpenAI Codex CLI, and other AGENTS.md-aware coding agents). Vendor-neutrality here is the load-bearing surface for cross-vendor behavioral parity.
+- `CLAUDE.md` — Claude Code shim. While CLAUDE.md is itself a Claude-Code platform binding artifact (its filename names the vendor by design), its **prose body** must be vendor-neutral by the same standard as `governance/`. Two specific allowances apply:
+  - The single-line `@AGENTS.md` import directive is treated as an inline binding directive, not a forbidden vendor term.
+  - Vendor-specific clarifications inside CLAUDE.md belong inside ` ```binding-example ` fenced blocks or under a "Platform Binding Examples" heading per the Allowlist Mechanism — never as load-bearing prose.
 
 **Out of scope** (vendor terms are intentionally present here):
 
 - `.claude/` — Claude Code platform binding directory.
 - `.opencode/` — OpenCode platform binding directory.
-- `AGENTS.md` — canonical root instruction file; may reference all platform bindings.
-- `CLAUDE.md` — Claude Code shim; intentionally Claude-specific.
 - `docs/reference/platform-bindings.md` — catalog of all platform bindings; references them by necessity.
 - `plans/` — planning documents; may reference vendor specifics when discussing implementation details.
 
@@ -247,7 +250,7 @@ The following are explicitly permitted and never constitute a violation:
 2. **Under "Platform Binding Examples" headings**: any content until the next same-level heading.
 3. **The convention file itself** (`governance-vendor-independence.md`): this file uses vendor terms in examples to illustrate the rule. The audit tooling allowlists this file.
 4. **`docs/reference/platform-bindings.md`**: catalog file; explicitly out of scope.
-5. **`AGENTS.md` and `CLAUDE.md`** at the repo root: explicitly out of scope.
+5. **The single-line `@AGENTS.md` import in `CLAUDE.md`**: treated as an inline binding directive (not a forbidden vendor term). Other appearances of vendor terms inside CLAUDE.md must use the standard allowlist mechanisms.
 6. **Plans files** (`plans/`): explicitly out of scope.
 7. **Citation context**: when citing an external source whose name happens to be a vendor term (e.g., "the AAIF specification donated by Anthropic in December 2025"), the citation is allowed. The pattern must be clearly attributive, not a product mention.
 

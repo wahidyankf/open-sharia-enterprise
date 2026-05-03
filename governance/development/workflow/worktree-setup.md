@@ -129,7 +129,7 @@ The rule is **triggered by execution mode, not by intent**. Even "small" or "doc
    git worktree add worktrees/my-feature-branch my-feature-branch
    ```
 
-   This repo overrides the Claude Code default worktree path — worktrees land at repo-root `worktrees/<name>/`, not `.claude/worktrees/<name>/`. See [worktree-path.md](../../conventions/structure/worktree-path.md) for the convention and the WorktreeCreate hook that enforces it.
+   This repo overrides the upstream coding-agent default worktree path — worktrees land at repo-root `worktrees/<name>/`, not under the platform binding directory. See [worktree-path.md](../../conventions/structure/worktree-path.md) for the convention and the `WorktreeCreate` hook that enforces it.
 
 2. Identify the root repository worktree path. This is the directory containing the canonical checkout — typically the parent of `worktrees/`.
 

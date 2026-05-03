@@ -15,6 +15,8 @@ created: 2026-04-03
 
 This document defines the standards for selecting the appropriate model tier when creating or updating AI agents. The governing principle is **match model capability to task complexity** -- use the most capable model only when the task demands it, and use lighter models for structured or mechanical work.
 
+> **Note on terminology**: "planning-grade", "execution-grade", and "fast" are **internal repo vocabulary**, not an externally-recognized cross-vendor standard. Web research (2026-05-03) found no community usage of these tier names outside this repository. They serve as a vendor-neutral capability axis used by `governance/` prose; concrete vendor model IDs (e.g., `claude-opus-4-7`, `opencode-go/minimax-m2.7`) live in platform-binding agent frontmatter and in the [AI Model Benchmarks Reference](../../../docs/reference/ai-model-benchmarks.md).
+
 ## Principles Implemented/Respected
 
 This practice implements the following core principles:

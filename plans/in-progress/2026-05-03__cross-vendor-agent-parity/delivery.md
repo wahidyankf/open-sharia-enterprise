@@ -2,59 +2,123 @@
 
 ## Phase 0: Re-Baseline
 
-- [ ] Run `rhino-cli governance vendor-audit governance/` and record exact violation count
-- [ ] Document the actual baseline finding inline in this checklist (e.g., "0 violations as of YYYY-MM-DD HH:MM" or "N violations across M files")
-- [ ] Decide path:
+- [x] Run `rhino-cli governance vendor-audit governance/` and record exact violation count
+  - Date: 2026-05-03
+  - Status: completed (corrected — initial baseline call used `../../governance/` which `findGitRoot()`+`filepath.Join` resolved to a non-existent path, returning a false-pass; corrected by running with `governance/` as repo-relative path)
+  - Result: corrected baseline = **1 violation** at `governance/development/workflow/worktree-setup.md:132` ("Claude Code" in load-bearing prose). Fixed inline (same Phase 0 patch — rewrite to "the upstream coding-agent default" + "platform binding directory"). Post-fix audit: `GOVERNANCE VENDOR AUDIT PASSED: no violations found` (0).
+- [x] Document the actual baseline finding inline in this checklist (e.g., "0 violations as of YYYY-MM-DD HH:MM" or "N violations across M files")
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: 1 violation observed at baseline (regression introduced 845f1e53e — worktree-path propagation commit); fixed in same Phase 0 patch (`worktree-setup.md:132` rewrite). Post-fix: 0 violations.
+- [x] Decide path:
   - If 0 violations → mark Phase 1-3 as "verify only" (skip remediation; still verify links and benchmark coverage)
   - If N > 0 violations → execute Phase 1-3 remediation as written
-- [ ] Inspect `.claude/agents/*.md` and `.opencode/agents/*.md` counts: `ls .claude/agents/*.md | wc -l` and `ls .opencode/agents/*.md | wc -l` — record both numbers; mismatch is expected to be addressed in Phase 5
-- [ ] Run `npm run sync:claude-to-opencode` once to record whether sync is currently a no-op or produces drift; do NOT commit yet — Phase 5 handles drift remediation
+  - Date: 2026-05-03
+  - Status: completed
+  - Decision: **verify-only path with one one-line remediation** — Phase 1-3 confirmed already-vendor-neutral by per-file audit; Phase X (convention amendment) and Phase 4+ proceed as written
+- [x] Inspect `.claude/agents/*.md` and `.opencode/agents/*.md` counts: `ls .claude/agents/*.md | wc -l` and `ls .opencode/agents/*.md | wc -l` — record both numbers; mismatch is expected to be addressed in Phase 5
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: both dirs contain 71 `.md` files; `.claude` = 70 agents + 1 `README.md`; `.opencode` = 71 agents (no README), includes orphan `ci-monitor-subagent.md`. Symmetric diff via `comm`: only-`.claude` = `README.md` (expected); only-`.opencode` = `ci-monitor-subagent.md` (orphan, Phase 5 target)
+- [x] Run `npm run sync:claude-to-opencode` once to record whether sync is currently a no-op or produces drift; do NOT commit yet — Phase 5 handles drift remediation
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: sync is **no-op** for tracked binding files (`Agents: 70 converted; Skills: 0 copied; Status: SUCCESS`). `git status` shows no `.opencode/` changes after sync. NOTE: sync re-converts all 70 `.claude` agents but does NOT delete `.opencode` orphans — `ci-monitor-subagent.md` orphan in `.opencode/agents/` is preserved untouched by sync; Phase 5 must remove it manually.
 
 ## Phase 1: Audit & Inventory
 
-- [ ] Catalog all governance/ violations by category (model names, benchmarks, vendor paths)
-- [ ] Identify content-migration files vs. rewording-only files
-- [ ] Verify `docs/reference/ai-model-benchmarks.md` is comprehensive enough to serve as canonical source
+- [x] Catalog all governance/ violations by category (model names, benchmarks, vendor paths)
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: 0 violations across all categories — nothing to catalog. Verbose `vendor-audit` confirms `PASSED: no violations found`.
+- [x] Identify content-migration files vs. rewording-only files
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: N/A — 0 violations means no remediation files to classify. Skipping per Phase 0 decision-path.
+- [x] Verify `docs/reference/ai-model-benchmarks.md` is comprehensive enough to serve as canonical source
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: 238-line reference with frontmatter, Benchmark Definitions table, per-model sections (Claude / OpenCode / etc.) with citations to primary sources (Anthropic API docs, release posts, system cards) and `[Verified]` confidence labels. Comprehensive and Diátaxis-conformant. Backs tier assignments in `model-selection.md`.
 
 ## Phase 2: Content Migration & Rewrite (governance/)
 
-- [ ] Verify `docs/reference/ai-model-benchmarks.md` has benchmark data for every model referenced in governance files — add any missing entries before proceeding
-- [ ] Update `governance/development/agents/model-selection.md`:
+- [x] Verify `docs/reference/ai-model-benchmarks.md` has benchmark data for every model referenced in governance files — add any missing entries before proceeding
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: distinct model values across both bindings: `haiku`, `sonnet`, `opencode-go/glm-5`, `opencode-go/minimax-m2.7`, omitted (opus inherit). `model-selection.md` covers all five via the capability-tier map with links to `ai-model-benchmarks.md`. Benchmarks doc has Claude Opus 4.7 / Sonnet 4.6 / Haiku 4.5 sections plus OpenCode notes — full coverage.
+- [x] Update `governance/development/agents/model-selection.md`:
   - Rewrite model references using capability tiers (planning-grade, execution-grade, fast)
   - Remove benchmark scores from governance prose
   - Link to `docs/reference/ai-model-benchmarks.md` as canonical source
   - Confirm the capability-tier map covers every tier used in `.claude/agents/*.md` and `.opencode/agents/*.md` frontmatter (extract via `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u`)
   - Add a one-line note clarifying that "planning-grade / execution-grade / fast" is internal repo vocabulary, not an externally-recognized cross-vendor standard (web research 2026-05-03 found no community usage)
-- [ ] Update `governance/development/agents/ai-agents.md` (explicit Phase 2 target):
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `governance/development/agents/model-selection.md`
+  - Result: capability-tier rewrite + benchmark-scores-removed + canonical-link + tier-map coverage already present from earlier work; **added terminology Note** (planning-grade / execution-grade / fast = internal repo vocabulary, not externally-recognized cross-vendor standard, web research 2026-05-03 found no community usage). Vendor-audit re-run after edit: still 0 violations.
+- [x] Update `governance/development/agents/ai-agents.md` (explicit Phase 2 target):
   - Wrap vendor-specific examples (color-translation map entries, OpenCode named-color rejection note, etc.) in `binding-example` fences. Drop the specific version number "1.14.31" — unverified per OpenCode public changelog; use "current OpenCode" instead
   - Neutralize load-bearing prose around the fences
   - Confirm the color-translation map covers every named color used in `.claude/agents/*.md` frontmatter (extract via `grep -h "^color:" .claude/agents/*.md | sort -u`)
-- [ ] Update `governance/README.md`:
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: `binding-example` fences already present (lines 67, 674, 2512, 2543, 2561). "1.14.31" version string already removed. Distinct colors in `.claude/agents/*.md` frontmatter: `blue`, `green`, `purple`, `yellow` — all four covered by Color Translation Table at line 759 (under "## Platform Binding Examples" heading, properly scoped). Reserved colors `red`/`orange`/`pink`/`cyan` also documented.
+- [x] Update `governance/README.md`:
   - Replace `.claude/agents/` references with "platform binding agents"
   - Update Layer 4 description to reflect vendor-neutrality
-- [ ] Update `governance/repository-governance-architecture.md`:
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `governance/README.md`
+  - Result: line 31 layer summary now reads "platform-binding agent catalogs in `.claude/agents/` (primary binding)"; Layer 4 expanded section adds vendor-neutrality clarifier and references both `.claude/agents/` and `.opencode/agents/`. Vendor-audit re-run: still 0 violations.
+- [x] Update `governance/repository-governance-architecture.md`:
   - Clarify agent skills are delivery infrastructure (not Layer 4.5)
   - Ensure agent color palette examples are not load-bearing prose
-- [ ] Check other governance files (including `governance/principles/`) for vendor-specific content
-- [ ] Verify vendor-specific benchmark content is complete in `docs/reference/ai-model-benchmarks.md`
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: agent-skills-as-delivery-infrastructure framing already present at lines 60, 119, 132, 359, 420, 482, 484, 497, 507-508, 632 (incl explicit "agent skills are delivery infrastructure, NOT a governance layer" callout). Color palette refs (`blue|green|yellow|purple`): grep returns 0 matches — no load-bearing color prose in this file.
+- [x] Check other governance files (including `governance/principles/`) for vendor-specific content
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: scoped audit on `governance/principles/` returns 0 violations. Whole-tree audit (`governance/`) also at 0. No vendor-specific content remains anywhere in governance prose.
+- [x] Verify vendor-specific benchmark content is complete in `docs/reference/ai-model-benchmarks.md`
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: confirmed via task 26 — 238-line reference covers Claude Opus 4.7 / Sonnet 4.6 / Haiku 4.5 + OpenCode notes, all with `[Verified]` confidence labels and primary-source citations. All distinct frontmatter `model:` values represented in benchmarks doc.
 
 ## Phase 3: Layer-Test Update
 
-- [ ] Update `governance/README.md` Layer Test with Vendor-Specific Content Test
-- [ ] Update `governance/conventions/structure/governance-vendor-independence.md` (minor edits only; major Scope expansion happens in Phase X)
+- [x] Update `governance/README.md` Layer Test with Vendor-Specific Content Test
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `governance/README.md`
+  - Result: added new "Vendor-Specific Content Test" section after Workflows Test routing vendor-specific content to platform-binding dirs OR `docs/reference/` (with `binding-example` fence escape hatch); extended Quick Decision Tree with vendor-specific branch. Vendor-audit re-run: 0 violations.
+- [x] Update `governance/conventions/structure/governance-vendor-independence.md` (minor edits only; major Scope expansion happens in Phase X)
+  - Date: 2026-05-03
+  - Status: completed (verify-only)
+  - Result: convention is comprehensive (Scope, Forbidden Vendor Terms with regex tables for product names / binding paths / model-vendor company names / model-product names / version strings, Allowlist mechanism, Migration Guidance, automated enforcement via `rhino-cli governance vendor-audit`). No minor edits surfaced — content is current as of recent vendor-independence-related plan completion. Phase X handles major Scope expansion (moving AGENTS.md/CLAUDE.md to in-scope).
 
 ## Phase X: Convention Amendment (BLOCKING for Phase 4)
 
 This phase MUST run before Phase 4. It expands the scope of the vendor-independence convention so that the AGENTS.md / CLAUDE.md audit has a convention to enforce against.
 
-- [ ] Amend `governance/conventions/structure/governance-vendor-independence.md`:
+- [x] Amend `governance/conventions/structure/governance-vendor-independence.md`:
   - Update the Scope section: AGENTS.md and CLAUDE.md are now in scope (move them OUT of "Out of scope" list)
   - Update the Exceptions list: remove the entry that exempts AGENTS.md and CLAUDE.md
   - Preserve the `plans/` exclusion (plans intentionally permit vendor-specific implementation discussion)
   - Add a brief note explaining that CLAUDE.md is itself a Claude-Code binding shim, so vendor terms are allowed inside `binding-example` fences or under "Platform Binding Examples" headings
   - Add a brief note explaining that the single-line `@AGENTS.md` import in CLAUDE.md is treated as an inline binding directive (not a forbidden vendor term)
-- [ ] Run `npm run lint:md:fix && npm run lint:md` against the convention file
-- [ ] Run `rhino-cli governance vendor-audit governance/` — must remain at 0 violations after amendment (the convention file itself is allowlisted)
+  - Date: 2026-05-03
+  - Status: completed
+  - Files changed: `governance/conventions/structure/governance-vendor-independence.md`
+  - Result: Scope section now lists AGENTS.md and CLAUDE.md as in-scope canonical root surfaces with the two specific allowances (binding-example fences inside CLAUDE.md, single-line `@AGENTS.md` import allowance). Out-of-scope list trimmed to `.claude/`, `.opencode/`, `docs/reference/platform-bindings.md`, `plans/`. Exceptions list updated: replaced "AGENTS.md and CLAUDE.md at the repo root: explicitly out of scope" with a narrowed entry for the single-line `@AGENTS.md` import directive only.
+- [x] Run `npm run lint:md:fix && npm run lint:md` against the convention file
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: `markdownlint-cli2` against the three Phase 2/X-edited governance files reports `0 errors`.
+- [x] Run `rhino-cli governance vendor-audit governance/` — must remain at 0 violations after amendment (the convention file itself is allowlisted)
+  - Date: 2026-05-03
+  - Status: completed
+  - Result: post-amendment audit: 0 violations. Convention file is permanently allowlisted by `forbiddenConvention` constant in `apps/rhino-cli/internal/governance/governance_vendor_audit.go:23`.
 - [ ] Commit the amendment: `refactor(governance): expand vendor-independence convention to include AGENTS.md and CLAUDE.md`
 
 ## Phase 4: AGENTS.md and CLAUDE.md Neutrality Audit
