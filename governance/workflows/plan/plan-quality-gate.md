@@ -257,7 +257,7 @@ The AI will invoke agents with scoped validation:
 ### Validate Single Plan
 
 ```
-User: "Run plan quality gate workflow for plans/in-progress/2025-01-15__new-feature/plan.md"
+User: "Run plan quality gate workflow for plans/in-progress/new-feature/plan.md"
 ```
 
 The AI will invoke agents with single-file scope:

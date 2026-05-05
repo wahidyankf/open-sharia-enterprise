@@ -92,17 +92,17 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 9: Plan Archival
 
-- [ ] Verify ALL prior delivery checklist items in this file are ticked (`- [x]`). Run `Bash grep -c "^- \\[ \\]" plans/backlog/2026-05-03__repo-rules-checker-docs-coverage/delivery.md` — returns `0` (or `Bash grep -c "^- \\[ \\]" plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage/delivery.md` if the plan moved to in-progress before archival).
+- [ ] Verify ALL prior delivery checklist items in this file are ticked (`- [x]`). Run `Bash grep -c "^- \\[ \\]" plans/backlog/2026-05-03__repo-rules-checker-docs-coverage/delivery.md` — returns `0` (or `Bash grep -c "^- \\[ \\]" plans/in-progress/repo-rules-checker-docs-coverage/delivery.md` if the plan moved to in-progress before archival).
   - _Suggested executor: direct execution_
 - [ ] Verify ALL Phase 5 quality gates AND Phase 8 CI workflows pass on the current commit. Run `Bash gh run list --limit=3 --json conclusion` and confirm all return `success`.
   - _Suggested executor: direct execution_
-- [ ] Move the plan folder from `plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage/` to `plans/done/2026-05-03__repo-rules-checker-docs-coverage/` via `Bash git mv plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage plans/done/2026-05-03__repo-rules-checker-docs-coverage`. Verify by running `Bash test -d plans/done/2026-05-03__repo-rules-checker-docs-coverage && test ! -d plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage` — exits 0.
+- [ ] Move the plan folder from `plans/in-progress/repo-rules-checker-docs-coverage/` to `plans/done/YYYY-MM-DD__repo-rules-checker-docs-coverage/` (substituting today's completion date) via `Bash git mv plans/in-progress/repo-rules-checker-docs-coverage plans/done/YYYY-MM-DD__repo-rules-checker-docs-coverage`. Verify by running `Bash test -d plans/done/YYYY-MM-DD__repo-rules-checker-docs-coverage && test ! -d plans/in-progress/repo-rules-checker-docs-coverage` — exits 0.
   - _Suggested executor: direct execution_
 - [ ] Update `plans/in-progress/README.md` — remove the entry for this plan. Verify by running `Bash grep -c "repo-rules-checker-docs-coverage" plans/in-progress/README.md` — returns `0`.
   - _Suggested executor: direct execution_
-- [ ] Update `plans/done/README.md` — add an entry shaped like the existing entries in that file: link text `Repo-Rules-Checker docs/ Coverage Extension` with relative target `./2026-05-03__repo-rules-checker-docs-coverage/`, followed by " — Extended repo-rules-checker with Step 8b for full docs/ tree validation including vendor-binding drift detection. Completed YYYY-MM-DD." with the actual completion date substituted. Verify by running `Bash grep -c "repo-rules-checker-docs-coverage" plans/done/README.md` — returns `1`.
+- [ ] Update `plans/done/README.md` — add an entry shaped like the existing entries in that file: link text `Repo-Rules-Checker docs/ Coverage Extension` with relative target `./YYYY-MM-DD__repo-rules-checker-docs-coverage/` (actual completion date), followed by " — Extended repo-rules-checker with Step 8b for full docs/ tree validation including vendor-binding drift detection. Completed YYYY-MM-DD." with the actual completion date substituted. Verify by running `Bash grep -c "repo-rules-checker-docs-coverage" plans/done/README.md` — returns `1`.
   - _Suggested executor: direct execution_
-- [ ] Search for orphaned references to `plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage` across the repo. Run `Bash rg -l "plans/in-progress/2026-05-03__repo-rules-checker-docs-coverage" --glob '!plans/done/**'` — returns no matches.
+- [ ] Search for orphaned references to `plans/in-progress/repo-rules-checker-docs-coverage` across the repo. Run `Bash rg -l "plans/in-progress/repo-rules-checker-docs-coverage" --glob '!plans/done/**'` — returns no matches.
   - _Suggested executor: direct execution_
 - [ ] Commit the archival via `Bash git commit` with subject `chore(plans): move repo-rules-checker-docs-coverage to done`. Verify by running `Bash git log --oneline -1` — first line matches the subject.
   - _Suggested executor: direct execution_

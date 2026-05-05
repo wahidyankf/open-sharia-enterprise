@@ -1,6 +1,6 @@
 ---
 name: plan-creating-project-plans
-description: Comprehensive project planning standards for plans/ directory including folder structure (ideas.md, backlog/, in-progress/, done/), naming convention (YYYY-MM-DD__identifier/), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, and Gherkin acceptance criteria. Essential for creating structured, executable project plans.
+description: Comprehensive project planning standards for plans/ directory including folder structure (ideas.md, backlog/, in-progress/, done/), stage-aware naming convention (backlog/done use YYYY-MM-DD__identifier/, in-progress uses identifier/ with no date prefix), five-document file organization (README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file default; single README.md for trivially-small single-file exception), BRD/PRD content-placement rules, and Gherkin acceptance criteria. Essential for creating structured, executable project plans.
 ---
 
 # Creating Project Plans
@@ -26,27 +26,28 @@ plans/
 ├── backlog/                              # Future work
 │   └── YYYY-MM-DD__project-name/        # Planned but not started
 ├── in-progress/                          # Active work
-│   └── YYYY-MM-DD__project-name/        # Currently executing
+│   └── project-name/                    # Currently executing (no date prefix)
 └── done/                                 # Completed work
-    └── YYYY-MM-DD__project-name/        # Archived completed plans
+    └── YYYY-MM-DD__project-name/        # Archived (completion date prefix)
 ```
 
 ## Plan Naming Convention
 
-**Format**: `YYYY-MM-DD__project-identifier/`
+Naming is **stage-aware** — each lifecycle stage has its own rule:
 
-**Examples**:
+| Stage          | Format                            | Date meaning    |
+| -------------- | --------------------------------- | --------------- |
+| `backlog/`     | `YYYY-MM-DD__project-identifier/` | Creation date   |
+| `in-progress/` | `project-identifier/`             | No date prefix  |
+| `done/`        | `YYYY-MM-DD__project-identifier/` | Completion date |
 
-- `2025-11-25__user-auth/`
-- `2026-01-02__rules-consolidation/`
-- `2025-12-10__api-refactor/`
+**Rules** (identifier part, all stages):
 
-**Rules**:
-
-- Date: Plan creation date (YYYY-MM-DD)
-- Separator: Double underscore (`__`)
+- Separator between date and identifier: Double underscore (`__`)
 - Identifier: Lowercase, hyphen-separated, descriptive
 - Trailing slash indicates directory
+- Strip the date prefix when moving from `backlog/` → `in-progress/`
+- Add the completion date prefix when moving from `in-progress/` → `done/`
 
 ## Plan Structure
 
@@ -55,7 +56,7 @@ plans/
 **For any plan with substantive business intent, product scope, and technical design:**
 
 ```
-plans/in-progress/2025-11-25__complex-feature/
+plans/in-progress/complex-feature/
 ├── README.md                 # Context, Scope, Approach Summary, navigation
 ├── brd.md                    # Business Requirements Document
 ├── prd.md                    # Product Requirements Document
@@ -77,7 +78,7 @@ plans/in-progress/2025-11-25__complex-feature/
 **Only for trivially small plans** where both condensed BRD and condensed PRD fit without crowding the technical sections:
 
 ```
-plans/in-progress/2025-11-25__simple-feature/
+plans/in-progress/simple-feature/
 └── README.md                 # All content in one file
 ```
 

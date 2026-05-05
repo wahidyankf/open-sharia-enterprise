@@ -5,7 +5,7 @@ termination: Zero findings remain after validation and plan moved to done/
 inputs:
   - name: plan-path
     type: string
-    description: Path to the plan file to execute (e.g., "plans/in-progress/2025-01-15__new-feature/plan.md")
+    description: Path to the plan file to execute (e.g., "plans/in-progress/new-feature/plan.md")
     required: true
   - name: max-iterations
     type: number
@@ -54,7 +54,7 @@ There is no dedicated `plan-executor` delegated agent. Executor logic lives in t
 **How to Execute**:
 
 ```
-User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md"
+User: "Execute plan plans/in-progress/new-feature/plan.md"
 ```
 
 The calling context will:
@@ -501,7 +501,7 @@ Report final status, archive plan if successful, and update all related READMEs.
   1. Move entire plan folder from current location to `plans/done/`:
 
      ```bash
-     git mv plans/in-progress/YYYY-MM-DD__plan-name/ plans/done/YYYY-MM-DD__plan-name/
+     git mv plans/in-progress/plan-name/ plans/done/YYYY-MM-DD__plan-name/
      ```
 
   2. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
@@ -570,7 +570,7 @@ with a note explaining why it was skipped rather than silently omitting it.
 ### Execute Plan with Default Settings
 
 ```
-User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md"
+User: "Execute plan plans/in-progress/new-feature/plan.md"
 ```
 
 The calling context orchestrates directly and invokes specialized agents via the Agent tool (default max 10 iterations):
@@ -585,7 +585,7 @@ The calling context orchestrates directly and invokes specialized agents via the
 ### Execute with Extended Iterations
 
 ```
-User: "Execute plan plans/in-progress/2025-01-15__complex-migration/plan.md with max-iterations=15"
+User: "Execute plan plans/in-progress/complex-migration/plan.md with max-iterations=15"
 ```
 
 The AI will invoke agents with extended iteration limit:
@@ -608,7 +608,7 @@ The AI will invoke agents regardless of folder location:
 ### Quick Validation Only
 
 ```
-User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md with max-iterations=1"
+User: "Execute plan plans/in-progress/new-feature/plan.md with max-iterations=1"
 ```
 
 The AI will invoke agents for a single cycle:

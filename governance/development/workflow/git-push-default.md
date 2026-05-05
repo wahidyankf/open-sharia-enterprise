@@ -220,7 +220,7 @@ Use `--rebase` instead.
 
 ### PASS: Proactive fix of preexisting violation
 
-While executing Plan A, the plan-execution workflow reads `plans/in-progress/2026-03-01__feature-x/delivery.md` and finds:
+While executing Plan A, the plan-execution workflow reads `plans/in-progress/feature-x/delivery.md` and finds:
 
 ```markdown
 - [x] Implement feature

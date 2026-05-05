@@ -419,7 +419,7 @@ Every checkbox in `delivery.md` (or the Delivery Checklist section of a single-f
    - Bare "the auth file", "the relevant config", "wherever needed": **HIGH** finding.
 
 2. **Explicit shell command(s)** when the action involves a command
-   - Acceptable: `npx nx run oseplatform-web:test:quick`, `git mv plans/in-progress/2026-05-15__foo plans/done/`, etc.
+   - Acceptable: `npx nx run oseplatform-web:test:quick`, `git mv plans/in-progress/foo plans/done/YYYY-MM-DD__foo`, etc.
    - Bare "run the lint", "run tests", "validate": **HIGH** finding.
 
 3. **Concrete acceptance criterion** stating the observable change that proves done

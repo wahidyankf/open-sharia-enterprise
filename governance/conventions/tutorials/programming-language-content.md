@@ -794,7 +794,7 @@ Even Elixir, the highest standard, has gaps:
 
 **Implication:** Achieving complete parity requires going beyond current highest standards in pedagogical patterns (front hooks, cross-references) and color compliance.
 
-**Analysis Report:** Complete parity analysis with detailed gap identification available in `plans/in-progress/2025-12-21__prog-lang-parity/analysis-report.md`
+**Analysis Report:** Complete parity analysis with detailed gap identification available in `plans/in-progress/prog-lang-parity/analysis-report.md`
 
 ## Related Conventions
 
