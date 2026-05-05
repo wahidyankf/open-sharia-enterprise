@@ -78,7 +78,7 @@ Archived plans and completed project planning documents.
 
 When archiving a plan:
 
-1. Rename the plan folder to update date prefix to current date (completion date)
-2. Move the renamed folder from `in-progress/` to `done/`
-3. Update the plan's README.md status to "Done"
-4. Add the plan to this list
+1. Rename the plan folder: `git mv plans/in-progress/[identifier]/ plans/done/YYYY-MM-DD__[identifier]/` using today's date as the **completion date** (not the original creation date)
+2. Update the plan's README.md status to "Done"
+3. Add the plan to this list
+4. Update `plans/in-progress/README.md` to remove the entry

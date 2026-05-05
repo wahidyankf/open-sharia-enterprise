@@ -15,11 +15,11 @@ experience doesn't match platform expectations.
 
 Three genuinely distinct layout modes — not just width variations:
 
-| Breakpoint | Chrome | Content grid |
-|---|---|---|
-| **Mobile** `< 640px` | Bottom TabBar + center FAB | Single column (unchanged) |
-| **Tablet** `640–1023px` | Left RailNav (64px, icon-only) | Two-column split per screen |
-| **Desktop** `≥ 1024px` | Left SideNav (220px, labeled) | Two-column wide layouts (uncapped) |
+| Breakpoint              | Chrome                         | Content grid                       |
+| ----------------------- | ------------------------------ | ---------------------------------- |
+| **Mobile** `< 640px`    | Bottom TabBar + center FAB     | Single column (unchanged)          |
+| **Tablet** `640–1023px` | Left RailNav (64px, icon-only) | Two-column split per screen        |
+| **Desktop** `≥ 1024px`  | Left SideNav (220px, labeled)  | Two-column wide layouts (uncapped) |
 
 The teal + warm-neutral color palette, dark-mode support, and PGlite-first data
 model stay unchanged. This is a shell + layout refactor, not a feature change.

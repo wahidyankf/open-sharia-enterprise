@@ -77,9 +77,15 @@ Clarify with user if needed:
 
 ### Step 2: Create Plan Folder
 
+New plans start in `backlog/` with a creation-date prefix, then move to `in-progress/` WITHOUT
+the date prefix when work begins.
+
 ```bash
-# Create plan folder with date prefix
-mkdir -p plans/in-progress/YYYY-MM-DD-project-identifier
+# Create plan folder in backlog (creation date prefix)
+mkdir -p plans/backlog/YYYY-MM-DD__project-identifier
+
+# When starting work: move to in-progress and strip the date prefix
+git mv plans/backlog/YYYY-MM-DD__project-identifier plans/in-progress/project-identifier
 ```
 
 ### Step 3: Write Requirements (BRD + PRD)
@@ -322,7 +328,7 @@ Every plan MUST declare its worktree path before the delivery checklist begins. 
 - **Multi-file plans**: top-level `## Worktree` section in `delivery.md`, placed before any phase heading.
 - **Single-file plans**: top-level `## Worktree` section in `README.md`, placed before `## Delivery Checklist`.
 
-**Path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` matches the plan-folder identifier (strip the date prefix). Example: plan folder `2026-05-15__auth-rewrite/` → worktree path `worktrees/auth-rewrite/`.
+**Path format**: `worktrees/<plan-identifier>/` where `<plan-identifier>` is the slug portion of the folder name (strip the `YYYY-MM-DD__` prefix when present). Example: `backlog/2026-05-15__auth-rewrite/` or `in-progress/auth-rewrite/` → worktree path `worktrees/auth-rewrite/`.
 
 **Required content** (template):
 
@@ -483,7 +489,7 @@ ALWAYS include at the end of the delivery checklist:
 - [ ] Verify ALL delivery checklist items are ticked
 - [ ] Verify ALL quality gates pass (local + CI)
 - [ ] Verify ALL manual assertions pass (Playwright MCP / curl)
-- [ ] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`
+- [ ] Rename and move: `git mv plans/in-progress/[identifier]/ plans/done/YYYY-MM-DD__[identifier]/` using today's date as the completion date (NOT the creation date)
 - [ ] Update `plans/in-progress/README.md` — remove the plan entry
 - [ ] Update `plans/done/README.md` — add the plan entry with completion date
 - [ ] Update any other READMEs that reference this plan (e.g., plans/README.md)

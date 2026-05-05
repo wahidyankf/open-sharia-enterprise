@@ -2,11 +2,11 @@
 
 ## Breakpoint Definitions
 
-| Name | Range | Detection |
-|---|---|---|
-| `mobile` | `< 640px` | `window.innerWidth < 640` |
-| `tablet` | `640–1023px` | `window.innerWidth >= 640 && < 1024` |
-| `desktop` | `≥ 1024px` | `window.innerWidth >= 1024` |
+| Name      | Range        | Detection                            |
+| --------- | ------------ | ------------------------------------ |
+| `mobile`  | `< 640px`    | `window.innerWidth < 640`            |
+| `tablet`  | `640–1023px` | `window.innerWidth >= 640 && < 1024` |
+| `desktop` | `≥ 1024px`   | `window.innerWidth >= 1024`          |
 
 ## Chrome (Navigation Shell)
 

@@ -8,8 +8,8 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
 ## Phase 1 — Machine & context plumbing
 
 - [ ] **1.1 RED** — Update `app-machine.unit.test.ts` (or snapshot) to expect
-  `breakpoint: "mobile"` initial context and `SET_BREAKPOINT` event; remove
-  `isDesktop` / `SET_DESKTOP` references. Tests fail.
+      `breakpoint: "mobile"` initial context and `SET_BREAKPOINT` event; remove
+      `isDesktop` / `SET_DESKTOP` references. Tests fail.
 
 - [ ] **1.2 GREEN** — Update `app-machine.ts`:
   - Export `Breakpoint = "mobile" | "tablet" | "desktop"` type.
@@ -36,15 +36,15 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
     chrome renders (RailNav slot returns `null` for now).
 
 - [ ] **1.5 REFACTOR** — Confirm `test:quick` passes. Confirm dev server
-  hot-reloads and chrome still switches at 1024px (desktop) and 640px (tablet,
-  shows blank for now).
+      hot-reloads and chrome still switches at 1024px (desktop) and 640px (tablet,
+      shows blank for now).
 
 ---
 
 ## Phase 2 — RailNav component
 
 - [ ] **2.1 RED** — Create
-  `src/contexts/app-shell/presentation/components/rail-nav.unit.test.tsx`:
+      `src/contexts/app-shell/presentation/components/rail-nav.unit.test.tsx`:
   - Test: renders 4 nav links (`/app/home`, `/app/history`, `/app/progress`,
     `/app/settings`).
   - Test: active link (`/app/history`) has `aria-current="page"`.
@@ -53,7 +53,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
   - All tests fail (`rail-nav.tsx` does not exist).
 
 - [ ] **2.2 GREEN** — Create
-  `src/contexts/app-shell/presentation/components/rail-nav.tsx`:
+      `src/contexts/app-shell/presentation/components/rail-nav.tsx`:
   - 64px wide vertical rail, `var(--color-card)` bg, right border.
   - Logo mark: 36×36 teal `border-radius: 10`, `Icon name="zap"` 18px.
   - FAB: 48×48 circle, teal, `Icon name="plus"` 22px, `aria-label="Log entry"`.
@@ -67,7 +67,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
   - Update `layout.unit.test.tsx` to assert RailNav visible on tablet.
 
 - [ ] **2.4 REFACTOR** — Manual verify at 768px in browser: rail visible,
-  icons only, tap nav items navigates, FAB opens AddEntry sheet.
+      icons only, tap nav items navigates, FAB opens AddEntry sheet.
 
 ---
 
@@ -79,7 +79,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
   - `layout.unit.test.tsx`: assert content wrapper does not have `maxWidth: 480`.
 
 - [ ] **3.2 REFACTOR** — Manual verify at 1280px: content spans full width
-  minus sidebar; no phantom empty space.
+      minus sidebar; no phantom empty space.
 
 ---
 
@@ -106,7 +106,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
   - Tests pass.
 
 - [ ] **4.3 GREEN** — `home/page.tsx`: read `breakpoint` from `useAppRuntime()`
-  and pass to `<HomeScreen>`.
+      and pass to `<HomeScreen>`.
 
 - [ ] **4.4 REFACTOR** — Manual verify at all 3 breakpoints.
 
@@ -140,7 +140,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
 ## Phase 6 — ProgressScreen two-column layout
 
 - [ ] **6.1 RED** — Update `progress-screen.unit.test.tsx` (if it exists) or
-  create focused tests:
+      create focused tests:
   - Test: `breakpoint="mobile"` → single column.
   - Test: `breakpoint="tablet"` → left picker column (`data-testid="progress-left"`),
     right content column (`data-testid="progress-right"`).
@@ -151,7 +151,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
 - [ ] **6.2 GREEN** — Update `ProgressScreen`:
   - Add `breakpoint: Breakpoint` prop.
   - Wide layout: flex row; left col (36%) is `position: sticky; top: 0;
-    align-self: flex-start; overflow: hidden` for picker panel; right col (64%)
+align-self: flex-start; overflow: hidden` for picker panel; right col (64%)
     scrolls.
   - Desktop exercise grid: `grid-template-columns: 1fr 1fr`.
   - Add `data-testid` attributes.
@@ -184,7 +184,7 @@ to the next. Run `nx run organiclever-web:test:quick` at the end of every phase.
 - [ ] **7.3 GREEN** — `settings/page.tsx`: pass `breakpoint`.
 
 - [ ] **7.4 REFACTOR** — Manual verify at all 3 breakpoints. Confirm Settings
-  saved-toast still appears correctly on all breakpoints.
+      saved-toast still appears correctly on all breakpoints.
 
 ---
 

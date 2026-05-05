@@ -539,7 +539,11 @@ Project planning in `plans/` folder:
 - **in-progress/**: Active work
 - **done/**: Completed plans
 
-**Folder naming**: `YYYY-MM-DD__[project-identifier]/`
+**Folder naming** (stage-aware):
+
+- `backlog/` — `YYYY-MM-DD__[project-identifier]/` (creation date prefix)
+- `in-progress/` — `[project-identifier]/` (no date prefix; strip it when moving from backlog)
+- `done/` — `YYYY-MM-DD__[project-identifier]/` (completion date prefix; add it when archiving)
 
 **See**: [governance/conventions/structure/plans.md](./governance/conventions/structure/plans.md)
 
