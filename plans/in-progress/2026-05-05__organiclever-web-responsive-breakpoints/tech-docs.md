@@ -51,10 +51,14 @@ Replace the `SET_DESKTOP` action handler:
 
 ```ts
 // before
-SET_DESKTOP: { actions: assign({ isDesktop: ({ event }) => event.isDesktop }) }
+SET_DESKTOP: {
+  actions: assign({ isDesktop: ({ event }) => event.isDesktop });
+}
 
 // after
-SET_BREAKPOINT: { actions: assign({ breakpoint: ({ event }) => event.breakpoint }) }
+SET_BREAKPOINT: {
+  actions: assign({ breakpoint: ({ event }) => event.breakpoint });
+}
 ```
 
 Default context value:
@@ -97,7 +101,7 @@ if (breakpoint === "desktop") {
       {showChrome && <SideNav onLogEntry={openAddEntry} />}
       <div
         className="mx-auto flex min-h-screen flex-1 flex-col"
-        style={{ maxWidth: 1280, padding: "0 32px" }}  // uncapped, generous padding
+        style={{ maxWidth: 1280, padding: "0 32px" }} // uncapped, generous padding
       >
         {children}
       </div>
@@ -170,6 +174,7 @@ No text labels. Accessible via `aria-label` on each nav link and button.
 ### Test file: `rail-nav.unit.test.tsx`
 
 Test:
+
 - Renders 4 nav links with correct `href` values.
 - Active link has `aria-current="page"`.
 - Log entry button calls `onLogEntry` on click.
@@ -190,7 +195,7 @@ passed from the page via `useAppRuntime().breakpoint`.
 ```ts
 interface HomeScreenProps {
   runtime: JournalRuntime;
-  breakpoint: Breakpoint;          // NEW
+  breakpoint: Breakpoint; // NEW
   onStartWorkout: (routine?: Routine) => void;
   onEditRoutine: (routine?: Routine) => void;
 }
@@ -220,7 +225,7 @@ if (isWide) {
           padding: "20px 24px 32px",
         }}
       >
-        <EntriesPanel />  {/* heading + grouped entry list */}
+        <EntriesPanel /> {/* heading + grouped entry list */}
       </div>
     </div>
   );
@@ -236,7 +241,7 @@ Desktop: within `<WorkoutModule>`, routine cards grid becomes
 ```ts
 interface HistoryScreenProps {
   runtime: JournalRuntime;
-  breakpoint: Breakpoint;          // NEW
+  breakpoint: Breakpoint; // NEW
   refreshKey?: number;
 }
 ```
@@ -250,7 +255,7 @@ scrollable session list. On desktop the session list renders in a
 ```ts
 export interface ProgressScreenProps {
   runtime: JournalRuntime;
-  breakpoint: Breakpoint;          // NEW
+  breakpoint: Breakpoint; // NEW
   refreshKey?: number;
 }
 ```
@@ -265,7 +270,7 @@ group-by toggle, `position: sticky; top: 0; align-self: flex-start`. Right col
 ```ts
 export interface SettingsScreenProps {
   runtime: AppRuntime;
-  breakpoint: Breakpoint;          // NEW
+  breakpoint: Breakpoint; // NEW
   darkMode: boolean;
   onToggleDarkMode: () => void;
 }
@@ -276,8 +281,7 @@ Desktop two-column grid:
 ```tsx
 if (breakpoint === "desktop") {
   return (
-    <div style={{ padding: "20px 32px 40px", display: "grid",
-                  gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+    <div style={{ padding: "20px 32px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <ProfileCard />
         <WorkoutDefaultsCard />
