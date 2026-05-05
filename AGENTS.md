@@ -143,7 +143,7 @@ npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm
 | Go CLI projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`, `libs/golang-commons`, `libs/hugo-commons`) | ≥90%      | `cover.out` (go test)         |                                                                                     |
 | `organiclever-be`                                                                                             | ≥90%      | AltCover LCOV (`altcov.info`) | Uses `--linecover` to avoid F# `task{}` BRDA inflation                              |
 | `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`                                                          | ≥80%      | LCOV (Vitest)                 |                                                                                     |
-| `organiclever-web`                                                                                            | ≥70%      | LCOV                          | dormant BE integration code (services/, layers/) excluded from coverage measurement |
+| `organiclever-web`                                                                                            | ≥75%      | LCOV                          | dormant BE integration code (services/, layers/) excluded from coverage measurement |
 
 **`test:integration` caching**: Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`: `organiclever-web` (no integration tests; cache: true with passWithNoTests prevents unnecessary re-runs), Go CLI apps (Godog at both unit and integration levels), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
 
