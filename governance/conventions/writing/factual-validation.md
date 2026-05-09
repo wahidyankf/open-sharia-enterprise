@@ -516,11 +516,13 @@ Flag any "Why It Matters" sentence matching this structure:
 ```
 
 Examples that always require verification:
+
 - "When Stripe implemented X, they reduced Y by Z%"
 - "At Google, [system] handles N+ transactions with metric M"
 - "After Facebook adopted X, deployment incidents dropped by Y%"
 
 High-suspicion signals:
+
 - Suspiciously round or precise numbers (73%, 95%, exactly 15 service classes)
 - Claims about internal metrics (bugs/month, memory footprint, cost savings)
 - No citation of an engineering blog post, paper, or conference talk
