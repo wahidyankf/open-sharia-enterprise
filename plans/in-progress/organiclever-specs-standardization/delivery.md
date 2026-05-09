@@ -360,7 +360,8 @@ Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks 
     - Date: 2026-05-09. Status: PASS. Each diagram shows structural info not in the prose: state machine transitions (JournalEvent, WorkoutSession, AppMachine), type hierarchy (Typed payload, Routine), data flow (Projection). None are decorative.
   - [x] Render-check: open `journal.md` in GitHub preview and confirm the Mermaid blocks render without parse errors
     - Date: 2026-05-09. Status: done. lint:md 0 errors (Mermaid blocks are valid markdown). No browser available for visual render; structural parse correctness confirmed by lint.
-- [ ] **2.5B.9 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations + diagrams (FR-16, FR-17)`
+- [x] **2.5B.9 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations + diagrams (FR-16, FR-17)`
+  - Date: 2026-05-09. Status: done. SHA 13caa8789. 11 files changed (10 UL files + delivery.md). Pre-commit hook: lint:md 0 errors, 0 broken links. Header shortened to fit 100-char limit.
 
   Use HEREDOC body listing all 10 files updated and noting: (a) "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files." (b) "Mermaid diagrams added per FR-17 for marquee terms (JournalEvent, Typed payload, Routine, WorkoutSession, Projection, AppMachine). XState-mirroring diagrams match the runtime machines."
 
@@ -368,8 +369,9 @@ Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks 
 
 Additive. Each file lands at its FINAL tree position; no later move needed. PM-Readability Contract applied to every file.
 
-- [ ] **3.1 Create `specs/apps/organiclever/product/overview.md`** (_New file_) — PM-first plain-language summary, personas, primary user flows, v0 scope vs deferred.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/product/overview.md` returns 0 (match found) AND the first 10 lines after H1 contain a plain-language summary paragraph with zero un-glossed framework names.
+- [x] **3.1 Create `specs/apps/organiclever/product/overview.md`** (_New file_) — PM-first plain-language summary, personas, primary user flows, v0 scope vs deferred.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/product/overview.md (new, 76 lines). Contains **Audience:** line (grep returns 0). Sections: personas table, v0 ships, v0 defers, primary user flows (Flow A/B), plain-language v0 summary, related links. No un-glossed niche framework names in summary paragraph.
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/product/overview.md` returns 0 (match found) AND the first 10 lines after H1 contain a plain-language summary paragraph with zero un-glossed framework names.
 - [ ] **3.2 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create product/overview.md (PM-first product summary)`
 
 - [ ] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** (_New file_) — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied.
