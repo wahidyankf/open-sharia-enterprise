@@ -44,11 +44,11 @@ func TestParse_FullGlossary(t *testing.T) {
 **Maintainer**: team
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| ` + "`JournalEvent`" + ` | A record. | ` + "`JournalEvent`" + ` | journal/mechanism.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| ` + "`JournalEvent`" + ` | ` + "`JournalEvent`" + ` | journal/mechanism.feature |
 
 ## Forbidden synonyms
 
@@ -96,10 +96,10 @@ func TestParse_MalformedHeader(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | BadColumn | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | BadColumn | Used in features |
+| --- | --- | --- |
 `
 	osReadFileFn = func(_ string) ([]byte, error) { return []byte(content), nil }
 
@@ -129,11 +129,11 @@ func TestParse_MultipleCodeIdentifiers(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Multi | Multi-id term. | ` + "`TypeA`" + `, ` + "`TypeB`" + ` | x/x.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Multi | ` + "`TypeA`" + `, ` + "`TypeB`" + ` | x/x.feature |
 
 ## Forbidden synonyms
 
@@ -159,10 +159,10 @@ func TestParse_EmptyTermsTable(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
 
 ## Forbidden synonyms
 
@@ -185,10 +185,10 @@ func TestParse_NoForbiddenSection(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
 `
 	osReadFileFn = func(_ string) ([]byte, error) { return []byte(content), nil }
 
@@ -337,10 +337,10 @@ func TestValidateAll_MissingFrontmatterKey(t *testing.T) {
 **Bounded context**: ` + "`ctx1`" + `
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
 
 ## Forbidden synonyms
 
@@ -376,11 +376,11 @@ func TestValidateAll_StaleCodeIdentifier(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Ghost | Missing. | ` + "`GhostType`" + ` | ctx1/ctx1.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Ghost | ` + "`GhostType`" + ` | ctx1/ctx1.feature |
 
 ## Forbidden synonyms
 
@@ -416,11 +416,11 @@ func TestValidateAll_MissingFeatureReference(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Known | Present. | ` + "`KnownType`" + ` | ctx1/nonexistent.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Known | ` + "`KnownType`" + ` | ctx1/nonexistent.feature |
 
 ## Forbidden synonyms
 
@@ -456,11 +456,11 @@ func TestValidateAll_TermCollision(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Entry | A record. | ` + "`EntryType`" + ` | ctx/ctx.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Entry | ` + "`EntryType`" + ` | ctx/ctx.feature |
 
 ## Forbidden synonyms
 
@@ -496,10 +496,10 @@ func TestValidateAll_ForbiddenSynonymInUse(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
 
 ## Forbidden synonyms
 
@@ -536,11 +536,11 @@ func TestValidateAll_CleanGlossary(t *testing.T) {
 **Maintainer**: t
 **Last reviewed**: 2026-01-01
 
-## Terms
+## Term index
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Known | A known type. | ` + "`KnownType`" + ` | ctx1/ctx1.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Known | ` + "`KnownType`" + ` | ctx1/ctx1.feature |
 
 ## Forbidden synonyms
 
@@ -616,7 +616,7 @@ func TestGrepFiles_NonexistentDir(t *testing.T) {
 
 func TestCheckTableHeader_MalformedInParseErrors(t *testing.T) {
 	g := &Glossary{
-		ParseErrors: []ParseError{{Message: "malformed terms table header: column BadColumn expected Definition"}},
+		ParseErrors: []ParseError{{Message: "malformed terms table header: column BadColumn expected Code identifier(s)"}},
 	}
 	findings := checkTableHeader("test.md", g, "error")
 	if len(findings) != 1 {

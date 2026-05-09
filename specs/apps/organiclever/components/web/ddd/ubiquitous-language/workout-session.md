@@ -12,15 +12,15 @@ the outcome through the journal context as a `WorkoutPayload` `JournalEvent`.
 
 ## Term index
 
-| Term              | Code identifier(s)                                                     | Used in features                         |
-| ----------------- | ---------------------------------------------------------------------- | ---------------------------------------- |
-| `WorkoutSession`  | `WorkoutMachineContext` (TS type), `workoutSessionMachine` (XState v5) | `workout-session/*.feature`              |
-| `Start`           | `START` (machine event type)                                           | `workout-session/*.feature`              |
-| `Finish`          | `CONFIRM_FINISH` (machine event type), `END_WORKOUT` (intent event)    | `workout-session/*.feature`              |
-| `Workout outcome` | `buildWorkoutEntry` (use-case fn)                                      | `workout-session/*.feature`, `journal/*` |
-| `Set log`         | `exercises: ActiveExercise[]` on `WorkoutMachineContext`               | `workout-session/*.feature`              |
-| `Workout screen`  | `WorkoutScreen` (component), `workout` (route segment)                 | `workout-session/*.feature`              |
-| `Finish screen`   | `FinishScreen` (component), `workout/finish` (route segment)           | `workout-session/*.feature`              |
+| Term              | Code identifier(s)                                                                            | Used in features                         |
+| ----------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `WorkoutSession`  | `WorkoutMachineContext` (TS type), `workoutSessionMachine` (XState v5)                        | `workout-session/*.feature`              |
+| `Start`           | `START` (machine event type)                                                                  | `workout-session/*.feature`              |
+| `Finish`          | `CONFIRM_FINISH` (machine event type), `END_WORKOUT` (intent event)                           | `workout-session/*.feature`              |
+| `Workout outcome` | `buildWorkoutEntry` (use-case fn)                                                             | `workout-session/*.feature`, `journal/*` |
+| `Set log`         | `ActiveExercise` (type), `LOG_SET` (machine event), `WorkoutMachineContext` (exercises field) | `workout-session/*.feature`              |
+| `Workout screen`  | `WorkoutScreen` (component), `workout` (route segment)                                        | `workout-session/*.feature`              |
+| `Finish screen`   | `FinishScreen` (component), `workout/finish` (route segment)                                  | `workout-session/*.feature`              |
 
 ## Terms in detail
 

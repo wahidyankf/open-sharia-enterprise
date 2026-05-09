@@ -13,14 +13,14 @@ preserved for future rewire.
 
 ## Term index
 
-| Term              | Code identifier(s)                                                                        | Used in features   |
-| ----------------- | ----------------------------------------------------------------------------------------- | ------------------ |
-| `Backend URL`     | `ORGANICLEVER_BE_URL` (env var, server-only)                                              | `health/*.feature` |
-| `Health probe`    | `BackendClient` (Effect Service Tag), `get` method on `BackendClientService`              | `health/*.feature` |
-| `Health status`   | `ApiError`, `NetworkError` (tagged error types); `UP`/`DOWN`/`Not configured` (UI states) | `health/*.feature` |
-| `Status tile`     | Server-rendered page component at `/system/status/be`                                     | `health/*.feature` |
-| `Backend client`  | `BackendClient` (Effect Service Tag), `BackendClientLive`, `createBackendClientTest`      | `health/*.feature` |
-| `Diagnostic page` | `system/status/be` (route segment), `export const dynamic = "force-dynamic"`              | `health/*.feature` |
+| Term              | Code identifier(s)                                                                                                       | Used in features   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| `Backend URL`     | `ORGANICLEVER_BE_URL` (env var, server-only)                                                                             | `health/*.feature` |
+| `Health probe`    | `BackendClient` (Effect Service Tag), `get` method on `BackendClientService`                                             | `health/*.feature` |
+| `Health status`   | `ApiError`, `NetworkError` (tagged error types in infrastructure/errors.ts); UP/DOWN/Not configured are UI string labels | `health/*.feature` |
+| `Status tile`     | Server-rendered page component at system/status/be (no exported component)                                               | `health/*.feature` |
+| `Backend client`  | `BackendClient` (Effect Service Tag), `BackendClientLive`, `createBackendClientTest`                                     | `health/*.feature` |
+| `Diagnostic page` | Server-rendered at route system/status/be (force-dynamic; no exported identifier)                                        | `health/*.feature` |
 
 ## Terms in detail
 

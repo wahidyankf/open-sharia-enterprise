@@ -12,12 +12,12 @@ other contexts.
 
 ## Term index
 
-| Term             | Code identifier(s)                                             | Used in features    |
-| ---------------- | -------------------------------------------------------------- | ------------------- |
-| `Disabled route` | `DisabledRoute` (component), `not-found.tsx` (Next.js special) | `routing/*.feature` |
-| `/login` guard   | `login` (Next.js route segment)                                | `routing/*.feature` |
-| `/profile` guard | `profile` (Next.js route segment)                              | `routing/*.feature` |
-| `Not-found page` | `not-found.tsx` (Next.js special file convention)              | `routing/*.feature` |
+| Term             | Code identifier(s)                                                                  | Used in features    |
+| ---------------- | ----------------------------------------------------------------------------------- | ------------------- |
+| `Disabled route` | `DisabledRoute` (component — commented-out export in routing/presentation/index.ts) | `routing/*.feature` |
+| `/login` guard   | Next.js route at app/login/ (no exported identifier in routing context)             | `routing/*.feature` |
+| `/profile` guard | Next.js route at app/profile/ (no exported identifier in routing context)           | `routing/*.feature` |
+| `Not-found page` | Next.js not-found.tsx special file (no exported identifier in routing context)      | `routing/*.feature` |
 
 ## Terms in detail
 

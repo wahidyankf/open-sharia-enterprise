@@ -11,16 +11,16 @@ domain logic; pure presentational content rendered as a Next.js Server Component
 
 ## Term index
 
-| Term                 | Code identifier(s)                                    | Used in features    |
-| -------------------- | ----------------------------------------------------- | ------------------- |
-| `Landing page`       | `LandingPage` (component), `/` (Next.js route)        | `landing/*.feature` |
-| `Hero`               | `LandingHero` (component)                             | `landing/*.feature` |
-| `Features section`   | `LandingFeatures` (component)                         | `landing/*.feature` |
-| `Principles section` | `LandingPrinciples` (component)                       | `landing/*.feature` |
-| `Rhythm demo`        | `LandingRhythmDemo` (component)                       | `landing/*.feature` |
-| `Landing nav`        | `LandingNav` (component)                              | `landing/*.feature` |
-| `Landing footer`     | `LandingFooter` (component)                           | `landing/*.feature` |
-| `CTA`                | Button label "Open the app" linking `/` → `/app/home` | `landing/*.feature` |
+| Term                 | Code identifier(s)                                                                               | Used in features    |
+| -------------------- | ------------------------------------------------------------------------------------------------ | ------------------- |
+| `Landing page`       | `LandingPage` (component), `/` (Next.js route)                                                   | `landing/*.feature` |
+| `Hero`               | `LandingHero` (component)                                                                        | `landing/*.feature` |
+| `Features section`   | `LandingFeatures` (component)                                                                    | `landing/*.feature` |
+| `Principles section` | `LandingPrinciples` (component)                                                                  | `landing/*.feature` |
+| `Rhythm demo`        | `LandingRhythmDemo` (component)                                                                  | `landing/*.feature` |
+| `Landing nav`        | `LandingNav` (component)                                                                         | `landing/*.feature` |
+| `Landing footer`     | `LandingFooter` (component)                                                                      | `landing/*.feature` |
+| `CTA`                | Button with label "Open the app" linking "/" to "/app/home" (string literal, no code identifier) | `landing/*.feature` |
 
 ## Terms in detail
 

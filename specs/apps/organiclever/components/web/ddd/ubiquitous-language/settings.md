@@ -11,15 +11,15 @@ the invariant "exactly one preferences row per user" and the dark-mode toggle.
 
 ## Term index
 
-| Term            | Code identifier(s)                                                     | Used in features     |
-| --------------- | ---------------------------------------------------------------------- | -------------------- |
-| `Preferences`   | `AppSettings` (TS type), `getSettings` / `saveSettings` (use-case fns) | `settings/*.feature` |
-| `Theme`         | `darkMode: boolean` field on `AppSettings`                             | `settings/*.feature` |
-| `Locale`        | `lang: Lang` field on `AppSettings`, `Lang` ("en" \| "id") (TS type)   | `settings/*.feature` |
-| `Units`         | (not yet implemented — placeholder for future weight/length units)     | `settings/*.feature` |
-| `Settings page` | `SettingsScreen` (component), `app/settings` (route segment)           | `settings/*.feature` |
-| `Reset data`    | (use-case fn, not yet implemented)                                     | `settings/*.feature` |
-| `Export data`   | (use-case fn, not yet implemented)                                     | `settings/*.feature` |
+| Term            | Code identifier(s)                                                           | Used in features     |
+| --------------- | ---------------------------------------------------------------------------- | -------------------- |
+| `Preferences`   | `AppSettings` (TS type), `getSettings` / `saveSettings` (use-case fns)       | `settings/*.feature` |
+| `Theme`         | `darkMode: boolean` field on `AppSettings`                                   | `settings/*.feature` |
+| `Locale`        | `lang: Lang` field on `AppSettings`, `Lang` (values: "en" or "id") (TS type) | `settings/*.feature` |
+| `Units`         | (not yet implemented — placeholder for future weight/length units)           | `settings/*.feature` |
+| `Settings page` | `SettingsScreen` (component), `app/settings` (route segment)                 | `settings/*.feature` |
+| `Reset data`    | (use-case fn, not yet implemented)                                           | `settings/*.feature` |
+| `Export data`   | (use-case fn, not yet implemented)                                           | `settings/*.feature` |
 
 ## Terms in detail
 

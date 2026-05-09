@@ -20,7 +20,7 @@ var (
 var requiredFrontmatterKeys = []string{"Bounded context", "Maintainer", "Last reviewed"}
 
 // expectedTableColumns is the exact ordered header the Terms table must have.
-var expectedTableColumns = []string{"Term", "Definition", "Code identifier(s)", "Used in features"}
+var expectedTableColumns = []string{"Term", "Code identifier(s)", "Used in features"}
 
 // Parse reads and parses a glossary markdown file.
 func Parse(path string) *Glossary {
@@ -52,7 +52,7 @@ func parseContent(g *Glossary, content string) {
 		}
 
 		// Section headers.
-		if strings.HasPrefix(line, "## Terms") {
+		if line == "## Terms" || line == "## Term index" {
 			inTermsTable = true
 			inForbidden = false
 			headerParsed = false
@@ -83,12 +83,11 @@ func parseContent(g *Glossary, content string) {
 					continue
 				}
 				// Data row.
-				if len(cells) >= 4 {
+				if len(cells) >= 3 {
 					t := Term{
 						Term:            stripMarkup(cells[0]),
-						Definition:      stripMarkup(cells[1]),
-						CodeIdentifiers: parseBacktickList(cells[2]),
-						UsedInFeatures:  parseFeatureRefs(cells[3]),
+						CodeIdentifiers: parseBacktickList(cells[1]),
+						UsedInFeatures:  parseFeatureRefs(cells[2]),
 						SourceLine:      lineNum,
 					}
 					g.Terms = append(g.Terms, t)

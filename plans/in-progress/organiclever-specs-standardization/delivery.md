@@ -408,16 +408,20 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7.
   - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/README.md. Added ## For Product / Project Managers section: audience note, reading order (product→system-context→containers→components→behavior), v0 plain-language summary. All 5 folders listed. grep "For Product / Project Managers" returns 1 match.
     Acceptance: `grep -q "For Product / Project Managers" specs/apps/organiclever/README.md` returns 0 AND the file lists all five top-level folders (product, system-context, containers, components, behavior) in the reading path.
-- [ ] **3.14 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): update root README to reflect C4-aware tree + add PM reading path`
+- [x] **3.14 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): update root README to reflect C4-aware tree + add PM reading path`
+  - Date: 2026-05-09. Status: done. lint:md 2335 files, 0 errors. Committed.
 
 ## Phase 4 — Trim app READMEs (removes duplicated content)
 
 Each app trim is its own commit. After each commit, run the relevant `test:quick` and `npm run lint:md`. Behavior & Architecture link sections point at the NEW tree paths (Phase 2 already completed the reorg).
 
-- [ ] **4.1 Rewrite `apps/organiclever-web/README.md`** to thin form (≤ 120 lines) per [prd.md FR-1](./prd.md#fr-1-thin-app-readme-rule). Sections:
+- [x] **4.1 Rewrite `apps/organiclever-web/README.md`** to thin form (≤ 120 lines) per [prd.md FR-1](./prd.md#fr-1-thin-app-readme-rule). Sections:
+  - Date: 2026-05-09. Status: done. Files Changed: apps/organiclever-web/README.md (rewritten, 65 lines). Sections: intro, status banner, quick start, commands table, env vars, project layout, tech stack, Behavior & Architecture links table, related. All Architecture/Design System/UL/Gherkin content replaced with links to specs/.
   - One-paragraph intro · Status banner · Quick Start · Commands (Nx targets table) · Environment Variables · Project Layout (top-level only) · Tech Stack · Behavior & Architecture (links to `specs/apps/organiclever/components/web/`, `specs/apps/organiclever/behavior/web/gherkin/`, `specs/apps/organiclever/components/web/ddd/`) · Related
-- [ ] **4.2 Verify line count** ≤ 120
-- [ ] **4.3 `npm run lint:md`** + `nx run organiclever-web:test:quick --skip-nx-cache` exit 0
+- [x] **4.2 Verify line count** ≤ 120
+  - Date: 2026-05-09. Status: PASS. 65 lines (target ≤120).
+- [x] **4.3 `npm run lint:md`** + `nx run organiclever-web:test:quick --skip-nx-cache` exit 0
+  - Date: 2026-05-09. Status: PASS. lint:md 2335 files 0 errors. test:quick 78.26% ≥ 70%. Preexisting fixes: (1) rhino-cli glossary parser updated to accept ## Term index trigger + 3-column format (swe-golang-dev). (2) 7 UL BC files updated to remove stale code identifiers (CSS vars, route strings, escaped pipes) that couldn't be found in context source.
 - [ ] **4.4 Commit**: `docs(apps): trim organiclever-web README to dev-runtime`
 
 - [ ] **4.5 Rewrite `apps/organiclever-be/README.md`** to thin form (≤ 120 lines, likely ~70). Remove "API Endpoints" inline table, "Architecture" project tree, "Testing Strategy" tier table. Behavior & Architecture links to `specs/apps/organiclever/components/be/api.md` + `specs/apps/organiclever/behavior/be/gherkin/`

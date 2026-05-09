@@ -12,17 +12,17 @@ entities.
 
 ## Term index
 
-| Term             | Code identifier(s)                                                                 | Used in features      |
-| ---------------- | ---------------------------------------------------------------------------------- | --------------------- |
-| `App shell`      | `appMachine` (XState v5 machine), `AppRuntimeContext` (React context)              | `app-shell/*.feature` |
-| `AppMachine`     | `appMachine` (XState v5 machine), `AppMachineContext` (TS type)                    | `app-shell/*.feature` |
-| `i18n key`       | `useT` (hook), `TRANSLATIONS` (TS table)                                           | `app-shell/*.feature` |
-| `Design token`   | `--color-primary`, `--font-sans`, etc. (CSS variables in ts-ui-tokens)             | `app-shell/*.feature` |
-| `TabBar`         | `TabBar` (component from ts-ui)                                                    | `app-shell/*.feature` |
-| `SideNav`        | `SideNav` (component from ts-ui)                                                   | `app-shell/*.feature` |
-| `Overlay tree`   | `OverlayTree` (component)                                                          | `app-shell/*.feature` |
-| `Logger`         | `FocusLogger`, `LearningLogger`, `ReadingLogger`, `CustomEntryLogger` (components) | `app-shell/*.feature` |
-| `Error boundary` | React built-in — no app-shell export                                               | `app-shell/*.feature` |
+| Term             | Code identifier(s)                                                                            | Used in features      |
+| ---------------- | --------------------------------------------------------------------------------------------- | --------------------- |
+| `App shell`      | `appMachine` (XState v5 machine), `AppRuntimeContext` (React context)                         | `app-shell/*.feature` |
+| `AppMachine`     | `appMachine` (XState v5 machine), `AppMachineContext` (TS type)                               | `app-shell/*.feature` |
+| `i18n key`       | `useT` (hook), `TRANSLATIONS` (TS table)                                                      | `app-shell/*.feature` |
+| `Design token`   | CSS custom properties: --color-primary, --font-sans, etc. (in ts-ui-tokens; no TS identifier) | `app-shell/*.feature` |
+| `TabBar`         | `TabBar` (component from ts-ui)                                                               | `app-shell/*.feature` |
+| `SideNav`        | `SideNav` (component from ts-ui)                                                              | `app-shell/*.feature` |
+| `Overlay tree`   | `OverlayTree` (component)                                                                     | `app-shell/*.feature` |
+| `Logger`         | `FocusLogger`, `LearningLogger`, `ReadingLogger`, `CustomEntryLogger` (components)            | `app-shell/*.feature` |
+| `Error boundary` | React built-in — no app-shell export                                                          | `app-shell/*.feature` |
 
 ## Terms in detail
 
