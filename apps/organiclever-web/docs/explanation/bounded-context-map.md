@@ -1,6 +1,6 @@
 # Bounded-Context Map — organiclever-web
 
-**Status**: Locked in Phase 0 of the [DDD adoption plan](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/README.md). Updated as later phases land.
+**Status**: Complete. See the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md).
 **Authority**: This document is the source of truth for bounded-context boundaries inside `apps/organiclever-web`. It complements (does not replace) the platform-wide [DDD Standards](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md).
 
 ## Summary
@@ -279,9 +279,9 @@ The capture group lets rules distinguish **own-context layer crossings** (always
 
 ## Related
 
-- [DDD adoption plan README](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/README.md)
-- [DDD adoption tech-docs](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/tech-docs.md)
-- [DDD adoption delivery checklist](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/delivery.md)
+- [DDD adoption plan README](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
+- [DDD adoption tech-docs](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
+- [DDD adoption delivery checklist](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
 - [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
 - [Three-Level Testing Standard](../../../../governance/development/quality/three-level-testing-standard.md)
 - [Test-Driven Development Convention](../../../../governance/development/workflow/test-driven-development.md)
