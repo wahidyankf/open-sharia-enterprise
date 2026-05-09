@@ -10,7 +10,7 @@ platform).
 | Context   | `context.md`      | The system and its external actors (visitors, authors, CI, Vercel)                     |
 | Container | `container.md`    | Runtime containers: Next.js app, content directory, Vercel CDN, search index           |
 | Component | `component-be.md` | tRPC API internals: router, procedures, content services, search index, route handlers |
-| Component | `component-fe.md` | UI internals: pages, layout components, content renderers, search, theme               |
+| Component | `component-web.md` | UI internals: pages, layout components, content renderers, search, theme               |
 
 ## C4 Level Summary
 

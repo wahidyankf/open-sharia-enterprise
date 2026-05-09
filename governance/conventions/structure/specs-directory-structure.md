@@ -136,7 +136,7 @@ specs/
 │       │   ├── context.md                   # System Context diagram
 │       │   ├── container.md                 # Container diagram
 │       │   ├── component-be.md              # Backend Component diagram
-│       │   └── component-fe.md              # Frontend Component diagram
+│       │   └── component-web.md              # Frontend Component diagram
 │       ├── contracts/                       # OpenAPI specs (if applicable)
 │       │   ├── README.md
 │       │   ├── openapi.yaml                 # Root OpenAPI document

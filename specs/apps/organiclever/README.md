@@ -21,7 +21,7 @@ specs/apps/organiclever/
 │   ├── context.md         # L1 — system context (2 actors)
 │   ├── container.md       # L2 — containers (FE, BE)
 │   ├── component-be.md    # L3 — F#/Giraffe REST API internals
-│   └── component-fe.md    # L3 — Next.js frontend internals
+│   └── component-web.md    # L3 — Next.js frontend internals
 ├── be/                    # Backend specs (HTTP-semantic)
 │   ├── README.md
 │   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)

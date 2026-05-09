@@ -15,7 +15,7 @@ specs/apps/ayokoding/
 │   ├── context.md         # Level 1: System context
 │   ├── container.md       # Level 2: Containers
 │   ├── component-be.md    # Level 3: tRPC API components
-│   └── component-fe.md    # Level 3: UI components
+│   └── component-web.md    # Level 3: UI components
 ├── be/                    # Backend specs (tRPC HTTP-semantic)
 │   └── gherkin/           # Backend Gherkin scenarios
 │       ├── content-api/

@@ -35,5 +35,5 @@ this diagram; see the [Container](./container.md) diagram for spec-to-container 
 
 - **Container diagram**: [container.md](./container.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend component diagram**: [component-fe.md](./component-fe.md)
+- **Frontend component diagram**: [component-web.md](./component-web.md)
 - **Parent**: [organiclever specs](../README.md)

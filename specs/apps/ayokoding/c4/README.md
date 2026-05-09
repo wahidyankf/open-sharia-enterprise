@@ -9,7 +9,7 @@ C4 architecture diagrams for the AyoKoding educational website (Next.js 16 fulls
 | Context   | `context.md`      | The system and its external actors (learners, authors, CI, Vercel)                       |
 | Container | `container.md`    | Runtime containers: Next.js app, content directory, Vercel CDN, search index             |
 | Component | `component-be.md` | tRPC API internals: router, procedures, content services, search index, markdown parsing |
-| Component | `component-fe.md` | UI internals: pages, layout components, content renderers, search, i18n                  |
+| Component | `component-web.md` | UI internals: pages, layout components, content renderers, search, i18n                  |
 
 ## C4 Level Summary
 

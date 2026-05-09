@@ -93,5 +93,5 @@ The browser-side application provides:
 
 - **Context diagram**: [context.md](./context.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend component diagram**: [component-fe.md](./component-fe.md)
+- **Frontend component diagram**: [component-web.md](./component-web.md)
 - **Parent**: [oseplatform-web specs](../README.md)

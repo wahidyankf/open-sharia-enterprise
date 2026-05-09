@@ -72,5 +72,5 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 
 - **Context diagram**: [context.md](./context.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend component diagram**: [component-fe.md](./component-fe.md)
+- **Frontend component diagram**: [component-web.md](./component-web.md)
 - **Parent**: [organiclever specs](../README.md)

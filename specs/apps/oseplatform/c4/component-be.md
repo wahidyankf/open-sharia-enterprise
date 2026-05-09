@@ -115,6 +115,6 @@ Each component above is exercised by Gherkin features from
 ## Related
 
 - **Container diagram**: [container.md](./container.md)
-- **Frontend component diagram**: [component-fe.md](./component-fe.md)
+- **Frontend component diagram**: [component-web.md](./component-web.md)
 - **Backend gherkin specs**: [be/gherkin/](../be/)
 - **Parent**: [oseplatform-web specs](../README.md)

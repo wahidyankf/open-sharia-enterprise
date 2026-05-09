@@ -14,7 +14,7 @@ specs/apps/oseplatform/
 │   ├── context.md         # Level 1: System context (actors + system)
 │   ├── container.md       # Level 2: Containers (server, client, stores)
 │   ├── component-be.md    # Level 3: tRPC API components
-│   └── component-fe.md    # Level 3: UI components
+│   └── component-web.md    # Level 3: UI components
 ├── be/                    # Backend specs (HTTP-semantic)
 │   └── gherkin/           # Backend Gherkin scenarios
 │       ├── content-retrieval/

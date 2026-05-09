@@ -9,7 +9,7 @@ C4 architecture diagrams for the OrganicLever fullstack application (frontend + 
 | Context   | `context.md`      | The system and its two external actors                                 |
 | Container | `container.md`    | Runtime containers: Next.js frontend, F#/Giraffe backend, PGlite store |
 | Component | `component-be.md` | F#/Giraffe REST API internals: health handler                          |
-| Component | `component-fe.md` | Next.js frontend internals: 9 DDD bounded contexts                     |
+| Component | `component-web.md` | Next.js frontend internals: 9 DDD bounded contexts                     |
 
 ## C4 Level Summary
 
