@@ -378,10 +378,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** (_New file_) — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied.
   - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/architecture.md (new). **Audience:** line present. ## Project layout section present. Layer rules table included. Dormant BE code list included. Bounded-context table and ESLint boundary rules documented.
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/architecture.md` returns 0 AND file contains a `## Project Layout` or equivalent section.
-- [ ] **3.4 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/architecture.md`
+- [x] **3.4 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/architecture.md`
+  - Date: 2026-05-09. Status: done. lint:md 2331 files, 0 errors. Committed. Broke link to routes-and-screens.md (not yet created) fixed to plain text reference before committing.
 
-- [ ] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** (_New file_) — Extract routes/screens/entry-flows tables. PM-Readability Contract applied.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/routes-and-screens.md` returns 0 AND file contains at least one markdown table with route or screen data.
+- [x] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** (_New file_) — Extract routes/screens/entry-flows tables. PM-Readability Contract applied.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/routes-and-screens.md (new). **Audience:** line present. Top-level routes table, in-app screens table (with chrome column), entry flows table, diagnostic page states table. Also restored hyperlink in architecture.md (had to be plain text before this file existed).
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/routes-and-screens.md` returns 0 AND file contains at least one markdown table with route or screen data.
 - [ ] **3.6 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/routes-and-screens.md`
 
 - [ ] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** (_New file_) — Palette, typography, dark mode, token import, components. PM-Readability Contract applied.

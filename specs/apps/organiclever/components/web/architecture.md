@@ -94,4 +94,4 @@ they are not dead code, just dormant:
   contexts, ADR, ESLint config
 - [Ubiquitous language](./ddd/ubiquitous-language/README.md) — per-context glossaries
 - [Behavior specs](../../behavior/web/gherkin/README.md) — Gherkin acceptance criteria
-- Routes and screens (`routes-and-screens.md`) — URL routing and screen inventory
+- [Routes and screens](./routes-and-screens.md) — URL routing and screen inventory
