@@ -16,7 +16,7 @@ COPY apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj src/OrganicLe
 COPY apps/organiclever-be/tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj tests/OrganicLeverBe.Tests/
 
 # Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
-# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\organiclever\be\gherkin\**\*.feature
+# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\organiclever\behavior\be\gherkin\**\*.feature
 # Going up 4 levels from /build/tests/OrganicLeverBe.Tests/ resolves to /specs/apps/organiclever/behavior/be/gherkin.
 COPY specs/apps/organiclever/behavior/be/gherkin /specs/apps/organiclever/behavior/be/gherkin
 
