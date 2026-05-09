@@ -330,7 +330,7 @@ function createPerson(name: string, age: number): Person {
 
 **Key Takeaway**: Use `toEqual` for object comparisons. Add TypeScript interfaces during refactoring to encode object shape expectations from tests.
 
-**Why It Matters**: Type-safe object handling prevents runtime errors that crash applications in production. TypeScript's static analysis catches type errors at compile time, but tests verify runtime behavior when types are correct but business logic is wrong. Research from Microsoft's TypeScript team shows that TypeScript reduces runtime errors by 38% compared to JavaScript, but type-safe code still requires behavioral testing. Combining TypeScript interfaces with TDD provides two layers of protection: compile-time shape checking and runtime behavior verification.
+**Why It Matters**: Type-safe object handling prevents runtime errors that crash applications in production. TypeScript's static analysis catches type errors at compile time, but tests verify runtime behavior when types are correct but business logic is wrong. Research on gradual typing adoption shows that static type checking meaningfully reduces runtime errors compared to untyped JavaScript, yet type-safe code still requires behavioral testing. Combining TypeScript interfaces with TDD provides two layers of protection: compile-time shape checking and runtime behavior verification.
 
 ### Example 8: Test Fixtures - Setup and Teardown
 
@@ -485,7 +485,7 @@ test("validates email format", () => {
 
 **Key Takeaway**: One test per behavior, but multiple assertions are fine when validating a single concept (like object properties). Separate concerns into different tests.
 
-**Why It Matters**: Focused tests provide clear failure messages. When a test breaks, you immediately know which behavior regressed. Research from Google's Testing Blog shows that tests with single responsibilities reduce debugging time by 60% because the failing test name precisely identifies the broken behavior. Multi-purpose tests create ambiguous failure signals requiring deeper investigation. Additionally, focused tests are 3x more likely to survive refactoring because they test behavior rather than implementation structure, making them stable partners for code evolution.
+**Why It Matters**: Focused tests provide clear failure messages. When a test breaks, you immediately know which behavior regressed. Tests with single responsibilities reduce debugging time because the failing test name precisely identifies the broken behavior. Multi-purpose tests create ambiguous failure signals requiring deeper investigation. Additionally, focused tests are significantly more likely to survive refactoring because they test behavior rather than implementation structure, making them stable partners for code evolution.
 
 ### Example 10: Testing Edge Cases - Null and Undefined
 
@@ -1408,7 +1408,7 @@ function calculateShipping(weight: number, distance: number, orderValue: number 
 
 **Key Takeaway**: Writing tests first forces you to think about requirements, edge cases, and API design before diving into implementation. This prevents over-engineering and missed requirements.
 
-**Why It Matters**: Test-first thinking catches requirement gaps early. IBM's System Sciences Institute research shows fixing requirements defects after release costs 100x more than catching them during design, making test-first requirement validation a high-ROI practice.
+**Why It Matters**: Test-first thinking catches requirement gaps early. Research in software engineering economics shows that fixing requirements defects after release costs orders of magnitude more than catching them during design, making test-first requirement validation a high-ROI practice.
 
 ## TDD Workflow in Practice (Examples 21-26)
 
@@ -1656,7 +1656,7 @@ class Stack<T> {
 
 **Key Takeaway**: Test public behavior (what the code does) not private implementation (how it does it). This allows refactoring without breaking tests.
 
-**Why It Matters**: Implementation-coupled tests create massive refactoring resistance that slows product development. When tests verify internal method calls instead of observable behavior, every refactoring breaks tests even when behavior is preserved. Google's Software Engineering book describes this as "brittle tests" and identifies them as a primary cause of TDD abandonment. Studies show teams with behavior-focused tests complete refactoring 3x faster than teams with implementation-coupled tests, because the tests serve as a reliable behavioral safety net rather than a structural constraint.
+**Why It Matters**: Implementation-coupled tests create massive refactoring resistance that slows product development. When tests verify internal method calls instead of observable behavior, every refactoring breaks tests even when behavior is preserved. Software engineering literature consistently describes this as "brittle tests" and identifies them as a primary cause of TDD abandonment. Teams with behavior-focused tests complete refactoring significantly faster than teams with implementation-coupled tests, because the tests serve as a reliable behavioral safety net rather than a structural constraint.
 
 ### Example 23: Testing Function Return Values
 
@@ -1806,7 +1806,7 @@ class Counter {
 
 **Key Takeaway**: Test state changes through public getters. Verify observable effects rather than accessing private fields directly.
 
-**Why It Matters**: State management bugs cause subtle production issues that are extremely difficult to reproduce and debug. Stateful objects accumulate mutations across method calls, creating behavior that depends on execution history. TDD with explicit state verification at each step documents the expected state machine and catches state transition bugs immediately. Amazon's engineering blog documented that 30% of production incidents in stateful services were caused by unexpected state accumulation. Explicit state testing in TDD prevents these by establishing clear before/after state expectations for every operation.
+**Why It Matters**: State management bugs cause subtle production issues that are extremely difficult to reproduce and debug. Stateful objects accumulate mutations across method calls, creating behavior that depends on execution history. TDD with explicit state verification at each step documents the expected state machine and catches state transition bugs immediately. A significant proportion of production incidents in stateful services stem from unexpected state accumulation, making explicit before/after state expectations for every operation a critical correctness tool.
 
 ### Example 25: Testing Output Messages
 
@@ -2206,7 +2206,7 @@ function findMax(numbers: number[]): number {
 
 **Key Takeaway**: Test aggregation operations with various element positions, negative numbers, single elements, and empty arrays. Empty array behavior requires explicit decision (throw or return default).
 
-**Why It Matters**: Aggregation edge cases cause runtime crashes. Reddit's data pipeline suffered multiple outages from unchecked empty array reductions in analytics jobs, emphasizing the importance of comprehensive aggregation testing.
+**Why It Matters**: Aggregation edge cases cause runtime crashes. Data pipelines are prone to outages from unchecked empty array reductions in analytics jobs, emphasizing the importance of comprehensive aggregation testing that covers boundary inputs such as empty collections.
 
 ---
 

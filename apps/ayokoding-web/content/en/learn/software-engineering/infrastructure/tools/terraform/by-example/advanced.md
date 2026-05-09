@@ -361,7 +361,7 @@ output "server_status" {
 
 **Key Takeaway**: Custom providers extend Terraform to any API or system. Implement CRUD operations (Create, Read, Update, Delete) for resources. Use Terraform Plugin SDK for schema definition and state management. Publish providers to Terraform Registry for public use or host privately.
 
-**Why It Matters**: Custom providers fill Terraform's gaps for internal systems—Datadog built a custom provider for their internal service catalog before official providers existed, enabling infrastructure-as-code for services, teams, and access policies. Custom providers standardize API interactions: instead of 50 engineers writing curl scripts, one provider codifies best practices in schema validation and retry logic. Publishing providers to Terraform Registry democratizes infrastructure automation: smaller companies can't afford AWS-level provider engineering, but community providers (MongoDB Atlas, PagerDuty, New Relic) enable world-class infrastructure management for all organizations.
+**Why It Matters**: Custom providers fill Terraform's gaps for internal systems — teams building internal service catalogs, custom APIs, or proprietary tooling can create providers that enable infrastructure-as-code for those systems before official providers exist. Custom providers standardize API interactions: instead of many engineers writing independent curl scripts, one provider codifies best practices in schema validation and retry logic. Publishing providers to Terraform Registry democratizes infrastructure automation — community providers (MongoDB Atlas, PagerDuty) enable world-class infrastructure management for organizations of all sizes.
 
 ---
 
@@ -550,7 +550,7 @@ output "region_endpoint" {
 
 **Key Takeaway**: Data sources query external systems with ReadContext only (no Create/Update/Delete). Use `Computed: true` for outputs calculated by provider. Data sources have IDs (use unique identifier from query). Common use: fetch AMI IDs, DNS records, or system information without managing resources. Reference with `data.TYPE.NAME.attribute`.
 
-**Why It Matters**: Data sources separate reading from writing, enabling safe infrastructure discovery—AWS data sources (`data.aws_ami`, `data.aws_vpc`) query existing resources without risking modification, critical for reading shared infrastructure like central VPCs or AMIs published by security teams. Data sources enable dynamic configuration: instead of hardcoding AMI IDs that change monthly, `data.aws_ami` queries latest Stripe uses data sources to fetch service discovery endpoints from Consul, allowing Terraform to reference application infrastructure without managing it.
+**Why It Matters**: Data sources separate reading from writing, enabling safe infrastructure discovery—AWS data sources (`data.aws_ami`, `data.aws_vpc`) query existing resources without risking modification, critical for reading shared infrastructure like central VPCs or AMIs published by security teams. Data sources enable dynamic configuration: instead of hardcoding AMI IDs that change monthly, `data.aws_ami` queries the latest matching AMI automatically. Teams use data sources to fetch service discovery endpoints from Consul, allowing Terraform to reference application infrastructure without managing it.
 
 ---
 
@@ -773,7 +773,7 @@ func testAccCheckServerDestroy(s *terraform.State) error {
 
 **Key Takeaway**: Acceptance tests use `resource.Test` with TestSteps for multi-stage testing. `Check` validates resource state with `TestCheckResourceAttr`. `CheckDestroy` ensures cleanup. Set `TF_ACC=1` to run acceptance tests (creates real infrastructure). Test import with `ImportState: true`. Tests verify Create, Read, Update, Delete operations work correctly.
 
-**Why It Matters**: Acceptance tests prevent regressions when updating provider logic—HashiCorp's AWS provider has 10,000+ acceptance tests ensuring updates don't break existing resources. Tests catch API changes early: when AWS modifies response format, tests fail immediately instead of breaking user production. Acceptance tests enable safe refactoring: rewrite resource logic, tests verify behavior unchanged. Without tests, provider updates are high-risk manual validation; with tests, providers can evolve safely at scale.
+**Why It Matters**: Acceptance tests prevent regressions when updating provider logic — comprehensive acceptance test suites ensure updates don't break existing resources. Tests catch API changes early: when a cloud provider modifies its response format, tests fail immediately instead of breaking user production deployments. Acceptance tests enable safe refactoring — rewrite resource logic and tests verify behavior remains unchanged. Without tests, provider updates are high-risk manual validation; with tests, providers can evolve safely at scale.
 
 ---
 
@@ -1773,7 +1773,7 @@ func TestModuleHandlesUpdates(t *testing.T) {
 
 **Key Takeaway**: Contract tests validate module behavior without checking implementation. Test: valid inputs accepted, invalid inputs rejected, required outputs produced, idempotence, update handling. Contract tests document module expectations for consumers. Use `InitAndApplyE` (returns error) to test validation failures. Tests ensure module interface stability across versions.
 
-**Why It Matters**: Contract tests enable safe module updates—when HashiCorp updates AWS provider, their VPC module contract tests verify module still accepts same inputs and produces same outputs, preventing breaking changes for thousands of module users. Contract tests are module documentation that can't go stale: tests prove module behavior, serving as executable specification. For organizations publishing internal modules, contract tests prevent "update breaks 50 dependent projects" disasters by verifying backwards compatibility before release.
+**Why It Matters**: Contract tests enable safe module updates — when a provider version changes, VPC module contract tests verify the module still accepts the same inputs and produces the same outputs, preventing breaking changes for downstream consumers. Contract tests are module documentation that can't go stale: tests prove module behavior, serving as an executable specification. For organizations publishing internal modules, contract tests prevent "update breaks 50 dependent projects" disasters by verifying backwards compatibility before release.
 
 ---
 

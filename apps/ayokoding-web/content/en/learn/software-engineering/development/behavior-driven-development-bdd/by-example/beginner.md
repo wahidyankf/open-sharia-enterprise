@@ -58,7 +58,7 @@ Feature: Hello World
 
 **Key Takeaway**: Feature files use Gherkin keywords (Feature, Scenario, Given, When, Then) to describe behavior in plain English, making tests readable by non-technical stakeholders.
 
-**Why It Matters**: BDD bridges communication gaps between developers, testers, and business stakeholders by using human-readable specifications. Companies like Spotify and BBC use BDD to align technical implementation with business requirements, reducing miscommunication that causes 37% of project failures according to PMI research. Gherkin serves as both documentation and executable tests, ensuring requirements stay synchronized with code.
+**Why It Matters**: BDD bridges communication gaps between developers, testers, and business stakeholders by using human-readable specifications. By expressing requirements as executable Gherkin scenarios, teams reduce the ambiguity that causes a significant proportion of project failures according to project management research. Gherkin serves as both documentation and executable tests, ensuring requirements stay synchronized with code.
 
 ### Example 2: Given-When-Then Structure
 

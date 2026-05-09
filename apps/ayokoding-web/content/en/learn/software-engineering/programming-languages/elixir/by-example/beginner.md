@@ -50,7 +50,7 @@ Hello.world()                  # => Calls world function on Hello module
 
 **Key Takeaway**: Elixir code is organized into modules and functions. `IO.puts/1` returns `:ok` after printing, demonstrating Elixir's consistent return value pattern.
 
-**Why It Matters**: Hello World establishes that Elixir code runs on the BEAM virtual machine, the same runtime powering Erlang systems used by WhatsApp, Discord, and telecommunications switches for decades. Unlike most languages, the BEAM is not designed around speed of computation but around concurrency, fault tolerance, and low-latency garbage collection. Understanding this from the start reframes how you think about Elixir: you're writing for a runtime designed to keep services running at scale, not just to execute algorithms.
+**Why It Matters**: Hello World establishes that Elixir code runs on the BEAM virtual machine, the same runtime that has powered Erlang telecommunications systems for decades. Unlike most languages, the BEAM is not designed around speed of computation but around concurrency, fault tolerance, and low-latency garbage collection. Understanding this from the start reframes how you think about Elixir: you're writing for a runtime designed to keep services running at scale, not just to execute algorithms.
 
 ---
 

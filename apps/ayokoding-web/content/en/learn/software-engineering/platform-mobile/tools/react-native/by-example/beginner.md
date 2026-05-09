@@ -1741,7 +1741,7 @@ const styles = StyleSheet.create({
 
 **Key Takeaway**: Create `app/(tabs)/_layout.tsx` with `<Tabs>` and add `Tabs.Screen` entries for each tab. Wrap the folder name in parentheses to create a route group (no URL segment). Use `useFocusEffect` to refresh data when a tab is selected.
 
-**Why It Matters**: Tab navigation is the primary top-level navigation pattern in iOS (used in App Store, Instagram, Twitter) and common on Android. Expo Router's Tabs component renders native-feeling tab bars using `UITabBarController` patterns on iOS. `useFocusEffect` enables per-tab data refresh on every visit — critical for list tabs that need fresh data without a full remount. The route group `(tabs)` folder keeps tab screens organized in the file system without polluting the URL space.
+**Why It Matters**: Tab navigation is the primary top-level navigation pattern in iOS and common on Android. Expo Router's Tabs component renders native-feeling tab bars using `UITabBarController` patterns on iOS. `useFocusEffect` enables per-tab data refresh on every visit — critical for list tabs that need fresh data without a full remount. The route group `(tabs)` folder keeps tab screens organized in the file system without polluting the URL space.
 
 ### Example 21: Dynamic Routes — Parameterized URLs
 

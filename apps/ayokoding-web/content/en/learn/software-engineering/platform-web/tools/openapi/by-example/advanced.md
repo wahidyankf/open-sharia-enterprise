@@ -1527,7 +1527,7 @@ paths:
 
 **Key Takeaway**: Header versioning uses custom headers (`X-API-Version`) or content negotiation (`Accept: application/vnd.bookstore.v2+json`). Echo the version in response headers to confirm which version served the request.
 
-**Why It Matters**: Header versioning keeps URLs clean and RESTful -- `/books` is always `/books` regardless of version. This is preferred by APIs that evolve frequently with minor changes (GitHub, Stripe use date-based header versioning). The tradeoff is reduced visibility -- consumers must remember to set headers, and caching requires Vary header configuration. Choose header versioning when you make frequent, backward-compatible changes and want stable URLs.
+**Why It Matters**: Header versioning keeps URLs clean and RESTful -- `/books` is always `/books` regardless of version. This approach suits APIs that evolve frequently with minor changes, particularly where date-based versioning headers signal API generation. The tradeoff is reduced visibility -- consumers must remember to set headers, and caching requires Vary header configuration. Choose header versioning when you make frequent, backward-compatible changes and want stable URLs.
 
 ---
 

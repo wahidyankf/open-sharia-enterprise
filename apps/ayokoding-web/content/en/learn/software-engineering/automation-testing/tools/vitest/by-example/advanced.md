@@ -1741,7 +1741,7 @@ test("MSW intercepts API calls", () => {
 
 **Key Takeaway**: MSW intercepts requests at the network level, so your code uses real `fetch` calls that are intercepted before reaching the network. This tests more of the real code path than mocking `fetch` directly.
 
-**Why It Matters**: Mocking `fetch` with `vi.fn()` skips request construction, header serialization, and response parsing. MSW intercepts at the network layer, so your code's `fetch()` call executes normally -- headers are set, body is serialized, response is parsed. This catches bugs in request construction that `vi.fn()` mocks would miss. MSW is the standard pattern for integration testing in modern JavaScript applications, recommended by Testing Library and used by teams at GitHub, Microsoft, and Google.
+**Why It Matters**: Mocking `fetch` with `vi.fn()` skips request construction, header serialization, and response parsing. MSW intercepts at the network layer, so your code's `fetch()` call executes normally — headers are set, body is serialized, response is parsed. This catches bugs in request construction that `vi.fn()` mocks would miss. MSW is the standard pattern for integration testing in modern JavaScript applications, recommended by the Testing Library ecosystem for testing HTTP-dependent code without hitting real servers.
 
 ---
 

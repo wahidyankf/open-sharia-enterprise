@@ -67,7 +67,7 @@ SELECT datetime('now') AS current_time;
 
 **Key Takeaway**: SQLite runs in Docker containers with no server configuration needed. The `SELECT` statement executes queries and returns results - even simple expressions work without FROM clauses.
 
-**Why It Matters**: Reproducible development environments prevent "works on my machine" issues across teams. Docker-based database setups enable consistent testing, onboarding, and CI/CD pipelines. Production applications typically use managed database services like AWS RDS or Google Cloud SQL, but local containerized databases are essential for development and testing without affecting production data. Teams using Docker for local databases onboard new developers in minutes instead of hours, eliminating environment-specific bugs from day one.
+**Why It Matters**: Reproducible development environments prevent "works on my machine" issues across teams. Docker-based database setups enable consistent testing, onboarding, and CI/CD pipelines without requiring each developer to install and configure a database server manually. Local containerized databases are essential for development and testing because they isolate test state from shared environments, allow parallel test runs, and can be recreated from scratch on every CI run. This parity between development and production database engines catches environment-specific bugs before they reach production.
 
 ---
 
@@ -401,7 +401,7 @@ WHERE id = 1;                                       -- => Filters to first row
 
 **Key Takeaway**: Use INTEGER for whole numbers and REAL for decimals. SQLite's dynamic typing is flexible but can cause unexpected behavior - use explicit CAST when precision matters, especially for financial calculations.
 
-**Why It Matters**: Floating-point errors accumulate in financial calculations—0.1 + 0.2 doesn't equal 0.3 in binary floating-point. Stripe, PayPal, and every serious payment processor store amounts in integer cents to avoid rounding errors that cause accounting discrepancies. Production financial systems use integer cents or dedicated decimal types. Type mismatches between application code and database can cause silent data corruption that surfaces only during audits, potentially after millions of transactions.
+**Why It Matters**: Floating-point errors accumulate in financial calculations—0.1 + 0.2 doesn't equal 0.3 in binary floating-point. Storing monetary amounts as integer cents avoids rounding errors that cause accounting discrepancies. Production financial systems use integer cents or dedicated decimal types. Type mismatches between application code and database can cause silent data corruption that surfaces only during audits, potentially after millions of transactions.
 
 ---
 
@@ -954,7 +954,7 @@ SELECT * FROM products OFFSET 5;
 
 **Key Takeaway**: LIMIT restricts result count, OFFSET skips rows. Use together for pagination: `LIMIT page_size OFFSET (page_number - 1) * page_size`. Always ORDER BY for consistent pagination.
 
-**Why It Matters**: Unbounded queries can overwhelm applications with millions of rows—LIMIT protects against memory exhaustion and API response timeouts. A "fetch all users" query on a table with 50 million users crashes applications. However, OFFSET-based pagination degrades at high page numbers because the database must scan and discard skipped rows. Production systems like Twitter and Instagram use cursor-based pagination with WHERE id > last_seen_id for O(log n) performance at any page depth.
+**Why It Matters**: Unbounded queries can overwhelm applications with millions of rows—LIMIT protects against memory exhaustion and API response timeouts. A "fetch all users" query on a table with 50 million users crashes applications. However, OFFSET-based pagination degrades at high page numbers because the database must scan and discard skipped rows. Cursor-based pagination with WHERE id > last_seen_id provides O(log n) performance at any page depth and is the recommended pattern for large datasets.
 
 ---
 
@@ -1094,7 +1094,7 @@ SELECT * FROM files WHERE filename NOT LIKE '%.pdf';
 
 **Key Takeaway**: Use LIKE for case-insensitive pattern matching (`%` = any characters, `_` = one character). Use GLOB for case-sensitive matching (`*` = any characters, `?` = one character). LIKE is more common across SQL databases.
 
-**Why It Matters**: Pattern matching powers search features throughout applications, from e-commerce product search to log analysis tools. However, leading wildcard patterns (`LIKE '%search%'`) bypass indexes and cause full table scans that become unacceptably slow at scale—Netflix and Amazon cannot scan millions of product records per search query. Production search typically uses full-text search indexes (FTS5 in SQLite) for indexed pattern matching. LIKE patterns must escape special characters to prevent unexpected matches and potential security issues.
+**Why It Matters**: Pattern matching powers search features throughout applications, from e-commerce product search to log analysis tools. However, leading wildcard patterns (`LIKE '%search%'`) bypass indexes and cause full table scans that become unacceptably slow at scale—scanning millions of product records per query is not sustainable. Production search typically uses full-text search indexes (FTS5 in SQLite) for indexed pattern matching. LIKE patterns must escape special characters to prevent unexpected matches and potential security issues.
 
 ---
 
@@ -2133,7 +2133,7 @@ UPDATE accounts SET balance = balance - 1000 WHERE owner = 'Alice';
 
 **Key Takeaway**: Use transactions to ensure related changes succeed or fail together. BEGIN starts transaction, COMMIT saves changes, ROLLBACK cancels. Constraint violations automatically rollback transactions.
 
-**Why It Matters**: Transactions prevent partial updates that corrupt data—transferring money must debit one account AND credit another, never just one. Stripe, PayPal, and every financial system rely on ACID transactions. Production systems wrap related operations in transactions to maintain consistency across concurrent requests. Without transactions, system crashes mid-operation leave data in invalid states requiring manual cleanup. Savepoints enable partial rollbacks in complex workflows where some steps should succeed even if later steps fail.
+**Why It Matters**: Transactions prevent partial updates that corrupt data—transferring money must debit one account AND credit another, never just one. ACID transactions are the foundation of data integrity for financial systems and any application where related operations must succeed or fail together. Without transactions, system crashes mid-operation leave data in invalid states requiring manual cleanup. Savepoints enable partial rollbacks in complex workflows where some steps should succeed even if later steps fail.
 
 ---
 

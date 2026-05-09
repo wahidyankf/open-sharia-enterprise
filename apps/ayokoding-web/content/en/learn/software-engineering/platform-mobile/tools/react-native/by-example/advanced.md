@@ -594,7 +594,7 @@ function withTiming(v: number, options: any) { return v; }  // => placeholder fo
 
 **Key Takeaway**: Add matching `sharedTransitionTag` string props to source and destination components. Reanimated interpolates position, size, and opacity between the two views during navigation. Use `SharedTransition.custom()` for precise control over the transition curve.
 
-**Why It Matters**: Shared element transitions are the signature animation of modern mobile UIs — Google Photos' expanding image, iOS App Store's card-to-fullscreen transition, Airbnb's listing expansion. They provide visual continuity that helps users understand where they navigated. Reanimated 4's implementation runs entirely on the UI thread via Fabric's synchronous layout queries, enabling accurate source position detection even for views inside scrolled lists. This was the most-requested animation feature in React Native history, finally productionized in Reanimated 4.
+**Why It Matters**: Shared element transitions are the signature animation of modern mobile UIs — examples include an image expanding into a full-screen detail view or a card animating into a full-screen layout. They provide visual continuity that helps users understand where they navigated. Reanimated 4's implementation runs entirely on the UI thread via Fabric's synchronous layout queries, enabling accurate source position detection even for views inside scrolled lists. This was the most-requested animation feature in React Native history, finally productionized in Reanimated 4.
 
 ### Example 65: Layout Animations — Entering, Exiting, Layout
 

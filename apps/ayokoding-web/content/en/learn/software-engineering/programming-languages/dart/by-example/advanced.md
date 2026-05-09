@@ -942,7 +942,7 @@ void main() {                           // => Execute statement
 00:00 +5: All tests passed!
 ```
 
-**Why It Matters**: Unit testing is the foundation of production reliability in financial applications where calculation errors have direct monetary consequences. `package:test` is Dart's official testing library—the standard approach for all Dart projects including Flutter. Note: Dart has no built-in test runner; `package:test` is the universally adopted solution. Well-tested Zakat calculation logic, payment processing rules, and eligibility criteria prevent financial errors that could affect thousands of users in production.
+**Why It Matters**: Unit testing is the foundation of production reliability—automated tests verify correctness continuously and catch regressions before they reach users. `package:test` is Dart's official testing library—the standard approach for all Dart projects including Flutter. Note: Dart has no built-in test runner; `package:test` is the universally adopted solution. Comprehensive test coverage enables confident refactoring, documents expected behavior through executable examples, and provides a safety net when requirements or implementations change.
 
 **Common Pitfalls**: Don't share state between tests. Use `setUp()` for fresh instances. Test exceptions with closures. Mock external dependencies.
 

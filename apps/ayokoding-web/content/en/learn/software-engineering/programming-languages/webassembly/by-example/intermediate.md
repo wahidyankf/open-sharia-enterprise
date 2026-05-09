@@ -246,7 +246,7 @@ console.log([...inverted]); // => [0, 127, 255, 0] — inverted channels
 
 **Key Takeaway**: `&[u8]` parameters and `Vec<u8>` returns involve copying between JS and Wasm heap. `js_sys::Uint8Array` with `get_index`/`set_index` enables zero-copy operations directly on JS-owned typed arrays.
 
-**Why It Matters**: Image processing, audio encoding, and cryptography functions work on megabytes of byte data. The difference between copying 4 MB on every call versus zero-copy is the difference between a smooth user experience and a stuttering one. The `js_sys::Uint8Array` zero-copy pattern is how Photoshop Web's Wasm image pipeline avoids doubling memory usage — it operates on the same `ArrayBuffer` that the browser's canvas API reads from.
+**Why It Matters**: Image processing, audio encoding, and cryptography functions work on megabytes of byte data. The difference between copying 4 MB on every call versus zero-copy is the difference between a smooth user experience and a stuttering one. The `js_sys::Uint8Array` zero-copy pattern avoids doubling memory usage by operating on the same `ArrayBuffer` that the browser's canvas API reads from — essential for high-throughput Wasm image pipelines.
 
 ---
 
@@ -373,7 +373,7 @@ pub fn log_message(msg: &str) {
 
 **Key Takeaway**: `web-sys` provides Rust bindings to all browser Web APIs; enable only needed features in `[features]` to control binary size. Use `.dyn_into::<T>()` to cast `Element` to specific DOM types.
 
-**Why It Matters**: `web-sys` enables Rust code to drive the full browser DOM and Canvas API without any JavaScript glue code — the Rust function is the event handler, the Rust function draws on the canvas, the Rust function makes the fetch request. This is how Figma's rendering engine and Canva's image editor use Rust for complex rendering logic that calls into WebGL directly, without a JS middleware layer introducing latency or object allocation overhead.
+**Why It Matters**: `web-sys` enables Rust code to drive the full browser DOM and Canvas API without any JavaScript glue code — the Rust function is the event handler, the Rust function draws on the canvas, the Rust function makes the fetch request. This approach is used by browser-based rendering engines and image editors that rely on Rust for complex graphics logic calling into WebGL directly, without a JS middleware layer introducing latency or object allocation overhead.
 
 ---
 
@@ -906,7 +906,7 @@ ctx.putImageData(imageData, 0, 0); // => display grayscale image
 
 **Key Takeaway**: The Emscripten image processing pattern: allocate in C heap (`_malloc`), copy pixels in from Canvas, call C processing function in-place, copy results back to Canvas `ImageData`, free C heap. This achieves near-native speed for pixel-level operations.
 
-**Why It Matters**: This pattern is exactly what browser-based photo editors (Photoshop Web, Polarr, Canva) use for computationally intensive operations like blur, sharpen, noise reduction, and color grading. The C computation is typically 10-50x faster than equivalent JavaScript for pixel-level loops. The malloc/copy/free overhead is amortized over the full image — for a 4K image (33 MB of RGBA data), the C processing dominates and the copy cost is negligible. Libraries like libvips and ImageMagick have been fully ported using this exact pattern.
+**Why It Matters**: This pattern is used by browser-based photo editors for computationally intensive operations like blur, sharpen, noise reduction, and color grading. The C computation is typically 10-50x faster than equivalent JavaScript for pixel-level loops. The malloc/copy/free overhead is amortized over the full image — for a 4K image (33 MB of RGBA data), the C processing dominates and the copy cost is negligible. Libraries like libvips and ImageMagick have been fully ported using this exact pattern.
 
 ---
 
@@ -1006,7 +1006,7 @@ async function processPixelsGood(imageData) {
 
 **Key Takeaway**: Minimize Wasm–JS boundary crossings by batching data into a single call. Write bulk operations that accept a pointer+length rather than element-by-element APIs. The crossing overhead is small per call but dominates when called millions of times.
 
-**Why It Matters**: Wasm–JS boundary overhead is typically 1-10 nanoseconds per crossing (browser-dependent). For 1 million crossings on a 1000x1000 image, that's 1-10 milliseconds of pure overhead — plus CPU cache pollution from switching between JS and Wasm execution contexts. The batch pattern reduces this to ~40 nanoseconds total. Google's measurements on porting their Sheets calculation engine to Wasm showed that eliminating chatty calls was responsible for 60% of the performance improvement beyond the algorithm speedup.
+**Why It Matters**: Wasm–JS boundary overhead is typically 1-10 nanoseconds per crossing (browser-dependent). For 1 million crossings on a 1000x1000 image, that's 1-10 milliseconds of pure overhead — plus CPU cache pollution from switching between JS and Wasm execution contexts. The batch pattern reduces this to ~40 nanoseconds total. Porting calculation-heavy engines to Wasm demonstrates that eliminating chatty boundary crossings is often responsible for the majority of performance improvement beyond the algorithm speedup alone.
 
 ---
 
@@ -1132,7 +1132,7 @@ console.log(await compute(42)); // => result from Wasm in worker
 
 **Key Takeaway**: Pre-compile the Wasm module on the main thread, transfer the compiled `Module` to a worker via `postMessage`, and instantiate in the worker. Use a job queue with `postMessage` for request/response communication. The UI thread stays responsive during heavy computation.
 
-**Why It Matters**: A Wasm function computing a 10,000-iteration physics simulation blocks the main thread for 16ms — dropping an entire frame. Moved to a worker, the UI thread is free to respond to user input and render at 60 FPS. The compiled `Module` transfer avoids re-compiling in the worker (a savings of 50-200ms for a 2 MB module). This pattern is how real-time collaborative document editors (Figma, Google Docs offline) run their conflict resolution and state computation in workers without blocking the editor UI.
+**Why It Matters**: A Wasm function computing a 10,000-iteration physics simulation blocks the main thread for 16ms — dropping an entire frame. Moved to a worker, the UI thread is free to respond to user input and render at 60 FPS. The compiled `Module` transfer avoids re-compiling in the worker (a savings of 50-200ms for a 2 MB module). This pattern is how real-time collaborative document editors run their conflict resolution and state computation in workers without blocking the editor UI, keeping interaction latency imperceptible to users.
 
 ---
 
@@ -1178,7 +1178,7 @@ wasm-pack build --target web --release
 
 **Key Takeaway**: `wasm-opt -O3` optimizes a `.wasm` binary with typical 10-20% size reduction and potential speed improvements. `wasm-pack --release` runs `wasm-opt` automatically. Use `-Oz` for maximum size reduction.
 
-**Why It Matters**: `wasm-opt` is not optional for production. A Rust Wasm binary without `wasm-opt` is larger and slower than necessary — dead code (monomorphized generics, unused trait impls) inflates the binary, and missed inlining opportunities leave performance on the table. For CDN-served `.wasm` files, every kilobyte saved reduces download time on mobile connections. Photoshop Web reports their `.wasm` binaries were 15% smaller after `wasm-opt` passes compared to LLVM output alone.
+**Why It Matters**: `wasm-opt` is not optional for production. A Rust Wasm binary without `wasm-opt` is larger and slower than necessary — dead code (monomorphized generics, unused trait impls) inflates the binary, and missed inlining opportunities leave performance on the table. For CDN-served `.wasm` files, every kilobyte saved reduces download time on mobile connections. Production Wasm applications commonly achieve 10-20% binary size reductions after `wasm-opt` passes compared to raw LLVM output.
 
 ---
 

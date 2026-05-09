@@ -462,7 +462,7 @@ export function createMyRouter() {
 
 **Key Takeaway**: `defaultPreload: 'intent'` in the router config triggers data prefetching on link hover. The `defaultPreloadDelay` prevents wasted requests from rapid cursor movements.
 
-**Why It Matters**: Intent-based prefetching creates a perception of instant navigation. When a user hovers for 150ms and then clicks, the data is already loading (or loaded). The typical hover-to-click time is 250-400ms, meaning a 150ms prefetch start gives 100-250ms of loading head-start. For routes with 200-300ms loaders, this often means the navigation feels truly instant to users. Major e-commerce sites like Amazon implement similar prefetching strategies for high-traffic product pages, attributing measurable conversion rate improvements to the perceived speed improvement.
+**Why It Matters**: Intent-based prefetching creates a perception of instant navigation. When a user hovers for 150ms and then clicks, the data is already loading (or loaded). The typical hover-to-click time is 250-400ms, meaning a 150ms prefetch start gives 100-250ms of loading head-start. For routes with 200-300ms loaders, this often means the navigation feels truly instant to users. Prefetching on user intent is a proven technique that reduces perceived latency and improves user experience for data-heavy pages.
 
 ### Example 64: Manual Query Invalidation
 
@@ -1337,7 +1337,7 @@ export const Route = createFileRoute('/products/$productId')({
 
 **Key Takeaway**: Check `queryClient.getQueryData()` before fetching in loaders. If the cache already has fresh data (from list page prefetch), return it immediately with zero network requests.
 
-**Why It Matters**: The product listing page often prefetches data for visible items using TanStack Query. When a user clicks a product, the detail page loader can find that data already in cache and render instantly - no loading state, no network request. This technique, used by single-page applications with sophisticated caching (Notion, Linear, Figma), creates a native-app navigation feel where every click renders instantly. The fallback to `fetchQuery` ensures correctness for direct URL visits or cache misses.
+**Why It Matters**: The product listing page often prefetches data for visible items using TanStack Query. When a user clicks a product, the detail page loader can find that data already in cache and render instantly - no loading state, no network request. This cache-first navigation technique creates a native-app feel where every click renders instantly. The fallback to `fetchQuery` ensures correctness for direct URL visits or cache misses.
 
 ### Example 77: Middleware Composition
 

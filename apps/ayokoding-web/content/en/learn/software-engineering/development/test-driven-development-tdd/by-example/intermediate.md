@@ -191,7 +191,7 @@ test("notifyUser sends email to user address", () => {
 
 **Key Takeaway**: Mocks verify behavior (method calls and arguments) while stubs provide data. Use mocks to test interactions between objects.
 
-**Why It Matters**: Mock verification catches integration bugs early, before costly integration environments are needed. Microservices architectures can use mock testing to verify service interaction contracts, reducing integration testing time by up to 70%. When a service changes its interface, mock-based tests fail immediately in CI - before the breaking change reaches staging. This "contract-first" approach, enabled by mocks, is the foundation of consumer-driven contract testing used at scale by Netflix, Amazon, and Google to coordinate hundreds of microservices.
+**Why It Matters**: Mock verification catches integration bugs early, before costly integration environments are needed. Microservices architectures can use mock testing to verify service interaction contracts, reducing integration testing time by up to 70%. When a service changes its interface, mock-based tests fail immediately in CI — before the breaking change reaches staging. This "contract-first" approach, enabled by mocks, is the foundation of consumer-driven contract testing used at scale to coordinate hundreds of microservices in distributed systems.
 
 ### Example 33: Test Doubles - Spies
 
@@ -1357,7 +1357,7 @@ describe("reverse", () => {
 
 **Key Takeaway**: Property-based tests verify invariants (properties that always hold) with random inputs. Use `fast-check` to generate test cases automatically.
 
-**Why It Matters**: Property-based testing finds edge cases developers don't think of by systematically exploring input space beyond manually crafted examples. Dropbox discovered critical file sync bugs using property-based tests that ran billions of input combinations, catching race conditions that would take years to encounter in manual testing. For sorting algorithms, property-based tests verify invariants (length preservation, element preservation, ordering) across millions of random arrays - covering edge cases no human test writer would generate. This approach is particularly powerful for encoding business rules as mathematical properties that all inputs must satisfy.
+**Why It Matters**: Property-based testing finds edge cases developers don't think of by systematically exploring input space beyond manually crafted examples. Property-based tests running billions of input combinations can surface race conditions and invariant violations that would take years to encounter in manual testing. For sorting algorithms, property-based tests verify invariants (length preservation, element preservation, ordering) across millions of random arrays — covering edge cases no human test writer would generate. This approach is particularly powerful for encoding business rules as mathematical properties that all inputs must satisfy.
 
 ### Example 43: Mutation Testing Concepts
 
@@ -1440,7 +1440,7 @@ function calculateDiscount(price: number, rate: number): number {
 
 **Key Takeaway**: Mutation testing reveals weak tests by introducing bugs. Write specific assertions that would fail if logic changes. Tools like Stryker automate mutation testing.
 
-**Why It Matters**: Weak tests create false confidence that can be more dangerous than no tests at all. Google's Testing Blog found that tests with poor assertions catch only 12% of bugs that proper assertions would catch. Teams measuring coverage instead of assertion quality create a "testing theater" - impressive numbers with minimal protection. A code review study by Atlassian showed that 60% of test reviews that passed CI eventually had production bugs related to inadequate assertions, not insufficient coverage. Strong assertions are the difference between a safety net and a false sense of security.
+**Why It Matters**: Weak tests create false confidence that can be more dangerous than no tests at all. Research on assertion quality shows that tests with poor assertions catch only a fraction of the bugs that proper assertions would catch. Teams measuring coverage instead of assertion quality create a "testing theater" — impressive numbers with minimal protection. Code review studies show that many tests that pass CI eventually correspond to production bugs related to inadequate assertions, not insufficient coverage. Strong assertions are the difference between a safety net and a false sense of security.
 
 ### Example 44: Test Coverage Analysis
 
@@ -1534,7 +1534,7 @@ test("high coverage doesn't guarantee correctness", () => {
 
 **Key Takeaway**: Aim for high test coverage (80%+ is good, 95%+ is excellent) but verify assertions are correct. Coverage measures execution, not correctness.
 
-**Why It Matters**: Coverage is a necessary but insufficient quality metric - 100% coverage with assertion-free tests provides zero protection. Industry best practices recommend 80-90% coverage thresholds combined with strong assertions that verify behavior. Teams with high coverage AND strong assertions have 60% fewer production bugs than high-coverage teams with weak tests (Google's testing research). Coverage tools identify untested paths but cannot verify that tested paths are correctly asserted. Use coverage as a floor (minimum bar to deploy) rather than a ceiling (goal to optimize toward).
+**Why It Matters**: Coverage is a necessary but insufficient quality metric — 100% coverage with assertion-free tests provides zero protection. Industry best practices recommend 80-90% coverage thresholds combined with strong assertions that verify behavior. Teams with high coverage and strong assertions consistently have fewer production bugs than high-coverage teams with weak tests. Coverage tools identify untested paths but cannot verify that tested paths are correctly asserted. Use coverage as a floor (minimum bar to deploy) rather than a ceiling (goal to optimize toward).
 
 ### Example 45: TDD with Express.js Routes
 
@@ -2123,7 +2123,7 @@ describe("Snapshot testing appropriate use cases", () => {
 
 **Key Takeaway**: Use snapshots for complex outputs (UI components, large JSON). Avoid for simple values or business logic where explicit assertions are clearer. Always review snapshot changes manually.
 
-**Why It Matters**: Snapshot tests catch regressions in complex outputs automatically, but create dangerous false security when developers blindly approve snapshot updates without reviewing changes. Instagram's testing team mandates manual review of all snapshot changes after discovering that 40% of their UI bugs came from approved snapshots that developers didn't examine - they just ran `jest --updateSnapshot` without reading the diff. Best practice is to treat snapshot changes as code changes requiring peer review, not automation artifacts. Snapshot tests are most valuable for stable outputs like API response formats, report templates, and serialized data structures.
+**Why It Matters**: Snapshot tests catch regressions in complex outputs automatically, but create dangerous false security when developers blindly approve snapshot updates without reviewing changes. A common failure mode is running `jest --updateSnapshot` without reading the diff, accepting regressions silently. Best practice is to treat snapshot changes as code changes requiring peer review, not automation artifacts. Snapshot tests are most valuable for stable outputs like API response formats, report templates, and serialized data structures.
 
 ## Infrastructure and Environment Testing (Examples 51-55)
 
@@ -2542,7 +2542,7 @@ function multiply(a: number, b: number): number {
 
 **Key Takeaway**: Use fake timers for time-based code, enable parallel test execution, and run only changed tests during development. Save full test runs for CI.
 
-**Why It Matters**: Fast tests enable rapid Red-Green-Refactor cycles by keeping feedback loops under 3 seconds - the threshold at which developers maintain focus. Parallel test execution with Jest Workers reduces total test time by 50-80% on multi-core machines, enabling large test suites to complete in seconds rather than minutes. Google's research on developer productivity shows that test feedback delays over 10 seconds cause developers to context-switch, increasing bug fix time by 3x. Optimizing test performance through parallelization, fake timer use, in-memory databases, and HTTP mocking is as important as test correctness for maintaining TDD discipline.
+**Why It Matters**: Fast tests enable rapid Red-Green-Refactor cycles by keeping feedback loops under 3 seconds — the threshold at which developers maintain focus. Parallel test execution with Jest Workers reduces total test time by 50-80% on multi-core machines, enabling large test suites to complete in seconds rather than minutes. Developer productivity research shows that test feedback delays over 10 seconds cause developers to context-switch, increasing bug fix time significantly. Optimizing test performance through parallelization, fake timer use, in-memory databases, and HTTP mocking is as important as test correctness for maintaining TDD discipline.
 
 ### Example 55: Flaky Test Detection and Fixes
 
@@ -2642,7 +2642,7 @@ describe("Flaky test patterns", () => {
 
 **Key Takeaway**: Flaky tests stem from non-determinism (randomness, timing, shared state). Fix by controlling randomness, using fake timers, and isolating test state.
 
-**Why It Matters**: Flaky tests destroy trust in test suites and are one of the most damaging test quality issues a team can face. Google's research on their 4.2 million test runs found that 1.1% of tests are flaky, causing 2.8 million failed builds per year and wasting enormous developer time. Teams experiencing high flakiness develop "test blindness" - ignoring failures because they might be flaky - which masks real bugs until they reach production. Netflix's testing infrastructure mandates automatic quarantine of flaky tests after 3 failures, preventing them from blocking CI/CD pipelines while investigation teams identify and fix the underlying non-determinism.
+**Why It Matters**: Flaky tests destroy trust in test suites and are one of the most damaging test quality issues a team can face. Large-scale test infrastructure studies show that roughly 1% of tests exhibit flakiness, producing a disproportionate number of failed builds and wasting enormous developer time. Teams experiencing high flakiness develop "test blindness" — ignoring failures because they might be flaky — which masks real bugs until they reach production. The recommended mitigation is automatic quarantine of flaky tests after repeated failures, preventing them from blocking CI/CD pipelines while investigation teams identify and fix the underlying non-determinism.
 
 ## Test Data and Design Patterns (Examples 56-58)
 

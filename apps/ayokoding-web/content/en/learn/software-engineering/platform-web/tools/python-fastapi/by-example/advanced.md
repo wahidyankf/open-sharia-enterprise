@@ -1363,7 +1363,7 @@ def process_payment(amount: float, currency: str):
 
 **Key Takeaway**: Implement idempotency by caching successful responses keyed by `Idempotency-Key` header hash. Return cached responses for duplicate requests with an `X-Idempotent-Replayed` header.
 
-**Why It Matters**: Network timeouts cause clients to retry requests, potentially processing the same payment, creating the same order, or sending the same email multiple times. Idempotency keys break this cycle: the first successful response is cached, and retries receive the identical response without re-executing the operation. Payment processors (Stripe, Braintree) mandate idempotency keys for all mutation endpoints. Implementing idempotency at the middleware level adds the protection to all endpoints uniformly, without requiring every handler to implement its own deduplication logic.
+**Why It Matters**: Network timeouts cause clients to retry requests, potentially processing the same payment, creating the same order, or sending the same email multiple times. Idempotency keys break this cycle: the first successful response is cached, and retries receive the identical response without re-executing the operation. Payment processing APIs widely mandate idempotency keys for all mutation endpoints as a baseline safety requirement. Implementing idempotency at the middleware level adds the protection to all endpoints uniformly, without requiring every handler to implement its own deduplication logic.
 
 ---
 

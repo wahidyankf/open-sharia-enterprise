@@ -1975,7 +1975,7 @@ registerRoute(
 
 **Key Takeaway**: Register multiple service workers with distinct `scope` values. More specific scopes (like `/dashboard/`) take precedence over less specific ones (`/`) for matching URLs. Each section maintains its own cache and update cycle.
 
-**Why It Matters**: Single-SW architectures create coupling between app sections — a dashboard update redeploys the entire service worker, invalidating caches for every section. Partitioned SWs allow the editor to be updated independently of the dashboard, with separate cache versions, strategies, and update prompts. This is the architecture used by large PWAs like Figma and Google Docs for their embedded experience sections.
+**Why It Matters**: Single-SW architectures create coupling between app sections — a dashboard update redeploys the entire service worker, invalidating caches for every section. Partitioned SWs allow the editor to be updated independently of the dashboard, with separate cache versions, strategies, and update prompts. This architecture is well suited to large PWAs where distinct functional sections have independent deployment and caching requirements.
 
 ---
 

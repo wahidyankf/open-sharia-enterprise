@@ -353,7 +353,7 @@ appointment.cancel(); // => status becomes Cancelled
 
 **Key Takeaway**: Use domain terminology (Patient, Practitioner, Appointment) directly in code, matching the language domain experts use. Avoid generic terms (Person, Event) or technical jargon that requires translation.
 
-**Why It Matters**: Translation between business language and technical language causes bugs. When Epic Systems (healthcare software) analyzed incident reports, 45% of bugs stemmed from terminology mismatches—developers used "User" while doctors said "Patient," leading to confusion about medical record access rules. Adopting Ubiquitous Language eliminated this class of bugs entirely. Code reviews became collaborative sessions where medical staff could verify business rules by reading actual code, catching domain errors before production. Ubiquitous Language turns code into documentation that domain experts can validate.
+**Why It Matters**: Translation between business language and technical language causes bugs. When developers use generic terms like "User" while domain experts say "Patient" or "Customer," the terminology gap introduces misunderstandings that propagate directly into incorrect code behavior. Adopting Ubiquitous Language bridges this gap: code uses the same vocabulary as the domain, enabling domain experts to review business rules directly in code and catch semantic errors before they reach production. Ubiquitous Language turns code into documentation that domain experts can validate.
 
 ## Entities - Identity and Lifecycle (Examples 4-8)
 
@@ -494,7 +494,7 @@ const order3 = new Order("ORD-002", "CUST-123"); // => order3: id=ORD-002 (diffe
 
 **Key Takeaway**: Entities have unique identities that persist throughout their lifecycle. Equality is based on identity (ID), not attributes. Same ID = same entity, even if attributes differ.
 
-**Why It Matters**: Identity vs attribute equality prevents critical business errors. When Amazon's order system compared orders by attributes instead of ID, customers editing orders (changing items/addresses) created duplicate order entries—same customer + same items looked like "duplicate submission" and got blocked. Switching to ID-based equality fixed this: editing order ORD-001 modifies the same entity, not creating a duplicate. Entity identity enables object lifecycle management, audit trails, and eventual consistency in distributed systems.
+**Why It Matters**: Identity vs attribute equality prevents critical business errors. When systems compare entities by attributes instead of identity, editing an existing record can appear identical to creating a new one — blocking legitimate modifications as "duplicate submissions." ID-based equality resolves this: modifying an entity updates the same instance rather than creating a new one. Entity identity enables correct object lifecycle management, audit trails, and eventual consistency in distributed systems.
 
 ### Example 5: Entity Lifecycle State Machine
 
@@ -1239,7 +1239,7 @@ await customerService.changeCustomerEmail("CUST-123", "newemail@example.com");
 
 **Key Takeaway**: Repositories abstract persistence, allowing domain logic to work with entities without knowing database details. Domain layer defines repository interfaces; infrastructure layer implements them.
 
-**Why It Matters**: Coupling domain logic to database details makes code hard to test and change. When LinkedIn migrated from Oracle to MySQL, repositories enabled zero domain logic changes—only repository implementations changed. Tests using in-memory repository implementations continued working. Repository pattern separates "what" (domain operations on entities) from "how" (database storage), enabling database migrations, testing, and eventual consistency patterns without touching business logic.
+**Why It Matters**: Coupling domain logic to database details makes code hard to test and change. When a system needs to migrate between database technologies, repositories enable zero domain logic changes — only repository implementations need updating. Tests using in-memory repository implementations continue working throughout the migration. Repository pattern separates "what" (domain operations on entities) from "how" (database storage), enabling database migrations, testing, and eventual consistency patterns without touching business logic.
 
 ### Example 8: Entity Factory Pattern
 
@@ -1573,7 +1573,7 @@ Product similarLaptop = productFactory.createProductFromExisting(laptop, "Gaming
 
 **Key Takeaway**: Factories encapsulate complex entity creation, ensuring entities are always created in valid states. Use factories when creation involves validation, ID generation, or complex initialization logic.
 
-**Why It Matters**: Complex entity creation scattered across code leads to inconsistent validation and invalid objects. When Etsy analyzed product listing bugs, 25% stemmed from products created with invalid states (missing categories, malformed prices, duplicate tags). Centralizing creation in ProductFactory ensured every product met validation rules, normalized tags consistently, and applied correct pricing logic. Factory pattern makes entity creation a first-class domain operation, not an ad-hoc constructor call.
+**Why It Matters**: Complex entity creation scattered across code leads to inconsistent validation and invalid objects. When creation logic is duplicated across call sites, each site may omit different validations — allowing invalid states such as missing categories, malformed prices, or duplicate tags to enter the system. Centralizing creation in a Factory ensures every object meets validation rules, normalizes data consistently, and applies correct initialization logic. Factory pattern makes entity creation a first-class domain operation, not an ad-hoc constructor call.
 
 ## Value Objects - Immutability and Equality (Examples 9-13)
 
@@ -2069,7 +2069,7 @@ hotel.addBooking(booking1); // => Add first booking (March 1-5)
 
 **Key Takeaway**: Value objects can encapsulate domain logic (overlap detection, duration calculation) making business rules explicit and reusable. DateRange is more expressive than separate start/end dates.
 
-**Why It Matters**: Scattered date range logic causes bugs. When Booking.com analyzed double-booking incidents, they found 12 different implementations of overlap detection across their codebase, with 3 containing bugs (off-by-one errors, timezone issues). Centralizing logic in DateRange value object eliminated inconsistencies and reduced double-booking bugs by 95%. Value objects make domain concepts like ranges, measurements, and identifiers first-class types with embedded validation and business rules.
+**Why It Matters**: Scattered date range logic causes bugs. When overlap detection is duplicated across a codebase, different implementations diverge — introducing off-by-one errors, timezone inconsistencies, or edge-case omissions. Centralizing logic in a DateRange value object eliminates these inconsistencies and creates a single authoritative implementation of range semantics. Value objects make domain concepts like ranges, measurements, and identifiers first-class types with embedded validation and business rules.
 
 ### Example 12: Email Value Object with Validation
 
@@ -3007,7 +3007,7 @@ inventory.receiveStock(50);             // => Receive shipment
 
 **Key Takeaway**: Aggregates enforce invariants across all contained entities and value objects. Every state change validates invariants to prevent invalid aggregate states. Invariants define the consistency boundary.
 
-**Why It Matters**: Invariant violations cause data corruption and business logic failures. When Walmart's inventory system allowed reservations to exceed on-hand stock (invariant not enforced), they oversold products, resulting in 8% order cancellation rate and $50M annual customer service costs. Enforcing invariants in Inventory aggregate made overselling impossible, reducing cancellations to 0.3%. Aggregates that protect invariants ensure business rules are never violated, regardless of how the system is used.
+**Why It Matters**: Invariant violations cause data corruption and business logic failures. When an inventory system allows reservations to exceed on-hand stock because the invariant is not enforced at the aggregate level, overselling becomes possible — leading to downstream order cancellations and degraded customer trust. Enforcing invariants inside the Inventory aggregate makes overselling structurally impossible regardless of which code path triggers the operation. Aggregates that protect invariants ensure business rules are never violated, regardless of how the system is used.
 
 ### Example 16: Aggregate References by ID
 
@@ -3155,7 +3155,7 @@ class OrderFulfillmentService {
 
 **Key Takeaway**: Aggregates reference other aggregates by ID, not by object reference. This maintains loose coupling and enables independent lifecycle management. Domain services coordinate multiple aggregates when needed.
 
-**Why It Matters**: Direct object references between aggregates create tight coupling and consistency problems. When Facebook's messaging system embedded User objects in Message aggregates, updating a user's name required updating millions of messages. Switching to ID references (Message stores userId, not User object) decoupled aggregates—user updates no longer cascade. ID references enable eventual consistency, caching, and distributed systems where aggregates may be in different databases or services.
+**Why It Matters**: Direct object references between aggregates create tight coupling and consistency problems. When one aggregate embeds another aggregate as a full object, any update to the embedded aggregate — such as a user renaming their account — requires propagating that change to every holder of the reference. Switching to ID references decouples aggregates: updates to one no longer cascade into another. ID references enable eventual consistency, caching, and distributed systems where aggregates may be in different databases or services.
 
 ### Example 17: Aggregate Size and Scope
 
@@ -3406,7 +3406,7 @@ func (s *ProjectManagementService) GetProjectProgress(projectID string) (*Projec
 
 **Key Takeaway**: Keep aggregates small and focused on a single consistency boundary. Split large aggregates into smaller ones referencing each other by ID. This enables concurrent updates, better performance, and clearer transactional boundaries.
 
-**Why It Matters**: Large aggregates kill scalability. When Jira initially modeled entire projects as single aggregates (project + all issues), concurrent updates by multiple users caused constant lock conflicts and slow performance. Splitting into separate aggregates (Project metadata vs individual Issue aggregates) enabled 100x concurrent throughput—users editing different issues no longer blocked each other. Aggregate size directly impacts system scalability and user experience.
+**Why It Matters**: Large aggregates kill scalability. When an entire project and all its issues are modeled as a single aggregate, concurrent updates by different users targeting different issues still conflict because they write to the same aggregate root — causing lock contention and degraded throughput. Splitting into smaller, focused aggregates (project metadata vs individual issue aggregates) eliminates this contention: modifications to different issues become independent transactions. Aggregate size directly impacts system scalability and user experience.
 
 ### Example 18: Transaction Boundaries and Aggregates
 
@@ -4576,7 +4576,7 @@ class OrderRepository {
 
 **Key Takeaway**: Domain events represent significant business occurrences. Aggregates publish events after state changes; event handlers react asynchronously. This decouples aggregates from side effects (email, inventory, analytics).
 
-**Why It Matters**: Coupling side effects into aggregate methods creates tight coupling and slow operations. When Uber's order placement called email service, inventory service, and analytics service synchronously, a slow email service caused order placement timeouts. Domain events decoupled these—order places fast (just state change), events trigger side effects asynchronously. This improved order placement from 3 seconds to 200ms and eliminated cascade failures when downstream services were slow.
+**Why It Matters**: Coupling side effects into aggregate methods creates tight coupling and slow operations. When an aggregate's core operation synchronously invokes email, inventory, and analytics services, a single slow downstream service causes the entire operation to time out. Domain events decouple these concerns — the aggregate performs its state change and records an event, while side effects execute asynchronously in independent handlers. This approach eliminates cascade failures and keeps core operations fast regardless of downstream service latency.
 
 ### Example 25: Domain Event for Aggregate Communication
 
@@ -4683,7 +4683,7 @@ public class OrderEventHandler {
 
 **Key Takeaway**: Domain events enable aggregates to communicate without direct references. Payment aggregate doesn't know about Order aggregate, but Order reacts to Payment events. This maintains loose coupling while coordinating business processes.
 
-**Why It Matters**: Direct aggregate references create tight coupling and circular dependencies. When e-commerce platforms implement Payment aggregates that reference Order aggregates directly, they can't deploy Payment and Order services independently (circular deployment dependency). Domain events break the coupling—Payment publishes events, Order subscribes. This enables independent deployment, scaling, and evolution of each aggregate.
+**Why It Matters**: Direct aggregate references create tight coupling and circular dependencies. When two aggregates hold direct object references to each other, deploying or scaling either one independently becomes impossible due to circular compile-time or runtime dependencies. Domain events break this coupling — one aggregate publishes events, the other subscribes — enabling independent deployment, scaling, and evolution of each aggregate without coordinating releases.
 
 ### Example 26: Event Sourcing Basics
 
@@ -4868,7 +4868,7 @@ console.log(reconstructed.getBalance()); // => Output: 1300 (1000 + 500 - 200)
 
 **Key Takeaway**: Event sourcing stores events (what happened) instead of current state. Current state is derived by replaying events. This provides complete audit trail, enables temporal queries, and supports event-driven architectures.
 
-**Why It Matters**: Traditional state storage loses history and causality. When financial institutions investigated fraud, they lacked event history—only current state, making investigation impossible. Event sourcing provides complete audit trail: every state change is recorded as an event. This enabled Klarna (payment company) to reduce fraud investigation time from 2 weeks to 2 hours by replaying events to see exactly what happened. Event sourcing turns every aggregate into an auditable, temporally-queryable entity.
+**Why It Matters**: Traditional state storage loses history and causality. When a system stores only the current state, fraud investigations, audit reviews, or debugging exercises are limited to a snapshot with no record of how that state was reached. Event sourcing provides a complete audit trail: every state change is recorded as an immutable event, enabling investigators to replay events and observe exactly what occurred and in what order. Event sourcing turns every aggregate into an auditable, temporally-queryable entity.
 
 ### Example 27: Event Versioning and Upcasting
 
@@ -4965,7 +4965,7 @@ handler.handle(newEvent); // => No upcasting needed
 
 **Key Takeaway**: Events are long-lived and immutable. As domain evolves, add new event versions and upcast old events to new format. This enables schema evolution without breaking existing event stores.
 
-**Why It Matters**: Events stored in production can't be changed—they're historical records. When Eventbrite (event ticketing) added "event categories" to their domain, they had 10M existing events without categories. Event upcasting allowed new code to handle old events by defaulting missing categories to "Other." Without upcasting, they would have needed to rewrite 10M historical events—impossible and dangerous. Event versioning is essential for evolving event-sourced systems.
+**Why It Matters**: Events stored in production can't be changed — they're historical records. When a domain evolves and new fields are added to events, the existing event store may contain millions of events in the old format without those fields. Event upcasting allows new code to handle old events by supplying sensible defaults for missing fields, making the schema evolution transparent to event handlers. Without upcasting, migrating the entire historical event store would be required — a dangerous and often infeasible operation. Event versioning is essential for evolving event-sourced systems.
 
 ## Domain Services (Examples 28-30)
 
@@ -5039,7 +5039,7 @@ public class BankingApplicationService {
 
 **Key Takeaway**: Domain services contain domain logic that doesn't fit into a single aggregate. They coordinate operations across aggregates but don't hold state. Aggregates still enforce their own invariants.
 
-**Why It Matters**: Without domain services, complex domain logic ends up in application services or one aggregate knows too much about others. When PayPal implemented currency conversion, they initially put logic in Payment aggregate—but conversion rates weren't Payment responsibility. Moving to CurrencyConversionService (domain service) separated concerns: Payment handles payment logic, ConversionService handles exchange rates. Domain services keep domain logic in domain layer, not scattered in application services.
+**Why It Matters**: Without domain services, complex domain logic ends up in application services or one aggregate knows too much about others. When logic like currency conversion is placed inside a Payment aggregate, it conflates two distinct responsibilities: payment processing and exchange rate computation. Moving such logic to a dedicated domain service (e.g., CurrencyConversionService) separates concerns cleanly — the aggregate handles its own invariants while the service encapsulates the conversion algorithm. Domain services keep domain logic in the domain layer, not scattered in application services.
 
 ### Example 29: Domain Service for Complex Calculations
 
@@ -5131,7 +5131,7 @@ class ShipmentApplicationService {
 
 **Key Takeaway**: Domain services encapsulate complex calculations involving multiple domain objects. They express domain logic that doesn't belong to a single aggregate but is still domain knowledge.
 
-**Why It Matters**: Complex calculations scattered across application layer lose domain context. When FedEx's shipping cost logic was in application services, business rules were hard to find and test. Moving to ShippingCostCalculator domain service centralized domain knowledge, making rules testable and maintainable. Domain services make domain expertise explicit and testable.
+**Why It Matters**: Complex calculations scattered across the application layer lose domain context. When shipping cost logic is spread across multiple application service methods, business rules become difficult to locate, modify, or test in isolation — and duplication inevitably introduces inconsistencies. Moving such logic to a dedicated domain service (e.g., ShippingCostCalculator) centralizes domain knowledge, making rules testable without infrastructure dependencies and maintainable as the domain evolves. Domain services make domain expertise explicit and testable.
 
 ### Example 30: Domain Service vs Application Service
 

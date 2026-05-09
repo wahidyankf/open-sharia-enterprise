@@ -1800,7 +1800,7 @@ func main() {
 
 **Key Takeaway**: Check for cached responses before processing. Return `Idempotency-Replayed: true` header on replay so clients can distinguish fresh from cached responses.
 
-**Why It Matters**: Network failures cause clients to retry requests. Without idempotency, a payment retry after a timeout charges the user twice—one of the most serious bugs in any e-commerce or fintech application. Idempotency keys allow safe retries: the server recognizes the same key and returns the original result without re-processing. Stripe, PayPal, and virtually every payment API mandate idempotency keys for mutating operations. In production, persist idempotency records to Redis or PostgreSQL (not in-memory) for durability across restarts.
+**Why It Matters**: Network failures cause clients to retry requests. Without idempotency, a payment retry after a timeout charges the user twice—one of the most serious bugs in any e-commerce or fintech application. Idempotency keys allow safe retries: the server recognizes the same key and returns the original result without re-processing. Payment and financial APIs widely mandate idempotency keys for mutating operations as a baseline safety requirement. In production, persist idempotency records to Redis or PostgreSQL (not in-memory) for durability across restarts.
 
 ---
 

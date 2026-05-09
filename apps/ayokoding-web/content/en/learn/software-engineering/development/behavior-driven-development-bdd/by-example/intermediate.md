@@ -2894,7 +2894,7 @@ HTML Report Contains:
 
 **Key Takeaway**: HTML reports transform BDD scenarios into living documentation that non-technical stakeholders can review, with embedded screenshots, data tables, and metadata providing complete context for test results.
 
-**Why It Matters**: Living documentation bridges the gap between code and business understanding. Atlassian reports that teams using HTML BDD reports see 40% higher stakeholder engagement in test reviews compared to raw test logs, enabling business analysts to validate coverage without technical assistance.
+**Why It Matters**: Living documentation bridges the gap between code and business understanding. Teams using HTML BDD reports consistently see higher stakeholder engagement in test reviews compared to raw test logs, enabling business analysts to validate coverage without technical assistance.
 
 ### Example 45: Cross-Browser Testing with BDD
 
@@ -3818,7 +3818,7 @@ Feature: User GraphQL API
 
 **Key Takeaway**: GraphQL BDD testing sends queries/mutations via POST requests and validates nested response structures using field path navigation, handling GraphQL's flexible field selection and complex data hierarchies.
 
-**Why It Matters**: GraphQL's nested data and field selection require different testing patterns than REST. BDD scenarios validate both data correctness and schema compliance, catching breaking changes when APIs evolve. GitHub uses GraphQL BDD tests to ensure API backwards compatibility across 500+ million API calls daily.
+**Why It Matters**: GraphQL's nested data and field selection require different testing patterns than REST. BDD scenarios validate both data correctness and schema compliance, catching breaking changes when APIs evolve. GraphQL APIs serving high traffic volumes depend on BDD-style contract tests to guarantee backwards compatibility as schemas evolve.
 
 ### Example 48: WebSocket Testing with Real-Time Events
 
@@ -4096,7 +4096,7 @@ Feature: Real-Time Chat
 
 **Key Takeaway**: WebSocket BDD testing requires async message waiting and connection lifecycle management, using predicates to match specific messages from the event stream.
 
-**Why It Matters**: Real-time features are hard to test due to asynchronous message delivery and connection state. BDD scenarios make WebSocket testing deterministic through message waiting predicates and connection cleanup hooks. Slack tests real-time messaging using WebSocket BDD patterns to ensure messages reach all connected clients within SLA timeframes.
+**Why It Matters**: Real-time features are hard to test due to asynchronous message delivery and connection state. BDD scenarios make WebSocket testing deterministic through message waiting predicates and connection cleanup hooks. This determinism is essential for verifying that messages reach all connected clients within SLA timeframes, regardless of network timing variations.
 
 ### Example 49: File Upload/Download Testing
 
@@ -4356,7 +4356,7 @@ Feature: File Upload and Download
 
 **Key Takeaway**: File upload/download BDD testing uses FormData for multipart uploads, verifies file metadata (ID, size, type), and validates downloaded content matches original uploads.
 
-**Why It Matters**: File handling involves complex edge cases (size limits, MIME types, encoding). BDD scenarios test the complete upload-download cycle including error cases (oversized files, invalid types). Dropbox uses file transfer BDD tests to verify integrity across network transfers and ensure zero data corruption at petabyte scale.
+**Why It Matters**: File handling involves complex edge cases (size limits, MIME types, encoding). BDD scenarios test the complete upload-download cycle including error cases (oversized files, invalid types). File storage systems rely on comprehensive transfer BDD tests to verify integrity across network transfers and ensure zero data corruption regardless of scale.
 
 ### Example 50: Email Testing with Mail Trap
 

@@ -1445,7 +1445,7 @@ async fn main() {
 
 **Key Takeaway**: The `Bytes` extractor buffers the entire request body into memory. Combine with `HeaderMap` for webhook signature verification where you need both raw bytes and headers.
 
-**Why It Matters**: Webhook signature verification requires the raw, unmodified request body—if you first deserialize to JSON and then re-serialize for HMAC computation, whitespace differences can cause signature mismatches. By extracting `Bytes` directly, you compute the HMAC over exactly what the sender signed. This pattern is required for secure webhooks from Stripe, GitHub, Twilio, and other platforms, and Axum's extractor system makes it trivial.
+**Why It Matters**: Webhook signature verification requires the raw, unmodified request body—if you first deserialize to JSON and then re-serialize for HMAC computation, whitespace differences can cause signature mismatches. By extracting `Bytes` directly, you compute the HMAC over exactly what the sender signed. This pattern is required for secure webhook handling from any platform that signs payloads, and Axum's extractor system makes it trivial.
 
 ---
 

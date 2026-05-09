@@ -99,7 +99,7 @@ GROUP BY hvs.product;               -- => Group by product
 
 **Key Takeaway**: CTEs use WITH to define temporary named result sets. They improve query readability by breaking complex logic into named steps. CTEs exist only for the query duration and can be referenced multiple times.
 
-**Why It Matters**: CTEs transform unreadable nested subqueries into maintainable, self-documenting code. Production analytics pipelines use CTEs extensively for multi-step transformations—calculating KPIs, preparing dashboards, and building data marts. Data teams at companies like Airbnb and Stripe maintain hundreds of CTE-based transformation queries. Teams adopting CTEs reduce debugging time significantly because each named step can be tested independently by temporarily adding SELECT \* FROM cte_name before the main query.
+**Why It Matters**: CTEs transform unreadable nested subqueries into maintainable, self-documenting code. Production analytics pipelines use CTEs extensively for multi-step transformations—calculating KPIs, preparing dashboards, and building data marts. Each named CTE step can be tested independently by temporarily adding SELECT \* FROM cte_name before the main query, which significantly reduces debugging time compared to deeply nested subqueries.
 
 ---
 
@@ -234,7 +234,7 @@ SELECT * FROM numbers;              -- => Select all generated numbers
 
 **Key Takeaway**: Recursive CTEs use RECURSIVE keyword and UNION ALL to traverse hierarchical structures. Base case starts recursion, recursive case joins to previous iteration. Powerful for org charts, file trees, and graph traversal.
 
-**Why It Matters**: Hierarchical data appears everywhere—org charts, folder structures, category trees, bill-of-materials, network routing, and permission inheritance chains. Without recursive CTEs, these queries require multiple round-trips or complex application code that re-queries the database for each level. A single recursive CTE replaces hundreds of lines of application logic for tree traversal, ancestor lookups, and path calculations. LinkedIn uses recursive queries for "connections of connections" relationship traversal that powers network features.
+**Why It Matters**: Hierarchical data appears everywhere—org charts, folder structures, category trees, bill-of-materials, network routing, and permission inheritance chains. Without recursive CTEs, these queries require multiple round-trips or complex application code that re-queries the database for each level. A single recursive CTE replaces hundreds of lines of application logic for tree traversal, ancestor lookups, and path calculations. Graph-like relationship traversal (connections of connections, transitive permissions, ancestor lookups) is a direct application of this technique, enabling depth-unlimited traversal in a single query.
 
 ---
 
@@ -2175,7 +2175,7 @@ WHERE articles_fts MATCH 'SQL';     -- => Search term
 
 **Key Takeaway**: FTS5 virtual tables enable fast full-text search. Use MATCH operator with search syntax (phrases, boolean operators, prefix search). Ranking and highlighting improve search UX. Ideal for document search, article catalogs, product descriptions.
 
-**Why It Matters**: Users expect instant search across articles, products, and documents—LIKE queries are too slow on large text datasets and cannot rank results by relevance. FTS5 provides Google-like search capabilities including phrase matching, boolean logic (AND, OR, NOT), and result highlighting, all within SQLite without external search engines like Elasticsearch or Solr. Documentation platforms, wiki systems, and local applications use FTS5 for fast full-text search over thousands of documents. The built-in nature of FTS5 eliminates the operational complexity of running a separate search service.
+**Why It Matters**: Users expect instant search across articles, products, and documents—LIKE queries are too slow on large text datasets and cannot rank results by relevance. FTS5 provides full-text search capabilities including phrase matching, boolean logic (AND, OR, NOT), and result highlighting, all within SQLite without external search engines like Elasticsearch or Solr. FTS5 supports relevance-ranked results, prefix searches, and token-based matching across multiple columns, making it suitable for fast full-text search over thousands of documents. The built-in nature of FTS5 eliminates the operational complexity of running a separate search service.
 
 ---
 

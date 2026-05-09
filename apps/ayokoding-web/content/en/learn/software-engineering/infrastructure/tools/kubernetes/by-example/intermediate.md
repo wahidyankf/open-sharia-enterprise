@@ -254,7 +254,7 @@ spec:
 
 **Key Takeaway**: Use partition in RollingUpdate strategy for canary deployments on StatefulSets; update high-ordinal Pods first while keeping low-ordinal Pods on stable version for gradual rollout validation.
 
-**Why It Matters**: Partition-based canary deployments reduce risk when updating stateful applications like databases or Kafka clusters. LinkedIn tests Kafka broker updates on high-ordinal instances (kafka-5, kafka-6) serving production traffic while keeping primary replicas (kafka-0, kafka-1) on stable versions—if issues arise, they rollback the canary instances without impacting primary data nodes. This surgical update capability is critical for stateful workloads where full-cluster updates risk data corruption or service outages, providing safety nets that traditional database upgrade procedures lack.
+**Why It Matters**: Partition-based canary deployments reduce risk when updating stateful applications like databases or Kafka clusters. Testing updates on high-ordinal instances (e.g., kafka-5, kafka-6) while keeping primary replicas (kafka-0, kafka-1) on stable versions allows rollback of canary instances without impacting primary data nodes if issues arise. This surgical update capability is critical for stateful workloads where full-cluster updates risk data corruption or service outages, providing safety nets that traditional database upgrade procedures lack.
 
 ---
 
@@ -705,7 +705,7 @@ spec:
 
 **Key Takeaway**: Use DaemonSets for node-level services requiring presence on every node; DaemonSets automatically handle node additions/removals and support node selectors for subset deployment.
 
-**Why It Matters**: DaemonSets ensure critical infrastructure services run on every node without manual deployment, essential for cluster-wide monitoring, logging, and networking. Datadog monitors thousands of Kubernetes nodes using DaemonSets to deploy its agent automatically to every node. This automation eliminates the systemd unit files and chef recipes required in traditional infrastructure where adding a new server meant manually installing monitoring agents, logging forwarders, and network plugins—Kubernetes handles this automatically through DaemonSets.
+**Why It Matters**: DaemonSets ensure critical infrastructure services run on every node without manual deployment, essential for cluster-wide monitoring, logging, and networking. Monitoring agents, log forwarders, and network plugins automatically deploy to every node including newly added ones. This automation eliminates the systemd unit files and chef recipes required in traditional infrastructure where adding a new server meant manually installing each agent — Kubernetes handles this automatically through DaemonSets.
 
 ---
 
@@ -907,7 +907,7 @@ spec:
 
 **Key Takeaway**: Use Jobs for one-time or periodic batch tasks; set appropriate completions, parallelism, and backoffLimit based on workload requirements; Jobs do not support restartPolicy: Always.
 
-**Why It Matters**: Kubernetes Jobs provide guaranteed execution for batch processing with automatic retry logic, eliminating custom failure handling code. Stripe processes nightly financial reconciliation using Jobs—if network issues cause failures, Jobs automatically retry up to backoffLimit, ensuring reports complete reliably. This declarative batch processing replaces brittle cron scripts that fail silently or require complex error handling, as Kubernetes tracks completion status and provides audit trails through Job history, critical for compliance in financial systems.
+**Why It Matters**: Kubernetes Jobs provide guaranteed execution for batch processing with automatic retry logic, eliminating custom failure handling code. When network issues cause transient failures, Jobs automatically retry up to `backoffLimit`, ensuring batch tasks complete reliably without manual intervention. This declarative batch processing replaces brittle cron scripts that fail silently or require complex error handling, as Kubernetes tracks completion status and provides audit trails through Job history, critical for compliance in financial systems.
 
 ---
 
@@ -1209,7 +1209,7 @@ spec:
 
 **Key Takeaway**: Ingress provides cost-effective HTTP/HTTPS routing compared to multiple LoadBalancer Services; install an Ingress Controller first, then create Ingress resources for routing rules.
 
-**Why It Matters**: Ingress Controllers consolidate HTTP/HTTPS traffic through a single load balancer entry point, dramatically reducing cloud infrastructure costs. Zalando reduced monthly AWS costs by $18,000 by replacing 50 LoadBalancer Services ($360 each) with one Ingress Controller managing path-based routing to all backend services. This consolidation also simplifies DNS management (one wildcard DNS entry vs. 50 separate records), TLS certificate management (one cert for \*.example.com vs. 50 individual certs), and firewall rules, making Ingress the de facto standard for exposing HTTP services in production Kubernetes clusters.
+**Why It Matters**: Ingress Controllers consolidate HTTP/HTTPS traffic through a single load balancer entry point, dramatically reducing cloud infrastructure costs. Replacing many individual LoadBalancer Services with one Ingress Controller managing path-based routing eliminates the per-service load balancer expense that accumulates at scale. This consolidation also simplifies DNS management (one wildcard DNS entry vs. many separate records), TLS certificate management (one cert for *.example.com vs. individual certs per service), and firewall rules, making Ingress the de facto standard for exposing HTTP services in production Kubernetes clusters.
 
 ---
 
@@ -1493,7 +1493,7 @@ spec:
 
 **Key Takeaway**: Leverage Ingress Controller annotations for advanced HTTP features; consult controller documentation for available annotations as they vary between nginx, Traefik, and other controllers.
 
-**Why It Matters**: Ingress annotations enable sophisticated traffic management without deploying dedicated API gateway infrastructure. Cloudflare uses nginx Ingress annotations for rate limiting, request transformation, and authentication—features that would otherwise require additional proxy layers (dedicated reverse proxies or API gateways). This consolidation reduces median request latency by 15-20ms (one fewer proxy hop) while providing enterprise features like A/B testing headers, geographic routing, and DDoS protection declaratively through annotations, making Ingress Controllers powerful enough to replace separate API gateway products.
+**Why It Matters**: Ingress annotations enable sophisticated traffic management without deploying dedicated API gateway infrastructure. Rate limiting, request transformation, and authentication can be declared as annotations rather than requiring additional proxy layers (dedicated reverse proxies or API gateways). This consolidation reduces median request latency by eliminating proxy hops while providing enterprise features like A/B testing headers, geographic routing, and DDoS protection declaratively through annotations, making Ingress Controllers powerful enough to replace separate API gateway products.
 
 ---
 
@@ -2329,7 +2329,7 @@ spec:
 
 **Key Takeaway**: Use PodDisruptionBudgets to maintain availability during voluntary disruptions like node maintenance; set minAvailable or maxUnavailable based on application requirements; PDBs do not prevent involuntary disruptions like node failures.
 
-**Why It Matters**: PodDisruptionBudgets enable zero-downtime cluster maintenance by preventing kubectl drain from evicting too many Pods simultaneously. LinkedIn performs rolling node upgrades across 10,000+ nodes monthly using PDBs—ensuring at least 80% of each service remains available during node rotations. Without PDBs, draining nodes could evict entire services causing outages. This controlled disruption enables continuous cluster upgrades (security patches, Kubernetes version updates) without service interruptions, transforming maintenance from scheduled downtime windows to continuous operations.
+**Why It Matters**: PodDisruptionBudgets enable zero-downtime cluster maintenance by preventing `kubectl drain` from evicting too many Pods simultaneously. Rolling node upgrades across large clusters depend on PDBs to ensure a minimum percentage of each service remains available during node rotations. Without PDBs, draining nodes could evict entire services causing outages. This controlled disruption enables continuous cluster upgrades (security patches, Kubernetes version updates) without service interruptions, transforming maintenance from scheduled downtime windows to continuous operations.
 
 ---
 
@@ -2470,7 +2470,7 @@ spec:
 
 **Key Takeaway**: Use startup probes for slow-starting applications to prevent premature liveness probe failures; configure longer failureThreshold \* periodSeconds than application startup time; liveness probes begin only after startup success.
 
-**Why It Matters**: Startup probes solve the "slow starter" problem for legacy applications or those loading large datasets on initialization. Adobe runs Java applications taking 3-5 minutes to start (class loading, dependency initialization)—without startup probes, liveness probes with 30-second timeouts would restart Pods repeatedly, creating CrashLoopBackOff cycles. Startup probes give adequate initialization time while still enabling fast liveness detection post-startup, allowing migration of legacy applications to Kubernetes without code modifications to speed up startup, unblocking containerization of monolithic systems.
+**Why It Matters**: Startup probes solve the "slow starter" problem for legacy applications or those loading large datasets on initialization. Java applications with class loading and dependency initialization phases can take several minutes to start—without startup probes, liveness probes with short timeouts would restart Pods repeatedly, creating CrashLoopBackOff cycles. Startup probes give adequate initialization time while still enabling fast liveness detection post-startup, allowing migration of legacy applications to Kubernetes without code modifications to speed up startup, unblocking containerization of monolithic systems.
 
 ---
 
@@ -2624,7 +2624,7 @@ kubectl get pods -o wide | grep probe-handlers  # => View all probe-handler Pod 
 
 **Key Takeaway**: Use HTTP probes for web applications with health endpoints, TCP probes for non-HTTP network services, and exec probes only when necessary due to execution overhead; prefer HTTP/TCP for performance.
 
-**Why It Matters**: Probe handler selection impacts cluster overhead and reliability at scale. Kubernetes clusters with 10,000 Pods running exec probes every 10 seconds execute 1,000 commands per second, consuming significant CPU and creating fork pressure. Twitter migrated from exec-based Redis probes (redis-cli ping) to TCP probes (port 6379), reducing kubelet CPU usage by 40% and eliminating occasional probe timeouts from fork latency. HTTP probes provide rich health checks (dependency status, circuit breaker state) with minimal overhead, making them ideal for microservices, while TCP probes suit databases and message queues where port availability signals health adequately.
+**Why It Matters**: Probe handler selection impacts cluster overhead and reliability at scale. Kubernetes clusters with many Pods running exec probes at short intervals execute thousands of commands per second, consuming significant CPU and creating fork pressure. Replacing exec-based probes (e.g., `redis-cli ping`) with TCP probes that check port availability reduces kubelet CPU usage and eliminates occasional probe timeouts from fork latency. HTTP probes provide rich health checks (dependency status, circuit breaker state) with minimal overhead, making them ideal for microservices, while TCP probes suit databases and message queues where port availability signals health adequately.
 
 ---
 

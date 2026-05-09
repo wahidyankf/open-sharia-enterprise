@@ -751,7 +751,7 @@ export function UserHoverCard() {
 
 **Key Takeaway**: Use HoverCard for rich, interactive previews and Tooltip for simple text labels. HoverCard's `closeDelay` enables users to move their mouse into the card content.
 
-**Why It Matters**: The distinction between Tooltip and HoverCard maps to WAI-ARIA's separation of `role="tooltip"` (non-interactive, supplementary text) and interactive floating content. Putting links or buttons inside a tooltip violates the spec and creates keyboard accessibility problems (tooltips are not focusable). HoverCard correctly handles the "preview card" pattern seen on GitHub, Twitter, and social platforms where hovering a username shows a rich profile card with actionable links. The `closeDelay` timing is critical -- without it, the card disappears before users can reach it with their mouse.
+**Why It Matters**: The distinction between Tooltip and HoverCard maps to WAI-ARIA's separation of `role="tooltip"` (non-interactive, supplementary text) and interactive floating content. Putting links or buttons inside a tooltip violates the spec and creates keyboard accessibility problems (tooltips are not focusable). HoverCard correctly handles the "preview card" pattern common on social platforms where hovering a username shows a rich profile card with actionable links. The `closeDelay` timing is critical — without it, the card disappears before users can reach it with their mouse.
 
 ---
 

@@ -1382,7 +1382,7 @@ class _DeferredDemoState extends State<DeferredDemo> {
 
 **Key Takeaway**: `import '...' deferred as name` excludes the module from the initial bundle; `await name.loadLibrary()` downloads it on demand; classes in the module can only be used after `loadLibrary()` completes.
 
-**Why It Matters**: Flutter Web's initial bundle can grow to 5-10MB for apps with many dependencies. Deferred loading splits heavy features into separate chunks. Users accessing only the main features never download the chart library, editor, or admin panel code. This pattern can reduce Time to Interactive by 40-60% for feature-rich apps. Google and the Flutter team recommend deferred loading as the primary bundle size optimization for production Flutter Web.
+**Why It Matters**: Flutter Web's initial bundle can grow to 5-10MB for apps with many dependencies. Deferred loading splits heavy features into separate chunks so users accessing only the main features never download the chart library, editor, or admin panel code. This pattern can reduce Time to Interactive by 40-60% for feature-rich apps. Deferred loading is the primary bundle size optimization strategy recommended for production Flutter Web applications.
 
 ---
 
@@ -2291,7 +2291,7 @@ void main() {
 
 **Key Takeaway**: Use `find.bySemanticsLabel` to verify screen reader labels in tests; `tester.getSemantics` inspects semantics properties; check minimum touch target sizes (44x44px per WCAG) in widget tests.
 
-**Why It Matters**: Accessibility testing catches issues before deployment that manual testing misses - missing button labels, incorrect focus order, touch targets that are too small. Automated accessibility tests in CI prevent regressions. The 44x44 logical pixel minimum touch target rule comes from both Apple's HIG and Google's Material guidelines and is verified by WCAG 2.1 Success Criterion 2.5.5 (Target Size). Violations exclude users with motor impairments.
+**Why It Matters**: Accessibility testing catches issues before deployment that manual testing misses — missing button labels, incorrect focus order, touch targets that are too small. Automated accessibility tests in CI prevent regressions. The 44x44 logical pixel minimum touch target rule is codified in WCAG 2.1 Success Criterion 2.5.5 (Target Size) and widely adopted in platform design guidelines. Violations exclude users with motor impairments.
 
 ---
 
@@ -2729,7 +2729,7 @@ class ImageOptimizationDemo extends StatelessWidget {
 
 **Key Takeaway**: Serve appropriately-sized images based on `MediaQuery.of(context).size`; use `frameBuilder` for smooth fade-in; always provide `semanticLabel`; WebP images are 25-35% smaller than JPEG at equivalent quality.
 
-**Why It Matters**: Images are typically 60-70% of a web page's byte weight. Serving a 1200px image on a 375px mobile screen wastes 70% of bandwidth. Largest Contentful Paint (LCP) - Google's core web vital - is usually determined by the hero image. Smooth fade-in prevents the jarring layout shift that occurs when images load after text, improving Cumulative Layout Shift (CLS). These metrics directly affect SEO ranking and user retention.
+**Why It Matters**: Images are typically 60-70% of a web page's byte weight. Serving a 1200px image on a 375px mobile screen wastes 70% of bandwidth. Largest Contentful Paint (LCP) — a Core Web Vital measuring how quickly the main content appears — is usually determined by the hero image. Smooth fade-in prevents the jarring layout shift that occurs when images load after text, improving Cumulative Layout Shift (CLS). These metrics directly affect SEO ranking and user retention.
 
 ---
 

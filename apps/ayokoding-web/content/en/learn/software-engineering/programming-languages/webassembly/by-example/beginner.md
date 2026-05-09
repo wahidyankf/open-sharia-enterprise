@@ -393,7 +393,7 @@ console.log(add(100, 200)); // => 300
 
 **Key Takeaway**: `WebAssembly.instantiateStreaming(fetch(url), importObject)` is the performance-optimal loading path — it streams compilation alongside the download and returns both the reusable `Module` and the live `Instance` in one call.
 
-**Why It Matters**: The difference between `instantiateStreaming` and the fallback pattern (fetch → ArrayBuffer → instantiate) is significant for large modules. A 2 MB Wasm file might take 200ms to download on a mobile connection; streaming compilation can have the first functions compiled before the download finishes. The Google Chrome team reported up to 50% faster load times for large Wasm games and applications using streaming compilation. The `Content-Type: application/wasm` requirement is a security boundary — browsers refuse to compile bytes that weren't explicitly marked as Wasm.
+**Why It Matters**: The difference between `instantiateStreaming` and the fallback pattern (fetch → ArrayBuffer → instantiate) is significant for large modules. A 2 MB Wasm file might take 200ms to download on a mobile connection; streaming compilation can have the first functions compiled before the download finishes. Browser engine measurements report up to 50% faster load times for large Wasm games and applications using streaming compilation. The `Content-Type: application/wasm` requirement is a security boundary — browsers refuse to compile bytes that weren't explicitly marked as Wasm.
 
 ---
 
@@ -571,7 +571,7 @@ worker.postMessage(module, []); // => transfer module to worker (zero-copy)
 
 **Key Takeaway**: `WebAssembly.Module` is the compiled stateless artifact; `WebAssembly.Instance` is the live running copy with its own memory. Compile once, cache the `Module`, and instantiate cheaply for each use or worker.
 
-**Why It Matters**: For applications running Wasm in multiple Web Workers (parallel computation), sharing a compiled `Module` via `postMessage` means each worker only pays instantiation cost (cheap) not compilation cost (expensive). This pattern is used in Figma's rendering engine, Google Earth's WebAssembly port, and Shopify's storefront worker architecture. Misunderstanding this and recompiling the module in each worker wastes significant CPU time on the main thread and in each worker's initialization.
+**Why It Matters**: For applications running Wasm in multiple Web Workers (parallel computation), sharing a compiled `Module` via `postMessage` means each worker only pays instantiation cost (cheap) not compilation cost (expensive). This pattern is common in rendering engines, geospatial viewers, and worker-based storefront architectures. Misunderstanding this and recompiling the module in each worker wastes significant CPU time on the main thread and in each worker's initialization.
 
 ---
 
@@ -611,7 +611,7 @@ console.log(instance.exports.add(1, 2)); // => 3
 
 **Key Takeaway**: `WebAssembly.compile(buffer)` compiles without instantiating, returning a reusable `Module`. Pre-compile during idle time and instantiate cheaply on demand to hide compilation latency from the user interaction critical path.
 
-**Why It Matters**: WebAssembly compilation is CPU-intensive — a 2 MB optimized module might take 50-200ms to compile even with browser JIT tiers. Doing this synchronously on user interaction would freeze the UI. Pre-compilation during idle time (requestIdleCallback) or service worker initialization eliminates perceived latency. This is the pattern used by AutoCAD Web, Microsoft Teams' media pipeline, and large WebAssembly games — the user clicks a button and the Wasm is already compiled.
+**Why It Matters**: WebAssembly compilation is CPU-intensive — a 2 MB optimized module might take 50-200ms to compile even with browser JIT tiers. Doing this synchronously on user interaction would freeze the UI. Pre-compilation during idle time (requestIdleCallback) or service worker initialization eliminates perceived latency. Large Wasm applications such as CAD tools, media pipelines, and games rely on this pattern — the user clicks a button and the Wasm is already compiled.
 
 ---
 
@@ -702,7 +702,7 @@ async function loadBestModule() {
 
 **Key Takeaway**: `wasm-feature-detect` tests browser Wasm capability at runtime, enabling progressive enhancement — ship the optimized SIMD/threads/GC build to capable browsers while falling back to a compatible build for others.
 
-**Why It Matters**: The WebAssembly ecosystem has multiple capability tiers: the 2017 MVP baseline is universally available, while SIMD/threads/GC arrived in staggered browser releases. Serving the SIMD-optimized build to a browser that doesn't support it causes an instantiation error. Feature detection + multiple build artifacts is the standard pattern used by FFmpeg.wasm (serving thread-enabled vs thread-free builds), Photoshop Web (detecting GC for managed object support), and any performance-critical Wasm application targeting all browsers.
+**Why It Matters**: The WebAssembly ecosystem has multiple capability tiers: the 2017 MVP baseline is universally available, while SIMD/threads/GC arrived in staggered browser releases. Serving the SIMD-optimized build to a browser that doesn't support it causes an instantiation error. Feature detection combined with multiple build artifacts is the standard pattern for production Wasm — for example, FFmpeg.wasm uses it to serve thread-enabled vs thread-free builds, and any performance-critical Wasm application targeting all browsers must adopt this progressive enhancement strategy.
 
 ---
 

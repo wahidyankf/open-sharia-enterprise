@@ -479,7 +479,7 @@ fi
 
 **Key Takeaway**: Run `terraform plan -refresh-only -detailed-exitcode` on a schedule to detect configuration drift early, before it causes outages or security incidents.
 
-**Why It Matters**: Infrastructure drift is insidious—it starts with a "quick fix" in the AWS console and ends with a production incident when Terraform's next apply reverts the manual change. Netflix and similar companies run drift detection every hour, treating any drift as a high-priority alert because undetected drift means the state file no longer accurately represents production, making capacity planning and disaster recovery planning unreliable.
+**Why It Matters**: Infrastructure drift is insidious—it starts with a "quick fix" in the AWS console and ends with a production incident when Terraform's next apply reverts the manual change. Running drift detection on a schedule, treating any drift as a high-priority alert, prevents the state file from diverging from production reality, which would make capacity planning and disaster recovery planning unreliable.
 
 ---
 
@@ -637,7 +637,7 @@ resource "aws_lb_target_group" "active" {
 
 **Key Takeaway**: Model blue-green deployments in Terraform by parameterizing `min_size`/`desired_capacity` and `target_group_arns` on the `active_color` variable, so flipping one variable value and running `terraform apply` executes the full cutover.
 
-**Why It Matters**: Blue-green deployment reduces deployment risk from hours (rolling updates that might leave inconsistent versions running) to seconds (atomic traffic switch). Amazon, Etsy, and LinkedIn publish that blue-green deployments allow them to deploy dozens of times per day while maintaining five-nines availability—because rollback is equally fast: just switch the active color back.
+**Why It Matters**: Blue-green deployment reduces deployment risk from hours (rolling updates that might leave inconsistent versions running) to seconds (atomic traffic switch). Because rollback is equally fast—just switch the active color back—teams can deploy more frequently without sacrificing availability. The pattern decouples deployment from release, making failed releases recoverable in under a minute rather than requiring a full rollback deployment.
 
 ---
 
@@ -729,7 +729,7 @@ resource "aws_launch_template" "app" {
 
 **Key Takeaway**: Immutable infrastructure bakes application code and configuration into AMIs at build time, so deployment means replacing instances with new ones rather than modifying running servers in place.
 
-**Why It Matters**: Mutable servers accumulate "configuration drift" over months of patches and manual changes until no one knows exactly what's installed. Immutable infrastructure eliminates this entirely: every instance is identical to what Packer built, every deployment is traceable to a specific AMI ID, and rollback is simply redeploying the previous AMI. Netflix's Chaos Engineering practices depend on immutable infrastructure—they can terminate any server at any time because replacement is instant and predictable.
+**Why It Matters**: Mutable servers accumulate "configuration drift" over months of patches and manual changes until no one knows exactly what's installed. Immutable infrastructure eliminates this entirely: every instance is identical to what Packer built, every deployment is traceable to a specific AMI ID, and rollback is simply redeploying the previous AMI. This predictability also makes chaos engineering practices feasible—instances can be terminated at any time because replacement is instant and the new instance starts in a known-good state.
 
 ---
 
@@ -1630,7 +1630,7 @@ resource "aws_db_instance" "prod" {
 
 **Key Takeaway**: SOPS encrypts secrets files using cloud KMS keys and stores encrypted files in git, providing both version-controlled secrets history and IAM-controlled access with a full audit trail.
 
-**Why It Matters**: Compliance frameworks like SOC 2, PCI-DSS, and HIPAA require demonstrating that access to production secrets is logged, audited, and revocable. SOPS with KMS provides all three: CloudTrail logs every decrypt operation, KMS key policies define exactly who can access secrets, and rotating secrets requires only updating the encrypted file and its KMS key—no environment variables to update across servers. Airbnb and Datadog use SOPS in their infrastructure pipelines for exactly this audit capability.
+**Why It Matters**: Compliance frameworks like SOC 2, PCI-DSS, and HIPAA require demonstrating that access to production secrets is logged, audited, and revocable. SOPS with KMS provides all three: CloudTrail logs every decrypt operation, KMS key policies define exactly who can access secrets, and rotating secrets requires only updating the encrypted file and its KMS key—no environment variables to update across servers. The encrypted file can be committed to version control, giving teams a full audit trail of secret changes with the same git blame history as application code.
 
 ---
 
@@ -2077,7 +2077,7 @@ module "database" {
 
 **Key Takeaway**: Compose large infrastructure configurations from small, single-purpose modules that expose clean interfaces (outputs) and accept parameters (variables), enabling reuse across environments while maintaining environment-specific configuration.
 
-**Why It Matters**: Enterprise infrastructure codebases without module composition become "configuration monoliths"—single 5,000-line `main.tf` files that no one understands completely and no one dares refactor. Module composition enables teams to own specific infrastructure layers (the networking team owns the networking module, the database team owns the RDS module) while the platform team composes them into environments. This organizational pattern, adopted by Airbnb, Lyft, and Uber's infrastructure teams, enables independent iteration on infrastructure components without cross-team coordination for every change.
+**Why It Matters**: Infrastructure codebases without module composition become "configuration monoliths"—single 5,000-line `main.tf` files that no one understands completely and no one dares refactor. Module composition enables teams to own specific infrastructure layers (the networking team owns the networking module, the database team owns the RDS module) while the platform team composes them into environments. This organizational pattern enables independent iteration on infrastructure components without cross-team coordination for every change, and makes the codebase testable in isolation with tools like Terratest.
 
 ---
 

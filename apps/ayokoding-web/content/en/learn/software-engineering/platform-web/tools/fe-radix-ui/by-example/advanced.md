@@ -2490,7 +2490,7 @@ export function CommandPalette() {
 
 **Key Takeaway**: Build a command palette by composing Dialog (modal shell), custom search filtering, and keyboard navigation with `aria-activedescendant` for virtual focus. Use `onOpenAutoFocus` prevention to manage focus yourself.
 
-**Why It Matters**: Command palettes have become the standard power-user interface in modern applications (VS Code, GitHub, Slack, Notion). The pattern combines Dialog's focus trapping and overlay management with custom search and keyboard navigation. The `aria-activedescendant` approach to virtual focus (where the input holds DOM focus while `aria-activedescendant` points to the visually highlighted option) enables seamless type-then-navigate interactions that would be impossible with actual DOM focus movement (which would remove the cursor from the input).
+**Why It Matters**: Command palettes have become the standard power-user interface in modern productivity applications. The pattern combines Dialog's focus trapping and overlay management with custom search and keyboard navigation. The `aria-activedescendant` approach to virtual focus (where the input holds DOM focus while `aria-activedescendant` points to the visually highlighted option) enables seamless type-then-navigate interactions that would be impossible with actual DOM focus movement (which would remove the cursor from the input).
 
 ---
 

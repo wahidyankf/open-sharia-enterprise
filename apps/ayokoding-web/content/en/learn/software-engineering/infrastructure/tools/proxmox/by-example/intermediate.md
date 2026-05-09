@@ -1100,7 +1100,7 @@ vtysh -c "show openfabric summary"
 
 **Key Takeaway**: SDN Fabrics (new in PVE 9.0) automate underlay network configuration for spine-leaf topologies, replacing manual FRRouting configuration files with declarative SDN API calls.
 
-**Why It Matters**: Spine-leaf is the modern data center network architecture used by hyperscalers (Google, Amazon, Facebook) for consistent, scalable L3 connectivity. Proxmox SDN Fabrics bring this architecture within reach of smaller deployments by automating the FRRouting configuration that previously required dedicated network engineering expertise. Teams building dedicated Proxmox clusters for private cloud workloads use Fabric SDN to match the network architecture of the public clouds they are replacing, enabling consistent operational runbooks across hybrid environments.
+**Why It Matters**: Spine-leaf is the modern data center network architecture for consistent, scalable L3 connectivity. Proxmox SDN Fabrics bring this architecture within reach of smaller deployments by automating the FRRouting configuration that previously required dedicated network engineering expertise. Teams building dedicated Proxmox clusters for private cloud workloads use Fabric SDN to match the network architecture of the public clouds they are replacing, enabling consistent operational runbooks across hybrid environments.
 
 ---
 

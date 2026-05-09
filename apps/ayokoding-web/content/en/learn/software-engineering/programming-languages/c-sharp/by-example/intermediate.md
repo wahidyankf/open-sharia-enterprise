@@ -116,7 +116,7 @@ Console.WriteLine(shape2.GetArea());
 
 **Key Takeaway**: Interfaces enable polymorphism by defining contracts that multiple types can implement with their own specialized behavior.
 
-**Why It Matters**: Interfaces are fundamental to SOLID design principles (especially Dependency Inversion). They enable testable, flexible architectures where code depends on abstractions rather than concrete implementations. Payment processing systems use interfaces to support multiple providers (Stripe, PayPal) through a single `IPaymentProcessor` interface, allowing provider switching without code changes. Unit tests inject mock implementations through interface references, isolating components from their dependencies and enabling fast, reliable test suites.
+**Why It Matters**: Interfaces are fundamental to SOLID design principles (especially Dependency Inversion). They enable testable, flexible architectures where code depends on abstractions rather than concrete implementations. Systems designed around interfaces support swappable implementations through a single contract—allowing provider switching without code changes and enabling multiple concrete types to satisfy the same role. Unit tests inject mock implementations through interface references, isolating components from their dependencies and enabling fast, reliable test suites.
 
 ## Example 32: Inheritance - Base and Derived Classes
 

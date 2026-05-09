@@ -1426,7 +1426,7 @@ export async function githubAgent(userRequest: string): Promise<string> {
 
 **Key Takeaway**: OAuth MCP servers use `headers: { Authorization: Bearer ... }` for token passing. The `onOAuthRequired` callback handles the OAuth flow when tokens are missing or expired.
 
-**Why It Matters**: Enterprise AI integrations (GitHub, Slack, Salesforce, Jira) require authenticated API access. Before OAuth MCP support, teams wrote custom tool wrappers with embedded credentials — a maintenance burden and security risk. OAuth MCP enables user-scoped access where the AI acts on behalf of the authenticated user with their exact permissions — no over-provisioning, no shared service accounts.
+**Why It Matters**: Enterprise AI integrations with external services require authenticated API access. Before OAuth MCP support, teams wrote custom tool wrappers with embedded credentials — a maintenance burden and security risk. OAuth MCP enables user-scoped access where the AI acts on behalf of the authenticated user with their exact permissions — no over-provisioning, no shared service accounts.
 
 ---
 

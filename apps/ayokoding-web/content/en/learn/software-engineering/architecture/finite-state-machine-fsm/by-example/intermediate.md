@@ -181,7 +181,7 @@ console.log(conn.getCurrentState()); // => Output: Disconnected
 
 **Key Takeaway**: Parent transitions (disconnect) apply to all substates by checking state prefix. This eliminates duplicating disconnect logic for Idle and Active substates.
 
-**Why It Matters**: Without parent transitions, you'd write disconnect logic multiple times (once per substate). At scale, this becomes unmaintainable - with many substates, you'd duplicate the transition many times. Shopping cart FSMs use parent-level "logout" transitions to eliminate duplicate logout handlers across cart substates (browsing, adding items, applying coupons, etc.). This guarantees consistent logout behavior regardless of which substate the user is in when they log out.
+**Why It Matters**: Without parent transitions, every common exit condition must be duplicated across all substates. As the number of substates grows, this duplication becomes a maintenance burden: adding a new substate requires remembering to add every shared transition handler, and changing shared behavior requires updating every copy. Parent-level transitions eliminate this by defining common exit conditions once at the parent level, guaranteeing consistent behavior regardless of which substate the FSM is in when the transition fires.
 
 ### Example 33: Entry/Exit Actions in Hierarchical States
 
@@ -555,7 +555,7 @@ console.log(media.getState()); // => Output: { audio: 'Playing', video: 'Streami
 
 **Key Takeaway**: Composite states enable independent parallel state machines within a single parent state. Each region maintains its own state independently.
 
-**Why It Matters**: Composite states model real-world systems where multiple aspects operate independently. A video conferencing app has composite state for Call (Audio region: muted/unmuted, Video region: on/off, Screen region: shared/not-shared). Without composite states, you'd need 2³=8 separate states for all combinations. Zoom's FSM uses composite states to model 5 independent regions (audio, video, screen share, recording, reactions), avoiding 2⁵=32 combination states.
+**Why It Matters**: Composite states model real-world systems where multiple aspects operate independently. A video conferencing app has a composite state for its call (Audio region: muted/unmuted, Video region: on/off, Screen region: shared/not-shared). Without composite states, you need 2³=8 separate states for all combinations—and each additional independent dimension doubles the state count. Composite states keep each dimension as a separate region, making the FSM comprehensible and allowing each region to evolve independently without multiplying the total state count.
 
 ### Example 37: Implementing Composite States
 

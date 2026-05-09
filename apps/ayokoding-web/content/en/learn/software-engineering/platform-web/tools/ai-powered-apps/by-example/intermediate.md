@@ -2102,4 +2102,4 @@ export async function agentWithRemoteMCP(userQuery: string): Promise<string> {
 
 **Key Takeaway**: `createMCPClient` connects to any MCP server (local stdio or remote HTTP). `mcpClient.tools()` converts server capabilities into AI SDK tools the model can use directly.
 
-**Why It Matters**: MCP is rapidly becoming the standard for AI tool integration — 200+ community servers exist for GitHub, Slack, PostgreSQL, Stripe, Figma, Docker, and Kubernetes. Instead of writing custom tool wrappers for each integration, MCP servers provide pre-built, tested adapters. As of `ai@6`, MCP clients support OAuth for authenticated external services, enabling secure access to enterprise APIs without custom credential management code.
+**Why It Matters**: MCP is rapidly becoming the standard for AI tool integration. Instead of writing custom tool wrappers for each external system, MCP servers provide a standardized protocol with pre-built, tested adapters for databases, APIs, and services. As of `ai@6`, MCP clients support OAuth for authenticated external services, enabling secure access to enterprise APIs without custom credential management code.

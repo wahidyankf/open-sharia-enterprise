@@ -313,7 +313,7 @@ print(f"{discounted.currency} {discounted.amount}")  # => Output: USD 90.0
 
 **Key Takeaway**: Onion Architecture places the domain model at the center and makes infrastructure an outermost detail, ensuring business logic is the most stable and reusable part of the codebase.
 
-**Why It Matters**: Onion Architecture gained popularity in enterprise .NET and Java communities because it naturally aligns with Domain-Driven Design — the domain model at the center corresponds to the Bounded Context's core. Organizations like Spotify and SoundCloud apply this principle to keep their domain models stable across service rewrites. When infrastructure is outermost, switching from PostgreSQL to DynamoDB touches only the outermost ring, never the pricing or catalog logic.
+**Why It Matters**: Onion Architecture gained popularity in enterprise .NET and Java communities because it naturally aligns with Domain-Driven Design — the domain model at the center corresponds to the Bounded Context's core. Keeping infrastructure as the outermost layer makes the domain model stable across service rewrites: switching from PostgreSQL to DynamoDB touches only the outermost ring, never the pricing or catalog logic. This also makes domain logic independently unit-testable without any infrastructure dependencies present.
 
 ---
 
@@ -407,7 +407,7 @@ bus.publish({ userId: "u1", email: "alice@example.com", timestamp: new Date() })
 
 **Key Takeaway**: The Observer pattern decouples event producers from event consumers — the source publishes events without knowing what handles them, and handlers register without knowing who triggers them.
 
-**Why It Matters**: Observer is the foundation of virtually every UI framework (React's synthetic events, Vue's reactivity, browser DOM events) and server-side event systems (Node.js EventEmitter, Spring ApplicationEventPublisher). At scale, Uber's dispatch system uses observer-style fan-out to notify multiple downstream services when a ride is requested. The pattern trades direct coupling for indirect coupling through an event contract, enabling teams to add handlers independently without coordinating with the event source.
+**Why It Matters**: Observer is the foundation of virtually every UI framework (React's synthetic events, Vue's reactivity, browser DOM events) and server-side event systems (Node.js EventEmitter, Spring ApplicationEventPublisher). The pattern trades direct coupling for indirect coupling through an event contract, enabling teams to add handlers independently without coordinating with the event source. Fan-out to multiple subscribers—notification systems, analytics, audit logs—becomes a configuration change rather than a code change in the publisher.
 
 ---
 
@@ -504,7 +504,7 @@ dispatcher.dispatch(order.pop_events())
 
 **Key Takeaway**: Domain events use past-tense business language, carry sufficient data for handlers, and are raised by aggregates as part of state transitions — not as raw technical notifications.
 
-**Why It Matters**: Domain events are central to CQRS, Event Sourcing, and saga orchestration patterns used by companies like Airbnb and Shopify. By naming events in business language (OrderPlaced, not UpdateOrderStatusEvent), the team's shared vocabulary aligns with the domain model. Handlers for domain events can trigger workflows — emails, refunds, inventory updates — without the aggregate knowing about them, which keeps the domain model focused and independently testable.
+**Why It Matters**: Domain events are central to CQRS, Event Sourcing, and saga orchestration patterns. By naming events in business language (OrderPlaced, not UpdateOrderStatusEvent), the team's shared vocabulary aligns with the domain model. Handlers for domain events can trigger workflows — emails, refunds, inventory updates — without the aggregate knowing about them, which keeps the domain model focused and independently testable.
 
 ---
 
@@ -593,7 +593,7 @@ await orderService.shipOrder("o1", "TRK-9876");
 
 **Key Takeaway**: Event-driven architecture decouples producers from consumers through a message broker — the OrderService publishes once, and any number of consumers can independently react without the producer knowing about them.
 
-**Why It Matters**: Event-driven architecture powers high-scale systems at LinkedIn (Kafka), Shopify (Kafka for order processing), and Amazon (SNS/SQS for service coordination). The key benefit over direct service calls is temporal decoupling — the Order service ships an order without waiting for the Notification service to respond. If the Notification service is down, messages queue until it recovers. This fault isolation prevents cascading failures that would occur with synchronous direct calls.
+**Why It Matters**: Event-driven architecture provides temporal decoupling that direct service calls cannot. The Order service ships an order without waiting for the Notification service to respond. If the Notification service is down, messages queue until it recovers. This fault isolation prevents cascading failures that would occur with synchronous direct calls, and enables adding new consumers without modifying producers.
 
 ---
 
@@ -688,7 +688,7 @@ print(f"Weight-based cost: ${cost:.2f}")  # => Output: Weight-based cost: $5.00
 
 **Key Takeaway**: The Strategy pattern replaces conditional logic (if/elif/switch on algorithm type) with polymorphism — each algorithm lives in its own class and is selected by the client at runtime.
 
-**Why It Matters**: Strategy is one of the most-applied GoF patterns in enterprise systems. Payment processors (Stripe, PayPal, bank transfer), shipping calculators, tax engines, and sorting algorithms all benefit from strategy isolation. Without it, a single class accumulates every algorithm variant behind if/else chains that grow unmaintainably and require retesting every variant when adding one new strategy. Amazon's fulfillment routing reportedly uses strategy-like patterns to select between same-day, standard, and freight carriers without changing the order processing core.
+**Why It Matters**: Strategy is one of the most-applied GoF patterns in enterprise systems. Payment processors, shipping calculators, tax engines, and sorting algorithms all benefit from strategy isolation. Without it, a single class accumulates every algorithm variant behind if/else chains that grow unmaintainably and require retesting every variant when adding one new strategy. Adding a new strategy requires only a new class that implements the interface — zero changes to existing strategies or the calling code.
 
 ---
 
@@ -769,7 +769,7 @@ const txId = processor.process(99.99);
 
 **Key Takeaway**: The Factory pattern centralizes object creation using a registry or conditional logic, so callers depend only on the product interface and never on concrete classes — adding a new product requires only updating the factory.
 
-**Why It Matters**: Factories are ubiquitous in enterprise Java (BeanFactory, ObjectMapper), Python (logging handlers), and Node.js ecosystems. Payment systems at Shopify and Stripe use factory-like patterns to instantiate the correct payment gateway implementation at runtime based on merchant configuration. Without a factory, every checkout page would need to import and instantiate each gateway class directly, creating tight coupling that makes adding a new payment method a cross-cutting change across dozens of files.
+**Why It Matters**: Factories are ubiquitous in enterprise ecosystems — Java's BeanFactory and ObjectMapper, Python's logging handlers, and Node.js dependency injection containers all rely on the pattern. Without a factory, every caller must import and instantiate each concrete class directly, creating tight coupling that makes adding a new implementation a cross-cutting change across dozens of files. A factory centralises object creation so adding a new product type requires updating only one place.
 
 ---
 
@@ -865,7 +865,7 @@ print(request.retries)          # => Output: 3
 
 **Key Takeaway**: The Builder pattern makes complex object construction readable by providing a fluent API where each method name describes what it sets — far more maintainable than constructors with many positional parameters.
 
-**Why It Matters**: The Builder pattern appears in almost every major library: Java's StringBuilder, Python's SQLAlchemy query builder, Kotlin's DSL builders, and Elasticsearch's QueryBuilder. It solves the "telescoping constructor" anti-pattern where objects with 8+ optional fields require 2^8 constructor overloads or a single unreadable constructor. At Dropbox, protocol buffer builders in Python and Java use this pattern for configuring complex API requests with dozens of optional fields, making the code self-documenting and less error-prone than positional arguments.
+**Why It Matters**: The Builder pattern appears in almost every major library: Java's StringBuilder, Python's SQLAlchemy query builder, Kotlin's DSL builders, and Elasticsearch's QueryBuilder. It solves the "telescoping constructor" anti-pattern where objects with 8+ optional fields require 2^8 constructor overloads or a single unreadable constructor. Protocol buffer builders use this pattern for configuring complex API requests with dozens of optional fields, making the code self-documenting and less error-prone than positional arguments.
 
 ---
 
@@ -937,7 +937,7 @@ trackCheckout(adapter, "42", 99.99);
 
 **Key Takeaway**: The Adapter wraps an incompatible class and translates its interface to match what callers expect — callers depend on the adapter's interface, never on the adaptee's interface.
 
-**Why It Matters**: Adapters are essential when integrating third-party services, migrating legacy systems, or wrapping external APIs. Stripe's client libraries act as adapters between the raw HTTP API and typed language interfaces. In large organizations, adapters allow teams to swap analytics providers (Google Analytics → Amplitude → Mixpanel) by writing a new adapter without touching any client code. The pattern also prevents third-party API changes from propagating across the codebase — only the adapter file changes.
+**Why It Matters**: Adapters are essential when integrating third-party services, migrating legacy systems, or wrapping external APIs. Client libraries act as adapters between raw HTTP APIs and typed language interfaces. Teams can swap analytics or payment providers by writing a new adapter without touching any client code. The pattern also prevents third-party API changes from propagating across the codebase — only the adapter file changes.
 
 ---
 
@@ -1048,7 +1048,7 @@ logging_repo.find_by_id("u1")  # => second call — cache hit
 
 **Key Takeaway**: Decorators stack behaviors (logging, caching, retry) around a core component without modifying it — each decorator adds one concern and composes cleanly with others.
 
-**Why It Matters**: Python's `@functools.lru_cache`, Java's Spring AOP (transaction, caching, security annotations), and gRPC interceptors all use the Decorator pattern. It addresses the cross-cutting concern problem: behaviors like logging and caching apply across many operations but belong in neither the domain model nor infrastructure. Netflix applies decorator-style patterns (Hystrix circuit breakers, Ribbon retry) around every service call. Adding a new cross-cutting concern requires writing one new decorator class — zero changes to existing decorators or the core component.
+**Why It Matters**: Python's `@functools.lru_cache`, Java's Spring AOP (transaction, caching, security annotations), and gRPC interceptors all use the Decorator pattern. It addresses the cross-cutting concern problem: behaviors like logging and caching apply across many operations but belong in neither the domain model nor infrastructure. Decorator-style patterns (circuit breakers, retry logic) compose cleanly around service calls without modifying those calls. Adding a new cross-cutting concern requires writing one new decorator class — zero changes to existing decorators or the core component.
 
 ---
 
@@ -1165,7 +1165,7 @@ console.log(result); // => Output: { success: true, trackingId: 'TRK-o1' }
 
 **Key Takeaway**: The Facade pattern gives callers a single, simplified method that hides the coordination complexity of multiple subsystem components — callers depend on the facade interface, not on the individual subsystem classes.
 
-**Why It Matters**: Facades are the architecture of every SDK and client library — the AWS SDK facade hides dozens of HTTP calls, retry logic, and credential management behind simple method calls. In microservices, API Gateways act as facades that route, aggregate, and transform calls across multiple backend services. Teams that adopt facade patterns for complex workflows report reduced onboarding friction: new developers call `orderFacade.placeOrder()` without needing to understand inventory reservation, payment retry logic, and shipping provider APIs simultaneously.
+**Why It Matters**: Facades are the architecture of every SDK and client library — they hide dozens of internal calls, retry logic, and protocol details behind simple method calls. In microservices, API Gateways act as facades that route, aggregate, and transform calls across multiple backend services. Teams that adopt facade patterns for complex workflows reduce onboarding friction: new developers call `orderFacade.placeOrder()` without needing to understand inventory reservation, payment retry logic, and shipping provider APIs simultaneously.
 
 ---
 
@@ -1304,7 +1304,7 @@ print(store.all())  # => Output: {'u1': {'email': 'alice@example.com'}}
 
 **Key Takeaway**: The Command pattern encapsulates an action and its parameters as an object — this object can be stored in a queue, logged, replicated, or reversed, enabling features like undo/redo, job queues, and audit trails.
 
-**Why It Matters**: The Command pattern powers undo/redo in every text editor (VS Code, Google Docs), task queues (Celery, Bull), and transactional outbox patterns. Git itself is fundamentally a command log — every commit is an immutable command that can be replayed or reverted. In financial systems, commands serve as audit trails where every action (CreateTransaction, UpdateBalance) is stored as an immutable record. Teams that implement command-sourced audit logs report near-zero effort for compliance reporting.
+**Why It Matters**: The Command pattern powers undo/redo in text editors, task queues (Celery, Bull), and transactional outbox patterns. Git is fundamentally a command log — every commit is an immutable command that can be replayed or reverted. In financial systems, commands serve as audit trails where every action (CreateTransaction, UpdateBalance) is stored as an immutable record. Implementing command-sourced audit logs means compliance reporting becomes a query over the command log, requiring no additional instrumentation.
 
 ---
 
@@ -1401,7 +1401,7 @@ mediator.search_box.search("architecture patterns")
 
 **Key Takeaway**: The Mediator centralizes all coordination logic — components emit events and receive instructions only through the mediator, preventing the web of direct cross-references that emerges when N components communicate peer-to-peer.
 
-**Why It Matters**: Without a mediator, N components communicating directly create O(N²) coupling — every new component must know about every existing component. The Mediator reduces this to O(N): each component knows only the mediator. UI frameworks (React's event bubbling, Vue's event bus), air traffic control systems, and chat servers all use mediator-style coordination. Discord's server architecture uses mediators to coordinate between channels, users, and voice sessions without direct component coupling.
+**Why It Matters**: Without a mediator, N components communicating directly create O(N²) coupling — every new component must know about every existing component. The Mediator reduces this to O(N): each component knows only the mediator. UI frameworks (React's event bubbling, Vue's event bus), air traffic control systems, and chat servers all use mediator-style coordination. Adding a new component to a mediator-based system requires wiring it only to the mediator, not to every existing peer—a linear cost versus the quadratic cost of direct coupling.
 
 ---
 
@@ -1550,7 +1550,7 @@ console.log(order.status()); // => Output: SHIPPED
 
 **Key Takeaway**: The State pattern eliminates complex if/elif chains on state variables by giving each state its own class that implements the valid behaviors for that state — invalid transitions are handled within each state class, not scattered across conditional logic.
 
-**Why It Matters**: Order lifecycle management, traffic lights, connection state machines, and CI/CD pipeline stages all require state-dependent behavior. Without the State pattern, every new state requires modifying every method that checks state — a classic open/closed principle violation. Shopify's order management system handles tens of state transitions (unfulfilled, partially fulfilled, fulfilled, refunded); State pattern keeps each transition's logic isolated and independently testable. State machines formalized this way also map directly to UML state diagrams for documentation.
+**Why It Matters**: Order lifecycle management, traffic lights, connection state machines, and CI/CD pipeline stages all require state-dependent behavior. Without the State pattern, every new state requires modifying every method that checks state — a classic open/closed principle violation. Complex state machines with many transitions become difficult to reason about when all logic is in one class; State pattern keeps each state's logic isolated and independently testable. State machines formalized this way also map directly to UML state diagrams for documentation, making the intended behavior verifiable against the implementation.
 
 ---
 
@@ -1741,7 +1741,7 @@ print(email1.domain())    # => Output: example.com
 
 **Key Takeaway**: Value objects are immutable, equality-by-value domain concepts that validate themselves at construction — they are safer than primitives (validated, meaningful type) and simpler than entities (no identity, no lifecycle).
 
-**Why It Matters**: Using primitives for domain concepts (float for money, string for email) leads to bugs: comparing "$10 USD" with "10.0" requires scattered null checks, currency mismatches go undetected, and invalid values propagate silently. Value objects eliminate entire categories of bugs by making invalid states unrepresentable. In financial systems at Monzo and Revolut, Money value objects prevent currency confusion that could result in transactions being processed in the wrong currency — a production incident with regulatory consequences.
+**Why It Matters**: Using primitives for domain concepts (float for money, string for email) leads to bugs: comparing "$10 USD" with "10.0" requires scattered null checks, currency mismatches go undetected, and invalid values propagate silently. Value objects eliminate entire categories of bugs by making invalid states unrepresentable—a Money value object that carries its currency alongside its amount prevents currency confusion at the type level, turning what would be a silent runtime error into a compile-time failure. In financial systems, this class of enforcement is especially critical because currency mismatches carry regulatory and financial consequences.
 
 ---
 
@@ -1839,7 +1839,7 @@ except ValueError as e:
 
 **Key Takeaway**: The Aggregate Root is the sole entry point for all modifications to a cluster of related objects — this concentrates business rule enforcement in one place and ensures the cluster is always in a valid state.
 
-**Why It Matters**: Without aggregate roots, invariants (max order value, minimum item count) get scattered across services, controllers, and repositories — each enforcing them inconsistently. DDD's aggregate design aligns with how databases enforce consistency: a transaction is a consistency boundary just as an aggregate is. Shopify's product catalog uses aggregates to ensure variant pricing and inventory rules are always consistent. Repositories save and load complete aggregates, not partial graphs, ensuring the consistency boundary is respected across the persistence layer.
+**Why It Matters**: Without aggregate roots, invariants (max order value, minimum item count) get scattered across services, controllers, and repositories — each enforcing them inconsistently. DDD's aggregate design aligns with how databases enforce consistency: a transaction is a consistency boundary just as an aggregate is. Aggregate roots centralize enforcement so that invariants cannot be bypassed by any caller, regardless of which code path initiates the modification. Repositories save and load complete aggregates, not partial graphs, ensuring the consistency boundary is respected across the persistence layer.
 
 ---
 
@@ -1929,7 +1929,7 @@ console.log(`Delivery: $${delivery}`); // => Output: Delivery: $6.25 (standard +
 
 **Key Takeaway**: Each Bounded Context maintains its own model of shared concepts — "Customer" means different attributes in Sales vs Shipping, and each context owns the operations relevant to its responsibility.
 
-**Why It Matters**: Attempting to create a single unified Customer model that satisfies Sales, Shipping, Billing, and Support contexts creates a god object that grows unboundedly and becomes impossible to change without breaking all consumers. Amazon's service decomposition famously has multiple Customer models — the Recommendations service Customer has click history, the Logistics Customer has delivery preferences, and the Finance Customer has payment methods. Bounded Contexts map directly to microservice boundaries: each service owns one context's model.
+**Why It Matters**: Attempting to create a single unified Customer model that satisfies Sales, Shipping, Billing, and Support contexts creates a god object that grows unboundedly and becomes impossible to change without breaking all consumers. Each context needs different attributes, different validation rules, and different operations—what "Customer" means to a recommendations engine differs fundamentally from what it means to a logistics system. Bounded Contexts map directly to microservice boundaries: each service owns one context's model and evolves it independently, eliminating the cross-team coordination overhead imposed by a shared universal model.
 
 ---
 
@@ -2052,7 +2052,7 @@ print(legacy_for_write.UNIT_PRICE)  # => Output: 101.84 (converted to EUR)
 
 **Key Takeaway**: The Anti-Corruption Layer translates external system models into domain concepts at the boundary — the domain model never directly touches external field names, data types, or conventions.
 
-**Why It Matters**: Without an ACL, legacy system concepts (numeric codes, currency-specific prices, quantity-as-boolean) leak into the domain model and spread throughout the codebase. When the legacy system changes (new field names, different currency), every domain file that imported legacy concepts breaks. Microsoft's patterns documentation cites ACL as essential for modernization projects where new systems must coexist with legacy ERPs. Netflix used ACL patterns extensively during their DVD-to-streaming migration to prevent DVD-specific concepts from contaminating the streaming domain model.
+**Why It Matters**: Without an ACL, legacy system concepts (numeric codes, currency-specific prices, quantity-as-boolean flags) leak into the domain model and spread throughout the codebase. When the legacy system changes (new field names, different currency representation), every domain file that imported legacy concepts breaks. The ACL pattern is essential for modernization projects where new systems must coexist with legacy ERPs—it contains the blast radius of legacy changes to the translation layer and keeps the domain model expressing concepts in terms that match the new system's understanding of the world.
 
 ---
 
@@ -2410,7 +2410,7 @@ console.log(result); // => Output: { token: 'jwt-token-here' }
 
 **Key Takeaway**: Plugin architecture exposes a stable CoreAPI for plugins to register behavior (routes, event handlers) — the core stays unchanged as new capabilities are added through plugins loaded at runtime.
 
-**Why It Matters**: Plugin architectures power VS Code (tens of thousands of extensions on the marketplace), Webpack (loaders and plugins), Jenkins (2,000+ plugins), and Kubernetes (admission controllers, CNI plugins). They enable organizations to extend platforms without access to core source code and allow independent release cycles — the VS Code team ships the editor while thousands of plugin authors release independently. The CoreAPI surface area is deliberately limited to prevent plugins from accessing internals that would couple them tightly to core implementation details.
+**Why It Matters**: Plugin architectures enable organizations to extend platforms without access to core source code and allow independent release cycles — the core team ships the platform while plugin authors release independently. Tools like VS Code, Webpack, and Jenkins demonstrate this at scale: each extension point defined by a stable plugin interface allows an ecosystem to grow without coupling to core internals. The CoreAPI surface area is deliberately limited to prevent plugins from accessing internals that would create tight coupling to core implementation details.
 
 ---
 
@@ -2865,7 +2865,7 @@ for event in events:
 
 **Key Takeaway**: Event Sourcing stores the full sequence of events rather than current state — current state is derived by replaying events, giving you complete audit history and the ability to time-travel to any past state.
 
-**Why It Matters**: Event Sourcing is the architecture behind git (commits are events, file state is derived by replay), banking ledgers (debits and credits are events, balance is derived), and financial audit systems (Revolut, Monzo use event-sourced account models). The pattern eliminates the "why" gap — traditional systems store only current balance, losing the transaction history. With Event Sourcing, debugging means replaying events to the point of failure. The tradeoff is complexity: eventual consistency between write and read models, and snapshot strategies needed for accounts with millions of events.
+**Why It Matters**: Event Sourcing is the architecture behind git (commits are events, file state is derived by replay), banking ledgers (debits and credits are events, balance is derived), and financial audit systems. The pattern eliminates the "why" gap — traditional systems store only current state, losing the history of how it was reached. With Event Sourcing, debugging means replaying events to the point of failure, and time-travel queries ("what was the state at time T?") become natural. The tradeoff is complexity: eventual consistency between write and read models, and snapshot strategies needed for streams with millions of events.
 
 ---
 
@@ -2994,7 +2994,7 @@ try {
 
 **Key Takeaway**: The Saga pattern manages distributed transactions through a sequence of local transactions with compensating rollbacks — each service commits its local change and compensations undo completed steps on failure, achieving eventual consistency without 2PC.
 
-**Why It Matters**: Two-phase commit (2PC) distributed transactions require all participating services to be available simultaneously and lock resources across services for the duration — catastrophic for microservices at scale. Uber's order matching, Airbnb's booking, and Amazon's checkout all use saga-like patterns because a booking involves inventory, payment, and notification services that cannot be locked together. Sagas trade atomicity for availability: the system remains operational even if one service is down, with compensation eventually restoring consistency.
+**Why It Matters**: Two-phase commit (2PC) distributed transactions require all participating services to be available simultaneously and lock resources across services for the duration — catastrophic for microservices at scale. Workflows involving inventory reservation, payment processing, and notification services cannot be locked together without unacceptable performance and availability consequences. Sagas trade strict atomicity for availability: the system remains operational even if one service is temporarily down, with compensation transactions eventually restoring consistency when the failed step resolves.
 
 ---
 

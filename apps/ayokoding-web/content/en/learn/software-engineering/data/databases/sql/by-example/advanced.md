@@ -631,7 +631,7 @@ FROM session_metrics;                                   -- => Aggregate across a
 
 **Key Takeaway**: Sessionization uses LAG to calculate time gaps between events. New session starts when gap exceeds threshold (e.g., 30 minutes). Use running SUM of session starts to assign session IDs. Calculate session metrics (duration, page views) with GROUP BY. Essential for web analytics.
 
-**Why It Matters**: "Average session duration" and "pages per session" are core web analytics metrics, but raw event logs don't contain session IDs—only individual event timestamps. Sessionization creates these groupings from timestamp gaps, enabling calculation of engagement metrics from raw data. Without it, you cannot answer "how long do users spend before converting?", "what's the typical browse depth?", or "do mobile users have shorter sessions than desktop?" Google Analytics performs sessionization automatically; this pattern lets you do the same analysis on your own event data with full control.
+**Why It Matters**: "Average session duration" and "pages per session" are core web analytics metrics, but raw event logs don't contain session IDs—only individual event timestamps. Sessionization creates these groupings from timestamp gaps, enabling calculation of engagement metrics from raw data. Without it, you cannot answer "how long do users spend before converting?", "what's the typical browse depth?", or "do mobile users have shorter sessions than desktop?" Implementing sessionization directly in SQL gives full control over session boundary definitions, timeout thresholds, and session-level aggregations, enabling custom analytics pipelines tailored to domain-specific event semantics.
 
 ---
 
@@ -2082,7 +2082,7 @@ GROUP BY c.id, c.name;
 
 **Key Takeaway**: Denormalization duplicates data to eliminate joins. Use for read-heavy workloads. Trade-offs: faster reads, complex updates, data redundancy. Materialized views/summary tables pre-aggregate for instant queries. Refresh periodically or use triggers. Balance normalization (data integrity) vs denormalization (performance).
 
-**Why It Matters**: Dashboard queries joining 5 tables across millions of rows cannot meet sub-second SLAs without denormalization. Analytics dashboards at companies like Shopify and Stripe use denormalized summary tables to provide instant responses to frequently accessed metrics. Understanding when to denormalize—read-heavy workloads where slightly stale data is acceptable—versus when to normalize—write-heavy workloads requiring strict consistency—is a key architectural decision. Getting this wrong in either direction creates either unusable performance or unsustainable data consistency maintenance burden.
+**Why It Matters**: Dashboard queries joining 5 tables across millions of rows cannot meet sub-second SLAs without denormalization. Denormalized summary tables pre-aggregate results so frequently accessed metrics can be served from a single table scan rather than a multi-join computation. Understanding when to denormalize—read-heavy workloads where slightly stale data is acceptable—versus when to normalize—write-heavy workloads requiring strict consistency—is a key architectural decision. Getting this wrong in either direction creates either unusable performance or unsustainable data consistency maintenance burden.
 
 ---
 
@@ -2623,7 +2623,7 @@ WHERE order_number = 'ORD-001'       -- => Same order
 
 **Key Takeaway**: Idempotent operations use unique constraints on external IDs (transaction_id, order_number). INSERT OR IGNORE prevents duplicates without errors. ON CONFLICT DO UPDATE for upserts. Status transitions check current state in WHERE. Enables safe retries in distributed systems.
 
-**Why It Matters**: Network failures cause retries—a mobile app might submit a payment request 3 times before receiving a response. Without idempotency, each retry creates a separate charge, resulting in duplicate billing that damages customer trust and requires manual refund processing. Idempotency keys ensure "at-least-once" message delivery doesn't become "multiple times" execution. Stripe, PayPal, and every serious payment processor mandate idempotency keys for transaction APIs. This pattern is also mandatory for event-driven systems, webhook receivers, and any distributed operation where the sender cannot guarantee exactly-once delivery.
+**Why It Matters**: Network failures cause retries—a mobile app might submit a payment request 3 times before receiving a response. Without idempotency, each retry creates a separate charge, resulting in duplicate billing that damages customer trust and requires manual refund processing. Idempotency keys ensure "at-least-once" message delivery doesn't become "multiple times" execution. This pattern is mandatory for payment APIs, event-driven systems, webhook receivers, and any distributed operation where the sender cannot guarantee exactly-once delivery.
 
 ---
 
@@ -2756,7 +2756,7 @@ WHERE request_time < datetime('now', '-24 hours');  -- => Delete older than 24 h
 
 **Key Takeaway**: Rate limiting counts events within time windows. Simple approach: count rows with `request_time >= datetime('now', '-1 hour')`. Sliding window: Store timestamps in JSON array, filter old ones. Check count before allowing action. Periodically cleanup old records. Essential for API rate limiting, login attempts, spam prevention.
 
-**Why It Matters**: Without rate limiting, a single bad actor can exhaust your API capacity with automated requests, brute-force user passwords, or scrape your entire product catalog in minutes. Database-backed rate limiting persists across server restarts and works consistently in distributed deployments where Redis might not be available. Every public-facing API—from GitHub to Twitter—enforces rate limits to ensure fair usage and system stability. This pattern is a fundamental security and availability requirement for any service exposed to the internet, protecting both your infrastructure and your users.
+**Why It Matters**: Without rate limiting, a single bad actor can exhaust your API capacity with automated requests, brute-force user passwords, or scrape your entire product catalog in minutes. Database-backed rate limiting persists across server restarts and works consistently in distributed deployments where Redis might not be available. Rate limiting is a fundamental security and availability requirement for any public-facing API, protecting both infrastructure and users by ensuring fair usage and preventing abuse.
 
 ---
 
@@ -2883,7 +2883,7 @@ WHERE user_id = 'user-42' AND test_name = 'dashboard_redesign';
 
 **Key Takeaway**: Feature flags use is_enabled boolean and rollout_percentage for gradual rollout. Store target_users as JSON for specific user targeting. Hash user IDs for consistent percentage assignment. Enable instant feature toggling without deployment. Essential for continuous delivery and risk mitigation.
 
-**Why It Matters**: "Ship fast, fix fast" requires the ability to instantly disable broken features in production without code deployment or rollback procedures. Gradual rollouts (1% → 10% → 50% → 100%) catch performance regressions and bugs before they affect all users, with the ability to halt rollout immediately. Database-backed feature flags propagate to all servers within seconds without deployment, enabling true continuous delivery. Companies like Facebook, Netflix, and Google use feature flags for every major feature launch, treating deployment and release as separate concerns controlled by business stakeholders, not just engineers.
+**Why It Matters**: "Ship fast, fix fast" requires the ability to instantly disable broken features in production without code deployment or rollback procedures. Gradual rollouts (1% → 10% → 50% → 100%) catch performance regressions and bugs before they affect all users, with the ability to halt rollout immediately. Database-backed feature flags propagate to all servers within seconds without deployment, enabling true continuous delivery. This pattern allows deployment and release to be treated as separate concerns—code ships continuously while feature visibility is controlled independently by configuration.
 
 ---
 

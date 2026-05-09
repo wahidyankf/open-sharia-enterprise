@@ -1367,7 +1367,7 @@ export default function PostModal({
 
 **Common Pitfalls**: Wrong interception syntax (. for same level, .. for parent level), or not handling direct access (only modal, no full page).
 
-**Why It Matters**: Intercepting routes enable the Instagram/Twitter pattern where clicking a photo opens a modal with the shareable URL, but navigating directly to that URL shows the full page. Production social media platforms, e-commerce product galleries, and media applications use this pattern extensively. Users can share modal URLs, open in new tabs for full experience, and navigate back to the list without losing context. This dramatically improves engagement metrics compared to simple modal implementations that lack shareable URLs.
+**Why It Matters**: Intercepting routes enable a powerful dual-rendering pattern where clicking an item opens a modal with a shareable URL, but navigating directly to that URL renders the full page. This pattern allows users to share modal URLs, open them in new tabs for the full experience, and navigate back to the list without losing context. The technique dramatically improves engagement compared to simple modal implementations that lack shareable URLs, and is widely used in social media platforms, e-commerce galleries, and media applications.
 
 ## Group 4: Advanced Forms & Validation
 
@@ -2526,7 +2526,7 @@ export default function UploadPage() {
 
 **Common Pitfalls**: Not validating file types server-side (security risk), or storing files in wrong directory (not accessible publicly).
 
-**Why It Matters**: File upload handling is a common security vulnerability surface. Production applications require server-side validation of both file type (MIME type, not just extension) and file size. Storing files in the public/ directory makes them accessible without authentication; production applications store uploaded files in cloud storage (S3, Cloudflare R2) or restricted server paths. Server Actions handle file uploads securely without CORS configuration, keeping file processing server-side where malware scanning and virus detection can run.
+**Why It Matters**: File upload handling is a common security vulnerability surface. Production applications require server-side validation of both file type (MIME type, not just extension) and file size. Storing files in the public/ directory makes them accessible without authentication; production applications store uploaded files in cloud object storage or restricted server paths instead. Server Actions handle file uploads securely without CORS configuration, keeping file processing server-side where malware scanning and virus detection can run.
 
 ## Group 9: Pagination & Infinite Scroll
 

@@ -260,7 +260,7 @@ console.log("Total sum:", totalSum); // => sum of 0..totalItems-1
 
 **Key Takeaway**: Parallel Wasm: compile the module once on the main thread, share via `postMessage`; use `WebAssembly.Memory({ shared: true })` for data sharing; each worker instantiates its own instance against the shared memory; coordinate via Atomics.
 
-**Why It Matters**: This pattern achieves true parallelism on multi-core machines — each worker runs on a separate OS thread. A sum over 4 million integers that takes 4ms on a single thread takes ~1ms distributed across 4 workers. For real applications (image convolution, FFT, physics simulation), the speedup is proportional to the number of cores for embarrassingly parallel algorithms. This is the architecture used by Figma's compute-intensive layout engine and WebAssembly-based scientific computing applications.
+**Why It Matters**: This pattern achieves true parallelism on multi-core machines — each worker runs on a separate OS thread. A sum over 4 million integers that takes 4ms on a single thread takes ~1ms distributed across 4 workers. For real applications (image convolution, FFT, physics simulation), the speedup is proportional to the number of cores for embarrassingly parallel algorithms. This is the architecture used by compute-intensive layout engines and WebAssembly-based scientific computing applications that need to leverage all available CPU cores.
 
 ---
 
@@ -340,7 +340,7 @@ emcc parallel.c -o parallel.js \
 
 **Key Takeaway**: Emscripten pthreads (`-pthread -s USE_PTHREADS=1`) maps POSIX thread APIs to Web Workers and SharedArrayBuffer atomics. PTHREAD_POOL_SIZE pre-spawns workers to reduce first-use latency. COOP/COEP headers are mandatory.
 
-**Why It Matters**: Emscripten pthreads is the migration path for parallel C/C++ code to the web. A C++ OpenMP-parallel image processing library can be compiled with Emscripten pthreads support (OpenMP maps to pthreads) and run in the browser with near-identical parallelism. Google Maps uses this approach for client-side 3D terrain rendering. The pre-spawn pool (`PTHREAD_POOL_SIZE`) is critical for interactive use — creating a Web Worker has 5-50ms overhead that makes the first parallel call sluggish; pre-spawning hides this cost.
+**Why It Matters**: Emscripten pthreads is the migration path for parallel C/C++ code to the web. A C++ OpenMP-parallel image processing library can be compiled with Emscripten pthreads support (OpenMP maps to pthreads) and run in the browser with near-identical parallelism. This approach enables client-side 3D rendering and real-time computation workloads in browser environments. The pre-spawn pool (`PTHREAD_POOL_SIZE`) is critical for interactive use — creating a Web Worker has 5-50ms overhead that makes the first parallel call sluggish; pre-spawning hides this cost.
 
 ---
 
@@ -1625,7 +1625,7 @@ fastly compute deploy     # => deploys to Fastly's edge network
 
 **Key Takeaway**: Cloudflare Workers supports Rust-compiled Wasm via `workers-rs` (deploy with `wrangler`). Fastly Compute uses WASIp1 modules (deploy with `fastly compute deploy`). Both run Wasm in distributed edge data centers with sub-millisecond cold starts.
 
-**Why It Matters**: Edge Wasm deployment is the production destination for WASI. Cloudflare Workers' Wasm support means a Rust module is deployed globally to 300+ data centers in minutes, with 0ms cold starts (Wasm is pre-compiled on Cloudflare's infrastructure). This is the architecture of Shopify's Oxygen platform (Remix on Cloudflare Workers), Cloudflare's own Zaraz product (JavaScript analytics orchestrator in Wasm), and any performance-sensitive edge API. The combination of Wasm's isolation guarantees and edge deployment's geographic distribution is uniquely powerful for low-latency, high-security API design.
+**Why It Matters**: Edge Wasm deployment is the production destination for WASI. Cloudflare Workers' Wasm support means a Rust module is deployed globally to 300+ data centers in minutes, with 0ms cold starts because Wasm is pre-compiled on the edge infrastructure. This architecture suits any performance-sensitive edge API that requires Wasm's isolation guarantees combined with geographic distribution. The combination of Wasm's sandboxing model and edge deployment is uniquely powerful for low-latency, high-security API design.
 
 ---
 

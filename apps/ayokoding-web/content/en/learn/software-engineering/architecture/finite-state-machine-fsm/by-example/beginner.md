@@ -702,7 +702,7 @@ console.log(doc.getCurrentState()); // => Output: Published
 
 **Key Takeaway**: Bi-directional transitions enable reversible operations (publish/unpublish, archive/restore). FSMs support undo patterns by modeling reverse transitions explicitly.
 
-**Why It Matters**: Undo functionality prevents data loss. When Medium implemented article publishing, FSMs with bi-directional transitions (Draft ↔ Published) enabled writers to unpublish articles without losing published URLs or SEO rankings. State history (Draft → Published → Draft → Published) created audit trail showing all state changes, critical for content moderation and editorial workflows.
+**Why It Matters**: Undo functionality prevents data loss, and bi-directional FSM transitions are the natural mechanism for reversible operations. Modeling reverse transitions explicitly (Draft ↔ Published, Active ↔ Archived) makes both directions first-class states with defined valid transitions, preventing invalid reversals while enabling authorized ones. The state history produced by bidirectional transitions also creates an audit trail showing all state changes—a valuable record for content moderation, editorial workflows, and compliance requirements.
 
 ## Events and Triggers (Examples 9-13)
 
@@ -986,7 +986,7 @@ console.log(system.getCurrentState()); // => Output: Emergency (not Warning or C
 
 **Key Takeaway**: Event prioritization ensures critical events process before less important ones. Queue sorts events by priority; FSM processes highest-priority events first.
 
-**Why It Matters**: Priority matters in safety-critical systems. When Boeing 737 MAX analyzed their flight control FSM, they found that sensor malfunction events (low priority) were processing before pilot override events (high priority), contributing to MCAS disasters. Event prioritization (pilot commands always preempt automated systems) is now mandatory in aviation software. Priority queues prevent low-priority events from blocking critical operations.
+**Why It Matters**: Priority matters in safety-critical systems where not all events carry equal urgency. When low-priority events process before high-priority ones, critical commands can be delayed behind routine signals—a correctness failure, not merely a performance issue. Event prioritization ensures that high-urgency events (emergency stops, user overrides, error escalations) preempt lower-priority ones regardless of arrival order. Priority queues also prevent low-priority event floods from blocking critical operations, which is essential for real-time systems with bounded response-time requirements.
 
 ### Example 12: Event History and Replay
 
@@ -1498,7 +1498,7 @@ try {
 
 **Key Takeaway**: Resource guards check availability (memory, connections, quotas) before transitions. Failed resource checks prevent transitions and may move to error states.
 
-**Why It Matters**: Resource guards prevent cascading failures. When Kubernetes schedules pods, FSM guards check node resources (CPU, memory, disk) before transitioning pod to Running state. Failed guards keep pod in Pending state instead of starting and immediately crashing. Resource-aware FSMs reduce cluster instability by 80% compared to optimistic scheduling. Guard failures also produce actionable signals: a pod stuck in Pending with a failing resource guard tells operators exactly which resource constraint needs addressing.
+**Why It Matters**: Resource guards prevent cascading failures by rejecting transitions that would overcommit available capacity. Without resource-aware guards, systems optimistically accept work that immediately fails on insufficient resources—wasting allocation effort and destabilizing downstream systems. Guard failures at the FSM transition level produce actionable signals: a request stuck in Pending with a failing resource guard tells operators exactly which resource constraint needs addressing, rather than generating cryptic runtime errors after partial work has been done.
 
 ### Example 17: Data Validation Guards
 
@@ -1763,7 +1763,7 @@ console.log(loan3.getCurrentState()); // => Output: Rejected
 
 **Key Takeaway**: Composite guards combine multiple conditions using AND/OR logic. Complex business rules (credit AND income AND debt ratio) OR (collateral) modeled as boolean expressions. All guard conditions must evaluate before transition.
 
-**Why It Matters**: Real business rules are complex. When LendingClub implemented loan approval FSMs, composite guards captured actual underwriting rules (30+ conditions combined with AND/OR/NOT logic). Explicit guard logic reduced loan default rate by 15% because business rules were visible and testable. Analysts could review FSM guard logic directly instead of reverse-engineering from code.
+**Why It Matters**: Real business rules are complex combinations of conditions joined with AND/OR/NOT logic. Encoding these as composite guards in the FSM makes them explicit, readable, and independently testable—each guard condition can be unit-tested against known inputs without exercising the full FSM. This visibility prevents business rule inconsistencies that accumulate when logic is scattered across multiple code paths and services, and makes it straightforward for non-engineers to review the transition logic directly rather than reverse-engineering behavior from implementation code.
 
 ## Entry and Exit Actions (Examples 19-23)
 
@@ -1892,7 +1892,7 @@ character.handleEvent("land"); // => Jumping → Idle
 
 **Key Takeaway**: Entry actions execute automatically when entering state, regardless of source state. Centralizes setup logic (start animations, play sounds) that must happen for every transition into that state.
 
-**Why It Matters**: Entry actions eliminate code duplication. When Unity game developers analyzed character controller code, they found animation setup duplicated across 10+ transition handlers (Idle→Walking, Running→Walking, Jumping→Walking all called `startWalkingAnimation()`). Consolidating into Walking state entry action reduced code by 70% and fixed 15 bugs where some transitions forgot to call setup logic.
+**Why It Matters**: Entry actions eliminate code duplication by consolidating state initialization into a single place. Without entry actions, every transition that leads to a given state must individually call the same setup logic—start animation, open connection, reset counter. When a new transition to that state is added, it must remember to include the setup call. Entry actions make the setup automatic and unconditional: regardless of which transition fired, the correct initialization runs. This removes an entire class of bugs where transitions forgot to call initialization code.
 
 ### Example 20: State Exit Actions
 
@@ -2144,7 +2144,7 @@ request.handleEvent("response_ok"); // => Pending → Success
 
 **Key Takeaway**: Entry actions setup state resources (start timers, open connections); exit actions cleanup state resources (clear timers, close connections). Together they ensure complete state lifecycle management.
 
-**Why It Matters**: Lifecycle management prevents bugs and resource leaks. Video conferencing systems experience connectivity issues from connection timers not being cleared when state changed, leading to spurious timeout errors. Entry/exit action pattern (entry: start timer, exit: clear timer) guarantees cleanup, significantly reducing false timeout errors. This pattern also eliminates the class of bugs where cleanup code runs in some exit paths but not others, a common source of resource leaks.
+**Why It Matters**: Lifecycle management prevents bugs and resource leaks. Without paired entry/exit actions, cleanup logic must be duplicated at every exit path from a state—and omitting it from even one path causes leaks that accumulate silently. The entry/exit action pattern makes cleanup structural: the FSM guarantees exit actions run regardless of which transition triggered the state change. This eliminates the entire class of bugs where cleanup runs on some exit paths but not others, a common source of timer leaks, connection leaks, and lock accumulation.
 
 ### Example 22: Entry/Exit Actions vs Transition Actions
 
@@ -3666,7 +3666,7 @@ alarm.handleEvent("sensor_triggered"); // => ArmedStay → Triggered (parent tra
 
 **Key Takeaway**: Hierarchical FSMs group related substates under parent states. Parent state defines common behavior (ANY Armed substate can trigger alarm). Substates specialize parent behavior (ArmedAway activates all sensors, ArmedStay only perimeter). Reduces duplication and makes state relationships explicit.
 
-**Why It Matters**: Hierarchical states prevent state explosion. When ADT (security systems) modeled alarm modes, flat FSM required 15 states and 100+ transitions. Hierarchical FSM (Armed{Away,Stay,Night}, Disarmed{Normal,Maintenance}, Triggered) reduced to 6 states and 20 transitions while supporting same functionality. Parent state transitions (disarm from ANY state) eliminated 10 duplicate transition rules. The reduction in state count also directly reduces the test matrix required for full coverage, from 100+ transition tests to 20, making comprehensive FSM testing achievable.
+**Why It Matters**: Hierarchical states prevent state explosion in domains with shared behavior. A flat FSM must define every combination of conditions as a separate state and duplicate every shared transition across all of them. Hierarchical FSMs group related substates under parent states where common transitions are defined once and inherited by all substates. This reduction in state and transition count directly reduces the test matrix required for full coverage, making comprehensive FSM testing achievable without exponential growth as the domain complexity increases.
 
 ### Example 30: Simple FSM Table-Driven Implementation
 

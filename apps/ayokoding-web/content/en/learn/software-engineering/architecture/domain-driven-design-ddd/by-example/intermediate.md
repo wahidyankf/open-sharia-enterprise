@@ -48,7 +48,7 @@ graph TD
 
 **Key Takeaway**: Bounded Contexts prevent model ambiguity by creating explicit boundaries where domain concepts have precise, context-specific meanings. The same term (e.g., "Customer") can mean different things in different contexts without conflict.
 
-**Why It Matters**: Without Bounded Contexts, teams waste months debating "what is a Customer?" When an e-commerce platform separated their Sales, Fulfillment, and Customer Service contexts, they discovered each team needed different Customer definitions. Sales needed purchase history, Fulfillment needed shipping addresses, Support needed account status. Trying to create one unified Customer model created an oversized entity that nobody understood. Bounded Contexts let each team optimize their model for their specific needs while maintaining clean integration points through Anti-Corruption Layers.
+**Why It Matters**: Without Bounded Contexts, teams waste months debating shared term meanings across different business capabilities. A single unified model attempting to serve all contexts inevitably accumulates conflicting requirements — the Sales team needs purchase history, Fulfillment needs shipping coordinates, Support needs account status — and the result is an oversized entity that no team fully understands or can change safely. Bounded Contexts let each team optimize their model for their specific needs while maintaining clean integration points through Anti-Corruption Layers.
 
 ### Example 32: Bounded Context Implementation - Sales Context
 
@@ -198,7 +198,7 @@ console.log(salesCustomer.getEmail());
 
 **Key Takeaway**: Each Bounded Context implements its own model with context-specific entities, value objects, and repositories. Sales Context's Customer focuses on credit limits and purchase history, completely independent of how other contexts model Customer.
 
-**Why It Matters**: Bounded Context isolation enables independent evolution. When a media platform's Sales team needed to add subscription tiers, they modified their Customer model without coordinating with Streaming, Support, or Analytics teams. Each context evolved at its own pace, deployed independently, and maintained backward compatibility only at integration boundaries. This organizational independence significantly reduced feature delivery time because teams no longer waited for cross-context alignment meetings.
+**Why It Matters**: Bounded Context isolation enables independent evolution. When contexts maintain explicit boundaries, each team can modify their internal model — adding subscription tiers, restructuring entities, or changing persistence — without coordinating with other context teams. Each context evolves at its own pace, deploys independently, and maintains backward compatibility only at integration boundaries. This organizational independence reduces feature delivery time because teams no longer wait for cross-context alignment before shipping changes.
 
 ### Example 33: Bounded Context Implementation - Shipping Context
 
@@ -333,7 +333,7 @@ console.log(shipment.getStatus());
 
 **Key Takeaway**: Shipping Context models Customer completely differently than Sales Context. Same customerId links the concepts, but Shipping focuses on delivery addresses and logistics, not credit limits or purchase history. Each context optimizes its model for its specific responsibilities.
 
-**Why It Matters**: Context-specific models prevent feature bloat. Shipping systems integrated with e-commerce platforms need shipping addresses and package dimensions, not customer credit scores or purchase preferences. By maintaining separate Shipping and Sales contexts, systems exchange only necessary data through well-defined interfaces, reducing coupling and API payload sizes. This separation enables Shipping systems to serve multiple Sales systems without modification.
+**Why It Matters**: Context-specific models prevent feature bloat. A Shipping context needs shipping addresses and package dimensions; it has no need for customer credit scores or purchase preferences that belong to a Sales context. By maintaining separate contexts, systems exchange only necessary data through well-defined interfaces, reducing coupling and API payload sizes. This separation enables a Shipping context to serve multiple upstream systems without modification.
 
 ### Example 34: Context Mapping - Shared Kernel Pattern
 
@@ -529,7 +529,7 @@ console.log(`Transaction: ${transaction.getAmount().getAmount()}`);
 
 **Key Takeaway**: Shared Kernel reduces duplication for commonly used types (Money, Address, etc.) that have identical semantics across contexts. Both teams must coordinate changes to shared code, making this pattern suitable only when tight collaboration is acceptable.
 
-**Why It Matters**: Shared Kernels prevent value object sprawl. A payment platform's Billing and Accounting contexts share Money, Currency, and Account value objects because these have identical semantics in both contexts. This eliminated multiple Money implementations with subtle differences (rounding rules, currency conversion) that caused financial reconciliation errors. However, Shared Kernel requires coordination—both teams must approve changes, making it unsuitable for loosely coupled teams. Use sparingly for truly universal concepts.
+**Why It Matters**: Shared Kernels prevent value object sprawl. When multiple contexts independently implement common types like Money or Currency, subtle semantic differences accumulate — different rounding rules, different currency conversion assumptions — causing reconciliation errors when those contexts integrate. A Shared Kernel defines one authoritative implementation with agreed-upon semantics used by all participating contexts. However, Shared Kernel requires coordination: both teams must approve changes, making it unsuitable for loosely coupled teams. Use sparingly for truly universal concepts.
 
 ### Example 35: Context Mapping - Customer-Supplier Pattern
 
@@ -699,7 +699,7 @@ console.log(`Ordered: ${orderItem.getProductName()}, Total: ${orderItem.getTotal
 
 **Key Takeaway**: Customer-Supplier pattern establishes clear dependency direction. Supplier context defines the contract (DTOs, interfaces), Customer context depends on it. Supplier evolves independently but must maintain backward compatibility for Customer.
 
-**Why It Matters**: Customer-Supplier clarifies API ownership and evolution responsibility. When an e-commerce platform's Inventory context (Supplier) serves Order Management (Customer), Inventory team owns the API contract and ensures backward compatibility. Customer teams can't demand breaking changes without negotiation, preventing the chaos of bidirectional dependencies. This pattern significantly reduced integration failures because API contracts became explicit, versioned, and ownership was clear—Supplier must maintain stability, Customer must adapt to contract.
+**Why It Matters**: Customer-Supplier clarifies API ownership and evolution responsibility. When one context provides services to another, the Supplier owns the API contract and is responsible for backward compatibility. Customer teams cannot demand breaking changes without negotiation, preventing the chaos of bidirectional dependencies where both sides freely modify shared interfaces. This pattern reduces integration failures because API contracts become explicit and versioned, with clear ownership — the Supplier maintains stability, the Customer adapts to the contract.
 
 ## Context Mapping Patterns (Examples 36-42)
 
@@ -891,7 +891,7 @@ console.log(`Payment ${payment.getPaymentId()} successful: ${payment.isSuccessfu
 
 **Key Takeaway**: Anti-Corruption Layer (ACL) shields your domain model from external systems by translating between your ubiquitous language and external contracts. This prevents external models from corrupting your carefully crafted domain model with their naming conventions, data structures, and business rules.
 
-**Why It Matters**: ACLs prevent technical debt from external integrations. When a ride-sharing platform integrated with a mapping service API, they built an ACL that translated the external "lat_lng" objects to their own "GeoLocation" domain model. When the external API changed, only the ACL needed updates—none of the platform's domain services changed. Without ACL, the API change would have required updating numerous files across multiple microservices. ACLs isolate integration complexity to a single boundary, protecting domain purity.
+**Why It Matters**: ACLs prevent technical debt from external integrations. When a system integrates with an external API that uses different terminology and data shapes, an ACL translates those external concepts into the system's own domain model. When the external API changes, only the ACL needs updating — none of the internal domain services change. Without an ACL, each API change would ripple across all code that directly uses the external types. ACLs isolate integration complexity to a single boundary, protecting domain purity.
 
 ### Example 37: Published Language Pattern
 
@@ -1071,7 +1071,7 @@ billingService.handleOrderCreated(event);
 
 **Key Takeaway**: Published Language establishes a documented, versioned contract for inter-context communication. Both publisher and subscriber translate between their internal models and the Published Language, enabling independent evolution as long as the contract is maintained.
 
-**Why It Matters**: Published Language prevents integration brittleness. A payment platform's webhook events use Published Language (JSON schemas with semantic versioning). When their internal Order model added new fields, their webhook schema remained unchanged, preventing breaking changes for API consumers. Publishers evolve internally, subscribers evolve internally, and only the stable Published Language contract binds them—significantly reducing cross-team coordination needs while maintaining integration stability.
+**Why It Matters**: Published Language prevents integration brittleness. When an internal model evolves by adding new fields or restructuring entities, a Published Language contract — such as a versioned JSON schema — remains unchanged, protecting API consumers from breaking changes. Publishers evolve internally, subscribers evolve internally, and only the stable Published Language contract binds them. This significantly reduces cross-team coordination needs while maintaining integration stability across independent release cycles.
 
 ### Example 38: Conformist Pattern
 
@@ -1192,7 +1192,7 @@ console.log(`Credit limit: $${salesService.getCreditLimitDollars(customer)}`);
 
 **Key Takeaway**: Conformist pattern accepts the external system's model without translation. Use when the external system is non-negotiable (legacy ERP, government API) and the cost of maintaining an Anti-Corruption Layer exceeds the benefit. Your domain adopts their naming, data structures, and conventions.
 
-**Why It Matters**: Conformist reduces integration overhead when you lack leverage. Small startups integrating with Salesforce or SAP often use Conformist because building ACLs for massive external systems is prohibitively expensive. The trade-off: your domain model becomes coupled to external conventions, but you avoid maintaining translation layers. Use Conformist for stable, dominant external systems where you're a small player—save ACL investment for systems you can influence or that change frequently.
+**Why It Matters**: Conformist reduces integration overhead when you lack leverage. When integrating with a dominant external system whose model is large and stable, building and maintaining a full ACL translation layer may cost more than the benefit it provides. The trade-off: adopting the external system's conventions couples your domain model to external terms, but eliminates the translation layer. Use Conformist for stable, dominant external systems where you are a small player — reserve ACL investment for systems you can influence or that change frequently.
 
 ### Example 39: Open Host Service Pattern
 
@@ -1455,7 +1455,7 @@ orderService.placeOrder("P1", 5);
 
 **Key Takeaway**: Open Host Service provides a well-documented, stable public API that makes integration easy for multiple consumers. Internal domain model remains private; only DTOs and service interfaces are exposed. This pattern standardizes access and reduces integration complexity.
 
-**Why It Matters**: Open Host Service reduces integration fragmentation. Major cloud storage providers use Open Host Services (RESTful APIs with multi-language SDKs), enabling widespread integration with stable contracts. Before standardizing on Open Host pattern, many early cloud platforms had numerous different integration patterns, requiring custom code per service. Open Host Service with stable contracts significantly reduces integration time and enables self-service integration without direct platform team involvement.
+**Why It Matters**: Open Host Service reduces integration fragmentation. When a context exposes an ad-hoc API per consumer rather than a stable common protocol, each new consumer requires bespoke integration work and the provider team must coordinate directly with every consumer team. A well-defined Open Host Service with a stable contract and versioned protocol enables self-service integration — consumers integrate independently without requiring direct involvement from the provider team. This scales integration capacity without scaling the provider team.
 
 ### Example 40: Separate Ways Pattern
 
@@ -1612,7 +1612,7 @@ console.log("Contexts operate separately with no integration");
 
 **Key Takeaway**: Separate Ways acknowledges that integration isn't always necessary or valuable. When two contexts have no business reason to communicate, forcing integration creates unnecessary coupling and complexity. Let them evolve independently.
 
-**Why It Matters**: Not every context needs integration. A media platform's HR system and their Content Recommendation engine have zero integration points—HR hires people, Recommendation suggests videos, and these domains don't overlap. Forcing integration (e.g., "recommend employee training based on viewing habits") would create artificial coupling for negligible value. Separate Ways saves development cost by explicitly documenting "no integration needed," preventing future teams from wasting time on unnecessary integration projects.
+**Why It Matters**: Not every context needs integration. Some contexts in a system serve entirely independent business capabilities with no meaningful data overlap. Forcing integration between such contexts creates artificial coupling for negligible value and increases coordination overhead. Separate Ways explicitly documents "no integration needed," saving development cost and preventing future teams from wasting time designing integration points that would serve no real business purpose.
 
 ### Example 41: Partnership Pattern
 
@@ -1823,7 +1823,7 @@ coordinator.processOrderWithPayment("O123");
 
 **Key Takeaway**: Partnership pattern formalizes mutual dependency between two contexts. Both teams coordinate development schedules, share interface designs, and commit to supporting each other's needs. Use when success of both contexts depends on tight integration and neither dominates the relationship.
 
-**Why It Matters**: Partnership enables collaborative innovation when contexts need deep integration. A payment platform's Payment and Fraud Detection contexts operate as partners—Fraud needs real-time payment data, Payments need immediate fraud verdicts. Both teams meet regularly to coordinate API changes, release schedules, and feature roadmaps. This partnership significantly reduced payment fraud while maintaining low payment latency. Partnership works when both teams have equal leverage and mutual dependency—otherwise, use Customer-Supplier pattern.
+**Why It Matters**: Partnership enables collaborative innovation when contexts need deep integration. When two contexts have equal leverage and strong mutual dependency — each needs real-time data from the other to function correctly — Partnership is the appropriate pattern. Both teams coordinate API changes, release schedules, and feature roadmaps jointly, preventing unilateral breaking changes. This tight coordination is justified by the depth of integration but only works sustainably when both teams have equal investment in the shared outcomes. When leverage is unequal, Customer-Supplier is a more appropriate choice.
 
 ### Example 42: Big Ball of Mud Pattern (Anti-Pattern Recognition)
 
@@ -1998,7 +1998,7 @@ console.log("Contexts properly separated with clear boundaries");
 
 **Key Takeaway**: Big Ball of Mud occurs when no Bounded Contexts exist—all domain concepts tangled in shared classes. Refactoring into Bounded Contexts separates concerns, enabling independent evolution and clearer domain models. Recognize the anti-pattern by spotting classes mixing unrelated business rules.
 
-**Why It Matters**: Big Ball of Mud is the default state without DDD. A marketplace platform's initial codebase had a single "User" class with many fields serving Hosts, Guests, Payment, Support, and Marketing. Refactoring into context-specific models (Host, Guest, PaymentAccount, SupportCase, MarketingProfile) significantly reduced the User class complexity into multiple focused classes. This separation enabled independent teams to work simultaneously without merge conflicts, accelerating feature delivery.
+**Why It Matters**: Big Ball of Mud is the default state without DDD. As systems grow under time pressure, shared classes accumulate responsibilities: a single entity ends up serving hosts, guests, payments, support, and marketing simultaneously. This makes the class simultaneously too large for any one team to own clearly and too coupled for any one concern to be extracted safely. Refactoring into context-specific models distributes responsibility into focused classes, enabling independent teams to work simultaneously without merge conflicts and reducing the blast radius of any single change.
 
 ## Application Services (Examples 43-47)
 
@@ -2404,7 +2404,7 @@ console.log(`Events published: ${eventPublisher.getPublishedEvents().length}`);
 
 **Key Takeaway**: Application Services collect domain events from aggregates and publish them after successful transaction completion. Domain objects raise events internally; Application Services handle infrastructure concerns (event publishing, transaction management). This maintains clean separation between domain logic and infrastructure.
 
-**Why It Matters**: Event publishing at Application Service layer ensures consistency. A ride-sharing platform's Trip domain raises TripCompleted event when driver marks trip finished. The Application Service saves trip state, publishes event (triggering payment processing, driver rating prompt, receipt email), and only then commits the transaction. If any step fails, entire operation rolls back—preventing split-brain scenarios where trip marked complete but payment never processed. Application Services as transaction boundaries with event publication ensure atomic state changes plus reliable side effects.
+**Why It Matters**: Event publishing at Application Service layer ensures consistency. When an aggregate raises a domain event, the Application Service is responsible for saving state and publishing the event within the same transactional boundary. If any step fails, the entire operation rolls back — preventing split-brain scenarios where the aggregate is marked complete but downstream effects never triggered. Application Services as transaction boundaries with event publication ensure atomic state changes plus reliable side effects.
 
 ### Example 45: Application Service - Input Validation
 
@@ -2581,7 +2581,7 @@ try {
 
 **Key Takeaway**: Application Services validate external input before invoking domain logic. This separates infrastructure concerns (parsing, type coercion, null checks) from domain concerns (business rules). Domain objects can assume inputs are valid, making domain code cleaner and more focused on business logic.
 
-**Why It Matters**: Input validation at Application Service layer prevents defensive programming in domain layer. A payment platform's Charge domain entity doesn't check for null amounts or negative values—that's validated in CreateChargeApplicationService before reaching domain. This separation enables reusing Charge entity across REST API, GraphQL API, and internal admin tools, each with different input formats but same domain rules. Application Services adapt external inputs to domain requirements, keeping domain pure.
+**Why It Matters**: Input validation at Application Service layer prevents defensive programming in domain layer. When input validation is pushed into domain entities, those entities become cluttered with format and presence checks that are infrastructure concerns, not domain rules. Validating at the Application Service layer instead allows domain entities to focus solely on business invariants, and enables reusing the same domain entity across multiple entry points — REST API, GraphQL, batch processors — each with different input formats but the same underlying domain rules.
 
 ### Example 46: Application Service - Cross-Aggregate Transactions
 
@@ -2813,7 +2813,7 @@ console.log(`Customer loyalty points: ${customer.getLoyaltyPoints()}`);
 
 **Key Takeaway**: Application Services coordinate multiple aggregates within a single transaction, respecting aggregate boundaries. Each aggregate enforces its own invariants; Application Service manages the transaction scope ensuring all changes commit together or roll back together.
 
-**Why It Matters**: Cross-aggregate transactions are unavoidable in real systems, but must be used carefully. An e-commerce platform's OrderPlacement service updates Order, Customer, and Inventory aggregates atomically—preventing oversold inventory or lost loyalty points. However, cross-aggregate transactions reduce scalability (locks on multiple aggregates) and should be minimized. Eventual consistency (domain events + separate transactions) is preferred for loosely coupled aggregates, but immediate consistency via Application Service transactions is necessary when business invariants span aggregates.
+**Why It Matters**: Cross-aggregate transactions are unavoidable in real systems, but must be used carefully. When a use case requires atomically updating Order, Customer, and Inventory aggregates — to prevent oversold inventory or lost loyalty points — an Application Service transaction spanning those aggregates provides immediate consistency. However, cross-aggregate transactions reduce scalability by holding locks on multiple aggregates simultaneously and should be minimized. Eventual consistency via domain events is preferred for loosely coupled aggregates, but immediate consistency is necessary when business invariants genuinely span multiple aggregates.
 
 ### Example 47: Application Service - Error Handling and Compensation
 
@@ -3082,7 +3082,7 @@ cancelService.cancelReservation("R456");
 
 **Key Takeaway**: Application Services implement error handling and compensation logic for multi-step use cases. Critical operations (cancel reservation, process refund) must succeed; non-critical operations (send email) can fail gracefully with compensation (retry queue). This ensures business operations complete even when infrastructure fails.
 
-**Why It Matters**: Real systems face partial failures. When CancelBooking services fail to send email after successful cancellation, the Application Service logs the failure to a retry queue rather than rolling back the cancellation. Guests get refunded even if email servers are down; emails retry asynchronously. This separation of critical domain operations from infrastructure failures improves reliability—booking cancellations succeed even when email service experiences downtime.
+**Why It Matters**: Real systems face partial failures. When a critical domain operation — such as a booking cancellation — succeeds but a subsequent infrastructure step such as sending email fails, the correct approach is to log the failure for asynchronous retry rather than roll back the domain operation. The user's refund is processed regardless of whether the email server is available; the notification retries independently. This separation of critical domain operations from infrastructure failures improves overall system reliability.
 
 ## Domain Event Handlers (Examples 48-52)
 
@@ -3306,7 +3306,7 @@ console.log(`Customer points: ${customer.getLoyaltyPoints()}`);
 
 **Key Takeaway**: Domain Event Handlers enable decoupled reactions to business events. Multiple handlers can subscribe to the same event, each implementing independent workflows (email, loyalty, analytics). This achieves eventual consistency without tight coupling between domain operations.
 
-**Why It Matters**: Event Handlers prevent tightly coupled workflows. When an e-commerce platform's OrderPlaced event fires, multiple independent handlers react: send confirmation email, update inventory, trigger fulfillment, award loyalty points, log analytics, notify warehouse, update recommendations, etc. Adding new reactions requires zero changes to Order domain—just register new handler. This extensibility enables adding new features (gift wrapping, carbon offset, fraud scoring) by adding handlers, not modifying core Order logic.
+**Why It Matters**: Event Handlers prevent tightly coupled workflows. When a domain event fires, multiple independent handlers can react — sending confirmation email, updating inventory, triggering fulfillment, awarding loyalty points, logging analytics — without any knowledge of each other. Adding new reactions requires zero changes to the publishing aggregate: just register a new handler. This extensibility enables adding new behaviors by composing handlers rather than modifying core domain logic, keeping the aggregate's responsibility bounded.
 
 ### Example 49: Idempotent Event Handlers
 
@@ -3461,7 +3461,7 @@ console.log(`Total transactions recorded: ${ledgerService.getTransactionCount()}
 
 **Key Takeaway**: Idempotent event handlers track processed event IDs to prevent duplicate processing. Distributed systems often deliver events multiple times; idempotency ensures handlers produce same result regardless of delivery count. Check processed event registry before executing business logic.
 
-**Why It Matters**: Event delivery guarantees are "at least once" not "exactly once." Kafka, RabbitMQ, and AWS SQS can deliver events multiple times during network partitions. A payment platform's RefundProcessed handler tracks processed event IDs—if message broker re-delivers refund event, handler skips duplicate processing, preventing double refunds. Idempotency is critical for financial operations where duplicate processing causes monetary loss.
+**Why It Matters**: Event delivery guarantees are "at least once" not "exactly once." Message brokers like Kafka, RabbitMQ, and AWS SQS can re-deliver events during network partitions or consumer restarts. Without idempotency, a re-delivered refund event would trigger a second refund — a correctness failure with real monetary consequences. Tracking processed event IDs and skipping already-handled events makes handlers safe to invoke multiple times. Idempotency is critical for any operation where duplicate processing causes incorrect state.
 
 ### Example 50: Saga Pattern with Event Handlers
 
@@ -3741,7 +3741,7 @@ saga.onShipmentCreated(shipmentCreated);
 
 **Key Takeaway**: Saga pattern coordinates long-running processes across multiple aggregates using event-driven choreography. Each step publishes events; saga coordinator reacts by executing next step or compensating on failure. Saga state tracks progress and enables recovery.
 
-**Why It Matters**: Sagas enable distributed transactions without distributed locks. RideCompletion sagas coordinate multiple steps: mark trip complete → process payment → update driver earnings → send receipt → award ratings. If payment fails, saga compensates by unmarking trip complete and releasing inventory. This achieves consistency across microservices without 2-phase commit, enabling horizontal scaling while maintaining business process integrity.
+**Why It Matters**: Sagas enable distributed transactions without distributed locks. Multi-step business processes — such as marking a trip complete, processing payment, updating earnings, and sending receipts — must remain consistent even when individual steps fail. A saga coordinates these steps sequentially, and if any step fails, compensation actions undo prior steps to restore a consistent state. This achieves eventual consistency across independent aggregates or services without 2-phase commit, enabling horizontal scaling while maintaining business process integrity.
 
 ### Example 51: Event Sourcing with Event Handlers
 
@@ -4344,7 +4344,7 @@ try {
 
 **Key Takeaway**: Factories encapsulate complex validation and business rules for aggregate creation, ensuring only valid aggregates enter the system. Validation logic centralized in factory method prevents duplicating rules across application layer.
 
-**Why It Matters**: Factories enforce invariants at creation time. A payment platform's Customer factory validates email, payment method, and compliance requirements before creating Customer aggregate—preventing invalid customers in system. This "fail fast" approach catches errors immediately rather than discovering invalid state later. Factories reduce Application Service complexity by handling validation internally, making services thin orchestration layers.
+**Why It Matters**: Factories enforce invariants at creation time. When creation requires validating email, payment method, and compliance requirements before the aggregate can exist, placing that logic in a Factory ensures invalid instances are impossible to create. This "fail fast" approach catches errors at the boundary rather than discovering invalid state later during processing. Factories reduce Application Service complexity by handling validation internally, keeping services thin orchestration layers.
 
 ### Example 54: Factory for Reconstituting Aggregates from Persistence
 
@@ -4648,7 +4648,7 @@ console.log(`${noDiscountPolicy.getType()}: $${noDiscountPolicy.calculate(5000) 
 
 **Key Takeaway**: Abstract Factory creates polymorphic aggregates based on business rules, encapsulating complex selection logic. Client code receives interface/base class, unaware of concrete implementation. This enables Strategy pattern with centralized creation logic.
 
-**Why It Matters**: Abstract Factories prevent conditional logic sprawl. A ride-sharing platform's PricingStrategyFactory creates different pricing algorithms (surge pricing, flat rate, time-based) based on city, time, and demand. Without factory, every pricing call would need complex if-else chains to select algorithm. Factory centralizes selection logic, and client code (trip calculation) works with PricingStrategy interface regardless of concrete implementation. This enables A/B testing new pricing algorithms by modifying factory logic, not client code.
+**Why It Matters**: Abstract Factories prevent conditional logic sprawl. When strategy selection depends on runtime conditions such as location, time, and demand, placing that selection logic directly in client code results in complex if-else chains duplicated wherever the strategy is needed. An Abstract Factory centralizes the selection logic, and client code works with the strategy interface regardless of the concrete implementation. This enables introducing new strategy variants by modifying factory logic only, without touching client code.
 
 ## Specifications Pattern (Examples 56-58)
 
@@ -4840,7 +4840,7 @@ matchingProducts.forEach((p) => {
 
 **Key Takeaway**: Specification pattern encapsulates business rules as objects that can be combined using AND, OR, NOT operators. This enables reusable, testable, composable business logic separate from domain entities and repositories.
 
-**Why It Matters**: Specifications prevent business rule duplication. E-commerce search filters (price range, category, in-stock) become reusable Specification objects rather than SQL WHERE clauses scattered across repositories. Major e-commerce platforms use Specifications for product eligibility rules (can ship to certain countries, eligible for promotions, available for gift wrapping)—same rules apply in search, checkout, and recommendations without duplicating logic. Specifications are unit-testable in isolation, improving code quality.
+**Why It Matters**: Specifications prevent business rule duplication. When filtering logic such as price range, category, or eligibility rules is expressed as SQL WHERE clauses scattered across repositories, the same rule ends up duplicated in search, checkout, and recommendations — and inconsistencies accumulate over time. Encapsulating these as reusable Specification objects centralizes the logic, makes the same rule apply consistently across all usage sites, and enables unit-testing business rules in isolation without requiring a database.
 
 ### Example 57: Specification for Repository Queries
 
@@ -5014,7 +5014,7 @@ console.log(`Generated SQL: ${sqlQuery}`);
 
 **Key Takeaway**: Specifications can encapsulate both in-memory filtering logic and database query generation. Repository methods accept Specification parameters, delegating query construction to business-rule objects. This keeps repositories thin and business rules explicit.
 
-**Why It Matters**: Specifications with SQL generation enable query optimization while maintaining business rule centralization. Professional networking platforms use Specifications that generate optimized SQL—preventing N+1 queries while keeping business logic (e.g., "active connections over threshold") in domain layer, not SQL strings. This separation enables testing business rules without databases and migrating between SQL/NoSQL without rewriting business logic.
+**Why It Matters**: Specifications with SQL generation enable query optimization while maintaining business rule centralization. When a Specification can translate its business rule into a SQL predicate, the database can apply the filter efficiently rather than loading all records for in-memory evaluation — preventing N+1 query patterns. Business logic stays in the domain layer as testable Specification classes, not scattered in SQL strings. This separation enables testing business rules without databases and migrating between persistence backends without rewriting domain logic.
 
 ### Example 58: Specification for Validation
 
@@ -5248,7 +5248,7 @@ try {
 
 **Key Takeaway**: Validation Specifications encapsulate complex business rules for state transitions. Domain methods accept Specification parameters, delegating validation to business-rule objects. This keeps validation logic testable, reusable, and explicit rather than buried in domain entity methods.
 
-**Why It Matters**: Validation Specifications enable regulatory compliance and business rule documentation. Banks must document loan approval criteria for auditors—Specification classes become living documentation of exact rules (minimum income, debt-to-income ratio, credit score thresholds). When regulations change (e.g., max debt-to-income ratio reduced from 43% to 36%), update one Specification class instead of finding all validation logic scattered across codebase. Specifications make business rules explicit, testable, and auditable.
+**Why It Matters**: Validation Specifications enable regulatory compliance and business rule documentation. When approval criteria — minimum income, debt-to-income ratio, credit score thresholds — must be documented for auditors, Specification classes become living documentation that reflects the exact rules enforced in code. When regulations change, updating one Specification class propagates the change everywhere the rule is applied, rather than requiring a codebase-wide search for scattered validation logic. Specifications make business rules explicit, testable, and auditable.
 
 ## Integration Patterns (Examples 59-60)
 
@@ -5502,7 +5502,7 @@ console.log(`Total events published: ${eventPublisher.getPublishedCount()}`);
 
 **Key Takeaway**: Outbox pattern stores domain events in database within same transaction as aggregate changes, then publishes them asynchronously via background worker. This ensures events are never lost even if message broker is unavailable, achieving eventual consistency with guaranteed delivery.
 
-**Why It Matters**: Direct event publishing to message brokers can lose events during failures. If Kafka is down when order confirmed, event never publishes, causing downstream systems (shipping, inventory) to miss critical state changes. Outbox pattern solves this: events saved to database (same transaction as order), background worker retries until published. Major platforms use Outbox for financial transactions where losing events means financial loss. Trade-off: slight delay (polling interval) vs. guaranteed delivery.
+**Why It Matters**: Direct event publishing to message brokers can lose events during failures. If the broker is unavailable when an order is confirmed, the event is never published, causing downstream systems such as shipping and inventory to miss critical state changes. The Outbox pattern solves this: events are saved to the database in the same transaction as the aggregate state change, and a background worker delivers them to the broker with retries until successful. This guarantees delivery at the cost of a slight delay (the polling interval) — a worthwhile trade-off wherever losing events causes incorrect downstream state.
 
 ### Example 60: API Gateway Integration with Anti-Corruption Layer
 
@@ -5722,4 +5722,4 @@ class ProductApplicationService {
 
 **Key Takeaway**: API Gateway integration with Anti-Corruption Layer translates external API responses into domain models, protecting ubiquitous language from external contracts. External APIs use their naming conventions and data structures; ACL adapts to our domain model, keeping domain pure.
 
-**Why It Matters**: External APIs change frequently and have different domain models. When integrating with a payment processor's API, don't pollute your domain with their naming conventions ("charge," "source," "customer_id"). Build ACL that translates external responses to your Payment, PaymentMethod, and Customer domain objects. When the external API changes (e.g., deprecates "source" in favor of "payment_method"), only ACL updates—domain model unchanged. This isolation enables switching payment processors by swapping ACL implementation without touching domain logic.
+**Why It Matters**: External APIs change frequently and have different domain models. When integrating with a third-party API, adopting the external system's naming conventions directly pollutes the domain model with external terminology. Building an ACL that translates external responses into domain objects keeps the internal model stable: when the external API changes — renaming fields or restructuring responses — only the ACL requires updates while the domain model stays unchanged. This isolation enables switching external providers by swapping the ACL implementation without touching domain logic.

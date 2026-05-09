@@ -15,7 +15,7 @@ This advanced-level tutorial explores expert FSM patterns through 25 annotated c
 
 Complex approval workflows require coordinating multiple approval stages with parallel and sequential dependencies. FSMs provide clear state transitions and rollback paths.
 
-**Why It Matters**: In large-scale content moderation systems, workflow FSMs handle many millions of approval requests daily across multiple approval stages (automated checks, human review, appeals, escalations). The FSM tracks each content piece through Draft → AutoCheck → HumanReview → Escalation → Published/Rejected states with rapid processing times. Without FSM's structured state management, coordinating parallel review queues and handling rollbacks would require significantly more code.
+**Why It Matters**: Multi-stage approval workflows involve parallel review queues, conditional branching based on confidence scores, and compensating rollbacks when reviews fail at later stages. FSMs provide a formal structure for this complexity: each state is explicit, every transition is defined, and invalid state progressions are rejected by the machine rather than discovered through runtime bugs. Without FSM's structured state management, coordinating parallel review queues and handling rollbacks requires scattered conditional logic that grows harder to audit and test as the number of approval stages increases.
 
 ```mermaid
 stateDiagram-v2
@@ -241,7 +241,7 @@ console.log(`Audit trail: ${JSON.stringify(workflow.getContext().history)}`); //
 
 Workflow engines need conditional branching based on runtime data (order value, user role, region). FSMs handle this through guard conditions on transitions.
 
-**Why It Matters**: Order fulfillment workflow FSMs process high volumes with conditional branching based on order value, destination, membership tier, and inventory availability. High-value orders require fraud review, international shipments require customs clearance, and premium orders get priority routing. Without FSM's guard conditions, implementing many branching rules would create unmaintainable if-else chains. Guard conditions also serve as executable documentation of business rules, making it trivial to audit which order types receive which processing paths.
+**Why It Matters**: Real workflow engines must apply different processing paths based on runtime data: order value, destination region, membership tier, and inventory availability all determine which transitions are valid. Without FSM guard conditions, implementing these branching rules produces unmaintainable if-else chains scattered across multiple handlers. Guard conditions concentrate decision logic at the transition level, making every branching rule explicit and independently testable. They also serve as executable documentation of business rules, making it straightforward to audit which input combinations receive which processing paths.
 
 ```mermaid
 stateDiagram-v2
@@ -571,7 +571,7 @@ console.log(payment.getState()); // => Output: Pending
 
 Long-running workflows need timeout handling (user didn't complete checkout, approval didn't happen in SLA). FSMs track timing for automatic state transitions.
 
-**Why It Matters**: Booking workflows FSM use timeout-based state transitions to auto-cancel reservations after inactivity in the Pending state. This releases held inventory daily. Without timeout handling, pending bookings would block inventory indefinitely, reducing availability and causing revenue loss. Timeout transitions also enable graduated escalation: a short timeout can trigger a reminder notification, while a longer timeout triggers cancellation, giving users a chance to complete their booking before inventory is released.
+**Why It Matters**: Long-running workflows hold resources—reserved inventory, authorized payment funds, allocated capacity—in intermediate states. Without explicit timeout transitions, those resources remain blocked indefinitely when users abandon flows midway. Timeout-driven FSM transitions auto-expire intermediate states, releasing held resources and keeping the system consistent without requiring manual cleanup. Graduated escalation is also possible: a short timeout triggers a reminder notification, while a longer timeout triggers cancellation, giving users an opportunity to complete their flow before resources are released.
 
 #### Diagram
 
@@ -714,7 +714,7 @@ setTimeout(() => {
 
 Workflows often depend on external services (payment gateway, shipping API). FSMs handle async responses and service failures gracefully.
 
-**Why It Matters**: Ride workflows FSM coordinate with many external services (maps API, driver location, payment processing, fraud detection, pricing engine, ETA calculator). The FSM handles async responses with varying latency. When external services fail, the FSM automatically retries with exponential backoff or transitions to fallback states. Without FSM coordination, handling concurrent service calls would require significantly more code.
+**Why It Matters**: Workflows depending on external services face inherent non-determinism: responses arrive asynchronously with varying latency, services occasionally fail, and partial completions require careful recovery. FSMs manage this complexity by making each waiting state explicit and defining what transitions are valid for each possible outcome—success, timeout, or error. Without FSM coordination, handling concurrent external service calls requires ad-hoc callback chains and scattered error-handling logic that is difficult to reason about or test systematically.
 
 ```typescript
 // Workflow coordinating external service calls
@@ -1253,7 +1253,7 @@ console.log(inventory.getState()); // => Same result (from cache)
 
 FSMs created frequently (per-request) benefit from object pooling to reduce GC pressure and allocation overhead.
 
-**Why It Matters**: At Discord, message FSMs are created at 50K instances/second during peak (300M messages/hour). Without pooling, this generated 4GB/sec allocation rate causing GC pauses every 200ms (disrupting real-time chat). By implementing FSM object pooling with max pool size 10,000, they reduced allocation rate to 0.3GB/sec and GC pauses to <10ms every 2 seconds. Pool hit rate of 92% eliminated 46K allocations/second.
+**Why It Matters**: Short-lived FSMs created per request—for message handling, session tracking, or per-connection state—generate significant garbage collector pressure when instantiated at high rates. Without pooling, allocation bursts cause GC pauses that disrupt latency-sensitive systems. Object pooling trades a small pool management overhead for dramatically reduced allocation rates and more predictable GC behavior. The pattern is particularly effective when FSMs are created and discarded at rates where allocation cost dominates over computation cost.
 
 ```typescript
 // FSM object pooling to reduce GC pressure
@@ -1430,7 +1430,7 @@ console.log(pool.getStats()); // => Output for verification
 
 Distributed systems need FSM state to be reconstructed from event logs for debugging, auditing, and recovery.
 
-**Why It Matters**: At Kafka, topic partition FSMs use event sourcing to reconstruct state from 500M+ events/day. When a broker fails, the FSM rebuilds state by replaying events from the log (50K events/sec replay speed), achieving recovery in 20-40 seconds instead of 5-10 minutes with snapshot-based recovery. Event logs enable time-travel debugging: engineers replay production events locally to reproduce bugs.
+**Why It Matters**: Distributed FSMs that store only current state lose their history on failure, requiring complex recovery procedures to restore consistency. Event sourcing eliminates this problem by treating the event log as the source of truth—state is always reconstructable by replaying events from the beginning or from a snapshot. This also enables time-travel debugging: engineers can replay any sequence of production events locally to reproduce bugs that occurred in live systems, a capability impossible with state-only storage.
 
 ```mermaid
 stateDiagram-v2
@@ -1575,7 +1575,7 @@ console.log(recoveredOrder.getState()); // => Output: Shipped (recovered state)
 
 Distributed FSMs need consensus (Raft, Paxos) to ensure all nodes agree on state transitions before committing.
 
-**Why It Matters**: At etcd (Kubernetes' backing store), FSMs use Raft consensus to coordinate state changes across 3-5 nodes. Every state transition requires majority (2/3 or 3/5) agreement before committing. This ensures consistency during network partitions: if cluster splits 2-3, the 3-node partition continues operating (has majority) while 2-node partition rejects writes. Consensus adds 5-15ms latency but guarantees linearizable state transitions critical for Kubernetes scheduler decisions.
+**Why It Matters**: Distributed FSMs that commit state transitions on a single node risk split-brain: two partitions can simultaneously accept conflicting transitions, leaving the cluster in an inconsistent state. Consensus protocols like Raft address this by requiring majority agreement before any transition commits. The tradeoff is latency—each transition requires at least one round-trip to a quorum of nodes—but the benefit is linearizable state transitions that all nodes agree on, which is essential for correctness in distributed coordination tasks such as leader election and configuration management.
 
 ```mermaid
 stateDiagram-v2
@@ -1744,7 +1744,7 @@ console.log(`node-1: ${node1.getState()}`); // => Output: Leader
 
 Distributed FSMs need distributed locks (Redis, ZooKeeper) to prevent concurrent state modifications from multiple processes.
 
-**Why It Matters**: At DoorDash, delivery FSMs coordinate across 50K+ active dashers with distributed locks preventing race conditions. When two dashers simultaneously try claiming the same delivery, the FSM uses Redis locks to ensure only one succeeds (lock acquisition timeout: 50ms). Without distributed locking, 3-5% of deliveries would experience double-assignment, costing \$8M+ annually in redundant trips and customer refunds.
+**Why It Matters**: Distributed FSMs running across multiple processes face race conditions when two processes attempt the same state transition simultaneously—both read the current state as "Available" and both attempt to transition to "Claimed." Without distributed locking, both succeed, producing an inconsistency. A distributed lock (implemented via Redis, ZooKeeper, or similar systems) serializes competing transitions so only one succeeds, while the other receives a failure response and can retry or handle the conflict. This pattern is essential whenever FSM transitions involve shared resources that must not be double-allocated.
 
 ```typescript
 // FSM with distributed locking (simulated Redis lock)
@@ -1925,7 +1925,7 @@ simulateConcurrentClaim();
 
 Active-active distributed FSMs replicate state across multiple regions for low-latency access, requiring conflict resolution.
 
-**Why It Matters**: Database table FSMs use active-active replication across multiple regions with eventual consistency. A table update in one region replicates to other regions with low latency. Concurrent updates to the same table in different regions use last-write-wins conflict resolution based on timestamps. Active-active enables high availability: if one region fails, another continues serving requests with minimal latency increase.
+**Why It Matters**: Active-active replication enables FSM state to be written and read from any region, eliminating the cross-region write latency of active-passive setups. The tradeoff is conflict resolution: when two regions accept conflicting transitions to the same FSM simultaneously, the system must decide which wins. Last-write-wins based on timestamps is simple but can discard valid transitions; CRDTs and vector clocks provide stronger conflict resolution at higher implementation cost. Choosing the right replication and conflict-resolution strategy requires understanding the acceptable consistency window for the specific FSM's domain.
 
 ```typescript
 // FSM with active-active state replication
@@ -2238,7 +2238,7 @@ console.log(`Designer 2 total: ${designer2.getEditCount()}`); // => 3
 
 Choreography sagas coordinate distributed transactions through event-driven FSMs without central orchestrator.
 
-**Why It Matters**: Order fulfillment sagas use choreography to coordinate multiple services (Order, Payment, Restaurant, Delivery) processing high volumes. Each service's FSM listens for events and publishes responses: Order→OrderPlaced, Payment→PaymentProcessed, Restaurant→FoodPrepared, Delivery→DriverAssigned. When Payment fails, it publishes PaymentFailed event triggering compensating transactions in all downstream services. Choreography enables higher throughput than orchestration (no central bottleneck) but requires careful event ordering.
+**Why It Matters**: Choreography-based sagas distribute coordination responsibility across services: each service's FSM listens for upstream events and publishes downstream events without a central coordinator. This eliminates the orchestrator as a throughput bottleneck and makes each service independently deployable. The tradeoff is visibility—the overall saga flow is implicit in event schemas rather than explicit in a single orchestrator. When failures occur, each service must publish compensating events that trigger rollbacks in dependent services, requiring careful design of event ordering and compensation chains to ensure eventual consistency.
 
 ```mermaid
 stateDiagram-v2
@@ -2443,7 +2443,7 @@ if (event === "PaymentProcessed") {
 
 Orchestration sagas use central orchestrator FSM to coordinate distributed transaction steps and compensations.
 
-**Why It Matters**: Content publishing sagas use orchestration to coordinate multiple services (Encode, QA, Metadata, CDN, Search, Recommendations, Analytics) for each new title release. The orchestrator FSM explicitly calls each service in order, tracks progress, and executes compensations on failures. With high release volumes, orchestration provides clear visibility (single FSM shows full saga state) and simplified error handling compared to choreography's distributed event chains.
+**Why It Matters**: Orchestration-based sagas centralize all coordination logic in a single orchestrator FSM that explicitly calls each step in sequence, tracks progress, and executes compensation on failure. This provides full visibility into saga state—the orchestrator FSM shows exactly where a distributed transaction stands at any point—and simplifies error handling since all recovery logic lives in one place. The tradeoff is that the orchestrator becomes a coordination bottleneck and a single point of failure, requiring its own resilience patterns (idempotent steps, durable execution) to be production-safe.
 
 ```mermaid
 stateDiagram-v2
@@ -2785,7 +2785,7 @@ runSagaWithRetries();
 
 Sagas need idempotent service calls to safely retry failed steps without duplicate side effects (double-charging, duplicate emails).
 
-**Why It Matters**: Network failures during payment retries can cause duplicate charges. Idempotency keys solve this: each saga step generates a unique key (order_id + step_name + attempt_number) sent with every API call. If a retry reaches the payment provider after the original succeeded, the provider returns the cached response rather than executing a new charge. Stripe's API is designed around this pattern — idempotency keys are a first-class feature precisely because retries are unavoidable at scale.
+**Why It Matters**: Network failures during saga step execution create a fundamental uncertainty: did the downstream service process the request before the connection dropped, or not? Retrying without idempotency guarantees risks duplicate side effects—double charges, duplicate shipments, duplicate email sends. Idempotency keys resolve this by making every API call uniquely identifiable: the downstream service recognizes a duplicate request and returns the cached response rather than executing the operation again. This pattern is a first-class design requirement in payment APIs and any system where duplicate execution has real-world consequences.
 
 ```typescript
 // Saga with idempotency guarantees
@@ -2909,7 +2909,7 @@ runIdempotentSaga();
 
 Blue-green deployments use FSM to manage traffic cutover between old (blue) and new (green) versions with instant rollback.
 
-**Why It Matters**: Service deployments use blue-green FSM to safely release microservice updates at scale. The FSM manages: Blue→Active (full traffic), Green→Standby (no traffic), validate Green health, cutover Green→Active (full traffic), Blue→Standby (rollback-ready). Validation phase runs many health checks (latency, error rate, memory) before cutover. Instant rollback capability (toggle Active back to Blue) significantly reduces failed deployment impact compared to rolling deployments.
+**Why It Matters**: Blue-green deployment FSMs make the promotion and rollback logic explicit and auditable. The FSM forces a validation phase before cutover where health checks (latency, error rate, memory usage) must pass, preventing premature traffic promotion to unhealthy versions. Instant rollback is a state transition rather than a re-deployment—switching Active back to the previous version takes effect immediately. This structural separation of validation from cutover reduces failed deployment impact compared to rolling deployments where a partial rollout cannot be instantly reversed.
 
 ```mermaid
 stateDiagram-v2
@@ -3086,7 +3086,7 @@ console.log(`Active: ${deployment.getActiveEnv()}`); // => Output: Blue
 
 Canary deployments use FSM to gradually increase traffic to new version while monitoring metrics, with automatic rollback on errors.
 
-**Why It Matters**: Canary deployments encoded as FSMs make the rollout policy explicit and automatable. Staged traffic promotion (1% → 5% → 25% → 50% → 100%) with automated rollback on error-rate or latency thresholds removes human judgment from the critical path. The Google SRE Workbook documents canary releases as a core reliability practice; FSMs formalize the when-to-proceed and when-to-rollback logic as auditable state transitions rather than informal runbooks.
+**Why It Matters**: Canary deployments encoded as FSMs make the rollout policy explicit and automatable. Staged traffic promotion (1% → 5% → 25% → 50% → 100%) with automated rollback on error-rate or latency thresholds removes human judgment from the critical path. The progressive-delivery pattern is recognized as a core reliability practice in site reliability engineering; FSMs formalize the when-to-proceed and when-to-rollback logic as auditable state transitions rather than informal runbooks that vary by operator.
 
 ```mermaid
 stateDiagram-v2
@@ -3917,7 +3917,7 @@ console.log(fsm2.getState()); // => Output: Rejected
 
 FSMs in event-driven architectures consume events from streams (Kafka) and publish state changes back to streams.
 
-**Why It Matters**: Trip FSMs consume events from Kafka topics (driver location updates, passenger requests, payment confirmations) at high volumes. Each trip FSM subscribes to relevant partitions, processes events to update state (Requested → Matched → PickupEnRoute → InProgress → Completed), and publishes state changes back to Kafka for downstream consumers (billing, analytics, notifications). Event streaming enables FSM scalability: many concurrent trips run across distributed nodes, each processing events efficiently.
+**Why It Matters**: FSMs combined with event streaming (via systems like Apache Kafka) enable scalable distributed state management: each FSM instance processes events from its assigned partition, transitions state, and publishes state changes back to the stream for downstream consumers. This decoupled architecture allows billing, analytics, and notification systems to react to state transitions without tight coupling to the FSM itself. Event streaming also provides natural replay capability—the event log can be replayed to reconstruct FSM state after a crash, or to re-process events when new downstream consumers are added.
 
 ```typescript
 // FSM consuming events from Kafka stream (simulated)

@@ -1425,7 +1425,7 @@ Package application with all dependencies into standalone JAR for simple, portab
 
 **Key Takeaway**: Uberjars bundle application and dependencies for simple deployment.
 
-**Why It Matters**: Uberjars provide single-file deployment artifacts containing application and all dependencies—eliminating classpath hell and dependency conflicts in production environments. Zero-dependency deployment simplifies container images reducing image sizes compared to exploded classpaths. Production microservices use uberjar deployment achieving smaller container images with separate dependency management, enabling faster deployment cycles and reliable rollback operations.
+**Why It Matters**: Uberjars provide single-file deployment artifacts containing application and all dependencies—eliminating classpath hell and dependency conflicts in production environments. Zero-dependency deployment simplifies container images and reduces image sizes compared to exploded classpaths. Packaging all dependencies into a single artifact enables deterministic, reproducible deployments and straightforward rollback operations.
 
 ## Example 77: Environment Configuration
 

@@ -710,7 +710,7 @@ fn calculate_length(s: &String) -> usize {
 
 **Key Takeaway**: References (`&T`) enable borrowing data without transferring ownership, allowing functions to read values while the original owner retains control and prevents unnecessary cloning. Multiple immutable references can coexist safely since reading doesn't mutate.
 
-**Why It Matters**: Immutable borrowing enables zero-copy data sharing across function boundaries without reference counting overhead (Rc/Arc) or garbage collection pauses, critical for high-performance systems. Cloudflare's proxy workers leverage borrowing for zero-allocation HTTP header parsing where C++ would require copying or unsafe raw pointers, and Java would trigger frequent GC pauses.
+**Why It Matters**: Immutable borrowing enables zero-copy data sharing across function boundaries without reference counting overhead (Rc/Arc) or garbage collection pauses, critical for high-performance systems. Systems requiring zero-allocation data processing benefit directly from borrowing semantics, where C++ would require copying or unsafe raw pointers, and garbage-collected languages would trigger frequent GC pauses.
 
 ---
 
@@ -2642,7 +2642,7 @@ fn main() {
 
 **Key Takeaway**: Hash maps provide O(1) key-value storage with convenient methods like `.entry()` and `.or_insert()` for conditional updates, while respecting ownership rules for keys and values. Use `entry()` API for efficient conditional insertion and updates. Hash maps take ownership of `String` keys/values but copy `Copy` types like integers.
 
-**Why It Matters**: HashMap with SipHash provides DOS-resistant hashing by default, preventing the hash collision attacks that plague Java and Python servers. Cloudflare uses Rust's HashMap for request routing tables where hash collision attacks could cause outages—security that requires careful key randomization in C++ std::unordered_map.
+**Why It Matters**: HashMap with SipHash provides DOS-resistant hashing by default, preventing the hash collision attacks that plague Java and Python servers. High-throughput routing tables and lookup structures benefit from this security property, which requires careful external key randomization in languages like C++ where `std::unordered_map` does not randomize by default.
 
 ---
 

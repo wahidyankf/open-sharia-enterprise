@@ -1510,7 +1510,7 @@ export const Route = createFileRoute('/profile')({
 
 **Key Takeaway**: `defer(promise)` marks loader data as non-blocking. Critical data awaited in the loader renders immediately; deferred data streams in when ready, wrapped in `<Suspense>`.
 
-**Why It Matters**: The defer pattern implements the progressive loading UX used by Amazon, Facebook, and Google Search. Critical page content (user name, product title, article heading) loads immediately; secondary content (recommendations, related articles, social proof) loads progressively without blocking the primary content. This pattern directly improves Core Web Vitals: LCP (Largest Contentful Paint) measures when the primary content appears, and deferring secondary content ensures LCP is not delayed by slow recommendation engines or analytics queries.
+**Why It Matters**: The defer pattern implements progressive loading: critical page content (user name, product title, article heading) loads immediately while secondary content (recommendations, related articles, social proof) loads progressively without blocking the primary render. This pattern directly improves Core Web Vitals: LCP (Largest Contentful Paint) measures when the primary content appears, and deferring secondary content ensures LCP is not delayed by slow recommendation engines or analytics queries.
 
 ## Group 19: Additional Intermediate Patterns
 

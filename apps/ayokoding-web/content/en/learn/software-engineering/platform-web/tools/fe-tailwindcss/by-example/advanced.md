@@ -1303,7 +1303,7 @@ module.exports = {
 
 **Key Takeaway**: Two-layer token architecture: primitive tokens (raw color values) + semantic tokens (role-based references). Semantic tokens enable theme switching by remapping references without changing utility names in HTML.
 
-**Why It Matters**: Design token systems are the foundation of scalable design engineering. At Airbnb, IBM, Adobe, and Atlassian, design token systems allow: (1) designers to change brand colors from a single source, (2) developers to switch between light/dark/high-contrast themes by swapping token mappings, (3) multi-brand products to share component code while having distinct visual identities. The two-layer approach is the industry standard - primitives give you the full palette, semantics give you purpose. When the semantic token `bg-interactive` changes from brand-600 to green-600, every button in the entire application updates without touching component code.
+**Why It Matters**: Design token systems are the foundation of scalable design engineering. A two-layer architecture separates primitive tokens (raw color values) from semantic tokens (role-based references), enabling: (1) designers to change brand colors from a single source, (2) developers to switch between light/dark/high-contrast themes by remapping token references, (3) multi-brand products to share component code while maintaining distinct visual identities. Primitives give you the full palette, semantics give you purpose. When the semantic token `bg-interactive` changes from brand-600 to green-600, every button in the entire application updates without touching component code.
 
 ### Example 72: Complex Responsive Dashboard Layout
 

@@ -1521,7 +1521,7 @@ export function EditorToolbar() {
 
 **Key Takeaway**: Toolbar provides roving tabindex navigation (arrows move between tools, Tab exits). It contains ToggleGroups, Buttons, Links, and Separators as sub-components.
 
-**Why It Matters**: Toolbars with many buttons create a "Tab trap" where keyboard users must press Tab dozens of times to pass through the toolbar. The roving tabindex pattern solves this: only one item is in the Tab order, and arrow keys navigate within the toolbar. This is the WAI-ARIA toolbar pattern that desktop applications use (think Microsoft Word's ribbon). Radix's Toolbar implements this pattern while composing correctly with its own ToggleGroup component inside the toolbar, maintaining a single cohesive keyboard navigation flow.
+**Why It Matters**: Toolbars with many buttons create a "Tab trap" where keyboard users must press Tab dozens of times to pass through the toolbar. The roving tabindex pattern solves this: only one item is in the Tab order, and arrow keys navigate within the toolbar. This is the WAI-ARIA toolbar pattern used by rich text editors and document editors with ribbon-style controls. Radix's Toolbar implements this pattern while composing correctly with its own ToggleGroup component inside the toolbar, maintaining a single cohesive keyboard navigation flow.
 
 ---
 

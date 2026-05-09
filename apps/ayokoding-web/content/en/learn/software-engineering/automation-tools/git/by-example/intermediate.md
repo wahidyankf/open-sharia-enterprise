@@ -519,7 +519,7 @@ git cherry-pick <hash_C1>..<hash_C3>     # => Pick a range (excludes C1, include
 
 **Key Takeaway**: `git cherry-pick <hash>` copies a commit's diff onto the current branch. Use it to backport bugfixes to release branches without merging the entire feature.
 
-**Why It Matters**: Cherry-pick is the standard mechanism for hotfix backporting in release-branch workflows. When a bug is fixed on `main` and must also be patched in `release/v1.x` and `release/v2.x`, cherry-pick applies the exact fix without carrying unrelated feature work. Continuous delivery pipelines at companies like Google and Netflix automate cherry-picks to propagate security patches across dozens of active release branches simultaneously, reducing the window between vulnerability discovery and patch delivery.
+**Why It Matters**: Cherry-pick is the standard mechanism for hotfix backporting in release-branch workflows. When a bug is fixed on `main` and must also be patched in `release/v1.x` and `release/v2.x`, cherry-pick applies the exact fix without carrying unrelated feature work. Automated continuous delivery pipelines use cherry-pick to propagate security patches across dozens of active release branches simultaneously, reducing the window between vulnerability discovery and patch delivery.
 
 ---
 
@@ -878,7 +878,7 @@ git commit --no-verify -m "emergency fix" # => --no-verify skips ALL hooks
 
 **Key Takeaway**: `pre-commit` hooks enforce quality gates at commit time. Make them executable with `chmod +x`, keep them fast (under 5 seconds), and ensure they exit 0 on success and non-zero on failure.
 
-**Why It Matters**: Pre-commit hooks shift quality checks left to the developer's machine, catching issues before they enter the repository rather than after. Tools like Husky (Node.js), pre-commit (Python), and lefthook (Go) provide cross-platform hook management with team-wide configuration. Meta, Google, and Airbnb enforce code formatting, import sorting, and secret detection via pre-commit hooks, preventing entire categories of review comments and CI failures. The 5-second rule keeps developer flow intact — slow hooks get disabled by frustrated engineers.
+**Why It Matters**: Pre-commit hooks shift quality checks left to the developer's machine, catching issues before they enter the repository rather than after. Tools like Husky (Node.js), pre-commit (Python), and lefthook (Go) provide cross-platform hook management with team-wide configuration. Enforcing code formatting, import sorting, and secret detection via pre-commit hooks prevents entire categories of review comments and CI failures. The 5-second rule keeps developer flow intact — slow hooks get disabled by frustrated engineers.
 
 ---
 
@@ -1412,7 +1412,7 @@ git bisect run sh -c 'grep -q "bad content" version.txt && exit 1 || exit 0'
 
 **Key Takeaway**: `git bisect start`, `git bisect bad`, and `git bisect good` launch a binary search through history. `git bisect run <script>` automates it with a test command. Always finish with `git bisect reset`.
 
-**Why It Matters**: Manual regression hunting through hundreds of commits takes hours. `git bisect` finds the culprit in seven steps even through 128 commits, ten steps through 1024 commits. The automated `git bisect run` form integrates with existing test suites to find the exact commit that broke a test without any developer interaction. Netflix engineering has documented using automated bisect to trace production regressions across thousands of commits in minutes. The O(log n) complexity makes it one of the highest-leverage debugging techniques available in any version control system.
+**Why It Matters**: Manual regression hunting through hundreds of commits takes hours. `git bisect` finds the culprit in seven steps even through 128 commits, ten steps through 1024 commits. The automated `git bisect run` form integrates with existing test suites to find the exact commit that broke a test without any developer interaction. The O(log n) complexity makes bisect one of the highest-leverage debugging techniques available — what would take hours of manual searching completes in minutes regardless of repository size.
 
 ---
 

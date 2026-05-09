@@ -656,7 +656,7 @@ Border radius utilities (`rounded-{size}`) control corner rounding from sharp (`
 
 **Key Takeaway**: Use `rounded-{size}` for consistent corner rounding. `rounded-full` creates circles/pills; `rounded-lg` or `rounded-xl` creates modern card styles; `rounded` for subtle input field rounding.
 
-**Why It Matters**: Border radius is the single most visible design choice in modern UI. Sharp corners feel corporate and rigid; excessive rounding feels playful and soft. The `rounded-xl` style (12px) dominates modern design systems from Apple to Google to Stripe. `rounded-full` for avatar images and notification badges is universal. Buttons typically use `rounded` to `rounded-lg`. Understanding the radius scale lets you match any design specification precisely. Production design systems often enforce specific radius values via custom config, ensuring all components match the brand's corner rounding philosophy.
+**Why It Matters**: Border radius is the single most visible design choice in modern UI. Sharp corners feel formal and structured; excessive rounding feels playful and soft. The `rounded-xl` style (12px) is a common choice in contemporary design systems because it balances modern aesthetics with visual clarity. `rounded-full` for avatar images and notification badges is universal. Buttons typically use `rounded` to `rounded-lg`. Understanding the radius scale lets you match any design specification precisely. Production design systems often enforce specific radius values via custom config, ensuring all components match the brand's corner rounding philosophy.
 
 ## Group 6: Flexbox Layout
 

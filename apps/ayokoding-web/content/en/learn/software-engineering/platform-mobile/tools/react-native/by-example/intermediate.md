@@ -961,7 +961,7 @@ function useUserData(userId: string) {
 
 **Key Takeaway**: Integrate `focusManager` with `AppState` to trigger TanStack Query's `refetchOnWindowFocus` when the mobile app foregrounds. Integrate `onlineManager` with NetInfo for automatic retry after network reconnection.
 
-**Why It Matters**: Mobile users background apps for hours and return expecting fresh data. Without the AppState adapter, TanStack Query's `refetchOnWindowFocus` does nothing on mobile (it's designed for browser tab focus events). The two-line integration transforms an entire app from showing stale data after backgrounding to automatically showing fresh data on every foreground — matching the behavior users expect from native apps like iOS Mail or Twitter. The NetInfo adapter handles spotty mobile connectivity gracefully.
+**Why It Matters**: Mobile users background apps for hours and return expecting fresh data. Without the AppState adapter, TanStack Query's `refetchOnWindowFocus` does nothing on mobile (it's designed for browser tab focus events). The two-line integration transforms an entire app from showing stale data after backgrounding to automatically showing fresh data on every foreground — matching the behavior users expect from native mobile apps. The NetInfo adapter handles spotty mobile connectivity gracefully.
 
 ### Example 39: Zustand — Global Store with TypeScript
 
@@ -2061,7 +2061,7 @@ const styles = StyleSheet.create({
 
 **Key Takeaway**: Use `Drawer` layout from `expo-router/drawer` as the root layout. Provide `drawerContent` for custom headers and additional items. Each `Drawer.Screen` maps to an `app/*.tsx` file.
 
-**Why It Matters**: Drawer navigation is the standard pattern for secondary navigation in Android apps (Google Drive, Gmail) and is common in settings-heavy iOS apps. The custom `DrawerContent` component enables user profile headers, account switching, and logout buttons — UI that doesn't fit in the route-based `Drawer.Screen` list. Expo Router's integration means deep links still work with drawer navigation — a drawer route is a real URL-addressable screen.
+**Why It Matters**: Drawer navigation is the standard pattern for secondary navigation in Android apps and is common in settings-heavy iOS apps. The custom `DrawerContent` component enables user profile headers, account switching, and logout buttons — UI that doesn't fit in the route-based `Drawer.Screen` list. Expo Router's integration means deep links still work with drawer navigation — a drawer route is a real URL-addressable screen.
 
 ### Example 52: Auth Flow — Protected Routes with Expo Router
 

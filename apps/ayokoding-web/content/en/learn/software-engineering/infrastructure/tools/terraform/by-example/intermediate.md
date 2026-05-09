@@ -755,7 +755,7 @@ output "map_bucket_names" {
 
 **Key Takeaway**: Use `count` for indexed module instances when order matters or quantity is dynamic. Use `for_each` with maps or sets for named instances with different configurations per region/environment. Access count outputs with `module.name[index]` and for_each outputs with `module.name[key]`. for_each is preferred for production (stable references).
 
-**Why It Matters**: for_each prevents resource address shifting when middle elements are removed—Stripe uses for_each for multi-region infrastructure because removing "eu-west" doesn't renumber all subsequent regions (unlike count where removing index 1 shifts 2→1, 3→2, causing unintended resource replacement). Map-based for_each enables per-region configuration: us-east gets high-availability tier, eu-west gets standard tier, without duplicating module code. This pattern scaled Stripe from 3 regions to 12 without modifying module logic, just expanding the regions map.
+**Why It Matters**: `for_each` prevents resource address shifting when middle elements are removed — removing "eu-west" from a map does not renumber subsequent regions (unlike `count`, where removing index 1 shifts 2→1, 3→2, causing unintended resource replacement). Map-based `for_each` enables per-region configuration — us-east gets high-availability tier, eu-west gets standard tier — without duplicating module code. This pattern scales multi-region infrastructure from a handful of regions to many without modifying module logic, by simply expanding the regions map.
 
 ---
 
@@ -1355,7 +1355,7 @@ key = "staging/app/terraform.tfstate"
 
 **Key Takeaway**: Partial backend configuration separates static settings (region, encryption) in HCL from dynamic settings (bucket, key) provided at `terraform init` via `-backend-config` flag, config file, or environment variables. This enables reusable configurations across environments without hardcoding environment-specific values in version control.
 
-**Why It Matters**: Partial backend config prevents hardcoding production credentials in HCL files committed to git—Twitter uses partial config to keep AWS account IDs and bucket names out of repository, providing them via CI/CD environment variables per deployment environment. This pattern enables "write once, deploy anywhere": same Terraform configuration deploys to dev (backend-dev.hcl), staging (backend-staging.hcl), and production (backend-prod.hcl) without modifying HCL code. Security benefit: backend credentials never appear in git history where they could leak.
+**Why It Matters**: Partial backend config prevents hardcoding production credentials in HCL files committed to git. Keeping AWS account IDs and bucket names out of the repository and providing them via CI/CD environment variables per deployment environment is a sound security practice. This pattern enables "write once, deploy anywhere": the same Terraform configuration deploys to dev (`backend-dev.hcl`), staging (`backend-staging.hcl`), and production (`backend-prod.hcl`) without modifying HCL code. The key security benefit is that backend credentials never appear in git history where they could leak.
 
 ---
 
@@ -1952,7 +1952,7 @@ resource "aws_instance" "app" {
 
 **Key Takeaway**: Workspaces suitable for similar environments (dev/staging sharing configurations). Directory separation preferred for production isolation where different AWS accounts, IAM roles, backend configs, or compliance requirements exist. Workspaces reduce code duplication but share backend config and variable files. Directories provide complete isolation with independent configurations.
 
-**Why It Matters**: Workspace limitations caused production outages at multiple companies—one engineer's `terraform workspace select prod` followed by `terraform destroy` deleted production because dev and prod shared IAM credentials and backend config. Directory separation enforces isolation: production directory uses production AWS account, non-production uses separate account, impossible to accidentally cross environments. HashiCorp recommends directory-based separation for production despite workspace convenience, because production requires stricter access controls, different approval workflows, and compliance audit trails that workspaces can't provide.
+**Why It Matters**: Workspace limitations create production outage risk — an engineer running `terraform workspace select prod` followed by `terraform destroy` can delete production infrastructure because dev and prod share IAM credentials and backend config when using workspaces. Directory separation enforces isolation: the production directory uses a production AWS account, non-production uses a separate account, making it impossible to accidentally cross environments. Directory-based separation is the recommended approach for production despite workspace convenience, because production requires stricter access controls, different approval workflows, and compliance audit trails that workspaces cannot provide.
 
 ---
 
@@ -2180,7 +2180,7 @@ output "provisioner_note" {
 
 **Key Takeaway**: `local-exec` provisioner runs commands locally (not on resources). Use `command` for shell commands, `working_dir` for execution directory, `environment` for env vars, `when = destroy` for cleanup. Provisioners run during resource creation (default) or destruction. Set `on_failure = continue` to allow resource success despite provisioner failure.
 
-**Why It Matters**: local-exec enables Terraform to trigger external systems that lack providers—DNS verification APIs, internal ticketing systems, and legacy tooling without Terraform support. Provisioners are a last resort (HashiCorp recommends avoiding them): they break Terraform's declarative model, cannot be planned (you don't see what command will run), and create hidden dependencies. Prefer provider resources (`aws_lambda_invocation`) or separate orchestration tools (GitHub Actions, Jenkins, Argo Workflows) for routine automation. They're acceptable for one-off migrations but are an anti-pattern for routine infrastructure management.
+**Why It Matters**: `local-exec` enables Terraform to trigger external systems that lack providers — DNS verification APIs, internal ticketing systems, and legacy tooling without Terraform support. Provisioners are a last resort and should be avoided when possible: they break Terraform's declarative model, cannot be planned (you don't see what command will run), and create hidden dependencies. Prefer provider resources (`aws_lambda_invocation`) or separate orchestration tools (GitHub Actions, Jenkins, Argo Workflows) for routine automation. Provisioners are acceptable for one-off migrations but are an anti-pattern for routine infrastructure management.
 
 ---
 
@@ -2879,7 +2879,7 @@ resource "local_file" "route_tables" {
 
 **Key Takeaway**: Dynamic blocks use `dynamic "BLOCK_NAME"` with `for_each` to generate nested blocks from collections. Access iteration elements via `BLOCK_NAME.value` (for lists) or `BLOCK_NAME.key`/`BLOCK_NAME.value` (for maps). Nest dynamic blocks for multi-level iteration. Eliminates repetitive block definitions while maintaining Terraform's declarative syntax.
 
-**Why It Matters**: Dynamic blocks prevent massive configuration duplication—before dynamic blocks, AWS security groups with 20 ingress rules required 20 hand-written `ingress { }` blocks; one typo in port number affects only that rule, making debugging tedious. Dynamic blocks centralize rule definitions in variables: change port 8080→8443 in one place, all ingress blocks update. This pattern enabled HashiCorp to reduce their example security group modules from 500 lines to 50 lines, improving readability and maintainability. However, overuse harms clarity: simple resources with 2-3 blocks should use explicit blocks, not dynamic; save dynamic for 5+ repeated blocks.
+**Why It Matters**: Dynamic blocks prevent massive configuration duplication — before dynamic blocks, AWS security groups with 20 ingress rules required 20 hand-written `ingress { }` blocks, and a typo in one port number requires careful debugging of all of them. Dynamic blocks centralize rule definitions in variables: change port 8080→8443 in one place, all ingress blocks update. This approach can reduce verbose security group modules from hundreds of lines to a fraction, improving readability and maintainability. However, overuse harms clarity: simple resources with 2-3 blocks should use explicit blocks, not dynamic; save dynamic for 5+ repeated blocks.
 
 ---
 
@@ -3588,7 +3588,7 @@ moved {
 
 **Key Takeaway**: `moved` blocks prevent resource destruction during refactoring by updating state to track resource under new address. Syntax: `moved { from = OLD_ADDRESS, to = NEW_ADDRESS }`. Works for resource renames, moving to/from modules, changing module instances. Requires Terraform 1.1+. Plan shows no changes (resource not recreated). Remove moved blocks after apply—they're migration instructions, not permanent configuration.
 
-**Why It Matters**: Moved blocks enable safe refactoring that was previously terrifying—before moved blocks, renaming `aws_rds_database.db` to `aws_rds_database.primary_db` would destroy and recreate the production database, causing hours of downtime. Moved blocks make refactoring safe: reorganize modules, split monolithic configurations, rename resources for clarity, all without destroying infrastructure. Datadog used moved blocks to reorganize 200+ Terraform modules from flat structure to hierarchical, completing migration with zero resource recreation. This transforms Terraform from "never touch working code" to "continuously refactor for maintainability", matching software engineering best practices.
+**Why It Matters**: Moved blocks enable safe refactoring that was previously terrifying — before moved blocks, renaming `aws_rds_database.db` to `aws_rds_database.primary_db` would destroy and recreate the production database, causing hours of downtime. Moved blocks make refactoring safe: reorganize modules, split monolithic configurations, rename resources for clarity, all without destroying infrastructure. Large Terraform codebases can be reorganized from flat to hierarchical module structures with zero resource recreation. This transforms Terraform from "never touch working code" to "continuously refactor for maintainability", matching software engineering best practices.
 
 ---
 

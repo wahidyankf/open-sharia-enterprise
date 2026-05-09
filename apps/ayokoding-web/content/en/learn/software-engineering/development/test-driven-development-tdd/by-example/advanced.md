@@ -383,7 +383,7 @@ test("UserService gets user orders via HTTP", async () => {
 
 **Key Takeaway**: Test microservices in isolation by mocking HTTP clients. Inject service URLs and HTTP clients as dependencies to enable independent testing.
 
-**Why It Matters**: Microservices with real service dependencies are slow, flaky, and require environment orchestration that blocks rapid TDD cycles. Service isolation enables fast unit testing where each microservice is tested independently against virtual dependencies. Large-scale microservice architectures like Netflix's (500+ services) run 100,000+ tests in under 5 minutes using service virtualization instead of full environment deployments. This speed is only achievable with dependency injection and service isolation as first-class design principles - TDD naturally drives these design decisions because untestable code with hard dependencies is painful to work with.
+**Why It Matters**: Microservices with real service dependencies are slow, flaky, and require environment orchestration that blocks rapid TDD cycles. Service isolation enables fast unit testing where each microservice is tested independently against virtual dependencies. Large-scale microservice architectures with hundreds of services can achieve extremely fast test suites using service virtualization instead of full environment deployments. This speed is only achievable with dependency injection and service isolation as first-class design principles — TDD naturally drives these design decisions because untestable code with hard dependencies is painful to work with.
 
 ### Example 64: Contract Testing for Microservices
 
@@ -827,7 +827,7 @@ test("calculateDiscount applies correct rate", () => {
 
 **Key Takeaway**: TDD principles (Red-Green-Refactor, AAA pattern, single assertion) are universal. Adapt to language idioms while maintaining core discipline.
 
-**Why It Matters**: Polyglot teams risk inconsistent testing quality across languages, with some languages having mature testing ecosystems and others lacking tooling. Universal TDD principles maintain quality by defining patterns (Red-Green-Refactor, AAA, test doubles) that apply regardless of language. Enterprise polyglot codebases at companies like LinkedIn (Java, Scala, Python, JavaScript) use language-specific tools (JUnit, ScalaTest, pytest, Jest) but consistent TDD patterns to achieve 80%+ coverage across all languages. The principles are portable even when the tools differ, enabling engineers to transfer testing knowledge between languages as they learn new parts of the stack.
+**Why It Matters**: Polyglot teams risk inconsistent testing quality across languages, with some languages having mature testing ecosystems and others lacking tooling. Universal TDD principles maintain quality by defining patterns (Red-Green-Refactor, AAA, test doubles) that apply regardless of language. Enterprise polyglot codebases spanning Java, Scala, Python, and JavaScript use language-specific tools (JUnit, ScalaTest, pytest, Jest) but consistent TDD patterns to achieve 80%+ coverage across all languages. The principles are portable even when the tools differ, enabling engineers to transfer testing knowledge between languages as they learn new parts of the stack.
 
 ## Performance, Security, and Anti-Patterns (Examples 69-72)
 
@@ -1056,7 +1056,7 @@ describe("ShoppingCart", () => {
 
 **Key Takeaway**: Test observable behavior through public API, not internal implementation. Tests should verify what the code does for users, not how it achieves it internally.
 
-**Why It Matters**: Tests coupled to implementation details break during refactoring, creating a negative feedback loop where the TDD safety net becomes a refactoring obstacle. Behavior-focused tests enable safe refactoring because they specify what the system does, not how it does it. Kent Beck's TDD philosophy emphasizes testing observable behavior (return values, state changes, interactions with dependencies) rather than internal implementation details. Google's codebase analysis shows that behavior-focused tests survive 3x more refactors than implementation-coupled tests, making them significantly more valuable as long-term regression protection. Avoiding implementation coupling is the single most impactful test design decision.
+**Why It Matters**: Tests coupled to implementation details break during refactoring, creating a negative feedback loop where the TDD safety net becomes a refactoring obstacle. Behavior-focused tests enable safe refactoring because they specify what the system does, not how it does it. Kent Beck's TDD philosophy emphasizes testing observable behavior (return values, state changes, interactions with dependencies) rather than internal implementation details. Codebase analysis consistently shows that behavior-focused tests survive significantly more refactors than implementation-coupled tests, making them more valuable as long-term regression protection. Avoiding implementation coupling is the single most impactful test design decision.
 
 ### Example 72: Test-Induced Design Damage
 
@@ -1442,7 +1442,7 @@ test("TDD investment pays back quickly", () => {
 
 **Key Takeaway**: Measure TDD ROI through defect reduction, velocity increase, and maintenance cost savings. Track metrics before and after adoption to quantify value.
 
-**Why It Matters**: Teams need business justification for TDD investment to secure organizational support and maintain the practice long-term. Data-driven ROI measurement enables informed decisions and demonstrates value to non-technical stakeholders. IBM's research found that teams practicing TDD had 40-80% fewer production bugs, with bug fix costs that are 2-10x lower when caught in development versus production. Microsoft's case studies document 15-35% longer initial development time offset by 46-68% reduction in post-release defect density. These measurements enable engineering leaders to quantify the practice's value and justify the investment during organizational transitions.
+**Why It Matters**: Teams need business justification for TDD investment to secure organizational support and maintain the practice long-term. Data-driven ROI measurement enables informed decisions and demonstrates value to non-technical stakeholders. Peer-reviewed research on TDD adoption finds that teams practicing TDD have 40-80% fewer production bugs, with bug fix costs that are 2-10x lower when caught in development versus production. Other studies document 15-35% longer initial development time offset by 46-68% reduction in post-release defect density. These measurements enable engineering leaders to quantify the practice's value and justify the investment during organizational transitions.
 
 ### Example 76: TDD in Regulated Industries
 
@@ -1605,7 +1605,7 @@ describe("GDPR Compliance", () => {
 
 **Key Takeaway**: Test compliance requirements (data deletion, access controls, encryption) with same rigor as features. Compliance tests document regulatory adherence.
 
-**Why It Matters**: Non-compliance penalties are severe and increasing globally: GDPR fines reach 4% of global annual revenue (€50M against Google in 2019), HIPAA violations reach $1.9M per incident, and PCI-DSS breaches result in card payment processor termination. Tested compliance prevents violations by verifying data handling rules as executable specifications. Compliance testing catches data handling violations before production - automated GDPR right-to-erasure tests can verify that personal data deletion cascades correctly across all storage systems. Financial services firms with comprehensive compliance test suites report 80% fewer regulatory findings during audits.
+**Why It Matters**: Non-compliance penalties are severe and increasing globally: GDPR fines reach 4% of global annual revenue, HIPAA violations reach $1.9M per incident, and PCI-DSS breaches result in card payment processor termination. Tested compliance prevents violations by verifying data handling rules as executable specifications. Compliance testing catches data handling violations before production — automated GDPR right-to-erasure tests can verify that personal data deletion cascades correctly across all storage systems. Financial services firms with comprehensive compliance test suites report significantly fewer regulatory findings during audits.
 
 ## Machine Learning and Emerging Paradigms (Examples 78-80)
 
@@ -1988,7 +1988,7 @@ test("CD metrics meet industry benchmarks", () => {
 
 **Key Takeaway**: Continuous deployment requires comprehensive test automation at all levels (unit, integration, E2E). TDD builds this test coverage from the start.
 
-**Why It Matters**: Manual testing blocks frequent deployment by requiring human verification gates between code completion and production. High-frequency deployment systems achieve deployment cycles measured in minutes rather than weeks using comprehensive automated test suites as the gate. Amazon deploys to production every 11.6 seconds on average - this is only possible with automated test suites that verify correctness faster than manual testing could. TDD discipline enables hundreds of thousands of safe deployments annually with 99.9%+ success rates because every change is verified by tests before deployment. The economics are compelling: automated testing costs are fixed, while manual testing costs scale with deployment frequency.
+**Why It Matters**: Manual testing blocks frequent deployment by requiring human verification gates between code completion and production. High-frequency deployment systems achieve deployment cycles measured in minutes rather than weeks using comprehensive automated test suites as the gate. Organizations with mature CI/CD pipelines can achieve deployments every few seconds on average — this is only possible with automated test suites that verify correctness faster than manual testing could. TDD discipline enables hundreds of thousands of safe deployments annually with 99.9%+ success rates because every change is verified by tests before deployment. The economics are compelling: automated testing costs are fixed, while manual testing costs scale with deployment frequency.
 
 ### Example 82: Production Testing Patterns
 
@@ -2064,7 +2064,7 @@ describe("Canary Deployment", () => {
 
 **Key Takeaway**: Test production deployment patterns (canary, blue-green, feature flags) to verify gradual rollout and quick rollback capabilities.
 
-**Why It Matters**: Production has unique conditions - traffic patterns, data volumes, hardware configurations, and user behavior - impossible to fully replicate in staging. Canary testing enables safe production validation by gradually routing traffic to new versions, catching environment-specific bugs before they affect all users. Netflix's deployment system uses canary releases for every deployment, routing 1% of traffic to new versions and automatically rolling back when error rates exceed baseline by 10%. This catches production-specific bugs while limiting blast radius to 1% of users. Combined with comprehensive staging tests, canary releases provide defense in depth against production failures.
+**Why It Matters**: Production has unique conditions — traffic patterns, data volumes, hardware configurations, and user behavior — that are impossible to fully replicate in staging. Canary testing enables safe production validation by gradually routing traffic to new versions, catching environment-specific bugs before they affect all users. A typical canary strategy routes a small percentage (1-5%) of traffic to the new version and automatically rolls back when error rates exceed a baseline threshold. This catches production-specific bugs while limiting the blast radius to a small fraction of users. Combined with comprehensive staging tests, canary releases provide defense in depth against production failures.
 
 ### Example 83: Testing with Feature Flags
 

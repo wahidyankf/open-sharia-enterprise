@@ -321,7 +321,7 @@ initColorScheme();
 
 **Key Takeaway**: Store color scheme preference in localStorage for persistence. Listen to `prefers-color-scheme` changes for OS preference syncing. Default to system preference when no explicit choice exists.
 
-**Why It Matters**: Users expect their dark mode preference to persist across sessions and pages. Without localStorage, every page reload resets to light mode - a jarring experience. Without listening to OS preference changes, users who toggle OS dark mode find your app doesn't update. The three-state system (light/dark/system) mirrors what every major OS, browser, and app offers. Production applications like GitHub, VS Code, and Linear implement exactly this pattern. The timing of initialization (before DOM render) prevents the "flash of wrong theme" that occurs when JavaScript runs after the first paint, briefly showing the wrong color scheme.
+**Why It Matters**: Users expect their dark mode preference to persist across sessions and pages. Without localStorage, every page reload resets to light mode - a jarring experience. Without listening to OS preference changes, users who toggle OS dark mode find your app doesn't update. The three-state system (light/dark/system) mirrors what every major OS, browser, and application offers. The timing of initialization (before DOM render) prevents the "flash of wrong theme" that occurs when JavaScript runs after the first paint, briefly showing the wrong color scheme.
 
 ## Group 3: Animations and Transitions
 
@@ -430,7 +430,7 @@ Transform utilities apply CSS transforms: scale, rotate, translate, and skew. Th
 
 **Key Takeaway**: Use `scale-{n}` for zoom effects, `rotate-{deg}` for rotations, `translate-{direction}-{n}` for movement. Combine with `transition-transform` for smooth animations. `animate-spin` creates CSS spinners.
 
-**Why It Matters**: CSS transforms are GPU-accelerated, making them the most performant way to create animations. Scale hover effects communicate "this is interactive" without color changes - essential for image galleries and card grids. The `-translate-y-1 shadow-lg` lift pattern is the standard hover effect for buttons in modern design systems (used by Stripe, Linear, and Vercel). The `animate-spin` loading spinner replaces GIF spinners - it's pure CSS, infinitely scalable, and color-customizable. Production applications combine scale, rotate, and translate transforms with `transition-transform` to create polished micro-interactions that increase user engagement and perceived quality.
+**Why It Matters**: CSS transforms are GPU-accelerated, making them the most performant way to create animations. Scale hover effects communicate "this is interactive" without color changes - essential for image galleries and card grids. The `-translate-y-1 shadow-lg` lift pattern is the standard hover effect for buttons in modern design systems. The `animate-spin` loading spinner replaces GIF spinners - it's pure CSS, infinitely scalable, and color-customizable. Production applications combine scale, rotate, and translate transforms with `transition-transform` to create polished micro-interactions that increase user engagement and perceived quality.
 
 ### Example 36: Tailwind Animation Classes
 
@@ -1464,7 +1464,7 @@ Production form inputs require careful attention to normal, focus, error, and di
 
 **Key Takeaway**: Standard input: `border border-gray-300 focus:border-blue-500 focus:ring-2`. Error input: swap to `border-red-300 bg-red-50`. Always include `focus:outline-none` with a custom focus indicator for accessibility.
 
-**Why It Matters**: Forms are the highest-stakes UI in production applications - they handle authentication, payments, data entry, and user configuration. Every state must be clearly communicated: normal (gray border), focused (blue highlight), error (red background + border + message), disabled (opacity + cursor). Missing any state causes confusion and support tickets. The focus ring pattern (`focus:outline-none focus-visible:ring-2 focus:ring-blue-500/20`) balances aesthetics (no harsh browser outline) with accessibility (clear keyboard indicator). These exact utility combinations appear in production forms at Stripe, Linear, and Vercel - studying their DevTools will confirm this pattern.
+**Why It Matters**: Forms are the highest-stakes UI in production applications - they handle authentication, payments, data entry, and user configuration. Every state must be clearly communicated: normal (gray border), focused (blue highlight), error (red background + border + message), disabled (opacity + cursor). Missing any state causes confusion and support tickets. The focus ring pattern (`focus:outline-none focus-visible:ring-2 focus:ring-blue-500/20`) balances aesthetics (no harsh browser outline) with accessibility (clear keyboard indicator). These utility combinations represent the production standard for accessible, visually consistent form components.
 
 ### Example 53: Loading and Skeleton States
 
@@ -1527,7 +1527,7 @@ Loading states prevent user confusion during asynchronous operations. Tailwind's
 
 **Key Takeaway**: Use `animate-pulse` on skeleton placeholders matching the actual content layout. Use loading buttons with `animate-spin` spinner + `disabled` attribute + `cursor-wait` for async button actions.
 
-**Why It Matters**: Perceived performance is often more important than actual performance. Users tolerate slow loading better when they see progress indicators. Skeleton screens outperform spinner-only loading in user research - they set expectations about content layout before data arrives, reducing surprise when content loads. The loading button pattern prevents double-submissions in payment forms and data mutations - critical for preventing duplicate transactions. The Google, GitHub, and Stripe UIs all use skeleton loading for their primary data views. Implementing these patterns with Tailwind takes minutes; implementing them from scratch with custom CSS takes hours.
+**Why It Matters**: Perceived performance is often more important than actual performance. Users tolerate slow loading better when they see progress indicators. Skeleton screens outperform spinner-only loading in user research - they set expectations about content layout before data arrives, reducing surprise when content loads. The loading button pattern prevents double-submissions in payment forms and data mutations - critical for preventing duplicate transactions. Implementing these patterns with Tailwind takes minutes; implementing them from scratch with custom CSS takes hours.
 
 ### Example 54: Dropdown and Popover Positioning
 

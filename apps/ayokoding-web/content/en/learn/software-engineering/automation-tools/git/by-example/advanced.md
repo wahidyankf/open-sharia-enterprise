@@ -975,7 +975,7 @@ git sparse-checkout disable
 
 **Key Takeaway**: `git clone --filter=blob:none --sparse` combined with `git sparse-checkout set <path>` gives you a partial clone that only materialises the directories you need, reducing checkout time and disk usage proportionally.
 
-**Why It Matters**: At companies like Google, Meta, and Microsoft, monorepos contain millions of files. A full checkout would consume hundreds of gigabytes and take hours. Sparse checkout combined with partial clone (VFS for Git at Microsoft, Google's CitC) makes these repositories practical for individual developers by ensuring you only ever fetch and materialise files you actually work with. GitHub and GitLab now support partial clone server-side, making this technique available to any organisation without custom infrastructure.
+**Why It Matters**: Large monorepos can contain millions of files where a full checkout would consume hundreds of gigabytes and take hours. Sparse checkout combined with partial clone makes these repositories practical for individual developers by ensuring you only ever fetch and materialise files you actually work with. This dramatically reduces initial clone time and ongoing disk usage proportionally to the subset of the repository you need. GitHub and GitLab now support partial clone server-side, making this technique available to any organisation without custom infrastructure.
 
 ---
 

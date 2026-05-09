@@ -1871,7 +1871,7 @@ docker compose config
 
 **Key Takeaway**: Docker Compose simplifies multi-container applications with declarative YAML configuration. Use `depends_on` for startup order, separate networks for layer isolation, and named volumes for data persistence. Always use `-d` flag for production deployments.
 
-**Why It Matters**: Docker Compose transforms complex multi-container orchestration from dozens of shell commands into a single declarative YAML file, reducing deployment complexity and human error. Declarative configuration enables version-controlled infrastructure where entire application stacks can be recreated identically across environments. Companies like Netflix, Spotify, and Airbnb use Compose-based workflows to manage complex service dependencies in development and staging, ensuring every engineer has the same reproducible environment without manual setup.
+**Why It Matters**: Docker Compose transforms complex multi-container orchestration from dozens of shell commands into a single declarative YAML file, reducing deployment complexity and human error. Declarative configuration enables version-controlled infrastructure where entire application stacks can be recreated identically across environments. This approach ensures every engineer works with the same reproducible environment without manual setup, eliminating the class of bugs that arise from inconsistent local configurations.
 
 ### Example 20: Docker Compose with Build Context
 

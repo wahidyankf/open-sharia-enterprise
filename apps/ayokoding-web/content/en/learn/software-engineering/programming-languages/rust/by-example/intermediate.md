@@ -3111,7 +3111,7 @@ fn main() {
 
 **Key Takeaway**: Custom error types implementing `Error` trait and `From` conversions enable type-safe error handling with automatic error type conversions through the `?` operator. This pattern unifies different error sources into a single error type while preserving error context and enabling pattern matching on error variants.
 
-**Why It Matters**: Type-safe error hierarchies with automatic conversions provide the structure of exception hierarchies without the performance cost of stack unwinding, enabling zero-overhead error handling in hot paths. Web frameworks like Axum use custom error types to provide detailed API error responses while maintaining the performance of explicit Result returns—impossible to achieve with exception-based frameworks without sacrificing latency.
+**Why It Matters**: Type-safe error hierarchies with automatic conversions provide the structure of exception hierarchies without the performance cost of stack unwinding, enabling zero-overhead error handling in hot paths. This pattern allows detailed, structured error responses in performance-sensitive code paths—something exception-based frameworks cannot achieve without sacrificing latency due to the cost of stack unwinding.
 
 ---
 

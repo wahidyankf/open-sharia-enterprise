@@ -193,7 +193,7 @@ print(f"AP during partition: {val}")
 
 **Key Takeaway**: During a network partition, CP systems protect data integrity by refusing requests, while AP systems maintain availability at the cost of potentially returning stale data. Choose CP for financial transactions and AP for social feeds or recommendation engines.
 
-**Why It Matters**: Every distributed system designer must consciously choose a partition strategy before deployment. DynamoDB, Cassandra, and CouchDB are AP systems used by Amazon and Netflix for their shopping carts and viewer histories respectively, because brief staleness is acceptable. HBase, ZooKeeper, and etcd are CP systems used in Kubernetes and distributed coordination because split-brain data would cause catastrophic inconsistency.
+**Why It Matters**: Every distributed system designer must consciously choose a partition strategy before deployment. DynamoDB, Cassandra, and CouchDB are AP systems suited for shopping carts and viewer histories where brief staleness is acceptable. HBase, ZooKeeper, and etcd are CP systems used in distributed coordination because split-brain data would cause catastrophic inconsistency. The choice cannot be avoided: a system that claims to be both consistent and available during a partition is either lying or hasn't been tested under real network conditions.
 
 ---
 
@@ -1039,7 +1039,7 @@ past_state_events = store.get_events("order-42")[:1]
 
 **Key Takeaway**: Event sourcing makes every state transition explicit and auditable by storing events rather than current state. Replaying events reconstructs any historical state, enabling time-travel queries impossible with traditional CRUD.
 
-**Why It Matters**: Event sourcing powers financial systems at banks and trading platforms where every transaction must be auditable and reversible. Companies like LinkedIn and Airbnb use event sourcing with Kafka as the event store to build audit logs, feed projections, and analytics pipelines from the same event stream. The append-only constraint also eliminates write conflicts in concurrent systems, since events are immutable facts.
+**Why It Matters**: Event sourcing is essential for financial systems and any domain where every state change must be auditable and reversible. The same event stream that drives state transitions can simultaneously power audit logs, read projections, and analytics pipelines, eliminating the need to separately instrument these concerns. The append-only constraint also eliminates write conflicts in concurrent systems, since events are immutable facts—concurrent writers append new events rather than contending for the right to overwrite current state.
 
 ---
 
@@ -1296,7 +1296,7 @@ print(f"Available: {[p['name'] for p in available]}")
 
 **Key Takeaway**: CQRS optimizes separately for writes (consistency, business rules) and reads (denormalized, fast projections). The read side can use completely different storage (Redis, Elasticsearch) from the write side (PostgreSQL), each tuned for its workload.
 
-**Why It Matters**: High-scale systems like Microsoft's Azure and booking platforms use CQRS because read traffic typically exceeds write traffic by 10-100x. Separating the models allows independent scaling: read replicas can be added without affecting the write master. The tradeoff is eventual consistency between write and read sides — acceptable for product catalogs and social feeds but requires careful design for account balances or inventory reservation.
+**Why It Matters**: In systems where read traffic exceeds write traffic by 10-100x, CQRS enables independent scaling of each side. Read replicas can be added without affecting the write master, and the read model can use denormalized storage (Redis, Elasticsearch) tuned for query performance rather than write consistency. The tradeoff is eventual consistency between write and read sides — acceptable for product catalogs and social feeds but requires careful design for account balances or inventory reservation where stale reads have real consequences.
 
 ---
 
@@ -1537,7 +1537,7 @@ print(f"Result: {result}")  # => {"success": False, "failed_at": "reserve_invent
 
 **Key Takeaway**: Sagas replace two-phase commit with compensating transactions. Each step commits locally and publishes an event; failures trigger reverse compensation. The tradeoff is that the system is temporarily inconsistent between saga steps.
 
-**Why It Matters**: Uber, Airbnb, and Amazon use saga patterns for booking and order workflows spanning multiple microservices. Two-phase commit fails at scale because it holds database locks across service boundaries — a 100ms network partition causes lock contention in the entire transaction coordinator. Sagas eliminate distributed locks by accepting temporary inconsistency, with compensations ensuring eventual consistency. The pattern is essential for any microservices architecture where a single user action touches multiple bounded contexts.
+**Why It Matters**: Two-phase commit fails at scale for cross-service workflows because it holds database locks across service boundaries — a network partition during the commit phase causes lock contention that spans all participating services. Sagas eliminate distributed locks by accepting temporary inconsistency: each step commits locally and publishes an event; failures trigger reverse compensation rather than rollback of a held transaction. The pattern is essential for any microservices architecture where a single user action touches multiple bounded contexts that cannot share a database transaction.
 
 ---
 
@@ -1775,7 +1775,7 @@ print(f"Result: {'committed' if success else 'aborted'}")
 
 **Key Takeaway**: 2PC guarantees atomicity across distributed systems but introduces a blocking problem: participants hold locks between phases, and coordinator crash leaves them locked indefinitely. Three-phase commit (3PC) and Paxos-based commit protocols address this at the cost of more network round trips.
 
-**Why It Matters**: Google Spanner uses a variant of 2PC with TrueTime to provide globally consistent transactions across data centers, accepting 10-14ms commit latency for cross-region transactions. Most modern microservices architectures avoid 2PC entirely in favor of sagas (Example 64) because 2PC creates distributed lock contention that destroys throughput at scale. Understanding 2PC's blocking nature explains why databases offering "distributed transactions" often impose significant performance penalties.
+**Why It Matters**: 2PC's blocking problem—where a coordinator crash leaves participants holding locks indefinitely—is why most modern microservices architectures avoid it entirely in favor of sagas. Distributed databases that offer 2PC-based distributed transactions must resolve this with techniques like Paxos-based commit or TrueTime-based ordering, accepting higher commit latency as the cost of cross-partition consistency. Understanding 2PC's blocking nature explains why databases offering "distributed transactions" often impose significant performance penalties and why saga-based eventual consistency is the more common production choice for cross-service workflows.
 
 ---
 
@@ -1970,7 +1970,7 @@ print(f"A concurrent with C? {vc_a.concurrent_with(snap_c1)}")
 
 **Key Takeaway**: Vector clocks establish causal ordering without synchronized clocks. Two events are causally related if one vector dominates the other; otherwise they are concurrent and may need conflict resolution (last-write-wins or merge).
 
-**Why It Matters**: Amazon DynamoDB uses vector clocks to detect conflicting writes when multiple clients update the same key concurrently. Riak uses vector clocks for its conflict resolution model. Git's commit graph is conceptually equivalent — merging branches requires understanding which commits are causally ordered versus concurrent. Any distributed system allowing concurrent writes to the same object needs a causality tracking mechanism to detect and resolve conflicts without losing data.
+**Why It Matters**: Any distributed system allowing concurrent writes to the same object needs a causality tracking mechanism. Without it, a system cannot distinguish between two independent updates (both valid, one may overwrite the other) and an update that causally follows an earlier one (the later update supersedes). Vector clocks provide this distinction: two events are causally related if one vector dominates the other; otherwise they are concurrent and require conflict resolution (last-write-wins, merge, or user-driven resolution). Git's commit graph implements the same concept—merging branches requires determining which commits are causally ordered versus concurrent.
 
 ---
 
@@ -2227,7 +2227,7 @@ print(f"Suspected failed (before timeout): {suspected}")
 
 **Key Takeaway**: Gossip spreads information to all N nodes in O(log N) gossip rounds by having each node contact a random subset of peers. The protocol is resilient to node failures and network partitions because it requires no central coordinator.
 
-**Why It Matters**: Apache Cassandra uses gossip for cluster membership and failure detection, allowing the ring to reconfigure automatically when nodes join or leave. HashiCorp Consul uses gossip (SWIM protocol) for service mesh health checking. Gossip scales to thousands of nodes without a single point of failure, unlike centralized membership registries. The tradeoff is eventual consistency — it takes several gossip rounds for cluster-wide convergence after a topology change.
+**Why It Matters**: Gossip protocols scale to thousands of nodes without a single point of failure, unlike centralized membership registries that become bottlenecks and failure points as cluster size grows. Apache Cassandra uses gossip for cluster membership and failure detection, and HashiCorp Consul uses the SWIM gossip protocol for service mesh health checking. The tradeoff is eventual consistency — it takes several gossip rounds for cluster-wide convergence after a topology change, meaning a freshly joined node may not be immediately visible to all peers.
 
 ---
 
@@ -2442,7 +2442,7 @@ print(f"FP rate at {bf.count} elements: {bf.false_positive_probability():.4f}")
 
 **Key Takeaway**: Bloom filters provide O(k) lookup and O(k) insertion with zero false negatives and tunable false positive rates. They are ideal for "definitely not in set" fast-path checks before expensive operations like disk reads or database queries.
 
-**Why It Matters**: Google's Bigtable and LevelDB use Bloom filters in their SSTable layers to avoid disk reads for keys that don't exist — reducing unnecessary I/O by up to 90%. Cassandra uses Bloom filters per SSTable to skip tables that don't contain the queried partition key. Browsers use Bloom filters for Safe Browsing malware URL checks. The space efficiency (10,000 URLs in 12 KB vs 250 KB for raw strings) makes Bloom filters essential for memory-constrained systems handling large datasets.
+**Why It Matters**: Bloom filters provide O(k) lookup with zero false negatives, making them ideal for "definitely not in set" fast-path checks before expensive operations like disk reads or database queries. LSM-tree based storage engines (including LevelDB and Apache Cassandra) use Bloom filters per SSTable to skip disk files that cannot contain the queried key, reducing unnecessary I/O by up to 90% for negative lookups. The space efficiency—tens of thousands of keys representable in kilobytes—makes Bloom filters essential for memory-constrained systems that need fast existence checks over large datasets.
 
 ---
 
@@ -2936,7 +2936,7 @@ print(f"Nodes claiming leadership: {[n.id for n in leaders]}")
 
 **Key Takeaway**: Expiring leases ensure that a failed leader's lock expires automatically, enabling another node to take over. The TTL must be long enough to survive transient network hiccups but short enough to recover quickly from failures.
 
-**Why It Matters**: Kubernetes uses etcd-based leader election for controller manager and scheduler components — only one instance runs active control loops at a time, preventing duplicate pod creation. Apache Kafka uses ZooKeeper (or KRaft) leader election to elect partition leaders. Setting the lease TTL too short (under 1 second) causes spurious leadership changes under load; too long (over 30 seconds) causes slow failover when the leader crashes. Real-world systems typically use 5-15 second leases with 1/3 TTL renewal intervals.
+**Why It Matters**: Expiring leases ensure that a failed leader's lock expires automatically, enabling another node to take over without manual intervention. Kubernetes uses etcd-based leader election for controller manager and scheduler components — only one instance runs active control loops at a time, preventing duplicate pod creation. Apache Kafka uses ZooKeeper (or KRaft) leader election to elect partition leaders. Setting the lease TTL too short causes spurious leadership changes under load; too long causes slow failover when the leader crashes. Real-world systems typically use 5-15 second leases with 1/3 TTL renewal intervals to balance these tradeoffs.
 
 ---
 
@@ -3143,7 +3143,7 @@ print(f"After convergence — US: {aa_us.data['prefs:color']['value']}")
 
 **Key Takeaway**: Active-passive provides simple consistency (no conflicts) at the cost of cross-region write latency. Active-active minimizes write latency globally but requires conflict resolution — last-write-wins, CRDTs, or application-level merge logic.
 
-**Why It Matters**: Cloudflare uses active-active with CRDTs for their Workers KV global key-value store, allowing edge writes anywhere with eventual consistency. DynamoDB Global Tables uses active-active with last-write-wins. GitHub's active-passive MySQL setup caused the 2018 October incident when a primary failover left replicas 5 minutes behind, resulting in data appearing temporarily lost. The replication topology choice determines both normal-case latency and failure-case data loss window (RPO).
+**Why It Matters**: The replication topology choice determines both normal-case write latency and failure-case data loss window (RPO). Active-passive provides simple consistency with no conflicts but imposes cross-region write latency for clients far from the primary. Active-active minimizes write latency globally but requires conflict resolution when concurrent writes to the same key occur in different regions. Replica lag during failover is also a critical consideration: a primary failover with lagging replicas can cause data to appear temporarily lost until replication catches up, making lag monitoring an operational necessity for any replication topology.
 
 ---
 
@@ -3421,7 +3421,7 @@ for partition_id in assignment["worker-0"]:
 
 **Key Takeaway**: Kafka's partitioning model guarantees message ordering per key (all events for the same order_id land on the same partition) while enabling parallel consumption across partitions. Consumer groups provide exactly-once logical semantics when using committed offsets correctly.
 
-**Why It Matters**: LinkedIn (Kafka's creator) processes 7 trillion messages per day through Kafka. Netflix uses Kafka for real-time event pipelines feeding recommendation systems and A/B test tracking. Partitioning by entity key (user_id, order_id) ensures that all events for an entity are processed in sequence by the same consumer, which is essential for correctness in stateful stream processing where out-of-order events could corrupt derived state.
+**Why It Matters**: Kafka's partitioning model is central to its correctness guarantees, not just its performance. Partitioning by entity key (user_id, order_id) ensures that all events for an entity are processed in sequence by the same consumer—a requirement for correctness in stateful stream processing where out-of-order events could corrupt derived state. Consumer groups provide scalable parallel consumption while preserving per-partition ordering, enabling systems to scale throughput by adding consumers without sacrificing the sequencing guarantees that stateful processing depends on.
 
 ---
 
@@ -3889,7 +3889,7 @@ print(f"\nSuccess: {orders.success_count}, Failures: {orders.failure_count}")
 
 **Key Takeaway**: Chaos engineering validates that resilience mechanisms (retries, circuit breakers, fallbacks) actually work under failure conditions. Experiments should start in staging, graduating to production only with automated safety checks and abort conditions.
 
-**Why It Matters**: Netflix's Chaos Monkey was created after their 2011 move to AWS when they realized that testing resilience in staging doesn't uncover production-specific failure modes. Amazon runs continuous chaos experiments on AWS, finding that without regular fault injection, teams stop maintaining and testing their fallback paths until they are needed in a real incident. Gremlin, the commercial chaos platform, reports that companies running regular chaos experiments resolve incidents 30-50% faster because their on-call engineers have seen the failure modes before.
+**Why It Matters**: Testing resilience in staging doesn't uncover production-specific failure modes—the traffic patterns, data volumes, and dependency combinations that trigger failures in production are rarely reproducible in staging. Without regular fault injection, teams stop maintaining and testing their fallback paths; those paths remain untested until they are needed in a real incident, which is the worst time to discover they are broken. Chaos engineering operationalizes the assumption that failures will occur, shifting the discovery of weaknesses from uncontrolled production incidents to controlled experiments with automated abort conditions.
 
 ---
 
@@ -4173,7 +4173,7 @@ print(f"Should rollback: {router.should_rollback()}")
 
 **Key Takeaway**: Blue-green deployments provide instant atomic rollback by keeping the previous environment live. Canary deployments reduce blast radius by exposing only a small percentage of traffic to new code while monitoring key metrics for regressions before full promotion.
 
-**Why It Matters**: Facebook deploys to production multiple times per day using canary deployments starting at 1% of traffic, automatically rolling back when error rates exceed thresholds. Amazon's deployment system requires all service deployments to pass canary health checks before proceeding. A blue-green deployment for a major database schema change at a payments company reduced the rollback window from 45 minutes (redeploy) to 30 seconds (selector switch), directly reducing financial exposure during incidents.
+**Why It Matters**: Canary deployments starting at a small percentage of traffic (1-5%) limit the blast radius of defective releases—if the canary reveals elevated error rates or latency regressions, only a small fraction of users are affected before automatic rollback fires. Blue-green deployments provide a complementary guarantee: the previous environment remains live and traffic can be redirected back within seconds rather than minutes, reducing the window of financial and reputational exposure during incidents. Together, these patterns enable high-frequency deployments with reduced risk by making rollback cheap and fast.
 
 ---
 
@@ -4401,7 +4401,7 @@ for user in users:
 
 **Key Takeaway**: Feature flags decouple deployment from release. Percentage-based rollout with deterministic user bucketing ensures each user gets a consistent experience, while targeting rules allow specific segments to be included or excluded regardless of rollout percentage.
 
-**Why It Matters**: Facebook uses Gatekeeper (their internal feature flag system) to run thousands of simultaneous experiments and gradual rollouts without needing separate deployment pipelines per feature. Etsy pioneered the concept of "continuous deployment with feature flags" to deploy 50+ times per day while keeping the main branch always deployable. LaunchDarkly serves 20 trillion flag evaluations per day. Feature flags eliminate the merge conflict and integration risk of long-lived feature branches, which was a primary cause of integration failures in large codebases.
+**Why It Matters**: Feature flags decouple deployment from release, enabling teams to deploy code to production continuously while controlling when features are exposed to users. This eliminates the merge conflict and integration risk of long-lived feature branches, which is a primary cause of integration failures in large codebases. Percentage-based rollout with deterministic user bucketing provides a safe mechanism for gradual exposure: a defective feature can be disabled for all users with a single flag change, without requiring a hotfix deployment. Feature flag platforms like LaunchDarkly, Unleash, and internal systems at large organizations handle trillions of evaluations per day because this pattern is fundamental to high-velocity deployment pipelines.
 
 ---
 
@@ -4882,7 +4882,7 @@ print(tracker.summary())
 
 **Key Takeaway**: Error budgets quantify how much unreliability is permitted under the SLO. When the error budget is exhausted, reliability work takes priority over feature development — this is the SRE model for balancing innovation speed against stability.
 
-**Why It Matters**: Google's SRE book introduced error budgets as a mechanism to resolve the tension between developers (want to ship fast) and operations (want stability). When Twitter experienced repeated availability incidents in 2022-2023, the lack of clear SLOs meant there was no agreed threshold for when to halt deployments and focus on reliability work. Companies like Spotify use weekly error budget reviews to decide whether to approve risky deployments based on remaining budget, creating a data-driven reliability culture.
+**Why It Matters**: Error budgets resolve the structural tension between development velocity and operational stability by making the tradeoff explicit and quantitative. Without clear SLOs and error budgets, there is no agreed threshold for when to halt deployments and prioritize reliability work—reliability decisions become subjective and politicized. With error budgets, the remaining budget serves as a data-driven signal: a depleted budget halts risky deployments until reliability is restored, while a healthy budget permits risk-taking. This transforms reliability from a soft cultural value into a hard engineering constraint.
 
 ---
 
@@ -5279,7 +5279,7 @@ print(f"Shard key: {advice['shard_key']} ({advice['rationale']})")
 
 **Key Takeaway**: Shard before hitting limits, not after. The 70% storage threshold triggers planning, 100% triggers urgency. The shard key must balance distribution (avoid hotspots) with query locality (minimize cross-shard joins) and must align with the most frequent access patterns.
 
-**Why It Matters**: Pinterest migrated from a single MySQL server to a sharded architecture in 2012 when their database reached 300 GB and 2,000 writes/second — close to practical limits. Instagram sharded by user_id enabling scale to hundreds of millions of users but created challenges for feed queries spanning multiple users' shards. Choosing the wrong shard key (e.g., sequential IDs creating write hotspots, or category IDs concentrating writes on popular categories) is the most common reason sharding projects fail to achieve expected throughput improvements.
+**Why It Matters**: Database sharding must be planned before capacity limits are reached, not after—emergency sharding under production load is significantly more risky than planned sharding with room to operate. The shard key choice is the most consequential architectural decision in a sharding project: sequential IDs create write hotspots on the newest shard, category IDs concentrate writes on popular categories, and overly granular keys create cross-shard joins that negate the throughput benefits. A shard key that distributes writes evenly but requires frequent cross-shard queries may perform worse than the single-node database it replaced.
 
 ---
 
@@ -5449,7 +5449,7 @@ print(f"Small file risk: {small_file_risk}")
 
 **Key Takeaway**: Partition strategy is the most impactful design decision for data lake query performance. Partitioning by date and entity type enables query engines to skip irrelevant partitions, reducing scan costs by 10-100x compared to full table scans.
 
-**Why It Matters**: Netflix stores petabytes of viewing events in Iceberg tables on S3, enabling data scientists to query a year of watch history for 200 million subscribers in minutes. Without proper partitioning, the same query would take hours and cost thousands of dollars in compute. LinkedIn's data lake handles 1 trillion events per day because Hive partitioning allows analysts to run queries that scan only relevant partitions, keeping compute costs proportional to query scope rather than total data size.
+**Why It Matters**: Partition strategy is the most impactful design decision for data lake query performance and cost. Without proper partitioning, analytical queries must scan the entire dataset regardless of scope, making compute costs proportional to total data size rather than query scope. Partitioning by date and entity type enables query engines to skip irrelevant partitions, reducing scan costs by 10-100x for common access patterns. At petabyte scale, the difference between well-partitioned and unpartitioned data lakes determines whether specific queries complete in minutes or hours and whether their cost is acceptable or prohibitive.
 
 ---
 
@@ -5642,7 +5642,7 @@ for user_id, event_type, ts in stream:
 
 **Key Takeaway**: Tumbling windows produce non-overlapping, fixed-interval aggregations. The watermark controls the latency-completeness tradeoff: a larger watermark delay tolerates more late events but delays result emission. Setting watermark too small drops late events; too large delays downstream consumers.
 
-**Why It Matters**: Uber's real-time surge pricing uses 1-minute tumbling windows to aggregate ride requests and driver availability per geographic hexagon. Twitter detects trending topics using tumbling windows over the tweet stream, identifying topics with accelerating mention rates. LinkedIn's feature engineering pipeline processes 5 trillion events per day through tumbling and sliding windows to compute real-time recommendation features. Incorrect watermark configuration is the most common cause of data loss in stream processing pipelines — late events that arrive after the watermark has passed are silently dropped.
+**Why It Matters**: Tumbling windows are foundational to real-time aggregation use cases: computing per-minute throughput metrics, detecting trending topics by counting mention rates within fixed intervals, and generating feature vectors for recommendation systems from recent user activity. The watermark controls the latency-completeness tradeoff in a principled way: a larger watermark delay tolerates more late events but delays result emission, while a smaller watermark reduces latency at the cost of silently dropping late events. Incorrect watermark configuration is the most common cause of silent data loss in stream processing pipelines, making it critical to tune based on the observed late-arrival distribution of your specific event sources.
 
 ---
 
@@ -5901,7 +5901,7 @@ print(f"\nPost-mortem (first 400 chars):\n{pm[:400]}...")
 
 **Key Takeaway**: Runbooks eliminate improvisation during high-stress incidents by providing documented step-by-step responses. Blameless post-mortems focus on systemic and process fixes rather than individual culpability, building the psychological safety needed to report and learn from failures.
 
-**Why It Matters**: Google's SRE book established that blameless post-mortems are essential for a learning culture — if engineers fear punishment for incidents, they hide failures instead of documenting and fixing them. Teams with documented runbooks resolve P1 incidents faster than teams that improvise, because the cognitive load of figuring out what to do is separated from the cognitive load of doing it. Etsy's blameless post-mortem culture allowed them to increase deployment frequency from weekly to 50+ deployments per day by removing the fear that a bad deployment would result in blame rather than systemic improvement.
+**Why It Matters**: Blameless post-mortems are essential for a learning culture — if engineers fear punishment for incidents, they hide failures instead of documenting and fixing them, preventing systemic improvements. The SRE discipline establishes that incidents are opportunities to improve systems, not occasions to assign culpability. Teams with documented runbooks resolve P1 incidents more effectively than teams that improvise, because the cognitive load of figuring out what to do is separated from the cognitive load of executing under pressure. Blameless culture and documented procedures are prerequisites for high-frequency deployment pipelines where failures are treated as expected learning opportunities rather than exceptional events requiring blame.
 
 ---
 
@@ -6099,7 +6099,7 @@ print(f"\nEU failover: {eu_failover}")
 
 **Key Takeaway**: Data residency requirements are hard constraints that override latency optimization. Systems must encode compliance rules into routing logic, not treat them as operational afterthoughts. A region failure for a residency-constrained user zone has no compliant failover — graceful degradation (cached responses or 503) is the only valid option.
 
-**Why It Matters**: LinkedIn was fined by EU regulators for transferring EU user data to US servers without adequate protection. Microsoft Azure built dedicated EU-sovereign cloud regions specifically to meet GDPR data residency requirements for European enterprise customers. Designing for multi-region compliance from the start is far cheaper than retrofitting: Slack required two years of engineering work to move from a single US region to globally distributed multi-region architecture, delaying their enterprise expansion into GDPR-sensitive markets.
+**Why It Matters**: Data residency requirements are hard constraints that override latency optimization—a system that routes EU user data to a US region for lower latency violates GDPR regardless of the performance benefit. Regulatory fines for cross-border data transfer violations can be substantial, and the engineering cost to retrofit residency compliance after a single-region architecture is already deployed is typically far higher than building it correctly from the start. Systems must encode compliance rules into routing logic with automated enforcement, not treat them as operational afterthoughts that are enforced manually by operators who may not know which data is residency-constrained.
 
 ---
 

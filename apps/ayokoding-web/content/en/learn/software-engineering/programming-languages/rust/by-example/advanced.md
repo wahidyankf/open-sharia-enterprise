@@ -991,7 +991,7 @@ async fn handle_async_result() {
 
 **Key Takeaway**: Async/await syntax enables writing asynchronous code with synchronous structure, with `async fn` returning futures and `.await` yielding to the runtime until futures complete.
 
-**Why It Matters**: Tokio-based async Rust achieves millions of concurrent connections with memory usage that goroutines (Go) or green threads can't match, because futures compile to state machines with minimal per-task allocation. Web servers like Axum and Discord's backend use async Rust for high-concurrency APIs where thread-per-connection models would exhaust memory at scale. Unlike Node.js callbacks or Python asyncio, Rust's type system prevents forgetting to `.await` a future—a common source of bugs in JavaScript where unawaited Promises are valid but wrong.
+**Why It Matters**: Tokio-based async Rust achieves millions of concurrent connections with memory usage that goroutines (Go) or green threads can't match, because futures compile to state machines with minimal per-task allocation. Thread-per-connection models exhaust memory at scale, while async futures allow high-concurrency APIs to remain both fast and memory-efficient. Unlike Node.js callbacks or Python asyncio, Rust's type system prevents forgetting to `.await` a future—a common source of bugs in JavaScript where unawaited Promises are valid but wrong.
 
 ---
 

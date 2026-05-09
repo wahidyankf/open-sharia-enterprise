@@ -1052,7 +1052,7 @@ public static async Task ApplyMigrationsWithRetryAsync(IServiceProvider services
 
 **Key Takeaway**: Configure `EnableRetryOnFailure` on the Npgsql provider to handle transient connection failures during migrations; add an outer retry loop in init containers where the database itself may not be ready yet.
 
-**Why It Matters**: Cloud-managed PostgreSQL databases (AWS RDS, Azure Database, Google Cloud SQL) perform routine failovers, maintenance windows, and connection resets that appear as transient errors. Without a retry policy, a migration running during a brief failover fails permanently and leaves the schema partially applied. EF Core's built-in retry policy handles the most common cases; the outer loop in init containers handles the container-startup race condition where the database pod is not yet accepting connections.
+**Why It Matters**: Managed PostgreSQL databases perform routine failovers, maintenance windows, and connection resets that appear as transient errors to connecting clients. Without a retry policy, a migration running during a brief failover fails permanently and leaves the schema partially applied. EF Core's built-in retry policy handles the most common transient fault patterns; the outer loop in init containers handles the container-startup race condition where the database pod is not yet accepting connections.
 
 ---
 

@@ -494,7 +494,7 @@ Effect.runPromise(flaky.pipe(Effect.retry(Schedule.recurs(5)))).then((r) => cons
 
 **Key Takeaway**: Build retry policies by composing `Schedule` values. `recurs` bounds the count, `spaced` adds fixed delays, `exponential` adds doubling delays, and `jittered` adds randomization to prevent synchronized retries.
 
-**Why It Matters**: Retry logic is one of the most impactful reliability improvements in distributed systems. Exponential backoff with jitter is the standard recommendation from AWS, Google, and Netflix because it prevents thundering herds — the scenario where all clients retry simultaneously, amplifying the load on a recovering service. Effect's `Schedule` system implements these best practices as composable values rather than ad-hoc `setTimeout` loops. When a service's retry policy needs to change, you update one `Schedule` definition. Jitter, backoff base, and maximum retries are all visible, testable parameters.
+**Why It Matters**: Retry logic is one of the most impactful reliability improvements in distributed systems. Exponential backoff with jitter is the industry-standard recommendation because it prevents thundering herds — the scenario where all clients retry simultaneously, amplifying the load on a recovering service. Effect's `Schedule` system implements these best practices as composable values rather than ad-hoc `setTimeout` loops. When a service's retry policy needs to change, you update one `Schedule` definition. Jitter, backoff base, and maximum retries are all visible, testable parameters.
 
 ---
 
@@ -1953,7 +1953,7 @@ const withTimeout = Effect.race(
 
 **Key Takeaway**: `Effect.race` starts two effects concurrently and returns the first to complete. The other is interrupted. Use it for hedged requests, competitive execution, and custom timeout patterns.
 
-**Why It Matters**: Tail latency — the slowest few percent of requests — often drives user experience in production systems. A technique proven to reduce P99 latency is hedging: send the request to multiple backends and take the first response, cancelling the others. `Effect.race` implements hedging in two lines. The automatic interruption of the losing fiber ensures that resources (connections, compute) used by the cancelled request are released promptly. This approach is used at scale by Google and Netflix to keep tail latencies low when any single backend might occasionally be slow.
+**Why It Matters**: Tail latency — the slowest few percent of requests — often drives user experience in production systems. A technique proven to reduce P99 latency is hedging: send the request to multiple backends and take the first response, cancelling the others. `Effect.race` implements hedging in two lines. The automatic interruption of the losing fiber ensures that resources (connections, compute) used by the cancelled request are released promptly. This approach is effective whenever a single backend may occasionally be slow, making tail latencies more predictable.
 
 ---
 

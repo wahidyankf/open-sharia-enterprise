@@ -206,7 +206,7 @@ server_thread.join()
 
 **Key Takeaway**: The client-server model is a contract — the client sends a request, the server returns a response, and neither knows the other's implementation details. This contract is the foundation of all networked systems.
 
-**Why It Matters**: Every system design decision — caching, load balancing, CDNs, microservices — builds on top of the client-server model. Engineers who understand the request-response cycle can reason about latency sources, failure modes, and scalability bottlenecks at each hop between client and server. Netflix, Google, and every major web service architect their systems as layered client-server interactions, each optimized independently.
+**Why It Matters**: Every system design decision — caching, load balancing, CDNs, microservices — builds on top of the client-server model. Engineers who understand the request-response cycle can reason about latency sources, failure modes, and scalability bottlenecks at each hop between client and server. All modern web services are composed of layered client-server interactions, each optimized independently for the specific demands of that layer.
 
 ---
 
@@ -2068,7 +2068,7 @@ order_document = {
 
 **Key Takeaway**: SQL databases enforce schema integrity and enable flexible queries across related data through JOINs; NoSQL document stores embed related data together for faster single-document reads. Choose SQL when data relationships are complex and consistency is critical; choose NoSQL when schema flexibility and read performance on denormalized data take priority.
 
-**Why It Matters**: The wrong database choice creates costly migrations later. Instagram started with PostgreSQL for user profiles and photos — the relational model fit their social graph queries. DynamoDB powers Amazon's shopping cart because each user's cart is a self-contained document fetched in a single read with predictable sub-millisecond latency. Most mature systems use both: SQL for transactional data requiring consistency, NoSQL for high-throughput or schema-flexible workloads.
+**Why It Matters**: The wrong database choice creates costly migrations later. SQL databases excel when data relationships are complex and consistency is critical—the relational model fits social graph queries, financial ledgers, and normalized transactional data. Document databases excel for self-contained entities (user carts, product catalogs) that are fetched as a unit and evolve their schema frequently. Most mature systems use both: SQL for transactional data requiring consistency, NoSQL for high-throughput or schema-flexible workloads. Choosing early based on access pattern requirements avoids the painful migration cost of switching database paradigms under load.
 
 ---
 
@@ -2604,7 +2604,7 @@ for s in cluster.servers:
 
 **Key Takeaway**: Horizontal scaling requires stateless services — every server must produce the same result for the same request regardless of which instance handles it. Shared databases or distributed caches hold persistent state; individual server instances remain disposable.
 
-**Why It Matters**: Horizontal scaling is how web-scale companies like Amazon and Google handle billions of requests. Adding a server takes seconds on cloud platforms (AWS Auto Scaling, Kubernetes HPA), making horizontal scaling the foundation of elastic capacity management. The critical design constraint is statelessness: services that store user sessions in server memory cannot scale horizontally because subsequent requests may hit a different server with no knowledge of that session.
+**Why It Matters**: Horizontal scaling is the foundation of elastic capacity management because adding servers takes seconds on cloud platforms (AWS Auto Scaling, Kubernetes HPA), whereas vertical scaling requires provisioning larger machines that may not be available in the required size. The critical design constraint is statelessness: services that store user sessions in server memory cannot scale horizontally because subsequent requests may hit a different server with no knowledge of that session. Designing for statelessness—externalizing session state to shared caches or databases—unlocks the full elasticity benefits of horizontal scaling.
 
 ---
 
@@ -3839,7 +3839,7 @@ analyze_latencies(latencies)
 
 **Key Takeaway**: Always measure P95 and P99 latency alongside the median — averages obscure tail latency where real user pain lives. A service with P50 of 20ms and P99 of 2000ms has serious tail latency problems despite a healthy average.
 
-**Why It Matters**: At scale, rare slow requests affect millions of users. A service with P99 of 2 seconds means 10,000 users per million requests wait nearly 2 seconds. Amazon famously found that every 100ms of latency cost 1% in sales — tail latency directly impacts revenue. Google's SRE teams set SLOs (Service Level Objectives) based on P99 latency, not averages, because P99 represents actual user experience for a meaningful portion of real traffic.
+**Why It Matters**: At scale, rare slow requests affect millions of users. A service with P99 of 2 seconds means 10,000 users per million requests wait nearly 2 seconds — even if the median latency is 20ms. Tail latency directly impacts revenue and user retention in ways that averages obscure. SRE practice sets SLOs (Service Level Objectives) based on P99 latency rather than averages precisely because P99 represents actual user experience for a meaningful portion of real traffic.
 
 ---
 
@@ -4142,7 +4142,7 @@ print("  Block:  Raw sectors, OS manages, fast I/O, used for DB volumes")
 
 **Key Takeaway**: Use block storage for database volumes (raw I/O performance), file storage for shared file systems needing directory structure, and object storage for web-served binary content at scale (images, videos, backups) where HTTP access and infinite horizontal scale matter more than POSIX semantics.
 
-**Why It Matters**: AWS S3 (object storage) hosts exabytes of user content for Netflix, Airbnb, and Dropbox because objects are immutable, distributed globally via CDN, and have no capacity limit per bucket. Databases use EBS (block storage) because they require low-latency random reads and writes at the block level. Choosing the wrong storage type causes either severe performance issues (using object storage for a database) or unnecessary complexity (using block storage for image hosting that needs global distribution).
+**Why It Matters**: Object storage (AWS S3, GCS, Azure Blob) is the natural fit for web-served binary content because objects are immutable, distributed globally via CDN, and have no capacity limit per bucket—enabling exabyte-scale storage without operational complexity. Block storage is the right choice for databases because they require low-latency random reads and writes at the block level, which object storage's HTTP semantics cannot provide. Choosing the wrong storage type causes either severe performance issues (using object storage for a database) or unnecessary complexity (using block storage for image hosting that needs global distribution).
 
 ---
 
@@ -4405,7 +4405,7 @@ print(f"London:   {r['latency_ms']}ms | {r['cache']} | via {r['from']}")
 
 **Key Takeaway**: CDN edge servers cache static content near users, reducing latency from hundreds of milliseconds (cross-continent) to single-digit milliseconds (regional edge). The origin server handles only cache misses; warm cache edges serve the vast majority of traffic.
 
-**Why It Matters**: Static assets (JavaScript bundles, images, fonts, videos) constitute 70-90% of web page weight. Without a CDN, every user globally fetches these from a single origin server — users in Singapore wait 300ms round-trips to a US-East server. Cloudflare, Fastly, and AWS CloudFront reduce this to under 10ms by caching at 200+ edge locations worldwide. Netflix uses CDNs to deliver the majority of its video traffic without touching its origin servers — CDN hit rates above 95% are common for popular content.
+**Why It Matters**: Static assets (JavaScript bundles, images, fonts, videos) constitute 70-90% of web page weight. Without a CDN, every user globally fetches these from a single origin server — users in Singapore wait 300ms round-trips to a US-East server. CDN providers like Cloudflare, Fastly, and AWS CloudFront reduce this to under 10ms by caching at hundreds of edge locations worldwide. CDN hit rates above 95% are common for popular static content, meaning the origin server handles only a small fraction of total traffic and can be sized accordingly.
 
 ---
 
@@ -4658,7 +4658,7 @@ for i in range(5):
 
 **Key Takeaway**: Token bucket allows configurable burst capacity while enforcing sustained average rates. Capacity controls burst size; refill rate controls long-term throughput limit. Clients are rejected only when they exhaust their accumulated tokens.
 
-**Why It Matters**: Rate limiting is essential infrastructure for any public API. Stripe, GitHub, and Twitter API all use token bucket or similar algorithms to prevent individual clients from monopolizing server capacity. Without rate limiting, a single misbehaving client — intentional (DDoS) or accidental (infinite retry loop) — can degrade service for all users. Token bucket is preferred over fixed-window rate limiting because it smooths burst traffic gracefully rather than allowing all burst at the window boundary and then blocking entirely.
+**Why It Matters**: Rate limiting is essential infrastructure for any public API. Without it, a single misbehaving client — intentional (DDoS) or accidental (infinite retry loop) — can degrade service for all users by monopolizing server capacity. Token bucket is preferred over fixed-window rate limiting because it smooths burst traffic gracefully: clients accumulate tokens during idle periods and spend them in bursts, rather than being allowed to send all allowed requests in the first second of a window and then blocked for the remainder.
 
 ---
 

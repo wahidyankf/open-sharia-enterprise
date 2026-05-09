@@ -1256,7 +1256,7 @@ paths:
 
 **Key Takeaway**: Define API key schemes in `components/securitySchemes` with `type: apiKey` and specify location (`header`, `query`, `cookie`). Apply globally with top-level `security` or per-operation. Use `security: []` to opt out of global security.
 
-**Why It Matters**: API key authentication is used by most third-party APIs (Stripe, SendGrid, GitHub). Documenting the key location and name in the spec lets Swagger UI add an "Authorize" button where consumers enter their key once and all requests include it automatically. Code generators create client constructors that require the API key, preventing unauthenticated requests at compile time.
+**Why It Matters**: API key authentication is the standard mechanism used by most third-party and public APIs. Documenting the key location and name in the spec lets Swagger UI add an "Authorize" button where consumers enter their key once and all requests include it automatically. Code generators create client constructors that require the API key, preventing unauthenticated requests at compile time.
 
 ---
 
@@ -2202,7 +2202,7 @@ paths:
 
 **Key Takeaway**: Use the top-level `webhooks` field (3.1 only) for server-to-client events independent of specific operations. Webhooks document what the consumer's endpoint receives, including event structure and expected responses.
 
-**Why It Matters**: Webhooks are the backbone of event-driven integrations (Stripe payment events, GitHub push events, Slack message events). The `webhooks` field makes these events first-class citizens in your API spec instead of afterthoughts in external documentation. Code generators produce webhook handler interfaces and event type definitions, giving consumers type-safe webhook processing with exhaustive event handling.
+**Why It Matters**: Webhooks are the backbone of event-driven integrations, delivering server-to-client notifications for events such as payment completions, push triggers, and message receipts. The `webhooks` field makes these events first-class citizens in your API spec instead of afterthoughts in external documentation. Code generators produce webhook handler interfaces and event type definitions, giving consumers type-safe webhook processing with exhaustive event handling.
 
 ---
 

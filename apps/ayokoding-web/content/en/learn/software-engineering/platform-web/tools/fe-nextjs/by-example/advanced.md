@@ -260,7 +260,7 @@ export default function PostPage({
 
 **Common Pitfalls**: Using server-only features (Server Actions, cookies, headers) in static export (build fails), or forgetting dynamicParams = false (build error).
 
-**Why It Matters**: Static export generates a fully self-contained website that deploys to any static hosting provider (S3, Cloudflare Pages, GitHub Pages) or CDN without server runtime requirements. Production documentation sites, marketing pages, and product catalogs use static export for maximum simplicity and minimum operational cost. The trade-off is losing dynamic server features - acceptable when content is truly static. Understanding this boundary prevents build failures from accidentally including server features in statically exported applications.
+**Why It Matters**: Static export generates a fully self-contained website that deploys to any static hosting provider or CDN without server runtime requirements. Documentation sites, marketing pages, and product catalogs benefit from static export for maximum simplicity and minimum operational cost. The trade-off is losing dynamic server features — acceptable when content is truly static. Understanding this boundary prevents build failures from accidentally including server features in statically exported applications.
 
 ## Group 2: Streaming & Suspense
 
@@ -1233,7 +1233,7 @@ export default function BlogPostPage() {
 
 **Common Pitfalls**: Not using Edge Runtime (slower response), or wrong image dimensions (social platforms crop incorrectly).
 
-**Why It Matters**: Dynamic OpenGraph images transform social media sharing from generic site screenshots to branded, content-specific previews. Blog posts with custom OG images showing the article title see 2-3x higher click-through rates on social platforms versus sites using generic screenshots. Production content platforms generate thousands of unique OG images on-demand using the ImageResponse API. Edge Runtime generation ensures fast response times globally (under 100ms) from CDN edge nodes. Correctly sizing OG images for each platform (1200x630 for Twitter/Facebook, 1000x1000 for LinkedIn) maximizes display quality.
+**Why It Matters**: Dynamic OpenGraph images transform social media sharing from generic site screenshots to branded, content-specific previews. Blog posts with custom OG images showing the article title see significantly higher click-through rates compared to sites using generic screenshots. Production content platforms generate thousands of unique OG images on-demand using the ImageResponse API. Edge Runtime generation ensures fast response times globally (under 100ms) from CDN edge nodes. The standard OG image dimension is 1200x630 pixels, widely supported across social sharing platforms.
 
 ### Example 64: JSON-LD Structured Data for SEO
 

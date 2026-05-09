@@ -234,7 +234,7 @@ kubectl describe rolebinding read-pods-binding
 
 **Key Takeaway**: Use ServiceAccounts for Pod identity and RBAC for fine-grained permission control; follow principle of least privilege by granting only required permissions; prefer namespace-scoped Roles over cluster-wide ClusterRoles when possible; use `kubectl auth can-i` to verify permissions before deployment.
 
-**Why It Matters**: RBAC is the foundation of Kubernetes security in production environments, used by companies like Google and Goldman Sachs to enforce least-privilege access at scale. Proper ServiceAccount configuration prevents privilege escalation attacks (where compromised Pods gain unauthorized cluster access) and enables compliance auditing (proving who can do what in the cluster). Without RBAC, a single vulnerable Pod could compromise the entire cluster - production clusters at major financial institutions require RBAC as a mandatory control for SOC 2 and PCI-DSS compliance.
+**Why It Matters**: RBAC is the foundation of Kubernetes security in production environments, enforcing least-privilege access at scale. Proper ServiceAccount configuration prevents privilege escalation attacks (where compromised Pods gain unauthorized cluster access) and enables compliance auditing (proving who can do what in the cluster). Without RBAC, a single vulnerable Pod could compromise the entire cluster — production clusters require RBAC as a mandatory control for SOC 2 and PCI-DSS compliance.
 
 ### Example 59: ClusterRole and ClusterRoleBinding
 
@@ -408,7 +408,7 @@ kubectl describe clusterrolebinding read-nodes-global
 
 **Key Takeaway**: Use ClusterRoles for cluster-wide resources like nodes and PersistentVolumes or cross-namespace access; combine ClusterRole with RoleBinding to limit cluster-wide permissions to specific namespaces; ClusterRole + ClusterRoleBinding grants cluster-wide access while ClusterRole + RoleBinding limits to single namespace.
 
-**Why It Matters**: ClusterRoles enable platform teams at companies like Datadog and New Relic to build monitoring solutions that observe all namespaces without requiring per-namespace RBAC configuration, reducing operational overhead from hundreds of RoleBindings to a single ClusterRoleBinding. This pattern is critical for cluster-wide operators (cert-manager, ingress-nginx) that manage resources across namespaces, and for SRE teams who need read-only cluster visibility for troubleshooting without modifying workloads. Cross-namespace visibility reduces mean-time-to-recovery (MTTR) in production incidents.
+**Why It Matters**: ClusterRoles enable platform teams to build monitoring solutions that observe all namespaces without requiring per-namespace RBAC configuration, reducing operational overhead from hundreds of RoleBindings to a single ClusterRoleBinding. This pattern is critical for cluster-wide operators (cert-manager, ingress-nginx) that manage resources across namespaces, and for SRE teams who need read-only cluster visibility for troubleshooting without modifying workloads. Cross-namespace visibility reduces mean-time-to-recovery (MTTR) in production incidents.
 
 ---
 
@@ -694,7 +694,7 @@ spec: # => Pod specification
 
 **Key Takeaway**: Always run containers as non-root with read-only root filesystem; drop all capabilities and add only required ones; use SecurityContext to enforce defense-in-depth security practices.
 
-**Why It Matters**: SecurityContext prevents container escape vulnerabilities that have affected Docker, containerd, and runc (CVE-2019-5736). Running as non-root with read-only filesystem blocked 80% of container attacks in Aqua Security's 2023 threat report. Companies like Google and Stripe enforce these SecurityContext settings as mandatory baselines in their internal Kubernetes policies. This defense-in-depth approach is mandatory for PCI-DSS and SOC 2 compliance, and reduces container escape risk by eliminating root-level access paths.
+**Why It Matters**: SecurityContext prevents container escape vulnerabilities that have affected Docker, containerd, and runc (CVE-2019-5736). Running as non-root with read-only filesystem eliminates the majority of container attack vectors by denying privilege escalation paths. This defense-in-depth approach is mandatory for PCI-DSS and SOC 2 compliance frameworks, and reduces container escape risk by ensuring processes operate with the minimum privileges required for their function.
 
 ---
 
@@ -942,7 +942,7 @@ kubectl get secret test-encryption -o jsonpath='{.data.key}' | base64 -d
 
 **Key Takeaway**: Enable encryption at rest for production clusters storing sensitive data; use KMS providers (AWS KMS, GCP KMS) for enterprise key management and audit logging; rotate encryption keys periodically following security policies; always keep identity provider as fallback for disaster recovery.
 
-**Why It Matters**: Encryption at rest protects against etcd backup theft and unauthorized database access (etcd contains all cluster secrets including database passwords, API tokens, and TLS certificates). The 2018 Timehop breach exposed 21 million records after attackers accessed unencrypted data stores—a risk etcd encryption directly mitigates. Companies like Stripe and Square mandate KMS-backed encryption for PCI-DSS compliance, using AWS KMS or HashiCorp Vault for automated key rotation and audit logging. Without encryption at rest, a single compromised etcd snapshot can expose all production credentials.
+**Why It Matters**: Encryption at rest protects against etcd backup theft and unauthorized database access (etcd contains all cluster secrets including database passwords, API tokens, and TLS certificates). Unencrypted etcd data represents a single point of total credential compromise — one stolen snapshot yields all production secrets in plaintext. KMS-backed encryption (AWS KMS, HashiCorp Vault) provides automated key rotation and audit logging required for PCI-DSS compliance, ensuring that even if physical media or backups are stolen, the data remains unreadable without the managed key material.
 
 ---
 
@@ -1123,7 +1123,7 @@ kubectl get pods -l app=backend -o wide
 
 **Key Takeaway**: NetworkPolicies implement pod-to-pod firewall rules using label selectors; start with deny-all policy and add explicit allow rules; requires CNI plugin with NetworkPolicy support (Calico, Cilium, Weave); remember to allow DNS egress for service discovery.
 
-**Why It Matters**: NetworkPolicies implement zero-trust networking required by PCI-DSS, HIPAA, and SOC 2 compliance frameworks. The 2020 SolarWinds attack demonstrated lateral movement risks - NetworkPolicies prevent compromised frontend Pods from accessing backend databases directly. Companies like Monzo and Revolut use NetworkPolicies to enforce payment card industry segmentation (isolating payment processing from other services), reducing breach impact radius. Without NetworkPolicies, any Pod compromise can pivot to all cluster resources, violating defense-in-depth principles.
+**Why It Matters**: NetworkPolicies implement zero-trust networking required by PCI-DSS, HIPAA, and SOC 2 compliance frameworks. Lateral movement attacks demonstrate the risk of flat cluster networks — NetworkPolicies prevent compromised frontend Pods from accessing backend databases directly. This pattern enforces payment card industry segmentation (isolating payment processing from other services), reducing breach impact radius. Without NetworkPolicies, any Pod compromise can pivot to all cluster resources, violating defense-in-depth principles.
 
 ---
 
@@ -1284,7 +1284,7 @@ kubectl run test-client -n test-isolation --image=busybox --rm -it -- wget -O- t
 
 **Key Takeaway**: Apply default deny NetworkPolicies at namespace level for zero-trust security; always allow DNS egress to prevent breaking service discovery; create explicit allow rules for required traffic only; test thoroughly in non-production namespace before production rollout.
 
-**Why It Matters**: Default deny NetworkPolicies implement zero-trust architecture principles adopted by Google (BeyondCorp) and Microsoft (Zero Trust Network). This approach shifts security from perimeter-based (firewall at edge) to identity-based (verify every connection), reducing insider threat risks and containing breach impact. Companies like Cloudflare and HashiCorp use default deny policies in production, reporting 60-80% reduction in lateral movement during security incidents. Implementing zero-trust at the network level is now a SOC 2 and ISO 27001 requirement for cloud-native organizations.
+**Why It Matters**: Default deny NetworkPolicies implement zero-trust architecture principles, shifting security from perimeter-based (firewall at edge) to identity-based (verify every connection). This approach reduces insider threat risks and contains breach impact by limiting lateral movement. Implementing zero-trust at the network level is now a SOC 2 and ISO 27001 requirement for cloud-native organizations.
 
 ### Example 66: Namespace Isolation with NetworkPolicy
 
@@ -1355,7 +1355,7 @@ kubectl label namespace development environment=dev        # => Dev isolated fro
 
 **Key Takeaway**: Use namespaceSelector for namespace-level isolation; label namespaces to define trust boundaries; combine podSelector and namespaceSelector for fine-grained cross-namespace access control.
 
-**Why It Matters**: Namespace isolation prevents cross-environment contamination where development workloads access production databases (a major cause of data leaks at companies without proper segmentation). This pattern enables multi-tenancy where different teams share a cluster while maintaining security boundaries—companies like Monzo and Goldman Sachs use namespace isolation to separate regulated financial workloads from general engineering services. Namespace-based NetworkPolicies also enforce compliance segmentation (separating PCI workloads from non-PCI, HIPAA from non-HIPAA) required by auditors, reducing the scope of compliance certifications and associated costs.
+**Why It Matters**: Namespace isolation prevents cross-environment contamination where development workloads access production databases — a leading cause of data leaks in clusters without proper segmentation. This pattern enables multi-tenancy where different teams share a cluster while maintaining security boundaries between regulated financial workloads and general engineering services. Namespace-based NetworkPolicies also enforce compliance segmentation (separating PCI workloads from non-PCI, HIPAA from non-HIPAA) required by auditors, reducing the scope of compliance certifications and associated costs.
 
 ### Example 67: Egress to External Services
 
@@ -1469,7 +1469,7 @@ spec:
 
 **Key Takeaway**: Control egress traffic to external services using ipBlock; always allow DNS (port 53) for name resolution; use CIDR ranges to restrict outbound access to approved IP addresses and services.
 
-**Why It Matters**: Egress policies prevent data exfiltration attacks where compromised Pods send secrets to attacker-controlled servers (a key tactic in the 2021 Codecov supply chain attack). Companies like JP Morgan Chase and Barclays implement strict egress whitelisting in their Kubernetes clusters to meet financial regulatory requirements. This pattern is critical for compliance (PCI-DSS requires documented network segmentation) and reduces incident response costs by limiting blast radius—egress policies at major banks have blocked ransomware command-and-control traffic in real breaches.
+**Why It Matters**: Egress policies prevent data exfiltration attacks where compromised Pods send secrets to attacker-controlled servers — a key tactic in supply chain attacks. Strict egress whitelisting is a financial regulatory requirement (PCI-DSS requires documented network segmentation) and reduces incident response costs by limiting blast radius. Egress controls block ransomware command-and-control traffic by allowing Pods to communicate only with explicitly approved external endpoints.
 
 ---
 
@@ -1613,7 +1613,7 @@ spec:
 
 **Key Takeaway**: Combine multiple selectors for complex traffic rules; understand OR (multiple from/to items) vs AND (multiple selectors in same item) semantics; test policies thoroughly in non-production before applying to production.
 
-**Why It Matters**: Micro-segmentation with complex NetworkPolicies enables zero-trust architecture at scale, used by financial institutions like Goldman Sachs and JP Morgan to isolate payment processing, trading systems, and customer data per regulatory requirements (PCI-DSS, SOX, GDPR). This pattern reduces breach impact radius by 90% compared to flat networks - the 2017 Equifax breach exploited lateral movement that NetworkPolicies would have prevented. ---
+**Why It Matters**: Micro-segmentation with complex NetworkPolicies enables zero-trust architecture at scale, isolating payment processing, trading systems, and customer data to meet regulatory requirements (PCI-DSS, SOX, GDPR). This pattern reduces breach impact radius compared to flat networks — lateral movement exploits that compromise entire clusters are prevented when workloads can only communicate through explicitly allowed paths. ---
 
 ## Custom Resources & Operators (Examples 69-73)
 
@@ -1932,7 +1932,7 @@ EOF
 
 **Key Takeaway**: Use CRDs to extend Kubernetes with domain-specific resources; define comprehensive OpenAPI schema with validation rules (required, enum, min/max, patterns); enable subresources (status, scale) for standard Kubernetes patterns; add printer columns for better kubectl output; implement controllers (operators) to reconcile custom resources to desired state.
 
-**Why It Matters**: CRDs power the operator pattern used by CloudNativePG, Prometheus Operator, and ArgoCD to manage complex stateful applications declaratively. This pattern transformed database management at companies like Zalando (Postgres Operator manages 1000+ databases) and CRDs enable platform teams to expose higher-level abstractions (Database, Certificate, Application) instead of low-level Kubernetes primitives, improving developer productivity while enforcing organizational standards (backups, monitoring, security) automatically. The Kubernetes ecosystem has 200+ production-ready operators built on CRDs.
+**Why It Matters**: CRDs power the operator pattern used by CloudNativePG, Prometheus Operator, and ArgoCD to manage complex stateful applications declaratively. CRDs enable platform teams to expose higher-level abstractions (Database, Certificate, Application) instead of low-level Kubernetes primitives, improving developer productivity while enforcing organizational standards (backups, monitoring, security) automatically. The Kubernetes ecosystem has 200+ production-ready operators built on CRDs, covering databases, certificates, service meshes, and more.
 
 ---
 
@@ -2112,7 +2112,7 @@ kubectl apply -f deploy/                                 # => Apply all operator
 
 **Key Takeaway**: Operators automate operational tasks by watching custom resources and reconciling state; use operator frameworks (Operator SDK, Kubebuilder) for production operators; operators enable self-service platforms and complex application lifecycle management.
 
-**Why It Matters**: The operator pattern automated complex operational tasks at companies like Zalando (Postgres Operator managing 1000+ databases) and Red Hat (OpenShift operators managing cluster lifecycle). This pattern encodes operational expertise in code - instead of runbooks and manual procedures, operators continuously enforce best practices (backups, monitoring, upgrades) automatically. The CNCF Operator Framework has enabled platform teams to build internal developer platforms where developers self-serve databases, message queues, and caches through simple YAML, reducing provisioning time from weeks to minutes.
+**Why It Matters**: The operator pattern encodes operational expertise in code — instead of runbooks and manual procedures, operators continuously enforce best practices (backups, monitoring, upgrades) automatically. Tools like CloudNativePG and the Prometheus Operator demonstrate this pattern managing complex stateful workloads at scale. The CNCF Operator Framework has enabled platform teams to build internal developer platforms where developers self-serve databases, message queues, and caches through simple YAML, reducing provisioning time from weeks to minutes.
 
 ---
 
@@ -2452,7 +2452,7 @@ webhooks:
 
 **Key Takeaway**: Use validating webhooks for custom policy enforcement beyond built-in admission controllers; use mutating webhooks for automatic resource modification like sidecar injection; webhook failures block API requests by default (set failurePolicy for control).
 
-**Why It Matters**: Admission webhooks power policy enforcement at scale - OPA Gatekeeper and Kyverno use webhooks to enforce 1000+ policies at companies like Zalando and Bloomberg, preventing misconfigurations before they reach production (rejecting Pods without resource limits, enforcing image signing requirements, blocking privileged containers). Mutating webhooks enable platform teams to inject cross-cutting concerns (logging sidecars, monitoring agents, secrets managers) automatically, reducing boilerplate in application manifests by 40%. This pattern implements policy-as-code required by compliance frameworks (SOC 2, PCI-DSS), replacing manual code reviews with automated enforcement that validates 100% of deployments in milliseconds.
+**Why It Matters**: Admission webhooks power policy enforcement at scale — OPA Gatekeeper and Kyverno use webhooks to enforce policies across entire clusters, preventing misconfigurations before they reach production (rejecting Pods without resource limits, enforcing image signing requirements, blocking privileged containers). Mutating webhooks enable platform teams to inject cross-cutting concerns (logging sidecars, monitoring agents, secrets managers) automatically, reducing boilerplate in application manifests. This pattern implements policy-as-code required by compliance frameworks (SOC 2, PCI-DSS), replacing manual code reviews with automated enforcement that validates 100% of deployments in milliseconds.
 
 ---
 
@@ -2610,7 +2610,7 @@ spec: # => Deployment specification
 
 **Key Takeaway**: Use Helm for repeatable application deployments with configuration management; separate chart version (Chart.yaml) from app version (appVersion); parameterize manifests using values.yaml for environment-specific deployments.
 
-**Why It Matters**: Helm standardized Kubernetes package management, enabling companies like SAP and IBM to distribute complex applications (400+ resource manifests) as single installable charts with configurable parameters. This pattern reduced deployment complexity at Grafana Labs (packaging Loki, Tempo, Mimir) from multi-page kubectl instructions to single helm install commands, improving adoption by 10x. Helm's versioning and rollback capabilities provide production safety - the Artifact Hub hosts 10,000+ production-ready charts used by organizations worldwide to deploy vetted, community-maintained applications in minutes.
+**Why It Matters**: Helm standardized Kubernetes package management, enabling complex applications with hundreds of resource manifests to be distributed as single installable charts with configurable parameters. This pattern reduces deployment complexity from multi-page `kubectl` instructions to a single `helm install` command, dramatically improving adoption. Helm's versioning and rollback capabilities provide production safety — the Artifact Hub hosts thousands of production-ready charts used by organizations worldwide to deploy vetted, community-maintained applications in minutes.
 
 ---
 
@@ -2706,7 +2706,7 @@ spec: # => Deployment specification (desired state)
 
 **Key Takeaway**: Use values.yaml for defaults and environment-specific values files for overrides; leverage --set for one-off changes; understand value precedence to predict final configuration.
 
-**Why It Matters**: Values-based configuration enables the same Helm chart to deploy across development, staging, and production environments with different resource allocations, database endpoints, and scaling settings—companies like Spotify and Zalando manage 1000+ Helm releases per environment using parameterized values files. This pattern implements DRY (Don't Repeat Yourself) principles, reducing configuration drift and copy-paste errors that caused major outages. Helm's --set flags enable GitOps workflows where CI/CD pipelines dynamically inject image tags and feature flags during deployment, eliminating hardcoded values that slow release velocity.
+**Why It Matters**: Values-based configuration enables the same Helm chart to deploy across development, staging, and production environments with different resource allocations, database endpoints, and scaling settings. Managing large numbers of Helm releases across environments using parameterized values files implements DRY (Don't Repeat Yourself) principles, reducing configuration drift and copy-paste errors that cause outages. Helm's `--set` flags enable GitOps workflows where CI/CD pipelines dynamically inject image tags and feature flags during deployment, eliminating hardcoded values that slow release velocity.
 
 ---
 
@@ -2889,7 +2889,7 @@ spec: # => Pod specification
 
 **Key Takeaway**: Implement Helm tests to validate releases post-deployment; include tests in CI/CD pipelines to catch deployment issues early; tests provide confidence in production rollouts.
 
-**Why It Matters**: Helm tests implement deployment validation that catches configuration errors before they impact users - companies like Zalando use Helm tests to verify 200+ microservice deployments, detecting 15% of deployments that would have failed in production (wrong database credentials, missing ConfigMaps, network policy misconfigurations). This pattern enables progressive delivery where deployments automatically roll back if health checks fail, reducing mean-time-to-recovery (MTTR) from hours (manual detection) to seconds (automated tests). Helm tests also document expected behavior, serving as executable specifications that ensure deployments meet functional requirements defined by QA teams.
+**Why It Matters**: Helm tests implement deployment validation that catches configuration errors before they impact users — detecting issues like wrong database credentials, missing ConfigMaps, and network policy misconfigurations in microservice deployments. This pattern enables progressive delivery where deployments automatically roll back if health checks fail, reducing mean-time-to-recovery (MTTR) from hours (manual detection) to seconds (automated tests). Helm tests also document expected behavior, serving as executable specifications that ensure deployments meet functional requirements defined by QA teams.
 
 ---
 
@@ -2991,7 +2991,7 @@ gitops-repo/ # => Git repository root
 
 **Key Takeaway**: GitOps treats Git as single source of truth for cluster state; separate application manifests by environment (production, staging); use GitOps operators like ArgoCD for continuous synchronization and drift detection.
 
-**Why It Matters**: GitOps transformed operational practices at companies like Weaveworks (coined the term) and Intuit, reducing deployment errors by 80% through mandatory peer review and automated drift detection. This pattern enforces infrastructure-as-code principles where all changes are versioned, auditable, and reversible - critical for compliance (SOC 2 requires audit trails for infrastructure changes). GitOps also enables disaster recovery through Git - companies like Monzo and Starling Bank can rebuild entire Kubernetes clusters from Git repositories in minutes, meeting recovery-time-objective (RTO) requirements for regulated financial services. The pull-request workflow democratizes infrastructure changes while maintaining control.
+**Why It Matters**: GitOps transforms operational practices by reducing deployment errors through mandatory peer review and automated drift detection. This pattern enforces infrastructure-as-code principles where all changes are versioned, auditable, and reversible — critical for compliance (SOC 2 requires audit trails for infrastructure changes). GitOps also enables disaster recovery through Git — entire Kubernetes clusters can be rebuilt from Git repositories in minutes, meeting recovery-time-objective (RTO) requirements for regulated workloads. The pull-request workflow democratizes infrastructure changes while maintaining control.
 
 ---
 
@@ -3081,7 +3081,7 @@ spec: # => Application specification
 
 **Key Takeaway**: Install ArgoCD for GitOps-based deployment automation; define Applications pointing to Git repositories; enable automated sync with selfHeal for drift correction; ArgoCD provides UI and CLI for application management.
 
-**Why It Matters**: ArgoCD automated deployment workflows at companies like Red Hat (OpenShift GitOps) and Adobe, eliminating manual kubectl commands that caused 40% of production incidents (wrong context, typos, outdated manifests). Automated self-heal prevents configuration drift where manual kubectl edits diverge from Git, a major source of "works on my cluster" debugging sessions. ArgoCD's multi-cluster management enables platform teams to manage 50+ Kubernetes clusters from single control plane, reducing operational overhead by 70% while ensuring consistent security policies and application versions across development, staging, and production environments.
+**Why It Matters**: ArgoCD automates deployment workflows, eliminating manual `kubectl` commands that cause production incidents through wrong context, typos, and outdated manifests. Automated self-heal prevents configuration drift where manual edits diverge from Git, a major source of "works on my cluster" debugging sessions. ArgoCD's multi-cluster management enables platform teams to manage many Kubernetes clusters from a single control plane, ensuring consistent security policies and application versions across development, staging, and production environments.
 
 ---
 
@@ -3207,7 +3207,7 @@ spec: # => Application specification
 
 **Key Takeaway**: Use automated sync with selfHeal for production to prevent configuration drift; enable prune to remove orphaned resources; configure retry with backoff for resilience against transient failures.
 
-**Why It Matters**: Sync strategies balance deployment automation (velocity) with safety (preventing outages). Companies like Intuit and Adobe adopted automated ArgoCD sync with self-heal enabled across hundreds of production applications, eliminating configuration drift incidents. Self-heal prevents configuration drift that caused major outages at Cloudflare, and sync waves implement ordered deployment patterns critical for stateful applications—deploying backends before databases dependent on them caused 25% of rollback events at a major SaaS company before adopting sync waves.
+**Why It Matters**: Sync strategies balance deployment automation (velocity) with safety (preventing outages). Automated ArgoCD sync with self-heal enabled across production applications eliminates configuration drift incidents by continuously reconciling cluster state with the Git source of truth. Sync waves implement ordered deployment patterns critical for stateful applications — deploying dependent services before their dependencies is a common source of rollback events without explicit ordering.
 
 ---
 
@@ -3336,7 +3336,7 @@ spec: # => Application specification
 
 **Key Takeaway**: Use ArgoCD Projects for multi-team environments to enforce repository, cluster, and resource restrictions; configure RBAC roles for granular access control; projects prevent accidental changes to critical resources.
 
-**Why It Matters**: ArgoCD Projects implement multi-tenancy at companies like Intuit and Salesforce, enabling 50+ development teams to share ArgoCD while maintaining security boundaries that prevent team A from deploying to team B's namespaces. This pattern enforces least-privilege access where frontend teams cannot modify backend infrastructure, reducing blast radius of misconfigurations by 90%. Project-based RBAC also implements compliance requirements (SOX, PCI-DSS) where auditors verify that developers cannot modify production resources directly, only through Git + peer review + automated deployment. This segregation of duties is mandatory for regulated industries.
+**Why It Matters**: ArgoCD Projects implement multi-tenancy for large engineering organizations, enabling many development teams to share ArgoCD while maintaining security boundaries that prevent team A from deploying to team B's namespaces. This pattern enforces least-privilege access where frontend teams cannot modify backend infrastructure, reducing blast radius of misconfigurations. Project-based RBAC also implements compliance requirements (SOX, PCI-DSS) where auditors verify that developers cannot modify production resources directly, only through Git + peer review + automated deployment. This segregation of duties is mandatory for regulated industries.
 
 ---
 
@@ -3482,7 +3482,7 @@ spec: # => ApplicationSet specification
 
 **Key Takeaway**: Use ApplicationSets for fleet management and multi-cluster deployments; leverage generators to avoid manual Application creation; ApplicationSets enable GitOps at scale for multiple environments and clusters.
 
-**Why It Matters**: ApplicationSets eliminate configuration duplication by generating multiple Application resources from a single template — one ApplicationSet can replace dozens of nearly-identical Application manifests across environments or clusters. The Pull Request generator enables automated preview environments where every PR gets an isolated test environment, improving QA feedback loops from days to minutes. Multi-cluster ApplicationSets power disaster recovery and multi-region deployments at companies like Adobe and Spotify, where the same application automatically deploys to 10+ clusters with environment-specific configuration, critical for high-availability SaaS platforms.
+**Why It Matters**: ApplicationSets eliminate configuration duplication by generating multiple Application resources from a single template — one ApplicationSet can replace dozens of nearly-identical Application manifests across environments or clusters. The Pull Request generator enables automated preview environments where every PR gets an isolated test environment, improving QA feedback loops from days to minutes. Multi-cluster ApplicationSets power disaster recovery and multi-region deployments by automatically deploying the same application to many clusters with environment-specific configuration, critical for high-availability SaaS platforms.
 
 ---
 
@@ -3670,7 +3670,7 @@ kubectl top nodes                               # => CPU and memory utilization 
 
 **Key Takeaway**: Production readiness requires comprehensive setup across security, reliability, monitoring, and operations; use this checklist to validate cluster readiness; automate validation using admission controllers and policy engines like OPA/Kyverno.
 
-**Why It Matters**: Production Kubernetes readiness is not binary — it is a set of practices accumulated across years of real outages and postmortems. This checklist codifies patterns from the Kubernetes community, Google SRE practices, and the CNCF ecosystem. Automated policy enforcement (OPA Gatekeeper, Kyverno) makes compliance a CI gate rather than a code review checklist — preventing misconfigured workloads from reaching production regardless of who writes the YAML. The SRE principles embedded here (error budgets, SLOs, chaos engineering) operationalize reliability, reducing incident frequency by 90% while enabling 10x deployment velocity. Production readiness is not optional—it's the difference between experimental clusters and platforms running critical business workloads serving millions of users.
+**Why It Matters**: Production Kubernetes readiness is not binary — it is a set of practices accumulated across years of real outages and postmortems. This checklist codifies patterns from the Kubernetes community, SRE practices, and the CNCF ecosystem. Automated policy enforcement (OPA Gatekeeper, Kyverno) makes compliance a CI gate rather than a code review checklist — preventing misconfigured workloads from reaching production regardless of who writes the YAML. The SRE principles embedded here (error budgets, SLOs, chaos engineering) operationalize reliability, enabling higher deployment velocity while reducing incident frequency. Production readiness is not optional — it is the difference between experimental clusters and platforms running critical business workloads.
 
 ---
 

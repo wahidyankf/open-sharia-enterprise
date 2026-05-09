@@ -1975,7 +1975,7 @@ async fn main() {
 
 **Key Takeaway**: Store responses keyed by `Idempotency-Key` header. Return the cached response for duplicate keys, marking it with `idempotent: true`. Expire entries after 24 hours to prevent indefinite memory growth.
 
-**Why It Matters**: Network retries are fundamental in distributed systems—clients cannot know if a request was received but the response was lost. Without idempotency keys, retrying a payment creates a double charge. With idempotency keys, retrying is safe: the server detects the duplicate and returns the original response without re-processing. This is how Stripe, Braintree, and every reliable payment API operates. The pattern applies to any non-idempotent operation: order creation, user registration, and any API that creates resources with side effects.
+**Why It Matters**: Network retries are fundamental in distributed systems—clients cannot know if a request was received but the response was lost. Without idempotency keys, retrying a payment creates a double charge. With idempotency keys, retrying is safe: the server detects the duplicate and returns the original response without re-processing. Payment and financial APIs require idempotency keys for exactly this reason. The pattern applies to any non-idempotent operation: order creation, user registration, and any API that creates resources with side effects.
 
 ---
 

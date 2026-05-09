@@ -2345,7 +2345,7 @@ class SnackBarDemo extends StatelessWidget {
 
 **Key Takeaway**: Always use `ScaffoldMessenger.of(context)` for snackbars; use `hideCurrentSnackBar()` before `showSnackBar()` when rapid successive messages could stack; use `SnackBarAction` for reversible operations.
 
-**Why It Matters**: The SnackBar with Undo action is a UX best practice for reversible operations - Google's Material Design guidelines recommend it for deletes and archives. Using `SnackBarBehavior.floating` prevents snackbars from obscuring the BottomNavigationBar. In production apps, dismissing the previous snackbar before showing a new one prevents a queue of messages that confuses users.
+**Why It Matters**: The SnackBar with Undo action is a UX best practice for reversible operations — Material Design guidelines recommend it for deletes and archives. Using `SnackBarBehavior.floating` prevents snackbars from obscuring the BottomNavigationBar. In production apps, dismissing the previous snackbar before showing a new one prevents a queue of messages that confuses users.
 
 ---
 
