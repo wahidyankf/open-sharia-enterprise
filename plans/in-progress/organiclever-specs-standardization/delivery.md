@@ -110,6 +110,7 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
 - [ ] **1.3 Create `specs/apps/organiclever/containers/README.md`**
 - [ ] **1.4 Create `specs/apps/organiclever/components/README.md`**
 - [ ] **1.5 Create subdirectories for Phase 2A targets** (run from repo root):
+
   ```bash
   mkdir -p specs/apps/organiclever/components/be \
             specs/apps/organiclever/components/web \
@@ -120,11 +121,13 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
     git add specs/apps/organiclever/$d/.gitkeep
   done
   ```
+
   Acceptance: `git status` shows all three `.gitkeep` files as new staged files.
   Note: `specs/apps/organiclever/containers/contracts/` is NOT pre-created here — Phase 2A.7 `git mv contracts → containers/contracts` moves the entire subtree including its directory structure.
   Note: Phase 2A `git mv` replaces `.gitkeep` files once real content lands; the `.gitkeep` files are removed as part of the Phase 2 commit.
 - [ ] **1.6 Create `specs/apps/organiclever/behavior/README.md`**
 - [ ] **1.7 Create empty subdirectories** for behavior (run from repo root):
+
   ```bash
   mkdir -p specs/apps/organiclever/behavior/be \
             specs/apps/organiclever/behavior/web
@@ -133,6 +136,7 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
     git add specs/apps/organiclever/$d/.gitkeep
   done
   ```
+
   Acceptance: `git status` shows both `.gitkeep` files as new staged files. Phase 2A `git mv` removes them once real content lands.
 - [ ] **1.8 Run `npm run lint:md`** — exit 0
 - [ ] **1.9 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — must still pass; old paths unchanged
@@ -207,16 +211,20 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 
 - [ ] **2F.0 Nx project discovery (FR-12)**: `nx show projects | grep organiclever-contracts` — must output `organiclever-contracts`. `nx run organiclever-contracts:lint --skip-nx-cache` — exit 0. `nx run organiclever-contracts:docs --skip-nx-cache` — exit 0.
 - [ ] **2F.1 Confirm zero stragglers**:
+
   ```bash
   rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" \
     --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**'
   ```
+
   Expect 0 results
 - [ ] **2F.2 Confirm zero BC-map old-path stragglers**:
+
   ```bash
   rg "apps/organiclever-web/docs/explanation/bounded-context-map" \
     --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**'
   ```
+
   Expect 0 results
 - [ ] **2F.3 Run `npm run lint:md`** — exit 0
 - [ ] **2F.4 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — exit 0 (DDD enforcement passes against new paths)
@@ -300,7 +308,8 @@ Each app trim is its own commit. After each commit, run the relevant `test:quick
 The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing governance files breaks FR-8 / FR-9. The agent prompt below captures all four files + cross-link symmetry + the new combined-doc shape.
 
 - [ ] **6.1 Invoke `repo-rules-maker`** with the prompt:
-  ```
+
+  ```text
   Create governance/conventions/structure/app-readme-vs-specs.md as a SINGLE
   COMBINED convention codifying FOUR rules from
   plans/in-progress/organiclever-specs-standardization/tech-docs.md:
@@ -359,6 +368,7 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
   Do NOT touch any non-governance files (apps/, infra/, specs/, plans/).
   Do NOT modify rhino-cli code — that's Phase 6.5 (separate).
   ```
+
 - [ ] **6.2 Verify all SEVEN files exist and conform**:
   - [ ] `governance/conventions/structure/app-readme-vs-specs.md`:
         `test -f governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
@@ -399,11 +409,13 @@ This phase delivers the deterministic offload commands that the agents (updated 
 ### 6.5 pre-step: Scaffold new rhino specs tree
 
 - [ ] **6.5.0 Scaffold `specs/apps/rhino/behavior/cli/gherkin/specs/`** (_New directory_ — does not yet exist):
+
   ```bash
   mkdir -p specs/apps/rhino/behavior/cli/gherkin/specs
   touch specs/apps/rhino/behavior/cli/gherkin/specs/.gitkeep
   git add specs/apps/rhino/behavior/cli/gherkin/specs/.gitkeep
   ```
+
   Also create a thin `specs/apps/rhino/behavior/cli/gherkin/README.md` index (1-line description + planned children list).
   Acceptance: `test -d specs/apps/rhino/behavior/cli/gherkin/specs` returns 0.
 
@@ -492,13 +504,14 @@ This phase delivers the deterministic offload commands that the agents (updated 
 
 ## Phase 8 — PM-readability check + final verification + archive
 
-- [ ] **8.1 PM-readability self-check** — for each NEW or MOVED file under `specs/apps/organiclever/` (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`, `components/web/ddd/bounded-context-map.md`), confirm:
-  - [ ] First 10 lines after H1 contain an `Audience:` line and a plain-language summary paragraph
-  - [ ] First occurrence of every term in the FR-6 glossary table carries a parenthetical or footnote-style gloss
+- [ ] **8.1 PM-readability self-check** (audience = SWE-background TPM, the kind embedded with a developer-tools team like a VS Code TPM; NOT non-technical PM) — for each NEW or MOVED file under `specs/apps/organiclever/` (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`, `components/web/ddd/bounded-context-map.md`), confirm:
+  - [ ] First 10 lines after H1 contain an `Audience:` line (default `Engineers, Technical Product/Project Managers`) and a plain-language summary paragraph
+  - [ ] First occurrence of every NICHE project-specific framework name (F#, Giraffe, PGlite, XState, Effect TS) and DDD-applied term (DDD, bounded context, aggregate, ubiquitous language) carries a parenthetical or footnote-style gloss
+  - [ ] Mainstream SWE vocabulary is NOT over-glossed: TypeScript, Next.js, Postgres, Docker, Kubernetes, REST, OpenAPI, IndexedDB, FSM, ADR, CI/CD, build pipeline, lockfile, Volta, npm, ESLint, Mermaid, Playwright, Vercel, Nx, monorepo are all gloss-free
   - [ ] Every section opens with intent (1-2 sentences on user value) before mechanism
   - [ ] Every code/Mermaid block is preceded by a one-sentence "what this shows" intro
-  - [ ] No un-glossed framework names in the summary paragraph
-- [ ] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section with reading order (product/ → system-context/ → containers/ → components/ → behavior/), file-by-file what-to-expect notes, and 3-bullet "v0 in plain language" summary
+  - [ ] Summary paragraph (after H1) contains no un-glossed niche framework names or DDD-applied terms; mainstream SWE vocabulary is fine
+- [ ] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section that opens with a one-sentence audience note (SWE-background TPMs targeted — VS Code TPM / database-product TPM / SDK TPM persona; non-technical PMs may need a colleague to walk through C4 diagrams and DDD-applied vocabulary), reading order (product/ → system-context/ → containers/ → components/ → behavior/), file-by-file what-to-expect notes, and 3-bullet "v0 in plain language" summary
 - [ ] **8.3 Run FULL FR-15 push gate matrix** (all `--skip-nx-cache`):
   - [ ] `npm run lint:md` exit 0
   - [ ] `nx run organiclever-web:test:quick` exit 0
@@ -516,6 +529,7 @@ This phase delivers the deterministic offload commands that the agents (updated 
   - [ ] `rhino-cli specs validate-adoption organiclever` finds zero HIGH findings
   - [ ] Pre-push hook simulation: `npx nx affected -t typecheck lint test:quick spec-coverage` exit 0
 - [ ] **8.4 Re-run stragglers grep**:
+
   ```bash
   # No old BC map references
   rg "apps/organiclever-web/docs/explanation/bounded-context-map" \
@@ -524,6 +538,7 @@ This phase delivers the deterministic offload commands that the agents (updated 
   rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" \
     --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**'
   ```
+
   Expect 0 results from both
 - [ ] **8.5 Verify acceptance criteria from [prd.md §Acceptance criteria](./prd.md#acceptance-criteria-gherkin)** — every Gherkin scenario passes manually, INCLUDING all FR-1 through FR-9 scenarios, the C4-aware tree-shape scenarios, the rhino-cli path scenario, the governance propagation scenarios
 - [ ] **8.6 Run `repo-rules-checker`** against pilot artifacts. If findings:

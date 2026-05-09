@@ -5,11 +5,16 @@
 The specs tree is consumed by **two reader populations**, both first-class:
 
 - **Engineers** — answering "what is this app supposed to do? what are the bounded contexts? what API surface? what behavior should I preserve when I change code?"
-- **Product / Project Managers** — answering "what features ship in v0? what flows exist today? which screens? what's the contract with backend? what's planned vs deferred?"
+- **Technical Product / Project Managers (TPMs) with software-engineering background** — concretely, the kind of TPM embedded with a developer-tools team (e.g., a TPM for VS Code, a TPM for a database product, a TPM for a developer SDK). Has shipped software, reads code, recognizes mainstream tooling. Answering "what features ship in v0? what flows exist today? which screens? what's the contract with backend? what's planned vs deferred?"
 
-A PM should be able to open `specs/apps/organiclever/README.md` cold, follow a clearly-labelled reading path, and arrive at a working mental model of the product without reading any code, any framework documentation, or any architecture decision record. Engineering jargon (DDD, bounded contexts, PGlite, XState, Effect TS, F#, Giraffe) is allowed inside specs/ when necessary, but every term is glossed in plain language on first use within each file, and every section leads with **intent** ("what this enables for the user") before **mechanism** ("how the code is shaped").
+Throughout this plan, the abbreviations "PM" and "TPM" both refer to this **SWE-background TPM** as defined above — they are NOT references to a non-technical PM persona. The TPM:
 
-This dual-audience constraint is the single most important shaping force on every new specs/ file in this plan. It is why the rule isn't "move all engineering content to specs/" but rather "move behavior + architecture to specs/, and write specs/ files such that a PM can read them."
+- **Knows** (no gloss needed): TypeScript, Next.js, Postgres, Docker, REST, OpenAPI, IndexedDB, finite state machines, build pipelines, CI/CD, lockfiles, ADRs, version pinning, DDD as a concept, ESLint/lint rules, Mermaid, Playwright/E2E testing, Vercel, Kubernetes basics
+- **Does NOT necessarily know** (gloss on first use within a file): F# / Giraffe (uncommon backend stack), PGlite (very new in-browser Postgres-WASM), Effect TS (uncommon TypeScript effect library), XState (state-machine library — gloss for safety since not universal), and DDD-applied vocabulary (bounded context, aggregate, ubiquitous language)
+
+A TPM should be able to open `specs/apps/organiclever/README.md` cold, follow a clearly-labelled reading path, and arrive at a working mental model of the product without chasing documentation for the niche stack choices above. Mainstream SWE vocabulary the TPM already commands does NOT need glossing — over-glossing is noise. Every section leads with **intent** ("what this enables for the user") before **mechanism** ("how the code is shaped").
+
+This dual-audience constraint is the single most important shaping force on every new specs/ file in this plan. It is why the rule isn't "move all engineering content to specs/" but rather "move behavior + architecture to specs/, and write specs/ files such that a SWE-background TPM can read them without chasing niche-stack docs."
 
 ## Why this exists
 
@@ -80,7 +85,7 @@ The convention is governance Layer 2 (per the [Repository Governance Architectur
 ## Affected Roles
 
 - **Engineers** — open `apps/organiclever-*/README.md` to start a dev server; benefit from dev-runtime-only READMEs that omit behavior narrative.
-- **Product / Project Managers** — open `specs/apps/organiclever/README.md` cold; benefit from PM-readable spec files with plain-language summaries and a reading path.
+- **Technical Product / Project Managers (TPMs) with software-engineering background** (kind of TPM embedded with a developer-tools team — a VS Code TPM, a database-product TPM, a SDK TPM — NOT non-technical PMs) — open `specs/apps/organiclever/README.md` cold; benefit from TPM-readable spec files where the niche stack choices (F#/Giraffe, PGlite, Effect TS, XState) and DDD-applied terms (bounded context, aggregate, ubiquitous language) are glossed on first use, and mainstream SWE vocab (TypeScript, Next.js, Postgres, REST, OpenAPI, FSM, IndexedDB, ADR) is gloss-free.
 - **Plan executor** — runs the delivery checklist; follows the phase-ordered approach (scaffold → atomic reorg → additive content → subtractive trim → governance → rhino-cli).
 - **Rollout plan authors** (follow-up plans for `ayokoding`, `oseplatform`, `wahidyankf`, `rhino`) — reference the new convention and the reference tree from this pilot when writing their rollout plan.
 - **`specs-checker` / `specs-fixer` / `specs-maker` agents** — updated in this plan; benefit from C4-aware validation categories and tree-shape enforcement.

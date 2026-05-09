@@ -7,7 +7,7 @@ This plan delivers a reorganization of `specs/apps/organiclever/` from a flat-ro
 ## Personas
 
 - **Contributor opening a new app** — opens an `apps/organiclever-*/README.md` to get a dev server running; wants Quick Start + Commands only, not behavior narrative.
-- **PM reading specs/** — opens `specs/apps/organiclever/README.md` cold; wants a reading path, plain-language summaries, and no un-glossed framework names.
+- **SWE-background TPM reading specs/** — Technical Product/Project Manager with software-engineering background; concretely, the kind of TPM embedded with a developer-tools team (a VS Code TPM, a database-product TPM, an SDK TPM). Has shipped software, reads code fluently, knows mainstream tooling (TypeScript, Next.js, Postgres, Docker, REST, OpenAPI, IndexedDB, FSM, CI/CD, ADR, DDD-as-concept). Does NOT necessarily know this product's niche stack choices: F#/Giraffe, PGlite, Effect TS, XState, or DDD-applied vocabulary (bounded context, aggregate, ubiquitous language). Opens `specs/apps/organiclever/README.md` cold; wants a reading path, summaries free of jargon for the niche choices, and gloss-on-first-use for those niche items. Throughout this PRD, the abbreviations "PM" and "TPM" both refer to this SWE-background TPM persona — never a non-technical PM.
 - **Rollout plan author** — references this pilot's convention and reference tree when writing the `ayokoding` or `oseplatform` rollout plan; needs the split rule to be unambiguous and the convention to be findable.
 - **Automation (specs-checker agent)** — validates repo state against the new convention; needs the tree shape and adoption rules to be explicit and machine-checkable.
 
@@ -17,9 +17,9 @@ As a contributor opening an organiclever app for the first time,
 I want the README to answer "how do I run this locally?" in under 120 lines,
 So that I do not have to read behavior narrative to start a dev server.
 
-As a PM reading `specs/apps/organiclever/` for the first time,
-I want a clearly-labelled reading path and plain-language file summaries,
-So that I can build a working mental model without reading code or framework docs.
+As a SWE-background TPM (the kind of TPM embedded with a developer-tools team, like a VS Code TPM) reading `specs/apps/organiclever/` for the first time,
+I want a clearly-labelled reading path and file summaries that gloss only the genuinely niche project-specific choices (F#/Giraffe, PGlite, Effect TS, XState) and DDD-applied vocabulary (bounded context, aggregate, ubiquitous language) on first use,
+So that I can build a working mental model without chasing docs for those niche items, while not being slowed down by needless glosses on mainstream SWE vocab (TypeScript, Next.js, Postgres, REST, OpenAPI, FSM, IndexedDB, ADR) I already know.
 
 As a rollout plan author,
 I want an unambiguous convention codifying the split rule and tree shape,
@@ -36,9 +36,9 @@ So that I can write "apply convention X to app Y" without re-deriving the rules.
 `specs/apps/organiclever/` serves two reader populations, both first-class:
 
 - **Engineers** — answering "what does this system do, what are the boundaries, what's the contract?"
-- **Product / Project Managers** — answering "what features exist in v0, what's planned, what's deferred?"
+- **SWE-background Technical Product / Project Managers** — concretely, the kind of TPM embedded with a developer-tools team (a VS Code TPM, a database-product TPM, an SDK TPM). Has shipped software, knows mainstream tooling (TypeScript, Next.js, Postgres, REST, OpenAPI, FSM, IndexedDB, ADR, DDD-as-concept). Does NOT necessarily know this product's niche stack (F#/Giraffe, PGlite, Effect TS, XState) or DDD-applied vocabulary (bounded context, aggregate, ubiquitous language). Answering "what features exist in v0, what's planned, what's deferred?"
 
-Every requirement in this PRD is shaped by the dual audience. PM-readability is not a "nice-to-have" — it is a hard acceptance criterion (FR-6, FR-7).
+Every requirement in this PRD is shaped by the dual audience. TPM-readability (where "TPM" means the SWE-background TPM defined above; "PM" used interchangeably as shorthand for this same persona) is not a "nice-to-have" — it is a hard acceptance criterion (FR-6, FR-7).
 
 ## Functional requirements
 
@@ -168,12 +168,12 @@ Final line counts must be:
 Every NEW or MOVED file under `specs/apps/organiclever/` (not just touched-for-link-updates) MUST satisfy:
 
 1. **Header block** — first 10 lines after the H1 contain:
-   - **`Audience:`** line listing target reader populations (`Engineers, Product/Project Managers` is the default)
-   - **Plain-language summary** — one paragraph, no framework jargon, that a PM can read and understand on first encounter
+   - **`Audience:`** line listing target reader populations (`Engineers, Technical Product/Project Managers` is the default — "TPM" meaning a SWE-background TPM as defined in the [Audience](#audience) section, NOT a non-technical PM)
+   - **Plain-language summary** — one paragraph free of jargon for the niche stack choices (F#/Giraffe, PGlite, Effect TS, XState) and DDD-applied vocabulary (bounded context, aggregate, ubiquitous language). Mainstream SWE vocabulary (TypeScript, Next.js, Postgres, Docker, REST, OpenAPI, FSM, IndexedDB, ADR, build pipelines, CI/CD, lockfiles) is fine without glossing — the TPM is a software engineer
 2. **Intent before mechanism** — every major section leads with what the feature/component enables for the user (1-2 sentences) before describing how the code is shaped
-3. **Glossary on first use** — the first occurrence of every technical term in a file (e.g., DDD, bounded context, PGlite, IndexedDB, XState, Effect TS, F#, Giraffe, REST, OpenAPI, ADR, FSM) carries a parenthetical or footnote-style plain-language gloss. Subsequent uses in the same file are gloss-free
+3. **Glossary on first use, scoped narrowly** — the first occurrence of each NICHE project-specific framework name (F#, Giraffe, PGlite, XState, Effect TS) or DDD-applied term (DDD, bounded context, aggregate, ubiquitous language) carries a parenthetical or footnote-style plain-language gloss. Subsequent uses in the same file are gloss-free. **Mainstream SWE vocabulary does NOT need glossing** — REST, OpenAPI, FSM, IndexedDB, ADR, CI/CD, lockfile, build pipeline, TypeScript, Next.js, Postgres, Docker, ESLint, Mermaid, Playwright, Vercel, Kubernetes, Volta, npm, etc. are all gloss-free. Over-glossing mainstream items is noise that the SWE-background TPM finds patronizing
 4. **No raw code listings without context** — code blocks (TypeScript, F#, Mermaid) are preceded by a one-sentence "what this shows" intro
-5. **Tables over prose where possible** — feature/route/screen/endpoint tables are PM-friendlier than narrative paragraphs
+5. **Tables over prose where possible** — feature/route/screen/endpoint tables are PM-friendlier than narrative paragraphs (PM = SWE-background TPM, see Audience)
 
 Files affected by FR-6 in this plan:
 
@@ -187,8 +187,9 @@ Files affected by FR-6 in this plan:
 
 `specs/apps/organiclever/README.md` MUST gain a `## For Product / Project Managers` section that:
 
-- Lists the recommended reading order for a non-engineering reader (start with X, then Y, then Z)
-- Explicitly calls out which files are PM-friendly (all of `specs/`) vs which require engineering context (any C4 diagram or DDD layer-rule reference, with a one-line "what to expect" note)
+- Opens with a one-sentence audience note: this section targets SWE-background TPMs (the kind embedded with a developer-tools team — VS Code TPM, database-product TPM, SDK TPM); non-technical PMs may need a colleague to walk them through C4 diagrams and DDD-applied vocabulary
+- Lists the recommended reading order for a SWE-background TPM (start with X, then Y, then Z)
+- Explicitly calls out which files are TPM-friendly out of the box (all of `specs/`) vs which assume deeper hands-on engineering context even for a SWE-background TPM (any C4 diagram or DDD layer-rule reference, with a one-line "what to expect" note)
 - Provides a 3-bullet "v0 in plain language" answer to "what does OrganicLever ship today?"
 
 ### FR-8: Governance propagation via repo-rules-maker
@@ -471,39 +472,42 @@ Feature: Pilot validation
     And the file describes the strained case, the resolution chosen, and the implication
       for the rollout plans
 
-Feature: PM-readable specs (FR-6, FR-7)
+Feature: PM-readable specs (FR-6, FR-7) — audience: SWE-background TPM (e.g., a VS Code TPM)
   Scenario: Every new specs/ file opens with audience + plain-language summary
     Given the plan has completed
     When I open any of the four NEW files under specs/apps/organiclever/
       (components/web/architecture.md, components/web/routes-and-screens.md, components/web/design-system.md, components/be/api.md)
       or the moved file (components/web/ddd/bounded-context-map.md)
-    Then the first 10 lines after the H1 contain an "Audience:" line
+    Then the first 10 lines after the H1 contain an "Audience:" line that names "Technical Product/Project Managers"
     And the first 10 lines after the H1 contain a plain-language summary paragraph
-    And the summary paragraph contains zero un-glossed framework names
+    And the summary paragraph contains zero un-glossed niche framework names (F#, Giraffe, PGlite, Effect TS, XState)
+    And the summary paragraph contains zero un-glossed DDD-applied terms (bounded context, aggregate, ubiquitous language)
+    But the summary paragraph MAY freely use mainstream SWE vocabulary without glossing
+      (TypeScript, Next.js, Postgres, Docker, REST, OpenAPI, IndexedDB, FSM, ADR, etc.)
 
-  Scenario: Technical terms are glossed on first use
+  Scenario: Niche project-specific terms are glossed on first use
     Given the plan has completed
     When I read any new specs/ file from start to finish
-    Then the first occurrence of each of these terms carries a parenthetical or
+    Then the first occurrence of each of these niche terms carries a parenthetical or
       footnote-style plain-language gloss:
       | DDD                  |
       | bounded context      |
+      | aggregate            |
+      | ubiquitous language  |
       | PGlite               |
-      | IndexedDB            |
       | XState               |
       | Effect TS            |
       | F#                   |
       | Giraffe              |
-      | REST                 |
-      | OpenAPI              |
-      | ADR                  |
-      | FSM                  |
     And subsequent uses of the same term in the same file are gloss-free
+    And mainstream SWE terms (REST, OpenAPI, IndexedDB, FSM, ADR, CI/CD, lockfile, build pipeline, TypeScript, Next.js, Postgres, Docker, ESLint, Mermaid, Playwright, Vercel, Kubernetes, Volta, npm) are NOT glossed
+      (over-glossing is a finding — the SWE-background TPM finds it patronizing)
 
-  Scenario: PM reading path exists
+  Scenario: PM reading path exists and is calibrated for SWE-background TPM
     Given the plan has completed
     When I open specs/apps/organiclever/README.md
     Then the file contains a "## For Product / Project Managers" section
+    And the section opens with a one-sentence audience note naming "SWE-background TPM" (e.g. a VS Code TPM)
     And the section lists a recommended reading order
     And the section provides a 3-bullet "v0 in plain language" summary
     And every file referenced in the reading path resolves to an existing file

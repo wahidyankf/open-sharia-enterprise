@@ -4,7 +4,7 @@
 
 Whoever executes this plan, and whoever runs the rollout for `ayokoding` / `oseplatform` / `wahidyankf` / `rhino` afterward. This document is the reference implementation.
 
-The output of this plan — `specs/apps/organiclever/` — has a different audience: **engineers AND product/project managers**. PM-readability is a hard constraint on every file written under `specs/`. See [§PM-Readability Contract](#pm-readability-contract) below.
+The output of this plan — `specs/apps/organiclever/` — has a different audience: **engineers AND Technical Product/Project Managers (TPMs) with software-engineering background** — concretely, the kind of TPM embedded with a developer-tools team (a VS Code TPM, a database-product TPM, an SDK TPM). Has shipped software, reads code fluently, recognizes mainstream tooling (TypeScript, Next.js, Postgres, Docker, REST, OpenAPI, FSM, IndexedDB, ADR, DDD-as-concept). Does NOT necessarily know this product's niche stack (F#/Giraffe, PGlite, Effect TS, XState) or DDD-applied vocabulary (bounded context, aggregate, ubiquitous language). Throughout this tech-docs file (and the rest of the plan), the abbreviations "PM" and "TPM" both refer to this SWE-background TPM persona — never a non-technical PM. PM-readability is a hard constraint on every file written under `specs/`. See [§PM-Readability Contract](#pm-readability-contract) below.
 
 ## High-level shape (before / after)
 
@@ -126,7 +126,12 @@ The rule is unambiguous when applied paragraph-by-paragraph. If a paragraph genu
 
 ## PM-Readability Contract
 
-Every NEW or MOVED file under `specs/apps/organiclever/` must be readable by a Product/Project Manager who has no F#/Next.js/PGlite/XState/Effect TS background. Six rules apply:
+Every NEW or MOVED file under `specs/apps/organiclever/` must be readable by a **SWE-background Technical Product/Project Manager** — concretely, the kind of TPM embedded with a developer-tools team (a VS Code TPM, a database-product TPM, an SDK TPM). The TPM has shipped software, reads code fluently, and recognizes mainstream tooling. The contract is calibrated to **gloss only the genuinely niche** — over-glossing mainstream SWE vocabulary is patronizing noise. Specifically:
+
+- **No gloss needed** (the SWE-background TPM already knows): TypeScript, Next.js, React, Postgres, Docker, Kubernetes, REST, OpenAPI, IndexedDB, FSM (finite state machine), CI/CD, ADR, build pipelines, lockfiles, version pinning, Volta, npm, ESLint, Mermaid, Playwright, Vercel, DDD-as-concept
+- **Gloss on first use within each file** (genuinely niche to this product): F#, Giraffe, PGlite, Effect TS, XState, and DDD-applied vocabulary (bounded context, aggregate, ubiquitous language)
+
+The contract is NOT calibrated to a non-technical PM. Six rules apply:
 
 ### Required header block (first 10 lines after H1)
 
@@ -135,10 +140,13 @@ Every spec file starts with:
 ```markdown
 # <Title>
 
-> **Audience**: Engineers, Product/Project Managers
+> **Audience**: Engineers, Technical Product/Project Managers
 >
-> **Plain-language summary**: <one paragraph, no framework jargon, that a PM
-> can read on first encounter and form a working mental model>
+> **Plain-language summary**: <one paragraph free of jargon for the niche
+> stack choices (F#/Giraffe, PGlite, Effect TS, XState) and DDD-applied
+> vocabulary (bounded context, aggregate, ubiquitous language); mainstream
+> SWE vocabulary is fine. A SWE-background TPM should be able to form a
+> working mental model on first read.>
 
 ## <First section heading>
 ...
@@ -146,7 +154,7 @@ Every spec file starts with:
 
 ### Rule 1 — Intent before mechanism
 
-Every section leads with **what the feature/component enables for the user** (1-2 sentences) before describing **how the code is shaped**. A PM should be able to read the first paragraph of any section and walk away knowing the user-facing point.
+Every section leads with **what the feature/component enables for the user** (1-2 sentences) before describing **how the code is shaped**. A SWE-background TPM should be able to read the first paragraph of any section and walk away knowing the user-facing point.
 
 ```markdown
 <!-- BAD — opens with mechanism -->
@@ -168,40 +176,39 @@ three use-cases (`appendEvent`, `bumpEvent`, `listEvents`) backed by an
 in-browser PGlite (Postgres-WASM, IndexedDB-backed) store.
 ```
 
-### Rule 2 — Glossary on first use
+### Rule 2 — Glossary on first use, scoped narrowly
 
-The first occurrence of every technical term in a file carries a parenthetical or footnote-style plain-language gloss. Subsequent uses in the same file are gloss-free.
+The first occurrence of each **niche project-specific framework name** or **DDD-applied term** in a file carries a parenthetical or footnote-style plain-language gloss. Subsequent uses in the same file are gloss-free. **Mainstream SWE vocabulary the SWE-background TPM already knows does NOT need glossing** — over-glossing is patronizing noise. The list below is exhaustive; do not gloss anything not on this list.
 
 | Term            | Gloss to use on first occurrence                                     |
 | --------------- | -------------------------------------------------------------------- |
-| DDD             | Domain-Driven Design — modeling code around business concepts        |
-| bounded context | a self-contained slice of the app with its own vocabulary and rules  |
-| PGlite          | Postgres running directly in the browser via WebAssembly             |
-| IndexedDB       | the browser's built-in local database, where PGlite stores data      |
-| XState          | a state-machine library that makes UI flows explicit                 |
-| Effect TS       | a TypeScript library for predictable side-effect handling            |
+| DDD (when first introducing the OrganicLever-specific application of it) | Domain-Driven Design — here applied as one bounded context per UI screen domain |
+| bounded context | a self-contained slice of the app with its own vocabulary, types, and rules; contexts communicate only through narrow published APIs |
+| aggregate       | a cluster of domain objects treated as one consistent unit by writes |
+| ubiquitous language | the shared vocabulary used by both the team and the code for one bounded context |
+| PGlite          | Postgres-WASM — Postgres compiled to WebAssembly running directly in the browser, persisted via IndexedDB |
+| XState          | a JavaScript/TypeScript state-machine library used here for UI flow orchestration |
+| Effect TS       | a TypeScript library for typed effect composition, used in the infrastructure layer |
 | F#              | functional .NET language used for the OrganicLever backend           |
-| Giraffe         | the F# web framework on top of ASP.NET Core                          |
-| REST            | the HTTP-based API style                                             |
-| OpenAPI         | a YAML/JSON format describing what an API does                       |
-| ADR             | Architecture Decision Record — a memo capturing a design choice      |
-| FSM             | finite-state machine — a model of "what state the app is in next"    |
+| Giraffe         | F# web framework on top of ASP.NET Core, used for the OrganicLever HTTP API |
+
+**Do NOT gloss** (mainstream — the SWE-background TPM already knows): TypeScript, JavaScript, Next.js, React, Node.js, Postgres, Docker, Kubernetes, REST, HTTP, JSON, YAML, OpenAPI, IndexedDB, FSM, finite state machine, CI, CD, CI/CD, ADR, Architecture Decision Record, build pipeline, lockfile, version pinning, Volta, npm, ESLint, Prettier, Mermaid, Playwright, Vercel, monorepo, Nx.
 
 ### Rule 3 — Tables over prose where possible
 
-Routes, screens, endpoints, environment variables, and feature lists are presented as tables. PMs scan tables faster than they parse prose.
+Routes, screens, endpoints, environment variables, and feature lists are presented as tables. SWE-background TPMs scan tables faster than they parse prose.
 
 ### Rule 4 — Code blocks are introduced
 
-Every code/Mermaid block is preceded by a one-sentence "what this shows" introduction. A PM should be able to skip the block and still follow the section.
+Every code/Mermaid block is preceded by a one-sentence "what this shows" introduction. A SWE-background TPM can read the block, but the intro lets them decide whether to. (They can read TypeScript and Mermaid fluently; the intro is about scanning velocity, not comprehension.)
 
 ### Rule 5 — Plain language in summary lines
 
-The H1-immediately-following summary paragraph contains zero un-glossed framework names. Save the technical detail for later sections; the summary is for everyone.
+The H1-immediately-following summary paragraph contains zero un-glossed niche project-specific framework names (F#/Giraffe, PGlite, Effect TS, XState) and zero un-glossed DDD-applied vocabulary (bounded context, aggregate, ubiquitous language). Mainstream SWE vocabulary (TypeScript, Next.js, Postgres, REST, OpenAPI, etc.) is fine. Save the niche detail for later sections; the summary is for everyone in the dual audience.
 
-### Rule 6 — Link forward to engineering depth
+### Rule 6 — Link forward to deep engineering depth
 
-When a section necessarily needs engineering depth (e.g., layer rules, ESLint boundaries enforcement), the section opens with a one-line "PMs can skip this section — it's about how engineers prevent code drift" cue and links forward to a deeper subsection or external doc.
+When a section necessarily needs hands-on engineering depth even for a SWE-background TPM (e.g., DDD layer rules with ESLint boundaries enforcement, Effect Layer composition with tagged errors, XState `fromPromise` actor wiring), the section opens with a one-line "TPMs can skim this section — it's about how engineers prevent code drift, and pre-supposes hands-on familiarity with the niche stack" cue and links forward to a deeper subsection or external doc.
 
 ## OrganicLever-specific notes
 
