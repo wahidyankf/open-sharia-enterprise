@@ -42,32 +42,36 @@ specs/apps/organiclever/
     └── web/gherkin/       # Frontend Gherkin scenarios (per bounded context)
 ```
 
-## Backend vs Frontend
+## Containers
 
-| Aspect      | Backend (be/)                                               | Frontend (fe/)                                                |
-| ----------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
-| Perspective | HTTP-semantic (GET, POST, status codes)                     | UI-semantic (clicks, types, sees)                             |
-| Background  | `Given the API is running`                                  | `Given the app is running`                                    |
-| Scenarios   | See [behavior/be/gherkin/](./behavior/be/gherkin/README.md) | See [behavior/web/gherkin/](./behavior/web/gherkin/README.md) |
-| Domains     | health                                                      | landing, system, layout, routing                              |
-| Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec)               | `apps/organiclever-web` (Next.js 16)                          |
+One row per deployable container (C4 L2). Container slug is canonical: it indexes
+`components/<slug>/`, `behavior/<slug>/gherkin/`, the container README, and the Gherkin
+glob. Adding a future container (e.g. `mobile`, `desktop`, a second backend) means adding
+a row here, not changing the schema.
 
-The frontend's system-status page consumes the backend's health endpoint. Otherwise the
-frontend is local-first today.
+| Container | Perspective                             | Background                 | Scenarios                                                 | Domains                          | Consumed by                                   |
+| --------- | --------------------------------------- | -------------------------- | --------------------------------------------------------- | -------------------------------- | --------------------------------------------- |
+| `be`      | HTTP-semantic (GET, POST, status codes) | `Given the API is running` | [behavior/be/gherkin/](./behavior/be/gherkin/README.md)   | health                           | `apps/organiclever-be` (F#/Giraffe, TickSpec) |
+| `web`     | UI-semantic (clicks, types, sees)       | `Given the app is running` | [behavior/web/gherkin/](./behavior/web/gherkin/README.md) | landing, system, layout, routing | `apps/organiclever-web` (Next.js 16)          |
+
+The `web` container's system-status page consumes the `be` container's health endpoint.
+Otherwise `web` is local-first today.
 
 ## Bounded Contexts
 
-| Bounded Context | BE Features | FE Features | Description                                              |
-| --------------- | ----------- | ----------- | -------------------------------------------------------- |
-| app-shell       | --          | 2           | Navigation chrome, accessibility, entry-logging overlays |
-| health          | 1           | 1           | Service health status (BE probe + FE diagnostic page)    |
-| journal         | --          | 2           | Append-only event log — system of record (PGlite)        |
-| landing         | --          | 1           | Marketing landing page                                   |
-| routine         | --          | 1           | Workout routine management                               |
-| routing         | --          | 2           | App routing and disabled-route 404 guards                |
-| settings        | --          | 3           | User preferences — dark mode, language                   |
-| stats           | --          | 2           | History and progress projections over journal events     |
-| workout-session | --          | 1           | Active workout session FSM                               |
+Counts are Gherkin features per container. `--` means no features in that container today.
+
+| Bounded Context | `be` features | `web` features | Description                                                |
+| --------------- | ------------- | -------------- | ---------------------------------------------------------- |
+| app-shell       | --            | 2              | Navigation chrome, accessibility, entry-logging overlays   |
+| health          | 1             | 1              | Service health status (`be` probe + `web` diagnostic page) |
+| journal         | --            | 2              | Append-only event log — system of record (PGlite)          |
+| landing         | --            | 1              | Marketing landing page                                     |
+| routine         | --            | 1              | Workout routine management                                 |
+| routing         | --            | 2              | App routing and disabled-route 404 guards                  |
+| settings        | --            | 3              | User preferences — dark mode, language                     |
+| stats           | --            | 2              | History and progress projections over journal events       |
+| workout-session | --            | 1              | Active workout session FSM                                 |
 
 ## Spec Artifacts
 

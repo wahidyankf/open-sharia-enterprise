@@ -13,23 +13,26 @@ each project can wire its step implementations against the right glob.
 - `web/` — Frontend Gherkin scenarios (UI semantic). Moved here from legacy
   flat-root `web/gherkin/` in Phase 2A.
 
-## Surface split
+## Containers
 
-| Aspect      | Backend (`be/`)                         | Frontend (`web/`)                    |
-| ----------- | --------------------------------------- | ------------------------------------ |
-| Perspective | HTTP-semantic (GET, POST, status codes) | UI-semantic (clicks, types, sees)    |
-| Background  | `Given the API is running`              | `Given the app is running`           |
-| Consumed by | `apps/organiclever-be` (F#/Giraffe)     | `apps/organiclever-web` (Next.js 16) |
+One row per deployable container (C4 L2). Container slug indexes
+`components/<slug>/` and `behavior/<slug>/gherkin/`. Adding a future container
+(`mobile`, `desktop`, a second backend) means adding a row, not changing the schema.
+
+| Container | Perspective                             | Background                 | Consumed by                          |
+| --------- | --------------------------------------- | -------------------------- | ------------------------------------ |
+| `be`      | HTTP-semantic (GET, POST, status codes) | `Given the API is running` | `apps/organiclever-be` (F#/Giraffe)  |
+| `web`     | UI-semantic (clicks, types, sees)       | `Given the app is running` | `apps/organiclever-web` (Next.js 16) |
 
 ## Gherkin coverage
 
-### Backend (`be/gherkin/`)
+### `be/gherkin/`
 
 | Domain | Feature                       | Scenarios |
 | ------ | ----------------------------- | --------- |
 | health | `health/health-check.feature` | 2         |
 
-### Frontend (`web/gherkin/`)
+### `web/gherkin/`
 
 Organized by bounded context (one folder per context, matching the
 [DDD registry](../ddd/bounded-contexts.yaml)).
