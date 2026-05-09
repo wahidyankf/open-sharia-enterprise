@@ -26,14 +26,14 @@ specs/apps/organiclever/
 │   │   └── component-be.md
 │   └── web/               # Next.js frontend component specs
 │       ├── README.md
-│       ├── component-web.md
-│       └── ddd/           # DDD artifacts: registry + glossaries + BC map
-│           ├── README.md
-│           ├── bounded-contexts.yaml
-│           ├── bounded-context-map.md
-│           └── ubiquitous-language/
-│               ├── README.md
-│               └── *.md   # One glossary file per bounded context
+│       └── component-web.md
+├── ddd/                   # DDD artifacts (platform-agnostic; shared by all surfaces)
+│   ├── README.md
+│   ├── bounded-contexts.yaml
+│   ├── bounded-context-map.md
+│   └── ubiquitous-language/
+│       ├── README.md
+│       └── *.md           # One glossary file per bounded context
 └── behavior/              # Gherkin scenarios (HTTP-semantic + UI-semantic)
     ├── README.md
     ├── be/gherkin/        # Backend Gherkin scenarios
