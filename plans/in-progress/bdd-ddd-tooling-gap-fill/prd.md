@@ -1,0 +1,309 @@
+# PRD — BDD + DDD Tooling Gap-Fill
+
+This plan delivers 10 fixes against the 2026-05-09 optimality audit. Each fix carries its own Gherkin acceptance criteria.
+
+## The allowlist
+
+Four web apps adopt full DDD + new specs format (post plans 1-3):
+
+```
+ALLOWLIST = [organiclever, wahidyankf, oseplatform, ayokoding]
+```
+
+Three CLI apps stay BDD-only (legacy spec-coverage targets remain; no DDD adoption):
+
+```
+NOT_ALLOWLISTED = [ayokoding-cli, oseplatform-cli, rhino-cli]
+```
+
+The allowlist is encoded in two places:
+
+1. New rhino-cli command flag `--apps` accepting a comma-separated list (default value pulled from a config constant).
+2. `governance/conventions/structure/specs-directory-structure.md` documents the policy in prose.
+
+## Fix #1 — Wire `specs validate-adoption` per allowlist into pre-push (HIGH)
+
+**What**: `rhino-cli specs validate-adoption` is a real validator that checks each app has `behavior/` (≥1 .feature) and `ddd/bounded-contexts.yaml`. Today: invocable manually only. Target: invocable via a single Nx target `rhino-cli:validate:specs-adoption` that loops over the allowlist; called from pre-push when any allowlisted app's specs change.
+
+**Acceptance**:
+
+```gherkin
+Feature: specs validate-adoption is enforced for allowlisted apps
+
+  Scenario: Nx target runs adoption check across the allowlist
+    Given rhino-cli is built
+    When the developer runs "nx run rhino-cli:validate:specs-adoption"
+    Then the command runs "rhino-cli specs validate-adoption" once per allowlisted app
+    And exits 0 when every app has behavior/ + ddd/bounded-contexts.yaml
+
+  Scenario: Adoption gate fires from pre-push when allowlisted specs change
+    Given the developer modifies specs/apps/wahidyankf/ddd/bounded-contexts.yaml
+    When git push runs the pre-push hook
+    Then "nx run rhino-cli:validate:specs-adoption" is invoked
+    And the push aborts non-zero if validation fails
+
+  Scenario: Adoption gate skips CLI apps
+    Given specs/apps/rhino/ has no ddd/bounded-contexts.yaml
+    When the developer runs "nx run rhino-cli:validate:specs-adoption"
+    Then the command exits 0
+    And the output does not list rhino in the validated apps
+
+  Scenario: Adoption gate is configurable via --apps
+    Given the developer wants to validate a custom subset
+    When the developer runs "rhino-cli specs validate-adoption --apps wahidyankf,ayokoding"
+    Then validation runs for exactly those two apps
+```
+
+## Fix #2 — Wire `specs validate-tree` per allowlist into pre-push (HIGH)
+
+**What**: same wiring shape as fix #1, for the tree-shape validator (`product/ system-context/ containers/ components/ behavior/` plus README.md per folder).
+
+**Acceptance**:
+
+```gherkin
+Feature: specs validate-tree is enforced for allowlisted apps
+
+  Scenario: Nx target runs tree-shape check across the allowlist
+    Given rhino-cli is built
+    When the developer runs "nx run rhino-cli:validate:specs-tree"
+    Then the command runs "rhino-cli specs validate-tree" once per allowlisted app
+    And exits 0 when every app has the canonical five-folder layout
+
+  Scenario: Tree-shape gate fires when an allowlisted app's spec tree changes
+    Given the developer adds specs/apps/oseplatform/extras/random.md
+    When git push runs the pre-push hook
+    Then validate-tree finds no extra-folder findings (extras/ is allowed at root since the validator only checks the 5 required folders are present)
+    And the push proceeds
+
+  Scenario: Tree-shape gate fails on missing required folder
+    Given the developer accidentally removes specs/apps/wahidyankf/components/
+    When git push runs the pre-push hook
+    Then "nx run rhino-cli:validate:specs-tree" reports a HIGH finding
+    And the push aborts non-zero
+```
+
+## Fix #3 — Mirror DDD gates onto `organiclever-be:test:quick` (HIGH)
+
+**What**: `organiclever-be:test:quick` does not run `ddd bc/ul` today, even though it shares `specs/apps/organiclever/ddd/bounded-contexts.yaml` with `-web`.
+
+**Acceptance**:
+
+```gherkin
+Feature: organiclever-be participates in DDD validation
+
+  Scenario: organiclever-be:test:quick runs ddd validators
+    Given apps/organiclever-be/project.json declares "ddd bc organiclever" and "ddd ul organiclever" in test:quick commands
+    When the developer runs "nx run organiclever-be:test:quick"
+    Then both DDD validators run before dotnet test
+    And both exit 0 before unit tests start
+
+  Scenario: organiclever-be cache invalidates on registry change
+    Given the developer modifies specs/apps/organiclever/ddd/bounded-contexts.yaml
+    When the developer runs "nx run organiclever-be:test:quick"
+    Then the cache is missed
+    And both DDD validators re-run
+```
+
+## Fix #4 — De-monoglot `ddd ul` (HIGH)
+
+**What**: `glossary/validator.go:116, 161` hardcodes `*.ts, *.tsx` for grep. Future bounded contexts spanning web + api may have F# code paths (organiclever) or non-TS code in general. Solution: add `code_lang:` field to each registry context (a list of language hints). Validator derives glob extensions from that field.
+
+**Schema change** (additive, backward-compatible):
+
+```yaml
+- name: health
+  layers: [domain, application, infrastructure]
+  code:
+    - apps/organiclever-be/src/contexts/health
+  code_lang: [fs] # NEW — defaults to [ts] if absent for backward compat
+  glossary: ...
+  gherkin: ...
+```
+
+When `code_lang` is absent, validator defaults to `[ts, tsx]` (current behavior, no breakage for existing registries).
+
+**Acceptance**:
+
+```gherkin
+Feature: ddd ul validates the right files per BC
+
+  Scenario: TS-only BC continues to validate against .ts/.tsx
+    Given a context has code_lang absent in bounded-contexts.yaml
+    When the developer runs "rhino-cli ddd ul <app>"
+    Then validator greps in *.ts and *.tsx
+    And no behavior change relative to today
+
+  Scenario: F# BC validates against .fs
+    Given a context has code_lang: [fs]
+    When the developer runs "rhino-cli ddd ul <app>"
+    Then validator greps in *.fs files under the code path
+    And every backticked code identifier in the glossary must exist in some .fs file under code path
+    And forbidden synonyms must not appear in any .fs file under code path
+
+  Scenario: Multi-language BC validates against the union
+    Given a context has code_lang: [ts, fs]
+    When the developer runs "rhino-cli ddd ul <app>"
+    Then validator greps in *.ts, *.tsx, and *.fs
+    And identifier presence in any one language counts as a match
+
+  Scenario: Unsupported language errors clearly
+    Given a context has code_lang: [cobol]
+    When the developer runs "rhino-cli ddd ul <app>"
+    Then the command exits non-zero
+    And reports "unsupported code_lang \"cobol\" — supported: ts, tsx, fs, go, py, java, kt, rs, ex, exs, cs, clj, dart"
+```
+
+## Fix #5 — Multi-parent orphan-root walks (MEDIUM)
+
+**What**: `bcregistry/validator.go:208, 212` walk only `Contexts[0].Glossary` and `Contexts[0].Gherkin` parent dirs for orphan detection. Multi-parent layouts (e.g., `behavior/web/gherkin/` and `behavior/api/gherkin/` after plans 2 and 3) miss orphans in non-first parents.
+
+**Acceptance**:
+
+```gherkin
+Feature: ddd bc orphan detection covers all gherkin parents
+
+  Scenario: Orphan in second perspective is detected
+    Given specs/apps/oseplatform/behavior/web/gherkin/<bc>/ contains exactly the registered BCs
+    And specs/apps/oseplatform/behavior/api/gherkin/orphan-bc/ exists but is not in bounded-contexts.yaml
+    When the developer runs "rhino-cli ddd bc oseplatform"
+    Then the command reports a finding for "orphan gherkin directory \"orphan-bc\""
+
+  Scenario: Orphan in first perspective is still detected
+    Given specs/apps/oseplatform/behavior/web/gherkin/orphan-bc/ exists
+    When the developer runs "rhino-cli ddd bc oseplatform"
+    Then the command reports a finding for the orphan
+```
+
+## Fix #6 — Multi-file scenario matching in `spec-coverage` (MEDIUM)
+
+**What**: `findMatchingTestFile` (`internal/speccoverage/checker.go`) returns the first match (`SkipAll`). Tests split across multiple files yield false-positive scenario gaps. Change: collect all matches, union their scenario titles before checking.
+
+**Acceptance**:
+
+```gherkin
+Feature: spec-coverage tolerates scenarios split across multiple test files
+
+  Scenario: Two test files share a feature stem
+    Given a Gherkin file feature.feature with two scenarios "A" and "B"
+    And feature.test.tsx contains scenario "A"
+    And feature.extra.test.tsx contains scenario "B"
+    When the developer runs "rhino-cli spec-coverage validate"
+    Then the command exits 0
+    And neither scenario is reported as missing
+
+  Scenario: Single test file backward compat
+    Given a Gherkin file feature.feature with two scenarios
+    And only feature.test.tsx exists with both scenarios
+    When the developer runs "rhino-cli spec-coverage validate"
+    Then the command exits 0 with no findings
+```
+
+## Fix #7 — Delete or hide `specs drift-*` placeholders (MEDIUM)
+
+**What**: `specs drift-routes`, `drift-endpoints`, `drift-contracts` exit 0 with "Not yet implemented". They appear in `rhino-cli specs --help`. Move to `cmd/_stub_/` directory excluded from cobra registration so they no longer surface as commands.
+
+**Acceptance**:
+
+```gherkin
+Feature: drift-* placeholders are hidden until implemented
+
+  Scenario: drift-routes is no longer a registered command
+    When the developer runs "rhino-cli specs --help"
+    Then the output lists "validate-tree", "validate-counts", "validate-links", "validate-adoption"
+    And the output does not list "drift-routes", "drift-endpoints", "drift-contracts"
+
+  Scenario: drift-routes returns clear error if invoked
+    When the developer runs "rhino-cli specs drift-routes organiclever"
+    Then the command exits 1
+    And reports "unknown subcommand \"drift-routes\""
+```
+
+## Fix #8 — Reconcile `validate-counts` severity (MEDIUM)
+
+**What**: `validate-counts` reports MEDIUM for missing required folder; `validate-tree` reports HIGH for the same condition. Inconsistent. Change `validate-counts` to HIGH for missing folder, keep MEDIUM for empty folder.
+
+**Acceptance**:
+
+```gherkin
+Feature: validate-counts severity is consistent with validate-tree
+
+  Scenario: Missing folder is HIGH
+    Given specs/apps/organiclever/ does not contain a containers/ folder
+    When the developer runs "rhino-cli specs validate-counts specs/apps/organiclever"
+    Then the finding for missing containers/ has severity HIGH
+
+  Scenario: Empty folder is MEDIUM
+    Given specs/apps/organiclever/components/ exists but contains only README.md
+    When the developer runs "rhino-cli specs validate-counts specs/apps/organiclever"
+    Then the finding for empty components/ has severity MEDIUM
+```
+
+## Fix #9 — Audit log + env var rename (MEDIUM)
+
+**What**: `ORGANICLEVER_RHINO_DDD_SEVERITY=warn` silently downgrades all DDD findings. No log line says it was honored. Rename env var to `OSE_RHINO_DDD_SEVERITY` (cross-app reach) and emit a stderr line on every honored downgrade.
+
+**Acceptance**:
+
+```gherkin
+Feature: severity escape hatch is observable
+
+  Scenario: New env var name is honored with audit line
+    Given OSE_RHINO_DDD_SEVERITY=warn is set
+    When the developer runs "rhino-cli ddd bc organiclever"
+    Then the command emits to stderr: "WARN: severity downgraded to \"warn\" via OSE_RHINO_DDD_SEVERITY env var"
+    And findings exit 0 (warnings only)
+
+  Scenario: Legacy env var still works for one minor rev
+    Given ORGANICLEVER_RHINO_DDD_SEVERITY=warn is set
+    And OSE_RHINO_DDD_SEVERITY is unset
+    When the developer runs "rhino-cli ddd bc organiclever"
+    Then the command emits: "WARN: ORGANICLEVER_RHINO_DDD_SEVERITY is deprecated; use OSE_RHINO_DDD_SEVERITY"
+    And findings exit 0
+
+  Scenario: --severity flag overrides env vars
+    Given OSE_RHINO_DDD_SEVERITY=warn is set
+    When the developer runs "rhino-cli ddd bc organiclever --severity=error"
+    Then the command treats findings as errors (exit non-zero)
+    And no severity-downgrade audit line is emitted
+```
+
+## Fix #10 — Expand `ddd bc` symmetry whitelist (MEDIUM)
+
+**What**: `bcregistry/validator.go:269-272` whitelists only `customer-supplier` and `conformist` for symmetry checks. Add `partnership`, `shared-kernel`, `anticorruption-layer`, `open-host-service`.
+
+**Acceptance**:
+
+```gherkin
+Feature: ddd bc enforces symmetry across all asymmetric relationship kinds
+
+  Scenario: partnership requires reciprocal entry
+    Given context A declares relationship "to: B, kind: partnership"
+    And context B does not declare a reciprocal "to: A, kind: partnership"
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then the command reports a finding for asymmetric "partnership" relationship
+
+  Scenario: shared-kernel requires reciprocal entry
+    Given context A declares relationship "to: B, kind: shared-kernel"
+    And context B does not declare a reciprocal
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then the command reports a finding for asymmetric "shared-kernel" relationship
+
+  Scenario: anticorruption-layer is asymmetric (one-way)
+    Given context A declares relationship "to: B, kind: anticorruption-layer"
+    And context B does not declare a reciprocal
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then the command exits 0
+    And no finding is reported (anticorruption-layer is intentionally one-way)
+
+  Scenario: open-host-service is asymmetric (one-way)
+    Given context A declares relationship "to: B, kind: open-host-service"
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then no finding is reported
+```
+
+## Non-goals
+
+- No spec-coverage AST migration (regex extraction stays).
+- No reverse-direction step orphan check (backlog).
+- No drift-\* command implementation.
+- No new BDD/DDD enforcement for non-allowlisted apps.

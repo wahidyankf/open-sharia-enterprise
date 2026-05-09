@@ -1,0 +1,215 @@
+# Delivery Checklist — BDD + DDD Tooling Gap-Fill
+
+All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
+
+---
+
+## Phase 0 — Pre-flight gate
+
+- [ ] **0.1** Confirm plans 1, 2, 3 are merged to `origin/main` and CI is green for all three. The allowlist gate (Phase 11) will fail if any of them is incomplete.
+- [ ] **0.2** Inspect `specs/apps/{wahidyankf,oseplatform,ayokoding}/ddd/bounded-contexts.yaml` — confirm each has `version: 2`, ≥1 context, valid layers. If anything is broken, the dependency is not actually satisfied; halt and re-validate plans 1-3 first.
+- [ ] **0.3** Inspect `apps/{wahidyankf-web,oseplatform-web,ayokoding-web,organiclever-web}/project.json` — confirm each runs `ddd bc/ul` in `test:quick`. (organiclever-be is NOT yet wired; that's Phase 3.)
+- [ ] **0.4** Create worktree `worktrees/bdd-ddd-tooling-gap-fill/`.
+
+---
+
+## Phase 1 — Allowlist constant + Nx target wiring (Fixes #1, #2)
+
+### 1.1 Allowlist package
+
+- [ ] **1.1.1 RED** Create `apps/rhino-cli/internal/allowlist/allowlist_test.go` asserting `AppsWithDDD` contains exactly the four expected apps (no CLIs, no extras). Test fails: package doesn't exist.
+- [ ] **1.1.2 GREEN** Create `apps/rhino-cli/internal/allowlist/allowlist.go` per `tech-docs.md` § "Allowlist constant". Test passes.
+
+### 1.2 `--apps` flag on `validate-adoption` and `validate-tree`
+
+- [ ] **1.2.1 RED** In `cmd/specs_validate_adoption_test.go` add scenarios: "no positional, no flag → defaults to allowlist"; "explicit positional preserved"; "--apps flag overrides defaults". Tests fail.
+- [ ] **1.2.2 GREEN** Add `--apps` StringSlice flag; if positional empty AND flag empty, use `allowlist.AppsWithDDD`; if positional set, single-app behavior preserved. Same change in `cmd/specs_validate_tree.go`.
+- [ ] **1.2.3 GREEN** Run unit + integration tests. Coverage ≥90%.
+
+### 1.3 Nx targets
+
+- [ ] **1.3.1** Edit `apps/rhino-cli/project.json`:
+  - Add `validate:specs-adoption` target per `tech-docs.md` Fix #1+#2.
+  - Add `validate:specs-tree` target.
+- [ ] **1.3.2 GREEN** Run `nx run rhino-cli:validate:specs-adoption` — exits 0 (assumes plans 1-3 merged).
+- [ ] **1.3.3 GREEN** Run `nx run rhino-cli:validate:specs-tree` — exits 0.
+
+### 1.4 Pre-push wiring
+
+- [ ] **1.4.1** Edit `.husky/pre-push` adding the conditional invocations per `tech-docs.md` § "Pre-push wiring".
+- [ ] **1.4.2 RED** Stage a no-op edit to `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` (whitespace) and run `git push --dry-run`. Confirm both new gates fire.
+- [ ] **1.4.3 GREEN** Confirm push succeeds (gates pass with valid registry).
+- [ ] **1.4.4** Manually break `specs/apps/wahidyankf/behavior/web/gherkin/` (rename a folder) and confirm gate aborts the push with a HIGH finding. Then revert.
+
+---
+
+## Phase 2 — `organiclever-be:test:quick` DDD wiring (Fix #3)
+
+- [ ] **2.1 RED** From the existing `apps/organiclever-be/project.json` `test:quick.options.commands`, the two `ddd bc/ul` invocations are absent. Capture this state.
+- [ ] **2.2 GREEN** Edit `apps/organiclever-be/project.json`:
+  - Prepend the two `ddd bc/ul` commands.
+  - Add the two new `inputs` paths.
+- [ ] **2.3 GREEN** `nx run organiclever-be:test:quick` — DDD validators run before dotnet test; both green.
+- [ ] **2.4 GREEN** Touch `specs/apps/organiclever/ddd/bounded-contexts.yaml` (whitespace edit), reset to original. Re-run `nx run organiclever-be:test:quick`. Confirm cache miss (DDD re-runs).
+
+---
+
+## Phase 3 — Per-BC `code_lang:` field (Fix #4)
+
+### 3.1 Schema bump
+
+- [ ] **3.1.1 RED** Add unit test in `internal/bcregistry/bcregistry_test.go`:
+  - Scenario: registry without `code_lang` defaults to `[ts, tsx]`.
+  - Scenario: registry with `code_lang: [fs]` is decoded.
+  - Scenario: unsupported `code_lang: [cobol]` errors clearly.
+    Tests fail.
+- [ ] **3.1.2 GREEN** Edit `internal/bcregistry/types.go` adding `CodeLang []string` to `Context`. Add `SupportedLangGlobs` map. Add `validateCodeLang()` helper.
+- [ ] **3.1.3 GREEN** Edit `internal/bcregistry/loader.go`: post-decode loop sets default; calls `validateCodeLang`.
+- [ ] **3.1.4 GREEN** All unit tests pass.
+
+### 3.2 Validator change
+
+- [ ] **3.2.1 RED** Add unit tests in `internal/glossary/validator_test.go`:
+  - F#-only BC with `code_lang: [fs]` validates against .fs grep.
+  - TS+F# BC with `code_lang: [ts, fs]` validates union.
+  - TS-only BC (default) preserves today's behavior.
+    Tests fail.
+- [ ] **3.2.2 GREEN** Edit `internal/glossary/validator.go` `checkTerms()` and `checkForbiddenSynonyms()`: replace hardcoded `[]string{"*.ts", "*.tsx"}` with per-BC computed glob list.
+- [ ] **3.2.3 GREEN** All unit tests pass. Integration tests in `cmd/ddd_ul.integration_test.go` updated for new fixtures.
+
+### 3.3 Update existing registries
+
+- [ ] **3.3.1** `specs/apps/organiclever/ddd/bounded-contexts.yaml` — leave `code_lang` absent (defaults to `[ts, tsx]`, correct for current FE-only contexts).
+- [ ] **3.3.2** `specs/apps/{wahidyankf,oseplatform,ayokoding}/ddd/bounded-contexts.yaml` — same; default `[ts, tsx]` is correct since plans 1-3 only created TS bounded contexts.
+- [ ] **3.3.3 GREEN** Run `rhino-cli ddd ul organiclever wahidyankf oseplatform ayokoding` — all green (no behavior change today; foundation laid for future polyglot BCs).
+
+---
+
+## Phase 4 — Multi-parent orphan-root walks (Fix #5)
+
+- [ ] **4.1 RED** Add unit test in `internal/bcregistry/bcregistry_test.go`:
+  - Multi-parent registry: contexts with gherkin under `behavior/web/gherkin/` AND `behavior/api/gherkin/`. Plant an orphan dir under each. Validator should report **both** orphans.
+    Test fails because today only first parent is walked.
+- [ ] **4.2 GREEN** Edit `internal/bcregistry/validator.go:208, 212` per `tech-docs.md` Fix #5: build `glossaryRoots` and `gherkinRoots` maps; iterate sorted slices.
+- [ ] **4.3 GREEN** All existing tests pass; new test passes.
+- [ ] **4.4 GREEN** Manual smoke: plant a real orphan under `specs/apps/oseplatform/behavior/api/gherkin/` (e.g. mkdir `bogus/`, touch `bogus.feature`), run `rhino-cli ddd bc oseplatform` — confirm orphan reported. Revert.
+
+---
+
+## Phase 5 — Multi-file scenario matching (Fix #6)
+
+- [ ] **5.1 RED** Add unit test in `internal/speccoverage/checker_test.go`: feature with 2 scenarios, two test files (`feature.test.tsx` with scenario A, `feature.extra.test.tsx` with scenario B). Without fix, scenario B reported as gap. Test fails (today scenario B is reported).
+- [ ] **5.2 GREEN** Refactor `findMatchingTestFile` → `findAllMatchingTestFiles`. Update `checkOneToOne` to union scenario titles across all matches before checking.
+- [ ] **5.3 GREEN** All existing tests pass; new test passes.
+- [ ] **5.4 GREEN** `--shared-steps` mode unchanged — confirm via existing tests.
+
+---
+
+## Phase 6 — Delete drift-\* placeholders (Fix #7)
+
+- [ ] **6.1 RED** Add unit test in `cmd/specs_drift_routes_test.go` (or new file): `rhino-cli specs --help` does not list `drift-routes`. Today the test fails (drift-routes is registered).
+- [ ] **6.2 GREEN** Delete files:
+  - `apps/rhino-cli/cmd/specs_drift_routes.go`
+  - `apps/rhino-cli/cmd/specs_drift_endpoints.go`
+  - `apps/rhino-cli/cmd/specs_drift_contracts.go`
+  - Their `_test.go` companions if any.
+- [ ] **6.3 GREEN** `go build ./...` succeeds. `rhino-cli specs --help` lists 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption).
+- [ ] **6.4** Update `governance/conventions/structure/specs-directory-structure.md`: add a "Drift detection" subsection noting these commands are not currently implemented; track via the tooling backlog.
+
+---
+
+## Phase 7 — Severity reconciliation (Fix #8)
+
+- [ ] **7.1 RED** Update unit test in `cmd/specs_validate_counts_test.go` to assert HIGH for missing folder, MEDIUM for empty folder. Test fails (today missing reports MEDIUM).
+- [ ] **7.2 GREEN** Edit `cmd/specs_validate_counts.go`:
+  - `validateSpecCounts()`: set `Criticality: "HIGH"` for missing-folder finding (already so per code; the print format on line 48 hardcodes MEDIUM).
+  - Print format: use `f.Criticality` instead of hardcoded `MEDIUM`.
+- [ ] **7.3 GREEN** All tests pass. Manual smoke: create a missing/empty folder pair under a test fixture; confirm severity strings.
+
+---
+
+## Phase 8 — Severity audit log + env var rename (Fix #9)
+
+- [ ] **8.1 RED** Add unit tests in `cmd/ddd_bc_test.go` and `cmd/ddd_ul_test.go`:
+  - Scenario A: `OSE_RHINO_DDD_SEVERITY=warn` + invocation → stderr line emitted; exit 0 with warnings.
+  - Scenario B: `ORGANICLEVER_RHINO_DDD_SEVERITY=warn` + invocation → deprecation stderr line + audit stderr line; exit 0.
+  - Scenario C: both env vars set → `OSE_RHINO_DDD_SEVERITY` wins; legacy ignored without deprecation warning.
+  - Scenario D: `--severity=error` + env var `warn` → flag wins; no audit line.
+    Tests fail.
+- [ ] **8.2 GREEN** Edit `cmd/ddd_bc.go:84-91` and `cmd/ddd_ul.go:82-89` per `tech-docs.md` Fix #9.
+- [ ] **8.3 GREEN** All tests pass. Confirm `(cd apps/rhino-cli && OSE_RHINO_DDD_SEVERITY=warn go run main.go ddd bc organiclever)` emits the audit line to stderr and exits 0 even when findings exist.
+
+---
+
+## Phase 9 — Symmetry whitelist expansion (Fix #10)
+
+- [ ] **9.1 RED** Add unit tests in `internal/bcregistry/bcregistry_test.go`:
+  - `partnership` asymmetric (one-side declared) → finding.
+  - `shared-kernel` asymmetric → finding.
+  - `anticorruption-layer` one-side declared → no finding (one-way intentionally).
+  - `open-host-service` one-side declared → no finding.
+  - Unknown kind `made-up-kind` → "unknown relationship kind" finding.
+    Tests fail.
+- [ ] **9.2 GREEN** Edit `internal/bcregistry/validator.go`:
+  - Expand `asymmetricKinds` to include `partnership`, `shared-kernel`.
+  - Add `knownKinds` set + new validator pass that flags unknown kinds.
+- [ ] **9.3 GREEN** All tests pass. Existing organiclever registry (uses only `customer-supplier` and `conformist`) continues to pass without change.
+
+---
+
+## Phase 10 — Documentation + agent-binding updates
+
+- [ ] **10.1** Update `governance/conventions/structure/specs-directory-structure.md`:
+  - Document the allowlist policy (Phase 1).
+  - Document `code_lang:` schema field (Phase 3).
+  - Document drift-\* removal (Phase 6).
+  - Document severity audit + env var rename (Phase 8).
+  - Document expanded symmetry whitelist (Phase 9).
+- [ ] **10.2** Update `.claude/agents/specs-checker.md` and `.claude/agents/specs-fixer.md`:
+  - Drop references to `drift-routes`, `drift-endpoints`, `drift-contracts`.
+  - Reference the new `validate:specs-adoption` and `validate:specs-tree` Nx targets.
+- [ ] **10.3** Run `npm run sync:claude-to-opencode` — confirm `.opencode/agents/` mirror updated.
+- [ ] **10.4** Run `npm run validate:sync` — parity confirmed.
+- [ ] **10.5** `npm run lint:md` — fix violations.
+
+---
+
+## Phase 11 — Final validation gate
+
+- [ ] **11.1** `(cd apps/rhino-cli && go build ./... && go test ./...)` — all pass.
+- [ ] **11.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
+- [ ] **11.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
+- [ ] **11.4** `nx run rhino-cli:validate:specs-tree` — 0 findings.
+- [ ] **11.5** For each of the 4 web apps: `nx run <app>-web:test:quick` — DDD passes.
+- [ ] **11.6** `nx run organiclever-be:test:quick` — DDD passes.
+- [ ] **11.7** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
+- [ ] **11.8** `npm run lint:md` — 0 violations.
+- [ ] **11.9** `npm run validate:sync` — `.claude/` ↔ `.opencode/` parity.
+- [ ] **11.10** Manual smoke per fix:
+  - **#1**: edit `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` whitespace; `git push --dry-run` — both new gates fire.
+  - **#3**: `nx run organiclever-be:test:quick` cold cache → DDD validators run.
+  - **#4**: temporarily add `code_lang: [fs]` to one organiclever BC + a stale F# identifier in its glossary → `ddd ul` reports stale identifier. Revert.
+  - **#5**: plant orphan under `specs/apps/oseplatform/behavior/api/gherkin/bogus/` → `ddd bc oseplatform` reports orphan. Revert.
+  - **#7**: `rhino-cli specs --help` shows 4 subcommands.
+  - **#8**: missing folder + empty folder → distinct severities.
+  - **#9**: `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits stderr audit line.
+
+---
+
+## Phase 12 — Commit, push, archive
+
+- [ ] **12.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
+  - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
+  - Body lists 10 fixes by number.
+- [ ] **12.2** Push via Trunk Based Development (default) or draft PR (optional).
+- [ ] **12.3** Wait for `main` CI green per `governance/development/workflow/ci-monitoring.md`.
+- [ ] **12.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
+- [ ] **12.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
+- [ ] **12.6** Surface for downstream: confirm `repo-ose-primer-propagation-maker` has the new constants, agent definitions, and validator changes on its propagation list. The maker runs in dry-run by default; an actual primer PR is a separate decision.
+
+---
+
+## Notes on dependency timing
+
+- **If plans 1-3 ship one-by-one and plan 4 ships immediately after each completes**: rework Phase 0.1 to gate only on "the relevant subset of plans 1-3" and gate Phases 1.4 (pre-push wiring) on all-three-done. The allowlist gate must be deferred until every allowlisted app actually has the new shape.
+- **If plan 4 ships before any of plans 1-3 (not recommended)**: the Phase 1.4 pre-push wiring would fail. In that case, deliver Phases 1.1 + 1.2 + 1.3 (validator + Nx targets) without 1.4 (pre-push), let 1.4 land in a second commit after plans 1-3 are all green.
