@@ -14,9 +14,6 @@ PGlite (Postgres-WASM) for in-browser data storage.
 screen has a dedicated URL — refresh, browser back/forward, and deep links all work. All app data
 is stored locally in the browser via PGlite (IndexedDB-backed) — no backend required.
 
-The existing Effect TS service layer (`src/services/`) and layer implementations (`src/layers/`)
-are preserved as dormant library code for a future backend rewire.
-
 ## Routes and Screens
 
 ### Top-level routes
@@ -173,12 +170,14 @@ Preserved — no changes — as library code for the future rewire:
 ## Development
 
 ```bash
-nx dev organiclever-web          # Start development server (localhost:3200)
-nx build organiclever-web        # Production build
-nx run organiclever-web:test:quick  # Unit tests + coverage validation (70%)
-nx run organiclever-web:test:unit   # Unit tests only
-nx run organiclever-web:typecheck   # TypeScript type check
-nx run organiclever-web:lint        # Lint with oxlint
+nx dev organiclever-web                      # Start development server (localhost:3200)
+nx build organiclever-web                    # Production build
+nx run organiclever-web:test:quick           # Unit tests + coverage validation (70%) + DDD checks
+nx run organiclever-web:test:unit            # Unit tests only
+nx run organiclever-web:test:integration     # Integration tests (real filesystem)
+nx run organiclever-web:spec-coverage        # Gherkin spec coverage validation
+nx run organiclever-web:typecheck            # TypeScript type check
+nx run organiclever-web:lint                 # Lint with oxlint
 ```
 
 ## Testing
