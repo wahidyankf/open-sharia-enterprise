@@ -62,7 +62,7 @@ feature files are the shared contract — only the step implementations differ p
 ## Feature File Organization
 
 ```
-specs/apps/organiclever/fe/
+specs/apps/organiclever/web/
 ├── README.md
 └── gherkin/
     ├── README.md
@@ -83,7 +83,7 @@ specs/apps/organiclever/fe/
 ## Adding a Feature File
 
 1. Identify the domain (e.g., `landing`, `layout`, `routing`)
-2. Create the folder if it does not exist: `specs/apps/organiclever/fe/gherkin/[domain]/`
+2. Create the folder if it does not exist: `specs/apps/organiclever/web/gherkin/[domain]/`
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Open with `Feature:` then a user story block (`As a … / I want … / So that …`)
 5. Use `Given the app is running` as the first Background step

@@ -1,7 +1,7 @@
 /**
  * Step definitions for the App Shell Navigation feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/app-shell/navigation.feature
+ * Covers: specs/apps/organiclever/web/gherkin/app-shell/navigation.feature
  *
  * Selector notes:
  * - The app lives at /app (AppRoot mounts there). Root / is the marketing landing page.

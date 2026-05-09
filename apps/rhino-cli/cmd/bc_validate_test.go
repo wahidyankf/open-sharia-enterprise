@@ -123,7 +123,7 @@ func (s *bcValidateUnitSteps) codeFolderHasExtraInfrastructure() error { return 
 func (s *bcValidateUnitSteps) registryWithMissingGherkin() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/fe/gherkin/journal",
+			File:     "specs/apps/organiclever/web/gherkin/journal",
 			Message:  `missing gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -136,7 +136,7 @@ func (s *bcValidateUnitSteps) gherkinFolderDoesNotExist() error { return nil }
 func (s *bcValidateUnitSteps) registryWithEmptyGherkin() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/fe/gherkin/journal",
+			File:     "specs/apps/organiclever/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -147,7 +147,7 @@ func (s *bcValidateUnitSteps) registryWithEmptyGherkin() error {
 func (s *bcValidateUnitSteps) gherkinFolderExistsButEmpty() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/fe/gherkin/journal",
+			File:     "specs/apps/organiclever/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil

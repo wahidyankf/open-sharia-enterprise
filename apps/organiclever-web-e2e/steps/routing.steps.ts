@@ -1,9 +1,9 @@
 /**
  * Step definitions for the URL-routed shell.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/routing/app-routes.feature
+ * Covers: specs/apps/organiclever/web/gherkin/routing/app-routes.feature
  * Plus the new "URL persists across page refresh" scenario added to
- * specs/apps/organiclever/fe/gherkin/app-shell/navigation.feature.
+ * specs/apps/organiclever/web/gherkin/app-shell/navigation.feature.
  *
  * The 308-redirect and 404 step impls live in disabled-routes.steps.ts.
  */

@@ -37,7 +37,7 @@ folders and their subfolders — nothing else.
 folders: [specs/apps/organiclever/be]
 
 # Multiple folders — validate each AND check cross-folder consistency
-folders: [specs/apps/organiclever/be, specs/apps/organiclever/fe]
+folders: [specs/apps/organiclever/be, specs/apps/organiclever/web]
 
 # Mixed tiers
 folders: [specs/apps/organiclever/be, specs/libs/golang-commons]
@@ -219,7 +219,7 @@ Use the standard audit report format:
 **Folders validated**:
 
 - `specs/apps/organiclever/be`
-- `specs/apps/organiclever/fe`
+- `specs/apps/organiclever/web`
 
 **Timestamp**: YYYY-MM-DD--HH-MM UTC+7
 **UUID Chain**: {uuid}
@@ -245,7 +245,7 @@ Use the standard audit report format:
 **Expected**: What should be there
 **Confidence**: HIGH | MEDIUM
 
-### specs/apps/organiclever/fe
+### specs/apps/organiclever/web
 
 [... findings for this folder ...]
 
@@ -253,7 +253,7 @@ Use the standard audit report format:
 
 #### [HIGH] Cross-Folder Consistency — {Brief description}
 
-**Folders**: `specs/apps/organiclever/be`, `specs/apps/organiclever/fe`
+**Folders**: `specs/apps/organiclever/be`, `specs/apps/organiclever/web`
 **Evidence**: What contradicts or doesn't blend
 **Expected**: What consistency looks like
 **Confidence**: HIGH | MEDIUM

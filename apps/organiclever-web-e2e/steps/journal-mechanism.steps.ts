@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Journal Mechanism feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/journal/journal-mechanism.feature
+ * Covers: specs/apps/organiclever/web/gherkin/journal/journal-mechanism.feature
  *
  * PGlite is exposed as `globalThis.__ol_db` in dev/test mode. This lets step
  * definitions assert database state directly via SQL without going through the

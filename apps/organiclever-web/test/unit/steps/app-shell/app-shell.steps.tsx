@@ -1,7 +1,7 @@
 /**
  * Step definitions for the App Shell Navigation feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/app-shell/navigation.feature
+ * Covers: specs/apps/organiclever/web/gherkin/app-shell/navigation.feature
  *
  * Post-route-refactor: tab navigation is URL-driven, not state-machine-driven.
  * Unit-level assertions therefore check that the on-disk Next.js page exists
@@ -17,7 +17,7 @@ import { appMachine } from "@/contexts/app-shell/presentation/app-machine";
 import type { Actor } from "xstate";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/fe/gherkin/app-shell/navigation.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/app-shell/navigation.feature"),
 );
 
 const APP_ROOT = path.resolve(__dirname, "../../../../src/app/app");

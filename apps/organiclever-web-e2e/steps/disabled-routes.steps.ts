@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Disabled Routes feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/routing/disabled-routes.feature
+ * Covers: specs/apps/organiclever/web/gherkin/routing/disabled-routes.feature
  *
  * GET-only routes (/login, /profile) are verified by navigating with page.goto
  * and checking the HTTP status. /login and /profile remain as guards against

@@ -1,7 +1,7 @@
 /**
  * Step catalog for the Journal Mechanism feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/journal/journal-mechanism.feature
+ * Covers: specs/apps/organiclever/web/gherkin/journal/journal-mechanism.feature
  *
  * This file registers every step text from the feature so that
  * `rhino-cli spec-coverage validate` passes. The step definitions are stubs

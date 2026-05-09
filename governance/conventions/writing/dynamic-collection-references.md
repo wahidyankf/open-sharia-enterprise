@@ -164,7 +164,7 @@ If a count is needed anywhere, the index document for that collection is the sin
 | Dev Practices    | `governance/development/README.md`             |
 | Workflows        | `governance/workflows/README.md`               |
 | BE Gherkin Specs | `specs/apps/organiclever/be/gherkin/README.md` |
-| FE Gherkin Specs | `specs/apps/organiclever/fe/gherkin/README.md` |
+| FE Gherkin Specs | `specs/apps/organiclever/web/gherkin/README.md` |
 
 ## Examples
 

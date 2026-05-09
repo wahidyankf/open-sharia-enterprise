@@ -67,7 +67,7 @@ contexts:
     layers:
 %s    code: apps/organiclever-web/src/contexts/%s
     glossary: specs/apps/organiclever/ubiquitous-language/%s.md
-    gherkin: specs/apps/organiclever/fe/gherkin/%s
+    gherkin: specs/apps/organiclever/web/gherkin/%s
     relationships: []
 `, contextName, layersYAML, contextName, contextName, contextName)
 

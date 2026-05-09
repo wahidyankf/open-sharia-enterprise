@@ -184,7 +184,7 @@ nx run organiclever-web:lint                 # Lint with oxlint
 
 Tests use Vitest with `@amiceli/vitest-cucumber` for BDD-style Gherkin specs.
 
-- **Spec files**: [`specs/apps/organiclever/fe/gherkin/`](../../specs/apps/organiclever/fe/gherkin/README.md) — organized by bounded context
+- **Spec files**: [`specs/apps/organiclever/web/gherkin/`](../../specs/apps/organiclever/web/gherkin/README.md) — organized by bounded context
 - **Ubiquitous language**: [`specs/apps/organiclever/ubiquitous-language/`](../../specs/apps/organiclever/ubiquitous-language/README.md) — per-context glossaries; Gherkin steps use only glossary terms
 - **Step implementations**: `test/unit/steps/` — organized by bounded context to mirror spec folders
 

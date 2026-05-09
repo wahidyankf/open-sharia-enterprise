@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Disabled Routes feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/routing/disabled-routes.feature
+ * Covers: specs/apps/organiclever/web/gherkin/routing/disabled-routes.feature
  *
  * Verifies that previously-removed routes have no corresponding page/route
  * files on disk. Next.js serves 404 for any path with no matching file,
@@ -13,7 +13,7 @@ import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/fe/gherkin/routing/disabled-routes.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/routing/disabled-routes.feature"),
 );
 
 const appRoot = path.resolve(__dirname, "../../../../../src/app");

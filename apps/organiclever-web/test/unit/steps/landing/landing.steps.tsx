@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { LandingPage } from "@/contexts/landing/presentation";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/fe/gherkin/landing/landing.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/landing/landing.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {

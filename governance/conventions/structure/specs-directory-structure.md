@@ -88,7 +88,7 @@ specs/apps/organiclever/be/gherkin/expenses/expense-management.feature
 specs/apps/organiclever/be/gherkin/expenses/attachments.feature
 specs/apps/organiclever/be/gherkin/authentication/password-login.feature
 specs/apps/ayokoding/fe/gherkin/accessibility/accessibility.feature
-specs/apps/organiclever/fe/gherkin/authentication/google-login.feature
+specs/apps/organiclever/web/gherkin/authentication/google-login.feature
 ```
 
 A domain folder may contain one or many feature files. Group features by business domain, not by technical concern.

@@ -33,7 +33,7 @@ have separate spec trees with different domain coverage.
 
 ### Frontend Gherkin
 
-**Location**: [`specs/apps/organiclever/fe/gherkin/`](../fe/gherkin/README.md)
+**Location**: [`specs/apps/organiclever/web/gherkin/`](../fe/gherkin/README.md)
 
 | Domain  | Feature                           | Scenarios |
 | ------- | --------------------------------- | --------- |

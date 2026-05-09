@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Routine Management feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/routine/routine-management.feature
+ * Covers: specs/apps/organiclever/web/gherkin/routine/routine-management.feature
  *
  * Tests pure routine editing logic directly (no PGlite, no browser APIs):
  * - New routine state initialisation and save guard (name must be non-empty)
@@ -66,7 +66,7 @@ function addExerciseToGroup(groups: ExerciseGroup[], gIdx: number, exercise: Exe
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/fe/gherkin/routine/routine-management.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/routine/routine-management.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

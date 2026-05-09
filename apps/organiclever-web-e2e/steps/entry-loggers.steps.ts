@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Entry Loggers feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/loggers/entry-loggers.feature
+ * Covers: specs/apps/organiclever/web/gherkin/loggers/entry-loggers.feature
  *
  * Note: "the app shell is visible" is already registered in app-shell.steps.ts.
  * Note: "the Add Entry sheet is open", "the user closes the Add Entry sheet",

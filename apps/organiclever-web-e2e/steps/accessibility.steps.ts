@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Accessibility Compliance feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/layout/accessibility.feature
+ * Covers: specs/apps/organiclever/web/gherkin/layout/accessibility.feature
  *
  * Uses axe-core via @axe-core/playwright to validate WCAG AA compliance and
  * supplements automated scanning with targeted assertions for heading hierarchy,

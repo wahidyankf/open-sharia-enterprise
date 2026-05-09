@@ -7,7 +7,7 @@ context. Each folder maps to one bounded context from the
 ## Structure
 
 ```
-specs/apps/organiclever/fe/gherkin/
+specs/apps/organiclever/web/gherkin/
 ├── app-shell/             # Navigation, accessibility, cross-cutting loggers
 │   ├── accessibility.feature
 │   ├── entry-loggers.feature

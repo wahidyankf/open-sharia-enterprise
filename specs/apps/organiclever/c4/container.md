@@ -39,7 +39,7 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 
 - **Backend Gherkin** (`specs/apps/organiclever/be/gherkin/`) feeds `organiclever-be` BDD
   scenarios at the `test:unit` and `test:integration` levels.
-- **Frontend Gherkin** (`specs/apps/organiclever/fe/gherkin/`) feeds `organiclever-web` BDD
+- **Frontend Gherkin** (`specs/apps/organiclever/web/gherkin/`) feeds `organiclever-web` BDD
   scenarios at the `test:unit` level and `organiclever-web-e2e` Playwright scenarios at the
   `test:e2e` level.
 - **Main CI** runs `typecheck`, `lint`, `test:quick` on push to `main` for both containers.

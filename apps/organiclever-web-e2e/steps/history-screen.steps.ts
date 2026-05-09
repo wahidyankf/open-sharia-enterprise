@@ -1,7 +1,7 @@
 /**
  * Step definitions for the History Screen feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/stats/history-screen.feature
+ * Covers: specs/apps/organiclever/web/gherkin/stats/history-screen.feature
  *
  * Selector notes:
  * - History screen is shown when the "History" TabBar button is active (SPA routing via

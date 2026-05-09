@@ -2,9 +2,9 @@
  * Step definitions for Settings features.
  *
  * Covers:
- * - specs/apps/organiclever/fe/gherkin/settings/settings-screen.feature
- * - specs/apps/organiclever/fe/gherkin/settings/dark-mode.feature
- * - specs/apps/organiclever/fe/gherkin/settings/language.feature
+ * - specs/apps/organiclever/web/gherkin/settings/settings-screen.feature
+ * - specs/apps/organiclever/web/gherkin/settings/dark-mode.feature
+ * - specs/apps/organiclever/web/gherkin/settings/language.feature
  *
  * Selector notes:
  * - Settings screen has data-testid="settings-screen" on the root div.

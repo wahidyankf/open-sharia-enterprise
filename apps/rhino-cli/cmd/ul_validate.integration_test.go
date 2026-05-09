@@ -64,7 +64,7 @@ contexts:
       - domain
     code: apps/organiclever-web/src/contexts/%s
     glossary: specs/apps/organiclever/ubiquitous-language/%s.md
-    gherkin: specs/apps/organiclever/fe/gherkin/%s
+    gherkin: specs/apps/organiclever/web/gherkin/%s
     relationships: []
 `, contextName, contextName, contextName, contextName)
 
@@ -204,14 +204,14 @@ contexts:
     layers: [domain]
     code: apps/organiclever-web/src/contexts/journal
     glossary: specs/apps/organiclever/ubiquitous-language/journal.md
-    gherkin: specs/apps/organiclever/fe/gherkin/journal
+    gherkin: specs/apps/organiclever/web/gherkin/journal
     relationships: []
   - name: routine
     summary: test routine
     layers: [domain]
     code: apps/organiclever-web/src/contexts/routine
     glossary: specs/apps/organiclever/ubiquitous-language/routine.md
-    gherkin: specs/apps/organiclever/fe/gherkin/routine
+    gherkin: specs/apps/organiclever/web/gherkin/routine
     relationships: []
 `
 	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever")

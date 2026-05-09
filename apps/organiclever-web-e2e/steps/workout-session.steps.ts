@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Workout Session feature.
  *
- * Covers: specs/apps/organiclever/fe/gherkin/workout/workout-session.feature
+ * Covers: specs/apps/organiclever/web/gherkin/workout/workout-session.feature
  *
  * Selector notes:
  * - The app is an SPA at /app. Workout screen is a machine state (navigation: "workout"),

@@ -64,7 +64,7 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature",
         "{workspaceRoot}/specs/apps/organiclever/bounded-contexts.yaml",
         "{workspaceRoot}/specs/apps/organiclever/ubiquitous-language/**/*.md"
       ],
@@ -85,7 +85,7 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature"
       ],
       "options": {
         "command": "npx vitest run --project unit",
@@ -96,7 +96,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature"],
       "options": {
         "command": "node scripts/gen-migrations.mjs && npx vitest run --project integration",
         "cwd": "{projectRoot}"
@@ -119,9 +119,9 @@
       "outputs": ["{projectRoot}/storybook-static"]
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/fe/gherkin apps/organiclever-web",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/web/gherkin apps/organiclever-web",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/fe/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],

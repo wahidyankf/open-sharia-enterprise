@@ -55,7 +55,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/organiclever/fe/gherkin/`](../fe/gherkin/README.md):
+[`specs/apps/organiclever/web/gherkin/`](../fe/gherkin/README.md):
 
 | Component                                | Gherkin Domain | Features         |
 | ---------------------------------------- | -------------- | ---------------- |

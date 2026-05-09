@@ -100,7 +100,7 @@ src/contexts/<bc>/
 
 1. Identify which bounded context owns the feature. Consult [`docs/explanation/bounded-context-map.md`](./docs/explanation/bounded-context-map.md).
 2. Ensure the domain term appears in [`specs/apps/organiclever/ubiquitous-language/<bc>.md`](../../specs/apps/organiclever/ubiquitous-language/README.md). Add it if missing — same commit as the code change.
-3. Write or update the Gherkin spec in `specs/apps/organiclever/fe/gherkin/<bc>/`.
+3. Write or update the Gherkin spec in `specs/apps/organiclever/web/gherkin/<bc>/`.
 4. Implement: Red (failing step) → Green (minimal code) → Refactor.
 5. Keep all new code inside the correct context layer. If it touches IO, it goes in `infrastructure/`. If it is a use-case, it goes in `application/`. Never break the layer rules.
 6. Run `nx run organiclever-web:lint` to confirm 0 boundary errors before committing.
@@ -396,7 +396,7 @@ docker compose -f infra/dev/organiclever-web/docker-compose.yml up organiclever-
 ```typescript
 // 1. Add term to specs/apps/organiclever/ubiquitous-language/<bc>.md (same commit as code)
 
-// 2. Add Gherkin scenario in specs/apps/organiclever/fe/gherkin/<bc>/<file>.feature
+// 2. Add Gherkin scenario in specs/apps/organiclever/web/gherkin/<bc>/<file>.feature
 
 // 3. Add step implementation in test/unit/steps/<bc>/<file>.steps.tsx
 
