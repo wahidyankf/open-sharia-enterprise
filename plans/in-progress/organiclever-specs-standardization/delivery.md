@@ -390,10 +390,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** (_New file_) — Palette, typography, dark mode, token import, components. PM-Readability Contract applied.
   - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/design-system.md (new). **Audience:** line present. Palette table, typography table, dark mode section, token import chain (code block with intro sentence), key components table, dynamic hue backgrounds pattern. ts-ui link as plain text (cross-package relative path complex). Also restored routes-and-screens.md link to design-system.md.
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/design-system.md` returns 0 AND file contains palette or typography content.
-- [ ] **3.8 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/design-system.md`
+- [x] **3.8 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/design-system.md`
+  - Date: 2026-05-09. Status: done. lint:md 2333 files, 0 errors. Committed.
 
-- [ ] **3.9 Create `specs/apps/organiclever/components/be/api.md`** (_New file_) — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/be/api.md` returns 0 AND file contains an endpoint table or endpoint list.
+- [x] **3.9 Create `specs/apps/organiclever/components/be/api.md`** (_New file_) — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/be/api.md (new). **Audience:** line present. Endpoint table (GET /api/v1/health), env vars table, architecture tree, tech stack table, BDD test coverage section.
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/be/api.md` returns 0 AND file contains an endpoint table or endpoint list.
 - [ ] **3.10 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/be/api.md`
 
 - [ ] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** (_New file_) — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied.
