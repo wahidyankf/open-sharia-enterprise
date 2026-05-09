@@ -433,8 +433,10 @@ Each app trim is its own commit. After each commit, run the relevant `test:quick
   - Date: 2026-05-09. Status: PASS. lint:md 0 errors. test:quick 91.67% ≥ 90%.
 - [ ] **4.8 Commit**: `docs(apps): trim organiclever-be README to dev-runtime`
 
-- [ ] **4.9 Rewrite `apps/organiclever-web-e2e/README.md`** to thin form. Keep: prerequisites, Setup, Running Tests, Environment Variables, Project Structure (top-level only). Move "What This Tests" inline list to a one-line pointer at `specs/apps/organiclever/behavior/web/gherkin/`
-- [ ] **4.10 Verify line count** ≤ 120
+- [x] **4.9 Rewrite `apps/organiclever-web-e2e/README.md`** to thin form. Keep: prerequisites, Setup, Running Tests, Environment Variables, Project Structure (top-level only). Move "What This Tests" inline list to a one-line pointer at `specs/apps/organiclever/behavior/web/gherkin/`
+  - Date: 2026-05-09. Status: done. 60 lines. "What This Tests" section → one-line pointer to behavior/web/gherkin/.
+- [x] **4.10 Verify line count** ≤ 120
+  - Date: 2026-05-09. Status: PASS. 60 lines (target ≤120).
 - [ ] **4.11 `npm run lint:md`** exit 0
 - [ ] **4.12 Commit**: `docs(apps): trim organiclever-web-e2e README to dev-runtime`
 

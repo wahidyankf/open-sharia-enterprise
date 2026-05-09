@@ -1,48 +1,14 @@
 # organiclever-web-e2e
 
 End-to-end tests for the [OrganicLever frontend](../organiclever-web/README.md),
-using [playwright-bdd](https://github.com/vitalets/playwright-bdd) to drive tests from Gherkin
-feature files.
+using playwright-bdd to drive a real browser from Gherkin feature files.
 
-Tests use Playwright to drive a real browser against a running frontend and backend stack.
-
-## What This Tests
-
-Feature files in [`specs/apps/organiclever/behavior/web/gherkin/`](../../specs/apps/organiclever/behavior/web/gherkin/)
-are the source of truth:
-
-- `landing/landing` — Landing page renders hero, principles, weekly-rhythm demo, CTAs
-- `system/system-status-be` — System-status page polls the BE health endpoint and renders the result
-- `routing/disabled-routes` — `/login` and `/profile` return 404 (no v0 auth surface)
-- `layout/accessibility` — WCAG AA heading hierarchy, keyboard navigation, color contrast, ARIA landmarks
-
-## Architecture
-
-```
-specs/apps/organiclever/behavior/web/gherkin/**/*.feature    <- source of truth (read-only)
-        |
-        v  (defineBddConfig reads features)
-playwright.config.ts
-        |
-        v  (bddgen generates)
-.features-gen/**/*.spec.ts            <- auto-generated, gitignored
-        |
-        v  (playwright test runs)
-steps/**/*.steps.ts                   <- step implementations
-```
+**Behavior specs** (source of truth):
+[`specs/apps/organiclever/behavior/web/gherkin/`](../../specs/apps/organiclever/behavior/web/gherkin/)
 
 ## Prerequisites
 
-The frontend must be running on `http://localhost:3200` (or the URL set via `BASE_URL`) and the
-OrganicLever backend must be running before executing tests.
-
-**Start the backend**:
-
-```bash
-nx dev organiclever-be
-```
-
-**Start the frontend**:
+Frontend must be running on `http://localhost:3200` (or `BASE_URL`):
 
 ```bash
 nx dev organiclever-web
@@ -50,39 +16,27 @@ nx dev organiclever-web
 
 ## Setup
 
-Install Playwright and its browser dependencies (one-time setup):
-
 ```bash
-nx run organiclever-web-e2e:install
+nx run organiclever-web-e2e:install   # Install Playwright + browser deps (one-time)
 ```
 
 ## Running Tests
 
 ```bash
-# Run all BDD E2E tests headlessly (generates specs then runs)
+# Run all BDD E2E tests headlessly
 nx run organiclever-web-e2e:test:e2e
 
-# Run with interactive Playwright UI
+# Interactive Playwright UI
 nx run organiclever-web-e2e:test:e2e:ui
 
 # View HTML report from last run
 nx run organiclever-web-e2e:test:e2e:report
 
-# Generate spec files only (without running tests)
-cd apps/organiclever-web-e2e && npx bddgen
-
-# Lint TypeScript source files (oxlint)
-nx run organiclever-web-e2e:lint
-
-# Type check
-nx run organiclever-web-e2e:typecheck
-
 # Pre-push quality gate (typecheck + lint)
 nx run organiclever-web-e2e:test:quick
 ```
 
-**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E
-target names. `test:e2e` runs on a scheduled cron (not on pre-push).
+`test:e2e` runs on a scheduled cron, not on pre-push.
 
 ## Environment Variables
 
@@ -91,29 +45,16 @@ target names. `test:e2e` runs on a scheduled cron (not on pre-push).
 | `BASE_URL` | `http://localhost:3200` | Frontend base URL               |
 | `CI`       | unset                   | Enables CI mode (single worker) |
 
-Override the base URL to test a different deployment:
-
-```bash
-BASE_URL=http://localhost:3200 nx run organiclever-web-e2e:test:e2e
-```
-
 ## Project Structure
 
 ```
 apps/organiclever-web-e2e/
-├── playwright.config.ts           # Playwright + playwright-bdd configuration
-├── package.json                   # Dependencies (playwright, playwright-bdd, axe-core)
-├── tsconfig.json                  # TypeScript config
-├── steps/                         # BDD step definitions
-│   ├── landing.steps.ts           # Landing-page steps
-│   ├── system-status-be.steps.ts  # System-status page steps
-│   ├── disabled-routes.steps.ts   # /login + /profile 404 guards
-│   └── accessibility.steps.ts     # Accessibility compliance steps
-└── .features-gen/                 # Auto-generated spec files (gitignored)
+├── playwright.config.ts   # Playwright + playwright-bdd config
+├── steps/                  # BDD step definitions (per feature domain)
+└── .features-gen/          # Auto-generated spec files (gitignored)
 ```
 
-## Related Documentation
+## Related
 
-- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
-- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards
-- [OrganicLever Gherkin Specs](../../specs/apps/organiclever/behavior/web/gherkin/) — Shared feature files (source of truth)
+- [Gherkin specs](../../specs/apps/organiclever/behavior/web/gherkin/) — feature files (source of truth)
+- [organiclever-web](../organiclever-web/README.md) — frontend under test
