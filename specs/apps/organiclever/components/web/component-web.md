@@ -31,10 +31,10 @@ graph TD
     subgraph FE["Next.js 16 Frontend Container"]
         direction TB
 
-        ROUTER["App Router<br/>────────────────<br/>Thin page.tsx + layout.tsx wrappers<br/>(no business logic)"]:::router
+        ROUTER["App Router<br/>────────────────<br/>Thin page+layout wrappers<br/>(no business logic)"]:::router
 
         subgraph SHELL["UI Shell"]
-            APPSHELL["app-shell<br/>────────────────<br/>TabBar · SideNav · loggers · i18n<br/>appMachine (XState)"]:::context
+            APPSHELL["app-shell<br/>────────────────<br/>TabBar · SideNav · i18n<br/>appMachine (XState)"]:::context
         end
 
         subgraph SOR["System of Record"]
@@ -84,11 +84,11 @@ graph TD
     SETTINGS --> EFFECT
     EFFECT --> PGLITE
 
-    STATS -.->|"reads"| JOURNAL
-    WORKOUT -.->|"persists via<br/>application barrel"| JOURNAL
-    WORKOUT -.->|"reads templates"| ROUTINE
+    STATS -. "reads" .-> JOURNAL
+    WORKOUT -. "persists via app barrel" .-> JOURNAL
+    WORKOUT -. "reads templates" .-> ROUTINE
 
-    HEALTH -->|"server-side fetch<br/>HTTP/JSON"| BE
+    HEALTH -- "server-side fetch" --> BE
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef router fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px

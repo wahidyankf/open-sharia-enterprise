@@ -26,11 +26,11 @@ graph TD
         BE["F#/Giraffe Backend<br/>──────────────────<br/>F#, Giraffe<br/><br/>Health endpoint"]:::container_be
     end
 
-    EU -->|"HTTPS"| FE
-    OPS -->|"health check"| BE
+    EU -- "HTTPS" --> FE
+    OPS -- "health check" --> BE
 
-    FE -->|"in-browser writes/reads"| PGLITE
-    FE -->|"system-status diagnostic<br/>HTTP/JSON"| BE
+    FE -- "in-browser writes/reads" --> PGLITE
+    FE -- "system-status diagnostic" --> BE
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef actor_ops fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
