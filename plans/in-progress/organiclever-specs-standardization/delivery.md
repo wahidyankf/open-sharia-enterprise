@@ -422,11 +422,15 @@ Each app trim is its own commit. After each commit, run the relevant `test:quick
   - Date: 2026-05-09. Status: PASS. 65 lines (target ≤120).
 - [x] **4.3 `npm run lint:md`** + `nx run organiclever-web:test:quick --skip-nx-cache` exit 0
   - Date: 2026-05-09. Status: PASS. lint:md 2335 files 0 errors. test:quick 78.26% ≥ 70%. Preexisting fixes: (1) rhino-cli glossary parser updated to accept ## Term index trigger + 3-column format (swe-golang-dev). (2) 7 UL BC files updated to remove stale code identifiers (CSS vars, route strings, escaped pipes) that couldn't be found in context source.
-- [ ] **4.4 Commit**: `docs(apps): trim organiclever-web README to dev-runtime`
+- [x] **4.4 Commit**: `docs(apps): trim organiclever-web README to dev-runtime`
+  - Date: 2026-05-09. Status: done. Combined with preexisting fix commit (parser + UL stale identifier fixes) in same commit SHA.
 
-- [ ] **4.5 Rewrite `apps/organiclever-be/README.md`** to thin form (≤ 120 lines, likely ~70). Remove "API Endpoints" inline table, "Architecture" project tree, "Testing Strategy" tier table. Behavior & Architecture links to `specs/apps/organiclever/components/be/api.md` + `specs/apps/organiclever/behavior/be/gherkin/`
-- [ ] **4.6 Verify line count** ≤ 120
-- [ ] **4.7 `npm run lint:md`** + `nx run organiclever-be:test:quick --skip-nx-cache` exit 0
+- [x] **4.5 Rewrite `apps/organiclever-be/README.md`** to thin form (≤ 120 lines, likely ~70). Remove "API Endpoints" inline table, "Architecture" project tree, "Testing Strategy" tier table. Behavior & Architecture links to `specs/apps/organiclever/components/be/api.md` + `specs/apps/organiclever/behavior/be/gherkin/`
+  - Date: 2026-05-09. Status: done. 52 lines. Behavior & Architecture links table pointing to specs/.
+- [x] **4.6 Verify line count** ≤ 120
+  - Date: 2026-05-09. Status: PASS. 52 lines (target ≤120).
+- [x] **4.7 `npm run lint:md`** + `nx run organiclever-be:test:quick --skip-nx-cache` exit 0
+  - Date: 2026-05-09. Status: PASS. lint:md 0 errors. test:quick 91.67% ≥ 90%.
 - [ ] **4.8 Commit**: `docs(apps): trim organiclever-be README to dev-runtime`
 
 - [ ] **4.9 Rewrite `apps/organiclever-web-e2e/README.md`** to thin form. Keep: prerequisites, Setup, Running Tests, Environment Variables, Project Structure (top-level only). Move "What This Tests" inline list to a one-line pointer at `specs/apps/organiclever/behavior/web/gherkin/`
