@@ -77,6 +77,29 @@ The original pilot framing deferred convention creation to a post-pilot rollout.
 
 The convention is governance Layer 2 (per the [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)), so it lives at `governance/conventions/structure/app-readme-vs-specs.md`.
 
+## Affected Roles
+
+- **Engineers** — open `apps/organiclever-*/README.md` to start a dev server; benefit from dev-runtime-only READMEs that omit behavior narrative.
+- **Product / Project Managers** — open `specs/apps/organiclever/README.md` cold; benefit from PM-readable spec files with plain-language summaries and a reading path.
+- **Plan executor** — runs the delivery checklist; follows the phase-ordered approach (scaffold → atomic reorg → additive content → subtractive trim → governance → rhino-cli).
+- **Rollout plan authors** (follow-up plans for `ayokoding`, `oseplatform`, `wahidyankf`, `rhino`) — reference the new convention and the reference tree from this pilot when writing their rollout plan.
+- **`specs-checker` / `specs-fixer` / `specs-maker` agents** — updated in this plan; benefit from C4-aware validation categories and tree-shape enforcement.
+- **`repo-rules-checker`** — validates pilot artifacts against the new convention before archival.
+
+## Success Metrics
+
+- _Judgment call_: A contributor unfamiliar with the repo can answer "what does organiclever-web do?" from `specs/apps/organiclever/` alone, without opening any app code or README.
+- _Observable fact_: `apps/organiclever-web/README.md` is at most 120 lines after Phase 4. Verified by `wc -l apps/organiclever-web/README.md` returning ≤120.
+- _Observable fact_: Zero references to `specs/apps/organiclever/{be,web,ddd,c4,contracts}/` in any non-archived file after Phase 2. Verified by the straggler grep in step 2F.1 returning 0.
+- _Observable fact_: All FR-15 gate commands exit 0 before push to `origin main`. Verified by step 8.3.
+- _Judgment call_: Rollout plan authors for `ayokoding` or `oseplatform` can write their plan using the new convention without requesting clarifications on the split rule.
+
+## Business Risks
+
+- **Split rule does not generalize to bilingual apps or CLI-only apps**: `ayokoding-web` is bilingual (ID/EN) and `rhino-cli` is CLI-only — the content split rule may need per-surface variants. Mitigation: per-surface variant table in the convention; CLI deferral of DDD recorded in Refinement log; `pilot-findings.md` captures any strain.
+- **`apps-organiclever-web-developing-content` skill embeds duplicated content**: the skill at `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` may reference old spec paths or duplicate spec content from app READMEs. Mitigation: FR-3 cross-link update scope includes this skill; the skill update is part of Phase 2.
+- **Governance convention mismatch**: if `specs-checker`, `specs-fixer`, or `specs-maker` agents are not updated in Phase 6, automated validation will continue to enforce the old flat-root tree shape — creating false positives on the new tree. Mitigation: Phase 6 delegates to `repo-rules-maker` and Phase 8 runs `repo-rules-checker` to confirm self-consistency.
+
 ## Outcomes
 
 ### Direct outcomes (this plan)

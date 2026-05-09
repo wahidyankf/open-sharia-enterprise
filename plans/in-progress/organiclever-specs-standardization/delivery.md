@@ -1,5 +1,27 @@
 # Delivery — OrganicLever Specs Standardization (Pilot)
 
+## Worktree
+
+Worktree path: `worktrees/organiclever-specs-standardization/`
+
+Provision before execution (run from the `ose-public` subrepo root):
+
+```bash
+claude --worktree organiclever-specs-standardization
+```
+
+This creates `worktrees/organiclever-specs-standardization/` inside the `ose-public` repo root.
+See [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../governance/conventions/structure/plans.md#worktree-specification).
+
+## Commit Guidelines
+
+- Commit thematically — each commit delivers one cohesive change (per the Commit Strategy in tech-docs.md)
+- Follow Conventional Commits format: `<type>(<scope>): <description>`
+- Split different domains/concerns into separate commits — spec moves, rhino-cli Go code, governance, and sync are separate commit domains
+- Do NOT bundle unrelated fixes into a single commit
+- See [tech-docs.md §Commit Strategy](./tech-docs.md#commit-strategy) for the planned commit sequence
+
 ## Phase flow
 
 The diagram below shows the phase ordering and the additive-before-subtractive constraint. New specs/ files MUST exist before any app/infra README is trimmed.
@@ -43,6 +65,18 @@ flowchart TD
 
 ## Pre-flight
 
+### Environment Setup
+
+- [ ] **Environment setup**: Provision worktree if not already done — `claude --worktree organiclever-specs-standardization` (creates `worktrees/organiclever-specs-standardization/` in repo root; see [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md))
+- [ ] **Initialize polyglot toolchain** in the worktree root: `npm install && npm run doctor -- --fix`
+      (ensures Go, .NET, and other polyglot toolchains are initialized; see
+      [Worktree Toolchain Initialization](../../governance/development/workflow/worktree-setup.md)).
+      Acceptance: `npm run doctor` exits 0 with no missing tools.
+
+> **Fix-all-issues rule**: Fix ALL failures found during quality gates — including preexisting issues
+> not caused by your changes. Do not defer or mention-and-skip. This follows the Root Cause Orientation
+> principle. If a baseline test:quick fails before you start, fix it first, then proceed.
+
 - [ ] On `main` (or in an `ose-public` worktree branched off `main`); working tree clean
 - [ ] `npm install` clean (no postinstall failures)
 - [ ] `npm run lint:md` exits 0 on the baseline
@@ -75,15 +109,31 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
 - [ ] **1.2 Create `specs/apps/organiclever/system-context/README.md`**
 - [ ] **1.3 Create `specs/apps/organiclever/containers/README.md`**
 - [ ] **1.4 Create `specs/apps/organiclever/components/README.md`**
-- [ ] **1.5 Create empty subdirectories** that will receive Phase 2A moves (use `mkdir -p` then `git add -N` of a `.gitkeep` if needed to track):
-  - [ ] `specs/apps/organiclever/components/be/` (will receive moved `be/README.md`, `c4/component-be.md`)
-  - [ ] `specs/apps/organiclever/components/web/` (will receive moved `web/README.md`, `c4/component-web.md`)
-  - [ ] `specs/apps/organiclever/components/web/ddd/` (will receive moved `ddd/` content)
-  - [ ] `specs/apps/organiclever/containers/contracts/` is NOT pre-created — Phase 2A.7 `git mv contracts → containers/contracts` moves the entire subtree
+- [ ] **1.5 Create subdirectories for Phase 2A targets** (run from repo root):
+  ```bash
+  mkdir -p specs/apps/organiclever/components/be \
+            specs/apps/organiclever/components/web \
+            specs/apps/organiclever/components/web/ddd
+  # Git cannot track empty dirs — add placeholder files
+  for d in components/be components/web components/web/ddd; do
+    touch specs/apps/organiclever/$d/.gitkeep
+    git add specs/apps/organiclever/$d/.gitkeep
+  done
+  ```
+  Acceptance: `git status` shows all three `.gitkeep` files as new staged files.
+  Note: `specs/apps/organiclever/containers/contracts/` is NOT pre-created here — Phase 2A.7 `git mv contracts → containers/contracts` moves the entire subtree including its directory structure.
+  Note: Phase 2A `git mv` replaces `.gitkeep` files once real content lands; the `.gitkeep` files are removed as part of the Phase 2 commit.
 - [ ] **1.6 Create `specs/apps/organiclever/behavior/README.md`**
-- [ ] **1.7 Create empty subdirectories** for behavior:
-  - [ ] `specs/apps/organiclever/behavior/be/` (will receive moved `be/gherkin/`)
-  - [ ] `specs/apps/organiclever/behavior/web/` (will receive moved `web/gherkin/`)
+- [ ] **1.7 Create empty subdirectories** for behavior (run from repo root):
+  ```bash
+  mkdir -p specs/apps/organiclever/behavior/be \
+            specs/apps/organiclever/behavior/web
+  for d in behavior/be behavior/web; do
+    touch specs/apps/organiclever/$d/.gitkeep
+    git add specs/apps/organiclever/$d/.gitkeep
+  done
+  ```
+  Acceptance: `git status` shows both `.gitkeep` files as new staged files. Phase 2A `git mv` removes them once real content lands.
 - [ ] **1.8 Run `npm run lint:md`** — exit 0
 - [ ] **1.9 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — must still pass; old paths unchanged
 - [ ] **1.10 Commit**: `docs(specs): scaffold C4-aware tree top-level READMEs (no content move)`
@@ -126,11 +176,11 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 - [ ] **2C.1** `apps/rhino-cli/internal/bcregistry/loader.go` — change path constant from `filepath.Join(repoRoot, "specs", "apps", app, "ddd", "bounded-contexts.yaml")` to `filepath.Join(repoRoot, "specs", "apps", app, "components", "web", "ddd", "bounded-contexts.yaml")`
 - [ ] **2C.2** `apps/rhino-cli/internal/bcregistry/validator.go` — update File: error-message strings: `specs/apps/<app>/ddd/bounded-contexts.yaml` → `specs/apps/<app>/components/web/ddd/bounded-contexts.yaml`
 - [ ] **2C.3** `apps/rhino-cli/internal/glossary/validator.go` — same File: path updates
-- [ ] **2C.4** `apps/rhino-cli/cmd/ddd_bc_test.go` — update expected `File:` strings in test fixtures (12 references confirmed via grep)
+- [ ] **2C.4** `apps/rhino-cli/cmd/ddd_bc_test.go` — update expected `File:` strings and path strings in test fixtures. Find all occurrences: `grep -n "specs/apps/organiclever" apps/rhino-cli/cmd/ddd_bc_test.go` (5 references to `specs/apps/organiclever` paths). Update each occurrence to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/ddd\|specs/apps/organiclever/web/gherkin" apps/rhino-cli/cmd/ddd_bc_test.go` returns 0.
 - [ ] **2C.5** `apps/rhino-cli/cmd/ddd_ul_test.go` — same (5 references)
 - [ ] **2C.6** `apps/rhino-cli/cmd/ddd_bc.integration_test.go` — update inline YAML fixture `glossary:` and `gherkin:` paths to use new tree
 - [ ] **2C.7** `apps/rhino-cli/cmd/ddd_ul.integration_test.go` — same
-- [ ] **2C.8** `apps/rhino-cli/README.md` — update path references in docs (line ~658, ~949, ~959 per discovery grep)
+- [ ] **2C.8** `apps/rhino-cli/README.md` — update old spec path references. Find all occurrences: `grep -n "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` and update each to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` returns 0.
 
 ### 2D — Nx project.json updates
 
@@ -155,7 +205,7 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 
 ### 2F — Verify Phase 2 atomicity
 
-- [ ] **2F.0 Nx project discovery (FR-12)**: `nx show projects | grep organiclever-contracts` — must list the project at new path. Run `nx run organiclever-contracts:lint` and `nx run organiclever-contracts:docs` (with `--skip-nx-cache`) — must exit 0
+- [ ] **2F.0 Nx project discovery (FR-12)**: `nx show projects | grep organiclever-contracts` — must output `organiclever-contracts`. `nx run organiclever-contracts:lint --skip-nx-cache` — exit 0. `nx run organiclever-contracts:docs --skip-nx-cache` — exit 0.
 - [ ] **2F.1 Confirm zero stragglers**:
   ```bash
   rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" \
@@ -183,26 +233,33 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 
 Additive. Each file lands at its FINAL tree position; no later move needed. PM-Readability Contract applied to every file.
 
-- [ ] **3.1 Create `specs/apps/organiclever/product/overview.md`** — PM-first plain-language summary, personas, primary user flows, v0 scope vs deferred. Header block per FR-6 (Audience, summary)
-- [ ] **3.2 Run `npm run lint:md`** + **Commit**: `docs(specs): create product/overview.md (PM-first product summary)`
+- [ ] **3.1 Create `specs/apps/organiclever/product/overview.md`** (_New file_) — PM-first plain-language summary, personas, primary user flows, v0 scope vs deferred.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/product/overview.md` returns 0 (match found) AND the first 10 lines after H1 contain a plain-language summary paragraph with zero un-glossed framework names.
+- [ ] **3.2 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create product/overview.md (PM-first product summary)`
 
-- [ ] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied
-- [ ] **3.4 Run `npm run lint:md`** + **Commit**: `docs(specs): create components/web/architecture.md`
+- [ ] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** (_New file_) — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/architecture.md` returns 0 AND file contains a `## Project Layout` or equivalent section.
+- [ ] **3.4 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/architecture.md`
 
-- [ ] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** — Extract routes/screens/entry-flows tables. PM-Readability Contract applied
-- [ ] **3.6 Run `npm run lint:md`** + **Commit**: `docs(specs): create components/web/routes-and-screens.md`
+- [ ] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** (_New file_) — Extract routes/screens/entry-flows tables. PM-Readability Contract applied.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/routes-and-screens.md` returns 0 AND file contains at least one markdown table with route or screen data.
+- [ ] **3.6 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/routes-and-screens.md`
 
-- [ ] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** — Palette, typography, dark mode, token import, components. PM-Readability Contract applied
-- [ ] **3.8 Run `npm run lint:md`** + **Commit**: `docs(specs): create components/web/design-system.md`
+- [ ] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** (_New file_) — Palette, typography, dark mode, token import, components. PM-Readability Contract applied.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/design-system.md` returns 0 AND file contains palette or typography content.
+- [ ] **3.8 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/design-system.md`
 
-- [ ] **3.9 Create `specs/apps/organiclever/components/be/api.md`** — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied
-- [ ] **3.10 Run `npm run lint:md`** + **Commit**: `docs(specs): create components/be/api.md`
+- [ ] **3.9 Create `specs/apps/organiclever/components/be/api.md`** (_New file_) — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/be/api.md` returns 0 AND file contains an endpoint table or endpoint list.
+- [ ] **3.10 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/be/api.md`
 
-- [ ] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied
-- [ ] **3.12 Run `npm run lint:md`** + **Commit**: `docs(specs): create containers/deployment.md`
+- [ ] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** (_New file_) — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied.
+      Acceptance: `grep -q "Audience:" specs/apps/organiclever/containers/deployment.md` returns 0 AND file contains an environments or Docker images table.
+- [ ] **3.12 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create containers/deployment.md`
 
-- [ ] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7
-- [ ] **3.14 Run `npm run lint:md`** + **Commit**: `docs(specs): update root README to reflect C4-aware tree + add PM reading path`
+- [ ] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7.
+      Acceptance: `grep -q "For Product / Project Managers" specs/apps/organiclever/README.md` returns 0 AND the file lists all five top-level folders (product, system-context, containers, components, behavior) in the reading path.
+- [ ] **3.14 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): update root README to reflect C4-aware tree + add PM reading path`
 
 ## Phase 4 — Trim app READMEs (removes duplicated content)
 
@@ -303,14 +360,32 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
   Do NOT modify rhino-cli code — that's Phase 6.5 (separate).
   ```
 - [ ] **6.2 Verify all SEVEN files exist and conform**:
-  - [ ] `governance/conventions/structure/app-readme-vs-specs.md`: frontmatter (`Status: Pilot — initial issue`); Purpose; Standards 1-7 (split rule, forbidden/required sections, length budget, tree shape, PM contract, BDD/DDD/Contracts adoption, cross-link integrity); Examples (≥ 3 before/after); Validation; Refinement log (seeded with CLI-DDD-deferred entry); Related
-  - [ ] `governance/conventions/structure/specs-directory-structure.md`: REWRITTEN; describes C4-aware five-folder tree; no longer prescribes flat-root layout for new apps; per-surface variants present
-  - [ ] `governance/conventions/structure/README.md` lists new convention; specs-directory-structure description reflects rewrite
-  - [ ] `governance/conventions/writing/readme-quality.md` cross-references the new convention
-  - [ ] `.claude/agents/specs-checker.md`: Cat 1 amended (5-folder READMEs); Cat 8 replaced (C4-aware); Cat 9 added (Adoption Gaps); each category tagged Deterministic/LLM; Drift Detection subsection present
-  - [ ] `.claude/agents/specs-fixer.md`: auto-fix list gains scaffold missing top-level/per-surface READMEs + count/route/endpoint rewrites via rhino-cli output; adoption gaps + tree-shape moves go to Requires Review
-  - [ ] `.claude/agents/specs-maker.md`: scaffolding template emits canonical 5-folder tree; supports surface-profile parameter
-  - [ ] `governance/workflows/specs/specs-quality-gate.md`: Validation Dimensions table gains 3 new rows (tree shape, adoption gaps, drift); Deterministic Offload subsection present
+  - [ ] `governance/conventions/structure/app-readme-vs-specs.md`:
+        `test -f governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "Status: Pilot" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "## Standards" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "## Examples" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "Refinement log" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "CLI DDD adoption deferred" governance/conventions/structure/app-readme-vs-specs.md` → exit 0 (seeded Refinement log entry).
+  - [ ] `governance/conventions/structure/specs-directory-structure.md`:
+        `grep -q "product" governance/conventions/structure/specs-directory-structure.md` → exit 0 (new tree present).
+        `grep -q "app-readme-vs-specs" governance/conventions/structure/specs-directory-structure.md` → exit 0 (cross-link present).
+  - [ ] `governance/conventions/structure/README.md`:
+        `grep -q "app-readme-vs-specs" governance/conventions/structure/README.md` → exit 0.
+  - [ ] `governance/conventions/writing/readme-quality.md`:
+        `grep -q "app-readme-vs-specs" governance/conventions/writing/readme-quality.md` → exit 0.
+  - [ ] `.claude/agents/specs-checker.md`:
+        `grep -q "Category 9\|Adoption Gaps" .claude/agents/specs-checker.md` → exit 0.
+        `grep -q "Deterministic\|rhino-cli" .claude/agents/specs-checker.md` → exit 0.
+        `grep -q "Drift Detection" .claude/agents/specs-checker.md` → exit 0.
+  - [ ] `.claude/agents/specs-fixer.md`:
+        `grep -q "scaffold\|top-level README" .claude/agents/specs-fixer.md` → exit 0.
+        `grep -q "Requires Review" .claude/agents/specs-fixer.md` → exit 0 (adoption gaps not auto-fixed).
+  - [ ] `.claude/agents/specs-maker.md`:
+        `grep -q "surface-profile\|web-only\|cli-only\|full-stack" .claude/agents/specs-maker.md` → exit 0.
+  - [ ] `governance/workflows/specs/specs-quality-gate.md`:
+        `grep -q "Spec Tree Shape\|Adoption Gaps\|Drift" governance/workflows/specs/specs-quality-gate.md` → exit 0.
+        `grep -q "Deterministic Offload\|rhino-cli" governance/workflows/specs/specs-quality-gate.md` → exit 0.
 - [ ] **6.3 `npm run lint:md`** exit 0
 - [ ] **6.4 Run `repo-rules-checker`** against all seven governance files + pilot artifacts. Expect zero findings; if findings appear, see Phase 8 step 8.7
 - [ ] **6.5 Commit (split into two for clarity)**:
@@ -319,19 +394,92 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
 
 ## Phase 6.5 — Implement rhino-cli specs subcommands (FR-14)
 
-This phase delivers the deterministic offload commands that the agents (updated in Phase 6) call. TDD shape: write the Gherkin feature first (lands at the new tree position `specs/apps/rhino/behavior/cli/gherkin/specs/<subcmd>.feature`), then step impl, then Go code, then verify ≥90% coverage.
+This phase delivers the deterministic offload commands that the agents (updated in Phase 6) call. Each subcommand follows Red→Green→Refactor TDD at the checkbox level.
 
-For each subcommand below, follow the same TDD micro-loop. Subcommands ordered by dependency (validate-tree first since others reference it).
+### 6.5 pre-step: Scaffold new rhino specs tree
 
-- [ ] **6.5.1 `rhino-cli specs validate-tree <app>`** — Filesystem walk; emit JSONL findings for tree-shape violations. Gherkin feature + step impl (mocked + integration) + Go code + ≥90% coverage
-- [ ] **6.5.2 `rhino-cli specs validate-counts <folder>`** — Parse `.feature` files; compare to README counts. Same TDD pattern
-- [ ] **6.5.3 `rhino-cli specs validate-links <folder>`** — Markdown AST + filesystem resolve. JSONL findings on broken links
-- [ ] **6.5.4 `rhino-cli specs validate-adoption <app>`** — Check existence of `containers/contracts/`, `components/<surface>/ddd/`, `behavior/<surface>/gherkin/` per FR-10 hooks. JSONL adoption-gap findings
-- [ ] **6.5.5 Run `nx run rhino-cli:test:quick --skip-nx-cache`** + `nx run rhino-cli:test:integration --skip-nx-cache` — exit 0
+- [ ] **6.5.0 Scaffold `specs/apps/rhino/behavior/cli/gherkin/specs/`** (_New directory_ — does not yet exist):
+  ```bash
+  mkdir -p specs/apps/rhino/behavior/cli/gherkin/specs
+  touch specs/apps/rhino/behavior/cli/gherkin/specs/.gitkeep
+  git add specs/apps/rhino/behavior/cli/gherkin/specs/.gitkeep
+  ```
+  Also create a thin `specs/apps/rhino/behavior/cli/gherkin/README.md` index (1-line description + planned children list).
+  Acceptance: `test -d specs/apps/rhino/behavior/cli/gherkin/specs` returns 0.
+
+### 6.5.1 `rhino-cli specs validate-tree <app>`
+
+- [ ] **6.5.1-RED — write failing Gherkin spec**:
+      Create `specs/apps/rhino/behavior/cli/gherkin/specs/validate-tree.feature` (_New file_) with scenarios
+      for tree-shape compliance (happy path + missing-folder finding). Run
+      `nx run rhino-cli:test:unit --skip-nx-cache` — expect test failures (undefined steps).
+      Acceptance: test run exits non-zero with "undefined step" or "no step definition" errors.
+- [ ] **6.5.1-GREEN — implement step definitions and Go command**:
+      Create `apps/rhino-cli/cmd/specs_validate_tree.go` (_New file_) and
+      `apps/rhino-cli/cmd/specs_validate_tree_test.go` (_New file_). Create step impl
+      `apps/rhino-cli/cmd/specs_validate_tree_steps_test.go` (_New file_) consuming the feature.
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass. Acceptance: exit 0.
+- [ ] **6.5.1-REFACTOR — verify coverage ≥90%**:
+      Run `nx run rhino-cli:test:quick --skip-nx-cache` (includes coverage validation).
+      Acceptance: exit 0, coverage report shows ≥90% for `cmd/specs_validate_tree.go`.
+
+### 6.5.2 `rhino-cli specs validate-counts <folder>`
+
+- [ ] **6.5.2-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/validate-counts.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.2-GREEN**: Create `apps/rhino-cli/cmd/specs_validate_counts.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_validate_counts_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_validate_counts_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.2-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_validate_counts.go`.
+
+### 6.5.3 `rhino-cli specs validate-links <folder>`
+
+- [ ] **6.5.3-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/validate-links.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.3-GREEN**: Create `apps/rhino-cli/cmd/specs_validate_links.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_validate_links_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_validate_links_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.3-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_validate_links.go`.
+
+### 6.5.4 `rhino-cli specs validate-adoption <app>`
+
+- [ ] **6.5.4-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/validate-adoption.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.4-GREEN**: Create `apps/rhino-cli/cmd/specs_validate_adoption.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_validate_adoption_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_validate_adoption_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.4-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_validate_adoption.go`.
+
+- [ ] **6.5.5 Run `nx run rhino-cli:test:quick --skip-nx-cache`** + `nx run rhino-cli:test:integration --skip-nx-cache` — exit 0 (validates-tree/counts/links/adoption all pass)
 - [ ] **6.5.6 Commit**: `feat(rhino-cli): add specs validate-tree/validate-counts/validate-links/validate-adoption + Gherkin specs`
-- [ ] **6.5.7 `rhino-cli specs drift-routes <app>`** — Walk `apps/<app>/src/app/**/page.tsx`; compare to `routes-and-screens.md` table
-- [ ] **6.5.8 `rhino-cli specs drift-endpoints <app>`** — F# regex scan of route attributes; compare to `api.md` table
-- [ ] **6.5.9 `rhino-cli specs drift-contracts <app>`** — Compare F# attributes to `openapi.yaml` paths
+
+### 6.5.7 `rhino-cli specs drift-routes <app>`
+
+- [ ] **6.5.7-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/drift-routes.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.7-GREEN**: Create `apps/rhino-cli/cmd/specs_drift_routes.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_drift_routes_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_drift_routes_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.7-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_drift_routes.go`.
+
+### 6.5.8 `rhino-cli specs drift-endpoints <app>`
+
+- [ ] **6.5.8-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/drift-endpoints.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.8-GREEN**: Create `apps/rhino-cli/cmd/specs_drift_endpoints.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_drift_endpoints_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_drift_endpoints_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.8-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_drift_endpoints.go`.
+
+### 6.5.9 `rhino-cli specs drift-contracts <app>`
+
+- [ ] **6.5.9-RED**: Create `specs/apps/rhino/behavior/cli/gherkin/specs/drift-contracts.feature` (_New file_). Run `nx run rhino-cli:test:unit --skip-nx-cache` — undefined steps, exit non-zero.
+- [ ] **6.5.9-GREEN**: Create `apps/rhino-cli/cmd/specs_drift_contracts.go` (_New file_),
+      `apps/rhino-cli/cmd/specs_drift_contracts_test.go` (_New file_), and
+      `apps/rhino-cli/cmd/specs_drift_contracts_steps_test.go` (_New file_).
+      Run `nx run rhino-cli:test:unit --skip-nx-cache` — all scenarios pass.
+- [ ] **6.5.9-REFACTOR**: Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0, ≥90% coverage on `cmd/specs_drift_contracts.go`.
+
 - [ ] **6.5.10 Run `nx run rhino-cli:test:quick --skip-nx-cache`** + `nx run rhino-cli:test:integration --skip-nx-cache` — exit 0
 - [ ] **6.5.11 Commit**: `feat(rhino-cli): add specs drift-routes/drift-endpoints/drift-contracts + Gherkin specs`
 - [ ] **6.5.12 Smoke-test from agent perspective**: invoke `rhino-cli specs validate-tree organiclever` and confirm JSONL output is parseable + matches expected schema
@@ -359,7 +507,7 @@ For each subcommand below, follow the same TDD micro-loop. Subcommands ordered b
   - [ ] `nx run organiclever-be-e2e:test:quick` exit 0
   - [ ] `nx run organiclever-web:spec-coverage` exit 0
   - [ ] `nx run organiclever-web:test:integration` exit 0
-  - [ ] `nx run organiclever-contracts:lint` + `nx run organiclever-contracts:docs` exit 0 (FR-12)
+  - [ ] `nx run organiclever-contracts:lint --skip-nx-cache` + `nx run organiclever-contracts:docs --skip-nx-cache` exit 0 (FR-12)
   - [ ] `nx run rhino-cli:test:quick` exit 0 (DDD enforcement on new paths + new specs subcommands)
   - [ ] `nx run rhino-cli:test:integration` exit 0
   - [ ] `rhino-cli specs validate-tree organiclever` finds zero violations (FR-14)
@@ -396,8 +544,9 @@ For each subcommand below, follow the same TDD micro-loop. Subcommands ordered b
 - [ ] **8.12 Push to `origin main`**: `git push origin worktree/<branch>:main` (or whichever publish path applies — direct-to-main per the parent worktree convention)
 - [ ] **8.13 Post-push GitHub Actions monitoring** (FR-15):
   - [ ] Run `gh run list --branch main --limit 5` — confirm latest workflow runs are queued or running
+  - [ ] Identify which workflows triggered: run `gh run list --branch main --limit 5 --json workflowName,status,conclusion` and note the workflow names. Typical workflows for this plan include the main CI workflow (`CI`) and any lint/test workflows defined in `.github/workflows/`. Run `ls .github/workflows/` to list all defined workflows.
   - [ ] Wait per [CI Monitoring](../../../governance/development/workflow/ci-monitoring.md) — schedule wakeup every 3-5 min; do NOT tight-loop
-  - [ ] All triggered workflows complete with conclusion `success`
+  - [ ] All triggered workflows complete with conclusion `success`. Run `gh run view <run-id>` per triggered workflow to confirm.
   - [ ] If ANY workflow fails: diagnose, push fix commit, repeat 8.13. NEVER mark plan archived until CI is green
 - [ ] **8.14 Commit (plan archive — typically done before 8.12 push)**: `docs(plans): archive organiclever-specs-standardization to plans/done/`
 

@@ -1,5 +1,36 @@
 # PRD — OrganicLever Specs Standardization (Pilot)
 
+## Product Overview
+
+This plan delivers a reorganization of `specs/apps/organiclever/` from a flat-root multi-axis layout into a five-folder C4-aware tree (`product/`, `system-context/`, `containers/`, `components/`, `behavior/`). It also trims app and infra READMEs to dev-runtime-only focus, writes new PM-readable spec files at their final tree positions, and propagates the resulting conventions to governance docs and enforcement agents. The output is a reference implementation for four follow-up rollout plans covering `ayokoding`, `oseplatform`, `wahidyankf`, and `rhino`.
+
+## Personas
+
+- **Contributor opening a new app** — opens an `apps/organiclever-*/README.md` to get a dev server running; wants Quick Start + Commands only, not behavior narrative.
+- **PM reading specs/** — opens `specs/apps/organiclever/README.md` cold; wants a reading path, plain-language summaries, and no un-glossed framework names.
+- **Rollout plan author** — references this pilot's convention and reference tree when writing the `ayokoding` or `oseplatform` rollout plan; needs the split rule to be unambiguous and the convention to be findable.
+- **Automation (specs-checker agent)** — validates repo state against the new convention; needs the tree shape and adoption rules to be explicit and machine-checkable.
+
+## User Stories
+
+As a contributor opening an organiclever app for the first time,
+I want the README to answer "how do I run this locally?" in under 120 lines,
+So that I do not have to read behavior narrative to start a dev server.
+
+As a PM reading `specs/apps/organiclever/` for the first time,
+I want a clearly-labelled reading path and plain-language file summaries,
+So that I can build a working mental model without reading code or framework docs.
+
+As a rollout plan author,
+I want an unambiguous convention codifying the split rule and tree shape,
+So that I can write "apply convention X to app Y" without re-deriving the rules.
+
+## Product Risks
+
+- **Split rule does not generalize**: the content split rule may have OrganicLever-specific edge cases that do not map cleanly to bilingual apps (`ayokoding-web`) or CLI-only apps (`rhino-cli`). Mitigation: pilot-findings.md captures any strain; convention includes per-surface variants and a Refinement log.
+- **PM-readability contract breaks under technical depth**: some spec content (DDD layer rules, bounded-context diagrams) may resist plain-language treatment without losing precision. Mitigation: the contract requires intent-before-mechanism and first-use glossing, not elimination of technical content.
+- **Rule generalization to bilingual/CLI apps is unverified**: rollout plans may surface variant requirements not captured in this pilot's convention. Mitigation: `Status: Pilot — initial issue` frontmatter signals amendment risk; Refinement log tracks changes.
+
 ## Audience
 
 `specs/apps/organiclever/` serves two reader populations, both first-class:
@@ -146,11 +177,11 @@ Every NEW or MOVED file under `specs/apps/organiclever/` (not just touched-for-l
 
 Files affected by FR-6 in this plan:
 
-- `specs/apps/organiclever/web/architecture.md` (new)
-- `specs/apps/organiclever/web/routes-and-screens.md` (new)
-- `specs/apps/organiclever/web/design-system.md` (new)
-- `specs/apps/organiclever/be/api.md` (new)
-- `specs/apps/organiclever/ddd/bounded-context-map.md` (moved — must gain header block + glossary even though body content moves verbatim)
+- `specs/apps/organiclever/components/web/architecture.md` (new)
+- `specs/apps/organiclever/components/web/routes-and-screens.md` (new)
+- `specs/apps/organiclever/components/web/design-system.md` (new)
+- `specs/apps/organiclever/components/be/api.md` (new)
+- `specs/apps/organiclever/components/web/ddd/bounded-context-map.md` (moved — must gain header block + glossary even though body content moves verbatim)
 
 ### FR-7: PM reading path in specs/ index
 
@@ -326,7 +357,7 @@ To make specs validation FASTER and CHEAPER, deterministic checks move from LLM 
 2. Reserve LLM reasoning for things it does well (semantic coherence, terminology drift, narrative quality)
 3. Document the split clearly: each Validation Category states "Deterministic via rhino-cli" or "LLM"
 
-**Test coverage**: every new rhino-cli subcommand has Gherkin specs at `specs/apps/rhino/cli/...` (or under the new tree shape: `specs/apps/rhino/behavior/cli/gherkin/specs/`) and ≥90% Go test coverage per the Go CLI standard.
+**Test coverage**: every new rhino-cli subcommand has Gherkin specs at `specs/apps/rhino/behavior/cli/gherkin/specs/` (_New directory_ — `specs/apps/rhino/behavior/` does not yet exist; Phase 6.5.0 scaffolds it before the first feature file is written) and ≥90% Go test coverage per the Go CLI standard.
 
 **Performance target** (for executor sanity check, not enforced acceptance): a full specs-quality-gate run against `specs/apps/organiclever/` should complete in < 30 seconds for the deterministic checks (rhino-cli) + < 90 seconds for LLM-driven checks.
 
@@ -380,29 +411,29 @@ Feature: Organiclever app READMEs are thin
     Given I open apps/organiclever-be/README.md
     Then the file is at most 120 lines
     And the file contains zero "API Endpoints" inline tables (the table moved to specs/)
-    And the "Behavior & Architecture" section links to specs/apps/organiclever/be/api.md
+    And the "Behavior & Architecture" section links to specs/apps/organiclever/components/be/api.md
 
   Scenario: e2e READMEs are thin
     Given I open either apps/organiclever-web-e2e/README.md or apps/organiclever-be-e2e/README.md
     Then the file is at most 120 lines
-    And the file links to specs/apps/organiclever/{web,be}/gherkin/ for the source of truth
+    And the file links to specs/apps/organiclever/behavior/{web,be}/gherkin/ for the source of truth
 
   Scenario: infra/organiclever READMEs contain only runtime content
     Given I open infra/dev/organiclever/README.md
     Then the file contains zero deployment topology narrative
-    And the file links to specs/apps/organiclever/deployment.md
+    And the file links to specs/apps/organiclever/containers/deployment.md
     And the file is at most 60 lines
 
   Scenario: K8s READMEs link to specs/ for topology
     Given I open infra/k8s/organiclever/README.md
     Then the file contains only "build image" + "deploy this manifest" runtime commands
-    And the file links to specs/apps/organiclever/deployment.md for envs and image lifecycle
+    And the file links to specs/apps/organiclever/containers/deployment.md for envs and image lifecycle
     And the file is at most 60 lines
 
 Feature: Bounded-context map lives with the DDD registry
-  Scenario: BC map is in specs/apps/organiclever/ddd/
+  Scenario: BC map is in specs/apps/organiclever/components/web/ddd/
     Given the plan has completed
-    Then the file specs/apps/organiclever/ddd/bounded-context-map.md exists
+    Then the file specs/apps/organiclever/components/web/ddd/bounded-context-map.md exists
     And the file apps/organiclever-web/docs/explanation/bounded-context-map.md does not exist
     And the directory apps/organiclever-web/docs/ does not exist (or contains only non-pilot files)
 
@@ -444,8 +475,8 @@ Feature: PM-readable specs (FR-6, FR-7)
   Scenario: Every new specs/ file opens with audience + plain-language summary
     Given the plan has completed
     When I open any of the four NEW files under specs/apps/organiclever/
-      (web/architecture.md, web/routes-and-screens.md, web/design-system.md, be/api.md)
-      or the moved file (ddd/bounded-context-map.md)
+      (components/web/architecture.md, components/web/routes-and-screens.md, components/web/design-system.md, components/be/api.md)
+      or the moved file (components/web/ddd/bounded-context-map.md)
     Then the first 10 lines after the H1 contain an "Audience:" line
     And the first 10 lines after the H1 contain a plain-language summary paragraph
     And the summary paragraph contains zero un-glossed framework names
@@ -674,7 +705,7 @@ Feature: rhino-cli deterministic offload (FR-14)
   Scenario: Each new subcommand has Gherkin coverage and >=90% Go test coverage
     Given the plan has completed
     Then for every new "rhino-cli specs <subcmd>" command:
-      - a corresponding Gherkin feature file exists at specs/apps/rhino/behavior/cli/gherkin/specs/<subcmd>.feature
+      - a corresponding Gherkin feature file exists at specs/apps/rhino/behavior/cli/gherkin/specs/<subcmd>.feature (_New directory_ tree scaffolded in Phase 6.5.0)
       - Go test coverage on the cmd package is >= 90%
 
 Feature: Push gate (FR-15)
