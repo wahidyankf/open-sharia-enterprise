@@ -91,7 +91,7 @@ vi.mock("@/components/ui/dropdown-menu", () => ({
 }));
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/fe/gherkin/theme/theme.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/web/gherkin/theme/theme.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {

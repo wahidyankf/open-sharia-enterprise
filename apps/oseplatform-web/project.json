@@ -103,7 +103,7 @@
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/oseplatform/be/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/oseplatform/fe/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/oseplatform/web/gherkin/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     }

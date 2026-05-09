@@ -87,7 +87,7 @@ The rules for domain subdirectories vary by layer type:
 specs/apps/organiclever/be/gherkin/expenses/expense-management.feature
 specs/apps/organiclever/be/gherkin/expenses/attachments.feature
 specs/apps/organiclever/be/gherkin/authentication/password-login.feature
-specs/apps/ayokoding/fe/gherkin/accessibility/accessibility.feature
+specs/apps/ayokoding/web/gherkin/accessibility/accessibility.feature
 specs/apps/organiclever/web/gherkin/authentication/google-login.feature
 ```
 

@@ -98,7 +98,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/oseplatform/fe/gherkin/`](../fe/):
+[`specs/apps/oseplatform/web/gherkin/`](../fe/):
 
 | Component                      | Gherkin Domain | Scope                                  |
 | ------------------------------ | -------------- | -------------------------------------- |

@@ -106,7 +106,7 @@
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/web/gherkin/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     }

@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import "./helpers/test-setup";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/fe/gherkin/search/search.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/web/gherkin/search/search.feature"),
 );
 
 // SearchDialog depends on Radix Dialog portals, cmdk, tRPC client, and Next.js router.
