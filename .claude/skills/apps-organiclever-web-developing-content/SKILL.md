@@ -99,7 +99,7 @@ src/contexts/<bc>/
 ### Adding a feature (bounded-context-aware workflow)
 
 1. Identify which bounded context owns the feature. Consult [`docs/explanation/bounded-context-map.md`](./docs/explanation/bounded-context-map.md).
-2. Ensure the domain term appears in [`specs/apps/organiclever/ubiquitous-language/<bc>.md`](../../specs/apps/organiclever/ubiquitous-language/README.md). Add it if missing — same commit as the code change.
+2. Ensure the domain term appears in [`specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md`](../../specs/apps/organiclever/ddd/ubiquitous-language/README.md). Add it if missing — same commit as the code change.
 3. Write or update the Gherkin spec in `specs/apps/organiclever/web/gherkin/<bc>/`.
 4. Implement: Red (failing step) → Green (minimal code) → Refactor.
 5. Keep all new code inside the correct context layer. If it touches IO, it goes in `infrastructure/`. If it is a use-case, it goes in `application/`. Never break the layer rules.
@@ -394,7 +394,7 @@ docker compose -f infra/dev/organiclever-web/docker-compose.yml up organiclever-
 ### Adding a feature to an existing bounded context
 
 ```typescript
-// 1. Add term to specs/apps/organiclever/ubiquitous-language/<bc>.md (same commit as code)
+// 1. Add term to specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md (same commit as code)
 
 // 2. Add Gherkin scenario in specs/apps/organiclever/web/gherkin/<bc>/<file>.feature
 
@@ -494,8 +494,8 @@ export default function Counter() {
 
 `apps/organiclever-web` follows Domain-Driven Design. The bounded-context map is canonical at:
 
-- **Registry**: [`specs/apps/organiclever/bounded-contexts.yaml`](../../../specs/apps/organiclever/bounded-contexts.yaml)
-- **Glossaries**: `specs/apps/organiclever/ubiquitous-language/<bc>.md`
+- **Registry**: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../../specs/apps/organiclever/ddd/bounded-contexts.yaml)
+- **Glossaries**: `specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md`
 - **Design intent (full prose)**: [`plans/done/2026-05-02__organiclever-adopt-ddd/tech-docs.md`](../../../plans/done/2026-05-02__organiclever-adopt-ddd/tech-docs.md)
 - **ADR**: [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
 - **Enforcement**: [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md) — `rhino-cli ddd bc` and `rhino-cli ddd ul`
@@ -533,7 +533,7 @@ Full xstate placement rules: see DDD plan `tech-docs.md` § "xstate machine plac
 
 When you add a new domain term to code OR a Gherkin feature:
 
-1. Add a row to the right context's `specs/apps/organiclever/ubiquitous-language/<bc>.md` Terms table.
+1. Add a row to the right context's `specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md` Terms table.
 2. Set `Code identifier(s)` to the actual symbol(s) in code (backtick-comma-list).
 3. Set `Used in features` to the `.feature` filename(s) under that BC's Gherkin folder.
 4. If the term is also used by another context with a different meaning, add it to **both** glossaries' "Forbidden synonyms" sections cross-linking each other.

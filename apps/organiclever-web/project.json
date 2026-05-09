@@ -65,8 +65,8 @@
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/organiclever/bounded-contexts.yaml",
-        "{workspaceRoot}/specs/apps/organiclever/ubiquitous-language/**/*.md"
+        "{workspaceRoot}/specs/apps/organiclever/ddd/bounded-contexts.yaml",
+        "{workspaceRoot}/specs/apps/organiclever/ddd/ubiquitous-language/**/*.md"
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {

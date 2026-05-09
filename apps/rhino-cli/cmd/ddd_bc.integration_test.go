@@ -66,12 +66,12 @@ contexts:
     summary: test context
     layers:
 %s    code: apps/organiclever-web/src/contexts/%s
-    glossary: specs/apps/organiclever/ubiquitous-language/%s.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/%s.md
     gherkin: specs/apps/organiclever/web/gherkin/%s
     relationships: []
 `, contextName, layersYAML, contextName, contextName, contextName)
 
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ contexts:
 	}
 
 	// Create glossary file.
-	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ubiquitous-language")
+	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 	if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (s *bcValidateIntegSteps) registryMissingGlossary() error {
 		return err
 	}
 	// Remove glossary file.
-	return os.Remove(filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ubiquitous-language", "journal.md"))
+	return os.Remove(filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language", "journal.md"))
 }
 
 func (s *bcValidateIntegSteps) glossaryRemoved() error { return nil }

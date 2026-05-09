@@ -265,7 +265,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 			target, ok := contextByName[rel.To]
 			if !ok {
 				findings = append(findings, Finding{
-					File:     "specs/apps/" + reg.App + "/bounded-contexts.yaml",
+					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf("relationship target %q declared by %q does not exist in registry", rel.To, ctx.Name),
 					Severity: severity,
 				})
@@ -273,7 +273,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 			}
 			if !hasReciprocal(target, ctx.Name, rel.Kind) {
 				findings = append(findings, Finding{
-					File:     "specs/apps/" + reg.App + "/bounded-contexts.yaml",
+					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf(`relationship asymmetry: %q → %q (%s) but %q has no reciprocal entry`, ctx.Name, rel.To, rel.Kind, rel.To),
 					Severity: severity,
 				})

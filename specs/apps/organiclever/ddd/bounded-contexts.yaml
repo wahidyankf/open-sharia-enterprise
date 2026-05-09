@@ -12,7 +12,7 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/journal
-    glossary: specs/apps/organiclever/ubiquitous-language/journal.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/journal.md
     gherkin: specs/apps/organiclever/web/gherkin/journal
     relationships:
       - to: workout-session
@@ -32,7 +32,7 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/workout-session
-    glossary: specs/apps/organiclever/ubiquitous-language/workout-session.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/workout-session.md
     gherkin: specs/apps/organiclever/web/gherkin/workout-session
     relationships:
       - to: journal
@@ -53,7 +53,7 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/routine
-    glossary: specs/apps/organiclever/ubiquitous-language/routine.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routine.md
     gherkin: specs/apps/organiclever/web/gherkin/routine
     relationships:
       - to: workout-session
@@ -70,7 +70,7 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/stats
-    glossary: specs/apps/organiclever/ubiquitous-language/stats.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/stats.md
     gherkin: specs/apps/organiclever/web/gherkin/stats
     relationships:
       - to: journal
@@ -88,7 +88,7 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/settings
-    glossary: specs/apps/organiclever/ubiquitous-language/settings.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/settings.md
     gherkin: specs/apps/organiclever/web/gherkin/settings
     relationships: []
 
@@ -101,7 +101,7 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/app-shell
-    glossary: specs/apps/organiclever/ubiquitous-language/app-shell.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/app-shell.md
     gherkin: specs/apps/organiclever/web/gherkin/app-shell
     relationships: []
 
@@ -113,7 +113,7 @@ contexts:
     layers:
       - infrastructure
     code: apps/organiclever-web/src/contexts/health
-    glossary: specs/apps/organiclever/ubiquitous-language/health.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/health.md
     gherkin: specs/apps/organiclever/web/gherkin/health
     relationships: []
 
@@ -124,7 +124,7 @@ contexts:
     layers:
       - presentation
     code: apps/organiclever-web/src/contexts/landing
-    glossary: specs/apps/organiclever/ubiquitous-language/landing.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/landing.md
     gherkin: specs/apps/organiclever/web/gherkin/landing
     relationships: []
 
@@ -136,6 +136,6 @@ contexts:
     layers:
       - presentation
     code: apps/organiclever-web/src/contexts/routing
-    glossary: specs/apps/organiclever/ubiquitous-language/routing.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routing.md
     gherkin: specs/apps/organiclever/web/gherkin/routing
     relationships: []

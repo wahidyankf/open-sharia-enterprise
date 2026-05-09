@@ -63,12 +63,12 @@ contexts:
     layers:
       - domain
     code: apps/organiclever-web/src/contexts/%s
-    glossary: specs/apps/organiclever/ubiquitous-language/%s.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/%s.md
     gherkin: specs/apps/organiclever/web/gherkin/%s
     relationships: []
 `, contextName, contextName, contextName, contextName)
 
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ contexts:
 
 // writeGlossary writes a glossary file with the given content.
 func (s *ulValidateIntegSteps) writeGlossary(contextName, content string) error {
-	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ubiquitous-language")
+	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 	if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 		return err
 	}
@@ -203,18 +203,18 @@ contexts:
     summary: test journal
     layers: [domain]
     code: apps/organiclever-web/src/contexts/journal
-    glossary: specs/apps/organiclever/ubiquitous-language/journal.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/journal.md
     gherkin: specs/apps/organiclever/web/gherkin/journal
     relationships: []
   - name: routine
     summary: test routine
     layers: [domain]
     code: apps/organiclever-web/src/contexts/routine
-    glossary: specs/apps/organiclever/ubiquitous-language/routine.md
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routine.md
     gherkin: specs/apps/organiclever/web/gherkin/routine
     relationships: []
 `
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -238,7 +238,7 @@ contexts:
 			return err
 		}
 		// Both glossaries define the same term "Entry" without Forbidden synonyms cross-link.
-		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ubiquitous-language")
+		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 		if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 			return err
 		}

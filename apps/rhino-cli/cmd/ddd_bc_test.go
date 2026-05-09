@@ -84,7 +84,7 @@ func (s *bcValidateUnitSteps) phantomFolderExists() error { return nil }
 func (s *bcValidateUnitSteps) registryWithMissingGlossary() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  `missing glossary for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -158,7 +158,7 @@ func (s *bcValidateUnitSteps) gherkinFolderExistsButEmpty() error {
 func (s *bcValidateUnitSteps) registryWithRelationshipAsymmetry() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/bounded-contexts.yaml",
+			File:     "specs/apps/organiclever/ddd/bounded-contexts.yaml",
 			Message:  `relationship asymmetry: "workout-session" → "journal" (customer-supplier) but "journal" has no reciprocal entry`,
 			Severity: "error",
 		}}, nil

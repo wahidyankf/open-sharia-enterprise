@@ -9,9 +9,14 @@ F#/Giraffe backend REST API and a Next.js 16 frontend.
 
 ```
 specs/apps/organiclever/
-├── README.md                  # This file
-├── bounded-contexts.yaml      # DDD registry — 9 bounded contexts with layers, paths, relationships
-├── c4/                        # Unified C4 architecture diagrams
+├── README.md              # This file
+├── ddd/                   # DDD artifacts (registry + glossaries) consumed by rhino-cli ddd
+│   ├── README.md
+│   ├── bounded-contexts.yaml  # Registry — 9 bounded contexts with layers, paths, relationships
+│   └── ubiquitous-language/   # Per-bounded-context glossary (shared by FE + future BE)
+│       ├── README.md          # Index + authoring rules
+│       └── *.md               # One glossary file per bounded context
+├── c4/                    # Unified C4 architecture diagrams
 │   ├── README.md          # Diagram index
 │   ├── context.md         # L1 — system context (2 actors)
 │   ├── container.md       # L2 — containers (FE, BE)
@@ -20,12 +25,9 @@ specs/apps/organiclever/
 ├── be/                    # Backend specs (HTTP-semantic)
 │   ├── README.md
 │   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
-├── web/                   # Frontend specs (UI-semantic)
-│   ├── README.md
-│   └── gherkin/           # Frontend Gherkin scenarios (see web/gherkin/README)
-└── ubiquitous-language/   # Per-bounded-context glossary (shared by FE + future BE)
-    ├── README.md          # Index + authoring rules
-    └── *.md               # One glossary file per bounded context
+└── web/                   # Frontend specs (UI-semantic)
+    ├── README.md
+    └── gherkin/           # Frontend Gherkin scenarios (see web/gherkin/README)
 ```
 
 ## Backend vs Frontend
@@ -57,11 +59,10 @@ frontend is local-first.
 
 ## Spec Artifacts
 
-- **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Machine-readable DDD registry consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul` to enforce structural parity and glossary parity
+- **[ddd/](./ddd/README.md)** — DDD artifacts: [bounded-contexts.yaml](./ddd/bounded-contexts.yaml) (registry) and [ubiquitous-language/](./ddd/ubiquitous-language/README.md) (glossaries); consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
 - **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
 - **[web/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))
-- **[ubiquitous-language/](./ubiquitous-language/README.md)** — Per-bounded-context glossary, the shared platform-agnostic vocabulary consumed by `fe/` today and by `be/` once DDD adoption reaches `organiclever-be`
 
 ## DDD Registry (`bounded-contexts.yaml`)
 

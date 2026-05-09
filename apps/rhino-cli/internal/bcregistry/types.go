@@ -1,8 +1,8 @@
 // Package bcregistry loads and validates the DDD bounded-context registry
-// (specs/apps/<app>/bounded-contexts.yaml) for the given application.
+// (specs/apps/<app>/ddd/bounded-contexts.yaml) for the given application.
 package bcregistry
 
-// Registry is the in-memory form of specs/apps/<app>/bounded-contexts.yaml.
+// Registry is the in-memory form of specs/apps/<app>/ddd/bounded-contexts.yaml.
 type Registry struct {
 	Version  int       `yaml:"version"`
 	App      string    `yaml:"app"`
