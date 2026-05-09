@@ -1,7 +1,7 @@
 # Bounded-Context Map — organiclever-web
 
-**Status**: Complete. See the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md).
-**Authority**: This document is the source of truth for bounded-context boundaries inside `apps/organiclever-web`. It complements (does not replace) the platform-wide [DDD Standards](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md).
+**Status**: Complete. See the [DDD adoption plan](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md).
+**Authority**: This document is the source of truth for bounded-context boundaries inside `apps/organiclever-web`. It complements (does not replace) the platform-wide [DDD Standards](../../../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md).
 
 ## Summary
 
@@ -74,7 +74,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 ### journal
 
 - `src/lib/journal/journal-store.ts` (+ `.unit.test.ts`, `.int.test.ts`) → `infrastructure/`
-- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
+- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
 - `src/lib/journal/typed-payloads.ts` (+ `.unit.test.ts`) → `domain/`
 - `src/lib/journal/types.ts` → `domain/`
 - `src/lib/journal/errors.ts` → `domain/` (or `application/` if error types prove use-case-specific at migration time)
@@ -119,7 +119,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 
 - `src/lib/i18n/translations.ts` (+ `.unit.test.ts`) → `presentation/`
 - `src/lib/i18n/use-t.ts` → `presentation/`
-- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
+- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
 - `src/components/app/app-runtime-context.tsx` → `presentation/`
 - `src/components/app/tab-bar.tsx` (+ test) → `presentation/components/`
 - `src/components/app/side-nav.tsx` (+ test) → `presentation/components/`
@@ -169,7 +169,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 
 ## Spec reorganization decisions
 
-The Gherkin folder layout under `specs/apps/organiclever/web/gherkin/` is reorganized from per-route to per-bounded-context. The mapping below is the authority that Phase 9 executes mechanically.
+The Gherkin folder layout under `specs/apps/organiclever/behavior/web/gherkin/` is reorganized from per-route to per-bounded-context. The mapping below is the authority that Phase 9 executes mechanically.
 
 | Current folder | Target folder                                          | Rationale                                                                                                 |
 | -------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
@@ -192,7 +192,7 @@ The Gherkin folder layout under `specs/apps/organiclever/web/gherkin/` is reorga
 After Phase 9 the target tree is:
 
 ```text
-specs/apps/organiclever/web/gherkin/
+specs/apps/organiclever/behavior/web/gherkin/
 ├── README.md
 ├── app-shell/         # accessibility, i18n, layout, loggers
 ├── health/            # backend-health diagnostic page (absorbs old system/)
@@ -209,7 +209,7 @@ specs/apps/organiclever/web/gherkin/
 
 ## Layer rules (recap)
 
-The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
+The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
 
 ```text
 src/app/**
@@ -232,7 +232,7 @@ src/app/**
 
 ## Enforcement
 
-**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
+**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
 
 ### Why a separate eslint pass alongside oxlint?
 
@@ -279,9 +279,9 @@ The capture group lets rules distinguish **own-context layer crossings** (always
 
 ## Related
 
-- [DDD adoption plan README](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
-- [DDD adoption tech-docs](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
-- [DDD adoption delivery checklist](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
-- [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
-- [Three-Level Testing Standard](../../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../../governance/development/workflow/test-driven-development.md)
+- [DDD adoption plan README](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
+- [DDD adoption tech-docs](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
+- [DDD adoption delivery checklist](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
+- [DDD Standards (platform-wide)](../../../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
+- [Three-Level Testing Standard](../../../../../../governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../../../../governance/development/workflow/test-driven-development.md)

@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Home Screen feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/journal/home-screen.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/journal/home-screen.feature
  *
  * Tests component logic directly without browser APIs:
  * - kindToHue and kindToIcon utility functions
@@ -47,7 +47,7 @@ function filterEntries(entries: JournalEntry[], activeFilter: string | null): Jo
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/journal/home-screen.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/behavior/web/gherkin/journal/home-screen.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

@@ -1,7 +1,7 @@
 /**
  * Step definitions for the OrganicLever Landing Page feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/landing/landing.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/landing/landing.feature
  *
  * playwright-bdd treats all keyword registrations (Given/When/Then) as synonyms,
  * so each unique step pattern must be registered exactly once.

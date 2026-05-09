@@ -17,13 +17,13 @@ backend health endpoint), accessibility compliance, and 404 guards on `/login` a
 
 ## Relationship to organiclever-be
 
-| Aspect      | organiclever-be                                  | organiclever-web                         |
-| ----------- | ------------------------------------------------ | ---------------------------------------- |
-| Perspective | Backend API — HTTP-semantic                      | Frontend UI — user interaction-semantic  |
-| Steps       | `sends GET/POST`, `status code`, `response body` | `clicks`, `types`, `sees`, `navigates`   |
-| Background  | `Given the API is running`                       | `Given the app is running`               |
-| Scenarios   | See [be/gherkin/](../be/gherkin/README.md)       | See [fe/gherkin/](gherkin/README.md)     |
-| Domains     | health                                           | landing, system, layout, routing, events |
+| Aspect      | organiclever-be                                        | organiclever-web                                         |
+| ----------- | ------------------------------------------------------ | -------------------------------------------------------- |
+| Perspective | Backend API — HTTP-semantic                            | Frontend UI — user interaction-semantic                  |
+| Steps       | `sends GET/POST`, `status code`, `response body`       | `clicks`, `types`, `sees`, `navigates`                   |
+| Background  | `Given the API is running`                             | `Given the app is running`                               |
+| Scenarios   | See [be/gherkin/](../../behavior/be/gherkin/README.md) | See [web/gherkin/](../../behavior/web/gherkin/README.md) |
+| Domains     | health                                                 | landing, system, layout, routing, events                 |
 
 The frontend's system-status page consumes the backend's health endpoint. Otherwise the v0
 frontend is local-first — productivity-tracking features live in the user's browser. The
@@ -62,20 +62,18 @@ feature files are the shared contract — only the step implementations differ p
 ## Feature File Organization
 
 ```
-specs/apps/organiclever/web/
+specs/apps/organiclever/behavior/web/gherkin/
 ├── README.md
-└── gherkin/
-    ├── README.md
-    ├── landing/
-    │   └── landing.feature
-    ├── system/
-    │   └── system-status-be.feature
-    ├── layout/
-    │   └── accessibility.feature
-    ├── routing/
-    │   └── disabled-routes.feature
-    └── events/
-        └── events-mechanism.feature
+├── landing/
+│   └── landing.feature
+├── system/
+│   └── system-status-be.feature
+├── layout/
+│   └── accessibility.feature
+├── routing/
+│   └── disabled-routes.feature
+└── events/
+    └── events-mechanism.feature
 ```
 
 **File naming**: `[domain-capability].feature` (kebab-case)
@@ -83,7 +81,7 @@ specs/apps/organiclever/web/
 ## Adding a Feature File
 
 1. Identify the domain (e.g., `landing`, `layout`, `routing`)
-2. Create the folder if it does not exist: `specs/apps/organiclever/web/gherkin/[domain]/`
+2. Create the folder if it does not exist: `specs/apps/organiclever/behavior/web/gherkin/[domain]/`
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Open with `Feature:` then a user story block (`As a … / I want … / So that …`)
 5. Use `Given the app is running` as the first Background step
@@ -91,12 +89,16 @@ specs/apps/organiclever/web/
 
 ## Ubiquitous Language
 
-Every term used in scenario titles, `Background` clauses, and step text is owned by one bounded context and documented in [`../ubiquitous-language/`](../ubiquitous-language/README.md). Reviewers reject Gherkin steps that introduce synonyms outside the glossary; new terms ride into the glossary in the same commit as the feature change. See the [bounded-context map ADR](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md) for context responsibilities and relationships.
+Every term used in scenario titles, `Background` clauses, and step text is owned by one bounded
+context and documented in [`ddd/ubiquitous-language/`](./ddd/ubiquitous-language/README.md).
+Reviewers reject Gherkin steps that introduce synonyms outside the glossary; new terms ride into
+the glossary in the same commit as the feature change. See the
+[bounded-context map](./ddd/bounded-context-map.md) for context responsibilities and relationships.
 
 ## Related
 
-- **Parent**: [organiclever specs](../README.md)
-- **Ubiquitous Language**: [`../ubiquitous-language/`](../ubiquitous-language/README.md) — shared vocabulary across FE and future BE
-- **C4 Architecture**: [c4/](../c4/README.md) — Context, Container, and Component diagrams
-- **Backend counterpart**: [be/](../be/README.md) — HTTP-semantic API specs
-- **BDD Standards**: [behavior-driven-development-bdd/](../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+- **Parent**: [organiclever specs](../../README.md)
+- **Ubiquitous Language**: [`ddd/ubiquitous-language/`](./ddd/ubiquitous-language/README.md) — shared vocabulary
+- **C4 Architecture**: see `system-context/`, `containers/`, `components/` top-level folders
+- **Backend counterpart**: [components/be/](../be/README.md) — HTTP-semantic API specs
+- **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

@@ -24,7 +24,7 @@
         "command": "npx bddgen && npx tsc --noEmit",
         "cwd": "apps/organiclever-be-e2e"
       },
-      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature"]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
@@ -33,7 +33,7 @@
         "parallel": true,
         "cwd": "apps/organiclever-be-e2e"
       },
-      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature"]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -57,9 +57,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/be/gherkin apps/organiclever-be-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/behavior/be/gherkin apps/organiclever-be-e2e",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"],

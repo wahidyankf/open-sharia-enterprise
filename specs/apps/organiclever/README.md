@@ -10,35 +10,45 @@ F#/Giraffe backend REST API and a Next.js 16 frontend.
 ```
 specs/apps/organiclever/
 ├── README.md              # This file
-├── ddd/                   # DDD artifacts (registry + glossaries) consumed by rhino-cli ddd
+├── product/               # Product framing (above C4)
+│   └── README.md
+├── system-context/        # C4 L1 — actors and external systems
 │   ├── README.md
-│   ├── bounded-contexts.yaml  # Registry — 9 bounded contexts with layers, paths, relationships
-│   └── ubiquitous-language/   # Per-bounded-context glossary (shared by FE + future BE)
-│       ├── README.md          # Index + authoring rules
-│       └── *.md               # One glossary file per bounded context
-├── c4/                    # Unified C4 architecture diagrams
-│   ├── README.md          # Diagram index
-│   ├── context.md         # L1 — system context (2 actors)
-│   ├── container.md       # L2 — containers (FE, BE)
-│   ├── component-be.md    # L3 — F#/Giraffe REST API internals
-│   └── component-web.md    # L3 — Next.js frontend internals
-├── be/                    # Backend specs (HTTP-semantic)
+│   └── context.md
+├── containers/            # C4 L2 — deployable units
 │   ├── README.md
-│   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
-└── web/                   # Frontend specs (UI-semantic)
+│   ├── container.md
+│   └── contracts/         # OpenAPI 3.1 contract spec (consumed by codegen)
+├── components/            # C4 L3 — per-container internals
+│   ├── README.md
+│   ├── be/                # F#/Giraffe backend component specs
+│   │   ├── README.md
+│   │   └── component-be.md
+│   └── web/               # Next.js frontend component specs
+│       ├── README.md
+│       ├── component-web.md
+│       └── ddd/           # DDD artifacts: registry + glossaries + BC map
+│           ├── README.md
+│           ├── bounded-contexts.yaml
+│           ├── bounded-context-map.md
+│           └── ubiquitous-language/
+│               ├── README.md
+│               └── *.md   # One glossary file per bounded context
+└── behavior/              # Gherkin scenarios (HTTP-semantic + UI-semantic)
     ├── README.md
-    └── gherkin/           # Frontend Gherkin scenarios (see web/gherkin/README)
+    ├── be/gherkin/        # Backend Gherkin scenarios
+    └── web/gherkin/       # Frontend Gherkin scenarios (per bounded context)
 ```
 
 ## Backend vs Frontend
 
-| Aspect      | Backend (be/)                                 | Frontend (fe/)                            |
-| ----------- | --------------------------------------------- | ----------------------------------------- |
-| Perspective | HTTP-semantic (GET, POST, status codes)       | UI-semantic (clicks, types, sees)         |
-| Background  | `Given the API is running`                    | `Given the app is running`                |
-| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)     | See [web/gherkin/](./web/gherkin/README.md) |
-| Domains     | health                                        | landing, system, layout, routing          |
-| Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec) | `apps/organiclever-web` (Next.js 16)      |
+| Aspect      | Backend (be/)                                               | Frontend (fe/)                                                |
+| ----------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| Perspective | HTTP-semantic (GET, POST, status codes)                     | UI-semantic (clicks, types, sees)                             |
+| Background  | `Given the API is running`                                  | `Given the app is running`                                    |
+| Scenarios   | See [behavior/be/gherkin/](./behavior/be/gherkin/README.md) | See [behavior/web/gherkin/](./behavior/web/gherkin/README.md) |
+| Domains     | health                                                      | landing, system, layout, routing                              |
+| Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec)               | `apps/organiclever-web` (Next.js 16)                          |
 
 The frontend's system-status page consumes the backend's health endpoint. Otherwise the v0
 frontend is local-first.
@@ -59,10 +69,16 @@ frontend is local-first.
 
 ## Spec Artifacts
 
-- **[ddd/](./ddd/README.md)** — DDD artifacts: [bounded-contexts.yaml](./ddd/bounded-contexts.yaml) (registry) and [ubiquitous-language/](./ddd/ubiquitous-language/README.md) (glossaries); consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
-- **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
-- **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
-- **[web/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))
+- **[components/web/ddd/](./components/web/ddd/README.md)** — DDD artifacts:
+  [bounded-contexts.yaml](./components/web/ddd/bounded-contexts.yaml) (registry) and
+  [ubiquitous-language/](./components/web/ddd/ubiquitous-language/README.md) (glossaries);
+  consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
+- **[system-context/](./system-context/README.md)**, **[containers/](./containers/README.md)**,
+  **[components/](./components/README.md)** — C4 architecture diagrams (L1/L2/L3)
+- **[components/be/](./components/be/README.md)** — Backend API component specs
+  ([Gherkin features](./behavior/be/gherkin/README.md))
+- **[components/web/](./components/web/README.md)** — Frontend component specs
+  ([Gherkin features](./behavior/web/gherkin/README.md))
 
 ## DDD Registry (`bounded-contexts.yaml`)
 
@@ -74,15 +90,15 @@ vocabulary invariants automatically in `nx run organiclever-web:test:quick`.
 
 Each entry under `contexts:` declares:
 
-| Field           | What it means                                                                 |
-| --------------- | ----------------------------------------------------------------------------- |
-| `name`          | Identifier — must match the folder name under `src/contexts/`                 |
-| `summary`       | One-paragraph human description                                               |
+| Field           | What it means                                                                                                         |
+| --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `name`          | Identifier — must match the folder name under `src/contexts/`                                                         |
+| `summary`       | One-paragraph human description                                                                                       |
 | `layers`        | Ordered list of DDD layers that must exist as subfolders (e.g. `[domain, application, infrastructure, presentation]`) |
-| `code`          | Filesystem path to the context's implementation root                          |
-| `glossary`      | Path to the context's ubiquitous-language Markdown file                       |
-| `gherkin`       | Path to the context's Gherkin scenario directory                              |
-| `relationships` | List of inter-context relationships with `to`, `kind`, and `role`             |
+| `code`          | Filesystem path to the context's implementation root                                                                  |
+| `glossary`      | Path to the context's ubiquitous-language Markdown file                                                               |
+| `gherkin`       | Path to the context's Gherkin scenario directory                                                                      |
+| `relationships` | List of inter-context relationships with `to`, `kind`, and `role`                                                     |
 
 Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
 For `customer-supplier` and `conformist`, both sides must declare the relationship

@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Progress Screen feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/progress/progress-screen.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/progress/progress-screen.feature
  *
  * Selector notes:
  * - Progress screen is a machine state tab (navigation: "main", tab: "progress").

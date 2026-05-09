@@ -84,7 +84,7 @@ func (s *bcValidateUnitSteps) phantomFolderExists() error { return nil }
 func (s *bcValidateUnitSteps) registryWithMissingGlossary() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md",
 			Message:  `missing glossary for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -123,7 +123,7 @@ func (s *bcValidateUnitSteps) codeFolderHasExtraInfrastructure() error { return 
 func (s *bcValidateUnitSteps) registryWithMissingGherkin() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/web/gherkin/journal",
+			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `missing gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -136,7 +136,7 @@ func (s *bcValidateUnitSteps) gherkinFolderDoesNotExist() error { return nil }
 func (s *bcValidateUnitSteps) registryWithEmptyGherkin() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/web/gherkin/journal",
+			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -147,7 +147,7 @@ func (s *bcValidateUnitSteps) registryWithEmptyGherkin() error {
 func (s *bcValidateUnitSteps) gherkinFolderExistsButEmpty() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/web/gherkin/journal",
+			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
 			Severity: "error",
 		}}, nil
@@ -158,7 +158,7 @@ func (s *bcValidateUnitSteps) gherkinFolderExistsButEmpty() error {
 func (s *bcValidateUnitSteps) registryWithRelationshipAsymmetry() error {
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return []bcregistry.Finding{{
-			File:     "specs/apps/organiclever/ddd/bounded-contexts.yaml",
+			File:     "specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml",
 			Message:  `relationship asymmetry: "workout-session" → "journal" (customer-supplier) but "journal" has no reciprocal entry`,
 			Severity: "error",
 		}}, nil

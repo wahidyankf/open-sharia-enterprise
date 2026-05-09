@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Dark Mode feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/settings/dark-mode.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/settings/dark-mode.feature
  *
  * Tests dark mode toggle via appMachine (XState) directly.
  * The machine is the source of truth for darkMode state; SettingsScreen
@@ -30,7 +30,7 @@ function makeActor(initialDarkMode: boolean) {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/settings/dark-mode.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/behavior/web/gherkin/settings/dark-mode.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

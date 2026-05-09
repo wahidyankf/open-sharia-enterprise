@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Entry Loggers feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/app-shell/entry-loggers.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/app-shell/entry-loggers.feature
  *
  * Tests component logic directly using:
  * - appMachine via XState createActor (overlay state management)
@@ -58,7 +58,10 @@ function makeActor() {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/app-shell/entry-loggers.feature"),
+  path.resolve(
+    __dirname,
+    "../../../../../../specs/apps/organiclever/behavior/web/gherkin/app-shell/entry-loggers.feature",
+  ),
 );
 
 describeFeature(feature, ({ Scenario }) => {

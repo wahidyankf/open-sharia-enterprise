@@ -17,8 +17,8 @@ COPY apps/organiclever-be/tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj
 
 # Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
 # The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\organiclever\be\gherkin\**\*.feature
-# Going up 4 levels from /build/tests/OrganicLeverBe.Tests/ resolves to /specs/apps/organiclever/be/gherkin.
-COPY specs/apps/organiclever/be/gherkin /specs/apps/organiclever/be/gherkin
+# Going up 4 levels from /build/tests/OrganicLeverBe.Tests/ resolves to /specs/apps/organiclever/behavior/be/gherkin.
+COPY specs/apps/organiclever/behavior/be/gherkin /specs/apps/organiclever/behavior/be/gherkin
 
 # Restore dependencies (layer cache until project files change).
 RUN dotnet restore tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj

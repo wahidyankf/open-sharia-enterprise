@@ -19,7 +19,7 @@ nx run organiclever-contracts:bundle
 
 # Generate browsable API documentation
 nx run organiclever-contracts:docs
-# Open specs/apps/organiclever/contracts/generated/docs/index.html
+# Open specs/apps/organiclever/containers/contracts/generated/docs/index.html
 ```
 
 ## File Structure

@@ -2,8 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/organiclever/web/gherkin",
-  features: "../../specs/apps/organiclever/web/gherkin/**/*.feature",
+  featuresRoot: "../../specs/apps/organiclever/behavior/web/gherkin",
+  features: "../../specs/apps/organiclever/behavior/web/gherkin/**/*.feature",
   steps: ["./steps/**/*.steps.ts"],
 });
 

@@ -9,7 +9,7 @@ services:
       ASPNETCORE_URLS: "http://+:8202"
     volumes:
       - ../../../apps/organiclever-be:/workspace:rw
-      - ../../../specs/apps/organiclever/be/gherkin:/specs/apps/organiclever/be/gherkin:ro
+      - ../../../specs/apps/organiclever/behavior/be/gherkin:/specs/apps/organiclever/behavior/be/gherkin:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8202/api/v1/health"]
       interval: 30s

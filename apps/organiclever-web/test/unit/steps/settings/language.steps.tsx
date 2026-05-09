@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Language Setting feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/settings/language.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/settings/language.feature
  *
  * Tests language selection via pure settings store logic.
  * Avoids window.location.reload() — tests the settings state mutation only.
@@ -34,7 +34,7 @@ function applyLang(settings: AppSettings, lang: Lang): AppSettings {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/settings/language.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/behavior/web/gherkin/settings/language.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

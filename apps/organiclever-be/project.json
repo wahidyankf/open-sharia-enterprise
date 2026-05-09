@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/organiclever-be/generated-contracts --model-package OrganicLeverBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -g fsharp-giraffe-server -o $(pwd)/apps/organiclever-be/generated-contracts --model-package OrganicLeverBe.Contracts --global-property=models,modelDocs=false,apiDocs=false"
       },
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/generated-contracts"]
     },
     "build": {
@@ -55,7 +55,7 @@
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/**/*.fs",
         "{projectRoot}/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"
       ],
       "outputs": ["{projectRoot}/coverage/altcov.info"]
     },
@@ -70,7 +70,7 @@
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/**/*.fs",
         "{projectRoot}/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"
       ]
     },
     "test:integration": {
@@ -107,9 +107,9 @@
       "cache": true
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/be/gherkin apps/organiclever-be",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/behavior/be/gherkin apps/organiclever-be",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature", "{projectRoot}/**/*.fs"]
     }
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"],

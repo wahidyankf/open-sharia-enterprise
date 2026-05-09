@@ -51,18 +51,18 @@ the shared contract — only the step implementations differ per level.
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — Gherkin feature files covering all domains
-- **[c4/](../c4/README.md)** — C4 architecture diagrams for the OrganicLever application
+- **[gherkin/](../../behavior/be/gherkin/README.md)** — Gherkin feature files covering all
+  domains (moved to `behavior/be/gherkin/` in the C4-aware spec tree)
+- **[C4 diagrams](../../system-context/context.md)** — C4 architecture diagrams for OrganicLever
+  (`c4/` folder replaced by `system-context/`, `containers/`, `components/` top-level folders)
 
 ## Feature File Organization
 
 ```
-specs/apps/organiclever/be/
+specs/apps/organiclever/behavior/be/gherkin/
 ├── README.md
-└── gherkin/
-    ├── README.md
-    └── health/
-        └── health-check.feature          (2 scenarios)
+└── health/
+    └── health-check.feature          (2 scenarios)
 ```
 
 **File naming**: `[domain-capability].feature` (kebab-case)
@@ -89,7 +89,7 @@ the affected test targets automatically.
 The canonical input pattern used in `project.json`:
 
 ```
-"{workspaceRoot}/specs/apps/organiclever/be/gherkin/**/*.feature"
+"{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"
 ```
 
 `test:integration` has `cache: false` and does not need explicit spec inputs.
@@ -97,7 +97,7 @@ The canonical input pattern used in `project.json`:
 ## Adding a Feature File
 
 1. Identify the bounded context (e.g., `authentication`, `health`)
-2. Create the folder if it does not exist: `specs/apps/organiclever/be/gherkin/[context]/`
+2. Create the folder if it does not exist: `specs/apps/organiclever/behavior/be/gherkin/[context]/`
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Open with `Feature:` then a user story block (`As a … / I want … / So that …`)
 5. Use `Given the API is running` as the first Background step
@@ -105,6 +105,6 @@ The canonical input pattern used in `project.json`:
 
 ## Related
 
-- **Parent**: [organiclever specs](../README.md)
-- **Frontend counterpart**: [fe/](../fe/README.md) — UI-semantic frontend specs
-- **BDD Standards**: [behavior-driven-development-bdd/](../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+- **Parent**: [organiclever specs](../../README.md)
+- **Frontend counterpart**: [web/](../web/README.md) — UI-semantic frontend specs
+- **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

@@ -584,7 +584,7 @@ complete. See the "Spec-Coverage Projects" section for flags and project-by-proj
 ## Codegen Dependency Chain
 
 Apps with OpenAPI contract specs share a `codegen` target that generates types and
-encoders/decoders from the spec (e.g., `specs/apps/organiclever/contracts/`) into
+encoders/decoders from the spec (e.g., `specs/apps/organiclever/containers/contracts/`) into
 `generated-contracts/`.
 
 The dependency chain is:

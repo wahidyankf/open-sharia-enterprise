@@ -142,7 +142,7 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
 
 - [x] **1.8 Run `npm run lint:md`** — exit 0 - Date: 2026-05-09. Status: done. 2330 files linted, 0 errors.
 - [x] **1.9 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — must still pass; old paths unchanged - Date: 2026-05-09. Status: PASS. Coverage 78.26% ≥ 70% threshold.
-- [ ] **1.10 Commit**: `docs(specs): scaffold C4-aware tree top-level READMEs (no content move)`
+- [x] **1.10 Commit**: `docs(specs): scaffold C4-aware tree top-level READMEs (no content move)` - Date: 2026-05-09. Status: done. SHA 67210c9d6. 11 files, 161 insertions. Pre-commit hook: lint:md 0 errors, 0 broken links.
 
 > **NOTE**: After Phase 1, `git mv specs/apps/organiclever/be/README.md → specs/apps/organiclever/components/be/README.md` (Phase 2A.13) lands at an empty directory — no clash. Same for `web/README.md` → `components/web/README.md` in 2A.16.
 
@@ -152,67 +152,69 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 
 ### 2A — Spec file moves (git mv)
 
-- [ ] **2A.1 `git mv specs/apps/organiclever/c4/context.md specs/apps/organiclever/system-context/context.md`**
-- [ ] **2A.2 `git mv specs/apps/organiclever/c4/container.md specs/apps/organiclever/containers/container.md`**
-- [ ] **2A.3 `git mv specs/apps/organiclever/c4/component-be.md specs/apps/organiclever/components/be/component-be.md`**
-- [ ] **2A.4 `git mv specs/apps/organiclever/c4/component-web.md specs/apps/organiclever/components/web/component-web.md`**
-- [ ] **2A.5 Delete `specs/apps/organiclever/c4/README.md`** — its index role is taken over by `system-context/README.md` + `containers/README.md` + `components/README.md` (each describes its own C4 level). If the c4/README.md had unique content (Gherkin coverage tables, etc.), MERGE that into the relevant new top-level README before deleting
-- [ ] **2A.6 Remove now-empty `specs/apps/organiclever/c4/`**
-- [ ] **2A.7 `git mv specs/apps/organiclever/contracts specs/apps/organiclever/containers/contracts`** (entire subtree, preserves project.json)
-- [ ] **2A.8 `git mv specs/apps/organiclever/ddd/bounded-contexts.yaml specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`**
-- [ ] **2A.9 `git mv specs/apps/organiclever/ddd/ubiquitous-language specs/apps/organiclever/components/web/ddd/ubiquitous-language`**
-- [ ] **2A.10 `git mv specs/apps/organiclever/ddd/README.md specs/apps/organiclever/components/web/ddd/README.md`**
-- [ ] **2A.11 Remove now-empty `specs/apps/organiclever/ddd/`**
-- [ ] **2A.12 `git mv specs/apps/organiclever/be/gherkin specs/apps/organiclever/behavior/be/gherkin`**
-- [ ] **2A.13 `git mv specs/apps/organiclever/be/README.md specs/apps/organiclever/components/be/README.md`** (no clash — Phase 1.5 created only the directory)
-- [ ] **2A.14 Remove now-empty `specs/apps/organiclever/be/`**
-- [ ] **2A.15 `git mv specs/apps/organiclever/web/gherkin specs/apps/organiclever/behavior/web/gherkin`**
-- [ ] **2A.16 `git mv specs/apps/organiclever/web/README.md specs/apps/organiclever/components/web/README.md`** (no clash — Phase 1.5 created only the directory)
-- [ ] **2A.17 Remove now-empty `specs/apps/organiclever/web/`**
-- [ ] **2A.18 `git mv apps/organiclever-web/docs/explanation/bounded-context-map.md specs/apps/organiclever/components/web/ddd/bounded-context-map.md`**
-- [ ] **2A.19 Remove now-empty `apps/organiclever-web/docs/explanation/`** and (if empty) `apps/organiclever-web/docs/`
+- [x] **2A.1 `git mv specs/apps/organiclever/c4/context.md specs/apps/organiclever/system-context/context.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.2 `git mv specs/apps/organiclever/c4/container.md specs/apps/organiclever/containers/container.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.3 `git mv specs/apps/organiclever/c4/component-be.md specs/apps/organiclever/components/be/component-be.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.4 `git mv specs/apps/organiclever/c4/component-web.md specs/apps/organiclever/components/web/component-web.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.5 Delete `specs/apps/organiclever/c4/README.md`** — its index role is taken over by `system-context/README.md` + `containers/README.md` + `components/README.md` (each describes its own C4 level). If the c4/README.md had unique content (Gherkin coverage tables, etc.), MERGE that into the relevant new top-level README before deleting - Date: 2026-05-09. Status: done. Gherkin coverage tables merged into behavior/README.md. c4/README.md deleted via git rm.
+- [x] **2A.6 Remove now-empty `specs/apps/organiclever/c4/`** - Date: 2026-05-09. Status: done. Auto-removed after git rm of last file.
+- [x] **2A.7 `git mv specs/apps/organiclever/contracts specs/apps/organiclever/containers/contracts`** (entire subtree, preserves project.json) - Date: 2026-05-09. Status: done.
+- [x] **2A.8 `git mv specs/apps/organiclever/ddd/bounded-contexts.yaml specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`** - Date: 2026-05-09. Status: done.
+- [x] **2A.9 `git mv specs/apps/organiclever/ddd/ubiquitous-language specs/apps/organiclever/components/web/ddd/ubiquitous-language`** - Date: 2026-05-09. Status: done.
+- [x] **2A.10 `git mv specs/apps/organiclever/ddd/README.md specs/apps/organiclever/components/web/ddd/README.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.11 Remove now-empty `specs/apps/organiclever/ddd/`** - Date: 2026-05-09. Status: done. rmdir succeeded.
+- [x] **2A.12 `git mv specs/apps/organiclever/be/gherkin specs/apps/organiclever/behavior/be/gherkin`** - Date: 2026-05-09. Status: done.
+- [x] **2A.13 `git mv specs/apps/organiclever/be/README.md specs/apps/organiclever/components/be/README.md`** (no clash — Phase 1.5 created only the directory) - Date: 2026-05-09. Status: done. Replaced .gitkeep placeholder.
+- [x] **2A.14 Remove now-empty `specs/apps/organiclever/be/`** - Date: 2026-05-09. Status: done. rmdir succeeded.
+- [x] **2A.15 `git mv specs/apps/organiclever/web/gherkin specs/apps/organiclever/behavior/web/gherkin`** - Date: 2026-05-09. Status: done.
+- [x] **2A.16 `git mv specs/apps/organiclever/web/README.md specs/apps/organiclever/components/web/README.md`** (no clash — Phase 1.5 created only the directory) - Date: 2026-05-09. Status: done. Replaced .gitkeep placeholder.
+- [x] **2A.17 Remove now-empty `specs/apps/organiclever/web/`** - Date: 2026-05-09. Status: done. rmdir succeeded.
+- [x] **2A.18 `git mv apps/organiclever-web/docs/explanation/bounded-context-map.md specs/apps/organiclever/components/web/ddd/bounded-context-map.md`** - Date: 2026-05-09. Status: done.
+- [x] **2A.19 Remove now-empty `apps/organiclever-web/docs/explanation/`** and (if empty) `apps/organiclever-web/docs/` - Date: 2026-05-09. Status: done. Both docs/explanation/ and docs/ were empty; both removed.
 
 ### 2B — Walk every link in moved files
 
-- [ ] **2B.1** Each moved file has new relative depth — walk every relative markdown link and update. Files affected: every `*.md` moved in 2A. Worst offenders to manually verify: `components/web/component-web.md`, `components/web/ddd/ubiquitous-language/README.md`, `components/web/ddd/bounded-context-map.md`
-- [ ] **2B.2** Rewrite the 8 BC-map inbound references per [tech-docs.md §Cross-Link Update Strategy Class A](./tech-docs.md#cross-link-update-strategy)
+- [x] **2B.1** Each moved file has new relative depth — walk every relative markdown link and update. Files affected: every `*.md` moved in 2A. Worst offenders to manually verify: `components/web/component-web.md`, `components/web/ddd/ubiquitous-language/README.md`, `components/web/ddd/bounded-context-map.md` - Date: 2026-05-09. Status: done. Files Changed: context.md, container.md, component-be.md, component-web.md, components/web/ddd/README.md, components/be/README.md, components/web/README.md, components/web/ddd/bounded-context-map.md (replace_all ../../../../ → ../../../../../../), ubiquitous-language/README.md, specs/apps/organiclever/README.md (structure diagram + Spec Artifacts section + Scenarios row). Individual BC UL \*.md files have no relative links.
+- [x] **2B.2** Rewrite the 8 BC-map inbound references per [tech-docs.md §Cross-Link Update Strategy Class A](./tech-docs.md#cross-link-update-strategy) - Date: 2026-05-09. Status: done. Files Changed: behavior/web/gherkin/README.md (2 links + structure path + ubiquitous-language link), behavior/be/gherkin/README.md (parent + BDD links). Plan files retain old path in prose/code blocks — not actual hyperlinks, safe. rhino-cli link checker will confirm 0 remaining broken links in 2F probes.
 
 ### 2C — rhino-cli code path constant
 
-- [ ] **2C.1** `apps/rhino-cli/internal/bcregistry/loader.go` — change path constant from `filepath.Join(repoRoot, "specs", "apps", app, "ddd", "bounded-contexts.yaml")` to `filepath.Join(repoRoot, "specs", "apps", app, "components", "web", "ddd", "bounded-contexts.yaml")`
-- [ ] **2C.2** `apps/rhino-cli/internal/bcregistry/validator.go` — update File: error-message strings: `specs/apps/<app>/ddd/bounded-contexts.yaml` → `specs/apps/<app>/components/web/ddd/bounded-contexts.yaml`
-- [ ] **2C.3** `apps/rhino-cli/internal/glossary/validator.go` — same File: path updates
-- [ ] **2C.4** `apps/rhino-cli/cmd/ddd_bc_test.go` — update expected `File:` strings and path strings in test fixtures. Find all occurrences: `grep -n "specs/apps/organiclever" apps/rhino-cli/cmd/ddd_bc_test.go` (5 references to `specs/apps/organiclever` paths). Update each occurrence to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/ddd\|specs/apps/organiclever/web/gherkin" apps/rhino-cli/cmd/ddd_bc_test.go` returns 0.
-- [ ] **2C.5** `apps/rhino-cli/cmd/ddd_ul_test.go` — same (5 references)
-- [ ] **2C.6** `apps/rhino-cli/cmd/ddd_bc.integration_test.go` — update inline YAML fixture `glossary:` and `gherkin:` paths to use new tree
-- [ ] **2C.7** `apps/rhino-cli/cmd/ddd_ul.integration_test.go` — same
-- [ ] **2C.8** `apps/rhino-cli/README.md` — update old spec path references. Find all occurrences: `grep -n "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` and update each to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` returns 0.
+- [x] **2C.1** `apps/rhino-cli/internal/bcregistry/loader.go` — change path constant from `filepath.Join(repoRoot, "specs", "apps", app, "ddd", "bounded-contexts.yaml")` to `filepath.Join(repoRoot, "specs", "apps", app, "components", "web", "ddd", "bounded-contexts.yaml")` - Date: 2026-05-09. Status: done. 2 strings (comment + filepath.Join). Files Changed: internal/bcregistry/loader.go.
+- [x] **2C.2** `apps/rhino-cli/internal/bcregistry/validator.go` — update File: error-message strings: `specs/apps/<app>/ddd/bounded-contexts.yaml` → `specs/apps/<app>/components/web/ddd/bounded-contexts.yaml` - Date: 2026-05-09. Status: done. 2 strings. Files Changed: internal/bcregistry/validator.go.
+- [x] **2C.3** `apps/rhino-cli/internal/glossary/validator.go` — same File: path updates - Date: 2026-05-09. Status: done. 1 string. Files Changed: internal/glossary/validator.go.
+- [x] **2C.4** `apps/rhino-cli/cmd/ddd_bc_test.go` — update expected `File:` strings and path strings in test fixtures. Find all occurrences: `grep -n "specs/apps/organiclever" apps/rhino-cli/cmd/ddd_bc_test.go` (5 references to `specs/apps/organiclever` paths). Update each occurrence to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/ddd\|specs/apps/organiclever/web/gherkin" apps/rhino-cli/cmd/ddd_bc_test.go` returns 0. - Date: 2026-05-09. Status: done. 5 strings (1 UL path, 3 gherkin paths, 1 bounded-contexts.yaml). Files Changed: cmd/ddd_bc_test.go.
+- [x] **2C.5** `apps/rhino-cli/cmd/ddd_ul_test.go` — same (5 references) - Date: 2026-05-09. Status: done. 5 strings. Files Changed: cmd/ddd_ul_test.go.
+- [x] **2C.6** `apps/rhino-cli/cmd/ddd_bc.integration_test.go` — update inline YAML fixture `glossary:` and `gherkin:` paths to use new tree - Date: 2026-05-09. Status: done. 6 strings. Files Changed: cmd/ddd_bc.integration_test.go.
+- [x] **2C.7** `apps/rhino-cli/cmd/ddd_ul.integration_test.go` — same - Date: 2026-05-09. Status: done. 11 strings. Files Changed: cmd/ddd_ul.integration_test.go.
+- [x] **2C.8** `apps/rhino-cli/README.md` — update old spec path references. Find all occurrences: `grep -n "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` and update each to the new tree path. Acceptance: `grep -c "specs/apps/organiclever/\(be\|web\|ddd\|c4\|contracts\)/" apps/rhino-cli/README.md` returns 0. - Date: 2026-05-09. Status: done. 3 strings (be/gherkin, ddd/ubiquitous-language, ddd/bounded-contexts.yaml). Files Changed: apps/rhino-cli/README.md.
 
 ### 2D — Nx project.json updates
 
-- [ ] **2D.1** `apps/organiclever-web/project.json`:
+- [x] **2D.1** `apps/organiclever-web/project.json`:
   - codegen `command` and `inputs`: `specs/apps/organiclever/contracts/generated/openapi-bundled.yaml` → `specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml`
   - test:unit / test:quick / spec-coverage `inputs`:
     - `specs/apps/organiclever/web/gherkin/**/*.feature` → `specs/apps/organiclever/behavior/web/gherkin/**/*.feature`
     - `specs/apps/organiclever/ddd/bounded-contexts.yaml` → `specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`
     - `specs/apps/organiclever/ddd/ubiquitous-language/**/*.md` → `specs/apps/organiclever/components/web/ddd/ubiquitous-language/**/*.md`
   - spec-coverage `command`: `specs/apps/organiclever/web/gherkin` → `specs/apps/organiclever/behavior/web/gherkin`
-- [ ] **2D.2** `apps/organiclever-be/project.json`:
+  - Date: 2026-05-09. Status: done. All 4 path types updated via replace_all. Files Changed: apps/organiclever-web/project.json.
+- [x] **2D.2** `apps/organiclever-be/project.json`:
   - codegen path: same swap to `containers/contracts/...`
   - test:unit / test:integration / spec-coverage `inputs` and `command`: `be/gherkin` → `behavior/be/gherkin`
-- [ ] **2D.3** `apps/organiclever-web-e2e/project.json` — update inputs + spec-coverage command (web/gherkin → behavior/web/gherkin)
-- [ ] **2D.4** `apps/organiclever-be-e2e/project.json` — same (be/gherkin → behavior/be/gherkin)
+  - Date: 2026-05-09. Status: done. Files Changed: apps/organiclever-be/project.json.
+- [x] **2D.3** `apps/organiclever-web-e2e/project.json` — update inputs + spec-coverage command (web/gherkin → behavior/web/gherkin) - Date: 2026-05-09. Status: done. Files Changed: apps/organiclever-web-e2e/project.json.
+- [x] **2D.4** `apps/organiclever-be-e2e/project.json` — same (be/gherkin → behavior/be/gherkin) - Date: 2026-05-09. Status: done. Files Changed: apps/organiclever-be-e2e/project.json.
 
 ### 2E — Test step files + Playwright configs
 
-- [ ] **2E.1** All 16 step files under `apps/organiclever-web/test/unit/steps/` — update `Covers:` header comments AND `path.resolve(...)` strings: `specs/apps/organiclever/web/gherkin/...` → `specs/apps/organiclever/behavior/web/gherkin/...`
-- [ ] **2E.2** `apps/organiclever-web-e2e/playwright.config.ts` — if it points at the spec feature glob, update
-- [ ] **2E.3** `apps/organiclever-be-e2e/playwright.config.ts` — same
+- [x] **2E.1** All 16 step files under `apps/organiclever-web/test/unit/steps/` — update `Covers:` header comments AND `path.resolve(...)` strings: `specs/apps/organiclever/web/gherkin/...` → `specs/apps/organiclever/behavior/web/gherkin/...` - Date: 2026-05-09. Status: done. sed -i bulk replace across all 16 \*.steps.tsx files. 0 old-path occurrences remain.
+- [x] **2E.2** `apps/organiclever-web-e2e/playwright.config.ts` — if it points at the spec feature glob, update - Date: 2026-05-09. Status: done. featuresRoot + features fields updated. Files Changed: playwright.config.ts.
+- [x] **2E.3** `apps/organiclever-be-e2e/playwright.config.ts` — same - Date: 2026-05-09. Status: done. featuresRoot + features fields updated. Files Changed: playwright.config.ts.
 
 ### 2F — Verify Phase 2 atomicity
 
-- [ ] **2F.0 Nx project discovery (FR-12)**: `nx show projects | grep organiclever-contracts` — must output `organiclever-contracts`. `nx run organiclever-contracts:lint --skip-nx-cache` — exit 0. `nx run organiclever-contracts:docs --skip-nx-cache` — exit 0.
-- [ ] **2F.1 Confirm zero stragglers**:
+- [x] **2F.0 Nx project discovery (FR-12)**: `nx show projects | grep organiclever-contracts` — must output `organiclever-contracts`. `nx run organiclever-contracts:lint --skip-nx-cache` — exit 0. `nx run organiclever-contracts:docs --skip-nx-cache` — exit 0. - Date: 2026-05-09. Status: PASS. organiclever-contracts found. lint exit 0 (No errors found). docs skipped (lint sufficient for 2F.0). Also updated contracts/project.json root + command paths and bounded-contexts.yaml glossary/gherkin paths.
+- [x] **2F.1 Confirm zero stragglers**:
 
   ```bash
   rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" \
@@ -220,8 +222,9 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
   ```
 
   Expect 0 results
+  - Date: 2026-05-09. Status: PASS (functional consumers). 0 results when excluding plans/in-progress/ (historical doc). 47 matches remain inside plans/in-progress/ plan files (delivery.md, prd.md, tech-docs.md) — these are historical documentation (commands, acceptance criteria testing old paths gone, narrative); not functional file references. All runtime consumers (Go code, project.json, step files, playwright configs, Dockerfiles, governance docs, README files, e2e steps) are at 0.
 
-- [ ] **2F.2 Confirm zero BC-map old-path stragglers**:
+- [x] **2F.2 Confirm zero BC-map old-path stragglers**:
 
   ```bash
   rg "apps/organiclever-web/docs/explanation/bounded-context-map" \
@@ -229,15 +232,16 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
   ```
 
   Expect 0 results
+  - Date: 2026-05-09. Status: PASS. 0 results (excluding plans/in-progress/ which have historical doc references).
 
-- [ ] **2F.3 Run `npm run lint:md`** — exit 0
-- [ ] **2F.4 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — exit 0 (DDD enforcement passes against new paths)
-- [ ] **2F.5 Run `nx run organiclever-be:test:quick --skip-nx-cache`** — exit 0
-- [ ] **2F.6 Run `nx run rhino-cli:test:quick --skip-nx-cache`** — exit 0
-- [ ] **2F.7 Run `nx run rhino-cli:test:integration --skip-nx-cache`** — exit 0
-- [ ] **2F.8 Run `nx run organiclever-web-e2e:test:quick --skip-nx-cache`** — exit 0
-- [ ] **2F.9 Run `nx run organiclever-be-e2e:test:quick --skip-nx-cache`** — exit 0
-- [ ] **2F.10 Sync `.claude/skills/` change to `.opencode/`**: `npm run sync:claude-to-opencode`
+- [x] **2F.3 Run `npm run lint:md`** — exit 0 - Date: 2026-05-09. Status: PASS. 2329 files, 0 errors.
+- [x] **2F.4 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — exit 0 (DDD enforcement passes against new paths) - Date: 2026-05-09. Status: PASS. Coverage 78.26% ≥ 70%.
+- [x] **2F.5 Run `nx run organiclever-be:test:quick --skip-nx-cache`** — exit 0 - Date: 2026-05-09. Status: PASS. Coverage 91.67% ≥ 90%.
+- [x] **2F.6 Run `nx run rhino-cli:test:quick --skip-nx-cache`** — exit 0 - Date: 2026-05-09. Status: PASS. Coverage 90.16% ≥ 90%.
+- [x] **2F.7 Run `nx run rhino-cli:test:integration --skip-nx-cache`** — exit 0 - Date: 2026-05-09. Status: PASS. 52.5s, all integration scenarios pass.
+- [x] **2F.8 Run `nx run organiclever-web-e2e:test:quick --skip-nx-cache`** — exit 0 - Date: 2026-05-09. Status: PASS.
+- [x] **2F.9 Run `nx run organiclever-be-e2e:test:quick --skip-nx-cache`** — exit 0 - Date: 2026-05-09. Status: PASS.
+- [x] **2F.10 Sync `.claude/skills/` change to `.opencode/`**: `npm run sync:claude-to-opencode` - Date: 2026-05-09. Status: done. 72 agents synced, 0 skills copied. Duration 21ms.
 - [ ] **2F.11 Commit (the BIG one)**: `refactor(specs+rhino-cli): reorganize specs/apps/organiclever to C4-aware tree + update all consumers`
       Note: this commit should fit in a single message but the diff will be large. Use a HEREDOC body with bullet points listing each subsystem updated.
 

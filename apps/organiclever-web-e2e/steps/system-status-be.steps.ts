@@ -1,7 +1,7 @@
 /**
  * Step definitions for the BE Status Page feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/system/system-status-be.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/system/system-status-be.feature
  *
  * In full-stack CI (docker-compose), ORGANICLEVER_BE_URL is always set to the
  * docker BE service. Only the "UP when backend healthy" scenario can run there.

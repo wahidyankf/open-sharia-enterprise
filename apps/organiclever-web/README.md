@@ -58,7 +58,7 @@ device — no network requests, no backend required for core app functionality.
 
 ## Architecture
 
-The app is structured around **bounded contexts** with `domain` / `application` / `infrastructure` / `presentation` layers. See [docs/explanation/bounded-context-map.md](./docs/explanation/bounded-context-map.md) for the authoritative map, layer rules, and ESLint enforcement.
+The app is structured around **bounded contexts** with `domain` / `application` / `infrastructure` / `presentation` layers. See [bounded-context-map.md](../../specs/apps/organiclever/components/web/ddd/bounded-context-map.md) for the authoritative map, layer rules, and ESLint enforcement.
 
 ### Project layout
 
@@ -120,7 +120,7 @@ apps/organiclever-web/
 - `presentation` ← `domain` + `application`
 - Cross-context: only via the target context's published `application/index.ts` or `presentation/index.ts`
 
-**Ubiquitous language**: every domain term used in Gherkin steps is defined in [`specs/apps/organiclever/ddd/ubiquitous-language/`](../../specs/apps/organiclever/ddd/ubiquitous-language/README.md).
+**Ubiquitous language**: every domain term used in Gherkin steps is defined in [`specs/apps/organiclever/components/web/ddd/ubiquitous-language/`](../../specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md).
 
 ```
 Browser ──── Next.js (organiclever-web)
@@ -184,8 +184,8 @@ nx run organiclever-web:lint                 # Lint with oxlint
 
 Tests use Vitest with `@amiceli/vitest-cucumber` for BDD-style Gherkin specs.
 
-- **Spec files**: [`specs/apps/organiclever/web/gherkin/`](../../specs/apps/organiclever/web/gherkin/README.md) — organized by bounded context
-- **Ubiquitous language**: [`specs/apps/organiclever/ddd/ubiquitous-language/`](../../specs/apps/organiclever/ddd/ubiquitous-language/README.md) — per-context glossaries; Gherkin steps use only glossary terms
+- **Spec files**: [`specs/apps/organiclever/behavior/web/gherkin/`](../../specs/apps/organiclever/behavior/web/gherkin/README.md) — organized by bounded context
+- **Ubiquitous language**: [`specs/apps/organiclever/components/web/ddd/ubiquitous-language/`](../../specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md) — per-context glossaries; Gherkin steps use only glossary terms
 - **Step implementations**: `test/unit/steps/` — organized by bounded context to mirror spec folders
 
 Coverage threshold: 70% lines (enforced by `rhino-cli test-coverage validate`).

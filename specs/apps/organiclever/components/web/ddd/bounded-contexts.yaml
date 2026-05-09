@@ -12,8 +12,8 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/journal
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/journal.md
-    gherkin: specs/apps/organiclever/web/gherkin/journal
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/journal
     relationships:
       - to: workout-session
         kind: customer-supplier
@@ -32,8 +32,8 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/workout-session
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/workout-session.md
-    gherkin: specs/apps/organiclever/web/gherkin/workout-session
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/workout-session.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/workout-session
     relationships:
       - to: journal
         kind: customer-supplier
@@ -53,8 +53,8 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/routine
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routine.md
-    gherkin: specs/apps/organiclever/web/gherkin/routine
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/routine.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/routine
     relationships:
       - to: workout-session
         kind: conformist
@@ -70,8 +70,8 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/stats
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/stats.md
-    gherkin: specs/apps/organiclever/web/gherkin/stats
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/stats.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/stats
     relationships:
       - to: journal
         kind: customer-supplier
@@ -88,8 +88,8 @@ contexts:
       - infrastructure
       - presentation
     code: apps/organiclever-web/src/contexts/settings
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/settings.md
-    gherkin: specs/apps/organiclever/web/gherkin/settings
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/settings.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/settings
     relationships: []
 
   - name: app-shell
@@ -101,8 +101,8 @@ contexts:
       - application
       - presentation
     code: apps/organiclever-web/src/contexts/app-shell
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/app-shell.md
-    gherkin: specs/apps/organiclever/web/gherkin/app-shell
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/app-shell.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/app-shell
     relationships: []
 
   - name: health
@@ -113,8 +113,8 @@ contexts:
     layers:
       - infrastructure
     code: apps/organiclever-web/src/contexts/health
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/health.md
-    gherkin: specs/apps/organiclever/web/gherkin/health
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/health.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/health
     relationships: []
 
   - name: landing
@@ -124,8 +124,8 @@ contexts:
     layers:
       - presentation
     code: apps/organiclever-web/src/contexts/landing
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/landing.md
-    gherkin: specs/apps/organiclever/web/gherkin/landing
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/landing.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/landing
     relationships: []
 
   - name: routing
@@ -136,6 +136,6 @@ contexts:
     layers:
       - presentation
     code: apps/organiclever-web/src/contexts/routing
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routing.md
-    gherkin: specs/apps/organiclever/web/gherkin/routing
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/routing.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/routing
     relationships: []

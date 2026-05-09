@@ -1,7 +1,7 @@
 /**
  * Unit-level step definitions for the URL-routed shell.
  *
- * Covers: specs/apps/organiclever/web/gherkin/routing/app-routes.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/routing/app-routes.feature
  *
  * Where the e2e suite drives a real browser, the unit suite simulates URL
  * transitions and asserts on-disk page presence. Browser semantics (history
@@ -25,7 +25,7 @@ function pageFileForPath(routePath: string): string {
 }
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/routing/app-routes.feature"),
+  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/behavior/web/gherkin/routing/app-routes.feature"),
 );
 
 describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {

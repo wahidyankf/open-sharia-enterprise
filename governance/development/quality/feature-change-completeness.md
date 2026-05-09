@@ -141,12 +141,12 @@ A developer adds a `GET /api/products/:id` endpoint to `organiclever-be`.
 
 They update, in the same commit or PR:
 
-1. `specs/apps/organiclever/contracts/` -- add path and response schema
+1. `specs/apps/organiclever/containers/contracts/` -- add path and response schema
 2. `specs/apps/organiclever-be/gherkin/products/get-product.feature` -- add scenarios
 3. Unit tests -- test service function with mocked repository
 4. Integration tests -- test with real database
 5. E2E tests -- test full HTTP flow
-6. `specs/apps/organiclever/c4/` -- update component diagram if new component
+6. `specs/apps/organiclever/system-context/` -- update component diagram if new component
 
 ### FAIL: Code without specs
 
@@ -162,7 +162,7 @@ A developer removes the `DELETE /api/products/:id` endpoint.
 
 They update, in the same commit or PR:
 
-1. `specs/apps/organiclever/contracts/` -- remove path definition
+1. `specs/apps/organiclever/containers/contracts/` -- remove path definition
 2. `specs/apps/organiclever-be/gherkin/products/delete-product.feature` -- remove scenarios
 3. Remove related unit, integration, and E2E tests
 4. Update any documentation that referenced the endpoint

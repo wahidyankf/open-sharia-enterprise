@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Routine Management feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/routine/routine-management.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/routine/routine-management.feature
  *
  * Selector notes:
  * - The EditRoutineScreen is a machine state (navigation: "editRoutine"), not a URL.

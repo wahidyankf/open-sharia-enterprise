@@ -655,7 +655,7 @@ rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-w
 rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web -q
 
 # Shared steps mode (for E2E projects with shared step files)
-rhino-cli spec-coverage validate specs/apps/organiclever/be/gherkin apps/organiclever-be-e2e --shared-steps
+rhino-cli spec-coverage validate specs/apps/organiclever/behavior/be/gherkin apps/organiclever-be-e2e --shared-steps
 ```
 
 **What it does:**
@@ -946,7 +946,7 @@ Checks for each registered context: code directory with declared layer subfolder
 
 #### `ddd ul`
 
-Validates ubiquitous-language glossary parity between `specs/apps/organiclever/ddd/ubiquitous-language/` and the codebase.
+Validates ubiquitous-language glossary parity between `specs/apps/organiclever/components/web/ddd/ubiquitous-language/` and the codebase.
 
 ```bash
 rhino-cli ddd ul organiclever
@@ -956,7 +956,7 @@ Checks: frontmatter presence, terms table structure, stale code identifiers (via
 
 **Severity**: both default to `error`. Override locally: `ORGANICLEVER_RHINO_DDD_SEVERITY=warn`.
 
-**See**: [`apps-organiclever-web-developing-content` skill](../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md) § Domain-Driven Design for authoring rules and the BC registry at [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../specs/apps/organiclever/ddd/bounded-contexts.yaml).
+**See**: [`apps-organiclever-web-developing-content` skill](../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md) § Domain-Driven Design for authoring rules and the BC registry at [`specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`](../../specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml).
 
 ## Help Commands
 

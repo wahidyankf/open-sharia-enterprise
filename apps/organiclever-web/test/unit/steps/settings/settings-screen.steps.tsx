@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Settings Screen feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/settings/settings-screen.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/settings/settings-screen.feature
  *
  * Tests settings logic directly without browser APIs:
  * - useSettings state shape and loading lifecycle
@@ -40,7 +40,10 @@ function selectRest(settings: AppSettings, value: RestSeconds): AppSettings {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/settings/settings-screen.feature"),
+  path.resolve(
+    __dirname,
+    "../../../../../../specs/apps/organiclever/behavior/web/gherkin/settings/settings-screen.feature",
+  ),
 );
 
 describeFeature(feature, ({ Scenario }) => {

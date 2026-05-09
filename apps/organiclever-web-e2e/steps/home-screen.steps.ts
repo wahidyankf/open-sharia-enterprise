@@ -1,7 +1,7 @@
 /**
  * Step definitions for the Home Screen feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/home/home-screen.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/home/home-screen.feature
  *
  * Selector notes:
  * - Home screen always renders "Good morning" as the greeting and "Last 7 days" in the week card.

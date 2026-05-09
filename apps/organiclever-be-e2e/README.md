@@ -8,14 +8,14 @@ Tests use Playwright's `APIRequestContext` to validate HTTP endpoints — no bro
 
 ## What This Tests
 
-Feature files in `specs/apps/organiclever/be/gherkin/` are the source of truth:
+Feature files in `specs/apps/organiclever/behavior/be/gherkin/` are the source of truth:
 
 - `health/health-check.feature` — `GET /health` reports service status
 
 ## Architecture
 
 ```
-specs/apps/organiclever/be/gherkin/**/*.feature  ← source of truth (read-only)
+specs/apps/organiclever/behavior/be/gherkin/**/*.feature  ← source of truth (read-only)
         │
         ▼  (defineBddConfig reads features)
 playwright.config.ts
@@ -125,5 +125,5 @@ The `Before` hook in `steps/common.steps.ts` runs before each scenario and clear
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
 - [OrganicLever Backend](../organiclever-be/README.md) — The backend under test
-- [Backend Gherkin Specs](../../specs/apps/organiclever/be/gherkin/) — Shared feature files (source of truth)
+- [Backend Gherkin Specs](../../specs/apps/organiclever/behavior/be/gherkin/) — Shared feature files (source of truth)
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards

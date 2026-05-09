@@ -1,7 +1,7 @@
 /**
  * Step definitions for the History Screen feature.
  *
- * Covers: specs/apps/organiclever/web/gherkin/stats/history-screen.feature
+ * Covers: specs/apps/organiclever/behavior/web/gherkin/stats/history-screen.feature
  *
  * Tests component logic directly without browser APIs:
  * - Reverse-chronological ordering of journal entries
@@ -53,7 +53,10 @@ function sortNewestFirst(entries: JournalEntry[]): JournalEntry[] {
 // ---------------------------------------------------------------------------
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/stats/history-screen.feature"),
+  path.resolve(
+    __dirname,
+    "../../../../../../specs/apps/organiclever/behavior/web/gherkin/stats/history-screen.feature",
+  ),
 );
 
 describeFeature(feature, ({ Scenario }) => {

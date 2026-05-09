@@ -28,7 +28,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/organiclever/be/gherkin/`](../be/gherkin/README.md):
+[`specs/apps/organiclever/behavior/be/gherkin/`](../../behavior/be/gherkin/README.md):
 
 | Component      | Gherkin Domain | Features         |
 | -------------- | -------------- | ---------------- |
@@ -44,7 +44,7 @@ Each component above is exercised by Gherkin features from
 
 ## Related
 
-- **Container diagram**: [container.md](./container.md)
-- **Frontend component diagram**: [component-web.md](./component-web.md)
-- **Backend gherkin specs**: [be/gherkin/](../be/gherkin/README.md)
-- **Parent**: [organiclever specs](../README.md)
+- **Container diagram**: [container.md](../../containers/container.md)
+- **Frontend component diagram**: [component-web.md](../web/component-web.md)
+- **Backend gherkin specs**: [behavior/be/gherkin/](../../behavior/be/gherkin/README.md)
+- **Parent**: [organiclever specs](../../README.md)

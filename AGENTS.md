@@ -30,7 +30,7 @@
   - `organiclever-be` — F#/Giraffe REST API backend for OrganicLever
   - `organiclever-web-e2e` — Playwright FE E2E tests for organiclever-web
   - `organiclever-be-e2e` — Playwright BE E2E tests for organiclever-be
-  - `organiclever-contracts` — OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/contracts/`); generates types + encoders/decoders for organiclever apps via `codegen` Nx target
+  - `organiclever-contracts` — OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/containers/contracts/`); generates types + encoders/decoders for organiclever apps via `codegen` Nx target
   - `wahidyankf-web` — Next.js 16 personal portfolio site (www.wahidyankf.com)
   - `wahidyankf-web-fe-e2e` — Playwright-BDD E2E tests for wahidyankf-web UI
 
@@ -155,7 +155,7 @@ npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm
 
 Both unit and integration levels consume same Gherkin specs — step implementations differ (mocked I/O vs real filesystem). `test:quick` includes `test:unit` (with godog BDD scenarios) + coverage validation.
 
-**OrganicLever contract enforcement**: `organiclever-be` and `organiclever-web` share OpenAPI 3.1 contract spec at `specs/apps/organiclever/contracts/`. `organiclever-contracts` project lints and bundles spec. Both apps have `codegen` Nx target generating types into `generated-contracts/` (gitignored). `codegen` is a dependency of `typecheck` and `build` — contract violations caught by `nx affected -t typecheck` and `test:quick` in pre-push hook and PR quality gate.
+**OrganicLever contract enforcement**: `organiclever-be` and `organiclever-web` share OpenAPI 3.1 contract spec at `specs/apps/organiclever/containers/contracts/`. `organiclever-contracts` project lints and bundles spec. Both apps have `codegen` Nx target generating types into `generated-contracts/` (gitignored). `codegen` is a dependency of `typecheck` and `build` — contract violations caught by `nx affected -t typecheck` and `test:quick` in pre-push hook and PR quality gate.
 
 For the broader polyglot three-level testing examples (demo backends in Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure), see the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) repository.
 
@@ -507,7 +507,7 @@ nx run wahidyankf-web-fe-e2e:test:e2e:ui       # Run FE E2E tests with Playwrigh
 - **Content**: Backend API for OrganicLever productivity tracker
 - **E2E tests**: `organiclever-be-e2e`
 - **Dev port**: 8202
-- **Contract**: OpenAPI 3.1 spec at `specs/apps/organiclever/contracts/`
+- **Contract**: OpenAPI 3.1 spec at `specs/apps/organiclever/containers/contracts/`
 
 **Commands**:
 

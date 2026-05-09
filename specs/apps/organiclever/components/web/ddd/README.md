@@ -7,9 +7,10 @@ These files are the machine-readable source of truth consumed by `rhino-cli ddd 
 ## Structure
 
 ```
-specs/apps/organiclever/ddd/
+specs/apps/organiclever/components/web/ddd/
 ├── README.md                  # This file
 ├── bounded-contexts.yaml      # Registry — 9 bounded contexts with layers, paths, relationships
+├── bounded-context-map.md     # Visual bounded-context map with Mermaid diagrams
 └── ubiquitous-language/       # Per-context glossaries (one .md per bounded context)
     ├── README.md              # Authoring rules and index
     └── *.md                   # One glossary file per bounded context
@@ -27,10 +28,10 @@ specs/apps/organiclever/ddd/
 
 ## How enforcement works
 
-See [specs/apps/organiclever/README.md § DDD Registry](../README.md#ddd-registry-bounded-contextsyaml)
+See [specs/apps/organiclever/README.md § DDD Registry](../../../README.md#ddd-registry-bounded-contextsyaml)
 for full details on what each command checks.
 
 ## Related
 
-- [organiclever-web architecture](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
-- [rhino-cli ddd commands](../../../../apps/rhino-cli/README.md#ddd-enforcement)
+- [bounded-context-map.md](./bounded-context-map.md) — Visual bounded-context map with Mermaid
+- [rhino-cli ddd commands](../../../../../../apps/rhino-cli/README.md#ddd-enforcement)

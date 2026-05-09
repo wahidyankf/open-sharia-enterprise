@@ -79,7 +79,7 @@ configuration. Future endpoints will document their own variables here.
 | Unit     | `test:unit`  | BDD scenarios via TickSpec + WebApplicationFactory |
 | Coverage | `test:quick` | Unit tests + AltCover coverage (90% required)      |
 
-All test levels consume the same Gherkin specs from `specs/apps/organiclever/be/gherkin/`.
+All test levels consume the same Gherkin specs from `specs/apps/organiclever/behavior/be/gherkin/`.
 
 ## Architecture
 
@@ -106,5 +106,5 @@ apps/organiclever-be/
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md)
-- [Backend Gherkin Specs](../../specs/apps/organiclever/be/gherkin/)
+- [Backend Gherkin Specs](../../specs/apps/organiclever/behavior/be/gherkin/)
 - [Nx Target Standards](../../governance/development/infra/nx-targets.md)

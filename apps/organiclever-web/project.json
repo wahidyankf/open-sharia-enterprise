@@ -7,11 +7,11 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/contracts/generated/openapi-bundled.yaml -o apps/organiclever-web/src/generated-contracts -s"
+        "command": "npx @hey-api/openapi-ts -i specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -o apps/organiclever-web/src/generated-contracts -s"
       },
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/contracts/generated/openapi-bundled.yaml"],
+      "inputs": ["{workspaceRoot}/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml"],
       "outputs": ["{projectRoot}/src/generated-contracts"]
     },
     "dev": {
@@ -64,9 +64,9 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/organiclever/ddd/bounded-contexts.yaml",
-        "{workspaceRoot}/specs/apps/organiclever/ddd/ubiquitous-language/**/*.md"
+        "{workspaceRoot}/specs/apps/organiclever/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml",
+        "{workspaceRoot}/specs/apps/organiclever/components/web/ddd/ubiquitous-language/**/*.md"
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
@@ -85,7 +85,7 @@
       "inputs": [
         "default",
         "{projectRoot}/src/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/behavior/web/gherkin/**/*.feature"
       ],
       "options": {
         "command": "npx vitest run --project unit",
@@ -96,7 +96,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever/behavior/web/gherkin/**/*.feature"],
       "options": {
         "command": "node scripts/gen-migrations.mjs && npx vitest run --project integration",
         "cwd": "{projectRoot}"
@@ -119,9 +119,12 @@
       "outputs": ["{projectRoot}/storybook-static"]
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/web/gherkin apps/organiclever-web",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/behavior/web/gherkin apps/organiclever-web",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/web/gherkin/**/*.feature", "{projectRoot}/**/*.{ts,tsx}"]
+      "inputs": [
+        "{workspaceRoot}/specs/apps/organiclever/behavior/web/gherkin/**/*.feature",
+        "{projectRoot}/**/*.{ts,tsx}"
+      ]
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],

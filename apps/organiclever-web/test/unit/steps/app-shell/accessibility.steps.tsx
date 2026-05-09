@@ -5,7 +5,10 @@ import { expect } from "vitest";
 import RootPage from "@/app/page";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../specs/apps/organiclever/web/gherkin/app-shell/accessibility.feature"),
+  path.resolve(
+    __dirname,
+    "../../../../../../specs/apps/organiclever/behavior/web/gherkin/app-shell/accessibility.feature",
+  ),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

@@ -63,12 +63,12 @@ contexts:
     layers:
       - domain
     code: apps/organiclever-web/src/contexts/%s
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/%s.md
-    gherkin: specs/apps/organiclever/web/gherkin/%s
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/%s.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/%s
     relationships: []
 `, contextName, contextName, contextName, contextName)
 
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ contexts:
 	}
 
 	// Create gherkin dir with one feature file.
-	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "web", "gherkin", contextName)
+	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "behavior", "web", "gherkin", contextName)
 	if err := os.MkdirAll(gherkinDir, 0755); err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ contexts:
 
 // writeGlossary writes a glossary file with the given content.
 func (s *ulValidateIntegSteps) writeGlossary(contextName, content string) error {
-	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
+	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language")
 	if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 		return err
 	}
@@ -203,18 +203,18 @@ contexts:
     summary: test journal
     layers: [domain]
     code: apps/organiclever-web/src/contexts/journal
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/journal.md
-    gherkin: specs/apps/organiclever/web/gherkin/journal
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/journal
     relationships: []
   - name: routine
     summary: test routine
     layers: [domain]
     code: apps/organiclever-web/src/contexts/routine
-    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routine.md
-    gherkin: specs/apps/organiclever/web/gherkin/routine
+    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/routine.md
+    gherkin: specs/apps/organiclever/behavior/web/gherkin/routine
     relationships: []
 `
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -230,7 +230,7 @@ contexts:
 		if err := os.WriteFile(filepath.Join(codeDir, "types.ts"), []byte("export type EntryType = string;\n"), 0644); err != nil {
 			return err
 		}
-		gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "web", "gherkin", ctx)
+		gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "behavior", "web", "gherkin", ctx)
 		if err := os.MkdirAll(gherkinDir, 0755); err != nil {
 			return err
 		}
@@ -238,7 +238,7 @@ contexts:
 			return err
 		}
 		// Both glossaries define the same term "Entry" without Forbidden synonyms cross-link.
-		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
+		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language")
 		if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 			return err
 		}

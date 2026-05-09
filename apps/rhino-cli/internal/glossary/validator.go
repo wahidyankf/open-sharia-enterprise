@@ -204,7 +204,7 @@ func checkTermCollisions(reg *bcregistry.Registry, glossaries map[string]*Glossa
 		}
 		if !allCovered {
 			findings = append(findings, Finding{
-				File:     fmt.Sprintf("specs/apps/%s/ddd/bounded-contexts.yaml", reg.App),
+				File:     fmt.Sprintf("specs/apps/%s/components/web/ddd/bounded-contexts.yaml", reg.App),
 				Message:  fmt.Sprintf(`term collision: %q defined in %v without mutual Forbidden-synonyms cross-link`, term, contexts),
 				Severity: sev,
 			})

@@ -27,13 +27,14 @@ graph TD
     classDef ci fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-The `specs/apps/organiclever/{be,web}/gherkin/` Gherkin features feed both the Main CI gate
-(`test:quick`) and the cron-scheduled E2E pipeline. They are not modeled as a separate actor in
-this diagram; see the [Container](./container.md) diagram for spec-to-container wiring.
+The `specs/apps/organiclever/behavior/{be,web}/gherkin/` Gherkin features feed both the Main CI
+gate (`test:quick`) and the cron-scheduled E2E pipeline. They are not modeled as a separate actor
+in this diagram; see the [Container](../containers/container.md) diagram for spec-to-container
+wiring.
 
 ## Related
 
-- **Container diagram**: [container.md](./container.md)
-- **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend component diagram**: [component-web.md](./component-web.md)
+- **Container diagram**: [container.md](../containers/container.md)
+- **Backend component diagram**: [component-be.md](../components/be/component-be.md)
+- **Frontend component diagram**: [component-web.md](../components/web/component-web.md)
 - **Parent**: [organiclever specs](../README.md)

@@ -21,8 +21,34 @@ each project can wire its step implementations against the right glob.
 | Background  | `Given the API is running`              | `Given the app is running`           |
 | Consumed by | `apps/organiclever-be` (F#/Giraffe)     | `apps/organiclever-web` (Next.js 16) |
 
+## Gherkin coverage
+
+### Backend (`be/gherkin/`)
+
+| Domain | Feature                       | Scenarios |
+| ------ | ----------------------------- | --------- |
+| health | `health/health-check.feature` | 2         |
+
+### Frontend (`web/gherkin/`)
+
+Organized by bounded context (one folder per context, matching the
+[DDD registry](../components/web/ddd/bounded-contexts.yaml)).
+
+| Bounded Context | Features                                       | Count  |
+| --------------- | ---------------------------------------------- | ------ |
+| app-shell       | `accessibility`, `entry-loggers`, `navigation` | 3      |
+| health          | `system-status-be`                             | 1      |
+| journal         | `home-screen`, `journal-mechanism`             | 2      |
+| landing         | `landing`                                      | 1      |
+| routine         | `routine-management`                           | 1      |
+| routing         | `app-routes`, `disabled-routes`                | 2      |
+| settings        | `dark-mode`, `language`, `settings-screen`     | 3      |
+| stats           | `history-screen`, `progress-screen`            | 2      |
+| workout-session | `workout-session`                              | 1      |
+| **Total**       |                                                | **16** |
+
 ## Related
 
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
-- `../containers/contracts/` — OpenAPI contract the backend scenarios assert against (available
-  after Phase 2A.7 moves `contracts/` into `containers/`)
+- [`../containers/contracts/`](../containers/contracts/README.md) — OpenAPI contract the
+  backend scenarios assert against (moved from legacy `contracts/` in Phase 2A.7)

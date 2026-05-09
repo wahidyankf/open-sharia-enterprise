@@ -44,13 +44,14 @@ graph TD
 The Gherkin specs and CI pipelines are not rendered in this diagram (each container is exercised
 by both, so adding them would clutter the rank without adding signal). Their wiring:
 
-- **Backend Gherkin** (`specs/apps/organiclever/be/gherkin/`) feeds `organiclever-be` BDD
-  scenarios at the `test:unit` and `test:integration` levels.
-- **Frontend Gherkin** (`specs/apps/organiclever/web/gherkin/`) feeds `organiclever-web` BDD
-  scenarios at the `test:unit` level (organized by bounded context, with `vitest-cucumber`) and
-  `organiclever-web-e2e` Playwright scenarios at the `test:e2e` level.
-- **DDD enforcement** (`specs/apps/organiclever/ddd/`) is validated by `rhino-cli ddd bc` and
-  `rhino-cli ddd ul`, both run as part of `test:quick` for `organiclever-web`.
+- **Backend Gherkin** (`specs/apps/organiclever/behavior/be/gherkin/`) feeds `organiclever-be`
+  BDD scenarios at the `test:unit` and `test:integration` levels.
+- **Frontend Gherkin** (`specs/apps/organiclever/behavior/web/gherkin/`) feeds `organiclever-web`
+  BDD scenarios at the `test:unit` level (organized by bounded context, with `vitest-cucumber`)
+  and `organiclever-web-e2e` Playwright scenarios at the `test:e2e` level.
+- **DDD enforcement** (`specs/apps/organiclever/components/web/ddd/`) is validated by
+  `rhino-cli ddd bc` and `rhino-cli ddd ul`, both run as part of `test:quick` for
+  `organiclever-web`.
 - **Main CI** runs `typecheck`, `lint`, `test:quick` on push to `main` for both containers.
 - **E2E CI** runs the full Docker Compose stack on a twice-daily cron.
 
@@ -70,7 +71,7 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 
 ## Related
 
-- **Context diagram**: [context.md](./context.md)
-- **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend component diagram**: [component-web.md](./component-web.md)
+- **Context diagram**: [context.md](../system-context/context.md)
+- **Backend component diagram**: [component-be.md](../components/be/component-be.md)
+- **Frontend component diagram**: [component-web.md](../components/web/component-web.md)
 - **Parent**: [organiclever specs](../README.md)

@@ -7,19 +7,19 @@ v0 has no authenticated screens. The frontend is structured around 9 DDD bounded
 
 ## Routes
 
-| Route                 | Owning context(s)        | Notes                                     |
-| --------------------- | ------------------------ | ----------------------------------------- |
-| `/`                   | landing                  | Marketing page                            |
-| `/app`                | (redirect)               | 308 → `/app/home`                         |
-| `/app/home`           | app-shell, journal       | Dashboard + quick-log FAB                 |
-| `/app/history`        | app-shell, stats         | Chronological entry log                   |
-| `/app/progress`       | app-shell, stats         | Charts and streaks                        |
-| `/app/settings`       | app-shell, settings      | Theme, language, data export              |
-| `/app/workout`        | workout-session          | Active workout (TabBar hidden)            |
-| `/app/workout/finish` | workout-session          | Post-workout summary                      |
-| `/app/routines/edit`  | routine                  | Routine editor                            |
-| `/system/status/be`   | health                   | Backend probe (`force-dynamic`)           |
-| `/login`, `/profile`  | routing                  | 404 stubs (auth not yet shipped)          |
+| Route                 | Owning context(s)   | Notes                            |
+| --------------------- | ------------------- | -------------------------------- |
+| `/`                   | landing             | Marketing page                   |
+| `/app`                | (redirect)          | 308 → `/app/home`                |
+| `/app/home`           | app-shell, journal  | Dashboard + quick-log FAB        |
+| `/app/history`        | app-shell, stats    | Chronological entry log          |
+| `/app/progress`       | app-shell, stats    | Charts and streaks               |
+| `/app/settings`       | app-shell, settings | Theme, language, data export     |
+| `/app/workout`        | workout-session     | Active workout (TabBar hidden)   |
+| `/app/workout/finish` | workout-session     | Post-workout summary             |
+| `/app/routines/edit`  | routine             | Routine editor                   |
+| `/system/status/be`   | health              | Backend probe (`force-dynamic`)  |
+| `/login`, `/profile`  | routing             | 404 stubs (auth not yet shipped) |
 
 ## Component Architecture
 
@@ -113,20 +113,20 @@ graph TD
 ## Gherkin Coverage by Bounded Context
 
 Each bounded context owns its Gherkin features under
-[`specs/apps/organiclever/web/gherkin/<bc>/`](../web/gherkin/README.md):
+[`specs/apps/organiclever/behavior/web/gherkin/<bc>/`](../../behavior/web/gherkin/README.md):
 
-| Bounded Context | Features                                                            | Count |
-| --------------- | ------------------------------------------------------------------- | ----- |
-| app-shell       | `accessibility`, `entry-loggers`, `navigation`                      | 3     |
-| health          | `system-status-be`                                                  | 1     |
-| journal         | `home-screen`, `journal-mechanism`                                  | 2     |
-| landing         | `landing`                                                           | 1     |
-| routine         | `routine-management`                                                | 1     |
-| routing         | `app-routes`, `disabled-routes`                                     | 2     |
-| settings        | `dark-mode`, `language`, `settings-screen`                          | 3     |
-| stats           | `history-screen`, `progress-screen`                                 | 2     |
-| workout-session | `workout-session`                                                   | 1     |
-| **Total**       |                                                                     | **16**|
+| Bounded Context | Features                                       | Count  |
+| --------------- | ---------------------------------------------- | ------ |
+| app-shell       | `accessibility`, `entry-loggers`, `navigation` | 3      |
+| health          | `system-status-be`                             | 1      |
+| journal         | `home-screen`, `journal-mechanism`             | 2      |
+| landing         | `landing`                                      | 1      |
+| routine         | `routine-management`                           | 1      |
+| routing         | `app-routes`, `disabled-routes`                | 2      |
+| settings        | `dark-mode`, `language`, `settings-screen`     | 3      |
+| stats           | `history-screen`, `progress-screen`            | 2      |
+| workout-session | `workout-session`                              | 1      |
+| **Total**       |                                                | **16** |
 
 ## DDD Enforcement
 
@@ -139,21 +139,21 @@ Two `rhino-cli ddd` subcommands run automatically as part of `test:quick`:
   `.feature` files, and term collisions across glossaries carry mutual `Forbidden-synonyms`
   cross-links.
 
-Source of truth: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../ddd/bounded-contexts.yaml).
+Source of truth: [`specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`](./ddd/bounded-contexts.yaml).
 
 ## Testing
 
-| Level              | What                                              | Coverage |
-| ------------------ | ------------------------------------------------- | -------- |
-| `test:unit`        | Per-context steps via `vitest-cucumber`           | >= 70%   |
-| `test:integration` | Real filesystem via tmpdir fixtures               | N/A      |
-| `test:e2e`         | Full browser via Playwright (`organiclever-web-e2e`) | N/A   |
+| Level              | What                                                 | Coverage |
+| ------------------ | ---------------------------------------------------- | -------- |
+| `test:unit`        | Per-context steps via `vitest-cucumber`              | >= 70%   |
+| `test:integration` | Real filesystem via tmpdir fixtures                  | N/A      |
+| `test:e2e`         | Full browser via Playwright (`organiclever-web-e2e`) | N/A      |
 
 ## Related
 
-- **Container diagram**: [container.md](./container.md)
-- **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend bounded-context map**: [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
-- **DDD registry**: [`specs/apps/organiclever/ddd/`](../ddd/README.md)
-- **Frontend gherkin specs**: [`web/gherkin/`](../web/gherkin/README.md)
-- **Parent**: [organiclever specs](../README.md)
+- **Container diagram**: [container.md](../../containers/container.md)
+- **Backend component diagram**: [component-be.md](../be/component-be.md)
+- **Frontend bounded-context map**: [`components/web/ddd/bounded-context-map.md`](./ddd/bounded-context-map.md)
+- **DDD registry**: [`components/web/ddd/`](./ddd/README.md)
+- **Frontend gherkin specs**: [`behavior/web/gherkin/`](../../behavior/web/gherkin/README.md)
+- **Parent**: [organiclever specs](../../README.md)

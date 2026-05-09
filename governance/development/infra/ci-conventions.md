@@ -381,7 +381,7 @@ services themselves run in parallel across matrix entries.
 | Backend app         | `{domain}-be` or `{domain}-be-{lang}-{framework}`                                         | `organiclever-be`                                  |
 | Frontend app        | `{domain}-fe` or `{domain}-fe-{lang}-{framework}`                                         | `organiclever-web`                                 |
 | Infra dev directory | `infra/dev/{app-name}/`                                                                   | `infra/dev/organiclever-be/`                       |
-| Specs directory     | See [Specs Directory Structure](../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/be/gherkin/`              |
+| Specs directory     | See [Specs Directory Structure](../../conventions/structure/specs-directory-structure.md) | `specs/apps/organiclever/behavior/be/gherkin/`     |
 | Test workflow       | `test-{app-name}.yml`                                                                     | `test-and-deploy-organiclever-web-development.yml` |
 | Reusable workflow   | `_reusable-{purpose}.yml`                                                                 | `_reusable-backend-e2e.yml`                        |
 | Composite action    | `.github/actions/{name}/action.yml`                                                       | `.github/actions/setup-golang/action.yml`          |

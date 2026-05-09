@@ -153,10 +153,10 @@ Use this table when uncertain whether a change requires a spec update:
 
 `specs/apps/organiclever/` serves both the backend (`organiclever-be`) and frontend (`organiclever-web`) from a shared set of specs:
 
-- `specs/apps/organiclever/c4/` — C4 diagrams for the OrganicLever application architecture
+- `specs/apps/organiclever/system-context/` — C4 diagrams for the OrganicLever application architecture
 - `specs/apps/organiclever-be/gherkin/` — Shared Gherkin scenarios consumed by the backend at unit, integration, and E2E levels
 - `specs/apps/organiclever-web/gherkin/` — Shared Gherkin scenarios consumed by the frontend
-- `specs/apps/organiclever/contracts/` — OpenAPI 3.1 contract spec that both backend and frontend implement
+- `specs/apps/organiclever/containers/contracts/` — OpenAPI 3.1 contract spec that both backend and frontend implement
 
 When a new endpoint is added to the OpenAPI spec in `organiclever-contracts`, both the corresponding Gherkin scenarios and the C4 component diagram must be updated to reflect the new behavior and component.
 
@@ -187,10 +187,10 @@ A developer adds a `GET /api/products/:id` endpoint to `organiclever-be`.
 
 They:
 
-1. Update `specs/apps/organiclever/contracts/` (OpenAPI spec) with the new endpoint definition
+1. Update `specs/apps/organiclever/containers/contracts/` (OpenAPI spec) with the new endpoint definition
 2. Run `nx run organiclever-contracts:codegen` and related codegen targets
 3. Add a Gherkin scenario to `specs/apps/organiclever-be/gherkin/products/get-product.feature`
-4. Update the C4 component diagram in `specs/apps/organiclever/c4/` if the endpoint belongs to a new component
+4. Update the C4 component diagram in `specs/apps/organiclever/system-context/` if the endpoint belongs to a new component
 5. Implement the endpoint in `apps/organiclever-be/`
 
 All changes are in a single commit or PR.

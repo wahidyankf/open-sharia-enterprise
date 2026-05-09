@@ -22,7 +22,7 @@ The `specs/` directory contains all behavioral specifications (Gherkin feature f
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/be/gherkin/expenses/expense-management.feature` immediately reveals the project, layer, domain, and feature without any external metadata or configuration.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/behavior/be/gherkin/expenses/expense-management.feature` immediately reveals the project, layer, domain, and feature without any external metadata or configuration.
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: CLI specs use a flat structure under `gherkin/` because CLI commands are independent operations that do not group into business domains. Adding domain subdirectories with one or two files each would create indirection without value.
 
@@ -84,11 +84,11 @@ The rules for domain subdirectories vary by layer type:
 **BE and FE specs** ALWAYS use domain subdirectories under `gherkin/`. Each domain folder groups related feature files:
 
 ```
-specs/apps/organiclever/be/gherkin/expenses/expense-management.feature
-specs/apps/organiclever/be/gherkin/expenses/attachments.feature
-specs/apps/organiclever/be/gherkin/authentication/password-login.feature
+specs/apps/organiclever/behavior/be/gherkin/expenses/expense-management.feature
+specs/apps/organiclever/behavior/be/gherkin/expenses/attachments.feature
+specs/apps/organiclever/behavior/be/gherkin/authentication/password-login.feature
 specs/apps/ayokoding/web/gherkin/accessibility/accessibility.feature
-specs/apps/organiclever/web/gherkin/authentication/google-login.feature
+specs/apps/organiclever/behavior/web/gherkin/authentication/google-login.feature
 ```
 
 A domain folder may contain one or many feature files. Group features by business domain, not by technical concern.

@@ -8,7 +8,7 @@ Tests use Playwright to drive a real browser against a running frontend and back
 
 ## What This Tests
 
-Feature files in [`specs/apps/organiclever/web/gherkin/`](../../specs/apps/organiclever/web/gherkin/)
+Feature files in [`specs/apps/organiclever/behavior/web/gherkin/`](../../specs/apps/organiclever/behavior/web/gherkin/)
 are the source of truth:
 
 - `landing/landing` — Landing page renders hero, principles, weekly-rhythm demo, CTAs
@@ -19,7 +19,7 @@ are the source of truth:
 ## Architecture
 
 ```
-specs/apps/organiclever/web/gherkin/**/*.feature    <- source of truth (read-only)
+specs/apps/organiclever/behavior/web/gherkin/**/*.feature    <- source of truth (read-only)
         |
         v  (defineBddConfig reads features)
 playwright.config.ts
@@ -116,4 +116,4 @@ apps/organiclever-web-e2e/
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards
-- [OrganicLever Gherkin Specs](../../specs/apps/organiclever/web/gherkin/) — Shared feature files (source of truth)
+- [OrganicLever Gherkin Specs](../../specs/apps/organiclever/behavior/web/gherkin/) — Shared feature files (source of truth)

@@ -201,15 +201,15 @@ Shared Go utilities (time formatting, test helpers, output capture).
 All Gherkin specs and API contracts live under `specs/` and are consumed via
 `{workspaceRoot}` inputs.
 
-| Spec Directory                       | Consumed By                            | Targets                                 |
-| ------------------------------------ | -------------------------------------- | --------------------------------------- |
-| `specs/apps/organiclever/contracts/` | organiclever-web, organiclever-be      | codegen                                 |
-| `specs/apps/organiclever-web/`       | organiclever-web, organiclever-web-e2e | test:integration, typecheck, test:quick |
-| `specs/apps/rhino/`                  | rhino-cli                              | test:integration                        |
-| `specs/apps/ayokoding/`              | ayokoding-cli, ayokoding-web           | test:integration                        |
-| `specs/apps/oseplatform/`            | oseplatform-cli, oseplatform-web       | test:integration                        |
-| `specs/libs/golang-commons/`         | golang-commons                         | test:integration                        |
-| `specs/libs/hugo-commons/`           | hugo-commons                           | test:integration                        |
+| Spec Directory                                  | Consumed By                            | Targets                                 |
+| ----------------------------------------------- | -------------------------------------- | --------------------------------------- |
+| `specs/apps/organiclever/containers/contracts/` | organiclever-web, organiclever-be      | codegen                                 |
+| `specs/apps/organiclever-web/`                  | organiclever-web, organiclever-web-e2e | test:integration, typecheck, test:quick |
+| `specs/apps/rhino/`                             | rhino-cli                              | test:integration                        |
+| `specs/apps/ayokoding/`                         | ayokoding-cli, ayokoding-web           | test:integration                        |
+| `specs/apps/oseplatform/`                       | oseplatform-cli, oseplatform-web       | test:integration                        |
+| `specs/libs/golang-commons/`                    | golang-commons                         | test:integration                        |
+| `specs/libs/hugo-commons/`                      | hugo-commons                           | test:integration                        |
 
 ## Design Decisions
 
