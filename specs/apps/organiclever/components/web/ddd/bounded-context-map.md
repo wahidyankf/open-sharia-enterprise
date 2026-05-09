@@ -1,5 +1,7 @@
 # Bounded-Context Map — organiclever-web
 
+**Audience:** Engineers, Technical Product/Project Managers
+
 **Status**: Complete. See the [DDD adoption plan](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md).
 **Authority**: This document is the source of truth for bounded-context boundaries inside `apps/organiclever-web`. It complements (does not replace) the platform-wide [DDD Standards](../../../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md).
 

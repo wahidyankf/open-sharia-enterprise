@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -101,21 +102,24 @@ func validateSpecCounts(repoRoot, folder string) []SpecFinding {
 	return findings
 }
 
-// countNonReadmeMdFiles counts .md files in a directory that are not named README.md.
+// countNonReadmeMdFiles counts spec files (.md non-README + .feature) recursively under dir.
 func countNonReadmeMdFiles(dir string) int {
-	entries, err := readDirFn(dir)
-	if err != nil {
-		return 0
-	}
 	count := 0
-	for _, e := range entries {
-		if e.IsDir() {
-			continue
+	_ = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil //nolint:nilerr
 		}
-		name := e.Name()
-		if strings.HasSuffix(strings.ToLower(name), ".md") && !strings.EqualFold(name, "README.md") {
+		if info.IsDir() {
+			return nil
+		}
+		name := filepath.Base(path)
+		lower := strings.ToLower(name)
+		if strings.HasSuffix(lower, ".feature") {
+			count++
+		} else if strings.HasSuffix(lower, ".md") && !strings.EqualFold(name, "README.md") {
 			count++
 		}
-	}
+		return nil
+	})
 	return count
 }

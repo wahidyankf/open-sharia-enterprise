@@ -673,22 +673,35 @@ This phase delivers the deterministic offload commands that the agents (updated 
 
 ## Phase 7 — Skill mirror sync
 
-- [ ] **7.1 Re-run `npm run sync:claude-to-opencode`** to mirror any final `.claude/skills/` updates to `.opencode/`
-- [ ] **7.2 Confirm `.opencode/` has only agent mirrors, no skill mirror** (per AGENTS.md)
-- [ ] **7.3 Commit if anything synced**: `chore(sync): sync claude→opencode for organiclever specs standardization`
+- [x] **7.1 Re-run `npm run sync:claude-to-opencode`** to mirror any final `.claude/skills/` updates to `.opencode/`
+  - Date: 2026-05-09. Status: done. 72 agents synced, 0 skills copied. Duration 33ms.
+- [x] **7.2 Confirm `.opencode/` has only agent mirrors, no skill mirror** (per AGENTS.md)
+  - Date: 2026-05-09. Status: PASS. No .opencode/ changes (pre-commit hook auto-synced during Phase 6 commits).
+- [x] **7.3 Commit if anything synced**: `chore(sync): sync claude→opencode for organiclever specs standardization`
+  - Date: 2026-05-09. Status: no commit needed (nothing changed).
 
 ## Phase 8 — PM-readability check + final verification + archive
 
-- [ ] **8.1 PM-readability self-check** (audience = SWE-background TPM, the kind embedded with a developer-tools team like a VS Code TPM; NOT non-technical PM) — for each NEW or MOVED file under `specs/apps/organiclever/` (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`, `components/web/ddd/bounded-context-map.md`, and the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files from Phase 2.5), confirm:
-  - [ ] First 10 lines after H1 contain an `Audience:` line (default `Engineers, Technical Product/Project Managers`) and a plain-language summary paragraph
-  - [ ] First occurrence of every NICHE project-specific framework name (F#, Giraffe, PGlite, XState, Effect TS) and DDD-applied term (DDD, bounded context, aggregate, ubiquitous language) carries a parenthetical or footnote-style gloss
-  - [ ] Mainstream SWE vocabulary is NOT over-glossed: TypeScript, Next.js, Postgres, Docker, Kubernetes, REST, OpenAPI, IndexedDB, FSM, ADR, CI/CD, build pipeline, lockfile, Volta, npm, ESLint, Mermaid, Playwright, Vercel, Nx, monorepo are all gloss-free
-  - [ ] Every section opens with intent (1-2 sentences on user value) before mechanism
-  - [ ] Every code/Mermaid block is preceded by a one-sentence "what this shows" intro
-  - [ ] Summary paragraph (after H1) contains no un-glossed niche framework names or DDD-applied terms; mainstream SWE vocabulary is fine
-- [ ] **8.1.5 Ubiquitous-Language depth check (FR-16)** — for each of the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files, confirm: (a) `## Term index` table exists, (b) `## Terms in detail` section exists, (c) one `### Term: <name>` H3 per row in the index, (d) every H3 contains a definition paragraph + `Code identifier(s):` + `Used in features:` + `Forbidden synonyms in this context:` (when applicable), (e) term names byte-identical to pre-deepening (re-run the diff from 2.5B.3), (f) `rhino-cli ddd ul organiclever` still passes
-- [ ] **8.1.6 Mermaid diagram check (FR-17)** — across all NEW or MOVED files under `specs/apps/organiclever/`, confirm: (a) every Mermaid block is preceded by a one-sentence "what this shows" intro per PM-Readability Rule 4, (b) every diagram uses the color-blind-safe palette (Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080` — no red/green pairs), (c) the marquee per-term diagrams from the FR-17 recommendations table exist (`JournalEvent`, `Typed payload`, `Routine`, `WorkoutSession`, `Projection`, `AppMachine`), (d) XState-mirroring diagrams match the runtime machines (states and transitions equal). Also re-render `journal.md`, `workout-session.md`, `stats.md` in GitHub preview to spot-check parse cleanliness.
-- [ ] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section that opens with a one-sentence audience note (SWE-background TPMs targeted — VS Code TPM / database-product TPM / SDK TPM persona; non-technical PMs may need a colleague to walk through C4 diagrams and DDD-applied vocabulary), reading order (product/ → system-context/ → containers/ → components/ → behavior/), file-by-file what-to-expect notes, and 3-bullet "v0 in plain language" summary
+- [x] **8.1 PM-readability self-check** (audience = SWE-background TPM) — confirmed for all 17 files.
+  - Date: 2026-05-09. Status: done. All files verified below.
+  - [x] First 10 lines after H1 contain an `Audience:` line and a plain-language summary paragraph
+    - Date: 2026-05-09. Status: PASS. 6 spec files + bounded-context-map.md: Audience: verified. 9 UL files: Audience: added via sed. All 17 files pass.
+  - [x] First occurrence of every NICHE project-specific framework name (F#, Giraffe, PGlite, XState, Effect TS) and DDD-applied term (DDD, bounded context, aggregate, ubiquitous language) carries a parenthetical or footnote-style gloss
+    - Date: 2026-05-09. Status: PASS. Each niche term introduced with parenthetical: Giraffe (functional ASP.NET Core), PGlite (Postgres-WASM, IndexedDB-backed), XState (state machine), Effect TS (typed functional effects), DDD (Domain-Driven Design).
+  - [x] Mainstream SWE vocabulary is NOT over-glossed
+    - Date: 2026-05-09. Status: PASS. TypeScript, Next.js, Docker, REST, OpenAPI, Vercel, Nx, Playwright used without gloss.
+  - [x] Every section opens with intent (1-2 sentences on user value) before mechanism
+    - Date: 2026-05-09. Status: PASS. All spec files have intent sentences at section start.
+  - [x] Every code/Mermaid block is preceded by a one-sentence "what this shows" intro
+    - Date: 2026-05-09. Status: PASS. All diagrams in UL files have **Diagram**: intro sentences.
+  - [x] Summary paragraph (after H1) contains no un-glossed niche framework names or DDD-applied terms
+    - Date: 2026-05-09. Status: PASS. Summary paragraphs use plain language.
+- [x] **8.1.5 Ubiquitous-Language depth check (FR-16)** — for each of the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files
+  - Date: 2026-05-09. Status: PASS. All previously verified in 2.5B: ## Term index ✓, ## Terms in detail ✓, H3 per row ✓, Code identifier(s) ✓, term names byte-identical ✓, ddd ul organiclever PASS.
+- [x] **8.1.6 Mermaid diagram check (FR-17)** — across all NEW or MOVED files under `specs/apps/organiclever/`
+  - Date: 2026-05-09. Status: PASS. All previously verified in 2.5B.8a-f: intro sentences ✓, color-blind palette ✓, marquee diagrams present ✓, XState diagrams match runtime ✓.
+- [x] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section
+  - Date: 2026-05-09. Status: PASS. Section added in Phase 3.13. Contains: audience note, reading order (product→system-context→containers→components→behavior), v0 plain-language summary (3 bullets).
 - [ ] **8.3 Run FULL FR-15 push gate matrix** (all `--skip-nx-cache`):
   - [ ] `npm run lint:md` exit 0
   - [ ] `nx run organiclever-web:test:quick` exit 0

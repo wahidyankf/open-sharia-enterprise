@@ -3,6 +3,7 @@
 **Bounded context**: `landing`
 **Maintainer**: organiclever-web team
 **Last reviewed**: 2026-05-09
+**Audience:** Engineers, Technical Product/Project Managers
 
 ## One-line summary
 

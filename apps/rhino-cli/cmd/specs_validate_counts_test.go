@@ -195,64 +195,62 @@ func TestUnitSpecsValidateCounts(t *testing.T) {
 }
 
 func TestCountNonReadmeMdFiles(t *testing.T) {
-	tests := []struct {
-		name       string
-		entries    []os.DirEntry
-		readDirErr error
-		wantCount  int
-	}{
-		{
-			name: "only README.md",
-			entries: []os.DirEntry{
-				&mockDirEntry{name: "README.md", isDir: false},
-			},
-			wantCount: 0,
-		},
-		{
-			name: "one spec file and README",
-			entries: []os.DirEntry{
-				&mockDirEntry{name: "README.md", isDir: false},
-				&mockDirEntry{name: "overview.md", isDir: false},
-			},
-			wantCount: 1,
-		},
-		{
-			name: "directory entries are skipped",
-			entries: []os.DirEntry{
-				&mockDirEntry{name: "subdir", isDir: true},
-				&mockDirEntry{name: "spec.md", isDir: false},
-			},
-			wantCount: 1,
-		},
-		{
-			name: "non-.md files are skipped",
-			entries: []os.DirEntry{
-				&mockDirEntry{name: "spec.txt", isDir: false},
-				&mockDirEntry{name: "spec.md", isDir: false},
-			},
-			wantCount: 1,
-		},
-		{
-			name:       "readdir error returns 0",
-			readDirErr: os.ErrNotExist,
-			wantCount:  0,
-		},
+	// Uses real temp directories since the implementation uses filepath.Walk recursively.
+	write := func(dir, name string) {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("x"), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	mkdir := func(dir, name string) string {
+		p := filepath.Join(dir, name)
+		if err := os.Mkdir(p, 0755); err != nil {
+			t.Fatal(err)
+		}
+		return p
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			origReadDir := readDirFn
-			readDirFn = func(_ string) ([]os.DirEntry, error) {
-				return tt.entries, tt.readDirErr
-			}
-			defer func() { readDirFn = origReadDir }()
+	t.Run("only README.md", func(t *testing.T) {
+		dir := t.TempDir()
+		write(dir, "README.md")
+		if got := countNonReadmeMdFiles(dir); got != 0 {
+			t.Errorf("got %d, want 0", got)
+		}
+	})
 
-			got := countNonReadmeMdFiles("/some/dir")
-			if got != tt.wantCount {
-				t.Errorf("got %d, want %d", got, tt.wantCount)
-			}
-		})
-	}
+	t.Run("one spec file and README", func(t *testing.T) {
+		dir := t.TempDir()
+		write(dir, "README.md")
+		write(dir, "overview.md")
+		if got := countNonReadmeMdFiles(dir); got != 1 {
+			t.Errorf("got %d, want 1", got)
+		}
+	})
+
+	t.Run("counts feature files recursively", func(t *testing.T) {
+		dir := t.TempDir()
+		write(dir, "README.md")
+		sub := mkdir(dir, "gherkin")
+		write(sub, "health.feature")
+		write(sub, "README.md")
+		if got := countNonReadmeMdFiles(dir); got != 1 {
+			t.Errorf("got %d, want 1", got)
+		}
+	})
+
+	t.Run("non-md non-feature files are skipped", func(t *testing.T) {
+		dir := t.TempDir()
+		write(dir, "spec.txt")
+		write(dir, "spec.md")
+		if got := countNonReadmeMdFiles(dir); got != 1 {
+			t.Errorf("got %d, want 1", got)
+		}
+	})
+
+	t.Run("nonexistent dir returns 0", func(t *testing.T) {
+		if got := countNonReadmeMdFiles("/nonexistent/path/xyz"); got != 0 {
+			t.Errorf("got %d, want 0", got)
+		}
+	})
 }
 
 func TestSpecsValidateCountsCmd_MissingGitRoot(t *testing.T) {

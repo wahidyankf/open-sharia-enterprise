@@ -18,5 +18,5 @@ domain.
 
 ## Related
 
-- **Parent**: [components/be/ specs](../../../../components/be/README.md)
+- **Parent**: [components/be/ specs](../../../components/be/README.md)
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
