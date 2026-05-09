@@ -307,7 +307,7 @@ ORDER BY cohort_week;                                   -- => Chronological orde
 
 **Key Takeaway**: Cohort analysis groups users by signup period and tracks behavior over time. Use date functions to calculate cohort periods and time since signup. Pivot with CASE to show retention by week/month. Essential for SaaS metrics and user engagement analysis.
 
-**Why It Matters**: "Did last month's signup cohort retain better than the previous month?" drives product decisions worth millions in engineering investment. Cohort retention tables are the foundation of investor presentations, product roadmaps, and growth reviews at companies like Duolingo, Headspace, and every SaaS business. Understanding whether a product change improved or hurt retention requires comparing cohorts before and after the change, making cohort analysis the essential measurement tool for product-led growth strategies.
+**Why It Matters**: "Did last month's signup cohort retain better than the previous month?" drives product decisions worth significant engineering investment. Cohort retention tables are the foundation of investor presentations, product roadmaps, and growth reviews in product-led businesses. Understanding whether a product change improved or hurt retention requires comparing cohorts before and after the change, making cohort analysis the essential measurement tool for product-led growth strategies.
 
 ---
 

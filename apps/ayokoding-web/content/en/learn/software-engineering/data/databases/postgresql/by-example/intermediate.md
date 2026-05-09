@@ -925,7 +925,7 @@ DROP INDEX idx_products_category;
 
 **Key Takeaway**: B-tree indexes accelerate lookups and range queries - create them on columns frequently used in WHERE, JOIN, and ORDER BY. Primary keys automatically get indexes. Too many indexes slow down writes (INSERT/UPDATE/DELETE).
 
-**Why It Matters**: B-tree indexes reduce query time from O(N) sequential scans to O(log N) index lookups, making the difference between 10-second and 10-millisecond queries on million-row tables used by companies like Shopify. Automatic primary key indexing prevents developers from forgetting to index foreign key columns, a common source of performance problems in MySQL databases where foreign keys don't automatically create indexes.
+**Why It Matters**: B-tree indexes reduce query time from O(N) sequential scans to O(log N) index lookups, making the difference between 10-second and 10-millisecond queries on million-row tables. Automatic primary key indexing prevents developers from forgetting to index foreign key columns, a common source of performance problems in MySQL databases where foreign keys don't automatically create indexes.
 
 ---
 

@@ -68,7 +68,7 @@ Each function now has one reason to change: swap the database without touching t
 
 **Key Takeaway:** Separate each distinct responsibility into its own function or module. A function should have exactly one reason to change.
 
-**Why It Matters:** In production systems, business rules change far more often than data storage technology, and display formats change more often than both. When these concerns are mixed, a simple business rule change forces a full regression test of the display layer. Netflix, Stripe, and other high-velocity engineering teams build their systems so each layer evolves independently, enabling hundreds of safe deployments per day.
+**Why It Matters:** In production systems, business rules change far more often than data storage technology, and display formats change more often than both. When these concerns are mixed, a simple business rule change forces a full regression test of the display layer. Separating concerns so each layer evolves independently is what enables high-frequency, safe deployment pipelines.
 
 ---
 
@@ -145,7 +145,7 @@ class PasswordService {
 
 **Key Takeaway:** Each class should have exactly one reason to change. When you add email template logic, only `EmailService` changes. When you change password policy, only `PasswordService` changes.
 
-**Why It Matters:** SRP is the foundational principle behind microservices: each service owns one business capability. Amazon's transition from monolith to service-oriented architecture succeeded by applying SRP at the service level. Teams that own single-responsibility services deploy independently, reducing the coordination overhead that kills engineering velocity at scale.
+**Why It Matters:** SRP is the foundational principle behind microservices: each service owns one business capability. Teams that own single-responsibility services deploy independently, reducing the coordination overhead that kills engineering velocity at scale. When a class has multiple reasons to change, every change carries the risk of breaking an unrelated concern within the same unit.
 
 ---
 
@@ -274,7 +274,7 @@ console.log(handleCancelRequest(999)); // => Order 999 not found
 
 **Key Takeaway:** The presentation layer transforms but never decides. All decisions live in the business layer where they can be tested without a UI or HTTP context.
 
-**Why It Matters:** Teams that keep business logic out of controllers can test their entire rule set with fast in-memory unit tests. When the presentation layer grows (mobile app, CLI tool, REST API), the business layer requires zero modification, which is exactly what allows organizations like Shopify to serve multiple client types from a single codebase.
+**Why It Matters:** Teams that keep business logic out of controllers can test their entire rule set with fast in-memory unit tests. When the presentation layer grows — mobile app, CLI tool, REST API — the business layer requires zero modification. A single stable business layer serving multiple client types is only achievable when no presentation logic has leaked into it.
 
 ---
 
@@ -533,7 +533,7 @@ print(test_service.greet(1))   # => Hello, TestUser!
 
 **Key Takeaway:** Inject dependencies from the outside rather than creating them inside. The service only knows the interface it needs, not which implementation provides it.
 
-**Why It Matters:** Dependency injection is the foundation of testable architectures. Google's Guice and Java's Spring DI container both exist to automate what this example does manually. Applications built with DI reach 90%+ test coverage more easily because every dependency can be substituted with a fast in-memory fake.
+**Why It Matters:** Dependency injection is the foundation of testable architectures. DI containers in Java, Python, and other ecosystems exist to automate what this example does manually. Applications built with DI reach high test coverage more easily because every dependency can be substituted with a fast in-memory fake, removing the need for live databases or external services in the test suite.
 
 ---
 
@@ -778,7 +778,7 @@ print(calc2.final_price(100.0))  # => 70.0 (100 - 30)
 
 **Key Takeaway:** Depend on abstractions and inject concrete strategies from outside. Adding new behavior means writing a new class, not modifying existing ones.
 
-**Why It Matters:** The Open/Closed Principle is why payment providers like Stripe expose a pluggable system: you add a new payment method by implementing an interface, not by editing their core billing engine. Applications that violate OCP accumulate feature flags and nested conditionals that make every new feature a regression risk.
+**Why It Matters:** The Open/Closed Principle enables extension through new implementations rather than modification of existing code. Pluggable systems — payment processors, logging backends, notification channels — are only maintainable when each extension point uses an interface rather than a conditional. Applications that violate OCP accumulate feature flags and nested conditionals that make every new feature a regression risk.
 
 ---
 
@@ -933,7 +933,7 @@ print(allow_purchase(user))  # => True
 
 **Key Takeaway:** Extract repeated decisions into named functions or constants. Code duplication is a symptom of knowledge duplication — fix the knowledge location, not just the syntax.
 
-**Why It Matters:** The most costly bugs in production are consistency bugs where the same rule was updated in two places but not the third. DRY violations are the primary driver of those failures. Amazon's famous "two-pizza team" service model enforces DRY at the organizational level: each business rule is owned by exactly one team and one service.
+**Why It Matters:** The most costly bugs in production are consistency bugs where the same rule was updated in two places but not the third. DRY violations are the primary driver of those failures. Establishing a single authoritative location for each business rule ensures that every caller automatically benefits from corrections and prevents silent divergence over time.
 
 ---
 
@@ -993,7 +993,7 @@ console.log(greet("Alice")); // => Good day, Alice.
 
 **Key Takeaway:** Add abstractions only when complexity is demonstrated, not anticipated. The second solution is easier to read, debug, test, extend, and hand off.
 
-**Why It Matters:** Premature abstraction is one of the top causes of architectural debt in growing codebases. Kent Beck's Extreme Programming research found that over-engineered systems took 2-4x longer to modify than simple ones, even when the modification aligned with the intended abstraction. Build the simplest thing, then refactor when a pattern genuinely emerges.
+**Why It Matters:** Premature abstraction is one of the top causes of architectural debt in growing codebases. Over-engineered systems take significantly longer to modify than simple ones, even when a modification aligns with the intended abstraction, because developers must navigate layers of indirection before reaching the logic they want to change. Build the simplest thing, then refactor when a pattern genuinely emerges.
 
 ---
 
@@ -1043,7 +1043,7 @@ print(user.display_name())  # => Alice
 
 **Key Takeaway:** Ship only what the current sprint requires. Code that is never executed in production still costs maintenance, testing, and cognitive load.
 
-**Why It Matters:** YAGNI reduces the "inventory" of unvalidated code. Lean manufacturing teaches that inventory is waste — software inventory (unshipped features, speculative abstractions) follows the same economics. Spotify's feature teams operate under the principle that 80% of their speculative features never get used as imagined; building them upfront wastes 80% of the effort expended.
+**Why It Matters:** YAGNI reduces the "inventory" of unvalidated code. Lean manufacturing teaches that inventory is waste — software inventory (unshipped features, speculative abstractions) follows the same economics. Speculative features that never arrive as imagined waste the full cost of their development and the ongoing maintenance cost of code that production traffic never exercises.
 
 ---
 
@@ -1182,7 +1182,7 @@ print(service.place_order(customer, inventory, "Laptop", 1200.0))
 
 **Key Takeaway:** Define stable public methods that express what the object can do, not what it contains. Callers depend on behavior, not representation.
 
-**Why It Matters:** Encapsulation is what makes refactoring safe. When the internal representation of an object changes — migrating from a dict to a database row, for example — only that class changes. Martin Fowler's refactoring research shows that systems with high encapsulation maintain a stable change cost over time, while tightly coupled systems see change cost grow superlinearly.
+**Why It Matters:** Encapsulation is what makes refactoring safe. When the internal representation of an object changes — migrating from a dict to a database row, for example — only that class changes. Systems with high encapsulation maintain a stable change cost over time, while tightly coupled systems see change cost grow superlinearly as every internal detail becomes a dependency for external callers.
 
 ---
 
@@ -1443,7 +1443,7 @@ print(penguin.fly())  # => Cannot fly (no exception thrown)
 
 **Key Takeaway:** Model "has-a" relationships with composition and "is-a" relationships with interfaces. Composition lets you mix and match behaviors without inheriting unwanted methods.
 
-**Why It Matters:** Deep inheritance hierarchies are a primary driver of architectural rigidity. The Gang of Four design patterns book's most cited advice is "favor object composition over class inheritance." Go's type system uses composition exclusively (no class inheritance), enabling the flexibility that makes Go code so maintainable at scale.
+**Why It Matters:** Deep inheritance hierarchies are a primary driver of architectural rigidity. The Gang of Four design patterns book's most cited advice is "favor object composition over class inheritance." Languages that use structural typing and composition as primary extension mechanisms demonstrate that flexible, maintainable systems do not require deep inheritance trees.
 
 ---
 
@@ -2072,7 +2072,7 @@ for summary in service.list_all():
 
 **Key Takeaway:** Each layer has a clear job: DTOs carry data at boundaries, the domain holds rules, the repository manages storage, and the service coordinates use cases. The presentation layer does nothing but wire and call.
 
-**Why It Matters:** This four-layer structure is the default architecture taught in enterprise engineering onboarding at companies like Google, Microsoft, and ThoughtWorks because it reliably scales from a two-person project to a hundred-engineer system. Each layer can be replaced, tested, and scaled independently — a database can be swapped, a new presentation layer added, and business rules changed without cascading rewrites.
+**Why It Matters:** This four-layer structure reliably scales from a two-person project to a large engineering team because each layer can be replaced, tested, and scaled independently. A database can be swapped, a new presentation layer added, and business rules changed without cascading rewrites — a property that only holds when the layer boundaries are respected throughout development.
 
 ---
 
@@ -2174,4 +2174,4 @@ def get_current_user() -> dict | None:
 
 **Key Takeaway:** God objects, layer leakage, anemic domains, and global state are the four most common beginner architecture smells. Recognizing them early is as important as knowing the correct patterns.
 
-**Why It Matters:** Architecture smells compound silently: a god object at 500 lines becomes unmaintainable at 5,000. LinkedIn's 2011 production outage was partly caused by a single massive `Member` object that every team edited simultaneously, causing deployment conflicts and data inconsistencies. The patterns in Examples 1-27 exist precisely to prevent these smells from taking root.
+**Why It Matters:** Architecture smells compound silently: a god object at 500 lines becomes unmaintainable at 5,000. When multiple teams edit the same massive object simultaneously, deployment conflicts and data inconsistencies are inevitable. The patterns in Examples 1-27 exist precisely to prevent these smells from taking root by establishing clear, stable boundaries before the codebase grows past the point where restructuring becomes prohibitively expensive.

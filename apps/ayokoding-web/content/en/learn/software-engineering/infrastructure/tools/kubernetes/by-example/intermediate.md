@@ -802,7 +802,7 @@ spec:
 
 **Key Takeaway**: Use nodeSelector or node affinity in DaemonSets to run specialized workloads only on appropriate nodes; label nodes based on hardware capabilities, regions, or roles for targeted DaemonSet deployment.
 
-**Why It Matters**: Node-selective DaemonSets enable hardware-specific infrastructure services without cluttering nodes lacking required resources. This selective deployment reduces monitoring overhead by 80% compared to running GPU collectors cluster-wide and enables heterogeneous cluster management where different node types run different infrastructure services based on hardware capabilities. Machine learning platforms at companies like NVIDIA deploy GPU-specific DaemonSets only on GPU-equipped nodes, ensuring specialized monitoring agents run where they provide value without wasting resources on CPU-only nodes.
+**Why It Matters**: Node-selective DaemonSets enable hardware-specific infrastructure services without cluttering nodes lacking required resources. This selective deployment enables heterogeneous cluster management where different node types run different infrastructure services based on hardware capabilities. Targeting DaemonSets to only nodes with required hardware ensures specialized monitoring agents run where they provide value without wasting resources on incompatible nodes.
 
 ---
 

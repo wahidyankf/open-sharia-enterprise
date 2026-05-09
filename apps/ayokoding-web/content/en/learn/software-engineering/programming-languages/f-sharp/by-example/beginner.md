@@ -107,7 +107,7 @@ printfn "%d %s %.2f %b" age name pi isValid
 
 **Key Takeaway**: F# infers types from literals and operations. Explicit type annotations are rarely needed for local bindings.
 
-**Why It Matters**: Type inference reduces code verbosity compared to Java or C# while maintaining compile-time safety, enabling developers to write concise yet statically-typed code. OCaml and Haskell pioneered this approach; F# brings it to .NET with full tooling support including IntelliSense, refactoring, and error highlighting. Teams switching from Java report 30-40% less type annotation boilerplate, allowing focus on domain logic rather than type declarations.
+**Why It Matters**: Type inference reduces code verbosity compared to Java or C# while maintaining compile-time safety, enabling developers to write concise yet statically-typed code. OCaml and Haskell pioneered this approach; F# brings it to .NET with full tooling support including IntelliSense, refactoring, and error highlighting. Reduced type annotation boilerplate lets developers focus on domain logic rather than type declarations.
 
 ## Example 4: Basic Types
 

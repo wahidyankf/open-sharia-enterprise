@@ -1375,7 +1375,7 @@ export const vpcIds = Object.fromEntries(
 
 **Key Takeaway**: Pulumi enables infrastructure as actual code with full programming language constructs, while Terraform HCL provides a declarative DSL with limited but often sufficient functionality for most infrastructure patterns.
 
-**Why It Matters**: Terraform's declarative model handles 80% of infrastructure needs elegantly, but teams writing complex multi-environment, multi-region configurations often hit HCL's limits: no functions, no complex conditionals on unknowns, no native type system. Pulumi's approach, adopted by teams at Mercedes-Benz, Snowflake, and Cockroach Labs, enables infrastructure logic as complex as application code while maintaining the same declarative deployment model where Pulumi tracks what needs to change.
+**Why It Matters**: Terraform's declarative model handles 80% of infrastructure needs elegantly, but teams writing complex multi-environment, multi-region configurations often hit HCL's limits: no functions, no complex conditionals on unknowns, no native type system. Pulumi enables infrastructure logic as complex as application code while maintaining the same declarative deployment model where Pulumi tracks what needs to change.
 
 ---
 
@@ -1894,7 +1894,7 @@ terraform graph -type=plan | dot -Tsvg > plan-graph.svg
 
 **Key Takeaway**: Terraform automatically parallelizes resource creation for independent resources and serializes dependent ones; use implicit references over explicit `depends_on` whenever possible to maximize parallelism.
 
-**Why It Matters**: Understanding the dependency graph is the difference between a 5-minute `terraform apply` and a 30-minute one. A poorly designed module with unnecessary `depends_on` relationships forces sequential resource creation, serializing what could be parallel. Teams managing large-scale infrastructure at companies like HashiCorp and Databricks tune their module dependency graphs by visualizing them, identifying bottlenecks, and removing unnecessary sequential constraints—reducing apply times from 20+ minutes to under 5 minutes.
+**Why It Matters**: Understanding the dependency graph is the difference between a fast and a slow `terraform apply`. A poorly designed module with unnecessary `depends_on` relationships forces sequential resource creation, serializing what could be parallel. Visualizing dependency graphs, identifying bottlenecks, and removing unnecessary sequential constraints are standard techniques for reducing apply times on large infrastructure codebases.
 
 ---
 

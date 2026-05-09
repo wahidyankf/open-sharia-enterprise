@@ -105,9 +105,10 @@ service boundaries in code, making each capability independently replaceable.
 
 **Why It Matters:** Business-capability decomposition aligns service ownership with Conway's Law —
 the team owning "Orders" controls its full stack without coordinating schema changes with the
-"Inventory" team. Netflix, Amazon, and Uber organise services this way because autonomous teams
-ship faster. Misaligned decomposition (e.g., by technical tier) creates distributed monoliths where
-every feature requires cross-team merges, eliminating the delivery speed advantage of microservices.
+"Inventory" team. Misaligned decomposition (for example, by technical tier) creates distributed
+monoliths where every feature requires cross-team merges, eliminating the delivery speed advantage
+of microservices. Autonomous teams shipping to independently deployable services is the central
+premise that business-capability boundaries make possible.
 
 ---
 
@@ -185,9 +186,9 @@ at the proxy level; each migrated route is an isolated, low-risk step.
 
 **Why It Matters:** Big-bang rewrites fail at a high rate because they require running two systems
 simultaneously, training all users at once, and accepting rollback as all-or-nothing. The Strangler
-Fig pattern, used by Amazon's migration from monolith to services and documented by Martin Fowler,
-allows teams to migrate one route at a time, roll back individual services, and retire the legacy
-system only after every path is covered — dramatically reducing migration risk.
+Fig pattern, documented by Martin Fowler, allows teams to migrate one route at a time, roll back
+individual services, and retire the legacy system only after every path is covered — dramatically
+reducing migration risk by making each step small, reversible, and independently verifiable.
 
 ---
 
@@ -367,9 +368,9 @@ schema design because the saga flow is distributed across multiple handlers.
 **Why It Matters:** Choreography eliminates the orchestrator as a single point of failure and a
 coordination bottleneck, making each service independently deployable without versioning the
 orchestrator. However, tracing a saga through event logs is harder than reading a single orchestrator
-class. Teams at Uber and Shopify choose choreography for high-throughput flows (millions of events
-per second) and orchestration when business rules require centralized audit trails or frequent
-changes to saga logic.
+class. Choreography suits high-throughput flows where independent deployability and minimal
+coupling matter most; orchestration is preferable when business rules require centralized audit
+trails or when saga logic changes frequently enough that a single source of truth simplifies maintenance.
 
 ---
 
@@ -442,10 +443,10 @@ simplicity outweigh URL aesthetics; use header versioning for internal APIs with
 versioning requirements.
 
 **Why It Matters:** Breaking API changes without a versioning strategy are among the leading causes
-of production incidents when microservices are upgraded. Stripe, GitHub, and Twilio all use URI path
-versioning because it is explicit in logs, debuggable in browsers, and cache-friendly — benefits that
-outweigh the "impurity" of embedding version in the URL. Choosing the wrong strategy early forces a
-painful migration later when consumer count is large.
+of production incidents when microservices are upgraded. URI path versioning is explicit in logs,
+debuggable in browsers, and cache-friendly — benefits that outweigh the "impurity" of embedding
+version in the URL. Choosing the wrong strategy early forces a painful migration later when consumer
+count is large and backward compatibility cannot be broken without coordinating across many teams.
 
 ---
 
@@ -520,9 +521,9 @@ without negotiating with teams serving other clients.
 
 **Why It Matters:** A single general-purpose API must satisfy every client's needs simultaneously,
 leading to bloated responses, API design by committee, and tight release coupling between mobile
-and web teams. Netflix popularised BFFs for this reason: their mobile team needed lightweight
-playback payloads while the web team needed rich metadata pages. BFFs give each client team
-autonomy while downstream services remain focused on their domain.
+and web teams. BFFs give each client team autonomy to evolve their aggregation layer independently
+while downstream services remain focused on their own domain. The pattern directly resolves the
+tension between mobile clients needing lightweight payloads and web clients needing rich aggregates.
 
 ---
 
@@ -623,11 +624,10 @@ dependency is unhealthy, giving it time to recover while callers receive fallbac
 
 **Why It Matters:** Without circuit breakers, a slow or failing downstream service causes thread
 pools to fill with waiting requests, blocking the entire caller — the cascade failure pattern that
-brought down Twitter's original monolith in the "fail whale" era. Netflix's Hystrix library
-popularised circuit breakers, and their Chaos Engineering team demonstrated that properly
-configured breakers allow the platform to shed load during incidents without full outages. Today
-Resilience4j (Java) and `circuitbreaker` packages in Python/Go embed this pattern as production
-standard.
+turns a partial dependency failure into a full service outage. Circuit breaker libraries in Java,
+Python, and Go embed this pattern as production standard because properly configured breakers allow
+a system to shed load during incidents without full outages, giving the failing dependency time to
+recover while callers receive fast fallback responses.
 
 ---
 
@@ -721,9 +721,9 @@ dependency so one slow service can only exhaust its own pool, not the shared app
 **Why It Matters:** The bulkhead pattern is named after ship compartments that prevent flooding
 from spreading. In services, a payment processor slowdown that fills a shared thread pool starves
 inventory checks and health endpoints — a total service outage caused by a partial dependency
-failure. Netflix's Hystrix and Resilience4j's `Bulkhead` module enforce this isolation in
-production, allowing services to degrade gracefully (payments fail, site keeps working) rather than
-failing completely.
+failure. Bulkhead isolation in resilience libraries enforces this separation in production, allowing
+services to degrade gracefully (payments fail, site keeps working) rather than failing completely
+because one slow dependency exhausted the shared resource pool.
 
 ---
 
@@ -778,12 +778,11 @@ print(f"Result: {result}")  # => Output: Result: success  (after 2 retried failu
 **Key Takeaway:** Use exponential backoff to avoid retry storms, and add jitter to spread load
 across time when many clients retry the same failing service concurrently.
 
-**Why It Matters:** AWS documented that naive fixed-interval retries caused cascading failures
-during EC2 availability events when thousands of services retried simultaneously, amplifying load
-on already-stressed infrastructure. Exponential backoff with jitter — the "Full Jitter" algorithm
-published by the AWS Architecture Blog — reduces collision probability by up to 94% compared to
-fixed intervals, enabling overloaded services to shed excess load and recover within seconds instead
-of minutes.
+**Why It Matters:** Naive fixed-interval retries cause cascading failures when many services retry
+simultaneously during an availability event, amplifying load on already-stressed infrastructure.
+Exponential backoff with jitter — the "Full Jitter" strategy — reduces collision probability
+dramatically compared to fixed intervals by spreading retries over time, enabling overloaded
+services to shed excess load and recover within seconds instead of minutes.
 
 ---
 
@@ -872,9 +871,9 @@ that all spans generated by a single user request share the same root identifier
 **Why It Matters:** Without distributed tracing, debugging latency in a chain of ten microservices
 requires correlating timestamps across ten separate log files — a manual task that takes hours.
 Tracing tools like Jaeger, Zipkin, and Datadog APM reduce this to a single flame graph, enabling
-engineers to identify which service or database query caused a P99 latency spike in minutes.
-Uber reduced mean-time-to-diagnosis for distributed incidents by 60% after adopting Jaeger, which
-became a CNCF graduated project based on wide industry adoption.
+engineers to identify which service or database query caused a P99 latency spike in minutes. The
+value of distributed tracing scales with the number of services in the call chain: the more
+microservices, the more essential a shared trace context becomes for diagnosing production incidents.
 
 ---
 
@@ -957,8 +956,8 @@ deployable unit evolves independently to handle observability, security, and tra
 pattern to inject Envoy proxies alongside every pod transparently — the application team deploys
 business code unchanged, while the platform team rotates TLS certificates, controls traffic splits,
 and collects distributed traces through the sidecar. This separation allows infrastructure upgrades
-without coordinating with hundreds of application teams, enabling companies like Google to roll
-out mTLS cluster-wide without modifying a single application.
+without coordinating with application teams, enabling cluster-wide policy rollouts without
+modifying a single application binary.
 
 ---
 
@@ -1018,10 +1017,10 @@ handling from application code, keeping business logic free of infrastructure co
 
 **Why It Matters:** Without an ambassador, retry logic, connection pool configuration, and timeout
 handling are duplicated across every service that calls the same downstream. When the retry policy
-needs changing (e.g., after a database upgrade changes failure characteristics), a single ambassador
-change affects all consumers. Envoy proxy — used as ambassador by Lyft, Google, and Netflix — shows
-this pattern at scale: a single proxy configuration update changes connection pool behaviour for
-hundreds of microservices without code deployment.
+needs changing — for example, after a database upgrade changes failure characteristics — a single
+ambassador change affects all consumers. Proxy-based ambassadors demonstrate this pattern at scale:
+a single proxy configuration update changes connection pool behaviour for all microservices without
+requiring individual code deployments.
 
 ---
 
@@ -1205,9 +1204,9 @@ package-access modifiers, making the modular monolith easier to later split into
 **Why It Matters:** Microservices introduce distributed systems complexity (network failures, data
 consistency, distributed tracing) that many teams are not ready for. A modular monolith provides
 the domain boundary discipline of microservices while retaining the operational simplicity of a
-single deployable unit. Stack Overflow runs on a modular monolith and handles millions of daily
-requests; Shopify migrated from a tangled monolith to a modular monolith before selectively
-extracting services, avoiding the distributed systems complexity until it was genuinely needed.
+single deployable unit. Well-designed modular monoliths handle high traffic volumes without the
+overhead of distributed coordination, and their strict internal boundaries enable selective service
+extraction later without the coupling problems of an unstructured monolith.
 
 ---
 
@@ -1292,10 +1291,10 @@ single file to understand, change, and test a feature end to end.
 
 **Why It Matters:** Traditional layered architecture (Controller/Service/Repository) scatters a
 feature across three folders, requiring developers to navigate multiple files to understand one
-user story. Jimmy Bogard's vertical slice architecture — popularised through MediatR in .NET and
-adopted in Python projects via FastAPI CQRS patterns — collocates request, handler, and response,
-reducing cognitive load. Microsoft's eShopOnContainers and many enterprise teams report 40-50%
-faster feature onboarding after switching from horizontal layers to vertical slices.
+user story. Vertical slice architecture — popularised through MediatR in .NET and adopted in
+Python projects via FastAPI CQRS patterns — collocates request, handler, and response in one unit,
+reducing cognitive load and making the scope of a change immediately visible to anyone reading the
+code.
 
 ---
 
@@ -1808,11 +1807,11 @@ for r in results:
 data access must go through APIs so services remain independently deployable and scalable.
 
 **Why It Matters:** Shared databases are the most common reason microservices fail to deliver on
-their independence promise: a schema change by the Orders team breaks the Billing service's
-queries at runtime. Amazon's two-pizza team rule explicitly forbids cross-service database access
-for this reason. Database-per-service enables independent scaling (Orders at 100 replicas, Billing
-at 5) and technology selection (Orders on PostgreSQL, Recommendations on DynamoDB) — impossible
-with a shared schema.
+their independence promise: a schema change in one service breaks another service's queries at
+runtime. Database-per-service enables independent scaling (Orders at 100 replicas, Billing at 5)
+and technology selection (relational for transactions, document store for recommendations) —
+neither is possible with a shared schema, because any schema change requires coordinating all
+teams that query the shared tables.
 
 ---
 
@@ -1903,12 +1902,12 @@ print(store.is_enabled("new_checkout", "beta-tester-1"))  # => Output: False (ki
 feature decision, preventing inconsistent UX where a user sees the new feature on one page reload
 but not another.
 
-**Why It Matters:** Feature toggles enable trunk-based development at Facebook scale, where thousands
-of engineers commit to a single branch daily. Rather than maintaining long-lived feature branches
-that create merge conflicts, engineers deploy dark code (toggled off) continuously and activate
-features through the toggle system. Netflix's Unleash and Facebook's Gatekeeper show that toggle
-infrastructure reduces deployment risk to near zero: a bad feature can be disabled with a config
-change in seconds, without the 10-30 minute pipeline cycle of a revert-and-redeploy.
+**Why It Matters:** Feature toggles enable trunk-based development at large engineering scales by
+allowing engineers to commit dark code (toggled off) continuously rather than maintaining long-lived
+feature branches that create merge conflicts. Toggle infrastructure reduces deployment risk to near
+zero: a bad feature can be disabled with a config change in seconds, without the full pipeline cycle
+of a revert-and-redeploy. This decouples deployment frequency from release frequency, which is the
+key property enabling continuous delivery.
 
 ---
 
@@ -2003,11 +2002,11 @@ print(f"Telemetry: {proxy_a._telemetry}")
 infrastructure proxy layer so application developers write only business logic.
 
 **Why It Matters:** Before service meshes, every team independently implemented retry logic,
-circuit breaking, and TLS in each language and service — 50 teams meant 50 different retry
-implementations with different bugs. Google, Lyft, and IBM co-created Envoy and Istio to solve
-this at scale: a single control plane pushes consistent policies to all sidecars simultaneously.
-Airbnb's adoption of a service mesh reduced their mTLS rollout from an estimated 2 years of
-application-level changes to 6 weeks of infrastructure configuration.
+circuit breaking, and TLS in each language and service — many teams meant many different retry
+implementations with different bugs and different failure modes. A service mesh addresses this by
+pushing consistent policies to all sidecars simultaneously through a single control plane.
+Cross-cutting concerns like mTLS adoption that would require touching every service's application
+code become infrastructure configuration changes that propagate automatically.
 
 ---
 
@@ -2220,9 +2219,10 @@ for s in summaries:
 **Why It Matters:** Relational databases optimised for write consistency (with locks, transactions,
 and normalisation) perform poorly for complex read queries that aggregate data across many tables.
 CQRS solves this by maintaining separate read models — projected, denormalised, perhaps stored in
-Elasticsearch or Redis — that answer queries in microseconds without table scans. Stack Overflow,
-event-sourcing the entire Q&A platform, and trading systems at exchanges like NYSE use CQRS to
-achieve sub-millisecond query latency while maintaining write consistency through normalised command models.
+Elasticsearch or Redis — that answer queries in microseconds without table scans. Systems requiring
+sub-millisecond query latency alongside strong write consistency benefit most from CQRS because the
+read model can be shaped precisely for each query, without the normalisation constraints that the
+write model's correctness guarantees require.
 
 ---
 
@@ -2530,10 +2530,11 @@ to real infrastructure adapters requires zero domain code changes — only compo
 
 **Why It Matters:** Traditional layered architectures let infrastructure details leak into the
 domain (JPA annotations in entity classes, Kafka types in service methods), making domains
-impossible to test without spinning up databases. Hexagonal architecture, adopted by teams at
-Spotify, ThoughtWorks, and in Alistair Cockburn's original 2005 formulation, enables fast unit
-tests of all business logic using in-memory adapters, reducing test suite time from 10+ minutes
-(integration tests with real DB) to seconds — critical for a high-frequency CI/CD pipeline.
+impossible to test without spinning up databases. Hexagonal architecture, described in Alistair
+Cockburn's original 2005 formulation, enables fast unit tests of all business logic using in-memory
+adapters, reducing test suite time from 10+ minutes (integration tests with real DB) to seconds —
+critical for a high-frequency CI/CD pipeline. The domain remains portable across infrastructure
+changes precisely because it has no compile-time dependency on any specific technology adapter.
 
 ---
 
@@ -2630,7 +2631,7 @@ mechanism; never allow unbounded queuing, which defers the OOM crash rather than
 **Why It Matters:** Reactive Streams — standardised in the Reactive Streams specification (RxJava,
 Project Reactor, Akka Streams, Python's asyncio) — emerged because event-driven systems with
 unbounded queues inevitably crash under load: the queue fills memory until the process is killed.
-Twitter's real-time timeline processing, Netflix's Zuul 2, and LinkedIn's Samza stream processing
-all implement backpressure to handle traffic spikes of 10x normal load without OOM crashes. Systems
-that lack backpressure require over-provisioning by the spike ratio — expensive and wasteful compared
-to a properly backpressured reactive pipeline.
+Stream processing systems implement backpressure to handle traffic spikes well above normal load
+without OOM crashes. Systems that lack backpressure require over-provisioning by the spike ratio —
+expensive and wasteful compared to a properly backpressured reactive pipeline that signals producers
+to slow down rather than accumulating an unbounded backlog.
