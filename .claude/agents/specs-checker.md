@@ -348,7 +348,7 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 - [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
-- [AI Agents Convention](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Agent Workflow Orchestration](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
 - [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
 - [Specs Validation Workflow](../../governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-fixer](./specs-fixer.md), [specs-maker](./specs-maker.md)

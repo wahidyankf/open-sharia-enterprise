@@ -300,7 +300,7 @@ In any README listing, folders appear in canonical order:
 - [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md) — canonical path patterns, per-surface variants, domain subdirectory rules
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
-- [AI Agents Convention](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Agent Workflow Orchestration](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
 - [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
 - [Specs Validation Workflow](../../governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-checker](./specs-checker.md), [specs-fixer](./specs-fixer.md)
