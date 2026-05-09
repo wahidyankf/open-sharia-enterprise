@@ -30,3 +30,8 @@ product features.
 `docker-compose.ci.yml` is used in GitHub Actions for E2E tests. It overrides only what differs
 from the default compose file (currently nothing meaningful — kept as the extension point for
 future CI-specific configuration).
+
+## Behavior & Architecture
+
+See [specs/apps/organiclever/containers/deployment.md](../../../specs/apps/organiclever/containers/deployment.md)
+for environments, Docker images, and deployment details.

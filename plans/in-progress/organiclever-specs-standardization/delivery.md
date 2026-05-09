@@ -445,15 +445,21 @@ Each app trim is its own commit. After each commit, run the relevant `test:quick
   - Date: 2026-05-09. Status: done. 62 lines.
 - [x] **4.14 Verify line count** ≤ 120
   - Date: 2026-05-09. Status: PASS. 62 lines (target ≤120).
-- [ ] **4.15 `npm run lint:md`** exit 0
-- [ ] **4.16 Commit**: `docs(apps): trim organiclever-be-e2e README to dev-runtime`
+- [x] **4.15 `npm run lint:md`** exit 0
+  - Date: 2026-05-09. Status: PASS. 2335 files, 0 errors.
+- [x] **4.16 Commit**: `docs(apps): trim organiclever-be-e2e README to dev-runtime`
+  - Date: 2026-05-09. Status: done. Committed.
 
 ## Phase 5 — Trim infra/ READMEs
 
-- [ ] **5.1 Verify `infra/dev/organiclever/README.md`** — confirm purely Docker-Compose runtime. Add one-line "Behavior & Architecture" pointer to `specs/apps/organiclever/containers/deployment.md`. Target ≤ 60 lines
-- [ ] **5.2 Verify `infra/k8s/organiclever/README.md`** — Remove Docker-image build narrative + staging/production profile mapping. Replace with "build + apply" runtime block + link to `specs/apps/organiclever/containers/deployment.md`. Keep link to `infra/dev/organiclever/README.md`. Target ≤ 60 lines
-- [ ] **5.3 Verify `infra/k8s/organiclever/staging/README.md`** — Reduce to status placeholder + one-line link to `specs/apps/organiclever/containers/deployment.md`. Target ≤ 30 lines
-- [ ] **5.4 Verify `infra/k8s/organiclever/production/README.md`** — Same shape as 5.3. Target ≤ 30 lines
+- [x] **5.1 Verify `infra/dev/organiclever/README.md`** — confirm purely Docker-Compose runtime. Add one-line "Behavior & Architecture" pointer to `specs/apps/organiclever/containers/deployment.md`. Target ≤ 60 lines
+  - Date: 2026-05-09. Status: done. 37 lines ≤60. Added Behavior & Architecture section → deployment.md link.
+- [x] **5.2 Verify `infra/k8s/organiclever/README.md`** — Remove Docker-image build narrative + staging/production profile mapping. Replace with "build + apply" runtime block + link to `specs/apps/organiclever/containers/deployment.md`. Keep link to `infra/dev/organiclever/README.md`. Target ≤ 60 lines
+  - Date: 2026-05-09. Status: done. 25 lines ≤60. Removed Docker build/profile mapping → deployment.md link.
+- [x] **5.3 Verify `infra/k8s/organiclever/staging/README.md`** — Reduce to status placeholder + one-line link to `specs/apps/organiclever/containers/deployment.md`. Target ≤ 30 lines
+  - Date: 2026-05-09. Status: done. 17 lines ≤30. Removed stale Spring references, added deployment.md link + ASPNETCORE_ENVIRONMENT correction note.
+- [x] **5.4 Verify `infra/k8s/organiclever/production/README.md`** — Same shape as 5.3. Target ≤ 30 lines
+  - Date: 2026-05-09. Status: done. 18 lines ≤30. Same as 5.3.
 - [ ] **5.5 `npm run lint:md`** exit 0
 - [ ] **5.6 Commit**: `docs(infra): trim organiclever infra READMEs to runtime-only + link to specs/containers/deployment`
 

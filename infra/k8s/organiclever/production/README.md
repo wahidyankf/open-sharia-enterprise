@@ -1,14 +1,13 @@
 # Production Environment
 
-**Status**: Placeholder - Kubernetes manifests to be added
+**Status**: Placeholder — Kubernetes manifests to be added.
 
-**Spring Profile**: `prod`
-**Configuration**: `apps/organiclever-be/src/main/resources/application-prod.yml`
+For environment details, Docker images, and deployment configuration see
+[specs/apps/organiclever/containers/deployment.md](../../../../specs/apps/organiclever/containers/deployment.md).
 
-**Docker images**:
-
-- Backend: `apps/organiclever-be/Dockerfile` — `docker build -t organiclever-be:latest apps/organiclever-be/`
-- Frontend: `apps/organiclever-web/Dockerfile` — `docker build -f apps/organiclever-web/Dockerfile -t organiclever-web:latest .`
+**Note**: The `SPRING_PROFILES_ACTIVE` reference in this directory is stale — `organiclever-be`
+uses F#/Giraffe (ASP.NET Core), not Spring Boot. The correct env var is
+`ASPNETCORE_ENVIRONMENT=Production`. Fix planned alongside the Kubernetes manifest authoring.
 
 Planned resources:
 
