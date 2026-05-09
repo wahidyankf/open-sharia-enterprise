@@ -384,10 +384,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** (_New file_) — Extract routes/screens/entry-flows tables. PM-Readability Contract applied.
   - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/routes-and-screens.md (new). **Audience:** line present. Top-level routes table, in-app screens table (with chrome column), entry flows table, diagnostic page states table. Also restored hyperlink in architecture.md (had to be plain text before this file existed).
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/routes-and-screens.md` returns 0 AND file contains at least one markdown table with route or screen data.
-- [ ] **3.6 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/routes-and-screens.md`
+- [x] **3.6 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/routes-and-screens.md`
+  - Date: 2026-05-09. Status: done. lint:md 2332 files, 0 errors. Committed. design-system.md link fixed to plain text (not yet created). Link restored after design-system.md commits.
 
-- [ ] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** (_New file_) — Palette, typography, dark mode, token import, components. PM-Readability Contract applied.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/design-system.md` returns 0 AND file contains palette or typography content.
+- [x] **3.7 Create `specs/apps/organiclever/components/web/design-system.md`** (_New file_) — Palette, typography, dark mode, token import, components. PM-Readability Contract applied.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/design-system.md (new). **Audience:** line present. Palette table, typography table, dark mode section, token import chain (code block with intro sentence), key components table, dynamic hue backgrounds pattern. ts-ui link as plain text (cross-package relative path complex). Also restored routes-and-screens.md link to design-system.md.
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/design-system.md` returns 0 AND file contains palette or typography content.
 - [ ] **3.8 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/design-system.md`
 
 - [ ] **3.9 Create `specs/apps/organiclever/components/be/api.md`** (_New file_) — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied.
