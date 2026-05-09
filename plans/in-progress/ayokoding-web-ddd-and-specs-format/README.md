@@ -46,7 +46,7 @@ Same shape as plan 2 (oseplatform):
 - `build-tools/gherkin/` (index-generation build scripts).
 - E2E spec migration (`apps/ayokoding-web-{be,fe}-e2e/` step files).
 - Any content (article files in `content/`) — only code and specs reshaped.
-- Adopting the `validate:specs-shape` pre-push gate — handled in `bdd-ddd-tooling-gap-fill`.
+- Adopting the `validate:specs-adoption` and `validate:specs-tree` pre-push gates — handled in `bdd-ddd-tooling-gap-fill`.
 
 ## Dependencies / sequencing
 
@@ -55,21 +55,7 @@ Same shape as plan 2 (oseplatform):
 
 ## Worktree
 
-Path: `worktrees/ayokoding-web-ddd-and-specs-format/`
-
-Provisioning:
-
-```bash
-cd /Users/wkf/ose-projects/ose-public && claude --worktree ayokoding-web-ddd-and-specs-format
-```
-
-Or via git directly:
-
-```bash
-git worktree add worktrees/ayokoding-web-ddd-and-specs-format -b worktree/ayokoding-web-ddd-and-specs-format
-```
-
-Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
+See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktree provisioning block consumed by the plan-execution workflow.
 
 ## Documents
 

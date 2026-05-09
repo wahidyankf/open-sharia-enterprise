@@ -4,6 +4,28 @@ All steps follow Red → Green → Refactor (TDD). Run `nx run wahidyankf-web:te
 
 ---
 
+## Worktree
+
+Worktree path: `worktrees/wahidyankf-web-ddd-and-specs-format/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree wahidyankf-web-ddd-and-specs-format
+```
+
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+
+---
+
+## Environment Setup
+
+- [ ] Provision worktree: `claude --worktree wahidyankf-web-ddd-and-specs-format` (creates `worktrees/wahidyankf-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [ ] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [ ] Verify existing tests pass before making changes: `nx run wahidyankf-web:test:quick`.
+
+---
+
 ## Phase 0 — Pre-flight inventory
 
 - [ ] **0.1** Read `apps/wahidyankf-web/src/` end-to-end: enumerate every file under `src/components/`, `src/utils/`, `src/app/`. Produce a concrete file-by-file mapping table (old path → new path) and append it to `tech-docs.md` under "Source refactor mechanics" (the table currently shows initial estimate only).
@@ -73,7 +95,7 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
 
 ### 4.2 `home` (presentation only)
 
-- [ ] **4.2.1** Mirror 4.1 with the home files. After: 2 BCs resolve in `ddd ul`.
+- [ ] **4.2.1** Create empty `apps/wahidyankf-web/src/contexts/home/presentation/`. `git mv` home files (see move table in `tech-docs.md §Source refactor mechanics`): all files under `src/components/home/` → `src/contexts/home/presentation/`. Update import statements project-wide via `nx run wahidyankf-web:typecheck` to confirm zero import errors. Run `nx run wahidyankf-web:test:quick` — passes. Run `rhino-cli ddd ul wahidyankf` — `home` glossary identifiers now resolve. After: 2 BCs resolve in `ddd ul`.
 
 ### 4.3 `cv` (application + presentation)
 
@@ -84,11 +106,11 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
 
 ### 4.4 `personal-projects` (application + presentation)
 
-- [ ] **4.4.1** Mirror 4.3.
+- [ ] **4.4.1** Create `src/contexts/personal-projects/{application,presentation}/`. `git mv` personal-projects components (see move table in `tech-docs.md §Source refactor mechanics`) into `presentation/`; move project records + filter logic into `application/`. Split any mixed file. Update imports; run `nx run wahidyankf-web:typecheck`. Run `nx run wahidyankf-web:test:quick` — passes.
 
 ### 4.5 `search` (application + presentation)
 
-- [ ] **4.5.1** Mirror 4.3. Search-index builder + scoring → `application/`. Search input + results UI → `presentation/`.
+- [ ] **4.5.1** Create `src/contexts/search/{application,presentation}/`. `git mv` search files (see move table in `tech-docs.md §Source refactor mechanics`): search-index builder + scoring → `application/`; search input + results UI → `presentation/`. Update imports; run `nx run wahidyankf-web:typecheck`. Run `nx run wahidyankf-web:test:quick` — passes.
 
 ### 4.6 Cleanup
 
@@ -122,6 +144,8 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
 
 ## Phase 7 — Final validation gate
 
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 - [ ] **7.1** `rhino-cli specs validate-tree wahidyankf` — 0 findings.
 - [ ] **7.2** `rhino-cli specs validate-counts specs/apps/wahidyankf` — 0 findings.
 - [ ] **7.3** `rhino-cli specs validate-links specs/apps/wahidyankf` — 0 findings.
@@ -134,15 +158,31 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
 - [ ] **7.10** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` from worktree root — full pre-push gate green.
 - [ ] **7.11** `npm run lint:md` — 0 violations.
 
+### Manual UI Verification (Playwright MCP)
+
+- [ ] **7.12** Start dev server: `nx dev wahidyankf-web` (listens at `localhost:3201`).
+- [ ] **7.13** Navigate to the home page via `browser_navigate` to `http://localhost:3201/` — confirm page renders without blank sections.
+- [ ] **7.14** `browser_snapshot` — verify bounded-context-organized components render correctly (hero, featured-project teaser visible).
+- [ ] **7.15** Navigate to `/cv` and `/personal-projects`; `browser_snapshot` each — confirm pages render with no layout regressions from the source refactor.
+- [ ] **7.16** `browser_console_messages` — must show 0 JS errors across all three pages.
+- [ ] **7.17** `browser_take_screenshot` for each page — attach for visual record.
+
 ---
 
 ## Phase 8 — Commit, push, archive
+
+### Commit Guidelines
+
+- [ ] Commit changes thematically — group related changes into logically cohesive commits.
+- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+- [ ] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from source refactor separate from project.json wiring).
+- [ ] Do NOT bundle unrelated fixes into a single commit.
 
 - [ ] **8.1** Single atomic commit (or commit-per-phase if maintainer prefers; both legal):
   - Message: `feat(wahidyankf-web): adopt C4 + DDD specs format`
   - Body lists: 5 bounded contexts, source refactor scope, DDD validator wiring, spec-coverage gate.
 - [ ] **8.2** Push the worktree branch through whichever publish path applies (direct-to-main per Trunk Based Development is the default for `ose-public`; draft PR optional).
-- [ ] **8.3** Run `gh run watch` (or wake-up CI monitoring per `governance/development/workflow/ci-monitoring.md`) until `main` CI is green.
+- [ ] **8.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **8.4** Move this plan folder to `plans/done/YYYY-MM-DD__wahidyankf-web-ddd-and-specs-format/` (date prefix added at archival per `governance/conventions/structure/plans.md`).
 - [ ] **8.5** Update `plans/in-progress/README.md` and `plans/done/README.md` indices.
 - [ ] **8.6** If `bdd-ddd-tooling-gap-fill` is still in-progress or backlog, post a note in its `delivery.md` Phase 0 confirming wahidyankf is now allowlist-eligible.

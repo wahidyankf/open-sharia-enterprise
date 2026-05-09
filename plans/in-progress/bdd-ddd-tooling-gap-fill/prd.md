@@ -1,6 +1,6 @@
 # PRD — BDD + DDD Tooling Gap-Fill
 
-This plan delivers 10 fixes against the 2026-05-09 optimality audit. Each fix carries its own Gherkin acceptance criteria.
+This plan delivers 11 fixes against the 2026-05-09 optimality audit. Each fix carries its own Gherkin acceptance criteria.
 
 ## The allowlist
 
@@ -343,6 +343,30 @@ Feature: gherkin field accepts multi-perspective paths
     When the developer runs "rhino-cli ddd bc ayokoding"
     Then the orphan is reported regardless of which perspective it lives in
 ```
+
+## Personas
+
+- **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
+- **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
+- **Refactor executor** (delivery-checklist hat) — follows the 13-phase delivery checklist (Phase 0 pre-flight + Phases 1-11 one fix each + Phase 12 validation + Phase 13 commit).
+- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
+
+## User Stories
+
+- As a developer, I want `validate:specs-adoption` and `validate:specs-tree` wired into pre-push for all four allowlisted web apps so that a spec structural violation aborts the push automatically.
+- As a developer, I want `organiclever-be:test:quick` to run `ddd bc/ul` so that F#/TS bounded contexts are validated in the same gate as the TypeScript frontend.
+- As a developer, I want `ddd ul` to support per-BC `code_lang:` so that glossary identifier checks grep the correct file extensions for each language.
+- As a developer, I want multi-parent orphan-root walks so that `ddd bc` reports orphan directories under any perspective, not only the first declared context's parent.
+- As a developer, I want the `gherkin:` field to accept a list of paths so that multi-perspective BCs (`content`, `search`, `i18n`, `navigation` in ayokoding) can register both web-side and api-side gherkin folders honestly.
+- As a developer, I want the three `specs drift-*` placeholder commands removed so that `rhino-cli specs --help` only lists commands that are actually implemented.
+
+## Product Risks
+
+- **Allowlist gate fires before plans 1-3 are merged** — Phase 0.1 will fail because allowlisted apps do not yet have `bounded-contexts.yaml`. Mitigation: Phase 0 explicitly confirms all three plans are merged before proceeding.
+- **Validator core changes (`bcregistry/validator.go`) introduce regressions** — fixes #4, #5, #11 edit the core. Mitigation: `(cd apps/rhino-cli && go test ./...)` required after each phase; 90% coverage threshold enforced.
+- **Pre-push `--apps` flag defaults change breaks existing single-app usage** — if `validate-adoption` previously accepted a positional arg, adding `--apps` must preserve backward compatibility. Mitigation: fix #1/#2 delivery steps include explicit backward-compat scenarios.
+- **`gherkin: []string` migration breaks existing single-string registries** — organiclever and plans 1-3 apps use single-string form. Mitigation: fix #11 adds `UnmarshalYAML` auto-conversion so existing registries continue to parse without change.
 
 ## Non-goals
 

@@ -40,6 +40,14 @@ Today the gap is silent:
 
 The refactor is closed-system. The biggest concrete risk is import path churn breaking `nx run wahidyankf-web:test:quick`; mitigated by phased TDD delivery (refactor one BC at a time, run tests after each phase).
 
+## Success Metrics
+
+- `[Judgment call]` `rhino-cli ddd bc wahidyankf` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `rhino-cli ddd ul wahidyankf` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `nx run wahidyankf-web:spec-coverage` reports 0 step gaps across all 5 bounded contexts.
+- `[Judgment call]` `bdd-ddd-tooling-gap-fill` can include `wahidyankf` in the allowlist gate at plan-4 day-1 without requiring any additional structural changes.
+- `[Judgment call]` 0 DDD drift reported by `ddd bc/ul` in the cycle between this plan's archival and the next PR that touches `apps/wahidyankf-web/src/`.
+
 ## Stakeholders
 
 Single maintainer (the site owner). No external contracts to honour. No coordinated downstream consumer.

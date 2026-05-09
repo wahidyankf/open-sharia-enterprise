@@ -225,6 +225,29 @@ Feature: ayokoding-web DDD + new specs format adoption
     And build-tools/ exists with its legacy contents unchanged
 ```
 
+## Personas
+
+- **Developer** (maintainer hat) — reshapes source and spec files, performs i18n middleware migration, runs tRPC router split, checks that validators pass.
+- **Spec author** (documentation hat) — writes glossaries, bounded-context map, per-BC READMEs, and multi-perspective gherkin workaround documentation.
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist step by step, including locale verification.
+- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **`swe-typescript-dev` agent** — performs TypeScript source moves, tRPC router extraction, i18n middleware migration, and import updates.
+
+## User Stories
+
+- As a developer, I want the ayokoding-web spec tree to follow the canonical C4 + DDD layout so that `rhino-cli ddd bc ayokoding` can validate structural invariants automatically.
+- As a developer, I want tRPC procedures split into per-BC `application/router.ts` files under `src/contexts/<bc>/` so that a change to one BC's router cannot silently break another.
+- As a spec author, I want the `i18n` BC to own the Next.js middleware so that locale negotiation logic is traceable to its owning bounded context.
+- As a spec author, I want multi-perspective BCs (`content`, `search`, `i18n`, `navigation`) to register the web-side gherkin path per the documented workaround, with a clear note that api-side paths are registered via plan 4 fix #11.
+- As a refactor executor, I want the phased TDD delivery checklist to guide me one BC at a time so that I can verify correctness after each discrete change.
+
+## Product Risks
+
+- **Multi-perspective BC gherkin path registered on wrong side** — if the api-side path is registered instead of the web-side path for `content`, `search`, `i18n`, `navigation`, `spec-coverage` will fail to find web-side feature files. Mitigation: step 3.2 explicitly calls out the workaround from `tech-docs.md §Multi-perspective gherkin: workaround`.
+- **i18n middleware migration breaks locale routing** — extracting `src/middleware.ts` to `src/contexts/i18n/application/middleware.ts` requires a correct re-export. Mitigation: step 6.5 runs FE-E2E with Indonesian locale explicitly.
+- **`build-tools/` or `cli/` gherkin touched accidentally** — either out-of-scope tree changing triggers an unexpected `specs validate-tree` failure. Mitigation: step 2.5 explicitly confirms these paths are unchanged.
+- **tRPC router split breaks `be-e2e` tests** — extracting a procedure incompletely causes HTTP 500s. Mitigation: `nx run ayokoding-web-be-e2e:test:e2e` run after each BC's router extraction.
+
 ## Non-goals
 
 - No new product feature.

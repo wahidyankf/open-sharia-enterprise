@@ -52,21 +52,7 @@ LOW-severity polish items from the audit (reverse-direction step check, AST-base
 
 ## Worktree
 
-Path: `worktrees/bdd-ddd-tooling-gap-fill/`
-
-Provisioning:
-
-```bash
-cd /Users/wkf/ose-projects/ose-public && claude --worktree bdd-ddd-tooling-gap-fill
-```
-
-Or via git directly:
-
-```bash
-git worktree add worktrees/bdd-ddd-tooling-gap-fill -b worktree/bdd-ddd-tooling-gap-fill
-```
-
-Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
+See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktree provisioning block consumed by the plan-execution workflow.
 
 ## Documents
 

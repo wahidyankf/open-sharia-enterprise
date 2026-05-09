@@ -237,7 +237,7 @@ into per-finding severity:
 _, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Criticality, f.Evidence)
 ```
 
-`validateSpecCounts()` body sets `Criticality: "HIGH"` for missing folder findings, keeps `"MEDIUM"` for empty-folder findings. The existing `SpecFinding.Criticality` field already supports this; only the print format needs the change.
+`validateSpecCounts()` body sets `Criticality: "HIGH"` for missing folder findings, keeps `"MEDIUM"` for empty-folder findings. The existing `SpecFinding.Criticality` field already supports this. Two changes are required: (1) set `Criticality: "HIGH"` in the missing-folder `SpecFinding{}` struct literal in `validateSpecCounts()` (currently set to `"MEDIUM"` at the sub-folder loop level); (2) change the print format on line 48 to use `f.Criticality` instead of the hardcoded string `"MEDIUM"`.
 
 ## Fix #9 — Severity audit log + env var rename
 

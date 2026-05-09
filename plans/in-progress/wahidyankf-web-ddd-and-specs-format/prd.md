@@ -187,6 +187,28 @@ Feature: wahidyankf-web DDD + new specs format adoption
     And each subdirectory contains exactly the layers declared in bounded-contexts.yaml
 ```
 
+## Personas
+
+- **Developer** (maintainer hat) — reshapes source and spec files, runs TDD cycles, checks that validators pass.
+- **Spec author** (documentation hat) — writes glossaries, bounded-context map, and per-BC READMEs.
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist step by step.
+- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **`swe-typescript-dev` agent** — performs TypeScript source moves and import updates.
+
+## User Stories
+
+- As a developer, I want the wahidyankf-web spec tree to follow the canonical C4 + DDD layout so that `rhino-cli ddd bc wahidyankf` can validate structural invariants automatically.
+- As a developer, I want source code organized by bounded context under `src/contexts/<bc>/<layer>/` so that a rename in one BC cannot silently break another.
+- As a spec author, I want per-BC Gherkin folders under `behavior/web/gherkin/<bc>/` so that the `spec-coverage` target can report step gaps per bounded context.
+- As a refactor executor, I want the phased TDD delivery checklist to guide me one BC at a time so that I can verify correctness after each discrete change.
+
+## Product Risks
+
+- **Gherkin features moved to wrong BC subfolder** — `spec-coverage` would miss step coverage for the misplaced feature and report a false green. Mitigation: step 2.1 lists exact source → destination paths.
+- **Import path churn breaks `test:quick`** — any file not updated to the new `src/contexts/` path causes a TypeScript build failure. Mitigation: phased refactor (one BC at a time) with `nx run wahidyankf-web:typecheck` after each BC.
+- **`bounded-contexts.yaml` schema error** — a typo in the registry causes `rhino-cli ddd bc wahidyankf` to fail with a parse error rather than a structural finding, masking real issues. Mitigation: step 3.2 validates the registry immediately after authoring.
+- **Legacy `fe/gherkin/` folder not removed** — `specs validate-tree` would report the unexpected folder. Mitigation: step 2.4 explicitly removes it.
+
 ## Non-goals
 
 - No new UI feature added by this plan.

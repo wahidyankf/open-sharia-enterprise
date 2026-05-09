@@ -38,7 +38,7 @@ One container: `web` (Next.js Vercel deployment). No tRPC server-side code today
 
 - E2E spec migration (`apps/wahidyankf-web-fe-e2e/` step files) — separate plan.
 - `apps/wahidyankf-web/src/test/` reorganization — colocate alongside refactored contexts where possible, but no test re-architecture.
-- Adopting the new `validate:specs-shape` pre-push gate — handled in `bdd-ddd-tooling-gap-fill` (this plan only adopts the format; tooling waits).
+- Adopting the `validate:specs-adoption` and `validate:specs-tree` pre-push gates — handled in `bdd-ddd-tooling-gap-fill` (this plan only adopts the format; tooling waits).
 
 ## Dependencies / sequencing
 
@@ -47,21 +47,7 @@ One container: `web` (Next.js Vercel deployment). No tRPC server-side code today
 
 ## Worktree
 
-Path: `worktrees/wahidyankf-web-ddd-and-specs-format/`
-
-Provisioning:
-
-```bash
-cd /Users/wkf/ose-projects/ose-public && claude --worktree wahidyankf-web-ddd-and-specs-format
-```
-
-Or via git directly:
-
-```bash
-git worktree add worktrees/wahidyankf-web-ddd-and-specs-format -b worktree/wahidyankf-web-ddd-and-specs-format
-```
-
-Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
+See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktree provisioning block consumed by the plan-execution workflow.
 
 ## Documents
 

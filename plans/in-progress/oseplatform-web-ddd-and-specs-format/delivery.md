@@ -4,6 +4,28 @@ All steps follow Red → Green → Refactor (TDD). Run `nx run oseplatform-web:t
 
 ---
 
+## Worktree
+
+Worktree path: `worktrees/oseplatform-web-ddd-and-specs-format/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree oseplatform-web-ddd-and-specs-format
+```
+
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+
+---
+
+## Environment Setup
+
+- [ ] Provision worktree: `claude --worktree oseplatform-web-ddd-and-specs-format` (creates `worktrees/oseplatform-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [ ] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [ ] Verify existing tests pass before making changes: `nx run oseplatform-web:test:quick`.
+
+---
+
 ## Phase 0 — Pre-flight inventory
 
 - [ ] **0.1** Read `apps/oseplatform-web/src/` end-to-end. Enumerate every file under `src/server/`, `src/components/`, `src/app/`, `src/lib/`, `src/scripts/`. Produce a concrete file-by-file mapping table (old path → new path) and append it to `tech-docs.md` under "Source refactor mechanics" (the table currently shows initial estimate only).
@@ -125,6 +147,8 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
 
 ## Phase 8 — Final validation gate
 
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 - [ ] **8.1** `rhino-cli specs validate-tree oseplatform` — 0 findings.
 - [ ] **8.2** `rhino-cli specs validate-counts specs/apps/oseplatform` — 0 findings.
 - [ ] **8.3** `rhino-cli specs validate-links specs/apps/oseplatform` — 0 findings.
@@ -133,20 +157,36 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
 - [ ] **8.6** `rhino-cli ddd ul oseplatform` — 0 findings.
 - [ ] **8.7** `nx run oseplatform-web:test:quick` — 0 findings, coverage ≥80%.
 - [ ] **8.8** `nx run oseplatform-web:spec-coverage` — 0 step gaps across both perspectives.
-- [ ] **8.10** `nx run oseplatform-web-be-e2e:test:e2e` — every tRPC scenario passes.
-- [ ] **8.11** `nx run oseplatform-web-fe-e2e:test:e2e` — every UI scenario passes.
-- [ ] **8.12** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
-- [ ] **8.13** `npm run lint:md` — 0 violations.
+- [ ] **8.9** `nx run oseplatform-web-be-e2e:test:e2e` — every tRPC scenario passes.
+- [ ] **8.10** `nx run oseplatform-web-fe-e2e:test:e2e` — every UI scenario passes.
+- [ ] **8.11** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
+- [ ] **8.12** `npm run lint:md` — 0 violations.
+
+### Manual UI Verification (Playwright MCP)
+
+- [ ] **8.13** Start dev server: `nx dev oseplatform-web` (listens at `localhost:3100`).
+- [ ] **8.14** Navigate to the home page via `browser_navigate` to `http://localhost:3100/` — confirm landing page renders without blank sections.
+- [ ] **8.15** `browser_snapshot` — verify bounded-context-organized components render correctly (content listings, navigation, theme visible).
+- [ ] **8.16** Navigate to a content article page and a search page; `browser_snapshot` each — confirm no layout regressions from the tRPC router split or source refactor.
+- [ ] **8.17** `browser_console_messages` — must show 0 JS errors across all tested pages.
+- [ ] **8.18** `browser_take_screenshot` for each page — attach for visual record.
 
 ---
 
 ## Phase 9 — Commit, push, archive
 
+### Commit Guidelines
+
+- [ ] Commit changes thematically — group related changes into logically cohesive commits.
+- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+- [ ] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from project.json wiring).
+- [ ] Do NOT bundle unrelated fixes into a single commit.
+
 - [ ] **9.1** Commit (single atomic, or per-phase if maintainer prefers):
   - Message: `feat(oseplatform-web): adopt C4 + DDD specs format with api slug`
   - Body lists: 7 BCs, slug rename `be → api`, tRPC router split, DDD wiring.
 - [ ] **9.2** Push via Trunk Based Development (default) or draft PR (optional).
-- [ ] **9.3** Wait for `main` CI green per `governance/development/workflow/ci-monitoring.md`.
+- [ ] **9.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **9.4** Move plan folder to `plans/done/YYYY-MM-DD__oseplatform-web-ddd-and-specs-format/`.
 - [ ] **9.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] **9.6** Notify `bdd-ddd-tooling-gap-fill` plan: oseplatform now allowlist-eligible.

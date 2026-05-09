@@ -42,6 +42,14 @@ Today the gap mirrors oseplatform's, plus i18n-specific concerns:
 1. **i18n middleware refactor**: `src/middleware.ts` is invoked by Next.js at the edge for every request. Moving it under `src/contexts/i18n/` requires either keeping `src/middleware.ts` as a thin re-export OR updating `next.config.js` middleware path config (Next.js 16 expects `src/middleware.ts` by default; alternative locations need explicit configuration). Mitigated by keeping a one-line `src/middleware.ts` that re-exports from `src/contexts/i18n/application/middleware.ts` — preserves Next.js convention while putting code under BC ownership.
 2. **Locale-aware URL routing in E2E**: any selectors that hardcode `/en/...` or `/id/...` paths could break if the middleware refactor changes redirect behavior. Mitigated by doing the i18n BC refactor last (after all other BCs settle), then running fe-e2e with both locales.
 
+## Success Metrics
+
+- `[Judgment call]` `rhino-cli ddd bc ayokoding` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `rhino-cli ddd ul ayokoding` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `nx run ayokoding-web:spec-coverage` reports 0 step gaps across both perspectives (`web` and `api`) for all 6 bounded contexts.
+- `[Judgment call]` `bdd-ddd-tooling-gap-fill` can include `ayokoding` in the allowlist gate at plan-4 day-1 without requiring any additional structural changes.
+- `[Judgment call]` 0 DDD drift reported by `ddd bc/ul` in the cycle between this plan's archival and the next PR that touches `apps/ayokoding-web/src/`.
+
 ## Stakeholders
 
 Single maintainer. Indonesian content audience benefits indirectly (fewer locale-routing bugs). No external API contract.

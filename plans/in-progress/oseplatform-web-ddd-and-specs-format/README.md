@@ -45,7 +45,7 @@ Apply the same C4 + DDD layout that `organiclever` already uses to `oseplatform-
 - `oseplatform-cli` and its specs (`specs/apps/oseplatform/cli/`) — separate plan if/when CLI moves to the new format.
 - E2E spec migration (`apps/oseplatform-web-{be,fe}-e2e/` step files).
 - Any change to deployment pipeline or `prod-oseplatform-web` branch.
-- Adopting the `validate:specs-shape` pre-push gate — handled in `bdd-ddd-tooling-gap-fill` (this plan only adopts the format).
+- Adopting the `validate:specs-adoption` and `validate:specs-tree` pre-push gates — handled in `bdd-ddd-tooling-gap-fill` (this plan only adopts the format).
 
 ## Dependencies / sequencing
 
@@ -54,21 +54,7 @@ Apply the same C4 + DDD layout that `organiclever` already uses to `oseplatform-
 
 ## Worktree
 
-Path: `worktrees/oseplatform-web-ddd-and-specs-format/`
-
-Provisioning:
-
-```bash
-cd /Users/wkf/ose-projects/ose-public && claude --worktree oseplatform-web-ddd-and-specs-format
-```
-
-Or via git directly:
-
-```bash
-git worktree add worktrees/oseplatform-web-ddd-and-specs-format -b worktree/oseplatform-web-ddd-and-specs-format
-```
-
-Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
+See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktree provisioning block consumed by the plan-execution workflow.
 
 ## Documents
 

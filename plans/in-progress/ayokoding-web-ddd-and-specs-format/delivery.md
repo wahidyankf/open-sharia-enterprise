@@ -4,6 +4,28 @@ All steps follow Red → Green → Refactor (TDD). Run `nx run ayokoding-web:tes
 
 ---
 
+## Worktree
+
+Worktree path: `worktrees/ayokoding-web-ddd-and-specs-format/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree ayokoding-web-ddd-and-specs-format
+```
+
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+
+---
+
+## Environment Setup
+
+- [ ] Provision worktree: `claude --worktree ayokoding-web-ddd-and-specs-format` (creates `worktrees/ayokoding-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [ ] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [ ] Verify existing tests pass before making changes: `nx run ayokoding-web:test:quick`.
+
+---
+
 ## Phase 0 — Pre-flight inventory
 
 - [ ] **0.1** Read `apps/ayokoding-web/src/` end-to-end. Enumerate every file under `src/server/`, `src/components/`, `src/app/`, `src/lib/`, `src/middleware.ts`, `src/scripts/`. Produce a concrete file-by-file mapping table.
@@ -72,7 +94,7 @@ All steps follow Red → Green → Refactor (TDD). Run `nx run ayokoding-web:tes
 ## Phase 3 — DDD scaffolding
 
 - [ ] **3.1 RED** `rhino-cli ddd bc ayokoding` — fails: registry not found.
-- [ ] **3.2 GREEN** Author `ddd/bounded-contexts.yaml` per `tech-docs.md` template (6 contexts, schema v2).
+- [ ] **3.2 GREEN** Author `ddd/bounded-contexts.yaml` per `tech-docs.md` template (6 contexts, schema v2). For the 4 multi-perspective BCs (`content`, `search`, `i18n`, `navigation`): set `gherkin:` to the web-side path (`behavior/web/gherkin/<bc>`) per the registry limitation workaround in `tech-docs.md §Multi-perspective gherkin: workaround`. Do NOT set the api-side path here — api-side paths will be registered via plan 4 fix #11 once the `gherkin: []string` schema extension ships.
 - [ ] **3.3 RED** `rhino-cli ddd bc ayokoding` — fails: code dirs not yet created. Expected.
 - [ ] **3.4** Author `ddd/bounded-context-map.md` with Mermaid relationship diagram.
 - [ ] **3.5** Author 6 glossaries under `ddd/ubiquitous-language/<bc>.md`.
@@ -150,6 +172,8 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
 
 ## Phase 9 — Final validation gate
 
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 - [ ] **9.1** `rhino-cli specs validate-tree ayokoding` — 0 findings.
 - [ ] **9.2** `rhino-cli specs validate-counts specs/apps/ayokoding` — 0 findings.
 - [ ] **9.3** `rhino-cli specs validate-links specs/apps/ayokoding` — 0 findings.
@@ -158,21 +182,38 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
 - [ ] **9.6** `rhino-cli ddd ul ayokoding` — 0 findings.
 - [ ] **9.7** `nx run ayokoding-web:test:quick` — 0 findings, coverage ≥80%.
 - [ ] **9.8** `nx run ayokoding-web:spec-coverage` — 0 step gaps across both perspectives.
-- [ ] **9.10** `nx run ayokoding-web-be-e2e:test:e2e` — every tRPC scenario passes.
-- [ ] **9.11** `nx run ayokoding-web-fe-e2e:test:e2e` — every UI scenario passes in both English and Indonesian.
-- [ ] **9.12** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
-- [ ] **9.13** `npm run lint:md` — 0 violations.
-- [ ] **9.14** Confirm `specs/apps/ayokoding/cli/` and `build-tools/` unchanged.
+- [ ] **9.9** `nx run ayokoding-web-be-e2e:test:e2e` — every tRPC scenario passes.
+- [ ] **9.10** `nx run ayokoding-web-fe-e2e:test:e2e` — every UI scenario passes in both English and Indonesian.
+- [ ] **9.11** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
+- [ ] **9.12** `npm run lint:md` — 0 violations.
+- [ ] **9.13** Confirm `specs/apps/ayokoding/cli/` and `build-tools/` unchanged.
+
+### Manual UI Verification (Playwright MCP)
+
+- [ ] **9.14** Start dev server: `nx dev ayokoding-web` (listens at `localhost:3101`).
+- [ ] **9.15** Navigate to `http://localhost:3101/en/` via `browser_navigate` — confirm English content renders without blank sections.
+- [ ] **9.16** Navigate to `http://localhost:3101/id/` — confirm Indonesian locale renders correctly (locale switcher visible, content in Indonesian).
+- [ ] **9.17** `browser_snapshot` on each locale — verify bounded-context-organized components render correctly (content listings, navigation, search visible).
+- [ ] **9.18** Test locale switching: click locale switcher in UI via `browser_click` — confirm redirect to correct locale URL.
+- [ ] **9.19** `browser_console_messages` — must show 0 JS errors across both locales.
+- [ ] **9.20** `browser_take_screenshot` for English and Indonesian home pages — attach for visual record.
 
 ---
 
 ## Phase 10 — Commit, push, archive
 
+### Commit Guidelines
+
+- [ ] Commit changes thematically — group related changes into logically cohesive commits.
+- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+- [ ] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from i18n middleware migration separate from project.json wiring).
+- [ ] Do NOT bundle unrelated fixes into a single commit.
+
 - [ ] **10.1** Commit (single atomic):
   - Message: `feat(ayokoding-web): adopt C4 + DDD specs format with api slug + i18n BC ownership`
   - Body lists: 6 BCs, slug rename `be → api`, tRPC router split, i18n middleware migration, DDD wiring.
 - [ ] **10.2** Push via Trunk Based Development.
-- [ ] **10.3** Wait for `main` CI green.
+- [ ] **10.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **10.4** Move plan folder to `plans/done/YYYY-MM-DD__ayokoding-web-ddd-and-specs-format/`.
 - [ ] **10.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] **10.6** Notify `bdd-ddd-tooling-gap-fill` plan: ayokoding now allowlist-eligible. With plans 1+2+3 done, plan 4 is unblocked.

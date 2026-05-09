@@ -221,6 +221,28 @@ Feature: oseplatform-web DDD + new specs format adoption
     And specs/apps/oseplatform/cli/gherkin/README.md is unchanged
 ```
 
+## Personas
+
+- **Developer** (maintainer hat) — reshapes source and spec files, runs tRPC router split, checks that validators pass.
+- **Spec author** (documentation hat) — writes glossaries, bounded-context map, per-BC READMEs, and slug-vs-container note.
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist step by step.
+- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **`swe-typescript-dev` agent** — performs TypeScript source moves, tRPC router extraction, and import updates.
+
+## User Stories
+
+- As a developer, I want the oseplatform-web spec tree to follow the canonical C4 + DDD layout so that `rhino-cli ddd bc oseplatform` can validate structural invariants automatically.
+- As a developer, I want tRPC procedures split into per-BC `application/router.ts` files under `src/contexts/<bc>/` so that a change to one BC's router cannot silently break another.
+- As a spec author, I want the `be` slug renamed to `api` and documented with a slug-vs-container explanation so that future contributors understand why the slug does not map to a separate deployable.
+- As a refactor executor, I want the phased TDD delivery checklist to guide me one BC at a time so that I can verify correctness after each discrete change.
+
+## Product Risks
+
+- **Gherkin features moved to wrong BC subfolder** — `spec-coverage` would miss step coverage for the misplaced feature and report a false green. Mitigation: steps 2.1 and 2.2 list exact source → destination paths.
+- **tRPC router split breaks `be-e2e` tests** — extracting a procedure incompletely causes HTTP 500s that the E2E tests catch. Mitigation: `nx run oseplatform-web-be-e2e:test:e2e` run after each BC's router extraction (phases 4.1–4.7).
+- **`be → api` slug rename missed in downstream references** — old `be/gherkin/` paths still referenced in README, step files, or project.json. Mitigation: step 7.1 explicitly updates all references.
+- **`bounded-contexts.yaml` schema error** — causes `rhino-cli ddd bc oseplatform` to fail with a parse error. Mitigation: step 3.2 validates the registry immediately after authoring.
+
 ## Non-goals
 
 - No new product feature added.

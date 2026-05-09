@@ -12,7 +12,7 @@ The gap is not in the validators. It is in the layer above them.
 
 ## Business value
 
-1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-shape` exit code on pre-push. The first kind drifts; the second kind doesn't.
+1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-adoption validate:specs-tree` exit code on pre-push. The first kind drifts; the second kind doesn't.
 2. **Multi-surface DDD becomes honest.** Plans 2 and 3 introduce bounded contexts that span web + api perspectives. Without fix #4 (per-BC `code_lang:`), `ddd ul` would silently fail to validate F# / TS / both for any cross-perspective BC. With fix #4, every code identifier in every glossary is grep-checked in the right files.
 3. **Drift-command housekeeping.** Three placeholder commands that appear functional in `--help` are a long-standing source of false security. Deleting or hiding them removes a lurking trap.
 4. **Future-app onboarding cost drops.** A new web app adopts DDD by adding to the allowlist + creating its `ddd/bounded-contexts.yaml`. No more per-project.json copy-paste of `ddd bc/ul` invocations once fix #1 + #2 wire the centralized gate.
@@ -39,6 +39,15 @@ The gap is not in the validators. It is in the layer above them.
 - **Low**: fixes #1, #2, #3, #7, #8, #9, #10 are mechanical — wiring, severity strings, whitelist expansion. Each lands behind a TDD red→green and a manual test.
 - **Medium**: fixes #4 (per-BC `code_lang:`) and #5 (multi-parent orphan walk) edit the validator core (`bcregistry/validator.go`, `glossary/validator.go`). New tests cover positive + negative cases per the existing 90% coverage rule. Risk: test fixture drift across the existing 30+ rhino-cli test files. Mitigated by `(cd apps/rhino-cli && go test ./...)` after each phase.
 - **Medium**: fix #6 (multi-file scenario matching) changes spec-coverage's behavior in non-shared-steps mode. Today only `--shared-steps` mode is in production use; non-shared mode change is theoretically observable but practically zero-impact since no project uses it.
+
+## Success Metrics
+
+- `[Judgment call]` `nx run rhino-cli:validate:specs-adoption` exits 0 for all four allowlisted web apps after this plan lands on `main`.
+- `[Judgment call]` `nx run rhino-cli:validate:specs-tree` exits 0 for all four allowlisted web apps after this plan lands on `main`.
+- `[Judgment call]` `rhino-cli specs --help` lists exactly 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption) — no drift-\* placeholders.
+- `[Judgment call]` `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits a stderr audit line and exits 0 even when findings exist.
+- `[Judgment call]` `nx run rhino-cli:test:quick` reports coverage ≥90% after all 11 fixes.
+- `[Judgment call]` The pre-push gate blocks a push that introduces a structural spec violation in any allowlisted app.
 
 ## Stakeholders
 

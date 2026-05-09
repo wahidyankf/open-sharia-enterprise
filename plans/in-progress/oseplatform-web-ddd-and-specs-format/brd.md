@@ -40,6 +40,14 @@ Today the gap is significant:
 1. **tRPC router split** is real production-code reorganization. A flat `src/server/router.ts` becomes seven per-BC routers stitched together at the app router. If the wiring breaks, content rendering breaks. Mitigated by phased TDD: split one BC at a time, run BE-E2E after each.
 2. **Slug rename `be` → `api`** breaks any external link, search-engine cache, or hand-rolled script that referenced `behavior/be/gherkin/`. Mitigated by adding a one-time note in `apps/oseplatform-web/README.md` and (optionally) a redirect file in the legacy path during a deprecation window. Since oseplatform's contributor surface is small, the deprecation window can be zero in practice.
 
+## Success Metrics
+
+- `[Judgment call]` `rhino-cli ddd bc oseplatform` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `rhino-cli ddd ul oseplatform` exits 0 with "0 finding(s)" after the refactor lands on `main`.
+- `[Judgment call]` `nx run oseplatform-web:spec-coverage` reports 0 step gaps across both perspectives (`web` and `api`) for all 7 bounded contexts.
+- `[Judgment call]` `bdd-ddd-tooling-gap-fill` can include `oseplatform` in the allowlist gate at plan-4 day-1 without requiring any additional structural changes.
+- `[Judgment call]` 0 DDD drift reported by `ddd bc/ul` in the cycle between this plan's archival and the next PR that touches `apps/oseplatform-web/src/`.
+
 ## Stakeholders
 
 Single maintainer (the platform owner). External readership is low-volume content consumers (RSS subscribers, search-engine crawlers) who do not interact with the spec tree directly. No external API contract to honour.

@@ -2,6 +2,30 @@
 
 All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
 
+> **Manual behavioral acceptance gate**: Per-phase steps implement the code change. The manual CLI smoke verification for each fix (expected inputs → expected stdout/stderr/exit-code) is consolidated in **Phase 12.10**. After each phase completes its TDD cycle, proceed; full behavioral assertion runs in Phase 12.
+
+---
+
+## Worktree
+
+Worktree path: `worktrees/bdd-ddd-tooling-gap-fill/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree bdd-ddd-tooling-gap-fill
+```
+
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+
+---
+
+## Environment Setup
+
+- [ ] Provision worktree: `claude --worktree bdd-ddd-tooling-gap-fill` (creates `worktrees/bdd-ddd-tooling-gap-fill/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [ ] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [ ] Verify existing tests pass before making changes: `nx run rhino-cli:test:quick`.
+
 ---
 
 ## Phase 0 — Pre-flight gate
@@ -122,9 +146,9 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
 ## Phase 7 — Severity reconciliation (Fix #8)
 
 - [ ] **7.1 RED** Update unit test in `cmd/specs_validate_counts_test.go` to assert HIGH for missing folder, MEDIUM for empty folder. Test fails (today missing reports MEDIUM).
-- [ ] **7.2 GREEN** Edit `cmd/specs_validate_counts.go`:
-  - `validateSpecCounts()`: set `Criticality: "HIGH"` for missing-folder finding (already so per code; the print format on line 48 hardcodes MEDIUM).
-  - Print format: use `f.Criticality` instead of hardcoded `MEDIUM`.
+- [ ] **7.2 GREEN** Edit `cmd/specs_validate_counts.go` — two changes required:
+  1. In `validateSpecCounts()`, change the missing-folder finding's `Criticality` from `"MEDIUM"` to `"HIGH"` in the struct literal at the missing-folder branch (the empty-folder branch keeps `"MEDIUM"`).
+  2. Replace the hardcoded `MEDIUM` in the printf format on line 48 (`%s: MEDIUM: %s`) with `%s: %s: %s` and pass `f.Criticality` so the runtime severity string matches the struct value.
 - [ ] **7.3 GREEN** All tests pass. Manual smoke: create a missing/empty folder pair under a test fixture; confirm severity strings.
 
 ---
@@ -221,6 +245,8 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
 
 ## Phase 12 — Final validation gate
 
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes. This follows the root cause orientation principle — proactively fix preexisting errors encountered during work.
+
 - [ ] **12.1** `(cd apps/rhino-cli && go build ./... && go test ./...)` — all pass.
 - [ ] **12.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
 - [ ] **12.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
@@ -244,11 +270,18 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
 
 ## Phase 13 — Commit, push, archive
 
+### Commit Guidelines
+
+- [ ] Commit changes thematically — group related changes into logically cohesive commits.
+- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+- [ ] Split different domains/concerns into separate commits (e.g., allowlist wiring separate from schema changes separate from governance doc updates).
+- [ ] Do NOT bundle unrelated fixes into a single commit.
+
 - [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
   - Body lists 11 fixes by number.
 - [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
-- [ ] **13.3** Wait for `main` CI green per `governance/development/workflow/ci-monitoring.md`.
+- [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
 - [ ] **13.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] **13.6** Surface for downstream: confirm `repo-ose-primer-propagation-maker` has the new constants, agent definitions, and validator changes on its propagation list. The maker runs in dry-run by default; an actual primer PR is a separate decision.
