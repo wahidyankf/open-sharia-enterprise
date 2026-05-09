@@ -114,17 +114,39 @@ context — use this when agent delegation is unavailable.
 
 ## Validation Dimensions
 
-The checker validates seven categories across all spec areas:
+The checker validates ten categories across all spec areas:
 
-| #   | Category                         | What It Checks                                                 |
-| --- | -------------------------------- | -------------------------------------------------------------- |
-| 1   | Structural Completeness          | Every directory has README.md                                  |
-| 2   | Feature File Inventory           | README counts match actual .feature files and scenarios        |
-| 3   | Gherkin Format Compliance        | Feature headers, user stories, Background steps, naming        |
-| 4   | Cross-Spec Consistency           | Shared domains align between related specs (demo-be ↔ demo-fe) |
-| 5   | C4 Diagram Consistency           | Accessible colors, actor consistency, file references          |
-| 6   | Cross-Reference Integrity        | All markdown links resolve to existing files                   |
-| 7   | Spec-to-Implementation Alignment | Spec READMEs reference implementations that exist              |
+| #   | Category                         | What It Checks                                                                                                            | Method                      |
+| --- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| 1   | Structural Completeness          | Every directory has README.md                                                                                             | LLM                         |
+| 2   | Feature File Inventory           | README counts match actual .feature files and scenarios                                                                   | LLM                         |
+| 3   | Gherkin Format Compliance        | Feature headers, user stories, Background steps, naming                                                                   | LLM                         |
+| 4   | Cross-Spec Consistency           | Shared domains align between related specs (demo-be ↔ demo-fe)                                                            | LLM                         |
+| 5   | C4 Diagram Consistency           | Accessible colors, actor consistency, file references                                                                     | LLM                         |
+| 6   | Cross-Reference Integrity        | All markdown links resolve to existing files                                                                              | LLM                         |
+| 7   | Spec-to-Implementation Alignment | Spec READMEs reference implementations that exist                                                                         | LLM                         |
+| 8   | Spec Tree Shape                  | C4-aware five-folder tree compliance per surface profile (product/, system-context/, containers/, components/, behavior/) | Deterministic via rhino-cli |
+| 9   | Adoption Gaps                    | BDD/DDD/Contracts adoption check per surface profile (full-stack, web-only, CLI)                                          | LLM with rhino-cli assist   |
+| 10  | Drift Detection                  | Route/endpoint/contract drift between spec files and implementation code                                                  | Deterministic via rhino-cli |
+
+### Deterministic Offload
+
+Categories 8 and 10 (Spec Tree Shape and Drift Detection) are **deterministic checks** owned by
+`rhino-cli specs <subcmd>` Go code (per FR-14 of the App README vs Specs Convention). Agents shell
+out to these commands rather than re-implementing the check in prompt logic. Category 9 (Adoption
+Gaps) uses `rhino-cli specs validate-adoption` for the structural portion and LLM reasoning for
+the narrative justification assessment.
+
+| rhino-cli command                         | Validates                              | Maps to Category |
+| ----------------------------------------- | -------------------------------------- | ---------------- |
+| `rhino-cli specs validate-tree <app>`     | Five-folder C4-aware tree shape        | 8                |
+| `rhino-cli specs validate-adoption <app>` | BDD/DDD/Contracts adoption per profile | 9 (partial)      |
+| `rhino-cli specs drift-routes <app>`      | Routes/screens spec vs app code        | 10               |
+| `rhino-cli specs drift-endpoints <app>`   | Endpoint spec vs handler code          | 10               |
+
+Agents MUST NOT re-implement these checks with file-glob heuristics or LLM inference when the
+`rhino-cli` command exists. If the command is unavailable (pre-implementation), mark the finding
+as `[rhino-cli pending]` and skip rather than substitute a weaker heuristic.
 
 ## Steps
 
@@ -332,10 +354,15 @@ Typical execution flow (folders: `[specs/apps/organiclever-be, specs/apps/organi
 ```
 Iteration 1:
   Check organiclever-be → 4 findings (1 CRITICAL, 2 HIGH, 1 MEDIUM)
+    Examples: "Spec Tree Shape: missing containers/ folder [HIGH]",
+              "Adoption Gaps: journal context has no Gherkin specs [HIGH]"
   Check organiclever-web → 3 findings (0 CRITICAL, 2 HIGH, 1 LOW)
+    Examples: "Drift Detection: routes-and-screens.md lists /stats but no matching route in app code [HIGH]"
   Cross-folder check → 5 findings (0 CRITICAL, 3 HIGH, 1 MEDIUM, 1 LOW)
   Total: 12 findings (1 CRITICAL, 7 HIGH, 2 MEDIUM, 2 LOW)
   [normal mode] Fix 8 (1 CRITICAL + 7 HIGH)
+    Note: Spec Tree Shape and Drift Detection findings → shell out to rhino-cli to confirm
+          before applying fix; Adoption Gaps findings → LLM applies narrative fix
   Re-check → 4 findings (0 CRITICAL, 1 HIGH, 2 MEDIUM, 1 LOW)
 
 Iteration 2:
