@@ -455,16 +455,38 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits.
-- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
-- [ ] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from project.json wiring).
-- [ ] Do NOT bundle unrelated fixes into a single commit.
+- [x] Commit changes thematically — group related changes into logically cohesive commits.
+  - **Date**: 2026-05-10 — Done (3 commits)
+- [x] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+  - **Date**: 2026-05-10 — Done
+- [x] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from project.json wiring).
+  - **Date**: 2026-05-10 — Done (3 commits: spec+DDD+docs, source refactor, config+wiring+E2E)
+- [x] Do NOT bundle unrelated fixes into a single commit.
+  - **Date**: 2026-05-10 — Done
 
-- [ ] **9.1** Commit (single atomic, or per-phase if maintainer prefers):
+- [x] **9.1** Commit (single atomic, or per-phase if maintainer prefers):
   - Message: `feat(oseplatform-web): adopt C4 + DDD specs format with api slug`
   - Body lists: 7 BCs, slug rename `be → api`, tRPC router split, DDD wiring.
-- [ ] **9.2** Push via Trunk Based Development (default) or draft PR (optional).
-- [ ] **9.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
-- [ ] **9.4** Move plan folder to `plans/done/YYYY-MM-DD__oseplatform-web-ddd-and-specs-format/`.
-- [ ] **9.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
-- [ ] **9.6** Notify `bdd-ddd-tooling-gap-fill` plan: oseplatform now allowlist-eligible.
+  - **Date**: 2026-05-10
+  - **Status**: Done — 3 per-phase commits on worktree branch `worktree/cozy-dazzling-orbit`
+  - **Notes**: Commit 1: spec+DDD+docs. Commit 2: source refactor. Commit 3: config+wiring+E2E fixes.
+- [x] **9.2** Push via Trunk Based Development (default) or draft PR (optional).
+  - **Date**: 2026-05-10
+  - **Status**: Done — pushed to origin/main
+  - **Notes**: FF-merged worktree/cozy-dazzling-orbit to local main; pushed origin main. 135 files changed, 2924 insertions, 605 deletions.
+- [x] **9.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+  - **Date**: 2026-05-10
+  - **Status**: Done (no CI trigger on push to main — expected)
+  - **Notes**: `gh run list --commit=$HEAD` returns 0 runs. The "Test and Deploy - OSE Platform Web" workflow triggers on push to `prod-oseplatform-web` (deployment branch), not on push to `main`. All local quality gates passed: typecheck ✓ lint ✓ test:quick 136 tests 90.84% ✓ be-E2E 12/12 ✓ fe-E2E 42/42 ✓ spec-coverage ✓.
+- [x] **9.4** Move plan folder to `plans/done/YYYY-MM-DD__oseplatform-web-ddd-and-specs-format/`.
+  - **Date**: 2026-05-10
+  - **Status**: Done
+  - **Files Changed**: `plans/done/2026-05-10__oseplatform-web-ddd-and-specs-format/`
+- [x] **9.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
+  - **Date**: 2026-05-10
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/README.md`, `plans/done/README.md`
+- [x] **9.6** Notify `bdd-ddd-tooling-gap-fill` plan: oseplatform now allowlist-eligible.
+  - **Date**: 2026-05-10
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/bdd-ddd-tooling-gap-fill/delivery.md`
