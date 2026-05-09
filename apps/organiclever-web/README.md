@@ -190,7 +190,7 @@ Tests use Vitest with `@amiceli/vitest-cucumber` for BDD-style Gherkin specs.
 
 Coverage threshold: 70% lines (enforced by `rhino-cli test-coverage validate`).
 
-`test:quick` also runs `rhino-cli bc validate organiclever` and `rhino-cli ul validate organiclever`
+`test:quick` also runs `rhino-cli ddd bc organiclever` and `rhino-cli ddd ul organiclever`
 to enforce DDD structural parity and glossary accuracy. Both run at `error` severity by default.
 
 **Local escape hatch** — if a false-positive blocks you before a fix lands, set:

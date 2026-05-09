@@ -11,8 +11,8 @@ import (
 
 var bcSeverity string
 
-var bcValidateCmd = &cobra.Command{
-	Use:   "validate <app>",
+var dddBcCmd = &cobra.Command{
+	Use:   "bc <app>",
 	Short: "Validate bounded-context structural parity against the registry",
 	Long: `Verify that the filesystem matches the registry at
 specs/apps/<app>/bounded-contexts.yaml.
@@ -33,21 +33,21 @@ Severity is resolved in priority order:
   2. ORGANICLEVER_RHINO_DDD_SEVERITY environment variable
   3. Default: error`,
 	Example: `  # Validate organiclever bounded-context structure
-  rhino-cli bc validate organiclever
+  rhino-cli ddd bc organiclever
 
   # Downgrade findings to warnings (escape hatch only)
-  rhino-cli bc validate organiclever --severity=warn`,
+  rhino-cli ddd bc organiclever --severity=warn`,
 	Args:          cobra.ExactArgs(1),
 	SilenceErrors: true,
-	RunE:          runBcValidate,
+	RunE:          runDddBc,
 }
 
 func init() {
-	bcValidateCmd.Flags().StringVar(&bcSeverity, "severity", "", "override finding severity: warn|error")
-	bcCmd.AddCommand(bcValidateCmd)
+	dddBcCmd.Flags().StringVar(&bcSeverity, "severity", "", "override finding severity: warn|error")
+	dddCmd.AddCommand(dddBcCmd)
 }
 
-func runBcValidate(cmd *cobra.Command, args []string) error {
+func runDddBc(cmd *cobra.Command, args []string) error {
 	repoRoot, err := findGitRoot()
 	if err != nil {
 		return fmt.Errorf("failed to find git repository root: %w", err)
@@ -65,12 +65,10 @@ func runBcValidate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Print all findings.
 	for _, f := range findings {
 		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity, f.Message)
 	}
 
-	// Exit non-zero if any error-severity findings remain.
 	errCount := 0
 	for _, f := range findings {
 		if f.Severity == "error" {
@@ -78,12 +76,11 @@ func runBcValidate(cmd *cobra.Command, args []string) error {
 		}
 	}
 	if errCount > 0 {
-		return fmt.Errorf("%d error finding(s) found by bc validate", errCount)
+		return fmt.Errorf("%d error finding(s) found by ddd bc", errCount)
 	}
 	return nil
 }
 
-// resolveBcSeverity returns the effective severity, checking flag → env var → default.
 func resolveBcSeverity(flagVal string) string {
 	if flagVal != "" {
 		return normaliseSeverity(flagVal)

@@ -498,7 +498,7 @@ export default function Counter() {
 - **Glossaries**: `specs/apps/organiclever/ubiquitous-language/<bc>.md`
 - **Design intent (full prose)**: [`plans/done/2026-05-02__organiclever-adopt-ddd/tech-docs.md`](../../../plans/done/2026-05-02__organiclever-adopt-ddd/tech-docs.md)
 - **ADR**: [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
-- **Enforcement**: [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md) — `rhino-cli bc validate` and `rhino-cli ul validate`
+- **Enforcement**: [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md) — `rhino-cli ddd bc` and `rhino-cli ddd ul`
 
 ### Bounded contexts
 
@@ -544,8 +544,8 @@ When you add a new domain term to code OR a Gherkin feature:
 ```bash
 nx run organiclever-web:test:quick
 # This runs (among other things):
-#   rhino-cli bc validate organiclever
-#   rhino-cli ul validate organiclever
+#   rhino-cli ddd bc organiclever
+#   rhino-cli ddd ul organiclever
 # Both must exit zero before the commit can proceed.
 ```
 

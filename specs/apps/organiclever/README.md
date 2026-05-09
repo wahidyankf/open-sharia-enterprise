@@ -57,7 +57,7 @@ frontend is local-first.
 
 ## Spec Artifacts
 
-- **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Machine-readable DDD registry consumed by `rhino-cli bc validate` and `rhino-cli ul validate` to enforce structural parity and glossary parity
+- **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Machine-readable DDD registry consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul` to enforce structural parity and glossary parity
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
 - **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
 - **[fe/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))

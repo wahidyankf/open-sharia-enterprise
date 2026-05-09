@@ -71,8 +71,8 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "commands": [
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go bc validate organiclever)",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ul validate organiclever)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc organiclever)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul organiclever)",
           "node scripts/gen-migrations.mjs && npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-web/coverage/lcov.info 70)"
         ],
         "parallel": false,

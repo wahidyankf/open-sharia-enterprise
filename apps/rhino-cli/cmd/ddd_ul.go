@@ -11,8 +11,8 @@ import (
 
 var ulSeverity string
 
-var ulValidateCmd = &cobra.Command{
-	Use:   "validate <app>",
+var dddUlCmd = &cobra.Command{
+	Use:   "ul <app>",
 	Short: "Validate ubiquitous-language glossary parity against the registry",
 	Long: `Verify that every glossary file listed in specs/apps/<app>/bounded-contexts.yaml
 is well-formed and internally consistent.
@@ -31,21 +31,21 @@ Severity is resolved in priority order:
   2. ORGANICLEVER_RHINO_DDD_SEVERITY environment variable
   3. Default: error`,
 	Example: `  # Validate organiclever glossaries
-  rhino-cli ul validate organiclever
+  rhino-cli ddd ul organiclever
 
   # Downgrade findings to warnings (escape hatch only)
-  rhino-cli ul validate organiclever --severity=warn`,
+  rhino-cli ddd ul organiclever --severity=warn`,
 	Args:          cobra.ExactArgs(1),
 	SilenceErrors: true,
-	RunE:          runUlValidate,
+	RunE:          runDddUl,
 }
 
 func init() {
-	ulValidateCmd.Flags().StringVar(&ulSeverity, "severity", "", "override finding severity: warn|error")
-	ulCmd.AddCommand(ulValidateCmd)
+	dddUlCmd.Flags().StringVar(&ulSeverity, "severity", "", "override finding severity: warn|error")
+	dddCmd.AddCommand(dddUlCmd)
 }
 
-func runUlValidate(cmd *cobra.Command, args []string) error {
+func runDddUl(cmd *cobra.Command, args []string) error {
 	repoRoot, err := findGitRoot()
 	if err != nil {
 		return fmt.Errorf("failed to find git repository root: %w", err)
@@ -74,7 +74,7 @@ func runUlValidate(cmd *cobra.Command, args []string) error {
 		}
 	}
 	if errCount > 0 {
-		return fmt.Errorf("%d error finding(s) found by ul validate", errCount)
+		return fmt.Errorf("%d error finding(s) found by ddd ul", errCount)
 	}
 	return nil
 }

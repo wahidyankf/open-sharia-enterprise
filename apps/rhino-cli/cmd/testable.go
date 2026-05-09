@@ -70,10 +70,10 @@ var gitDefaultDepsFn = git.DefaultDeps
 // docs validate-mermaid command delegation.
 var docsValidateMermaidFn = mermaid.ValidateBlocks
 
-// bc validate command delegation.
+// ddd bc command delegation.
 var bcValidateAllFn = bcregistry.ValidateAll
 
-// ul validate command delegation.
+// ddd ul command delegation.
 var ulValidateAllFn = glossary.ValidateAll
 
 // readFileFn is a variable for dependency injection of os.ReadFile in tests.

@@ -352,14 +352,14 @@ const (
 	stepEnvFileCopiedBackToOriginalPathInWorktree    = `^the \.env file is copied back to its original path in the worktree$`
 )
 
-// ul validate step patterns.
+// ddd ul step patterns.
 const (
 	stepUlValidRegistryCleanGlossaries          = `^the repository has a valid bounded-contexts\.yaml for "organiclever"$`
 	stepUlEveryGlossaryCorrectFrontmatter       = `^every registered glossary file has correct frontmatter keys$`
 	stepUlEveryTermsTableWellFormed             = `^every terms table header is well-formed$`
 	stepUlEveryCodeIdentifierResolves           = `^every code identifier resolves in the BC code path$`
 	stepUlEveryFeatureRefResolves               = `^every feature reference resolves to an existing \.feature file$`
-	stepUlRunValidateOrganiclever               = `^I run "rhino-cli ul validate organiclever"$`
+	stepUlRunValidateOrganiclever               = `^I run "rhino-cli ddd ul organiclever"$`
 	stepUlMissingFrontmatterKey                 = `^a glossary file is missing the "Maintainer" frontmatter key$`
 	stepUlOutputMentionsMissingFrontmatterKey   = `^the output mentions "missing frontmatter key"$`
 	stepUlMalformedTableHeader                  = `^a glossary file has a terms table with a wrong column header$`
@@ -370,10 +370,10 @@ const (
 	stepUlOutputMentionsMissingFeatureReference = `^the output mentions "missing feature reference"$`
 	stepUlTermCollision                         = `^two glossaries declare the same term without cross-linking via Forbidden synonyms$`
 	stepUlOutputMentionsTermCollision           = `^the output mentions "term collision"$`
-	stepUlRunValidateOrganicleverWithWarnFlag   = `^I run "rhino-cli ul validate organiclever" with the "--severity=warn" flag$`
+	stepUlRunValidateOrganicleverWithWarnFlag   = `^I run "rhino-cli ddd ul organiclever" with the "--severity=warn" flag$`
 )
 
-// bc validate step patterns.
+// ddd bc step patterns.
 const (
 	stepBcRegistryOneContextClean           = `^a registry with one bounded context "journal" declaring layers "\[domain, application, infrastructure, presentation\]"$`
 	stepBcGlossaryFileExistsAtPath          = `^a glossary file exists at the registered glossary path$`
@@ -396,10 +396,10 @@ const (
 	stepBcRegistryWithOrphanAndWarnFlag     = `^a registry with an orphan code folder present on the filesystem$`
 	stepBcRegistryWithOrphanEnvWarn         = `^a registry with an orphan code folder present on the filesystem$`
 	stepBcEnvVarWarnSet                     = `^the environment variable "ORGANICLEVER_RHINO_DDD_SEVERITY" is set to "warn"$`
-	stepBcRunValidateOrganiclever           = `^the developer runs "rhino-cli bc validate organiclever"$`
-	stepBcRunWithWarnFlag                   = `^the developer runs "rhino-cli bc validate organiclever --severity=warn"$`
-	stepBcRunWithEnvWarn                    = `^the developer runs "rhino-cli bc validate organiclever"$`
-	stepBcRunUnknownApp                     = `^the developer runs "rhino-cli bc validate unknownapp"$`
+	stepBcRunValidateOrganiclever           = `^the developer runs "rhino-cli ddd bc organiclever"$`
+	stepBcRunWithWarnFlag                   = `^the developer runs "rhino-cli ddd bc organiclever --severity=warn"$`
+	stepBcRunWithEnvWarn                    = `^the developer runs "rhino-cli ddd bc organiclever"$`
+	stepBcRunUnknownApp                     = `^the developer runs "rhino-cli ddd bc unknownapp"$`
 	stepBcNoFindingsInOutput                = `^no findings are printed to stdout$`
 	stepBcOutputMentionsOrphan              = `^the output mentions "orphan"$`
 	stepBcOutputMentionsPhantom             = `^the output mentions "phantom"$`

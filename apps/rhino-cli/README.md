@@ -934,22 +934,22 @@ rhino-cli env restore -o json
 
 `rhino-cli` provides two subcommands to enforce Domain-Driven Design conventions in `organiclever-web`. Both run automatically as part of `nx run organiclever-web:test:quick`.
 
-#### `bc validate`
+#### `ddd bc`
 
 Validates bounded-context structural parity between `apps/organiclever-web/src/contexts/` and the registry.
 
 ```bash
-rhino-cli bc validate organiclever
+rhino-cli ddd bc organiclever
 ```
 
 Checks for each registered context: code directory with declared layer subfolders, glossary file, Gherkin directory. Detects orphan directories and asymmetric relationships.
 
-#### `ul validate`
+#### `ddd ul`
 
 Validates ubiquitous-language glossary parity between `specs/apps/organiclever/ubiquitous-language/` and the codebase.
 
 ```bash
-rhino-cli ul validate organiclever
+rhino-cli ddd ul organiclever
 ```
 
 Checks: frontmatter presence, terms table structure, stale code identifiers (via ripgrep), missing feature references, cross-context term collisions, forbidden-synonym misuse.
