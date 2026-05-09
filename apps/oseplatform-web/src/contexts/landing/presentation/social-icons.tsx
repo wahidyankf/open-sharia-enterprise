@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Github, Rss } from "lucide-react";
 import { Button } from "@open-sharia-enterprise/ts-ui";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/contexts/app-shell/presentation/ui/tooltip";
 
 export function SocialIcons() {
   return (

@@ -1,8 +1,8 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import matter from "gray-matter";
-import { frontmatterSchema } from "@/lib/schemas/content";
-import type { ContentMeta } from "./types";
+import { frontmatterSchema } from "@/contexts/content/application/schemas";
+import type { ContentMeta } from "../application/types";
 import type { ContentRepository } from "./repository";
 
 const DEFAULT_CONTENT_DIR = process.env.CONTENT_DIR ?? path.resolve(process.cwd(), "content");

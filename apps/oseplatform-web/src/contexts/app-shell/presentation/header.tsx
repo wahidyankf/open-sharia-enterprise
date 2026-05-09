@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { Menu, Search } from "lucide-react";
 import { Button } from "@open-sharia-enterprise/ts-ui";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { MobileNav } from "@/components/layout/mobile-nav";
-import { useSearchOpen } from "@/lib/hooks/use-search";
+import { ThemeToggle } from "@/contexts/app-shell/presentation/theme-toggle";
+import { MobileNav } from "@/contexts/app-shell/presentation/mobile-nav";
+import { useSearchOpen } from "@/contexts/search/presentation/use-search";
 import { useState } from "react";
 
 const NAV_LINKS = [

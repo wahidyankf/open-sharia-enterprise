@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { SearchContext } from "@/lib/hooks/use-search";
+import { SearchContext } from "@/contexts/search/presentation/use-search";
 import { SearchDialog } from "./search-dialog";
 
 export function SearchProvider({ children }: { children: ReactNode }) {

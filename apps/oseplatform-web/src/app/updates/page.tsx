@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
-import { UpdateCard } from "@/components/content/update-card";
+import { Header } from "@/contexts/app-shell/presentation/header";
+import { Footer } from "@/contexts/app-shell/presentation/footer";
+import { Breadcrumb } from "@/contexts/content/presentation/breadcrumb";
+import { UpdateCard } from "@/contexts/content/presentation/update-card";
 import { serverCaller } from "@/lib/trpc/server";
 
 export const metadata: Metadata = {

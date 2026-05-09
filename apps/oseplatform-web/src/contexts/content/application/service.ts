@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import FlexSearch from "flexsearch";
-import type { ContentRepository } from "./repository";
+import type { ContentRepository } from "../infrastructure/repository";
 import type { ContentMeta, Heading, PageLink, SearchResult } from "./types";
-import { parseMarkdown } from "./parser";
-import { stripMarkdown } from "./reader";
+import { parseMarkdown } from "../infrastructure/parser";
+import { stripMarkdown } from "../infrastructure/reader";
 
 export interface SearchDoc {
   id: string;

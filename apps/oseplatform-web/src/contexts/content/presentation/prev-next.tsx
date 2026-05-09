@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { PageLink } from "@/server/content/types";
+import type { PageLink } from "@/contexts/content/application/types";
 
 interface PrevNextProps {
   prev?: PageLink;

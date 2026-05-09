@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { TRPCProvider } from "@/lib/trpc/provider";
-import { SearchProvider } from "@/components/search/search-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { SearchProvider } from "@/contexts/search/presentation/search-provider";
+import { TooltipProvider } from "@/contexts/app-shell/presentation/ui/tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {

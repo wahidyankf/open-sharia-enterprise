@@ -1,5 +1,5 @@
-import { searchQuerySchema } from "@/lib/schemas/search";
-import { router, publicProcedure } from "../init";
+import { searchQuerySchema } from "@/contexts/search/application/schemas";
+import { router, publicProcedure } from "@/lib/trpc/init";
 
 export const searchRouter = router({
   query: publicProcedure.input(searchQuerySchema).query(async ({ ctx, input }) => {

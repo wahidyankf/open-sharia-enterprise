@@ -1,4 +1,4 @@
-import type { ContentMeta } from "./types";
+import type { ContentMeta } from "../application/types";
 
 export interface ContentRepository {
   readAllContent(): Promise<ContentMeta[]>;

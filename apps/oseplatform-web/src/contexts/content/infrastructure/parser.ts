@@ -7,7 +7,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeStringify from "rehype-stringify";
-import type { Heading } from "./types";
+import type { Heading } from "../application/types";
 
 interface ParseResult {
   html: string;

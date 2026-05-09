@@ -1,12 +1,12 @@
-import { router } from "./init";
-import { contentRouter } from "./procedures/content";
-import { searchRouter } from "./procedures/search";
-import { metaRouter } from "./procedures/meta";
+import { router } from "@/lib/trpc/init";
+import { contentRouter } from "@/contexts/content/application/router";
+import { searchRouter } from "@/contexts/search/application/router";
+import { healthRouter } from "@/contexts/health/application/router";
 
 export const appRouter = router({
   content: contentRouter,
   search: searchRouter,
-  meta: metaRouter,
+  health: healthRouter,
 });
 
 export type AppRouter = typeof appRouter;

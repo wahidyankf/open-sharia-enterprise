@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
-import { TableOfContents } from "@/components/layout/toc";
-import { MarkdownRenderer } from "@/components/content/markdown-renderer";
+import { Header } from "@/contexts/app-shell/presentation/header";
+import { Footer } from "@/contexts/app-shell/presentation/footer";
+import { Breadcrumb } from "@/contexts/content/presentation/breadcrumb";
+import { TableOfContents } from "@/contexts/content/presentation/toc";
+import { MarkdownRenderer } from "@/contexts/content/presentation/markdown-renderer";
 import { serverCaller } from "@/lib/trpc/server";
 
 export async function generateMetadata(): Promise<Metadata> {

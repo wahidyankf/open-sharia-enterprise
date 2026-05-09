@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/contexts/app-shell/presentation/ui/sheet";
 
 interface MobileNavProps {
   open: boolean;

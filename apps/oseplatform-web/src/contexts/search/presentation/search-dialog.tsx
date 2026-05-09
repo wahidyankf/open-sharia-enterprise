@@ -9,10 +9,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { useSearchOpen } from "@/lib/hooks/use-search";
+} from "@/contexts/app-shell/presentation/ui/command";
+import { useSearchOpen } from "@/contexts/search/presentation/use-search";
 import { trpcClient } from "@/lib/trpc/client";
-import type { SearchResult } from "@/server/content/types";
+import type { SearchResult } from "@/contexts/content/application/types";
 
 export function SearchDialog() {
   const router = useRouter();

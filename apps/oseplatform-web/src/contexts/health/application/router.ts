@@ -1,7 +1,7 @@
-import { router, publicProcedure } from "../init";
+import { router, publicProcedure } from "@/lib/trpc/init";
 
-export const metaRouter = router({
-  health: publicProcedure.query(() => {
+export const healthRouter = router({
+  check: publicProcedure.query(() => {
     return { status: "ok" as const };
   }),
 });

@@ -1,7 +1,7 @@
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { Hero } from "@/components/landing/hero";
-import { SocialIcons } from "@/components/landing/social-icons";
+import { Header } from "@/contexts/app-shell/presentation/header";
+import { Footer } from "@/contexts/app-shell/presentation/footer";
+import { Hero } from "@/contexts/landing/presentation/hero";
+import { SocialIcons } from "@/contexts/landing/presentation/social-icons";
 
 export default function Home() {
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ContentMeta } from "@/server/content/types";
+import { Badge } from "@/contexts/app-shell/presentation/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/contexts/app-shell/presentation/ui/card";
+import type { ContentMeta } from "@/contexts/content/application/types";
 
 interface UpdateCardProps {
   update: ContentMeta;

@@ -1,4 +1,4 @@
-import type { ContentMeta } from "./types";
+import type { ContentMeta } from "../application/types";
 import type { ContentRepository } from "./repository";
 
 export class InMemoryContentRepository implements ContentRepository {
