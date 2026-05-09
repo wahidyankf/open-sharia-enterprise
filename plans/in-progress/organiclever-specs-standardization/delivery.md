@@ -396,10 +396,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.9 Create `specs/apps/organiclever/components/be/api.md`** (_New file_) — API endpoints, env vars narrative, architecture tree. PM-Readability Contract applied.
   - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/be/api.md (new). **Audience:** line present. Endpoint table (GET /api/v1/health), env vars table, architecture tree, tech stack table, BDD test coverage section.
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/be/api.md` returns 0 AND file contains an endpoint table or endpoint list.
-- [ ] **3.10 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/be/api.md`
+- [x] **3.10 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/be/api.md`
+  - Date: 2026-05-09. Status: done. lint:md 2334 files, 0 errors. Committed. deployment.md link fixed to plain text (not yet created).
 
-- [ ] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** (_New file_) — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/containers/deployment.md` returns 0 AND file contains an environments or Docker images table.
+- [x] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** (_New file_) — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/.../containers/deployment.md (new). **Audience:** line present. Environments table, frontend+backend deployment sections, Docker images table, Spring-profile note (stale SPRING_PROFILES_ACTIVE → correct ASPNETCORE_ENVIRONMENT). Also restored api.md link to deployment.md.
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/containers/deployment.md` returns 0 AND file contains an environments or Docker images table.
 - [ ] **3.12 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create containers/deployment.md`
 
 - [ ] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7.

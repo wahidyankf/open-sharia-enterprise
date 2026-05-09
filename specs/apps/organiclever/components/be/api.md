@@ -66,4 +66,4 @@ All tests consume Gherkin specs from
 
 - [Behavior specs](../../behavior/be/gherkin/README.md) — Gherkin acceptance criteria
 - [Container diagram](../../containers/container.md) — where this service fits
-- Deployment (`containers/deployment.md`) — environments and Docker images
+- [Deployment](../../containers/deployment.md) — environments and Docker images
