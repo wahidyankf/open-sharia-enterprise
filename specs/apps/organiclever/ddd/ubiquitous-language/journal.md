@@ -45,7 +45,10 @@ stateDiagram-v2
     [*] --> Created: appendEntry()
     Created --> Bumped: bumpEntry()
     Bumped --> Bumped: bumpEntry()
-    note right of Bumped: updatedAt changes\npayload is immutable
+    note right of Bumped
+        updatedAt changes
+        payload is immutable
+    end note
 ```
 
 **Code identifier(s)**:

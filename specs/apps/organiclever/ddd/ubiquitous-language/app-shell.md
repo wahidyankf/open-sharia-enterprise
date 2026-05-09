@@ -74,7 +74,11 @@ stateDiagram-v2
     addEntry --> customLoggerOpen : OPEN_CUSTOM_LOGGER
     loggerOpen --> none : CLOSE_LOGGER
     customLoggerOpen --> none : CLOSE_CUSTOM_LOGGER
-    note right of none: TOGGLE_DARK_MODE and\nSET_DESKTOP are global:\nfire in any state,\nupdate context only
+    note right of none
+        TOGGLE_DARK_MODE and SET_DESKTOP
+        are global — fire in any state,
+        update context only
+    end note
 ```
 
 **Code identifier(s)**:

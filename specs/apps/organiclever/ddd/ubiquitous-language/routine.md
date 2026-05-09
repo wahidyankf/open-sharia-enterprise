@@ -63,7 +63,7 @@ classDiagram
     }
     Routine *-- ExerciseGroup : groups
     ExerciseGroup *-- ExerciseTemplate : exercises
-    note for ExerciseTemplate "Shared-kernel type from\njournal domain"
+    note for ExerciseTemplate "Shared-kernel type from journal domain"
 ```
 
 **Code identifier(s)**:

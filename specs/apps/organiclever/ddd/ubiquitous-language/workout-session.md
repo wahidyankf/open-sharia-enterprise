@@ -55,7 +55,10 @@ stateDiagram-v2
     finishing --> error : saveWorkout.error
     error --> finishing : RETRY
     done --> [*]
-    note right of active_exercising: active.*: compound state\ninitial = exercising
+    note right of active_exercising
+        active.* is a compound state
+        initial = exercising
+    end note
 ```
 
 **Code identifier(s)**:
