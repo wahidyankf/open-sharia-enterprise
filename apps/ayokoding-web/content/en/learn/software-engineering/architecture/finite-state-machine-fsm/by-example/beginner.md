@@ -79,7 +79,7 @@ console.log(process.getState()); // => Output: Complete (Processing → Complete
 
 **Key Takeaway**: FSMs model behavior through explicit states and transitions. Each state represents a distinct condition; transitions define how events change state. This explicit modeling prevents invalid states and makes behavior predictable.
 
-**Why It Matters**: State management bugs account for 40% of production defects in complex applications. When Uber rewrote their ride matching logic using FSMs, they reduced state-related bugs from 120/month to 12/month. FSMs prevent impossible states (like "cancelled but also completed") and make state transitions auditable. Explicit state modeling transforms implicit assumptions into verifiable contracts—critical for safety-critical systems, financial transactions, and complex workflows where invalid states mean lost revenue or regulatory violations.
+**Why It Matters**: State management bugs are among the most common and hardest-to-reproduce defects in complex applications. FSMs prevent impossible states (like "cancelled but also completed") by making every valid transition explicit and every invalid transition a compile-time or runtime error. Explicit state modeling transforms implicit assumptions into verifiable contracts—critical for safety-critical systems, financial transactions, and complex workflows where invalid states mean lost revenue or regulatory violations.
 
 ### Example 2: Simple On/Off FSM
 
@@ -517,7 +517,7 @@ console.log(order3.getCurrentState()); // => Output: Cancelled
 
 **Key Takeaway**: One state can transition to multiple different states based on event received. Pending order has three possible outcomes (approve, reject, cancel), each leading to different terminal state.
 
-**Why It Matters**: Multi-outcome states model real-world decision points. When Stripe implemented payment processing FSM, Pending state could transition to Succeeded, Failed, or RequiresAction states based on payment gateway response. Clear branching logic reduced payment reconciliation errors by 85% because every outcome was explicitly modeled and logged. This explicit outcome modeling also enables accurate reporting and alerting: each terminal state maps directly to a business metric, eliminating ambiguous outcome tracking.
+**Why It Matters**: Multi-outcome states model real-world decision points. In payment processing, a Pending state might transition to Succeeded, Failed, or RequiresAction based on gateway response. When every outcome is an explicit named state, reconciliation and reporting become straightforward — each terminal state maps directly to a business metric, eliminating ambiguous outcome tracking. Implicit branching in if-else chains lacks this property.
 
 ### Example 7: Invalid Transition Handling
 
@@ -832,7 +832,7 @@ console.log(auth.getCurrentUser()); // => Output: null
 
 **Key Takeaway**: Events carry data (payloads) used during transitions. Login event includes username/password; logout has no payload. Payloads enable data-driven state changes.
 
-**Why It Matters**: Event payloads decouple event sources from state machines. When Slack implemented presence status FSM, events carried context (user_id, timestamp, device_type) enabling rich state transitions without tight coupling to UI components. Event payload standardization reduced integration bugs by 70% because every event consumer received consistent data structure. Typed payloads also enable compile-time validation that events carry all required data before reaching FSM handlers.
+**Why It Matters**: Event payloads decouple event sources from state machines. When events carry context (user_id, timestamp, device_type), state machines can make rich transitions without tight coupling to their callers. Typed payloads also enable compile-time validation that events carry all required data before reaching FSM handlers — turning missing-field bugs from runtime surprises into build-time errors.
 
 ### Example 10: Timed Transitions
 
@@ -1392,7 +1392,7 @@ console.log(trading.canPlaceTrade()); // => Output: true if MarketOpen/AfterHour
 
 **Key Takeaway**: Time-based guards restrict operations to valid time windows. Trading system only allows trades during market hours. Guards check current time and enforce business rules (no weekend trading).
 
-**Why It Matters**: Time constraints prevent invalid operations. When Robinhood's trading system failed to enforce time guards during extended outages, users placed orders at invalid times, creating 15,000 failed trades requiring manual reconciliation. Time-based FSM guards (reject trades outside market hours) would have prevented this—failed fast with clear error instead of accepting and failing later.
+**Why It Matters**: Time constraints prevent invalid operations. Trading systems that accept orders outside market hours create downstream reconciliation failures — the order appears accepted but cannot be executed. Time-based FSM guards fail fast with a clear error at submission rather than accepting the operation and failing silently later. Explicit temporal guards encode business hours as a first-class state constraint, not an afterthought.
 
 ### Example 16: Resource Availability Guards
 
@@ -2254,7 +2254,7 @@ auth.handleEvent("login_success"); // => LoggingIn → LoggedIn
 
 **Key Takeaway**: Entry/exit actions run for every transition into/out of state (generic setup/cleanup). Transition actions run for specific transitions only (specialized logic). Use entry/exit for common behavior, transition actions for unique behavior.
 
-**Why It Matters**: Choosing correct action type prevents code duplication or scattered logic. When Twitter migrated to React, they analyzed state management and found 60% of component lifecycle methods (componentDidMount, componentWillUnmount) were duplicating logic that should be entry/exit actions. Proper separation (entry: start timer, exit: stop timer, transition: send specific analytics event) reduced React component code by 40%.
+**Why It Matters**: Choosing the correct action type prevents code duplication and scattered logic. Entry/exit actions belong in the state, not in every transition that leads to or from it. When lifecycle setup (start timer, initialize subscription) is placed in entry actions and cleanup (stop timer, release subscription) in exit actions, each concern is written once — regardless of how many transitions reach or leave that state.
 
 ### Example 23: Nested Entry/Exit Actions
 
@@ -2434,7 +2434,7 @@ video.handleEvent("buffer_complete"); // => Buffering → Playing
 
 **Key Takeaway**: Entry/exit actions can orchestrate multiple operations by calling helper methods. This enables rich state lifecycle behavior (UI updates, analytics, resource management) without cluttering transition logic.
 
-**Why It Matters**: Nested actions organize complex state behavior. When YouTube analyzed video player bugs, they found state transition code mixed UI updates, analytics, playback control, and buffer management—making bugs hard to trace. Refactoring to nested entry/exit actions (entry: call setup helpers, exit: call cleanup helpers) reduced state-related bugs by 65% because each concern was isolated and testable.
+**Why It Matters**: Nested actions organize complex state behavior. When state transition code mixes UI updates, analytics, playback control, and buffer management in a single handler, bugs become hard to trace — a change to playback logic can silently break analytics. Refactoring to nested entry/exit actions (entry: call setup helpers, exit: call cleanup helpers) isolates each concern so it can be tested and changed independently.
 
 ## Transition Actions (Examples 24-27)
 
@@ -3076,7 +3076,7 @@ user2.handleEvent("create_profile", {
 
 **Key Takeaway**: Transition actions can contain conditional logic, executing different operations based on transition context (user data, flags, external state). Enables flexible state transitions adapting to varying circumstances.
 
-**Why It Matters**: Conditional transition actions handle business logic variations without state explosion. When LinkedIn implemented profile completion FSMs, conditional actions (premium vs free users) prevented needing separate FSMs for each user tier. One FSM with conditional transition actions reduced code complexity by 60% while supporting 5 user tiers and 10+ feature flags.
+**Why It Matters**: Conditional transition actions handle business logic variations without state explosion. Without conditional actions, supporting different user tiers (premium vs free) would require separate FSMs per tier — multiplying the total state count by the number of variants. One FSM with conditional transition actions keeps the state graph comprehensible while accommodating arbitrary tier differences in behavior.
 
 ### Example 27: Transition Action Error Handling
 

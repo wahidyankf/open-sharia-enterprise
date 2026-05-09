@@ -1241,7 +1241,7 @@ git config --local remote.origin.partialclonefilter
 
 **Key Takeaway**: Use `--depth 1` for CI build-only checkouts where history is irrelevant; use `--filter=blob:none` for developer clones that need full history but want a fast initial clone.
 
-**Why It Matters**: GitHub reports that the average clone of a large monorepo takes 15-30 minutes with a full clone. Shallow clones reduce CI checkout time to under 30 seconds for most projects, directly reducing compute costs and developer feedback loop time. Blobless clones are the recommended default for developer machines at companies like GitHub itself, where they reduced internal clone times by 90% while preserving full `git log` and `git blame` functionality.
+**Why It Matters**: Full clones of large monorepos download the entire object history, which grows without bound as the repo ages. Shallow clones reduce CI checkout time by fetching only recent commits. Blobless clones — which fetch commit and tree objects but defer blob downloads until checkout — are documented by GitHub as a recommended default for developer machines, preserving full `git log` and `git blame` functionality while skipping historical blobs that most workflows never need.
 
 ---
 
@@ -1656,7 +1656,7 @@ git log --oneline origin/main..HEAD
 
 **Key Takeaway**: In a Git monorepo, combine `nx affected` for CI task scoping, sparse checkout for developer ergonomics, and CODEOWNERS for automated review routing — each layer addresses a different scalability dimension.
 
-**Why It Matters**: Without deliberate monorepo strategies, CI time scales linearly with repository size: every PR triggers a full build of every project. Nx affected reduces CI time by 80-95% in large monorepos by running only impacted projects. CODEOWNERS enforces team ownership without manual PR assignment, which is the primary governance mechanism that makes monorepos viable at scale at companies like Google (Blaze/Bazel), Meta (Buck), and Microsoft (Rush).
+**Why It Matters**: Without deliberate monorepo strategies, CI time scales linearly with repository size: every PR triggers a full build of every project. `nx affected` runs only impacted projects, skipping unrelated ones — the savings scale with the ratio of changed-to-total projects in the repo. CODEOWNERS enforces team ownership without manual PR assignment, which is the primary governance mechanism that makes monorepos viable at scale. Google (Bazel), Meta (Buck), and Microsoft (Rush) each built specialized tooling to solve this same problem.
 
 ---
 

@@ -800,7 +800,7 @@ class BankAccountTemporal extends BankAccountWithSnapshots {
 
 **Key Takeaway**: Event Sourcing enables temporal queries by replaying events up to specific dates. Can reconstruct historical state, compare states across time, and generate complete audit trails.
 
-**Why It Matters**: Financial regulations require reconstructing account state at any historical date for audits. Traditional systems struggle with "what was balance on tax day last year?" requiring complex backup restoration. Event Sourcing answers this instantly by replaying events until target date. When IRS audited Coinbase crypto transactions, Coinbase used Event Sourcing temporal queries to generate complete transaction histories for millions of accounts across multiple years, something impossible with traditional databases. This same pattern enabled them to detect and fix accounting bugs retroactively—replay events with corrected logic to see what balances should have been.
+**Why It Matters**: Financial regulations require reconstructing account state at any historical date for audits. Traditional systems struggle with "what was balance on tax day last year?" requiring complex backup restoration or point-in-time snapshots. Event Sourcing answers this by replaying events until the target timestamp—the entire history is the data store. The same mechanism enables retroactive bug correction: replay events with fixed logic to determine what balances should have been. This auditability is architecturally guaranteed, not bolted on after the fact.
 
 ### Example 64: Event Versioning and Upcasting
 
@@ -4151,7 +4151,7 @@ class ProcessTimeoutMonitor {
 
 **Key Takeaway**: Process Managers handle timeouts using timer infrastructure (persistent timers, scheduled jobs). Timeout monitors detect abandoned processes by checking state age, providing safety net if in-process timeouts fail.
 
-**Why It Matters**: Distributed systems experience indefinite delays—services hang, networks partition, messages lost. Timeouts prevent processes from waiting forever. Lyft ride matching sets 30-second timeout for driver acceptance—if no response, match offered to next driver. Process Manager implements this with timeout handlers that trigger alternate flows. Persistent timeout monitoring ensures cleanup even if process instance crashes before timeout fires, preventing resource leaks and stuck processes.
+**Why It Matters**: Distributed systems experience indefinite delays—services hang, networks partition, messages get lost. Timeouts prevent processes from waiting forever. Ride-matching systems are a canonical example: if a driver doesn't respond within a short window, the match is offered to the next driver. Process Manager implements this with timeout handlers that trigger alternate flows. Persistent timeout monitoring ensures cleanup even if the process instance crashes before the timeout fires, preventing resource leaks and stuck processes.
 
 ## Strategic Design at Scale (Examples 77-80)
 
@@ -4935,7 +4935,7 @@ namespace WarehouseContext {
 
 **Key Takeaway**: Published Language defines standard communication format using industry standards (JSON Schema, ISO formats, XML, Protocol Buffers). Enables multiple contexts to integrate without knowing each other's internal models.
 
-**Why It Matters**: Without Published Language, each context speaks its own dialect causing translation chaos. Financial services use ISO 20022 (XML standard) as Published Language—all banks understand it without knowing each other's internal models. AWS uses CloudEvents (CNCF standard) for event interchange across services. Published Language reduces integration cost from O(n²) to O(n)—instead of each pair of contexts needing custom translation, all contexts translate to/from standard format once. Version metadata enables evolution without breaking existing consumers.
+**Why It Matters**: Without Published Language, each context speaks its own dialect causing translation chaos. Financial services use ISO 20022 (an XML-based messaging standard) as Published Language—all banks understand it without knowing each other's internal models. The CNCF CloudEvents specification serves the same role for cloud event interchange, with support across Azure, Google Cloud, and others. Published Language reduces integration cost from O(n²) to O(n)—instead of each pair of contexts needing custom translation, all contexts translate to/from standard format once. Version metadata enables evolution without breaking existing consumers.
 
 ### Example 80: Large-Scale Bounded Context Organization
 
@@ -5852,7 +5852,7 @@ class NotificationMicroservice {
 
 **Key Takeaway**: Event-driven microservices architecture uses persistent event bus and event store. Services publish domain events that other services subscribe to. Event store provides audit log and enables rebuilding read models.
 
-**Why It Matters**: Synchronous service-to-service calls create tight coupling and cascading failures. Event-driven architecture decouples services—Order service publishes OrderPlaced event without knowing who consumes it. New services (Analytics, Notification) subscribe without modifying Order service. LinkedIn migrated from synchronous to event-driven architecture, reducing coupling and enabling 700+ microservices to evolve independently. Event store provides complete audit trail and disaster recovery—can rebuild any read model by replaying events.
+**Why It Matters**: Synchronous service-to-service calls create tight coupling and cascading failures. Event-driven architecture decouples services—Order service publishes OrderPlaced event without knowing who consumes it. New services (Analytics, Notification) subscribe without modifying Order service. LinkedIn's adoption of Kafka for a universal data pipeline is a well-documented example of this decoupling at scale, enabling services to evolve and deploy independently. Event store provides complete audit trail and disaster recovery—any read model can be rebuilt by replaying events.
 
 ### Example 84: Service Mesh and DDD
 
@@ -6079,7 +6079,7 @@ class ResilientServiceClient {
 
 **Key Takeaway**: Service mesh handles cross-cutting concerns (service discovery, circuit breaking, retries, observability) at infrastructure level. Bounded contexts map to service identities. Circuit breakers prevent cascading failures between contexts.
 
-**Why It Matters**: Implementing resilience patterns in every service creates duplication and inconsistency. Service mesh (Istio, Linkerd) provides this at platform level—circuit breakers, retries, timeouts configured declaratively. Twitter uses service mesh to handle traffic between 900+ microservices, preventing cascading failures when services slow down. When Inventory service degrades, circuit breaker opens automatically, preventing Order service from waiting indefinitely. DDD bounded contexts map cleanly to service mesh identities, enabling consistent policy enforcement across architectural boundaries.
+**Why It Matters**: Implementing resilience patterns in every service creates duplication and inconsistency. Service mesh (Istio, Linkerd) provides this at platform level—circuit breakers, retries, timeouts configured declaratively. Twitter pioneered this approach with Finagle, their internal RPC framework, which directly influenced the creation of Linkerd (now a CNCF project). When an Inventory service degrades, the circuit breaker opens automatically, preventing Order service from waiting indefinitely. DDD bounded contexts map cleanly to service mesh identities, enabling consistent policy enforcement across architectural boundaries.
 
 ### Example 85: Polyglot Persistence in DDD Microservices
 

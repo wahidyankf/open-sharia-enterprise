@@ -276,7 +276,7 @@ spec:
 
 **Key Takeaway**: Always set resource requests for predictable scheduling and limits to prevent resource starvation; memory limit violations kill Pods (OOMKilled) while CPU limits throttle performance.
 
-**Why It Matters**: Resource management prevents the "noisy neighbor" problem where one application monopolizes cluster resources, impacting others. This multi-tenancy capability allows multiple teams to safely share the same Kubernetes cluster, reducing infrastructure costs by 40-60% compared to dedicated per-team clusters. Organizations like Spotify and Airbnb run hundreds of services on shared clusters using resource quotas and limits, ensuring predictable performance while maximizing hardware utilization and operational efficiency.
+**Why It Matters**: Resource management prevents the "noisy neighbor" problem where one application monopolizes cluster resources, impacting others. Multi-tenancy allows multiple teams to safely share the same Kubernetes cluster — far more cost-efficient than dedicated per-team clusters. Resource quotas and limits make this safe by bounding the maximum resource consumption of any tenant, ensuring predictable performance while maximizing hardware utilization and operational efficiency.
 
 ### Example 6: Pod Environment Variables
 
@@ -1068,7 +1068,7 @@ spec:
 
 **Key Takeaway**: LoadBalancer Services are production-ready for external access but incur cloud provider costs per Service; consider using a single Ingress controller with Ingress resources for cost-effective HTTP/HTTPS routing to multiple Services.
 
-**Why It Matters**: Cloud provider load balancers typically cost $15-30 per month each—manageable for a few services but expensive at scale. Zalando reduced infrastructure costs by 60% by replacing 50 LoadBalancer Services with a single Ingress controller handling HTTP routing to all backend services. This cost optimization matters for startups and enterprises alike, as Kubernetes' multi-cloud portability ensures this architecture works identically on AWS, GCP, Azure, or on-premises, unlike cloud-specific load balancer configurations.
+**Why It Matters**: Cloud provider load balancers cost money per provisioned instance — manageable for a few services but significant at scale. A single Ingress controller can route HTTP traffic to dozens of backend services, replacing one load balancer per service with one per cluster. Kubernetes' multi-cloud portability ensures this architecture works identically on AWS, GCP, Azure, or on-premises, unlike cloud-specific load balancer configurations.
 
 ---
 
@@ -1657,7 +1657,7 @@ immutable:
 
 **Key Takeaway**: Use immutable ConfigMaps and Secrets for production environments to prevent accidental changes and improve performance; adopt versioned naming (config-v1, config-v2) for clean rollout and rollback workflows.
 
-**Why It Matters**: Immutable ConfigMaps eliminate configuration drift by preventing in-place modifications that can cause inconsistent state across Pods. This immutability also improves kubelet performance by eliminating constant watch operations, reducing API server load by 15-20% in large clusters with thousands of ConfigMaps. Large-scale operators like Shopify mark all production ConfigMaps as immutable to enforce GitOps workflows where every configuration change requires a new version, providing a complete audit trail and enabling instant rollback.
+**Why It Matters**: Immutable ConfigMaps eliminate configuration drift by preventing in-place modifications that can cause inconsistent state across Pods. Kubernetes documents an additional benefit: immutable ConfigMaps improve kubelet performance in large clusters by eliminating constant watch operations for changes that can't happen. GitOps workflows where every configuration change requires a new versioned ConfigMap get this for free — the immutability invariant is enforced structurally, not by convention. Large clusters with thousands of ConfigMaps benefit most from this approach.
 
 ---
 

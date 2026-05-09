@@ -2692,7 +2692,7 @@ print(f"Write-behind DB writes: {db.write_count}")  # => 1 (DB not yet written)
 
 **Key Takeaway**: Cache-aside is the safest default (no stale writes on cache failure). Write-through ensures consistency. Write-behind maximizes write throughput at the cost of potential data loss if the cache crashes before flushing. Choose based on consistency vs performance requirements.
 
-**Why It Matters**: Instagram uses Redis as a cache-aside cache for user profiles, reducing MySQL load by 80-90% at peak. Airbnb uses write-through caching for pricing data where stale prices cause revenue loss. High-frequency trading systems use write-behind caching to absorb burst writes at microsecond latency, flushing to persistent storage asynchronously. The correct cache strategy depends on the business cost of staleness versus the cost of write latency.
+**Why It Matters**: The cache strategy must match the business cost of staleness versus write latency. Profile data can tolerate seconds of staleness (use cache-aside or write-through). Pricing data where stale prices cause revenue loss needs write-through or invalidation. High-frequency trading systems use write-behind to absorb burst writes at microsecond latency, flushing to persistent storage asynchronously. Choosing the wrong strategy causes either stale reads or write bottlenecks.
 
 ---
 
@@ -4695,7 +4695,7 @@ print(f"\nMetrics: {metrics.summary()}")
 
 **Key Takeaway**: The three pillars answer complementary questions: metrics tell you when something is wrong (error rate spike), traces show where (slow DB span), and logs explain why (SQL query plan missing index). Correlating all three via trace_id enables rapid root cause analysis.
 
-**Why It Matters**: Google's SRE book established the RED method (Rate, Errors, Duration) as the minimum metric set for every service. Shopify attributed their 2021 Black Friday success to implementing distributed tracing six months earlier — they traced a 200ms p99 latency increase to a single Redis call in the checkout path, fixing it before peak traffic. Teams without observability spend 60-80% of incident time reproducing the problem; teams with full observability spend that time fixing it.
+**Why It Matters**: Google's SRE book established the RED method (Rate, Errors, Duration) as the minimum metric set for every service. Distributed tracing enables a fundamentally different incident investigation: instead of reproducing a latency increase with load tests, you trace it to a specific service call in a real production request. Teams without observability spend the majority of incident time figuring out where the problem is; teams with distributed tracing spend that time fixing it.
 
 ---
 
@@ -5901,7 +5901,7 @@ print(f"\nPost-mortem (first 400 chars):\n{pm[:400]}...")
 
 **Key Takeaway**: Runbooks eliminate improvisation during high-stress incidents by providing documented step-by-step responses. Blameless post-mortems focus on systemic and process fixes rather than individual culpability, building the psychological safety needed to report and learn from failures.
 
-**Why It Matters**: Google's SRE book established that blameless post-mortems are essential for a learning culture — if engineers fear punishment for incidents, they hide failures instead of documenting and fixing them. PagerDuty research shows teams with documented runbooks resolve P1 incidents 40% faster than teams that improvise. Etsy's blameless post-mortem culture allowed them to increase deployment frequency from weekly to 50+ deployments per day by removing the fear that a bad deployment would result in blame rather than systemic improvement.
+**Why It Matters**: Google's SRE book established that blameless post-mortems are essential for a learning culture — if engineers fear punishment for incidents, they hide failures instead of documenting and fixing them. Teams with documented runbooks resolve P1 incidents faster than teams that improvise, because the cognitive load of figuring out what to do is separated from the cognitive load of doing it. Etsy's blameless post-mortem culture allowed them to increase deployment frequency from weekly to 50+ deployments per day by removing the fear that a bad deployment would result in blame rather than systemic improvement.
 
 ---
 

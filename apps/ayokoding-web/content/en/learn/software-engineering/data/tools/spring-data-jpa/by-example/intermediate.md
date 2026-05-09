@@ -161,7 +161,7 @@ public class ProductService {                                 // => Service laye
 
 **Key Takeaway**: Native SQL queries provide database-specific optimization and access to vendor-specific features, but sacrifice portability and JPA abstraction benefits.
 
-**Why It Matters**: Native SQL queries enable database-specific optimizations like PostgreSQL's array operators, MySQL's JSON functions, and Oracle's advanced analytics, improving query performance by 100-1000x when vendor features outperform JPQL. However, native queries sacrifice database portability and bypass JPA's second-level cache, increasing coupling and maintenance burden. Production teams limit native SQL to <10% of queries, reserving it for performance-critical paths where JPQL's abstraction costs measurably impact throughput.
+**Why It Matters**: Native SQL queries enable database-specific optimizations like PostgreSQL's array operators, MySQL's JSON functions, and Oracle's advanced analytics that JPQL cannot express. For performance-critical paths where vendor features significantly outperform JPQL, native queries are the right tool. However, native queries sacrifice database portability and bypass JPA's second-level cache — reserve them for paths where the abstraction cost measurably impacts throughput, not as the default.
 
 ### Example 33: @Modifying Queries
 
@@ -241,7 +241,7 @@ public class UserService {
 
 **Key Takeaway**: @Modifying queries enable bulk UPDATE/DELETE operations but bypass entity lifecycle callbacks and require manual persistence context management to avoid stale cache data.
 
-**Why It Matters**: @Modifying bulk operations execute UPDATE/DELETE as single SQL statements affecting thousands of rows in milliseconds, compared to iterating entities which generates N individual queries taking seconds. However, bulk operations bypass entity lifecycle callbacks and dirty checking, requiring manual persistence context clearing to avoid stale cached data. Applications using @Modifying correctly for batch status updates report 95% reduction in execution time, while improper use without clearAutomatically causes data consistency bugs affecting 15-20% of subsequent queries in same transaction.
+**Why It Matters**: @Modifying bulk operations execute UPDATE/DELETE as single SQL statements affecting thousands of rows in milliseconds, compared to iterating entities which generates N individual queries taking seconds. The tradeoff is critical: bulk operations bypass entity lifecycle callbacks and dirty checking. Without `clearAutomatically = true`, the persistence context retains stale cached data that doesn't reflect the bulk change — causing subsequent queries in the same transaction to read incorrect state.
 
 ### Example 34: Constructor Expressions (DTO Projections)
 
@@ -321,7 +321,7 @@ public class UserService {
 
 **Key Takeaway**: Constructor expressions (DTO projections) dramatically improve read performance by loading only required columns, essential for reporting and API responses where entity management overhead isn't needed.
 
-**Why It Matters**: DTO projections reduce memory consumption by 60-80% compared to loading full entities, critical for large result sets where entities contain lazy-loaded collections or BLOB fields. Constructor expressions enable compile-time type safety unlike Object[] which defer errors to runtime, preventing ClassCastException that plague 25% of projection implementations. High-traffic API endpoints using DTOs report 40% reduction in garbage collection pressure and 3x improvement in response times for list operations returning 100+ records.
+**Why It Matters**: DTO projections reduce memory consumption significantly compared to loading full entities, critical for large result sets where entities contain lazy-loaded collections or BLOB fields that the API response doesn't need. Constructor expressions enable compile-time type safety unlike Object[] projections, which defer ClassCastException to runtime. For list endpoints returning many records, transferring only the needed fields reduces both database I/O and serialization overhead.
 
 ### Example 35: JOIN Queries
 
@@ -712,7 +712,7 @@ public class UserService {
 
 **Key Takeaway**: PageRequest provides offset-based pagination for random access (page jumping), ideal for traditional paginated UIs with page numbers.
 
-**Why It Matters**: Page objects provide total count, total pages, and hasNext indicators essential for pagination UI without separate COUNT queries, improving API response times by 30-40% compared to manual pagination. Spring Data's PageRequest automatically generates database-portable LIMIT/OFFSET SQL across PostgreSQL, MySQL, Oracle, and SQL Server, eliminating vendor-specific pagination syntax. However, deep pagination (offset > 10,000) degrades linearly as databases scan and discard offset rows - use cursor-based pagination for infinite scroll and large dataset navigation.
+**Why It Matters**: Page objects provide total count, total pages, and hasNext indicators essential for pagination UI without separate COUNT queries. Spring Data's PageRequest automatically generates database-portable LIMIT/OFFSET SQL across PostgreSQL, MySQL, Oracle, and SQL Server, eliminating vendor-specific pagination syntax. One important caveat: deep pagination (offset > 10,000) degrades linearly as the database must scan and discard offset rows — use cursor-based pagination for infinite scroll and large dataset navigation.
 
 ### Example 40: Sorting with Pageable
 
@@ -911,7 +911,7 @@ public class ProductService {
 
 **Key Takeaway**: Custom sorting directions enable business-specific ordering like "active users first, then by registration date," essential for prioritized list displays.
 
-**Why It Matters**: Custom query methods with Pageable enable complex business logic with automatic pagination support, eliminating duplicate code for paginated vs non-paginated variants of same query. The pattern handles edge cases like empty results and single-page datasets consistently, preventing off-by-one errors that cause 40% of pagination bugs in manual implementations. Production APIs with 50+ paginated endpoints report 80% code reduction by leveraging Spring Data's pagination infrastructure versus hand-rolled pagination logic.
+**Why It Matters**: Custom query methods with Pageable enable complex business logic with automatic pagination support, eliminating duplicate code for paginated vs non-paginated variants of the same query. The pattern handles edge cases like empty results and single-page datasets consistently. Hand-rolling pagination logic means reimplementing these edge cases for every endpoint — Spring Data's infrastructure handles them once.
 
 ### Example 43: Pagination with Specifications
 
@@ -1532,7 +1532,7 @@ public class UserService {
 
 **Key Takeaway**: @Embeddable objects enable value object patterns for grouping related fields (e.g., Address, Money) without creating separate database tables, improving domain model clarity.
 
-**Why It Matters**: CascadeType.ALL automatically propagates all persistence operations (PERSIST, MERGE, REMOVE, REFRESH, DETACH), reducing transaction management code by 80% for true composition relationships. This pattern ensures database consistency for aggregates like Order→OrderItems where children have no independent existence. However, ALL includes REMOVE which deletes children when removing from collection, causing accidental data loss if applied to independent entities - 40% of cascade-related production bugs stem from using ALL on looser associations.
+**Why It Matters**: CascadeType.ALL automatically propagates all persistence operations (PERSIST, MERGE, REMOVE, REFRESH, DETACH), eliminating manual cascade management for true composition relationships. This ensures database consistency for aggregates like Order→OrderItems where children have no independent existence. The danger is CascadeType.REMOVE: it deletes children when removing from the collection. Applying ALL to looser associations (where children CAN exist independently) causes accidental data loss — a common and severe production mistake.
 
 ### Example 49: Cascading Operations
 
@@ -1662,7 +1662,7 @@ public class OrderService {
 
 **Key Takeaway**: Cascading operations automatically propagate persist/merge/remove operations to related entities, essential for aggregate root patterns but requiring careful configuration to avoid unintended deletions.
 
-**Why It Matters**: FetchType.LAZY prevents loading entire object graphs unnecessarily, reducing memory consumption by 70-90% and query execution time by 50-80% for large relationship collections. Lazy loading enables on-demand data access, fetching related entities only when accessed through getter methods. However, accessing lazy collections outside transactions triggers LazyInitializationException, the most common JPA error affecting 50% of developers, requiring explicit JOIN FETCH, EntityGraphs, or Open Session in View patterns.
+**Why It Matters**: FetchType.LAZY prevents loading entire object graphs unnecessarily — only fetch related entities when they're actually accessed. The concrete risk is LazyInitializationException: accessing a lazy collection outside of a transaction fails because the persistence context is already closed. This is one of the most common JPA errors in production, requiring explicit JOIN FETCH, EntityGraphs, or Open Session in View patterns to resolve.
 
 ### Example 50: Bidirectional Relationship Management
 
@@ -1781,7 +1781,7 @@ public class OrderService {
 
 **Key Takeaway**: Bidirectional relationships require explicit management of both sides to maintain referential integrity, with helper methods ensuring consistency before persistence.
 
-**Why It Matters**: FetchType.EAGER automatically loads relationships in every query regardless of usage, simplifying code by eliminating lazy loading exceptions but causing 100-1000x performance degradation when unneeded data loads. The pattern generates LEFT OUTER JOIN for @ManyToOne/@OneToOne and separate SELECT for collections, creating N+1 problems invisible until production scale. Database query logs from eager loading mishaps show 80%+ of queries fetching unused relationships - use @EntityGraph or JOIN FETCH for selective eager loading instead of blanket EAGER configuration.
+**Why It Matters**: FetchType.EAGER automatically loads relationships in every query regardless of usage, eliminating lazy loading exceptions at the cost of always fetching data that may not be needed. For @ManyToOne/@OneToOne it generates LEFT OUTER JOIN; for collections it issues separate SELECT statements — creating N+1 problems that are invisible during development but devastating at production scale. Selective eager loading with @EntityGraph or JOIN FETCH on specific queries is almost always better than blanket EAGER configuration on the entity.
 
 ## Group 4: Transaction Management
 
@@ -1925,7 +1925,7 @@ public class BusinessService {
 
 **Key Takeaway**: Transaction propagation controls how nested method calls participate in transactions, with REQUIRED (join existing) and REQUIRES_NEW (suspend and create new) covering most production scenarios.
 
-**Why It Matters**: @Transactional ensures ACID properties for database operations, automatically committing successful operations and rolling back on exceptions, preventing partial updates that corrupt data. Spring's declarative transactions eliminate 90% of manual connection, commit, and rollback code compared to JDBC, reducing transaction management bugs by 80%. However, transaction boundaries define persistence context scope - detached entities outside transactions cause LazyInitializationException and lost updates, requiring careful service layer design and read-only transaction optimization.
+**Why It Matters**: @Transactional ensures ACID properties for database operations, automatically committing successful operations and rolling back on exceptions, preventing partial updates that corrupt data. Spring's declarative transactions eliminate the boilerplate of manual connection, commit, and rollback code compared to raw JDBC. The critical design constraint: transaction boundaries define persistence context scope — entities become detached once the transaction closes, causing LazyInitializationException and lost updates if accessed afterward. Service layer design must account for this explicitly.
 
 ### Example 52: Transaction Isolation Levels
 

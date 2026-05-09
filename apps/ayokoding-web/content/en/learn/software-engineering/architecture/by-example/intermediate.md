@@ -120,7 +120,7 @@ print(found.email)  # => Output: alice@example.com
 
 **Key Takeaway**: Ports are interfaces owned by the application core; adapters are infrastructure implementations owned by outer layers. This boundary makes the core independently testable and infrastructure-swappable.
 
-**Why It Matters**: Hexagonal architecture is the foundation behind major frameworks like Spring (ports as interfaces, adapters as repositories/controllers) and is used at companies like Netflix for service isolation. Teams that adopt this pattern report 40-60% faster test cycles because the core runs entirely with in-memory adapters — no database, no network, no flakiness. The architecture also makes cloud migration straightforward: swap one adapter, not the entire codebase.
+**Why It Matters**: Hexagonal architecture is the foundation behind major frameworks like Spring (ports as interfaces, adapters as repositories/controllers). The primary testing benefit is concrete: the core domain runs entirely with in-memory adapters — no database, no network, no flakiness. Test cycles are faster and deterministic because infrastructure is swapped out, not mocked at the boundary. The architecture also makes cloud migration straightforward: swap one adapter, not the entire codebase.
 
 ---
 
@@ -2181,7 +2181,7 @@ console.log(item?.displayPrice); // => Output: $9.99 (pre-formatted, no client l
 
 **Key Takeaway**: CQRS separates the write model (enforcing business rules, normalized) from the read model (optimized for display, denormalized) — they evolve independently and can be scaled separately.
 
-**Why It Matters**: CQRS addresses the fundamental tension between write consistency and read performance. Systems like e-commerce product catalogs need fast, join-free reads at scale but require strict business rule enforcement on writes. GitHub uses CQRS-like separation where issue writes go through validation-heavy command handlers while issue list queries read from pre-indexed projections. The pattern enables read replicas to handle 99% of traffic while write masters focus on consistency — a common scaling strategy that can reduce database read load by orders of magnitude.
+**Why It Matters**: CQRS addresses the fundamental tension between write consistency and read performance. Systems like e-commerce product catalogs need fast, join-free reads at scale but require strict business rule enforcement on writes. Read replicas handle the majority of traffic while write masters focus on consistency — a common scaling strategy that reduces database read load by orders of magnitude. CQRS makes this separation explicit in the codebase, preventing the commands and queries from drifting back into a single tangled model.
 
 ---
 
@@ -2410,7 +2410,7 @@ console.log(result); // => Output: { token: 'jwt-token-here' }
 
 **Key Takeaway**: Plugin architecture exposes a stable CoreAPI for plugins to register behavior (routes, event handlers) — the core stays unchanged as new capabilities are added through plugins loaded at runtime.
 
-**Why It Matters**: Plugin architectures power VS Code (100,000+ extensions), Webpack (loaders and plugins), Jenkins (800+ plugins), and Kubernetes (admission controllers, CNI plugins). They enable organizations to extend platforms without access to core source code and allow independent release cycles — the VS Code team ships the editor while thousands of plugin authors release independently. The CoreAPI surface area is deliberately limited to prevent plugins from accessing internals that would couple them tightly to core implementation details.
+**Why It Matters**: Plugin architectures power VS Code (tens of thousands of extensions on the marketplace), Webpack (loaders and plugins), Jenkins (2,000+ plugins), and Kubernetes (admission controllers, CNI plugins). They enable organizations to extend platforms without access to core source code and allow independent release cycles — the VS Code team ships the editor while thousands of plugin authors release independently. The CoreAPI surface area is deliberately limited to prevent plugins from accessing internals that would couple them tightly to core implementation details.
 
 ---
 
@@ -2524,7 +2524,7 @@ sql_service.add_product(Product("p3", "Tablet", 449.99, "electronics"))
 
 **Key Takeaway**: The Repository pattern gives the domain layer a collection-like interface for persistence — the domain calls `save()` and `find_by_category()`, not SQL or HTTP, making it easy to swap implementations and test with in-memory repositories.
 
-**Why It Matters**: Repository is the standard persistence abstraction in DDD, Spring Data (JpaRepository), Entity Framework (DbSet), and Active Record. Teams that adopt repositories report 3-5x faster unit test execution because all tests run against in-memory repositories — no database connections, no migrations, no test data cleanup. The pattern also enables blue-green database migrations: implement a new SqlProductRepository pointing at the new schema, run side-by-side, then switch over by changing one DI binding.
+**Why It Matters**: Repository is the standard persistence abstraction in DDD, Spring Data (JpaRepository), Entity Framework (DbSet), and Active Record. The testing benefit is structural: unit tests run against in-memory repositories with no database connections, no migrations, and no test data cleanup. This eliminates an entire category of test flakiness and infrastructure dependency. The pattern also enables blue-green database migrations: implement a new SqlProductRepository pointing at the new schema, run side-by-side, then switch over by changing one DI binding.
 
 ---
 
@@ -3125,4 +3125,4 @@ print(breaker.state)  # => Output: CircuitState.CLOSED
 
 **Key Takeaway**: The Circuit Breaker prevents cascade failures by monitoring call success rates and blocking calls when a remote service is failing — this protects the caller from timeout storms and gives the failing service time to recover.
 
-**Why It Matters**: Without Circuit Breakers, a failing downstream service causes callers to wait for timeouts on every request — threads accumulate, memory fills, and the entire system cascades into failure within seconds. Netflix's Hystrix (now Resilience4j) pioneered circuit breakers in microservices and found they prevented hundreds of production incidents where one service failure would otherwise bring down the entire platform. Today, service meshes (Istio, Linkerd) implement circuit breaking at the infrastructure layer — but application-level circuit breakers provide more fine-grained control per operation.
+**Why It Matters**: Without Circuit Breakers, a failing downstream service causes callers to wait for timeouts on every request — threads accumulate, memory fills, and the entire system cascades into failure within seconds. Netflix's Hystrix popularized circuit breakers in microservices; Hystrix is now in maintenance mode and Netflix recommends Resilience4j (a separate, independently maintained library inspired by Hystrix) for new projects. The pattern itself was formalized by Michael Nygard in "Release It!" (2007). Today, service meshes (Istio, Linkerd) implement circuit breaking at the infrastructure layer — but application-level circuit breakers provide more fine-grained control per operation.

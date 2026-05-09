@@ -83,7 +83,7 @@ console.log(conn.getState()); // => Output: Disconnected
 
 **Key Takeaway**: Hierarchical states reduce duplication by inheriting parent-level transitions. Substates specialize behavior while parent states define common transitions applicable to all substates.
 
-**Why It Matters**: In production systems, hierarchical states reduce code duplication by 60-70%. When Spotify redesigned their playback FSM using hierarchical states, they eliminated 45 duplicate "error" transitions by defining error handling once at the parent Playing state level. All substates (Streaming, Buffering, Paused) inherited error handling automatically. This pattern is essential for complex domains where multiple substates share common exit conditions (authentication timeouts, network failures, user logouts).
+**Why It Matters**: In production systems, hierarchical states eliminate duplicated transition logic. Without them, a shared behavior like error handling must be duplicated on every substate — a maintenance burden that grows with every new substate added. Defining error handling once at the parent Playing state level means Streaming, Buffering, and Paused all inherit it automatically. This pattern is essential for complex domains where multiple substates share common exit conditions (authentication timeouts, network failures, user logouts).
 
 ### Example 32: Implementing Parent State Transitions
 
@@ -287,7 +287,7 @@ machine.handleEvent("powerOff"); // => Emergency exit: any On substate → Off
 
 **Key Takeaway**: Parent entry/exit actions execute when entering/leaving ANY substate of that parent. Substate transitions within the parent don't trigger parent entry/exit.
 
-**Why It Matters**: Entry/exit actions at parent level prevent resource leaks. When Dropbox redesigned their sync engine FSM, they moved connection cleanup to parent-level exit actions. Previously, each of 8 sync substates duplicated cleanup logic - missing it in 2 substates caused 40K connection leaks/day. Parent exit actions guarantee cleanup runs regardless of which substate triggered the exit.
+**Why It Matters**: Entry/exit actions at parent level prevent resource leaks. When cleanup logic (connection teardown, lock release, session cleanup) is duplicated across every substate, omitting it from even one substate causes resource leaks that accumulate silently. Parent-level exit actions guarantee cleanup runs regardless of which substate triggered the exit — the invariant is enforced structurally, not by convention.
 
 ### Example 34: Multiple Levels of Hierarchy
 
@@ -483,7 +483,7 @@ console.log(player.getCurrentState()); // => Output: Playing.Buffering
 
 **Key Takeaway**: Default substates ensure consistent entry points when transitioning to parent states. Configuration-driven defaults make entry behavior explicit.
 
-**Why It Matters**: Default substates prevent ambiguous entry. Without defaults, "resume playback" could enter Playing at any of 5 substates (Loading/Buffering/Active/Paused/Seeking), causing inconsistent behavior. YouTube's player FSM uses default substates to guarantee playback always starts at Loading state, ensuring proper initialization sequence (load → buffer → play) regardless of how Playing state is entered.
+**Why It Matters**: Default substates prevent ambiguous entry. Without a default, "resume playback" could enter the Playing state at any of its substates (Loading/Buffering/Active/Paused/Seeking), causing inconsistent initialization. A defined default substate guarantees playback always starts at Loading, ensuring the correct initialization sequence (load → buffer → play) regardless of how the Playing state is entered.
 
 ## Composite States (Examples 36-40)
 
@@ -1039,7 +1039,7 @@ console.log(system.getCurrentState()); // => Output: { connectivity: 'Offline', 
 
 **Key Takeaway**: Parallel regions execute independently. Changes in one region don't affect other regions unless explicitly coordinated.
 
-**Why It Matters**: Parallel regions prevent false dependencies. An app can be "Offline + LoggedIn" - network connectivity and authentication are orthogonal concerns. Slack's FSM uses parallel regions for 4 independent aspects: network (online/offline), auth (logged in/out), workspace (selected/none), notifications (enabled/disabled). Without parallel states, combinations explode to 2⁴=16 states. Parallel regions also enable each dimension to evolve independently—adding a new network state doesn't require modifying the authentication or notification regions.
+**Why It Matters**: Parallel regions prevent false dependencies. An app can be "Offline + LoggedIn" — network connectivity and authentication are orthogonal concerns. With parallel regions, 4 independent dimensions (network, auth, workspace, notifications) each have 2 states, remaining comprehensible. Without parallel states, all combinations must be explicit: 2⁴=16 states minimum, growing further with each new variant. Parallel regions also enable each dimension to evolve independently — adding a new network state doesn't require modifying the authentication or notification regions.
 
 ### Example 42: Broadcast Events to Parallel Regions
 
@@ -1898,7 +1898,7 @@ console.log(condFSM2.getCurrentState()); // => Output: Connected.Idle
 
 **Key Takeaway**: Conditional history restoration validates saved context before restoration. If validation fails, FSM falls back to default state instead of restoring potentially invalid state.
 
-**Why It Matters**: Unconditional restoration can restore invalid states. A video streaming app paused at 4K quality on WiFi shouldn't restore 4K on cellular (bandwidth insufficient). Conditional history checks network bandwidth before restoring playback quality. Stripe's payment FSM validates saved payment amount against current exchange rate before restoring "Confirm Payment" state - prevents showing stale amounts.
+**Why It Matters**: Unconditional restoration can restore invalid states. A video streaming app paused at 4K quality on WiFi shouldn't restore 4K on cellular — bandwidth is now insufficient. Conditional history checks current context before deciding whether to restore the saved state. In payment flows, validating the saved amount against the current exchange rate before restoring "Confirm Payment" prevents showing stale totals to the user.
 
 ## State Pattern Implementation (Examples 49-53)
 
@@ -2799,7 +2799,7 @@ checkout2.handleEvent("confirm"); // => Execute payment via PayPal strategy
 
 **Key Takeaway**: State Pattern can compose with Strategy Pattern - states select strategies, and context stores the selected strategy. This separates state transitions (State Pattern) from behavior execution (Strategy Pattern).
 
-**Why It Matters**: Composing patterns provides flexibility. E-commerce checkouts need State Pattern for workflow (selecting payment → processing → complete) and Strategy Pattern for payment methods (credit card, PayPal, crypto). Without composition, you'd duplicate payment logic across states or duplicate workflow logic across payment methods. Stripe's checkout FSM uses this composition - 5 states (select/process/authorize/capture/complete) × 20 payment strategies = clean separation instead of 100 state-strategy combinations.
+**Why It Matters**: Composing patterns provides flexibility. E-commerce checkouts need State Pattern for workflow (selecting payment → processing → complete) and Strategy Pattern for payment methods (credit card, bank transfer, crypto). Without composition, payment logic must be duplicated across states or workflow logic duplicated across payment methods. With composition, N states × M payment strategies requires N + M implementations instead of N × M.
 
 ## Production Workflows (Examples 54-60)
 
@@ -3152,7 +3152,7 @@ console.log(failOrder.getCurrentState()); // => Output: OutOfStock
 
 **Key Takeaway**: Production FSMs integrate with external systems (inventory) via guards. Transitions succeed only if external conditions (stock availability) are met, preventing invalid state progressions.
 
-**Why It Matters**: Inventory guards prevent overselling. Without FSM-integrated checks, orders could confirm even when out of stock, creating customer service nightmares. Shopify's order FSM checks inventory atomically during confirmation - if stock depletes between submission and confirmation (race condition), guard fails and order enters "Awaiting Restock" state instead of confirming. This guard-based approach eliminates the need for compensating transactions to cancel oversold orders, preventing the customer experience damage of accepting then cancelling orders.
+**Why It Matters**: Inventory guards prevent overselling. Without FSM-integrated checks, the race condition between stock check and order confirmation allows orders to confirm against depleted inventory. An FSM guard that checks inventory atomically during the confirmation transition fails fast — the order enters "Awaiting Restock" instead of confirming — which is far cheaper than accepting an order and then cancelling it post-confirmation.
 
 ### Example 56: Order Processing with Timeout Handling
 
@@ -3297,7 +3297,7 @@ setTimeout(() => {
 
 **Key Takeaway**: Production FSMs handle timeouts using scheduled events that auto-trigger transitions if intermediate states persist too long. Timeouts prevent orders from getting stuck indefinitely.
 
-**Why It Matters**: Timeout handling prevents resource leaks and improves UX. Payment providers reserve funds during authorization - if order never completes, funds stay reserved indefinitely, frustrating customers. Stripe's payment FSM expires authorizations after 7 days, auto-transitioning to "Expired" state and releasing reserved funds. Timeout FSMs clean up abandoned carts, stale sessions, and orphaned resources.
+**Why It Matters**: Timeout handling prevents resource leaks and improves UX. Payment providers reserve funds during authorization — if an order never completes, those funds stay reserved indefinitely. Timeout transitions auto-expire the authorization after a defined window, releasing reserved funds and cleaning up the order. The same pattern applies to abandoned carts, stale sessions, and any resource that must not be held open indefinitely.
 
 ### Example 57: Order Processing with Compensation (Saga Pattern)
 

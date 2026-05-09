@@ -158,7 +158,7 @@ WhatsApp integration requires the WhatsApp Business API (via Meta Cloud API or a
 
 **Key Takeaway**: WhatsApp requires either Meta Cloud API (official, needs business account) or a local web bridge (unofficial). Set `allowFrom` with phone numbers in E.164 format.
 
-**Why It Matters**: WhatsApp has 2.7 billion active users — more than Telegram, Slack, and Discord combined. For businesses in regions where WhatsApp dominates communication (Latin America, South Asia, Europe), an AI assistant on WhatsApp meets users where they already are. Customer service teams deploy OpenClaw on WhatsApp to handle first-line queries (order status, FAQs, scheduling) before escalating to humans, reducing response time from hours to seconds while keeping the familiar WhatsApp experience.
+**Why It Matters**: WhatsApp has over 2 billion monthly active users and dominates messaging in Latin America, South Asia, and Europe. For businesses in those regions, an AI assistant on WhatsApp meets users where they already are rather than requiring them to download another app. Customer service teams deploy OpenClaw on WhatsApp to handle first-line queries (order status, FAQs, scheduling) before escalating to humans, reducing response time from hours to seconds while keeping the familiar WhatsApp experience.
 
 ### Example 32: Signal Channel Setup
 
@@ -235,7 +235,7 @@ Different channels can use different LLM models. A quick-response Slack channel 
 
 **Key Takeaway**: Set `model.primary` inside a channel config to override the global default. Each channel independently selects its LLM model.
 
-**Why It Matters**: LLM costs vary dramatically — Opus costs ~15x more than Haiku per token. Using the same model everywhere either overspends (Opus for "what time is it?") or under-delivers (Haiku for "design a microservice architecture"). Channel-specific models match cost to context: personal Telegram chats use cheap models for casual queries, team Slack channels use powerful models for technical discussions, and automated webhook channels use the cheapest model for high-volume log processing. This per-channel optimization can reduce monthly LLM costs by 60-80% without sacrificing quality where it matters.
+**Why It Matters**: LLM costs vary dramatically by capability tier — the most capable models can cost many times more per token than the fastest/cheapest ones. Using the same model everywhere either overspends (flagship model for "what time is it?") or under-delivers (fast model for "design a microservice architecture"). Channel-specific models match cost to context: personal Telegram chats use cheap models for casual queries, team Slack channels use powerful models for technical discussions, and automated webhook channels use the cheapest model for high-volume log processing.
 
 ### Example 34: Channel Access Control Patterns
 
