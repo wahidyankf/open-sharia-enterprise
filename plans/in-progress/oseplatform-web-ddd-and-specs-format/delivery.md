@@ -106,9 +106,9 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
   - Set `test:quick.options.parallel` to `false` if not already.
   - Add the four new `inputs` paths.
   - Add `rhino-cli` to `implicitDependencies` if absent.
-- [ ] **6.4** Add the two new `spec-coverage` and `spec-coverage-api` targets per `tech-docs.md`.
+- [ ] **6.4** Add the single `spec-coverage` target running both perspectives sequentially per `tech-docs.md`.
 - [ ] **6.5 GREEN** `nx run oseplatform-web:test:quick` runs DDD validators first, then existing pipeline. All green.
-- [ ] **6.6 GREEN** `nx run oseplatform-web:spec-coverage` and `:spec-coverage-api` — 0 step gaps each.
+- [ ] **6.6 GREEN** `nx run oseplatform-web:spec-coverage` — 0 step gaps across both perspectives.
 
 ---
 
@@ -132,8 +132,7 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
 - [ ] **8.5** `rhino-cli ddd bc oseplatform` — 0 findings.
 - [ ] **8.6** `rhino-cli ddd ul oseplatform` — 0 findings.
 - [ ] **8.7** `nx run oseplatform-web:test:quick` — 0 findings, coverage ≥80%.
-- [ ] **8.8** `nx run oseplatform-web:spec-coverage` — 0 step gaps.
-- [ ] **8.9** `nx run oseplatform-web:spec-coverage-api` — 0 step gaps.
+- [ ] **8.8** `nx run oseplatform-web:spec-coverage` — 0 step gaps across both perspectives.
 - [ ] **8.10** `nx run oseplatform-web-be-e2e:test:e2e` — every tRPC scenario passes.
 - [ ] **8.11** `nx run oseplatform-web-fe-e2e:test:e2e` — every UI scenario passes.
 - [ ] **8.12** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.

@@ -181,34 +181,30 @@ Add to `test:quick.inputs`:
 "{workspaceRoot}/specs/apps/oseplatform/ddd/ubiquitous-language/**/*.md"
 ```
 
-Add **two** spec-coverage targets — one per perspective:
+Add a single `spec-coverage` target that runs both perspectives sequentially:
 
 ```json
 "spec-coverage": {
-  "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin apps/oseplatform-web",
+  "executor": "nx:run-commands",
+  "options": {
+    "commands": [
+      "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin apps/oseplatform-web",
+      "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/api/gherkin apps/oseplatform-web"
+    ],
+    "parallel": false
+  },
   "cache": true,
   "inputs": [
     "{workspaceRoot}/specs/apps/oseplatform/behavior/web/gherkin/**/*.feature",
-    "{projectRoot}/**/*.{ts,tsx}"
-  ]
-},
-"spec-coverage-api": {
-  "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/api/gherkin apps/oseplatform-web",
-  "cache": true,
-  "inputs": [
     "{workspaceRoot}/specs/apps/oseplatform/behavior/api/gherkin/**/*.feature",
     "{projectRoot}/**/*.{ts,tsx}"
   ]
 }
 ```
 
-Both targets validate against the same `apps/oseplatform-web` source root because all step definitions for both perspectives live in the same TS codebase. `nx affected -t spec-coverage` runs the web one; the api one needs explicit invocation OR pre-push extension to `nx affected -t spec-coverage spec-coverage-api`.
+Single target chosen over two-targets-per-perspective because pre-push runs `nx affected -t spec-coverage` and would not pick up a separately-named `spec-coverage-api`. The trade-off: cache key includes both perspective inputs, so api-only changes invalidate the web validation too. Since validation is a fast Go binary regex grep, the extra work is negligible.
 
 `implicitDependencies` adds `rhino-cli` if absent.
-
-## Pre-push hook update (out of scope here, completed in plan 4)
-
-This plan does **not** modify `.husky/pre-push` to add `spec-coverage-api`. Plan 4 introduces a single `validate:spec-coverage-all` Nx target that loops over all known perspective slugs per app, removing the need to enumerate them in pre-push. Until then, devs run `spec-coverage-api` manually OR rely on `test:quick` (which doesn't include it).
 
 ## Glossary anatomy
 
@@ -220,7 +216,7 @@ Same template as `organiclever`'s glossaries. Each `ubiquitous-language/<bc>.md`
 - Terms in detail (≥3 terms per BC; 7-12 terms for content + search).
 - Forbidden synonyms (lock both intra-BC and cross-BC).
 
-The `Maintainer` value is `oseplatform-web maintainer`.
+The `Maintainer` value is `oseplatform-web team`.
 
 ## Test gates and what they prove
 
@@ -232,8 +228,7 @@ The `Maintainer` value is `oseplatform-web maintainer`.
 | `rhino-cli specs validate-adoption oseplatform`          | `behavior/` non-empty + `bounded-contexts.yaml` present |
 | `rhino-cli ddd bc oseplatform`                           | Source layout matches registry; 7 contexts              |
 | `rhino-cli ddd ul oseplatform`                           | All 7 glossaries well-formed                            |
-| `nx run oseplatform-web:spec-coverage`                   | Every web Gherkin step has a step definition            |
-| `nx run oseplatform-web:spec-coverage-api`               | Every api Gherkin step has a step definition            |
+| `nx run oseplatform-web:spec-coverage`                   | Every Gherkin step has a step definition (web + api)    |
 | `nx run oseplatform-web:test:quick`                      | DDD + vitest + coverage ≥80% (existing)                 |
 | `nx run oseplatform-web-be-e2e:test:e2e`                 | tRPC routes still respond correctly post-router-split   |
 | `nx run oseplatform-web-fe-e2e:test:e2e`                 | UI routes render correctly post-refactor                |

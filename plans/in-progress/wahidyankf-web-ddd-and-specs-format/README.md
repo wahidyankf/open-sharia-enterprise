@@ -2,7 +2,6 @@
 
 **Status**: In Progress
 **Scope**: `ose-public` — `apps/wahidyankf-web/`, `specs/apps/wahidyankf/`
-**Branch**: `worktree/wahidyankf-web-ddd-and-specs-format` (assigned at execution time)
 
 ## Problem
 
@@ -45,6 +44,24 @@ One container: `web` (Next.js Vercel deployment). No tRPC server-side code today
 
 - **Independent of plans 2 and 3** — wahidyankf-web has no shared kernel with `oseplatform-web` or `ayokoding-web`. The three web-app plans can run in any order.
 - **Unblocks plan 4** — `bdd-ddd-tooling-gap-fill` allowlists wahidyankf in the new pre-push adoption gate; until this plan lands, the allowlist must skip wahidyankf.
+
+## Worktree
+
+Path: `worktrees/wahidyankf-web-ddd-and-specs-format/`
+
+Provisioning:
+
+```bash
+cd /Users/wkf/ose-projects/ose-public && claude --worktree wahidyankf-web-ddd-and-specs-format
+```
+
+Or via git directly:
+
+```bash
+git worktree add worktrees/wahidyankf-web-ddd-and-specs-format -b worktree/wahidyankf-web-ddd-and-specs-format
+```
+
+Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
 
 ## Documents
 

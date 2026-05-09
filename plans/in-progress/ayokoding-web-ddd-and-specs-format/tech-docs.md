@@ -58,7 +58,7 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/content
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/content.md
-    gherkin: specs/apps/ayokoding/behavior/api/gherkin/content
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/content
     relationships:
       - to: search
         kind: customer-supplier
@@ -82,7 +82,7 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/search
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/search.md
-    gherkin: specs/apps/ayokoding/behavior/api/gherkin/search
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/search
     relationships:
       - to: content
         kind: customer-supplier
@@ -103,7 +103,7 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/i18n
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/i18n.md
-    gherkin: specs/apps/ayokoding/behavior/api/gherkin/i18n
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/i18n
     relationships: []
 
   - name: navigation
@@ -116,7 +116,7 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/navigation
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/navigation.md
-    gherkin: specs/apps/ayokoding/behavior/api/gherkin/navigation
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/navigation
     relationships:
       - to: content
         kind: customer-supplier
@@ -187,11 +187,42 @@ Identical pattern to oseplatform:
 - `parallel: false`.
 - Add four new `inputs` paths.
 - Add `rhino-cli` to `implicitDependencies`.
-- Add two `spec-coverage` targets, one per perspective.
+- Add a single `spec-coverage` target running both perspectives sequentially (mirroring plan 2 oseplatform):
+
+```json
+"spec-coverage": {
+  "executor": "nx:run-commands",
+  "options": {
+    "commands": [
+      "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/web/gherkin apps/ayokoding-web",
+      "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/api/gherkin apps/ayokoding-web"
+    ],
+    "parallel": false
+  },
+  "cache": true,
+  "inputs": [
+    "{workspaceRoot}/specs/apps/ayokoding/behavior/web/gherkin/**/*.feature",
+    "{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature",
+    "{projectRoot}/**/*.{ts,tsx}"
+  ]
+}
+```
+
+## Multi-perspective `gherkin:` workaround (registry limitation)
+
+Today's `bcregistry/Context.Gherkin` is a single string. Plan 3 has four BCs that span both perspectives (`content`, `search`, `i18n`, `navigation` each have web-side AND api-side feature files). The registry can only point at one path.
+
+**Workaround applied here**: register multi-perspective BCs as `gherkin: behavior/web/gherkin/<bc>`. This satisfies `ddd bc`'s "directory exists with ≥1 .feature" check using the web side. The api-side feature files (`content-api.feature`, `search-api.feature`, `i18n-api.feature`, `navigation-api.feature`) live under `behavior/api/gherkin/<bc>/` but are NOT validated by `ddd bc` for that BC's `gherkin:` field.
+
+**Coverage on api side preserved by**: the single `spec-coverage` target above runs against `behavior/api/gherkin/` independently, so every step in api-side features is still validated against TS step definitions.
+
+**Orphan detection on api side**: today's validator only walks `Contexts[0].Gherkin` parent. Since `app-shell` (contexts[0]) lives under `behavior/web/gherkin/`, only that parent is walked — api-side subdirs are silently un-walked, which means no false orphan findings for plan 3. Plan 4 fix #5 (multi-parent orphan walks) **+** fix #11 (`gherkin: []string` schema extension) together resolve the limitation properly: once both ship, this plan's registry can be updated to declare both perspectives' paths per multi-perspective BC, and the validator catches orphans in both walks.
+
+Until plan 4 lands, the workaround is structurally honest: each multi-perspective BC's web-side gherkin folder is the canonical "registered" path; the api-side folder is documented in the BC's glossary's "Used in features" column for human reference, with a note that registry-side validation is web-only pending plan 4.
 
 ## Glossary anatomy
 
-Same template as `organiclever` and oseplatform plan. Maintainer field: `ayokoding-web maintainer`.
+Same template as `organiclever` and oseplatform plan. Maintainer field: `ayokoding-web team`.
 
 ## Test gates and what they prove
 
@@ -203,8 +234,7 @@ Same template as `organiclever` and oseplatform plan. Maintainer field: `ayokodi
 | `rhino-cli specs validate-adoption ayokoding`          | `behavior/` non-empty + `bounded-contexts.yaml` present |
 | `rhino-cli ddd bc ayokoding`                           | Source layout matches registry; 6 contexts              |
 | `rhino-cli ddd ul ayokoding`                           | All 6 glossaries well-formed                            |
-| `nx run ayokoding-web:spec-coverage`                   | Every web Gherkin step has a step definition            |
-| `nx run ayokoding-web:spec-coverage-api`               | Every api Gherkin step has a step definition            |
+| `nx run ayokoding-web:spec-coverage`                   | Every Gherkin step has a step definition (web + api)    |
 | `nx run ayokoding-web:test:quick`                      | DDD + vitest + coverage ≥80%                            |
 | `nx run ayokoding-web-be-e2e:test:e2e`                 | tRPC routes work post router split                      |
 | `nx run ayokoding-web-fe-e2e:test:e2e` (en + id)       | UI works in both locales post middleware migration      |

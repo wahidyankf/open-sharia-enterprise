@@ -60,16 +60,17 @@ Both new Nx targets (`validate:specs-adoption` and `validate:specs-tree`) loop o
 
 ### Pre-push wiring
 
-`.husky/pre-push` adds two new conditional invocations:
+The two new Nx targets are added to the existing `nx affected -t ...` line in `.husky/pre-push`. Single source of truth: the allowlist lives only in `apps/rhino-cli/internal/allowlist/allowlist.go`; the pre-push hook makes no per-app routing decision.
+
+`.husky/pre-push` line becomes:
 
 ```sh
-if echo "$CHANGED" | grep -qE '^specs/apps/(organiclever|wahidyankf|oseplatform|ayokoding)/'; then
-  npx nx run rhino-cli:validate:specs-adoption
-  npx nx run rhino-cli:validate:specs-tree
-fi
+npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree --parallel="$PARALLEL"
 ```
 
-The regex is hardcoded to the allowlist for change-detection (which is parent of pre-push selectivity). The validator itself uses `allowlist.AppsWithDDD` for actual validation.
+Both new targets are cacheable and declare their `inputs` to include `specs/apps/**/behavior/**/*.feature` and `specs/apps/**/ddd/bounded-contexts.yaml`, so `nx affected` only re-runs them when an allowlisted app's specs (or the rhino-cli source) actually change. Cache hits are near-zero cost on pushes that don't touch specs.
+
+Removing the legacy regex avoids duplicating the allowlist between Go code and shell script; adding a new app to `allowlist.AppsWithDDD` is the single point of change.
 
 ## Fix #3 — `organiclever-be:test:quick` DDD wiring
 
@@ -308,6 +309,143 @@ for _, ctx := range reg.Contexts {
 }
 ```
 
+## Fix #11 — `gherkin: []string` schema extension
+
+### Schema change
+
+Schema version stays at `2` because the change is **additive with auto-conversion** (analogous to how `code:` was elevated). `bcregistry/types.go` redefines:
+
+```go
+type Context struct {
+    Name           string         `yaml:"name"`
+    Summary        string         `yaml:"summary"`
+    Layers         []string       `yaml:"layers"`
+    Code           []string       `yaml:"code"`
+    CodeLang       []string       `yaml:"code_lang"`
+    Glossary       string         `yaml:"glossary"`
+    Gherkin        GherkinPaths   `yaml:"gherkin"`  // CHANGED — was string
+    Relationships  []Relationship `yaml:"relationships"`
+}
+
+// GherkinPaths is a list with a custom UnmarshalYAML so a single string
+// in the YAML form auto-converts to a one-element slice. This preserves
+// every existing v2 registry without edit.
+type GherkinPaths []string
+
+func (g *GherkinPaths) UnmarshalYAML(value *yaml.Node) error {
+    if value.Kind == yaml.ScalarNode {
+        *g = GherkinPaths{value.Value}
+        return nil
+    }
+    var list []string
+    if err := value.Decode(&list); err != nil {
+        return err
+    }
+    *g = GherkinPaths(list)
+    return nil
+}
+```
+
+### Loader
+
+`bcregistry/loader.go` post-decode loop adds:
+
+```go
+for i := range reg.Contexts {
+    if len(reg.Contexts[i].Gherkin) == 0 {
+        return nil, fmt.Errorf("registry context %q has empty gherkin list", reg.Contexts[i].Name)
+    }
+}
+```
+
+### Validator changes
+
+`bcregistry/validator.go` `checkGherkin()` becomes per-path:
+
+```go
+func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
+    var findings []Finding
+    for _, gh := range ctx.Gherkin {
+        gherkinPath := filepath.Join(repoRoot, gh)
+        if _, err := osStatFn(gherkinPath); err != nil {
+            findings = append(findings, Finding{
+                File:     gh,
+                Message:  fmt.Sprintf("missing gherkin directory for context %q", ctx.Name),
+                Severity: severity,
+            })
+            continue
+        }
+        // ≥1 .feature check per path
+        entries, err := osReadDirFn(gherkinPath)
+        if err != nil {
+            findings = append(findings, Finding{
+                File:     gh,
+                Message:  fmt.Sprintf("cannot read gherkin directory for context %q: %v", ctx.Name, err),
+                Severity: severity,
+            })
+            continue
+        }
+        hasFeature := false
+        for _, e := range entries {
+            if !e.IsDir() && strings.HasSuffix(e.Name(), ".feature") {
+                hasFeature = true
+                break
+            }
+        }
+        if !hasFeature {
+            findings = append(findings, Finding{
+                File:     gh,
+                Message:  fmt.Sprintf("no feature files found in gherkin directory for context %q", ctx.Name),
+                Severity: severity,
+            })
+        }
+    }
+    return findings
+}
+```
+
+### `registeredGherkin` map population
+
+In `validate()`, the registered set construction loops the list:
+
+```go
+for i := range reg.Contexts {
+    ctx := &reg.Contexts[i]
+    contextByName[ctx.Name] = ctx
+    for _, c := range ctx.Code {
+        registeredCode[filepath.Join(repoRoot, c)] = true
+    }
+    registeredGlossary[filepath.Join(repoRoot, ctx.Glossary)] = true
+    for _, gh := range ctx.Gherkin {
+        registeredGherkin[filepath.Join(repoRoot, gh)] = true
+    }
+}
+```
+
+Combined with fix #5 (multi-parent orphan walks), this catches orphans on every perspective parent regardless of which side a BC declared first.
+
+### `glossary/validator.go` impact
+
+The glossary validator's `checkTerms` uses `ctx.Gherkin` to build feature paths. With `GherkinPaths` it iterates:
+
+```go
+for _, gh := range ctx.Gherkin {
+    gherkinPath := filepath.Join(opts.RepoRoot, gh)
+    findings = append(findings, checkTermsAgainstGherkin(ctx.Glossary, g, codePaths, gherkinPath, sev)...)
+}
+```
+
+A feature reference in a glossary table that resolves under any one of the BC's gherkin paths counts as found. (Glossary feature references already use the prefix `<bc>/<feature>.feature` per organiclever convention; the validator joins this against each gherkin parent in turn.)
+
+### Plans 2 + 3 follow-up
+
+Once fixes #5 + #11 land, plans 2 and 3's registries can be updated:
+
+- Plan 2 oseplatform — no change required today (no BC has both perspectives day-one).
+- Plan 3 ayokoding — change `gherkin: behavior/web/gherkin/content` to `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for `content`, `search`, `i18n`, `navigation`. Same yaml file edited in one commit.
+
+This migration commit is **out of scope of plan 4** itself — plan 4 ships the schema, plans 2/3 (or a small follow-up) consume it.
+
 ## Test plan
 
 Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~40 new test scenarios across the 10 fixes.
@@ -317,8 +455,9 @@ Coverage gate: ≥90% on `apps/rhino-cli/` (existing). Each fix's TDD red-step w
 ## Migration considerations
 
 - **Plans 1, 2, 3 ship without `code_lang:`** — they default to `[ts, tsx]`, which is correct for all three since their bounded contexts live entirely in TS. Fix #4 lets them later add `code_lang: [ts, fs]` when a multi-surface BC is introduced.
-- **organiclever-be DDD wiring (fix #3)** depends on the four organiclever BCs that are not present yet declaring `code_lang: [fs]`. Until plans 1-3 are merged, fix #3 also requires updating `specs/apps/organiclever/ddd/bounded-contexts.yaml` to add `code_lang:` to relevant contexts.
+- **organiclever-be DDD wiring (fix #3)** is independent of fix #4. organiclever's 9 bounded contexts all live under `apps/organiclever-web/src/contexts/<bc>` (TypeScript) today; organiclever-be carries no domain code (health-check only). Fix #3 wires the same TS-against-TS validators that organiclever-web already runs, with cache invalidation triggered when the registry or glossaries change. No `code_lang: [fs]` migration is required for fix #3 to land; that becomes relevant only if a future plan introduces an organiclever-be BC with F# domain code.
 - **Pre-push allowlist gate (fixes #1, #2)** must wait until all 4 web apps are on the new format. If plan 4 is delivered before any of plans 1-3, the new pre-push gate would fail on day one. Hard dependency — flagged in `delivery.md` Phase 0.
+- **Plan 3 multi-perspective registry (fix #11)** — plan 3 today registers `gherkin: behavior/web/gherkin/<bc>` for multi-perspective BCs (workaround). After fix #11 + fix #5 land, plan 3's registry can be migrated to `gherkin: [behavior/web/gherkin/<bc>, behavior/api/gherkin/<bc>]` per multi-perspective BC. Migration is a separate small follow-up commit, not part of plan 4 itself, since it only edits one yaml file.
 
 ## Risk and rollback
 

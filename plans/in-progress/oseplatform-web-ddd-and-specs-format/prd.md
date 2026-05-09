@@ -201,11 +201,11 @@ Feature: oseplatform-web DDD + new specs format adoption
     Then both DDD validators run before vitest
     And both exit 0 before unit tests start
 
-  Scenario: spec-coverage per perspective passes
-    Given oseplatform-web has spec-coverage targets for both web and api perspectives
+  Scenario: spec-coverage covers both perspectives via single target
+    Given oseplatform-web has a single spec-coverage target running both perspectives sequentially
     When the developer runs "nx run oseplatform-web:spec-coverage"
-    And "nx run oseplatform-web:spec-coverage-api"
-    Then 0 step gaps are reported across all bounded-context folders in both perspectives
+    Then both behavior/web/gherkin and behavior/api/gherkin are validated
+    And 0 step gaps are reported across all bounded-context folders in both perspectives
 
   Scenario: source code reflects bounded contexts
     Given the refactor is complete

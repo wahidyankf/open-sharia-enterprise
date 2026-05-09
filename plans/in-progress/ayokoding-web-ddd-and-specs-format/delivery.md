@@ -131,9 +131,9 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
   - Set `test:quick.options.parallel: false`.
   - Add the four new `inputs` paths.
   - Add `rhino-cli` to `implicitDependencies` if absent.
-- [ ] **7.4** Add the two new `spec-coverage` and `spec-coverage-api` targets per `tech-docs.md`.
+- [ ] **7.4** Add the single `spec-coverage` target running both perspectives sequentially per `tech-docs.md`.
 - [ ] **7.5 GREEN** `nx run ayokoding-web:test:quick` runs DDD validators first, then existing pipeline. All green.
-- [ ] **7.6 GREEN** `nx run ayokoding-web:spec-coverage` and `:spec-coverage-api` — 0 step gaps each.
+- [ ] **7.6 GREEN** `nx run ayokoding-web:spec-coverage` — 0 step gaps across both perspectives.
 
 ---
 
@@ -157,8 +157,7 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
 - [ ] **9.5** `rhino-cli ddd bc ayokoding` — 0 findings.
 - [ ] **9.6** `rhino-cli ddd ul ayokoding` — 0 findings.
 - [ ] **9.7** `nx run ayokoding-web:test:quick` — 0 findings, coverage ≥80%.
-- [ ] **9.8** `nx run ayokoding-web:spec-coverage` — 0 step gaps.
-- [ ] **9.9** `nx run ayokoding-web:spec-coverage-api` — 0 step gaps.
+- [ ] **9.8** `nx run ayokoding-web:spec-coverage` — 0 step gaps across both perspectives.
 - [ ] **9.10** `nx run ayokoding-web-be-e2e:test:e2e` — every tRPC scenario passes.
 - [ ] **9.11** `nx run ayokoding-web-fe-e2e:test:e2e` — every UI scenario passes in both English and Indonesian.
 - [ ] **9.12** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.

@@ -301,6 +301,49 @@ Feature: ddd bc enforces symmetry across all asymmetric relationship kinds
     Then no finding is reported
 ```
 
+## Fix #11 — Extend `gherkin:` field to `[]string` (HIGH)
+
+**What**: `bcregistry.Context.Gherkin` is a single string. Plans 2 and 3 introduce bounded contexts that span both `web` and `api` perspectives — each BC has Gherkin scenarios in two folders (`behavior/web/gherkin/<bc>/` and `behavior/api/gherkin/<bc>/`). The schema cannot express this. Plan 3 works around it by registering only the web-side path and leaving api-side un-validated by `ddd bc`. Resolution: extend `gherkin:` to accept `[]string` (parallel to the `code: []string` extension already at schema v2). Each path must independently exist with ≥1 `.feature` file. Backward compatible: single-string form auto-converts to a one-element list during YAML decode.
+
+**Acceptance**:
+
+```gherkin
+Feature: gherkin field accepts multi-perspective paths
+
+  Scenario: Single-string form continues to work (backward compat)
+    Given a context declares `gherkin: specs/apps/organiclever/behavior/web/gherkin/journal`
+    When the developer runs "rhino-cli ddd bc organiclever"
+    Then the loader auto-converts to a one-element list
+    And no behavior change relative to today
+
+  Scenario: List form validates each path
+    Given a context declares `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]`
+    And both paths exist on disk with ≥1 .feature file
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then the command exits 0 with no findings
+
+  Scenario: List form catches missing path
+    Given a context declares `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]`
+    And only behavior/web/gherkin/content/ exists on disk
+    When the developer runs "rhino-cli ddd bc <app>"
+    Then the command reports a finding for "missing gherkin directory" pointing at api/gherkin/content
+    And exits non-zero
+
+  Scenario: Plan 3 ayokoding registry can declare both perspectives
+    Given fixes #5 and #11 are both applied
+    And specs/apps/ayokoding/ddd/bounded-contexts.yaml declares `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for the content BC
+    When the developer runs "rhino-cli ddd bc ayokoding"
+    Then the command exits 0
+    And both perspective folders are registered (no orphan findings on either side)
+
+  Scenario: Orphan detection (post fix #5) covers all parents
+    Given fix #5 multi-parent orphan walks is applied
+    And fix #11 list-form gherkin is applied
+    And specs/apps/ayokoding/behavior/api/gherkin/orphan-bc/ exists but is not registered
+    When the developer runs "rhino-cli ddd bc ayokoding"
+    Then the orphan is reported regardless of which perspective it lives in
+```
+
 ## Non-goals
 
 - No spec-coverage AST migration (regex extraction stays).

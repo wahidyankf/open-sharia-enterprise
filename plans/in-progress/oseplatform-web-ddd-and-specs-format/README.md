@@ -2,7 +2,6 @@
 
 **Status**: In Progress
 **Scope**: `ose-public` — `apps/oseplatform-web/`, `specs/apps/oseplatform/` (web parts only)
-**Branch**: `worktree/oseplatform-web-ddd-and-specs-format` (assigned at execution time)
 
 ## Problem
 
@@ -52,6 +51,24 @@ Apply the same C4 + DDD layout that `organiclever` already uses to `oseplatform-
 
 - **Independent of plans 1 and 3.**
 - **Unblocks plan 4** — `bdd-ddd-tooling-gap-fill` allowlists oseplatform in the new pre-push adoption gate; until this plan lands, the allowlist must skip oseplatform.
+
+## Worktree
+
+Path: `worktrees/oseplatform-web-ddd-and-specs-format/`
+
+Provisioning:
+
+```bash
+cd /Users/wkf/ose-projects/ose-public && claude --worktree oseplatform-web-ddd-and-specs-format
+```
+
+Or via git directly:
+
+```bash
+git worktree add worktrees/oseplatform-web-ddd-and-specs-format -b worktree/oseplatform-web-ddd-and-specs-format
+```
+
+Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
 
 ## Documents
 

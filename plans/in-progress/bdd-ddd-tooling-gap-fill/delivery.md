@@ -36,10 +36,11 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
 
 ### 1.4 Pre-push wiring
 
-- [ ] **1.4.1** Edit `.husky/pre-push` adding the conditional invocations per `tech-docs.md` § "Pre-push wiring".
-- [ ] **1.4.2 RED** Stage a no-op edit to `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` (whitespace) and run `git push --dry-run`. Confirm both new gates fire.
+- [ ] **1.4.1** Edit `.husky/pre-push` to add `validate:specs-adoption validate:specs-tree` to the existing `nx affected -t typecheck lint test:quick spec-coverage` invocation, so the pre-push line becomes `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree --parallel="$PARALLEL"`. No conditional regex — the allowlist lives only in `apps/rhino-cli/internal/allowlist/allowlist.go`.
+- [ ] **1.4.2 RED** Stage a no-op edit to `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` (whitespace) and run `git push --dry-run`. Confirm both new gates fire (cache miss because input changed).
 - [ ] **1.4.3 GREEN** Confirm push succeeds (gates pass with valid registry).
 - [ ] **1.4.4** Manually break `specs/apps/wahidyankf/behavior/web/gherkin/` (rename a folder) and confirm gate aborts the push with a HIGH finding. Then revert.
+- [ ] **1.4.5 GREEN** Push without spec changes — confirm both new targets are cache-hit (near-zero cost).
 
 ---
 
@@ -157,35 +158,79 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
 
 ---
 
-## Phase 10 — Documentation + agent-binding updates
+## Phase 10 — `gherkin: []string` schema extension (Fix #11)
 
-- [ ] **10.1** Update `governance/conventions/structure/specs-directory-structure.md`:
+### 10.1 Schema bump with auto-conversion
+
+- [ ] **10.1.1 RED** Add unit tests in `internal/bcregistry/bcregistry_test.go`:
+  - Single-string form decodes to one-element slice (backward compat with organiclever, plans 1, 2, 3).
+  - List form `[behavior/web/gherkin/x, behavior/api/gherkin/x]` decodes intact.
+  - Empty list errors clearly (`empty gherkin list`).
+  - Tests fail.
+- [ ] **10.1.2 GREEN** Edit `internal/bcregistry/types.go` per `tech-docs.md` Fix #11:
+  - Replace `Gherkin string` with `Gherkin GherkinPaths`.
+  - Add `GherkinPaths` named type with `UnmarshalYAML` that auto-converts scalar to single-element list.
+- [ ] **10.1.3 GREEN** Edit `internal/bcregistry/loader.go`: post-decode loop validates `len(ctx.Gherkin) > 0`.
+- [ ] **10.1.4 GREEN** All unit tests pass.
+
+### 10.2 `checkGherkin()` per-path
+
+- [ ] **10.2.1 RED** Add unit tests in `internal/bcregistry/bcregistry_test.go`:
+  - List with one missing path → finding for missing path; passing path validated.
+  - List with one path lacking .feature → "no feature files" finding for that path only.
+  - Tests fail.
+- [ ] **10.2.2 GREEN** Edit `internal/bcregistry/validator.go` `checkGherkin()`: loop `ctx.Gherkin` iterating each path independently per `tech-docs.md`.
+- [ ] **10.2.3 GREEN** All tests pass.
+
+### 10.3 `registeredGherkin` map population
+
+- [ ] **10.3.1 RED** Combined fix #5 + #11 test: orphan under api/gherkin/ when registry declares both perspectives → reported. Today's code (single-parent walk + single-path) doesn't catch it; with both fixes it does.
+- [ ] **10.3.2 GREEN** Edit `internal/bcregistry/validator.go` `validate()`: `registeredGherkin` loop iterates `ctx.Gherkin`.
+- [ ] **10.3.3 GREEN** All tests pass.
+
+### 10.4 Glossary validator
+
+- [ ] **10.4.1 RED** Test in `internal/glossary/validator_test.go`: glossary feature reference resolvable under either of a BC's two declared gherkin paths is "found".
+- [ ] **10.4.2 GREEN** Edit `internal/glossary/validator.go` `checkTerms`: iterate `ctx.Gherkin` paths; first match wins.
+- [ ] **10.4.3 GREEN** All tests pass.
+
+### 10.5 Backward-compat smoke
+
+- [ ] **10.5 GREEN** Run `rhino-cli ddd bc organiclever` — exits 0 (single-string `gherkin:` form auto-converts; behavior unchanged).
+- [ ] **10.6 GREEN** Run `rhino-cli ddd bc <each plan-1-3 app>` — exits 0 (same single-string form, no migration required).
+
+---
+
+## Phase 11 — Documentation + agent-binding updates
+
+- [ ] **11.1** Update `governance/conventions/structure/specs-directory-structure.md`:
   - Document the allowlist policy (Phase 1).
   - Document `code_lang:` schema field (Phase 3).
   - Document drift-\* removal (Phase 6).
   - Document severity audit + env var rename (Phase 8).
   - Document expanded symmetry whitelist (Phase 9).
-- [ ] **10.2** Update `.claude/agents/specs-checker.md` and `.claude/agents/specs-fixer.md`:
+  - Document `gherkin: []string` extension (Phase 10).
+- [ ] **11.2** Update `.claude/agents/specs-checker.md` and `.claude/agents/specs-fixer.md`:
   - Drop references to `drift-routes`, `drift-endpoints`, `drift-contracts`.
   - Reference the new `validate:specs-adoption` and `validate:specs-tree` Nx targets.
-- [ ] **10.3** Run `npm run sync:claude-to-opencode` — confirm `.opencode/agents/` mirror updated.
-- [ ] **10.4** Run `npm run validate:sync` — parity confirmed.
-- [ ] **10.5** `npm run lint:md` — fix violations.
+- [ ] **11.3** Run `npm run sync:claude-to-opencode` — confirm `.opencode/agents/` mirror updated.
+- [ ] **11.4** Run `npm run validate:sync` — parity confirmed.
+- [ ] **11.5** `npm run lint:md` — fix violations.
 
 ---
 
-## Phase 11 — Final validation gate
+## Phase 12 — Final validation gate
 
-- [ ] **11.1** `(cd apps/rhino-cli && go build ./... && go test ./...)` — all pass.
-- [ ] **11.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
-- [ ] **11.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
-- [ ] **11.4** `nx run rhino-cli:validate:specs-tree` — 0 findings.
-- [ ] **11.5** For each of the 4 web apps: `nx run <app>-web:test:quick` — DDD passes.
-- [ ] **11.6** `nx run organiclever-be:test:quick` — DDD passes.
-- [ ] **11.7** `nx affected -t typecheck lint test:quick spec-coverage --base=HEAD~1` — full pre-push gate green.
-- [ ] **11.8** `npm run lint:md` — 0 violations.
-- [ ] **11.9** `npm run validate:sync` — `.claude/` ↔ `.opencode/` parity.
-- [ ] **11.10** Manual smoke per fix:
+- [ ] **12.1** `(cd apps/rhino-cli && go build ./... && go test ./...)` — all pass.
+- [ ] **12.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
+- [ ] **12.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
+- [ ] **12.4** `nx run rhino-cli:validate:specs-tree` — 0 findings.
+- [ ] **12.5** For each of the 4 web apps: `nx run <app>-web:test:quick` — DDD passes.
+- [ ] **12.6** `nx run organiclever-be:test:quick` — DDD passes.
+- [ ] **12.7** `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree --base=HEAD~1` — full pre-push gate green.
+- [ ] **12.8** `npm run lint:md` — 0 violations.
+- [ ] **12.9** `npm run validate:sync` — `.claude/` ↔ `.opencode/` parity.
+- [ ] **12.10** Manual smoke per fix:
   - **#1**: edit `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` whitespace; `git push --dry-run` — both new gates fire.
   - **#3**: `nx run organiclever-be:test:quick` cold cache → DDD validators run.
   - **#4**: temporarily add `code_lang: [fs]` to one organiclever BC + a stale F# identifier in its glossary → `ddd ul` reports stale identifier. Revert.
@@ -193,19 +238,21 @@ All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd ap
   - **#7**: `rhino-cli specs --help` shows 4 subcommands.
   - **#8**: missing folder + empty folder → distinct severities.
   - **#9**: `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits stderr audit line.
+  - **#11**: edit `specs/apps/ayokoding/ddd/bounded-contexts.yaml` to declare `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for content BC; `rhino-cli ddd bc ayokoding` exits 0. Revert.
 
 ---
 
-## Phase 12 — Commit, push, archive
+## Phase 13 — Commit, push, archive
 
-- [ ] **12.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
+- [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
-  - Body lists 10 fixes by number.
-- [ ] **12.2** Push via Trunk Based Development (default) or draft PR (optional).
-- [ ] **12.3** Wait for `main` CI green per `governance/development/workflow/ci-monitoring.md`.
-- [ ] **12.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
-- [ ] **12.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
-- [ ] **12.6** Surface for downstream: confirm `repo-ose-primer-propagation-maker` has the new constants, agent definitions, and validator changes on its propagation list. The maker runs in dry-run by default; an actual primer PR is a separate decision.
+  - Body lists 11 fixes by number.
+- [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
+- [ ] **13.3** Wait for `main` CI green per `governance/development/workflow/ci-monitoring.md`.
+- [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
+- [ ] **13.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
+- [ ] **13.6** Surface for downstream: confirm `repo-ose-primer-propagation-maker` has the new constants, agent definitions, and validator changes on its propagation list. The maker runs in dry-run by default; an actual primer PR is a separate decision.
+- [ ] **13.7** Optional follow-up commit: edit `specs/apps/ayokoding/ddd/bounded-contexts.yaml` to migrate the four multi-perspective BCs (`content`, `search`, `i18n`, `navigation`) from single-string `gherkin:` to list form `[behavior/web/gherkin/<bc>, behavior/api/gherkin/<bc>]`. Single yaml edit; out of scope of this plan but unblocked by it.
 
 ---
 

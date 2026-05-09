@@ -118,7 +118,7 @@ apps/ayokoding-web/src/
 - **Code**: `src/contexts/content/`
 - **Layers**: `[application, infrastructure, presentation]`
 - **Owns**: content rendering + tRPC content-api. `application/` exposes content-fetching procedures + DTOs. `infrastructure/` adapts filesystem reads + frontmatter parsing. `presentation/` renders article + content-list views.
-- **Gherkin**: `behavior/web/gherkin/content/content-rendering.feature` (UI), `behavior/api/gherkin/content/content-api.feature` (HTTP)
+- **Gherkin**: `behavior/web/gherkin/content/content-rendering.feature` (UI; **registry-canonical** path), `behavior/api/gherkin/content/content-api.feature` (HTTP; covered by `spec-coverage` only — registry limitation, see tech-docs § "Multi-perspective gherkin: workaround")
 - **Key terms**: `Article`, `Content source`, `Frontmatter`, `Slug`, `Render pipeline`
 - **Forbidden synonyms**: "post" (blog jargon), "page" (Next.js overloaded)
 
@@ -127,7 +127,7 @@ apps/ayokoding-web/src/
 - **Code**: `src/contexts/search/`
 - **Layers**: `[application, infrastructure, presentation]`
 - **Owns**: search backend (tRPC) + UI. `application/` query interpreter + scoring. `infrastructure/` index implementation. `presentation/` input + results dropdown.
-- **Gherkin**: `behavior/web/gherkin/search/search.feature` (UI), `behavior/api/gherkin/search/search-api.feature` (HTTP)
+- **Gherkin**: `behavior/web/gherkin/search/search.feature` (UI; **registry-canonical**), `behavior/api/gherkin/search/search-api.feature` (HTTP; covered by `spec-coverage` only — see tech-docs workaround)
 - **Key terms**: `Query`, `Search index`, `Result entry`, `Score`, `Snippet`, `Locale-aware index`
 - **Forbidden synonyms**: "find", "lookup"
 
@@ -136,7 +136,7 @@ apps/ayokoding-web/src/
 - **Code**: `src/contexts/i18n/`
 - **Layers**: `[application, infrastructure, presentation]`
 - **Owns**: locale switching, tRPC i18n-api, Next.js middleware (locale detection + redirect). `application/` locale negotiation logic + the middleware function. `infrastructure/` translation file loaders. `presentation/` locale switcher UI component.
-- **Gherkin**: `behavior/web/gherkin/i18n/i18n.feature` (UI), `behavior/api/gherkin/i18n/i18n-api.feature` (HTTP)
+- **Gherkin**: `behavior/web/gherkin/i18n/i18n.feature` (UI; **registry-canonical**), `behavior/api/gherkin/i18n/i18n-api.feature` (HTTP; covered by `spec-coverage` only — see tech-docs workaround)
 - **Key terms**: `Locale`, `Default locale`, `Locale switcher`, `Translation table`, `Locale prefix`
 - **Forbidden synonyms**: "language" (overloaded — language is a property of a locale), "translation" (an action; the artefact is `Translation table`)
 
@@ -145,7 +145,7 @@ apps/ayokoding-web/src/
 - **Code**: `src/contexts/navigation/`
 - **Layers**: `[application, presentation]`
 - **Owns**: top-level navigation + tRPC navigation-api (which exposes the nav structure to clients). `application/` produces the nav tree. `presentation/` renders the menu.
-- **Gherkin**: `behavior/web/gherkin/navigation/navigation.feature` (UI), `behavior/api/gherkin/navigation/navigation-api.feature` (HTTP)
+- **Gherkin**: `behavior/web/gherkin/navigation/navigation.feature` (UI; **registry-canonical**), `behavior/api/gherkin/navigation/navigation-api.feature` (HTTP; covered by `spec-coverage` only — see tech-docs workaround)
 - **Key terms**: `Nav item`, `Nav tree`, `Active item`, `Breadcrumb`
 - **Forbidden synonyms**: "menu" (UI-only word), "sidebar"
 
@@ -205,11 +205,11 @@ Feature: ayokoding-web DDD + new specs format adoption
     Then both DDD validators run before vitest
     And both exit 0 before unit tests start
 
-  Scenario: spec-coverage per perspective passes
-    Given ayokoding-web has spec-coverage targets for both web and api perspectives
+  Scenario: spec-coverage covers both perspectives via single target
+    Given ayokoding-web has a single spec-coverage target running both perspectives sequentially
     When the developer runs "nx run ayokoding-web:spec-coverage"
-    And "nx run ayokoding-web:spec-coverage-api"
-    Then 0 step gaps are reported across all bounded-context folders in both perspectives
+    Then both behavior/web/gherkin and behavior/api/gherkin are validated
+    And 0 step gaps are reported across all bounded-context folders in both perspectives
 
   Scenario: source code reflects bounded contexts
     Given the refactor is complete

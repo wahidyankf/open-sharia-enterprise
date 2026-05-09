@@ -2,7 +2,6 @@
 
 **Status**: In Progress
 **Scope**: `ose-public` — `apps/ayokoding-web/`, `specs/apps/ayokoding/` (web parts only)
-**Branch**: `worktree/ayokoding-web-ddd-and-specs-format` (assigned at execution time)
 
 ## Problem
 
@@ -53,6 +52,24 @@ Same shape as plan 2 (oseplatform):
 
 - **Independent of plans 1 and 2.**
 - **Unblocks plan 4** — `bdd-ddd-tooling-gap-fill` allowlists ayokoding once the new format ships.
+
+## Worktree
+
+Path: `worktrees/ayokoding-web-ddd-and-specs-format/`
+
+Provisioning:
+
+```bash
+cd /Users/wkf/ose-projects/ose-public && claude --worktree ayokoding-web-ddd-and-specs-format
+```
+
+Or via git directly:
+
+```bash
+git worktree add worktrees/ayokoding-web-ddd-and-specs-format -b worktree/ayokoding-web-ddd-and-specs-format
+```
+
+Per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md): worktrees in `ose-public` land at `worktrees/<name>/` in repo root. Path is gitignored.
 
 ## Documents
 

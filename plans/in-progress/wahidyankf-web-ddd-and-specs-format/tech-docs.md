@@ -173,7 +173,7 @@ Each `ubiquitous-language/<bc>.md`:
 # Ubiquitous Language — <bc>
 
 **Bounded context**: `<bc>`
-**Maintainer**: wahidyankf-web maintainer
+**Maintainer**: wahidyankf-web team
 **Last reviewed**: <YYYY-MM-DD set at authoring time>
 **Audience:** Engineers, Technical Product/Project Managers
 
@@ -210,7 +210,7 @@ Each `ubiquitous-language/<bc>.md`:
 - "..." — owned by `<other-bc>`. Inside `<bc>`, prefer "...".
 ```
 
-The maintainer field per organiclever is the team handle. wahidyankf is solo-maintained; the field carries the explicit `wahidyankf-web maintainer` text rather than being omitted, so `ddd ul`'s frontmatter completeness check passes without exception.
+The maintainer field per organiclever is the team handle. For cross-app consistency, every glossary uses the `<app>-web team` form (so plans 1-3 use `wahidyankf-web team`, `oseplatform-web team`, `ayokoding-web team`). `ddd ul`'s frontmatter completeness check requires the key to be present and non-empty; the team-handle convention is by parallelism with organiclever, not validator requirement.
 
 ## Test gates and what they prove
 
