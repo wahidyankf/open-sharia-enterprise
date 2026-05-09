@@ -32,7 +32,7 @@ each project can wire its step implementations against the right glob.
 ### Frontend (`web/gherkin/`)
 
 Organized by bounded context (one folder per context, matching the
-[DDD registry](../components/web/ddd/bounded-contexts.yaml)).
+[DDD registry](../ddd/bounded-contexts.yaml)).
 
 | Bounded Context | Features                                       | Count  |
 | --------------- | ---------------------------------------------- | ------ |

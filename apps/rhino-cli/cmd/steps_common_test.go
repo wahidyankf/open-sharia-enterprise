@@ -458,9 +458,9 @@ const (
 
 // specs validate-adoption step patterns.
 const (
-	stepSpecsAdoptionBothPresent                  = `^an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and a bounded-contexts\.yaml at specs/apps/testapp/components/web/ddd/bounded-contexts\.yaml$`
+	stepSpecsAdoptionBothPresent                  = `^an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and a bounded-contexts\.yaml at specs/apps/testapp/ddd/bounded-contexts\.yaml$`
 	stepSpecsAdoptionNoFeatureFiles               = `^an app "testapp" that has no feature files under specs/apps/testapp/behavior/$`
-	stepSpecsAdoptionNoBcYaml                     = `^an app "testapp" that has feature files but no bounded-contexts\.yaml at specs/apps/testapp/components/web/ddd/bounded-contexts\.yaml$`
+	stepSpecsAdoptionNoBcYaml                     = `^an app "testapp" that has feature files but no bounded-contexts\.yaml at specs/apps/testapp/ddd/bounded-contexts\.yaml$`
 	stepSpecsAdoptionNoSpecTree                   = `^an app "unknownapp" with no spec tree at all$`
 	stepSpecsRunValidateAdoptionTestapp           = `^the developer runs "rhino-cli specs validate-adoption testapp"$`
 	stepSpecsRunValidateAdoptionUnknownapp        = `^the developer runs "rhino-cli specs validate-adoption unknownapp"$`

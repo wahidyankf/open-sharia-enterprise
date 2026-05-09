@@ -59,19 +59,20 @@ func (s *bcValidateIntegSteps) writeRegistryWithOneContext(contextName string, l
 	for _, l := range layers {
 		layersYAML += fmt.Sprintf("      - %s\n", l)
 	}
-	registry := fmt.Sprintf(`version: 1
+	registry := fmt.Sprintf(`version: 2
 app: organiclever
 contexts:
   - name: %s
     summary: test context
     layers:
-%s    code: apps/organiclever-web/src/contexts/%s
-    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/%s.md
+%s    code:
+      - apps/organiclever-web/src/contexts/%s
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/%s.md
     gherkin: specs/apps/organiclever/behavior/web/gherkin/%s
     relationships: []
 `, contextName, layersYAML, contextName, contextName, contextName)
 
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -88,7 +89,7 @@ contexts:
 	}
 
 	// Create glossary file.
-	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language")
+	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 	if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 		return err
 	}
@@ -127,7 +128,7 @@ func (s *bcValidateIntegSteps) registryMissingGlossary() error {
 		return err
 	}
 	// Remove glossary file.
-	return os.Remove(filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language", "journal.md"))
+	return os.Remove(filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language", "journal.md"))
 }
 
 func (s *bcValidateIntegSteps) glossaryRemoved() error { return nil }

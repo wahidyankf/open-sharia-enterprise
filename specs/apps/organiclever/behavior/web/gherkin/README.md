@@ -2,7 +2,7 @@
 
 Gherkin feature files for the OrganicLever frontend application, organized by bounded
 context. Each folder maps to one bounded context from the
-[bounded-context map](../../../components/web/ddd/bounded-context-map.md).
+[bounded-context map](../../../ddd/bounded-context-map.md).
 
 ## Structure
 
@@ -38,7 +38,7 @@ specs/apps/organiclever/behavior/web/gherkin/
 ## Ubiquitous Language
 
 Every domain term used in step text is defined in
-[ubiquitous-language/](../../../components/web/ddd/ubiquitous-language/README.md). Gherkin steps use only
+[ubiquitous-language/](../../../ddd/ubiquitous-language/README.md). Gherkin steps use only
 glossary terms; code identifiers match the `Code identifier(s)` column verbatim.
 
 ## Conventions
@@ -63,7 +63,7 @@ definitions in `apps/organiclever-web/test/unit/steps/`.
 
 ## Related
 
-- **Ubiquitous language**: [ubiquitous-language/](../../../components/web/ddd/ubiquitous-language/README.md)
-- **Bounded-context map**: [bounded-context-map.md](../../../components/web/ddd/bounded-context-map.md)
+- **Ubiquitous language**: [ubiquitous-language/](../../../ddd/ubiquitous-language/README.md)
+- **Bounded-context map**: [bounded-context-map.md](../../../ddd/bounded-context-map.md)
 - **Backend counterpart**: [be gherkin specs](../../be/gherkin/README.md)
 - **Parent**: [web component specs](../../../components/web/README.md)

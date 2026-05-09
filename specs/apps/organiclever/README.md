@@ -69,9 +69,9 @@ frontend is local-first.
 
 ## Spec Artifacts
 
-- **[components/web/ddd/](./components/web/ddd/README.md)** — DDD artifacts:
-  [bounded-contexts.yaml](./components/web/ddd/bounded-contexts.yaml) (registry) and
-  [ubiquitous-language/](./components/web/ddd/ubiquitous-language/README.md) (glossaries);
+- **[ddd/](./ddd/README.md)** — DDD artifacts:
+  [bounded-contexts.yaml](./ddd/bounded-contexts.yaml) (registry) and
+  [ubiquitous-language/](./ddd/ubiquitous-language/README.md) (glossaries);
   consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
 - **[system-context/](./system-context/README.md)**, **[containers/](./containers/README.md)**,
   **[components/](./components/README.md)** — C4 architecture diagrams (L1/L2/L3)

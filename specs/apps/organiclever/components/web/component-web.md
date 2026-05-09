@@ -139,7 +139,7 @@ Two `rhino-cli ddd` subcommands run automatically as part of `test:quick`:
   `.feature` files, and term collisions across glossaries carry mutual `Forbidden-synonyms`
   cross-links.
 
-Source of truth: [`specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`](./ddd/bounded-contexts.yaml).
+Source of truth: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../ddd/bounded-contexts.yaml).
 
 ## Testing
 
@@ -153,7 +153,7 @@ Source of truth: [`specs/apps/organiclever/components/web/ddd/bounded-contexts.y
 
 - **Container diagram**: [container.md](../../containers/container.md)
 - **Backend component diagram**: [component-be.md](../be/component-be.md)
-- **Frontend bounded-context map**: [`components/web/ddd/bounded-context-map.md`](./ddd/bounded-context-map.md)
-- **DDD registry**: [`components/web/ddd/`](./ddd/README.md)
+- **Frontend bounded-context map**: [`ddd/bounded-context-map.md`](../../ddd/bounded-context-map.md)
+- **DDD registry**: [`ddd/`](../../ddd/README.md)
 - **Frontend gherkin specs**: [`behavior/web/gherkin/`](../../behavior/web/gherkin/README.md)
 - **Parent**: [organiclever specs](../../README.md)

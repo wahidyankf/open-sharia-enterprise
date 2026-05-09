@@ -61,7 +61,7 @@ func (s *ulValidateSteps) allFeatureRefsResolve() error     { return nil }
 func (s *ulValidateSteps) missingMaintainerKey() error {
 	ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 		return []glossary.Finding{{
-			File:     "specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "missing frontmatter key: Maintainer",
 			Severity: "error",
 		}}, nil
@@ -72,7 +72,7 @@ func (s *ulValidateSteps) missingMaintainerKey() error {
 func (s *ulValidateSteps) malformedTableHeader() error {
 	ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 		return []glossary.Finding{{
-			File:     "specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "malformed terms table header",
 			Severity: "error",
 		}}, nil
@@ -83,7 +83,7 @@ func (s *ulValidateSteps) malformedTableHeader() error {
 func (s *ulValidateSteps) staleCodeIdentifier() error {
 	ulValidateAllFn = func(opts glossary.ValidateOptions) ([]glossary.Finding, error) {
 		return []glossary.Finding{{
-			File:     "specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "stale identifier: `GhostType`",
 			Severity: opts.Severity,
 		}}, nil
@@ -94,7 +94,7 @@ func (s *ulValidateSteps) staleCodeIdentifier() error {
 func (s *ulValidateSteps) missingFeatureReference() error {
 	ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 		return []glossary.Finding{{
-			File:     "specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md",
+			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "missing feature reference: journal/ghost.feature",
 			Severity: "error",
 		}}, nil
@@ -105,7 +105,7 @@ func (s *ulValidateSteps) missingFeatureReference() error {
 func (s *ulValidateSteps) termCollision() error {
 	ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 		return []glossary.Finding{{
-			File:     "specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml",
+			File:     "specs/apps/organiclever/ddd/bounded-contexts.yaml",
 			Message:  `term collision: "Entry" defined in [journal, routine] without mutual Forbidden-synonyms cross-link`,
 			Severity: "error",
 		}}, nil

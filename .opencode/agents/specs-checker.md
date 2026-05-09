@@ -66,7 +66,7 @@ Every directory within the listed folders must have a `README.md`. This includes
 - Per-surface subfolders (`components/be/`, `components/web/`, `behavior/be/gherkin/`,
   `behavior/web/gherkin/`, `behavior/cli/gherkin/`)
 - All domain subdirectories within `behavior/<surface>/gherkin/<domain>/`
-- DDD subdirectories (`components/web/ddd/`, `components/web/ddd/ubiquitous-language/`)
+- DDD subdirectories (`ddd/`, `ddd/ubiquitous-language/`)
 - `containers/contracts/` (when present)
 
 Check recursively through all subfolders within listed folders.

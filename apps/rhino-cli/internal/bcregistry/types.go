@@ -2,6 +2,10 @@
 // (specs/apps/<app>/ddd/bounded-contexts.yaml) for the given application.
 package bcregistry
 
+// SchemaVersion is the registry schema version this loader accepts.
+// Version 2 introduced the list-typed Context.Code field (was string in v1).
+const SchemaVersion = 2
+
 // Registry is the in-memory form of specs/apps/<app>/ddd/bounded-contexts.yaml.
 type Registry struct {
 	Version  int       `yaml:"version"`
@@ -10,11 +14,13 @@ type Registry struct {
 }
 
 // Context describes one bounded context and its expected filesystem artefacts.
+// Code is a list to permit multi-surface implementations (e.g., FE + BE);
+// each path must independently satisfy the declared Layers structure.
 type Context struct {
 	Name          string         `yaml:"name"`
 	Summary       string         `yaml:"summary"`
 	Layers        []string       `yaml:"layers"`
-	Code          string         `yaml:"code"`
+	Code          []string       `yaml:"code"`
 	Glossary      string         `yaml:"glossary"`
 	Gherkin       string         `yaml:"gherkin"`
 	Relationships []Relationship `yaml:"relationships"`

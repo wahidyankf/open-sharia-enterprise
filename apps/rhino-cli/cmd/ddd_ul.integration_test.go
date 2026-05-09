@@ -55,20 +55,21 @@ func (s *ulValidateIntegSteps) after(_ context.Context, _ *godog.Scenario, _ err
 
 // writeMinimalRegistry writes a one-context bounded-contexts.yaml and the minimal artefact set.
 func (s *ulValidateIntegSteps) writeMinimalRegistry(contextName string) error {
-	registry := fmt.Sprintf(`version: 1
+	registry := fmt.Sprintf(`version: 2
 app: organiclever
 contexts:
   - name: %s
     summary: test context
     layers:
       - domain
-    code: apps/organiclever-web/src/contexts/%s
-    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/%s.md
+    code:
+      - apps/organiclever-web/src/contexts/%s
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/%s.md
     gherkin: specs/apps/organiclever/behavior/web/gherkin/%s
     relationships: []
 `, contextName, contextName, contextName, contextName)
 
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -100,7 +101,7 @@ contexts:
 
 // writeGlossary writes a glossary file with the given content.
 func (s *ulValidateIntegSteps) writeGlossary(contextName, content string) error {
-	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language")
+	glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 	if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 		return err
 	}
@@ -196,25 +197,27 @@ func (s *ulValidateIntegSteps) staleCodeIdentifier() error {
 
 func (s *ulValidateIntegSteps) termCollisionSetup() error {
 	// Write a two-context registry where both share a term "Entry" without Forbidden synonyms cross-link.
-	registry := `version: 1
+	registry := `version: 2
 app: organiclever
 contexts:
   - name: journal
     summary: test journal
     layers: [domain]
-    code: apps/organiclever-web/src/contexts/journal
-    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md
+    code:
+      - apps/organiclever-web/src/contexts/journal
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/journal.md
     gherkin: specs/apps/organiclever/behavior/web/gherkin/journal
     relationships: []
   - name: routine
     summary: test routine
     layers: [domain]
-    code: apps/organiclever-web/src/contexts/routine
-    glossary: specs/apps/organiclever/components/web/ddd/ubiquitous-language/routine.md
+    code:
+      - apps/organiclever-web/src/contexts/routine
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/routine.md
     gherkin: specs/apps/organiclever/behavior/web/gherkin/routine
     relationships: []
 `
-	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd")
+	regDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd")
 	if err := os.MkdirAll(regDir, 0755); err != nil {
 		return err
 	}
@@ -238,7 +241,7 @@ contexts:
 			return err
 		}
 		// Both glossaries define the same term "Entry" without Forbidden synonyms cross-link.
-		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "components", "web", "ddd", "ubiquitous-language")
+		glossaryDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "ddd", "ubiquitous-language")
 		if err := os.MkdirAll(glossaryDir, 0755); err != nil {
 			return err
 		}

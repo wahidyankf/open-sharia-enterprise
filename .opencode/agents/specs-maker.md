@@ -63,7 +63,7 @@ surface-profile: cli-only
 target: specs/apps/organiclever/behavior/web/gherkin/health
 
 # Scaffold a specific subfolder within an existing spec area
-target: specs/apps/organiclever/components/web/ddd
+target: specs/apps/organiclever/ddd
 ```
 
 ## Capabilities

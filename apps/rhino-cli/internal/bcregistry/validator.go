@@ -39,7 +39,9 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 	for i := range reg.Contexts {
 		ctx := &reg.Contexts[i]
 		contextByName[ctx.Name] = ctx
-		registeredCode[filepath.Join(repoRoot, ctx.Code)] = true
+		for _, c := range ctx.Code {
+			registeredCode[filepath.Join(repoRoot, c)] = true
+		}
 		registeredGlossary[filepath.Join(repoRoot, ctx.Glossary)] = true
 		registeredGherkin[filepath.Join(repoRoot, ctx.Gherkin)] = true
 	}
@@ -65,20 +67,20 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 
 func checkContext(repoRoot string, ctx Context, severity string) []Finding {
 	var findings []Finding
-	codePath := filepath.Join(repoRoot, ctx.Code)
 
-	// Code directory must exist.
-	if _, err := osStatFn(codePath); err != nil {
-		findings = append(findings, Finding{
-			File:     ctx.Code,
-			Message:  fmt.Sprintf("missing code directory for context %q", ctx.Name),
-			Severity: severity,
-		})
-		return findings // can't check layers if dir missing
+	// Each declared code path must independently satisfy the layer structure.
+	for _, codeRel := range ctx.Code {
+		codePath := filepath.Join(repoRoot, codeRel)
+		if _, err := osStatFn(codePath); err != nil {
+			findings = append(findings, Finding{
+				File:     codeRel,
+				Message:  fmt.Sprintf("missing code directory for context %q", ctx.Name),
+				Severity: severity,
+			})
+			continue // can't check layers for this path if dir missing; other paths still checked
+		}
+		findings = append(findings, checkLayersAtPath(repoRoot, ctx, codeRel, severity)...)
 	}
-
-	// Layers must match exactly.
-	findings = append(findings, checkLayers(repoRoot, ctx, severity)...)
 
 	// Glossary file must exist.
 	glossaryPath := filepath.Join(repoRoot, ctx.Glossary)
@@ -96,15 +98,16 @@ func checkContext(repoRoot string, ctx Context, severity string) []Finding {
 	return findings
 }
 
-func checkLayers(repoRoot string, ctx Context, severity string) []Finding {
+// checkLayersAtPath enforces declared layer subfolders against a single code path.
+// Per-path independent: every code path must contain ALL declared layers.
+func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) []Finding {
 	var findings []Finding
-	codePath := filepath.Join(repoRoot, ctx.Code)
+	codePath := filepath.Join(repoRoot, codeRel)
 
-	// Read actual layer subdirs on filesystem.
 	entries, err := osReadDirFn(codePath)
 	if err != nil {
 		return []Finding{{
-			File:     ctx.Code,
+			File:     codeRel,
 			Message:  fmt.Sprintf("cannot read code directory for context %q: %v", ctx.Name, err),
 			Severity: severity,
 		}}
@@ -122,22 +125,20 @@ func checkLayers(repoRoot string, ctx Context, severity string) []Finding {
 		declared[l] = true
 	}
 
-	// Missing layers.
 	for _, l := range ctx.Layers {
 		if !actual[l] {
 			findings = append(findings, Finding{
-				File:     filepath.Join(ctx.Code, l),
+				File:     filepath.Join(codeRel, l),
 				Message:  fmt.Sprintf("missing layer %q for context %q", l, ctx.Name),
 				Severity: severity,
 			})
 		}
 	}
 
-	// Extra layers.
 	for name := range actual {
 		if !declared[name] {
 			findings = append(findings, Finding{
-				File:     filepath.Join(ctx.Code, name),
+				File:     filepath.Join(codeRel, name),
 				Message:  fmt.Sprintf("extra layer %q found on filesystem but not declared in registry for context %q", name, ctx.Name),
 				Severity: severity,
 			})
@@ -186,9 +187,22 @@ func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
 func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlossary, registeredGherkin map[string]bool, severity string) []Finding {
 	var findings []Finding
 
-	// Code root = parent of first context's code path.
-	codeRoot := filepath.Join(repoRoot, filepath.Dir(reg.Contexts[0].Code))
-	findings = append(findings, detectOrphanDirs(codeRoot, registeredCode, "orphan code directory", "registered in bounded-contexts.yaml", severity)...)
+	// Code roots = union of parents of every code path across every context.
+	// Multi-path contexts (e.g., FE + BE) yield multiple roots.
+	codeRoots := map[string]bool{}
+	for _, ctx := range reg.Contexts {
+		for _, c := range ctx.Code {
+			codeRoots[filepath.Join(repoRoot, filepath.Dir(c))] = true
+		}
+	}
+	sortedCodeRoots := make([]string, 0, len(codeRoots))
+	for r := range codeRoots {
+		sortedCodeRoots = append(sortedCodeRoots, r)
+	}
+	sort.Strings(sortedCodeRoots)
+	for _, root := range sortedCodeRoots {
+		findings = append(findings, detectOrphanDirs(root, registeredCode, "orphan code directory", "registered in bounded-contexts.yaml", severity)...)
+	}
 
 	// Glossary root = parent of first context's glossary path.
 	glossaryRoot := filepath.Join(repoRoot, filepath.Dir(reg.Contexts[0].Glossary))
@@ -265,7 +279,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 			target, ok := contextByName[rel.To]
 			if !ok {
 				findings = append(findings, Finding{
-					File:     "specs/apps/" + reg.App + "/components/web/ddd/bounded-contexts.yaml",
+					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf("relationship target %q declared by %q does not exist in registry", rel.To, ctx.Name),
 					Severity: severity,
 				})
@@ -273,7 +287,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 			}
 			if !hasReciprocal(target, ctx.Name, rel.Kind) {
 				findings = append(findings, Finding{
-					File:     "specs/apps/" + reg.App + "/components/web/ddd/bounded-contexts.yaml",
+					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf(`relationship asymmetry: %q → %q (%s) but %q has no reciprocal entry`, ctx.Name, rel.To, rel.Kind, rel.To),
 					Severity: severity,
 				})

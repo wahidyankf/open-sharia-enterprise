@@ -57,13 +57,16 @@ func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 		// Table header.
 		findings = append(findings, checkTableHeader(ctx.Glossary, g, sev)...)
 
-		// Per-term checks.
-		codePath := filepath.Join(opts.RepoRoot, ctx.Code)
+		// Per-term checks across every declared code path (FE + BE someday).
+		codePaths := make([]string, 0, len(ctx.Code))
+		for _, c := range ctx.Code {
+			codePaths = append(codePaths, filepath.Join(opts.RepoRoot, c))
+		}
 		gherkinPath := filepath.Join(opts.RepoRoot, ctx.Gherkin)
-		findings = append(findings, checkTerms(ctx.Glossary, g, codePath, gherkinPath, sev)...)
+		findings = append(findings, checkTerms(ctx.Glossary, g, codePaths, gherkinPath, sev)...)
 
 		// Forbidden synonym usage.
-		findings = append(findings, checkForbiddenSynonyms(ctx.Glossary, g, codePath, gherkinPath, sev)...)
+		findings = append(findings, checkForbiddenSynonyms(ctx.Glossary, g, codePaths, gherkinPath, sev)...)
 	}
 
 	// Cross-context term collision.
@@ -103,16 +106,19 @@ func checkTableHeader(file string, g *Glossary, sev string) []Finding {
 	return findings
 }
 
-func checkTerms(file string, g *Glossary, codePath, gherkinPath, sev string) []Finding {
+func checkTerms(file string, g *Glossary, codePaths []string, gherkinPath, sev string) []Finding {
 	var findings []Finding
 	for _, term := range g.Terms {
-		// Code identifier existence.
+		// Code identifier existence — sum matches across every declared code path.
 		for _, id := range term.CodeIdentifiers {
-			count := grepFn(id, codePath, []string{"*.ts", "*.tsx"})
+			count := 0
+			for _, codePath := range codePaths {
+				count += grepFn(id, codePath, []string{"*.ts", "*.tsx"})
+			}
 			if count == 0 {
 				findings = append(findings, Finding{
 					File:     file,
-					Message:  fmt.Sprintf("stale identifier: `%s` (term %q, not found in %s)", id, term.Term, codePath),
+					Message:  fmt.Sprintf("stale identifier: `%s` (term %q, not found in %v)", id, term.Term, codePaths),
 					Severity: sev,
 				})
 			}
@@ -147,10 +153,13 @@ func checkTerms(file string, g *Glossary, codePath, gherkinPath, sev string) []F
 	return findings
 }
 
-func checkForbiddenSynonyms(file string, g *Glossary, codePath, gherkinPath, sev string) []Finding {
+func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, gherkinPath, sev string) []Finding {
 	var findings []Finding
 	for _, fb := range g.ForbiddenSynonyms {
-		count := grepFn(fb.Term, codePath, []string{"*.ts", "*.tsx"})
+		count := 0
+		for _, codePath := range codePaths {
+			count += grepFn(fb.Term, codePath, []string{"*.ts", "*.tsx"})
+		}
 		count += grepFn(fb.Term, gherkinPath, []string{"*.feature"})
 		if count > 0 {
 			findings = append(findings, Finding{
@@ -204,7 +213,7 @@ func checkTermCollisions(reg *bcregistry.Registry, glossaries map[string]*Glossa
 		}
 		if !allCovered {
 			findings = append(findings, Finding{
-				File:     fmt.Sprintf("specs/apps/%s/components/web/ddd/bounded-contexts.yaml", reg.App),
+				File:     fmt.Sprintf("specs/apps/%s/ddd/bounded-contexts.yaml", reg.App),
 				Message:  fmt.Sprintf(`term collision: %q defined in %v without mutual Forbidden-synonyms cross-link`, term, contexts),
 				Severity: sev,
 			})

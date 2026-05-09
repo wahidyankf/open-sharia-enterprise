@@ -49,7 +49,7 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 - **Frontend Gherkin** (`specs/apps/organiclever/behavior/web/gherkin/`) feeds `organiclever-web`
   BDD scenarios at the `test:unit` level (organized by bounded context, with `vitest-cucumber`)
   and `organiclever-web-e2e` Playwright scenarios at the `test:e2e` level.
-- **DDD enforcement** (`specs/apps/organiclever/components/web/ddd/`) is validated by
+- **DDD enforcement** (`specs/apps/organiclever/ddd/`) is validated by
   `rhino-cli ddd bc` and `rhino-cli ddd ul`, both run as part of `test:quick` for
   `organiclever-web`.
 - **Main CI** runs `typecheck`, `lint`, `test:quick` on push to `main` for both containers.

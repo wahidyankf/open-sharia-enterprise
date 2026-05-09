@@ -276,12 +276,12 @@ func TestParseForbiddenEntry_NoDash(t *testing.T) {
 // oneContextRegistry returns a minimal registry with one context.
 func oneContextRegistry() *bcregistry.Registry {
 	return &bcregistry.Registry{
-		Version: 1,
+		Version: bcregistry.SchemaVersion,
 		App:     "test",
 		Contexts: []bcregistry.Context{{
 			Name:     "ctx1",
 			Layers:   []string{"domain"},
-			Code:     "apps/test/src/contexts/ctx1",
+			Code:     []string{"apps/test/src/contexts/ctx1"},
 			Glossary: "specs/apps/test/ubiquitous-language/ctx1.md",
 			Gherkin:  "specs/apps/test/fe/gherkin/ctx1",
 		}},
@@ -290,11 +290,11 @@ func oneContextRegistry() *bcregistry.Registry {
 
 func twoContextRegistry() *bcregistry.Registry {
 	return &bcregistry.Registry{
-		Version: 1,
+		Version: bcregistry.SchemaVersion,
 		App:     "test",
 		Contexts: []bcregistry.Context{
-			{Name: "ctxa", Code: "apps/test/src/contexts/ctxa", Glossary: "specs/apps/test/ubiquitous-language/ctxa.md", Gherkin: "specs/apps/test/fe/gherkin/ctxa"},
-			{Name: "ctxb", Code: "apps/test/src/contexts/ctxb", Glossary: "specs/apps/test/ubiquitous-language/ctxb.md", Gherkin: "specs/apps/test/fe/gherkin/ctxb"},
+			{Name: "ctxa", Code: []string{"apps/test/src/contexts/ctxa"}, Glossary: "specs/apps/test/ubiquitous-language/ctxa.md", Gherkin: "specs/apps/test/fe/gherkin/ctxa"},
+			{Name: "ctxb", Code: []string{"apps/test/src/contexts/ctxb"}, Glossary: "specs/apps/test/ubiquitous-language/ctxb.md", Gherkin: "specs/apps/test/fe/gherkin/ctxb"},
 		},
 	}
 }

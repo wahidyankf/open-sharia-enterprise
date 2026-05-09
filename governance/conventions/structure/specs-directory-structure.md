@@ -106,14 +106,14 @@ specs/apps/<app-family>/
 │       ├── component-web.md
 │       ├── architecture.md
 │       ├── design-system.md
-│       ├── routes-and-screens.md
-│       └── ddd/                    # When DDD adopted
-│           ├── README.md
-│           ├── bounded-contexts.yaml
-│           ├── bounded-context-map.md
-│           └── ubiquitous-language/
-│               ├── README.md
-│               └── <bc>.md
+│       └── routes-and-screens.md
+├── ddd/                            # App-level DDD (when adopted)
+│   ├── README.md
+│   ├── bounded-contexts.yaml
+│   ├── bounded-context-map.md
+│   └── ubiquitous-language/
+│       ├── README.md
+│       └── <bc>.md
 └── behavior/                       # Cross-cutting Gherkin (all C4 levels)
     ├── README.md
     ├── be/
@@ -237,7 +237,7 @@ Not every project has all directories. Presence of subdirectories depends on the
 
 - **`containers/contracts/`**: Present for apps with OpenAPI contract specs (e.g., `organiclever`)
 - **`components/be/`**: Present for apps with a backend container (e.g., `organiclever`)
-- **`components/web/ddd/`**: Present when DDD is adopted for the web container
+- **`ddd/`**: Present when DDD is adopted (lives at the app root, not under `components/web/`, because the ubiquitous language belongs to the bounded context, not to one implementation surface)
 - **`behavior/be/gherkin/`**: Present for apps with backend Gherkin specs
 - **`behavior/cli/gherkin/`**: Present for CLI apps
 
@@ -263,12 +263,19 @@ For existing spec trees with a flat-root layout (`be/`, `web/`, `cli/`, `c4/`, `
 | `specs/apps/<app>/be/gherkin/`         | `specs/apps/<app>/behavior/be/gherkin/`            |
 | `specs/apps/<app>/web/gherkin/`        | `specs/apps/<app>/behavior/web/gherkin/`           |
 | `specs/apps/<app>/cli/gherkin/`        | `specs/apps/<app>/behavior/cli/gherkin/`           |
-| `specs/apps/<app>/ddd/`                | `specs/apps/<app>/components/web/ddd/`             |
+| `specs/apps/<app>/ddd/`                | `specs/apps/<app>/ddd/`                            |
 | `specs/apps/<app>/c4/context.md`       | `specs/apps/<app>/system-context/context.md`       |
 | `specs/apps/<app>/c4/container.md`     | `specs/apps/<app>/containers/container.md`         |
 | `specs/apps/<app>/c4/component-be.md`  | `specs/apps/<app>/components/be/component-be.md`   |
 | `specs/apps/<app>/c4/component-web.md` | `specs/apps/<app>/components/web/component-web.md` |
 | `specs/apps/<app>/contracts/`          | `specs/apps/<app>/containers/contracts/`           |
+
+**DDD relocation (2026-05-09).** An interim layout placed DDD artefacts at
+`specs/apps/<app>/components/web/ddd/` (the row above used to point there). They were lifted
+back to the app root because the ubiquitous language belongs to the bounded context, not to one
+implementation surface. The current canonical location is `specs/apps/<app>/ddd/`. Apps still
+on the interim path apply the same atomic-commit migration recipe (rhino-cli constants, Nx
+inputs, every cross-link, governance) to relocate.
 
 The atomic commit is mandatory — splitting the move and the path updates causes test failures between commits.
 

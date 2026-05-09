@@ -15,7 +15,7 @@ var specsValidateAdoptionCmd = &cobra.Command{
 
   (a) specs/apps/<app>/behavior/ exists and contains at least one .feature file
       (searched recursively).
-  (b) specs/apps/<app>/components/web/ddd/bounded-contexts.yaml exists.
+  (b) specs/apps/<app>/ddd/bounded-contexts.yaml exists.
 
 Reports HIGH findings for missing adoption. Exits non-zero if any findings are found.`,
 	Example: `  # Validate organiclever has adopted BDD and DDD
@@ -79,14 +79,14 @@ func validateSpecAdoption(repoRoot, app string) []SpecFinding {
 	}
 
 	// Check (b): bounded-contexts.yaml exists.
-	bcYaml := filepath.Join(baseDir, "components", "web", "ddd", "bounded-contexts.yaml")
+	bcYaml := filepath.Join(baseDir, "ddd", "bounded-contexts.yaml")
 	if _, err := osStat(bcYaml); err != nil {
 		findings = append(findings, SpecFinding{
 			Category:    "adoption",
 			Criticality: "HIGH",
-			File:        filepath.Join("specs", "apps", app, "components", "web", "ddd"),
-			Evidence:    fmt.Sprintf("missing bounded-contexts.yaml at specs/apps/%s/components/web/ddd/bounded-contexts.yaml", app),
-			Expected:    fmt.Sprintf("create specs/apps/%s/components/web/ddd/bounded-contexts.yaml", app),
+			File:        filepath.Join("specs", "apps", app, "ddd"),
+			Evidence:    fmt.Sprintf("missing bounded-contexts.yaml at specs/apps/%s/ddd/bounded-contexts.yaml", app),
+			Expected:    fmt.Sprintf("create specs/apps/%s/ddd/bounded-contexts.yaml", app),
 		})
 	}
 

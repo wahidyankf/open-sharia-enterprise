@@ -51,13 +51,13 @@ apps/organiclever-web/src/
 
 ## Behavior & Architecture
 
-| Artifact                     | Location                                                                                                                          |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Bounded-context architecture | [specs/…/components/web/architecture.md](../../specs/apps/organiclever/components/web/architecture.md)                            |
-| Routes and screens           | [specs/…/components/web/routes-and-screens.md](../../specs/apps/organiclever/components/web/routes-and-screens.md)                |
-| Design system                | [specs/…/components/web/design-system.md](../../specs/apps/organiclever/components/web/design-system.md)                          |
-| Ubiquitous language          | [specs/…/components/web/ddd/ubiquitous-language/](../../specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md) |
-| Gherkin specs                | [specs/…/behavior/web/gherkin/](../../specs/apps/organiclever/behavior/web/gherkin/README.md)                                     |
+| Artifact                     | Location                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Bounded-context architecture | [specs/…/components/web/architecture.md](../../specs/apps/organiclever/components/web/architecture.md)             |
+| Routes and screens           | [specs/…/components/web/routes-and-screens.md](../../specs/apps/organiclever/components/web/routes-and-screens.md) |
+| Design system                | [specs/…/components/web/design-system.md](../../specs/apps/organiclever/components/web/design-system.md)           |
+| Ubiquitous language          | [specs/…/ddd/ubiquitous-language/](../../specs/apps/organiclever/ddd/ubiquitous-language/README.md)                |
+| Gherkin specs                | [specs/…/behavior/web/gherkin/](../../specs/apps/organiclever/behavior/web/gherkin/README.md)                      |
 
 ## Related
 

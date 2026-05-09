@@ -48,13 +48,14 @@ func TestLoad_Success(t *testing.T) {
 	orig := osReadFileFn
 	defer func() { osReadFileFn = orig }()
 
-	yaml := []byte(`version: 1
+	yaml := []byte(`version: 2
 app: test
 contexts:
   - name: ctx1
     summary: first
     layers: [domain, application]
-    code: apps/test/src/contexts/ctx1
+    code:
+      - apps/test/src/contexts/ctx1
     glossary: specs/apps/test/ubiquitous-language/ctx1.md
     gherkin: specs/apps/test/fe/gherkin/ctx1
     relationships: []
@@ -117,7 +118,7 @@ func TestValidateAll_DefaultSeverity(t *testing.T) {
 	}()
 
 	osReadFileFn = func(_ string) ([]byte, error) {
-		return []byte("version: 1\napp: test\ncontexts: []\n"), nil
+		return []byte("version: 2\napp: test\ncontexts: []\n"), nil
 	}
 	osStatFn = func(_ string) (os.FileInfo, error) { return fakeStatInfo{isDir: true}, nil }
 	osReadDirFn = func(_ string) ([]os.DirEntry, error) { return nil, nil }
@@ -136,21 +137,32 @@ func TestCheckContext_MissingCodeDir(t *testing.T) {
 	orig := osStatFn
 	defer func() { osStatFn = orig }()
 
+	// All stat calls fail: code, glossary, and gherkin all reported missing.
 	osStatFn = func(_ string) (os.FileInfo, error) { return nil, errors.New("not found") }
 
 	ctx := Context{
 		Name:     "journal",
 		Layers:   []string{"domain"},
-		Code:     "apps/test/src/contexts/journal",
+		Code:     []string{"apps/test/src/contexts/journal"},
 		Glossary: "specs/apps/test/ubiquitous-language/journal.md",
 		Gherkin:  "specs/apps/test/fe/gherkin/journal",
 	}
 	findings := checkContext("/repo", ctx, "error")
-	if len(findings) != 1 {
-		t.Fatalf("expected 1 finding for missing code dir, got %d", len(findings))
+	// Expect findings for code + glossary + gherkin (each independently checked).
+	if len(findings) != 3 {
+		t.Fatalf("expected 3 findings (code, glossary, gherkin all missing), got %d: %+v", len(findings), findings)
 	}
-	if findings[0].Severity != "error" {
-		t.Errorf("expected severity 'error', got %q", findings[0].Severity)
+	hasCodeFinding := false
+	for _, f := range findings {
+		if f.Severity != "error" {
+			t.Errorf("expected severity 'error', got %q", f.Severity)
+		}
+		if f.File == "apps/test/src/contexts/journal" {
+			hasCodeFinding = true
+		}
+	}
+	if !hasCodeFinding {
+		t.Error("expected a finding for the missing code directory")
 	}
 }
 
@@ -170,7 +182,7 @@ func TestCheckContext_AllPresent(t *testing.T) {
 	ctx := Context{
 		Name:     "journal",
 		Layers:   []string{"domain", "application"},
-		Code:     "apps/test/src/contexts/journal",
+		Code:     []string{"apps/test/src/contexts/journal"},
 		Glossary: "specs/apps/test/ubiquitous-language/journal.md",
 		Gherkin:  "specs/apps/test/fe/gherkin/journal",
 	}
@@ -203,9 +215,9 @@ func TestCheckLayers_MissingLayer(t *testing.T) {
 	ctx := Context{
 		Name:   "journal",
 		Layers: []string{"domain", "application"},
-		Code:   "apps/test/src/contexts/journal",
+		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayers("/repo", ctx, "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for missing layer, got %d: %+v", len(findings), findings)
 	}
@@ -225,9 +237,9 @@ func TestCheckLayers_ExtraLayer(t *testing.T) {
 	ctx := Context{
 		Name:   "journal",
 		Layers: []string{"domain", "application"},
-		Code:   "apps/test/src/contexts/journal",
+		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayers("/repo", ctx, "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for extra layer, got %d: %+v", len(findings), findings)
 	}
@@ -244,9 +256,9 @@ func TestCheckLayers_ExactMatch(t *testing.T) {
 	ctx := Context{
 		Name:   "journal",
 		Layers: []string{"domain", "application"},
-		Code:   "apps/test/src/contexts/journal",
+		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayers("/repo", ctx, "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings, got %d", len(findings))
 	}
@@ -263,9 +275,9 @@ func TestCheckLayers_ReadDirError(t *testing.T) {
 	ctx := Context{
 		Name:   "journal",
 		Layers: []string{"domain"},
-		Code:   "apps/test/src/contexts/journal",
+		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayers("/repo", ctx, "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for readdir error, got %d", len(findings))
 	}
@@ -591,14 +603,14 @@ func TestValidate_SortsFindings(t *testing.T) {
 			{
 				Name:     "zzz",
 				Layers:   []string{"domain"},
-				Code:     "apps/test/src/contexts/zzz",
+				Code:     []string{"apps/test/src/contexts/zzz"},
 				Glossary: "specs/apps/test/ubiquitous-language/zzz.md",
 				Gherkin:  "specs/apps/test/fe/gherkin/zzz",
 			},
 			{
 				Name:     "aaa",
 				Layers:   []string{"domain"},
-				Code:     "apps/test/src/contexts/aaa",
+				Code:     []string{"apps/test/src/contexts/aaa"},
 				Glossary: "specs/apps/test/ubiquitous-language/aaa.md",
 				Gherkin:  "specs/apps/test/fe/gherkin/aaa",
 			},

@@ -44,7 +44,7 @@ the validated scope.
    for all five canonical folders (`product/`, `system-context/`, `containers/`, `components/`,
    `behavior/`) and per-surface subfolders (`components/be/`, `components/web/`,
    `behavior/be/gherkin/`, `behavior/web/gherkin/`, `behavior/cli/gherkin/`,
-   `components/web/ddd/`, `components/web/ddd/ubiquitous-language/`)
+   `ddd/`, `ddd/ubiquitous-language/`)
 4. **Missing per-surface subfolder README.md** — Generate from directory contents using
    standard template; scaffold all required README files within the validated scope
 5. **Broken cross-references** — Fix relative paths based on actual file locations
@@ -130,7 +130,7 @@ the validated scope.
 
 ### Review 1: Adoption Gap — DDD not adopted for organiclever web
 
-**Finding**: [MEDIUM] Category 9 — components/web/ddd/ absent for full-stack app
+**Finding**: [MEDIUM] Category 9 — ddd/ absent for full-stack app
 **Reason not auto-fixed**: BDD/DDD/Contracts adoption requires explicit team decision
 **Recommended action**: Create a plan item to adopt DDD for organiclever-web, following
 the organiclever pilot pattern

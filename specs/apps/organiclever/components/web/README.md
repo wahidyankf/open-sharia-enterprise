@@ -90,15 +90,15 @@ specs/apps/organiclever/behavior/web/gherkin/
 ## Ubiquitous Language
 
 Every term used in scenario titles, `Background` clauses, and step text is owned by one bounded
-context and documented in [`ddd/ubiquitous-language/`](./ddd/ubiquitous-language/README.md).
+context and documented in [`ddd/ubiquitous-language/`](../../ddd/ubiquitous-language/README.md).
 Reviewers reject Gherkin steps that introduce synonyms outside the glossary; new terms ride into
 the glossary in the same commit as the feature change. See the
-[bounded-context map](./ddd/bounded-context-map.md) for context responsibilities and relationships.
+[bounded-context map](../../ddd/bounded-context-map.md) for context responsibilities and relationships.
 
 ## Related
 
 - **Parent**: [organiclever specs](../../README.md)
-- **Ubiquitous Language**: [`ddd/ubiquitous-language/`](./ddd/ubiquitous-language/README.md) — shared vocabulary
+- **Ubiquitous Language**: [`ddd/ubiquitous-language/`](../../ddd/ubiquitous-language/README.md) — shared vocabulary
 - **C4 Architecture**: see `system-context/`, `containers/`, `components/` top-level folders
 - **Backend counterpart**: [components/be/](../be/README.md) — HTTP-semantic API specs
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

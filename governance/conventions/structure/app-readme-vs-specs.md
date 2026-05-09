@@ -91,21 +91,21 @@ Content a developer needs to run, build, test, or lint THIS specific checkout on
 
 Content that describes WHAT the system does — what URLs it exposes, what user flows exist, what API endpoints, what bounded contexts, what design decisions, what integration points. This content is platform-agnostic and survives even if the app were rewritten in a different framework.
 
-| Content                                                                 | Destination                                                         |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Routes table (URLs the app serves)                                      | `specs/apps/<app-family>/components/web/routes-and-screens.md`      |
-| Screens table (user-visible pages)                                      | `specs/apps/<app-family>/components/web/routes-and-screens.md`      |
-| Entry-flow tables                                                       | `specs/apps/<app-family>/components/web/routes-and-screens.md`      |
-| Bounded-context project layout (full `src/contexts/<bc>/...` recursion) | `specs/apps/<app-family>/components/web/architecture.md`            |
-| Layer rules (`domain` ← no imports, etc.)                               | `specs/apps/<app-family>/components/web/architecture.md`            |
-| Dormant code listing                                                    | `specs/apps/<app-family>/components/web/architecture.md`            |
-| Bounded-context map narrative + diagram                                 | `specs/apps/<app-family>/components/web/ddd/bounded-context-map.md` |
-| Design system palette / fonts / dark-mode / token import                | `specs/apps/<app-family>/components/web/design-system.md`           |
-| Component variant catalog                                               | `specs/apps/<app-family>/components/web/design-system.md`           |
-| API endpoints table                                                     | `specs/apps/<app-family>/components/be/api.md`                      |
-| Backend architecture diagram (DI, project tree)                         | `specs/apps/<app-family>/components/be/api.md`                      |
-| Backend testing strategy                                                | `specs/apps/<app-family>/components/be/api.md`                      |
-| E2E architecture (bddgen pipeline, feature → spec → test flow)          | `specs/apps/<app-family>/behavior/{web,be}/gherkin/README.md`       |
+| Content                                                                 | Destination                                                    |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Routes table (URLs the app serves)                                      | `specs/apps/<app-family>/components/web/routes-and-screens.md` |
+| Screens table (user-visible pages)                                      | `specs/apps/<app-family>/components/web/routes-and-screens.md` |
+| Entry-flow tables                                                       | `specs/apps/<app-family>/components/web/routes-and-screens.md` |
+| Bounded-context project layout (full `src/contexts/<bc>/...` recursion) | `specs/apps/<app-family>/components/web/architecture.md`       |
+| Layer rules (`domain` ← no imports, etc.)                               | `specs/apps/<app-family>/components/web/architecture.md`       |
+| Dormant code listing                                                    | `specs/apps/<app-family>/components/web/architecture.md`       |
+| Bounded-context map narrative + diagram                                 | `specs/apps/<app-family>/ddd/bounded-context-map.md`           |
+| Design system palette / fonts / dark-mode / token import                | `specs/apps/<app-family>/components/web/design-system.md`      |
+| Component variant catalog                                               | `specs/apps/<app-family>/components/web/design-system.md`      |
+| API endpoints table                                                     | `specs/apps/<app-family>/components/be/api.md`                 |
+| Backend architecture diagram (DI, project tree)                         | `specs/apps/<app-family>/components/be/api.md`                 |
+| Backend testing strategy                                                | `specs/apps/<app-family>/components/be/api.md`                 |
+| E2E architecture (bddgen pipeline, feature → spec → test flow)          | `specs/apps/<app-family>/behavior/{web,be}/gherkin/README.md`  |
 
 **Applying the rule — three questions in order:**
 
@@ -130,7 +130,7 @@ When a paragraph genuinely fits both categories, bias toward moving. The app REA
 
 - Routes tables listing URL paths (belongs in `components/web/routes-and-screens.md`)
 - API endpoint tables (belongs in `components/be/api.md`)
-- Bounded-context maps or narrative descriptions (belongs in `components/web/ddd/`)
+- Bounded-context maps or narrative descriptions (belongs in `ddd/`)
 - Architecture diagrams showing internal structure deeper than one level (belongs in `components/`)
 - Design system palettes, font specs, or component variant catalogs (belongs in `components/web/design-system.md`)
 - Full `src/contexts/<bc>/...` directory recursion (belongs in architecture.md)
@@ -445,7 +445,7 @@ specs/apps/organiclever/
 **Migration checklist**:
 
 1. Create five top-level folders with `README.md` placeholders.
-2. In one atomic `git mv` commit: move `be/gherkin/` → `behavior/be/gherkin/`, `web/gherkin/` → `behavior/web/gherkin/`, `ddd/` → `components/web/ddd/`, `c4/*.md` files → their new positions, `contracts/` → `containers/contracts/`.
+2. In one atomic `git mv` commit: move `be/gherkin/` → `behavior/be/gherkin/`, `web/gherkin/` → `behavior/web/gherkin/`, `c4/*.md` files → their new positions, `contracts/` → `containers/contracts/`. `ddd/` stays at the app root (do not relocate it under `components/web/`; the ubiquitous language is per bounded context, not per surface).
 3. In the same commit: update rhino-cli path constants, Nx `project.json` `inputs`, step file references, and governance cross-links.
 4. Run `rhino-cli specs validate-tree <app>` to verify.
 

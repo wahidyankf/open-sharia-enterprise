@@ -81,9 +81,9 @@ func (s *specsValidateAdoptionUnitSteps) noBcYaml() error {
 		return []SpecFinding{{
 			Category:    "adoption",
 			Criticality: "HIGH",
-			File:        "specs/apps/testapp/components/web/ddd",
-			Evidence:    "missing bounded-contexts.yaml at specs/apps/testapp/components/web/ddd/bounded-contexts.yaml",
-			Expected:    "create specs/apps/testapp/components/web/ddd/bounded-contexts.yaml",
+			File:        "specs/apps/testapp/ddd",
+			Evidence:    "missing bounded-contexts.yaml at specs/apps/testapp/ddd/bounded-contexts.yaml",
+			Expected:    "create specs/apps/testapp/ddd/bounded-contexts.yaml",
 		}}
 	}
 	return nil
@@ -103,9 +103,9 @@ func (s *specsValidateAdoptionUnitSteps) noSpecTree() error {
 			{
 				Category:    "adoption",
 				Criticality: "HIGH",
-				File:        "specs/apps/unknownapp/components/web/ddd",
-				Evidence:    "missing bounded-contexts.yaml at specs/apps/unknownapp/components/web/ddd/bounded-contexts.yaml",
-				Expected:    "create specs/apps/unknownapp/components/web/ddd/bounded-contexts.yaml",
+				File:        "specs/apps/unknownapp/ddd",
+				Evidence:    "missing bounded-contexts.yaml at specs/apps/unknownapp/ddd/bounded-contexts.yaml",
+				Expected:    "create specs/apps/unknownapp/ddd/bounded-contexts.yaml",
 			},
 		}
 	}
