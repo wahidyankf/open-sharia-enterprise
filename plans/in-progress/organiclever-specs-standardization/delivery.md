@@ -294,23 +294,31 @@ Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks 
   ```bash
   for f in specs/apps/organiclever/components/web/ddd/ubiquitous-language/*.md; do
     case "$(basename $f)" in README.md) continue;; esac
-    awk '/^### Term:/,/^### |^## /' "$f" | grep -L 'Code identifier' && echo "MISSING in $f"
+    awk '/^### Term:/,/^### |^## /' "$f" | grep -q 'Code identifier' || echo "MISSING in $f"
   done
   ```
 
   Expect zero "MISSING" lines.
 
-- [ ] **2.5B.3** Confirm canonical vocabulary preserved (term names byte-identical to pre-deepening). Diff against the pre-deepening commit:
+- [ ] **2.5B.3** Confirm canonical vocabulary preserved (term names byte-identical to pre-deepening). Diff against the pre-deepening commit for ALL `<bc>.md` files:
 
   ```bash
-  git show HEAD~1:specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md \
-    | awk '/^## Terms/,0' | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/old-journal-terms.txt
-  awk '/^## Term index/,/^## /' specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md \
-    | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/new-journal-terms.txt
-  diff /tmp/old-journal-terms.txt /tmp/new-journal-terms.txt
+  for f in specs/apps/organiclever/components/web/ddd/ubiquitous-language/*.md; do
+    case "$(basename $f)" in README.md) continue;; esac
+    bc="$(basename $f)"
+    git show HEAD~1:"specs/apps/organiclever/components/web/ddd/ubiquitous-language/$bc" \
+      | awk '/^## Terms/,0' | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/old-terms.txt
+    awk '/^## Term index/,/^## /' "$f" \
+      | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/new-terms.txt
+    result=$(diff /tmp/old-terms.txt /tmp/new-terms.txt)
+    if [ -n "$result" ]; then
+      echo "TERM DRIFT in $bc:"
+      echo "$result"
+    fi
+  done
   ```
 
-  Expect zero diff output. Repeat for each `<bc>.md`.
+  Expect zero output (no TERM DRIFT lines).
 
 - [ ] **2.5B.4** Run `npm run lint:md` — exit 0
 - [ ] **2.5B.5** Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0 (DDD ul parser still happy)

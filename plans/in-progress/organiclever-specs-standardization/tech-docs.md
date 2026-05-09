@@ -473,7 +473,7 @@ These are observations specific to this pilot; they do NOT modify the rule, but 
 - **`organiclever-web` is the heavy case.** Its 301-line README is the main test of the rule.
 - **The `Status: Pre-Alpha` banner** is a runtime-relevant warning to anyone running the app — it stays in the app README.
 - **`organiclever-web/docs/explanation/`** has only one inhabitant (`bounded-context-map.md`). Once moved, the directory should be removed entirely.
-- **The dormant BE integration code listing** (paths under `src/contexts/health/infrastructure/`) is architectural narrative — moves to `specs/apps/organiclever/web/architecture.md`. A reader trying to figure out "what does the health context contain in this codebase?" can find it via the `specs/` link.
+- **The dormant BE integration code listing** (paths under `src/contexts/health/infrastructure/`) is architectural narrative — moves to `specs/apps/organiclever/components/web/architecture.md`. A reader trying to figure out "what does the health context contain in this codebase?" can find it via the `specs/` link.
 
 ## Target Tree
 
