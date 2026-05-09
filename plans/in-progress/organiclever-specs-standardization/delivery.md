@@ -372,10 +372,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.1 Create `specs/apps/organiclever/product/overview.md`** (_New file_) — PM-first plain-language summary, personas, primary user flows, v0 scope vs deferred.
   - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/product/overview.md (new, 76 lines). Contains **Audience:** line (grep returns 0). Sections: personas table, v0 ships, v0 defers, primary user flows (Flow A/B), plain-language v0 summary, related links. No un-glossed niche framework names in summary paragraph.
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/product/overview.md` returns 0 (match found) AND the first 10 lines after H1 contain a plain-language summary paragraph with zero un-glossed framework names.
-- [ ] **3.2 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create product/overview.md (PM-first product summary)`
+- [x] **3.2 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create product/overview.md (PM-first product summary)`
+  - Date: 2026-05-09. Status: done. lint:md 2330 files, 0 errors. Committed.
 
-- [ ] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** (_New file_) — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied.
-      Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/architecture.md` returns 0 AND file contains a `## Project Layout` or equivalent section.
+- [x] **3.3 Create `specs/apps/organiclever/components/web/architecture.md`** (_New file_) — Extract from `apps/organiclever-web/README.md` "Architecture" section: project layout (full bounded-context tree), layer rules, dormant BE integration code listing. PM-Readability Contract applied.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/.../components/web/architecture.md (new). **Audience:** line present. ## Project layout section present. Layer rules table included. Dormant BE code list included. Bounded-context table and ESLint boundary rules documented.
+    Acceptance: `grep -q "Audience:" specs/apps/organiclever/components/web/architecture.md` returns 0 AND file contains a `## Project Layout` or equivalent section.
 - [ ] **3.4 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create components/web/architecture.md`
 
 - [ ] **3.5 Create `specs/apps/organiclever/components/web/routes-and-screens.md`** (_New file_) — Extract routes/screens/entry-flows tables. PM-Readability Contract applied.
