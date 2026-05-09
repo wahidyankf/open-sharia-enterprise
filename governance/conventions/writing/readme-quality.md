@@ -571,11 +571,18 @@ This project uses Nx to manage applications and libraries:
 - README file exceeds 400 lines
 - Complaints from contributors about clarity
 
+## Scope vs Structural Conventions
+
+This convention governs README quality — clarity, voice, scannability, engagement, and plain language. It applies to all `README.md` files across the repository.
+
+Structural placement of content — what belongs in an app or infra README vs in `specs/apps/<app-family>/` — is governed by a separate convention: [App README vs Specs Convention](../structure/app-readme-vs-specs.md). That convention defines the Category A (dev-runtime, stays in README) and Category B (behavior/architecture, moves to specs/) split, line-count caps, and forbidden headings. Both conventions apply to app READMEs simultaneously: this convention governs HOW to write the content, the other governs WHAT content to include.
+
 ## Related Documentation
 
 - [Content Quality Principles](./quality.md) - General content quality standards
 - [Emoji Usage Convention](../formatting/emoji.md) - Emoji usage guidelines
 - [Linking Convention](../formatting/linking.md) - How to format links
+- [App README vs Specs Convention](../structure/app-readme-vs-specs.md) - Structural placement: what content belongs in app READMEs vs specs/
 
 ## External Resources
 

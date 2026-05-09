@@ -1,6 +1,6 @@
 ---
 title: "Specs Directory Structure Convention"
-description: Canonical directory structure for Gherkin feature files, C4 architecture diagrams, and OpenAPI contracts in the specs/ directory
+description: Canonical C4-aware five-folder directory structure for specs/ — Gherkin feature files, C4 architecture diagrams, DDD artifacts, and OpenAPI contracts
 category: explanation
 subcategory: conventions
 tags:
@@ -11,26 +11,31 @@ tags:
   - organization
   - c4-diagrams
   - openapi
+  - c4
 created: 2026-04-02
 ---
 
 # Specs Directory Structure Convention
 
-The `specs/` directory contains all behavioral specifications (Gherkin feature files), architectural diagrams (C4), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical directory structure that all projects must follow.
+The `specs/` directory contains all behavioral specifications (Gherkin feature files), architectural diagrams (C4), domain design artifacts (DDD), and API contracts (OpenAPI) for the monorepo. This convention codifies the canonical C4-aware five-folder directory structure that all projects must follow.
+
+The authoritative combined convention — covering what content belongs in app READMEs vs `specs/`, the five-folder tree shape, PM-readability requirements, and BDD/DDD/Contracts adoption expectations — is [App README vs Specs Convention](./app-readme-vs-specs.md). This document describes the canonical path patterns and domain subdirectory rules within the `behavior/` tree in detail, and defines how the overall spec tree is organized.
 
 ## Principles Implemented/Respected
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/behavior/be/gherkin/expenses/expense-management.feature` immediately reveals the project, layer, domain, and feature without any external metadata or configuration.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The directory structure communicates spec scope through path segments. Reading a path like `specs/apps/organiclever/behavior/be/gherkin/expenses/expense-management.feature` immediately reveals the project, C4 level, layer, domain, and feature without any external metadata.
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: CLI specs use a flat structure under `gherkin/` because CLI commands are independent operations that do not group into business domains. Adding domain subdirectories with one or two files each would create indirection without value.
 
-- **[Documentation First](../../principles/content/documentation-first.md)**: The specs directory serves as living documentation of system behavior. Gherkin features describe what the system does in human-readable language, C4 diagrams describe architectural context, and OpenAPI contracts describe API surfaces.
+- **[Documentation First](../../principles/content/documentation-first.md)**: The specs directory serves as living documentation of system behavior. Gherkin features describe what the system does in human-readable language, C4 diagrams describe architectural context at three zoom levels, and OpenAPI contracts describe API surfaces.
 
 ## Conventions Implemented/Respected
 
 This convention implements/respects the following conventions:
+
+- **[App README vs Specs Convention](./app-readme-vs-specs.md)**: This directory structure is the canonical layout produced by applying the Content Split Rule from that convention. The five-folder tree IS the spec tree shape described there.
 
 - **[Specs-Application Sync Convention](../../development/quality/specs-application-sync.md)**: The directory structure enables bidirectional sync between specs and application code. The path pattern mirrors the app/lib structure in the workspace.
 
@@ -40,17 +45,21 @@ This convention implements/respects the following conventions:
 
 ## Purpose
 
-This convention establishes the canonical directory layout for the `specs/` directory. It defines how Gherkin feature files, C4 architecture diagrams, and OpenAPI contracts are organized across apps and libs, ensuring consistency, discoverability, and correct tool integration.
+This convention establishes the canonical directory layout for the `specs/` directory. It defines how Gherkin feature files, C4 architecture diagrams, DDD artifacts, and OpenAPI contracts are organized across apps and libs, ensuring consistency, discoverability, and correct tool integration. The layout uses a C4-aware five-folder tree at the app level that maps directly to the C4 model zoom levels, with a `product/` folder for PM-first content and a `behavior/` folder for Gherkin that cuts across all C4 levels.
 
 ## Scope
 
 ### What This Convention Covers
 
-- **Gherkin feature file placement** for apps (BE, FE, CLI, build-tools) and libs
+- The C4-aware five-folder tree for app spec areas
+- **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within the `behavior/` tree
 - **Domain subdirectory rules** for grouping related feature files
-- **C4 diagram placement** within app spec directories
-- **OpenAPI contract placement** within app spec directories
+- **C4 diagram placement** within `system-context/`, `containers/`, and `components/`
+- **DDD artifact placement** within `components/<surface>/ddd/`
+- **OpenAPI contract placement** within `containers/contracts/`
 - **README.md index files** at each navigational level
+- **Per-surface variants** (full-stack, web-only, CLI-only, multi-CLI)
+- **Migration path** from flat-root layouts to the C4-aware tree
 
 ### What This Convention Does NOT Cover
 
@@ -58,66 +67,148 @@ This convention establishes the canonical directory layout for the `specs/` dire
 - **C4 diagram content** (covered by C4 model documentation within each project)
 - **OpenAPI spec authoring** (covered by contract project documentation)
 - **Test implementation** (covered by [Three-Level Testing Standard](../../development/quality/three-level-testing-standard.md))
+- **Content split decisions** (what belongs in app README vs specs/) — see [App README vs Specs Convention](./app-readme-vs-specs.md)
+- **PM-readability requirements** for spec files — see [App README vs Specs Convention](./app-readme-vs-specs.md)
 
-## Canonical Path Pattern
+## Canonical App Spec Tree
 
-### Gherkin Feature Files
+### Five-Folder Layout
 
-The canonical path pattern for Gherkin feature files is:
+Every app spec area under `specs/apps/<app-family>/` uses the following five-folder layout. Apps create only the folders they need — do not pre-create empty folders.
 
 ```
-specs/{scope}/{name}/{layer}/gherkin/{domain}/{feature}.feature
+specs/apps/<app-family>/
+├── README.md
+├── product/                        # PM-first content (not a C4 level)
+│   ├── README.md
+│   └── overview.md
+├── system-context/                 # C4 L1
+│   ├── README.md
+│   └── context.md
+├── containers/                     # C4 L2
+│   ├── README.md
+│   ├── container.md
+│   ├── contracts/                  # OpenAPI specs (full-stack only)
+│   │   ├── README.md
+│   │   ├── openapi.yaml
+│   │   ├── paths/
+│   │   ├── schemas/
+│   │   └── generated/
+│   └── deployment.md
+├── components/                     # C4 L3
+│   ├── README.md
+│   ├── be/                         # Full-stack only
+│   │   ├── README.md
+│   │   ├── component-be.md
+│   │   └── api.md
+│   └── web/                        # Web and full-stack
+│       ├── README.md
+│       ├── component-web.md
+│       ├── architecture.md
+│       ├── design-system.md
+│       ├── routes-and-screens.md
+│       └── ddd/                    # When DDD adopted
+│           ├── README.md
+│           ├── bounded-contexts.yaml
+│           ├── bounded-context-map.md
+│           └── ubiquitous-language/
+│               ├── README.md
+│               └── <bc>.md
+└── behavior/                       # Cross-cutting Gherkin (all C4 levels)
+    ├── README.md
+    ├── be/
+    │   └── gherkin/
+    │       ├── README.md
+    │       └── <domain>/
+    │           └── <feature>.feature
+    ├── web/
+    │   └── gherkin/
+    │       ├── README.md
+    │       └── <domain>/
+    │           └── <feature>.feature
+    └── cli/
+        └── gherkin/
+            ├── README.md
+            └── <command>.feature    # Flat structure — no domain dirs
+```
+
+### Folder Purposes
+
+| Folder            | Reader question it answers                            | Why top-level                                                    |
+| ----------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| `product/`        | "What does this product do for the user?"             | PM-first content — not architecture, not behavior                |
+| `system-context/` | "What is the system boundary? Who interacts with it?" | C4 L1                                                            |
+| `containers/`     | "What runtime processes exist?"                       | C4 L2 — hosts API contracts and deployment topology              |
+| `components/`     | "What is inside each container?"                      | C4 L3 — bounded contexts are components                          |
+| `behavior/`       | "Does the system do what the specs say?"              | Gherkin cuts across all C4 levels — orthogonal to zoom hierarchy |
+
+### Per-Surface Variants
+
+| Surface profile                   | Folders populated                                                                                                          | Folders absent or empty                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Full-stack (e.g., `organiclever`) | All five; `components/be/` + `components/web/` + `containers/contracts/`; `behavior/be/gherkin/` + `behavior/web/gherkin/` | None                                            |
+| Web-only (e.g., `wahidyankf`)     | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/web/gherkin/`                                   | `containers/contracts/`, `components/be/`       |
+| CLI-only (e.g., `rhino`)          | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/cli/gherkin/`                                   | `components/{be,web}/`, `containers/contracts/` |
+| Multi-CLI (e.g., `ayokoding`)     | Same as CLI-only, plus web layers if applicable                                                                            | Nothing additional omitted                      |
+
+## Gherkin Feature File Placement
+
+Gherkin feature files live inside the `behavior/` tree at `specs/apps/<app-family>/behavior/<surface>/gherkin/`.
+
+### Canonical Path Pattern
+
+```
+specs/apps/<app-family>/behavior/<surface>/gherkin/{domain}/{feature}.feature
 ```
 
 Where:
 
-- **`{scope}`** = `apps` or `libs`
-- **`{name}`** = project name (e.g., `ayokoding`, `oseplatform`, `rhino`, `organiclever`, `golang-commons`, `ts-ui`)
-- **`{layer}`** = `be`, `fe`, `cli`, or `build-tools` (apps only; omitted for libs)
-- **`{domain}`** = business domain grouping folder (e.g., `expenses/`, `authentication/`, `health/`)
-- **`{feature}`** = feature file name describing the behavior
+- **`<app-family>`** = project name (e.g., `organiclever`, `ayokoding`, `rhino`)
+- **`<surface>`** = `be`, `web`, or `cli`
+- **`{domain}`** = business domain grouping folder (BE/web only; omitted for CLI)
+- **`{feature}`** = feature file name in kebab-case
 
 ### Domain Subdirectory Rules
 
-The rules for domain subdirectories vary by layer type:
-
-**BE and FE specs** ALWAYS use domain subdirectories under `gherkin/`. Each domain folder groups related feature files:
+**BE and web specs** ALWAYS use domain subdirectories under `gherkin/`. Each domain folder groups related feature files by business domain, not by technical concern:
 
 ```
 specs/apps/organiclever/behavior/be/gherkin/expenses/expense-management.feature
-specs/apps/organiclever/behavior/be/gherkin/expenses/attachments.feature
 specs/apps/organiclever/behavior/be/gherkin/authentication/password-login.feature
-specs/apps/ayokoding/web/gherkin/accessibility/accessibility.feature
 specs/apps/organiclever/behavior/web/gherkin/authentication/google-login.feature
+specs/apps/ayokoding/behavior/web/gherkin/accessibility/accessibility.feature
 ```
 
-A domain folder may contain one or many feature files. Group features by business domain, not by technical concern.
+A domain folder may contain one or many feature files.
 
 **CLI specs** use a flat structure under `gherkin/` with NO domain subdirectories. Each feature file corresponds to one CLI command:
 
 ```
-specs/apps/rhino/cli/gherkin/doctor.feature
-specs/apps/rhino/cli/gherkin/env-backup.feature
-specs/apps/rhino/cli/gherkin/spec-coverage-validate.feature
-specs/apps/ayokoding/cli/gherkin/links-check.feature
-specs/apps/oseplatform/cli/gherkin/links-check.feature
+specs/apps/rhino/behavior/cli/gherkin/doctor.feature
+specs/apps/rhino/behavior/cli/gherkin/env-backup.feature
+specs/apps/rhino/behavior/cli/gherkin/spec-coverage-validate.feature
+specs/apps/ayokoding/behavior/cli/gherkin/links-check.feature
 ```
 
 **Rationale for CLI exception**: CLI commands are independent operations, not grouped into business domains. Domain folders containing one or two files each would add indirection without value. The flat structure communicates that each file is an independent command specification.
 
-**Build-tools specs** use domain subdirectories under `gherkin/`:
+## Lib Spec Structure
+
+Library specs use a simpler layout with no five-folder tree — libs do not have C4 levels or behavioral architecture in the same sense as deployed apps.
 
 ```
-specs/apps/ayokoding/build-tools/gherkin/index-generation/index-generation.feature
+specs/libs/<lib-name>/
+├── README.md
+└── gherkin/
+    └── <package>/           # Package or module subdirectories
+        └── <feature>.feature
 ```
 
-**Lib specs** use package or module subdirectories under `gherkin/` (no layer segment because libs do not have BE/FE/CLI layers):
+**Examples:**
 
 ```
 specs/libs/golang-commons/gherkin/testutil/capture-stdout.feature
 specs/libs/golang-commons/gherkin/timeutil/timestamp.feature
-specs/libs/ts-ui/gherkin/button/button.feature
-specs/libs/ts-ui/gherkin/dialog/dialog.feature
 specs/libs/hugo-commons/gherkin/links/check-links.feature
 ```
 
@@ -129,116 +220,129 @@ The complete `specs/` directory follows this layout:
 specs/
 ├── README.md
 ├── apps/
-│   └── {app-name}/
-│       ├── README.md
-│       ├── c4/                              # C4 architecture diagrams
-│       │   ├── README.md
-│       │   ├── context.md                   # System Context diagram
-│       │   ├── container.md                 # Container diagram
-│       │   ├── component-be.md              # Backend Component diagram
-│       │   └── component-web.md              # Frontend Component diagram
-│       ├── contracts/                       # OpenAPI specs (if applicable)
-│       │   ├── README.md
-│       │   ├── openapi.yaml                 # Root OpenAPI document
-│       │   ├── paths/                       # Path definitions
-│       │   ├── schemas/                     # Schema definitions
-│       │   ├── examples/                    # Request/response examples
-│       │   └── generated/                   # Bundled output (gitignored content)
-│       ├── be/                              # Backend layer
-│       │   ├── README.md
-│       │   └── gherkin/
-│       │       ├── README.md
-│       │       └── {domain}/               # Domain subdirectories (required)
-│       │           └── {feature}.feature
-│       ├── fe/                              # Frontend layer
-│       │   ├── README.md
-│       │   └── gherkin/
-│       │       ├── README.md
-│       │       └── {domain}/               # Domain subdirectories (required)
-│       │           └── {feature}.feature
-│       ├── cli/                             # CLI layer
-│       │   └── gherkin/
-│       │       ├── README.md
-│       │       └── {command}.feature        # Flat structure (no domain dirs)
-│       └── build-tools/                     # Build tools layer
-│           └── gherkin/
-│               └── {domain}/               # Domain subdirectories (required)
-│                   └── {feature}.feature
+│   └── <app-family>/         # C4-aware five-folder tree (per app above)
 ├── libs/
-│   └── {lib-name}/
+│   └── <lib-name>/
 │       ├── README.md
 │       └── gherkin/
-│           └── {package}/                   # Package subdirectories
-│               └── {feature}.feature
+│           └── <package>/
+│               └── <feature>.feature
 └── apps-labs/
-    └── README.md                            # Placeholder for experimental apps
+    └── README.md             # Placeholder for experimental apps
 ```
 
 ### Which Projects Have Which Directories
 
-Not every project has all directories. The presence of `c4/`, `contracts/`, or specific layer directories depends on the project:
+Not every project has all directories. Presence of subdirectories depends on the project's surface profile:
 
-- **`c4/`**: Present for multi-layer app groups (e.g., `ayokoding`, `oseplatform`, `organiclever`)
-- **`contracts/`**: Present only for apps with OpenAPI contract specs (e.g., `organiclever`)
-- **Layer directories** (`be/`, `fe/`, `cli/`, `build-tools/`): Present only for layers that exist in the app group
+- **`containers/contracts/`**: Present for apps with OpenAPI contract specs (e.g., `organiclever`)
+- **`components/be/`**: Present for apps with a backend container (e.g., `organiclever`)
+- **`components/web/ddd/`**: Present when DDD is adopted for the web container
+- **`behavior/be/gherkin/`**: Present for apps with backend Gherkin specs
+- **`behavior/cli/gherkin/`**: Present for CLI apps
 
 ## README Index Files
 
-Each navigational directory level should contain a `README.md` file that indexes its contents. This follows the same GitHub compatibility pattern used throughout the repository (see [File Naming Convention](./file-naming.md)).
+Every directory within a spec area must contain a `README.md` index file. README files serve as entry points when browsing on GitHub, providing context about what specifications exist at each level. This follows the same pattern used throughout the repository — see [File Naming Convention](./file-naming.md).
 
-README files serve as entry points when browsing the specs directory on GitHub, providing context about what specifications exist at each level.
+The order of folders in any README listing follows the canonical order: `product/`, `system-context/`, `containers/`, `components/`, `behavior/`.
+
+## Migration Path (Flat-Root to C4-Aware)
+
+For existing spec trees with a flat-root layout (`be/`, `web/`, `cli/`, `c4/`, `contracts/` at the `specs/apps/<app-family>/` root):
+
+1. Create the five top-level folders with placeholder `README.md` files.
+2. In ONE atomic commit: `git mv` all old subfolders to their new positions. Update ALL path references in the same commit — rhino-cli path constants, Nx `project.json` `inputs`, step definition files, governance cross-links.
+3. Update `specs/apps/<app-family>/README.md` to reflect the new tree.
+4. Verify with `rhino-cli specs validate-tree <app>` and `npm run lint:md`.
+
+**Flat-root to C4-aware path mapping:**
+
+| Old path                               | New path                                           |
+| -------------------------------------- | -------------------------------------------------- |
+| `specs/apps/<app>/be/gherkin/`         | `specs/apps/<app>/behavior/be/gherkin/`            |
+| `specs/apps/<app>/web/gherkin/`        | `specs/apps/<app>/behavior/web/gherkin/`           |
+| `specs/apps/<app>/cli/gherkin/`        | `specs/apps/<app>/behavior/cli/gherkin/`           |
+| `specs/apps/<app>/ddd/`                | `specs/apps/<app>/components/web/ddd/`             |
+| `specs/apps/<app>/c4/context.md`       | `specs/apps/<app>/system-context/context.md`       |
+| `specs/apps/<app>/c4/container.md`     | `specs/apps/<app>/containers/container.md`         |
+| `specs/apps/<app>/c4/component-be.md`  | `specs/apps/<app>/components/be/component-be.md`   |
+| `specs/apps/<app>/c4/component-web.md` | `specs/apps/<app>/components/web/component-web.md` |
+| `specs/apps/<app>/contracts/`          | `specs/apps/<app>/containers/contracts/`           |
+
+The atomic commit is mandatory — splitting the move and the path updates causes test failures between commits.
 
 ## Adding New Specs
 
 ### Adding a Feature File to an Existing Project
 
-1. Identify the correct layer (`be`, `fe`, `cli`, or `build-tools`)
-2. For BE/FE/build-tools: place the file in the appropriate domain subdirectory, creating the domain folder if it does not exist
-3. For CLI: place the file directly under `gherkin/` with no domain subdirectory
+1. Identify the correct surface (`be`, `web`, or `cli`)
+2. For BE/web: place the file in the appropriate domain subdirectory under `behavior/<surface>/gherkin/`, creating the domain folder if it does not exist
+3. For CLI: place the file directly under `behavior/cli/gherkin/` with no domain subdirectory
 4. Update the relevant `README.md` index file
 
 ### Adding Specs for a New Project
 
-1. Create the project directory under `specs/apps/{name}/` or `specs/libs/{name}/`
-2. Create a `README.md` at the project level
-3. Create the appropriate layer directories with `gherkin/` subdirectories
-4. For apps with multiple layers, create `c4/` with the standard C4 diagram files
-5. For apps with API contracts, create `contracts/` with the OpenAPI structure
+1. Create the project directory under `specs/apps/<app-family>/`
+2. Create `README.md` at the project level
+3. Determine the surface profile (full-stack, web-only, CLI-only, multi-CLI)
+4. Create only the folders the project needs — see per-surface variant table
+5. Create `README.md` index files at each folder level
+6. Run `rhino-cli specs validate-tree <app>` to verify the layout
 
 ### Adding Specs for a New Lib
 
-1. Create `specs/libs/{lib-name}/`
-2. Create a `README.md` at the lib level
-3. Create `gherkin/` directly under the lib name (no layer segment)
+1. Create `specs/libs/<lib-name>/`
+2. Create `README.md` at the lib level
+3. Create `gherkin/` directly under the lib name (no five-folder tree)
 4. Create package subdirectories under `gherkin/` matching the lib's module structure
 
 ## Enforcement
 
-### Automated Validation
+### Deterministic Validation (rhino-cli)
 
-The `rhino-cli spec-coverage validate` command validates that all Gherkin feature files under `specs/` have corresponding test implementations. It uses recursive globs (`**/*.feature`) to discover feature files, so it works correctly with both:
+The following `rhino-cli specs` commands validate the directory structure mechanically:
 
-- **Nested structures** (BE/FE/build-tools/libs with domain subdirectories)
-- **Flat structures** (CLI with no domain subdirectories)
+| Command                                    | What it checks                                                             |
+| ------------------------------------------ | -------------------------------------------------------------------------- |
+| `rhino-cli specs validate-tree <app>`      | Top-level folders match the canonical five — no flat-root artifacts remain |
+| `rhino-cli specs validate-counts <folder>` | README count claims match actual `.feature` file counts                    |
+| `rhino-cli specs validate-links <folder>`  | Markdown link integrity within the spec tree                               |
+| `rhino-cli specs validate-adoption <app>`  | BDD/DDD/Contracts adoption gaps per surface profile                        |
+| `rhino-cli specs drift-routes <app>`       | Routes/screens spec vs actual Next.js page files                           |
+| `rhino-cli specs drift-endpoints <app>`    | Endpoint spec vs actual backend handler files                              |
+| `rhino-cli specs drift-contracts <app>`    | OpenAPI paths vs backend handler attributes                                |
 
-The `spec-coverage` target runs as part of the pre-push hook for projects that have it configured. It ensures specs and application code stay synchronized.
+These commands run as part of the `specs-quality-gate` workflow deterministic-offload pass. See [Deterministic Offload](#deterministic-offload) below.
 
-### Manual Verification
+### LLM Semantic Validation (specs-checker)
+
+`specs-checker` validates categories that require semantic judgment: narrative coherence, terminology drift, C4 diagram consistency, cross-folder contradictions, and PM-readability compliance. See [Specs Validation Workflow](../../workflows/specs/specs-quality-gate.md).
+
+### Deterministic Offload
+
+The reasoning split between deterministic and LLM checks follows the principle that counting, path comparison, and file-system walking belong in Go, not in LLM context. Categories tagged `[Deterministic]` in `specs-checker` shell out to `rhino-cli`; categories tagged `[LLM]` keep LLM-driven reasoning.
+
+### Manual Verification Checklist
 
 When reviewing changes to the `specs/` directory, verify:
 
-- [ ] Feature files follow the canonical path pattern for their layer type
-- [ ] BE and FE specs use domain subdirectories (never flat under `gherkin/`)
-- [ ] CLI specs are flat under `gherkin/` (never use domain subdirectories)
+- [ ] App spec tree uses the five-folder layout at the top level
+- [ ] No flat-root artifacts remain (`be/`, `web/`, `cli/`, `c4/`, `contracts/` at root)
+- [ ] BE and web specs use domain subdirectories (never flat under `gherkin/`)
+- [ ] CLI specs are flat under `gherkin/` (never domain subdirectories)
 - [ ] Lib specs use package subdirectories under `gherkin/`
-- [ ] README.md index files exist at each navigational level
-- [ ] New projects include the appropriate directory scaffolding
+- [ ] `README.md` index files exist at every directory level
+- [ ] New projects include only the folders their surface profile needs
+- [ ] Folder listing in README follows canonical order: `product/`, `system-context/`, `containers/`, `components/`, `behavior/`
 
 ## Related Documentation
 
-- [Specs-Application Sync Convention](../../development/quality/specs-application-sync.md) - Bidirectional sync between specs and application code
-- [BDD Spec-Test Mapping](../../development/infra/bdd-spec-test-mapping.md) - How specs map to test implementations
-- [Three-Level Testing Standard](../../development/quality/three-level-testing-standard.md) - Unit, integration, and E2E testing levels consuming these specs
-- [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) - Gherkin writing standards for feature files
-- [File Naming Convention](./file-naming.md) - General file naming patterns (README.md exception applies here)
-- [Plans Organization Convention](./plans.md) - Similar convention for plans/ directory structure
+- [App README vs Specs Convention](./app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
+- [Specs-Application Sync Convention](../../development/quality/specs-application-sync.md) — bidirectional sync between specs and application code
+- [BDD Spec-Test Mapping](../../development/infra/bdd-spec-test-mapping.md) — how specs map to test implementations
+- [Three-Level Testing Standard](../../development/quality/three-level-testing-standard.md) — unit, integration, and E2E testing levels
+- [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) — Gherkin writing standards for feature files
+- [File Naming Convention](./file-naming.md) — general file naming patterns
+- [Plans Organization Convention](./plans.md) — similar convention for plans/ directory structure
+- [Specs Validation Workflow](../../workflows/specs/specs-quality-gate.md) — iterative validation workflow
