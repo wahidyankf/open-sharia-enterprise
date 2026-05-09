@@ -1,6 +1,6 @@
 # Ubiquitous Language — OrganicLever
 
-This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits as a sibling to `be/`, `fe/`, `c4/`, and `contracts/` because the same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
+This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits inside `specs/apps/organiclever/ddd/` alongside [`bounded-contexts.yaml`](../bounded-contexts.yaml) because both are DDD artifacts read by `rhino-cli ddd ul` and `rhino-cli ddd bc`. The same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
 
 ## What lives here
 
@@ -18,7 +18,7 @@ One markdown file per bounded context, plus this index. Each file lists the term
 | `landing`         | [landing.md](./landing.md)                 |
 | `routing`         | [routing.md](./routing.md)                 |
 
-The bounded-context map and the strategic-pattern relationships between these contexts live in [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md).
+The bounded-context map and the strategic-pattern relationships between these contexts live in [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md).
 
 ## Authoring rules
 
@@ -30,20 +30,20 @@ The bounded-context map and the strategic-pattern relationships between these co
 
 ## How this folder is consumed
 
-- **`organiclever-web` Gherkin features** under [`fe/gherkin/`](../fe/gherkin/README.md) — every term in scenario titles and step text comes from here.
-- **`organiclever-web` source** under [`apps/organiclever-web/src/`](../../../../apps/organiclever-web/src/) — type names, function names, and event names match the `Code identifier(s)` column.
-- **C4 component diagrams** under [`c4/`](../c4/README.md) — labels match owned-term names.
-- **Future `organiclever-be` source** under [`apps/organiclever-be/`](../../../../apps/organiclever-be/) — when DDD adoption reaches the backend, the same glossary governs F# record names and route handlers.
+- **`organiclever-web` Gherkin features** under [`web/gherkin/`](../../web/gherkin/README.md) — every term in scenario titles and step text comes from here.
+- **`organiclever-web` source** under [`apps/organiclever-web/src/`](../../../../../apps/organiclever-web/src/) — type names, function names, and event names match the `Code identifier(s)` column.
+- **C4 component diagrams** under [`c4/`](../../c4/README.md) — labels match owned-term names.
+- **Future `organiclever-be` source** under [`apps/organiclever-be/`](../../../../../apps/organiclever-be/) — when DDD adoption reaches the backend, the same glossary governs F# record names and route handlers.
 
 ## Glossary parity check
 
-Phase 9 of the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md) wires a glossary parity check into `nx run organiclever-web:spec-coverage` — Gherkin terms missing from any glossary file produce warnings. Phase 2 (this scaffolding) does not enable that check yet; it lands once Phase 9 reorganizes Gherkin folders by bounded context.
+Phase 9 of the [DDD adoption plan](../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md) wires a glossary parity check into `nx run organiclever-web:spec-coverage` — Gherkin terms missing from any glossary file produce warnings. Phase 2 (this scaffolding) does not enable that check yet; it lands once Phase 9 reorganizes Gherkin folders by bounded context.
 
 ## Related
 
-- [Bounded-context map ADR](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
-- [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
-- [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
-- [BDD with DDD Standards](../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
-- [organiclever specs README](../README.md)
-- [organiclever fe specs README](../fe/README.md)
+- [Bounded-context map ADR](../../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
+- [DDD adoption plan](../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
+- [DDD Standards (platform-wide)](../../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
+- [BDD with DDD Standards](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
+- [organiclever specs README](../../README.md)
+- [organiclever web specs README](../../web/README.md)
