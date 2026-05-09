@@ -20,9 +20,9 @@ specs
 !specs/apps/a-demo/be/gherkin
 !specs/apps/a-demo/fe/gherkin
 !specs/apps/a-demo/contracts/generated
-!specs/apps/organiclever/be/gherkin
-!specs/apps/organiclever/fe/gherkin
-!specs/apps/organiclever/contracts/generated
+!specs/apps/organiclever/behavior/be/gherkin
+!specs/apps/organiclever/behavior/web/gherkin
+!specs/apps/organiclever/containers/contracts/generated
 infra
 .claude
 .opencode
