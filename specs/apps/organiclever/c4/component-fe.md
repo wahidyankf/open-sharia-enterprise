@@ -1,80 +1,159 @@
 # Component Diagram: Next.js Frontend
 
 Level 3 of the C4 model. Shows the logical components inside the Next.js 16 frontend container.
-v0 has no authenticated screens. The frontend ships:
+v0 has no authenticated screens. The frontend is structured around 9 DDD bounded contexts
+(`src/contexts/<bc>/{domain,application,infrastructure,presentation}`), with PGlite
+(Postgres-WASM, IndexedDB-backed) as the local-first system of record.
 
-- **Landing page** (`/`) — marketing copy, "Open the app" CTA, principles, weekly-rhythm demo.
-- **System status page** (`/system/status/be`) — diagnostic dashboard polling the backend
-  `/api/v1/health` endpoint server-side.
-- **App page** (`/app`) — provisional client-side event-mechanism page; PGlite-backed
-  CRUD with Effect.ts runtime, `Schema`-validated drafts, and discriminated typed
-  errors. Landed by the gear-up plan; the bigger app plan replaces this with the
-  full app shell (TabBar / SideNav / typed loggers) on top of the same PGlite store.
-- **404 fallbacks** for `/login` and `/profile` — guards against accidental re-introduction of
-  Google auth UI.
+## Routes
+
+| Route                 | Owning context(s)        | Notes                                     |
+| --------------------- | ------------------------ | ----------------------------------------- |
+| `/`                   | landing                  | Marketing page                            |
+| `/app`                | (redirect)               | 308 → `/app/home`                         |
+| `/app/home`           | app-shell, journal       | Dashboard + quick-log FAB                 |
+| `/app/history`        | app-shell, stats         | Chronological entry log                   |
+| `/app/progress`       | app-shell, stats         | Charts and streaks                        |
+| `/app/settings`       | app-shell, settings      | Theme, language, data export              |
+| `/app/workout`        | workout-session          | Active workout (TabBar hidden)            |
+| `/app/workout/finish` | workout-session          | Post-workout summary                      |
+| `/app/routines/edit`  | routine                  | Routine editor                            |
+| `/system/status/be`   | health                   | Backend probe (`force-dynamic`)           |
+| `/login`, `/profile`  | routing                  | 404 stubs (auth not yet shipped)          |
+
+## Component Architecture
 
 ```mermaid
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080
-graph LR
+graph TD
     EU("End User<br/>Desktop / Mobile"):::actor
 
-    subgraph FE["Next.js Frontend Container"]
+    subgraph FE["Next.js 16 Frontend Container"]
+        direction TB
 
-        subgraph LAYER1["Pages"]
-            LANDING["Landing Page<br/>────────────────<br/>/<br/>Marketing site<br/>Public"]:::page
-            STATUS["System Status<br/>────────────────<br/>/system/status/be<br/>BE health diagnostics<br/>Public"]:::page
-            APP["App Page<br/>────────────────<br/>/app<br/>Event mechanism (provisional)<br/>Public"]:::page
+        ROUTER["App Router<br/>────────────────<br/>Thin page.tsx + layout.tsx wrappers<br/>(no business logic)"]:::router
+
+        subgraph SHELL["UI Shell"]
+            APPSHELL["app-shell<br/>────────────────<br/>TabBar · SideNav · loggers · i18n<br/>appMachine (XState)"]:::context
         end
 
-        subgraph LAYER2["Client-side Runtime"]
-            EFFECT["Effect.ts Runtime<br/>────────────────<br/>ManagedRuntime + PgliteLive Layer<br/>Schema + Data.TaggedError"]:::runtime
-            STORE["lib/events/event-store.ts<br/>────────────────<br/>Effect-returning CRUD<br/>append/update/delete/bump/list"]:::runtime
-            PGLITE["PGlite (Postgres-WASM)<br/>────────────────<br/>idb://ol_events_v1<br/>events table + storage_seq"]:::storage
+        subgraph SOR["System of Record"]
+            JOURNAL["journal<br/>────────────────<br/>Append-only event log<br/>journalMachine (XState)<br/>4 layers"]:::context_data
         end
 
+        subgraph DERIVED["Read-only Projections"]
+            STATS["stats<br/>────────────────<br/>History · Progress<br/>3 layers (no infra)"]:::context_ro
+        end
+
+        subgraph SESSION["Active Session"]
+            WORKOUT["workout-session<br/>────────────────<br/>workoutSessionMachine (XState)<br/>3 layers (no infra)"]:::context
+        end
+
+        subgraph TEMPLATES["Templates &amp; Preferences"]
+            ROUTINE["routine<br/>────────────────<br/>Workout templates<br/>4 layers"]:::context_data
+            SETTINGS["settings<br/>────────────────<br/>Dark mode · Language<br/>4 layers"]:::context_data
+        end
+
+        subgraph SURFACE["Static Surface &amp; Diagnostics"]
+            LANDING["landing<br/>────────────────<br/>Marketing page<br/>presentation only"]:::context_ui
+            ROUTING["routing<br/>────────────────<br/>404 guards<br/>presentation only"]:::context_ui
+            HEALTH["health<br/>────────────────<br/>BE diagnostic<br/>infrastructure only"]:::context_infra
+        end
+
+        subgraph SHARED["Shared Runtime (src/shared/)"]
+            PGLITE[("PGlite<br/>────────────────<br/>Postgres-WASM<br/>IndexedDB-backed")]:::storage
+            EFFECT["Effect TS · PgliteService<br/>────────────────<br/>Layer + Tag<br/>Sequences IO"]:::runtime
+        end
     end
 
     BE["F#/Giraffe Backend<br/>REST API"]:::external
 
-    EU -->|"public: /"| LANDING
-    EU -->|"public: /system/status/be"| STATUS
-    EU -->|"public: /app"| APP
+    EU --> ROUTER
+    ROUTER --> APPSHELL
+    ROUTER --> JOURNAL
+    ROUTER --> STATS
+    ROUTER --> WORKOUT
+    ROUTER --> ROUTINE
+    ROUTER --> SETTINGS
+    ROUTER --> LANDING
+    ROUTER --> ROUTING
+    ROUTER --> HEALTH
 
-    STATUS -->|"server-side fetch<br/>HTTP/JSON"| BE
-    APP -->|"useEvents hook<br/>runtime.runPromise"| EFFECT
-    EFFECT -->|"Layer.scoped service"| STORE
-    STORE -->|"raw parameterised SQL"| PGLITE
+    JOURNAL --> EFFECT
+    ROUTINE --> EFFECT
+    SETTINGS --> EFFECT
+    EFFECT --> PGLITE
+
+    STATS -.->|"reads"| JOURNAL
+    WORKOUT -.->|"persists via<br/>application barrel"| JOURNAL
+    WORKOUT -.->|"reads templates"| ROUTINE
+
+    HEALTH -->|"server-side fetch<br/>HTTP/JSON"| BE
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
-    classDef page fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef router fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+    classDef context fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef context_data fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef context_ro fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef context_ui fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+    classDef context_infra fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef runtime fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef storage fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
     classDef external fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
 ```
 
-## Gherkin Coverage by Component
+**Layer rules** (enforced by ESLint `boundaries` at error severity, plus `rhino-cli ddd bc`):
 
-Each component above is exercised by Gherkin features from
-[`specs/apps/organiclever/web/gherkin/`](../fe/gherkin/README.md):
+- `domain` ← no project imports
+- `application` ← `domain` only
+- `infrastructure` ← `domain` + `application` + `@/shared/runtime`
+- `presentation` ← `domain` + `application`
+- Cross-context: only via the target context's `application/index.ts` or `presentation/index.ts` barrel
 
-| Component                                | Gherkin Domain | Features         |
-| ---------------------------------------- | -------------- | ---------------- |
-| Landing Page                             | landing        | landing          |
-| System Status Page                       | system         | system-status-be |
-| All pages                                | layout         | accessibility    |
-| `/login` + `/profile` 404s               | routing        | disabled-routes  |
-| App Page + PGlite + Effect runtime/store | events         | events-mechanism |
+## Gherkin Coverage by Bounded Context
+
+Each bounded context owns its Gherkin features under
+[`specs/apps/organiclever/web/gherkin/<bc>/`](../web/gherkin/README.md):
+
+| Bounded Context | Features                                                            | Count |
+| --------------- | ------------------------------------------------------------------- | ----- |
+| app-shell       | `accessibility`, `entry-loggers`, `navigation`                      | 3     |
+| health          | `system-status-be`                                                  | 1     |
+| journal         | `home-screen`, `journal-mechanism`                                  | 2     |
+| landing         | `landing`                                                           | 1     |
+| routine         | `routine-management`                                                | 1     |
+| routing         | `app-routes`, `disabled-routes`                                     | 2     |
+| settings        | `dark-mode`, `language`, `settings-screen`                          | 3     |
+| stats           | `history-screen`, `progress-screen`                                 | 2     |
+| workout-session | `workout-session`                                                   | 1     |
+| **Total**       |                                                                     | **16**|
+
+## DDD Enforcement
+
+Two `rhino-cli ddd` subcommands run automatically as part of `test:quick`:
+
+- **`rhino-cli ddd bc organiclever`** — verifies every context's `code:`, `glossary:`, and
+  `gherkin:` paths exist with the declared layer subfolders, no orphans, relationship symmetry.
+- **`rhino-cli ddd ul organiclever`** — verifies every glossary file is well-formed, code
+  identifiers in backticks resolve in the BC code path, feature references resolve to real
+  `.feature` files, and term collisions across glossaries carry mutual `Forbidden-synonyms`
+  cross-links.
+
+Source of truth: [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../ddd/bounded-contexts.yaml).
 
 ## Testing
 
-| Level       | What                        | Gherkin             | Coverage |
-| ----------- | --------------------------- | ------------------- | -------- |
-| `test:unit` | Component logic, mocked API | Yes (all scenarios) | >= 70%   |
-| `test:e2e`  | Full browser via Playwright | Yes (all scenarios) | N/A      |
+| Level              | What                                              | Coverage |
+| ------------------ | ------------------------------------------------- | -------- |
+| `test:unit`        | Per-context steps via `vitest-cucumber`           | >= 70%   |
+| `test:integration` | Real filesystem via tmpdir fixtures               | N/A      |
+| `test:e2e`         | Full browser via Playwright (`organiclever-web-e2e`) | N/A   |
 
 ## Related
 
 - **Container diagram**: [container.md](./container.md)
 - **Backend component diagram**: [component-be.md](./component-be.md)
-- **Frontend gherkin specs**: [fe/gherkin/](../fe/gherkin/README.md)
+- **Frontend bounded-context map**: [`apps/organiclever-web/docs/explanation/bounded-context-map.md`](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
+- **DDD registry**: [`specs/apps/organiclever/ddd/`](../ddd/README.md)
+- **Frontend gherkin specs**: [`web/gherkin/`](../web/gherkin/README.md)
 - **Parent**: [organiclever specs](../README.md)
