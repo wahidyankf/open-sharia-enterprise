@@ -56,6 +56,58 @@ This convention establishes Mermaid diagrams as the primary visualization format
 - **All markdown files**: Use Mermaid diagrams as the primary format
 - **ASCII art**: Optional fallback for edge cases where Mermaid isn't supported (rarely needed)
 
+## Format Selection Rule
+
+The choice between ASCII art and Mermaid is **not optional** for the diagram intents listed below. The rule is enforceable: `repo-rules-checker` flags violations when a folder-tree appears as Mermaid, or when a relationship/flow diagram appears as plain ASCII art.
+
+### Decision Table
+
+| Diagram intent                   | Required format                   | Rationale                                                                                                                       |
+| -------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Folder / file tree               | **ASCII art** (`├──`, `└──`, `│`) | Mirrors `ls`/`tree` terminal output; renderable in every context including raw text; no parser risk; no width-validator concern |
+| Flow chart                       | **Mermaid**                       | Semantic structure; color-blind friendly palette; machine-validatable                                                           |
+| Sequence diagram                 | **Mermaid**                       | Semantic structure; renders interaction over time correctly                                                                     |
+| State machine                    | **Mermaid**                       | Explicit states and transitions; semantic meaning                                                                               |
+| Architecture / component diagram | **Mermaid**                       | Spatial relationships; color-coded components                                                                                   |
+| Dependency-direction diagram     | **Mermaid**                       | Arrow direction carries semantic meaning; validator checks width                                                                |
+| User-flow diagram                | **Mermaid**                       | Decision branches and outcomes need relational rendering                                                                        |
+| ER / class diagram               | **Mermaid**                       | Structured relationships and cardinality; screen-reader accessible                                                              |
+| C4 model diagram                 | **Mermaid**                       | Layered architecture levels; color coding by C4 boundary                                                                        |
+
+### Why This Split?
+
+ASCII art and Mermaid solve different representational problems.
+
+**File and folder trees** are a direct mirror of filesystem reality. When a reader sees `├── apps/`, they recognize immediately what `ls -la` or `tree` would show. Every markdown renderer — including raw terminal `cat`, GitHub web, offline static sites, and plain-text email — displays ASCII trees identically. No validator, no parser, no width constraint applies.
+
+**Relationship and flow diagrams** encode structure that has no natural text-linear representation. A sequence diagram describes temporal ordering. A dependency-direction diagram encodes which module knows about which. An ER diagram expresses cardinality. ASCII art can approximate these, but it encodes spatial relationships by character-position accident: changing one node forces manual re-alignment of every surrounding character. Mermaid encodes the relationship explicitly in its source, renders the spatial layout automatically, can be validated by `rhino-cli docs validate-mermaid`, and exposes its structure to screen readers.
+
+### Examples
+
+**ASCII tree (correct for folder structure):**
+
+```
+apps/
+├── organiclever-web/
+│   ├── src/
+│   └── tests/
+└── organiclever-be/
+    ├── src/
+    └── tests/
+```
+
+**Mermaid flowchart (correct for process/decision flows):**
+
+```mermaid
+flowchart LR
+    A[Request] --> B{Authenticated?}
+    B -->|Yes| C[Process]
+    B -->|No| D[Return 401]
+    C --> E[Response]
+```
+
+These two formats are not interchangeable. Using Mermaid for a folder tree introduces a parse target where none is needed. Using ASCII art for a flowchart loses semantic structure and cannot be validated.
+
 ## Why Mermaid First?
 
 Mermaid diagram support has become ubiquitous across modern development tools:

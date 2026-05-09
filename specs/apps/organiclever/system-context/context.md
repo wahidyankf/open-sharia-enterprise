@@ -13,7 +13,7 @@ graph TD
 
     OPS("Operations Engineer<br/>──────────────────<br/>Health monitoring"):::actor_ops
 
-    SYSTEM["OrganicLever<br/>──────────────────────<br/>Local-first life journal<br/><br/>Landing + life-journal app (PGlite)<br/>System-status diagnostics<br/>Backend health endpoint"]:::system
+    SYSTEM["OrganicLever<br/>──────────────────────<br/>Local-first life journal<br/><br/>Life-journal app (PGlite)<br/>System-status diagnostics<br/>Backend health endpoint"]:::system
 
     CI("CI Pipeline<br/>──────────────────<br/>Main CI: test:quick<br/>E2E: Playwright<br/>PR Quality Gate"):::ci
 

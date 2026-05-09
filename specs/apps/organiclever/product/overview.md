@@ -48,17 +48,48 @@ The two flows a v0 user runs most often:
 
 **Flow A — Log a workout (5–15 min)**
 
-```
-Home screen → FAB → pick Workout → pick Routine →
-  Workout screen (log sets, rest timer) →
-  End Workout → Confirm → Finish screen → Home
+```mermaid
+%% Color palette: Blue #0173B2 (screen), Teal #029E73 (action)
+graph TD
+    HOME["Home screen"]:::screen
+    FAB["FAB"]:::action
+    PICK_W["pick Workout"]:::action
+    PICK_R["pick Routine"]:::action
+    WORK["Workout screen<br/>(log sets, rest timer)"]:::screen
+    DONE["End Workout"]:::action
+    CONF["Confirm"]:::action
+    FIN["Finish screen"]:::screen
+    HOME2["Home"]:::screen
+
+    HOME --> FAB
+    FAB --> PICK_W
+    PICK_W --> PICK_R
+    PICK_R --> WORK
+    WORK --> DONE
+    DONE --> CONF
+    CONF --> FIN
+    FIN --> HOME2
+
+    classDef screen fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef action fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Flow B — Check recent activity (< 1 min)**
 
-```
-Home screen → recent entry list (bump entry to resurface it)
-         OR → History tab → filter by type
+```mermaid
+%% Color palette: Blue #0173B2 (screen), Teal #029E73 (action)
+graph TD
+    HOME["Home screen"]:::screen
+    RECENT["recent entry list<br/>(bump entry to resurface)"]:::action
+    HIST["History tab"]:::screen
+    FILTER["filter by type"]:::action
+
+    HOME --> RECENT
+    HOME --> HIST
+    HIST --> FILTER
+
+    classDef screen fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef action fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## v0 in plain language

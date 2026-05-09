@@ -76,7 +76,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 ### journal
 
 - `src/lib/journal/journal-store.ts` (+ `.unit.test.ts`, `.int.test.ts`) → `infrastructure/`
-- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
+- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
 - `src/lib/journal/typed-payloads.ts` (+ `.unit.test.ts`) → `domain/`
 - `src/lib/journal/types.ts` → `domain/`
 - `src/lib/journal/errors.ts` → `domain/` (or `application/` if error types prove use-case-specific at migration time)
@@ -121,7 +121,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 
 - `src/lib/i18n/translations.ts` (+ `.unit.test.ts`) → `presentation/`
 - `src/lib/i18n/use-t.ts` → `presentation/`
-- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
+- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
 - `src/components/app/app-runtime-context.tsx` → `presentation/`
 - `src/components/app/tab-bar.tsx` (+ test) → `presentation/components/`
 - `src/components/app/side-nav.tsx` (+ test) → `presentation/components/`
@@ -211,30 +211,35 @@ specs/apps/organiclever/behavior/web/gherkin/
 
 ## Layer rules (recap)
 
-The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
+The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
 
-```text
-src/app/**
-   └── may import → presentation/index.ts (any context), shared/**
-                            │
-                            ▼
-                    presentation/
-                       └── may import → own application/, own domain/ (read-only types), other contexts' presentation/index.ts, shared/**
-                            │
-                            ▼
-                    application/
-                       └── may import → own domain/, own infrastructure/ (port interfaces), other contexts' application/index.ts, shared/**
-                            │
-                            ▼
-                    domain/  ←  infrastructure/
-                                 └── may import → own domain/, own application/ (port interfaces), shared/**
+```mermaid
+%% Color palette: Orange #DE8F05 (entry), Blue #0173B2 (layer), Teal #029E73 (innermost)
+graph TD
+    APP["src/app/**<br/>(Next.js App Router)"]:::entry
+    PRES["presentation/<br/>(hooks + components)"]:::layer
+    APPL["application/<br/>(use-cases, XState)"]:::layer
+    INFRA["infrastructure/<br/>(PGlite, Effect Layers)"]:::layer
+    DOM["domain/<br/>(pure types, invariants)"]:::innermost
+
+    APP -- "presentation/index.ts" --> PRES
+    PRES -- "own application/+domain/" --> APPL
+    APPL -- "own domain/+infrastructure/" --> DOM
+    INFRA -- "own domain/+application/" --> DOM
+
+    classDef entry fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef layer fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef innermost fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
+
+Edge labels show the short form of allowed cross-context imports; the full
+allow-list is in the **Allowed dependency direction** table below.
 
 `domain/` is the innermost layer — it imports only its own domain files and `shared/`.
 
 ## Enforcement
 
-**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
+**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
 
 ### Why a separate eslint pass alongside oxlint?
 
@@ -281,9 +286,9 @@ The capture group lets rules distinguish **own-context layer crossings** (always
 
 ## Related
 
-- [DDD adoption plan README](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
-- [DDD adoption tech-docs](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
-- [DDD adoption delivery checklist](../../../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
-- [DDD Standards (platform-wide)](../../../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
-- [Three-Level Testing Standard](../../../../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../../../../governance/development/workflow/test-driven-development.md)
+- [DDD adoption plan README](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
+- [DDD adoption tech-docs](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
+- [DDD adoption delivery checklist](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
+- [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
+- [Three-Level Testing Standard](../../../../governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../../governance/development/workflow/test-driven-development.md)
