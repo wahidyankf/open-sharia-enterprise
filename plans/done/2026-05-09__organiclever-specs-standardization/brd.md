@@ -47,18 +47,18 @@ This reorg is the **cost-now-save-4×-later** decision. Doing it in the pilot sa
 
 A **single canonical home** per content type, with the other side reduced to a pointer:
 
-| Content type                                        | Canonical home                            | App / infra README role                                    |
-| --------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------- |
-| Behavior (routes, screens, entry flows, BE states)  | `specs/apps/organiclever/components/web/`            | One link line under "Behavior & Architecture"   |
-| API contract narrative                              | `specs/apps/organiclever/components/be/`             | One link line                                   |
-| Architecture (bounded contexts, layer rules, C4)    | `specs/apps/organiclever/components/`                | One link line                                   |
-| Bounded-context map (the ADR-style narrative)       | `specs/apps/organiclever/components/web/ddd/`        | (no longer in app docs/ tree)                   |
-| Deployment topology (envs, images, profiles)        | `specs/apps/organiclever/containers/deployment.md`   | infra/ READMEs link only                        |
-| Dev runtime (install, dev/build/test, env vars)     | App README                                            | (canonical here — specs/ does not duplicate)    |
-| Docker Compose / kubectl runtime commands           | `infra/{dev,k8s}/organiclever/README.md`              | (canonical here — operational surface)          |
-| Project layout snippet (filesystem tree)            | App README                                            | (canonical — app's own checkout)                |
-| Tech-stack version pinning                          | App README                                            | (canonical here)                                |
-| Design-system narrative (palette, fonts, dark mode) | `specs/apps/organiclever/components/web/design-system.md` | One link line                              |
+| Content type                                        | Canonical home                                            | App / infra README role                       |
+| --------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------- |
+| Behavior (routes, screens, entry flows, BE states)  | `specs/apps/organiclever/components/web/`                 | One link line under "Behavior & Architecture" |
+| API contract narrative                              | `specs/apps/organiclever/components/be/`                  | One link line                                 |
+| Architecture (bounded contexts, layer rules, C4)    | `specs/apps/organiclever/components/`                     | One link line                                 |
+| Bounded-context map (the ADR-style narrative)       | `specs/apps/organiclever/components/web/ddd/`             | (no longer in app docs/ tree)                 |
+| Deployment topology (envs, images, profiles)        | `specs/apps/organiclever/containers/deployment.md`        | infra/ READMEs link only                      |
+| Dev runtime (install, dev/build/test, env vars)     | App README                                                | (canonical here — specs/ does not duplicate)  |
+| Docker Compose / kubectl runtime commands           | `infra/{dev,k8s}/organiclever/README.md`                  | (canonical here — operational surface)        |
+| Project layout snippet (filesystem tree)            | App README                                                | (canonical — app's own checkout)              |
+| Tech-stack version pinning                          | App README                                                | (canonical here)                              |
+| Design-system narrative (palette, fonts, dark mode) | `specs/apps/organiclever/components/web/design-system.md` | One link line                                 |
 
 ## Pilot framing
 

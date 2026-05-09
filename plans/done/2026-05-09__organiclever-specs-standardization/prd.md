@@ -81,24 +81,24 @@ Every `apps/organiclever-*/README.md` file MUST contain only the following secti
 
 The following files MUST exist at these final tree positions after this plan completes:
 
-| File                                                                         | Purpose                                                                  | Source                                                                                  |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| `specs/apps/organiclever/product/overview.md`                                | NEW — plain-language v0 product summary, personas, primary flows         | New PM-first content (also extractable from current README intro paragraphs)            |
-| `specs/apps/organiclever/system-context/context.md`                          | C4 L1 system context (moved)                                             | `git mv` from `specs/apps/organiclever/c4/context.md`                                   |
-| `specs/apps/organiclever/containers/container.md`                            | C4 L2 container diagram (moved)                                          | `git mv` from `specs/apps/organiclever/c4/container.md`                                 |
-| `specs/apps/organiclever/containers/contracts/openapi.yaml` (+ subpaths)     | OpenAPI spec (moved)                                                     | `git mv` from `specs/apps/organiclever/contracts/`                                      |
-| `specs/apps/organiclever/containers/deployment.md`                           | NEW — local-dev / staging / production envs, image build pipeline       | Extracted from `infra/k8s/organiclever/README.md` + staging/production placeholders     |
-| `specs/apps/organiclever/components/be/component-be.md`                      | C4 L3 BE component diagram (moved)                                       | `git mv` from `specs/apps/organiclever/c4/component-be.md`                              |
-| `specs/apps/organiclever/components/be/api.md`                               | NEW — API endpoints table, BE arch project tree                         | Extracted from `apps/organiclever-be/README.md`                                         |
-| `specs/apps/organiclever/components/web/component-web.md`                    | C4 L3 Web component diagram (moved)                                      | `git mv` from `specs/apps/organiclever/c4/component-web.md`                             |
-| `specs/apps/organiclever/components/web/architecture.md`                     | NEW — full bounded-context tree, layer rules, dormant code              | Extracted from `apps/organiclever-web/README.md` "Architecture" section                 |
-| `specs/apps/organiclever/components/web/design-system.md`                    | NEW — palette, typography, dark mode, token import, component variants  | Extracted from `apps/organiclever-web/README.md` "Design System" section                |
-| `specs/apps/organiclever/components/web/routes-and-screens.md`               | NEW — routes, screens, entry flows, diagnostic page                     | Extracted from `apps/organiclever-web/README.md` "Routes and Screens" section           |
-| `specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`           | DDD registry (moved)                                                     | `git mv` from `specs/apps/organiclever/ddd/bounded-contexts.yaml`                       |
-| `specs/apps/organiclever/components/web/ddd/bounded-context-map.md`          | BC map ADR (moved)                                                       | `git mv` from `apps/organiclever-web/docs/explanation/bounded-context-map.md`           |
-| `specs/apps/organiclever/components/web/ddd/ubiquitous-language/`            | Per-context glossary files (moved)                                       | `git mv` from `specs/apps/organiclever/ddd/ubiquitous-language/`                        |
-| `specs/apps/organiclever/behavior/be/gherkin/`                               | BE Gherkin features (moved)                                              | `git mv` from `specs/apps/organiclever/be/gherkin/`                                     |
-| `specs/apps/organiclever/behavior/web/gherkin/`                              | Web Gherkin features (moved)                                             | `git mv` from `specs/apps/organiclever/web/gherkin/`                                    |
+| File                                                                     | Purpose                                                                | Source                                                                              |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `specs/apps/organiclever/product/overview.md`                            | NEW — plain-language v0 product summary, personas, primary flows       | New PM-first content (also extractable from current README intro paragraphs)        |
+| `specs/apps/organiclever/system-context/context.md`                      | C4 L1 system context (moved)                                           | `git mv` from `specs/apps/organiclever/c4/context.md`                               |
+| `specs/apps/organiclever/containers/container.md`                        | C4 L2 container diagram (moved)                                        | `git mv` from `specs/apps/organiclever/c4/container.md`                             |
+| `specs/apps/organiclever/containers/contracts/openapi.yaml` (+ subpaths) | OpenAPI spec (moved)                                                   | `git mv` from `specs/apps/organiclever/contracts/`                                  |
+| `specs/apps/organiclever/containers/deployment.md`                       | NEW — local-dev / staging / production envs, image build pipeline      | Extracted from `infra/k8s/organiclever/README.md` + staging/production placeholders |
+| `specs/apps/organiclever/components/be/component-be.md`                  | C4 L3 BE component diagram (moved)                                     | `git mv` from `specs/apps/organiclever/c4/component-be.md`                          |
+| `specs/apps/organiclever/components/be/api.md`                           | NEW — API endpoints table, BE arch project tree                        | Extracted from `apps/organiclever-be/README.md`                                     |
+| `specs/apps/organiclever/components/web/component-web.md`                | C4 L3 Web component diagram (moved)                                    | `git mv` from `specs/apps/organiclever/c4/component-web.md`                         |
+| `specs/apps/organiclever/components/web/architecture.md`                 | NEW — full bounded-context tree, layer rules, dormant code             | Extracted from `apps/organiclever-web/README.md` "Architecture" section             |
+| `specs/apps/organiclever/components/web/design-system.md`                | NEW — palette, typography, dark mode, token import, component variants | Extracted from `apps/organiclever-web/README.md` "Design System" section            |
+| `specs/apps/organiclever/components/web/routes-and-screens.md`           | NEW — routes, screens, entry flows, diagnostic page                    | Extracted from `apps/organiclever-web/README.md` "Routes and Screens" section       |
+| `specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`       | DDD registry (moved)                                                   | `git mv` from `specs/apps/organiclever/ddd/bounded-contexts.yaml`                   |
+| `specs/apps/organiclever/components/web/ddd/bounded-context-map.md`      | BC map ADR (moved)                                                     | `git mv` from `apps/organiclever-web/docs/explanation/bounded-context-map.md`       |
+| `specs/apps/organiclever/components/web/ddd/ubiquitous-language/`        | Per-context glossary files (moved)                                     | `git mv` from `specs/apps/organiclever/ddd/ubiquitous-language/`                    |
+| `specs/apps/organiclever/behavior/be/gherkin/`                           | BE Gherkin features (moved)                                            | `git mv` from `specs/apps/organiclever/be/gherkin/`                                 |
+| `specs/apps/organiclever/behavior/web/gherkin/`                          | Web Gherkin features (moved)                                           | `git mv` from `specs/apps/organiclever/web/gherkin/`                                |
 
 Existing top-level READMEs of the OLD subfolders (`be/README.md`, `web/README.md`, `ddd/README.md`, `c4/README.md`, `contracts/README.md`) are repurposed:
 
@@ -121,35 +121,35 @@ After the move:
 
 The reorg requires path updates in these production code paths (NOT just docs):
 
-| File                                                                         | Update                                                                                       |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `apps/rhino-cli/internal/bcregistry/loader.go`                              | Path constant: `specs/apps/<app>/ddd/bounded-contexts.yaml` → `specs/apps/<app>/components/web/ddd/bounded-contexts.yaml` (or generalize to walk the tree — see [tech-docs.md §rhino-cli path strategy](./tech-docs.md#rhino-cli-path-strategy)) |
-| `apps/rhino-cli/internal/bcregistry/validator.go`                           | `File:` strings in error messages updated to new paths                                       |
-| `apps/rhino-cli/internal/glossary/validator.go`                             | Same                                                                                         |
-| `apps/rhino-cli/cmd/ddd_bc_test.go`, `ddd_ul_test.go`                       | Expected `File:` strings in test fixtures updated                                            |
-| `apps/rhino-cli/cmd/ddd_bc.integration_test.go`, `ddd_ul.integration_test.go` | Inline YAML fixtures' `glossary:` and `gherkin:` paths updated                              |
-| `apps/organiclever-web/project.json`                                         | Nx cache inputs (codegen, test:unit, test:quick, spec-coverage) AND `spec-coverage` command  |
-| `apps/organiclever-be/project.json`                                          | Same — codegen, test:unit, test:integration, spec-coverage inputs + commands                |
-| `apps/organiclever-web-e2e/project.json`                                     | Cache inputs                                                                                  |
-| `apps/organiclever-be-e2e/project.json`                                      | Cache inputs + spec-coverage command + README links                                          |
-| `apps/organiclever-web/test/unit/steps/**/*.steps.tsx` (16 files)            | `path.resolve(...)` calls + `Covers:` comment header — feature path strings                  |
-| `apps/organiclever-web-e2e/playwright.config.ts`                             | If feature glob points at old spec path, update                                              |
-| `apps/organiclever-be-e2e/playwright.config.ts`                              | Same                                                                                         |
+| File                                                                          | Update                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/rhino-cli/internal/bcregistry/loader.go`                                | Path constant: `specs/apps/<app>/ddd/bounded-contexts.yaml` → `specs/apps/<app>/components/web/ddd/bounded-contexts.yaml` (or generalize to walk the tree — see [tech-docs.md §rhino-cli path strategy](./tech-docs.md#rhino-cli-path-strategy)) |
+| `apps/rhino-cli/internal/bcregistry/validator.go`                             | `File:` strings in error messages updated to new paths                                                                                                                                                                                           |
+| `apps/rhino-cli/internal/glossary/validator.go`                               | Same                                                                                                                                                                                                                                             |
+| `apps/rhino-cli/cmd/ddd_bc_test.go`, `ddd_ul_test.go`                         | Expected `File:` strings in test fixtures updated                                                                                                                                                                                                |
+| `apps/rhino-cli/cmd/ddd_bc.integration_test.go`, `ddd_ul.integration_test.go` | Inline YAML fixtures' `glossary:` and `gherkin:` paths updated                                                                                                                                                                                   |
+| `apps/organiclever-web/project.json`                                          | Nx cache inputs (codegen, test:unit, test:quick, spec-coverage) AND `spec-coverage` command                                                                                                                                                      |
+| `apps/organiclever-be/project.json`                                           | Same — codegen, test:unit, test:integration, spec-coverage inputs + commands                                                                                                                                                                     |
+| `apps/organiclever-web-e2e/project.json`                                      | Cache inputs                                                                                                                                                                                                                                     |
+| `apps/organiclever-be-e2e/project.json`                                       | Cache inputs + spec-coverage command + README links                                                                                                                                                                                              |
+| `apps/organiclever-web/test/unit/steps/**/*.steps.tsx` (16 files)             | `path.resolve(...)` calls + `Covers:` comment header — feature path strings                                                                                                                                                                      |
+| `apps/organiclever-web-e2e/playwright.config.ts`                              | If feature glob points at old spec path, update                                                                                                                                                                                                  |
+| `apps/organiclever-be-e2e/playwright.config.ts`                               | Same                                                                                                                                                                                                                                             |
 
 ### FR-4: Length budget
 
 Final line counts must be:
 
-| File                                                  | Max lines | Current   |
-| ----------------------------------------------------- | --------- | --------- |
-| `apps/organiclever-web/README.md`                     | 120       | 301       |
-| `apps/organiclever-be/README.md`                      | 120       | 110       |
-| `apps/organiclever-web-e2e/README.md`                 | 120       | 119       |
-| `apps/organiclever-be-e2e/README.md`                  | 120       | 129       |
-| `infra/dev/organiclever/README.md`                    | 60        | 32        |
-| `infra/k8s/organiclever/README.md`                    | 60        | 32        |
-| `infra/k8s/organiclever/staging/README.md`            | 30        | 15        |
-| `infra/k8s/organiclever/production/README.md`         | 30        | 19        |
+| File                                          | Max lines | Current |
+| --------------------------------------------- | --------- | ------- |
+| `apps/organiclever-web/README.md`             | 120       | 301     |
+| `apps/organiclever-be/README.md`              | 120       | 110     |
+| `apps/organiclever-web-e2e/README.md`         | 120       | 119     |
+| `apps/organiclever-be-e2e/README.md`          | 120       | 129     |
+| `infra/dev/organiclever/README.md`            | 60        | 32      |
+| `infra/k8s/organiclever/README.md`            | 60        | 32      |
+| `infra/k8s/organiclever/staging/README.md`    | 30        | 15      |
+| `infra/k8s/organiclever/production/README.md` | 30        | 19      |
 
 (`organiclever-be` is already under budget; the trim there removes the architecture diagram block while preserving Quick Start/Commands/Env Vars/Tech Stack — likely lands closer to 70 lines. The infra/ READMEs are already short; the work there is verifying split-rule compliance, not aggressive trimming. Their budgets are tight precisely so that any future drift is caught early.)
 
@@ -198,17 +198,17 @@ The plan MUST delegate the governance updates to the `repo-rules-maker` agent. `
 
 **File created via repo-rules-maker:**
 
-| File                                                          | Purpose                                                                  |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `governance/conventions/structure/app-readme-vs-specs.md`     | ONE COMBINED convention codifying: (1) Content Split Rule, (2) Spec Tree Shape (the C4-aware five-folder layout from FR-9), (3) PM-Readability Contract. Status frontmatter: `Pilot — initial issue` with empty `## Refinement log` |
+| File                                                      | Purpose                                                                                                                                                                                                                             |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `governance/conventions/structure/app-readme-vs-specs.md` | ONE COMBINED convention codifying: (1) Content Split Rule, (2) Spec Tree Shape (the C4-aware five-folder layout from FR-9), (3) PM-Readability Contract. Status frontmatter: `Pilot — initial issue` with empty `## Refinement log` |
 
 **Files updated via repo-rules-maker:**
 
-| File                                                          | Update                                                                                                          |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| File                                                            | Update                                                                                                                                                                                                               |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `governance/conventions/structure/specs-directory-structure.md` | **REWRITE** — replace the current `be/`, `web/`, `cli/`, `build-tools/` flat-root pattern with the new C4-aware five-folder tree as the repo-wide spec organization standard. Cross-link to `app-readme-vs-specs.md` |
-| `governance/conventions/structure/README.md` (Structure index)  | Add the new convention to the document list with one-line description; update the description of `specs-directory-structure.md` to reflect the rewrite |
-| `governance/conventions/writing/readme-quality.md`              | Cross-link statement: app/infra READMEs are also governed by `app-readme-vs-specs.md`                          |
+| `governance/conventions/structure/README.md` (Structure index)  | Add the new convention to the document list with one-line description; update the description of `specs-directory-structure.md` to reflect the rewrite                                                               |
+| `governance/conventions/writing/readme-quality.md`              | Cross-link statement: app/infra READMEs are also governed by `app-readme-vs-specs.md`                                                                                                                                |
 
 **Mandatory contents of the new convention** (executor must verify):
 
@@ -232,12 +232,12 @@ The plan MUST delegate the governance updates to the `repo-rules-maker` agent. `
 
 **Per-surface variants for the rollout** (codified in the new convention):
 
-| App surface profile         | Folders populated                                                                  |
-| --------------------------- | ---------------------------------------------------------------------------------- |
-| Full-stack (BE + Web)       | `product/`, `system-context/`, `containers/{contracts/}`, `components/{be,web}/`, `behavior/{be,web}/gherkin/` |
-| Web-only                    | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/web/gherkin/` |
-| CLI-only (e.g. `rhino`)     | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/cli/gherkin/` |
-| Multi-CLI (e.g. `ayokoding`)| Same as full-stack but with `components/cli/` and `behavior/cli/gherkin/` added; `web/` and `cli/` co-exist |
+| App surface profile          | Folders populated                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Full-stack (BE + Web)        | `product/`, `system-context/`, `containers/{contracts/}`, `components/{be,web}/`, `behavior/{be,web}/gherkin/` |
+| Web-only                     | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/web/gherkin/`                       |
+| CLI-only (e.g. `rhino`)      | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/cli/gherkin/`                       |
+| Multi-CLI (e.g. `ayokoding`) | Same as full-stack but with `components/cli/` and `behavior/cli/gherkin/` added; `web/` and `cli/` co-exist    |
 
 ### FR-10: BDD / DDD / Contracts Adoption Assumption
 
@@ -253,11 +253,11 @@ For the pilot (`organiclever`), all three are adopted: BDD on both surfaces, DDD
 
 **CLI apps — partial adoption with explicit deferral**:
 
-| Practice  | CLI default | Reason                                                                                  |
-| --------- | ----------- | --------------------------------------------------------------------------------------- |
-| BDD       | REQUIRED    | Precedent: `rhino-cli` already has Gherkin specs at `specs/apps/rhino/cli/gherkin/`     |
+| Practice  | CLI default | Reason                                                                                                       |
+| --------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
+| BDD       | REQUIRED    | Precedent: `rhino-cli` already has Gherkin specs at `specs/apps/rhino/cli/gherkin/`                          |
 | DDD       | OPTIONAL    | Most CLIs are simple; bounded contexts add overhead. Decision deferred until first CLI demonstrably benefits |
-| Contracts | NOT APPLIC. | CLIs have no API surface                                                                |
+| Contracts | NOT APPLIC. | CLIs have no API surface                                                                                     |
 
 The convention's Refinement log carries the entry: `2026-05-09 — CLI DDD adoption deferred; revisit if a CLI grows past ~10 commands or shows aggregate-shaped state.`
 
@@ -269,25 +269,25 @@ The convention's Refinement log carries the entry: `2026-05-09 — CLI DDD adopt
 
 **Rollout mapping** (informational; follow-up rollout plans inherit this):
 
-| App family   | BDD     | DDD                              | Contracts                |
-| ------------ | ------- | -------------------------------- | ------------------------ |
-| organiclever | YES     | YES (web)                        | YES                      |
-| ayokoding    | YES     | TBD — assess in rollout          | YES (if API surface)     |
-| oseplatform  | YES     | TBD                              | YES (if API surface)     |
-| wahidyankf   | YES     | TBD                              | NO (no API)              |
-| rhino        | YES     | DEFERRED                         | NO                       |
+| App family   | BDD | DDD                     | Contracts            |
+| ------------ | --- | ----------------------- | -------------------- |
+| organiclever | YES | YES (web)               | YES                  |
+| ayokoding    | YES | TBD — assess in rollout | YES (if API surface) |
+| oseplatform  | YES | TBD                     | YES (if API surface) |
+| wahidyankf   | YES | TBD                     | NO (no API)          |
+| rhino        | YES | DEFERRED                | NO                   |
 
 ### FR-11: Specs validator agents + workflow updated to enforce the new tree
 
 The plan MUST update the following agents/workflow so that all new spec trees (this pilot AND the four rollouts) are enforced automatically:
 
-| Path                                                          | Operation | Owner agent      | Update                                                                                            |
-| ------------------------------------------------------------- | --------- | ---------------- | ------------------------------------------------------------------------------------------------- |
-| `.claude/agents/specs-checker.md`                             | UPDATE    | repo-rules-maker | AMEND Category 1 (Structural Completeness) — README required at all 5 top-level folders + per-surface subfolders. AMEND Category 8 (Directory Structure Convention Compliance) — replace flat-root be/fe/cli rule with C4-aware five-folder tree rule. ADD Category 9 (Adoption Gaps) per FR-10 validation hooks. |
-| `.claude/agents/specs-fixer.md`                               | UPDATE    | repo-rules-maker | Auto-fix list: missing top-level README at any of the 5 folders (template scaffold per per-surface variant); missing per-surface README. Adoption gaps emit MEDIUM/HIGH findings — NOT auto-fixed (require human decision) |
-| `.claude/agents/specs-maker.md`                               | UPDATE    | repo-rules-maker | Scaffolding template REPLACED — when caller provides `target: specs/apps/<new-app>`, scaffold creates the canonical 5-folder tree (or per-surface variant if caller specifies `surface-profile: web-only|cli-only|full-stack|multi-cli`) |
-| `governance/workflows/specs/specs-quality-gate.md`            | UPDATE    | repo-rules-maker | "Validation Dimensions" table gains rows for Spec Tree Shape (Cat 8 amend) and Adoption Gaps (new Cat 9). Iteration Example updated to show new shape findings. |
-| `.opencode/agents/specs-{checker,fixer,maker}.md`             | UPDATE    | sync             | After `repo-rules-maker` updates `.claude/`, run `npm run sync:claude-to-opencode` to mirror      |
+| Path                                               | Operation | Owner agent      | Update                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------- | --------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | ----------- |
+| `.claude/agents/specs-checker.md`                  | UPDATE    | repo-rules-maker | AMEND Category 1 (Structural Completeness) — README required at all 5 top-level folders + per-surface subfolders. AMEND Category 8 (Directory Structure Convention Compliance) — replace flat-root be/fe/cli rule with C4-aware five-folder tree rule. ADD Category 9 (Adoption Gaps) per FR-10 validation hooks. |
+| `.claude/agents/specs-fixer.md`                    | UPDATE    | repo-rules-maker | Auto-fix list: missing top-level README at any of the 5 folders (template scaffold per per-surface variant); missing per-surface README. Adoption gaps emit MEDIUM/HIGH findings — NOT auto-fixed (require human decision)                                                                                        |
+| `.claude/agents/specs-maker.md`                    | UPDATE    | repo-rules-maker | Scaffolding template REPLACED — when caller provides `target: specs/apps/<new-app>`, scaffold creates the canonical 5-folder tree (or per-surface variant if caller specifies `surface-profile: web-only                                                                                                          | cli-only | full-stack | multi-cli`) |
+| `governance/workflows/specs/specs-quality-gate.md` | UPDATE    | repo-rules-maker | "Validation Dimensions" table gains rows for Spec Tree Shape (Cat 8 amend) and Adoption Gaps (new Cat 9). Iteration Example updated to show new shape findings.                                                                                                                                                   |
+| `.opencode/agents/specs-{checker,fixer,maker}.md`  | UPDATE    | sync             | After `repo-rules-maker` updates `.claude/`, run `npm run sync:claude-to-opencode` to mirror                                                                                                                                                                                                                      |
 
 After update, `repo-rules-checker` is run against the new convention + agent set to confirm self-consistency. If the agents disagree with the convention, fix the convention via repo-rules-maker (amend) or fix the agent — log the resolution in the convention's Refinement log.
 
@@ -305,32 +305,32 @@ After update, `repo-rules-checker` is run against the new convention + agent set
 
 **Existing drift detectors that already pass through to specs-checker** (no new code needed; just route them in):
 
-| Drift type                                                    | Existing detector                                  | Owner             |
-| ------------------------------------------------------------- | -------------------------------------------------- | ----------------- |
-| README count claims (X scenarios) vs actual feature files     | specs-checker Category 2                            | LLM               |
-| Bounded-context registry vs app `src/contexts/`               | `rhino-cli ddd bc <app>` (already running)         | Go (deterministic) |
-| Glossary code-identifier references vs source code            | `rhino-cli ddd ul <app>` (already running)         | Go (deterministic) |
-| Markdown link integrity                                       | specs-checker Category 6                            | LLM (mostly)      |
+| Drift type                                                | Existing detector                          | Owner              |
+| --------------------------------------------------------- | ------------------------------------------ | ------------------ |
+| README count claims (X scenarios) vs actual feature files | specs-checker Category 2                   | LLM                |
+| Bounded-context registry vs app `src/contexts/`           | `rhino-cli ddd bc <app>` (already running) | Go (deterministic) |
+| Glossary code-identifier references vs source code        | `rhino-cli ddd ul <app>` (already running) | Go (deterministic) |
+| Markdown link integrity                                   | specs-checker Category 6                   | LLM (mostly)       |
 
 **NEW drift detectors required by this plan**:
 
-| Drift type                                                                          | Mechanism                                                                  | Auto-fix?                            |
-| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------ |
-| `components/web/routes-and-screens.md` route table vs actual Next.js routes         | `rhino-cli specs drift-routes <app>` walks `apps/<app>/src/app/**/page.tsx` | YES (regenerate table from filesystem) |
-| `components/be/api.md` endpoint table vs actual F# route handlers                   | `rhino-cli specs drift-endpoints <app>`                                    | YES (regenerate from F# attribute scan) |
-| `containers/contracts/openapi.yaml` paths vs actual handlers                        | `rhino-cli specs drift-contracts <app>`                                    | NO — flag only (changing OpenAPI is intentional) |
-| Adoption gap (FR-10): full-stack app missing one of BDD/DDD/Contracts               | `rhino-cli specs validate-adoption <app>`                                  | NO — flag only (adoption is a decision) |
-| Spec tree shape (5 folders) vs actual `specs/apps/<app>/` tree                      | `rhino-cli specs validate-tree <app>`                                      | NO — flag only (reorg is a decision) |
-| README counts: claims `N scenarios` but actual count differs                        | `rhino-cli specs validate-counts <folder>`                                 | YES (rewrite the count)              |
+| Drift type                                                                  | Mechanism                                                                   | Auto-fix?                                        |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------ |
+| `components/web/routes-and-screens.md` route table vs actual Next.js routes | `rhino-cli specs drift-routes <app>` walks `apps/<app>/src/app/**/page.tsx` | YES (regenerate table from filesystem)           |
+| `components/be/api.md` endpoint table vs actual F# route handlers           | `rhino-cli specs drift-endpoints <app>`                                     | YES (regenerate from F# attribute scan)          |
+| `containers/contracts/openapi.yaml` paths vs actual handlers                | `rhino-cli specs drift-contracts <app>`                                     | NO — flag only (changing OpenAPI is intentional) |
+| Adoption gap (FR-10): full-stack app missing one of BDD/DDD/Contracts       | `rhino-cli specs validate-adoption <app>`                                   | NO — flag only (adoption is a decision)          |
+| Spec tree shape (5 folders) vs actual `specs/apps/<app>/` tree              | `rhino-cli specs validate-tree <app>`                                       | NO — flag only (reorg is a decision)             |
+| README counts: claims `N scenarios` but actual count differs                | `rhino-cli specs validate-counts <folder>`                                  | YES (rewrite the count)                          |
 
 **Modes** (matches existing specs-quality-gate `lax|normal|strict|ocd`):
 
-| Mode    | Drift checks counted                                              |
-| ------- | ----------------------------------------------------------------- |
-| lax     | CRITICAL drift only (e.g., spec references file that doesn't exist) |
-| normal  | + HIGH drift (count mismatches, route/endpoint mismatches)        |
-| strict  | + MEDIUM drift (adoption gaps, partial mismatches)                |
-| ocd     | All drift levels                                                  |
+| Mode   | Drift checks counted                                                |
+| ------ | ------------------------------------------------------------------- |
+| lax    | CRITICAL drift only (e.g., spec references file that doesn't exist) |
+| normal | + HIGH drift (count mismatches, route/endpoint mismatches)          |
+| strict | + MEDIUM drift (adoption gaps, partial mismatches)                  |
+| ocd    | All drift levels                                                    |
 
 The existing modes are reused — drift becomes new findings within the existing gate, not a separate workflow.
 
@@ -340,15 +340,15 @@ To make specs validation FASTER and CHEAPER, deterministic checks move from LLM 
 
 **New rhino-cli subcommands** (added under `apps/rhino-cli/cmd/`):
 
-| Command                                          | Replaces                                                          | Why deterministic                                       |
-| ------------------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------- |
-| `rhino-cli specs validate-tree <app>`            | LLM check of tree-shape compliance                                | Filesystem inspection                                   |
-| `rhino-cli specs validate-counts <folder>`       | LLM scenario/feature counting                                     | Parse `.feature` files for `Scenario:` lines            |
-| `rhino-cli specs validate-links <folder>`        | LLM markdown link checks                                          | Markdown AST + filesystem resolve                       |
-| `rhino-cli specs validate-adoption <app>`        | LLM adoption-gap inference                                        | Filesystem + heuristic checks                           |
-| `rhino-cli specs drift-routes <app>`             | LLM compare of routes-and-screens.md vs Next.js routes            | Walk `apps/<app>/src/app/**/page.tsx`                   |
-| `rhino-cli specs drift-endpoints <app>`          | LLM compare of api.md vs F# handler attributes                    | F# regex scan                                           |
-| `rhino-cli specs drift-contracts <app>`          | LLM compare of openapi.yaml vs handler attributes                 | Compare two enumerable lists                            |
+| Command                                    | Replaces                                               | Why deterministic                            |
+| ------------------------------------------ | ------------------------------------------------------ | -------------------------------------------- |
+| `rhino-cli specs validate-tree <app>`      | LLM check of tree-shape compliance                     | Filesystem inspection                        |
+| `rhino-cli specs validate-counts <folder>` | LLM scenario/feature counting                          | Parse `.feature` files for `Scenario:` lines |
+| `rhino-cli specs validate-links <folder>`  | LLM markdown link checks                               | Markdown AST + filesystem resolve            |
+| `rhino-cli specs validate-adoption <app>`  | LLM adoption-gap inference                             | Filesystem + heuristic checks                |
+| `rhino-cli specs drift-routes <app>`       | LLM compare of routes-and-screens.md vs Next.js routes | Walk `apps/<app>/src/app/**/page.tsx`        |
+| `rhino-cli specs drift-endpoints <app>`    | LLM compare of api.md vs F# handler attributes         | F# regex scan                                |
+| `rhino-cli specs drift-contracts <app>`    | LLM compare of openapi.yaml vs handler attributes      | Compare two enumerable lists                 |
 
 **Output format**: each command emits structured JSON (one finding per line, JSONL) matching the audit-report finding schema. specs-checker consumes the JSONL and merges into the audit report. specs-fixer consumes the same JSONL with `--fix` flag to apply auto-fixes where supported.
 
@@ -366,20 +366,20 @@ To make specs validation FASTER and CHEAPER, deterministic checks move from LLM 
 
 Before any push to `origin main` during plan execution, the executor MUST verify ALL related CI workflows pass. The push step is gated by the following checklist:
 
-| Gate                                                                            | Command                                                          | Passing condition |
-| ------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------- |
-| Markdown lint                                                                   | `npm run lint:md`                                                | exit 0            |
-| organiclever-web test:quick                                                     | `nx run organiclever-web:test:quick --skip-nx-cache`             | exit 0            |
-| organiclever-be test:quick                                                      | `nx run organiclever-be:test:quick --skip-nx-cache`              | exit 0            |
-| organiclever-web spec-coverage                                                  | `nx run organiclever-web:spec-coverage --skip-nx-cache`          | exit 0            |
-| organiclever-web test:integration                                               | `nx run organiclever-web:test:integration --skip-nx-cache`       | exit 0            |
-| organiclever-web-e2e test:quick                                                 | `nx run organiclever-web-e2e:test:quick --skip-nx-cache`         | exit 0            |
-| organiclever-be-e2e test:quick                                                  | `nx run organiclever-be-e2e:test:quick --skip-nx-cache`          | exit 0            |
-| organiclever-contracts lint + docs                                              | `nx run organiclever-contracts:lint && nx run organiclever-contracts:docs` | exit 0  |
-| rhino-cli test:quick (covers DDD enforcement against new spec paths)            | `nx run rhino-cli:test:quick --skip-nx-cache`                    | exit 0            |
-| rhino-cli test:integration                                                      | `nx run rhino-cli:test:integration --skip-nx-cache`              | exit 0            |
-| Pre-push hook full pass                                                         | (runs automatically during `git push`)                           | exit 0            |
-| GitHub Actions main-branch CI workflows post-push                               | Monitor via `gh run list --branch main --limit 5`                | All "completed" with conclusion "success" |
+| Gate                                                                 | Command                                                                    | Passing condition                         |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------- |
+| Markdown lint                                                        | `npm run lint:md`                                                          | exit 0                                    |
+| organiclever-web test:quick                                          | `nx run organiclever-web:test:quick --skip-nx-cache`                       | exit 0                                    |
+| organiclever-be test:quick                                           | `nx run organiclever-be:test:quick --skip-nx-cache`                        | exit 0                                    |
+| organiclever-web spec-coverage                                       | `nx run organiclever-web:spec-coverage --skip-nx-cache`                    | exit 0                                    |
+| organiclever-web test:integration                                    | `nx run organiclever-web:test:integration --skip-nx-cache`                 | exit 0                                    |
+| organiclever-web-e2e test:quick                                      | `nx run organiclever-web-e2e:test:quick --skip-nx-cache`                   | exit 0                                    |
+| organiclever-be-e2e test:quick                                       | `nx run organiclever-be-e2e:test:quick --skip-nx-cache`                    | exit 0                                    |
+| organiclever-contracts lint + docs                                   | `nx run organiclever-contracts:lint && nx run organiclever-contracts:docs` | exit 0                                    |
+| rhino-cli test:quick (covers DDD enforcement against new spec paths) | `nx run rhino-cli:test:quick --skip-nx-cache`                              | exit 0                                    |
+| rhino-cli test:integration                                           | `nx run rhino-cli:test:integration --skip-nx-cache`                        | exit 0                                    |
+| Pre-push hook full pass                                              | (runs automatically during `git push`)                                     | exit 0                                    |
+| GitHub Actions main-branch CI workflows post-push                    | Monitor via `gh run list --branch main --limit 5`                          | All "completed" with conclusion "success" |
 
 **Failure handling**: if ANY gate fails, do NOT push. Diagnose and fix in a follow-up commit on the same worktree branch. Re-run the full gate matrix. Only push when all green.
 
@@ -431,14 +431,14 @@ Specs files use **Mermaid diagrams** wherever a diagram clarifies the topic fast
 
 **When a Mermaid diagram is appropriate**:
 
-| Topic shape                                     | Mermaid diagram type                       | Examples                                                                                       |
-| ----------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Lifecycle / state transitions of a domain object | `stateDiagram-v2`                         | `JournalEvent` lifecycle (createdAt set → bump\* updates updatedAt); `WorkoutSession` FSM      |
-| Type hierarchy / variant family                 | `classDiagram` or `flowchart TD`          | `Typed payload` (`EntryPayload` ← `WorkoutPayload`, `ReadingPayload`, future variants)         |
-| Composition / aggregate structure               | `classDiagram` or `flowchart TD`          | `Routine` → `ExerciseSlot` → `Exercise` (aggregate composition)                                |
-| Cross-context interaction / data flow           | `sequenceDiagram` or `flowchart LR`       | `bump` event → `journal_events.updatedAt` write → `stats` projection refresh → UI relative-time |
-| Bounded-context map                             | `flowchart TD`                            | Already in `components/web/ddd/bounded-context-map.md`                                         |
-| C4 levels                                       | C4 PlantUML or `flowchart` per Mermaid C4 | Already in `system-context/context.md`, `containers/container.md`, `components/*/component-*.md` |
+| Topic shape                                      | Mermaid diagram type                      | Examples                                                                                         |
+| ------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Lifecycle / state transitions of a domain object | `stateDiagram-v2`                         | `JournalEvent` lifecycle (createdAt set → bump\* updates updatedAt); `WorkoutSession` FSM        |
+| Type hierarchy / variant family                  | `classDiagram` or `flowchart TD`          | `Typed payload` (`EntryPayload` ← `WorkoutPayload`, `ReadingPayload`, future variants)           |
+| Composition / aggregate structure                | `classDiagram` or `flowchart TD`          | `Routine` → `ExerciseSlot` → `Exercise` (aggregate composition)                                  |
+| Cross-context interaction / data flow            | `sequenceDiagram` or `flowchart LR`       | `bump` event → `journal_events.updatedAt` write → `stats` projection refresh → UI relative-time  |
+| Bounded-context map                              | `flowchart TD`                            | Already in `components/web/ddd/bounded-context-map.md`                                           |
+| C4 levels                                        | C4 PlantUML or `flowchart` per Mermaid C4 | Already in `system-context/context.md`, `containers/container.md`, `components/*/component-*.md` |
 
 **When a Mermaid diagram is NOT appropriate**:
 
@@ -453,15 +453,15 @@ Each `### Term: <name>` H3 MAY include an optional `**Diagram**:` field BETWEEN 
 
 **Concrete recommendations** (judgment-call list — executor decides per term):
 
-| Glossary file       | Term                  | Suggested diagram                                                                                                              |
-| ------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `journal.md`        | `JournalEvent`        | `stateDiagram-v2` — Created → Bumped\* (updatedAt mutates), payload/createdAt immutable                                       |
-| `journal.md`        | `Typed payload`       | `classDiagram` — `EntryPayload` ← `WorkoutPayload`, `ReadingPayload`                                                          |
-| `routine.md`        | `Routine`             | `classDiagram` — Routine → 1..N ExerciseSlot → 1 Exercise; show ordering attribute                                            |
-| `workout-session.md` | `WorkoutSession`     | `stateDiagram-v2` mirroring the actual XState machine (idle → running → resting → finishing → finished)                       |
-| `stats.md`          | `Projection`         | `sequenceDiagram` — `journal_events.append` → `stats.refresh()` → UI render                                                    |
-| `app-shell.md`      | `AppMachine`         | `stateDiagram-v2` mirroring the appMachine XState definition                                                                  |
-| (others)            | —                    | usually no diagram needed; nouns and value objects rarely benefit                                                              |
+| Glossary file        | Term             | Suggested diagram                                                                                       |
+| -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `journal.md`         | `JournalEvent`   | `stateDiagram-v2` — Created → Bumped\* (updatedAt mutates), payload/createdAt immutable                 |
+| `journal.md`         | `Typed payload`  | `classDiagram` — `EntryPayload` ← `WorkoutPayload`, `ReadingPayload`                                    |
+| `routine.md`         | `Routine`        | `classDiagram` — Routine → 1..N ExerciseSlot → 1 Exercise; show ordering attribute                      |
+| `workout-session.md` | `WorkoutSession` | `stateDiagram-v2` mirroring the actual XState machine (idle → running → resting → finishing → finished) |
+| `stats.md`           | `Projection`     | `sequenceDiagram` — `journal_events.append` → `stats.refresh()` → UI render                             |
+| `app-shell.md`       | `AppMachine`     | `stateDiagram-v2` mirroring the appMachine XState definition                                            |
+| (others)             | —                | usually no diagram needed; nouns and value objects rarely benefit                                       |
 
 **Code-mirroring constraint (drift prevention)**:
 
@@ -482,7 +482,7 @@ Mermaid diagrams that mirror runtime artefacts (XState machines, OpenAPI flows, 
 
 ## Acceptance criteria (Gherkin)
 
-```gherkin
+````gherkin
 Feature: Organiclever app READMEs are thin
   As a contributor opening an organiclever app for the first time
   I want the README to answer "how do I run this locally?" in under 120 lines
@@ -915,7 +915,7 @@ Feature: Push gate (FR-15)
     Then the push does not proceed
     And the failure is diagnosed + fixed in a follow-up commit
     And the full gate matrix is re-run before any push attempt
-```
+````
 
 ## Non-functional requirements
 

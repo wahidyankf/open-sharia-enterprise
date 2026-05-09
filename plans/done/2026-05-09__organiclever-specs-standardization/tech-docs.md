@@ -84,35 +84,35 @@ Content that describes WHAT the system does — what URLs it exposes, what user 
 
 ### Mapping table — Category A (stays in app README)
 
-| Content                                                  | Why it stays                                                                          |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| One-paragraph "what is this" intro                       | Reader orientation                                                                    |
-| Status banner (pre-alpha, etc.)                          | Visible warning at app entry point                                                    |
-| Quick Start commands                                     | Setting up dev server is THIS-checkout-specific                                       |
-| Nx targets table (`nx dev`, `nx build`, `nx run X:test:Y`) | Targets are defined in `project.json` of THIS app                                     |
-| Environment variables consumed at runtime                | Wire-level, depends on which env file the app reads                                   |
-| Project layout (top-level `src/`, `tests/`, configs)     | Filesystem of THIS checkout — but only top-level, not per-context recursion           |
-| Tech-stack version pinning                               | "I'm running Node 24.13.1, Next.js 16, F# .NET 10" — version source-of-truth          |
-| One paragraph + link to `specs/` for behavior            | The pointer that completes the split                                                  |
+| Content                                                    | Why it stays                                                                 |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| One-paragraph "what is this" intro                         | Reader orientation                                                           |
+| Status banner (pre-alpha, etc.)                            | Visible warning at app entry point                                           |
+| Quick Start commands                                       | Setting up dev server is THIS-checkout-specific                              |
+| Nx targets table (`nx dev`, `nx build`, `nx run X:test:Y`) | Targets are defined in `project.json` of THIS app                            |
+| Environment variables consumed at runtime                  | Wire-level, depends on which env file the app reads                          |
+| Project layout (top-level `src/`, `tests/`, configs)       | Filesystem of THIS checkout — but only top-level, not per-context recursion  |
+| Tech-stack version pinning                                 | "I'm running Node 24.13.1, Next.js 16, F# .NET 10" — version source-of-truth |
+| One paragraph + link to `specs/` for behavior              | The pointer that completes the split                                         |
 
 ### Mapping table — Category B (moves to specs/)
 
-| Content                                                                       | Destination                                                                  |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Routes table (URLs the app serves)                                            | `specs/apps/<app-family>/web/routes-and-screens.md`                          |
-| Screens table (user-visible pages and what they do)                           | `specs/apps/<app-family>/web/routes-and-screens.md`                          |
-| Entry-flow tables (FAB sub-flows etc.)                                        | `specs/apps/<app-family>/web/routes-and-screens.md`                          |
-| Diagnostic page state table                                                   | `specs/apps/<app-family>/web/routes-and-screens.md` (under "System status")  |
-| Bounded-context project layout (full `src/contexts/<bc>/...` recursion)       | `specs/apps/<app-family>/web/architecture.md`                                |
-| Layer rules (`domain` ← no imports, etc.)                                     | `specs/apps/<app-family>/web/architecture.md`                                |
-| Dormant code listing (`backend-client*.ts` etc.)                              | `specs/apps/<app-family>/web/architecture.md`                                |
-| Bounded-context map narrative + diagram                                       | `specs/apps/<app-family>/ddd/bounded-context-map.md`                         |
-| Design system palette / fonts / dark-mode / token import                      | `specs/apps/<app-family>/web/design-system.md`                               |
-| Component variant catalog (Button variants, Alert variants, etc.)             | `specs/apps/<app-family>/web/design-system.md`                               |
-| API endpoints table                                                           | `specs/apps/<app-family>/be/api.md`                                          |
-| Backend architecture diagram (DI, project tree)                               | `specs/apps/<app-family>/be/api.md`                                          |
-| Backend testing strategy table (BDD/coverage tier mapping)                    | `specs/apps/<app-family>/be/api.md`                                          |
-| E2E architecture (bddgen pipeline, feature → spec → test flow)                | `specs/apps/<app-family>/{web,be}/gherkin/README.md` (already lives there)   |
+| Content                                                                 | Destination                                                                 |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Routes table (URLs the app serves)                                      | `specs/apps/<app-family>/web/routes-and-screens.md`                         |
+| Screens table (user-visible pages and what they do)                     | `specs/apps/<app-family>/web/routes-and-screens.md`                         |
+| Entry-flow tables (FAB sub-flows etc.)                                  | `specs/apps/<app-family>/web/routes-and-screens.md`                         |
+| Diagnostic page state table                                             | `specs/apps/<app-family>/web/routes-and-screens.md` (under "System status") |
+| Bounded-context project layout (full `src/contexts/<bc>/...` recursion) | `specs/apps/<app-family>/web/architecture.md`                               |
+| Layer rules (`domain` ← no imports, etc.)                               | `specs/apps/<app-family>/web/architecture.md`                               |
+| Dormant code listing (`backend-client*.ts` etc.)                        | `specs/apps/<app-family>/web/architecture.md`                               |
+| Bounded-context map narrative + diagram                                 | `specs/apps/<app-family>/ddd/bounded-context-map.md`                        |
+| Design system palette / fonts / dark-mode / token import                | `specs/apps/<app-family>/web/design-system.md`                              |
+| Component variant catalog (Button variants, Alert variants, etc.)       | `specs/apps/<app-family>/web/design-system.md`                              |
+| API endpoints table                                                     | `specs/apps/<app-family>/be/api.md`                                         |
+| Backend architecture diagram (DI, project tree)                         | `specs/apps/<app-family>/be/api.md`                                         |
+| Backend testing strategy table (BDD/coverage tier mapping)              | `specs/apps/<app-family>/be/api.md`                                         |
+| E2E architecture (bddgen pipeline, feature → spec → test flow)          | `specs/apps/<app-family>/{web,be}/gherkin/README.md` (already lives there)  |
 
 ### How to apply the rule
 
@@ -149,6 +149,7 @@ Every spec file starts with:
 > working mental model on first read.>
 
 ## <First section heading>
+
 ...
 ```
 
@@ -158,12 +159,14 @@ Every section leads with **what the feature/component enables for the user** (1-
 
 ```markdown
 <!-- BAD — opens with mechanism -->
+
 ## Journal Context
 
 The journal context owns the `JournalEvent` aggregate and exposes
 `appendEvent`, `bumpEvent`, and `listEvents` use-cases via PGlite store.
 
 <!-- GOOD — opens with intent -->
+
 ## Journal Context
 
 The journal records every life-event the user logs (workouts, meals, reading,
@@ -180,17 +183,17 @@ in-browser PGlite (Postgres-WASM, IndexedDB-backed) store.
 
 The first occurrence of each **niche project-specific framework name** or **DDD-applied term** in a file carries a parenthetical or footnote-style plain-language gloss. Subsequent uses in the same file are gloss-free. **Mainstream SWE vocabulary the SWE-background TPM already knows does NOT need glossing** — over-glossing is patronizing noise. The list below is exhaustive; do not gloss anything not on this list.
 
-| Term            | Gloss to use on first occurrence                                     |
-| --------------- | -------------------------------------------------------------------- |
-| DDD (when first introducing the OrganicLever-specific application of it) | Domain-Driven Design — here applied as one bounded context per UI screen domain |
-| bounded context | a self-contained slice of the app with its own vocabulary, types, and rules; contexts communicate only through narrow published APIs |
-| aggregate       | a cluster of domain objects treated as one consistent unit by writes |
-| ubiquitous language | the shared vocabulary used by both the team and the code for one bounded context |
-| PGlite          | Postgres-WASM — Postgres compiled to WebAssembly running directly in the browser, persisted via IndexedDB |
-| XState          | a JavaScript/TypeScript state-machine library used here for UI flow orchestration |
-| Effect TS       | a TypeScript library for typed effect composition, used in the infrastructure layer |
-| F#              | functional .NET language used for the OrganicLever backend           |
-| Giraffe         | F# web framework on top of ASP.NET Core, used for the OrganicLever HTTP API |
+| Term                                                                     | Gloss to use on first occurrence                                                                                                     |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| DDD (when first introducing the OrganicLever-specific application of it) | Domain-Driven Design — here applied as one bounded context per UI screen domain                                                      |
+| bounded context                                                          | a self-contained slice of the app with its own vocabulary, types, and rules; contexts communicate only through narrow published APIs |
+| aggregate                                                                | a cluster of domain objects treated as one consistent unit by writes                                                                 |
+| ubiquitous language                                                      | the shared vocabulary used by both the team and the code for one bounded context                                                     |
+| PGlite                                                                   | Postgres-WASM — Postgres compiled to WebAssembly running directly in the browser, persisted via IndexedDB                            |
+| XState                                                                   | a JavaScript/TypeScript state-machine library used here for UI flow orchestration                                                    |
+| Effect TS                                                                | a TypeScript library for typed effect composition, used in the infrastructure layer                                                  |
+| F#                                                                       | functional .NET language used for the OrganicLever backend                                                                           |
+| Giraffe                                                                  | F# web framework on top of ASP.NET Core, used for the OrganicLever HTTP API                                                          |
 
 **Do NOT gloss** (mainstream — the SWE-background TPM already knows): TypeScript, JavaScript, Next.js, React, Node.js, Postgres, Docker, Kubernetes, REST, HTTP, JSON, YAML, OpenAPI, IndexedDB, FSM, finite state machine, CI, CD, CI/CD, ADR, Architecture Decision Record, build pipeline, lockfile, version pinning, Volta, npm, ESLint, Prettier, Mermaid, Playwright, Vercel, monorepo, Nx.
 
@@ -296,7 +299,7 @@ Some terms benefit from a diagram more than from extra prose. The H3 section gai
 
 **Worked example: `JournalEvent` lifecycle (`journal.md`)**:
 
-```text
+````text
 ### Term: `JournalEvent`
 
 A single, append-only record of something the user did. ...
@@ -319,11 +322,11 @@ stateDiagram-v2
 **Code identifier(s)**: `JournalEvent` — `apps/organiclever-web/src/contexts/journal/domain/types.ts`
 
 (... rest of H3 section ...)
-```
+````
 
 **Worked example: `Typed payload` hierarchy (`journal.md`)**:
 
-```text
+````text
 ### Term: `Typed payload`
 
 The structured body of a `JournalEvent`. ...
@@ -351,11 +354,11 @@ classDiagram
 ​```
 
 (... rest of H3 section ...)
-```
+````
 
 **Worked example: `WorkoutSession` FSM (`workout-session.md`)**:
 
-```text
+````text
 ### Term: `WorkoutSession`
 
 The active workout in progress, modelled as an XState machine ...
@@ -378,11 +381,11 @@ stateDiagram-v2
 ​```
 
 (... rest of H3 section ...)
-```
+````
 
 **Worked example: `Routine` aggregate composition (`routine.md`)**:
 
-```text
+````text
 ### Term: `Routine`
 
 A planned, ordered sequence of exercises ...
@@ -413,11 +416,11 @@ classDiagram
 ​```
 
 (... rest of H3 section ...)
-```
+````
 
 **Worked example: `Projection` data flow (`stats.md`)**:
 
-```text
+````text
 ### Term: `Projection`
 
 A read-only derived view ...
@@ -445,18 +448,18 @@ sequenceDiagram
 ​```
 
 (... rest of H3 section ...)
-```
+````
 
 **Diagram type cheat-sheet**:
 
-| Topic                              | Mermaid type                | Why this type                                                                          |
-| ---------------------------------- | --------------------------- | -------------------------------------------------------------------------------------- |
-| Lifecycle / FSM                    | `stateDiagram-v2`           | States and transitions are first-class; reads cleanly                                  |
-| Variant family / sealed union      | `classDiagram`              | Inheritance and field shape both visible                                               |
-| Aggregate composition              | `classDiagram`              | Composition (`*--`) and reference (`-->`) arrows are explicit                          |
-| Cross-context / async flow         | `sequenceDiagram`           | Time axis makes the order of writes vs reads obvious                                   |
-| Hierarchy / tree                   | `flowchart TD`              | Top-down with simple boxes; faster than classDiagram for pure structure                |
-| Network / relationship             | `flowchart LR`              | Left-right reads as "from → to"; good for context maps                                 |
+| Topic                         | Mermaid type      | Why this type                                                           |
+| ----------------------------- | ----------------- | ----------------------------------------------------------------------- |
+| Lifecycle / FSM               | `stateDiagram-v2` | States and transitions are first-class; reads cleanly                   |
+| Variant family / sealed union | `classDiagram`    | Inheritance and field shape both visible                                |
+| Aggregate composition         | `classDiagram`    | Composition (`*--`) and reference (`-->`) arrows are explicit           |
+| Cross-context / async flow    | `sequenceDiagram` | Time axis makes the order of writes vs reads obvious                    |
+| Hierarchy / tree              | `flowchart TD`    | Top-down with simple boxes; faster than classDiagram for pure structure |
+| Network / relationship        | `flowchart LR`    | Left-right reads as "from → to"; good for context maps                  |
 
 **Anti-patterns**:
 
@@ -571,13 +574,13 @@ specs/apps/organiclever/
 
 The five top-level folders aren't arbitrary; each maps to a specific reader question that other layouts confused.
 
-| Folder           | Reader question it answers                                       | Why a top-level (not nested)                                                |
-| ---------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `product/`       | "What does this product do for the user? What's in v0?"          | PM-first content. Not architecture (so not under `system-context/`). Not behavior (so not under `behavior/`). Deserves its own home. |
-| `system-context/`| "What's the system boundary? Who/what interacts with it?"        | C4 L1 — Simon Brown's canonical L1                                          |
-| `containers/`    | "What runtime processes exist? What are their boundaries?"       | C4 L2 — naturally hosts API contracts (boundary specs) and deployment topology |
-| `components/`    | "What's inside each container?"                                   | C4 L3. Bounded contexts ARE components, so DDD lives here naturally         |
-| `behavior/`      | "Does the system actually do what the specs say?"                | Gherkin tests behavior at every C4 level — orthogonal to zoom hierarchy. Forcing it under one C4 level would lie about its scope. |
+| Folder            | Reader question it answers                                 | Why a top-level (not nested)                                                                                                         |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `product/`        | "What does this product do for the user? What's in v0?"    | PM-first content. Not architecture (so not under `system-context/`). Not behavior (so not under `behavior/`). Deserves its own home. |
+| `system-context/` | "What's the system boundary? Who/what interacts with it?"  | C4 L1 — Simon Brown's canonical L1                                                                                                   |
+| `containers/`     | "What runtime processes exist? What are their boundaries?" | C4 L2 — naturally hosts API contracts (boundary specs) and deployment topology                                                       |
+| `components/`     | "What's inside each container?"                            | C4 L3. Bounded contexts ARE components, so DDD lives here naturally                                                                  |
+| `behavior/`       | "Does the system actually do what the specs say?"          | Gherkin tests behavior at every C4 level — orthogonal to zoom hierarchy. Forcing it under one C4 level would lie about its scope.    |
 
 ### Why no separate `architecture/` folder
 
@@ -589,11 +592,11 @@ A bounded context is, in C4 terms, exactly a Component (L3). The DDD registry, g
 
 ### Variants for non-OrganicLever apps
 
-| App profile         | What populates                                                                   | What's empty/omitted                                |
-| ------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Web-only (e.g. `wahidyankf`) | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/web/gherkin/` | `containers/contracts/` (no API), `components/be/`  |
-| CLI-only (e.g. `rhino`)      | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/cli/gherkin/` | `components/{be,web}/`, `containers/contracts/`     |
-| Multi-CLI (e.g. `ayokoding`) | Adds `components/cli/` + `behavior/cli/gherkin/` alongside web/be                | Nothing — same shape, more populated                |
+| App profile                  | What populates                                                                           | What's empty/omitted                               |
+| ---------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Web-only (e.g. `wahidyankf`) | `product/`, `system-context/`, `containers/`, `components/web/`, `behavior/web/gherkin/` | `containers/contracts/` (no API), `components/be/` |
+| CLI-only (e.g. `rhino`)      | `product/`, `system-context/`, `containers/`, `components/cli/`, `behavior/cli/gherkin/` | `components/{be,web}/`, `containers/contracts/`    |
+| Multi-CLI (e.g. `ayokoding`) | Adds `components/cli/` + `behavior/cli/gherkin/` alongside web/be                        | Nothing — same shape, more populated               |
 
 ### What the new convention says about creation
 
@@ -607,23 +610,23 @@ The `specs-quality-gate` workflow gains drift detection — comparing specs to c
 
 ### Drift inventory (organiclever pilot)
 
-| Drift case                                                                          | Detection method                                                              | Action                |
-| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------- |
-| README count mismatch (claims N scenarios but file count differs)                   | `rhino-cli specs validate-counts <folder>` (NEW)                              | Auto-fix the README   |
-| Routes/screens spec out of sync with `apps/organiclever-web/src/app/**/page.tsx`    | `rhino-cli specs drift-routes <app>` (NEW)                                    | Auto-fix the table    |
-| Endpoint spec out of sync with F# handler attributes                                | `rhino-cli specs drift-endpoints <app>` (NEW)                                 | Auto-fix the table    |
-| `containers/contracts/openapi.yaml` paths out of sync with handler attributes       | `rhino-cli specs drift-contracts <app>` (NEW)                                 | Flag only (intentional) |
-| Adoption gap (FR-10): app missing BDD/DDD/Contracts where convention says SHOULD    | `rhino-cli specs validate-adoption <app>` (NEW)                               | Flag only (decision)  |
-| Tree-shape violation (FR-9): top-level not the canonical 5                          | `rhino-cli specs validate-tree <app>` (NEW)                                   | Flag only (decision)  |
-| Bounded-context registry out of sync with `src/contexts/`                           | `rhino-cli ddd bc <app>` (existing)                                           | Flag (existing)       |
-| Glossary code-identifiers stale                                                     | `rhino-cli ddd ul <app>` (existing)                                           | Flag (existing)       |
+| Drift case                                                                       | Detection method                                 | Action                  |
+| -------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------- |
+| README count mismatch (claims N scenarios but file count differs)                | `rhino-cli specs validate-counts <folder>` (NEW) | Auto-fix the README     |
+| Routes/screens spec out of sync with `apps/organiclever-web/src/app/**/page.tsx` | `rhino-cli specs drift-routes <app>` (NEW)       | Auto-fix the table      |
+| Endpoint spec out of sync with F# handler attributes                             | `rhino-cli specs drift-endpoints <app>` (NEW)    | Auto-fix the table      |
+| `containers/contracts/openapi.yaml` paths out of sync with handler attributes    | `rhino-cli specs drift-contracts <app>` (NEW)    | Flag only (intentional) |
+| Adoption gap (FR-10): app missing BDD/DDD/Contracts where convention says SHOULD | `rhino-cli specs validate-adoption <app>` (NEW)  | Flag only (decision)    |
+| Tree-shape violation (FR-9): top-level not the canonical 5                       | `rhino-cli specs validate-tree <app>` (NEW)      | Flag only (decision)    |
+| Bounded-context registry out of sync with `src/contexts/`                        | `rhino-cli ddd bc <app>` (existing)              | Flag (existing)         |
+| Glossary code-identifiers stale                                                  | `rhino-cli ddd ul <app>` (existing)              | Flag (existing)         |
 
 ### Reasoning split: deterministic vs LLM
 
-| Type           | Owner             | Examples                                                  |
-| -------------- | ----------------- | --------------------------------------------------------- |
-| Deterministic  | rhino-cli (Go)    | Counting `.feature` files, comparing string lists, walking the filesystem, parsing YAML/JSON, regex-matching F# attributes |
-| LLM (semantic) | specs-checker     | "Does this scenario describe the same behavior?", terminology drift, narrative coherence, BC map prose accuracy |
+| Type           | Owner          | Examples                                                                                                                   |
+| -------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Deterministic  | rhino-cli (Go) | Counting `.feature` files, comparing string lists, walking the filesystem, parsing YAML/JSON, regex-matching F# attributes |
+| LLM (semantic) | specs-checker  | "Does this scenario describe the same behavior?", terminology drift, narrative coherence, BC map prose accuracy            |
 
 The split is documented in each Validation Category of the updated `specs-checker.md`. Categories tagged `[Deterministic]` shell out to `rhino-cli`; categories tagged `[LLM]` keep current LLM-driven reasoning.
 
@@ -707,26 +710,26 @@ The reorg produces TWO classes of link updates:
 
 **Class A — BC map references** (8 known inbound; relative paths recompute under the new tree):
 
-| Source file (after reorg, with new path)                                                | Old target ref                                                              | New target (relative)                                       |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md`              | `apps/organiclever-web/docs/explanation/bounded-context-map.md`             | `../bounded-context-map.md`                                 |
-| `specs/apps/organiclever/components/web/ddd/README.md`                                  | same                                                                        | `./bounded-context-map.md`                                  |
-| `specs/apps/organiclever/behavior/web/gherkin/README.md`                                | same                                                                        | `../../../components/web/ddd/bounded-context-map.md`        |
-| `specs/apps/organiclever/components/web/README.md`                                      | same                                                                        | `./ddd/bounded-context-map.md`                              |
-| `specs/apps/organiclever/components/web/component-web.md`                               | same                                                                        | `./ddd/bounded-context-map.md`                              |
-| `.claude/skills/apps-organiclever-web-developing-content/SKILL.md`                      | same                                                                        | `../../specs/apps/organiclever/components/web/ddd/bounded-context-map.md` (verify depth) |
+| Source file (after reorg, with new path)                                   | Old target ref                                                  | New target (relative)                                                                    |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md` | `apps/organiclever-web/docs/explanation/bounded-context-map.md` | `../bounded-context-map.md`                                                              |
+| `specs/apps/organiclever/components/web/ddd/README.md`                     | same                                                            | `./bounded-context-map.md`                                                               |
+| `specs/apps/organiclever/behavior/web/gherkin/README.md`                   | same                                                            | `../../../components/web/ddd/bounded-context-map.md`                                     |
+| `specs/apps/organiclever/components/web/README.md`                         | same                                                            | `./ddd/bounded-context-map.md`                                                           |
+| `specs/apps/organiclever/components/web/component-web.md`                  | same                                                            | `./ddd/bounded-context-map.md`                                                           |
+| `.claude/skills/apps-organiclever-web-developing-content/SKILL.md`         | same                                                            | `../../specs/apps/organiclever/components/web/ddd/bounded-context-map.md` (verify depth) |
 
 **Class B — old subfolder path references** (much larger; touches code, configs, step files):
 
-| Old path pattern                                              | New path pattern                                                  |
-| ------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `specs/apps/organiclever/be/gherkin/`                         | `specs/apps/organiclever/behavior/be/gherkin/`                    |
-| `specs/apps/organiclever/web/gherkin/`                        | `specs/apps/organiclever/behavior/web/gherkin/`                   |
-| `specs/apps/organiclever/ddd/bounded-contexts.yaml`           | `specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml` |
-| `specs/apps/organiclever/ddd/ubiquitous-language/`            | `specs/apps/organiclever/components/web/ddd/ubiquitous-language/` |
-| `specs/apps/organiclever/contracts/generated/openapi-bundled.yaml` | `specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml` |
-| `specs/apps/organiclever/c4/{context,container,component-be,component-web}.md` | new tree positions per Target Tree                |
-| `specs/apps/organiclever/web/`, `/be/`, `/ddd/`, `/c4/`, `/contracts/` (any flat-root reference) | corresponding new path                                            |
+| Old path pattern                                                                                 | New path pattern                                                              |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `specs/apps/organiclever/be/gherkin/`                                                            | `specs/apps/organiclever/behavior/be/gherkin/`                                |
+| `specs/apps/organiclever/web/gherkin/`                                                           | `specs/apps/organiclever/behavior/web/gherkin/`                               |
+| `specs/apps/organiclever/ddd/bounded-contexts.yaml`                                              | `specs/apps/organiclever/components/web/ddd/bounded-contexts.yaml`            |
+| `specs/apps/organiclever/ddd/ubiquitous-language/`                                               | `specs/apps/organiclever/components/web/ddd/ubiquitous-language/`             |
+| `specs/apps/organiclever/contracts/generated/openapi-bundled.yaml`                               | `specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml` |
+| `specs/apps/organiclever/c4/{context,container,component-be,component-web}.md`                   | new tree positions per Target Tree                                            |
+| `specs/apps/organiclever/web/`, `/be/`, `/ddd/`, `/c4/`, `/contracts/` (any flat-root reference) | corresponding new path                                                        |
 
 Files known to need Class B updates (full list in [PRD FR-3b](./prd.md#fr-3b-tooling-and-code-path-updates)). Targeted `sed` per file is safest; broad sed across the worktree risks false matches in plans/done/ (frozen).
 
@@ -760,17 +763,17 @@ The plan creates one new governance convention and updates three existing files.
 
 ### Files in scope
 
-| Path                                                            | Operation | Owner agent       | Purpose                                                                                                                |
-| --------------------------------------------------------------- | --------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `governance/conventions/structure/app-readme-vs-specs.md`       | CREATE    | repo-rules-maker  | ONE combined convention: Content Split Rule + Spec Tree Shape + PM-Readability Contract + BDD/DDD/Contracts Adoption  |
-| `governance/conventions/structure/specs-directory-structure.md` | REWRITE   | repo-rules-maker  | Replace the current flat-root be/web/cli/build-tools layout with the new C4-aware five-folder tree                     |
-| `governance/conventions/structure/README.md`                    | UPDATE    | repo-rules-maker  | Add new convention to "Documents" list; update the description of `specs-directory-structure.md`                       |
-| `governance/conventions/writing/readme-quality.md`              | UPDATE    | repo-rules-maker  | Cross-link statement: app/infra READMEs governed by `app-readme-vs-specs.md`                                          |
-| `.claude/agents/specs-checker.md`                               | UPDATE    | repo-rules-maker  | Amend Cat 1 (READMEs at all 5 top-level folders + per-surface). Replace Cat 8 (flat-root → C4-aware). Add Cat 9 (Adoption Gaps) per FR-10 |
-| `.claude/agents/specs-fixer.md`                                 | UPDATE    | repo-rules-maker  | Auto-fix list gains: scaffold missing top-level / per-surface READMEs from template. Adoption gaps go to Requires Review (not auto-fix) |
-| `.claude/agents/specs-maker.md`                                 | UPDATE    | repo-rules-maker  | Scaffolding template REPLACED — emit canonical 5-folder tree (per-surface variants) when caller targets `specs/apps/<new-app>/` |
-| `governance/workflows/specs/specs-quality-gate.md`              | UPDATE    | repo-rules-maker  | Validation Dimensions table gains Spec Tree Shape (amended Cat 8) and Adoption Gaps (Cat 9) rows. Update Iteration Example to show new findings |
-| `.opencode/agents/specs-checker.md`, `specs-fixer.md`, `specs-maker.md` | SYNC | npm run sync:claude-to-opencode | Mirror `.claude/` updates after `repo-rules-maker` finishes                                                            |
+| Path                                                                    | Operation | Owner agent                     | Purpose                                                                                                                                         |
+| ----------------------------------------------------------------------- | --------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `governance/conventions/structure/app-readme-vs-specs.md`               | CREATE    | repo-rules-maker                | ONE combined convention: Content Split Rule + Spec Tree Shape + PM-Readability Contract + BDD/DDD/Contracts Adoption                            |
+| `governance/conventions/structure/specs-directory-structure.md`         | REWRITE   | repo-rules-maker                | Replace the current flat-root be/web/cli/build-tools layout with the new C4-aware five-folder tree                                              |
+| `governance/conventions/structure/README.md`                            | UPDATE    | repo-rules-maker                | Add new convention to "Documents" list; update the description of `specs-directory-structure.md`                                                |
+| `governance/conventions/writing/readme-quality.md`                      | UPDATE    | repo-rules-maker                | Cross-link statement: app/infra READMEs governed by `app-readme-vs-specs.md`                                                                    |
+| `.claude/agents/specs-checker.md`                                       | UPDATE    | repo-rules-maker                | Amend Cat 1 (READMEs at all 5 top-level folders + per-surface). Replace Cat 8 (flat-root → C4-aware). Add Cat 9 (Adoption Gaps) per FR-10       |
+| `.claude/agents/specs-fixer.md`                                         | UPDATE    | repo-rules-maker                | Auto-fix list gains: scaffold missing top-level / per-surface READMEs from template. Adoption gaps go to Requires Review (not auto-fix)         |
+| `.claude/agents/specs-maker.md`                                         | UPDATE    | repo-rules-maker                | Scaffolding template REPLACED — emit canonical 5-folder tree (per-surface variants) when caller targets `specs/apps/<new-app>/`                 |
+| `governance/workflows/specs/specs-quality-gate.md`                      | UPDATE    | repo-rules-maker                | Validation Dimensions table gains Spec Tree Shape (amended Cat 8) and Adoption Gaps (Cat 9) rows. Update Iteration Example to show new findings |
+| `.opencode/agents/specs-checker.md`, `specs-fixer.md`, `specs-maker.md` | SYNC      | npm run sync:claude-to-opencode | Mirror `.claude/` updates after `repo-rules-maker` finishes                                                                                     |
 
 ### Skeleton for `app-readme-vs-specs.md` (combined convention)
 
@@ -800,42 +803,52 @@ created: 2026-05-09
 ## Standards
 
 ### Standard 1 — Content Split Rule (Category A vs Category B)
+
 …Category A (stays in app/infra README) vs Category B (moves to specs/)…
 (reproduces the Mapping Tables from tech-docs.md)
 
 ### Standard 2 — Forbidden / Required sections in app READMEs
+
 …allow-list of `## ` headings, forbidden content list…
 
 ### Standard 3 — Length budget
+
 …app/infra README line-count caps…
 
 ### Standard 4 — Spec Tree Shape (C4-aware five-folder layout)
+
 …the five top-level folders (`product/`, `system-context/`, `containers/`, `components/`, `behavior/`)
 with their purposes and rationale. Includes the per-surface variant table for full-stack /
 web-only / CLI-only / multi-CLI apps. Includes "what populates" guidance — apps create only
 folders they need…
 
 ### Standard 5 — PM-Readability Contract for specs/
+
 …six rules: header block, intent-before-mechanism, glossary on first use,
 tables-over-prose, code-block intros, link-forward-to-engineering-depth…
 
 ### Standard 6 — BDD/DDD/Contracts Adoption (FR-10)
+
 …non-CLI apps SHOULD adopt all three. CLI: BDD required, DDD optional/deferred, Contracts NOT APPLICABLE.
 …validation hooks at HIGH/MEDIUM levels per FR-10.
 …rollout mapping table for organiclever / ayokoding / oseplatform / wahidyankf / rhino.
 
 ### Standard 7 — Cross-link integrity
+
 …app README points at specs/, specs/ files point back at related specs/ siblings…
 
 ## Examples
 
 ### Before/after — app README trim
+
 (annotated diff fragments)
 
 ### Before/after — PM-readable specs/ file header
+
 (audience block + glossary on first use)
 
 ### Before/after — spec tree migration
+
 (flat-root → C4-aware tree mapping table; for migrating existing specs/apps/<app>/)
 
 ## Validation
@@ -896,13 +909,13 @@ If `repo-rules-checker` finds violations in the pilot artifacts that the new con
 
 ## Risk and Mitigation
 
-| Risk                                                                       | Likelihood | Mitigation                                                                                       |
-| -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------ |
+| Risk                                                                       | Likelihood | Mitigation                                                                                                                                              |
+| -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Broken link inside the moved BC map (its own internal `../../../` paths)   | Medium     | After `git mv`, deliberately walk every link in the moved file; the file goes one level deeper into `specs/` than it was, so adjustments are systematic |
-| Discovery pass missed an inbound link                                      | Low        | After-the-fact rg with `--glob '!plans/done/**'` is the safety net; failure mode is "stale link" not "broken behavior" |
-| Markdown table extracted to specs loses formatting                         | Low        | `git mv` + edit preserves text; tables are simple                                                |
-| Rule does not generalize to bilingual `ayokoding-web` or CLI-only `rhino`  | Medium     | Pilot success signal explicitly tests the rule on those shapes via §Pilot Outcome; if it fails, we capture in `pilot-findings.md` |
-| `apps-organiclever-web-developing-content` skill embeds duplicated content | Low        | Skill body is checked separately; expected to need only the BC map path update                   |
+| Discovery pass missed an inbound link                                      | Low        | After-the-fact rg with `--glob '!plans/done/**'` is the safety net; failure mode is "stale link" not "broken behavior"                                  |
+| Markdown table extracted to specs loses formatting                         | Low        | `git mv` + edit preserves text; tables are simple                                                                                                       |
+| Rule does not generalize to bilingual `ayokoding-web` or CLI-only `rhino`  | Medium     | Pilot success signal explicitly tests the rule on those shapes via §Pilot Outcome; if it fails, we capture in `pilot-findings.md`                       |
+| `apps-organiclever-web-developing-content` skill embeds duplicated content | Low        | Skill body is checked separately; expected to need only the BC map path update                                                                          |
 
 ## Commit Strategy
 

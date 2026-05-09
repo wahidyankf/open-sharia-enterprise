@@ -25,7 +25,7 @@ This is a documentation reorganization — no behavior change, no code change, n
 
 ## Why now
 
-The DDD adoption plan ([2026-05-03__organiclever-adopt-ddd](../../done/2026-05-03__organiclever-adopt-ddd/README.md)) established `specs/apps/organiclever/ddd/` as the home of the bounded-context registry and ubiquitous-language glossaries. The ddd-namespace restructure plan finished moving the registry path. But:
+The DDD adoption plan ([2026-05-03\_\_organiclever-adopt-ddd](../../done/2026-05-03__organiclever-adopt-ddd/README.md)) established `specs/apps/organiclever/ddd/` as the home of the bounded-context registry and ubiquitous-language glossaries. The ddd-namespace restructure plan finished moving the registry path. But:
 
 - `apps/organiclever-web/README.md` (301 lines) duplicates routes/screens/architecture that already live (or should live) in `specs/`
 - `apps/organiclever-web/docs/explanation/bounded-context-map.md` (287 lines) — the canonical BC map — is orphaned in the app's `docs/` tree, separated from the YAML registry and glossaries it pairs with

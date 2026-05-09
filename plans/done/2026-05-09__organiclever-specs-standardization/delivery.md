@@ -745,9 +745,12 @@ This phase delivers the deterministic offload commands that the agents (updated 
   - Stale Spring/Java references in `infra/k8s/organiclever/{staging,production}/README.md` (organiclever-be is F#/Giraffe; tracked for separate fix plan)
   - rhino-cli Strategy A path constant choice (vs Strategy B walking) — record so future BE-DDD adoption knows
   - Any §8.6 amendments
-- [ ] **8.8 Move plan folder to done**: `git mv plans/in-progress/organiclever-specs-standardization plans/done/2026-MM-DD__organiclever-specs-standardization` (using actual completion-date prefix)
-- [ ] **8.9 Update `plans/in-progress/README.md`** — remove from active list
-- [ ] **8.10 Update `plans/done/README.md`** if it lists individual archived plans
+- [x] **8.8 Move plan folder to done**: `git mv plans/in-progress/organiclever-specs-standardization plans/done/2026-05-09__organiclever-specs-standardization` (using actual completion-date prefix)
+  - Date: 2026-05-09. Status: done. git mv executed.
+- [x] **8.9 Update `plans/in-progress/README.md`** — remove from active list
+  - Date: 2026-05-09. Status: done. Entry removed.
+- [x] **8.10 Update `plans/done/README.md`** if it lists individual archived plans
+  - Date: 2026-05-09. Status: done. Entry added.
 - [ ] **8.11 FR-15 push gate — final pre-push checks**:
   - [ ] Re-run all 8.3 commands one last time; ALL exit 0
   - [ ] Confirm working tree clean (no uncommitted changes besides plan archive)

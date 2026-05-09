@@ -5,7 +5,6 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [organiclever-specs-standardization](./organiclever-specs-standardization/README.md) — Pilot for repo-wide thin-app-README + canonical specs/ docs split (organiclever first, then ayokoding/oseplatform/wahidyankf/rhino)
 
 ## Instructions
 
