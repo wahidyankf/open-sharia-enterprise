@@ -115,19 +115,19 @@ func (s *ulValidateSteps) termCollision() error {
 
 func (s *ulValidateSteps) run() error {
 	buf := new(bytes.Buffer)
-	ulValidateCmd.SetOut(buf)
-	ulValidateCmd.SetErr(buf)
-	s.cmdErr = ulValidateCmd.RunE(ulValidateCmd, []string{"organiclever"})
+	dddUlCmd.SetOut(buf)
+	dddUlCmd.SetErr(buf)
+	s.cmdErr = dddUlCmd.RunE(dddUlCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
 func (s *ulValidateSteps) runWithWarnFlag() error {
 	buf := new(bytes.Buffer)
-	ulValidateCmd.SetOut(buf)
-	ulValidateCmd.SetErr(buf)
+	dddUlCmd.SetOut(buf)
+	dddUlCmd.SetErr(buf)
 	ulSeverity = "warn"
-	s.cmdErr = ulValidateCmd.RunE(ulValidateCmd, []string{"organiclever"})
+	s.cmdErr = dddUlCmd.RunE(dddUlCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -229,10 +229,10 @@ func TestUlValidateCmd(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsDirUlValidate},
 			TestingT: t,
-			Tags:     "ul-validate",
+			Tags:     "ddd-ul",
 		},
 	}
 	if suite.Run() != 0 {
-		t.Fatal("non-zero status returned, failed to run ul validate feature tests")
+		t.Fatal("non-zero status returned, failed to run ddd ul feature tests")
 	}
 }

@@ -181,10 +181,10 @@ func (s *bcValidateUnitSteps) registryWithOrphanAndWarnFlag() error {
 
 func (s *bcValidateUnitSteps) runWithWarnFlag() error {
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
 	bcSeverity = "warn"
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -207,9 +207,9 @@ func (s *bcValidateUnitSteps) envVarWarnSet() error {
 
 func (s *bcValidateUnitSteps) run() error {
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -217,21 +217,21 @@ func (s *bcValidateUnitSteps) run() error {
 func (s *bcValidateUnitSteps) runWithEnvWarn() error {
 	defer os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY") //nolint:errcheck
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
 func (s *bcValidateUnitSteps) runUnknownApp() error {
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
 	bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 		return nil, fmt.Errorf("registry not found for app %q", "unknownapp")
 	}
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"unknownapp"})
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"unknownapp"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -396,7 +396,7 @@ func TestUnitBcValidate(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsDirUnitBcValidate},
 			TestingT: t,
-			Tags:     "bc-validate",
+			Tags:     "ddd-bc",
 		},
 	}
 	if suite.Run() != 0 {
@@ -416,10 +416,10 @@ func TestBcValidateCmd_MissingGitRoot(t *testing.T) {
 	osStat = func(_ string) (os.FileInfo, error) { return nil, os.ErrNotExist }
 
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
 
-	err := bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	err := dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	if err == nil || !strings.Contains(err.Error(), "git") {
 		t.Fatalf("expected git-root error, got: %v", err)
 	}
