@@ -2,17 +2,13 @@
 
 ## Worktree
 
-Worktree path: `worktrees/organiclever-specs-standardization/`
+Worktree path: `worktrees/ddd/`
 
-Provision before execution (run from the `ose-public` subrepo root):
-
-```bash
-claude --worktree organiclever-specs-standardization
-```
-
-This creates `worktrees/organiclever-specs-standardization/` inside the `ose-public` repo root.
-See [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../governance/conventions/structure/plans.md#worktree-specification).
+Provisioned via `claude --worktree ddd` from the `ose-public` subrepo root. Branch
+`worktree/ddd`. Plan authoring and execution both run inside this worktree; commits
+publish to `main` via `git push origin worktree/ddd:main` per Trunk-Based Development.
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
 
 ## Commit Guidelines
 
@@ -69,49 +65,49 @@ flowchart TD
 
 ### Environment Setup
 
-- [ ] **Environment setup**: Provision worktree if not already done — `claude --worktree organiclever-specs-standardization` (creates `worktrees/organiclever-specs-standardization/` in repo root; see [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md))
-- [ ] **Initialize polyglot toolchain** in the worktree root: `npm install && npm run doctor -- --fix`
+- [x] **Environment setup**: Provision worktree if not already done — `claude --worktree organiclever-specs-standardization` (creates `worktrees/organiclever-specs-standardization/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)) - Date: 2026-05-09. Status: done. Files Changed: none (existing `worktrees/ddd/` worktree branch `worktree/ddd` reused; declared path updated upfront).
+- [x] **Initialize polyglot toolchain** in the worktree root: `npm install && npm run doctor -- --fix`
       (ensures Go, .NET, and other polyglot toolchains are initialized; see
-      [Worktree Toolchain Initialization](../../governance/development/workflow/worktree-setup.md)).
-      Acceptance: `npm run doctor` exits 0 with no missing tools.
+      [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+      Acceptance: `npm run doctor` exits 0 with no missing tools. - Date: 2026-05-09. Status: done. Files Changed: node_modules (1718 pkgs). Doctor 19/19 tools OK, nothing to fix.
 
 > **Fix-all-issues rule**: Fix ALL failures found during quality gates — including preexisting issues
 > not caused by your changes. Do not defer or mention-and-skip. This follows the Root Cause Orientation
 > principle. If a baseline test:quick fails before you start, fix it first, then proceed.
 
-- [ ] On `main` (or in an `ose-public` worktree branched off `main`); working tree clean
-- [ ] `npm install` clean (no postinstall failures)
-- [ ] `npm run lint:md` exits 0 on the baseline
-- [ ] `nx run organiclever-web:test:quick --skip-nx-cache` exits 0 on baseline
-- [ ] `nx run organiclever-be:test:quick --skip-nx-cache` exits 0 on baseline
-- [ ] `nx run rhino-cli:test:quick --skip-nx-cache` exits 0 on baseline
-- [ ] `nx run rhino-cli:test:integration --skip-nx-cache` exits 0 on baseline
-- [ ] `rg "apps/organiclever-web/docs/explanation/bounded-context-map" --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**'` records the count
-- [ ] `rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**' | wc -l` records the count of old-path references that will need updating in Phase 2
+- [x] On `main` (or in an `ose-public` worktree branched off `main`); working tree clean - Date: 2026-05-09. Status: done. Branch: worktree/ddd off main. Pre-execution: clean except in-flight delivery.md edits from PF.1/2 atomic-sync ritual (expected).
+- [x] `npm install` clean (no postinstall failures) - Date: 2026-05-09. Status: done. Verified during PF.2 (1718 pkgs, postinstall doctor 19/19 OK).
+- [x] `npm run lint:md` exits 0 on the baseline - Date: 2026-05-09. Status: done. 2325 files linted, 0 errors.
+- [x] `nx run organiclever-web:test:quick --skip-nx-cache` exits 0 on baseline - Date: 2026-05-09. Status: PASS. Line coverage 78.26% (≥70% threshold).
+- [x] `nx run organiclever-be:test:quick --skip-nx-cache` exits 0 on baseline - Date: 2026-05-09. Status: PASS. Line coverage 91.67% (≥90% threshold).
+- [x] `nx run rhino-cli:test:quick --skip-nx-cache` exits 0 on baseline - Date: 2026-05-09. Status: PASS. Line coverage 90.16% (≥90% threshold).
+- [x] `nx run rhino-cli:test:integration --skip-nx-cache` exits 0 on baseline - Date: 2026-05-09. Status: PASS. coverage 64.1% (no threshold for integration).
+- [x] `rg "apps/organiclever-web/docs/explanation/bounded-context-map" --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**'` records the count - Date: 2026-05-09. **Baseline: 20 occurrences across 9 files**. Phase 2A.18 + 2B.2 will reduce to 0.
+- [x] `rg "specs/apps/organiclever/(be|web|ddd|c4|contracts)/" --glob '!plans/done/**' --glob '!generated-reports/**' --glob '!node_modules/**' | wc -l` records the count of old-path references that will need updating in Phase 2 - Date: 2026-05-09. **Baseline: 225 occurrences across 77 files**. Phase 2 atomic commit will reduce to 0 (verified by 2F.1 probe).
 
 ### Baseline metrics
 
-| Item                                          | Baseline value | Target           |
-| --------------------------------------------- | -------------- | ---------------- |
-| `apps/organiclever-web/README.md` line count  | 301            | ≤ 120            |
-| `apps/organiclever-be/README.md` line count   | 110            | ≤ 120            |
-| `apps/organiclever-web-e2e/README.md` line count | 119         | ≤ 120            |
-| `apps/organiclever-be-e2e/README.md` line count | 129          | ≤ 120            |
-| `infra/dev/organiclever/README.md` line count | 32             | ≤ 60             |
-| `infra/k8s/organiclever/README.md` line count | 32             | ≤ 60             |
-| `infra/k8s/organiclever/staging/README.md`    | 15             | ≤ 30             |
-| `infra/k8s/organiclever/production/README.md` | 19             | ≤ 30             |
-| Inbound BC map references                     | 8              | 0 (after move)   |
+| Item                                             | Baseline value | Target         |
+| ------------------------------------------------ | -------------- | -------------- |
+| `apps/organiclever-web/README.md` line count     | 301            | ≤ 120          |
+| `apps/organiclever-be/README.md` line count      | 110            | ≤ 120          |
+| `apps/organiclever-web-e2e/README.md` line count | 119            | ≤ 120          |
+| `apps/organiclever-be-e2e/README.md` line count  | 129            | ≤ 120          |
+| `infra/dev/organiclever/README.md` line count    | 32             | ≤ 60           |
+| `infra/k8s/organiclever/README.md` line count    | 32             | ≤ 60           |
+| `infra/k8s/organiclever/staging/README.md`       | 15             | ≤ 30           |
+| `infra/k8s/organiclever/production/README.md`    | 19             | ≤ 30           |
+| Inbound BC map references                        | 8              | 0 (after move) |
 
 ## Phase 1 — Scaffold the new spec tree (top-level only, no clashes)
 
 Additive only. Create the FIVE top-level directories + their immediate index READMEs ONLY. Sub-folder READMEs (`components/be/README.md`, `components/web/README.md`, `behavior/be/README.md`, `behavior/web/README.md`) are NOT created here — those arrive in Phase 2A via `git mv` of the existing flat-root `be/README.md` and `web/README.md`. Sub-DIRECTORIES are created (empty) so Phase 2A `git mv` lands content into them.
 
-- [ ] **1.1 Create `specs/apps/organiclever/product/README.md`** (thin index: one-line description + planned children list)
-- [ ] **1.2 Create `specs/apps/organiclever/system-context/README.md`**
-- [ ] **1.3 Create `specs/apps/organiclever/containers/README.md`**
-- [ ] **1.4 Create `specs/apps/organiclever/components/README.md`**
-- [ ] **1.5 Create subdirectories for Phase 2A targets** (run from repo root):
+- [x] **1.1 Create `specs/apps/organiclever/product/README.md`** (thin index: one-line description + planned children list) - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/product/README.md (new, 17 lines). Audience line + planned-children placeholder for Phase 3 overview.md.
+- [x] **1.2 Create `specs/apps/organiclever/system-context/README.md`** - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/system-context/README.md (new, 17 lines). Lists Phase 2A move target context.md.
+- [x] **1.3 Create `specs/apps/organiclever/containers/README.md`** - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/containers/README.md (new, 19 lines). Lists Phase 2A move targets container.md, contracts/.
+- [x] **1.4 Create `specs/apps/organiclever/components/README.md`** - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/components/README.md (new, 30 lines). Lists all Phase 2A move targets + Phase 3 new files for be/, web/, web/ddd/.
+- [x] **1.5 Create subdirectories for Phase 2A targets** (run from repo root):
 
   ```bash
   mkdir -p specs/apps/organiclever/components/be \
@@ -127,8 +123,10 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
   Acceptance: `git status` shows all three `.gitkeep` files as new staged files.
   Note: `specs/apps/organiclever/containers/contracts/` is NOT pre-created here — Phase 2A.7 `git mv contracts → containers/contracts` moves the entire subtree including its directory structure.
   Note: Phase 2A `git mv` replaces `.gitkeep` files once real content lands; the `.gitkeep` files are removed as part of the Phase 2 commit.
-- [ ] **1.6 Create `specs/apps/organiclever/behavior/README.md`**
-- [ ] **1.7 Create empty subdirectories** for behavior (run from repo root):
+  - Date: 2026-05-09. Status: done. Files Changed: components/{be,web,web/ddd}/.gitkeep (3 new files staged). Verified via `git status --short`.
+
+- [x] **1.6 Create `specs/apps/organiclever/behavior/README.md`** - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/behavior/README.md (new, 25 lines). Surface-split table BE/web gherkin.
+- [x] **1.7 Create empty subdirectories** for behavior (run from repo root):
 
   ```bash
   mkdir -p specs/apps/organiclever/behavior/be \
@@ -140,8 +138,10 @@ Additive only. Create the FIVE top-level directories + their immediate index REA
   ```
 
   Acceptance: `git status` shows both `.gitkeep` files as new staged files. Phase 2A `git mv` removes them once real content lands.
-- [ ] **1.8 Run `npm run lint:md`** — exit 0
-- [ ] **1.9 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — must still pass; old paths unchanged
+  - Date: 2026-05-09. Status: done. Files Changed: behavior/{be,web}/.gitkeep (2 new files staged).
+
+- [x] **1.8 Run `npm run lint:md`** — exit 0 - Date: 2026-05-09. Status: done. 2330 files linted, 0 errors.
+- [x] **1.9 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — must still pass; old paths unchanged - Date: 2026-05-09. Status: PASS. Coverage 78.26% ≥ 70% threshold.
 - [ ] **1.10 Commit**: `docs(specs): scaffold C4-aware tree top-level READMEs (no content move)`
 
 > **NOTE**: After Phase 1, `git mv specs/apps/organiclever/be/README.md → specs/apps/organiclever/components/be/README.md` (Phase 2A.13) lands at an empty directory — no clash. Same for `web/README.md` → `components/web/README.md` in 2A.16.
@@ -174,7 +174,7 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 
 ### 2B — Walk every link in moved files
 
-- [ ] **2B.1** Each moved file has new relative depth — walk every `[link](../...)` path and update. Files affected: every `*.md` moved in 2A. Worst offenders to manually verify: `components/web/component-web.md`, `components/web/ddd/ubiquitous-language/README.md`, `components/web/ddd/bounded-context-map.md`
+- [ ] **2B.1** Each moved file has new relative depth — walk every relative markdown link and update. Files affected: every `*.md` moved in 2A. Worst offenders to manually verify: `components/web/component-web.md`, `components/web/ddd/ubiquitous-language/README.md`, `components/web/ddd/bounded-context-map.md`
 - [ ] **2B.2** Rewrite the 8 BC-map inbound references per [tech-docs.md §Cross-Link Update Strategy Class A](./tech-docs.md#cross-link-update-strategy)
 
 ### 2C — rhino-cli code path constant
@@ -220,6 +220,7 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
   ```
 
   Expect 0 results
+
 - [ ] **2F.2 Confirm zero BC-map old-path stragglers**:
 
   ```bash
@@ -228,6 +229,7 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
   ```
 
   Expect 0 results
+
 - [ ] **2F.3 Run `npm run lint:md`** — exit 0
 - [ ] **2F.4 Run `nx run organiclever-web:test:quick --skip-nx-cache`** — exit 0 (DDD enforcement passes against new paths)
 - [ ] **2F.5 Run `nx run organiclever-be:test:quick --skip-nx-cache`** — exit 0
@@ -237,7 +239,7 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 - [ ] **2F.9 Run `nx run organiclever-be-e2e:test:quick --skip-nx-cache`** — exit 0
 - [ ] **2F.10 Sync `.claude/skills/` change to `.opencode/`**: `npm run sync:claude-to-opencode`
 - [ ] **2F.11 Commit (the BIG one)**: `refactor(specs+rhino-cli): reorganize specs/apps/organiclever to C4-aware tree + update all consumers`
-   Note: this commit should fit in a single message but the diff will be large. Use a HEREDOC body with bullet points listing each subsystem updated.
+      Note: this commit should fit in a single message but the diff will be large. Use a HEREDOC body with bullet points listing each subsystem updated.
 
 ## Phase 2.5 — Deepen ubiquitous-language glossary files (FR-16)
 
@@ -333,7 +335,7 @@ Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks 
   - [ ] Render-check: open `journal.md` in GitHub preview and confirm the Mermaid blocks render without parse errors
 - [ ] **2.5B.9 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations + diagrams (FR-16, FR-17)`
 
-   Use HEREDOC body listing all 10 files updated and noting: (a) "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files." (b) "Mermaid diagrams added per FR-17 for marquee terms (JournalEvent, Typed payload, Routine, WorkoutSession, Projection, AppMachine). XState-mirroring diagrams match the runtime machines."
+  Use HEREDOC body listing all 10 files updated and noting: (a) "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files." (b) "Mermaid diagrams added per FR-17 for marquee terms (JournalEvent, Typed payload, Routine, WorkoutSession, Projection, AppMachine). XState-mirroring diagrams match the runtime machines."
 
 ## Phase 3 — Create new content files at final tree positions
 
@@ -640,6 +642,7 @@ This phase delivers the deterministic offload commands that the agents (updated 
   ```
 
   Expect 0 results from both
+
 - [ ] **8.5 Verify acceptance criteria from [prd.md §Acceptance criteria](./prd.md#acceptance-criteria-gherkin)** — every Gherkin scenario passes manually, INCLUDING all FR-1 through FR-9 scenarios, the C4-aware tree-shape scenarios, the rhino-cli path scenario, the governance propagation scenarios
 - [ ] **8.6 Run `repo-rules-checker`** against pilot artifacts. If findings:
   - **A. Pilot artifact violates convention** → fix the artifact in a follow-up commit, re-run checker, repeat
