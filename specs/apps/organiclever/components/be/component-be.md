@@ -1,10 +1,10 @@
 # Component Diagram: F#/Giraffe REST API
 
 Level 3 of the C4 model. Shows the logical components inside the F#/Giraffe REST API container.
-v0 ships only the health endpoint; future work will add productivity-tracking handlers.
+Today only the health endpoint ships; future work will add productivity-tracking handlers.
 
 All routes are public. There is no authentication middleware, no domain services, and no
-infrastructure layer (no database, no migrations, no repositories) in v0.
+infrastructure layer (no database, no migrations, no repositories) today.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080

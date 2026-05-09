@@ -1,9 +1,9 @@
 # OrganicLever Frontend App Specs
 
 Platform-agnostic Gherkin acceptance specifications for the OrganicLever frontend application.
-v0 covers the marketing landing page, the system-status diagnostic page (which polls the
-backend health endpoint), accessibility compliance, and 404 guards on `/login` and `/profile`
-(no authenticated screens in v0).
+Coverage today: the marketing landing page, the system-status diagnostic page (which polls
+the backend health endpoint), accessibility compliance, and 404 guards on `/login` and
+`/profile` (no authenticated screens today).
 
 ## What This Covers
 
@@ -25,8 +25,8 @@ backend health endpoint), accessibility compliance, and 404 guards on `/login` a
 | Scenarios   | See [be/gherkin/](../../behavior/be/gherkin/README.md) | See [web/gherkin/](../../behavior/web/gherkin/README.md) |
 | Domains     | health                                                 | landing, system, layout, routing, events                 |
 
-The frontend's system-status page consumes the backend's health endpoint. Otherwise the v0
-frontend is local-first — productivity-tracking features live in the user's browser. The
+The frontend's system-status page consumes the backend's health endpoint. Otherwise the
+frontend is local-first today — productivity-tracking features live in the user's browser. The
 generic event mechanism (`events` domain) is backed by **PGlite (Postgres-WASM over
 IndexedDB)** wrapped in **Effect.ts** (`Schema` + `Layer` + `ManagedRuntime`); future
 typed-payload features (workout, reading, etc.) layer on top via additional migrations.

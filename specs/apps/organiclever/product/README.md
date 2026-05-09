@@ -8,8 +8,8 @@ above system context. Read this first if you are new to OrganicLever.
 
 ## Planned children
 
-- `overview.md` — PM-first product summary covering personas, primary user flows, v0 scope
-  vs deferred items. Authored in Phase 3 of the specs-standardization plan.
+- `overview.md` — PM-first product summary covering personas, primary user flows, current
+  scope vs deferred items. Authored in Phase 3 of the specs-standardization plan.
 
 ## Related
 

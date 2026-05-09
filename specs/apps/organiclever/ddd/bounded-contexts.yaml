@@ -138,7 +138,7 @@ contexts:
 
   - name: routing
     summary: >-
-      Disabled-route guards. v0 has no authentication, so /login and /profile
+      Disabled-route guards. No authentication ships today, so /login and /profile
       exist only as 404 stubs to communicate "feature not yet available"
       without leaking placeholders into other contexts.
     layers:

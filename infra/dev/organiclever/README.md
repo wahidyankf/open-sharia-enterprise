@@ -12,7 +12,7 @@ Docker Compose setup for running the full OrganicLever stack locally.
 ## Quick Start
 
 ```bash
-# Start all services (no .env file required for v0)
+# Start all services (no .env file required today)
 npm run organiclever:dev
 
 # Restart with a fresh build
@@ -21,7 +21,7 @@ npm run organiclever:dev:restart
 
 ## Environment Variables
 
-v0 has no required environment variables. The backend runs the health endpoint without
+No required environment variables today. The backend runs the health endpoint without
 configuration and the frontend is local-first. The `.env.example` placeholder is kept for future
 product features.
 

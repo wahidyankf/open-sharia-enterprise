@@ -2,9 +2,9 @@
 
 Level 2 of the C4 model. Shows the runtime containers inside the OrganicLever system boundary:
 the Next.js 16 frontend (landing site + life-journal app + system-status diagnostic page) and
-the F#/Giraffe backend REST API (health endpoint only in v0).
+the F#/Giraffe backend REST API (health endpoint only today).
 
-The frontend is a Next.js App Router application structured around DDD bounded contexts. v0 has
+The frontend is a Next.js App Router application structured around DDD bounded contexts. Today there are
 no authenticated screens and no remote sync — productivity-tracking data lives in the user's
 browser via PGlite (Postgres-WASM, IndexedDB-backed). UI state machines run via XState
 (`appMachine` for the navigation shell, `journalMachine` for event-log writes,

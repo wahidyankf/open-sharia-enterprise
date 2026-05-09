@@ -1,6 +1,8 @@
 # OrganicLever Application Specs
 
-Platform-agnostic specifications for the OrganicLever fullstack application. v0 ships a
+Platform-agnostic specifications for the OrganicLever fullstack application. The
+application is rolling-release on `main` (Trunk Based Development): scope grows
+incrementally rather than landing in numbered releases. Today the system ships a
 marketing landing site, a system-status diagnostic page, and a `/api/v1/health` backend
 endpoint — no authenticated screens, no remote sync. The application consists of an
 F#/Giraffe backend REST API and a Next.js 16 frontend.
@@ -50,8 +52,8 @@ specs/apps/organiclever/
 | Domains     | health                                                      | landing, system, layout, routing                              |
 | Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec)               | `apps/organiclever-web` (Next.js 16)                          |
 
-The frontend's system-status page consumes the backend's health endpoint. Otherwise the v0
-frontend is local-first.
+The frontend's system-status page consumes the backend's health endpoint. Otherwise the
+frontend is local-first today.
 
 ## Bounded Contexts
 
@@ -169,7 +171,7 @@ new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
 **Reading order**:
 
 1. **[product/overview.md](./product/overview.md)** — Start here. Plain-language
-   summary of what OrganicLever does, who it is for, what v0 ships, and what is deferred.
+   summary of what OrganicLever does, who it is for, what ships today, and what is deferred.
 2. **[system-context/context.md](./system-context/context.md)** — Where OrganicLever
    sits in the broader technical landscape: actors, external systems, trust boundaries.
 3. **[containers/container.md](./containers/container.md)** — The two deployable units:
@@ -183,11 +185,11 @@ new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
    as Gherkin (Given-When-Then) acceptance criteria per bounded context. The same files
    drive automated tests.
 
-**v0 in plain language**:
+**In plain language**:
 
 - You log what you did (workout, reading, meal, focus). It remembers. You see it later.
 - No account. No subscription. No data leaves your device.
-- The streak badge is the only "game mechanic" in v0.
+- The streak badge is the only "game mechanic" today.
 
 ## Related
 

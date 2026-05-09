@@ -1,7 +1,7 @@
 # Component Diagram: Next.js Frontend
 
 Level 3 of the C4 model. Shows the logical components inside the Next.js 16 frontend container.
-v0 has no authenticated screens. The frontend is structured around 9 DDD bounded contexts
+No authenticated screens today. The frontend is structured around 9 DDD bounded contexts
 (`src/contexts/<bc>/{domain,application,infrastructure,presentation}`), with PGlite
 (Postgres-WASM, IndexedDB-backed) as the local-first system of record.
 

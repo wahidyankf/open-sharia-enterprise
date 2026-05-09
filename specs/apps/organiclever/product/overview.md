@@ -14,13 +14,13 @@ stays on your device: no account, no server, no sync. The browser is the databas
 | **The curious learner**    | Tracks reading pages and learning topics weekly |
 | **The self-optimizer**     | Reviews a week of data to spot what worked      |
 
-The initial focus is on the consistent trainer. Workout logging is the deepest feature in
-v0; all other entry types (reading, learning, meal, focus) follow the same append-and-bump
-pattern but with lighter UIs.
+The initial focus is on the consistent trainer. Workout logging is the deepest feature
+shipped today; all other entry types (reading, learning, meal, focus) follow the same
+append-and-bump pattern but with lighter UIs.
 
-## What v0 ships
+## Ships today
 
-OrganicLever v0 delivers one closed loop:
+OrganicLever delivers one closed loop today:
 
 1. **Build a routine** — name a workout template, add exercise groups with default sets /
    reps / weight.
@@ -31,20 +31,22 @@ OrganicLever v0 delivers one closed loop:
 4. **Track your streak** — a weekly streak badge appears on the home screen once you hit
    two workouts in a week.
 
-## What v0 defers
+## Deferred
 
-- **Authentication and accounts** — all data is local; no login flow ships in v0.
+OrganicLever is rolling-release on `main` — items below ship when ready, no version cut.
+
+- **Authentication and accounts** — all data is local; no login flow ships today.
 - **Cloud sync** — no server writes; PGlite (Postgres-WASM, IndexedDB-backed) is the
   only storage.
 - **Social or sharing features** — private log only.
-- **Weight/length unit settings** — kg only in v0; `lb`/`in` support is placeholdered.
+- **Weight/length unit settings** — kg only today; `lb`/`in` support is placeholdered.
 - **Data export and reset** — UI stubs exist in Settings; backend not yet implemented.
-- **Progress charts** — the `/app/progress` screen exists but chart data is placeholder
-  in v0.
+- **Progress charts** — the `/app/progress` screen exists but chart data is still
+  placeholder.
 
 ## Primary user flows
 
-The two flows a v0 user runs most often:
+The two flows a user runs most often today:
 
 **Flow A — Log a workout (5–15 min)**
 
@@ -92,11 +94,11 @@ graph TD
     classDef action fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-## v0 in plain language
+## In plain language
 
 - You log what you did. It remembers. You see it later.
 - No account. No subscription. No data leaves your phone.
-- The streak badge is the only "game mechanic" in v0.
+- The streak badge is the only "game mechanic" today.
 
 ## Related
 

@@ -75,7 +75,7 @@ are added to the `typed-payloads` schema module without touching existing record
 
 **Diagram**: The diagram below shows the payload type hierarchy. All concrete types
 extend the common `EntryPayload` discriminated union via the `type` field; two concrete
-types ship in v0.
+types ship today.
 
 ```mermaid
 %% Color palette: Blue #0173B2 | Teal #029E73 | Orange #DE8F05 | Gray #808080
@@ -216,7 +216,7 @@ only stores timestamps.
 
 A human-friendly duration string rendered next to a `JournalEvent` to indicate how long
 ago it was created or bumped: "just now", "3m ago", "2h ago". Derived from `updatedAt`
-versus the current clock. English-only in v0. Lives in `shared/utils/` because it has
+versus the current clock. English-only today. Lives in `shared/utils/` because it has
 no journal-domain dependency — it is a pure formatting function reusable across contexts.
 
 **Code identifier(s)**:

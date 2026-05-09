@@ -54,7 +54,7 @@ volume totals, both in the same application file.
 A purely derived view over `JournalEvent`s. Always read-only — never writes back to the
 journal. The `stats` bounded context is entirely composed of projections. A `Projection`
 maps raw journal data into a shaped type useful for a specific view (e.g., exercise
-progress over time, per-day session counts). Two concrete projection types ship in v0:
+progress over time, per-day session counts). Two concrete projection types ship today:
 `ExerciseProgress` (per-exercise weight/reps trend) and `DayEntry` (per-day session
 summary for bar charts).
 
@@ -101,7 +101,7 @@ flowchart LR
 
 The time window over which an `Aggregate` is computed. Values: `day`, `week`, `month`.
 Not a dedicated type in the domain — period is expressed as a string literal in use-case
-arguments. The most common period in v0 is `week` (the `WeeklyStats` aggregate uses a
+arguments. The most common period today is `week` (the `WeeklyStats` aggregate uses a
 7-day rolling window from PGlite).
 
 **Code identifier(s)**:

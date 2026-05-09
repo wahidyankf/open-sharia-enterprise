@@ -9,7 +9,7 @@
 
 Backend health-endpoint client and the `/system/status/be` diagnostic page. Reads
 `ORGANICLEVER_BE_URL`, probes `GET /health`, and renders an UP / DOWN / Not configured
-tile. The `health` context is dormant in v0 (no live backend deployed) but its code is
+tile. The `health` context is dormant today (no live backend deployed) but its code is
 preserved for future rewire.
 
 ## Term index
@@ -132,7 +132,7 @@ swapping the live layer for a test layer requires only a different Layer binding
 **Used in features**: `health/*.feature`
 
 **Forbidden synonyms in this context**: "HTTP client" (the mechanism — the domain term
-is `Backend client`); "API client" (implies a full REST client — v0 only probes
+is `Backend client`); "API client" (implies a full REST client — today only probes
 `/health`).
 
 **Related**: `Health probe`, `Backend URL`

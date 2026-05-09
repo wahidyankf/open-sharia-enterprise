@@ -57,7 +57,7 @@ runtime configuration such as i18n keys and design tokens — inside `settings`,
 
 The user's chosen visual theme. Stored as `darkMode: boolean` on `AppSettings`: `true`
 = dark mode, `false` = light mode. Applied by the `app-shell` bootstrap by setting
-`data-theme="dark"` on `<html>`. No "system follows OS" mode in v0; the user toggles
+`data-theme="dark"` on `<html>`. No "system follows OS" mode today; the user toggles
 explicitly.
 
 **Code identifier(s)**:
@@ -97,7 +97,7 @@ resolution in `app-shell`. Stored as `lang: Lang` on `AppSettings`.
 ### Term: `Units`
 
 The measurement units applied to weights and lengths in the UI (e.g., `kg`/`lb`,
-`cm`/`in`). **Not yet implemented in v0.** Placeholder in the glossary and `AppSettings`
+`cm`/`in`). **Not yet implemented.** Placeholder in the glossary and `AppSettings`
 design for a future iteration. When implemented, it will be a value-typed enum on
 `AppSettings` and consumed by journal and stats presentation layers.
 
@@ -138,7 +138,7 @@ Gherkin steps use `Settings page` to match the route name).
 
 The user action that wipes all PGlite stores (journal entries, routines, preferences) and
 returns the app to the empty state — as if the user opened it for the first time.
-**Not yet implemented in v0.** When implemented, it will call a cross-context use-case
+**Not yet implemented.** When implemented, it will call a cross-context use-case
 that clears all three stores and triggers a re-seed via `app-shell`.
 
 **Code identifier(s)**:
@@ -156,7 +156,7 @@ Not yet implemented — no function in current codebase.
 ### Term: `Export data`
 
 The action that serializes all PGlite stores into a downloadable JSON file, letting the
-user back up or migrate their data. **Not yet implemented in v0.** When implemented, it
+user back up or migrate their data. **Not yet implemented.** When implemented, it
 will be a pure domain use-case reading all `JournalEvent`s, `Routine`s, and
 `AppSettings` into a versioned export envelope.
 

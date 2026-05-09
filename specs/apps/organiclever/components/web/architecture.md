@@ -18,11 +18,11 @@ error severity.
 | `stats`           | Read-only projections and aggregates over journal events       |
 | `settings`        | User preferences (dark mode, language, rest timer)             |
 | `app-shell`       | Navigation chrome, overlay tree, i18n, `appMachine`            |
-| `health`          | Backend health-endpoint client (dormant in v0)                 |
+| `health`          | Backend health-endpoint client (dormant today)                 |
 | `landing`         | Marketing landing page at `/`                                  |
 | `routing`         | Disabled-route 404 guards (`/login`, `/profile`)               |
 
-See [bounded-context-map.md](./ddd/bounded-context-map.md) for strategic-pattern
+See [bounded-context-map.md](../../ddd/bounded-context-map.md) for strategic-pattern
 relationships and ESLint boundary rules between contexts.
 
 ## Project layout
@@ -90,8 +90,8 @@ they are not dead code, just dormant:
 
 ## Related
 
-- [Bounded-context map](./ddd/bounded-context-map.md) — strategic patterns between
+- [Bounded-context map](../../ddd/bounded-context-map.md) — strategic patterns between
   contexts, ADR, ESLint config
-- [Ubiquitous language](./ddd/ubiquitous-language/README.md) — per-context glossaries
+- [Ubiquitous language](../../ddd/ubiquitous-language/README.md) — per-context glossaries
 - [Behavior specs](../../behavior/web/gherkin/README.md) — Gherkin acceptance criteria
 - [Routes and screens](./routes-and-screens.md) — URL routing and screen inventory

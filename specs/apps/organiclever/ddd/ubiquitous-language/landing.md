@@ -175,7 +175,7 @@ Button with label `"Open the app"` rendered inside `LandingHero`
 
 **Used in features**: `landing/*.feature`
 
-**Forbidden synonyms in this context**: "Sign up button" (no auth in v0 — it links
+**Forbidden synonyms in this context**: "Sign up button" (no auth today — it links
 directly to the app); "Get started" (the button label is specifically "Open the app",
 not "Get started").
 

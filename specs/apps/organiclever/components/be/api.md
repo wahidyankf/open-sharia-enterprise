@@ -3,10 +3,10 @@
 **Audience:** Engineers, Technical Product/Project Managers
 
 OrganicLever backend (`organiclever-be`) is an F#/Giraffe (a functional web framework
-on top of ASP.NET Core — think Node.js Express but functional and typed) REST API. v0
-ships one endpoint: the health check. All productivity-tracking endpoints are deferred
-to future iterations; the backend is deployed alongside the frontend for operational
-readiness, not because v0 features require it.
+on top of ASP.NET Core — think Node.js Express but functional and typed) REST API.
+Today it ships one endpoint: the health check. All productivity-tracking endpoints are
+deferred; the backend is deployed alongside the frontend for operational readiness, not
+because current features require it.
 
 ## Endpoints
 
@@ -16,12 +16,12 @@ readiness, not because v0 features require it.
 
 ## Environment variables
 
-v0 has no required environment variables. The health endpoint runs without any
+No required environment variables today. The health endpoint runs without any
 configuration. Future endpoints will document their variables here.
 
 | Variable     | Scope | Required | Description |
 | ------------ | ----- | -------- | ----------- |
-| (none in v0) | —     | No       | —           |
+| (none today) | —     | No       | —           |
 
 ## Architecture
 

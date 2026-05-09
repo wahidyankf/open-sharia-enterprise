@@ -3,8 +3,8 @@
 Level 1 of the C4 model. Shows the OrganicLever system as a single boundary with two external
 actors. The system contains both the Next.js frontend — a local-first life-journal app
 (workout, reading, learning, meal, focus tracking) backed by in-browser PGlite storage — and
-the F#/Giraffe backend REST API (health endpoint only in v0; productivity API surface deferred).
-v0 has no authenticated screens.
+the F#/Giraffe backend REST API (health endpoint only today; productivity API surface deferred).
+No authenticated screens today.
 
 ```mermaid
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080

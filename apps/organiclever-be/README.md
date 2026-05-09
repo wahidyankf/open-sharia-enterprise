@@ -1,6 +1,6 @@
 # organiclever-be
 
-F#/Giraffe REST API backend for OrganicLever. v0 ships one endpoint: health check.
+F#/Giraffe REST API backend for OrganicLever. Today ships one endpoint: health check.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ nx dev organiclever-be   # http://localhost:8202
 
 ## Environment Variables
 
-v0 has no required environment variables. Future endpoints will document theirs here.
+No required environment variables today. Future endpoints will document theirs here.
 
 ## Tech Stack
 

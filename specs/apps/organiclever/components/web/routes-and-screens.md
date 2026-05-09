@@ -15,8 +15,8 @@ App Router), not by in-memory state.
 | `/app`              | 308 permanent redirect to `/app/home`        |
 | `/app/...`          | OrganicLever life journal (URL-routed shell) |
 | `/system/status/be` | Server-rendered backend diagnostic page      |
-| `/login`            | 404 stub — no authentication in v0           |
-| `/profile`          | 404 stub — no user profile in v0             |
+| `/login`            | 404 stub — no authentication today           |
+| `/profile`          | 404 stub — no user profile today             |
 
 ## In-app screens (URL-routed under `/app/`)
 

@@ -1,8 +1,8 @@
 # OrganicLever Backend API Specs
 
-Platform-agnostic Gherkin acceptance specifications for the OrganicLever backend service. v0
-covers the service health endpoint only; productivity-tracking endpoints will be added in
-future iterations.
+Platform-agnostic Gherkin acceptance specifications for the OrganicLever backend service.
+Coverage today is the service health endpoint only; productivity-tracking endpoints will
+be added incrementally on the rolling-release `main` branch.
 
 ## What This Covers
 
