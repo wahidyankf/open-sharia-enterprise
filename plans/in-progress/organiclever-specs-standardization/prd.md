@@ -425,6 +425,61 @@ After the Phase 2A move (`ddd/ubiquitous-language/` → `components/web/ddd/ubiq
 
 **Validation**: a new acceptance scenario asserts every per-bounded-context glossary file contains as many `### Term:` H3 sections as rows in the term index table, and that each H3 section contains AT MINIMUM a definition paragraph plus a `Code identifier(s):` line. Hand-spot-check against `journal.md` (the most term-rich file) before declaring the deepening commit done.
 
+### FR-17: Mermaid diagrams in specs/ where appropriate (incl. per-term in ubiquitous-language files)
+
+Specs files use **Mermaid diagrams** wherever a diagram clarifies the topic faster than prose. Diagrams are not decoration — they are load-bearing communication for SWE-background TPMs and engineers alike. The PM-Readability Contract Rule 4 (every code/Mermaid block preceded by a one-sentence "what this shows" intro) governs HOW diagrams appear; this FR governs WHERE they appear.
+
+**When a Mermaid diagram is appropriate**:
+
+| Topic shape                                     | Mermaid diagram type                       | Examples                                                                                       |
+| ----------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Lifecycle / state transitions of a domain object | `stateDiagram-v2`                         | `JournalEvent` lifecycle (createdAt set → bump\* updates updatedAt); `WorkoutSession` FSM      |
+| Type hierarchy / variant family                 | `classDiagram` or `flowchart TD`          | `Typed payload` (`EntryPayload` ← `WorkoutPayload`, `ReadingPayload`, future variants)         |
+| Composition / aggregate structure               | `classDiagram` or `flowchart TD`          | `Routine` → `ExerciseSlot` → `Exercise` (aggregate composition)                                |
+| Cross-context interaction / data flow           | `sequenceDiagram` or `flowchart LR`       | `bump` event → `journal_events.updatedAt` write → `stats` projection refresh → UI relative-time |
+| Bounded-context map                             | `flowchart TD`                            | Already in `components/web/ddd/bounded-context-map.md`                                         |
+| C4 levels                                       | C4 PlantUML or `flowchart` per Mermaid C4 | Already in `system-context/context.md`, `containers/container.md`, `components/*/component-*.md` |
+
+**When a Mermaid diagram is NOT appropriate**:
+
+- Trivial 2-3 element relationships that fit in one prose sentence
+- Anything where the diagram would simply restate a markdown table
+- "Decoration" diagrams that don't carry information beyond the surrounding prose
+- Topics where prose comparison reads faster (e.g., "X is like Y but with Z" — write the sentence)
+
+**Per-term Mermaid pattern in ubiquitous-language files** (extends FR-16 H3 structure):
+
+Each `### Term: <name>` H3 MAY include an optional `**Diagram**:` field BETWEEN the definition paragraph and the `Code identifier(s):` line. The field consists of: (a) one-sentence "what this shows" intro per PM-Readability Rule 4, (b) the Mermaid block. A term without a clarifying diagram simply omits this field — empty diagrams are forbidden (do not stub).
+
+**Concrete recommendations** (judgment-call list — executor decides per term):
+
+| Glossary file       | Term                  | Suggested diagram                                                                                                              |
+| ------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `journal.md`        | `JournalEvent`        | `stateDiagram-v2` — Created → Bumped\* (updatedAt mutates), payload/createdAt immutable                                       |
+| `journal.md`        | `Typed payload`       | `classDiagram` — `EntryPayload` ← `WorkoutPayload`, `ReadingPayload`                                                          |
+| `routine.md`        | `Routine`             | `classDiagram` — Routine → 1..N ExerciseSlot → 1 Exercise; show ordering attribute                                            |
+| `workout-session.md` | `WorkoutSession`     | `stateDiagram-v2` mirroring the actual XState machine (idle → running → resting → finishing → finished)                       |
+| `stats.md`          | `Projection`         | `sequenceDiagram` — `journal_events.append` → `stats.refresh()` → UI render                                                    |
+| `app-shell.md`      | `AppMachine`         | `stateDiagram-v2` mirroring the appMachine XState definition                                                                  |
+| (others)            | —                    | usually no diagram needed; nouns and value objects rarely benefit                                                              |
+
+**Code-mirroring constraint (drift prevention)**:
+
+Mermaid diagrams that mirror runtime artefacts (XState machines, OpenAPI flows, schema relationships) MUST match the runtime artefact. If `workoutSessionMachine.ts` defines states `[idle, running, resting, finishing, finished]`, the diagram in `workout-session.md` MUST list exactly those states and exactly those transitions. A drift here is the same severity as a stale code identifier — `rhino-cli specs drift-routes` and `drift-endpoints` (FR-14) catch route/endpoint drift; XState-vs-diagram drift is caught by hand review during Phase 2.5 (one-time pilot effort) and tracked as a `pilot-findings.md` candidate for future automation.
+
+**Color palette**: every Mermaid diagram uses the color-blind-safe palette per [governance/conventions/formatting/diagrams.md](../../../governance/conventions/formatting/diagrams.md): Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080`. Stroke colors `#000`. Text on dark fills uses `#FFF`; text on light fills uses `#000`. The palette is already used in `delivery.md`'s phase-flow diagram and the existing C4 diagrams — preserve consistency.
+
+**Accessibility**: every Mermaid block is preceded by a prose sentence that states the diagram's key takeaway. A screen-reader user MUST get the same insight from the prose alone — the diagram amplifies, never substitutes.
+
+**Files affected by FR-17 in this plan**:
+
+- All NEW files in Phase 3 (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`) — include a Mermaid diagram where one of the topic shapes above applies; omit otherwise
+- All 9 deepened ubiquitous-language `<bc>.md` files in Phase 2.5 — add per-term diagrams per the recommendations table above (judgment call: executor adds one only when it clarifies)
+- `components/web/ddd/bounded-context-map.md` (moved) — already contains diagrams; verify color palette consistency post-move
+- `system-context/context.md`, `containers/container.md`, `components/be/component-be.md`, `components/web/component-web.md` (moved) — already contain C4 diagrams; verify color palette consistency post-move
+
+**Validation**: new acceptance scenarios assert (a) every Mermaid block in NEW or MOVED specs files is preceded by a one-sentence intro, (b) every diagram uses the color-blind-safe palette, (c) at least the marquee terms in the recommendations table above carry diagrams, (d) no diagram restates a table that appears in the same section.
+
 ## Acceptance criteria (Gherkin)
 
 ```gherkin
@@ -598,6 +653,54 @@ Feature: Ubiquitous Language glossary files contain detailed per-term explanatio
     And the rule references journal.md as the example
     And the rule preserves the existing 5 authoring rules verbatim
       (the new rule is rule 6, not a replacement)
+
+Feature: Mermaid diagrams in specs/ files where appropriate (FR-17)
+  As a SWE-background TPM scanning specs/
+  I want diagrams that clarify lifecycles, hierarchies, state machines, and cross-context flows
+    where the diagram is faster to read than prose
+  So that I get the structural insight without reading code,
+    AND I can trust the diagram matches the actual runtime artefact.
+
+  Scenario: Marquee ubiquitous-language terms carry diagrams
+    Given the deepened glossary files exist
+    Then specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md contains
+      a Mermaid stateDiagram-v2 within the "### Term: `JournalEvent`" H3 section
+    And it contains a Mermaid classDiagram (or flowchart) within "### Term: `Typed payload`"
+    And specs/apps/organiclever/components/web/ddd/ubiquitous-language/routine.md contains
+      a Mermaid classDiagram within "### Term: `Routine`" showing Routine → ExerciseSlot → Exercise
+    And specs/apps/organiclever/components/web/ddd/ubiquitous-language/workout-session.md contains
+      a Mermaid stateDiagram-v2 within "### Term: `WorkoutSession`" mirroring the XState machine states
+    And specs/apps/organiclever/components/web/ddd/ubiquitous-language/stats.md contains
+      a Mermaid sequenceDiagram within "### Term: `Projection`" showing journal-event → stats-refresh → UI
+
+  Scenario: Every Mermaid block has a one-sentence intro (PM-Readability Rule 4 enforcement)
+    Given any *.md file under specs/apps/organiclever/
+    When I find every fenced ```mermaid block
+    Then the line preceding the opening fence is a sentence ending in "." (the "what this shows" intro)
+      OR a "**Diagram**:" / "**What this shows**:" label followed by an intro on the next line
+    And no Mermaid block appears without an intro
+
+  Scenario: Color palette consistency
+    Given any Mermaid block under specs/apps/organiclever/
+    When I look at fill colors and stroke colors
+    Then fill colors come from the color-blind-safe palette
+      (Blue #0173B2, Teal #029E73, Orange #DE8F05, Gray #808080)
+    And stroke colors are #000
+    And no diagram uses red/green color pairs that fail color-blind accessibility
+
+  Scenario: Diagrams that mirror runtime artefacts match the runtime artefact
+    Given specs/apps/organiclever/components/web/ddd/ubiquitous-language/workout-session.md
+    When I read the stateDiagram in "### Term: `WorkoutSession`"
+    Then the set of states in the diagram equals the set of states in
+      apps/organiclever-web/src/contexts/workout-session/application/workout-session-machine.ts
+    And the transitions in the diagram match the events handled by that XState machine
+
+  Scenario: No decoration diagrams (no diagram that simply restates a table)
+    Given any *.md file under specs/apps/organiclever/
+    When a Mermaid diagram appears within ~10 lines of a markdown table
+    Then the diagram conveys at least one piece of information not in the table
+      (e.g., a relationship, a sequence, a state transition — not just "the same items as the table")
+    Otherwise the diagram is a finding to remove or to merge with the table
 
 Feature: Governance propagation (FR-8)
   Scenario: New convention exists and follows the convention-writing standard

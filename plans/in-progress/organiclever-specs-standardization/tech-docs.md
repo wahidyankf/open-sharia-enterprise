@@ -290,6 +290,181 @@ but never mutates them in place.
 
 **README.md addendum**: the `ubiquitous-language/README.md` index gains a new authoring rule (rule 6, appended — existing 5 rules retained verbatim) requiring per-term H3 detail, with `journal.md` named as the canonical example.
 
+### Per-term Mermaid diagrams (FR-17)
+
+Some terms benefit from a diagram more than from extra prose. The H3 section gains an OPTIONAL `**Diagram**:` field between the definition paragraph and the `Code identifier(s):` line. The field is one-sentence intro + Mermaid block. Omit when prose is clearer (most nouns and value objects do not need a diagram). Empty stubs are forbidden.
+
+**Worked example: `JournalEvent` lifecycle (`journal.md`)**:
+
+```text
+### Term: `JournalEvent`
+
+A single, append-only record of something the user did. ...
+
+**Diagram**: lifecycle of a `JournalEvent` from creation through optional bumps —
+the payload and `createdAt` are immutable; only `updatedAt` changes on bump.
+
+​```mermaid
+%% Color palette: Blue #0173B2 | Teal #029E73 | Orange #DE8F05
+stateDiagram-v2
+    [*] --> Created: append(payload)
+    Created: createdAt = updatedAt = now
+    Created --> Bumped: bump()
+    Bumped: updatedAt = now (payload, createdAt unchanged)
+    Bumped --> Bumped: bump() (idempotent re-touch)
+    Bumped --> [*]: (records never delete in v0)
+    Created --> [*]
+​```
+
+**Code identifier(s)**: `JournalEvent` — `apps/organiclever-web/src/contexts/journal/domain/types.ts`
+
+(... rest of H3 section ...)
+```
+
+**Worked example: `Typed payload` hierarchy (`journal.md`)**:
+
+```text
+### Term: `Typed payload`
+
+The structured body of a `JournalEvent`. ...
+
+**Diagram**: payload variants in v0 — extensible via the `typed-payloads` schema.
+
+​```mermaid
+classDiagram
+    class EntryPayload {
+        <<sealed union>>
+        +type: "workout" | "reading" | "meal" | "focus" | "learning"
+    }
+    class WorkoutPayload {
+        +type: "workout"
+        +routineId: RoutineId
+        +sets: SetEntry[]
+    }
+    class ReadingPayload {
+        +type: "reading"
+        +bookId: string
+        +pages: number
+    }
+    EntryPayload <|-- WorkoutPayload
+    EntryPayload <|-- ReadingPayload
+​```
+
+(... rest of H3 section ...)
+```
+
+**Worked example: `WorkoutSession` FSM (`workout-session.md`)**:
+
+```text
+### Term: `WorkoutSession`
+
+The active workout in progress, modelled as an XState machine ...
+
+**Diagram**: workout-session state machine — mirrors the actual XState definition
+in `apps/organiclever-web/src/contexts/workout-session/application/workout-session-machine.ts`.
+Drift between this diagram and the machine is treated as a finding (FR-17).
+
+​```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> running: START_SET
+    running --> resting: COMPLETE_SET
+    resting --> running: NEXT_SET
+    running --> finishing: FINISH_REQUESTED
+    resting --> finishing: FINISH_REQUESTED
+    finishing --> finished: CONFIRM_FINISH
+    finishing --> running: RESUME
+    finished --> [*]: PERSIST_TO_JOURNAL
+​```
+
+(... rest of H3 section ...)
+```
+
+**Worked example: `Routine` aggregate composition (`routine.md`)**:
+
+```text
+### Term: `Routine`
+
+A planned, ordered sequence of exercises ...
+
+**Diagram**: aggregate composition — Routine is the aggregate root; ExerciseSlot
+and Exercise are not addressed independently from outside the aggregate.
+
+​```mermaid
+classDiagram
+    class Routine {
+        <<aggregate root>>
+        +id: RoutineId
+        +name: string
+        +slots: ExerciseSlot[]
+    }
+    class ExerciseSlot {
+        +order: number
+        +exerciseId: ExerciseId
+        +sets: SetTarget[]
+    }
+    class Exercise {
+        +id: ExerciseId
+        +name: string
+        +muscleGroup: string
+    }
+    Routine "1" *-- "1..N" ExerciseSlot : ordered
+    ExerciseSlot "1" --> "1" Exercise : references
+​```
+
+(... rest of H3 section ...)
+```
+
+**Worked example: `Projection` data flow (`stats.md`)**:
+
+```text
+### Term: `Projection`
+
+A read-only derived view ...
+
+**Diagram**: append-then-project flow — `journal` is the system of record;
+`stats` projections refresh on every event append, never write back.
+
+​```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as UI (presentation)
+    participant Use as journal use-case
+    participant DB as PGlite (journal_events)
+    participant Stat as stats projection
+    User->>UI: log workout
+    UI->>Use: appendEntry(workoutPayload)
+    Use->>DB: INSERT INTO journal_events
+    DB-->>Use: row
+    Use->>Stat: notify(append)
+    Stat->>DB: SELECT aggregate
+    DB-->>Stat: rows
+    Stat-->>UI: refreshed projection
+    UI-->>User: rendered StatCard
+​```
+
+(... rest of H3 section ...)
+```
+
+**Diagram type cheat-sheet**:
+
+| Topic                              | Mermaid type                | Why this type                                                                          |
+| ---------------------------------- | --------------------------- | -------------------------------------------------------------------------------------- |
+| Lifecycle / FSM                    | `stateDiagram-v2`           | States and transitions are first-class; reads cleanly                                  |
+| Variant family / sealed union      | `classDiagram`              | Inheritance and field shape both visible                                               |
+| Aggregate composition              | `classDiagram`              | Composition (`*--`) and reference (`-->`) arrows are explicit                          |
+| Cross-context / async flow         | `sequenceDiagram`           | Time axis makes the order of writes vs reads obvious                                   |
+| Hierarchy / tree                   | `flowchart TD`              | Top-down with simple boxes; faster than classDiagram for pure structure                |
+| Network / relationship             | `flowchart LR`              | Left-right reads as "from → to"; good for context maps                                 |
+
+**Anti-patterns**:
+
+- Diagram that restates a markdown table → either keep the table (preferred for scannable reference) or keep the diagram with strictly more information; never both
+- Decorative state diagram on a term that has only one state → the prose "is always present" reads faster
+- Diagram with red/green color pairs → fails color-blind accessibility; use the repo palette (Blue / Teal / Orange / Gray)
+- Diagram with no preceding intro sentence → violates PM-Readability Rule 4 and FR-17
+
 ## OrganicLever-specific notes
 
 These are observations specific to this pilot; they do NOT modify the rule, but flag context for the executor.

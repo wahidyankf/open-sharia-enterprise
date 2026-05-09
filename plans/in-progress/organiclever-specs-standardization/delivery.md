@@ -254,8 +254,10 @@ For each file, the executor:
 1. Lists all terms from the existing compact table (preserves ordering)
 2. Splits the file into the new shape: header (retained), one-line summary (retained), `## Term index` table (Definition column REMOVED — keep Term, Code identifier(s), Used in features), `## Terms in detail` (NEW — one `### Term: <name>` per row in the index)
 3. For EACH term writes the required fields per FR-16 (definition paragraph, why-this-term, code identifier path, persisted-as if applicable, used-in-features, forbidden-synonyms-in-context with reason, related cross-links)
-4. Reads the actual code at the path in `Code identifier(s)` to confirm the type/function still exists and the file path is correct (a glossary that points at moved or renamed code is worse than a thin glossary)
-5. Verifies `rhino-cli ddd ul organiclever` still parses the deepened file (the parser reads the term index table, not the detailed sections, so it should pass — but verify, do not assume)
+4. **For terms in the FR-17 recommendations table** (`JournalEvent`, `Typed payload`, `Routine`, `WorkoutSession`, `Projection`, `AppMachine`, plus any other term where a diagram clarifies more than prose), inserts a `**Diagram**:` field between the definition paragraph and `Code identifier(s):`. The field is one-sentence intro + Mermaid block. Color palette: Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080`. See [tech-docs.md §Per-term Mermaid diagrams](./tech-docs.md#per-term-mermaid-diagrams-fr-17) for worked examples
+5. **For diagrams that mirror runtime artefacts** (XState machines especially), reads the runtime artefact and matches the diagram's states and transitions exactly. Drift = same severity as a stale code identifier
+6. Reads the actual code at the path in `Code identifier(s)` to confirm the type/function still exists and the file path is correct (a glossary that points at moved or renamed code is worse than a thin glossary)
+7. Verifies `rhino-cli ddd ul organiclever` still parses the deepened file (the parser reads the term index table, not the detailed sections, so it should pass — but verify, do not assume)
 
 Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks recommended after each file):
 
@@ -314,9 +316,16 @@ Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks 
 - [ ] **2.5B.5** Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0 (DDD ul parser still happy)
 - [ ] **2.5B.6** Run `nx run rhino-cli:test:integration --skip-nx-cache` — exit 0
 - [ ] **2.5B.7** Spot-check `journal.md` rendered output: open in GitHub-flavored preview, verify the `## Term index` table jumps cleanly to each `### Term:` H3 via slug links, and the deepened explanation reads coherently to a SWE-background TPM persona check (one paragraph the executor can read aloud and feel says something substantive — if it reads like the old table cell padded out, deepen further).
-- [ ] **2.5B.8 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations (FR-16)`
+- [ ] **2.5B.8 Mermaid diagram audit (FR-17)**: for each glossary file, confirm:
+  - [ ] Marquee terms from the FR-17 recommendations table carry a `**Diagram**:` field (`JournalEvent` + `Typed payload` in `journal.md`; `Routine` in `routine.md`; `WorkoutSession` in `workout-session.md`; `Projection` in `stats.md`; `AppMachine` in `app-shell.md`)
+  - [ ] Every Mermaid block is preceded by a one-sentence "what this shows" intro per PM-Readability Rule 4
+  - [ ] Color palette is the color-blind-safe set (Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080`); no red/green pairs
+  - [ ] Diagrams that mirror runtime artefacts match the runtime: in particular, the `WorkoutSession` stateDiagram-v2 in `workout-session.md` lists states and transitions matching `apps/organiclever-web/src/contexts/workout-session/application/workout-session-machine.ts`, AND the `AppMachine` diagram in `app-shell.md` matches `apps/organiclever-web/src/contexts/app-shell/presentation/app-machine.ts`
+  - [ ] No diagram is a decoration (every diagram conveys information beyond the surrounding prose / table)
+  - [ ] Render-check: open `journal.md` in GitHub preview and confirm the Mermaid blocks render without parse errors
+- [ ] **2.5B.9 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations + diagrams (FR-16, FR-17)`
 
-   Use HEREDOC body listing all 10 files updated and noting "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files."
+   Use HEREDOC body listing all 10 files updated and noting: (a) "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files." (b) "Mermaid diagrams added per FR-17 for marquee terms (JournalEvent, Typed payload, Routine, WorkoutSession, Projection, AppMachine). XState-mirroring diagrams match the runtime machines."
 
 ## Phase 3 — Create new content files at final tree positions
 
@@ -593,6 +602,7 @@ This phase delivers the deterministic offload commands that the agents (updated 
   - [ ] Every code/Mermaid block is preceded by a one-sentence "what this shows" intro
   - [ ] Summary paragraph (after H1) contains no un-glossed niche framework names or DDD-applied terms; mainstream SWE vocabulary is fine
 - [ ] **8.1.5 Ubiquitous-Language depth check (FR-16)** — for each of the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files, confirm: (a) `## Term index` table exists, (b) `## Terms in detail` section exists, (c) one `### Term: <name>` H3 per row in the index, (d) every H3 contains a definition paragraph + `Code identifier(s):` + `Used in features:` + `Forbidden synonyms in this context:` (when applicable), (e) term names byte-identical to pre-deepening (re-run the diff from 2.5B.3), (f) `rhino-cli ddd ul organiclever` still passes
+- [ ] **8.1.6 Mermaid diagram check (FR-17)** — across all NEW or MOVED files under `specs/apps/organiclever/`, confirm: (a) every Mermaid block is preceded by a one-sentence "what this shows" intro per PM-Readability Rule 4, (b) every diagram uses the color-blind-safe palette (Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080` — no red/green pairs), (c) the marquee per-term diagrams from the FR-17 recommendations table exist (`JournalEvent`, `Typed payload`, `Routine`, `WorkoutSession`, `Projection`, `AppMachine`), (d) XState-mirroring diagrams match the runtime machines (states and transitions equal). Also re-render `journal.md`, `workout-session.md`, `stats.md` in GitHub preview to spot-check parse cleanliness.
 - [ ] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section that opens with a one-sentence audience note (SWE-background TPMs targeted — VS Code TPM / database-product TPM / SDK TPM persona; non-technical PMs may need a colleague to walk through C4 diagrams and DDD-applied vocabulary), reading order (product/ → system-context/ → containers/ → components/ → behavior/), file-by-file what-to-expect notes, and 3-bullet "v0 in plain language" summary
 - [ ] **8.3 Run FULL FR-15 push gate matrix** (all `--skip-nx-cache`):
   - [ ] `npm run lint:md` exit 0
