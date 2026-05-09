@@ -58,11 +58,9 @@ Implementing a complete Bounded Context with its own model, repositories, and se
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     subgraph SalesContext[Sales Bounded Context]
-        A["Customer\n(Sales model)"]
-        B["Product\n(Sales model)"]
+        E["SalesService"]
         C["Order\n(Sales model)"]
         D["SalesOrderRepository"]
-        E["SalesService"]
     end
     subgraph ShippingContext[Shipping Bounded Context]
         F["Shipment\n(Shipping model)"]
@@ -70,13 +68,17 @@ graph TD
         H["ShipmentRepository"]
     end
 
-    E -->|via ACL/event| F
+    E -- via ACL/event --> F
+    C --> D
+    F --> G
+    G --> H
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#0173B2,stroke:#000,color:#fff
+    style E fill:#0173B2,stroke:#000,color:#fff
     style C fill:#0173B2,stroke:#000,color:#fff
+    style D fill:#0173B2,stroke:#000,color:#fff
     style F fill:#DE8F05,stroke:#000,color:#000
     style G fill:#DE8F05,stroke:#000,color:#000
+    style H fill:#DE8F05,stroke:#000,color:#000
 ```
 
 ```typescript
@@ -1205,10 +1207,10 @@ graph TD
     D["Consumer C\nInternal Service"]
     E["Your Domain\nBounded Context"]
 
-    A -->|serves| B
-    A -->|serves| C
-    A -->|serves| D
-    E -->|exposes via| A
+    A -- serves --> B
+    A -- serves --> C
+    A -- serves --> D
+    E -- exposes via --> A
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
@@ -2197,11 +2199,11 @@ graph TD
     D["Email Service\nhandler"]
     E["Audit Service\nhandler"]
 
-    A -->|orchestrates| B
-    B -->|raises| C
-    A -->|publishes after tx| C
-    C -->|notifies| D
-    C -->|notifies| E
+    A -- orchestrates --> B
+    B -- raises --> C
+    A -- publishes after tx --> C
+    C -- notifies --> D
+    C -- notifies --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff

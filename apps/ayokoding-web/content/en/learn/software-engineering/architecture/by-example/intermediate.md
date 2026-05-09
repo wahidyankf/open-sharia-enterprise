@@ -132,7 +132,7 @@ Clean Architecture organizes code into concentric rings (Entities → Use Cases 
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["Frameworks & Drivers<br/>Web, DB, UI"]
-    B["Interface Adapters<br/>Controllers, Presenters, Gateways"]
+    B["Interface Adapters<br/>Controllers, Presenters"]
     C["Use Cases<br/>Application Business Rules"]
     D["Entities<br/>Enterprise Business Rules"]
 
@@ -612,10 +612,10 @@ graph TD
     D["WeightBasedStrategy"]
     E["FreeShippingStrategy"]
 
-    A -->|uses| B
-    B -.->|implements| C
-    B -.->|implements| D
-    B -.->|implements| E
+    A -- uses --> B
+    B -.-> C
+    B -.-> D
+    B -.-> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
@@ -2071,11 +2071,11 @@ graph TD
     D["Query Handler<br/>(Read Side)"]
     E["Read Store<br/>(Denormalized / Cache)"]
 
-    A -->|Command| B
-    B -->|persist| C
-    C -->|sync event| E
-    A -->|Query| D
-    D -->|read| E
+    A -- Command --> B
+    B -- persist --> C
+    C -- sync event --> E
+    A -- Query --> D
+    D -- read --> E
 
     style A fill:#CA9161,stroke:#000,color:#fff
     style B fill:#0173B2,stroke:#000,color:#fff

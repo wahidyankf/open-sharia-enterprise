@@ -927,20 +927,16 @@ Terratest is a Go library that writes automated tests for Terraform infrastructu
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-  A["Test Code (Go)"] --> B["terraform init/apply"]
-  B --> C["Real AWS/GCP/Azure"]
-  C --> D["Assertions"]
-  D --> E{Pass?}
-  E -->|Yes| F["terraform destroy"]
-  E -->|No| G["Log failure + destroy"]
+  A["Test Code (Go)"] --> B["Deploy + Provision<br/>terraform apply"]
+  B --> C["Real AWS/GCP/Azure<br/>Assertions run"]
+  C -- Pass --> D["terraform destroy"]
+  C -- Fail --> E["Log failure + destroy"]
 
   style A fill:#0173B2,stroke:#000,color:#fff
   style B fill:#DE8F05,stroke:#000,color:#fff
   style C fill:#CA9161,stroke:#000,color:#fff
-  style D fill:#CC78BC,stroke:#000,color:#fff
-  style E fill:#DE8F05,stroke:#000,color:#fff
-  style F fill:#029E73,stroke:#000,color:#fff
-  style G fill:#CA9161,stroke:#000,color:#fff
+  style D fill:#029E73,stroke:#000,color:#fff
+  style E fill:#CA9161,stroke:#000,color:#fff
 ```
 
 ```go
@@ -1998,10 +1994,8 @@ graph TD
   A --> D["module.database"]
   B --> E["module.vpc"]
   B --> F["module.security-groups"]
-  C --> G["module.asg"]
-  C --> H["module.alb"]
-  D --> I["module.rds"]
-  D --> J["module.elasticache"]
+  C --> G["module.asg + alb"]
+  D --> H["module.rds + elasticache"]
 
   style A fill:#0173B2,stroke:#000,color:#fff
   style B fill:#DE8F05,stroke:#000,color:#fff
@@ -2010,9 +2004,7 @@ graph TD
   style E fill:#029E73,stroke:#000,color:#fff
   style F fill:#029E73,stroke:#000,color:#fff
   style G fill:#029E73,stroke:#000,color:#fff
-  style H fill:#029E73,stroke:#000,color:#fff
-  style I fill:#CA9161,stroke:#000,color:#fff
-  style J fill:#CA9161,stroke:#000,color:#fff
+  style H fill:#CA9161,stroke:#000,color:#fff
 ```
 
 ```hcl

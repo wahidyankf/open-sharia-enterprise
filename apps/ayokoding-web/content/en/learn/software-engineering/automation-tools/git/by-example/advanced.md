@@ -1052,13 +1052,13 @@ graph TD
     BLOB3["Blob object<br/>src/app.go contents"]
     PARENT["Parent commit<br/>SHA: 9f8e7d6"]
 
-    TAG -->|points to| COMMIT
-    COMMIT -->|tree| TREE
-    COMMIT -->|parent| PARENT
-    TREE -->|blob README.md| BLOB1
-    TREE -->|blob main.go| BLOB2
-    TREE -->|tree src/| SUBTREE
-    SUBTREE -->|blob app.go| BLOB3
+    TAG -- points to --> COMMIT
+    COMMIT -- tree --> TREE
+    COMMIT -- parent --> PARENT
+    TREE -- blob README.md --> BLOB1
+    TREE -- blob main.go --> BLOB2
+    TREE -- tree src/ --> SUBTREE
+    SUBTREE -- blob app.go --> BLOB3
 
     style TAG fill:#CC78BC,stroke:#000,color:#fff
     style COMMIT fill:#0173B2,stroke:#000,color:#fff

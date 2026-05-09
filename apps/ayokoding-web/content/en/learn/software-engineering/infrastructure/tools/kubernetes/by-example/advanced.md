@@ -3353,7 +3353,7 @@ graph TD
  B --> D[Cluster: prod-eu-central]
  B --> E[Cluster: staging]
  C --> F[Application: prod-us-west-app]
- D --> G[Application: prod-eu-central-app]
+ D --> G[App: prod-eu-central]
  E --> H[Application: staging-app]
 
  style A fill:#0173B2,stroke:#000000,stroke-width:2px,color:#fff

@@ -601,29 +601,23 @@ DNS (Domain Name System) translates human-readable names like `api.example.com` 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Browser<br/>Needs api.example.com"]
-    B["OS DNS Cache<br/>Check local cache first"]
-    C["Recursive Resolver<br/>ISP or 8.8.8.8"]
-    D["Root DNS Server<br/>Knows .com servers"]
-    E["TLD DNS Server<br/>Knows example.com"]
-    F["Authoritative DNS<br/>Returns 203.0.113.42"]
+    A["Browser<br/>Query api.example.com"]
+    B["OS DNS Cache<br/>Check local cache"]
+    C["Recursive Resolver<br/>Iterative query"]
+    D["DNS Hierarchy<br/>Root → TLD → Auth"]
+    E["IP: 203.0.113.42<br/>Returned to browser"]
 
-    A -->|"1 - query"| B
-    B -->|"2 - cache miss"| C
-    C -->|"3 - ask root"| D
-    D -->|"4 - refer to TLD"| C
-    C -->|"5 - ask TLD"| E
-    E -->|"6 - refer to auth"| C
-    C -->|"7 - ask auth"| F
-    F -->|"8 - IP address"| C
-    C -->|"9 - cache + return"| A
+    A -- 1 query --> B
+    B -- 2 cache miss --> C
+    C -- 3 query chain --> D
+    D -- 4 IP address --> C
+    C -- 5 cache+return --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#CA9161,stroke:#000,color:#fff
     style C fill:#DE8F05,stroke:#000,color:#fff
     style D fill:#CC78BC,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#fff
-    style F fill:#029E73,stroke:#000,color:#fff
+    style E fill:#029E73,stroke:#000,color:#fff
 ```
 
 {{< tabs items="Go,Python" >}}
@@ -1270,10 +1264,9 @@ graph TD
     G["Return Response"]
 
     A --> B
-    B -->|"Hit"| C
-    B -->|"Miss"| D
+    B -- Hit --> C
+    B -- Miss --> D
     D --> E
-    E --> D
     D --> F
     F --> G
     C --> G
@@ -4168,12 +4161,12 @@ graph TD
     EdgeAS["CDN Edge<br/>Singapore PoP"]
     Origin["Origin Server<br/>Single datacenter"]
 
-    US -->|"2ms"| EdgeUS
-    EU -->|"1ms"| EdgeEU
-    AS -->|"3ms"| EdgeAS
-    EdgeUS -->|"Cache miss only<br/>120ms"| Origin
-    EdgeEU -->|"Cache miss only<br/>90ms"| Origin
-    EdgeAS -->|"Cache miss only<br/>200ms"| Origin
+    US -- 2ms --> EdgeUS
+    EU -- 1ms --> EdgeEU
+    AS -- 3ms --> EdgeAS
+    EdgeUS -- cache miss 120ms --> Origin
+    EdgeEU -- cache miss 90ms --> Origin
+    EdgeAS -- cache miss 200ms --> Origin
 
     style US fill:#0173B2,stroke:#000,color:#fff
     style EU fill:#0173B2,stroke:#000,color:#fff

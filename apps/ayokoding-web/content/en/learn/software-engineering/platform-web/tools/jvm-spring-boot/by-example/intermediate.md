@@ -54,8 +54,8 @@ graph TD
     Config --> Secondary["Secondary DataSource"]
     Primary --> PrimaryEMF["Primary EntityManagerFactory"]
     Secondary --> SecondaryEMF["Secondary EntityManagerFactory"]
-    PrimaryEMF --> PrimaryRepos["@EnableJpaRepositories(basePackages=primary)"]
-    SecondaryEMF --> SecondaryRepos["@EnableJpaRepositories(basePackages=secondary)"]
+    PrimaryEMF --> PrimaryRepos["@EnableJpaRepos(primary)"]
+    SecondaryEMF --> SecondaryRepos["@EnableJpaRepos(secondary)"]
     PrimaryRepos --> PrimaryTx["Primary TransactionManager"]
     SecondaryRepos --> SecondaryTx["Secondary TransactionManager"]
 
@@ -443,7 +443,7 @@ sequenceDiagram
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     Starter["spring-boot-starter-data-jpa"] --> TxStarter["Detects spring-tx on classpath"]
-    TxStarter --> Manager["Auto-Configure PlatformTransactionManager"]
+    TxStarter --> Manager["Auto-Config TransactionMgr"]
     Manager --> JpaManager["JpaTransactionManager Bean"]
     JpaManager --> AOP["@EnableTransactionManagement"]
     AOP --> Proxy["Create @Transactional Proxies"]
@@ -1533,20 +1533,20 @@ class ApiController {
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 flowchart TD
     A[HTTP Request] --> B{Security Filter Chain}
-    B -->|/public/**| C[Permit All]
-    B -->|/admin/**| D{Has ADMIN Role?}
-    B -->|Other| E{Authenticated?}
+    B -- /public/** --> C[Permit All]
+    B -- /admin/** --> D{Has ADMIN Role?}
+    B -- Other --> E{Authenticated?}
 
-    D -->|Yes| F[Allow Access]
-    D -->|No| G[403 Forbidden]
+    D -- Yes --> F[Allow Access]
+    D -- No --> G[403 Forbidden]
 
-    E -->|Yes| F
-    E -->|No| H[Redirect to Login]
+    E -- Yes --> F
+    E -- No --> H[Redirect to Login]
 
     H --> I[UserDetailsService]
     I --> J[Check Credentials]
-    J -->|Valid| K[Create Authentication]
-    J -->|Invalid| L[401 Unauthorized]
+    J -- Valid --> K[Create Authentication]
+    J -- Invalid --> L[401 Unauthorized]
 
     K --> F
 

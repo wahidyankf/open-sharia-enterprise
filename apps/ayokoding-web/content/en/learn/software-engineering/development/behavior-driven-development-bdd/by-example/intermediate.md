@@ -1504,26 +1504,22 @@ BDD scenarios integrate into CI/CD pipelines for automated quality gates on ever
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     A[Git Push] --> B[CI Trigger]
-    B --> C[Install Deps]
-    C --> D[Run Smoke Tests @smoke]
-    D --> E{Smoke Pass?}
-    E -->|No| F[Fail Build]
-    E -->|Yes| G[Run Regression Suite]
-    G --> H{All Pass?}
-    H -->|No| F
-    H -->|Yes| I[Deploy to Staging]
-    I --> J[Upload Test Reports]
+    B --> C[Install + Smoke Tests]
+    C --> D{Smoke Pass?}
+    D -->|No| E[Fail Build]
+    D -->|Yes| F[Run Regression Suite]
+    F --> G{All Pass?}
+    G -->|No| E
+    G -->|Yes| H[Deploy + Reports]
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
     style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#029E73,stroke:#000,color:#fff
-    style H fill:#CA9161,stroke:#000,color:#fff
-    style I fill:#0173B2,stroke:#000,color:#fff
-    style J fill:#0173B2,stroke:#000,color:#fff
+    style D fill:#CA9161,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#000
+    style F fill:#029E73,stroke:#000,color:#fff
+    style G fill:#CA9161,stroke:#000,color:#fff
+    style H fill:#0173B2,stroke:#000,color:#fff
 ```
 
 **GitHub Actions Workflow**:
@@ -7099,24 +7095,16 @@ BDD scenarios verify API contracts between consumers and providers using Pact, e
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-    A[Consumer Test] --> B[Generate Pact Contract]
-    B --> C[Pact Broker]
-    C --> D[Provider Verification]
-    D --> E{Contract Valid?}
-    E -->|Yes| F[Publish to Broker]
-    E -->|No| G[Build Fails - Notify Consumer]
-    F --> H[Can-I-Deploy Check]
-    H --> I[Safe to Deploy]
+    A["Consumer Test<br/>Generate Contract"] --> B[Pact Broker]
+    B --> C[Provider Verification]
+    C -- Pass --> D[Deploy Check]
+    C -- Fail --> E[Build Fails]
 
     style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#029E73,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#0173B2,stroke:#000,color:#fff
-    style G fill:#CC78BC,stroke:#000,color:#000
-    style H fill:#DE8F05,stroke:#000,color:#000
-    style I fill:#029E73,stroke:#000,color:#fff
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#CA9161,stroke:#000,color:#fff
+    style D fill:#0173B2,stroke:#000,color:#fff
+    style E fill:#CC78BC,stroke:#000,color:#000
 ```
 
 **Consumer Contract Test**:

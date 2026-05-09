@@ -94,7 +94,7 @@ Parent states define transitions that apply to all substates, eliminating duplic
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Connected (parent state)\ndisconnect transition applies to ALL substates"] -->|"contains"| B["Connected.Idle"]
+    A["Connected (parent)\ndisconnect: applies to all"] -->|"contains"| B["Connected.Idle"]
     A -->|"contains"| C["Connected.Active"]
     A -->|"disconnect"| D["Disconnected"]
     D -->|"connect"| A

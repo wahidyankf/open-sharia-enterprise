@@ -1621,8 +1621,8 @@ Extend Spring Data repositories with custom query methods using EntityManager.
 %% Custom repository pattern
 graph TD
     A[Standard Repository] --> B[ProductRepository Interface]
-    C[Custom Fragment] --> D[ProductRepositoryCustom Interface]
-    D --> E[ProductRepositoryCustomImpl Class]
+    C[Custom Fragment] --> D[ProductRepoCustom Interface]
+    D --> E[ProductRepoCustomImpl Class]
     E --> F[EntityManager Injection]
     B --> G[Extends Both]
     D --> G

@@ -123,7 +123,7 @@ fun main(args: Array<String>) {
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Classpath["Classpath Scanning"] --> Conditions["Evaluate @Conditional Annotations"]
+    Classpath["Classpath Scanning"] --> Conditions["Evaluate @Conditional"]
     Conditions --> Check1["@ConditionalOnClass"]
     Conditions --> Check2["@ConditionalOnMissingBean"]
     Conditions --> Check3["@ConditionalOnProperty"]
@@ -2819,12 +2819,12 @@ data class AppConfig(
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    Props["application.properties"] --> Scan["Spring Scans @ConfigurationProperties"]
+    Props["application.properties"] --> Scan["Scan @ConfigurationProperties"]
     Scan --> Match["Match prefix app.*"]
-    Match --> Bind1["Bind app.name → name property"]
-    Match --> Bind2["Bind app.version → version property"]
-    Match --> Bind3["Bind app.max-users → maxUsers property"]
-    Bind1 --> Validate["Validate @Validated constraints"]
+    Match --> Bind1["Bind app.name → name"]
+    Match --> Bind2["Bind app.version → version"]
+    Match --> Bind3["Bind app.max-users → maxUsers"]
+    Bind1 --> Validate["Validate @Validated"]
     Bind2 --> Validate
     Bind3 --> Validate
     Validate --> POJO["Type-Safe POJO Ready"]
@@ -2848,7 +2848,7 @@ graph TD
 graph TD
     Defaults["Built-in Defaults"] --> AppProps["application.properties"]
     AppProps --> AppYml["application.yml"]
-    AppYml --> ProfileProps["application-{profile}.properties"]
+    AppYml --> ProfileProps["application-{profile}.props"]
     ProfileProps --> EnvVars["Environment Variables"]
     EnvVars --> CmdArgs["Command Line Arguments"]
     CmdArgs --> FinalConfig["Final Configuration"]

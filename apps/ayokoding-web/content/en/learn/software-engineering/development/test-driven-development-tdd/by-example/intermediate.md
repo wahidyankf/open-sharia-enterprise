@@ -429,10 +429,10 @@ graph TD
     D[Test Doubles]
     E[Service Under Test]
 
-    A -->|Injects| B
-    B -->|Used by| E
-    C -->|Injects| D
-    D -->|Used by| E
+    A -- Injects --> B
+    B -- Used by --> E
+    C -- Injects --> D
+    D -- Used by --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
@@ -1250,11 +1250,11 @@ Property-based testing generates random inputs to verify properties hold for all
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph TD
     A[Property-Based Test]
-    B[Generate 1000s of Random Inputs]
+    B[Generate Random Inputs]
     C[Apply Function Under Test]
     D{Property Holds?}
     E[All Pass: High Confidence]
-    F[Failure: Shrink to Minimal Case]
+    F[Failure: Shrink to Min Case]
 
     A --> B --> C --> D
     D -->|"yes"| E
@@ -2356,18 +2356,16 @@ Continuous Integration runs tests automatically on every commit. Configure CI to
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph LR
     A[Code Push]
-    B[Unit Tests]
-    C[Integration Tests]
-    D[Build]
-    E[Deploy]
+    B["Unit + Integration Tests"]
+    C[Build]
+    D[Deploy]
 
-    A --> B --> C --> D --> E
+    A --> B --> C --> D
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Red: Test CI configuration**
@@ -2656,20 +2654,16 @@ Test data builders create complex test objects with readable, maintainable code.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph LR
     A[UserBuilder.new]
-    B[".withName('Alice')"]
-    C[".withRole('admin')"]
-    D[".inOrganization('Acme')"]
-    E[".build()"]
-    F[User Object]
+    B[".withName + .withRole<br/>.inOrganization"]
+    C[".build()"]
+    D[User Object]
 
-    A --> B --> C --> D --> E --> F
+    A --> B --> C --> D
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#CA9161,stroke:#000,color:#fff
-    style C fill:#CA9161,stroke:#000,color:#fff
-    style D fill:#CA9161,stroke:#000,color:#fff
-    style E fill:#DE8F05,stroke:#000,color:#fff
-    style F fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#029E73,stroke:#000,color:#fff
 ```
 
 **Red: Repetitive object creation**

@@ -1157,12 +1157,14 @@ graph TD
     F[Shared Test Utilities]
     G[CI Enforcement]
 
-    A -->|"defines"| B
-    B -->|"adopted by"| C
-    B -->|"adopted by"| D
-    B -->|"adopted by"| E
-    F -->|"used by"| C & D & E
-    G -->|"enforces"| B
+    A -- defines --> B
+    B -- adopted by --> C
+    B -- adopted by --> D
+    B -- adopted by --> E
+    F -- used by --> C
+    F -- used by --> D
+    F -- used by --> E
+    G -- enforces --> B
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#fff
@@ -1787,7 +1789,7 @@ graph TD
     B[Fitness Function Test]
     C{Constraint Met?}
     D[CI Passes]
-    E[Architecture Violation Detected]
+    E[Arch Violation Detected]
 
     A -->|"encoded as"| B
     B --> C
@@ -1885,18 +1887,16 @@ Continuous deployment requires high confidence in automated tests. TDD enables s
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph LR
     A[Code Commit]
-    B[Unit Tests]
-    C[Integration Tests]
-    D[Canary Deploy 1%]
-    E[Full Deploy 100%]
+    B["Unit + Integration Tests"]
+    C[Canary Deploy 1%]
+    D[Full Deploy 100%]
 
-    A --> B --> C --> D --> E
+    A --> B --> C --> D
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#fff
-    style E fill:#CC78BC,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#fff
+    style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Challenge**: Deploy to production safely without manual testing

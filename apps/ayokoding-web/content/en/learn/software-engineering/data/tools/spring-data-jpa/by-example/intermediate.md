@@ -1338,11 +1338,11 @@ The N+1 problem occurs when fetching a collection triggers 1 query for the paren
 graph TD
     A[Load 100 Orders] --> B[Query 1: SELECT orders]
     B --> C[Process Order 1]
-    C --> D[Query 2: SELECT items WHERE order_id=1]
+    C --> D[SQL: items WHERE order_id=1]
     B --> E[Process Order 2]
-    E --> F[Query 3: SELECT items WHERE order_id=2]
+    E --> F[SQL: items WHERE order_id=2]
     B --> G[Process Order 100]
-    G --> H[Query 101: SELECT items WHERE order_id=100]
+    G --> H[SQL: items WHERE order_id=100]
     H --> I[Total: 101 Queries]
 
     style A fill:#0173B2,stroke:#000,color:#fff

@@ -6121,11 +6121,11 @@ graph TD
 
     CLIENT --> CDN
     CDN --> API
-    API -->|read| CACHE
-    CACHE -->|miss| DB
-    API -->|write| BLOOM
-    BLOOM -->|new URL| DB
-    API -->|emit| KAFKA
+    API -- read --> CACHE
+    CACHE -- miss --> DB
+    API -- write --> BLOOM
+    BLOOM -- new URL --> DB
+    API -- emit --> KAFKA
 
     style CLIENT fill:#0173B2,stroke:#000,color:#fff
     style CDN fill:#DE8F05,stroke:#000,color:#fff

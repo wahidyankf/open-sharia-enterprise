@@ -426,21 +426,18 @@ graph TD
     B["ubuntu + 18<br/>EXCLUDED"]
     C["ubuntu + 20<br/>+ coverage: true"]
     D["ubuntu + 22"]
-    E["windows + 20"]
-    F["macos + 20"]
+    E["windows + 20<br/>macos + 20"]
 
-    A -->|generate combinations| B
-    A -->|generate combinations| C
-    A -->|generate combinations| D
-    A -->|generate combinations| E
-    A -->|generate combinations| F
+    A -- generates --> B
+    A -- generates --> C
+    A -- generates --> D
+    A -- generates --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#CA9161,stroke:#000,color:#fff
     style C fill:#029E73,stroke:#000,color:#fff
     style D fill:#DE8F05,stroke:#000,color:#fff
     style E fill:#DE8F05,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#fff
 ```
 
 **Static matrix with include/exclude**:

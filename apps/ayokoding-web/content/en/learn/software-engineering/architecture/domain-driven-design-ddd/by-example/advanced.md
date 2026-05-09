@@ -337,21 +337,17 @@ Snapshots optimize event replay performance for long-lived aggregates by periodi
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
-    A["Event 1\nOrderCreated"]
-    B["Event 2\nItemAdded"]
-    C["...100 events..."]
-    D["Snapshot\n(state at event 100)"]
-    E["Event 101\nItemRemoved"]
-    F["Current State\n= Snapshot + Event101"]
+    A["Events 1-100\nOrderCreated..."]
+    B["Snapshot\n(state at event 100)"]
+    C["Event 101\nItemRemoved"]
+    D["Current State\n= Snapshot + Event101"]
 
     A --> B --> C --> D
-    D --> E --> F
 
-    style D fill:#029E73,stroke:#000,color:#fff
-    style F fill:#0173B2,stroke:#000,color:#fff
     style A fill:#DE8F05,stroke:#000,color:#000
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#DE8F05,stroke:#000,color:#000
+    style B fill:#029E73,stroke:#000,color:#fff
+    style C fill:#DE8F05,stroke:#000,color:#000
+    style D fill:#0173B2,stroke:#000,color:#fff
 ```
 
 ```typescript
@@ -1087,11 +1083,11 @@ graph TD
     D["CustomerOrdersView\n(read model)"]
     E["Query Service\nreads from views"]
 
-    A -->|event stream| B
-    B -->|builds| C
-    B -->|builds| D
-    E -->|queries| C
-    E -->|queries| D
+    A -- event stream --> B
+    B -- builds --> C
+    B -- builds --> D
+    E -- queries --> C
+    E -- queries --> D
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#CC78BC,stroke:#000,color:#fff
@@ -4168,10 +4164,10 @@ graph TD
     D["Notification Context\n(Open Host Service)"]
     E["Legacy ERP\n(Anti-Corruption Layer)"]
 
-    A -->|Shared Kernel| C
-    A -->|Customer-Supplier| B
-    A -->|Published Language| D
-    E -->|ACL protects| A
+    A -- Shared Kernel --> C
+    A -- Customer-Supplier --> B
+    A -- Published Language --> D
+    E -- ACL protects --> A
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
@@ -4640,10 +4636,10 @@ graph TD
     D["Context C\nconsumer"]
     E["Context D\nconsumer"]
 
-    A -->|publishes to| B
-    B -->|consumed by| C
-    B -->|consumed by| D
-    B -->|consumed by| E
+    A -- publishes to --> B
+    B -- consumed by --> C
+    B -- consumed by --> D
+    B -- consumed by --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#029E73,stroke:#000,color:#fff
@@ -5636,12 +5632,10 @@ graph TD
     D["Inventory Service\nsubscribes OrderPlaced"]
     E["Notification Service\nsubscribes multiple events"]
 
-    A -->|publish| B
-    B -->|consume| C
-    B -->|consume| D
-    B -->|consume| E
-    C -->|publish PaymentCompleted| B
-    D -->|publish InventoryReserved| B
+    A -- publish --> B
+    B -- consume --> C
+    B -- consume --> D
+    B -- consume --> E
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#CC78BC,stroke:#000,color:#fff
