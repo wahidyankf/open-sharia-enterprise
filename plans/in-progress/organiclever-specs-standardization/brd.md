@@ -129,7 +129,6 @@ The convention is governance Layer 2 (per the [Repository Governance Architectur
 ## Non-goals
 
 - Changing OrganicLever's behavior, code, Nx targets, or test commands
-- Renaming `specs/apps/organiclever/` subfolders or restructuring the existing C4 / DDD / Gherkin layout
 - Touching other apps (`ayokoding`, `oseplatform`, `wahidyankf`, `rhino`) — those follow in dedicated rollout plans that APPLY the new convention
 - Inventing new governance machinery (no new agents, no new workflows) — `repo-rules-maker` already exists and is the right tool to create/update the conventions in scope
 

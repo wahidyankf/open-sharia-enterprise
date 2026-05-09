@@ -738,4 +738,4 @@ Feature: Push gate (FR-15)
 - Convention file creation (post-pilot)
 - Other apps (post-pilot rollouts)
 - New Nx targets, new agents, new skills
-- Restructuring `specs/apps/organiclever/` subfolders beyond the additions listed above
+- Further restructuring of `specs/apps/organiclever/` beyond the five-folder C4-aware tree specified in FR-1 (the rename of `c4/`, `ddd/`, `be/`, `web/`, `contracts/` into `system-context/`, `containers/`, `components/`, `behavior/` IS in scope and is the core of the plan)
