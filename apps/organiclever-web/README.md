@@ -295,3 +295,8 @@ See [`libs/ts-ui/README.md`](../../libs/ts-ui/README.md) for the complete compon
 - **`@open-sharia-enterprise/ts-ui-tokens`** — OL warm OKLCH design tokens
 - **Vitest** — Unit tests
 - **TypeScript 5** — Strict mode
+
+## Known gaps
+
+- **PWA icons** (`public/icons/icon-192.png`, `public/icons/icon-512.png`) are 69-byte stubs.
+  Replace with real 192×192 and 512×512 brand artwork before any production launch.
