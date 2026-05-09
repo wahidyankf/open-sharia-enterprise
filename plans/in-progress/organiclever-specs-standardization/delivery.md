@@ -402,10 +402,12 @@ Additive. Each file lands at its FINAL tree position; no later move needed. PM-R
 - [x] **3.11 Create `specs/apps/organiclever/containers/deployment.md`** (_New file_) — Envs table, Docker images, Spring-profile mapping note (with the F#/Giraffe correction note). PM-Readability Contract applied.
   - Date: 2026-05-09. Status: done. Files Changed: specs/.../containers/deployment.md (new). **Audience:** line present. Environments table, frontend+backend deployment sections, Docker images table, Spring-profile note (stale SPRING_PROFILES_ACTIVE → correct ASPNETCORE_ENVIRONMENT). Also restored api.md link to deployment.md.
     Acceptance: `grep -q "Audience:" specs/apps/organiclever/containers/deployment.md` returns 0 AND file contains an environments or Docker images table.
-- [ ] **3.12 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create containers/deployment.md`
+- [x] **3.12 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): create containers/deployment.md`
+  - Date: 2026-05-09. Status: done. lint:md 2335 files, 0 errors. Committed.
 
-- [ ] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7.
-      Acceptance: `grep -q "For Product / Project Managers" specs/apps/organiclever/README.md` returns 0 AND the file lists all five top-level folders (product, system-context, containers, components, behavior) in the reading path.
+- [x] **3.13 Update `specs/apps/organiclever/README.md`** — replace old structure description with new five-folder tree; add `## For Product / Project Managers` reading-path section per FR-7.
+  - Date: 2026-05-09. Status: done. Files Changed: specs/apps/organiclever/README.md. Added ## For Product / Project Managers section: audience note, reading order (product→system-context→containers→components→behavior), v0 plain-language summary. All 5 folders listed. grep "For Product / Project Managers" returns 1 match.
+    Acceptance: `grep -q "For Product / Project Managers" specs/apps/organiclever/README.md` returns 0 AND the file lists all five top-level folders (product, system-context, containers, components, behavior) in the reading path.
 - [ ] **3.14 Run `npm run lint:md`** — exit 0. Then **Commit**: `docs(specs): update root README to reflect C4-aware tree + add PM reading path`
 
 ## Phase 4 — Trim app READMEs (removes duplicated content)

@@ -158,6 +158,37 @@ All backends consume the backend Gherkin specs at **all three test levels**:
 - **`test:quick`** — unit + coverage check; Gherkin spec paths included in Nx cache inputs
 - **`test:integration`** — steps call service functions with real PostgreSQL; cache disabled
 
+## For Product / Project Managers
+
+**Audience note**: This folder is written for engineers and SWE-background TPMs (the
+kind embedded with a developer-tools or productivity team — not non-technical PMs). The
+C4 diagrams and DDD-applied vocabulary (bounded context, ubiquitous language, aggregate)
+will be familiar if you have worked with system diagrams and event-storming. If you are
+new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
+
+**Reading order**:
+
+1. **[product/overview.md](./product/overview.md)** — Start here. Plain-language
+   summary of what OrganicLever does, who it is for, what v0 ships, and what is deferred.
+2. **[system-context/context.md](./system-context/context.md)** — Where OrganicLever
+   sits in the broader technical landscape: actors, external systems, trust boundaries.
+3. **[containers/container.md](./containers/container.md)** — The two deployable units:
+   Next.js web app (Vercel) and F#/Giraffe backend (Kubernetes). How they connect.
+   Also see [containers/deployment.md](./containers/deployment.md) for environments
+   and Docker image details.
+4. **[components/web/](./components/web/README.md)** — Frontend internals:
+   bounded-context architecture, routes and screens, design system.
+   [components/be/api.md](./components/be/api.md) covers the backend API surface.
+5. **[behavior/](./behavior/README.md)** — What the system is supposed to do, expressed
+   as Gherkin (Given-When-Then) acceptance criteria per bounded context. The same files
+   drive automated tests.
+
+**v0 in plain language**:
+
+- You log what you did (workout, reading, meal, focus). It remembers. You see it later.
+- No account. No subscription. No data leaves your device.
+- The streak badge is the only "game mechanic" in v0.
+
 ## Related
 
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
