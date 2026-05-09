@@ -1,6 +1,6 @@
 import path from "path";
 import { describe, it, expect } from "vitest";
-import { processAllIndexFiles } from "../../../src/server/content/index-generator";
+import { processAllIndexFiles } from "../../../src/contexts/content/infrastructure/index-generator";
 
 const CONTENT_DIR = path.resolve(process.cwd(), "content");
 

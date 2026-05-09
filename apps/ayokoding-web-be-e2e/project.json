@@ -35,7 +35,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature"],
       "options": {
         "command": "npx bddgen && npx playwright test",
         "cwd": "apps/ayokoding-web-be-e2e"
@@ -56,9 +56,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/be/gherkin apps/ayokoding-web-be-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/api/gherkin apps/ayokoding-web-be-e2e",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
+      "inputs": ["{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]

@@ -1,4 +1,4 @@
-import { createTRPCContext } from "@/server/trpc/init";
+import { createTRPCContext } from "@/contexts/app-shell/application/trpc-init";
 
 export const dynamic = "force-static";
 

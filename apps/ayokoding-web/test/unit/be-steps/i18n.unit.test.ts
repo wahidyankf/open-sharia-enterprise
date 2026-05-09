@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { isValidLocale, SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_LABELS } from "@/lib/i18n/config";
-import { t } from "@/lib/i18n/translations";
+import { isValidLocale, SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_LABELS } from "@/contexts/i18n/application/config";
+import { t } from "@/contexts/i18n/application/translations";
 
 describe("i18n config", () => {
   it("supports en and id locales", () => {

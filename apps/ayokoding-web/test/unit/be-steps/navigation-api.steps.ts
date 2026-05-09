@@ -2,10 +2,10 @@ import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
-import type { TreeNode } from "@/server/content/types";
+import type { TreeNode } from "@/contexts/content/infrastructure/types";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/be/gherkin/navigation-api/navigation-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/api/gherkin/navigation/navigation-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

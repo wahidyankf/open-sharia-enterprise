@@ -1,0 +1,108 @@
+version: 2
+app: ayokoding
+contexts:
+  - name: app-shell
+    summary: >-
+      Site chrome — header, footer, responsive layout, accessibility wiring,
+      plus the tRPC root router stitching that composes per-BC sub-routers
+      into the single tRPC API surface served at /api/trpc.
+    layers:
+      - application
+      - presentation
+    code:
+      - apps/ayokoding-web/src/contexts/app-shell
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/app-shell.md
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/app-shell
+    relationships: []
+
+  - name: content
+    summary: >-
+      Content rendering + tRPC content-api. Application owns procedures + DTOs;
+      infrastructure owns filesystem/frontmatter adapters; presentation owns
+      article + content-list rendering.
+    layers:
+      - application
+      - infrastructure
+      - presentation
+    code:
+      - apps/ayokoding-web/src/contexts/content
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/content.md
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/content
+    relationships:
+      - to: search
+        kind: customer-supplier
+        role: supplier
+      - to: navigation
+        kind: customer-supplier
+        role: supplier
+      - to: i18n
+        kind: conformist
+        role: downstream
+
+  - name: search
+    summary: >-
+      Search backend (tRPC) + UI. Application interprets queries and scores
+      results; infrastructure owns the index; presentation renders the input +
+      results dropdown.
+    layers:
+      - application
+      - infrastructure
+      - presentation
+    code:
+      - apps/ayokoding-web/src/contexts/search
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/search.md
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/search
+    relationships:
+      - to: content
+        kind: customer-supplier
+        role: customer
+      - to: i18n
+        kind: conformist
+        role: downstream
+
+  - name: i18n
+    summary: >-
+      Locale switching + tRPC i18n-api + Next.js middleware. Application owns
+      locale negotiation and the middleware function; infrastructure owns
+      translation file loaders; presentation owns the locale switcher UI.
+    layers:
+      - application
+      - infrastructure
+      - presentation
+    code:
+      - apps/ayokoding-web/src/contexts/i18n
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/i18n.md
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/i18n
+    relationships:
+      - to: content
+        kind: conformist
+        role: upstream
+      - to: search
+        kind: conformist
+        role: upstream
+
+  - name: navigation
+    summary: >-
+      Top-level navigation + tRPC navigation-api. Application produces the nav
+      tree; presentation renders the menu.
+    layers:
+      - application
+      - presentation
+    code:
+      - apps/ayokoding-web/src/contexts/navigation
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/navigation.md
+    gherkin: specs/apps/ayokoding/behavior/web/gherkin/navigation
+    relationships:
+      - to: content
+        kind: customer-supplier
+        role: customer
+
+  - name: health
+    summary: Health-check tRPC procedure. No UI surface today.
+    layers:
+      - application
+    code:
+      - apps/ayokoding-web/src/contexts/health
+    glossary: specs/apps/ayokoding/ddd/ubiquitous-language/health.md
+    gherkin: specs/apps/ayokoding/behavior/api/gherkin/health
+    relationships: []

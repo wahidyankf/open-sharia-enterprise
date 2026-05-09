@@ -28,7 +28,7 @@
     "generate-search-data": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx tsx src/scripts/generate-search-data.ts",
+        "command": "npx tsx src/contexts/search/infrastructure/generate-search-data.ts",
         "cwd": "{projectRoot}"
       }
     },
@@ -81,14 +81,22 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "dependsOn": ["ayokoding-cli:build"],
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/ddd/bounded-contexts.yaml",
+        "{workspaceRoot}/specs/apps/ayokoding/ddd/ubiquitous-language/**/*.md"
+      ],
       "options": {
         "commands": [
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc ayokoding)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul ayokoding)",
           "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 80)",
           "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content content",
           "npx tsx src/scripts/generate-indexes.ts --validate"
         ],
-        "parallel": true,
+        "parallel": false,
         "cwd": "{projectRoot}"
       }
     },
@@ -102,11 +110,18 @@
       "cache": false
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/be/gherkin apps/ayokoding-web",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/web/gherkin apps/ayokoding-web",
+          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/api/gherkin apps/ayokoding-web"
+        ],
+        "parallel": false
+      },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/ayokoding/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     }

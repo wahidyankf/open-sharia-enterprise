@@ -12,24 +12,37 @@ export default defineConfig({
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
-        "src/components/ui/**",
-        "src/components/layout/**",
-        "src/components/content/**",
-        "src/components/search/**",
+        // App shell presentation (chrome) — passive UI primitives + layout shell
+        "src/contexts/app-shell/presentation/**",
+        // Per-BC presentation (UI surfaces — exercised via E2E + fe-step Gherkin scenarios)
+        "src/contexts/content/presentation/**",
+        "src/contexts/search/presentation/**",
+        "src/contexts/i18n/presentation/**",
+        "src/contexts/navigation/presentation/**",
+        // Re-export shim — pure type re-export, no executable code
+        "src/contexts/navigation/application/schemas.ts",
+        // Next.js app router pages — covered via E2E
         "src/app/**",
-        "src/lib/hooks/**",
+        // Cross-cutting tRPC client wiring
         "src/lib/trpc/client.ts",
         "src/lib/trpc/provider.tsx",
         "src/lib/trpc/server.ts",
+        // i18n middleware re-export shim and implementation (covered via fe-e2e)
         "src/middleware.ts",
-        "src/server/content/parser.ts",
-        "src/server/content/reader.ts",
-        "src/server/content/repository.ts",
-        "src/server/content/repository-fs.ts",
-        "src/server/content/types.ts",
-        "src/server/content/index-generator.ts",
+        "src/contexts/i18n/application/middleware.ts",
+        // Content infrastructure adapters + scripts (covered via integration suite)
+        "src/contexts/content/infrastructure/parser.ts",
+        "src/contexts/content/infrastructure/reader.ts",
+        "src/contexts/content/infrastructure/repository.ts",
+        "src/contexts/content/infrastructure/repository-fs.ts",
+        "src/contexts/content/infrastructure/types.ts",
+        "src/contexts/content/infrastructure/index-generator.ts",
+        "src/contexts/search/infrastructure/**",
         "src/scripts/**",
-        "src/server/trpc/procedures/**",
+        // tRPC routers — composition-only; behaviour is exercised via BE-E2E
+        "src/contexts/**/application/router.ts",
+        "src/contexts/app-shell/application/root-router.ts",
+        // Test infra
         "src/test/**",
         "**/*.{test,spec}.{ts,tsx}",
       ],

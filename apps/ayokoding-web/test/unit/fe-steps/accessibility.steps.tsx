@@ -3,12 +3,12 @@ import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, screen } from "@testing-library/react";
 import { expect } from "vitest";
 import "./helpers/test-setup";
-import { Breadcrumb } from "@/components/layout/breadcrumb";
-import { TableOfContents } from "@/components/layout/toc";
-import { PrevNext } from "@/components/layout/prev-next";
+import { Breadcrumb } from "@/contexts/navigation/presentation/breadcrumb";
+import { TableOfContents } from "@/contexts/navigation/presentation/toc";
+import { PrevNext } from "@/contexts/navigation/presentation/prev-next";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding/web/gherkin/accessibility/accessibility.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/behavior/web/gherkin/app-shell/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

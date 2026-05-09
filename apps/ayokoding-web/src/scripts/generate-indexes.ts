@@ -1,5 +1,5 @@
 import path from "node:path";
-import { processAllIndexFiles } from "../server/content/index-generator";
+import { processAllIndexFiles } from "../contexts/content/infrastructure/index-generator";
 
 const mode = process.argv.includes("--validate") ? "validate" : "generate";
 const contentDir = path.resolve(process.cwd(), "content");

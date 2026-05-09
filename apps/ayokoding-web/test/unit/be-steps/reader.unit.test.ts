@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveSlug, stripMarkdown } from "@/server/content/reader";
+import { deriveSlug, stripMarkdown } from "@/contexts/content/infrastructure/reader";
 
 describe("deriveSlug", () => {
   it("derives slug for regular content page", () => {

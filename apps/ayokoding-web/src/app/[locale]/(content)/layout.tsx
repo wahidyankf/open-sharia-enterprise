@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar } from "@/contexts/navigation/presentation/sidebar";
 
 interface Props {
   children: React.ReactNode;

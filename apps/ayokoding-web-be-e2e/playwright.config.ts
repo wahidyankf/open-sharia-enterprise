@@ -6,7 +6,7 @@ const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
-  features: path.join(workspaceRoot, "specs/apps/ayokoding/be/gherkin/**/*.feature"),
+  features: path.join(workspaceRoot, "specs/apps/ayokoding/behavior/api/gherkin/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
 });
 
