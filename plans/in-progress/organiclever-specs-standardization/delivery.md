@@ -32,6 +32,7 @@ flowchart TD
     Pre["Pre-flight<br/>baseline metrics<br/>discovery scans"]:::pre
     P1["Phase 1 — scaffold tree<br/>create empty specs/apps/organiclever/<br/>{product,system-context,containers,<br/>components,behavior}/ + READMEs"]:::add
     P2["Phase 2 — atomic reorg<br/>git mv old subfolders into new tree<br/>+ rhino-cli path constant<br/>+ Nx project.json paths<br/>+ 16 step files<br/>+ e2e configs<br/>(ONE commit, tests pass after)"]:::big
+    P25["Phase 2.5 — deepen UL glossary<br/>per-term H3 sections in<br/>9 ubiquitous-language/&lt;bc&gt;.md files<br/>+ README authoring rule 6<br/>(FR-16, separate commit)"]:::add
     P3["Phase 3 — additive content<br/>create new files at final tree positions:<br/>product/overview.md<br/>containers/deployment.md<br/>components/be/api.md<br/>components/web/architecture.md<br/>components/web/design-system.md<br/>components/web/routes-and-screens.md<br/>+ git mv BC map"]:::add
     P4["Phase 4 — subtractive<br/>trim app READMEs<br/>(web, be, web-e2e, be-e2e)"]:::sub
     P5["Phase 5 — subtractive<br/>trim infra/ READMEs<br/>(dev, k8s, staging, production)"]:::sub
@@ -42,7 +43,8 @@ flowchart TD
 
     Pre --> P1
     P1 --> P2
-    P2 --> P3
+    P2 --> P25
+    P25 --> P3
     P3 --> P4
     P3 --> P5
     P4 --> P6
@@ -236,6 +238,85 @@ This is the BIG commit. Combines: `git mv` of all old spec subfolders into the n
 - [ ] **2F.10 Sync `.claude/skills/` change to `.opencode/`**: `npm run sync:claude-to-opencode`
 - [ ] **2F.11 Commit (the BIG one)**: `refactor(specs+rhino-cli): reorganize specs/apps/organiclever to C4-aware tree + update all consumers`
    Note: this commit should fit in a single message but the diff will be large. Use a HEREDOC body with bullet points listing each subsystem updated.
+
+## Phase 2.5 — Deepen ubiquitous-language glossary files (FR-16)
+
+Per [prd.md FR-16](./prd.md#fr-16-ubiquitous-language-file-depth-detailed-per-term-explanations) and [tech-docs.md §Ubiquitous Language file depth](./tech-docs.md#ubiquitous-language-file-depth). The Phase 2A move preserved the compact 1-line table format. This phase replaces it with per-term H3 sections containing definition, why-this-term, code identifiers, persisted-as, used-in-features, forbidden-synonyms, and related cross-links.
+
+**Order**: Phase 2.5 runs AFTER Phase 2's BIG commit lands and AFTER Phase 2F gates pass. The deepening is a separate commit so `git log --follow` shows clean rename diffs from Phase 2A.
+
+**Scope**: 9 per-bounded-context files + the index README — 10 files total. One file per H3 section in the executor's working notes; no batching.
+
+### 2.5A — Term-by-term deepening (one file per sub-step)
+
+For each file, the executor:
+
+1. Lists all terms from the existing compact table (preserves ordering)
+2. Splits the file into the new shape: header (retained), one-line summary (retained), `## Term index` table (Definition column REMOVED — keep Term, Code identifier(s), Used in features), `## Terms in detail` (NEW — one `### Term: <name>` per row in the index)
+3. For EACH term writes the required fields per FR-16 (definition paragraph, why-this-term, code identifier path, persisted-as if applicable, used-in-features, forbidden-synonyms-in-context with reason, related cross-links)
+4. Reads the actual code at the path in `Code identifier(s)` to confirm the type/function still exists and the file path is correct (a glossary that points at moved or renamed code is worse than a thin glossary)
+5. Verifies `rhino-cli ddd ul organiclever` still parses the deepened file (the parser reads the term index table, not the detailed sections, so it should pass — but verify, do not assume)
+
+Sub-steps (one commit accumulates all 10; intermediate `git diff --stat` checks recommended after each file):
+
+- [ ] **2.5A.1 Deepen `specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md`** (most term-rich file — do this one first as the canonical example)
+- [ ] **2.5A.2 Deepen `routine.md`**
+- [ ] **2.5A.3 Deepen `workout-session.md`**
+- [ ] **2.5A.4 Deepen `stats.md`**
+- [ ] **2.5A.5 Deepen `settings.md`**
+- [ ] **2.5A.6 Deepen `app-shell.md`**
+- [ ] **2.5A.7 Deepen `health.md`**
+- [ ] **2.5A.8 Deepen `landing.md`**
+- [ ] **2.5A.9 Deepen `routing.md`**
+- [ ] **2.5A.10 Update `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md`** — append authoring rule 6 (per-term H3 detail required, journal.md as canonical example). Existing 5 rules retained verbatim.
+
+### 2.5B — Verify Phase 2.5
+
+- [ ] **2.5B.1** Confirm every per-bc file has matching index-row count and H3 count:
+
+  ```bash
+  for f in specs/apps/organiclever/components/web/ddd/ubiquitous-language/*.md; do
+    case "$(basename $f)" in README.md) continue;; esac
+    rows=$(awk '/^## Term index/,/^## /{if (/^\| `/) c++} END{print c+0}' "$f")
+    h3s=$(grep -c '^### Term:' "$f")
+    if [ "$rows" != "$h3s" ]; then
+      echo "MISMATCH $f: rows=$rows h3s=$h3s"
+    fi
+  done
+  ```
+
+  Expect zero "MISMATCH" lines.
+
+- [ ] **2.5B.2** Confirm every term H3 contains the required fields:
+
+  ```bash
+  for f in specs/apps/organiclever/components/web/ddd/ubiquitous-language/*.md; do
+    case "$(basename $f)" in README.md) continue;; esac
+    awk '/^### Term:/,/^### |^## /' "$f" | grep -L 'Code identifier' && echo "MISSING in $f"
+  done
+  ```
+
+  Expect zero "MISSING" lines.
+
+- [ ] **2.5B.3** Confirm canonical vocabulary preserved (term names byte-identical to pre-deepening). Diff against the pre-deepening commit:
+
+  ```bash
+  git show HEAD~1:specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md \
+    | awk '/^## Terms/,0' | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/old-journal-terms.txt
+  awk '/^## Term index/,/^## /' specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md \
+    | grep -oE '`[A-Za-z][A-Za-z0-9 _-]*`' | sort -u > /tmp/new-journal-terms.txt
+  diff /tmp/old-journal-terms.txt /tmp/new-journal-terms.txt
+  ```
+
+  Expect zero diff output. Repeat for each `<bc>.md`.
+
+- [ ] **2.5B.4** Run `npm run lint:md` — exit 0
+- [ ] **2.5B.5** Run `nx run rhino-cli:test:quick --skip-nx-cache` — exit 0 (DDD ul parser still happy)
+- [ ] **2.5B.6** Run `nx run rhino-cli:test:integration --skip-nx-cache` — exit 0
+- [ ] **2.5B.7** Spot-check `journal.md` rendered output: open in GitHub-flavored preview, verify the `## Term index` table jumps cleanly to each `### Term:` H3 via slug links, and the deepened explanation reads coherently to a SWE-background TPM persona check (one paragraph the executor can read aloud and feel says something substantive — if it reads like the old table cell padded out, deepen further).
+- [ ] **2.5B.8 Commit**: `docs(specs): deepen ubiquitous-language glossary files with per-term explanations (FR-16)`
+
+   Use HEREDOC body listing all 10 files updated and noting "Term names, code identifiers, and forbidden-synonym sets preserved byte-identical; only depth of explanation grows. rhino-cli ddd ul organiclever passes against deepened files."
 
 ## Phase 3 — Create new content files at final tree positions
 
@@ -504,13 +585,14 @@ This phase delivers the deterministic offload commands that the agents (updated 
 
 ## Phase 8 — PM-readability check + final verification + archive
 
-- [ ] **8.1 PM-readability self-check** (audience = SWE-background TPM, the kind embedded with a developer-tools team like a VS Code TPM; NOT non-technical PM) — for each NEW or MOVED file under `specs/apps/organiclever/` (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`, `components/web/ddd/bounded-context-map.md`), confirm:
+- [ ] **8.1 PM-readability self-check** (audience = SWE-background TPM, the kind embedded with a developer-tools team like a VS Code TPM; NOT non-technical PM) — for each NEW or MOVED file under `specs/apps/organiclever/` (`product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`, `components/web/ddd/bounded-context-map.md`, and the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files from Phase 2.5), confirm:
   - [ ] First 10 lines after H1 contain an `Audience:` line (default `Engineers, Technical Product/Project Managers`) and a plain-language summary paragraph
   - [ ] First occurrence of every NICHE project-specific framework name (F#, Giraffe, PGlite, XState, Effect TS) and DDD-applied term (DDD, bounded context, aggregate, ubiquitous language) carries a parenthetical or footnote-style gloss
   - [ ] Mainstream SWE vocabulary is NOT over-glossed: TypeScript, Next.js, Postgres, Docker, Kubernetes, REST, OpenAPI, IndexedDB, FSM, ADR, CI/CD, build pipeline, lockfile, Volta, npm, ESLint, Mermaid, Playwright, Vercel, Nx, monorepo are all gloss-free
   - [ ] Every section opens with intent (1-2 sentences on user value) before mechanism
   - [ ] Every code/Mermaid block is preceded by a one-sentence "what this shows" intro
   - [ ] Summary paragraph (after H1) contains no un-glossed niche framework names or DDD-applied terms; mainstream SWE vocabulary is fine
+- [ ] **8.1.5 Ubiquitous-Language depth check (FR-16)** — for each of the 9 deepened `components/web/ddd/ubiquitous-language/<bc>.md` files, confirm: (a) `## Term index` table exists, (b) `## Terms in detail` section exists, (c) one `### Term: <name>` H3 per row in the index, (d) every H3 contains a definition paragraph + `Code identifier(s):` + `Used in features:` + `Forbidden synonyms in this context:` (when applicable), (e) term names byte-identical to pre-deepening (re-run the diff from 2.5B.3), (f) `rhino-cli ddd ul organiclever` still passes
 - [ ] **8.2 PM-reading-path check** — `specs/apps/organiclever/README.md` contains a `## For Product / Project Managers` section that opens with a one-sentence audience note (SWE-background TPMs targeted — VS Code TPM / database-product TPM / SDK TPM persona; non-technical PMs may need a colleague to walk through C4 diagrams and DDD-applied vocabulary), reading order (product/ → system-context/ → containers/ → components/ → behavior/), file-by-file what-to-expect notes, and 3-bullet "v0 in plain language" summary
 - [ ] **8.3 Run FULL FR-15 push gate matrix** (all `--skip-nx-cache`):
   - [ ] `npm run lint:md` exit 0

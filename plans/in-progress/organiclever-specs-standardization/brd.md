@@ -113,6 +113,7 @@ The convention is governance Layer 2 (per the [Repository Governance Architectur
 - `specs/apps/organiclever/` is reorganized to the five-folder C4-aware tree (`product/`, `system-context/`, `containers/`, `components/`, `behavior/`); existing files moved with `git mv`, new files written at their final tree positions
 - Every new file in `specs/apps/organiclever/` is PM-readable: opens with audience + plain-language summary, glosses technical terms on first use, leads with intent before mechanism
 - `specs/apps/organiclever/README.md` carries a "For Product/Project Managers" reading-path section
+- The 9 per-bounded-context ubiquitous-language glossary files are deepened from compact 1-line table cells to per-term `### Term: <name>` H3 sections with definition paragraphs, why-this-term explanations, code-identifier paths, used-in-features cross-links, and per-term forbidden-synonym lists with reasons. The Ubiquitous Language is the canonical contract of each bounded context — it gets reference-grade depth, not just a glossing
 - `apps/organiclever-web/docs/` directory is removed (its single inhabitant — `bounded-context-map.md` — moves to `specs/apps/organiclever/components/web/ddd/`)
 - `apps/rhino-cli/internal/bcregistry/loader.go`, `bcregistry/validator.go`, `glossary/validator.go` updated to read from new spec paths; rhino-cli unit + integration tests pass
 - All Nx project.json cache inputs and `spec-coverage` commands updated to new paths; all test step files updated; Playwright e2e configs updated

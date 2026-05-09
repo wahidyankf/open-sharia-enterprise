@@ -210,6 +210,86 @@ The H1-immediately-following summary paragraph contains zero un-glossed niche pr
 
 When a section necessarily needs hands-on engineering depth even for a SWE-background TPM (e.g., DDD layer rules with ESLint boundaries enforcement, Effect Layer composition with tagged errors, XState `fromPromise` actor wiring), the section opens with a one-line "TPMs can skim this section — it's about how engineers prevent code drift, and pre-supposes hands-on familiarity with the niche stack" cue and links forward to a deeper subsection or external doc.
 
+## Ubiquitous Language file depth
+
+The PM-Readability Contract above (Rule 2 in particular) governs in-prose glossing — brief parenthetical notes when a niche term first appears in a narrative file. The dedicated Ubiquitous Language glossary files (`specs/apps/organiclever/components/web/ddd/ubiquitous-language/<bc>.md`) are different — they are the **canonical contract of the bounded context** and are consulted as reference, not skimmed as narrative. They MUST go deeper.
+
+**The current shape (pre-deepening)**: each per-bounded-context file uses a compact table — Term | Definition (1 line) | Code identifier(s) | Used in features. This is fine as a pointer index but does not explain the term's role, the distinction it draws, or the design intent.
+
+**The required shape (post-deepening, FR-16)**:
+
+```text
+# Ubiquitous Language — <bc>
+
+**Bounded context**: `<bc>`
+**Maintainer**: <team>
+**Last reviewed**: <YYYY-MM-DD>
+
+## One-line summary
+
+(retained from pre-deepening — single paragraph)
+
+## Term index
+
+(scannable jump table; Definition column REMOVED — moved to detailed sections)
+
+| Term            | Code identifier(s)                  | Used in features                        |
+| --------------- | ----------------------------------- | --------------------------------------- |
+| `JournalEvent`  | `JournalEvent` (TS type)            | `journal/journal-mechanism.feature`     |
+| ...             | ...                                 | ...                                     |
+
+## Terms in detail
+
+### Term: `JournalEvent`
+
+A single, append-only record of something the user did. Carries a typed payload
+(workout, reading, meal, focus, learning), a `createdAt` timestamp set at
+insertion, and an `updatedAt` timestamp that starts equal to `createdAt` and
+only changes on bump operations.
+
+**Why this term exists**: distinguishes the persistent record from in-memory
+views, queue messages, and UI list items. Users see "entries"; code persists
+`JournalEvent`s. The `stats` context derives aggregate views from these events
+but never mutates them in place.
+
+**Code identifier(s)**: `JournalEvent` — `apps/organiclever-web/src/contexts/journal/domain/types.ts`
+
+**Persisted as**: PGlite table `journal_events`, schema in
+`apps/organiclever-web/src/contexts/journal/infrastructure/schema.sql`
+
+**Used in features**: `journal/journal-mechanism.feature`
+
+**Forbidden synonyms in this context**:
+- `Aggregate` — owned by `stats` for derived rollups; using it for an event
+  would mask the read-vs-write boundary
+- `Entry` — UI label only; using it in code or specs would conflate
+  presentation with persistence
+
+**Related**:
+- ADR `apps/organiclever-web/docs/explanation/bounded-context-map.md` § journal
+- Schema `apps/organiclever-web/src/contexts/journal/infrastructure/schema.sql`
+- Neighbouring context: `stats` (consumes events; never mutates)
+
+### Term: `Typed payload`
+...
+```
+
+**Required fields per H3 section** (from FR-16):
+
+1. Definition paragraph — 1-3 sentences, what the term IS and what role it plays
+2. **Why this term exists** — 1-2 sentences explaining the distinction the term draws
+3. **Code identifier(s)** — fully-qualified path or type name
+4. **Persisted as / produced by** — schema table, queue topic, etc. (omit if not applicable, do NOT carry as `N/A`)
+5. **Used in features** — Gherkin feature paths
+6. **Forbidden synonyms in this context** — per-term, with reason
+7. **Related** — bullet list of cross-links (ADRs, schema files, neighbouring contexts)
+
+**Constraint preservation**: term names, code identifiers, forbidden synonyms are byte-identical between pre-deepening and post-deepening. Only depth of explanation grows. `rhino-cli ddd ul organiclever` MUST keep parsing the term index table without modification.
+
+**Length**: no upper cap. Lower bound: enough depth to disambiguate the term from its synonyms. Empty fields are omitted, not stubbed.
+
+**README.md addendum**: the `ubiquitous-language/README.md` index gains a new authoring rule (rule 6, appended — existing 5 rules retained verbatim) requiring per-term H3 detail, with `journal.md` named as the canonical example.
+
 ## OrganicLever-specific notes
 
 These are observations specific to this pilot; they do NOT modify the rule, but flag context for the executor.

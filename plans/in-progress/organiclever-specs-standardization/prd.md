@@ -157,7 +157,7 @@ Final line counts must be:
 
 - No changes to runtime BEHAVIOR of any `*.ts`, `*.tsx`, `*.fs` code — the only edits are spec-path strings (constants, fixtures, test feature paths)
 - No changes to `bounded-contexts.yaml` registry CONTENT — only its file location
-- No changes to glossary CONTENT — only file locations
+- Ubiquitous-language glossary file CONTENT IS deepened per FR-16 (per-term detailed explanations replace the current 1-line table cells); the move happens first (Phase 2A.9) and the deepening lands as a separate commit (Phase 2D) so history is clean. Term names, code identifiers, and forbidden-synonym lists are preserved verbatim — what changes is the depth of explanation per term, not the canonical vocabulary
 - No changes to Gherkin feature CONTENT — only their parent directories
 - No new Nx targets — existing ones get path updates only
 - All existing test:quick / test:integration / test:e2e suites pass against the new paths after the path-update commit
@@ -385,6 +385,46 @@ Before any push to `origin main` during plan execution, the executor MUST verify
 
 **Post-push CI monitoring**: after pushing, monitor GitHub Actions per [CI Post-Push Verification](../../../governance/development/workflow/ci-post-push-verification.md). Iron Rule 13 codifies this.
 
+### FR-16: Ubiquitous Language file depth (detailed per-term explanations)
+
+The current `specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md` files use a compact one-line-per-term table (Term | Definition | Code identifier(s) | Used in features). That format is adequate as a pointer index but does NOT explain each term in enough depth for a SWE-background TPM (or a new engineer joining the team) to understand the term's role, the distinction it draws against neighbouring terms, or the design intent behind the vocabulary choice. The Ubiquitous Language is the contract of the bounded context — it deserves more than a glossing.
+
+After the Phase 2A move (`ddd/ubiquitous-language/` → `components/web/ddd/ubiquitous-language/`), every per-bounded-context glossary file MUST be deepened in Phase 2D so that each term carries a full explanation. The deepening is a SEPARATE commit from the move so `git log --follow` shows a clean rename diff.
+
+**Required structure of every `<bc>.md` glossary file**:
+
+1. **Header block** (existing, retained): `Bounded context`, `Maintainer`, `Last reviewed` lines
+2. **One-line summary** (existing, retained): single paragraph stating what the bounded context owns
+3. **Term index** (NEW): scannable table — columns `Term | Code identifier(s) | Used in features` only (the Definition column moves to detailed sections). Anchored by GitHub-rendered slug links to each term's H3 below
+4. **Terms in detail** (NEW): one `### Term: <term name>` H3 section per term, in the same order as the index, each containing:
+   - **Definition paragraph(s)** — 1-3 sentences explaining what the term IS, what role it plays in this bounded context, and what data/behaviour it carries
+   - **Why this term exists** — 1-2 sentences explaining the distinction the term draws (why this name and not a synonym; what design boundary it enforces)
+   - **Code identifier(s)** — fully-qualified path(s) where the term is realized (TypeScript type, F# record, function name, file path)
+   - **Persisted as / produced by** (where applicable) — schema table name, queue topic, file format, etc.
+   - **Used in features** — Gherkin feature file paths
+   - **Forbidden synonyms in this context** — per-term list with reason (which neighbouring context owns the synonym, and what mistake the misnaming would mask)
+   - **Related** — bullet list cross-linking to ADRs, schema files, neighbouring contexts that interact with this term
+5. **Forbidden synonyms (cross-cutting)** (existing, retained at file end if applicable): the file-level forbidden-synonym section is kept for synonyms that span multiple terms; per-term forbidden synonyms appear in the per-term H3 (no duplication — the cross-cutting block is only for synonyms not tied to one specific term)
+
+**Constraint preservation**: Term names, code identifiers, and forbidden synonyms MUST be byte-identical to the pre-deepening table cells (the Ubiquitous Language is the contract — only the depth of explanation grows; the canonical vocabulary does not change). `rhino-cli ddd ul organiclever` MUST pass against the deepened files using its existing parser (which reads the term index table and code-identifier column).
+
+**Files affected by FR-16** (10 files, one commit):
+
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/journal.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/routine.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/workout-session.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/stats.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/settings.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/app-shell.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/health.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/landing.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/routing.md`
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md` (index — gains "Authoring rules" addendum requiring per-term H3 detail; existing 5 authoring rules retained, NEW rule 6 added: "Each term has a `### Term: <name>` H3 section with definition paragraph, why-this-term, code identifiers, persisted-as line, used-in-features, forbidden-synonyms-in-context, related links — see [example: journal.md](./journal.md)")
+
+**Length budget**: there is no upper line cap on glossary files (they are reference material, not narrative; readers jump to the term they need). The lower bound is whatever depth a SWE-background TPM needs to disambiguate the term from its synonyms. Empty fields (e.g., a term with no `Persisted as` because it is purely in-memory) are omitted from that term's H3 rather than carried as `N/A`.
+
+**Validation**: a new acceptance scenario asserts every per-bounded-context glossary file contains as many `### Term:` H3 sections as rows in the term index table, and that each H3 section contains AT MINIMUM a definition paragraph plus a `Code identifier(s):` line. Hand-spot-check against `journal.md` (the most term-rich file) before declaring the deepening commit done.
+
 ## Acceptance criteria (Gherkin)
 
 ```gherkin
@@ -511,6 +551,53 @@ Feature: PM-readable specs (FR-6, FR-7) — audience: SWE-background TPM (e.g., 
     And the section lists a recommended reading order
     And the section provides a 3-bullet "v0 in plain language" summary
     And every file referenced in the reading path resolves to an existing file
+
+Feature: Ubiquitous Language glossary files contain detailed per-term explanations (FR-16)
+  As a SWE-background TPM (or new engineer joining the team)
+  I want each term in the ubiquitous-language glossary to carry a full explanation —
+    not just a one-line table cell —
+  So that I can understand the term's role, the distinction it draws against neighbouring terms,
+    and the design intent behind the vocabulary choice without chasing source code.
+
+  Scenario: Each per-bounded-context glossary file has detailed term sections
+    Given the plan has completed
+    When I open specs/apps/organiclever/components/web/ddd/ubiquitous-language/<bc>.md
+      for each <bc> in [journal, routine, workout-session, stats, settings, app-shell, health, landing, routing]
+    Then the file contains a "## Term index" section with a scannable table
+    And the file contains a "## Terms in detail" section
+    And under "## Terms in detail" there is one "### Term: <name>" H3 section per row in the term index table
+      (count of H3 sections == count of rows in the index)
+    And each "### Term:" H3 section contains AT MINIMUM:
+      | a definition paragraph of 1-3 sentences            |
+      | a "Why this term exists" subsection or sentence    |
+      | a "Code identifier(s):" line with a fully-qualified path or type name |
+      | a "Used in features:" line                         |
+      | a "Forbidden synonyms in this context:" subsection (with reason for each, when applicable) |
+    And per-term forbidden synonyms appear in their term's H3 section (not duplicated at file end)
+    And the existing top-level "Forbidden synonyms" file-end section contains only cross-cutting synonyms (or is removed if every synonym is per-term)
+
+  Scenario: Glossary deepening preserves the canonical vocabulary (no rename, no drop)
+    Given the original specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md from the pre-deepening commit
+    And the deepened specs/apps/organiclever/components/web/ddd/ubiquitous-language/<bc>.md from the Phase 2D commit
+    When I diff the set of term names from each file
+    Then the term names are byte-identical between old and new
+    And the code identifiers in the term index table column are byte-identical between old and new
+    And the forbidden synonyms (aggregated across per-term and file-level) are a superset of (or equal to) the old set
+      (depth grows; the canonical contract does not shrink)
+
+  Scenario: rhino-cli ddd ul still parses the deepened files
+    Given the deepened glossary files exist at their new tree position
+    When I run "rhino-cli ddd ul organiclever"
+    Then the command exits 0
+    And it reports the same set of terms it reported pre-deepening
+    And no parser errors are emitted
+
+  Scenario: Glossary README.md authoring rules document the per-term H3 requirement
+    Given the deepened glossary index at specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md
+    Then the "Authoring rules" section contains a rule mandating "### Term: <name>" H3 sections per term
+    And the rule references journal.md as the example
+    And the rule preserves the existing 5 authoring rules verbatim
+      (the new rule is rule 6, not a replacement)
 
 Feature: Governance propagation (FR-8)
   Scenario: New convention exists and follows the convention-writing standard

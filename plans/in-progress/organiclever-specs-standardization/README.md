@@ -46,6 +46,7 @@ Today is the cheapest moment to consolidate before further drift.
 - Trim `apps/organiclever-web-e2e/README.md` and `apps/organiclever-be-e2e/README.md` to dev-runtime sections only
 - Verify and minimally trim `infra/dev/organiclever/README.md` and `infra/k8s/organiclever/README.md` (and `staging/`, `production/` placeholders) — these are already short but must keep ONLY dev-runtime / Docker Compose / kubectl content; deployment topology narrative moves to specs/
 - Create new `specs/apps/organiclever/` files at their final tree positions: `product/overview.md`, `containers/deployment.md`, `components/be/api.md`, `components/web/architecture.md`, `components/web/design-system.md`, `components/web/routes-and-screens.md`
+- **Deepen ubiquitous-language glossary files (FR-16)**: replace the compact 1-line table cells in each `components/web/ddd/ubiquitous-language/<bc>.md` (9 files) with per-term `### Term: <name>` H3 sections containing definition paragraphs, why-this-term explanations, code-identifier paths, persisted-as info, used-in-features cross-links, forbidden-synonyms-with-reason, and related cross-links. Term names, code identifiers, and forbidden synonyms preserved byte-identical (the canonical contract does not change — only the depth of explanation grows). Append authoring rule 6 to the index README requiring per-term H3 detail. Lands as a separate commit in Phase 2.5
 - **Update tooling for new paths**: `apps/rhino-cli/internal/bcregistry/loader.go` path constant; `bcregistry/validator.go` and `glossary/validator.go` File: error-message paths; `apps/rhino-cli/cmd/ddd_bc_test.go`, `ddd_ul_test.go`, integration test fixtures; all 16 step files in `apps/organiclever-web/test/unit/steps/**/*.steps.tsx` (path.resolve calls); `apps/organiclever-web/project.json` Nx cache inputs; `apps/organiclever-be/project.json`, `apps/organiclever-web-e2e/project.json`, `apps/organiclever-be-e2e/project.json` cache inputs and `spec-coverage` commands
 - Update every inbound cross-link to the moved/redirected content
 - Delete the now-empty `apps/organiclever-web/docs/explanation/` folder if no other files remain
@@ -54,7 +55,7 @@ Today is the cheapest moment to consolidate before further drift.
 **Out of scope:**
 
 - New AI agents, new workflows
-- Changes to `bounded-contexts.yaml` REGISTRY CONTENT, glossaries CONTENT, or Gherkin feature CONTENT (file paths/locations DO change as part of the reorg, but the contents inside are unchanged)
+- Changes to `bounded-contexts.yaml` REGISTRY CONTENT or Gherkin feature CONTENT (file paths/locations DO change as part of the reorg, but the contents inside are unchanged). Glossary files are explicitly OUT of this restriction — the canonical vocabulary (term names, code identifiers, forbidden synonyms) is preserved byte-identical, but the per-term depth of explanation grows substantially per FR-16
 - Behavior or feature changes to TS/F# application code
 - Adding new Nx targets (existing targets get path updates only)
 - Reorganizing other apps' specs folders (`ayokoding`, `oseplatform`, `wahidyankf`, `rhino`) — pattern is set but applied in follow-up rollout plans
@@ -116,8 +117,9 @@ flowchart LR
 10. `governance/conventions/structure/specs-directory-structure.md` is REWRITTEN (not just cross-linked) to define the new C4-aware tree shape as the repo-wide spec organization standard; done via `repo-rules-maker`
 11. `repo-rules-checker` reports zero violations of the new conventions against the pilot artifacts; rhino-cli compile+test pass against new spec paths
 12. New rhino-cli `specs` subcommands exist (validate-tree, validate-counts, validate-links, validate-adoption, drift-routes, drift-endpoints, drift-contracts), each with Gherkin specs at `specs/apps/rhino/behavior/cli/gherkin/specs/` and ≥90% Go test coverage
-13. `specs-quality-gate` workflow enforces the new tree shape, BDD/DDD/Contracts adoption gaps, AND spec-vs-app drift detection — all using existing `lax/normal/strict/ocd` modes
-14. Push to `origin main` happens only after the FR-15 gate matrix exits 0 across every related Nx target, and post-push GitHub Actions CI workflows complete with conclusion `success`
+13. Every per-bounded-context `components/web/ddd/ubiquitous-language/<bc>.md` file (9 files) carries a `## Term index` jump table and a `## Terms in detail` section with one `### Term: <name>` H3 per term, each containing a definition paragraph, a "why this term" line, code-identifier path(s), used-in-features cross-link, and per-term forbidden synonyms with reasons (FR-16). Term names, code identifiers, and forbidden synonyms remain byte-identical to pre-deepening; `rhino-cli ddd ul organiclever` passes against the deepened files
+14. `specs-quality-gate` workflow enforces the new tree shape, BDD/DDD/Contracts adoption gaps, AND spec-vs-app drift detection — all using existing `lax/normal/strict/ocd` modes
+15. Push to `origin main` happens only after the FR-15 gate matrix exits 0 across every related Nx target, and post-push GitHub Actions CI workflows complete with conclusion `success`
 
 See [prd.md](./prd.md) for the full Gherkin acceptance scenarios.
 
