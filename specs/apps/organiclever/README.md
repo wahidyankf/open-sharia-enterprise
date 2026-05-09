@@ -20,7 +20,7 @@ specs/apps/organiclever/
 ├── be/                    # Backend specs (HTTP-semantic)
 │   ├── README.md
 │   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
-├── fe/                    # Frontend specs (UI-semantic)
+├── web/                   # Frontend specs (UI-semantic)
 │   ├── README.md
 │   └── gherkin/           # Frontend Gherkin scenarios (see web/gherkin/README)
 └── ubiquitous-language/   # Per-bounded-context glossary (shared by FE + future BE)
@@ -60,8 +60,77 @@ frontend is local-first.
 - **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Machine-readable DDD registry consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul` to enforce structural parity and glossary parity
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
 - **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
-- **[fe/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))
+- **[web/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))
 - **[ubiquitous-language/](./ubiquitous-language/README.md)** — Per-bounded-context glossary, the shared platform-agnostic vocabulary consumed by `fe/` today and by `be/` once DDD adoption reaches `organiclever-be`
+
+## DDD Registry (`bounded-contexts.yaml`)
+
+`bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
+`organiclever-web`. Two `rhino-cli ddd` subcommands read it to enforce structural and
+vocabulary invariants automatically in `nx run organiclever-web:test:quick`.
+
+### Schema
+
+Each entry under `contexts:` declares:
+
+| Field           | What it means                                                                 |
+| --------------- | ----------------------------------------------------------------------------- |
+| `name`          | Identifier — must match the folder name under `src/contexts/`                 |
+| `summary`       | One-paragraph human description                                               |
+| `layers`        | Ordered list of DDD layers that must exist as subfolders (e.g. `[domain, application, infrastructure, presentation]`) |
+| `code`          | Filesystem path to the context's implementation root                          |
+| `glossary`      | Path to the context's ubiquitous-language Markdown file                       |
+| `gherkin`       | Path to the context's Gherkin scenario directory                              |
+| `relationships` | List of inter-context relationships with `to`, `kind`, and `role`             |
+
+Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
+For `customer-supplier` and `conformist`, both sides must declare the relationship
+(symmetry enforced by `ddd bc`).
+
+### `rhino-cli ddd bc organiclever` — structural parity
+
+Reads the registry and verifies the **filesystem** matches exactly:
+
+- Every declared `code:` path exists with **exactly** the declared `layers:` subfolders
+  (extra or missing layer = error)
+- Every declared `glossary:` file exists on disk
+- Every declared `gherkin:` directory exists and contains ≥1 `.feature` file
+- No **orphan** directories exist under `src/contexts/` that aren't in the registry
+- Relationship declarations are symmetric across both context entries
+
+### `rhino-cli ddd ul organiclever` — glossary parity
+
+Reads the registry to locate every `glossary:` file, then validates each:
+
+- Required frontmatter keys present (`Bounded context`, `Maintainer`, `Last reviewed`)
+- Terms table header matches canonical columns
+- Code identifiers (backtick-wrapped in the table) exist somewhere in the declared
+  `code:` path — stale identifiers from renamed types or deleted functions are caught here
+- Feature file references in the table resolve to real `.feature` files under the
+  declared `gherkin:` path
+- Same term in two glossaries → both must carry mutual `Forbidden-synonyms` cross-links
+
+### Severity and escape hatch
+
+Both commands default to `error` severity — a finding fails the build.
+
+```bash
+# Downgrade to warnings locally (never commit with this set)
+ORGANICLEVER_RHINO_DDD_SEVERITY=warn nx run organiclever-web:test:quick
+
+# Or per-command
+rhino-cli ddd bc organiclever --severity=warn
+rhino-cli ddd ul organiclever --severity=warn
+```
+
+### Adding a new bounded context
+
+1. Add an entry to `bounded-contexts.yaml` with all six fields.
+2. Create the code directory with the declared layer subfolders.
+3. Create the glossary file at the declared path (use an existing one as a template).
+4. Create the gherkin directory and add at least one `.feature` file.
+5. Run `nx run organiclever-web:test:quick` — `ddd bc` and `ddd ul` will confirm
+   the registry matches the filesystem before any unit tests run.
 
 ## Spec Consumption
 
