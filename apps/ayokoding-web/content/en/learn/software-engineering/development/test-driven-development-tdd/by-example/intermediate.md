@@ -1115,7 +1115,7 @@ test("fetchUserData uses HTTP client", async () => {
 
 **Key Takeaway**: Mock fetch with `jest.fn()` or inject HTTP client for better testability. Avoid real network calls in unit tests.
 
-**Why It Matters**: Real HTTP calls make tests slow, flaky, and dependent on external service availability - all three properties that break CI pipelines. Twitter's testing guidelines mandate HTTP mocking after measuring that mocked tests run 50x faster and have 95% fewer transient failures than tests hitting real APIs. External API rate limits, authentication expiry, and network partitions cause non-deterministic test failures. HTTP mocking also enables testing error scenarios (503s, timeouts, malformed responses) that are impossible to reliably trigger against real services but are critical to handle correctly in production.
+**Why It Matters**: Real HTTP calls make tests slow, flaky, and dependent on external service availability — all three properties that break CI pipelines. Mocked HTTP tests run orders of magnitude faster and eliminate transient failures caused by external API rate limits, authentication expiry, and network partitions. HTTP mocking also enables testing error scenarios (503s, timeouts, malformed responses) that are impossible to reliably trigger against real services but are critical to handle correctly in production.
 
 ## Advanced Testing Techniques (Examples 41-45)
 
@@ -2454,7 +2454,7 @@ describe("CI environment detection", () => {
 
 **Key Takeaway**: Configure CI to run tests on every commit. Set coverage thresholds to enforce quality gates. Use pre-commit hooks for fast local feedback.
 
-**Why It Matters**: Automated testing in CI/CD catches bugs before code review, reducing the review burden on human reviewers who can focus on design and business logic rather than functional correctness. CircleCI's research shows CI-enforced testing catches 95% of bugs before production versus 60% for manual testing teams. GitHub's internal data shows PR review time decreases by 40% when CI provides clear test results - reviewers skip manual testing and focus on code quality. Fast CI feedback (under 3 minutes) maintains developer flow state while slow CI (over 10 minutes) causes context switching that doubles the cost of fixing the bug.
+**Why It Matters**: Automated testing in CI/CD catches bugs before code review, reducing the review burden on human reviewers who can focus on design and business logic rather than functional correctness. When CI provides clear test results, reviewers can skip manual functional verification and focus on intent and architecture. The earlier bugs are caught in the development cycle, the cheaper they are to fix — the principle is well established across software engineering research going back decadesting and focus on code quality. Fast CI feedback (under 3 minutes) maintains developer flow state while slow CI (over 10 minutes) causes context switching that doubles the cost of fixing the bug.
 
 ### Example 54: Test Performance Optimization
 

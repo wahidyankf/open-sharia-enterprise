@@ -691,7 +691,7 @@ function validateAge(age: number): number {
 
 **Key Takeaway**: Test error conditions as thoroughly as success cases. Use `expect(() => fn()).toThrow()` syntax to test thrown errors.
 
-**Why It Matters**: Proper error handling prevents cascading failures in distributed systems. Netflix's Chaos Engineering research found that 60% of service outages are caused by improper error handling - unthrown errors, missing catch blocks, and silently swallowed exceptions. TDD enforces testing both success and error paths equally. TypeScript custom error types, verified through TDD, improve error diagnostics by providing structured error information that logging and monitoring systems can parse, reducing mean time to resolution (MTTR) during incidents.
+**Why It Matters**: Proper error handling prevents cascading failures in distributed systems. Unthrown errors, missing catch blocks, and silently swallowed exceptions are among the most common causes of production outages in distributed systems — they allow partial failures to appear successful, corrupting downstream state. TDD enforces testing both success and error paths equally. TypeScript custom error types, verified through TDD, improve error diagnostics by providing structured error information that logging and monitoring systems can parse, reducing mean time to resolution (MTTR) during incidents.
 
 ## Test Structure Patterns (Examples 13-16)
 

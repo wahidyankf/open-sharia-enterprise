@@ -2491,7 +2491,7 @@ class OAuth2Controller {
 
 **Key Takeaway**: Spring OAuth2 client simplifies social login—configure provider credentials and Spring handles the OAuth2 flow.
 
-**Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest millions in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction by 30-50% (no password memorization), but introduces dependency on external providers—production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
+**Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest heavily in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction — no password memorization, no "forgot password" flows for new signups — but introduces dependency on external providers. Production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
 
 ---
 
@@ -7016,7 +7016,7 @@ class NotificationService(
 
 **Key Takeaway**: Create Spring Boot starters for reusable auto-configuration—define `@Configuration` with `@ConditionalOnClass` and `@EnableConfigurationProperties`, register in `AutoConfiguration.imports`, and users get automatic bean registration with type-safe properties.
 
-**Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest millions in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction by 30-50% (no password memorization), but introduces dependency on external providers—production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
+**Why It Matters**: OAuth2 delegates authentication to specialized providers (Google, GitHub, AWS Cognito) that invest heavily in security infrastructure, enabling applications to avoid storing passwords that require expensive PCI/SOC2 compliance. Social login reduces signup friction — no password memorization, no "forgot password" flows for new signups — but introduces dependency on external providers. Production systems implement fallback authentication for when OAuth providers have outages, preventing login failures that lock out all users during downtime.
 
 ---
 

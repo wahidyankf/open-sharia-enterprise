@@ -482,7 +482,7 @@ Tailwind includes four built-in animations: `animate-spin`, `animate-ping`, `ani
 
 **Key Takeaway**: Use `animate-spin` for loading, `animate-ping` for online indicators/notifications, `animate-pulse` for skeleton screens, and `animate-bounce` for scroll prompts and call-to-action indicators.
 
-**Why It Matters**: These four animations cover 90% of production animation needs. Skeleton screens (animate-pulse) dramatically improve perceived performance - users prefer seeing a gray pulsing layout over a blank screen while data loads, even when the actual load time is identical. The ping animation pattern for online status indicators appears in virtually every real-time application (Slack, Discord, Linear). Overusing animations causes cognitive fatigue; these four targeted patterns avoid that pitfall. Production applications use `animate-spin` on exactly two types of UI: loading buttons and file upload indicators - any more animation than that crosses from helpful into distracting.
+**Why It Matters**: These four animations cover the vast majority of production animation needs. Skeleton screens (animate-pulse) dramatically improve perceived performance — users prefer seeing a gray pulsing layout over a blank screen while data loads, even when actual load time is identical. The ping animation pattern for online status indicators appears in virtually every real-time application. Overusing animations causes cognitive fatigue; these four targeted patterns avoid that pitfall. Production applications use `animate-spin` on exactly two types of UI: loading buttons and file upload indicators - any more animation than that crosses from helpful into distracting.
 
 ## Group 4: The @apply Directive
 

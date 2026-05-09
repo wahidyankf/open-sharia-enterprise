@@ -1526,7 +1526,7 @@ print(f"Cache hit rate: {cache.hit_rate():.1f}%")
 
 **Key Takeaway**: In-memory caching eliminates repeated expensive operations by storing results with a TTL. The hit rate measures effectiveness — a high hit rate means most requests are served from cache; a low hit rate means the cache is providing little benefit.
 
-**Why It Matters**: Database query latency is typically 1-100ms; in-memory cache reads complete in microseconds — a 100-10,000x speedup. Instagram, Twitter, and Reddit use Redis to cache user profiles, timelines, and session data, reducing database load by 90%+ for read-heavy workloads. Without caching, popular content would trigger duplicate database queries from thousands of concurrent users, overwhelming even powerful database servers.
+**Why It Matters**: Database query latency is typically 1-100ms; in-memory cache reads complete in microseconds — a dramatic speedup that compounds across high-traffic read paths. Large platforms use Redis to cache user profiles, timelines, and session data, absorbing the read load that would otherwise hit the database on every request. Without caching, popular content triggers duplicate database queries from thousands of concurrent users, overwhelming even powerful database servers.
 
 ---
 

@@ -2182,7 +2182,7 @@ console.log(`ACC-002 balance: ${account2.getBalance()}`);
 
 **Key Takeaway**: Application Services orchestrate use cases by coordinating domain objects, managing transactions, and handling infrastructure. Business logic stays in domain entities; Application Services delegate to domain objects rather than implementing business rules themselves.
 
-**Why It Matters**: Application Services prevent anemic domain models. When Square refactored their payment processing, they moved business logic from Application Services into Payment, Merchant, and Transaction domain entities. Application Services became thin orchestration layers handling transactions, logging, and event publishing—while domain entities enforced business rules like "refund can't exceed original payment." This separation enabled domain logic reuse across multiple use cases (web API, mobile app, batch processing) without duplicating business rules.
+**Why It Matters**: Application Services prevent anemic domain models. Keeping business rules in domain entities (not Application Services) enables logic reuse across multiple entry points—web API, mobile app, batch processing—without duplication. Application Services become thin orchestration layers handling cross-cutting concerns (transactions, logging, event publishing), while domain entities enforce rules like "refund can't exceed original payment." This separation makes business logic independently testable and prevents the sprawl that occurs when orchestration code and domain rules are mixed together.
 
 ### Example 44: Application Service with Domain Events
 
@@ -3958,7 +3958,7 @@ console.log(`Rebuilt account balance: $${account.getBalance()}, version: ${accou
 
 **Key Takeaway**: Event Sourcing stores domain events as source of truth, rebuilding aggregate state by replaying events. Event Handlers build projections (read models) from event streams, enabling multiple views of same data. Every state change is captured as event, providing complete audit trail.
 
-**Why It Matters**: Event Sourcing enables time travel and audit compliance. Banks use Event Sourcing for account ledgers—every deposit, withdrawal, and fee is an immutable event. Regulators can audit exact account state at any point in history by replaying events to that timestamp. GitLab uses Event Sourcing for project timelines, enabling "rewind" to any project state. Trade-off: complexity (managing event schemas, rebuilding projections) vs. benefits (audit trail, temporal queries, event-driven architecture).
+**Why It Matters**: Event Sourcing enables time travel and audit compliance. Financial systems are a natural fit—every deposit, withdrawal, and fee becomes an immutable event, giving regulators a complete audit trail of account state at any historical point by replaying events to that timestamp. This capability is difficult or impossible to retrofit into traditional CRUD systems. Trade-off: complexity (managing event schemas, rebuilding projections) vs. benefits (full audit trail, temporal queries, event-driven integration).
 
 ### Example 52: Event Handler Error Handling and Dead Letter Queue
 

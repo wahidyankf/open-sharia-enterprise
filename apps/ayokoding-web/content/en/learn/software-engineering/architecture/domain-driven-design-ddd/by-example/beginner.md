@@ -39,7 +39,7 @@ graph TD
 
 **Key Takeaway**: DDD bridges the gap between business requirements and technical implementation by creating a shared language and organizing code around business concepts. Strategic patterns guide system architecture; tactical patterns guide code structure.
 
-**Why It Matters**: Most software failures stem from miscommunication between business and technical teams. When Netflix built their recommendation system, initial implementation used technical terms ("UserVector," "ItemMatrix") that domain experts couldn't understand. Adopting DDD's Ubiquitous Language (renaming to "ViewingPreferences," "ContentCatalog") enabled domain experts to review code, catching business logic errors that technical teams missed. This collaboration improved recommendation accuracy from 65% to 82%, directly impacting customer retention. DDD's shared language prevents the costly translation errors that plague traditional development approaches.
+**Why It Matters**: Most software failures stem from miscommunication between business and technical teams. A core DDD insight — documented in Evans' original 2003 book — is that terminology gaps between developers and domain experts cause requirements to be misunderstood and implemented incorrectly. When teams adopt Ubiquitous Language, domain experts can read and validate the code's intent directly, catching misunderstandings before they reach production. DDD's shared language prevents the costly translation errors that plague traditional development approaches.
 
 ### Example 2: Anemic vs Rich Domain Model
 
@@ -171,7 +171,7 @@ console.log(account.getBalance());
 
 **Key Takeaway**: Rich domain models encapsulate business rules within domain objects, protecting invariants and making business logic explicit and discoverable. Services coordinate, but domain objects enforce rules.
 
-**Why It Matters**: Anemic models lead to scattered business logic that's hard to maintain and test. When Shopify refactored their order processing from anemic to rich domain models, they reduced order-related bugs by 73%. Business rules previously scattered across 15 service classes were consolidated into Order, LineItem, and Discount domain objects. This enabled domain experts to review actual business logic (previously hidden in services) and catch edge cases like "discount can't exceed item price" that technical teams had missed. Rich domain models make business rules visible, testable, and maintainable.
+**Why It Matters**: Anemic models lead to scattered business logic that's hard to maintain and test. Martin Fowler identified the Anemic Domain Model as an anti-pattern in 2003, noting that it violates object-oriented principles by separating data from the behavior that operates on it. When business rules live in service classes rather than domain objects, they become invisible to domain experts, harder to test in isolation, and prone to duplication across services. Rich domain models make business rules visible, testable, and maintainable.
 
 ### Example 3: Ubiquitous Language in Code
 
@@ -672,7 +672,7 @@ console.log(order.getStatus()); // => Output: DELIVERED
 
 **Key Takeaway**: Entities with lifecycle states should enforce valid state transitions using state machine patterns. Prevent invalid transitions (e.g., can't ship a delivered order) by encoding business rules in the entity itself.
 
-**Why It Matters**: Invalid state transitions cause data inconsistencies and business process failures. When Shopify analyzed their order fulfillment bugs, 30% stemmed from invalid state transitions (orders marked "shipped" before "paid," orders "refunded" that were never "delivered"). Implementing state machine enforcement in Order entity eliminated these bugs entirely. Business rules about valid transitions became executable code that prevented impossible states. State machines in entities make business process rules explicit, testable, and automatically enforced.
+**Why It Matters**: Invalid state transitions cause data inconsistencies and business process failures. Without explicit state machine enforcement, nothing prevents an order from being marked "shipped" before it is "paid," or "refunded" before it is "delivered." These impossible states corrupt downstream processes and are difficult to detect after the fact. Implementing state machine enforcement in the entity makes business rules about valid transitions executable code — impossible states become compile-time or runtime errors rather than silent data corruption.
 
 ### Example 6: Entity with Invariants
 
@@ -982,7 +982,7 @@ account.freeze();                                                       // => Ac
 
 **Key Takeaway**: Entities protect their invariants (rules that must always be true) by validating all state changes. Encapsulate validation logic in private methods and check invariants after every mutation.
 
-**Why It Matters**: Unprotected invariants lead to corrupt data and business rule violations. When PayPal analyzed transaction failures, they found 15% of failed payments involved negative balances that exceeded overdraft limits—invariants were enforced in application services but not in Account entity itself, allowing direct database updates to bypass validation. Moving invariant protection into Account entity made invariants impossible to violate regardless of how the account was modified. Entities that protect their own invariants ensure data integrity even in complex systems with multiple modification paths.
+**Why It Matters**: Unprotected invariants lead to corrupt data and business rule violations. When invariants are enforced only in application services, direct database updates or alternative code paths can bypass them entirely — allowing negative balances, oversold inventory, or invalid states to enter the system silently. Moving invariant protection into the entity itself means the rule is enforced regardless of how the entity is modified. Entities that protect their own invariants ensure data integrity even in complex systems with multiple modification paths.
 
 ### Example 7: Entity Repository Pattern
 
@@ -2485,7 +2485,7 @@ console.log(`Shipping cost: $${cost}`); // => Output: Shipping cost: $10.00
 
 **Key Takeaway**: Value objects with units prevent unit confusion by encapsulating value and unit together. Unit conversions become explicit domain operations, not scattered arithmetic.
 
-**Why It Matters**: Unit confusion causes expensive errors. NASA's Mars Climate Orbiter ($327M) crashed because one team used imperial units (pounds) while another used metric (newtons)—mixing units in calculations. Weight value object makes unit mixing impossible: adding weights automatically converts to common unit. Amazon's shipping system reduced weight-related billing errors by 88% after implementing Weight value objects, preventing bugs like comparing "5 kg" to "10 lb" without conversion.
+**Why It Matters**: Unit confusion causes expensive errors. NASA's Mars Climate Orbiter ($327M total mission cost) was lost because one team's software output thruster impulse in pound-force seconds while NASA's trajectory software expected newton-seconds — a factor-of-4.45 mismatch that went undetected until the spacecraft was destroyed. A Weight or Money value object makes this class of error impossible at the type level: operations automatically convert to a common unit, and mixing incompatible units becomes a compile-time or runtime error rather than silent data corruption.
 
 ## Aggregates and Aggregate Roots (Examples 14-18)
 
@@ -3592,7 +3592,7 @@ enum OrderPaymentStatus {
 
 **Key Takeaway**: Transactions should modify only one aggregate instance. Use domain events and eventual consistency to coordinate changes across multiple aggregates. This maintains aggregate boundaries and enables scalability.
 
-**Why It Matters**: Multi-aggregate transactions create coupling and distributed transaction complexity. When PayPal's early payment system used distributed transactions across Payment and Order aggregates, they experienced deadlocks, timeout failures, and poor scalability (10 TPS limit). Switching to eventual consistency (capture payment, publish event, update order asynchronously) increased throughput to 10,000 TPS and eliminated distributed transaction failures. One aggregate per transaction is the key to scalable DDD systems.
+**Why It Matters**: Multi-aggregate transactions create coupling and distributed transaction complexity. Distributed transactions spanning multiple aggregates require coordination (2PC, saga compensations) that introduces deadlocks, timeout failures, and dramatically reduced throughput. Switching to eventual consistency — capture payment, publish event, update order asynchronously — eliminates the distributed lock contention entirely. One aggregate per transaction is the key principle for scalable DDD systems; it is also why high-throughput payment systems explicitly avoid spanning aggregates in a single transaction.
 
 ## Repositories - Persistence Abstraction (Examples 19-23)
 
@@ -5215,7 +5215,7 @@ class EmailService {
 
 **Key Takeaway**: Domain services contain domain logic that doesn't fit in aggregates. Application services orchestrate use cases (load, coordinate, save) but delegate domain logic to aggregates and domain services. Infrastructure services handle technical concerns (email, database, messaging).
 
-**Why It Matters**: Mixing domain logic into application services makes business rules scattered and untestable. When Amazon analyzed their checkout flow, they found pricing logic split across 15 application service methods—impossible to test consistently. Moving to PricingService (domain service) centralized business rules, making them testable without infrastructure dependencies. Clear separation (application services orchestrate, domain services contain logic) keeps business rules discoverable and maintainable.
+**Why It Matters**: Mixing domain logic into application services makes business rules scattered and untestable. When pricing logic is spread across multiple application service methods, each handler re-implements or duplicates rules like discount stacking, tax exemptions, and volume pricing — inconsistently. Moving to a domain service centralizes these rules, making them testable without infrastructure dependencies. Clear separation (application services orchestrate, domain services contain logic) keeps business rules discoverable and maintainable.
 
 ---
 

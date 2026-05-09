@@ -4647,7 +4647,7 @@ Feature: Email Notifications
 
 **Key Takeaway**: Email BDD testing uses mail trap services to capture emails sent by the application, enabling verification of recipients, subjects, bodies, and embedded links without sending real emails.
 
-**Why It Matters**: Email functionality is critical for user workflows (registration, password reset, notifications) but hard to test in CI/CD. Mail trap services like MailTrap, MailHog, or Ethereal provide test SMTP servers that capture emails for assertion. Spotify uses email BDD tests to verify notification delivery across 40+ email templates in 30+ languages.
+**Why It Matters**: Email functionality is critical for user workflows (registration, password reset, notifications) but hard to test in CI/CD — production SMTP sends real emails to real addresses. Mail trap services like MailTrap, MailHog, or Ethereal provide test SMTP servers that capture emails for assertion without delivering them. BDD scenarios for email verify delivery, content, and formatting across multiple templates and locales without side effects.
 
 ### Example 51: PDF/Document Validation
 
@@ -6694,7 +6694,7 @@ docker-compose -f docker-compose.test.yml down -v  # Stop and clean
 
 **Key Takeaway**: Docker BDD testing provides isolated, reproducible test environments with database containers, API mocks, and service dependencies managed through Docker Compose lifecycle hooks.
 
-**Why It Matters**: Environment consistency eliminates "works on my machine" issues. Docker ensures identical database versions, network topology, and service dependencies across local dev and CI. Square runs 100% of BDD tests in Docker containers to guarantee production parity, catching database migration issues and service dependency bugs before deployment.
+**Why It Matters**: Environment consistency eliminates "works on my machine" issues. Docker ensures identical database versions, network topology, and service dependencies across local dev and CI. Running BDD tests in containers guarantees production parity, catching database migration issues and service dependency bugs before deployment rather than discovering them in production.
 
 ### Example 57: Integration Testing Patterns
 

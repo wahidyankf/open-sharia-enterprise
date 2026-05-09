@@ -1331,7 +1331,7 @@ jobs:
 
 **Key Takeaway**: Use `dorny/paths-filter` to detect changed paths and expose results as job outputs. Downstream jobs use `if: needs.<id>.outputs.<filter> == 'true'`. The deploy job must use `always()` to run when some build jobs were legitimately skipped rather than failed.
 
-**Why It Matters**: Monorepos with 20+ services cannot afford to rebuild and test everything on every commit — a 30-minute full build pipeline becomes the primary bottleneck to developer velocity. Path filtering reduces CI time by 70-90% on targeted changes: a CSS fix in `apps/web` runs only the frontend build, not the auth service or API. The `always()` expression in the deploy job is a subtle but critical correctness requirement — GitHub treats skipped jobs as "not completed", and a `needs:` dependency on a skipped job will also skip by default, breaking the deploy step for partial updates without `always()`.
+**Why It Matters**: Monorepos with 20+ services cannot afford to rebuild and test everything on every commit — a 30-minute full build pipeline becomes the primary bottleneck to developer velocity. Path filtering runs only the jobs relevant to the changed paths: a CSS fix in `apps/web` triggers only the frontend build, not the auth service or API. The `always()` expression in the deploy job is a subtle but critical correctness requirement — GitHub treats skipped jobs as "not completed", and a `needs:` dependency on a skipped job will also skip by default, breaking the deploy step for partial updates without `always()`.
 
 ---
 

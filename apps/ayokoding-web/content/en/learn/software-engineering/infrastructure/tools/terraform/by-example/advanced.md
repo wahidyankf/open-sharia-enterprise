@@ -2241,7 +2241,7 @@ output "endpoints" {
 
 **Key Takeaway**: Multi-region deployment uses provider aliases (`alias = "primary"`) and passes specific providers to modules with `providers = { aws = aws.primary }`. Deploy identical infrastructure in multiple regions for high availability. Use Route53 latency-based routing to direct traffic to nearest region. Replicate data across regions with S3 replication, RDS read replicas, or DynamoDB global tables. Global resources (Route53, IAM) created once in primary region.
 
-**Why It Matters**: Multi-region architecture enables sub-100ms global response times and disaster recovery—when AWS us-east-1 experienced 11-hour outage in 2021, companies with multi-region failover (Stripe, Figma) stayed online while single-region competitors went dark. Multi-region Terraform requires careful state management: separate state files per region or shared state with region-specific resources. Latency-based routing routes users to nearest region automatically, improving performance for global user base. Organizations targeting 99.99% uptime legally require multi-region (single region caps at 99.9% per AWS SLA).
+**Why It Matters**: Multi-region architecture enables sub-100ms global response times and disaster recovery. The AWS us-east-1 outage in December 2021 is the canonical example: companies with multi-region failover continued operating while single-region services went dark for hours. Multi-region Terraform requires careful state management: separate state files per region or shared state with region-specific resources. Latency-based routing sends users to the nearest region automatically. Organizations targeting 99.99% uptime require multi-region by design — a single region's SLA caps what's achievable.
 
 ---
 
@@ -2597,7 +2597,7 @@ output "rollout_status" {
 
 **Key Takeaway**: Feature flags enable progressive rollouts with percentage-based traffic splitting. Deploy new feature at 0% traffic, test, incrementally increase percentage while monitoring metrics. Instant rollback by reducing percentage to 0. Use count/for_each to conditionally create new feature resources. Load balancer weighted routing distributes traffic. Remove old feature after new feature proves stable at 100%.
 
-**Why It Matters**: Progressive rollouts reduce blast radius of bad deployments—when Facebook rolls out new features, they start at 0.1% (10,000 users), monitor for errors, then incrementally increase, preventing platform-wide outages from affecting 3 billion users. Feature flags enable A/B testing: route 50% to new algorithm, compare metrics, data-driven decision instead of gut feel. The gradual increase catches issues early: bug affecting 1% of traffic (1,000 users) gets caught and fixed before affecting 100% (100,000 users), dramatically reducing customer impact and support load.
+**Why It Matters**: Progressive rollouts reduce blast radius of bad deployments. Starting at a small percentage of traffic, monitoring for errors, then incrementally increasing catches issues before they affect everyone. Feature flags enable A/B testing: route 50% to a new algorithm, compare metrics, make data-driven decisions instead of gut-feel ones. A bug caught at 1% of traffic is far cheaper to fix than one discovered at 100% rollout.
 
 ---
 
@@ -3410,7 +3410,7 @@ resource "local_file" "protected" {
 
 **Key Takeaway**: Drift detection uses `terraform plan` to compare actual state vs desired configuration. Use `plan -detailed-exitcode` in automation: exit code 2 means drift detected. Schedule periodic drift detection in CI/CD (every 6 hours). Remediate drift with `terraform apply` to restore desired state. Prevent drift by importing manually created resources, enforcing "Terraform-only" policy, and using read-only production access.
 
-**Why It Matters**: Configuration drift causes outages—when Target's Black Friday site went down, investigation revealed manual firewall changes made months earlier conflicted with Terraform-managed rules, but drift wasn't detected until failure. Automated drift detection finds issues before they cause problems: engineer manually updates security group "temporarily", forgets to remove, drift detection catches it next scheduled run. Drift remediation restores consistency, preventing "snowflake servers" with unique configurations that are impossible to debug.
+**Why It Matters**: Configuration drift causes outages. The pattern is consistent: an engineer makes a "temporary" manual change to fix an urgent issue, never removes it, and the drift is discovered only when it conflicts with a Terraform-managed change months later. Automated drift detection finds these discrepancies on a schedule rather than during an incident. Drift remediation restores consistency, preventing "snowflake servers" with unique configurations that are impossible to reproduce or debug.
 
 ---
 
@@ -4303,7 +4303,7 @@ resource "local_file" "good_example" {
 
 **Key Takeaway**: Terraform parallelizes independent resources (default: 10 concurrent operations). Increase `-parallelism` for faster apply on large infrastructures (avoid API rate limits). Minimize `depends_on` usage—prefer implicit dependencies via attribute references. Visualize dependency graph with `terraform graph` to identify bottlenecks. Use `-target` for partial applies during development.
 
-**Why It Matters**: Parallelism dramatically reduces apply time—Stripe's infrastructure of 5,000+ resources takes 45 minutes with default parallelism=10 but only 12 minutes with parallelism=30, saving 33 minutes per apply. Unnecessary `depends_on` creates artificial bottlenecks: one engineer added `depends_on` to "be safe", turning 10 parallel EC2 instances into 10 sequential operations (10 minutes vs 1 minute). Terraform graph visualization catches these issues: visual inspection reveals long chains that should be parallel.
+**Why It Matters**: Parallelism dramatically reduces apply time in large Terraform configurations. Unnecessary `depends_on` creates artificial bottlenecks: adding `depends_on` "to be safe" turns resources that could provision in parallel into sequential operations — what could take 1 minute becomes 10. Terraform's graph visualization catches these issues: visual inspection reveals long dependency chains where parallel provisioning was possible. For large infrastructure codebases, tuning parallelism and auditing artificial dependencies is one of the highest-leverage performance optimizations available.
 
 ---
 
@@ -4601,7 +4601,7 @@ resource "aws_s3_bucket_replication_configuration" "terraform_state" {
 
 **Key Takeaway**: Enable S3 versioning for automatic state backups (every change creates new version). Configure lifecycle rules to archive old versions to Glacier (90-day retention). Replicate state bucket to secondary region for disaster recovery. Create local backups before risky operations (`terraform state pull > backup.tfstate`). Test recovery procedures regularly (quarterly drills).
 
-**Why It Matters**: State file loss requires manual reconstruction—after Target's S3 bucket deletion incident, engineering spent 3 weeks rebuilding Terraform state by importing 5,000+ resources with `terraform import`, costing $500k in engineering time. S3 versioning enables instant rollback: corrupted state from bad apply? Restore previous version in 30 seconds. Cross-region replication protects against region failure: when AWS us-east-1 had multi-hour outage, companies with replicated state switched to us-west-2, continued Terraform operations without interruption.
+**Why It Matters**: State file loss requires manual reconstruction — importing every existing resource back into Terraform state, one by one. For large infrastructure codebases this is weeks of work and represents a complete loss of IaC enforcement during reconstruction. S3 versioning enables instant rollback: corrupted state from a bad apply is restored in seconds. Cross-region replication protects against region failure, allowing Terraform operations to continue from a secondary region when the primary is unavailable.
 
 ---
 
@@ -6246,7 +6246,7 @@ module "database" {
 
 **Key Takeaway**: Monorepo with environment directories (environments/dev, environments/staging, environments/prod) enables code reuse with environment-specific parameters. Shared modules (modules/vpc, modules/compute, modules/database) enforce consistency. Each environment has isolated backend (separate state files). Deploy changes to dev → staging → prod sequentially. Module updates affect all environments (test in dev before prod).
 
-**Why It Matters**: Monorepo prevents configuration drift across environments—before monorepo, Datadog had separate repositories for dev/staging/prod with diverging configurations (prod had 30% more security rules than staging, unintentional). Monorepo with shared modules enforces consistency: security rule added to VPC module automatically flows to all environments on next apply. The sequential deployment pattern (dev → staging → prod) catches breaking changes: module update breaks dev, fixed before reaching prod, zero production incidents from Terraform changes in 18 months.
+**Why It Matters**: Monorepo prevents configuration drift across environments. With separate repositories per environment, security rules, instance types, and module versions diverge over time — changes made to prod aren't backported to staging, making staging an unreliable test environment. A shared module in a monorepo enforces consistency: a security rule added to the VPC module flows to all environments on next apply. The sequential deployment pattern (dev → staging → prod) catches breaking changes before they reach production.
 
 ---
 

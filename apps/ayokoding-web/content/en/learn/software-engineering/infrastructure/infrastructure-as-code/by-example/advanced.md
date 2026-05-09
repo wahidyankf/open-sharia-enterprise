@@ -800,7 +800,7 @@ projects:
 
 **Key Takeaway**: Atlantis implements GitOps for Terraform by triggering plans on PR open and blocking applies until the plan is reviewed and approved, making every infrastructure change auditable and reversible.
 
-**Why It Matters**: GitOps for infrastructure provides the same benefits as GitOps for application deployments: every change has a pull request, a plan output, an approver, and a commit hash in the audit trail. Shopify's infrastructure team reports that Atlantis eliminated "cowboy deploys"—infrastructure changes applied directly from developer laptops—reducing their production incidents from infrastructure changes by 60% because every change now goes through automated planning and human review.
+**Why It Matters**: GitOps for infrastructure provides the same benefits as GitOps for application deployments: every change has a pull request, a plan output, an approver, and a commit hash in the audit trail. Atlantis eliminates "cowboy deploys" — infrastructure changes applied directly from developer laptops — because every change now goes through automated planning and human review before apply. The audit trail also satisfies compliance requirements that manual apply never could.
 
 ---
 
@@ -914,7 +914,7 @@ jobs:
 
 **Key Takeaway**: A Terraform CI/CD pipeline combines format checks, validation, security scanning, and plan output in a pull request workflow that gates infrastructure changes on human approval.
 
-**Why It Matters**: An automated Terraform pipeline eliminates the most common IaC team problems: unformatted code causing merge conflicts, invalid configurations reaching production, and security misconfigurations slipping through code review. GitHub's own infrastructure team reports that automated plan-in-PR workflows reduced their infrastructure deployment cycle time by 40% by making review faster (reviewers see exact changes) while simultaneously reducing incidents from untested infrastructure changes.
+**Why It Matters**: An automated Terraform pipeline eliminates the most common IaC team problems: unformatted code causing merge conflicts, invalid configurations reaching production, and security misconfigurations slipping through code review. Plan-in-PR workflows make review faster because reviewers see exact changes rather than diff-reading the HCL — and because automated validation catches format, lint, and security issues before the review even starts.
 
 ---
 
@@ -1559,7 +1559,7 @@ resource "aws_nat_gateway" "main" {
 
 **Key Takeaway**: Infracost surfaces cloud cost impacts in pull requests before infrastructure changes are applied, preventing expensive surprises from infrastructure changes that seem small but have large cost implications.
 
-**Why It Matters**: Infrastructure cost overruns are almost always caused by incremental decisions that seemed reasonable in isolation: "just add a NAT Gateway," "bump instance type for performance," "add Multi-AZ for reliability." Infracost makes each decision's monthly cost visible at code review time, when changing it is free. Spotify's infrastructure team reports that surfacing costs in PRs reduced their unexpected cloud bill growth by 30% in the first quarter, because engineers started choosing cost-effective alternatives when alternatives were equally viable.
+**Why It Matters**: Infrastructure cost overruns are almost always caused by incremental decisions that seemed reasonable in isolation: "just add a NAT Gateway," "bump instance type for performance," "add Multi-AZ for reliability." Infracost makes each decision's monthly cost visible at code review time, when changing it is free. When engineers can see the $300/month impact of a "quick" instance type change before merging, they choose cost-effective alternatives — rather than discovering the bill impact at month-end.
 
 ---
 
@@ -1818,7 +1818,7 @@ resource "aws_autoscaling_policy" "queue_scale_out" {
 
 **Key Takeaway**: Define both target-tracking scaling (for steady-state metrics like CPU) and step scaling (for event-driven spikes like queue depth) to handle both gradual load increases and sudden traffic bursts.
 
-**Why It Matters**: Hard-coded `desired_capacity` in Terraform is a common anti-pattern for production systems—it creates a choice between over-provisioning (waste) and under-provisioning (incidents). IaC-defined scaling policies encode your scaling strategy as code: reviewable, testable, and auditable. Stripe's infrastructure team publicly documented that IaC-defined auto-scaling—with carefully tuned step policies for different traffic patterns—reduced their compute costs by 35% while improving availability during traffic spikes compared to manually managed capacity.
+**Why It Matters**: Hard-coded `desired_capacity` in Terraform is a common anti-pattern for production systems — it creates a choice between over-provisioning (waste) and under-provisioning (incidents). IaC-defined scaling policies encode the scaling strategy as code: reviewable, testable, and auditable. Step policies that are tuned per traffic pattern and committed to source control are far less likely to be misconfigured under pressure than manual console adjustments during an incident.
 
 ---
 

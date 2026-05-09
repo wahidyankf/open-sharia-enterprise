@@ -413,7 +413,7 @@ console.log(highValueOrder.getState()); // => Output: Processing
 
 Workflows need compensation logic when errors occur mid-flow (payment failed, inventory unavailable). FSMs track states for rollback to consistent states.
 
-**Why It Matters**: At Stripe, payment workflow FSMs handle 50M+ transactions daily with automatic rollback when errors occur. If a \$10,000 payment moves from Pending → Authorized → Captured but the capture fails, the FSM automatically executes compensation: Captured → Refunding → Pending, releasing the authorized funds. Without FSM-based compensation, 2-3% of failed transactions (1M+ daily) would leave funds in inconsistent states requiring manual resolution at \$15/incident cost.
+**Why It Matters**: FSM-based compensation handles partial failures automatically. If a payment moves from Pending → Authorized → Captured but the capture fails, the FSM executes a defined compensation path: Captured → Refunding → Pending, releasing the authorized funds. Without explicit compensation transitions, partial failures leave funds in inconsistent states requiring manual identification and resolution — a problem that scales linearly with transaction volume.
 
 ```mermaid
 stateDiagram-v2
@@ -874,7 +874,7 @@ setTimeout(() => {
 
 Large FSMs with similar states can be compressed using parameterized states (state + context data), reducing state explosion.
 
-**Why It Matters**: At LinkedIn, job application FSM originally had 150+ states for tracking applications across 10 job types × 15 statuses. By compressing to 15 parameterized states (status) + context (jobType), they reduced state count by 90% while maintaining full functionality. This optimization cut FSM memory footprint from 12KB to 1.3KB per application, saving 18GB memory across 1.7M active applications.
+**Why It Matters**: State explosion is the failure mode of naive FSM modeling. Tracking applications across N job types × M statuses without parameterization produces N×M states — each requiring its own transition definitions. By compressing to M parameterized states plus job-type context, the FSM stays comprehensible regardless of how many job types exist. The memory and maintenance savings scale with the number of variants.
 
 ```typescript
 // State compression using parameterized states
@@ -1120,7 +1120,7 @@ console.log(player.getState()); // => Output: Paused
 
 FSMs with expensive state entry/exit actions benefit from caching computed results to avoid redundant operations.
 
-**Why It Matters**: At Shopify, product availability FSM recalculates inventory levels on every entry to the CheckingStock state. With 50K product lookups/second, this created 800K database queries/second. By caching inventory levels for 5 seconds, they reduced queries by 94% (48K → 3K queries/second) while maintaining 99.9% accuracy. Cache hit rate of 94% saved \$120K/month in database costs.
+**Why It Matters**: Entry actions that hit the database on every state entry become a bottleneck at scale. Recalculating inventory on every CheckingStock entry multiplies database load by the transition frequency. Short-lived caching (e.g., 5 seconds) trades a small staleness window for a dramatic reduction in database calls — a worthwhile tradeoff for inventory that changes on the order of minutes, not milliseconds.
 
 ```typescript
 // FSM with state result caching
@@ -2106,7 +2106,7 @@ euWest.receiveReplicatedState(usEast.getReplicatedState());
 
 Conflict-free Replicated Data Types (CRDTs) enable FSM state merging without coordination, ideal for offline-first apps.
 
-**Why It Matters**: At Figma, collaborative editing FSMs use CRDT-based state merging to handle concurrent edits from 10+ designers. Each designer's FSM tracks local changes offline, then merges with remote states when reconnected. CRDTs guarantee eventual consistency without central coordination: all replicas converge to the same state regardless of message order or network delays. This enables Figma's real-time collaboration with <50ms latency and offline editing.
+**Why It Matters**: CRDT-based state merging enables collaborative FSMs that work offline and converge correctly when reconnected. Each participant's FSM tracks local changes independently, then merges with remote states without central coordination. CRDTs guarantee eventual consistency: all replicas converge to the same state regardless of message order or network delays — a property that is impossible to achieve with last-write-wins or simple locking strategies.
 
 ```typescript
 // FSM with CRDT state merging (G-Counter CRDT)
@@ -2620,7 +2620,7 @@ orchestrator.runSaga();
 
 Sagas need timeout and retry policies to handle slow services (network delays, overloaded services) without blocking indefinitely.
 
-**Why It Matters**: At Shopify, checkout sagas implement 3-tier retry policy: payment service (3 retries, 5s timeout), inventory service (5 retries, 2s timeout), shipping service (2 retries, 10s timeout). With 10K checkouts/minute during flash sales, these policies prevent cascade failures: when payment service slows to 8s response time (above 5s timeout), saga retries 3 times then fails fast (total 15s) instead of blocking for 60s+ and exhausting thread pools. Retry policies increased successful checkouts from 87% to 96% during traffic spikes.
+**Why It Matters**: Different services have different failure characteristics and deserve different retry budgets. Payment services need few retries with aggressive timeouts (funds-in-flight); inventory services tolerate more retries; shipping services have longer acceptable delays. Without per-service retry policies defined in the saga FSM, a single slow dependency blocks thread pools across the entire checkout. Explicit per-service policies in FSM transitions enable fast failure for the right services and patience for others.
 
 ```typescript
 // Saga with timeout and retry policies
@@ -2785,7 +2785,7 @@ runSagaWithRetries();
 
 Sagas need idempotent service calls to safely retry failed steps without duplicate side effects (double-charging, duplicate emails).
 
-**Why It Matters**: At Stripe, payment sagas use idempotency keys to prevent duplicate charges when retrying failed requests. Each saga step generates unique idempotency key (order_id + step_name + attempt_number) sent with API calls. If retry reaches Stripe after original succeeded, Stripe returns cached response (no duplicate charge). With 5-8% of payment requests retried, idempotency prevents \$50M+ monthly in duplicate charges and customer complaints.
+**Why It Matters**: Network failures during payment retries can cause duplicate charges. Idempotency keys solve this: each saga step generates a unique key (order_id + step_name + attempt_number) sent with every API call. If a retry reaches the payment provider after the original succeeded, the provider returns the cached response rather than executing a new charge. Stripe's API is designed around this pattern — idempotency keys are a first-class feature precisely because retries are unavoidable at scale.
 
 ```typescript
 // Saga with idempotency guarantees
@@ -3086,7 +3086,7 @@ console.log(`Active: ${deployment.getActiveEnv()}`); // => Output: Blue
 
 Canary deployments use FSM to gradually increase traffic to new version while monitoring metrics, with automatic rollback on errors.
 
-**Why It Matters**: At Google, canary FSM deploys YouTube changes to 1% → 5% → 25% → 50% → 100% of traffic over 6-12 hours, monitoring error rates and latency at each stage. If error rate increases >0.5% or p99 latency increases >10%, FSM automatically rolls back to previous version. With 50+ YouTube deploys daily, canary FSM catches 15-20% of bad deployments at 1-5% traffic, preventing user impact compared to full rollout. Gradual rollout reduces blast radius from 100% users (2B+) to <50M users for caught issues.
+**Why It Matters**: Canary deployments encoded as FSMs make the rollout policy explicit and automatable. Staged traffic promotion (1% → 5% → 25% → 50% → 100%) with automated rollback on error-rate or latency thresholds removes human judgment from the critical path. The Google SRE Workbook documents canary releases as a core reliability practice; FSMs formalize the when-to-proceed and when-to-rollback logic as auditable state transitions rather than informal runbooks.
 
 ```mermaid
 stateDiagram-v2
@@ -3276,7 +3276,7 @@ console.log(canary.getTrafficPct()); // => Output: 0
 
 Feature flags use FSM to manage feature lifecycle: development → testing → canary → enabled → deprecated.
 
-**Why It Matters**: At Facebook, feature flag FSMs manage 10K+ active flags controlling gradual feature rollouts, A/B tests, and emergency kill switches. A typical flag FSM: Development (0% users) → Testing (employees only, 50K users) → Canary (0.1% users, 3M) → Enabled (100%, 3B users) → Deprecated (cleanup). FSM state transitions have approval gates (testing→canary requires QA sign-off, canary→enabled requires metric validation). Kill switch capability (Enabled→Disabled in <1s) mitigates production issues affecting millions.
+**Why It Matters**: Feature flag FSMs encode rollout policy as auditable state — not tribal knowledge. A flag's lifecycle (Development → Testing → Canary → Enabled → Deprecated) with approval gates at each transition means promotion decisions are explicit and reviewable. Kill switch capability (Enabled → Disabled) is a state transition with the same structure, making emergency rollback consistent with routine promotion. Large-scale feature flag systems like LaunchDarkly and Unleash are built around exactly this state model.
 
 ```typescript
 // Feature flag FSM with approval gates and kill switch
@@ -3744,7 +3744,7 @@ testCircuit();
 
 FSMs integrate with ML models to make state transition decisions based on predictions (fraud detection, anomaly detection).
 
-**Why It Matters**: At PayPal, fraud detection FSMs use ML models to score transactions and determine state transitions. Transactions move through: Initiated → MLScoring → (Low Risk → Approved | Medium Risk → ManualReview | High Risk → Rejected). ML model predicts fraud probability (0-1 score) in real-time (<50ms latency). With 450M daily transactions, ML-FSM integration catches 92% of fraud (vs 78% rule-based) while reducing false positives by 40%, saving \$400M+ annually in fraud losses and customer friction.
+**Why It Matters**: ML-driven FSMs separate the scoring model from the routing policy. The ML model predicts fraud probability; the FSM decides what to do with the score (Low Risk → Approved, Medium Risk → ManualReview, High Risk → Rejected). This separation means the routing thresholds can be adjusted without retraining the model, and the model can be updated without changing the workflow logic. ML models embedded directly in if-else chains entangle both concerns, making either harder to change independently.
 
 ```typescript
 // FSM with ML model integration for state transitions
@@ -4109,7 +4109,7 @@ console.log(`Final state: ${trip.getState()}`); // => Output: Completed
 
 Production FSMs need visualization and debugging tools to understand current state distribution, transition history, and bottlenecks.
 
-**Why It Matters**: At Airbnb, booking FSM telemetry tracks 100K+ concurrent bookings with state distribution dashboards showing: Pending (15K), PaymentProcessing (8K), Confirmed (70K), Cancelled (5K), Error (2K). When Error state spikes to 8K (4x normal), engineers use FSM transition logs to identify root cause (payment gateway timeout) within 5 minutes. Without FSM visualization, diagnosing distributed state issues would take 30-60 minutes (analyzing logs across 200+ instances). State distribution metrics enable capacity planning: if PaymentProcessing consistently exceeds 10K, scale payment service.
+**Why It Matters**: FSM telemetry turns state distribution into an operational signal. When each booking's current state is tracked (Pending, PaymentProcessing, Confirmed, Cancelled, Error), an anomalous spike in the Error state is immediately visible on a dashboard rather than buried in per-instance logs. FSM transition logs also pinpoint root causes: if Error entries correlate with transitions from PaymentProcessing, the payment gateway is the culprit. State distribution metrics also inform capacity planning — sustained growth in PaymentProcessing entries signals the payment service needs scaling before it becomes a bottleneck.
 
 ```typescript
 // FSM with telemetry, visualization, and debugging

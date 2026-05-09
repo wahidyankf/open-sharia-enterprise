@@ -1872,7 +1872,7 @@ interface UserRepository : JpaRepository<User, Long> {
 
 **Key Takeaway**: `JpaRepository` provides CRUD methods out-of-the-box. No implementation code needed—Spring generates it at runtime.
 
-**Why It Matters**: JPA abstracts database differences across PostgreSQL, MySQL, Oracle, and H2, enabling database portability where the same code runs on development H2 and production PostgreSQL without SQL dialect changes. JpaRepository eliminates 80% of boilerplate data access code (JDBC connection handling, ResultSet mapping, transaction management) that traditionally required 50+ lines per DAO method, reducing data layer bugs from manual resource management and enabling rapid prototyping where adding a database entity requires only 5 lines of code.
+**Why It Matters**: JPA abstracts database differences across PostgreSQL, MySQL, Oracle, and H2, enabling database portability where the same code runs on development H2 and production PostgreSQL without SQL dialect changes. JpaRepository eliminates the vast majority of boilerplate data access code — JDBC connection handling, ResultSet mapping, and transaction management that traditionally required dozens of lines per DAO method — reducing data layer bugs from manual resource management and enabling rapid prototyping where adding a database entity requires only 5 lines of code.
 
 ---
 

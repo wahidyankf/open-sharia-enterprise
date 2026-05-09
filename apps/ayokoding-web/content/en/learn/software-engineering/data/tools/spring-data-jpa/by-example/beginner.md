@@ -290,7 +290,7 @@ public class UserLookupService {
 
 **Key Takeaway**: `Optional<T>` prevents `NullPointerException`. Always use `orElse()`, `orElseThrow()`, or `ifPresent()` instead of `get()`.
 
-**Why It Matters**: Optional eliminates NullPointerException crashes that cause 15-20% of production incidents in legacy Java applications, forcing developers to handle missing data explicitly at compile time. Unlike returning null which requires manual null checks everywhere, Optional's functional API (map, flatMap, filter) enables chainable operations that fail fast with clear error messages. Major tech companies (Google, Twitter, LinkedIn) mandate Optional for data access layer returns, as it reduces production exceptions by 80% compared to null-based code.
+**Why It Matters**: Optional eliminates NullPointerException crashes by forcing developers to handle missing data explicitly at compile time. Tony Hoare, who introduced null references, famously called it his "billion-dollar mistake" due to the crashes and vulnerabilities it caused. Unlike returning null which requires manual null checks everywhere, Optional's functional API (map, flatMap, filter) enables chainable operations that fail fast with clear error messages — making absent values visible in the type system rather than hidden runtime bombs.
 
 ### Example 4: Find All Entities
 
@@ -587,7 +587,7 @@ public class UserBatchService {
 
 **Key Takeaway**: Use `saveAll()` for batch operations. Configure `spring.jpa.properties.hibernate.jdbc.batch_size` to enable true batching for better performance.
 
-**Why It Matters**: Batch operations with saveAll() enable JDBC batching when properly configured (hibernate.jdbc.batch_size), reducing database round-trips from N to N/batch_size, improving bulk insert performance by 10-50x for large datasets. Without batching, inserting 10,000 entities takes 45 seconds; with batching, it completes in 2-3 seconds, critical for data migration and bulk import scenarios. Enterprise applications using saveAll() correctly report 80% reduction in database connection pool exhaustion incidents during high-load periods.
+**Why It Matters**: Batch operations with saveAll() enable JDBC batching when properly configured (hibernate.jdbc.batch_size), reducing database round-trips from N to N/batch_size. For large bulk inserts, the difference between sending one row at a time versus batches is the difference between seconds and minutes — each individual INSERT has network roundtrip overhead that batching eliminates. This is critical for data migration and bulk import scenarios where the insert volume would otherwise saturate the database connection pool.
 
 ### Example 8: Flush and Transaction Management
 
@@ -689,7 +689,7 @@ public class UserTransactionService {
 
 **Key Takeaway**: JPA batches database writes until transaction commit. Use `flush()` or `saveAndFlush()` when you need the ID immediately or want to trigger constraint violations early.
 
-**Why It Matters**: Understanding flush timing prevents subtle data inconsistency bugs where database constraints aren't validated until transaction commit, causing cryptic rollback errors in production. The flush() method forces immediate constraint validation, enabling fail-fast behavior that catches data integrity violations before complex business logic executes. Applications using strategic flush() calls reduce transaction rollback rates by 30-40%, as constraint violations surface immediately rather than at unpredictable commit time.
+**Why It Matters**: Understanding flush timing prevents subtle data inconsistency bugs where database constraints aren't validated until transaction commit, causing cryptic rollback errors in production. The flush() method forces immediate constraint validation, enabling fail-fast behavior that catches data integrity violations before complex business logic executes. Constraint violations that surface immediately are far easier to diagnose than rollback errors that occur after executing 50 business logic steps.
 
 ## Group 2: Simple Query Derivation
 
@@ -1185,7 +1185,7 @@ public class UserPatternService {
 
 **Key Takeaway**: Spring Data handles wildcard placement - `StartingWith` adds `%` at end, `EndingWith` at start, `Containing` at both ends. No manual wildcards needed.
 
-**Why It Matters**: Pattern matching queries reduce ad-hoc SQL by 50% in typical CRUD applications, eliminating typo-prone string concatenation and improving code searchability through method names. The StartingWith/EndingWith pattern enables prefix/suffix searches critical for autocomplete features serving millions of users, though full-text search (Elasticsearch, PostgreSQL pg_trgm) outperforms LIKE queries by 100-1000x on large datasets. Teams using pattern matching consistently report 40% fewer SQL injection vulnerabilities compared to dynamic query construction.
+**Why It Matters**: Pattern matching queries eliminate typo-prone string concatenation and use parameterized queries by default, preventing SQL injection. The StartingWith/EndingWith patterns enable prefix/suffix searches critical for autocomplete features. Note the performance ceiling: LIKE queries with leading wildcards (`%term`) can't use B-tree indexes and degrade to full table scans at scale — full-text search (Elasticsearch, PostgreSQL pg_trgm) handles large-dataset search requirements that LIKE can't.
 
 ### Example 13: Ordering Results
 
@@ -1289,7 +1289,7 @@ public class ProductSortService {
 
 **Key Takeaway**: `OrderBy` adds SQL `ORDER BY` clause. Combine multiple properties for multi-level sorting. Default is ascending if no suffix specified.
 
-**Why It Matters**: Declarative sorting through OrderBy prevents SQL injection in dynamic ORDER BY clauses while providing compile-time validation of sort column names, eliminating runtime errors. Multi-field sorting handles 80% of real-world sort requirements (sort by category, then price, then name) without complex Criteria API code. However, user-driven sortable tables benefit from Pageable Sort objects which support runtime column selection, reducing code duplication by 60% compared to creating separate OrderBy methods for each sort combination.
+**Why It Matters**: Declarative sorting through OrderBy prevents SQL injection in dynamic ORDER BY clauses while providing compile-time validation of sort column names, eliminating runtime errors. Multi-field sorting (sort by category, then price, then name) works without complex Criteria API code. User-driven sortable tables that need runtime column selection should use Pageable Sort objects instead — they allow the sort column to be specified at call time without creating a separate method per combination.
 
 ### Example 14: Limiting Results
 
@@ -2251,7 +2251,7 @@ public class CascadeService {
 
 **Key Takeaway**: `CascadeType.ALL` simplifies relationship management but can cause unintended deletes. Use specific cascade types for fine-grained control. `orphanRemoval=true` deletes entities removed from collections.
 
-**Why It Matters**: Bidirectional @OneToMany/@ManyToOne relationships enable navigation from both sides without additional queries, eliminating 40% of repository methods in typical domain models. The pattern models real-world parent-child relationships (Order→OrderItems) with single foreign key column, avoiding join table overhead of @ManyToMany and improving query performance by 30-40%. Production applications with proper bidirectional mapping report 60% reduction in N+1 query incidents, as developers can navigate object graphs naturally without triggering lazy loading exceptions.
+**Why It Matters**: Bidirectional @OneToMany/@ManyToOne relationships enable navigation from both sides without additional queries or extra repository methods. The pattern models real-world parent-child relationships (Order→OrderItems) with a single foreign key column, avoiding the join table overhead of @ManyToMany. Proper bidirectional mapping with eager/lazy loading configured correctly also prevents N+1 query problems — one of the most common JPA performance pitfalls, where navigating a collection triggers a separate SQL query per element.
 
 ### Example 21: Lazy vs Eager Loading
 
@@ -3704,4 +3704,4 @@ public class LifecycleCallbackService {
 
 **Key Takeaway**: Lifecycle callbacks execute at specific points in entity lifecycle. Use `@PrePersist` for default values, `@PreUpdate` for audit timestamps, `@PostLoad` for computed fields. These methods must be `void` and take no parameters.
 
-**Why It Matters**: Lifecycle callbacks eliminate 70-80% of manual auditing code by automatically setting createdAt/updatedAt timestamps on every entity save, reducing human error in compliance-critical systems. The @PrePersist pattern prevents DEFAULT NULL database violations by initializing required fields before INSERT, catching missing data at application layer versus cryptic constraint errors. Enterprise applications using lifecycle callbacks report 50% reduction in audit trail bugs, as timestamp logic executes consistently through framework hooks rather than scattered across service methods where developers forget to call them.
+**Why It Matters**: Lifecycle callbacks eliminate manual auditing code by automatically setting createdAt/updatedAt timestamps on every entity save, reducing human error in compliance-critical systems. The @PrePersist pattern prevents DEFAULT NULL database violations by initializing required fields before INSERT, catching missing data at the application layer rather than producing cryptic constraint errors. Timestamp logic that runs through framework hooks is consistent by construction — compared to service methods where each developer must remember to call it.

@@ -3482,7 +3482,7 @@ spec: # => ApplicationSet specification
 
 **Key Takeaway**: Use ApplicationSets for fleet management and multi-cluster deployments; leverage generators to avoid manual Application creation; ApplicationSets enable GitOps at scale for multiple environments and clusters.
 
-**Why It Matters**: ApplicationSets eliminate configuration duplication at companies like Intuit (1 ApplicationSet replaces 50+ identical Application manifests), reducing maintenance overhead by 95% while ensuring consistency across environments. The Pull Request generator enables automated preview environments where every PR gets isolated test environment, improving QA feedback loops from days to minutes. Multi-cluster ApplicationSets power disaster recovery and multi-region deployments at companies like Adobe and Spotify, where the same application automatically deploys to 10+ clusters with environment-specific configuration, critical for high-availability SaaS platforms.
+**Why It Matters**: ApplicationSets eliminate configuration duplication by generating multiple Application resources from a single template — one ApplicationSet can replace dozens of nearly-identical Application manifests across environments or clusters. The Pull Request generator enables automated preview environments where every PR gets an isolated test environment, improving QA feedback loops from days to minutes. Multi-cluster ApplicationSets power disaster recovery and multi-region deployments at companies like Adobe and Spotify, where the same application automatically deploys to 10+ clusters with environment-specific configuration, critical for high-availability SaaS platforms.
 
 ---
 
@@ -3598,7 +3598,7 @@ data: # => ConfigMap data
 
 **Key Takeaway**: Implement three pillars of observability (metrics, logs, traces) for production clusters; use Prometheus for metrics, Loki for logs, and Jaeger for traces; create Grafana dashboards for visualization and alerting.
 
-**Why It Matters**: Comprehensive observability is non-negotiable for production Kubernetes—companies like Datadog and New Relic achieve 99.99% uptime through real-time monitoring of 50,000+ metrics per cluster, detecting anomalies (CPU spikes, memory leaks, error rate increases) within seconds. The shift from reactive (users report outages) to proactive (alerts fire before user impact) reduced mean-time-to-detection (MTTD) by 90% at major SaaS platforms. Distributed tracing (Tempo/Jaeger) is critical for debugging microservices where a single request spans 20+ services. This observability stack implements SRE principles (SLOs, error budgets) required for production reliability at scale.
+**Why It Matters**: Comprehensive observability is non-negotiable for production Kubernetes. The shift from reactive (users report outages) to proactive (alerts fire before user impact) requires real-time monitoring that detects anomalies — CPU spikes, memory leaks, error rate increases — before they become visible to users. Distributed tracing (Tempo/Jaeger) is critical for debugging microservices where a single request spans 20+ services. This observability stack implements SRE principles (SLOs, error budgets) required for production reliability at scale.
 
 ---
 
@@ -3670,7 +3670,7 @@ kubectl top nodes                               # => CPU and memory utilization 
 
 **Key Takeaway**: Production readiness requires comprehensive setup across security, reliability, monitoring, and operations; use this checklist to validate cluster readiness; automate validation using admission controllers and policy engines like OPA/Kyverno.
 
-**Why It Matters**: This comprehensive checklist represents 8+ years of Kubernetes production learnings from companies like Google, Airbnb, and Shopify. Companies achieving 99.99% uptime (Stripe, Datadog, PagerDuty) mandate 100% checklist compliance before production deployment, enforced through automated policy checks (OPA Gatekeeper, Kyverno). This checklist implements SRE principles (error budgets, SLOs, chaos engineering) that transformed operational practices, reducing incident frequency by 90% while enabling 10x deployment velocity. Production readiness is not optional—it's the difference between experimental clusters and platforms running critical business workloads serving millions of users.
+**Why It Matters**: Production Kubernetes readiness is not binary — it is a set of practices accumulated across years of real outages and postmortems. This checklist codifies patterns from the Kubernetes community, Google SRE practices, and the CNCF ecosystem. Automated policy enforcement (OPA Gatekeeper, Kyverno) makes compliance a CI gate rather than a code review checklist — preventing misconfigured workloads from reaching production regardless of who writes the YAML. The SRE principles embedded here (error budgets, SLOs, chaos engineering) operationalize reliability, reducing incident frequency by 90% while enabling 10x deployment velocity. Production readiness is not optional—it's the difference between experimental clusters and platforms running critical business workloads serving millions of users.
 
 ---
 

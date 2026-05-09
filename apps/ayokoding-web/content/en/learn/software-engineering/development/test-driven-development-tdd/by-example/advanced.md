@@ -305,7 +305,7 @@ test("createUser calls all services", () => {
 
 **Key Takeaway**: Break hard dependencies by extracting interfaces and injecting through constructor. This creates seams for testing without changing core logic.
 
-**Why It Matters**: Hard dependencies block testing and refactoring, making codebases progressively more expensive to modify as they grow. Dependency breaking techniques - constructor injection, parameter passing, factory extraction - enable incremental testability improvements without rewrites. Twitter's backend team documented 10x faster test execution after breaking database dependencies in their timeline service using these techniques, enabling the Red-Green-Refactor cycle for code that had been effectively frozen for years. Each dependency broken enables more tests, which enables more confident refactoring, creating a virtuous cycle of improving code quality.
+**Why It Matters**: Hard dependencies block testing and refactoring, making codebases progressively more expensive to modify as they grow. Dependency breaking techniques — constructor injection, parameter passing, factory extraction — enable incremental testability improvements without rewrites. Breaking database dependencies from unit tests removes the slowest layer in the test stack, enabling rapid Red-Green-Refactor cycles instead of waiting for real database I/O on every test run. These techniques are the foundation of Michael Feathers' "Working Effectively with Legacy Code" — the authoritative reference for incremental testability improvement without rewrites. Each dependency broken enables more tests, which enables more confident refactoring, creating a virtuous cycle of improving code quality.
 
 ## Microservices and Distributed Systems (Examples 63-68)
 
@@ -543,7 +543,7 @@ test("replication happens eventually", async () => {
 
 **Key Takeaway**: Test eventual consistency with polling and timeouts. Don't assume immediate consistency in distributed systems - wait for conditions to be met.
 
-**Why It Matters**: Distributed systems have inherent delays that make tests assuming immediate consistency the leading cause of flaky tests in microservice architectures. Eventual consistency helpers abstract timing concerns from tests, enabling deterministic verification of distributed state. Amazon's DynamoDB team documented that eventual consistency test helpers eliminated 85% of timing-related test failures in their distributed testing suite. The pattern also documents system behavior clearly: when tests use explicit "eventually consistent" assertions, the distributed nature of the system is visible in the test code itself, preventing false assumptions about synchronous consistency propagating through the codebase.
+**Why It Matters**: Distributed systems have inherent delays that make tests assuming immediate consistency a leading cause of flaky tests in microservice architectures. Eventual consistency helpers abstract timing concerns from tests, enabling deterministic verification of distributed state. Without them, tests either use arbitrary `sleep()` calls (slow and fragile) or fail intermittently depending on system load. The pattern also documents system behavior clearly: when tests use explicit "eventually consistent" assertions, the distributed nature of the system is visible in the test code itself, preventing false assumptions about synchronous consistency propagating through the codebase.
 
 ### Example 66: Testing Event Sourcing Systems
 
@@ -1271,7 +1271,7 @@ describe("Testing Guild Practices", () => {
 
 **Key Takeaway**: Scale TDD through documented standards, CI enforcement, shared utilities, and cross-team knowledge sharing. Consistency emerges from infrastructure and culture.
 
-**Why It Matters**: Inconsistent testing across teams creates quality gaps where some services have 90% coverage and others have 10%, with the low-coverage services becoming the production incident sources. Standardization scales quality through shared practices, templates, and tooling that make good testing the path of least resistance. Large engineering organizations like Spotify standardize on testing templates and coverage thresholds across 150+ product teams, maintaining 80%+ average coverage through organizational culture rather than mandates. The key is making good practices easy: shared test utilities, generator templates, and clear documentation lower the barrier for teams starting TDD adoption.
+**Why It Matters**: Inconsistent testing across teams creates quality gaps where some services have high coverage and others have near-zero, with the low-coverage services becoming the production incident sources. Standardization scales quality through shared practices, templates, and tooling that make good testing the path of least resistance. When testing practices and coverage thresholds are defined at the organizational level, teams don't have to reinvent testing culture independently — the defaults are already correct. Large engineering organizations achieve consistent quality by standardizing on shared templates and enforcing coverage thresholds in CI, not by relying on individual team discipline. The key is making good practices easy: shared test utilities, generator templates, and clear documentation lower the barrier for teams starting TDD adoption.
 
 ### Example 74: TDD Coaching and Mentoring
 
@@ -1699,7 +1699,7 @@ describe("ML System Testing", () => {
 
 **Key Takeaway**: Test ML systems through interfaces, pipelines, and boundary cases. Don't test model internals, but test preprocessing, prediction API, and edge cases.
 
-**Why It Matters**: ML models are non-deterministic but pipelines are deterministic and testable. Pipeline bugs cause model failures that appear as mysterious accuracy degradation, making them expensive to diagnose without test coverage. ML teams at companies like Spotify maintain 80%+ test coverage on data pipelines and model interfaces, preventing most production failures before they affect recommendations. Data preprocessing bugs are particularly damaging because they corrupt training data silently - a normalization error might not affect single predictions but systematically biases the training distribution, causing gradual accuracy degradation that takes weeks to detect.
+**Why It Matters**: ML models are non-deterministic but pipelines are deterministic and testable. Pipeline bugs cause model failures that appear as mysterious accuracy degradation — extremely expensive to diagnose without test coverage because the failure manifests far from its cause. Data preprocessing bugs are particularly damaging because they corrupt training data silently - a normalization error might not affect single predictions but systematically biases the training distribution, causing gradual accuracy degradation that takes weeks to detect.
 
 ### Example 79: Testing AI/ML Model Behavior
 
