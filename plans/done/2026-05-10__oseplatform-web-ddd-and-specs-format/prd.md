@@ -72,6 +72,7 @@ apps/oseplatform-web/src/
 ├── app/                            # Next.js routes (thin glue)
 ├── contexts/
 │   ├── app-shell/
+│   │   ├── application/            # root tRPC router
 │   │   └── presentation/
 │   ├── landing/
 │   │   └── presentation/
@@ -84,8 +85,7 @@ apps/oseplatform-web/src/
 │   │   ├── infrastructure/
 │   │   └── presentation/
 │   ├── rss-feed/
-│   │   ├── application/            # feed builder
-│   │   └── infrastructure/         # XML serializer + route handler
+│   │   └── application/            # feed builder (XML is in-process, no separate infra layer)
 │   ├── seo/
 │   │   ├── application/            # metadata + sitemap builder
 │   │   └── presentation/           # head tags
@@ -101,8 +101,8 @@ apps/oseplatform-web/src/
 ### `app-shell`
 
 - **Code**: `src/contexts/app-shell/`
-- **Layers**: `[presentation]`
-- **Owns**: header, footer, theme toggle, navigation chrome, responsive breakpoints, accessibility wiring.
+- **Layers**: `[application, presentation]`
+- **Owns**: header, footer, theme toggle, navigation chrome, responsive breakpoints, accessibility wiring. Root tRPC router stitching in `application/`.
 - **Gherkin**: `behavior/web/gherkin/app-shell/{responsive,navigation,theme,accessibility}.feature`
 - **Key terms**: `Theme`, `Breakpoint`, `Nav item`, `Skip link`, `ARIA landmark`
 - **Forbidden synonyms**: "layout" (overloaded by Next.js), "wrapper" (jargon)
@@ -137,8 +137,8 @@ apps/oseplatform-web/src/
 ### `rss-feed`
 
 - **Code**: `src/contexts/rss-feed/`
-- **Layers**: `[application, infrastructure]`
-- **Owns**: RSS feed generation route (`/rss.xml` or similar). `application/` aggregates published articles into feed entries; `infrastructure/` writes the XML stream to the response.
+- **Layers**: `[application]`
+- **Owns**: RSS feed generation route (`/rss.xml`). `application/` aggregates published articles and serializes the XML response in-process. No separate infrastructure layer (XML serialization is colocated in application).
 - **Gherkin**: `behavior/api/gherkin/rss-feed/rss-feed.feature`
 - **Key terms**: `Feed`, `Feed entry`, `Channel metadata`
 - **Forbidden synonyms**: "subscription" (different concept — payment subscription)
