@@ -414,3 +414,57 @@ const (
 	stepBcOutputContainsWarning             = `^the output contains the word "warning"$`
 	stepBcOutputMentionsNotFoundOrApp       = `^the output mentions "not found" or "unknownapp"$`
 )
+
+// specs validate-tree step patterns.
+const (
+	stepSpecsTreeAllFiveFolders            = `^a spec tree for "testapp" with all five required folders and their README\.md files$`
+	stepSpecsTreeMissingBehavior           = `^a spec tree for "testapp" missing the "behavior" folder$`
+	stepSpecsTreeProductFolderNoReadme     = `^a spec tree for "testapp" where the "product" folder exists but has no README\.md$`
+	stepSpecsTreeNoSpecTreeForUnknownapp   = `^no spec tree exists for "unknownapp"$`
+	stepSpecsRunValidateTreeTestapp        = `^the developer runs "rhino-cli specs validate-tree testapp"$`
+	stepSpecsRunValidateTreeUnknownapp     = `^the developer runs "rhino-cli specs validate-tree unknownapp"$`
+	stepSpecsOutputContainsZeroFinding     = `^the output contains "0 finding"$`
+	stepSpecsOutputContainsMissingBehavior = `^the output contains "missing required folder: behavior"$`
+	stepSpecsOutputContainsMissingReadme   = `^the output contains "missing README\.md"$`
+	stepSpecsOutputContainsMissingProduct  = `^the output contains "missing required folder: product"$`
+)
+
+// specs validate-counts step patterns.
+const (
+	stepSpecsCountsFolderWithSpecFiles           = `^a spec folder at "specs/apps/testapp" with at least one non-README \.md file in each required subfolder$`
+	stepSpecsCountsFolderProductOnlyReadme       = `^a spec folder at "specs/apps/testapp" where the "product" subfolder contains only README\.md$`
+	stepSpecsCountsFolderBehaviorMissing         = `^a spec folder at "specs/apps/testapp" where the "behavior" subfolder does not exist$`
+	stepSpecsCountsFolderNosuchapp               = `^no directory exists at "specs/apps/nosuchapp"$`
+	stepSpecsRunValidateCountsTestapp            = `^the developer runs "rhino-cli specs validate-counts specs/apps/testapp"$`
+	stepSpecsRunValidateCountsNosuchapp          = `^the developer runs "rhino-cli specs validate-counts specs/apps/nosuchapp"$`
+	stepSpecsCountsOutputContainsZeroFinding     = `^the output contains "0 finding"$`
+	stepSpecsCountsOutputContainsEmptySubfolder  = `^the output contains "empty subfolder"$`
+	stepSpecsCountsOutputContainsMissingBehavior = `^the output contains "missing required folder: behavior"$`
+	stepSpecsCountsOutputContainsDoesNotExist    = `^the output contains "does not exist"$`
+)
+
+// specs validate-links step patterns.
+const (
+	stepSpecsLinksAllLinksValid              = `^a spec folder at "specs/apps/testapp" where all internal markdown links resolve to existing files$`
+	stepSpecsLinksBrokenInternalLink         = `^a spec folder at "specs/apps/testapp" containing a markdown file with a broken internal link$`
+	stepSpecsLinksOnlyExternalLinks          = `^a spec folder at "specs/apps/testapp" containing only markdown files with external HTTPS links$`
+	stepSpecsLinksNoSuchapp                  = `^no directory exists at "specs/apps/nosuchapp"$`
+	stepSpecsRunValidateLinksTestapp         = `^the developer runs "rhino-cli specs validate-links specs/apps/testapp"$`
+	stepSpecsRunValidateLinksNosuchapp       = `^the developer runs "rhino-cli specs validate-links specs/apps/nosuchapp"$`
+	stepSpecsLinksOutputContainsZeroFinding  = `^the output contains "0 finding"$`
+	stepSpecsLinksOutputContainsBrokenLink   = `^the output contains "broken link"$`
+	stepSpecsLinksOutputContainsDoesNotExist = `^the output contains "does not exist"$`
+)
+
+// specs validate-adoption step patterns.
+const (
+	stepSpecsAdoptionBothPresent                  = `^an app "testapp" that has at least one feature file under specs/apps/testapp/behavior/ and a bounded-contexts\.yaml at specs/apps/testapp/components/web/ddd/bounded-contexts\.yaml$`
+	stepSpecsAdoptionNoFeatureFiles               = `^an app "testapp" that has no feature files under specs/apps/testapp/behavior/$`
+	stepSpecsAdoptionNoBcYaml                     = `^an app "testapp" that has feature files but no bounded-contexts\.yaml at specs/apps/testapp/components/web/ddd/bounded-contexts\.yaml$`
+	stepSpecsAdoptionNoSpecTree                   = `^an app "unknownapp" with no spec tree at all$`
+	stepSpecsRunValidateAdoptionTestapp           = `^the developer runs "rhino-cli specs validate-adoption testapp"$`
+	stepSpecsRunValidateAdoptionUnknownapp        = `^the developer runs "rhino-cli specs validate-adoption unknownapp"$`
+	stepSpecsAdoptionOutputContainsZeroFinding    = `^the output contains "0 finding"$`
+	stepSpecsAdoptionOutputContainsNoFeatureFiles = `^the output contains "no feature files"$`
+	stepSpecsAdoptionOutputContainsBcYaml         = `^the output contains "bounded-contexts\.yaml"$`
+)

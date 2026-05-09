@@ -79,6 +79,30 @@ var ulValidateAllFn = glossary.ValidateAll
 // readFileFn is a variable for dependency injection of os.ReadFile in tests.
 var readFileFn = os.ReadFile
 
+// specs validate-tree command delegation.
+var specsValidateTreeFn = validateSpecTree
+
+// specs validate-counts command delegation.
+var specsValidateCountsFn = validateSpecCounts
+
+// specs validate-links command delegation.
+var specsValidateLinksFn = validateSpecLinks
+
+// specs validate-adoption command delegation.
+var specsValidateAdoptionFn = validateSpecAdoption
+
+// specsWalkMdFilesFn is injectable for unit tests.
+var specsWalkMdFilesFn = walkMdFiles
+
+// specsWalkFeatureFilesFn is injectable for unit tests.
+var specsWalkFeatureFilesFn = walkFeatureFiles
+
+// readDirFn is a variable for dependency injection of os.ReadDir in tests.
+var readDirFn = os.ReadDir
+
+// specCountNonReadmeMdFilesFn is a variable for dependency injection in tests.
+var specCountNonReadmeMdFilesFn = countNonReadmeMdFiles
+
 // getMermaidStagedFilesFn is injectable for unit tests (avoids real git call).
 var getMermaidStagedFilesFn = getMermaidStagedFiles
 

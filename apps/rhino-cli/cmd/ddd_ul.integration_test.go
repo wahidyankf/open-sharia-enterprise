@@ -116,9 +116,9 @@ func validGlossaryContent(contextName string) string {
 
 ## Terms
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| `+"`KnownType`"+` | A known type. | `+"`KnownType`"+` | %s/%s.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| `+"`KnownType`"+` | `+"`KnownType`"+` | %s/%s.feature |
 
 ## Forbidden synonyms
 
@@ -148,8 +148,8 @@ func (s *ulValidateIntegSteps) missingMaintainerKey() error {
 
 ## Terms
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
 `
 	return s.writeGlossary("journal", content)
 }
@@ -166,7 +166,7 @@ func (s *ulValidateIntegSteps) malformedTableHeader() error {
 
 ## Terms
 
-| Term | Description | Code identifier(s) | Used in features |
+| Term | BadColumn | Used in features |
 | --- | --- | --- | --- |
 `
 	return s.writeGlossary("journal", content)
@@ -184,9 +184,9 @@ func (s *ulValidateIntegSteps) staleCodeIdentifier() error {
 
 ## Terms
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| ` + "`GhostType`" + ` | Does not exist. | ` + "`GhostType`" + ` | journal/journal.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| ` + "`GhostType`" + ` | ` + "`GhostType`" + ` | journal/journal.feature |
 
 ## Forbidden synonyms
 
@@ -250,9 +250,9 @@ contexts:
 
 ## Terms
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| Entry | A record. | `+"`EntryType`"+` | %s/%s.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Entry | `+"`EntryType`"+` | %s/%s.feature |
 
 ## Forbidden synonyms
 
@@ -283,9 +283,9 @@ func (s *ulValidateIntegSteps) missingFeatureReference() error {
 
 ## Terms
 
-| Term | Definition | Code identifier(s) | Used in features |
-| --- | --- | --- | --- |
-| ` + "`KnownType`" + ` | A known type. | ` + "`KnownType`" + ` | journal/nonexistent.feature |
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| ` + "`KnownType`" + ` | ` + "`KnownType`" + ` | journal/nonexistent.feature |
 
 ## Forbidden synonyms
 
