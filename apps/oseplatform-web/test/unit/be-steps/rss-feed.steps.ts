@@ -1,12 +1,12 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import type { ContentMeta } from "@/server/content/types";
-import { InMemoryContentRepository } from "@/server/content/repository-memory";
-import { ContentService } from "@/server/content/service";
+import type { ContentMeta } from "@/contexts/content/application/types";
+import { InMemoryContentRepository } from "@/contexts/content/infrastructure/repository-memory";
+import { ContentService } from "@/contexts/content/application/service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/be/gherkin/rss-feed/rss-feed.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/behavior/api/gherkin/rss-feed/rss-feed.feature"),
 );
 
 const SITE_URL = "https://oseplatform.com";

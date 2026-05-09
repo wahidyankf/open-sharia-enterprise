@@ -1,11 +1,11 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import type { SearchResult } from "@/server/content/types";
+import type { SearchResult } from "@/contexts/content/application/types";
 import { integrationCaller } from "./helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/be/gherkin/search/search.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/behavior/api/gherkin/search/search.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

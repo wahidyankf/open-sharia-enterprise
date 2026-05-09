@@ -1,14 +1,14 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import type { SearchResult } from "@/server/content/types";
-import { createCallerFactory } from "@/server/trpc/init";
-import type { TRPCContext } from "@/server/trpc/init";
-import { appRouter } from "@/server/trpc/router";
+import type { SearchResult } from "@/contexts/content/application/types";
+import { createCallerFactory } from "@/lib/trpc/init";
+import type { TRPCContext } from "@/lib/trpc/init";
+import { appRouter } from "@/contexts/app-shell/application/root-router";
 import { testContentService, testContentServiceWithPhase } from "./helpers/test-service";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/be/gherkin/search/search.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/behavior/api/gherkin/search/search.feature"),
 );
 
 const createCaller = createCallerFactory(appRouter);

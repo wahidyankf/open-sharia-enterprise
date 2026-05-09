@@ -35,7 +35,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "inputs": ["default", "{workspaceRoot}/specs/apps/oseplatform/web/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/oseplatform/behavior/web/gherkin/**/*.feature"],
       "options": {
         "command": "npx bddgen && npx playwright test",
         "cwd": "apps/oseplatform-web-fe-e2e"
@@ -56,9 +56,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/web/gherkin apps/oseplatform-web-fe-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin apps/oseplatform-web-fe-e2e",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/oseplatform/web/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
+      "inputs": ["{workspaceRoot}/specs/apps/oseplatform/behavior/web/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:oseplatform"],

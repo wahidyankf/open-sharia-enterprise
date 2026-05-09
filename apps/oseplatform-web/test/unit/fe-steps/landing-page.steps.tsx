@@ -38,8 +38,8 @@ vi.mock("@open-sharia-enterprise/ts-ui", () => ({
   },
 }));
 
-// Mock @/components/ui/tooltip
-vi.mock("@/components/ui/tooltip", () => ({
+// Mock @/contexts/app-shell/presentation/ui/tooltip
+vi.mock("@/contexts/app-shell/presentation/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => {
     if (asChild && React.isValidElement(children)) {
@@ -50,11 +50,11 @@ vi.mock("@/components/ui/tooltip", () => ({
   TooltipContent: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
 }));
 
-import { Hero } from "@/components/landing/hero";
-import { SocialIcons } from "@/components/landing/social-icons";
+import { Hero } from "@/contexts/landing/presentation/hero";
+import { SocialIcons } from "@/contexts/landing/presentation/social-icons";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/web/gherkin/landing-page/landing-page.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/behavior/web/gherkin/landing/landing-page.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background, AfterEachScenario }) => {

@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { testCaller } from "./helpers/test-caller";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/oseplatform/be/gherkin/health/health.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/oseplatform/behavior/api/gherkin/health/health.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
@@ -18,7 +18,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     let result: { status: string };
 
     When("the health endpoint is called", async () => {
-      result = await testCaller.meta.health();
+      result = await testCaller.health.check();
     });
 
     Then('the response contains status "ok"', () => {

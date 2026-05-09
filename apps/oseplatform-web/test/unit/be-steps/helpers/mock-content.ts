@@ -1,4 +1,4 @@
-import type { ContentMeta } from "@/server/content/types";
+import type { ContentMeta } from "@/contexts/content/application/types";
 
 export const mockUpdateMetas: ContentMeta[] = [
   {

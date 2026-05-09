@@ -5,7 +5,7 @@ import { buildTrpcUrl, extractTrpcData, state } from "./helpers";
 const { When, Then } = createBdd();
 
 When("the health endpoint is called", async ({ request }) => {
-  const url = buildTrpcUrl("meta.health", undefined);
+  const url = buildTrpcUrl("health.check", undefined);
   const response = await request.get(url);
   expect(response.ok()).toBeTruthy();
   const body = await response.json();

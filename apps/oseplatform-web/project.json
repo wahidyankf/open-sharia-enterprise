@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/oseplatform-web/src",
   "projectType": "application",
-  "implicitDependencies": ["oseplatform-cli"],
+  "implicitDependencies": ["oseplatform-cli", "rhino-cli"],
   "targets": {
     "generate-search-data": {
       "command": "npx tsx src/scripts/generate-search-data.ts",
@@ -69,6 +69,8 @@
       "options": {
         "cwd": "apps/oseplatform-web",
         "commands": [
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc oseplatform)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul oseplatform)",
           "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-web/coverage/lcov.info 80)",
           "../../apps/oseplatform-cli/dist/oseplatform-cli links check --content content"
         ],
@@ -78,7 +80,11 @@
         "{projectRoot}/src/**/*",
         "{projectRoot}/test/unit/**/*",
         "{projectRoot}/content/**/*.md",
-        "{projectRoot}/vitest.config.ts"
+        "{projectRoot}/vitest.config.ts",
+        "{workspaceRoot}/specs/apps/oseplatform/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/oseplatform/behavior/api/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/oseplatform/ddd/bounded-contexts.yaml",
+        "{workspaceRoot}/specs/apps/oseplatform/ddd/ubiquitous-language/**/*.md"
       ],
       "cache": true
     },
@@ -99,11 +105,18 @@
       "command": "rm -rf .next"
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/be/gherkin apps/oseplatform-web",
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin apps/oseplatform-web",
+          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/api/gherkin apps/oseplatform-web"
+        ],
+        "parallel": false
+      },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/specs/apps/oseplatform/be/gherkin/**/*.feature",
-        "{workspaceRoot}/specs/apps/oseplatform/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/oseplatform/behavior/web/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/oseplatform/behavior/api/gherkin/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     }

@@ -5,10 +5,10 @@ import { describe, it, expect } from "vitest";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { cn } from "@/lib/utils";
-import { InMemoryContentRepository } from "@/server/content/repository-memory";
-import { ContentService } from "@/server/content/service";
-import type { SearchDoc } from "@/server/content/service";
-import { createTRPCContext } from "@/server/trpc/init";
+import { InMemoryContentRepository } from "@/contexts/content/infrastructure/repository-memory";
+import { ContentService } from "@/contexts/content/application/service";
+import type { SearchDoc } from "@/contexts/content/application/service";
+import { createTRPCContext } from "@/lib/trpc/init";
 
 // --- lib/utils.ts ---
 describe("cn utility", () => {
