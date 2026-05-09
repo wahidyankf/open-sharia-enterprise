@@ -751,18 +751,22 @@ This phase delivers the deterministic offload commands that the agents (updated 
   - Date: 2026-05-09. Status: done. Entry removed.
 - [x] **8.10 Update `plans/done/README.md`** if it lists individual archived plans
   - Date: 2026-05-09. Status: done. Entry added.
-- [ ] **8.11 FR-15 push gate — final pre-push checks**:
-  - [ ] Re-run all 8.3 commands one last time; ALL exit 0
-  - [ ] Confirm working tree clean (no uncommitted changes besides plan archive)
-  - [ ] If the worktree branch has commits not yet on local `main`, fast-forward `main` first OR push the worktree branch directly to `main` per Trunk-Based Development
-- [ ] **8.12 Push to `origin main`**: `git push origin worktree/<branch>:main` (or whichever publish path applies — direct-to-main per the parent worktree convention)
-- [ ] **8.13 Post-push GitHub Actions monitoring** (FR-15):
-  - [ ] Run `gh run list --branch main --limit 5` — confirm latest workflow runs are queued or running
-  - [ ] Identify which workflows triggered: run `gh run list --branch main --limit 5 --json workflowName,status,conclusion` and note the workflow names. Typical workflows for this plan include the main CI workflow (`CI`) and any lint/test workflows defined in `.github/workflows/`. Run `ls .github/workflows/` to list all defined workflows.
-  - [ ] Wait per [CI Monitoring](../../../governance/development/workflow/ci-monitoring.md) — schedule wakeup every 3-5 min; do NOT tight-loop
-  - [ ] All triggered workflows complete with conclusion `success`. Run `gh run view <run-id>` per triggered workflow to confirm.
-  - [ ] If ANY workflow fails: diagnose, push fix commit, repeat 8.13. NEVER mark plan archived until CI is green
-- [ ] **8.14 Commit (plan archive — typically done before 8.12 push)**: `docs(plans): archive organiclever-specs-standardization to plans/done/`
+- [x] **8.11 FR-15 push gate — final pre-push checks**:
+  - Date: 2026-05-09. Status: done. All gates passed.
+  - [x] Re-run all 8.3 commands one last time; ALL exit 0 — PASS.
+  - [x] Confirm working tree clean (no uncommitted changes besides plan archive) — PASS.
+  - [x] If the worktree branch has commits not yet on local `main`, fast-forward `main` first OR push the worktree branch directly to `main` per Trunk-Based Development — rebased on origin/main then pushed.
+- [x] **8.12 Push to `origin main`**: `git push origin worktree/<branch>:main` (or whichever publish path applies — direct-to-main per the parent worktree convention)
+  - Date: 2026-05-09. Status: done. 21 commits pushed to origin/main. Rebased on 2 commits from concurrent pushes.
+- [x] **8.13 Post-push GitHub Actions monitoring** (FR-15):
+  - Date: 2026-05-09. Status: PASS. Run 25598288356 all 6 jobs success.
+  - [x] Run `gh run list --branch main --limit 5` — PASS. Workflow triggered via workflow_dispatch (schedule-only, not push-triggered).
+  - [x] Identify which workflows triggered — `Test and Deploy - OrganicLever Web Development` (6 jobs).
+  - [x] Wait per CI Monitoring — used ScheduleWakeup every ~4 min.
+  - [x] All triggered workflows complete with conclusion `success` — run 25598288356: FE integration ✓, BE integration ✓, FE lint ✓, Spec coverage ✓, E2E ✓, Deploy to staging ✓.
+  - [x] If ANY workflow fails — two preexisting fixes required: .dockerignore spec path exceptions + .fsproj be/gherkin path. Both fixed and pushed; CI confirmed green on third run.
+- [x] **8.14 Commit (plan archive — typically done before 8.12 push)**: `docs(plans): archive organiclever-specs-standardization to plans/done/`
+  - Date: 2026-05-09. Status: done. SHA 5f79ad56e. Plan moved to plans/done/2026-05-09\_\_organiclever-specs-standardization/.
 
 ## Iron rules
 
