@@ -22,7 +22,7 @@ specs/apps/organiclever/
 │   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
 ├── fe/                    # Frontend specs (UI-semantic)
 │   ├── README.md
-│   └── gherkin/           # Frontend Gherkin scenarios (see fe/gherkin/README)
+│   └── gherkin/           # Frontend Gherkin scenarios (see web/gherkin/README)
 └── ubiquitous-language/   # Per-bounded-context glossary (shared by FE + future BE)
     ├── README.md          # Index + authoring rules
     └── *.md               # One glossary file per bounded context
@@ -34,7 +34,7 @@ specs/apps/organiclever/
 | ----------- | --------------------------------------------- | ----------------------------------------- |
 | Perspective | HTTP-semantic (GET, POST, status codes)       | UI-semantic (clicks, types, sees)         |
 | Background  | `Given the API is running`                    | `Given the app is running`                |
-| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)     | See [fe/gherkin/](./fe/gherkin/README.md) |
+| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)     | See [web/gherkin/](./web/gherkin/README.md) |
 | Domains     | health                                        | landing, system, layout, routing          |
 | Consumed by | `apps/organiclever-be` (F#/Giraffe, TickSpec) | `apps/organiclever-web` (Next.js 16)      |
 
@@ -60,7 +60,7 @@ frontend is local-first.
 - **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Machine-readable DDD registry consumed by `rhino-cli bc validate` and `rhino-cli ul validate` to enforce structural parity and glossary parity
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
 - **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
-- **[fe/](./fe/README.md)** — Frontend app specs ([Gherkin features](./fe/gherkin/README.md))
+- **[fe/](./web/README.md)** — Frontend app specs ([Gherkin features](./web/gherkin/README.md))
 - **[ubiquitous-language/](./ubiquitous-language/README.md)** — Per-bounded-context glossary, the shared platform-agnostic vocabulary consumed by `fe/` today and by `be/` once DDD adoption reaches `organiclever-be`
 
 ## Spec Consumption

@@ -74,7 +74,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 ### journal
 
 - `src/lib/journal/journal-store.ts` (+ `.unit.test.ts`, `.int.test.ts`) → `infrastructure/`
-- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/tech-docs.md)
+- `src/lib/journal/journal-machine.ts` (+ `.unit.test.ts`) → `application/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
 - `src/lib/journal/typed-payloads.ts` (+ `.unit.test.ts`) → `domain/`
 - `src/lib/journal/types.ts` → `domain/`
 - `src/lib/journal/errors.ts` → `domain/` (or `application/` if error types prove use-case-specific at migration time)
@@ -119,7 +119,7 @@ Every file currently under `src/lib/`, `src/services/`, `src/layers/`, `src/comp
 
 - `src/lib/i18n/translations.ts` (+ `.unit.test.ts`) → `presentation/`
 - `src/lib/i18n/use-t.ts` → `presentation/`
-- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
+- `src/lib/app/app-machine.ts` (+ `.unit.test.ts`) → `presentation/` per [tech-docs § xstate machine placement](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — UI shell machine, no IO
 - `src/components/app/app-runtime-context.tsx` → `presentation/`
 - `src/components/app/tab-bar.tsx` (+ test) → `presentation/components/`
 - `src/components/app/side-nav.tsx` (+ test) → `presentation/components/`
@@ -209,7 +209,7 @@ specs/apps/organiclever/web/gherkin/
 
 ## Layer rules (recap)
 
-The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
+The full ESLint boundaries config lives in [tech-docs.md § ESLint boundaries](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md). Inward dependency direction:
 
 ```text
 src/app/**
@@ -232,7 +232,7 @@ src/app/**
 
 ## Enforcement
 
-**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
+**Severity: ESLint boundaries (`boundaries/element-types`) at `error` severity** as of Phase 8 of the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md). Any forbidden cross-layer or cross-context import fails `nx run organiclever-web:lint` and blocks the pre-push hook + CI.
 
 ### Why a separate eslint pass alongside oxlint?
 

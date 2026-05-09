@@ -37,12 +37,12 @@ The bounded-context map and the strategic-pattern relationships between these co
 
 ## Glossary parity check
 
-Phase 9 of the [DDD adoption plan](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/delivery.md) wires a glossary parity check into `nx run organiclever-web:spec-coverage` — Gherkin terms missing from any glossary file produce warnings. Phase 2 (this scaffolding) does not enable that check yet; it lands once Phase 9 reorganizes Gherkin folders by bounded context.
+Phase 9 of the [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md) wires a glossary parity check into `nx run organiclever-web:spec-coverage` — Gherkin terms missing from any glossary file produce warnings. Phase 2 (this scaffolding) does not enable that check yet; it lands once Phase 9 reorganizes Gherkin folders by bounded context.
 
 ## Related
 
 - [Bounded-context map ADR](../../../../apps/organiclever-web/docs/explanation/bounded-context-map.md)
-- [DDD adoption plan](../../../../plans/in-progress/2026-05-02__organiclever-adopt-ddd/README.md)
+- [DDD adoption plan](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/README.md)
 - [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
 - [BDD with DDD Standards](../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
 - [organiclever specs README](../README.md)
