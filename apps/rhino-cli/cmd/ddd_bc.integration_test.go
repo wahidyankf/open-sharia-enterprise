@@ -31,7 +31,7 @@ type bcValidateIntegSteps struct {
 func (s *bcValidateIntegSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
 	s.originalWd, _ = os.Getwd()
 	var err error
-	s.tmpDir, err = os.MkdirTemp("", "bc-validate-*")
+	s.tmpDir, err = os.MkdirTemp("", "ddd-bc-*")
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ contexts:
 	}
 
 	// Create gherkin dir with one feature file.
-	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "fe", "gherkin", contextName)
+	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "web", "gherkin", contextName)
 	if err := os.MkdirAll(gherkinDir, 0755); err != nil {
 		return err
 	}
@@ -151,19 +151,19 @@ func (s *bcValidateIntegSteps) registryWithOrphanForWarnFlag() error {
 
 func (s *bcValidateIntegSteps) run() error {
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
 func (s *bcValidateIntegSteps) runWithWarnFlag() error {
 	buf := new(bytes.Buffer)
-	bcValidateCmd.SetOut(buf)
-	bcValidateCmd.SetErr(buf)
+	dddBcCmd.SetOut(buf)
+	dddBcCmd.SetErr(buf)
 	bcSeverity = "warn"
-	s.cmdErr = bcValidateCmd.RunE(bcValidateCmd, []string{"organiclever"})
+	s.cmdErr = dddBcCmd.RunE(dddBcCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -274,7 +274,7 @@ func TestIntegrationBcValidate(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsDirIntegBcValidate},
 			TestingT: t,
-			Tags:     "bc-validate",
+			Tags:     "ddd-bc",
 		},
 	}
 	if suite.Run() != 0 {

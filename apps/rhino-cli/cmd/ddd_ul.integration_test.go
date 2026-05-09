@@ -31,7 +31,7 @@ type ulValidateIntegSteps struct {
 func (s *ulValidateIntegSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
 	s.originalWd, _ = os.Getwd()
 	var err error
-	s.tmpDir, err = os.MkdirTemp("", "ul-validate-*")
+	s.tmpDir, err = os.MkdirTemp("", "ddd-ul-*")
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ contexts:
 	}
 
 	// Create gherkin dir with one feature file.
-	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "fe", "gherkin", contextName)
+	gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "web", "gherkin", contextName)
 	if err := os.MkdirAll(gherkinDir, 0755); err != nil {
 		return err
 	}
@@ -230,7 +230,7 @@ contexts:
 		if err := os.WriteFile(filepath.Join(codeDir, "types.ts"), []byte("export type EntryType = string;\n"), 0644); err != nil {
 			return err
 		}
-		gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "fe", "gherkin", ctx)
+		gherkinDir := filepath.Join(s.tmpDir, "specs", "apps", "organiclever", "web", "gherkin", ctx)
 		if err := os.MkdirAll(gherkinDir, 0755); err != nil {
 			return err
 		}
@@ -295,19 +295,19 @@ func (s *ulValidateIntegSteps) missingFeatureReference() error {
 
 func (s *ulValidateIntegSteps) run() error {
 	buf := new(bytes.Buffer)
-	ulValidateCmd.SetOut(buf)
-	ulValidateCmd.SetErr(buf)
-	s.cmdErr = ulValidateCmd.RunE(ulValidateCmd, []string{"organiclever"})
+	dddUlCmd.SetOut(buf)
+	dddUlCmd.SetErr(buf)
+	s.cmdErr = dddUlCmd.RunE(dddUlCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
 func (s *ulValidateIntegSteps) runWithWarnFlag() error {
 	buf := new(bytes.Buffer)
-	ulValidateCmd.SetOut(buf)
-	ulValidateCmd.SetErr(buf)
+	dddUlCmd.SetOut(buf)
+	dddUlCmd.SetErr(buf)
 	ulSeverity = "warn"
-	s.cmdErr = ulValidateCmd.RunE(ulValidateCmd, []string{"organiclever"})
+	s.cmdErr = dddUlCmd.RunE(dddUlCmd, []string{"organiclever"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -402,10 +402,10 @@ func TestIntegrationUlValidate(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsDirIntegUlValidate},
 			TestingT: t,
-			Tags:     "ul-validate",
+			Tags:     "ddd-ul",
 		},
 	}
 	if suite.Run() != 0 {
-		t.Fatal("non-zero status returned, failed to run integration ul validate feature tests")
+		t.Fatal("non-zero status returned, failed to run integration ddd ul feature tests")
 	}
 }
