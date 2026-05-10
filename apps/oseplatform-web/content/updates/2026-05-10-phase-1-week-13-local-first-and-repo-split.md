@@ -271,8 +271,10 @@ What changed in five weeks:
 
 ## What's Next
 
-Three lines of work continue, none of them new ground:
+Five lines of work continue over the next month:
 
+- **Codebase stabilization** — the past five weeks introduced large structural change: local-first pivot, three-repo split, demo extraction, DDD restructure, and a new web app. The next month is biased toward consolidation rather than expansion: tightening edges, fixing flake, retiring scaffolding, and letting the new structure settle before adding more on top.
+- **More development experiments using Chinese LLM models** — the OpenCode Go provider migration brought MiniMax M2.7 and GLM 5 into the agent loop alongside the existing Anthropic-backed Claude Code path. The next month extends that exploration: comparing model output quality on real plan execution, validator iteration loops, and code generation; calibrating which capability tier each model fits; and stress-testing cost and latency in everyday workflows.
 - **OrganicLever local-first feature build-out** — workout sessions, journal v3, history and progress views, settings, sync (eventually), and offline-first edge cases. Pre-Alpha will become Alpha when the daily flow is usable end-to-end.
 - **`ose-infra` continuous deployment** — the staging branch already auto-deploys; promotion to production environment branches is the next step. The previous update flagged CD as the priority and that has not changed; the local-first pivot consumed time that would otherwise have gone to it.
 - **`ose-primer` template hardening** — remaining classifier rows to settle, `pdf-chat-apps` demo family already in `plans/in-progress/`, and template parity checks running on every propagation.
