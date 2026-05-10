@@ -47,9 +47,21 @@ After completing the networking introduction, you'll understand:
 - How load balancers distribute traffic
 - Basic network troubleshooting approaches
 
-## Getting Started
+## Learning Paths
+
+### Conceptual Understanding
 
 Start with the **[Introduction](/en/learn/software-engineering/networking/introduction)** to build foundational networking knowledge. This introduction assumes no prior networking experience and teaches concepts through clear explanations and diagrams.
+
+### Code-First Learning
+
+The **[By Example](/en/learn/software-engineering/networking/by-example)** tutorial teaches networking through 83 heavily annotated Python examples. Each example is self-contained and runnable with `python3`. This path suits experienced developers who prefer learning through working code rather than narrative explanations.
+
+The By Example tutorial covers:
+
+- **Beginner** (Examples 1-29): OSI model, IP addressing, DNS, TCP/UDP sockets, HTTP, HTTPS basics
+- **Intermediate** (Examples 30-56): TLS deep-dive, WebSockets, HTTP/2, select(), threading, NAT, BGP, congestion control
+- **Advanced** (Examples 57-83): Raw sockets, asyncio, gRPC, MQTT, WebRTC, eBPF, QUIC, mTLS, rate limiting, production patterns
 
 The content focuses on practical networking knowledge relevant to software development, not exhaustive protocol specifications or network administration details.
 
