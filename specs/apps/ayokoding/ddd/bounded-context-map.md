@@ -84,11 +84,12 @@ Legend:
 
 Six BCs declare layer subsets honestly:
 
-- `app-shell` — `[presentation]` only.
-- `content`, `search`, `i18n` — full `[application, infrastructure, presentation]` (real
+- `app-shell` — `[application, presentation]` (presentation chrome + tRPC root router stitching).
+- `content`, `search` — full `[application, infrastructure, presentation]` (real
   procedures, real adapters, real UI).
-- `navigation` — `[application, presentation]` (the nav tree is computed but there is no
-  separate infrastructure beyond what content already exposes).
+- `i18n`, `navigation` — `[application, presentation]` (locale negotiation /
+  nav tree projection are computed but there is no separate infrastructure today;
+  i18n's translation tables are static, navigation derives from content).
 - `health` — `[application]` only (no UI, no persistence).
 
 `bcregistry/validator.go` enforces the subset on `src/contexts/<bc>/`.

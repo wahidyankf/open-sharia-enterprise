@@ -62,7 +62,7 @@ git push origin main:prod-ayokoding-web
 | `app-shell`  | `[application, presentation]`                 | tRPC root router stitching + chrome (header, footer, theme toggle, ui/)   |
 | `content`    | `[application, infrastructure, presentation]` | tRPC `content.*` procedures + filesystem reader + markdown rendering      |
 | `search`     | `[application, infrastructure, presentation]` | tRPC `search.query` + FlexSearch index (in content infra) + search dialog |
-| `i18n`       | `[application, infrastructure, presentation]` | Locale schema + `meta.languages` + middleware + locale switcher           |
+| `i18n`       | `[application, presentation]`                 | Locale schema + `meta.languages` + middleware + locale switcher           |
 | `navigation` | `[application, presentation]`                 | tRPC `content.getTree` (owned by navigation BC) + sidebar/breadcrumb/toc  |
 | `health`     | `[application]`                               | tRPC `meta.health` liveness probe                                         |
 

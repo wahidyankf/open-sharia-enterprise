@@ -63,11 +63,12 @@ contexts:
   - name: i18n
     summary: >-
       Locale switching + tRPC i18n-api + Next.js middleware. Application owns
-      locale negotiation and the middleware function; infrastructure owns
-      translation file loaders; presentation owns the locale switcher UI.
+      locale negotiation, the middleware function, and translation lookup tables;
+      presentation owns the locale switcher UI. No infrastructure layer today —
+      translation tables are static (no loader/adapter); will add when i18n grows
+      filesystem or remote translation sources.
     layers:
       - application
-      - infrastructure
       - presentation
     code:
       - apps/ayokoding-web/src/contexts/i18n
