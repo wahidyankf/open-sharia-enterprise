@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "./page";
-import { filterItems } from "@/utils/search";
+import { filterItems } from "@/contexts/search/application/search";
 
 // Mock the next/navigation module
 const mockPush = vi.fn();
@@ -17,7 +17,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 // Mock the components imported from other files
-vi.mock("@/components/Navigation", () => ({
+vi.mock("@/contexts/app-shell/presentation/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
@@ -47,12 +47,12 @@ vi.mock("@open-sharia-enterprise/ts-ui", () => ({
 }));
 
 // Mock the filterItems function
-vi.mock("@/utils/search", () => ({
+vi.mock("@/contexts/search/application/search", () => ({
   filterItems: vi.fn((items) => items),
 }));
 
 // Mock the data and utility functions
-vi.mock("@/app/data", () => ({
+vi.mock("@/contexts/cv/application/data", () => ({
   cvData: [
     {
       type: "about",

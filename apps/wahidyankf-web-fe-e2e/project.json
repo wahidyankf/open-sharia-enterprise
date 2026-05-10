@@ -17,7 +17,7 @@
         "command": "tsc --noEmit",
         "cwd": "{projectRoot}"
       },
-      "inputs": ["default", "{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature"]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/wahidyankf/behavior/web/gherkin/**/*.feature"]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -33,7 +33,7 @@
         "parallel": true,
         "cwd": "{projectRoot}"
       },
-      "inputs": ["default", "{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature"]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/wahidyankf/behavior/web/gherkin/**/*.feature"]
     },
     "test:e2e": {
       "executor": "nx:run-commands",
@@ -57,9 +57,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/wahidyankf/fe/gherkin apps/wahidyankf-web-fe-e2e",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/wahidyankf/behavior/web/gherkin apps/wahidyankf-web-fe-e2e",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/wahidyankf/fe/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
+      "inputs": ["{workspaceRoot}/specs/apps/wahidyankf/behavior/web/gherkin/**/*.feature", "{projectRoot}/**/*.ts"]
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"],

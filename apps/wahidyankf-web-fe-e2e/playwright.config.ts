@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
 const testDir = defineBddConfig({
-  featuresRoot: "../../specs/apps/wahidyankf/fe/gherkin",
+  featuresRoot: "../../specs/apps/wahidyankf/behavior/web/gherkin",
   steps: "./steps/**/*.ts",
 });
 

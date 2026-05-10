@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("@/components/Navigation", () => ({
+vi.mock("@/contexts/app-shell/presentation/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
@@ -52,7 +52,7 @@ type ProjectItem = {
   links: Record<string, string>;
 };
 
-vi.mock("@/utils/search", () => ({
+vi.mock("@/contexts/search/application/search", () => ({
   filterItems: vi.fn((items: ProjectItem[], searchTerm: string) =>
     items.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase())),
   ),

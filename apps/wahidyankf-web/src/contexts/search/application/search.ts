@@ -1,3 +1,6 @@
+export type SearchTerm = string;
+export type SearchResult<T> = T[];
+
 export function filterItems<T>(items: T[], searchTerm: string, keys: (keyof T)[]): T[] {
   if (!searchTerm) return items;
 

@@ -1,7 +1,9 @@
 import path from "node:path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 
-const feature = await loadFeature(path.resolve(process.cwd(), "../../specs/apps/wahidyankf/fe/gherkin/theme.feature"));
+const feature = await loadFeature(
+  path.resolve(process.cwd(), "../../specs/apps/wahidyankf/behavior/web/gherkin/app-shell/theme.feature"),
+);
 
 describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {

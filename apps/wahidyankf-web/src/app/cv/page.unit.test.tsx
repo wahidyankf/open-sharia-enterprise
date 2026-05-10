@@ -18,7 +18,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("@/components/Navigation", () => ({
+vi.mock("@/contexts/app-shell/presentation/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
@@ -42,7 +42,7 @@ vi.mock("@open-sharia-enterprise/ts-ui", () => ({
   HighlightText: ({ text }: { text: string }) => <span>{text}</span>,
 }));
 
-vi.mock("@/utils/search", () => ({
+vi.mock("@/contexts/search/application/search", () => ({
   filterItems: vi.fn((items) => items),
 }));
 
@@ -80,7 +80,7 @@ describe("CV component", () => {
     ];
 
     // Use vi.doMock for the data module
-    vi.doMock("@/app/data", () => ({
+    vi.doMock("@/contexts/cv/application/data", () => ({
       cvData: mockCvData,
       getTopSkillsLastFiveYears: () => [{ name: "React", duration: 60 }],
       getTopLanguagesLastFiveYears: () => [{ name: "JavaScript", duration: 60 }],
