@@ -47,6 +47,7 @@ weight: 102
 - [Networking](/en/learn/software-engineering/networking)
   - [Introduction](/en/learn/software-engineering/networking/introduction)
   - [Overview](/en/learn/software-engineering/networking/overview)
+  - [By Example](/en/learn/software-engineering/networking/by-example)
 - [Algorithm and Data Structures](/en/learn/software-engineering/algorithm-and-data-structures)
   - [By Example](/en/learn/software-engineering/algorithm-and-data-structures/by-example)
   - [Overview](/en/learn/software-engineering/algorithm-and-data-structures/overview)
