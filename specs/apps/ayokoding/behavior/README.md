@@ -28,13 +28,15 @@ a real F#/Giraffe container; ayokoding does not have one.
   flat-root `web/gherkin/`.
 - `api/gherkin/` — tRPC API Gherkin scenarios (HTTP semantic). Moved here from legacy
   flat-root `be/gherkin/` (slug rename `be` → `api`).
+- `cli/` — CLI-semantic scenarios for `ayokoding-cli`. Covers the `links check` command.
 
 ## Perspectives
 
-| Perspective | Background                 | Step style                                     | Consumed by                              |
-| ----------- | -------------------------- | ---------------------------------------------- | ---------------------------------------- |
-| `web`       | `Given the app is running` | `clicks`, `types`, `sees`, `navigates`         | `apps/ayokoding-web-fe-e2e` (Playwright) |
-| `api`       | `Given the API is running` | `the client calls`, response shape, error code | `apps/ayokoding-web-be-e2e` (Playwright) |
+| Perspective | Background                          | Step style                                     | Consumed by                                            |
+| ----------- | ----------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
+| `web`       | `Given the app is running`          | `clicks`, `types`, `sees`, `navigates`         | `apps/ayokoding-web-fe-e2e` (Playwright)               |
+| `api`       | `Given the API is running`          | `the client calls`, response shape, error code | `apps/ayokoding-web-be-e2e` (Playwright)               |
+| `cli`       | `Given the CLI binary is available` | `runs`, exit code, output assertions           | `apps/ayokoding-cli` (Go test + godog, `cli/gherkin/`) |
 
 ## Gherkin coverage
 

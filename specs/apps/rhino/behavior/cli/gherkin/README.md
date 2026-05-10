@@ -1,10 +1,34 @@
-# rhino-cli specs Gherkin Specs
+# rhino-cli Gherkin Specs
 
-Gherkin feature files for the `specs` subcommand family of
-[rhino-cli](../../../../../../apps/rhino-cli/README.md) — deterministic spec validation
-(FR-14).
+Gherkin feature files for [rhino-cli](../../../../../../apps/rhino-cli/README.md) — the Repository
+Hygiene & INtegration Orchestrator CLI.
 
-## Planned Feature Files
+## Feature Files
+
+| File                                | Command(s)                  | Scenarios |
+| ----------------------------------- | --------------------------- | --------- |
+| `agents-sync.feature`               | `agents sync`               | 7         |
+| `agents-validate-claude.feature`    | `agents validate-claude`    | 5         |
+| `agents-validate-naming.feature`    | `agents validate-naming`    | 4         |
+| `ddd-bc.feature`                    | `ddd bc`                    | 11        |
+| `ddd-ul.feature`                    | `ddd ul`                    | 7         |
+| `docs-validate-links.feature`       | `docs validate-links`       | 4         |
+| `docs-validate-mermaid.feature`     | `docs validate-mermaid`     | 22        |
+| `doctor.feature`                    | `doctor`                    | 9         |
+| `env-backup.feature`                | `env backup`                | 18        |
+| `env-init.feature`                  | `env init`                  | 4         |
+| `env-restore.feature`               | `env restore`               | 13        |
+| `git-pre-commit.feature`            | `git pre-commit`            | 1         |
+| `governance-vendor-audit.feature`   | `governance vendor-audit`   | 7         |
+| `spec-coverage-validate.feature`    | `spec-coverage validate`    | 6         |
+| `test-coverage-diff.feature`        | `test-coverage diff`        | 4         |
+| `test-coverage-merge.feature`       | `test-coverage merge`       | 3         |
+| `test-coverage-validate.feature`    | `test-coverage validate`    | 10        |
+| `workflows-validate-naming.feature` | `workflows validate-naming` | 4         |
+
+## `specs/` Subfolder — Planned Feature Files
+
+The `specs/` subfolder covers the `specs` subcommand family (deterministic spec validation, FR-14).
 
 | File                        | Command(s)                | Status  |
 | --------------------------- | ------------------------- | ------- |
@@ -15,12 +39,11 @@ Gherkin feature files for the `specs` subcommand family of
 
 ## Conventions
 
-- **File naming**: `[action].feature` (kebab-case, action only — domain is the directory)
+- **File naming**: `[domain]-[action].feature` (kebab-case, domain-prefixed)
 - **Step language**: CLI-semantic only — no framework or library names
 - **User story block**: Every `Feature:` block opens with `As a … / I want … / So that …`
 
 ## Related
 
-- **Parent**: rhino-cli behavior specs (specs/apps/rhino/behavior/cli/ — no parent README yet)
-- **CLI gherkin**: [specs/apps/rhino/cli/gherkin/](../../../cli/gherkin/README.md)
+- **Parent**: [rhino-cli specs](../../README.md)
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

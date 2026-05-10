@@ -18,7 +18,7 @@ import (
 
 var specsDiffTestCoverageDir = func() string {
 	_, f, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino/cli/gherkin")
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino/behavior/cli/gherkin")
 }()
 
 // Scenario: No changed lines reports 100% coverage

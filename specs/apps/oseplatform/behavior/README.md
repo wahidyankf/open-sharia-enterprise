@@ -20,13 +20,15 @@ caller). See [`../containers/container.md`](../containers/container.md) for the 
   DDD-format adoption.
 - `api/` — tRPC HTTP-semantic scenarios. Migrated here from legacy `be/gherkin/` (slug
   rename `be → api`) during DDD-format adoption.
+- `cli/` — CLI-semantic scenarios for `oseplatform-cli`. Covers the `links check` command.
 
 ## Perspectives
 
-| Perspective | Background                 | Step style                                       | Consumed by                                          |
-| ----------- | -------------------------- | ------------------------------------------------ | ---------------------------------------------------- |
-| `web`       | `Given the app is running` | `clicks`, `types`, `sees`, `navigates`           | `apps/oseplatform-web-fe-e2e` (Playwright)           |
-| `api`       | `Given the API is running` | `sends GET/POST`, `status code`, `response body` | `apps/oseplatform-web-be-e2e` (Playwright tRPC HTTP) |
+| Perspective | Background                          | Step style                                       | Consumed by                                              |
+| ----------- | ----------------------------------- | ------------------------------------------------ | -------------------------------------------------------- |
+| `web`       | `Given the app is running`          | `clicks`, `types`, `sees`, `navigates`           | `apps/oseplatform-web-fe-e2e` (Playwright)               |
+| `api`       | `Given the API is running`          | `sends GET/POST`, `status code`, `response body` | `apps/oseplatform-web-be-e2e` (Playwright tRPC HTTP)     |
+| `cli`       | `Given the CLI binary is available` | `runs`, exit code, output assertions             | `apps/oseplatform-cli` (Go test + godog, `cli/gherkin/`) |
 
 ## Gherkin coverage
 

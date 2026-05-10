@@ -97,9 +97,9 @@ go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
 Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
 `/tmp` filesystem fixtures.
 
-| Test function               | Feature file                                             | Scenarios |
-| --------------------------- | -------------------------------------------------------- | --------- |
-| `TestIntegrationLinksCheck` | `specs/apps/oseplatform/cli/gherkin/links-check.feature` | 4         |
+| Test function               | Feature file                                                      | Scenarios |
+| --------------------------- | ----------------------------------------------------------------- | --------- |
+| `TestIntegrationLinksCheck` | `specs/apps/oseplatform/behavior/cli/gherkin/links-check.feature` | 4         |
 
 The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
 `specs/apps/oseplatform/**/*.feature` files change.

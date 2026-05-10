@@ -18,7 +18,7 @@ import (
 
 var specsSyncAgentsDir = func() string {
 	_, f, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino/cli/gherkin")
+	return filepath.Join(filepath.Dir(f), "../../../specs/apps/rhino/behavior/cli/gherkin")
 }()
 
 // Scenario: Syncing converts Claude agents to OpenCode format and leaves skills in place

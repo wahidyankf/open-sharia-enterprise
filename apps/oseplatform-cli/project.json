@@ -67,9 +67,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/oseplatform/cli/gherkin apps/oseplatform-cli --shared-steps",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/oseplatform/behavior/cli/gherkin apps/oseplatform-cli --shared-steps",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/oseplatform/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": ["{workspaceRoot}/specs/apps/oseplatform/behavior/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     }
   },
   "tags": ["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]

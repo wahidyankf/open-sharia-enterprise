@@ -13,16 +13,17 @@ the contract between the CLI implementation and its consumers.
 
 ## Structure
 
-All feature files live under a single `cli/gherkin/` directory:
+All feature files live under `behavior/cli/gherkin/`:
 
 ```
 specs/apps/rhino/
 ├── README.md
-└── cli/
-    └── gherkin/    # All rhino-cli Gherkin feature files
+└── behavior/
+    └── cli/
+        └── gherkin/    # All rhino-cli Gherkin feature files
 ```
 
-See [cli/gherkin/README.md](./cli/gherkin/README.md) for the full file inventory.
+See [behavior/cli/gherkin/README.md](./behavior/cli/gherkin/README.md) for the full file inventory.
 
 ## Running the Tests
 
@@ -51,7 +52,7 @@ The `test:integration` target is cached — it only re-runs when source files in
 
 ## Adding New Specs
 
-1. Create `specs/apps/rhino/cli/gherkin/<domain>-<action>.feature`
+1. Create `specs/apps/rhino/behavior/cli/gherkin/<domain>-<action>.feature`
 2. Create `apps/rhino-cli/cmd/<domain>_<action>_test.go` (no build tag — unit test with godog):
    - Add `package cmd` at the top
    - Include `// Scenario: <title>` comments for every scenario
@@ -66,7 +67,7 @@ The `test:integration` target is cached — it only re-runs when source files in
 
    ```bash
    cd apps/rhino-cli
-   go run main.go spec-coverage validate specs/apps/rhino/cli/gherkin apps/rhino-cli
+   go run main.go spec-coverage validate specs/apps/rhino/behavior/cli/gherkin apps/rhino-cli
    ```
 
 ## Dual Consumption

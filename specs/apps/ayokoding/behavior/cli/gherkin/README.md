@@ -1,6 +1,6 @@
 # ayokoding-cli Gherkin Specs
 
-Gherkin feature files for [ayokoding-cli](../../../../../apps/ayokoding-cli/README.md) — the CLI
+Gherkin feature files for [ayokoding-cli](../../../../../../apps/ayokoding-cli/README.md) — the CLI
 tool for ayokoding-web content validation. 1 file, 4 scenarios.
 
 ## Feature Files
@@ -18,4 +18,4 @@ tool for ayokoding-web content validation. 1 file, 4 scenarios.
 ## Related
 
 - **Parent**: [ayokoding-cli specs](../../README.md)
-- **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+- **BDD Standards**: [behavior-driven-development-bdd/](../../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

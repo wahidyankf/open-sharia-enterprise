@@ -68,9 +68,9 @@
       }
     },
     "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/cli/gherkin apps/rhino-cli --shared-steps",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/behavior/cli/gherkin apps/rhino-cli --shared-steps",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/rhino/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
     },
     "validate:naming-agents": {
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go agents validate-naming",
