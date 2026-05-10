@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-// exStepRe matches defgiven/defwhen/defthen ~r/^text$/
+// exStepRe matches defgiven/defwhen/defthen ~r/^text$/.
 var exStepRe = regexp.MustCompile(`def(?:given|when|then|and_|but_)\s+~r/\^?(.*?)\$?/`)
 
 // extractElixirStepTexts reads an Elixir file and adds step regex patterns to sm.patterns.

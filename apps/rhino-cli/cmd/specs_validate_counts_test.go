@@ -53,7 +53,7 @@ func (s *specsValidateCountsUnitSteps) after(_ context.Context, _ *godog.Scenari
 	return context.Background(), nil
 }
 
-// Scenario: folder with spec files in all subfolders passes validation
+// Scenario: folder with spec files in all subfolders passes validation.
 func (s *specsValidateCountsUnitSteps) specFolderWithSpecFiles() error {
 	specsValidateCountsFn = func(_, _ string) []SpecFinding {
 		return nil
@@ -61,7 +61,7 @@ func (s *specsValidateCountsUnitSteps) specFolderWithSpecFiles() error {
 	return nil
 }
 
-// Scenario: empty subfolder reports a finding
+// Scenario: empty subfolder reports a finding.
 func (s *specsValidateCountsUnitSteps) specFolderProductOnlyReadme() error {
 	specsValidateCountsFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -75,7 +75,7 @@ func (s *specsValidateCountsUnitSteps) specFolderProductOnlyReadme() error {
 	return nil
 }
 
-// Scenario: missing subfolder reports a finding
+// Scenario: missing subfolder reports a finding.
 func (s *specsValidateCountsUnitSteps) specFolderBehaviorMissing() error {
 	specsValidateCountsFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -89,7 +89,7 @@ func (s *specsValidateCountsUnitSteps) specFolderBehaviorMissing() error {
 	return nil
 }
 
-// Scenario: folder path that does not exist
+// Scenario: folder path that does not exist.
 func (s *specsValidateCountsUnitSteps) noDirectoryNosuchapp() error {
 	specsValidateCountsFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{

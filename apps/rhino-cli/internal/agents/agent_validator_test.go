@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// Helper function to create a valid agent file
+// Helper function to create a valid agent file.
 func createValidAgent(t *testing.T, dir, name string) {
 	t.Helper()
 	content := `---
@@ -24,7 +24,7 @@ Test agent body`
 	}
 }
 
-// Helper function to create a skill directory
+// Helper function to create a skill directory.
 func createValidSkill(t *testing.T, dir, name string) {
 	t.Helper()
 	skillDir := filepath.Join(dir, name)

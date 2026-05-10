@@ -527,6 +527,7 @@ Go CLI projects (`apps/rhino-cli`, `apps/ayokoding-cli`) use [golangci-lint](htt
 - **Exhaustiveness**: `exhaustive` (typed-constant switch/map) · `gochecksumtype` (sealed-interface type switches)
 - **Error-handling discipline**: `errorlint` (forces `errors.Is`/`errors.As`; requires `%w` in `fmt.Errorf`)
 - **Const hygiene**: `iotamixing` (forbids mixing iota with non-iota in same const block)
+- **Documentation style**: `godot` (doc comments must end with period) · `revive exported` (exported identifiers must have doc) · `revive package-comments` (every package needs a doc comment)
 - **staticcheck checks**: `all` (SA\*, ST\*, S\*, QF\*) with 4 cosmetic ST checks excluded
 
 **Usage**:

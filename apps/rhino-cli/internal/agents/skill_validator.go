@@ -9,12 +9,12 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// validateSkillYAMLFormatting checks YAML has proper formatting
+// validateSkillYAMLFormatting checks YAML has proper formatting.
 func validateSkillYAMLFormatting(skillName string, content []byte) ValidationCheck {
 	return validateYAMLFormattingRaw(fmt.Sprintf("Skill: %s - YAML Formatting", skillName), content)
 }
 
-// validateSkill performs all 7 validation rules for a single skill
+// validateSkill performs all 7 validation rules for a single skill.
 func validateSkill(skillPath string, skillName string) []ValidationCheck {
 	var checks []ValidationCheck
 
@@ -170,7 +170,7 @@ func validateSkill(skillPath string, skillName string) []ValidationCheck {
 	return checks
 }
 
-// validateAllSkills validates all skills and returns skill names map
+// validateAllSkills validates all skills and returns skill names map.
 func validateAllSkills(repoRoot string) ([]ValidationCheck, map[string]bool) {
 	skillsDir := filepath.Join(repoRoot, ".claude", "skills")
 

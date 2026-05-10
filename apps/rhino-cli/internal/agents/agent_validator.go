@@ -333,7 +333,7 @@ func validateModel(filename string, model string) ValidationCheck {
 	}
 }
 
-// validateColor checks that the color is valid
+// validateColor checks that the color is valid.
 func validateColor(filename string, color string) ValidationCheck {
 	if !ValidColors[color] {
 		validColors := []string{"red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"}
@@ -353,7 +353,7 @@ func validateColor(filename string, color string) ValidationCheck {
 	}
 }
 
-// validateFilename checks that filename matches name field
+// validateFilename checks that filename matches name field.
 func validateFilename(filename string, name string) ValidationCheck {
 	expectedFilename := name + ".md"
 	if filename != expectedFilename {
@@ -373,7 +373,7 @@ func validateFilename(filename string, name string) ValidationCheck {
 	}
 }
 
-// validateUniqueness checks that agent name is unique
+// validateUniqueness checks that agent name is unique.
 func validateUniqueness(filename string, name string, agentNames map[string]bool) ValidationCheck {
 	if agentNames[name] {
 		return ValidationCheck{
@@ -392,7 +392,7 @@ func validateUniqueness(filename string, name string, agentNames map[string]bool
 	}
 }
 
-// validateSkillsExist checks that all referenced skills exist
+// validateSkillsExist checks that all referenced skills exist.
 func validateSkillsExist(filename string, skills []string, skillNames map[string]bool) ValidationCheck {
 	missing := []string{}
 
@@ -419,7 +419,7 @@ func validateSkillsExist(filename string, skills []string, skillNames map[string
 	}
 }
 
-// validateNoComments checks that frontmatter has no YAML comments
+// validateNoComments checks that frontmatter has no YAML comments.
 func validateNoComments(filename string, frontmatter []byte) ValidationCheck {
 	lines := bytes.Split(frontmatter, []byte("\n"))
 	for _, line := range lines {
@@ -443,7 +443,7 @@ func validateNoComments(filename string, frontmatter []byte) ValidationCheck {
 }
 
 // validateYAMLFormatting checks that YAML has proper formatting (space after colons)
-// This check runs BEFORE normalization to catch formatting issues
+// This check runs BEFORE normalization to catch formatting issues.
 func validateYAMLFormatting(filename string, content []byte) ValidationCheck {
 	return validateYAMLFormattingRaw(fmt.Sprintf("Agent: %s - YAML Formatting", filename), content)
 }
@@ -488,7 +488,7 @@ func validateGeneratedReportsTools(filename string, tools []string) ValidationCh
 	}
 }
 
-// validateAllAgents validates all agents in parallel
+// validateAllAgents validates all agents in parallel.
 func validateAllAgents(repoRoot string, skillNames map[string]bool) []ValidationCheck {
 	agentsDir := filepath.Join(repoRoot, ".claude", "agents")
 

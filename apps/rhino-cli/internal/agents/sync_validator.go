@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ValidateSync validates that .claude/ and .opencode/ are in sync
+// ValidateSync validates that .claude/ and .opencode/ are in sync.
 func ValidateSync(repoRoot string) (*ValidationResult, error) {
 	startTime := time.Now()
 	result := &ValidationResult{
@@ -141,7 +141,7 @@ func validateAgentCount(repoRoot string) ValidationCheck {
 	}
 }
 
-// validateAgentEquivalence checks semantic equivalence of agents
+// validateAgentEquivalence checks semantic equivalence of agents.
 func validateAgentEquivalence(repoRoot string) []ValidationCheck {
 	var checks []ValidationCheck
 
@@ -173,7 +173,7 @@ func validateAgentEquivalence(repoRoot string) []ValidationCheck {
 	return checks
 }
 
-// validateAgentFile checks if a single agent file is semantically equivalent
+// validateAgentFile checks if a single agent file is semantically equivalent.
 func validateAgentFile(name, claudePath, opencodePath string) ValidationCheck {
 	// Read Claude agent
 	claudeContent, err := os.ReadFile(claudePath)

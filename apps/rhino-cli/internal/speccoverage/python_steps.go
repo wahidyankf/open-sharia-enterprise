@@ -19,7 +19,7 @@ var pyStepRe = regexp.MustCompile(
 		`\)`,
 )
 
-// pyScenarioRe matches @scenario("feature.feature", "Title")
+// pyScenarioRe matches @scenario("feature.feature", "Title").
 var pyScenarioRe = regexp.MustCompile(`@scenario\s*\(\s*"[^"]*"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)`)
 
 // extractPythonStepTexts reads a Python file and adds step texts to the stepMatcher.

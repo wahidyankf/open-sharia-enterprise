@@ -79,6 +79,31 @@ Three linters were added in 2026-05-10 to strengthen type safety:
 
 - Never mix `iota` constants with literal constants in the same `const` block
 
+**`godot`** — Doc comment style:
+
+- Every doc comment on a declaration must end with a period
+- Auto-fixed by `golangci-lint run --fix`
+
+**`revive exported`** — Exported symbol documentation:
+
+- Every exported type, function, method, const, and var must have a godoc comment
+- Package `main` needs `// Package main is the entry point for [tool].`
+- Interface implementations use `// Code implements [InterfaceName].`
+- `String()` (`fmt.Stringer`) is exempt — recognized as stdlib interface
+
+Doc comment style:
+
+```go
+// Execute runs the root cobra command, writing errors to stderr and exiting on failure.
+func Execute() { ... }
+
+// DefaultMaxSize is the maximum allowed file size for env backup inclusion (1 MB).
+const DefaultMaxSize = 1024 * 1024
+
+// Code implements ToolStatus.
+func (StatusOK) Code() string { return "ok" }
+```
+
 Canonical sealed-interface form:
 
 ```go

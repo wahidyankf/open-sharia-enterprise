@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-// jvmStepRe matches @Given("text"), @When("text"), @Then("text"), @And("text"), @But("text")
+// jvmStepRe matches @Given("text"), @When("text"), @Then("text"), @And("text"), @But("text").
 var jvmStepRe = regexp.MustCompile(`@(?:Given|When|Then|And|But)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)`)
 
 // extractJVMStepTexts reads a Java/Kotlin file and adds step texts to the stepMatcher.

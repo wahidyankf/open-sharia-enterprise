@@ -15,20 +15,26 @@ type ToolStatus interface {
 // StatusOK indicates the tool is installed with the correct version.
 type StatusOK struct{}
 
-func (StatusOK) isToolStatus()  {}
-func (StatusOK) Code() string   { return "ok" }
+func (StatusOK) isToolStatus() {}
+
+// Code implements ToolStatus.
+func (StatusOK) Code() string { return "ok" }
 
 // StatusWarning indicates the tool is installed but the version doesn't match.
 type StatusWarning struct{}
 
-func (StatusWarning) isToolStatus()  {}
-func (StatusWarning) Code() string   { return "warning" }
+func (StatusWarning) isToolStatus() {}
+
+// Code implements ToolStatus.
+func (StatusWarning) Code() string { return "warning" }
 
 // StatusMissing indicates the tool is not found in PATH.
 type StatusMissing struct{}
 
-func (StatusMissing) isToolStatus()  {}
-func (StatusMissing) Code() string   { return "missing" }
+func (StatusMissing) isToolStatus() {}
+
+// Code implements ToolStatus.
+func (StatusMissing) Code() string { return "missing" }
 
 // ToolCheck holds the result of checking a single tool.
 type ToolCheck struct {
@@ -55,12 +61,16 @@ type Scope interface {
 type ScopeFull struct{}
 
 func (ScopeFull) isScope() {}
+
+// Code implements Scope.
 func (ScopeFull) Code() string { return "full" }
 
 // ScopeMinimal checks only core tools required for basic development.
 type ScopeMinimal struct{}
 
-func (ScopeMinimal) isScope()    {}
+func (ScopeMinimal) isScope() {}
+
+// Code implements Scope.
 func (ScopeMinimal) Code() string { return "minimal" }
 
 // ParseScope converts a CLI string to a Scope variant.

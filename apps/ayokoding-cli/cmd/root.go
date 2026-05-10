@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	// Global flags
+	// Global flags.
 	verbose bool
 	quiet   bool
 	output  string

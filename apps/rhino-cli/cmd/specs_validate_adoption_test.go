@@ -53,7 +53,7 @@ func (s *specsValidateAdoptionUnitSteps) after(_ context.Context, _ *godog.Scena
 	return context.Background(), nil
 }
 
-// Scenario: app with BDD feature files and bounded-contexts.yaml passes validation
+// Scenario: app with BDD feature files and bounded-contexts.yaml passes validation.
 func (s *specsValidateAdoptionUnitSteps) bothPresent() error {
 	specsValidateAdoptionFn = func(_, _ string) []SpecFinding {
 		return nil
@@ -61,7 +61,7 @@ func (s *specsValidateAdoptionUnitSteps) bothPresent() error {
 	return nil
 }
 
-// Scenario: app missing behavior feature files reports a finding
+// Scenario: app missing behavior feature files reports a finding.
 func (s *specsValidateAdoptionUnitSteps) noFeatureFiles() error {
 	specsValidateAdoptionFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -75,7 +75,7 @@ func (s *specsValidateAdoptionUnitSteps) noFeatureFiles() error {
 	return nil
 }
 
-// Scenario: app missing bounded-contexts.yaml reports a finding
+// Scenario: app missing bounded-contexts.yaml reports a finding.
 func (s *specsValidateAdoptionUnitSteps) noBcYaml() error {
 	specsValidateAdoptionFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -89,7 +89,7 @@ func (s *specsValidateAdoptionUnitSteps) noBcYaml() error {
 	return nil
 }
 
-// Scenario: unknown app with no spec tree at all
+// Scenario: unknown app with no spec tree at all.
 func (s *specsValidateAdoptionUnitSteps) noSpecTree() error {
 	specsValidateAdoptionFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{

@@ -53,7 +53,7 @@ func (s *specsValidateLinksUnitSteps) after(_ context.Context, _ *godog.Scenario
 	return context.Background(), nil
 }
 
-// Scenario: folder with all valid internal links passes validation
+// Scenario: folder with all valid internal links passes validation.
 func (s *specsValidateLinksUnitSteps) allLinksValid() error {
 	specsValidateLinksFn = func(_, _ string) []SpecFinding {
 		return nil
@@ -61,7 +61,7 @@ func (s *specsValidateLinksUnitSteps) allLinksValid() error {
 	return nil
 }
 
-// Scenario: markdown file with broken internal link reports a finding
+// Scenario: markdown file with broken internal link reports a finding.
 func (s *specsValidateLinksUnitSteps) brokenInternalLink() error {
 	specsValidateLinksFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -75,7 +75,7 @@ func (s *specsValidateLinksUnitSteps) brokenInternalLink() error {
 	return nil
 }
 
-// Scenario: markdown file with only external HTTPS links passes validation
+// Scenario: markdown file with only external HTTPS links passes validation.
 func (s *specsValidateLinksUnitSteps) onlyExternalLinks() error {
 	specsValidateLinksFn = func(_, _ string) []SpecFinding {
 		return nil
@@ -83,7 +83,7 @@ func (s *specsValidateLinksUnitSteps) onlyExternalLinks() error {
 	return nil
 }
 
-// Scenario: folder path that does not exist
+// Scenario: folder path that does not exist.
 func (s *specsValidateLinksUnitSteps) noSuchapp() error {
 	specsValidateLinksFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{

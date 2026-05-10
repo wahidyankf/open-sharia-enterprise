@@ -364,7 +364,7 @@ func parseCargoLlvmCov(output string) string {
 }
 
 // parseElixirVersion extracts the version from elixir --version multiline output.
-// Input: "Erlang/OTP 27 ...\n\nElixir 1.19.5 (compiled with Erlang/OTP 27)"
+// Input: "Erlang/OTP 27 ...\n\nElixir 1.19.5 (compiled with Erlang/OTP 27)".
 func parseElixirVersion(output string) string {
 	return parseLineWord(output, "Elixir ", 1, "")
 }

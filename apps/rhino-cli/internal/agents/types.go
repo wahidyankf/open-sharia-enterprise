@@ -7,7 +7,7 @@ import (
 
 // ---- Sync types (from former internal/sync) ----
 
-// ClaudeAgent represents Claude Code format agent configuration
+// ClaudeAgent represents Claude Code format agent configuration.
 type ClaudeAgent struct {
 	Name        string   `yaml:"name"`
 	Description string   `yaml:"description"`
@@ -33,7 +33,7 @@ type OpenCodeAgent struct {
 	Skills      []string        `yaml:"skills,omitempty"`
 }
 
-// SyncOptions configures sync behavior
+// SyncOptions configures sync behavior.
 type SyncOptions struct {
 	RepoRoot   string
 	DryRun     bool
@@ -146,13 +146,13 @@ func (a *ClaudeAgentFull) UnmarshalYAML(unmarshal func(interface{}) error) error
 	return nil
 }
 
-// ClaudeSkill represents a Claude Code skill configuration
+// ClaudeSkill represents a Claude Code skill configuration.
 type ClaudeSkill struct {
 	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
 }
 
-// ValidationError represents a validation error with detailed information
+// ValidationError represents a validation error with detailed information.
 type ValidationError struct {
 	AgentName string
 	SkillName string
@@ -162,7 +162,7 @@ type ValidationError struct {
 	Actual    string
 }
 
-// ValidateClaudeOptions configures validation behavior
+// ValidateClaudeOptions configures validation behavior.
 type ValidateClaudeOptions struct {
 	RepoRoot   string
 	AgentsOnly bool
@@ -268,7 +268,7 @@ var ValidOpenCodeColorThemes = map[string]bool{
 }
 
 // ValidSkillNamePattern validates skill name format
-// Lowercase letters, numbers, hyphens only, max 64 characters
+// Lowercase letters, numbers, hyphens only, max 64 characters.
 var ValidSkillNamePattern = regexp.MustCompile(`^[a-z0-9-]{1,64}$`)
 
 // RequiredFields names the agent frontmatter fields that MUST be present.

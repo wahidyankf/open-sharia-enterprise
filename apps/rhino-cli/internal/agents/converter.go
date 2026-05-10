@@ -60,7 +60,7 @@ type fieldPolicy struct {
 // ValidClaudeAgentFields lacks a policy entry here.
 //
 // Policy decisions per FR-5 of the plan
-// (`plans/in-progress/2026-05-02__validate-claude-opencode-sync-correctness/`):
+// (`plans/in-progress/2026-05-02__validate-claude-opencode-sync-correctness/`):.
 var claudeAgentFieldPolicy = map[string]fieldPolicy{
 	// Required fields
 	"name":        {action: "drop", reason: "filename carries name"},
@@ -94,7 +94,7 @@ var claudeAgentFieldPolicy = map[string]fieldPolicy{
 }
 
 // normalizeYAML fixes common YAML formatting issues in Claude agent files
-// Specifically, adds spaces after colons where missing (e.g., "name:value" -> "name: value")
+// Specifically, adds spaces after colons where missing (e.g., "name:value" -> "name: value").
 func normalizeYAML(content []byte) []byte {
 	// Pattern: word character or hyphen followed by colon, then non-whitespace
 	// This matches "name:value" but not "name: value" or "  - item"
@@ -106,7 +106,7 @@ func normalizeYAML(content []byte) []byte {
 	return normalized
 }
 
-// ExtractFrontmatter extracts YAML frontmatter and body from markdown content
+// ExtractFrontmatter extracts YAML frontmatter and body from markdown content.
 func ExtractFrontmatter(content []byte) (frontmatter []byte, body []byte, err error) {
 	// Look for frontmatter between --- markers
 	lines := bytes.Split(content, []byte("\n"))
@@ -149,7 +149,7 @@ func ExtractFrontmatter(content []byte) (frontmatter []byte, body []byte, err er
 	return frontmatter, body, nil
 }
 
-// ParseClaudeTools parses tools from Claude format (comma-separated or array)
+// ParseClaudeTools parses tools from Claude format (comma-separated or array).
 func ParseClaudeTools(toolsRaw interface{}) []string {
 	var tools []string
 
@@ -175,7 +175,7 @@ func ParseClaudeTools(toolsRaw interface{}) []string {
 	return tools
 }
 
-// ConvertTools converts Claude tools array to OpenCode tools map
+// ConvertTools converts Claude tools array to OpenCode tools map.
 func ConvertTools(claudeTools []string) map[string]bool {
 	tools := make(map[string]bool)
 
@@ -189,7 +189,7 @@ func ConvertTools(claudeTools []string) map[string]bool {
 	return tools
 }
 
-// ConvertModel converts Claude model to OpenCode model
+// ConvertModel converts Claude model to OpenCode model.
 func ConvertModel(claudeModel string) string {
 	model := strings.TrimSpace(claudeModel)
 

@@ -191,7 +191,7 @@ func parseFeatureRefs(cell string) []string {
 	return out
 }
 
-// parseForbiddenEntry parses lines like: "Term" — reason
+// parseForbiddenEntry parses lines like: "Term" — reason.
 func parseForbiddenEntry(line string) (term, reason string) {
 	// Strip surrounding quotes from the term.
 	sep := "—"

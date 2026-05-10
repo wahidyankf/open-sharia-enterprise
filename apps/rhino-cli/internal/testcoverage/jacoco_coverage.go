@@ -54,7 +54,7 @@ func parseJaCoCo(filename string) (jacocoReport, error) {
 //   - ci > 0 AND mb > 0  → Partial
 //   - ci == 0             → Missed
 //
-// Coverage % = covered / (covered + partial + missed)
+// Coverage % = covered / (covered + partial + missed).
 func ComputeJaCoCoResult(filename string, threshold float64) (Result, error) {
 	report, err := parseJaCoCo(filename)
 	if err != nil {

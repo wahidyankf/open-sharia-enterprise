@@ -109,6 +109,31 @@ case StatusA:
 
 See [Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types) for full pattern.
 
+**Doc Comments** — `godot` + `revive exported` + `revive package-comments` enforce:
+
+```go
+// Package doctor checks required development tools are installed.
+package doctor
+
+// Execute runs the root cobra command, writing errors to stderr and exiting on failure.
+func Execute() { ... }
+
+// DefaultMaxSize is the maximum allowed file size for env backup inclusion (1 MB).
+const DefaultMaxSize = 1024 * 1024
+
+// Code implements ToolStatus.
+func (StatusOK) Code() string { return "ok" }
+```
+
+Rules:
+
+- First line = identifier name + verb + object + period (`godot`)
+- Imperative mood for functions: "Execute runs…" not "This runs…"
+- Interface implementations: `// Code implements [InterfaceName].`
+- `String()` (fmt.Stringer): optional — recognized as stdlib interface
+- Unexported identifiers: no linter, code-review only
+- Package main: `// Package main is the entry point for [tool name].`
+
 **Struct Embedding**: Use for composition
 
 ```go

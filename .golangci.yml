@@ -22,6 +22,9 @@ linters:
     - errorlint # forces errors.Is/errors.As; flags non-%w fmt.Errorf
     # Const-block hygiene
     - iotamixing # forbids mixing iota with non-iota constants in same block
+    # Documentation style
+    - godot # exported doc comments must end with a period
+    - revive # exported rule: every exported symbol must have a doc comment
     # Unused code
     - unparam # unused function parameters (and params always called with same value)
     - wastedassign # assignments whose written value is never subsequently read
@@ -101,3 +104,20 @@ linters:
 
     gochecksumtype:
       default-signifies-exhaustive: false # default case does NOT waive exhaustiveness
+
+    godot:
+      scope: declarations # only check doc comments on declarations (not inline comments)
+      capital: false # don't require capital first letter
+      period: true # require period at end
+
+    revive:
+      enable-all-rules: false # only the rules listed below are active
+      rules:
+        - name: exported
+          severity: error
+          disabled: false
+          arguments:
+            - "disableStutteringCheck" # don't flag type-name stuttering (e.g. doctor.DoctorResult)
+        - name: package-comments
+          severity: error
+          disabled: false

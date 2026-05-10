@@ -1,3 +1,4 @@
+// Package main is the entry point for the ayokoding-cli content link validation tool.
 package main
 
 import (

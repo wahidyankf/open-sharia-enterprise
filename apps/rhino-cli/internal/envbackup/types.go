@@ -56,5 +56,8 @@ var DefaultSkipDirs = []string{
 	"generated-contracts",
 }
 
-const DefaultMaxSize = 1024 * 1024 // 1 MB
+// DefaultMaxSize is the maximum allowed file size for env backup inclusion (1 MB).
+const DefaultMaxSize = 1024 * 1024
+
+// DefaultBackupDir is the default directory name used for env file backups.
 const DefaultBackupDir = "ose-open-env-backup"

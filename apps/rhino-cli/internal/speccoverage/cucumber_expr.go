@@ -8,12 +8,12 @@ import (
 // cucumberParamRe matches any Cucumber expression parameter like {string}, {int}, etc.
 var cucumberParamRe = regexp.MustCompile(`\{[^}]+\}`)
 
-// pythonParsersParamRe matches Python pytest-bdd parsers.parse format like {name:d}, {name:g}, {name:w}, {name}
+// pythonParsersParamRe matches Python pytest-bdd parsers.parse format like {name:d}, {name:g}, {name:w}, {name}.
 var pythonParsersParamRe = regexp.MustCompile(`\{(\w+)(?::([dgw]))?\}`)
 
 // unescapeCucumberExpr processes Cucumber expression escape sequences in literal
 // text. In Cucumber expressions, backslash escapes special characters:
-// \( → (, \) → ), \{ → }, \} → }, \/ → /, \\ → \
+// \( → (, \) → ), \{ → }, \} → }, \/ → /, \\ → \.
 func unescapeCucumberExpr(s string) string {
 	var buf strings.Builder
 	buf.Grow(len(s))

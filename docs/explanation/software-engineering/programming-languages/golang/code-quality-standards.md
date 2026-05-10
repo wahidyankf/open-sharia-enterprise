@@ -1222,7 +1222,7 @@ linters:
 
 Document linter decisions:
 
-```markdown
+````markdown
 # Linting Standards
 
 ## Required Linters
@@ -1233,6 +1233,36 @@ Document linter decisions:
 - **errorlint**: `errors.Is`/`errors.As` for comparisons; `%w` for error wrapping in `fmt.Errorf`
 - **gochecksumtype**: Exhaustive type switches on sealed interfaces (`//sumtype:decl`)
 - **iotamixing**: No mixing of `iota` with non-iota constants in the same `const` block
+- **godot**: All doc comments on declarations must end with a period
+- **revive (exported)**: Every exported identifier must have a doc comment
+- **revive (package-comments)**: Every package must have a package-level doc comment
+
+## Go Doc Comment Style
+
+All exported identifiers must follow Go godoc conventions:
+
+- **First sentence**: Starts with the identifier name, ends with a period. Imperative for functions.
+- **Imperative mood for functions**: `// Execute runs the root command.` not `// This runs the root command.`
+- **Interface implementations**: Use `// Code implements [InterfaceName].` for interface method implementations.
+- **No Javadoc blocks**: No `// Returns:`, `// Args:`, `// Param:` — use flowing prose.
+
+```go
+// Execute runs the root cobra command, writing errors to stderr and exiting on failure.
+func Execute() { ... }
+
+// DefaultMaxSize is the maximum allowed file size for env backup inclusion (1 MB).
+const DefaultMaxSize = 1024 * 1024
+
+// Code implements ToolStatus.
+func (StatusOK) Code() string { return "ok" }
+```
+````
+
+**Skip doc comments for**:
+
+- Unexported identifiers (code review enforces clarity)
+- Interface marker methods (`isScope() {}`)
+- `String()` — recognized as `fmt.Stringer` implementation; doc optional
 
 ## Disabled Linters
 
@@ -1243,7 +1273,8 @@ Document linter decisions:
 
 - Test files: Disable complexity checks
 - Generated code: Disable all linters
-```
+
+````
 
 ## Common Issues and Fixes
 
@@ -1253,7 +1284,7 @@ Document linter decisions:
 
 ```go
 file, _ := os.Open("file.txt") // errcheck: error return value not checked
-```
+````
 
 **Fix**:
 

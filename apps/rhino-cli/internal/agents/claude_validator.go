@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// ValidateClaude validates .claude/ directory format
+// ValidateClaude validates .claude/ directory format.
 func ValidateClaude(opts ValidateClaudeOptions) (*ValidationResult, error) {
 	startTime := time.Now()
 	result := &ValidationResult{

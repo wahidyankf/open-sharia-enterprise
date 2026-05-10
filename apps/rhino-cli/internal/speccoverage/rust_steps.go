@@ -6,13 +6,13 @@ import (
 	"regexp"
 )
 
-// rsStepLiteralRe matches #[given("text")] — plain text step
+// rsStepLiteralRe matches #[given("text")] — plain text step.
 var rsStepLiteralRe = regexp.MustCompile(`#\[(?:given|when|then)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)\s*\]`)
 
-// rsStepExprRe matches #[given(expr = "text")] — expression step (treated as Cucumber expression)
+// rsStepExprRe matches #[given(expr = "text")] — expression step (treated as Cucumber expression).
 var rsStepExprRe = regexp.MustCompile(`#\[(?:given|when|then)\s*\(\s*expr\s*=\s*"((?:[^"\\]|\\.)*)"\s*\)\s*\]`)
 
-// rsStepRegexRe matches #[given(regex = r#"pattern"#)] — regex step
+// rsStepRegexRe matches #[given(regex = r#"pattern"#)] — regex step.
 var rsStepRegexRe = regexp.MustCompile(`#\[(?:given|when|then)\s*\(\s*regex\s*=\s*r#"(.*?)"#\s*\)\s*\]`)
 
 // extractRustStepTexts reads a Rust file and adds step texts/patterns.

@@ -78,7 +78,7 @@ func parseBranchCoverage(condCov string) (covered, total int) {
 //   - hits > 0 AND branch with some branches not covered   → Partial
 //   - hits == 0                                             → Missed
 //
-// Coverage % = covered / (covered + partial + missed)
+// Coverage % = covered / (covered + partial + missed).
 func ComputeCoberturaResult(filename string, threshold float64) (Result, error) {
 	report, err := parseCobertura(filename)
 	if err != nil {

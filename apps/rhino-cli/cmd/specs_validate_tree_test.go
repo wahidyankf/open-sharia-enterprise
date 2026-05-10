@@ -53,7 +53,7 @@ func (s *specsValidateTreeUnitSteps) after(_ context.Context, _ *godog.Scenario,
 	return context.Background(), nil
 }
 
-// Scenario: app with complete spec tree passes validation
+// Scenario: app with complete spec tree passes validation.
 func (s *specsValidateTreeUnitSteps) specTreeWithAllFiveFolders() error {
 	specsValidateTreeFn = func(_, _ string) []SpecFinding {
 		return nil
@@ -61,7 +61,7 @@ func (s *specsValidateTreeUnitSteps) specTreeWithAllFiveFolders() error {
 	return nil
 }
 
-// Scenario: app missing a required folder reports a finding
+// Scenario: app missing a required folder reports a finding.
 func (s *specsValidateTreeUnitSteps) specTreeMissingBehavior() error {
 	specsValidateTreeFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -75,7 +75,7 @@ func (s *specsValidateTreeUnitSteps) specTreeMissingBehavior() error {
 	return nil
 }
 
-// Scenario: app with folder missing README.md reports a finding
+// Scenario: app with folder missing README.md reports a finding.
 func (s *specsValidateTreeUnitSteps) specTreeProductFolderNoReadme() error {
 	specsValidateTreeFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
@@ -89,7 +89,7 @@ func (s *specsValidateTreeUnitSteps) specTreeProductFolderNoReadme() error {
 	return nil
 }
 
-// Scenario: app with no spec tree at all
+// Scenario: app with no spec tree at all.
 func (s *specsValidateTreeUnitSteps) noSpecTreeForUnknownapp() error {
 	specsValidateTreeFn = func(_, _ string) []SpecFinding {
 		var findings []SpecFinding

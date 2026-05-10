@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// linkRegex matches markdown links: [text](url)
+	// linkRegex matches markdown links: [text](url).
 	linkRegex = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
 )
 
