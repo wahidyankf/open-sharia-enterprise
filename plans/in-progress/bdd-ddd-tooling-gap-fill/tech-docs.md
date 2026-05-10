@@ -642,9 +642,199 @@ The four `validate:specs-*` targets are `cache: true` (Phase 1.3 + Phase 7B.3). 
 - `pr-validate-links.yml` already runs `rhino-cli docs validate-links` (a different command tree). The plan deliberately leaves that workflow alone — `docs validate-links` is out of scope per Fix #13's "Out-of-scope" note.
 - `test-organiclever-web-staging.yml` and `deploy-organiclever-web-to-production.yml` are post-merge deploy promotion workflows (no testing/validation logic). Adding spec gates there would duplicate `test-and-deploy-organiclever-web-development.yml`'s coverage with no incremental signal.
 
+## Fix #15 — Reverse-direction step orphan check
+
+### `stepMatcher` origin tracking
+
+Today `internal/speccoverage/checker.go` `stepMatcher` is `{exact map[string]bool, patterns []*regexp.Regexp}`. Reverse-direction reporting needs origin per matcher entry. Replace with:
+
+```go
+type stepMatcherEntry struct {
+    Kind        string         // "exact" or "pattern"
+    ExactText   string         // populated when Kind == "exact"
+    Pattern     *regexp.Regexp // populated when Kind == "pattern"
+    PatternText string         // raw regex source for reporting (Kind == "pattern")
+    File        string         // origin file (relative to repo root)
+}
+
+type stepMatcher struct {
+    entries []stepMatcherEntry
+    // Forward-direction lookup index (rebuilt from entries):
+    exactIndex map[string]int // exact text → entries[i]
+}
+
+func (sm *stepMatcher) matches(stepText string) bool {
+    normalized := normalizeWS(stepText)
+    if _, ok := sm.exactIndex[normalized]; ok {
+        return true
+    }
+    for _, e := range sm.entries {
+        if e.Kind == "pattern" && e.Pattern.MatchString(normalized) {
+            return true
+        }
+    }
+    return false
+}
+```
+
+Each `addStepToMatcher` and `extract*StepTexts` call site is updated to pass the origin file path through the helper chain. The forward-direction `matches` API is preserved verbatim (no behavior change to existing forward direction).
+
+### Reverse-direction loop
+
+After `checkOneToOne` and `checkSharedSteps` finish their forward loops, a single reverse-direction loop runs against the same matcher pool:
+
+```go
+// Build set of all Gherkin step texts seen during forward pass.
+// In checkOneToOne: collected during the existing scenario walk.
+// In checkSharedSteps: same — gathered as we walk specFiles.
+allGherkinSteps := []string{} // populated during forward pass; unique not required
+
+// Reverse-direction check.
+var orphans []OrphanStepImpl
+for _, e := range allStepTexts.entries {
+    matched := false
+    switch e.Kind {
+    case "exact":
+        for _, gs := range allGherkinSteps {
+            if normalizeWS(gs) == e.ExactText {
+                matched = true
+                break
+            }
+        }
+    case "pattern":
+        for _, gs := range allGherkinSteps {
+            if e.Pattern.MatchString(normalizeWS(gs)) {
+                matched = true
+                break
+            }
+        }
+    }
+    if !matched {
+        orphans = append(orphans, OrphanStepImpl{
+            File:        e.File,
+            MatcherKind: e.Kind,
+            MatcherText: ifElse(e.Kind == "exact", e.ExactText, e.PatternText),
+        })
+    }
+}
+```
+
+Naive O(N×M) loop is fine — typical project has under 500 step impls and under 1000 Gherkin steps. If profiling later surfaces a hotspot, rebuild as `map[string]bool` for exacts and a single regex union pass.
+
+### `OrphanStepImpl` finding type
+
+`internal/speccoverage/types.go` adds:
+
+```go
+// OrphanStepImpl is a step implementation in source code with no Gherkin step matching it.
+type OrphanStepImpl struct {
+    File        string // relative path from repo root
+    MatcherKind string // "exact" or "pattern"
+    MatcherText string // exact step text or raw regex source
+}
+```
+
+`CheckResult` gains:
+
+```go
+type CheckResult struct {
+    TotalSpecs       int
+    TotalScenarios   int
+    TotalSteps       int
+    Gaps             []CoverageGap
+    ScenarioGaps     []ScenarioGap
+    StepGaps         []StepGap
+    OrphanStepImpls  []OrphanStepImpl // NEW
+    Duration         time.Duration
+}
+```
+
+### Exit logic
+
+`cmd/spec_coverage_validate.go` `runValidateSpecCoverage` extends the `hasGaps` check:
+
+```go
+hasGaps := len(result.Gaps) > 0 ||
+    len(result.ScenarioGaps) > 0 ||
+    len(result.StepGaps) > 0 ||
+    len(result.OrphanStepImpls) > 0 // NEW
+if hasGaps {
+    if !quiet && output == "text" {
+        // existing prints …
+        if len(result.OrphanStepImpls) > 0 {
+            _, _ = fmt.Fprintf(cmd.OutOrStderr(),
+                "❌ Found %d orphan step implementation(s) (no Gherkin step matches them)\n",
+                len(result.OrphanStepImpls))
+        }
+    }
+    return fmt.Errorf("spec coverage gaps found: %d file gap(s), %d scenario gap(s), %d step gap(s), %d orphan step impl(s)",
+        len(result.Gaps), len(result.ScenarioGaps), len(result.StepGaps), len(result.OrphanStepImpls))
+}
+```
+
+### Output formatters
+
+`reporter.go` text/markdown/json formatters render the new finding type:
+
+```go
+// FormatText (excerpt):
+if len(r.OrphanStepImpls) > 0 {
+    fmt.Fprintf(&buf, "\nOrphan step implementations (no Gherkin step matches):\n")
+    for _, o := range r.OrphanStepImpls {
+        fmt.Fprintf(&buf, "  %s: [%s] %s\n", o.File, o.MatcherKind, o.MatcherText)
+    }
+}
+
+// FormatJSON: include "orphan_step_impls": [...] alongside existing keys.
+// FormatMarkdown: render as a section "## Orphan step implementations" with a table.
+```
+
+### Pre-flight orphan audit (Phase 5B.4)
+
+Before merging the plan, the new check runs against all 15 spec-coverage-wired projects. Audit script:
+
+```bash
+# Run from repo root inside the worktree.
+projects=(
+  ayokoding-cli ayokoding-web ayokoding-web-be-e2e ayokoding-web-fe-e2e
+  organiclever-be organiclever-be-e2e organiclever-web organiclever-web-e2e
+  oseplatform-cli oseplatform-web oseplatform-web-be-e2e oseplatform-web-fe-e2e
+  rhino-cli wahidyankf-web wahidyankf-web-fe-e2e
+)
+fail=0
+for p in "${projects[@]}"; do
+  echo "=== $p ==="
+  if ! npx nx run "$p:spec-coverage" 2>&1 | tee "/tmp/sc-$p.log"; then
+    fail=1
+    grep -E "Orphan step implementation" "/tmp/sc-$p.log" || true
+  fi
+done
+exit $fail
+```
+
+For each project that fails, the orphan(s) are either:
+
+1. **Real orphans** — delete the orphan step impl in the same plan (or rename/rework if the underlying scenario was renamed).
+2. **False positives from regex extraction limitations** — add a targeted matcher tweak in `checker.go` (e.g. handle a previously-missing string-quote style). Track each tweak as its own commit.
+
+No project receives an opt-out flag; the audit is the gate.
+
+### Mode coverage
+
+The reverse-direction check runs in **both** modes:
+
+- **Default mode** (`checkOneToOne`): The matcher pool is built once from `extractAllStepTexts(opts.AppDir)` regardless of which test files match which feature stems. Reverse-direction validates the entire pool against the union of all Gherkin step texts seen across all `.feature` files in the spec tree. Identical pool, identical Gherkin set as `--shared-steps` mode.
+- **`--shared-steps` mode** (`checkSharedSteps`): same pool, same Gherkin set; the reverse-direction call is identical.
+
+Implementation: extract reverse-direction logic into `checkOrphanStepImpls(allStepTexts, allGherkinSteps)` and call it from both `checkOneToOne` and `checkSharedSteps` after the forward loop completes.
+
+### No escape hatch
+
+Per scope decision (2026-05-10): no `--allow-orphan-steps` flag, no env var. Rationale: any orphan is either a real bug or a regex-extraction false positive — both are surface-able and fixable in this plan. Adding an escape hatch would replicate the `OSE_RHINO_DDD_SEVERITY` story and create another silent-suppression channel.
+
 ## Test plan
 
-Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~54 new test scenarios across the 14 fixes (Fix #14 contributes 4 acceptance scenarios verified via grep + workflow-run smoke tests rather than Go unit tests, since the artifact is YAML, not Go code).
+Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~61 new test scenarios across the 15 fixes (Fix #14 contributes 4 acceptance scenarios verified via grep + workflow-run smoke tests rather than Go unit tests, since the artifact is YAML, not Go code; Fix #15 contributes 7 acceptance scenarios — 6 Go-side unit/integration tests plus 1 cross-project pre-flight audit verified via shell script in Phase 5B.4). Breakdown: 45 Gherkin scenarios from fixes 1-13 in `prd.md` + 4 Gherkin scenarios from Fix #14 + 7 Gherkin scenarios from Fix #15 + ~5 unit/integration test layer variants where the same Gherkin scenario maps to both a unit-level godog test and an integration-level godog test (primarily fixes #4, #5, #6 which touch core validator logic exercised at both test layers).
 
 Coverage gate: ≥90% on `apps/rhino-cli/` (existing). Each fix's TDD red-step writes the failing test first; green-step implements; refactor cleans up.
 
@@ -664,7 +854,6 @@ Coverage gate: ≥90% on `apps/rhino-cli/` (existing). Each fix's TDD red-step w
 ## Out of scope (revisit later)
 
 - AST-based step extraction (audit LOW priority).
-- Reverse-direction step orphan check in `--shared-steps`.
 - Drift command implementations.
 - DDD-aware `nx affected` graph.
 - Validator unification with `lint:md` / `docs validate-links`.

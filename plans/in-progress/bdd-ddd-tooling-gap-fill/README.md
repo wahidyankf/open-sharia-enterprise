@@ -27,7 +27,7 @@ Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD 
   - Status (2026-05-10): All three prerequisite plans merged to `origin/main` — `oseplatform-web-ddd-and-specs-format`, `ayokoding-web-ddd-and-specs-format`, `wahidyankf-web-ddd-and-specs-format`. Plan fully unblocked.
 - **CLI apps stay off the allowlist permanently.** `ayokoding-cli`, `oseplatform-cli`, `rhino-cli` adopt BDD only (existing `spec-coverage` targets); no DDD adoption is required of them. The allowlist excludes them by design.
 
-## Scope: 14 fixes
+## Scope: 15 fixes
 
 | #   | Severity | Fix                                                                                                                   |
 | --- | -------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -45,8 +45,9 @@ Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD 
 | 12  | MEDIUM   | Wire `specs validate-counts` per allowlist into pre-push (paired with #8 severity reconciliation)                     |
 | 13  | MEDIUM   | Wire `specs validate-links` per allowlist into pre-push                                                               |
 | 14  | HIGH     | Wire `validate:specs-{adoption,tree,counts,links}` into PR quality gate + 4 main-CI deploy workflows                  |
+| 15  | MEDIUM   | Reverse-direction step orphan check in `spec-coverage validate` (default-on, no escape hatch)                         |
 
-LOW-severity polish items from the audit (reverse-direction step check, AST-based step extraction) are tracked as backlog, not delivered here.
+LOW-severity polish item from the audit (AST-based step extraction) is tracked as backlog, not delivered here. Reverse-direction step orphan check (previously backlog) is now Fix #15.
 
 ## Out of scope
 
@@ -63,4 +64,4 @@ See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktr
 - [brd.md](./brd.md) — business rationale
 - [prd.md](./prd.md) — per-fix specification + Gherkin acceptance criteria
 - [tech-docs.md](./tech-docs.md) — implementation specifics per fix
-- [delivery.md](./delivery.md) — TDD-shaped 16-phase checklist (Phases 0–13 including 7B and 7C)
+- [delivery.md](./delivery.md) — TDD-shaped 17-phase checklist (Phases 0–13 including 5B, 7B, and 7C)

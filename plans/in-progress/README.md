@@ -5,7 +5,7 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [bdd-ddd-tooling-gap-fill](./bdd-ddd-tooling-gap-fill/README.md) — Close 14 enforcement gaps in rhino-cli BDD + DDD validators across pre-push, PR gate, and main-CI deploy workflows (oseplatform + ayokoding + wahidyankf all done — fully unblocked)
+- [bdd-ddd-tooling-gap-fill](./bdd-ddd-tooling-gap-fill/README.md) — Close 15 enforcement gaps in rhino-cli BDD + DDD validators across pre-push, PR gate, and main-CI deploy workflows; includes reverse-direction step orphan check (oseplatform + ayokoding + wahidyankf all done — fully unblocked)
 
 ## Instructions
 

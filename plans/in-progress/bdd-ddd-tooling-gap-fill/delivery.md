@@ -1,6 +1,6 @@
 # Delivery Checklist — BDD + DDD Tooling Gap-Fill
 
-All steps follow Red → Green → Refactor (TDD) where the artifact is Go code; YAML wiring (Phases 1.4, 7B.4, 7C) uses verify-by-invocation rather than Go unit tests. After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
+All steps follow Red → Green → Refactor (TDD) where the artifact is Go code; YAML wiring (Phases 1.4, 7B.4, 7C) uses verify-by-invocation rather than Go unit tests. The Fix #15 pre-flight orphan audit (Phase 5B.4) uses cross-project shell-script verification with mandatory cleanup commits before merge. After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
 
 > **Manual behavioral acceptance gate**: Per-phase steps implement the code change. The manual CLI smoke verification for each fix (expected inputs → expected stdout/stderr/exit-code) is consolidated in **Phase 12.10**. After each phase completes its TDD cycle, proceed; full behavioral assertion runs in Phase 12.
 
@@ -109,7 +109,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **3.3.1** `specs/apps/organiclever/ddd/bounded-contexts.yaml` — leave `code_lang` absent (defaults to `[ts, tsx]`, correct for current FE-only contexts).
 - [ ] **3.3.2** `specs/apps/{wahidyankf,oseplatform,ayokoding}/ddd/bounded-contexts.yaml` — same; default `[ts, tsx]` is correct since plans 1-3 only created TS bounded contexts.
-- [ ] **3.3.3 GREEN** Run `rhino-cli ddd ul organiclever wahidyankf oseplatform ayokoding` — all green (no behavior change today; foundation laid for future polyglot BCs).
+- [ ] **3.3.3 GREEN** Run the four separate invocations (each accepts exactly one positional arg per `cobra.ExactArgs(1)`):
+  ```bash
+  for app in organiclever wahidyankf oseplatform ayokoding; do
+    rhino-cli ddd ul "$app"
+  done
+  ```
+  Each exits 0 (no behavior change today; foundation laid for future polyglot BCs).
 
 ---
 
@@ -133,6 +139,81 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ---
 
+## Phase 5B — Reverse-direction step orphan check (Fix #15)
+
+> **Why this phase exists**: Plan goal is "zero dead specs/BDD/DDD scripts" — extending naturally to "zero orphan step impls". `spec-coverage validate` today is forward-only; this phase adds reverse-direction enforcement default-on with no escape hatch. Phase ordering: must run after Phase 5 (Fix #6 multi-file scenario matching) because both touch `internal/speccoverage/checker.go` and Fix #6 changes the forward-direction matcher pool plumbing that Fix #15 reuses.
+
+### 5B.1 OrphanStepImpl finding type + stepMatcher origin tracking
+
+- [ ] **5B.1.1 RED** Add unit test in `internal/speccoverage/checker_test.go`:
+  - Scenario: `extractAllStepTexts` returns matcher entries whose `File` field is the relative path to the source file containing the step impl.
+  - Test fails: `stepMatcher.entries` does not exist; only `exact` map and `patterns` slice exist today.
+- [ ] **5B.1.2 RED** Add unit test in `internal/speccoverage/types_test.go` (create if missing): `OrphanStepImpl{File, MatcherKind, MatcherText}` exists and is exported.
+- [ ] **5B.1.3 GREEN** Edit `internal/speccoverage/types.go` per `tech-docs.md` Fix #15: add `OrphanStepImpl` struct; add `OrphanStepImpls []OrphanStepImpl` to `CheckResult`.
+- [ ] **5B.1.4 GREEN** Edit `internal/speccoverage/checker.go` per `tech-docs.md` Fix #15: replace `stepMatcher` internals with `entries []stepMatcherEntry` + `exactIndex map[string]int`; preserve `matches(string) bool` API (forward direction unchanged).
+- [ ] **5B.1.5 GREEN** Plumb origin file path through every `extract*StepTexts` call site (TS/JS, Go, JVM, Python, Elixir, Rust, C#, F#, Clojure, Dart) — each adds origin file to entry on append. Run `(cd apps/rhino-cli && go test ./internal/speccoverage/...)` — all existing tests pass; new tests pass.
+
+### 5B.2 Reverse-direction loop in checkOneToOne and checkSharedSteps
+
+- [ ] **5B.2.1 RED** Add unit test in `internal/speccoverage/checker_test.go`:
+  - Scenario: spec tree with one Gherkin step "Given a happy user". Step impls in test source: `Given("a happy user", fn)` and `Given("an unmatched orphan", fn)`. After CheckAll, `result.OrphanStepImpls` has exactly one entry, file = orphan's source file.
+  - Same scenario in `--shared-steps` mode: identical result.
+  - Tests fail.
+- [ ] **5B.2.2 RED** Add unit test for regex-pattern reverse direction:
+  - Scenario: Go-style `sc.Step(`^the user has (\d+) items$`, fn)` exists. Spec tree contains "And the user has 3 items" → matched, no orphan.
+  - Scenario: `sc.Step(`^a unicorn appears$`, fn)` exists, no spec text matches → orphan reported with `MatcherKind: "pattern"` and `MatcherText: "^a unicorn appears$"`.
+  - Tests fail.
+- [ ] **5B.2.3 GREEN** Extract reverse-direction logic into `checkOrphanStepImpls(sm *stepMatcher, allGherkinSteps []string) []OrphanStepImpl` per `tech-docs.md`.
+- [ ] **5B.2.4 GREEN** Modify `checkOneToOne` to collect `allGherkinSteps` during the existing scenario walk; call `checkOrphanStepImpls` after the forward loop; assign result to `result.OrphanStepImpls`.
+- [ ] **5B.2.5 GREEN** Modify `checkSharedSteps` identically. Verify identical reverse-direction behavior between modes.
+- [ ] **5B.2.6 GREEN** All unit tests pass. Coverage ≥90% for `internal/speccoverage/`.
+
+### 5B.3 Exit logic + output formatters
+
+- [ ] **5B.3.1 RED** Add unit test in `cmd/spec_coverage_validate_test.go`: invoking `validateSpecCoverageCmd` with a fixture that has orphans → command returns non-zero error; stderr contains "Found N orphan step implementation(s)".
+- [ ] **5B.3.2 GREEN** Edit `cmd/spec_coverage_validate.go` per `tech-docs.md`: extend `hasGaps` check; extend the formatted error message; add the new stderr line in text mode.
+- [ ] **5B.3.3 RED** Add unit test in `internal/speccoverage/reporter_test.go`: `FormatJSON` output for a `CheckResult` with two `OrphanStepImpls` includes `"orphan_step_impls": [...]` with `file`, `matcher_kind`, `matcher_text` fields.
+- [ ] **5B.3.4 GREEN** Edit `internal/speccoverage/reporter.go`: render `OrphanStepImpls` in text/json/markdown formatters per `tech-docs.md`.
+- [ ] **5B.3.5 GREEN** All tests pass. Manual: `(cd apps/rhino-cli && go run main.go spec-coverage validate <fixture-with-orphan> <fixture-app>)` exits non-zero; output matches.
+
+### 5B.4 Pre-flight orphan audit across 15 spec-coverage-wired projects
+
+> **Critical gate**: This step runs the new check against every project that today wires `spec-coverage`. Any orphan must be cleaned up in this plan before merge (or, for false positives caused by regex extraction limitations, a targeted matcher fix lands in this plan). No `--allow-orphan-steps` flag, no env var.
+
+- [ ] **5B.4.1 GREEN** Run the audit script (in worktree, after 5B.1–5B.3 complete):
+  ```bash
+  projects=(
+    ayokoding-cli ayokoding-web ayokoding-web-be-e2e ayokoding-web-fe-e2e
+    organiclever-be organiclever-be-e2e organiclever-web organiclever-web-e2e
+    oseplatform-cli oseplatform-web oseplatform-web-be-e2e oseplatform-web-fe-e2e
+    rhino-cli wahidyankf-web wahidyankf-web-fe-e2e
+  )
+  fail=0
+  for p in "${projects[@]}"; do
+    echo "=== $p ==="
+    if ! npx nx run "$p:spec-coverage" 2>&1 | tee "/tmp/sc-$p.log"; then
+      fail=1
+      grep -E "Orphan step implementation" "/tmp/sc-$p.log" || true
+    fi
+  done
+  echo "FAIL=$fail"
+  ```
+  Outcome A: zero orphans across all 15 projects → proceed to 5B.4.5.
+  Outcome B: ≥1 orphan in ≥1 project → 5B.4.2.
+- [ ] **5B.4.2** For each orphan reported in 5B.4.1, classify as **real orphan** OR **false positive (regex limitation)**:
+  - Real orphan: scenario has been renamed/deleted; the orphan step impl is unused. Action: delete the step impl in the source file.
+  - False positive: the step impl is used by a Gherkin step but the matcher's regex extraction missed the binding (e.g., unusual quote style, multi-line edge case). Action: tweak the relevant `extract*StepTexts` function in `checker.go` and add a unit test fixture covering the case.
+- [ ] **5B.4.3** Apply each cleanup (real orphans deleted, matcher tweaks added) as its own commit. Each commit message: `fix(<project>): remove orphan step impl <description>` or `fix(rhino-cli): handle <case> in step extraction`.
+- [ ] **5B.4.4 GREEN** Re-run the 5B.4.1 audit script. Confirm `FAIL=0`. If still failing, repeat 5B.4.2-5B.4.3.
+- [ ] **5B.4.5** Document the audit result in `governance/conventions/structure/specs-directory-structure.md` (Phase 11.1 picks this up): cite the audit ran in worktree as part of this plan and that all 15 projects are orphan-clean at merge time.
+
+> **Halt condition**: If the audit surfaces >30 orphans across all projects (suggesting a different cleanup pattern than this plan budgeted for), halt at 5B.4.2 and re-scope rather than try to merge with shortcuts. Concrete escalation steps:
+> (a) Create `plans/backlog/YYYY-MM-DD__bdd-spec-coverage-orphan-cleanup/` with a `README.md` containing the orphan inventory copied verbatim from the `/tmp/sc-*.log` audit logs produced in 5B.4.1.
+> (b) Open a draft PR with the Fix #15 validator code commits (5B.1–5B.3) but NOT the pre-push wiring extension — the validator ships dormant; the cleanup plan adds wiring after orphans are gone. Commit message for the dormant-validator PR: `feat(rhino-cli): add reverse-direction step orphan validator (pre-merge audit exceeded threshold — wiring deferred)`.
+> (c) Update `plans/in-progress/README.md` to reflect the split — mark Fix #15 as partial-merge (validator code only, pre-push wiring deferred) and add a link to the new backlog cleanup plan entry.
+
+---
+
 ## Phase 6 — Delete drift-\* placeholders (Fix #7)
 
 - [ ] **6.1 RED** Create `apps/rhino-cli/cmd/specs_drift_routes_test.go` (_New test_): assert that `rhino-cli specs --help` output does not contain the string `drift-routes`. Run `(cd apps/rhino-cli && go test ./cmd/ -run TestSpecsHelp)` — test fails (drift-routes is currently registered).
@@ -153,7 +234,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **7.1 RED** Update unit test in `cmd/specs_validate_counts_test.go` to assert HIGH for missing folder, MEDIUM for empty folder. Test fails (today missing reports MEDIUM).
 - [ ] **7.2 GREEN** Edit `cmd/specs_validate_counts.go` — two changes required:
-  1. In `validateSpecCounts()`, change the missing-folder finding's `Criticality` from `"MEDIUM"` to `"HIGH"` in the struct literal at the missing-folder branch (the empty-folder branch keeps `"MEDIUM"`).
+  1. In `validateSpecCounts()`, on **line 82**, change the struct literal `Criticality: "MEDIUM"` → `Criticality: "HIGH"` for the **required sub-folder missing** branch (the `for _, sub := range requiredSpecFolders` block where `osStat(subPath)` fails). The top-level spec folder missing case (line 67) is already `"HIGH"` — do not change it. The empty subfolder case (line 94) stays `"MEDIUM"` — do not change it.
   2. Replace the hardcoded `MEDIUM` in the printf format on line 48 (`%s: MEDIUM: %s`) with `%s: %s: %s` and pass `f.Criticality` so the runtime severity string matches the struct value.
 - [ ] **7.3 GREEN** All tests pass. Manual smoke: create a missing/empty folder pair under a test fixture; confirm severity strings.
 
@@ -324,6 +405,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Document severity audit + env var rename (Phase 8).
   - Document expanded symmetry whitelist (Phase 9).
   - Document `gherkin: []string` extension (Phase 10).
+  - Document Fix #15 reverse-direction step orphan check (Phase 5B): every `spec-coverage` invocation now enforces both directions; no `--allow-orphan-steps` flag exists; the pre-flight audit ran across all 15 projects in worktree before this plan merged and surfaced zero remaining orphans (or N orphans cleaned up in commits SHA1, SHA2, … per Phase 5B.4.3).
 - [ ] **11.2** Update `.claude/agents/specs-checker.md` and `.claude/agents/specs-fixer.md`:
   - Drop references to `drift-routes`, `drift-endpoints`, `drift-contracts`.
   - Reference the new `validate:specs-adoption` and `validate:specs-tree` Nx targets.
@@ -340,6 +422,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **12.1** `(cd apps/rhino-cli && go build ./... && go test ./...)` — all pass.
 - [ ] **12.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
+- [ ] **12.2b** Re-run the Phase 5B.4.1 cross-project orphan audit script (Fix #15) — `FAIL=0`, every spec-coverage-wired project orphan-clean.
 - [ ] **12.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
 - [ ] **12.4** `nx run rhino-cli:validate:specs-tree` — 0 findings.
 - [ ] **12.4b** `nx run rhino-cli:validate:specs-counts` — 0 findings.
@@ -361,16 +444,20 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [ ] **12.9** `npm run validate:sync` — `.claude/` ↔ `.opencode/` parity.
 - [ ] **12.10** Manual smoke per fix:
   - **#1**: edit `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` whitespace; `git push --dry-run` — both new gates fire.
+  - **#2**: rename `specs/apps/wahidyankf/components/` → `components-bogus/`; run `git push --dry-run` — confirm `validate:specs-tree` gate fires with a HIGH severity finding for the missing required folder. Revert (`git checkout specs/apps/wahidyankf/components/` or equivalent).
   - **#3**: `nx run organiclever-be:test:quick` cold cache → DDD validators run.
   - **#4**: temporarily add `code_lang: [fs]` to one organiclever BC + a stale F# identifier in its glossary → `ddd ul` reports stale identifier. Revert.
   - **#5**: plant orphan under `specs/apps/oseplatform/behavior/api/gherkin/bogus/` → `ddd bc oseplatform` reports orphan. Revert.
+  - **#6**: place a feature with two scenarios across two test files (e.g., create `apps/organiclever-web/e2e/feature.test.tsx` containing scenario "A" and `apps/organiclever-web/e2e/feature.extra.test.tsx` containing scenario "B", both referencing the same `feature.feature`); run `nx run organiclever-web:spec-coverage` — confirm both scenarios exit 0 with no scenario gap reported. Revert.
   - **#7**: `rhino-cli specs --help` shows 4 subcommands.
   - **#8**: missing folder + empty folder → distinct severities.
   - **#9**: `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits stderr audit line.
+  - **#10**: temporarily add `relationships: [{to: B, kind: partnership}]` to one BC in `specs/apps/organiclever/ddd/bounded-contexts.yaml` without adding a reciprocal entry in the B context; run `rhino-cli ddd bc organiclever` — confirm a finding for asymmetric "partnership" relationship is reported. Revert.
   - **#11**: edit `specs/apps/ayokoding/ddd/bounded-contexts.yaml` to declare `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for content BC; `rhino-cli ddd bc ayokoding` exits 0. Revert.
   - **#12**: rename `specs/apps/wahidyankf/containers/` → `containers-bogus/`; `git push --dry-run` aborts via validate:specs-counts with HIGH severity. Revert.
   - **#13**: introduce a broken markdown link in `specs/apps/wahidyankf/system-context/context.md` (`[broken](./does-not-exist.md)`); `git push --dry-run` aborts via validate:specs-links. Revert.
   - **#14**: open a draft PR with a structural spec violation (e.g., rename `specs/apps/wahidyankf/containers/` → `containers-bogus/`); confirm the `specs-gate` job in `pr-quality-gate.yml` aborts non-zero. Trigger one of the deploy workflows via `workflow_dispatch` and confirm the `specs-gate` job runs. Revert.
+  - **#15**: temporarily add an unmatched step impl to `apps/rhino-cli/cmd/<some>_test.go` (e.g., `sc.Step(\`^a unicorn appears$\`, fn)` with no matching Gherkin); run `nx run rhino-cli:spec-coverage` — confirm orphan reported with `MatcherKind: "pattern"`, `MatcherText: "^a unicorn appears$"`, exits non-zero. Revert.
 
 ---
 
@@ -383,9 +470,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [ ] Split different domains/concerns into separate commits (e.g., allowlist wiring separate from schema changes separate from governance doc updates). Exception: tightly-coupled governance fixes that form a single logical unit may be committed atomically when the scope justifies it (see step 13.1).
 - [ ] Do NOT bundle unrelated fixes into a single commit.
 
-- [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
+- [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled. Note: Phase 5B.4.3 cleanup commits (real-orphan deletions or matcher tweaks surfaced by the pre-flight audit) ship as their own commits and precede the headline commit.
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
-  - Body lists 14 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli; all four validate:specs-* targets gated on every CI surface (pre-push + PR gate + 4 main-CI deploy workflows)".
+  - Body lists 15 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli; zero orphan step impls across the 15 spec-coverage-wired projects; all four validate:specs-* targets gated on every CI surface (pre-push + PR gate + 4 main-CI deploy workflows); spec-coverage now enforces forward + reverse direction default-on with no escape hatch".
 - [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
 - [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.

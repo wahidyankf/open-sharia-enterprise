@@ -1,6 +1,10 @@
 # PRD — BDD + DDD Tooling Gap-Fill
 
-This plan delivers 14 fixes against the 2026-05-09 optimality audit (11 from the original audit plus #12 and #13 added during the 2026-05-10 recheck to honor the "zero dead specs/BDD/DDD scripts" goal, plus #14 added during the 2026-05-10 CI-surface recheck to ensure all four `validate:specs-*` targets run on every gating surface — pre-push, PR quality gate, and main-CI deploy workflows). Each fix carries its own Gherkin acceptance criteria.
+This plan delivers 15 fixes against the 2026-05-09 optimality audit (11 from the original audit plus #12 and #13 added during the 2026-05-10 recheck to honor the "zero dead specs/BDD/DDD scripts" goal, plus #14 added during the 2026-05-10 CI-surface recheck to ensure all four `validate:specs-*` targets run on every gating surface — pre-push, PR quality gate, and main-CI deploy workflows, plus #15 added during the 2026-05-10 reverse-direction recheck to extend "zero dead scripts" to "zero orphan step impls"). Each fix carries its own Gherkin acceptance criteria.
+
+## Product Overview
+
+This plan completes the enforcement layer for `rhino-cli`'s BDD and DDD validation surface. Before this plan, the validators exist and work in isolation — but 4 of 7 `specs *` validators are dead code (no Nx target invokes them), the pre-push gate wires only some validators, and zero CI surfaces run any `validate:specs-*` target. After this plan, all 15 fixes together wire BDD+DDD enforcement gates across every relevant gating surface: pre-push catches spec violations at push time, the PR quality gate catches them at merge time, and four main-CI deploy workflows block deploy when validators fail. Additionally, three `specs drift-*` placeholder commands that create false security are removed, two validator gaps (multi-language glossary grep, multi-parent orphan detection) are closed, and `spec-coverage validate` is extended to enforce the reverse direction — every step impl must match at least one Gherkin step, preventing orphaned step impls from accumulating silently across the 15 spec-coverage-wired projects.
 
 ## The allowlist
 
@@ -448,11 +452,76 @@ Feature: validate:specs-* runs on PR gate and main-CI deploy workflows
     Then each surface invokes "validate:specs-adoption", "validate:specs-tree", "validate:specs-counts", and "validate:specs-links" — exactly four targets, no surface partially wired
 ```
 
+## Fix #15 — Reverse-direction step orphan check (MEDIUM)
+
+**What**: `spec-coverage validate` today runs forward-only — every Gherkin step must have at least one matching step impl, otherwise reported as `StepGap`. The reverse direction is unchecked: a step impl in test source can sit orphaned (no Gherkin step matches it) and the validator silently passes. Common causes: scenario rename without step-impl rename, scenario deletion without step-impl removal, copy-paste of step impls during refactor. This fix extends `spec-coverage validate` to also enforce reverse: every extracted step impl in the matcher pool must match at least one Gherkin step in the spec tree, otherwise reported as a new `OrphanStepImpl` finding. Default-on with no escape hatch — aligns with the plan's "enforced governance" philosophy. Both `default` mode (per-file matching) and `--shared-steps` mode (pooled matching) run the new check (the matcher pool is identical in both modes; reverse-direction validation runs once over the unified pool).
+
+**Implementation overview** (full code shape in `tech-docs.md` Fix #15):
+
+- `internal/speccoverage/types.go` adds `OrphanStepImpl` finding type tracking origin file, raw matcher representation (exact string or pattern source), and matcher kind.
+- `internal/speccoverage/checker.go` extends `stepMatcher` to track origin per matcher entry. After the forward-direction loop, a reverse-direction loop iterates the matcher pool and tests each entry against the union of all Gherkin step texts gathered during the forward pass. Misses are appended to `result.OrphanStepImpls`.
+- `cmd/spec_coverage_validate.go` exit logic adds `len(result.OrphanStepImpls) > 0` to the existing `hasGaps` check; the existing JSON, markdown, text formatters render the new finding type.
+
+**Pre-flight orphan audit** (Phase 5B.4): before merging, the check runs in worktree against all 15 spec-coverage-wired projects (`apps/ayokoding-cli`, `apps/ayokoding-web`, `apps/ayokoding-web-be-e2e`, `apps/ayokoding-web-fe-e2e`, `apps/organiclever-be`, `apps/organiclever-be-e2e`, `apps/organiclever-web`, `apps/organiclever-web-e2e`, `apps/oseplatform-cli`, `apps/oseplatform-web`, `apps/oseplatform-web-be-e2e`, `apps/oseplatform-web-fe-e2e`, `apps/rhino-cli`, `apps/wahidyankf-web`, `apps/wahidyankf-web-fe-e2e`). Any orphan reported is either a real bug to be cleaned up in this plan, or a real false positive surfaced by extraction limitations (regex, multi-line edge cases) which gets a targeted matcher tweak — no project-level escape hatch is added.
+
+**Acceptance**:
+
+```gherkin
+Feature: spec-coverage validate enforces reverse-direction orphan-free step impls
+
+  Scenario: Orphan step impl is reported in default mode
+    Given a project's spec tree has zero Gherkin steps matching "Then the moon is blue"
+    And a step impl `Then("the moon is blue", fn)` exists in some test source file
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir>"
+    Then the command reports an OrphanStepImpl finding for that step impl
+    And reports the originating file path
+    And exits non-zero
+
+  Scenario: Orphan step impl is reported in --shared-steps mode
+    Given the same orphan condition as above
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir> --shared-steps"
+    Then the OrphanStepImpl finding is reported with the same file origin
+    And exits non-zero
+
+  Scenario: Step impl matched by at least one Gherkin step is not flagged
+    Given a step impl `Given("a happy user", fn)` exists in some test source
+    And at least one .feature file contains "Given a happy user"
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir>"
+    Then no OrphanStepImpl finding is reported for that impl
+    And the command exits 0 (assuming no other gaps)
+
+  Scenario: Regex-based step impl is checked against all Gherkin steps
+    Given a Go-style step `sc.Step(`^the user has (\d+) items$`, fn)` exists
+    And at least one .feature file contains "And the user has 3 items"
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir>"
+    Then the regex step impl is considered matched
+    And no OrphanStepImpl finding is reported for it
+
+  Scenario: Regex-based step impl with no Gherkin coverage is flagged
+    Given a Go-style step `sc.Step(`^a unicorn appears$`, fn)` exists
+    And no .feature file contains text matching that regex
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir>"
+    Then an OrphanStepImpl finding is reported with the regex source as evidence
+    And exits non-zero
+
+  Scenario: JSON output includes orphan-step-impls section
+    Given orphan step impls exist in a project
+    When the developer runs "rhino-cli spec-coverage validate <specs-dir> <app-dir> -o json"
+    Then the JSON output contains an "orphan_step_impls" array
+    And each entry includes "file", "matcher_kind" (exact|pattern), and "matcher_text" fields
+
+  Scenario: Pre-flight orphan audit across all 15 spec-coverage-wired projects
+    Given the developer is in the worktree before merge
+    When the developer runs "for proj in <each of the 15 projects>; do nx run $proj:spec-coverage; done"
+    Then every project exits 0 with no OrphanStepImpl findings
+    And any project that fails has its orphan(s) cleaned up in this plan before merge
+```
+
 ## Personas
 
 - **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
 - **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
-- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 7C for the CI-surface wiring covering Fix #14 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 5B for the reverse-direction orphan check + pre-flight audit covering Fix #15 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 7C for the CI-surface wiring covering Fix #14 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
 - **Delivery executor** (plan-execution workflow hat) — follows `governance/workflows/plan/plan-execution.md` to execute each delivery checkbox in order.
 - **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
 
@@ -467,6 +536,7 @@ Feature: validate:specs-* runs on PR gate and main-CI deploy workflows
 - As a developer, I want `specs validate-counts` wired into pre-push so that a missing required spec folder aborts the push with HIGH severity, paired with the severity reconciliation already shipped in Fix #8.
 - As a developer, I want `specs validate-links` wired into pre-push so that a broken internal markdown link inside any allowlisted spec tree aborts the push, leaving zero dead specs/BDD/DDD scripts after this plan ships.
 - As a maintainer, I want the four `validate:specs-*` targets wired into the PR quality gate and every main-CI deploy workflow so that structural spec drift cannot reach `main` even if a developer pushes with `--no-verify`, ensuring belt-and-braces enforcement across pre-push, PR gate, and deploy time.
+- As a developer, I want `spec-coverage validate` to also enforce reverse-direction step impl coverage so that scenarios renamed or deleted without removing their step impls are caught at push time, preventing orphaned step impls from accumulating across the 15 projects that wire `spec-coverage`.
 
 ## Product Risks
 
@@ -477,7 +547,7 @@ Feature: validate:specs-* runs on PR gate and main-CI deploy workflows
 
 ## Non-goals
 
-- No spec-coverage AST migration (regex extraction stays).
-- No reverse-direction step orphan check (backlog).
+- No spec-coverage AST migration (regex extraction stays). Fix #15 inherits regex-based extraction; if the pre-flight audit surfaces false-positive orphans caused by regex limitations, those are tracked as targeted matcher fixes in the same plan, not as a wholesale AST migration.
 - No drift-\* command implementation.
 - No new BDD/DDD enforcement for non-allowlisted apps.
+- No `--allow-orphan-steps` escape hatch (Fix #15) — default-on hard-fail is the intentional rollout per scope decision; legitimate orphan step impls (e.g., shared step library) are surfaced and addressed in the pre-flight audit (Phase 5B.4) rather than papered over with a flag.
