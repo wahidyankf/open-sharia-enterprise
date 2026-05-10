@@ -9,8 +9,8 @@ import (
 func TestFix_AllOK(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "git", Status: StatusOK},
-			{Name: "golang", Status: StatusOK},
+			{Name: "git", Status: StatusOK{}},
+			{Name: "golang", Status: StatusOK{}},
 		},
 		OKCount: 2,
 	}
@@ -37,7 +37,7 @@ func TestFix_AllOK(t *testing.T) {
 func TestFix_WarningCountsAsAlreadyOK(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "node", Status: StatusWarning, InstalledVersion: "22.0.0", RequiredVersion: "24.13.1"},
+			{Name: "node", Status: StatusWarning{}, InstalledVersion: "22.0.0", RequiredVersion: "24.13.1"},
 		},
 		WarnCount: 1,
 	}
@@ -61,7 +61,7 @@ func TestFix_WarningCountsAsAlreadyOK(t *testing.T) {
 func TestFix_MissingTool(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "golang", Status: StatusMissing, RequiredVersion: "1.24.2"},
+			{Name: "golang", Status: StatusMissing{}, RequiredVersion: "1.24.2"},
 		},
 		MissingCount: 1,
 	}
@@ -90,7 +90,7 @@ func TestFix_MissingTool(t *testing.T) {
 func TestFix_DryRun(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "golang", Status: StatusMissing, RequiredVersion: "1.24.2"},
+			{Name: "golang", Status: StatusMissing{}, RequiredVersion: "1.24.2"},
 		},
 		MissingCount: 1,
 	}
@@ -115,7 +115,7 @@ func TestFix_DryRun(t *testing.T) {
 func TestFix_InstallFails(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "golang", Status: StatusMissing},
+			{Name: "golang", Status: StatusMissing{}},
 		},
 		MissingCount: 1,
 	}
@@ -144,7 +144,7 @@ func TestFix_InstallFails(t *testing.T) {
 func TestFix_NoInstallCmd(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "dart", Status: StatusMissing},
+			{Name: "dart", Status: StatusMissing{}},
 		},
 		MissingCount: 1,
 	}
@@ -167,7 +167,7 @@ func TestFix_NoInstallCmd(t *testing.T) {
 func TestFix_EmptyStepsForPlatform(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "docker", Status: StatusMissing},
+			{Name: "docker", Status: StatusMissing{}},
 		},
 		MissingCount: 1,
 	}
@@ -189,8 +189,8 @@ func TestFix_EmptyStepsForPlatform(t *testing.T) {
 func TestFix_DependencyOrder(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "volta", Status: StatusMissing},
-			{Name: "node", Status: StatusMissing, RequiredVersion: "24.13.1"},
+			{Name: "volta", Status: StatusMissing{}},
+			{Name: "node", Status: StatusMissing{}, RequiredVersion: "24.13.1"},
 		},
 		MissingCount: 2,
 	}
@@ -226,7 +226,7 @@ func TestFix_DependencyOrder(t *testing.T) {
 func TestFix_MultiStepInstall(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "python", Status: StatusMissing, RequiredVersion: "3.13.1"},
+			{Name: "python", Status: StatusMissing{}, RequiredVersion: "3.13.1"},
 		},
 		MissingCount: 1,
 	}
@@ -262,7 +262,7 @@ func TestFix_MultiStepInstall(t *testing.T) {
 func TestFix_MultiStepFailsOnSecondStep(t *testing.T) {
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "python", Status: StatusMissing, RequiredVersion: "3.13.1"},
+			{Name: "python", Status: StatusMissing{}, RequiredVersion: "3.13.1"},
 		},
 		MissingCount: 1,
 	}
@@ -305,9 +305,9 @@ func TestFixAll_WithMissingTools(t *testing.T) {
 	checks := make([]ToolCheck, len(names))
 	for i, name := range names {
 		if name == "golang" {
-			checks[i] = ToolCheck{Name: name, Binary: "go", Status: StatusMissing, RequiredVersion: "1.24.2"}
+			checks[i] = ToolCheck{Name: name, Binary: "go", Status: StatusMissing{}, RequiredVersion: "1.24.2"}
 		} else {
-			checks[i] = ToolCheck{Name: name, Binary: name, Status: StatusOK}
+			checks[i] = ToolCheck{Name: name, Binary: name, Status: StatusOK{}}
 		}
 	}
 	result := &DoctorResult{Checks: checks, OKCount: 6, MissingCount: 1}
@@ -336,7 +336,7 @@ func TestFixAll_FullScope(t *testing.T) {
 	// Test FixAll with full scope and no missing tools
 	result := &DoctorResult{
 		Checks: []ToolCheck{
-			{Name: "git", Status: StatusOK},
+			{Name: "git", Status: StatusOK{}},
 		},
 		OKCount: 1,
 	}

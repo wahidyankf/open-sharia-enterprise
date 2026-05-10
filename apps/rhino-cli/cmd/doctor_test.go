@@ -73,7 +73,7 @@ func (s *doctorUnitSteps) allRequiredDevelopmentToolsArePresentWithMatchingVersi
 				checks[i] = doctor.ToolCheck{
 					Name:   name,
 					Binary: name,
-					Status: doctor.StatusOK,
+					Status: doctor.StatusOK{},
 				}
 			}
 			return &doctor.DoctorResult{
@@ -95,7 +95,7 @@ func (s *doctorUnitSteps) aRequiredDevelopmentToolIsNotFoundInTheSystemPATH() er
 		Checks: append(makeAllOKChecks(18), doctor.ToolCheck{
 			Name:   "golang",
 			Binary: "go",
-			Status: doctor.StatusMissing,
+			Status: doctor.StatusMissing{},
 			Note:   "not found in PATH",
 		}),
 	}
@@ -113,7 +113,7 @@ func (s *doctorUnitSteps) aRequiredDevelopmentToolIsInstalledWithANonMatchingVer
 		Checks: append(makeAllOKChecks(18), doctor.ToolCheck{
 			Name:             "node",
 			Binary:           "node",
-			Status:           doctor.StatusWarning,
+			Status:           doctor.StatusWarning{},
 			InstalledVersion: "1.0.0",
 			RequiredVersion:  "24.11.1",
 		}),
@@ -232,7 +232,7 @@ func (s *doctorUnitSteps) theDeveloperRunsTheDoctorCommandWithFix() error {
 	doctorFixAllFn = func(result *doctor.DoctorResult, opts doctor.CheckOptions, fixOpts doctor.FixOptions, printf func(string, ...any)) doctor.FixResult {
 		fr := doctor.FixResult{}
 		for _, check := range result.Checks {
-			if check.Status == doctor.StatusMissing {
+			if check.Status.Code() == "missing" {
 				printf("Installing %s: mock install\n", check.Name)
 				fr.Fixed++
 			} else {
@@ -251,7 +251,7 @@ func (s *doctorUnitSteps) theDeveloperRunsTheDoctorCommandWithFixDryRun() error 
 	doctorFixAllFn = func(result *doctor.DoctorResult, opts doctor.CheckOptions, fixOpts doctor.FixOptions, printf func(string, ...any)) doctor.FixResult {
 		fr := doctor.FixResult{}
 		for _, check := range result.Checks {
-			if check.Status == doctor.StatusMissing {
+			if check.Status.Code() == "missing" {
 				printf("Would install: %s via mock command\n", check.Name)
 			} else {
 				fr.AlreadyOK++
@@ -283,7 +283,7 @@ func (s *doctorUnitSteps) theOutputReportsNothingToFix() error {
 	return nil
 }
 
-// makeAllOKChecks creates n tool checks all with StatusOK.
+// makeAllOKChecks creates n tool checks all with StatusOK{}.
 func makeAllOKChecks(n int) []doctor.ToolCheck {
 	names := []string{"git", "volta", "node", "npm", "java", "maven", "golang",
 		"python", "rust", "cargo-llvm-cov", "elixir", "erlang", "dotnet",
@@ -297,7 +297,7 @@ func makeAllOKChecks(n int) []doctor.ToolCheck {
 		checks[i] = doctor.ToolCheck{
 			Name:   name,
 			Binary: name,
-			Status: doctor.StatusOK,
+			Status: doctor.StatusOK{},
 		}
 	}
 	return checks

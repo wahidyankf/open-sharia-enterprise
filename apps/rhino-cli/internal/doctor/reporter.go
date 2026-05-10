@@ -10,7 +10,7 @@ import (
 )
 
 func symbolFor(status ToolStatus) string {
-	switch status {
+	switch status.(type) {
 	case StatusOK:
 		return "✓"
 	case StatusWarning:
@@ -23,7 +23,7 @@ func symbolFor(status ToolStatus) string {
 }
 
 func displayVersion(check ToolCheck) string {
-	if check.Status == StatusMissing {
+	if _, ok := check.Status.(StatusMissing); ok {
 		return "not found"
 	}
 	if check.InstalledVersion == "" {
@@ -102,7 +102,7 @@ func FormatJSON(result *DoctorResult) (string, error) {
 		tools[i] = JSONToolItem{
 			Name:             check.Name,
 			Binary:           check.Binary,
-			Status:           string(check.Status),
+			Status:           check.Status.Code(),
 			InstalledVersion: check.InstalledVersion,
 			RequiredVersion:  check.RequiredVersion,
 			Source:           check.Source,
@@ -153,7 +153,7 @@ func FormatMarkdown(result *DoctorResult) string {
 		sym := symbolFor(check.Status)
 		ver := displayVersion(check)
 		_, _ = fmt.Fprintf(&sb, "| %s | %s %s | %s | %s | %s |\n",
-			check.Name, sym, string(check.Status), ver, check.RequiredVersion, check.Note)
+			check.Name, sym, check.Status.Code(), ver, check.RequiredVersion, check.Note)
 	}
 
 	return sb.String()

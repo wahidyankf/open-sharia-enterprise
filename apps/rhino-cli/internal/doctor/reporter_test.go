@@ -15,11 +15,11 @@ func buildResult(checks []ToolCheck) *DoctorResult {
 	}
 	for _, c := range checks {
 		switch c.Status {
-		case StatusOK:
+		case StatusOK{}:
 			r.OKCount++
-		case StatusWarning:
+		case StatusWarning{}:
 			r.WarnCount++
-		case StatusMissing:
+		case StatusMissing{}:
 			r.MissingCount++
 		}
 	}
@@ -27,25 +27,25 @@ func buildResult(checks []ToolCheck) *DoctorResult {
 }
 
 var allOKChecks = []ToolCheck{
-	{Name: "git", Binary: "git", Status: StatusOK, InstalledVersion: "2.47.2", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "volta", Binary: "volta", Status: StatusOK, InstalledVersion: "2.0.2", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "node", Binary: "node", Status: StatusOK, InstalledVersion: "24.11.1", RequiredVersion: "24.11.1", Source: "package.json → volta.node", Note: "required: 24.11.1"},
-	{Name: "npm", Binary: "npm", Status: StatusOK, InstalledVersion: "11.6.3", RequiredVersion: "11.6.3", Source: "package.json → volta.npm", Note: "required: 11.6.3"},
-	{Name: "java", Binary: "java", Status: StatusOK, InstalledVersion: "25", RequiredVersion: "25", Source: "apps/organiclever-be-jasb/pom.xml → <java.version>", Note: "required: 25"},
-	{Name: "maven", Binary: "mvn", Status: StatusOK, InstalledVersion: "3.9.9", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "golang", Binary: "go", Status: StatusOK, InstalledVersion: "1.24.2", RequiredVersion: "1.24.2", Source: "apps/rhino-cli/go.mod → go directive", Note: "required: \u22651.24.2"},
-	{Name: "python", Binary: "python3", Status: StatusOK, InstalledVersion: "3.13.1", RequiredVersion: "3.13", Source: "apps/a-demo-be-python-fastapi/.python-version", Note: "required: \u22653.13"},
-	{Name: "rust", Binary: "rustc", Status: StatusOK, InstalledVersion: "1.94.0", RequiredVersion: "1.80", Source: "apps/a-demo-be-rust-axum/Cargo.toml → rust-version", Note: "required: ≥1.80"},
-	{Name: "cargo-llvm-cov", Binary: "cargo", Status: StatusOK, InstalledVersion: "0.8.5", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "elixir", Binary: "elixir", Status: StatusOK, InstalledVersion: "1.19.5", RequiredVersion: "1.19.5", Source: ".tool-versions → elixir", Note: "required: \u22651.19.5"},
-	{Name: "erlang", Binary: "erl", Status: StatusOK, InstalledVersion: "27", RequiredVersion: "27.3", Source: ".tool-versions → erlang", Note: "required: \u226527.3 (major)"},
-	{Name: "dotnet", Binary: "dotnet", Status: StatusOK, InstalledVersion: "10.0.103", RequiredVersion: "10.0.103", Source: "apps/a-demo-be-fsharp-giraffe/global.json → sdk.version", Note: "required: \u226510.0.103 (major)"},
-	{Name: "clojure", Binary: "clj", Status: StatusOK, InstalledVersion: "1.12.4.1582", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "dart", Binary: "dart", Status: StatusOK, InstalledVersion: "3.11.3", RequiredVersion: "3.11.1", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk", Note: "required: \u22653.11.1"},
-	{Name: "flutter", Binary: "flutter", Status: StatusOK, InstalledVersion: "3.41.5", RequiredVersion: "3.41.0", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter", Note: "required: ≥3.41.0"},
-	{Name: "docker", Binary: "docker", Status: StatusOK, InstalledVersion: "29.2.1", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "jq", Binary: "jq", Status: StatusOK, InstalledVersion: "1.8.1", Source: "(no config file)", Note: "no version requirement"},
-	{Name: "playwright", Binary: "npx", Status: StatusOK, InstalledVersion: "1.58.2", Source: "node_modules (npx playwright)", Note: "no version requirement"},
+	{Name: "git", Binary: "git", Status: StatusOK{}, InstalledVersion: "2.47.2", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "volta", Binary: "volta", Status: StatusOK{}, InstalledVersion: "2.0.2", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "node", Binary: "node", Status: StatusOK{}, InstalledVersion: "24.11.1", RequiredVersion: "24.11.1", Source: "package.json → volta.node", Note: "required: 24.11.1"},
+	{Name: "npm", Binary: "npm", Status: StatusOK{}, InstalledVersion: "11.6.3", RequiredVersion: "11.6.3", Source: "package.json → volta.npm", Note: "required: 11.6.3"},
+	{Name: "java", Binary: "java", Status: StatusOK{}, InstalledVersion: "25", RequiredVersion: "25", Source: "apps/organiclever-be-jasb/pom.xml → <java.version>", Note: "required: 25"},
+	{Name: "maven", Binary: "mvn", Status: StatusOK{}, InstalledVersion: "3.9.9", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "golang", Binary: "go", Status: StatusOK{}, InstalledVersion: "1.24.2", RequiredVersion: "1.24.2", Source: "apps/rhino-cli/go.mod → go directive", Note: "required: \u22651.24.2"},
+	{Name: "python", Binary: "python3", Status: StatusOK{}, InstalledVersion: "3.13.1", RequiredVersion: "3.13", Source: "apps/a-demo-be-python-fastapi/.python-version", Note: "required: \u22653.13"},
+	{Name: "rust", Binary: "rustc", Status: StatusOK{}, InstalledVersion: "1.94.0", RequiredVersion: "1.80", Source: "apps/a-demo-be-rust-axum/Cargo.toml → rust-version", Note: "required: ≥1.80"},
+	{Name: "cargo-llvm-cov", Binary: "cargo", Status: StatusOK{}, InstalledVersion: "0.8.5", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "elixir", Binary: "elixir", Status: StatusOK{}, InstalledVersion: "1.19.5", RequiredVersion: "1.19.5", Source: ".tool-versions → elixir", Note: "required: \u22651.19.5"},
+	{Name: "erlang", Binary: "erl", Status: StatusOK{}, InstalledVersion: "27", RequiredVersion: "27.3", Source: ".tool-versions → erlang", Note: "required: \u226527.3 (major)"},
+	{Name: "dotnet", Binary: "dotnet", Status: StatusOK{}, InstalledVersion: "10.0.103", RequiredVersion: "10.0.103", Source: "apps/a-demo-be-fsharp-giraffe/global.json → sdk.version", Note: "required: \u226510.0.103 (major)"},
+	{Name: "clojure", Binary: "clj", Status: StatusOK{}, InstalledVersion: "1.12.4.1582", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "dart", Binary: "dart", Status: StatusOK{}, InstalledVersion: "3.11.3", RequiredVersion: "3.11.1", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk", Note: "required: \u22653.11.1"},
+	{Name: "flutter", Binary: "flutter", Status: StatusOK{}, InstalledVersion: "3.41.5", RequiredVersion: "3.41.0", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter", Note: "required: ≥3.41.0"},
+	{Name: "docker", Binary: "docker", Status: StatusOK{}, InstalledVersion: "29.2.1", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "jq", Binary: "jq", Status: StatusOK{}, InstalledVersion: "1.8.1", Source: "(no config file)", Note: "no version requirement"},
+	{Name: "playwright", Binary: "npx", Status: StatusOK{}, InstalledVersion: "1.58.2", Source: "node_modules (npx playwright)", Note: "no version requirement"},
 }
 
 func TestFormatText_AllOK(t *testing.T) {
@@ -70,7 +70,7 @@ func TestFormatText_AllOK(t *testing.T) {
 
 func TestFormatText_WithWarning(t *testing.T) {
 	checks := []ToolCheck{
-		{Name: "java", Binary: "java", Status: StatusWarning, InstalledVersion: "21", RequiredVersion: "25", Note: "required: 25, version mismatch"},
+		{Name: "java", Binary: "java", Status: StatusWarning{}, InstalledVersion: "21", RequiredVersion: "25", Note: "required: 25, version mismatch"},
 	}
 	result := buildResult(checks)
 	out := FormatText(result, false, false)
@@ -85,7 +85,7 @@ func TestFormatText_WithWarning(t *testing.T) {
 
 func TestFormatText_WithMissing(t *testing.T) {
 	checks := []ToolCheck{
-		{Name: "golang", Binary: "go", Status: StatusMissing, RequiredVersion: "1.24.2", Note: "not found in PATH"},
+		{Name: "golang", Binary: "go", Status: StatusMissing{}, RequiredVersion: "1.24.2", Note: "not found in PATH"},
 	}
 	result := buildResult(checks)
 	out := FormatText(result, false, false)
@@ -155,7 +155,7 @@ func TestFormatJSON_AllOK(t *testing.T) {
 func TestFormatJSON_Mixed(t *testing.T) {
 	t.Run("with warning", func(t *testing.T) {
 		checks := []ToolCheck{
-			{Name: "java", Status: StatusWarning, Note: "version mismatch"},
+			{Name: "java", Status: StatusWarning{}, Note: "version mismatch"},
 		}
 		result := buildResult(checks)
 		out, err := FormatJSON(result)
@@ -174,7 +174,7 @@ func TestFormatJSON_Mixed(t *testing.T) {
 
 	t.Run("with missing", func(t *testing.T) {
 		checks := []ToolCheck{
-			{Name: "golang", Status: StatusMissing, Note: "not found in PATH"},
+			{Name: "golang", Status: StatusMissing{}, Note: "not found in PATH"},
 		}
 		result := buildResult(checks)
 		out, err := FormatJSON(result)
@@ -192,17 +192,14 @@ func TestFormatJSON_Mixed(t *testing.T) {
 	})
 }
 
-func TestSymbolFor_Default(t *testing.T) {
-	// Use an undefined ToolStatus value to trigger the default branch
-	sym := symbolFor(ToolStatus("unknown-status"))
-	if sym != "?" {
-		t.Errorf("expected '?' for unknown status, got %q", sym)
-	}
-}
+// TestSymbolFor_Default intentionally removed: with //sumtype:decl sealing,
+// the "unknownStatus" pattern would break gochecksumtype exhaustiveness.
+// The default branch in symbolFor is a dead-code safety net.
+
 
 func TestDisplayVersion_EmptyInstalled(t *testing.T) {
 	check := ToolCheck{
-		Status:           StatusOK,
+		Status:           StatusOK{},
 		InstalledVersion: "",
 	}
 	ver := displayVersion(check)

@@ -168,15 +168,15 @@ func TestCompareGTE(t *testing.T) {
 		required   string
 		wantStatus ToolStatus
 	}{
-		{"exact match", "1.24.2", "1.24.2", StatusOK},
-		{"newer minor", "1.26.0", "1.24.2", StatusOK},
-		{"newer major", "2.0.0", "1.24.2", StatusOK},
-		{"newer patch", "1.24.3", "1.24.2", StatusOK},
-		{"older minor", "1.23.0", "1.24.2", StatusWarning},
-		{"older patch", "1.24.1", "1.24.2", StatusWarning},
-		{"older major", "0.99.0", "1.24.2", StatusWarning},
-		{"empty required", "1.26.0", "", StatusOK},
-		{"v prefix installed", "v1.26.0", "1.24.2", StatusOK},
+		{"exact match", "1.24.2", "1.24.2", StatusOK{}},
+		{"newer minor", "1.26.0", "1.24.2", StatusOK{}},
+		{"newer major", "2.0.0", "1.24.2", StatusOK{}},
+		{"newer patch", "1.24.3", "1.24.2", StatusOK{}},
+		{"older minor", "1.23.0", "1.24.2", StatusWarning{}},
+		{"older patch", "1.24.1", "1.24.2", StatusWarning{}},
+		{"older major", "0.99.0", "1.24.2", StatusWarning{}},
+		{"empty required", "1.26.0", "", StatusOK{}},
+		{"v prefix installed", "v1.26.0", "1.24.2", StatusOK{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -189,10 +189,12 @@ func TestCompareGTE(t *testing.T) {
 				t.Errorf("compareGTE(%q, %q) note = %q, want %q",
 					tt.installed, tt.required, gotNote, "no version requirement")
 			}
-			if tt.required != "" && tt.wantStatus == StatusOK && !strings.Contains(gotNote, "≥") {
+			_, wantOK := tt.wantStatus.(StatusOK)
+			_, wantWarn := tt.wantStatus.(StatusWarning)
+			if tt.required != "" && wantOK && !strings.Contains(gotNote, "≥") {
 				t.Errorf("compareGTE OK note should contain '≥', got: %q", gotNote)
 			}
-			if tt.wantStatus == StatusWarning && !strings.Contains(gotNote, "too old") {
+			if wantWarn && !strings.Contains(gotNote, "too old") {
 				t.Errorf("compareGTE warning note should contain 'too old', got: %q", gotNote)
 			}
 		})
@@ -206,12 +208,12 @@ func TestCompareExact(t *testing.T) {
 		required   string
 		wantStatus ToolStatus
 	}{
-		{"exact match", "24.11.1", "24.11.1", StatusOK},
-		{"match with v prefix installed", "v24.11.1", "24.11.1", StatusOK},
-		{"match with v prefix required", "24.11.1", "v24.11.1", StatusOK},
-		{"mismatch", "23.0.0", "24.11.1", StatusWarning},
-		{"empty required", "24.11.1", "", StatusOK},
-		{"both empty", "", "", StatusOK},
+		{"exact match", "24.11.1", "24.11.1", StatusOK{}},
+		{"match with v prefix installed", "v24.11.1", "24.11.1", StatusOK{}},
+		{"match with v prefix required", "24.11.1", "v24.11.1", StatusOK{}},
+		{"mismatch", "23.0.0", "24.11.1", StatusWarning{}},
+		{"empty required", "24.11.1", "", StatusOK{}},
+		{"both empty", "", "", StatusOK{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -235,12 +237,12 @@ func TestCompareMajor(t *testing.T) {
 		required   string
 		wantStatus ToolStatus
 	}{
-		{"major match exact", "25", "25", StatusOK},
-		{"major match with patch", "25.0.1", "25", StatusOK},
-		{"major mismatch", "21", "25", StatusWarning},
-		{"major mismatch with patch", "21.0.1", "25", StatusWarning},
-		{"empty required", "25", "", StatusOK},
-		{"installed with v prefix", "v25", "25", StatusOK},
+		{"major match exact", "25", "25", StatusOK{}},
+		{"major match with patch", "25.0.1", "25", StatusOK{}},
+		{"major mismatch", "21", "25", StatusWarning{}},
+		{"major mismatch with patch", "21.0.1", "25", StatusWarning{}},
+		{"empty required", "25", "", StatusOK{}},
+		{"installed with v prefix", "v25", "25", StatusOK{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -421,8 +423,8 @@ func TestRunOneDef_Git_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "git")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q", check.Status)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q", check.Status)
 	}
 	if check.InstalledVersion != "2.47.2" {
 		t.Errorf("expected installed version %q, got %q", "2.47.2", check.InstalledVersion)
@@ -436,8 +438,8 @@ func TestRunOneDef_Git_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(t.TempDir()), "git")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -459,8 +461,8 @@ func TestRunOneDef_Volta_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "volta")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q", check.Status)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q", check.Status)
 	}
 	if check.InstalledVersion != "2.0.2" {
 		t.Errorf("expected installed version %q, got %q", "2.0.2", check.InstalledVersion)
@@ -474,8 +476,8 @@ func TestRunOneDef_Volta_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(t.TempDir()), "volta")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -485,8 +487,8 @@ func TestRunOneDef_Node_Match(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "24.11.1" {
 		t.Errorf("expected installed version %q, got %q", "24.11.1", check.InstalledVersion)
@@ -499,8 +501,8 @@ func TestRunOneDef_Node_Mismatch(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
 	check := runOneDef(runner, def)
-	if check.Status != StatusWarning {
-		t.Errorf("expected StatusWarning, got %q", check.Status)
+	if check.Status.Code() != "warning" {
+		t.Errorf("expected StatusWarning{}, got %q", check.Status)
 	}
 }
 
@@ -508,8 +510,8 @@ func TestRunOneDef_Node_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -520,8 +522,8 @@ func TestRunOneDef_Java_Match(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "25" {
 		t.Errorf("expected installed version %q, got %q", "25", check.InstalledVersion)
@@ -534,8 +536,8 @@ func TestRunOneDef_Java_Mismatch(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
 	check := runOneDef(runner, def)
-	if check.Status != StatusWarning {
-		t.Errorf("expected StatusWarning, got %q", check.Status)
+	if check.Status.Code() != "warning" {
+		t.Errorf("expected StatusWarning{}, got %q", check.Status)
 	}
 }
 
@@ -543,8 +545,8 @@ func TestRunOneDef_Java_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -554,8 +556,8 @@ func TestRunOneDef_Maven_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "maven")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "3.9.9" {
 		t.Errorf("expected installed version %q, got %q", "3.9.9", check.InstalledVersion)
@@ -566,8 +568,8 @@ func TestRunOneDef_Maven_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(t.TempDir()), "maven")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -577,8 +579,8 @@ func TestRunOneDef_Go_Match(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "1.24.2" {
 		t.Errorf("expected installed version %q, got %q", "1.24.2", check.InstalledVersion)
@@ -595,8 +597,8 @@ func TestRunOneDef_Go_NewerVersion(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK for 1.26.0 >= 1.24.2, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{} for 1.26.0 >= 1.24.2, got %q (note: %q)", check.Status, check.Note)
 	}
 }
 
@@ -606,8 +608,8 @@ func TestRunOneDef_Go_Mismatch(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
 	check := runOneDef(runner, def)
-	if check.Status != StatusWarning {
-		t.Errorf("expected StatusWarning for 1.23.0 < 1.24.2, got %q", check.Status)
+	if check.Status.Code() != "warning" {
+		t.Errorf("expected StatusWarning{} for 1.23.0 < 1.24.2, got %q", check.Status)
 	}
 	if !strings.Contains(check.Note, "too old") {
 		t.Errorf("expected note to contain 'too old', got %q", check.Note)
@@ -618,8 +620,8 @@ func TestRunOneDef_Go_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -773,8 +775,8 @@ func TestCompareGTE_Fallback(t *testing.T) {
 	// Use the same unparseable string on both sides so compareExact returns OK
 	status, note := compareGTE("not-a-version", "not-a-version")
 	// Both identical, exact comparison returns OK
-	if status != StatusOK {
-		t.Errorf("compareGTE fallback: expected OK for identical unparseable strings, got %q (note: %q)", status, note)
+	if status.Code() != "ok" {
+		t.Errorf("compareGTE fallback: expected OK for identical unparseable strings, got %q (note: %q)", status.Code(), note)
 	}
 }
 
@@ -782,8 +784,8 @@ func TestCompareGTE_FallbackMismatch(t *testing.T) {
 	// Fallback to exact when one side is unparseable
 	status, note := compareGTE("not-a-version", "1.0.0")
 	// They don't match exactly, so Warning
-	if status != StatusWarning {
-		t.Errorf("compareGTE fallback: expected Warning for mismatch, got %q (note: %q)", status, note)
+	if status.Code() != "warning" {
+		t.Errorf("compareGTE fallback: expected Warning for mismatch, got %q (note: %q)", status.Code(), note)
 	}
 }
 
@@ -1216,13 +1218,13 @@ func TestCompareMajorGTE(t *testing.T) {
 		required   string
 		wantStatus ToolStatus
 	}{
-		{"major match exact", "27", "27.3", StatusOK},
-		{"major newer", "28", "27.3", StatusOK},
-		{"major older", "26", "27.3", StatusWarning},
-		{"same with dots", "10.0.103", "10.0.103", StatusOK},
-		{"major same dotted", "10.0.401", "10.0.103", StatusOK},
-		{"major older dotted", "8.0.401", "10.0.103", StatusWarning},
-		{"empty required", "27", "", StatusOK},
+		{"major match exact", "27", "27.3", StatusOK{}},
+		{"major newer", "28", "27.3", StatusOK{}},
+		{"major older", "26", "27.3", StatusWarning{}},
+		{"same with dots", "10.0.103", "10.0.103", StatusOK{}},
+		{"major same dotted", "10.0.401", "10.0.103", StatusOK{}},
+		{"major older dotted", "8.0.401", "10.0.103", StatusWarning{}},
+		{"empty required", "27", "", StatusOK{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1243,8 +1245,8 @@ func TestRunOneDef_Python_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "python")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "3.13.1" {
 		t.Errorf("expected version %q, got %q", "3.13.1", check.InstalledVersion)
@@ -1255,8 +1257,8 @@ func TestRunOneDef_Python_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "python")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -1266,8 +1268,8 @@ func TestRunOneDef_Rust_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "rust")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q", check.Status)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q", check.Status)
 	}
 	if check.InstalledVersion != "1.94.0" {
 		t.Errorf("expected version %q, got %q", "1.94.0", check.InstalledVersion)
@@ -1280,8 +1282,8 @@ func TestRunOneDef_Elixir_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "elixir")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "1.19.5" {
 		t.Errorf("expected version %q, got %q", "1.19.5", check.InstalledVersion)
@@ -1294,8 +1296,8 @@ func TestRunOneDef_Erlang_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "erlang")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 }
 
@@ -1305,8 +1307,8 @@ func TestRunOneDef_Dotnet_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "dotnet")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 }
 
@@ -1316,8 +1318,8 @@ func TestRunOneDef_Dart_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "dart")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "3.11.3" {
 		t.Errorf("expected version %q, got %q", "3.11.3", check.InstalledVersion)
@@ -1330,8 +1332,8 @@ func TestRunOneDef_Docker_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "docker")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q", check.Status)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q", check.Status)
 	}
 	if check.InstalledVersion != "29.2.1" {
 		t.Errorf("expected version %q, got %q", "29.2.1", check.InstalledVersion)
@@ -1361,8 +1363,8 @@ func TestRunOneDef_Playwright_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "playwright")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "1.58.2" {
 		t.Errorf("expected version %q, got %q", "1.58.2", check.InstalledVersion)
@@ -1373,8 +1375,8 @@ func TestRunOneDef_Playwright_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(t.TempDir()), "playwright")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }
 
@@ -1384,8 +1386,8 @@ func TestRunOneDef_Jq_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "jq")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q", check.Status)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q", check.Status)
 	}
 	if check.InstalledVersion != "1.8.1" {
 		t.Errorf("expected version %q, got %q", "1.8.1", check.InstalledVersion)
@@ -1486,8 +1488,8 @@ func TestRunOneDef_GolangciLint_Found(t *testing.T) {
 	})
 	def := findDef(t, buildToolDefs(t.TempDir()), "golangci-lint")
 	check := runOneDef(runner, def)
-	if check.Status != StatusOK {
-		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	if check.Status.Code() != "ok" {
+		t.Errorf("expected StatusOK{}, got %q (note: %q)", check.Status, check.Note)
 	}
 	if check.InstalledVersion != "2.11.1" {
 		t.Errorf("expected version %q, got %q", "2.11.1", check.InstalledVersion)
@@ -1498,7 +1500,7 @@ func TestRunOneDef_GolangciLint_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
 	def := findDef(t, buildToolDefs(t.TempDir()), "golangci-lint")
 	check := runOneDef(runner, def)
-	if check.Status != StatusMissing {
-		t.Errorf("expected StatusMissing, got %q", check.Status)
+	if check.Status.Code() != "missing" {
+		t.Errorf("expected StatusMissing{}, got %q", check.Status)
 	}
 }

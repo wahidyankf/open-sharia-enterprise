@@ -3,17 +3,32 @@ package doctor
 
 import "time"
 
-// ToolStatus represents the health status of a tool check.
-type ToolStatus string
+// ToolStatus is a sealed interface for the health status of a tool check.
+// Use StatusOK{}, StatusWarning{}, or StatusMissing{}.
+//
+//sumtype:decl
+type ToolStatus interface {
+	isToolStatus()
+	Code() string
+}
 
-const (
-	// StatusOK indicates the tool is installed with the correct version.
-	StatusOK ToolStatus = "ok"
-	// StatusWarning indicates the tool is installed but the version doesn't match.
-	StatusWarning ToolStatus = "warning"
-	// StatusMissing indicates the tool is not found in PATH.
-	StatusMissing ToolStatus = "missing"
-)
+// StatusOK indicates the tool is installed with the correct version.
+type StatusOK struct{}
+
+func (StatusOK) isToolStatus()  {}
+func (StatusOK) Code() string   { return "ok" }
+
+// StatusWarning indicates the tool is installed but the version doesn't match.
+type StatusWarning struct{}
+
+func (StatusWarning) isToolStatus()  {}
+func (StatusWarning) Code() string   { return "warning" }
+
+// StatusMissing indicates the tool is not found in PATH.
+type StatusMissing struct{}
+
+func (StatusMissing) isToolStatus()  {}
+func (StatusMissing) Code() string   { return "missing" }
 
 // ToolCheck holds the result of checking a single tool.
 type ToolCheck struct {

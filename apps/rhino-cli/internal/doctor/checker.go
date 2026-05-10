@@ -137,30 +137,30 @@ func parseJavaVersion(stderr string) string {
 // Empty required means no requirement — always OK.
 func compareExact(installed, required string) (ToolStatus, string) {
 	if required == "" {
-		return StatusOK, "no version requirement"
+		return StatusOK{}, "no version requirement"
 	}
 	inst := normalizeSimpleVersion(installed)
 	req := normalizeSimpleVersion(required)
 	if inst == req {
-		return StatusOK, fmt.Sprintf("required: %s", required)
+		return StatusOK{}, fmt.Sprintf("required: %s", required)
 	}
-	return StatusWarning, fmt.Sprintf("required: %s, version mismatch", required)
+	return StatusWarning{}, fmt.Sprintf("required: %s, version mismatch", required)
 }
 
 // compareMajor compares only the major version component (used for Java).
 // Empty required means no requirement — always OK.
 func compareMajor(installed, required string) (ToolStatus, string) {
 	if required == "" {
-		return StatusOK, "no version requirement"
+		return StatusOK{}, "no version requirement"
 	}
 	inst := normalizeSimpleVersion(installed)
 	req := normalizeSimpleVersion(required)
 	instMajor := strings.SplitN(inst, ".", 2)[0]
 	reqMajor := strings.SplitN(req, ".", 2)[0]
 	if instMajor != "" && instMajor == reqMajor {
-		return StatusOK, fmt.Sprintf("required: %s", required)
+		return StatusOK{}, fmt.Sprintf("required: %s", required)
 	}
-	return StatusWarning, fmt.Sprintf("required: %s, version mismatch", required)
+	return StatusWarning{}, fmt.Sprintf("required: %s, version mismatch", required)
 }
 
 // parseVersionParts splits a version string into [major, minor, patch] integers.
@@ -184,7 +184,7 @@ func parseVersionParts(s string) (major, minor, patch int, ok bool) {
 // Empty required means no requirement — always OK.
 func compareMajorGTE(installed, required string) (ToolStatus, string) {
 	if required == "" {
-		return StatusOK, "no version requirement"
+		return StatusOK{}, "no version requirement"
 	}
 	inst := normalizeSimpleVersion(installed)
 	req := normalizeSimpleVersion(required)
@@ -196,16 +196,16 @@ func compareMajorGTE(installed, required string) (ToolStatus, string) {
 		return compareExact(installed, required)
 	}
 	if iMaj >= rMaj {
-		return StatusOK, fmt.Sprintf("required: \u2265%s (major)", required)
+		return StatusOK{}, fmt.Sprintf("required: \u2265%s (major)", required)
 	}
-	return StatusWarning, fmt.Sprintf("required: \u2265%s (major), version too old", required)
+	return StatusWarning{}, fmt.Sprintf("required: \u2265%s (major), version too old", required)
 }
 
 // compareGTE checks that installed >= required (used for backward-compatible tools like Go).
 // Empty required means no requirement — always OK.
 func compareGTE(installed, required string) (ToolStatus, string) {
 	if required == "" {
-		return StatusOK, "no version requirement"
+		return StatusOK{}, "no version requirement"
 	}
 	iMaj, iMin, iPat, iOk := parseVersionParts(installed)
 	rMaj, rMin, rPat, rOk := parseVersionParts(required)
@@ -216,9 +216,9 @@ func compareGTE(installed, required string) (ToolStatus, string) {
 	if iMaj > rMaj ||
 		(iMaj == rMaj && iMin > rMin) ||
 		(iMaj == rMaj && iMin == rMin && iPat >= rPat) {
-		return StatusOK, fmt.Sprintf("required: \u2265%s", required)
+		return StatusOK{}, fmt.Sprintf("required: \u2265%s", required)
 	}
-	return StatusWarning, fmt.Sprintf("required: \u2265%s, version too old", required)
+	return StatusWarning{}, fmt.Sprintf("required: \u2265%s, version too old", required)
 }
 
 // --- Reader functions for new tool version sources ---
@@ -469,9 +469,9 @@ var checkPlaywrightBrowsersFn = checkPlaywrightBrowsers
 // comparePlaywright checks version and warns if browsers are not installed.
 func comparePlaywright(installed, required string) (ToolStatus, string) {
 	if !checkPlaywrightBrowsersFn() {
-		return StatusWarning, "browsers not installed \u2014 run: npx playwright install"
+		return StatusWarning{}, "browsers not installed \u2014 run: npx playwright install"
 	}
-	return StatusOK, "no version requirement"
+	return StatusOK{}, "no version requirement"
 }
 
 // runOneDef executes a single tool check definition using the provided runner.
@@ -484,7 +484,7 @@ func runOneDef(runner CommandRunner, def toolDef) ToolCheck {
 	}
 	stdout, stderr, _, err := runner(def.binary, def.args...)
 	if err != nil {
-		check.Status = StatusMissing
+		check.Status = StatusMissing{}
 		check.Note = "not found in PATH"
 		return check
 	}
@@ -556,7 +556,7 @@ func CheckAll(opts CheckOptions) (*DoctorResult, error) {
 	}
 
 	for _, c := range checks {
-		switch c.Status {
+		switch c.Status.(type) {
 		case StatusOK:
 			result.OKCount++
 		case StatusWarning:

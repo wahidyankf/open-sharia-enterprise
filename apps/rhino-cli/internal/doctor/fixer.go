@@ -56,7 +56,9 @@ func Fix(result *DoctorResult, defs []toolDef, opts FixOptions, printf func(stri
 	fr := FixResult{}
 
 	for i, check := range result.Checks {
-		if check.Status == StatusOK || check.Status == StatusWarning {
+		_, isOK := check.Status.(StatusOK)
+		_, isWarn := check.Status.(StatusWarning)
+		if isOK || isWarn {
 			fr.AlreadyOK++
 			continue
 		}
