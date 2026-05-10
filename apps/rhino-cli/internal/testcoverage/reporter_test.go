@@ -21,7 +21,7 @@ func makeResult(covered, partial, missed int, pct float64, format Format) *Resul
 }
 
 func TestFormatText_Pass(t *testing.T) {
-	r := makeResult(86, 5, 9, 86.00, FormatGo)
+	r := makeResult(86, 5, 9, 86.00, FormatGo{})
 	out := FormatText(r, false, false)
 
 	if !strings.Contains(out, "Line coverage: 86.00%") {
@@ -39,7 +39,7 @@ func TestFormatText_Pass(t *testing.T) {
 }
 
 func TestFormatText_Fail(t *testing.T) {
-	r := makeResult(60, 0, 40, 60.00, FormatGo)
+	r := makeResult(60, 0, 40, 60.00, FormatGo{})
 	out := FormatText(r, false, false)
 
 	if !strings.Contains(out, "FAIL:") {
@@ -51,7 +51,7 @@ func TestFormatText_Fail(t *testing.T) {
 }
 
 func TestFormatText_VerboseQuietIgnored(t *testing.T) {
-	r := makeResult(100, 0, 0, 100.0, FormatLCOV)
+	r := makeResult(100, 0, 0, 100.0, FormatLCOV{})
 	// verbose and quiet params are accepted but don't change output
 	out1 := FormatText(r, true, false)
 	out2 := FormatText(r, false, true)
@@ -65,7 +65,7 @@ func TestFormatText_ExactPythonFormat(t *testing.T) {
 	// Verify exact format matching Python script output
 	r := &Result{
 		File:      "cover.out",
-		Format:    FormatGo,
+		Format:    FormatGo{},
 		Covered:   2411,
 		Partial:   141,
 		Missed:    249,
@@ -86,7 +86,7 @@ func TestFormatText_ExactPythonFormat(t *testing.T) {
 }
 
 func TestFormatJSON_Pass(t *testing.T) {
-	r := makeResult(90, 2, 8, 90.0, FormatGo)
+	r := makeResult(90, 2, 8, 90.0, FormatGo{})
 	out, err := FormatJSON(r, false, 0)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -111,7 +111,7 @@ func TestFormatJSON_Pass(t *testing.T) {
 }
 
 func TestFormatJSON_Fail(t *testing.T) {
-	r := makeResult(50, 0, 50, 50.0, FormatLCOV)
+	r := makeResult(50, 0, 50, 50.0, FormatLCOV{})
 	out, err := FormatJSON(r, false, 0)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -130,7 +130,7 @@ func TestFormatJSON_Fail(t *testing.T) {
 }
 
 func TestFormatMarkdown_Pass(t *testing.T) {
-	r := makeResult(90, 2, 8, 90.0, FormatGo)
+	r := makeResult(90, 2, 8, 90.0, FormatGo{})
 	out := FormatMarkdown(r, false, 0)
 
 	if !strings.Contains(out, "## Coverage Report") {
@@ -145,7 +145,7 @@ func TestFormatMarkdown_Pass(t *testing.T) {
 }
 
 func TestFormatMarkdown_Fail(t *testing.T) {
-	r := makeResult(50, 0, 50, 50.0, FormatGo)
+	r := makeResult(50, 0, 50, 50.0, FormatGo{})
 	out := FormatMarkdown(r, false, 0)
 
 	if !strings.Contains(out, "**FAIL**") {
@@ -154,7 +154,7 @@ func TestFormatMarkdown_Fail(t *testing.T) {
 }
 
 func TestFormatMarkdown_ContainsAllFields(t *testing.T) {
-	r := makeResult(100, 5, 10, 87.0, FormatLCOV)
+	r := makeResult(100, 5, 10, 87.0, FormatLCOV{})
 	out := FormatMarkdown(r, false, 0)
 
 	for _, field := range []string{"| File |", "| Format |", "| Line Coverage |", "| Threshold |", "| Covered |", "| Partial |", "| Missed |", "| Total |"} {
@@ -165,7 +165,7 @@ func TestFormatMarkdown_ContainsAllFields(t *testing.T) {
 }
 
 func makeResultWithFiles() *Result {
-	r := makeResult(150, 10, 40, 75.0, FormatLCOV)
+	r := makeResult(150, 10, 40, 75.0, FormatLCOV{})
 	r.Files = []FileResult{
 		{Path: "src/a.ts", Covered: 100, Partial: 5, Missed: 10, Total: 115, Pct: 86.96},
 		{Path: "src/b.ts", Covered: 50, Partial: 5, Missed: 30, Total: 85, Pct: 58.82},
@@ -198,7 +198,7 @@ func TestFormatTextPerFile_BelowThresholdFilter(t *testing.T) {
 }
 
 func TestFormatTextPerFile_NoFiles(t *testing.T) {
-	r := makeResult(100, 0, 0, 100.0, FormatGo)
+	r := makeResult(100, 0, 0, 100.0, FormatGo{})
 	out := FormatTextPerFile(r, 0)
 	if !strings.Contains(out, "No files to report") {
 		t.Errorf("expected empty message, got: %s", out)

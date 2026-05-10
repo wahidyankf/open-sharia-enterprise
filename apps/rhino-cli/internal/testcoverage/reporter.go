@@ -83,7 +83,7 @@ func FormatJSON(r *Result, perFile bool, belowThreshold float64) (string, error)
 		Status:    status,
 		Timestamp: timeutil.Timestamp(),
 		File:      r.File,
-		Format:    string(r.Format),
+		Format:    r.Format.Code(),
 		Covered:   r.Covered,
 		Partial:   r.Partial,
 		Missed:    r.Missed,
@@ -124,7 +124,7 @@ func FormatMarkdown(r *Result, perFile bool, belowThreshold float64) string {
 			"| Missed | %d |\n"+
 			"| Total | %d |\n"+
 			"| Status | **%s** |\n",
-		r.File, string(r.Format), r.Pct, r.Threshold,
+		r.File, r.Format.Code(), r.Pct, r.Threshold,
 		r.Covered, r.Partial, r.Missed, r.Total, status,
 	)
 

@@ -173,7 +173,7 @@ func TestComputeLCOVResult_SampleLCOV(t *testing.T) {
 	if result.Pct != 60.0 {
 		t.Errorf("expected pct=60.0, got %f", result.Pct)
 	}
-	if result.Format != FormatLCOV {
+	if result.Format .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV, got %s", result.Format)
 	}
 }

@@ -77,7 +77,7 @@ func buildGoResult(pct, threshold float64) testcoverage.Result {
 	covered := int(float64(total) * pct / 100)
 	return testcoverage.Result{
 		File:      "/mock-repo/cover.out",
-		Format:    testcoverage.FormatGo,
+		Format:    testcoverage.FormatGo{},
 		Covered:   covered,
 		Missed:    total - covered,
 		Total:     total,
@@ -91,7 +91,7 @@ func buildGoResult(pct, threshold float64) testcoverage.Result {
 func buildLCOVResult(pct, threshold float64, files []testcoverage.FileResult) testcoverage.Result {
 	r := testcoverage.Result{
 		File:      "/mock-repo/lcov.info",
-		Format:    testcoverage.FormatLCOV,
+		Format:    testcoverage.FormatLCOV{},
 		Pct:       pct,
 		Threshold: threshold,
 		Passed:    pct >= threshold,
@@ -111,7 +111,7 @@ func buildCoberturaResult(pct, threshold float64) testcoverage.Result {
 	covered := int(float64(total) * pct / 100)
 	return testcoverage.Result{
 		File:      "/mock-repo/cobertura.xml",
-		Format:    testcoverage.FormatCobertura,
+		Format:    testcoverage.FormatCobertura{},
 		Covered:   covered,
 		Missed:    total - covered,
 		Total:     total,

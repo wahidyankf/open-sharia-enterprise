@@ -102,7 +102,7 @@ func ComputeJaCoCoResult(filename string, threshold float64) (Result, error) {
 
 	return Result{
 		File:      filename,
-		Format:    FormatJaCoCo,
+		Format:    FormatJaCoCo{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,

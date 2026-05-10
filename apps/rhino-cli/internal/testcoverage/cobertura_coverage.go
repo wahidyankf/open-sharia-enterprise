@@ -139,7 +139,7 @@ func ComputeCoberturaResult(filename string, threshold float64) (Result, error) 
 
 	return Result{
 		File:      filename,
-		Format:    FormatCobertura,
+		Format:    FormatCobertura{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,

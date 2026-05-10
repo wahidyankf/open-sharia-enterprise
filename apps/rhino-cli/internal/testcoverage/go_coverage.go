@@ -200,7 +200,7 @@ func ComputeGoResult(filename string, threshold float64) (Result, error) {
 
 	return Result{
 		File:      filename,
-		Format:    FormatGo,
+		Format:    FormatGo{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,

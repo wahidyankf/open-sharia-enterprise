@@ -8,28 +8,28 @@ import (
 
 func TestDetectFormat_InfoExtension(t *testing.T) {
 	got := DetectFormat("/some/path/coverage.info")
-	if got != FormatLCOV {
+	if got .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV for .info extension, got %v", got)
 	}
 }
 
 func TestDetectFormat_LcovInName(t *testing.T) {
 	got := DetectFormat("/some/path/lcov.out")
-	if got != FormatLCOV {
+	if got .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV for lcov in name, got %v", got)
 	}
 }
 
 func TestDetectFormat_CaseInsensitiveLcov(t *testing.T) {
 	got := DetectFormat("/some/path/LCOV_report.txt")
-	if got != FormatLCOV {
+	if got .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV for uppercase LCOV in name, got %v", got)
 	}
 }
 
 func TestDetectFormat_FileOpenError(t *testing.T) {
 	got := DetectFormat("/nonexistent/path/cover.out")
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for non-existent file, got %v", got)
 	}
 }
@@ -41,7 +41,7 @@ func TestDetectFormat_ModePrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for mode: prefix, got %v", got)
 	}
 }
@@ -53,7 +53,7 @@ func TestDetectFormat_SFPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatLCOV {
+	if got .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV for SF: prefix, got %v", got)
 	}
 }
@@ -65,7 +65,7 @@ func TestDetectFormat_TNPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatLCOV {
+	if got .Code() != "lcov" {
 		t.Errorf("expected FormatLCOV for TN: prefix, got %v", got)
 	}
 }
@@ -77,7 +77,7 @@ func TestDetectFormat_UnknownFallback(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for unknown first line, got %v", got)
 	}
 }
@@ -89,28 +89,28 @@ func TestDetectFormat_EmptyFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for empty file, got %v", got)
 	}
 }
 
 func TestDetectFormat_JaCoCoFilename(t *testing.T) {
 	got := DetectFormat("/some/path/jacoco.xml")
-	if got != FormatJaCoCo {
+	if got .Code() != "jacoco" {
 		t.Errorf("expected FormatJaCoCo for jacoco.xml, got %v", got)
 	}
 }
 
 func TestDetectFormat_JaCoCoCaseInsensitive(t *testing.T) {
 	got := DetectFormat("/some/path/JACOCO_report.xml")
-	if got != FormatJaCoCo {
+	if got .Code() != "jacoco" {
 		t.Errorf("expected FormatJaCoCo for JACOCO_report.xml, got %v", got)
 	}
 }
 
 func TestDetectFormat_JaCoCoRequiresXmlExtension(t *testing.T) {
 	got := DetectFormat("/some/path/jacoco.exec")
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for jacoco.exec (not .xml), got %v", got)
 	}
 }
@@ -122,7 +122,7 @@ func TestDetectFormat_XMLContentReport(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatJaCoCo {
+	if got .Code() != "jacoco" {
 		t.Errorf("expected FormatJaCoCo for <?xml content, got %v", got)
 	}
 }
@@ -134,28 +134,28 @@ func TestDetectFormat_XMLContentReportTag(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatJaCoCo {
+	if got .Code() != "jacoco" {
 		t.Errorf("expected FormatJaCoCo for <report content, got %v", got)
 	}
 }
 
 func TestDetectFormat_CoberturaFilename(t *testing.T) {
 	got := DetectFormat("/some/path/cobertura.xml")
-	if got != FormatCobertura {
+	if got .Code() != "cobertura" {
 		t.Errorf("expected FormatCobertura for cobertura.xml, got %v", got)
 	}
 }
 
 func TestDetectFormat_CoberturaCaseInsensitive(t *testing.T) {
 	got := DetectFormat("/some/path/Cobertura_report.xml")
-	if got != FormatCobertura {
+	if got .Code() != "cobertura" {
 		t.Errorf("expected FormatCobertura for Cobertura_report.xml, got %v", got)
 	}
 }
 
 func TestDetectFormat_CoberturaRequiresXmlExtension(t *testing.T) {
 	got := DetectFormat("/some/path/cobertura.dat")
-	if got != FormatGo {
+	if got .Code() != "go" {
 		t.Errorf("expected FormatGo for cobertura.dat (not .xml), got %v", got)
 	}
 }
@@ -168,7 +168,7 @@ func TestDetectFormat_XMLContentCoverageTag(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatCobertura {
+	if got .Code() != "cobertura" {
 		t.Errorf("expected FormatCobertura for <coverage> content, got %v", got)
 	}
 }
@@ -182,7 +182,7 @@ func TestDetectFormat_KoverReportXML(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := DetectFormat(path)
-	if got != FormatJaCoCo {
+	if got .Code() != "jacoco" {
 		t.Errorf("expected FormatJaCoCo for Kover report.xml with <report> content, got %v", got)
 	}
 }

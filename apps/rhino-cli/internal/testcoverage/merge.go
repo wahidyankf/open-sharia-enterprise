@@ -172,7 +172,7 @@ func ResultFromCoverageMap(cm CoverageMap, threshold float64) Result {
 	}
 
 	return Result{
-		Format:    FormatLCOV,
+		Format:    FormatLCOV{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,
@@ -322,7 +322,7 @@ func ToCoverageMapCobertura(filename string) (CoverageMap, error) {
 
 // ToCoverageMap converts any supported coverage file to CoverageMap based on detected format.
 func ToCoverageMap(filename string) (CoverageMap, error) {
-	switch DetectFormat(filename) {
+	switch DetectFormat(filename).(type) {
 	case FormatLCOV:
 		return ToCoverageMapLCOV(filename)
 	case FormatJaCoCo:

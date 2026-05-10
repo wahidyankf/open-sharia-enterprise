@@ -59,7 +59,7 @@ func TestComputeCoberturaResult_ValidReport(t *testing.T) {
 	if !result.Passed {
 		t.Error("expected Passed=true")
 	}
-	if result.Format != FormatCobertura {
+	if result.Format.Code() != "cobertura" {
 		t.Errorf("expected FormatCobertura, got %v", result.Format)
 	}
 }

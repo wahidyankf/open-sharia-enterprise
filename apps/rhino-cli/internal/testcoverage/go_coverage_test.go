@@ -180,7 +180,7 @@ func TestComputeGoResult_NoSourceFiles(t *testing.T) {
 	if result.Total == 0 {
 		t.Error("expected non-zero total")
 	}
-	if result.Format != FormatGo {
+	if result.Format .Code() != "go" {
 		t.Errorf("expected FormatGo, got %s", result.Format)
 	}
 	if result.Threshold != 85 {

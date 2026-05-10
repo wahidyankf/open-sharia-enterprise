@@ -15,18 +15,18 @@ import (
 func DetectFormat(filename string) Format {
 	lower := strings.ToLower(filename)
 	if strings.HasSuffix(lower, ".info") || strings.Contains(lower, "lcov") {
-		return FormatLCOV
+		return FormatLCOV{}
 	}
 	if strings.HasSuffix(lower, ".xml") && strings.Contains(lower, "jacoco") {
-		return FormatJaCoCo
+		return FormatJaCoCo{}
 	}
 	if strings.HasSuffix(lower, ".xml") && strings.Contains(lower, "cobertura") {
-		return FormatCobertura
+		return FormatCobertura{}
 	}
 
 	f, err := os.Open(filename)
 	if err != nil {
-		return FormatGo
+		return FormatGo{}
 	}
 	defer func() { _ = f.Close() }()
 
@@ -37,10 +37,10 @@ func DetectFormat(filename string) Format {
 			continue
 		}
 		if strings.HasPrefix(line, "mode:") {
-			return FormatGo
+			return FormatGo{}
 		}
 		if strings.HasPrefix(line, "SF:") || strings.HasPrefix(line, "TN:") {
-			return FormatLCOV
+			return FormatLCOV{}
 		}
 		if strings.HasPrefix(line, "<!DOCTYPE") {
 			continue
@@ -60,14 +60,14 @@ func DetectFormat(filename string) Format {
 			}
 		}
 		if strings.HasPrefix(line, "<report") {
-			return FormatJaCoCo
+			return FormatJaCoCo{}
 		}
 		if strings.HasPrefix(line, "<coverage") {
-			return FormatCobertura
+			return FormatCobertura{}
 		}
 		// Unknown content — stop scanning
 		break
 	}
 
-	return FormatGo
+	return FormatGo{}
 }

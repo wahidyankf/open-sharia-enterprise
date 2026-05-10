@@ -74,7 +74,7 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 	}
 
 	var result testcoverage.Result
-	switch testcoverage.DetectFormat(absPath) {
+	switch testcoverage.DetectFormat(absPath).(type) {
 	case testcoverage.FormatLCOV:
 		result, err = testCoverageComputeLCOVResultFn(absPath, threshold)
 	case testcoverage.FormatJaCoCo:

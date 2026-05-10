@@ -50,7 +50,7 @@ func (s *diffTestCoverageUnitSteps) before(_ context.Context, _ *godog.Scenario)
 	// Default: return 100% diff coverage (no changed lines)
 	testCoverageComputeDiffCoverageFn = func(_ testcoverage.DiffCoverageOptions) (testcoverage.Result, error) {
 		return testcoverage.Result{
-			Format:    testcoverage.FormatDiff,
+			Format:    testcoverage.FormatDiff{},
 			Pct:       100.0,
 			Threshold: 0,
 			Passed:    true,
@@ -73,7 +73,7 @@ func (s *diffTestCoverageUnitSteps) aCoverageFileAndNoGitChanges() error {
 	s.coverFile = "cover.out"
 	testCoverageComputeDiffCoverageFn = func(_ testcoverage.DiffCoverageOptions) (testcoverage.Result, error) {
 		return testcoverage.Result{
-			Format:    testcoverage.FormatDiff,
+			Format:    testcoverage.FormatDiff{},
 			Pct:       100.0,
 			Threshold: 0,
 			Passed:    true,
@@ -88,7 +88,7 @@ func (s *diffTestCoverageUnitSteps) aCoverageFileWhereAllChangedLinesAreCovered(
 	s.coverFile = "cover.out"
 	testCoverageComputeDiffCoverageFn = func(opts testcoverage.DiffCoverageOptions) (testcoverage.Result, error) {
 		return testcoverage.Result{
-			Format:    testcoverage.FormatDiff,
+			Format:    testcoverage.FormatDiff{},
 			Pct:       100.0,
 			Threshold: opts.Threshold,
 			Passed:    100.0 >= opts.Threshold,
@@ -104,7 +104,7 @@ func (s *diffTestCoverageUnitSteps) aCoverageFileWhereSomeChangedLinesMissed() e
 	testCoverageComputeDiffCoverageFn = func(opts testcoverage.DiffCoverageOptions) (testcoverage.Result, error) {
 		pct := 40.0
 		return testcoverage.Result{
-			Format:    testcoverage.FormatDiff,
+			Format:    testcoverage.FormatDiff{},
 			Pct:       pct,
 			Threshold: opts.Threshold,
 			Passed:    pct >= opts.Threshold,
@@ -120,7 +120,7 @@ func (s *diffTestCoverageUnitSteps) aCoverageFileAndChangesInExcludedFiles() err
 	s.coverFile = "cover.out"
 	testCoverageComputeDiffCoverageFn = func(opts testcoverage.DiffCoverageOptions) (testcoverage.Result, error) {
 		return testcoverage.Result{
-			Format:    testcoverage.FormatDiff,
+			Format:    testcoverage.FormatDiff{},
 			Pct:       100.0,
 			Threshold: opts.Threshold,
 			Passed:    true,

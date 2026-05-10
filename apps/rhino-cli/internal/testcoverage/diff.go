@@ -30,7 +30,7 @@ func ComputeDiffCoverage(opts DiffCoverageOptions) (Result, error) {
 	if len(hunks) == 0 {
 		return Result{
 			File:      opts.CoverageFile,
-			Format:    FormatDiff,
+			Format:    FormatDiff{},
 			Pct:       100.0,
 			Threshold: opts.Threshold,
 			Passed:    true,
@@ -106,7 +106,7 @@ func ComputeDiffCoverage(opts DiffCoverageOptions) (Result, error) {
 
 	return Result{
 		File:      opts.CoverageFile,
-		Format:    FormatDiff,
+		Format:    FormatDiff{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,

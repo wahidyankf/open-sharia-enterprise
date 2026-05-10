@@ -137,7 +137,7 @@ func ComputeLCOVResult(filename string, threshold float64) (Result, error) {
 
 	return Result{
 		File:      filename,
-		Format:    FormatLCOV,
+		Format:    FormatLCOV{},
 		Covered:   covered,
 		Partial:   partial,
 		Missed:    missed,
