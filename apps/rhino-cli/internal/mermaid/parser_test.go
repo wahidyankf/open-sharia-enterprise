@@ -38,7 +38,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "simple flowchart TD",
 			source:        "flowchart TD\nA --> B",
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 			wantNodeIDs:   []string{"A", "B"},
 			wantEdges:     []Edge{{From: "A", To: "B"}},
 		},
@@ -46,7 +46,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "node with rectangle label",
 			source:        "flowchart TD\nA[Hello World]",
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 			wantNodeIDs:   []string{"A"},
 			nodeLabels:    map[string]string{"A": "Hello World"},
 		},
@@ -54,7 +54,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "node with quoted label",
 			source:        `flowchart TD` + "\n" + `A["Long label text"]`,
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 			wantNodeIDs:   []string{"A"},
 			nodeLabels:    map[string]string{"A": "Long label text"},
 		},
@@ -62,7 +62,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "duplicate node id last-declaration-wins",
 			source:        "flowchart TD\nA[First]\nA[Second]\nA --> B",
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 			wantNodeIDs:   []string{"A", "B"},
 			nodeLabels:    map[string]string{"A": "Second"},
 		},
@@ -70,7 +70,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "edge with link text",
 			source:        "flowchart TD\nA -- text --> B",
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 			wantNodeIDs:   []string{"A", "B"},
 			wantEdges:     []Edge{{From: "A", To: "B"}},
 		},
@@ -83,7 +83,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "graph LR direction",
 			source:        "graph LR\nA --> B",
 			wantCount:     1,
-			wantDirection: DirectionLR,
+			wantDirection: DirectionLR{},
 			wantNodeIDs:   []string{"A", "B"},
 			wantEdges:     []Edge{{From: "A", To: "B"}},
 		},
@@ -91,7 +91,7 @@ func TestParseDiagram(t *testing.T) {
 			name:          "flowchart with no direction defaults to TB",
 			source:        "flowchart\nA --> B",
 			wantCount:     1,
-			wantDirection: DirectionTB,
+			wantDirection: DirectionTB{},
 			wantNodeIDs:   []string{"A", "B"},
 		},
 		{
@@ -102,7 +102,7 @@ subgraph sg
 end
 B --> A`,
 			wantCount:     1,
-			wantDirection: DirectionTD,
+			wantDirection: DirectionTD{},
 		},
 	}
 
@@ -119,7 +119,7 @@ B --> A`,
 			if count == 0 {
 				return // non-flowchart: no further checks
 			}
-			if tt.wantDirection != "" && diagram.Direction != tt.wantDirection {
+			if tt.wantDirection != nil && diagram.Direction != tt.wantDirection {
 				t.Errorf("Direction = %q, want %q", diagram.Direction, tt.wantDirection)
 			}
 			// Check node IDs present.

@@ -41,7 +41,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 		// Rule 3: multiple diagrams in one block.
 		if count > 1 {
 			violations = append(violations, Violation{
-				Kind:       ViolationMultipleDiagrams,
+				Kind: ViolationMultipleDiagrams{},
 				FilePath:   block.FilePath,
 				BlockIndex: block.BlockIndex,
 				StartLine:  block.StartLine,
@@ -59,7 +59,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 			labelLen := EffectiveLabelLen(node.Label)
 			if labelLen > opts.MaxLabelLen {
 				violations = append(violations, Violation{
-					Kind:        ViolationLabelTooLong,
+					Kind: ViolationLabelTooLong{},
 					FilePath:    block.FilePath,
 					BlockIndex:  block.BlockIndex,
 					StartLine:   block.StartLine,
@@ -76,7 +76,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 		depth := Depth(diagram.Nodes, diagram.Edges)
 
 		var horizontal, vertical int
-		switch diagram.Direction {
+		switch diagram.Direction.(type) {
 		case DirectionLR, DirectionRL: // named constants from types.go
 			horizontal, vertical = depth, span
 		case DirectionTB, DirectionTD, DirectionBT: // named constants from types.go
@@ -86,7 +86,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 		if horizontal > opts.MaxWidth && vertical > opts.MaxDepth {
 			// Both exceeded → warning only.
 			warnings = append(warnings, Warning{
-				Kind:        WarningComplexDiagram,
+				Kind: WarningComplexDiagram{},
 				FilePath:    block.FilePath,
 				BlockIndex:  block.BlockIndex,
 				StartLine:   block.StartLine,
@@ -98,7 +98,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 		} else if horizontal > opts.MaxWidth {
 			// Width exceeded alone → violation.
 			violations = append(violations, Violation{
-				Kind:        ViolationWidthExceeded,
+				Kind: ViolationWidthExceeded{},
 				FilePath:    block.FilePath,
 				BlockIndex:  block.BlockIndex,
 				StartLine:   block.StartLine,
@@ -113,7 +113,7 @@ func ValidateBlocks(blocks []MermaidBlock, opts ValidateOptions) ValidationResul
 			for _, sg := range diagram.Subgraphs {
 				if len(sg.NodeIDs) > opts.MaxSubgraphNodes {
 					warnings = append(warnings, Warning{
-						Kind:              WarningSubgraphDense,
+						Kind: WarningSubgraphDense{},
 						FilePath:          block.FilePath,
 						BlockIndex:        block.BlockIndex,
 						StartLine:         block.StartLine + sg.StartLine,

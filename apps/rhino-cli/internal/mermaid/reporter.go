@@ -70,7 +70,7 @@ func FormatText(result ValidationResult, verbose, quiet bool) string {
 }
 
 func violationDetail(v Violation) string {
-	switch v.Kind {
+	switch v.Kind.(type) {
 	case ViolationLabelTooLong:
 		return fmt.Sprintf("[%s] node %q label %q is %d chars (max %d)",
 			v.Kind, v.NodeID, v.LabelText, v.LabelLen, v.MaxLabelLen)
@@ -85,7 +85,7 @@ func violationDetail(v Violation) string {
 }
 
 func warningDetail(w Warning) string {
-	switch w.Kind {
+	switch w.Kind.(type) {
 	case WarningSubgraphDense:
 		label := w.SubgraphLabel
 		if label == "" {
@@ -144,7 +144,7 @@ func FormatJSON(result ValidationResult) (string, error) {
 	vs := make([]jsonViolation, len(result.Violations))
 	for i, v := range result.Violations {
 		vs[i] = jsonViolation{
-			Kind:        string(v.Kind),
+			Kind:        v.Kind.Code(),
 			FilePath:    v.FilePath,
 			BlockIndex:  v.BlockIndex,
 			StartLine:   v.StartLine,
@@ -159,7 +159,7 @@ func FormatJSON(result ValidationResult) (string, error) {
 	ws := make([]jsonWarning, len(result.Warnings))
 	for i, w := range result.Warnings {
 		ws[i] = jsonWarning{
-			Kind:              string(w.Kind),
+			Kind:              w.Kind.Code(),
 			FilePath:          w.FilePath,
 			BlockIndex:        w.BlockIndex,
 			StartLine:         w.StartLine,

@@ -91,7 +91,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchartNodeLabelLong
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationLabelTooLong,
+					Kind:        mermaid.ViolationLabelTooLong{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					NodeID:      "A",
@@ -114,7 +114,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchartNodeLabel35Ch
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationLabelTooLong,
+					Kind:        mermaid.ViolationLabelTooLong{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					NodeID:      "A",
@@ -147,7 +147,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingTBFlowchartOneRank4Par
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationWidthExceeded,
+					Kind:        mermaid.ViolationWidthExceeded{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					ActualWidth: 4,
@@ -171,7 +171,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingLRFlowchart4NodesAtSam
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationWidthExceeded,
+					Kind:        mermaid.ViolationWidthExceeded{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					ActualWidth: 4,
@@ -192,7 +192,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchart4NodesAtOneRa
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationWidthExceeded,
+					Kind:        mermaid.ViolationWidthExceeded{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					ActualWidth: 4,
@@ -210,7 +210,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchart4NodesAtOneRa
 		return mermaid.ValidationResult{
 			Warnings: []mermaid.Warning{
 				{
-					Kind:        mermaid.WarningComplexDiagram,
+					Kind:        mermaid.WarningComplexDiagram{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					ActualWidth: 4,
@@ -231,7 +231,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchart4NodesAtOneRa
 			return mermaid.ValidationResult{
 				Warnings: []mermaid.Warning{
 					{
-						Kind:        mermaid.WarningComplexDiagram,
+						Kind:        mermaid.WarningComplexDiagram{},
 						FilePath:    "/mock-repo/docs/a.md",
 						BlockIndex:  0,
 						ActualWidth: 4,
@@ -246,7 +246,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchart4NodesAtOneRa
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationWidthExceeded,
+					Kind:        mermaid.ViolationWidthExceeded{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					ActualWidth: 4,
@@ -263,7 +263,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingMermaidBlockTwoFlowcha
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:       mermaid.ViolationMultipleDiagrams,
+					Kind:       mermaid.ViolationMultipleDiagrams{},
 					FilePath:   "/mock-repo/docs/a.md",
 					BlockIndex: 0,
 				},
@@ -315,7 +315,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileContainingFlowchartWithLabelLeng
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationLabelTooLong,
+					Kind:        mermaid.ViolationLabelTooLong{},
 					FilePath:    "/mock-repo/docs/a.md",
 					BlockIndex:  0,
 					NodeID:      "A",
@@ -341,7 +341,7 @@ func (s *validateMermaidUnitSteps) aMarkdownFileUnderPlansLongLabel() error {
 		return mermaid.ValidationResult{
 			Violations: []mermaid.Violation{
 				{
-					Kind:        mermaid.ViolationLabelTooLong,
+					Kind:        mermaid.ViolationLabelTooLong{},
 					FilePath:    "/mock-repo/plans/sample/diagram.md",
 					BlockIndex:  0,
 					NodeID:      "A",

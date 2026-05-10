@@ -41,7 +41,7 @@ func TestFormatText_LabelTooLong(t *testing.T) {
 		BlocksScanned: 1,
 		Violations: []Violation{
 			{
-				Kind:        ViolationLabelTooLong,
+				Kind:        ViolationLabelTooLong{},
 				FilePath:    "test.md",
 				BlockIndex:  0,
 				StartLine:   5,
@@ -70,7 +70,7 @@ func TestFormatText_WidthExceeded(t *testing.T) {
 		BlocksScanned: 1,
 		Violations: []Violation{
 			{
-				Kind:        ViolationWidthExceeded,
+				Kind:        ViolationWidthExceeded{},
 				FilePath:    "test.md",
 				BlockIndex:  0,
 				StartLine:   1,
@@ -94,7 +94,7 @@ func TestFormatText_MultipleDiagrams(t *testing.T) {
 		BlocksScanned: 1,
 		Violations: []Violation{
 			{
-				Kind:       ViolationMultipleDiagrams,
+				Kind:       ViolationMultipleDiagrams{},
 				FilePath:   "test.md",
 				BlockIndex: 0,
 				StartLine:  1,
@@ -113,7 +113,7 @@ func TestFormatText_Warning(t *testing.T) {
 		BlocksScanned: 1,
 		Warnings: []Warning{
 			{
-				Kind:        WarningComplexDiagram,
+				Kind:        WarningComplexDiagram{},
 				FilePath:    "test.md",
 				BlockIndex:  0,
 				StartLine:   1,
@@ -142,7 +142,7 @@ func TestFormatText_SubgraphDenseWarning(t *testing.T) {
 		BlocksScanned: 1,
 		Warnings: []Warning{
 			{
-				Kind:              WarningSubgraphDense,
+				Kind:              WarningSubgraphDense{},
 				FilePath:          "test.md",
 				BlockIndex:        0,
 				StartLine:         12,
@@ -173,7 +173,7 @@ func TestFormatText_SubgraphDenseUnnamedLabel(t *testing.T) {
 		BlocksScanned: 1,
 		Warnings: []Warning{
 			{
-				Kind:              WarningSubgraphDense,
+				Kind:              WarningSubgraphDense{},
 				FilePath:          "test.md",
 				BlockIndex:        0,
 				StartLine:         3,
@@ -194,7 +194,7 @@ func TestFormatJSON_ValidJSON(t *testing.T) {
 		BlocksScanned: 3,
 		Violations: []Violation{
 			{
-				Kind:        ViolationLabelTooLong,
+				Kind:        ViolationLabelTooLong{},
 				FilePath:    "a.md",
 				BlockIndex:  0,
 				StartLine:   1,
@@ -206,7 +206,7 @@ func TestFormatJSON_ValidJSON(t *testing.T) {
 		},
 		Warnings: []Warning{
 			{
-				Kind:        WarningComplexDiagram,
+				Kind:        WarningComplexDiagram{},
 				FilePath:    "b.md",
 				BlockIndex:  1,
 				StartLine:   5,
@@ -260,7 +260,7 @@ func TestFormatMarkdown_ContainsSeverityHeader(t *testing.T) {
 		BlocksScanned: 1,
 		Violations: []Violation{
 			{
-				Kind:        ViolationWidthExceeded,
+				Kind:        ViolationWidthExceeded{},
 				FilePath:    "test.md",
 				BlockIndex:  0,
 				StartLine:   1,
@@ -299,7 +299,7 @@ func TestFormatMarkdown_WarningRow(t *testing.T) {
 		BlocksScanned: 1,
 		Warnings: []Warning{
 			{
-				Kind:        WarningComplexDiagram,
+				Kind:        WarningComplexDiagram{},
 				FilePath:    "test.md",
 				BlockIndex:  0,
 				StartLine:   1,

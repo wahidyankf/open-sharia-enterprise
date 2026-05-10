@@ -119,7 +119,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           defaultOpts,
 			wantViolations: 1,
 			wantWarnings:   0,
-			violationKind:  ViolationLabelTooLong,
+			violationKind:  ViolationLabelTooLong{},
 		},
 		{
 			name: "width exactly at limit no violation",
@@ -140,7 +140,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           ValidateOptions{MaxLabelLen: 30, MaxWidth: 3, MaxDepth: 5},
 			wantViolations: 1,
 			wantWarnings:   0,
-			violationKind:  ViolationWidthExceeded,
+			violationKind:  ViolationWidthExceeded{},
 		},
 		{
 			name: "non-flowchart block no violations",
@@ -158,7 +158,7 @@ func TestValidateBlocks(t *testing.T) {
 			},
 			opts:           defaultOpts,
 			wantViolations: 1,
-			violationKind:  ViolationMultipleDiagrams,
+			violationKind:  ViolationMultipleDiagrams{},
 		},
 		{
 			name: "custom opts respected",
@@ -178,7 +178,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           ValidateOptions{MaxLabelLen: 30, MaxWidth: 3, MaxDepth: 5},
 			wantViolations: 0,
 			wantWarnings:   1,
-			warningKind:    WarningComplexDiagram,
+			warningKind:    WarningComplexDiagram{},
 		},
 		{
 			name: "width only exceeded violation",
@@ -188,7 +188,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           ValidateOptions{MaxLabelLen: 30, MaxWidth: 3, MaxDepth: 5},
 			wantViolations: 1,
 			wantWarnings:   0,
-			violationKind:  ViolationWidthExceeded,
+			violationKind:  ViolationWidthExceeded{},
 		},
 		{
 			name: "depth only exceeded no output",
@@ -207,7 +207,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           defaultOpts,
 			wantViolations: 1,
 			wantWarnings:   0,
-			violationKind:  ViolationWidthExceeded,
+			violationKind:  ViolationWidthExceeded{},
 		},
 		{
 			name: "LR_tall_in_span no violation",
@@ -226,7 +226,7 @@ func TestValidateBlocks(t *testing.T) {
 			opts:           defaultOpts,
 			wantViolations: 1,
 			wantWarnings:   0,
-			violationKind:  ViolationWidthExceeded,
+			violationKind:  ViolationWidthExceeded{},
 		},
 		{
 			name: "TD_deep_in_depth no violation",
@@ -248,14 +248,14 @@ func TestValidateBlocks(t *testing.T) {
 			if len(result.Warnings) != tt.wantWarnings {
 				t.Errorf("warnings = %d, want %d; warnings: %+v", len(result.Warnings), tt.wantWarnings, result.Warnings)
 			}
-			if tt.violationKind != "" && len(result.Violations) > 0 {
-				if result.Violations[0].Kind != tt.violationKind {
-					t.Errorf("violation kind = %q, want %q", result.Violations[0].Kind, tt.violationKind)
+			if tt.violationKind != nil && len(result.Violations) > 0 {
+				if result.Violations[0].Kind.Code() != tt.violationKind.Code() {
+					t.Errorf("violation kind = %q, want %q", result.Violations[0].Kind.Code(), tt.violationKind.Code())
 				}
 			}
-			if tt.warningKind != "" && len(result.Warnings) > 0 {
-				if result.Warnings[0].Kind != tt.warningKind {
-					t.Errorf("warning kind = %q, want %q", result.Warnings[0].Kind, tt.warningKind)
+			if tt.warningKind != nil && len(result.Warnings) > 0 {
+				if result.Warnings[0].Kind.Code() != tt.warningKind.Code() {
+					t.Errorf("warning kind = %q, want %q", result.Warnings[0].Kind.Code(), tt.warningKind.Code())
 				}
 			}
 		})
@@ -331,7 +331,7 @@ end`
 			result := ValidateBlocks([]MermaidBlock{makeFlowchartBlock(tt.source)}, tt.opts)
 			subgraphWarnings := 0
 			for _, w := range result.Warnings {
-				if w.Kind == WarningSubgraphDense {
+				if w.Kind.Code() == "subgraph_density" {
 					subgraphWarnings++
 				}
 			}
@@ -356,8 +356,8 @@ func TestValidateBlocks_AmpFanoutTriggersWidthViolation(t *testing.T) {
 	if len(result.Violations) != 1 {
 		t.Fatalf("violations = %d, want 1; got: %+v", len(result.Violations), result.Violations)
 	}
-	if result.Violations[0].Kind != ViolationWidthExceeded {
-		t.Errorf("kind = %q, want %q", result.Violations[0].Kind, ViolationWidthExceeded)
+	if result.Violations[0].Kind.Code() != "width_exceeded" {
+		t.Errorf("kind = %q, want %q", result.Violations[0].Kind.Code(), "width_exceeded")
 	}
 	if result.Violations[0].ActualWidth < 5 {
 		t.Errorf("ActualWidth = %d, want >= 5", result.Violations[0].ActualWidth)

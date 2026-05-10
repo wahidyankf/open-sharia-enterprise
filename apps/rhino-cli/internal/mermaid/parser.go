@@ -69,9 +69,9 @@ func ParseDiagram(block MermaidBlock) (ParsedDiagram, int, error) {
 
 	// Extract direction from the first header match.
 	firstMatch := matches[0]
-	dir := DirectionTB
+	dir := Direction(DirectionTB{})
 	if len(firstMatch) >= 4 && strings.TrimSpace(firstMatch[3]) != "" {
-		dir = Direction(strings.TrimSpace(firstMatch[3]))
+		dir = ParseDirection(strings.TrimSpace(firstMatch[3]))
 	}
 
 	// Parse nodes, edges, and subgraphs.
