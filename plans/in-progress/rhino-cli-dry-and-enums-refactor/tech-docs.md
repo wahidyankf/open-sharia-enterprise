@@ -1,5 +1,53 @@
 # Tech Docs — rhino-cli DRY + Enum Refactor Pass
 
+## SUPERSESSION NOTICE (2026-05-10)
+
+**This plan MUST be executed AFTER the `velvety-herding-ullman` worktree landed (now in main).**
+
+Before execution, read this notice. Significant changes to the enum landscape:
+
+### Enums Already Converted to Sealed Interfaces
+
+These were **typed string enums** when this plan was written; they are now **sealed interfaces** in main:
+
+| Enum                    | Was                         | Now                        | Files Affected                                                       |
+| ----------------------- | --------------------------- | -------------------------- | -------------------------------------------------------------------- |
+| `doctor.Scope`          | `type Scope string`         | `//sumtype:decl` interface | `types.go`, `checker.go`, `fixer.go`, `reporter.go`, `cmd/doctor.go` |
+| `doctor.ToolStatus`     | `type ToolStatus string`    | `//sumtype:decl` interface | `types.go`, `checker.go`, `fixer.go`, `reporter.go`                  |
+| `mermaid.Direction`     | `type Direction string`     | `//sumtype:decl` interface | `types.go`, `parser.go`, `validator.go`                              |
+| `mermaid.ViolationKind` | `type ViolationKind string` | `//sumtype:decl` interface | `types.go`, `validator.go`, `reporter.go`                            |
+| `mermaid.WarningKind`   | `type WarningKind string`   | `//sumtype:decl` interface | `types.go`, `validator.go`, `reporter.go`                            |
+| `testcoverage.Format`   | `type Format string`        | `//sumtype:decl` interface | `types.go`, `detect.go`, all parsers                                 |
+
+### Impact on This Plan
+
+1. **Item 2 (agents.CheckStatus)**: Plan says `type CheckStatus string`. Use sealed interface instead.
+2. **Item 3 (Criticality, Severity)**: Same — sealed interface, not typed string.
+3. **All other new enums**: Apply sealed interface pattern.
+4. **Item line about Direction/ViolationKind/WarningKind** — they are now sealed interfaces, not typed string enums.
+5. **Items referencing ToolStatus and Scope in doctor refactor** — already sealed; use type assertions and `.Code()`.
+
+### Canonical Sealed-Interface Form
+
+```go
+//sumtype:decl
+type CheckStatus interface {
+    isCheckStatus()
+    Code() string
+    String() string
+}
+
+type StatusPassed struct{}
+func (StatusPassed) isCheckStatus()  {}
+func (StatusPassed) Code() string    { return "passed" }
+func (StatusPassed) String() string  { return "passed" }
+// ... StatusWarning, StatusFailed
+```
+
+See [Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types).
+
+---
+
 ## Architecture Overview
 
 Pre-refactor structure stays. The refactor consolidates patterns
