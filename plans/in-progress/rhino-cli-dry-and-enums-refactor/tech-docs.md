@@ -1,50 +1,31 @@
 # Tech Docs — rhino-cli DRY + Enum Refactor Pass
 
-## SUPERSESSION NOTICE (2026-05-10)
+## Pattern Baseline (post-`velvety-herding-ullman` rebase)
 
-**This plan MUST be executed AFTER the `velvety-herding-ullman` worktree landed (now in main).**
+This plan was rebased onto `origin/main` after the `velvety-herding-ullman`
+worktree landed. That worktree introduced the **sealed-interface sum-type**
+pattern (`//sumtype:decl` + `gochecksumtype` linter) and converted six
+existing enums to it: `doctor.Scope`, `doctor.ToolStatus`,
+`mermaid.Direction`, `mermaid.ViolationKind`, `mermaid.WarningKind`, and
+`testcoverage.Format`. It also enabled new linters: `errorlint`, `godot`,
+`revive (exported + package-comments)`, `exhaustive`, `gochecksumtype`.
 
-Before execution, read this notice. Significant changes to the enum landscape:
+This plan adopts the same pattern for every new enum it introduces. See
+[Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types)
+for the canonical form.
 
-### Enums Already Converted to Sealed Interfaces
+**Pattern rule for this plan**:
 
-These were **typed string enums** when this plan was written; they are now **sealed interfaces** in main:
+| Item                                               | Pattern                                              | Reason                                                             |
+| -------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| Items 2, 3, 4 (CheckStatus, Criticality, Severity) | Sealed interface (`//sumtype:decl`)                  | Multi-variant, JSON-serialized, exported across packages           |
+| Item 1 (matcherKind)                               | Sealed interface (`//sumtype:decl`)                  | Closed universe; matches repo style; gochecksumtype enforces it    |
+| Item 5 (mermaid)                                   | Already sealed in main — verify gochecksumtype clean | No active fix needed; was an exhaustivity-discipline item          |
+| Item 13 (Scope filter)                             | Scope already sealed; refactor still needed          | `MinimalTools` map → `toolDef.minimal` field; type-switch on Scope |
 
-| Enum                    | Was                         | Now                        | Files Affected                                                       |
-| ----------------------- | --------------------------- | -------------------------- | -------------------------------------------------------------------- |
-| `doctor.Scope`          | `type Scope string`         | `//sumtype:decl` interface | `types.go`, `checker.go`, `fixer.go`, `reporter.go`, `cmd/doctor.go` |
-| `doctor.ToolStatus`     | `type ToolStatus string`    | `//sumtype:decl` interface | `types.go`, `checker.go`, `fixer.go`, `reporter.go`                  |
-| `mermaid.Direction`     | `type Direction string`     | `//sumtype:decl` interface | `types.go`, `parser.go`, `validator.go`                              |
-| `mermaid.ViolationKind` | `type ViolationKind string` | `//sumtype:decl` interface | `types.go`, `validator.go`, `reporter.go`                            |
-| `mermaid.WarningKind`   | `type WarningKind string`   | `//sumtype:decl` interface | `types.go`, `validator.go`, `reporter.go`                            |
-| `testcoverage.Format`   | `type Format string`        | `//sumtype:decl` interface | `types.go`, `detect.go`, all parsers                                 |
-
-### Impact on This Plan
-
-1. **Item 2 (agents.CheckStatus)**: Plan says `type CheckStatus string`. Use sealed interface instead.
-2. **Item 3 (Criticality, Severity)**: Same — sealed interface, not typed string.
-3. **All other new enums**: Apply sealed interface pattern.
-4. **Item line about Direction/ViolationKind/WarningKind** — they are now sealed interfaces, not typed string enums.
-5. **Items referencing ToolStatus and Scope in doctor refactor** — already sealed; use type assertions and `.Code()`.
-
-### Canonical Sealed-Interface Form
-
-```go
-//sumtype:decl
-type CheckStatus interface {
-    isCheckStatus()
-    Code() string
-    String() string
-}
-
-type StatusPassed struct{}
-func (StatusPassed) isCheckStatus()  {}
-func (StatusPassed) Code() string    { return "passed" }
-func (StatusPassed) String() string  { return "passed" }
-// ... StatusWarning, StatusFailed
-```
-
-See [Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types).
+**Wire-format rule** (from design-patterns.md): when a sealed-interface type
+appears in a JSON-serialized struct, expose a separate `string` wire field
+populated from `value.Code()`. Internal type stays the sealed interface.
 
 ---
 
@@ -79,11 +60,11 @@ flowchart LR
 
 ## Item-by-Item Design
 
-### Item 1: `speccoverage.matcherKind` enum
+### Item 1: `speccoverage.matcherKind` sealed interface
 
 **File**: `internal/speccoverage/checker.go`
 
-**Before** (lines 35-41, 36-37):
+**Before** (lines 35-41):
 
 ```go
 type stepMatcherEntry struct {
@@ -103,73 +84,91 @@ Two callers use string literals:
   with no `default`.
 - `reporter.go:78` uses `o.MatcherKind` as a `string` field (already wire
   format) — NO migration needed here. The string value is populated at the
-  orphan-collection site via `entry.Kind.String()`.
+  orphan-collection site via `entry.Kind.Code()`.
 
-**After**:
+**After** (sealed interface per `velvety-herding-ullman` baseline):
 
 ```go
-type matcherKind int
-
-const (
-    kindExact matcherKind = iota
-    kindPattern
-)
-
-func (k matcherKind) String() string {
-    switch k {
-    case kindExact:
-        return "exact"
-    case kindPattern:
-        return "pattern"
-    default:
-        panic(fmt.Sprintf("unhandled matcherKind: %d", int(k)))
-    }
+//sumtype:decl
+type matcherKind interface {
+    isMatcherKind()
+    Code() string
 }
+
+type kindExact struct{}
+func (kindExact) isMatcherKind() {}
+func (kindExact) Code() string   { return "exact" }
+
+type kindPattern struct{}
+func (kindPattern) isMatcherKind() {}
+func (kindPattern) Code() string   { return "pattern" }
 
 type stepMatcherEntry struct {
     Kind        matcherKind
-    // ...
+    // ... rest unchanged
 }
 ```
 
 **Wire-format note**: `OrphanStepImpl.MatcherKind` (in `types.go`)
-serializes to JSON. To preserve the existing JSON output (`"matcher_kind": "exact"`),
-keep `OrphanStepImpl.MatcherKind` as `string` (the wire type) but
-populate it via `entry.Kind.String()` at the orphan-collection site.
-Internal type is `matcherKind`; external (JSON) type stays `string`.
+serializes to JSON. Preserve the existing JSON output
+(`"matcher_kind": "exact"`) by keeping `OrphanStepImpl.MatcherKind` as
+`string` and populating it via `entry.Kind.Code()` at the
+orphan-collection site. Internal type is `matcherKind`; external (JSON)
+type stays `string`.
 
 **Switch contract**: `checkOrphanStepImpls` becomes:
 
 ```go
-switch e.Kind {
+switch e.Kind.(type) {
 case kindExact:
     // ...
 case kindPattern:
     // ...
-default:
-    panic(fmt.Sprintf("unhandled matcherKind: %v", e.Kind))
 }
 ```
 
-The `default: panic` is intentional — these two are the closed universe.
+`gochecksumtype` enforces exhaustiveness at lint time; no `default` arm
+required (and `gochecksumtype` warns if one is added that swallows future
+cases).
 
-### Item 2: `agents.CheckStatus` enum
+### Item 2: `agents.CheckStatus` sealed interface
 
 **File**: `internal/agents/types.go`
 
 **Before**: `ValidationCheck.Status string` with literal `"passed"`,
 `"warning"`, `"failed"` at ~232 sites across 5 files.
 
-**After**:
+**After** (sealed interface — matches `doctor.ToolStatus` shape):
 
 ```go
-type CheckStatus string
+//sumtype:decl
+type CheckStatus interface {
+    isCheckStatus()
+    Code() string
+}
 
-const (
-    StatusPassed  CheckStatus = "passed"
-    StatusWarning CheckStatus = "warning"
-    StatusFailed  CheckStatus = "failed"
-)
+type StatusPassed struct{}
+func (StatusPassed) isCheckStatus() {}
+func (StatusPassed) Code() string   { return "passed" }
+
+type StatusWarning struct{}
+func (StatusWarning) isCheckStatus() {}
+func (StatusWarning) Code() string   { return "warning" }
+
+type StatusFailed struct{}
+func (StatusFailed) isCheckStatus() {}
+func (StatusFailed) Code() string   { return "failed" }
+
+// ParseCheckStatus converts a CLI/JSON string to a CheckStatus variant.
+// Returns false for unknown values.
+func ParseCheckStatus(s string) (CheckStatus, bool) {
+    switch s {
+    case "passed":  return StatusPassed{}, true
+    case "warning": return StatusWarning{}, true
+    case "failed":  return StatusFailed{}, true
+    default:        return nil, false
+    }
+}
 
 type ValidationCheck struct {
     Name     string
@@ -180,15 +179,19 @@ type ValidationCheck struct {
 }
 ```
 
-`string`-typed (not int-iota) because the JSON marshaller already
-serializes the literal value `"passed"|"warning"|"failed"` and that
-shape is consumed by downstream tooling. Type alias gives compile-time
-exhaustivity without breaking JSON.
+**JSON wire-format**: existing JSON output emits literal `"status": "passed"`.
+Preserve via separate wire-format struct with `Status string` populated
+via `check.Status.Code()` at marshal time (same pattern doctor reporter
+already uses — see `internal/doctor/reporter.go:105`).
 
-**Migration**: Mechanical replace across 5 internal/agents files. Test
-files migrate too (test assertions read `Status`).
+**Migration**: Mechanical replace across 5 internal/agents non-test files.
+Each `Status: "passed"` becomes `Status: StatusPassed{}`. Type switches on
+status (e.g., in `ValidationResult.Add` — see Item 10) use `.(type)`
+exhaustively. Test files migrate too: assertions like
+`if check.Status == "passed"` become `_, ok := check.Status.(StatusPassed)`
+or compare via `check.Status.Code() == "passed"`.
 
-### Item 3: `cmd.Criticality` enum
+### Item 3: `cmd.Criticality` sealed interface
 
 **File**: `cmd/specs_validate_tree.go` — defines `SpecFinding`.
 
@@ -206,64 +209,101 @@ type SpecFinding struct {
 
 12 string-literal usages across the four `specs_validate_*.go` files.
 
-**After**:
+**After** (sealed interface):
 
 ```go
-type Criticality string
+//sumtype:decl
+type Criticality interface {
+    isCriticality()
+    Code() string
+}
 
-const (
-    CriticalityHigh   Criticality = "HIGH"
-    CriticalityMedium Criticality = "MEDIUM"
-    CriticalityLow    Criticality = "LOW"
-)
+type CriticalityHigh struct{}
+func (CriticalityHigh) isCriticality() {}
+func (CriticalityHigh) Code() string   { return "HIGH" }
+
+type CriticalityMedium struct{}
+func (CriticalityMedium) isCriticality() {}
+func (CriticalityMedium) Code() string   { return "MEDIUM" }
+
+type CriticalityLow struct{}
+func (CriticalityLow) isCriticality() {}
+func (CriticalityLow) Code() string   { return "LOW" }
 
 type SpecFinding struct {
     Category    string      `json:"category"`
-    Criticality Criticality `json:"criticality"`
+    Criticality Criticality `json:"-"`              // not directly marshalled
+    CriticalityCode string  `json:"criticality"`    // wire-format mirror
     File        string      `json:"file"`
     Evidence    string      `json:"evidence"`
     Expected    string      `json:"expected"`
 }
 ```
 
+**Wire-format alternative** (preferred — fewer fields): keep
+`Criticality Criticality` and add a `MarshalJSON` method that emits
+`{"criticality": code, ...}` via a private wire-format struct. The choice
+between the two-field approach and `MarshalJSON` is open in delivery —
+prefer whichever produces a smaller diff against the existing JSON
+fixture. Run-time behaviour is identical; pick the smaller-diff form.
+
 JSON wire format preserved (`"criticality": "HIGH"`).
 
-### Item 4: `bcregistry.Severity` + `glossary.Severity` enum
+### Item 4: `bcregistry.Severity` + `glossary.Severity` sealed interface
 
 **Files**: `internal/bcregistry/types.go`, `internal/glossary/types.go`.
 
 Currently both packages have `Severity string // "error" or "warning"` on
 their `Finding` and `ValidateOptions` types.
 
-**After**: each package defines (independently — they don't share a
-package, so the type lives in each):
+**After** (sealed interface; defined independently in each package):
 
 ```go
-type Severity string
+//sumtype:decl
+type Severity interface {
+    isSeverity()
+    Code() string
+}
 
-const (
-    SeverityError Severity = "error"
-    SeverityWarn  Severity = "warn"
-)
+type SeverityError struct{}
+func (SeverityError) isSeverity() {}
+func (SeverityError) Code() string { return "error" }
+
+type SeverityWarn struct{}
+func (SeverityWarn) isSeverity() {}
+func (SeverityWarn) Code() string { return "warn" }
+
+func ParseSeverity(s string) (Severity, bool) {
+    switch s {
+    case "error":          return SeverityError{}, true
+    case "warn", "warning": return SeverityWarn{}, true
+    default:               return nil, false
+    }
+}
 ```
 
 The on-disk YAML and CLI flag still accept the strings `"error"` and
-`"warn"`; conversion happens at the cmd-layer boundary in
-`resolveSeverity` (item 8).
+`"warn"`; conversion happens at the cmd-layer boundary in `resolveSeverity`
+(item 8) which calls `ParseSeverity` and surfaces invalid input as an
+error. JSON-emitted findings populate the wire-format string field via
+`finding.Severity.Code()`.
 
-### Item 5: Mermaid switch exhaustivity
+### Item 5: Mermaid switch exhaustivity (REVISED — already complete)
 
 **Files**: `internal/mermaid/parser.go`, `internal/mermaid/validator.go`,
 `internal/mermaid/reporter.go`.
 
-`Direction`, `ViolationKind`, `WarningKind` are already typed string enums.
-Audit existing switches; add `default:` arms:
+**Status**: already done by the `velvety-herding-ullman` worktree.
+`Direction`, `ViolationKind`, `WarningKind` are sealed interfaces;
+`gochecksumtype` enforces exhaustiveness at lint time. No active fix
+needed.
 
-- For closed-universe switches: `default: panic(fmt.Sprintf("unhandled %T: %v", x, x))`.
-- For switches that intentionally treat unknowns as no-op: explicit
-  `default:` with `// no-op: <reason>` comment.
-
-No type changes; pure exhaustivity discipline pass.
+**Action in this plan**: confirm `golangci-lint run ./...` reports zero
+`gochecksumtype` violations against `internal/mermaid/`. This is a
+verify-only step folded into Phase 12.3 lint check; no separate phase
+required. If a violation surfaces (e.g., a future contributor adds a new
+variant without updating a switch), it is fixed in place — but no
+violations are expected at plan start.
 
 ### Item 6: Per-language step extractor consolidation
 
@@ -529,26 +569,28 @@ func runSpecsValidator(cmd *cobra.Command, label string, targets []string, fn sp
 **Note on output format**: `validate-tree`, `validate-adoption`,
 `validate-links` print `%s: HIGH: %s\n` (hardcoded HIGH).
 `validate-counts` prints `%s: %s: %s\n` (uses `f.Criticality`).
-The shared driver uses `f.Criticality` — equivalent because all three
-"HIGH"-printers happen to set `Criticality: "HIGH"` already, so output
-is byte-identical. **Verify** in Phase 6 with golden file before/after.
+The shared driver uses `f.Criticality.Code()` (sealed interface — see
+Item 3) — equivalent because all three "HIGH"-printers happen to set
+`Criticality: CriticalityHigh{}` already, so output is byte-identical.
+**Verify** in Phase 6 with golden file before/after.
 
 ### Item 10: ValidationResult.Add helper
 
 **File**: `internal/agents/types.go`.
 
+`Status` is now a sealed interface (see Item 2). The tally uses an
+exhaustive type switch which `gochecksumtype` enforces at lint time.
+
 ```go
 func (r *ValidationResult) Add(check ValidationCheck) {
     r.Checks = append(r.Checks, check)
-    switch check.Status {
+    switch check.Status.(type) {
     case StatusPassed:
         r.PassedChecks++
     case StatusWarning:
         r.WarningChecks++
     case StatusFailed:
         r.FailedChecks++
-    default:
-        panic(fmt.Sprintf("unhandled CheckStatus: %v", check.Status))
     }
     r.TotalChecks++
 }
@@ -561,15 +603,18 @@ func (r *ValidationResult) Add(check ValidationCheck) {
 
 **File**: `internal/agents/check_helpers.go` (new).
 
+`Status` is the sealed interface from Item 2; constructors set the
+appropriate variant.
+
 ```go
 func passed(name, message string) ValidationCheck {
-    return ValidationCheck{Name: name, Status: StatusPassed, Message: message}
+    return ValidationCheck{Name: name, Status: StatusPassed{}, Message: message}
 }
 
 func failed(name, expected, actual, message string) ValidationCheck {
     return ValidationCheck{
         Name:     name,
-        Status:   StatusFailed,
+        Status:   StatusFailed{},
         Expected: expected,
         Actual:   actual,
         Message:  message,
@@ -579,7 +624,7 @@ func failed(name, expected, actual, message string) ValidationCheck {
 func warning(name, expected, actual, message string) ValidationCheck {
     return ValidationCheck{
         Name:     name,
-        Status:   StatusWarning,
+        Status:   StatusWarning{},
         Expected: expected,
         Actual:   actual,
         Message:  message,
@@ -596,13 +641,16 @@ constructed inline), keep the literal — partial migration is fine.
 
 **File**: `internal/doctor/checker.go`.
 
+`ToolStatus` is a sealed interface in main; `StatusOK{}` etc. are
+zero-value struct literals.
+
 ```go
 type compareFn func(installed, required string) (ToolStatus, string)
 
 func withEmptyOK(f compareFn) compareFn {
     return func(installed, required string) (ToolStatus, string) {
         if required == "" {
-            return StatusOK, "no version requirement"
+            return StatusOK{}, "no version requirement"
         }
         return f(installed, required)
     }
@@ -616,19 +664,31 @@ func withEmptyOK(f compareFn) compareFn {
 
 Pure cosmetic; ~40 LOC saved across the four functions.
 
-### Item 13: doctor MinimalTools removal
+### Item 13: doctor MinimalTools removal + scope type-switch
 
 **File**: `internal/doctor/types.go`, `internal/doctor/tools.go`,
 `internal/doctor/checker.go`.
+
+`Scope` is already a sealed interface in main (`ScopeFull{}`,
+`ScopeMinimal{}` per `velvety-herding-ullman`). What still needs doing:
+
+1. The `MinimalTools` map (`types.go:97-98`) still exists.
+2. `toolDef` doesn't have a `minimal` field.
+3. `CheckAll`'s scope filter (`checker.go:540`) still keys into the
+   `MinimalTools` map by tool name.
+4. The scope branch is a sealed-interface type switch already; verify
+   `gochecksumtype` exhaustiveness post-refactor.
 
 **Before**:
 
 ```go
 // types.go
-var MinimalTools = map[string]bool{...}
+var MinimalTools = map[string]bool{
+    "git": true, "volta": true, /* ... */
+}
 
-// checker.go
-if opts.Scope == ScopeMinimal {
+// checker.go (scope filter — currently uses string-keyed lookup):
+if _, ok := opts.Scope.(ScopeMinimal); ok {
     filtered := make([]toolDef, 0)
     for _, def := range defs {
         if MinimalTools[def.name] {
@@ -653,8 +713,11 @@ type toolDef struct {
     name: "git", binary: "git", /* ... */ minimal: true,
 },
 
-// checker.go:
-if opts.Scope == ScopeMinimal {
+// checker.go — exhaustive type switch on the sealed Scope interface:
+switch opts.Scope.(type) {
+case nil, ScopeFull:
+    // all defs (nil = unset CLI flag → defaults to full)
+case ScopeMinimal:
     filtered := make([]toolDef, 0)
     for _, def := range defs {
         if def.minimal {
@@ -663,17 +726,12 @@ if opts.Scope == ScopeMinimal {
     }
     defs = filtered
 }
-
-// Scope switch becomes exhaustive:
-switch opts.Scope {
-case "", ScopeFull:
-    // all defs
-case ScopeMinimal:
-    // filter
-default:
-    panic(fmt.Sprintf("unhandled Scope: %v", opts.Scope))
-}
 ```
+
+`gochecksumtype` enforces every variant is handled; deleting the
+`MinimalTools` map removes the parallel out-of-band data. Adding a new
+tool to minimal scope is now a single `minimal: true` field assignment
+in `buildToolDefs`.
 
 ### Item 14: stepMatcher legacy fields removal
 

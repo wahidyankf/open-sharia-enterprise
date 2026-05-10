@@ -82,10 +82,11 @@ All measurable on demand from the worktree:
    `grep -rn '"passed"\|"warning"\|"failed"' apps/rhino-cli/internal/agents/*.go`
    returns 0 matches in non-test files. Same shape for the four other
    converted enums.
-4. **Switch exhaustivity for typed enums (observable fact)**: Every
-   `switch` over a converted enum has either a `default:` branch with
-   meaningful behaviour OR a `default: panic(...)` for closed unions.
-   Verified by `grep` plus reviewer pass.
+4. **Switch exhaustivity for sealed-interface enums (observable fact)**:
+   Every type switch over a converted enum is exhaustive. Enforced
+   automatically by `gochecksumtype` (one of the linters in
+   `.golangci.yml`); `cd apps/rhino-cli && golangci-lint run --enable-only=gochecksumtype ./...`
+   exits 0 with zero violations.
 5. **Per-language step extractor LOC reduction (cited measurement)**:
    Sum of LOC for the 7 `<lang>_steps.go` files drops by ≥30% from the
    pre-refactor baseline (count taken at plan start).

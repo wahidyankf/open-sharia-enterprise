@@ -82,43 +82,63 @@ Pre-refactor capture. No code changes yet. Output stored in
 
 ---
 
-## Phase 1 — `agents.CheckStatus` typed enum + `ValidationResult.Add`
+## Phase 1 — `agents.CheckStatus` sealed interface + `ValidationResult.Add`
 
 Foundation phase. Broadest reach, lowest risk. ~232 string-literal sites.
 
-- [ ] **1.1 GREEN (type)** — Edit `apps/rhino-cli/internal/agents/types.go`:
-      add `type CheckStatus string` plus consts `StatusPassed = "passed"`,
-      `StatusWarning = "warning"`, `StatusFailed = "failed"`. Change
-      `ValidationCheck.Status` field type from `string` to `CheckStatus`.
+Pattern: sealed interface (`//sumtype:decl`) per the
+`velvety-herding-ullman` baseline — see tech-docs.md Item 2.
+
+- [ ] **1.1 GREEN (sealed interface)** — Edit
+      `apps/rhino-cli/internal/agents/types.go`: add `//sumtype:decl`
+      `CheckStatus` interface with marker `isCheckStatus()` and `Code() string`,
+      plus variants `StatusPassed{}`, `StatusWarning{}`, `StatusFailed{}`
+      and a `ParseCheckStatus(s string) (CheckStatus, bool)` helper.
+      Change `ValidationCheck.Status` field type from `string` to
+      `CheckStatus`. Every new exported identifier carries a doc comment
+      ending in a period (godot + revive).
 
 - [ ] **1.2 GREEN (callsite migration — internal/agents)** — Replace every
-      string literal `"passed"|"warning"|"failed"` in
-      `apps/rhino-cli/internal/agents/*.go` (non-test) with the typed
-      consts. Files touched: `agent_validator.go`, `claude_validator.go`,
+      string literal `Status: "passed"` / `"warning"` / `"failed"` in
+      `apps/rhino-cli/internal/agents/*.go` (non-test) with the
+      corresponding zero-value variant (e.g., `StatusPassed{}`). Files
+      touched: `agent_validator.go`, `claude_validator.go`,
       `skill_validator.go`, `sync_validator.go`, `yaml_formatting.go`.
-      Verify with `grep -rn '"passed"\|"warning"\|"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go` —
+      Verify with
+      `grep -rn 'Status:\s*"passed"\|Status:\s*"warning"\|Status:\s*"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go` —
       must return 0.
 
-- [ ] **1.3 GREEN (test migration)** — Update `*_test.go` files in
+- [ ] **1.3 GREEN (JSON wire-format)** — Add a wire-format struct in the
+      reporter (or marshalling helper) that exposes `Status string`
+      populated via `check.Status.Code()`, mirroring
+      `internal/doctor/reporter.go:105`. Existing JSON output
+      (`"status": "passed"`) is preserved byte-for-byte.
+
+- [ ] **1.4 GREEN (test migration)** — Update `*_test.go` files in
       `apps/rhino-cli/internal/agents/` that compare `check.Status` to
-      a literal string. Replace with the typed const. Tests that
-      assert against JSON output keep their `"passed"` literal as it's
-      the wire format.
+      a literal string. Replace with type assertion
+      (`_, ok := check.Status.(StatusPassed)`) or compare via
+      `check.Status.Code() == "passed"`. JSON-output assertions keep
+      the literal `"passed"` since strings are the wire format.
 
-- [ ] **1.4 GREEN (Add method)** — Add `func (r *ValidationResult) Add(check ValidationCheck)`
-      method in `types.go` per tech-docs.md item 10. Include
-      `default: panic` for unhandled status.
+- [ ] **1.5 GREEN (Add method)** — Add `func (r *ValidationResult) Add(check ValidationCheck)`
+      method in `types.go` per tech-docs.md item 10. Use exhaustive type
+      switch on `check.Status.(type)`; `gochecksumtype` enforces every
+      variant is handled.
 
-- [ ] **1.5 GREEN (sync_validator migration)** — Edit
+- [ ] **1.6 GREEN (sync_validator migration)** — Edit
       `apps/rhino-cli/internal/agents/sync_validator.go`: replace 4×
       duplicated `result.Checks = append(...) ; result.PassedChecks++ / FailedChecks++ ; result.TotalChecks++`
       blocks with `result.Add(check)`. Lines affected approximately
       22-67. Tests must continue to pass with no edits.
 
-- [ ] **1.6 PHASE GATE** — Run `npx nx run rhino-cli:test:quick`. Exit 0,
-      coverage ≥ baseline − 0.5%.
+- [ ] **1.7 PHASE GATE** — Run
+      `cd apps/rhino-cli && golangci-lint run ./...` — exits 0 (no new
+      gochecksumtype, godot, revive, or errorlint violations introduced).
+      Then run `npx nx run rhino-cli:test:quick`. Exit 0, coverage ≥
+      baseline − 0.5%.
 
-- [ ] **1.7 COMMIT** — `refactor(rhino-cli/agents): introduce CheckStatus enum and ValidationResult.Add`.
+- [ ] **1.8 COMMIT** — `refactor(rhino-cli/agents): introduce CheckStatus sealed interface and ValidationResult.Add`.
 
 ---
 
@@ -144,63 +164,85 @@ Foundation phase. 24-file mechanical replace.
 
 ---
 
-## Phase 3 — `speccoverage.matcherKind` typed enum
+## Phase 3 — `speccoverage.matcherKind` sealed interface
 
 Closed-universe phase. ~12 sites across `checker.go`, `types.go`, and
 `rust_steps.go` (non-test). `reporter.go` requires no changes — it uses
 `o.MatcherKind` as a wire-format string field already.
 
-- [ ] **3.1 GREEN (type)** — Edit
+Pattern: sealed interface (`//sumtype:decl`) per tech-docs.md item 1.
+
+- [ ] **3.1 GREEN (sealed interface)** — Edit
       `apps/rhino-cli/internal/speccoverage/checker.go`: add
-      `type matcherKind int`, consts `kindExact`, `kindPattern`, and a
-      `String()` method per tech-docs.md item 1. Change
-      `stepMatcherEntry.Kind` field type from `string` to `matcherKind`.
+      `//sumtype:decl matcherKind` interface with marker `isMatcherKind()`
+      and `Code() string`, plus variants `kindExact{}` and `kindPattern{}`.
+      Change `stepMatcherEntry.Kind` field type from `string` to
+      `matcherKind`. Doc comments end in periods (godot).
 
 - [ ] **3.2 GREEN (callsite migration)** — Replace every
-      `Kind: "exact"` / `Kind: "pattern"` / `case "exact":` /
-      `case "pattern":` / `e.Kind == "pattern"` reference with the
-      typed const. Add `default: panic(fmt.Sprintf("unhandled matcherKind: %v", e.Kind))`
-      to the switch in `checkOrphanStepImpls`.
+      `Kind: "exact"` / `Kind: "pattern"` write with `Kind: kindExact{}`
+      / `Kind: kindPattern{}`. Replace `case "exact":` / `case "pattern":`
+      string switches with type switches: `case kindExact:` /
+      `case kindPattern:`. Replace `e.Kind == "pattern"` with type
+      assertion: `_, isPattern := e.Kind.(kindPattern)`.
+      `gochecksumtype` enforces exhaustiveness — no `default:` arm.
 
 - [ ] **3.3 GREEN (JSON wire bridge)** — `OrphanStepImpl.MatcherKind`
       stays `string` (wire format). At the orphan collection site
-      (`checkOrphanStepImpls`), populate via `e.Kind.String()`. Verify
+      (`checkOrphanStepImpls`), populate via `e.Kind.Code()`. Verify
       JSON output unchanged: rerun the Phase 0 spec-coverage capture
       and diff against baseline.
 
-- [ ] **3.4 PHASE GATE** — `npx nx run rhino-cli:test:quick` exits 0.
+- [ ] **3.4 PHASE GATE** —
+      `cd apps/rhino-cli && golangci-lint run ./internal/speccoverage/...` —
+      exits 0 (gochecksumtype reports zero exhaustiveness violations).
+      Then `npx nx run rhino-cli:test:quick` exits 0.
       `grep -n '"exact"\|"pattern"' apps/rhino-cli/internal/speccoverage/*.go | grep -v _test.go` —
-      should only show the `String()` method body and the JSON-wire
+      should only show the `Code()` method bodies and the JSON-wire
       population.
 
-- [ ] **3.5 COMMIT** — `refactor(rhino-cli/speccoverage): introduce typed matcherKind enum`.
+- [ ] **3.5 COMMIT** — `refactor(rhino-cli/speccoverage): introduce sealed matcherKind interface`.
 
 ---
 
-## Phase 4 — `bcregistry.Severity` + `glossary.Severity` + ddd consolidation
+## Phase 4 — `bcregistry.Severity` + `glossary.Severity` sealed interface + ddd consolidation
 
 Closed-universe + DRY in one phase (small enough). Item 4 + Item 8.
 
+Pattern: each package defines its own `//sumtype:decl` `Severity` sealed
+interface per tech-docs.md item 4.
+
 - [ ] **4.1 GREEN (bcregistry Severity)** — Edit
-      `apps/rhino-cli/internal/bcregistry/types.go`: add
-      `type Severity string` + consts `SeverityError`, `SeverityWarn`.
-      Change `Finding.Severity`, `ValidateOptions.Severity` field types.
+      `apps/rhino-cli/internal/bcregistry/types.go`: add a
+      `//sumtype:decl Severity` interface with marker `isSeverity()` and
+      `Code() string`, plus variants `SeverityError{}`, `SeverityWarn{}`,
+      and a `ParseSeverity(s string) (Severity, bool)` helper. Change
+      `Finding.Severity` and `ValidateOptions.Severity` field types
+      from `string` to `Severity`. Doc comments end in periods.
 
 - [ ] **4.2 GREEN (glossary Severity)** — Same pattern in
       `apps/rhino-cli/internal/glossary/types.go`.
 
 - [ ] **4.3 GREEN (internal callsites)** — Replace string literals
-      `"error"`, `"warn"` in `bcregistry/*.go` and `glossary/*.go`
-      non-test files with typed consts.
+      `Severity: "error"` / `Severity: "warn"` in `bcregistry/*.go` and
+      `glossary/*.go` non-test files with the corresponding zero-value
+      variant (e.g., `Severity: SeverityError{}`). Severity comparisons
+      in switches use type-switch on `.(type)`.
 
 - [ ] **4.4 GREEN (cmd/severity.go)** — Create
-      `apps/rhino-cli/cmd/severity.go` with shared `resolveSeverity` and
-      `normaliseSeverity` per tech-docs.md item 8.
+      `apps/rhino-cli/cmd/severity.go` (_New file_) with shared
+      `resolveSeverity(flagVal string) string` (returns the wire string
+      `"error"` or `"warn"`) and `normaliseSeverity` per tech-docs.md
+      item 8. The cmd-layer keeps the wire-string contract for backwards
+      compatibility with `--severity` flag and `OSE_RHINO_DDD_SEVERITY`
+      env var; sealed-interface conversion happens at the
+      bcregistry/glossary boundary via `ParseSeverity`.
 
 - [ ] **4.5 GREEN (ddd_bc.go migration)** — Edit
       `apps/rhino-cli/cmd/ddd_bc.go`: delete `resolveBcSeverity`,
       `normaliseSeverity`. Call site becomes
-      `sev := resolveSeverity(bcSeverity)`.
+      `sev := resolveSeverity(bcSeverity)`. Pass `sev` through to
+      `bcregistry.ValidateAll` which calls `ParseSeverity` internally.
 
 - [ ] **4.6 GREEN (ddd_ul.go migration)** — Edit
       `apps/rhino-cli/cmd/ddd_ul.go`: delete `resolveUlSeverity`,
@@ -218,47 +260,61 @@ Closed-universe + DRY in one phase (small enough). Item 4 + Item 8.
       env wins when no flag, default when neither, env "warn" emits
       stderr warning. RED on file creation, GREEN once impl works.
 
-- [ ] **4.8 PHASE GATE** — `npx nx run rhino-cli:test:quick` exits 0.
-      Re-run Phase 0 ddd_bc + ddd_ul output captures with both flag
-      and env permutations; diff against baseline.
+- [ ] **4.8 PHASE GATE** —
+      `cd apps/rhino-cli && golangci-lint run ./internal/bcregistry/... ./internal/glossary/... ./cmd/...` —
+      exits 0. Then `npx nx run rhino-cli:test:quick` exits 0.
+      Re-run Phase 0 ddd_bc + ddd_ul output captures with both flag and
+      env permutations; diff against baseline (output byte-identical).
 
-- [ ] **4.9 COMMIT** — `refactor(rhino-cli): typed Severity + shared resolveSeverity helper`.
-
----
-
-## Phase 5 — Mermaid switch exhaustivity
-
-Closed-universe phase. Pure exhaustivity discipline; no type changes.
-
-- [ ] **5.1 AUDIT** — Grep all switches over `Direction`,
-      `ViolationKind`, `WarningKind` in
-      `apps/rhino-cli/internal/mermaid/*.go`:
-      `grep -nB1 -A20 'switch.*Direction\|switch.*ViolationKind\|switch.*WarningKind' apps/rhino-cli/internal/mermaid/*.go | grep -v _test.go`.
-
-- [ ] **5.2 GREEN** — For each switch found in 5.1: add explicit
-      `default:` arm. Closed-universe switches → `default: panic(fmt.Sprintf("unhandled %T: %v", x, x))`.
-      No-op-on-unknown switches → explicit `default:` with `// no-op: <reason>` comment.
-
-- [ ] **5.3 PHASE GATE** — `npx nx run rhino-cli:test:quick` exits 0.
-
-- [ ] **5.4 COMMIT** — `refactor(rhino-cli/mermaid): make enum switches exhaustive`.
+- [ ] **4.9 COMMIT** — `refactor(rhino-cli): sealed Severity interface + shared resolveSeverity helper`.
 
 ---
 
-## Phase 6 — `cmd.Criticality` enum + specs subcommand consolidation
+## Phase 5 — Mermaid sealed-enum verification (no-op phase)
+
+Per `velvety-herding-ullman` rebase: `Direction`, `ViolationKind`,
+`WarningKind` are already sealed interfaces in main, and
+`gochecksumtype` enforces exhaustiveness at lint time. This phase
+contains no source edits; it exists to record that the mermaid
+exhaustivity item (originally Item 5) is satisfied by the upstream
+work and verified once at plan execution.
+
+- [ ] **5.1 VERIFY** — Run
+      `cd apps/rhino-cli && golangci-lint run ./internal/mermaid/...` —
+      exit 0 with zero `gochecksumtype` violations. If violations
+      surface (e.g., a future variant added without updating switches),
+      fix in place: add the missing case to each affected type switch.
+      No code changes are expected at plan start.
+
+- [ ] **5.2 NO COMMIT** — This phase produces no diff under the
+      expected baseline. If 5.1 surfaced a violation requiring a fix,
+      commit as
+      `refactor(rhino-cli/mermaid): exhaust sealed-enum switch for <variant>`.
+
+---
+
+## Phase 6 — `cmd.Criticality` sealed interface + specs subcommand consolidation
 
 Type-safety + DRY. Item 3 + Item 9 paired (Criticality is consumed by
 the new specs driver).
 
-- [ ] **6.1 GREEN (Criticality type)** — Edit
-      `apps/rhino-cli/cmd/specs_validate_tree.go` (where SpecFinding
-      is defined): add `type Criticality string` + consts
-      `CriticalityHigh`, `CriticalityMedium`, `CriticalityLow`. Change
-      `SpecFinding.Criticality` field type.
+Pattern: sealed interface (`//sumtype:decl`) per tech-docs.md item 3.
 
-- [ ] **6.2 GREEN (callsite migration)** — Replace `"HIGH"`, `"MEDIUM"`,
-      `"LOW"` string literals in `apps/rhino-cli/cmd/specs_validate_*.go`
-      with typed consts.
+- [ ] **6.1 GREEN (Criticality sealed interface)** — Edit
+      `apps/rhino-cli/cmd/specs_validate_tree.go` (where SpecFinding is
+      defined): add a `//sumtype:decl Criticality` interface with marker
+      `isCriticality()` and `Code() string`, plus variants
+      `CriticalityHigh{}`, `CriticalityMedium{}`, `CriticalityLow{}`.
+      Change `SpecFinding.Criticality` field type from `string` to
+      `Criticality`. JSON wire-format preservation: pick the smaller-diff
+      approach (separate string field OR `MarshalJSON` method) — verify
+      via 6.3 golden output diff.
+
+- [ ] **6.2 GREEN (callsite migration)** — Replace `Criticality: "HIGH"`,
+      `"MEDIUM"`, `"LOW"` writes in
+      `apps/rhino-cli/cmd/specs_validate_*.go` with the corresponding
+      variant (e.g., `Criticality: CriticalityHigh{}`). Comparisons use
+      type assertion or `f.Criticality.Code()`.
 
 - [ ] **6.3 GREEN (golden output capture)** — Pre-driver-merge: capture
       the current output for each of the 4 specs subcommands against
@@ -330,34 +386,49 @@ DRY. Item 15.
 
 Items 12 and 13 paired (both touch `internal/doctor/`).
 
+`Scope` is already a sealed interface in main per `velvety-herding-ullman`
+(`ScopeFull{}`, `ScopeMinimal{}`); this phase removes the parallel
+`MinimalTools` map and migrates the scope branch to a sealed-interface
+type switch (gochecksumtype enforced).
+
 - [ ] **8.1 GREEN (decorator)** — Edit
-      `apps/rhino-cli/internal/doctor/checker.go`: add `withEmptyOK(f compareFn) compareFn`
-      per tech-docs.md item 12.
+      `apps/rhino-cli/internal/doctor/checker.go`: add
+      `withEmptyOK(f compareFn) compareFn` per tech-docs.md item 12.
+      Decorator returns `StatusOK{}` (sealed-interface zero-value
+      variant) when `required == ""`.
 
 - [ ] **8.2 GREEN (compareXxx migration)** — Strip the
-      `if required == "" { return StatusOK, "no version requirement" }`
+      `if required == "" { return StatusOK{}, "no version requirement" }`
       preamble from `compareExact`, `compareMajor`, `compareMajorGTE`,
-      `compareGTE`. Wrap each at the buildToolDefs site with
+      `compareGTE`. Wrap each at the `buildToolDefs` site with
       `withEmptyOK(...)`.
 
 - [ ] **8.3 GREEN (toolDef.minimal field)** — Edit
       `apps/rhino-cli/internal/doctor/tools.go`: add
       `minimal bool` field on `toolDef`. Mark each entry currently in
       `MinimalTools` with `minimal: true` (git, volta, node, npm,
-      golang, docker, jq).
+      golang, docker, jq). Doc comment on the new field ends in a
+      period (godot).
 
 - [ ] **8.4 GREEN (CheckAll filter)** — Edit `checker.go` `CheckAll`:
-      replace the `MinimalTools[def.name]` lookup with `def.minimal`.
-      Wrap the scope branch in an exhaustive switch over `Scope` per
-      tech-docs.md item 13.
+      replace the `MinimalTools[def.name]` map lookup with `def.minimal`.
+      The scope branch becomes an exhaustive type switch on the sealed
+      `Scope` interface per tech-docs.md item 13 — a `switch opts.Scope.(type)`
+      with `case nil, ScopeFull:` (all defs) and `case ScopeMinimal:`
+      (filter on `def.minimal`). `gochecksumtype` enforces every variant
+      is handled; no `default` arm.
 
 - [ ] **8.5 GREEN (delete MinimalTools)** — Delete the `MinimalTools`
-      var from `apps/rhino-cli/internal/doctor/types.go`.
+      var from `apps/rhino-cli/internal/doctor/types.go` and remove its
+      doc comment.
 
-- [ ] **8.6 PHASE GATE** — `npx nx run rhino-cli:test:quick` exits 0.
-      Re-run Phase 0 doctor capture; diff against baseline.
+- [ ] **8.6 PHASE GATE** —
+      `cd apps/rhino-cli && golangci-lint run ./internal/doctor/...` —
+      exits 0 (gochecksumtype + godot + revive + errorlint clean).
+      Then `npx nx run rhino-cli:test:quick` exits 0. Re-run Phase 0
+      doctor capture; diff against baseline (output byte-identical).
 
-- [ ] **8.7 COMMIT** — `refactor(rhino-cli/doctor): minimal field on toolDef + withEmptyOK decorator`.
+- [ ] **8.7 COMMIT** — `refactor(rhino-cli/doctor): drop MinimalTools map for toolDef.minimal + withEmptyOK decorator`.
 
 ---
 
@@ -500,10 +571,11 @@ DRY. Item 11.
 
 - [ ] **11.2 GREEN (agent_validator migration)** — In
       `apps/rhino-cli/internal/agents/agent_validator.go`: replace
-      every `ValidationCheck{Name: ..., Status: StatusPassed, Message: ...}`
-      literal with `passed(name, message)`. Same for `StatusFailed`
-      → `failed(...)`. Where the literal includes a non-helper-shape
-      field (e.g., a custom Name format), keep the literal.
+      every `ValidationCheck{Name: ..., Status: StatusPassed{}, Message: ...}`
+      literal with `passed(name, message)`. Same for `StatusFailed{}`
+      → `failed(...)` and `StatusWarning{}` → `warning(...)`. Where the
+      literal includes a non-helper-shape field (e.g., a custom Name
+      format), keep the literal.
 
 - [ ] **11.3 GREEN (skill_validator migration)** — Same pattern for
       `apps/rhino-cli/internal/agents/skill_validator.go`.
@@ -520,7 +592,13 @@ DRY. Item 11.
 
 - [ ] **12.2** — Run `npx nx run rhino-cli:typecheck`. Exit 0.
 
-- [ ] **12.3** — Run `npx nx run rhino-cli:lint`. Exit 0.
+- [ ] **12.3** — Run `npx nx run rhino-cli:lint`. Exit 0. Then run the
+      full golangci-lint set explicitly to confirm zero violations across
+      the new linters introduced by `velvety-herding-ullman`:
+      `cd apps/rhino-cli && golangci-lint run ./...` — exit 0 with zero
+      `gochecksumtype`, `errorlint`, `godot`, `revive (exported)`,
+      `revive (package-comments)`, `exhaustive`, or `iotamixing`
+      violations.
 
 - [ ] **12.4** — Run coverage validation:
       `cd apps/rhino-cli && go run . test-coverage validate cover.out 90`. Exit 0.
@@ -539,11 +617,20 @@ DRY. Item 11.
       `npx nx affected -t typecheck lint test:quick spec-coverage`. Exit 0.
 
 - [ ] **12.7** — Verify enum residue is gone — these greps must each
-      return 0 hits:
-  - `grep -rn '"passed"\|"warning"\|"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go`
-  - `grep -rn 'Kind: "exact"\|Kind: "pattern"\|case "exact":\|case "pattern":' apps/rhino-cli/internal/speccoverage/*.go | grep -v _test.go`
-  - `grep -rn 'Severity: "error"\|Severity: "warn"' apps/rhino-cli/internal/{bcregistry,glossary}/*.go | grep -v _test.go`
-  - `grep -rn 'Criticality: "HIGH"\|Criticality: "MEDIUM"\|Criticality: "LOW"' apps/rhino-cli/cmd/*.go | grep -v _test.go`
+      return 0 hits in non-test source (the `Code()` method bodies and
+      JSON wire-format population are the only allowed locations for
+      the literal strings):
+  - `grep -rn 'Status:\s*"passed"\|Status:\s*"warning"\|Status:\s*"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go`
+  - `grep -rn 'Kind:\s*"exact"\|Kind:\s*"pattern"' apps/rhino-cli/internal/speccoverage/*.go | grep -v _test.go`
+  - `grep -rn 'Severity:\s*"error"\|Severity:\s*"warn"' apps/rhino-cli/internal/bcregistry/*.go apps/rhino-cli/internal/glossary/*.go | grep -v _test.go`
+  - `grep -rn 'Criticality:\s*"HIGH"\|Criticality:\s*"MEDIUM"\|Criticality:\s*"LOW"' apps/rhino-cli/cmd/*.go | grep -v _test.go`
+
+- [ ] **12.7b** — Verify every new sealed-interface declaration is
+      annotated and exhaustive. Run:
+  - `grep -rn '//sumtype:decl' apps/rhino-cli/internal/agents/types.go apps/rhino-cli/internal/speccoverage/checker.go apps/rhino-cli/internal/bcregistry/types.go apps/rhino-cli/internal/glossary/types.go apps/rhino-cli/cmd/specs_validate_tree.go` —
+    must return at least one match per file (the new declarations from
+    Items 1, 2, 3, 4).
+  - `cd apps/rhino-cli && golangci-lint run --enable-only=gochecksumtype ./...` — exits 0.
 
 - [ ] **12.8** — Verify legacy field removal (gated by Phase 9):
   - `grep -rn '\.exact\[\|sm\.patterns\b\|stepMatcher.exact\|stepMatcher.patterns' apps/rhino-cli/internal/speccoverage/*.go | grep -v _test.go` —

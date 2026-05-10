@@ -43,26 +43,43 @@ and after. Test suite passes throughout.
 
 ### Type-Safety Requirements
 
-- **FR-1** — `internal/speccoverage` defines `type matcherKind int` (or
-  `type matcherKind string`; choice in tech-docs.md) with exported
-  consts for the closed set `{exact, pattern}`. Every switch on
-  `matcherKind` has a `default: panic(fmt.Sprintf("unhandled matcherKind: %v", k))`
-  branch.
-- **FR-2** — `internal/agents` defines `type CheckStatus string` with
-  consts `StatusPassed`, `StatusWarning`, `StatusFailed`. Every
-  string literal `"passed"|"warning"|"failed"` in non-test code is
-  replaced by the typed const. Test files may keep string literals if
-  they assert against JSON output where strings are the wire format.
-- **FR-3** — `cmd` defines `type Criticality string` with consts
-  `CriticalityHigh`, `CriticalityMedium`, `CriticalityLow`. Every
-  `SpecFinding.Criticality` assignment uses the typed const.
+All new typed enums in this plan adopt the **sealed-interface sum-type**
+pattern (`//sumtype:decl` + `gochecksumtype` linter) introduced into the
+repo by the `velvety-herding-ullman` worktree. See
+[Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types).
+
+- **FR-1** — `internal/speccoverage` defines a `//sumtype:decl matcherKind`
+  sealed interface with variants `kindExact{}` and `kindPattern{}`. Every
+  type switch on `matcherKind` is exhaustive (enforced by
+  `gochecksumtype`). `OrphanStepImpl.MatcherKind` (JSON wire field) stays
+  `string`, populated via `entry.Kind.Code()`.
+- **FR-2** — `internal/agents` defines a `//sumtype:decl CheckStatus`
+  sealed interface with variants `StatusPassed{}`, `StatusWarning{}`,
+  `StatusFailed{}`, plus a `ParseCheckStatus(s string) (CheckStatus, bool)`
+  helper. Every string literal `"passed"|"warning"|"failed"` in non-test
+  code is replaced by the corresponding zero-value variant. JSON wire
+  output preserves the literal string via a separate `Status string`
+  field on the wire-format struct (populated from `check.Status.Code()` —
+  same pattern as `internal/doctor/reporter.go`). Test files migrate too
+  (assertions use `_, ok := check.Status.(StatusPassed)` or
+  `check.Status.Code() == "passed"`).
+- **FR-3** — `cmd` defines a `//sumtype:decl Criticality` sealed
+  interface with variants `CriticalityHigh{}`, `CriticalityMedium{}`,
+  `CriticalityLow{}`. Every `SpecFinding.Criticality` assignment uses
+  the variant. JSON wire format (`"criticality": "HIGH"`) preserved
+  via either a separate string field or a `MarshalJSON` method — choice
+  in delivery to minimize golden-output diff.
 - **FR-4** — `internal/bcregistry` and `internal/glossary` each define
-  `type Severity string` with consts `SeverityError`, `SeverityWarn`.
-  All severity comparisons use `==`/typed comparison, not string
-  comparison.
-- **FR-5** — `internal/mermaid` `Direction`, `ViolationKind`,
-  `WarningKind` switches gain explicit `default: panic` branches OR
-  document why a no-op default is correct.
+  their own `//sumtype:decl Severity` sealed interface with variants
+  `SeverityError{}`, `SeverityWarn{}`, plus a `ParseSeverity` helper.
+  Severity comparisons use type assertion or `value.Code()`; severity
+  fields on `Finding` use the sealed interface.
+- **FR-5** — Mermaid switches: `velvety-herding-ullman` already
+  converted `Direction`, `ViolationKind`, `WarningKind` to sealed
+  interfaces and `gochecksumtype` enforces exhaustiveness. This plan
+  only **verifies** zero `gochecksumtype` violations against
+  `internal/mermaid/*.go` as part of Phase 12 lint check; no active
+  fix is required at plan start.
 
 ### DRY Requirements
 
@@ -98,7 +115,10 @@ and after. Test suite passes throughout.
   preamble in each is deleted.
 - **FR-13** — `internal/doctor.toolDef` gains a `minimal bool` field.
   `MinimalTools` map in `types.go` is deleted. `CheckAll`'s scope
-  filter checks `def.minimal` directly.
+  filter switches on the sealed `Scope` interface (already in main per
+  `velvety-herding-ullman`) and checks `def.minimal` directly. The
+  scope type switch is exhaustive over `nil | ScopeFull | ScopeMinimal`
+  (enforced by `gochecksumtype`).
 
 ### Legacy Cleanup Requirements
 
@@ -122,8 +142,17 @@ and after. Test suite passes throughout.
 
 - **NFR-1** — Coverage stays ≥ 90% (Go-tier threshold).
   `rhino-cli test-coverage validate` exits 0.
-- **NFR-2** — `nx run rhino-cli:lint` exits 0; no new
-  `staticcheck`/`go vet` violations introduced.
+- **NFR-2** — `nx run rhino-cli:lint` exits 0 across the full
+  golangci-lint set declared in `.golangci.yml` (per
+  [Code Quality Convention](../../../governance/development/quality/code.md)):
+  `errcheck`, `govet`, `ineffassign`, `staticcheck`, `unused`,
+  `forcetypeassert`, `nilerr`, `nilnesserr`, `nilnil`, `exhaustive`,
+  `gochecksumtype`, `errorlint`, `iotamixing`, `godot`, `revive`. Every
+  new exported identifier introduced by the plan carries a doc comment
+  ending in a period (godot + revive). Every new sealed-interface type
+  switch is exhaustive (gochecksumtype). Every new error-construction
+  uses `%w` for wrapping and `errors.Is`/`errors.As` for comparison
+  (errorlint).
 - **NFR-3** — `nx run rhino-cli:test:quick` exits 0; no test deletions
   except where a test asserts against the deleted legacy `exact` /
   `patterns` fields directly.
@@ -182,17 +211,18 @@ Feature: rhino-cli refactor preserves every command's behaviour
 
   # --- Type-safety wins (the new contract) ---
 
-  Scenario: invalid CheckStatus value is a compile error
-    Given a developer changes a string-typed status to "passsed"
+  Scenario: invalid CheckStatus assignment is a compile error
+    Given a developer assigns a literal "passsed" string to ValidationCheck.Status
     When the developer runs "go build ./..."
     Then the compile fails with a type mismatch error
     And the binary is not produced
+    Because Status is a sealed interface that only accepts the variant types
 
-  Scenario: matcherKind switch with missing case panics with a clear message
-    Given a hypothetical future matcherKind value is added without updating the orphan switch
-    When the orphan check encounters such an entry
-    Then the program panics with "unhandled matcherKind: <value>"
-    And the message names the unhandled value
+  Scenario: missing case in a sealed-enum switch is a lint error
+    Given a hypothetical future variant is added to a sealed interface without updating its switches
+    When the developer runs "golangci-lint run ./..."
+    Then gochecksumtype reports an exhaustiveness violation
+    And the lint command exits non-zero
 
   Scenario: doctor adding a tool no longer requires updating two places
     Given a developer adds a new toolDef entry to buildToolDefs

@@ -42,14 +42,22 @@ no new test cases beyond those needed to cover the new helpers.
 Grouped by area. See [tech-docs.md](./tech-docs.md) for the full design of
 each item.
 
-**Type-safety wins** (string → typed enum):
+**Type-safety wins** (string → sealed-interface sum type per the
+`velvety-herding-ullman` baseline pattern: `//sumtype:decl` +
+`gochecksumtype` linter enforcement):
 
-- **Item 1** — `speccoverage.matcherKind` — `"exact"|"pattern"`
-- **Item 2** — `agents.CheckStatus` — `"passed"|"warning"|"failed"`
-- **Item 3** — `cmd.Criticality` (specs findings) — `"HIGH"|"MEDIUM"|"LOW"`
-- **Item 4** — `bcregistry.Severity` + `glossary.Severity` — `"error"|"warn"`
+- **Item 1** — `speccoverage.matcherKind` — sealed interface with
+  variants `kindExact{}`, `kindPattern{}`.
+- **Item 2** — `agents.CheckStatus` — sealed interface with variants
+  `StatusPassed{}`, `StatusWarning{}`, `StatusFailed{}`.
+- **Item 3** — `cmd.Criticality` — sealed interface with variants
+  `CriticalityHigh{}`, `CriticalityMedium{}`, `CriticalityLow{}`.
+- **Item 4** — `bcregistry.Severity` + `glossary.Severity` — sealed
+  interface with variants `SeverityError{}`, `SeverityWarn{}` per
+  package.
 - **Item 5** — mermaid `Direction` / `ViolationKind` / `WarningKind` —
-  already typed; add exhaustivity discipline (`default: panic` in switches).
+  already sealed in main (`velvety-herding-ullman`); plan only verifies
+  zero `gochecksumtype` violations as part of Phase 12 lint.
 
 **DRY wins** (consolidation):
 
