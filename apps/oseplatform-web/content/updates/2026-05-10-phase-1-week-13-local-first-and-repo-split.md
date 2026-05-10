@@ -22,7 +22,7 @@ showtoc: true
 
 Five weeks ago we said the polyglot experiment was over and the focus was narrowing to ship. The narrowing went further than we expected. The F# backend that was the chosen production stack is now an empty scaffold. OrganicLever's data layer moved into the browser. The eleven demo backends that defined the previous update no longer live in this repo at all. The single repository that held everything in Phase 0 became a parent container tracking three sibling repositories. And the FSL-1.1-MIT license—introduced four weeks ago with a long rationale—was reverted to MIT after a strategic reassessment.
 
-This update covers the work between 2026-04-05 19:55 +07 and 2026-05-10 20:00 +07. Most of it is not new features. It is the work of cutting things apart cleanly: extracting demo apps without losing history, splitting infrastructure without breaking automation, restructuring an application's bounded contexts without losing the test suite, and enforcing the new conventions through tooling rather than discipline.
+This update covers the work since the last post. Most of it is not new features. It is the work of cutting things apart cleanly: extracting demo apps without losing history, splitting infrastructure without breaking automation, restructuring an application's bounded contexts without losing the test suite, and enforcing the new conventions through tooling rather than discipline.
 
 ## License: MIT, Reverted From FSL-1.1-MIT
 
