@@ -446,9 +446,105 @@ Once fixes #5 + #11 land, plans 2 and 3's registries can be updated:
 
 This migration commit is **out of scope of plan 4** itself — plan 4 ships the schema, plans 2/3 (or a small follow-up) consume it.
 
+## Fix #12 — Wire `specs validate-counts` into pre-push
+
+### Code change
+
+`apps/rhino-cli/cmd/specs_validate_counts.go` accepts an optional `--apps` StringSlice flag with the same semantics as `validate-adoption` and `validate-tree`:
+
+- `rhino-cli specs validate-counts specs/apps/organiclever` — single positional folder, today's behavior preserved.
+- `rhino-cli specs validate-counts --apps organiclever,wahidyankf` — multi-app, expands each name to `specs/apps/<app>` internally.
+- `rhino-cli specs validate-counts` (no positional, no flag) — defaults to `--apps=<allowlist>` from `internal/allowlist/allowlist.go` (single source of truth shared with fixes #1 and #2).
+
+The existing positional path argument is preserved unchanged so manual invocations and any future per-app project.json wiring keep working.
+
+### Nx target
+
+`apps/rhino-cli/project.json` adds:
+
+```json
+"validate:specs-counts": {
+  "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-counts",
+  "cache": true,
+  "inputs": [
+    "{projectRoot}/**/*.go",
+    "{workspaceRoot}/specs/apps/**/README.md",
+    "{workspaceRoot}/specs/apps/**/{product,system-context,containers,components,behavior}/**"
+  ],
+  "outputs": []
+}
+```
+
+`inputs` mirror `validate:specs-tree` because both validators react to folder structure changes, not file content. Cache hits on pushes that don't touch spec layout are near-zero cost.
+
+### Pre-push wiring
+
+`.husky/pre-push` line extends from:
+
+```sh
+npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree --parallel="$PARALLEL"
+```
+
+to:
+
+```sh
+npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree validate:specs-counts --parallel="$PARALLEL"
+```
+
+The allowlist still lives only in `apps/rhino-cli/internal/allowlist/allowlist.go`; the pre-push hook performs no per-app routing.
+
+### Severity coupling with Fix #8
+
+Fix #12 must ship after Fix #8. Otherwise the new pre-push gate would fire MEDIUM-only findings on missing required folders, which is inconsistent with `validate-tree` and weakens the gate. Phase ordering enforces this — Phase 7 (Fix #8) precedes Phase 7B (Fix #12).
+
+## Fix #13 — Wire `specs validate-links` into pre-push
+
+### Code change
+
+`apps/rhino-cli/cmd/specs_validate_links.go` accepts the same `--apps` StringSlice flag with allowlist default:
+
+- `rhino-cli specs validate-links specs/apps/organiclever` — single folder, today's behavior preserved.
+- `rhino-cli specs validate-links --apps organiclever,wahidyankf` — multi-app, expands each to `specs/apps/<app>` internally.
+- `rhino-cli specs validate-links` (no positional, no flag) — defaults to `--apps=<allowlist>`.
+
+### Nx target
+
+`apps/rhino-cli/project.json` adds:
+
+```json
+"validate:specs-links": {
+  "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-links",
+  "cache": true,
+  "inputs": [
+    "{projectRoot}/**/*.go",
+    "{workspaceRoot}/specs/apps/**/*.md"
+  ],
+  "outputs": []
+}
+```
+
+`inputs` cover all markdown under `specs/apps/` because `validate-links` parses every `.md` file's link references. Spec folder restructures still trigger because the markdown move/rename invalidates the cache.
+
+### Pre-push wiring
+
+The pre-push line becomes (after Fix #12 lands):
+
+```sh
+npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --parallel="$PARALLEL"
+```
+
+### Out-of-scope: `docs validate-links`
+
+`rhino-cli` also ships `docs validate-links`, which scans the entire repo's markdown (including `governance/`, `docs/`, `apps/*/README.md`). It is currently ungated. This plan does not wire it because:
+
+- The `docs *` command tree is broader than the specs/BDD/DDD enforcement scope this plan owns.
+- A separate plan covering validator unification with `lint:md` and `markdown-link-check` is the natural home for that work.
+
+The result of this plan is that **every `specs *` and `ddd *` and `spec-coverage *` command** is gated; `docs validate-links` is the only related ungated rhino-cli command, and it lives outside the user-stated scope.
+
 ## Test plan
 
-Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~40 new test scenarios across the 10 fixes.
+Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~50 new test scenarios across the 13 fixes.
 
 Coverage gate: ≥90% on `apps/rhino-cli/` (existing). Each fix's TDD red-step writes the failing test first; green-step implements; refactor cleans up.
 

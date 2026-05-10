@@ -1,6 +1,6 @@
 # PRD — BDD + DDD Tooling Gap-Fill
 
-This plan delivers 11 fixes against the 2026-05-09 optimality audit. Each fix carries its own Gherkin acceptance criteria.
+This plan delivers 13 fixes against the 2026-05-09 optimality audit (11 from the original audit plus #12 and #13 added during the 2026-05-10 recheck to honor the "zero dead specs/BDD/DDD scripts" goal). Each fix carries its own Gherkin acceptance criteria.
 
 ## The allowlist
 
@@ -344,11 +344,77 @@ Feature: gherkin field accepts multi-perspective paths
     Then the orphan is reported regardless of which perspective it lives in
 ```
 
+## Fix #12 — Wire `specs validate-counts` into pre-push (MEDIUM)
+
+**What**: After Fix #8 reconciles severity (HIGH for missing folder, MEDIUM for empty), wire `specs validate-counts` into pre-push as a third allowlist-driven Nx target alongside `validate:specs-adoption` and `validate:specs-tree`. Pattern mirrors Fix #1+#2: add `--apps` StringSlice flag with `allowlist.AppsWithDDD` default; new Nx target `validate:specs-counts`; append to `.husky/pre-push` line.
+
+**Acceptance**:
+
+```gherkin
+Feature: validate-counts is invoked by pre-push gate
+
+  Scenario: No-arg invocation defaults to allowlist
+    When the developer runs "rhino-cli specs validate-counts"
+    Then the validator iterates over allowlist.AppsWithDDD
+    And exits 0 when all four apps pass count checks
+
+  Scenario: Single-app positional preserved (backward compat)
+    When the developer runs "rhino-cli specs validate-counts specs/apps/organiclever"
+    Then only organiclever is validated
+    And the existing single-app behavior is unchanged
+
+  Scenario: Pre-push gate fires on missing required folder (HIGH)
+    Given specs/apps/wahidyankf/containers/ is renamed to containers-bogus/
+    When the developer attempts "git push"
+    Then the validate:specs-counts gate fires
+    And reports HIGH severity finding
+    And the push is aborted
+
+  Scenario: Pre-push cache hit when specs unchanged
+    Given the previous push left validate:specs-counts in nx cache
+    And no spec files changed
+    When the developer runs "git push"
+    Then the validate:specs-counts target is a cache hit (near-zero cost)
+```
+
+## Fix #13 — Wire `specs validate-links` into pre-push (MEDIUM)
+
+**What**: Same pattern as Fix #12 — add `--apps` StringSlice flag with `allowlist.AppsWithDDD` default to `cmd/specs_validate_links.go`; new Nx target `validate:specs-links`; append to `.husky/pre-push` line. After this fix, no `specs *` command in `rhino-cli` is ungated; the only related ungated command remaining anywhere in `rhino-cli` is `docs validate-links`, which is out of this plan's scope and lives in a different command tree.
+
+**Acceptance**:
+
+```gherkin
+Feature: validate-links is invoked by pre-push gate
+
+  Scenario: No-arg invocation defaults to allowlist
+    When the developer runs "rhino-cli specs validate-links"
+    Then the validator iterates over allowlist.AppsWithDDD
+    And exits 0 when all four apps have resolvable internal links
+
+  Scenario: Single-folder positional preserved (backward compat)
+    When the developer runs "rhino-cli specs validate-links specs/apps/organiclever"
+    Then only the organiclever spec tree is scanned
+    And the existing single-folder behavior is unchanged
+
+  Scenario: Pre-push gate fires on broken markdown link
+    Given specs/apps/wahidyankf/system-context/context.md contains a link to "./does-not-exist.md"
+    When the developer attempts "git push"
+    Then the validate:specs-links gate fires
+    And reports the broken link
+    And the push is aborted
+
+  Scenario: External links are ignored
+    Given specs/apps/wahidyankf/README.md contains "https://example.com/missing"
+    When the developer runs "rhino-cli specs validate-links"
+    Then external links are not fetched
+    And no finding is reported for the external URL
+```
+
 ## Personas
 
 - **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
 - **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
-- **Refactor executor** (delivery-checklist hat) — follows the 13-phase delivery checklist (Phase 0 pre-flight + Phases 1-11 one fix each + Phase 12 validation + Phase 13 commit).
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
 - **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
 - **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
 
@@ -360,6 +426,8 @@ Feature: gherkin field accepts multi-perspective paths
 - As a developer, I want multi-parent orphan-root walks so that `ddd bc` reports orphan directories under any perspective, not only the first declared context's parent.
 - As a developer, I want the `gherkin:` field to accept a list of paths so that multi-perspective BCs (`content`, `search`, `i18n`, `navigation` in ayokoding) can register both web-side and api-side gherkin folders honestly.
 - As a developer, I want the three `specs drift-*` placeholder commands removed so that `rhino-cli specs --help` only lists commands that are actually implemented.
+- As a developer, I want `specs validate-counts` wired into pre-push so that a missing required spec folder aborts the push with HIGH severity, paired with the severity reconciliation already shipped in Fix #8.
+- As a developer, I want `specs validate-links` wired into pre-push so that a broken internal markdown link inside any allowlisted spec tree aborts the push, leaving zero dead specs/BDD/DDD scripts after this plan ships.
 
 ## Product Risks
 

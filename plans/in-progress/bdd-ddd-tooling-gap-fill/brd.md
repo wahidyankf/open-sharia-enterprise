@@ -4,7 +4,7 @@
 
 `rhino-cli` ships strong BDD + DDD validators. The audit on 2026-05-09 confirmed the inner logic is real and well-tested. But the **wiring** between those validators and the pre-push gate is uneven:
 
-- 4 of 7 `specs *` validators are dead code (no Nx target invokes them).
+- 4 of 7 `specs *` validators are dead code (no Nx target invokes them). The other 3 are placeholder `drift-*` stubs.
 - Of the apps that have specs (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`, plus the three CLIs), only `organiclever-web` has `ddd bc/ul` in `test:quick`. Plans 1-3 fix three of the remaining web apps; this plan fixes `organiclever-be` (which shares organiclever's registry but doesn't validate it).
 - Two `ddd` validators silently mis-cover multi-surface bounded contexts: `ddd ul` greps only TS/TSX, `ddd bc` walks only the first context's parent for orphans.
 
@@ -12,7 +12,7 @@ The gap is not in the validators. It is in the layer above them.
 
 ## Business value
 
-1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-adoption validate:specs-tree` exit code on pre-push. The first kind drifts; the second kind doesn't.
+1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links` exit code on pre-push. The first kind drifts; the second kind doesn't. **Net result**: zero dead specs/BDD/DDD scripts in `rhino-cli` — every `specs *`, `ddd *`, and `spec-coverage *` command is gated or deleted.
 2. **Multi-surface DDD becomes honest.** Plans 2 and 3 introduce bounded contexts that span web + api perspectives. Without fix #4 (per-BC `code_lang:`), `ddd ul` would silently fail to validate F# / TS / both for any cross-perspective BC. With fix #4, every code identifier in every glossary is grep-checked in the right files.
 3. **Drift-command housekeeping.** Three placeholder commands that appear functional in `--help` are a long-standing source of false security. Deleting or hiding them removes a lurking trap.
 4. **Future-app onboarding cost drops.** A new web app adopts DDD by adding to the allowlist + creating its `ddd/bounded-contexts.yaml`. No more per-project.json copy-paste of `ddd bc/ul` invocations once fix #1 + #2 wire the centralized gate.
@@ -27,7 +27,7 @@ The gap is not in the validators. It is in the layer above them.
 
 - ~10 phased TDD code changes inside `apps/rhino-cli/`, each with a Red→Green→Refactor cycle.
 - 4 `project.json` files updated (`organiclever-be`, plus tightening for the 3 web apps that plans 1-3 already wire).
-- 1 `.husky/pre-push` change adding two new `nx run` lines for the centralized `validate:specs-adoption` and `validate:specs-tree` targets.
+- 1 `.husky/pre-push` change adding four new `nx run` lines for the centralized `validate:specs-adoption`, `validate:specs-tree`, `validate:specs-counts`, and `validate:specs-links` targets.
 - 1 `.claude/agents/specs-checker.md` and `specs-fixer.md` update to reflect the dropped `drift-*` commands.
 - ~20 lines of governance update (`governance/conventions/structure/specs-directory-structure.md`) clarifying allowlist policy.
 - New env var name `OSE_RHINO_DDD_SEVERITY`; legacy `ORGANICLEVER_RHINO_DDD_SEVERITY` deprecated for one minor rev with a stderr warning.
@@ -44,10 +44,13 @@ The gap is not in the validators. It is in the layer above them.
 
 - `[Judgment call]` `nx run rhino-cli:validate:specs-adoption` exits 0 for all four allowlisted web apps after this plan lands on `main`.
 - `[Judgment call]` `nx run rhino-cli:validate:specs-tree` exits 0 for all four allowlisted web apps after this plan lands on `main`.
+- `[Judgment call]` `nx run rhino-cli:validate:specs-counts` exits 0 for all four allowlisted web apps after this plan lands on `main`.
+- `[Judgment call]` `nx run rhino-cli:validate:specs-links` exits 0 for all four allowlisted web apps after this plan lands on `main`.
 - `[Judgment call]` `rhino-cli specs --help` lists exactly 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption) — no drift-\* placeholders.
 - `[Judgment call]` `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits a stderr audit line and exits 0 even when findings exist.
-- `[Judgment call]` `nx run rhino-cli:test:quick` reports coverage ≥90% after all 11 fixes.
-- `[Judgment call]` The pre-push gate blocks a push that introduces a structural spec violation in any allowlisted app.
+- `[Judgment call]` `nx run rhino-cli:test:quick` reports coverage ≥90% after all 13 fixes.
+- `[Judgment call]` The pre-push gate blocks a push that introduces a structural spec violation, missing required folder, or broken markdown link in any allowlisted app.
+- `[Judgment call]` **Zero dead specs/BDD/DDD scripts** — `git grep` over `apps/rhino-cli/cmd/specs_*.go` shows every command is invoked by either an Nx target or `.husky/pre-push`; the three `specs_drift_*.go` files are deleted.
 
 ## Stakeholders
 

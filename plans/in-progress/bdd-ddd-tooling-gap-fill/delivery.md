@@ -30,7 +30,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 0 — Pre-flight gate
 
-- [ ] **0.1** Confirm plans 1, 2, 3 are merged to `origin/main` and CI is green for all three. The allowlist gate (Phase 11) will fail if any of them is incomplete.
+- [ ] **0.1** Confirm plans 1, 2, 3 are merged to `origin/main` and CI is green for all three. The allowlist gates (wired in Phases 1.4 + 7B.4, validated in Phase 12) will fail if any of them is incomplete.
   - **Note (2026-05-10)**: Plan 3 (`oseplatform-web-ddd-and-specs-format`) merged to `origin/main`. `specs/apps/oseplatform/ddd/bounded-contexts.yaml` v2, 7 BCs. `oseplatform-web:test:quick` now runs `ddd bc/ul`. oseplatform is allowlist-eligible.
   - **Note (2026-05-10)**: Plan 2 (`ayokoding-web-ddd-and-specs-format`) merged to `origin/main` (SHA 232b07c2e). `specs/apps/ayokoding/ddd/bounded-contexts.yaml` v2, 6 BCs. `ayokoding-web:test:quick` now runs `ddd bc/ul`. ayokoding is allowlist-eligible. CI run 25615323712 green.
   - **Note (2026-05-10)**: Plan 1 (`wahidyankf-web-ddd-and-specs-format`) merged to `origin/main` (SHA 77ad0771e). `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` v2, 5 BCs. `wahidyankf-web:test:quick` now runs `ddd bc/ul`. wahidyankf is allowlist-eligible. CI run 25616084542 green. All three plans now done — Phase 0 fully unblocked.
@@ -156,6 +156,41 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ---
 
+## Phase 7B — Wire validate-counts + validate-links per allowlist (Fix #12, #13)
+
+> **Why this phase exists**: Plan goal is **zero dead specs/BDD/DDD scripts** after this plan ships. Fixes #1 and #2 wire `validate-adoption` + `validate-tree`; this phase wires the remaining two (`validate-counts` and `validate-links`) using the same allowlist pattern. Phase ordering: must run after Phase 7 (Fix #8) so the new `validate:specs-counts` gate inherits HIGH severity for missing folders.
+
+### 7B.1 `--apps` flag on validate-counts (Fix #12)
+
+- [ ] **7B.1.1 RED** Add unit tests in `cmd/specs_validate_counts_test.go` mirroring Fix #1+#2 pattern: "no positional, no flag → defaults to allowlist"; "explicit positional folder preserved"; "--apps flag overrides defaults". Tests fail.
+- [ ] **7B.1.2 GREEN** Edit `cmd/specs_validate_counts.go`: add `--apps` StringSlice flag; if positional empty AND flag empty, use `allowlist.AppsWithDDD` (same import path as Phase 1.1). Today's positional folder behavior preserved.
+- [ ] **7B.1.3 GREEN** Run unit tests. Coverage ≥90%.
+
+### 7B.2 `--apps` flag on validate-links (Fix #13)
+
+- [ ] **7B.2.1 RED** Add unit tests in `cmd/specs_validate_links_test.go` (same scenarios as 7B.1.1, scoped to validate-links). Tests fail.
+- [ ] **7B.2.2 GREEN** Edit `cmd/specs_validate_links.go`: same pattern — add `--apps` StringSlice flag with allowlist default, preserve positional behavior.
+- [ ] **7B.2.3 GREEN** Run unit tests. Coverage ≥90%.
+
+### 7B.3 Nx targets
+
+- [ ] **7B.3.1** Edit `apps/rhino-cli/project.json`:
+  - Add `validate:specs-counts` target per `tech-docs.md` Fix #12 (cacheable, `inputs` mirror `validate:specs-tree`).
+  - Add `validate:specs-links` target per `tech-docs.md` Fix #13 (cacheable, `inputs` cover `specs/apps/**/*.md`).
+- [ ] **7B.3.2 GREEN** Run `nx run rhino-cli:validate:specs-counts` — exits 0 (assumes plans 1-3 merged).
+- [ ] **7B.3.3 GREEN** Run `nx run rhino-cli:validate:specs-links` — exits 0.
+
+### 7B.4 Pre-push wiring
+
+- [ ] **7B.4.1** Edit `.husky/pre-push` to extend the existing nx affected line with `validate:specs-counts validate:specs-links`. Final form: `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --parallel="$PARALLEL"`.
+- [ ] **7B.4.2 RED** Stage a no-op edit to `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` (whitespace) and run `git push --dry-run`. Confirm both new gates fire (cache miss because input changed).
+- [ ] **7B.4.3 GREEN** Confirm push succeeds (gates pass with valid registry + intact links).
+- [ ] **7B.4.4** Manually rename `specs/apps/wahidyankf/containers/` → `containers-bogus/` and confirm the validate:specs-counts gate aborts the push with a HIGH finding. Then revert.
+- [ ] **7B.4.5** Manually introduce a broken markdown link in `specs/apps/wahidyankf/system-context/context.md` (e.g. `[broken](./does-not-exist.md)`) and confirm the validate:specs-links gate aborts the push. Then revert.
+- [ ] **7B.4.6 GREEN** Push without spec changes — confirm both new targets are cache-hit (near-zero cost).
+
+---
+
 ## Phase 8 — Severity audit log + env var rename (Fix #9)
 
 - [ ] **8.1 RED** Add unit tests in `cmd/ddd_bc_test.go` and `cmd/ddd_ul_test.go`:
@@ -234,6 +269,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Document the allowlist policy (Phase 1).
   - Document `code_lang:` schema field (Phase 3).
   - Document drift-\* removal (Phase 6).
+  - Document the four allowlist-driven pre-push gates: `validate:specs-adoption`, `validate:specs-tree`, `validate:specs-counts`, `validate:specs-links` (Phases 1, 7B). State explicitly that **zero `specs *` commands ship dead** after this plan.
   - Document severity audit + env var rename (Phase 8).
   - Document expanded symmetry whitelist (Phase 9).
   - Document `gherkin: []string` extension (Phase 10).
@@ -254,9 +290,12 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [ ] **12.2** `nx run rhino-cli:test:quick` — coverage ≥90%.
 - [ ] **12.3** `nx run rhino-cli:validate:specs-adoption` — 0 findings (4 web apps).
 - [ ] **12.4** `nx run rhino-cli:validate:specs-tree` — 0 findings.
+- [ ] **12.4b** `nx run rhino-cli:validate:specs-counts` — 0 findings.
+- [ ] **12.4c** `nx run rhino-cli:validate:specs-links` — 0 findings.
+- [ ] **12.4d** `git grep -l "cobra.Command" apps/rhino-cli/cmd/specs_*.go apps/rhino-cli/cmd/ddd_*.go apps/rhino-cli/cmd/spec_coverage*.go` cross-checked against `apps/rhino-cli/project.json` + `.husky/pre-push` + each app's `project.json` — every command file is referenced by at least one invocation; the three `specs_drift_*.go` files no longer exist. **Zero dead specs/BDD/DDD scripts confirmed.**
 - [ ] **12.5** For each of the 4 web apps: `nx run <app>-web:test:quick` — DDD passes.
 - [ ] **12.6** `nx run organiclever-be:test:quick` — DDD passes.
-- [ ] **12.7** `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree --base=HEAD~1` — full pre-push gate green.
+- [ ] **12.7** `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --base=HEAD~1` — full pre-push gate green.
 - [ ] **12.8** `npm run lint:md` — 0 violations.
 - [ ] **12.9** `npm run validate:sync` — `.claude/` ↔ `.opencode/` parity.
 - [ ] **12.10** Manual smoke per fix:
@@ -268,6 +307,8 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - **#8**: missing folder + empty folder → distinct severities.
   - **#9**: `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits stderr audit line.
   - **#11**: edit `specs/apps/ayokoding/ddd/bounded-contexts.yaml` to declare `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for content BC; `rhino-cli ddd bc ayokoding` exits 0. Revert.
+  - **#12**: rename `specs/apps/wahidyankf/containers/` → `containers-bogus/`; `git push --dry-run` aborts via validate:specs-counts with HIGH severity. Revert.
+  - **#13**: introduce a broken markdown link in `specs/apps/wahidyankf/system-context/context.md` (`[broken](./does-not-exist.md)`); `git push --dry-run` aborts via validate:specs-links. Revert.
 
 ---
 
@@ -282,7 +323,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
-  - Body lists 11 fixes by number.
+  - Body lists 13 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli".
 - [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
 - [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
