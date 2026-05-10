@@ -28,48 +28,65 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 0.5 — Environment Setup
 
-- [ ] Install dependencies and verify toolchain from repo root:
+- [x] Install dependencies and verify toolchain from repo root:
 
   ```bash
   npm install && npm run doctor -- --fix
   ```
 
   Verify: `npm run doctor` exits 0 with no failures.
-- [ ] Verify Java 25 available:
+
+  > **Done** 2026-05-11 — `npm install` completed; `npm run doctor` reports 20/20 tools OK (java v25, maven v3.9.4, golang v1.26.1, docker v29.4.0).
+
+- [x] Verify Java 25 available:
 
   ```bash
   java -version
   ```
 
   Verify: output shows `openjdk 25` (or matching JDK 25).
-- [ ] Verify Maven 3.9+ available:
+
+  > **Done** 2026-05-11 — `java v25` confirmed via doctor output.
+
+- [x] Verify Maven 3.9+ available:
 
   ```bash
   mvn -version
   ```
 
   Verify: output shows `Apache Maven 3.9` or later.
-- [ ] Verify Docker daemon running:
+
+  > **Done** 2026-05-11 — `maven v3.9.4` confirmed via doctor output.
+
+- [x] Verify Docker daemon running:
 
   ```bash
   docker info
   ```
 
   Verify: exits 0 with no connection errors.
-- [ ] Verify Go toolchain available (for rhino-cli commands):
+
+  > **Done** 2026-05-11 — `docker v29.4.0` confirmed via doctor output.
+
+- [x] Verify Go toolchain available (for rhino-cli commands):
 
   ```bash
   go version
   ```
 
   Verify: exits 0.
-- [ ] Verify existing `nx run organiclever-be:test:quick` passes before making changes:
+
+  > **Done** 2026-05-11 — `golang v1.26.1` confirmed via doctor output.
+
+- [x] Verify existing `nx run organiclever-be:test:quick` passes before making changes:
 
   ```bash
   npx nx run organiclever-be:test:quick
   ```
 
   Verify: exits 0 (baseline green).
+
+  > **Done** 2026-05-11 — F# baseline passes: 2 tests, 91.67% line coverage.
 
 ---
 
@@ -80,42 +97,59 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > remaining tracked changes) — then commit:
 > `chore(organiclever-be): remove F# source and dotnet tooling`
 
-- [ ] Delete `apps/organiclever-be/global.json`:
+- [x] Delete `apps/organiclever-be/global.json`:
 
   ```bash
   git rm apps/organiclever-be/global.json
   ```
 
   Verify: `test ! -f apps/organiclever-be/global.json` exits 0.
-- [ ] Delete `apps/organiclever-be/dotnet-tools.json`:
+
+  > **Done** 2026-05-11 — `git rm apps/organiclever-be/global.json` succeeded.
+
+- [x] Delete `apps/organiclever-be/dotnet-tools.json`:
 
   ```bash
   git rm apps/organiclever-be/dotnet-tools.json
   ```
 
   Verify: `test ! -f apps/organiclever-be/dotnet-tools.json` exits 0.
-- [ ] Delete `apps/organiclever-be/fsharplint.json`:
+
+  > **Done** 2026-05-11 — `git rm apps/organiclever-be/dotnet-tools.json` succeeded.
+
+- [x] Delete `apps/organiclever-be/fsharplint.json`:
 
   ```bash
   git rm apps/organiclever-be/fsharplint.json
   ```
 
   Verify: `test ! -f apps/organiclever-be/fsharplint.json` exits 0.
-- [ ] Delete `apps/organiclever-be/src/OrganicLeverBe/` (entire directory):
+
+  > **Done** 2026-05-11 — `git rm apps/organiclever-be/fsharplint.json` succeeded.
+
+- [x] Delete `apps/organiclever-be/src/OrganicLeverBe/` (entire directory):
 
   ```bash
   git rm -r apps/organiclever-be/src/OrganicLeverBe/
   ```
 
   Verify: `test ! -d apps/organiclever-be/src/OrganicLeverBe` exits 0.
-- [ ] Delete `apps/organiclever-be/tests/OrganicLeverBe.Tests/` (entire directory):
+
+  > **Done** 2026-05-11 — tracked .fs/.fsproj removed; untracked bin/obj cleaned with rm -rf.
+
+- [x] Delete `apps/organiclever-be/tests/OrganicLeverBe.Tests/` (entire directory):
 
   ```bash
   git rm -r apps/organiclever-be/tests/OrganicLeverBe.Tests/
   ```
 
   Verify: `test ! -d apps/organiclever-be/tests/OrganicLeverBe.Tests` exits 0.
-- [ ] Verify `nx run organiclever-be:build` fails — **expected Red** (no buildable sources)
+
+  > **Done** 2026-05-11 — 6 .fs/.fsproj files removed; untracked artifacts cleaned.
+
+- [x] Verify `nx run organiclever-be:build` fails — **expected Red** (no buildable sources)
+
+  > **Done** 2026-05-11 — `MSB1009: Project file does not exist` — Red confirmed.
 
 ---
 
@@ -154,10 +188,10 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Adapt from `ose-primer/apps/crud-be-java-springboot/pmd-ruleset.xml` verbatim.
   - Verify: `test -f apps/organiclever-be/pmd-ruleset.xml` exits 0.
 - [ ] Create `apps/organiclever-be/.dockerignore` (_New file_) — exclude `target/`, `.git`,
-  `*.md`:
+      `*.md`:
   - Verify: `test -f apps/organiclever-be/.dockerignore` exits 0.
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/package-info.java`
-  (_New file_):
+      (_New file_):
 
   ```java
   @NullMarked
@@ -167,8 +201,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/package-info.java`
   exits 0.
+
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/OrganicleverBeApplication.java`
-  (_New file_):
+      (_New file_):
 
   ```java
   @SpringBootApplication
@@ -179,6 +214,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/OrganicleverBeApplication.java`
   exits 0.
+
 - [ ] Create `apps/organiclever-be/src/main/resources/application.yml` (_New file_):
   - `server.port: 8202`
   - `management.endpoint.health.show-details: never`
@@ -215,7 +251,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > `feat(organiclever-be): add Java/Spring Boot health endpoint with Cucumber BDD`
 
 - [ ] **Red**: Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
-  (_New file_) — unit test runner only, no step defs yet:
+      (_New file_) — unit test runner only, no step defs yet:
   - `@Suite @IncludeEngines("cucumber") @SelectClasspathResource("health/health-check.feature")`
   - Glue: `com.organicleverbe.unit.health, com.organicleverbe.unit.steps`
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
@@ -227,35 +263,36 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   ```
 
   Verify: exits non-zero with "undefined" or "pending" Cucumber output.
+
 - [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/package-info.java`
-  (_New file_):
+      (_New file_):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/package-info.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitStateStore.java`
-  (_New file_) — `@Scope("cucumber-glue")` bean: `statusCode` (int) + `responseBody` (Object):
+      (_New file_) — `@Scope("cucumber-glue")` bean: `statusCode` (int) + `responseBody` (Object):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitStateStore.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitTestApplication.java`
-  (_New file_) — `@SpringBootApplication(scanBasePackages = "com.organicleverbe")` minimal test app:
+      (_New file_) — `@SpringBootApplication(scanBasePackages = "com.organicleverbe")` minimal test app:
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitTestApplication.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/BaseUnitCucumberContextConfig.java`
-  (_New file_) — empty base class (hook point for shared Spring config):
+      (_New file_) — empty base class (hook point for shared Spring config):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/BaseUnitCucumberContextConfig.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitContextConfig.java`
-  (_New file_) —
-  `@CucumberContextConfiguration @SpringBootTest(classes = UnitTestApplication.class, webEnvironment = NONE) @ActiveProfiles("unit-test")`:
+      (_New file_) —
+      `@CucumberContextConfiguration @SpringBootTest(classes = UnitTestApplication.class, webEnvironment = NONE) @ActiveProfiles("unit-test")`:
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitContextConfig.java`
     exits 0.
 - [ ] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitCommonSteps.java`
-  (_New file_):
+      (_New file_):
   - `@Given("the API is running")` → no-op (Spring context running = API up)
   - `@Then("the response status code should be {int}")` → assert `stateStore.getStatusCode()`
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitCommonSteps.java`
     exits 0.
 - [ ] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitHealthSteps.java`
-  (_New file_):
+      (_New file_):
   - `@When("an operations engineer sends GET /health")` → `stateStore.setStatusCode(200); stateStore.setResponseBody(Map.of("status", "UP"));`
   - `@When("an unauthenticated engineer sends GET /health")` → same
   - `@Then("the health status should be {string}")` → assert `map.get("status")`
@@ -264,10 +301,10 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitHealthSteps.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/test/resources/application-unit-test.yml` (_New file_,
-  empty — Cucumber picks up profile `unit-test`):
+      empty — Cucumber picks up profile `unit-test`):
   - Verify: `test -f apps/organiclever-be/src/test/resources/application-unit-test.yml` exits 0.
 - [ ] Create `apps/organiclever-be/src/test/resources/junit-platform.properties` (_New file_) —
-  `cucumber.publish.quiet=true`:
+      `cucumber.publish.quiet=true`:
   - Verify: `test -f apps/organiclever-be/src/test/resources/junit-platform.properties` exits 0.
 - [ ] Verify `mvn test` passes — **expected Green** (simulated state satisfies all assertions):
 
@@ -276,12 +313,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   ```
 
   Verify: exits 0.
+
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/package-info.java`
-  (_New file_):
+      (_New file_):
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/package-info.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/HealthController.java`
-  (_New file_):
+      (_New file_):
 
   ```java
   @RestController
@@ -294,26 +332,28 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/HealthController.java`
   exits 0.
+
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/package-info.java`
-  (_New file_):
+      (_New file_):
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/package-info.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/GlobalExceptionHandler.java`
-  (_New file_) — `@RestControllerAdvice` returning RFC 7807-style error body:
+      (_New file_) — `@RestControllerAdvice` returning RFC 7807-style error body:
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/GlobalExceptionHandler.java`
     exits 0.
 - [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/CorsConfig.java`
-  (_New file_) — `WebMvcConfigurer.addCorsMappings` for `/**`:
+      (_New file_) — `WebMvcConfigurer.addCorsMappings` for `/**`:
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/CorsConfig.java`
     exits 0.
 - [ ] Verify `mvn test` still passes after adding main-source files — **Green** (controller
-  addition does not break unit tests):
+      addition does not break unit tests):
 
   ```bash
   cd apps/organiclever-be && mvn test
   ```
 
   Verify: exits 0.
+
 - [ ] Verify 90% coverage — inspect `target/site/jacoco/jacoco.xml` line coverage ≥90%:
 
   ```bash
@@ -339,7 +379,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 - `typecheck` target uses only `mvn compile -Pnullcheck` (NullAway via Maven profile)
 
 - [ ] Rewrite `apps/organiclever-be/project.json` per `tech-docs.md` §Updated project.json
-  Targets — with the following adjustments for ose-public rhino-cli compatibility:
+      Targets — with the following adjustments for ose-public rhino-cli compatibility:
   - `codegen`: java generator, `com.organicleverbe.contracts` output — **omit**
     `java-clean-imports` (not in ose-public rhino-cli `[Unverified — ose-primer only]`)
   - `build`: `mvn clean package -DskipTests`
@@ -367,6 +407,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 and Java files exist under
   `apps/organiclever-be/generated-contracts/src/main/java/com/organicleverbe/contracts/`.
+
 - [ ] Run `npx nx run organiclever-be:build` — verify JAR produced:
 
   ```bash
@@ -375,6 +416,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 and a file matching `apps/organiclever-be/target/organiclever-be-*.jar`
   exists.
+
 - [ ] Run `npx nx run organiclever-be:typecheck` — verify NullAway passes:
 
   ```bash
@@ -382,6 +424,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 with no NullAway violations.
+
 - [ ] Run `npx nx run organiclever-be:lint` — verify Checkstyle + PMD pass:
 
   ```bash
@@ -389,6 +432,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0.
+
 - [ ] Run `npx nx run organiclever-be:test:quick` — verify all checks pass, ≥90% coverage:
 
   ```bash
@@ -396,6 +440,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 and JaCoCo reports ≥90% line coverage.
+
 - [ ] Run `npx nx run organiclever-be:spec-coverage` — verify all Gherkin scenarios covered:
 
   ```bash
@@ -413,9 +458,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 > `refactor(organiclever-be): replace Dockerfile.integration for Java`
 
 - [ ] Replace `apps/organiclever-be/Dockerfile.integration` with Java/Maven version — using
-  `ose-primer/apps/crud-be-java-springboot/Dockerfile.integration` as reference, replacing all
-  references to `demobejasb` → `organicleverbe` and `crud-be-java-springboot` →
-  `organiclever-be`:
+      `ose-primer/apps/crud-be-java-springboot/Dockerfile.integration` as reference, replacing all
+      references to `demobejasb` → `organicleverbe` and `crud-be-java-springboot` →
+      `organiclever-be`:
   - Base: `maven:3.9-eclipse-temurin-25-alpine`
   - Copy `pom.xml`, run `mvn dependency:go-offline`
   - Copy `src/`, `generated-contracts/`, gherkin specs
@@ -441,6 +486,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: process prints "Started OrganicleverBeApplication" and port 8202 is listening.
+
 - [ ] Verify health endpoint returns service status UP:
 
   ```bash
@@ -448,6 +494,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: response is `{"status":"UP"}`.
+
 - [ ] Verify anonymous access returns HTTP 200:
 
   ```bash
@@ -455,6 +502,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: returns `200`.
+
 - [ ] Verify no component details in response:
 
   ```bash
@@ -462,8 +510,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: returns `false`.
+
 - [ ] Stop dev server (Ctrl-C or `kill` the process).
-  Verify: port 8202 no longer listening.
+      Verify: port 8202 no longer listening.
 
 ---
 
@@ -508,16 +557,16 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
     AND `grep -v 'dotnet\|aspnet\|ASPNET' infra/dev/organiclever/Dockerfile.be.dev` returns all lines
     (i.e., no dotnet references remain).
 - [ ] Update `infra/dev/organiclever/docker-compose.yml` — remove `ASPNETCORE_URLS` env var
-  from the `organiclever-be` service (dotnet-specific; Java uses `server.port` in `application.yml`):
+      from the `organiclever-be` service (dotnet-specific; Java uses `server.port` in `application.yml`):
   - Verify: `grep -c 'ASPNETCORE_URLS' infra/dev/organiclever/docker-compose.yml` returns 0.
 - [ ] Update `.github/actions/install-language-deps/action.yml` — remove the `organiclever-be`
-  dotnet-restore branch (the Java build handles deps via `mvn`; no separate pre-restore step needed):
+      dotnet-restore branch (the Java build handles deps via `mvn`; no separate pre-restore step needed):
   - Remove: the `if [ "${{ inputs.backend-name }}" = "organiclever-be" ]; then dotnet restore ...` block.
   - If the entire `Restore .NET dependencies` step becomes empty, remove that step entirely.
   - Verify: `grep -c 'OrganicLeverBe.fsproj' .github/actions/install-language-deps/action.yml`
     returns 0.
 - [ ] Update `infra/dev/organiclever/README.md` — change backend description from
-  "F#/Giraffe REST API backend" to "Java/Spring Boot REST API backend":
+      "F#/Giraffe REST API backend" to "Java/Spring Boot REST API backend":
   - Verify: `grep -q 'Java/Spring Boot' infra/dev/organiclever/README.md` exits 0.
 
 ---
@@ -536,6 +585,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 with no errors.
+
 - [ ] Run affected lint:
 
   ```bash
@@ -543,6 +593,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 with no errors.
+
 - [ ] Run affected quick tests:
 
   ```bash
@@ -550,6 +601,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 with all tests passing and ≥90% JaCoCo line coverage.
+
 - [ ] Run affected spec-coverage:
 
   ```bash
@@ -557,8 +609,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: exits 0 with all Gherkin scenarios covered.
+
 - [ ] Fix ALL failures found (including preexisting issues not caused by your changes)
-  before proceeding to Phase 7.
+      before proceeding to Phase 7.
 
 ---
 
@@ -588,6 +641,7 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
   ```
 
   Verify: `git status` shows only expected files staged.
+
 - [ ] Commit plan completion:
 
   ```bash
@@ -595,6 +649,7 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
   ```
 
   Verify: `git log --oneline -1 | grep 'refactor(organiclever-be)'` exits 0.
+
 - [ ] Push to `origin/main` (direct-to-main, Trunk Based Development):
 
   ```bash
@@ -612,6 +667,7 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
   ```
 
   Verify: the latest run triggered by your push is listed.
+
 - [ ] Monitor the triggered CI run:
 
   ```bash
@@ -632,10 +688,11 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
   ```
 
   Verify: `test -d plans/done/$(date +%Y-%m-%d)__organiclever-be-java-migration` exits 0.
+
 - [ ] Update `plans/in-progress/README.md` — remove the organiclever-be-java-migration entry.
-  Verify: `grep -c 'organiclever-be-java-migration' plans/in-progress/README.md` returns 0.
+      Verify: `grep -c 'organiclever-be-java-migration' plans/in-progress/README.md` returns 0.
 - [ ] Update `plans/done/README.md` — add the plan entry with today's completion date.
-  Verify: `grep -q 'organiclever-be-java-migration' plans/done/README.md` exits 0.
+      Verify: `grep -q 'organiclever-be-java-migration' plans/done/README.md` exits 0.
 - [ ] Commit archival:
 
   ```bash
