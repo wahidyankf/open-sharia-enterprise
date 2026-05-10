@@ -94,23 +94,23 @@ Six BCs declare layer subsets honestly:
 
 `bcregistry/validator.go` enforces the subset on `src/contexts/<bc>/`.
 
-## Multi-perspective gherkin: workaround (registry limitation)
+## Multi-perspective gherkin
 
-Today's `bcregistry/Context.Gherkin` is a single string. Four BCs span both perspectives
-(`content`, `search`, `i18n`, `navigation` each have web-side AND api-side feature files).
-The registry can only point at one path.
+Four BCs span both perspectives (`content`, `search`, `i18n`, `navigation` each have web-side
+AND api-side feature files). They are registered with list-form `gherkin:` declaring both
+paths:
 
-Workaround applied here: register multi-perspective BCs as
-`gherkin: behavior/web/gherkin/<bc>`. This satisfies `ddd bc`'s "directory exists with ≥1
-.feature" check using the web side. The api-side feature files (`content-api.feature`,
-`search-api.feature`, `i18n-api.feature`, `navigation-api.feature`) live under
-`behavior/api/gherkin/<bc>/` but are not validated by `ddd bc` for that BC's `gherkin:` field.
+```yaml
+gherkin:
+  - behavior/web/gherkin/<bc>
+  - behavior/api/gherkin/<bc>
+```
 
-Coverage on the api side is preserved by the `spec-coverage` Nx target (added in Phase 7),
-which runs against `behavior/api/gherkin/` independently. Plan
-[`bdd-ddd-tooling-gap-fill`](../../../../plans/in-progress/bdd-ddd-tooling-gap-fill/README.md)
-fix #11 (`gherkin: []string` schema extension) resolves this limitation properly; once it
-ships, the registry can be updated to declare both perspectives' paths per multi-perspective BC.
+The list-form schema (`GherkinPaths` type, scalar↔list auto-conversion via custom
+`UnmarshalYAML`) shipped via the
+[`bdd-ddd-tooling-gap-fill`](../../../../plans/done/2026-05-10__bdd-ddd-tooling-gap-fill/README.md)
+plan, fix #11. `ddd bc` now iterates every declared path and validates "directory exists
+with ≥1 .feature" per perspective, eliminating the prior single-path limitation.
 
 ## Related
 
