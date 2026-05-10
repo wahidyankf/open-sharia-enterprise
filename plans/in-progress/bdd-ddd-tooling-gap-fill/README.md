@@ -62,4 +62,4 @@ See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktr
 - [brd.md](./brd.md) — business rationale
 - [prd.md](./prd.md) — per-fix specification + Gherkin acceptance criteria
 - [tech-docs.md](./tech-docs.md) — implementation specifics per fix
-- [delivery.md](./delivery.md) — TDD-shaped 11-phase checklist
+- [delivery.md](./delivery.md) — TDD-shaped 15-phase checklist (Phases 0–13 including 7B)

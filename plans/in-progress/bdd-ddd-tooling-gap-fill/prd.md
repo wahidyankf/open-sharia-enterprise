@@ -415,7 +415,7 @@ Feature: validate-links is invoked by pre-push gate
 - **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
 - **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
 - **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
-- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **Delivery executor** (plan-execution workflow hat) — follows `governance/workflows/plan/plan-execution.md` to execute each delivery checkbox in order.
 - **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
 
 ## User Stories

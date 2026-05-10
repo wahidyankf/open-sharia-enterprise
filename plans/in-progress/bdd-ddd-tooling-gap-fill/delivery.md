@@ -73,7 +73,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 2 — `organiclever-be:test:quick` DDD wiring (Fix #3)
 
-- [ ] **2.1 RED** From the existing `apps/organiclever-be/project.json` `test:quick.options.commands`, the two `ddd bc/ul` invocations are absent. Capture this state.
+- [ ] **2.1 PRE-FLIGHT** Run `nx run organiclever-be:test:quick --skip-nx-cache` and confirm the output does NOT show `ddd bc` or `ddd ul` invocations — this is the baseline to verify against after 2.2. (From the existing `apps/organiclever-be/project.json` `test:quick.options.commands`, the two `ddd bc/ul` invocations are absent.)
 - [ ] **2.2 GREEN** Edit `apps/organiclever-be/project.json`:
   - Prepend the two `ddd bc/ul` commands.
   - Add the two new `inputs` paths.
@@ -97,7 +97,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### 3.2 Validator change
 
-- [ ] **3.2.1 RED** Add unit tests in `internal/glossary/validator_test.go`:
+- [ ] **3.2.1 RED** Add unit tests in `internal/glossary/glossary_test.go`:
   - F#-only BC with `code_lang: [fs]` validates against .fs grep.
   - TS+F# BC with `code_lang: [ts, fs]` validates union.
   - TS-only BC (default) preserves today's behavior.
@@ -135,12 +135,15 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 6 — Delete drift-\* placeholders (Fix #7)
 
-- [ ] **6.1 RED** Add unit test in `cmd/specs_drift_routes_test.go` (or new file): `rhino-cli specs --help` does not list `drift-routes`. Today the test fails (drift-routes is registered).
-- [ ] **6.2 GREEN** Delete files:
-  - `apps/rhino-cli/cmd/specs_drift_routes.go`
-  - `apps/rhino-cli/cmd/specs_drift_endpoints.go`
-  - `apps/rhino-cli/cmd/specs_drift_contracts.go`
-  - Their `_test.go` companions if any.
+- [ ] **6.1 RED** Create `apps/rhino-cli/cmd/specs_drift_routes_test.go` (_New test_): assert that `rhino-cli specs --help` output does not contain the string `drift-routes`. Run `(cd apps/rhino-cli && go test ./cmd/ -run TestSpecsHelp)` — test fails (drift-routes is currently registered).
+- [ ] **6.2 GREEN** Run:
+  ```bash
+  git rm apps/rhino-cli/cmd/specs_drift_routes.go \
+         apps/rhino-cli/cmd/specs_drift_endpoints.go \
+         apps/rhino-cli/cmd/specs_drift_contracts.go
+  (cd apps/rhino-cli && go build ./...)
+  ```
+  `go build` exits 0.
 - [ ] **6.3 GREEN** `go build ./...` succeeds. `rhino-cli specs --help` lists 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption).
 - [ ] **6.4** Update `governance/conventions/structure/specs-directory-structure.md`: add a "Drift detection" subsection noting these commands are not currently implemented; track via the tooling backlog.
 
@@ -163,14 +166,14 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ### 7B.1 `--apps` flag on validate-counts (Fix #12)
 
 - [ ] **7B.1.1 RED** Add unit tests in `cmd/specs_validate_counts_test.go` mirroring Fix #1+#2 pattern: "no positional, no flag → defaults to allowlist"; "explicit positional folder preserved"; "--apps flag overrides defaults". Tests fail.
-- [ ] **7B.1.2 GREEN** Edit `cmd/specs_validate_counts.go`: add `--apps` StringSlice flag; if positional empty AND flag empty, use `allowlist.AppsWithDDD` (same import path as Phase 1.1). Today's positional folder behavior preserved.
-- [ ] **7B.1.3 GREEN** Run unit tests. Coverage ≥90%.
+- [ ] **7B.1.2 GREEN** Edit `cmd/specs_validate_counts.go`: add `--apps` StringSlice flag; if positional empty AND flag empty, use `allowlist.AppsWithDDD` (same import path as Phase 1.1). Today's positional folder behavior preserved. Verify by running `(cd apps/rhino-cli && go test ./cmd/ -run TestSpecsValidateCounts)` — all existing tests pass and the three new scenarios from step 7B.1.1 pass.
+- [ ] **7B.1.3 GREEN** Run `nx run rhino-cli:test:quick` — exits 0 with coverage ≥90%.
 
 ### 7B.2 `--apps` flag on validate-links (Fix #13)
 
 - [ ] **7B.2.1 RED** Add unit tests in `cmd/specs_validate_links_test.go` (same scenarios as 7B.1.1, scoped to validate-links). Tests fail.
-- [ ] **7B.2.2 GREEN** Edit `cmd/specs_validate_links.go`: same pattern — add `--apps` StringSlice flag with allowlist default, preserve positional behavior.
-- [ ] **7B.2.3 GREEN** Run unit tests. Coverage ≥90%.
+- [ ] **7B.2.2 GREEN** Edit `cmd/specs_validate_links.go`: same pattern — add `--apps` StringSlice flag with allowlist default, preserve positional behavior. Verify by running `(cd apps/rhino-cli && go test ./cmd/ -run TestSpecsValidateLinks)` — all existing tests pass and the three new scenarios from step 7B.2.1 pass.
+- [ ] **7B.2.3 GREEN** Run `nx run rhino-cli:test:quick` — exits 0 with coverage ≥90%.
 
 ### 7B.3 Nx targets
 
@@ -252,7 +255,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### 10.4 Glossary validator
 
-- [ ] **10.4.1 RED** Test in `internal/glossary/validator_test.go`: glossary feature reference resolvable under either of a BC's two declared gherkin paths is "found".
+- [ ] **10.4.1 RED** Test in `internal/glossary/glossary_test.go`: glossary feature reference resolvable under either of a BC's two declared gherkin paths is "found".
 - [ ] **10.4.2 GREEN** Edit `internal/glossary/validator.go` `checkTerms`: iterate `ctx.Gherkin` paths; first match wins.
 - [ ] **10.4.3 GREEN** All tests pass.
 
@@ -276,6 +279,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [ ] **11.2** Update `.claude/agents/specs-checker.md` and `.claude/agents/specs-fixer.md`:
   - Drop references to `drift-routes`, `drift-endpoints`, `drift-contracts`.
   - Reference the new `validate:specs-adoption` and `validate:specs-tree` Nx targets.
+  - Verify by running `grep -c "drift-routes\|drift-endpoints\|drift-contracts" .claude/agents/specs-checker.md .claude/agents/specs-fixer.md` — must return 0 for each file.
 - [ ] **11.3** Run `npm run sync:claude-to-opencode` — confirm `.opencode/agents/` mirror updated.
 - [ ] **11.4** Run `npm run validate:sync` — parity confirmed.
 - [ ] **11.5** `npm run lint:md` — fix violations.
@@ -318,7 +322,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] Commit changes thematically — group related changes into logically cohesive commits.
 - [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
-- [ ] Split different domains/concerns into separate commits (e.g., allowlist wiring separate from schema changes separate from governance doc updates).
+- [ ] Split different domains/concerns into separate commits (e.g., allowlist wiring separate from schema changes separate from governance doc updates). Exception: tightly-coupled governance fixes that form a single logical unit may be committed atomically when the scope justifies it (see step 13.1).
 - [ ] Do NOT bundle unrelated fixes into a single commit.
 
 - [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
