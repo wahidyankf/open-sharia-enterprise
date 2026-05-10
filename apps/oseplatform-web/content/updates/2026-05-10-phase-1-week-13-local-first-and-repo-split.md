@@ -22,7 +22,7 @@ showtoc: true
 
 Five weeks ago we said the polyglot experiment was over and the focus was narrowing to ship. The narrowing went further than we expected. The F# backend that was the chosen production stack is now an empty scaffold. OrganicLever's data layer moved into the browser. The eleven demo backends that defined the previous update no longer live in this repo at all. The single repository that held everything in Phase 0 became a parent container tracking three sibling repositories. And the FSL-1.1-MIT license—introduced four weeks ago with a long rationale—was reverted to MIT after a strategic reassessment.
 
-This update covers 1,346 commits across four repositories between 2026-04-05 19:55 +07 and 2026-05-10 20:00 +07. Most of those commits are not new features. They are the work of cutting things apart cleanly: extracting demo apps without losing history, splitting infrastructure without breaking automation, restructuring an application's bounded contexts without losing the test suite, and enforcing the new conventions through tooling rather than discipline.
+This update covers the work between 2026-04-05 19:55 +07 and 2026-05-10 20:00 +07. Most of it is not new features. It is the work of cutting things apart cleanly: extracting demo apps without losing history, splitting infrastructure without breaking automation, restructuring an application's bounded contexts without losing the test suite, and enforcing the new conventions through tooling rather than discipline.
 
 ## License: MIT, Reverted From FSL-1.1-MIT
 
@@ -130,10 +130,10 @@ graph TB
     classDef private fill:#DE8F05,stroke:#000,color:#FFF,stroke-width:2px
 ```
 
-- **`ose-public`** — the main product monorepo. Public on GitHub, MIT. Hosts `organiclever-*`, `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`, and the polyglot CLI tools `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`. 705 commits this period.
-- **`ose-infra`** — operational infrastructure. Forked from `ose-public` and now distinct, private, proprietary-licensed. Hosts the self-hosted GitHub Actions runner stack, `coralpolyp` (a new app described below), and infrastructure-only governance. 172 commits.
-- **`ose-primer`** — a public, MIT-licensed downstream template carrying the polyglot demo apps, governance scaffolding, AI agents and skills, and rhino-cli itself for teams to bootstrap their own OSE-style monorepos. New as a distinct entity this period. 258 commits.
-- **`ose-projects`** — the parent container. Created on 2026-04-06—one day after the previous update. Tracks the three subrepos as bare gitlinks (mode `160000`, no `.gitmodules`). 211 commits.
+- **`ose-public`** — the main product monorepo. Public on GitHub, MIT. Hosts `organiclever-*`, `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`, and the polyglot CLI tools `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`.
+- **`ose-infra`** — operational infrastructure. Forked from `ose-public` and now distinct, private, proprietary-licensed. Hosts the self-hosted GitHub Actions runner stack, `coralpolyp` (a new app described below), and infrastructure-only governance.
+- **`ose-primer`** — a public, MIT-licensed downstream template carrying the polyglot demo apps, governance scaffolding, AI agents and skills, and rhino-cli itself for teams to bootstrap their own OSE-style monorepos. New as a distinct entity this period.
+- **`ose-projects`** — the parent container. Created on 2026-04-06—one day after the previous update. Tracks the three subrepos as bare gitlinks (mode `160000`, no `.gitmodules`).
 
 ### `ose-projects` Was Brand New
 
@@ -145,7 +145,7 @@ The parent grew its own AI agent set—11 in total: `plan-maker`, `plan-checker`
 
 `ose-infra` shares its root commit with `ose-public`—same hash, same date in November 2025—because it was forked from `ose-public`. The divergence accelerated this period:
 
-- **Self-hosted GitHub Actions runner** (`gha-runner`): multi-arch Docker image, `launchd` supervisor, per-container resource caps (2 CPU / 8 GB), concurrency tuning (default 3), stale-runner cleanup, JIT registration. Most of `ose-infra`'s 15 `fix(ci)` commits this period are runner stability work—port conflicts, BuildKit toggles, timeout calibration, e2e cleanup. The runner now serves `ose-infra`'s CI exclusively; `ose-public` still uses GitHub-hosted `ubuntu-latest`.
+- **Self-hosted GitHub Actions runner** (`gha-runner`): multi-arch Docker image, `launchd` supervisor, per-container resource caps (2 CPU / 8 GB), concurrency tuning (default 3), stale-runner cleanup, JIT registration. Most of `ose-infra`'s `fix(ci)` work this period is runner stability—port conflicts, BuildKit toggles, timeout calibration, e2e cleanup. The runner now serves `ose-infra`'s CI exclusively; `ose-public` still uses GitHub-hosted `ubuntu-latest`.
 - **`coralpolyp`** — a new app inside `ose-infra`. Rust/Axum backend with a health endpoint, Next.js + Effect TS frontend, Playwright BE+FE E2E suites, Docker dev and CI stacks, and C4 + Gherkin + OpenAPI specs. Scaffolded 2026-04-13. The product purpose is intentionally not in scope for a public update.
 - **License**: migrated to proprietary on 2026-04-13.
 - **Demo apps removed**: all `a-demo-*` apps, specs, and infra were removed from `ose-infra` on 2026-04-14.
@@ -256,7 +256,6 @@ Several governance conventions were added or formalized this period across the t
 What changed in five weeks:
 
 - **Repositories**: 1 self-contained monorepo → 4 cooperating repos (parent + 3 subrepos)
-- **Commits this period**: 705 (`ose-public`) + 172 (`ose-infra`) + 258 (`ose-primer`) + 211 (`ose-projects`) = 1,346 total
 - **`ose-public` apps**: dropped 11 demo backends + 3 demo frontends + 1 fullstack demo (now in `ose-primer`); added `wahidyankf-web` + `wahidyankf-web-fe-e2e`
 - **`ose-public` libs**: 8 → 5 (Elixir trio relocated to `ose-primer`)
 - **`ose-infra` apps**: added `coralpolyp` (Rust/Axum BE + Next.js/Effect-TS FE + BE/FE E2E)
