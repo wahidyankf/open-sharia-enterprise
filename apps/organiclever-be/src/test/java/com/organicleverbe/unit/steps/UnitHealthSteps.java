@@ -1,5 +1,6 @@
 package com.organicleverbe.unit.steps;
 
+import com.organicleverbe.health.controller.HealthController;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +14,21 @@ public class UnitHealthSteps {
     @Autowired
     private UnitStateStore stateStore;
 
-    @When("an operations engineer sends GET \\/health")
+    @Autowired
+    private HealthController healthController;
+
+    @When("^an operations engineer sends GET /health$")
     public void anOperationsEngineerSendsGetHealth() {
+        Map<String, String> response = healthController.health();
         stateStore.setStatusCode(200);
-        stateStore.setResponseBody(Map.of("status", "UP"));
+        stateStore.setResponseBody(response);
     }
 
-    @When("an unauthenticated engineer sends GET \\/health")
+    @When("^an unauthenticated engineer sends GET /health$")
     public void anUnauthenticatedEngineerSendsGetHealth() {
+        Map<String, String> response = healthController.health();
         stateStore.setStatusCode(200);
-        stateStore.setResponseBody(Map.of("status", "UP"));
+        stateStore.setResponseBody(response);
     }
 
     @Then("the health status should be {string}")

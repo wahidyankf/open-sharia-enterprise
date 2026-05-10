@@ -454,7 +454,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 - `codegen` target omits the `java-clean-imports` post-processing step
 - `typecheck` target uses only `mvn compile -Pnullcheck` (NullAway via Maven profile)
 
-- [ ] Rewrite `apps/organiclever-be/project.json` per `tech-docs.md` §Updated project.json
+- [x] Rewrite `apps/organiclever-be/project.json` per `tech-docs.md` §Updated project.json
       Targets — with the following adjustments for ose-public rhino-cli compatibility:
   - `codegen`: java generator, `com.organicleverbe.contracts` output — **omit**
     `java-clean-imports` (not in ose-public rhino-cli `[Unverified — ose-primer only]`)
@@ -475,7 +475,10 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   - Remove: `AltCover`, `fantomas`, `dotnet` references
   - Verify: `test -f apps/organiclever-be/project.json` exits 0 and
     `grep -q '"platform:spring-boot"' apps/organiclever-be/project.json` exits 0.
-- [ ] Run `npx nx run organiclever-be:codegen` — verify Java contracts generated:
+
+  > **Done** 2026-05-11 — project.json rewritten: Maven targets, lang:java tag, jacoco.xml output, dotnet/F# refs removed.
+
+- [x] Run `npx nx run organiclever-be:codegen` — verify Java contracts generated:
 
   ```bash
   npx nx run organiclever-be:codegen
@@ -484,7 +487,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   Verify: exits 0 and Java files exist under
   `apps/organiclever-be/generated-contracts/src/main/java/com/organicleverbe/contracts/`.
 
-- [ ] Run `npx nx run organiclever-be:build` — verify JAR produced:
+  > **Done** 2026-05-11 — codegen exit 0; ErrorResponse.java + HealthResponse.java generated.
+
+- [x] Run `npx nx run organiclever-be:build` — verify JAR produced:
 
   ```bash
   npx nx run organiclever-be:build
@@ -493,7 +498,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   Verify: exits 0 and a file matching `apps/organiclever-be/target/organiclever-be-*.jar`
   exists.
 
-- [ ] Run `npx nx run organiclever-be:typecheck` — verify NullAway passes:
+  > **Done** 2026-05-11 — build exit 0; organiclever-be-1.0.0.jar (23.4M) produced.
+
+- [x] Run `npx nx run organiclever-be:typecheck` — verify NullAway passes:
 
   ```bash
   npx nx run organiclever-be:typecheck
@@ -501,7 +508,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 with no NullAway violations.
 
-- [ ] Run `npx nx run organiclever-be:lint` — verify Checkstyle + PMD pass:
+  > **Done** 2026-05-11 — typecheck exit 0; NullAway BUILD SUCCESS, no violations.
+
+- [x] Run `npx nx run organiclever-be:lint` — verify Checkstyle + PMD pass:
 
   ```bash
   npx nx run organiclever-be:lint
@@ -509,7 +518,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0.
 
-- [ ] Run `npx nx run organiclever-be:test:quick` — verify all checks pass, ≥90% coverage:
+  > **Done** 2026-05-11 — lint exit 0; Checkstyle + PMD both passed.
+
+- [x] Run `npx nx run organiclever-be:test:quick` — verify all checks pass, ≥90% coverage:
 
   ```bash
   npx nx run organiclever-be:test:quick
@@ -517,13 +528,17 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 and JaCoCo reports ≥90% line coverage.
 
-- [ ] Run `npx nx run organiclever-be:spec-coverage` — verify all Gherkin scenarios covered:
+  > **Done** 2026-05-11 — test:quick exit 0; 100% line coverage (2/2). Fix applied: UnitHealthSteps now calls healthController.health() directly for real coverage measurement.
+
+- [x] Run `npx nx run organiclever-be:spec-coverage` — verify all Gherkin scenarios covered:
 
   ```bash
   npx nx run organiclever-be:spec-coverage
   ```
 
   Verify: exits 0 with no uncovered scenarios reported.
+
+  > **Done** 2026-05-11 — spec-coverage exit 0: 1 spec, 3 scenarios, 8 steps all covered. Fix: @When step annotations changed to regex `^...$` format so rhino-cli can pattern-match `/health` without Cucumber Expression ambiguity.
 
 ---
 
