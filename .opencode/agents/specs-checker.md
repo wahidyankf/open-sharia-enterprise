@@ -216,19 +216,21 @@ Note: Adoption gap findings are always `[Adoption Gap]` tagged in the report and
 
 ## Drift Detection
 
-Before completing validation of any listed `specs/apps/<app-family>/` folder, run the
-`rhino-cli specs drift-*` commands applicable to the app's surface profile. Parse JSONL output
-and include findings in the audit report under a `## Drift Findings` subsection.
+Before completing validation of any listed `specs/apps/<app-family>/` folder, run the four
+allowlist-driven `rhino-cli specs validate-*` Nx targets via `nx run rhino-cli:validate:specs-{adoption,tree,counts,links}`.
+Each target accepts a `--apps <csv>` flag for explicit scoping; absent any flag, it defaults to the
+`AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`).
 
-| Drift command                           | Applies to                | Finding level      |
-| --------------------------------------- | ------------------------- | ------------------ |
-| `rhino-cli specs drift-routes <app>`    | Web and full-stack        | MEDIUM             |
-| `rhino-cli specs drift-endpoints <app>` | Full-stack (BE)           | MEDIUM             |
-| `rhino-cli specs drift-contracts <app>` | Full-stack with contracts | MEDIUM (flag only) |
+| Target                    | What it checks                                                        | Finding level |
+| ------------------------- | --------------------------------------------------------------------- | ------------- |
+| `validate:specs-adoption` | BDD/DDD/Contracts adoption gaps per surface profile                   | HIGH          |
+| `validate:specs-tree`     | Five-folder canonical layout — no flat-root artifacts                 | HIGH          |
+| `validate:specs-counts`   | Required subfolders contain ≥1 spec file (HIGH missing, MEDIUM empty) | HIGH/MEDIUM   |
+| `validate:specs-links`    | Markdown link integrity within the spec tree                          | HIGH          |
 
-Drift findings are tagged `[Drift]` in the report. `drift-contracts` mismatches are always
-flag-only — they indicate intentional divergence between spec and handler and require human review.
-`drift-routes` and `drift-endpoints` mismatches route to the fixer's auto-fix list.
+Drift detection (routes, endpoints, contracts) is not currently implemented; the placeholder
+command files were removed in the BDD+DDD tooling gap-fill plan. Re-introduction is tracked via
+the tooling backlog and will require a new dedicated plan, not a stub.
 
 ## Convergence Safeguards
 
@@ -265,8 +267,9 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 ## Execution Pattern
 
 1. **Initialize**: Generate UUID, create report file in `generated-reports/`
-2. **Run deterministic checks**: Shell out to `rhino-cli specs validate-tree`, `validate-adoption`,
-   and `drift-*` commands for each listed app. Parse JSONL output into findings.
+2. **Run deterministic checks**: Shell out to `nx run rhino-cli:validate:specs-{adoption,tree,counts,links}`
+   for each listed app (or default to the AppsWithDDD allowlist when no folder is listed). Parse
+   non-zero exit codes and printed findings into report entries.
 3. **Validate per folder**: For each listed folder, run LLM Categories 1-7 on that folder
    and all its subfolders
 4. **Cross-validate**: If 2+ folders listed, run Category 4 across them
@@ -320,14 +323,14 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 **Expected**: What consistency looks like
 **Confidence**: HIGH | MEDIUM
 
-## Drift Findings
+## Validator Findings
 
-#### [MEDIUM] Drift — routes-and-screens.md out of sync
+#### [HIGH] Allowlist gate — validate:specs-counts missing folder
 
-**App**: `organiclever`
-**Command**: `rhino-cli specs drift-routes organiclever`
-**Evidence**: Route `/workouts/new` exists in app but missing in routes-and-screens.md
-**Expected**: Add row to routes table in specs/apps/organiclever/components/web/routes-and-screens.md
+**App**: `wahidyankf`
+**Command**: `nx run rhino-cli:validate:specs-counts`
+**Evidence**: `specs/apps/wahidyankf/containers: HIGH: missing required folder: containers`
+**Expected**: Add the canonical `containers/` folder with at least one spec .md file
 **Confidence**: HIGH
 ```
 

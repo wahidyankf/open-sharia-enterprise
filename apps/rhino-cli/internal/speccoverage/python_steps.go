@@ -37,7 +37,7 @@ func extractPythonStepTexts(path string, sm *stepMatcher) error {
 		// Python uses {{...}} for literal braces in parsers.parse format strings
 		text = strings.ReplaceAll(text, "{{", "{")
 		text = strings.ReplaceAll(text, "}}", "}")
-		addPythonStepToMatcher(sm, text)
+		addPythonStepToMatcherWithOrigin(sm, text, path)
 	}
 	return nil
 }

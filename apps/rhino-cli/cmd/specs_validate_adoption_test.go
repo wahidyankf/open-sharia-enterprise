@@ -318,6 +318,191 @@ func TestValidateSpecAdoption_Logic(t *testing.T) {
 	}
 }
 
+func TestResolveAdoptionApps(t *testing.T) {
+	tests := []struct {
+		name       string
+		positional []string
+		appsFlag   []string
+		want       []string
+	}{
+		{
+			name:       "no positional, no flag → defaults to allowlist",
+			positional: nil,
+			appsFlag:   nil,
+			want:       []string{"organiclever", "wahidyankf", "oseplatform", "ayokoding"},
+		},
+		{
+			name:       "explicit positional preserved as single-app list",
+			positional: []string{"organiclever"},
+			appsFlag:   nil,
+			want:       []string{"organiclever"},
+		},
+		{
+			name:       "--apps flag overrides defaults",
+			positional: nil,
+			appsFlag:   []string{"organiclever", "wahidyankf"},
+			want:       []string{"organiclever", "wahidyankf"},
+		},
+		{
+			name:       "--apps flag with single app",
+			positional: nil,
+			appsFlag:   []string{"organiclever"},
+			want:       []string{"organiclever"},
+		},
+		{
+			name:       "positional wins over --apps flag (back-compat priority)",
+			positional: []string{"oseplatform"},
+			appsFlag:   []string{"organiclever", "wahidyankf"},
+			want:       []string{"oseplatform"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := resolveAdoptionApps(tt.positional, tt.appsFlag)
+			if len(got) != len(tt.want) {
+				t.Fatalf("resolveAdoptionApps() len = %d, want %d; got = %v, want = %v",
+					len(got), len(tt.want), got, tt.want)
+			}
+			for i := range tt.want {
+				if got[i] != tt.want[i] {
+					t.Errorf("resolveAdoptionApps()[%d] = %q, want %q", i, got[i], tt.want[i])
+				}
+			}
+		})
+	}
+}
+
+// TestSpecsValidateAdoption_NoArgsDefaultsToAllowlist verifies that calling
+// the command with zero positional args and no --apps flag iterates over
+// the allowlist. The fake validator counts how many apps it was called for.
+func TestSpecsValidateAdoption_NoArgsDefaultsToAllowlist(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateAdoptionFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateAdoptionFn = origFn
+		// Reset --apps flag for next test.
+		_ = specsValidateAdoptionCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateAdoptionFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateAdoptionCmd.SetOut(buf)
+	specsValidateAdoptionCmd.SetErr(buf)
+
+	if err := specsValidateAdoptionCmd.RunE(specsValidateAdoptionCmd, []string{}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 4 {
+		t.Errorf("expected validator called for 4 allowlist apps, got %d: %v",
+			len(calledFor), calledFor)
+	}
+}
+
+// TestSpecsValidateAdoption_AppsFlagOverrides verifies that --apps flag
+// invokes the validator for exactly the flag values.
+func TestSpecsValidateAdoption_AppsFlagOverrides(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateAdoptionFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateAdoptionFn = origFn
+		_ = specsValidateAdoptionCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateAdoptionFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	if err := specsValidateAdoptionCmd.Flags().Set("apps", "organiclever,wahidyankf"); err != nil {
+		t.Fatalf("failed to set --apps flag: %v", err)
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateAdoptionCmd.SetOut(buf)
+	specsValidateAdoptionCmd.SetErr(buf)
+
+	if err := specsValidateAdoptionCmd.RunE(specsValidateAdoptionCmd, []string{}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 2 {
+		t.Errorf("expected validator called for 2 apps, got %d: %v", len(calledFor), calledFor)
+	}
+	if len(calledFor) >= 2 && (calledFor[0] != "organiclever" || calledFor[1] != "wahidyankf") {
+		t.Errorf("expected [organiclever wahidyankf], got %v", calledFor)
+	}
+}
+
+// TestSpecsValidateAdoption_PositionalPreserved verifies that a single
+// positional arg keeps today's single-app behavior unchanged.
+func TestSpecsValidateAdoption_PositionalPreserved(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateAdoptionFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateAdoptionFn = origFn
+		_ = specsValidateAdoptionCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateAdoptionFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateAdoptionCmd.SetOut(buf)
+	specsValidateAdoptionCmd.SetErr(buf)
+
+	if err := specsValidateAdoptionCmd.RunE(specsValidateAdoptionCmd, []string{"organiclever"}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 1 || calledFor[0] != "organiclever" {
+		t.Errorf("expected validator called once for [organiclever], got %v", calledFor)
+	}
+}
+
 func TestWalkFeatureFiles(t *testing.T) {
 	tests := []struct {
 		name      string

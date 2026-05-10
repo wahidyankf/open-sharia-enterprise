@@ -312,6 +312,61 @@ func TestValidateSpecCoverageCmd_MissingGitRoot(t *testing.T) {
 	}
 }
 
+// TestValidateSpecCoverageCmd_OrphanStepImpls verifies that orphan step
+// implementations cause the command to fail with a non-zero exit and emit
+// a stderr line identifying the count (Phase 5B / Fix #15).
+func TestValidateSpecCoverageCmd_OrphanStepImpls(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specCoverageCheckAllFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specCoverageCheckAllFn = origFn
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+	specCoverageCheckAllFn = func(_ speccoverage.ScanOptions) (*speccoverage.CheckResult, error) {
+		return &speccoverage.CheckResult{
+			TotalSpecs:     1,
+			TotalScenarios: 1,
+			TotalSteps:     1,
+			OrphanStepImpls: []speccoverage.OrphanStepImpl{
+				{File: "apps/example/src/steps.ts", MatcherKind: "exact", MatcherText: "an unmatched orphan"},
+				{File: "apps/example/src/other.ts", MatcherKind: "pattern", MatcherText: "^a unicorn appears$"},
+			},
+		}, nil
+	}
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	validateSpecCoverageCmd.SetOut(stdout)
+	validateSpecCoverageCmd.SetErr(stderr)
+
+	verbose = false
+	quiet = false
+	output = "text"
+
+	err := validateSpecCoverageCmd.RunE(validateSpecCoverageCmd, []string{"specs/test", "apps/test"})
+	if err == nil {
+		t.Fatal("expected non-nil error when orphan step impls are present")
+	}
+	if !strings.Contains(err.Error(), "orphan step impl") {
+		t.Errorf("expected error to mention 'orphan step impl', got: %v", err)
+	}
+
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "Found 2 orphan step implementation(s)") {
+		t.Errorf("expected stderr to report orphan count, got: stdout=%q stderr=%q", stdout.String(), stderr.String())
+	}
+}
+
 // TestValidateSpecCoverageCmd_FnError verifies error propagation from the internal function.
 // This is a non-BDD test covering the error path not in Gherkin specs.
 func TestValidateSpecCoverageCmd_FnError(t *testing.T) {

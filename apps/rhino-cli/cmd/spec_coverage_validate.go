@@ -9,15 +9,20 @@ import (
 )
 
 var validateSpecCoverageCmd = &cobra.Command{
-	Use:   "validate <specs-dir> <app-dir>",
+	Use:   "validate <specs-dir> [<specs-dir>...] <app-dir>",
 	Short: "Validate that all BDD spec files have matching test implementations",
-	Long: `Walk <specs-dir> for .feature files and check each has at least one
-matching test file anywhere under <app-dir>.
+	Long: `Walk one or more <specs-dir> trees for .feature files and check each has at
+least one matching test file anywhere under the final positional <app-dir>.
+
+When multiple <specs-dir> arguments are provided, every gherkin tree is walked
+in a single pass and ALL extracted impl matchers under <app-dir> are validated
+against the union of gherkin steps. This is the correct shape when an app has
+both web and api gherkin scopes that share step impls (e.g., oseplatform-web).
 
 A matching test file is one whose base name starts with the feature file stem
 followed by a dot (e.g. "user-login.feature" matches "user-login.integration.test.tsx").
 
-Both paths are resolved relative to the git repository root.
+All paths are resolved relative to the git repository root.
 
 The reverse direction (test referencing a non-existent spec) is already enforced
 at runtime by vitest-cucumber's loadFeature(), so only the spec-to-test direction
@@ -25,12 +30,18 @@ is checked here.`,
 	Example: `  # Check organiclever-fe spec coverage
   rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
 
+  # Multiple gherkin scopes (web + api) against one app
+  rhino-cli spec-coverage validate --shared-steps \
+    specs/apps/oseplatform/behavior/web/gherkin \
+    specs/apps/oseplatform/behavior/api/gherkin \
+    apps/oseplatform-web
+
   # Output as JSON
   rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -o json
 
   # Quiet mode
   rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -q`,
-	Args:          cobra.ExactArgs(2),
+	Args:          cobra.MinimumNArgs(2),
 	SilenceErrors: true,
 	RunE:          runValidateSpecCoverage,
 }
@@ -50,12 +61,17 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to find git repository root: %w", err)
 	}
 
-	specsDir := filepath.Join(repoRoot, args[0])
-	appDir := filepath.Join(repoRoot, args[1])
+	// Last positional arg is the app-dir; preceding args are specs-dirs.
+	appDir := filepath.Join(repoRoot, args[len(args)-1])
+	specsDirs := make([]string, 0, len(args)-1)
+	for _, sd := range args[:len(args)-1] {
+		specsDirs = append(specsDirs, filepath.Join(repoRoot, sd))
+	}
 
 	opts := speccoverage.ScanOptions{
 		RepoRoot:    repoRoot,
-		SpecsDir:    specsDir,
+		SpecsDir:    specsDirs[0], // primary; preserved for backward-compat
+		SpecsDirs:   specsDirs,
 		AppDir:      appDir,
 		Verbose:     verbose,
 		Quiet:       quiet,
@@ -76,7 +92,10 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	hasGaps := len(result.Gaps) > 0 || len(result.ScenarioGaps) > 0 || len(result.StepGaps) > 0
+	hasGaps := len(result.Gaps) > 0 ||
+		len(result.ScenarioGaps) > 0 ||
+		len(result.StepGaps) > 0 ||
+		len(result.OrphanStepImpls) > 0
 	if hasGaps {
 		if !quiet && output == "text" {
 			if len(result.Gaps) > 0 {
@@ -88,9 +107,14 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 			if len(result.StepGaps) > 0 {
 				_, _ = fmt.Fprintf(cmd.OutOrStderr(), "❌ Found %d step(s) without matching step definitions\n", len(result.StepGaps))
 			}
+			if len(result.OrphanStepImpls) > 0 {
+				_, _ = fmt.Fprintf(cmd.OutOrStderr(),
+					"❌ Found %d orphan step implementation(s) (no Gherkin step matches them)\n",
+					len(result.OrphanStepImpls))
+			}
 		}
-		return fmt.Errorf("spec coverage gaps found: %d file gap(s), %d scenario gap(s), %d step gap(s)",
-			len(result.Gaps), len(result.ScenarioGaps), len(result.StepGaps))
+		return fmt.Errorf("spec coverage gaps found: %d file gap(s), %d scenario gap(s), %d step gap(s), %d orphan step impl(s)",
+			len(result.Gaps), len(result.ScenarioGaps), len(result.StepGaps), len(result.OrphanStepImpls))
 	}
 
 	return nil

@@ -41,7 +41,7 @@ func (s *ulValidateIntegSteps) before(_ context.Context, _ *godog.Scenario) (con
 	output = "text"
 	ulSeverity = ""
 	ulValidateAllFn = glossary.ValidateAll
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
 }
@@ -49,7 +49,7 @@ func (s *ulValidateIntegSteps) before(_ context.Context, _ *godog.Scenario) (con
 func (s *ulValidateIntegSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
 	_ = os.Chdir(s.originalWd)
 	_ = os.RemoveAll(s.tmpDir)
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 	return context.Background(), nil
 }
 

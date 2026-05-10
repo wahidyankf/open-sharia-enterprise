@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"testing"
 	"time"
 )
@@ -44,6 +45,96 @@ func dirEntries(pairs ...any) []os.DirEntry {
 	return out
 }
 
+// TestLoad_GherkinScalarAutoConvertsToList — Fix #11 schema bump:
+// scalar `gherkin: path` decodes to a one-element GherkinPaths slice.
+// Backward-compat: every existing v2 registry uses the scalar form.
+func TestLoad_GherkinScalarAutoConvertsToList(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	osReadFileFn = func(_ string) ([]byte, error) {
+		return []byte(`version: 2
+app: test
+contexts:
+  - name: ctx1
+    summary: first
+    layers: [domain]
+    code: [apps/test/src/contexts/ctx1]
+    glossary: specs/apps/test/ubiquitous-language/ctx1.md
+    gherkin: specs/apps/test/fe/gherkin/ctx1
+    relationships: []
+`), nil
+	}
+	reg, err := Load("/repo", "test")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	got := reg.Contexts[0].Gherkin
+	if len(got) != 1 || got[0] != "specs/apps/test/fe/gherkin/ctx1" {
+		t.Errorf("expected one-element GherkinPaths slice, got %v", got)
+	}
+}
+
+// TestLoad_GherkinListFormDecodesIntact — Fix #11:
+// list `gherkin: [a, b]` decodes into a two-element slice.
+func TestLoad_GherkinListFormDecodesIntact(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	osReadFileFn = func(_ string) ([]byte, error) {
+		return []byte(`version: 2
+app: test
+contexts:
+  - name: ctx1
+    summary: first
+    layers: [domain]
+    code: [apps/test/src/contexts/ctx1]
+    glossary: specs/apps/test/ubiquitous-language/ctx1.md
+    gherkin: [behavior/web/gherkin/ctx1, behavior/api/gherkin/ctx1]
+    relationships: []
+`), nil
+	}
+	reg, err := Load("/repo", "test")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	got := reg.Contexts[0].Gherkin
+	if len(got) != 2 {
+		t.Fatalf("expected 2 paths, got %d: %v", len(got), got)
+	}
+	if got[0] != "behavior/web/gherkin/ctx1" || got[1] != "behavior/api/gherkin/ctx1" {
+		t.Errorf("paths in unexpected order: %v", got)
+	}
+}
+
+// TestLoad_GherkinEmptyListErrors — Fix #11:
+// empty list errors with a clear message.
+func TestLoad_GherkinEmptyListErrors(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	osReadFileFn = func(_ string) ([]byte, error) {
+		return []byte(`version: 2
+app: test
+contexts:
+  - name: ctx1
+    summary: first
+    layers: [domain]
+    code: [apps/test/src/contexts/ctx1]
+    glossary: specs/apps/test/ubiquitous-language/ctx1.md
+    gherkin: []
+    relationships: []
+`), nil
+	}
+	_, err := Load("/repo", "test")
+	if err == nil {
+		t.Fatal("expected error for empty gherkin list, got nil")
+	}
+	if !strings.Contains(err.Error(), "empty gherkin list") {
+		t.Errorf("error should mention 'empty gherkin list', got: %v", err)
+	}
+}
+
 func TestLoad_Success(t *testing.T) {
 	orig := osReadFileFn
 	defer func() { osReadFileFn = orig }()
@@ -68,6 +159,107 @@ contexts:
 	}
 	if reg.App != "test" || len(reg.Contexts) != 1 || reg.Contexts[0].Name != "ctx1" {
 		t.Errorf("unexpected registry: %+v", reg)
+	}
+}
+
+// TestLoad_CodeLangDefaultsToTSAndTSX verifies that a registry without an
+// explicit code_lang field decodes with CodeLang defaulted to ["ts", "tsx"].
+// This preserves today's TS-only behaviour for all existing BCs.
+func TestLoad_CodeLangDefaultsToTSAndTSX(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	yaml := []byte(`version: 2
+app: test
+contexts:
+  - name: ctx1
+    summary: first
+    layers: [domain]
+    code:
+      - apps/test/src/contexts/ctx1
+    glossary: specs/apps/test/ubiquitous-language/ctx1.md
+    gherkin: specs/apps/test/fe/gherkin/ctx1
+    relationships: []
+`)
+	osReadFileFn = func(_ string) ([]byte, error) { return yaml, nil }
+
+	reg, err := Load("/repo", "test")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	if len(reg.Contexts) != 1 {
+		t.Fatalf("expected 1 context, got %d", len(reg.Contexts))
+	}
+	got := reg.Contexts[0].CodeLang
+	if len(got) != 2 || got[0] != "ts" || got[1] != "tsx" {
+		t.Errorf("expected default CodeLang [ts tsx], got %v", got)
+	}
+}
+
+// TestLoad_CodeLangExplicitFSharp verifies that an explicit single-element
+// code_lang list (e.g., F#-only BCs) decodes intact without being overwritten
+// by the default.
+func TestLoad_CodeLangExplicitFSharp(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	yaml := []byte(`version: 2
+app: test
+contexts:
+  - name: ctx1
+    summary: first
+    layers: [domain]
+    code:
+      - apps/test/src/contexts/ctx1
+    code_lang: [fs]
+    glossary: specs/apps/test/ubiquitous-language/ctx1.md
+    gherkin: specs/apps/test/fe/gherkin/ctx1
+    relationships: []
+`)
+	osReadFileFn = func(_ string) ([]byte, error) { return yaml, nil }
+
+	reg, err := Load("/repo", "test")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	got := reg.Contexts[0].CodeLang
+	if len(got) != 1 || got[0] != "fs" {
+		t.Errorf("expected CodeLang [fs], got %v", got)
+	}
+}
+
+// TestLoad_CodeLangUnsupportedRejected verifies that an unsupported language
+// in code_lang produces a clear error mentioning both the offending value and
+// the BC name.
+func TestLoad_CodeLangUnsupportedRejected(t *testing.T) {
+	orig := osReadFileFn
+	defer func() { osReadFileFn = orig }()
+
+	yaml := []byte(`version: 2
+app: test
+contexts:
+  - name: legacy-ledger
+    summary: first
+    layers: [domain]
+    code:
+      - apps/test/src/contexts/legacy-ledger
+    code_lang: [cobol]
+    glossary: specs/apps/test/ubiquitous-language/legacy-ledger.md
+    gherkin: specs/apps/test/fe/gherkin/legacy-ledger
+    relationships: []
+`)
+	osReadFileFn = func(_ string) ([]byte, error) { return yaml, nil }
+
+	_, err := Load("/repo", "test")
+	if err == nil {
+		t.Fatal("expected error for unsupported code_lang, got nil")
+	}
+	msg := err.Error()
+	if !strings.Contains(msg, "cobol") {
+		t.Errorf("expected error message to mention 'cobol', got: %s", msg)
+	}
+	if !strings.Contains(msg, "legacy-ledger") {
+		t.Errorf("expected error message to mention BC name 'legacy-ledger', got: %s", msg)
 	}
 }
 
@@ -145,7 +337,7 @@ func TestCheckContext_MissingCodeDir(t *testing.T) {
 		Layers:   []string{"domain"},
 		Code:     []string{"apps/test/src/contexts/journal"},
 		Glossary: "specs/apps/test/ubiquitous-language/journal.md",
-		Gherkin:  "specs/apps/test/fe/gherkin/journal",
+		Gherkin:  GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 	findings := checkContext("/repo", ctx, "error")
 	// Expect findings for code + glossary + gherkin (each independently checked).
@@ -184,7 +376,7 @@ func TestCheckContext_AllPresent(t *testing.T) {
 		Layers:   []string{"domain", "application"},
 		Code:     []string{"apps/test/src/contexts/journal"},
 		Glossary: "specs/apps/test/ubiquitous-language/journal.md",
-		Gherkin:  "specs/apps/test/fe/gherkin/journal",
+		Gherkin:  GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 
 	// Provide feature file for gherkin check.
@@ -291,7 +483,7 @@ func TestCheckGherkin_MissingDir(t *testing.T) {
 
 	ctx := Context{
 		Name:    "journal",
-		Gherkin: "specs/apps/test/fe/gherkin/journal",
+		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 	findings := checkGherkin("/repo", ctx, "error")
 	if len(findings) != 1 {
@@ -314,7 +506,7 @@ func TestCheckGherkin_NoFeatureFiles(t *testing.T) {
 
 	ctx := Context{
 		Name:    "journal",
-		Gherkin: "specs/apps/test/fe/gherkin/journal",
+		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 	findings := checkGherkin("/repo", ctx, "error")
 	if len(findings) != 1 {
@@ -337,7 +529,7 @@ func TestCheckGherkin_HasFeatureFile(t *testing.T) {
 
 	ctx := Context{
 		Name:    "journal",
-		Gherkin: "specs/apps/test/fe/gherkin/journal",
+		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 	findings := checkGherkin("/repo", ctx, "error")
 	if len(findings) != 0 {
@@ -360,7 +552,7 @@ func TestCheckGherkin_ReadDirError(t *testing.T) {
 
 	ctx := Context{
 		Name:    "journal",
-		Gherkin: "specs/apps/test/fe/gherkin/journal",
+		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
 	findings := checkGherkin("/repo", ctx, "error")
 	if len(findings) != 1 {
@@ -540,7 +732,63 @@ func TestCheckRelationshipSymmetry_ConformistKind(t *testing.T) {
 	}
 }
 
-func TestCheckRelationshipSymmetry_IgnoresNonAsymmetricKind(t *testing.T) {
+func TestCheckRelationshipSymmetry_IgnoresOneWayACL(t *testing.T) {
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{Name: "a", Relationships: []Relationship{{To: "b", Kind: "anticorruption-layer"}}},
+			{Name: "b", Relationships: []Relationship{}},
+		},
+	}
+	ctxByName := map[string]*Context{
+		"a": &reg.Contexts[0],
+		"b": &reg.Contexts[1],
+	}
+	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	if len(findings) != 0 {
+		t.Errorf("anticorruption-layer is intentionally one-way, expected 0 findings, got %d", len(findings))
+	}
+}
+
+func TestCheckRelationshipSymmetry_IgnoresOneWayOHS(t *testing.T) {
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{Name: "a", Relationships: []Relationship{{To: "b", Kind: "open-host-service"}}},
+			{Name: "b", Relationships: []Relationship{}},
+		},
+	}
+	ctxByName := map[string]*Context{
+		"a": &reg.Contexts[0],
+		"b": &reg.Contexts[1],
+	}
+	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	if len(findings) != 0 {
+		t.Errorf("open-host-service is intentionally one-way, expected 0 findings, got %d", len(findings))
+	}
+}
+
+// Fix #10 — partnership must be reciprocal.
+func TestCheckRelationshipSymmetry_PartnershipAsymmetric(t *testing.T) {
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{Name: "a", Relationships: []Relationship{{To: "b", Kind: "partnership"}}},
+			{Name: "b", Relationships: []Relationship{}},
+		},
+	}
+	ctxByName := map[string]*Context{
+		"a": &reg.Contexts[0],
+		"b": &reg.Contexts[1],
+	}
+	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	if len(findings) != 1 {
+		t.Fatalf("partnership must be reciprocal (Fix #10), expected 1 finding, got %d", len(findings))
+	}
+}
+
+// Fix #10 — shared-kernel must be reciprocal.
+func TestCheckRelationshipSymmetry_SharedKernelAsymmetric(t *testing.T) {
 	reg := &Registry{
 		App: "test",
 		Contexts: []Context{
@@ -553,8 +801,42 @@ func TestCheckRelationshipSymmetry_IgnoresNonAsymmetricKind(t *testing.T) {
 		"b": &reg.Contexts[1],
 	}
 	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
-	if len(findings) != 0 {
-		t.Errorf("expected 0 findings for non-asymmetric kind, got %d", len(findings))
+	if len(findings) != 1 {
+		t.Fatalf("shared-kernel must be reciprocal (Fix #10), expected 1 finding, got %d", len(findings))
+	}
+}
+
+// Fix #10 — unknown relationship kinds produce a finding.
+func TestCheckRelationshipKinds_UnknownReported(t *testing.T) {
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{Name: "a", Relationships: []Relationship{{To: "b", Kind: "made-up-kind"}}},
+			{Name: "b", Relationships: []Relationship{}},
+		},
+	}
+	findings := checkRelationshipKinds(reg, "error")
+	if len(findings) == 0 {
+		t.Fatal("unknown relationship kind must produce a finding (Fix #10)")
+	}
+	if !strings.Contains(findings[0].Message, "unknown relationship kind") {
+		t.Errorf("finding message should mention 'unknown relationship kind', got: %q", findings[0].Message)
+	}
+}
+
+// Fix #10 — known kinds produce no kind-validation finding.
+func TestCheckRelationshipKinds_KnownKindsAreSilent(t *testing.T) {
+	for _, k := range []string{"customer-supplier", "conformist", "partnership", "shared-kernel", "anticorruption-layer", "open-host-service"} {
+		reg := &Registry{
+			App: "test",
+			Contexts: []Context{
+				{Name: "a", Relationships: []Relationship{{To: "b", Kind: k}}},
+			},
+		}
+		findings := checkRelationshipKinds(reg, "error")
+		if len(findings) != 0 {
+			t.Errorf("known kind %q should not produce a kind finding, got %d: %+v", k, len(findings), findings)
+		}
 	}
 }
 
@@ -585,6 +867,151 @@ func TestHasReciprocal_False_WrongKind(t *testing.T) {
 	}
 }
 
+// TestDetectOrphans_MultiParentGlossaryAndGherkin verifies that when a
+// registry has contexts whose glossary/gherkin paths live under different
+// parent directories (e.g., behavior/web/... AND behavior/api/...), orphan
+// detection walks every parent — not only the first context's parent.
+//
+// Fixture: registry with 2 contexts; ctx-web has glossary+gherkin under
+// "behavior/web/...", ctx-api has glossary+gherkin under "behavior/api/...".
+// Plant an orphan glossary file AND an orphan gherkin dir under EACH parent.
+// Validator must report all 4 orphans (2 glossary files + 2 gherkin dirs).
+//
+// Today (pre-Fix #5) only the first context's parents are walked, so this
+// test fails until validator.go:208,212 are updated to iterate parents.
+func TestDetectOrphans_MultiParentGlossaryAndGherkin(t *testing.T) {
+	origReadDir := osReadDirFn
+	defer func() { osReadDirFn = origReadDir }()
+
+	osReadDirFn = func(p string) ([]os.DirEntry, error) {
+		switch p {
+		// Glossary parent dirs (called by detectOrphanFiles).
+		case "/repo/specs/apps/test/behavior/web/glossary":
+			return dirEntries("ctx-web.md", false, "orphan-web.md", false), nil
+		case "/repo/specs/apps/test/behavior/api/glossary":
+			return dirEntries("ctx-api.md", false, "orphan-api.md", false), nil
+		// Gherkin parent dirs (called by detectOrphanDirs).
+		case "/repo/specs/apps/test/behavior/web/gherkin":
+			return dirEntries("ctx-web", true, "orphan-web-dir", true), nil
+		case "/repo/specs/apps/test/behavior/api/gherkin":
+			return dirEntries("ctx-api", true, "orphan-api-dir", true), nil
+		}
+		// Code parent dir or anything else: empty.
+		return nil, nil
+	}
+
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{
+				Name:     "ctx-web",
+				Layers:   []string{"presentation"},
+				Code:     []string{"apps/test/src/contexts/ctx-web"},
+				Glossary: "specs/apps/test/behavior/web/glossary/ctx-web.md",
+				Gherkin:  GherkinPaths{"specs/apps/test/behavior/web/gherkin/ctx-web"},
+			},
+			{
+				Name:     "ctx-api",
+				Layers:   []string{"application"},
+				Code:     []string{"apps/test/src/contexts/ctx-api"},
+				Glossary: "specs/apps/test/behavior/api/glossary/ctx-api.md",
+				Gherkin:  GherkinPaths{"specs/apps/test/behavior/api/gherkin/ctx-api"},
+			},
+		},
+	}
+
+	registeredCode := map[string]bool{
+		"/repo/apps/test/src/contexts/ctx-web": true,
+		"/repo/apps/test/src/contexts/ctx-api": true,
+	}
+	registeredGlossary := map[string]bool{
+		"/repo/specs/apps/test/behavior/web/glossary/ctx-web.md": true,
+		"/repo/specs/apps/test/behavior/api/glossary/ctx-api.md": true,
+	}
+	registeredGherkin := map[string]bool{
+		"/repo/specs/apps/test/behavior/web/gherkin/ctx-web": true,
+		"/repo/specs/apps/test/behavior/api/gherkin/ctx-api": true,
+	}
+
+	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, "error")
+
+	// Collect orphan filenames by category.
+	var glossaryOrphans, gherkinOrphans []string
+	for _, f := range findings {
+		switch {
+		case strings.Contains(f.Message, "orphan glossary file"):
+			glossaryOrphans = append(glossaryOrphans, filepath.Base(f.File))
+		case strings.Contains(f.Message, "orphan gherkin directory"):
+			gherkinOrphans = append(gherkinOrphans, filepath.Base(f.File))
+		}
+	}
+	sort.Strings(glossaryOrphans)
+	sort.Strings(gherkinOrphans)
+
+	wantGlossary := []string{"orphan-api.md", "orphan-web.md"}
+	if len(glossaryOrphans) != 2 || glossaryOrphans[0] != wantGlossary[0] || glossaryOrphans[1] != wantGlossary[1] {
+		t.Errorf("glossary orphans: got %v, want %v (findings=%+v)", glossaryOrphans, wantGlossary, findings)
+	}
+
+	wantGherkin := []string{"orphan-api-dir", "orphan-web-dir"}
+	if len(gherkinOrphans) != 2 || gherkinOrphans[0] != wantGherkin[0] || gherkinOrphans[1] != wantGherkin[1] {
+		t.Errorf("gherkin orphans: got %v, want %v (findings=%+v)", gherkinOrphans, wantGherkin, findings)
+	}
+}
+
+// TestDetectOrphans_MultiPerspectiveBC — Combined Fix #5 + Fix #11:
+// when a single BC declares two gherkin perspectives (web + api), every
+// orphan under either parent is reported.
+func TestDetectOrphans_MultiPerspectiveBC(t *testing.T) {
+	origReadDir := osReadDirFn
+	defer func() { osReadDirFn = origReadDir }()
+
+	osReadDirFn = func(p string) ([]os.DirEntry, error) {
+		switch p {
+		case "/repo/specs/apps/test/behavior/web/gherkin":
+			return dirEntries("content", true, "stale-web-orphan", true), nil
+		case "/repo/specs/apps/test/behavior/api/gherkin":
+			return dirEntries("content", true, "stale-api-orphan", true), nil
+		}
+		return nil, nil
+	}
+
+	reg := &Registry{
+		App: "test",
+		Contexts: []Context{
+			{
+				Name:     "content",
+				Layers:   []string{"presentation"},
+				Code:     []string{"apps/test/src/contexts/content"},
+				Glossary: "specs/apps/test/ubiquitous-language/content.md",
+				Gherkin: GherkinPaths{
+					"specs/apps/test/behavior/web/gherkin/content",
+					"specs/apps/test/behavior/api/gherkin/content",
+				},
+			},
+		},
+	}
+	registeredCode := map[string]bool{"/repo/apps/test/src/contexts/content": true}
+	registeredGlossary := map[string]bool{"/repo/specs/apps/test/ubiquitous-language/content.md": true}
+	registeredGherkin := map[string]bool{
+		"/repo/specs/apps/test/behavior/web/gherkin/content": true,
+		"/repo/specs/apps/test/behavior/api/gherkin/content": true,
+	}
+	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, "error")
+
+	var gherkinOrphans []string
+	for _, f := range findings {
+		if strings.Contains(f.Message, "orphan gherkin directory") {
+			gherkinOrphans = append(gherkinOrphans, filepath.Base(f.File))
+		}
+	}
+	sort.Strings(gherkinOrphans)
+	want := []string{"stale-api-orphan", "stale-web-orphan"}
+	if len(gherkinOrphans) != 2 || gherkinOrphans[0] != want[0] || gherkinOrphans[1] != want[1] {
+		t.Errorf("multi-perspective gherkin orphans: got %v, want %v (findings=%+v)", gherkinOrphans, want, findings)
+	}
+}
+
 func TestValidate_SortsFindings(t *testing.T) {
 	origStat := osStatFn
 	origReadDir := osReadDirFn
@@ -605,14 +1032,14 @@ func TestValidate_SortsFindings(t *testing.T) {
 				Layers:   []string{"domain"},
 				Code:     []string{"apps/test/src/contexts/zzz"},
 				Glossary: "specs/apps/test/ubiquitous-language/zzz.md",
-				Gherkin:  "specs/apps/test/fe/gherkin/zzz",
+				Gherkin:  GherkinPaths{"specs/apps/test/fe/gherkin/zzz"},
 			},
 			{
 				Name:     "aaa",
 				Layers:   []string{"domain"},
 				Code:     []string{"apps/test/src/contexts/aaa"},
 				Glossary: "specs/apps/test/ubiquitous-language/aaa.md",
-				Gherkin:  "specs/apps/test/fe/gherkin/aaa",
+				Gherkin:  GherkinPaths{"specs/apps/test/fe/gherkin/aaa"},
 			},
 		},
 	}

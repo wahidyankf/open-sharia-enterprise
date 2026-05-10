@@ -115,14 +115,21 @@ func isPythonParsersExpr(text string) bool {
 	return pythonParsersParamRe.MatchString(text)
 }
 
-// addStepToMatcher adds a step text to the stepMatcher using the most appropriate mode:
-//   - If text starts with ^ (traditional regex), compile as regex and add to sm.patterns.
-//   - If text contains Cucumber expressions ({string}, {int}, etc.), convert and add to sm.patterns.
-//   - If text contains regex capture groups (...) but no Cucumber expressions, compile as regex and add to sm.patterns.
-//   - Otherwise, add to sm.exact as a literal match.
-//
-// normalizeWS is applied to text before processing.
+// addStepToMatcher adds a step text to the stepMatcher using the most appropriate mode.
+// Backward-compat wrapper: forwards to addStepToMatcherWithOrigin with empty origin.
+// Used by tests that synthesize entries without a source file.
 func addStepToMatcher(sm *stepMatcher, text string) {
+	addStepToMatcherWithOrigin(sm, text, "")
+}
+
+// addStepToMatcherWithOrigin adds a step text to the stepMatcher using the most appropriate mode:
+//   - If text starts with ^ (traditional regex), compile as regex and add as pattern entry.
+//   - If text contains Cucumber expressions ({string}, {int}, etc.), convert and add as pattern entry.
+//   - Otherwise, add as exact-text entry.
+//
+// The originFile is recorded on each created entry for reverse-direction reporting.
+// normalizeWS is applied to text before processing.
+func addStepToMatcherWithOrigin(sm *stepMatcher, text, originFile string) {
 	text = normalizeWS(text)
 	if text == "" {
 		return
@@ -132,7 +139,7 @@ func addStepToMatcher(sm *stepMatcher, text string) {
 	if strings.HasPrefix(text, "^") {
 		re, err := regexp.Compile(text)
 		if err == nil {
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, text, originFile)
 		}
 		return
 	}
@@ -142,19 +149,26 @@ func addStepToMatcher(sm *stepMatcher, text string) {
 		pattern := "^" + cucumberExprToRegex(text) + "$"
 		re, err := regexp.Compile(pattern)
 		if err == nil {
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, text, originFile)
 		}
 		return
 	}
 
 	// Plain literal text — unescape Cucumber expression escapes (\/, \(, etc.)
 	// so that the literal text matches the Gherkin step text.
-	sm.exact[unescapeCucumberExpr(text)] = true
+	sm.addExactWithOrigin(unescapeCucumberExpr(text), originFile)
 }
 
-// addPythonStepToMatcher adds a Python step text to the stepMatcher.
-// Handles both plain strings and parsers.parse format strings.
+// addPythonStepToMatcher is a backward-compat wrapper preserving the legacy
+// signature; forwards to addPythonStepToMatcherWithOrigin.
 func addPythonStepToMatcher(sm *stepMatcher, text string) {
+	addPythonStepToMatcherWithOrigin(sm, text, "")
+}
+
+// addPythonStepToMatcherWithOrigin adds a Python step text to the stepMatcher.
+// Handles both plain strings and parsers.parse format strings, and records
+// the origin file for reverse-direction reporting.
+func addPythonStepToMatcherWithOrigin(sm *stepMatcher, text, originFile string) {
 	text = normalizeWS(text)
 	if text == "" {
 		return
@@ -164,7 +178,7 @@ func addPythonStepToMatcher(sm *stepMatcher, text string) {
 	if strings.HasPrefix(text, "^") {
 		re, err := regexp.Compile(text)
 		if err == nil {
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, text, originFile)
 		}
 		return
 	}
@@ -174,7 +188,7 @@ func addPythonStepToMatcher(sm *stepMatcher, text string) {
 		pattern := "^" + convertPythonParsersExpr(text) + "$"
 		re, err := regexp.Compile(pattern)
 		if err == nil {
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, text, originFile)
 		}
 		return
 	}
@@ -184,11 +198,11 @@ func addPythonStepToMatcher(sm *stepMatcher, text string) {
 		pattern := "^" + cucumberExprToRegex(text) + "$"
 		re, err := regexp.Compile(pattern)
 		if err == nil {
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, text, originFile)
 		}
 		return
 	}
 
 	// Plain literal text — parentheses like (1280x800) are treated as literal
-	sm.exact[text] = true
+	sm.addExactWithOrigin(text, originFile)
 }

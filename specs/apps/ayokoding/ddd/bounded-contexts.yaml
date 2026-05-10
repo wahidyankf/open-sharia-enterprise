@@ -27,7 +27,9 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/content
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/content.md
-    gherkin: specs/apps/ayokoding/behavior/web/gherkin/content
+    gherkin:
+      - specs/apps/ayokoding/behavior/web/gherkin/content
+      - specs/apps/ayokoding/behavior/api/gherkin/content
     relationships:
       - to: search
         kind: customer-supplier
@@ -51,7 +53,9 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/search
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/search.md
-    gherkin: specs/apps/ayokoding/behavior/web/gherkin/search
+    gherkin:
+      - specs/apps/ayokoding/behavior/web/gherkin/search
+      - specs/apps/ayokoding/behavior/api/gherkin/search
     relationships:
       - to: content
         kind: customer-supplier
@@ -73,7 +77,9 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/i18n
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/i18n.md
-    gherkin: specs/apps/ayokoding/behavior/web/gherkin/i18n
+    gherkin:
+      - specs/apps/ayokoding/behavior/web/gherkin/i18n
+      - specs/apps/ayokoding/behavior/api/gherkin/i18n
     relationships:
       - to: content
         kind: conformist
@@ -92,7 +98,9 @@ contexts:
     code:
       - apps/ayokoding-web/src/contexts/navigation
     glossary: specs/apps/ayokoding/ddd/ubiquitous-language/navigation.md
-    gherkin: specs/apps/ayokoding/behavior/web/gherkin/navigation
+    gherkin:
+      - specs/apps/ayokoding/behavior/web/gherkin/navigation
+      - specs/apps/ayokoding/behavior/api/gherkin/navigation
     relationships:
       - to: content
         kind: customer-supplier

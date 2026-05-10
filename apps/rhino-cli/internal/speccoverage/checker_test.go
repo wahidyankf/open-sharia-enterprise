@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+// bt is a single backtick literal used to assemble fixture content for godog
+// step impl test cases. The fixtures need to embed `.Step(<backtick>...<backtick>, fn)`
+// at runtime, but writing that adjacency literally in this source file would make
+// the spec-coverage extractor (goStepRe) treat these test fixtures as real
+// orphan step implementations. Using bt + raw concatenation produces identical
+// runtime bytes while keeping the source bytes free of `.Step(<backtick>` adjacency.
+const bt = "`"
+
 // makeFile creates a file at the given path, creating parent dirs as needed.
 func makeFile(t *testing.T, path string) {
 	t.Helper()
@@ -466,10 +474,12 @@ func TestExtractAllStepTexts_SkipsNodeModules(t *testing.T) {
 func TestExtractGoStepTexts_FindsPatterns(t *testing.T) {
 	root := t.TempDir()
 
-	// Write a Go file with a godog sc.Step(` `, fn) call.
+	// Write a Go file with a godog sc.Step(<backtick>...<backtick>, fn) call.
 	// The backtick in the Go source is represented as \x60 in the regex,
-	// but in the actual file content we just write a raw backtick.
-	goContent := "package steps\n\nfunc init() {\n\tsc.Step(`^some step (\\d+) here$`, handleStep)\n}\n"
+	// but in the actual file content (assembled via the bt constant) we write
+	// a raw backtick. The placeholder above avoids triggering goStepRe on this
+	// comment.
+	goContent := "package steps\n\nfunc init() {\n\tsc.Step(" + bt + "^some step (\\d+) here$" + bt + ", handleStep)\n}\n"
 	writeContent(t, filepath.Join(root, "src", "steps_test.go"), goContent)
 
 	sm, err := extractAllStepTexts(root)
@@ -492,13 +502,11 @@ func TestExtractGoScenarioTitles_FindsComments(t *testing.T) {
 	root := t.TempDir()
 
 	path := filepath.Join(root, "feature_integration_test.go")
-	writeContent(t, path, `package mypackage
-
-func InitializeScenario(ctx *godog.ScenarioContext) {
-	// Scenario: My Go scenario
-	ctx.Step(`+"`"+`^my go step$`+"`"+`, myGoStep)
-}
-`)
+	writeContent(t, path, "package mypackage\n\n"+
+		"func InitializeScenario(ctx *godog.ScenarioContext) {\n"+
+		"\t// Scenario: My Go scenario\n"+
+		"\tctx.Step("+bt+"^my go step$"+bt+", myGoStep)\n"+
+		"}\n")
 
 	titles, err := extractScenarioTitles(path)
 	if err != nil {
@@ -523,7 +531,7 @@ Feature: Go feature
 	goTestContent := "package mypackage\n\n" +
 		"// Scenario: My Go scenario\n" +
 		"func InitializeScenario(ctx *godog.ScenarioContext) {\n" +
-		"\tctx.Step(`^my go step$`, myGoStep)\n" +
+		"\tctx.Step(" + bt + "^my go step$" + bt + ", myGoStep)\n" +
 		"}\n"
 	writeContent(t, filepath.Join(root, "app", "gofeature.integration_test.go"), goTestContent)
 
@@ -562,7 +570,7 @@ Feature: Go feature
 	goTestContent := "package mypackage\n\n" +
 		"// Scenario: My Go scenario\n" +
 		"func InitializeScenario(ctx *godog.ScenarioContext) {\n" +
-		"\tctx.Step(`^a completely different step$`, differentStep)\n" +
+		"\tctx.Step(" + bt + "^a completely different step$" + bt + ", differentStep)\n" +
 		"}\n"
 	writeContent(t, filepath.Join(root, "app", "gofeature.integration_test.go"), goTestContent)
 
@@ -605,7 +613,7 @@ Feature: My feature
 	goTestContent := "package mypackage\n\n" +
 		"// Scenario: My scenario\n" +
 		"func InitializeScenario(ctx *godog.ScenarioContext) {\n" +
-		"\tctx.Step(`^the user logs in$`, theUserLogsIn)\n" +
+		"\tctx.Step(" + bt + "^the user logs in$" + bt + ", theUserLogsIn)\n" +
 		"}\n"
 	writeContent(t, filepath.Join(root, "app", "myfeature.integration_test.go"), goTestContent)
 
@@ -785,8 +793,8 @@ func TestExtractGoStepTexts_InvalidRegex(t *testing.T) {
 	// Go file with an invalid regex pattern in Step()
 	goContent := "package mypackage\n\n" +
 		"func init() {\n" +
-		"\tsc.Step(`[invalid regex(`, myStep)\n" + // invalid regex
-		"\tsc.Step(`^valid step$`, validStep)\n" + // valid regex
+		"\tsc.Step(" + bt + "[invalid regex(" + bt + ", myStep)\n" + // invalid regex
+		"\tsc.Step(" + bt + "^valid step$" + bt + ", validStep)\n" + // valid regex
 		"}\n"
 	goFile := filepath.Join(root, "test_steps.go")
 	writeContent(t, goFile, goContent)
@@ -939,7 +947,7 @@ func TestExtractGoStepTexts_UnreadableFile(t *testing.T) {
 	// Make a Go file unreadable to trigger os.Open error path in extractGoStepTexts.
 	tmpDir := t.TempDir()
 	path := filepath.Join(tmpDir, "steps_test.go")
-	content := "package p\nfunc init() {\n\tsc.Step(`^a step$`, fn)\n}\n"
+	content := "package p\nfunc init() {\n\tsc.Step(" + bt + "^a step$" + bt + ", fn)\n}\n"
 	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -1390,4 +1398,261 @@ func TestToPascalCase_EmptyPart(t *testing.T) {
 	if got != "HealthCheck" {
 		t.Errorf("toPascalCase(%q) = %q, want %q", "-health-check-", got, "HealthCheck")
 	}
+}
+
+// --- Phase 5: multi-file scenario matching (Fix #6) ---
+
+// TestCheckAll_MultipleTestFiles_UnionScenarioTitles verifies that when a feature
+// file's stem matches MULTIPLE test files in the app dir, the scenario title
+// check unions titles across all matching test files. Without the fix, only the
+// first match is consulted, so scenarios defined in sibling test files (split for
+// readability or test-suite organisation) get spuriously reported as gaps.
+//
+// Scenario A is defined in `feature.test.tsx`. Scenario B is defined in
+// `feature.extra.test.tsx`. Both files match the stem `feature`. With Fix #6,
+// the union of scenario titles covers both scenarios — no gap is reported.
+func TestCheckAll_MultipleTestFiles_UnionScenarioTitles(t *testing.T) {
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "feature.feature"), `
+Feature: Feature
+  Scenario: A
+    Given step a
+  Scenario: B
+    Given step b
+`)
+
+	// First test file declares scenario A (and step a)
+	writeContent(t, filepath.Join(root, "app", "feature.test.tsx"), `
+import { describeFeature } from 'vitest-cucumber';
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("A", ({ Given }) => {
+    Given("step a", () => {});
+  });
+});
+`)
+
+	// Second test file (sibling) declares scenario B (and step b)
+	writeContent(t, filepath.Join(root, "app", "feature.extra.test.tsx"), `
+import { describeFeature } from 'vitest-cucumber';
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("B", ({ Given }) => {
+    Given("step b", () => {});
+  });
+});
+`)
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+
+	if len(result.Gaps) != 0 {
+		t.Errorf("Gaps = %v, want none (a matching test file exists)", result.Gaps)
+	}
+	if len(result.ScenarioGaps) != 0 {
+		t.Errorf("ScenarioGaps = %v, want none (scenario titles unioned across feature.test.tsx + feature.extra.test.tsx)", result.ScenarioGaps)
+	}
+	if len(result.StepGaps) != 0 {
+		t.Errorf("StepGaps = %v, want none (steps defined across both files)", result.StepGaps)
+	}
+	if result.TotalScenarios != 2 {
+		t.Errorf("TotalScenarios = %d, want 2", result.TotalScenarios)
+	}
+}
+
+// --- Phase 5B.1 (Fix #15): stepMatcher origin tracking ---
+
+// TestExtractAllStepTexts_EntriesCarryOriginFile verifies that each entry in
+// the matcher records the source file path that contributed it. This is the
+// foundation for the reverse-direction orphan check (Phase 5B.2).
+func TestExtractAllStepTexts_EntriesCarryOriginFile(t *testing.T) {
+	root := t.TempDir()
+
+	tsPath := filepath.Join(root, "src", "alpha.steps.ts")
+	writeContent(t, tsPath, `Given("alpha step", () => {});`+"\n")
+
+	goPath := filepath.Join(root, "src", "beta_test.go")
+	writeContent(t, goPath, "package p\n\nfunc init() {\n\tsc.Step("+bt+"^beta step (\\d+)$"+bt+", fn)\n}\n")
+
+	sm, err := extractAllStepTexts(root)
+	if err != nil {
+		t.Fatalf("extractAllStepTexts() error = %v", err)
+	}
+
+	if len(sm.entries) < 2 {
+		t.Fatalf("entries = %d, want at least 2 (one per step)", len(sm.entries))
+	}
+
+	var sawAlphaTS, sawBetaGo bool
+	for _, e := range sm.entries {
+		switch e.Kind {
+		case "exact":
+			if e.ExactText == "alpha step" {
+				sawAlphaTS = true
+				if e.File != tsPath {
+					t.Errorf("alpha step File = %q, want %q", e.File, tsPath)
+				}
+			}
+		case "pattern":
+			if e.PatternText == "^beta step (\\d+)$" {
+				sawBetaGo = true
+				if e.File != goPath {
+					t.Errorf("beta step File = %q, want %q", e.File, goPath)
+				}
+			}
+		}
+	}
+	if !sawAlphaTS {
+		t.Error("expected exact entry for 'alpha step' from alpha.steps.ts")
+	}
+	if !sawBetaGo {
+		t.Error("expected pattern entry for '^beta step (\\d+)$' from beta_test.go")
+	}
+}
+
+// --- Phase 5B.2 (Fix #15): reverse-direction orphan check ---
+
+// TestCheckAll_OrphanStepImpl_ExactMatch verifies that a TS step impl whose
+// text never appears in any Gherkin step is reported as an orphan in
+// CheckAll's default (one-to-one) mode.
+func TestCheckAll_OrphanStepImpl_ExactMatch(t *testing.T) {
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "happy.feature"), `
+Feature: Happy
+  Scenario: Happy path
+    Given a happy user
+`)
+
+	stepFile := filepath.Join(root, "app", "happy.test.ts")
+	writeContent(t, stepFile, `
+import { describeFeature } from 'vitest-cucumber';
+describeFeature(feature, ({ Scenario }) => {
+  Scenario("Happy path", ({ Given }) => {
+    Given("a happy user", () => {});
+    Given("an unmatched orphan", () => {});
+  });
+});
+`)
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+
+	if len(result.OrphanStepImpls) != 1 {
+		t.Fatalf("OrphanStepImpls count = %d, want 1: %+v", len(result.OrphanStepImpls), result.OrphanStepImpls)
+	}
+	o := result.OrphanStepImpls[0]
+	if o.MatcherKind != "exact" {
+		t.Errorf("MatcherKind = %q, want %q", o.MatcherKind, "exact")
+	}
+	if o.MatcherText != "an unmatched orphan" {
+		t.Errorf("MatcherText = %q, want %q", o.MatcherText, "an unmatched orphan")
+	}
+	wantFile := filepath.Join("app", "happy.test.ts")
+	if o.File != wantFile {
+		t.Errorf("File = %q, want %q (repo-relative)", o.File, wantFile)
+	}
+	_ = stepFile
+}
+
+// TestCheckAll_OrphanStepImpl_SharedStepsMode verifies that the same orphan
+// detection runs identically in --shared-steps mode.
+func TestCheckAll_OrphanStepImpl_SharedStepsMode(t *testing.T) {
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "shared.feature"), `
+Feature: Shared
+  Scenario: Shared path
+    Given a happy user
+`)
+
+	stepFile := filepath.Join(root, "app", "common.steps.ts")
+	writeContent(t, stepFile, `
+Given("a happy user", () => {});
+Given("an unmatched orphan", () => {});
+`)
+
+	opts := ScanOptions{
+		RepoRoot:    root,
+		SpecsDir:    filepath.Join(root, "specs"),
+		AppDir:      filepath.Join(root, "app"),
+		SharedSteps: true,
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+
+	if len(result.OrphanStepImpls) != 1 {
+		t.Fatalf("OrphanStepImpls count = %d, want 1: %+v", len(result.OrphanStepImpls), result.OrphanStepImpls)
+	}
+	if result.OrphanStepImpls[0].MatcherText != "an unmatched orphan" {
+		t.Errorf("MatcherText = %q, want %q", result.OrphanStepImpls[0].MatcherText, "an unmatched orphan")
+	}
+}
+
+// TestCheckAll_OrphanStepImpl_RegexPattern verifies reverse direction for Go
+// godog regex patterns: a pattern that matches a Gherkin step is not orphan,
+// but a pattern that matches no Gherkin step is reported as orphan with
+// MatcherKind "pattern".
+func TestCheckAll_OrphanStepImpl_RegexPattern(t *testing.T) {
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "items.feature"), `
+Feature: Items
+  Scenario: Add items
+    Given the user has 3 items
+`)
+
+	goFile := filepath.Join(root, "app", "items_test.go")
+	writeContent(t, goFile,
+		"package items\n\n"+
+			"// Scenario: Add items\n"+
+			"func InitializeScenario(sc *godog.ScenarioContext) {\n"+
+			"\tsc.Step("+bt+"^the user has (\\d+) items$"+bt+", theUserHasItems)\n"+
+			"\tsc.Step("+bt+"^a unicorn appears$"+bt+", aUnicornAppears)\n"+
+			"}\n")
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+
+	if len(result.OrphanStepImpls) != 1 {
+		t.Fatalf("OrphanStepImpls count = %d, want 1: %+v", len(result.OrphanStepImpls), result.OrphanStepImpls)
+	}
+	o := result.OrphanStepImpls[0]
+	if o.MatcherKind != "pattern" {
+		t.Errorf("MatcherKind = %q, want %q", o.MatcherKind, "pattern")
+	}
+	if o.MatcherText != "^a unicorn appears$" {
+		t.Errorf("MatcherText = %q, want %q", o.MatcherText, "^a unicorn appears$")
+	}
+	wantFile := filepath.Join("app", "items_test.go")
+	if o.File != wantFile {
+		t.Errorf("File = %q, want %q (repo-relative)", o.File, wantFile)
+	}
+	_ = goFile
 }

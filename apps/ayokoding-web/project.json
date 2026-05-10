@@ -112,16 +112,13 @@
     "spec-coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/web/gherkin apps/ayokoding-web",
-          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/api/gherkin apps/ayokoding-web"
-        ],
-        "parallel": false
+        "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/ayokoding/behavior/web/gherkin specs/apps/ayokoding/behavior/api/gherkin specs/apps/ayokoding/build-tools/gherkin apps/ayokoding-web"
       },
       "cache": true,
       "inputs": [
         "{workspaceRoot}/specs/apps/ayokoding/behavior/web/gherkin/**/*.feature",
         "{workspaceRoot}/specs/apps/ayokoding/behavior/api/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ayokoding/build-tools/gherkin/**/*.feature",
         "{projectRoot}/**/*.{ts,tsx}"
       ]
     }

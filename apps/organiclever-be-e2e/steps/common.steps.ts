@@ -17,22 +17,3 @@ Then("the response status code should be {int}", async ({}, code: number) => {
   const res = getResponse();
   expect(res.status()).toBe(code);
 });
-
-Then(
-  "the response body should contain {string} equal to {string}",
-  // oxlint-disable-next-line no-empty-pattern
-  async ({}, field: string, value: string) => {
-    const body = (await getResponse().json()) as Record<string, unknown>;
-    expect(body[field]).toBe(value);
-  },
-);
-
-Then(
-  "the response body should contain a non-null {string} field",
-  // oxlint-disable-next-line no-empty-pattern
-  async ({}, field: string) => {
-    const body = (await getResponse().json()) as Record<string, unknown>;
-    expect(body[field]).not.toBeNull();
-    expect(body[field]).toBeDefined();
-  },
-);

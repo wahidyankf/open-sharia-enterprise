@@ -34,13 +34,13 @@ func (s *ulValidateSteps) before(_ context.Context, _ *godog.Scenario) (context.
 	verbose = false
 	quiet = false
 	output = "text"
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 	return context.Background(), nil
 }
 
 func (s *ulValidateSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
 	ulValidateAllFn = s.savedFn
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 	return context.Background(), nil
 }
 

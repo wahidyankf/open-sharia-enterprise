@@ -954,7 +954,7 @@ rhino-cli ddd ul organiclever
 
 Checks: frontmatter presence, terms table structure, stale code identifiers (via ripgrep), missing feature references, cross-context term collisions, forbidden-synonym misuse.
 
-**Severity**: both default to `error`. Override locally: `ORGANICLEVER_RHINO_DDD_SEVERITY=warn`.
+**Severity**: both default to `error`. Override locally: `OSE_RHINO_DDD_SEVERITY=warn` (emits a stderr audit line on every honored downgrade).
 
 **See**: [`apps-organiclever-web-developing-content` skill](../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md) § Domain-Driven Design for authoring rules and the BC registry at [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../specs/apps/organiclever/ddd/bounded-contexts.yaml).
 

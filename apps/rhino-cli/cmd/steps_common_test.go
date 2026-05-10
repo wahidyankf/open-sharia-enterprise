@@ -395,7 +395,7 @@ const (
 	stepBcJournalNoReciprocal               = `^context "journal" declares no reciprocal relationship$`
 	stepBcRegistryWithOrphanAndWarnFlag     = `^a registry with an orphan code folder present on the filesystem$`
 	stepBcRegistryWithOrphanEnvWarn         = `^a registry with an orphan code folder present on the filesystem$`
-	stepBcEnvVarWarnSet                     = `^the environment variable "ORGANICLEVER_RHINO_DDD_SEVERITY" is set to "warn"$`
+	stepBcEnvVarWarnSet                     = `^the environment variable "OSE_RHINO_DDD_SEVERITY" is set to "warn"$`
 	stepBcRunValidateOrganiclever           = `^the developer runs "rhino-cli ddd bc organiclever"$`
 	stepBcRunWithWarnFlag                   = `^the developer runs "rhino-cli ddd bc organiclever --severity=warn"$`
 	stepBcRunWithEnvWarn                    = `^the developer runs "rhino-cli ddd bc organiclever"$`

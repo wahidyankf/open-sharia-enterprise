@@ -7,10 +7,13 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/allowlist"
 )
 
+var specsValidateLinksApps []string
+
 var specsValidateLinksCmd = &cobra.Command{
-	Use:   "validate-links <folder>",
+	Use:   "validate-links [<folder>]",
 	Short: "Check that markdown links in spec files resolve to existing files",
 	Long: `Scan all .md files under <folder> and verify that every internal markdown
 link points to an existing file. External links (starting with http:// or
@@ -20,16 +23,43 @@ A link is considered internal if its target does not start with "http://" or
 "https://". Relative paths are resolved from the directory containing the
 linking file.
 
-Reports one finding per broken link. Exits non-zero if any findings are found.`,
-	Example: `  # Validate links in organiclever spec folder
-  rhino-cli specs validate-links specs/apps/organiclever`,
-	Args:          cobra.ExactArgs(1),
+Reports one finding per broken link. Exits non-zero if any findings are found.
+
+Behavior:
+  - With a positional <folder>, validate that single folder.
+  - With --apps a,b,c, validate specs/apps/<a>, specs/apps/<b>, specs/apps/<c>.
+  - With neither, default --apps to the AppsWithDDD allowlist.`,
+	Example: `  # Validate links in organiclever spec folder (single folder)
+  rhino-cli specs validate-links specs/apps/organiclever
+
+  # Multi-app via flag
+  rhino-cli specs validate-links --apps organiclever,wahidyankf
+
+  # Default — runs across the AppsWithDDD allowlist
+  rhino-cli specs validate-links`,
+	Args:          cobra.MaximumNArgs(1),
 	SilenceErrors: true,
 	RunE:          runSpecsValidateLinks,
 }
 
 func init() {
+	specsValidateLinksCmd.Flags().StringSliceVar(&specsValidateLinksApps, "apps", nil, "comma-separated app names to validate (defaults to allowlist when no positional arg)")
 	specsCmd.AddCommand(specsValidateLinksCmd)
+}
+
+func resolveLinksApps(args []string) []string {
+	if len(args) > 0 {
+		return []string{args[0]}
+	}
+	apps := specsValidateLinksApps
+	if len(apps) == 0 {
+		apps = allowlist.AppsWithDDD
+	}
+	out := make([]string, 0, len(apps))
+	for _, a := range apps {
+		out = append(out, filepath.Join("specs", "apps", a))
+	}
+	return out
 }
 
 // markdownLinkRe matches [text](target) patterns.
@@ -41,19 +71,24 @@ func runSpecsValidateLinks(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to find git repository root: %w", err)
 	}
 
-	folder := args[0]
-	findings := specsValidateLinksFn(repoRoot, folder)
-
-	findingCount := len(findings)
-	if findingCount == 0 {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "specs validate-links: 0 finding(s) for %q\n", folder)
-		return nil
+	folders := resolveLinksApps(args)
+	totalFindings := 0
+	for _, folder := range folders {
+		findings := specsValidateLinksFn(repoRoot, folder)
+		findingCount := len(findings)
+		totalFindings += findingCount
+		if findingCount == 0 {
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "specs validate-links: 0 finding(s) for %q\n", folder)
+			continue
+		}
+		for _, f := range findings {
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: HIGH: %s\n", f.File, f.Evidence)
+		}
 	}
-
-	for _, f := range findings {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: HIGH: %s\n", f.File, f.Evidence)
+	if totalFindings > 0 {
+		return fmt.Errorf("%d finding(s) found by specs validate-links", totalFindings)
 	}
-	return fmt.Errorf("%d finding(s) found by specs validate-links", findingCount)
+	return nil
 }
 
 // validateSpecLinks scans all .md files under folder and checks internal link targets exist.

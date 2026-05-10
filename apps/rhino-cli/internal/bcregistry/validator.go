@@ -43,7 +43,9 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 			registeredCode[filepath.Join(repoRoot, c)] = true
 		}
 		registeredGlossary[filepath.Join(repoRoot, ctx.Glossary)] = true
-		registeredGherkin[filepath.Join(repoRoot, ctx.Gherkin)] = true
+		for _, gh := range ctx.Gherkin {
+			registeredGherkin[filepath.Join(repoRoot, gh)] = true
+		}
 	}
 
 	// Check each registered context.
@@ -58,6 +60,9 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 
 	// Check relationship symmetry.
 	findings = append(findings, checkRelationshipSymmetry(reg, contextByName, severity)...)
+
+	// Check relationship kinds (Fix #10) — flag typos / unrecognized values.
+	findings = append(findings, checkRelationshipKinds(reg, severity)...)
 
 	sort.SliceStable(findings, func(i, j int) bool {
 		return findings[i].File < findings[j].File
@@ -149,39 +154,44 @@ func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) [
 }
 
 func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
-	gherkinPath := filepath.Join(repoRoot, ctx.Gherkin)
-	if _, err := osStatFn(gherkinPath); err != nil {
-		return []Finding{{
-			File:     ctx.Gherkin,
-			Message:  fmt.Sprintf("missing gherkin directory for context %q", ctx.Name),
-			Severity: severity,
-		}}
-	}
+	var findings []Finding
+	for _, gh := range ctx.Gherkin {
+		gherkinPath := filepath.Join(repoRoot, gh)
+		if _, err := osStatFn(gherkinPath); err != nil {
+			findings = append(findings, Finding{
+				File:     gh,
+				Message:  fmt.Sprintf("missing gherkin directory for context %q", ctx.Name),
+				Severity: severity,
+			})
+			continue
+		}
 
-	entries, err := osReadDirFn(gherkinPath)
-	if err != nil {
-		return []Finding{{
-			File:     ctx.Gherkin,
-			Message:  fmt.Sprintf("cannot read gherkin directory for context %q: %v", ctx.Name, err),
-			Severity: severity,
-		}}
-	}
+		entries, err := osReadDirFn(gherkinPath)
+		if err != nil {
+			findings = append(findings, Finding{
+				File:     gh,
+				Message:  fmt.Sprintf("cannot read gherkin directory for context %q: %v", ctx.Name, err),
+				Severity: severity,
+			})
+			continue
+		}
 
-	hasFeature := false
-	for _, e := range entries {
-		if !e.IsDir() && strings.HasSuffix(e.Name(), ".feature") {
-			hasFeature = true
-			break
+		hasFeature := false
+		for _, e := range entries {
+			if !e.IsDir() && strings.HasSuffix(e.Name(), ".feature") {
+				hasFeature = true
+				break
+			}
+		}
+		if !hasFeature {
+			findings = append(findings, Finding{
+				File:     gh,
+				Message:  fmt.Sprintf("no feature files found in gherkin directory for context %q", ctx.Name),
+				Severity: severity,
+			})
 		}
 	}
-	if !hasFeature {
-		return []Finding{{
-			File:     ctx.Gherkin,
-			Message:  fmt.Sprintf("no feature files found in gherkin directory for context %q", ctx.Name),
-			Severity: severity,
-		}}
-	}
-	return nil
+	return findings
 }
 
 func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlossary, registeredGherkin map[string]bool, severity string) []Finding {
@@ -204,13 +214,34 @@ func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlo
 		findings = append(findings, detectOrphanDirs(root, registeredCode, "orphan code directory", "registered in bounded-contexts.yaml", severity)...)
 	}
 
-	// Glossary root = parent of first context's glossary path.
-	glossaryRoot := filepath.Join(repoRoot, filepath.Dir(reg.Contexts[0].Glossary))
-	findings = append(findings, detectOrphanFiles(glossaryRoot, registeredGlossary, "orphan glossary file", "registered in bounded-contexts.yaml", severity)...)
+	// Glossary roots = union of parents of every glossary path across every
+	// context. Multi-parent registries (e.g., contexts split across
+	// behavior/web/glossary/ and behavior/api/glossary/) yield multiple roots.
+	glossaryRoots := map[string]bool{}
+	gherkinRoots := map[string]bool{}
+	for _, ctx := range reg.Contexts {
+		glossaryRoots[filepath.Join(repoRoot, filepath.Dir(ctx.Glossary))] = true
+		for _, gh := range ctx.Gherkin {
+			gherkinRoots[filepath.Join(repoRoot, filepath.Dir(gh))] = true
+		}
+	}
+	sortedGlossaryRoots := make([]string, 0, len(glossaryRoots))
+	for r := range glossaryRoots {
+		sortedGlossaryRoots = append(sortedGlossaryRoots, r)
+	}
+	sort.Strings(sortedGlossaryRoots)
+	for _, root := range sortedGlossaryRoots {
+		findings = append(findings, detectOrphanFiles(root, registeredGlossary, "orphan glossary file", "registered in bounded-contexts.yaml", severity)...)
+	}
 
-	// Gherkin root = parent of first context's gherkin path.
-	gherkinRoot := filepath.Join(repoRoot, filepath.Dir(reg.Contexts[0].Gherkin))
-	findings = append(findings, detectOrphanDirs(gherkinRoot, registeredGherkin, "orphan gherkin directory", "registered in bounded-contexts.yaml", severity)...)
+	sortedGherkinRoots := make([]string, 0, len(gherkinRoots))
+	for r := range gherkinRoots {
+		sortedGherkinRoots = append(sortedGherkinRoots, r)
+	}
+	sort.Strings(sortedGherkinRoots)
+	for _, root := range sortedGherkinRoots {
+		findings = append(findings, detectOrphanDirs(root, registeredGherkin, "orphan gherkin directory", "registered in bounded-contexts.yaml", severity)...)
+	}
 
 	return findings
 }
@@ -266,9 +297,12 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 	var findings []Finding
 
 	// asymmetricKinds require a reciprocal entry.
+	// anticorruption-layer and open-host-service are intentionally one-way; not in this map.
 	asymmetricKinds := map[string]bool{
 		"customer-supplier": true,
 		"conformist":        true,
+		"partnership":       true, // Fix #10 — must be reciprocal
+		"shared-kernel":     true, // Fix #10 — must be reciprocal
 	}
 
 	for _, ctx := range reg.Contexts {
@@ -304,4 +338,34 @@ func hasReciprocal(ctx *Context, sourceName, kind string) bool {
 		}
 	}
 	return false
+}
+
+// checkRelationshipKinds (Fix #10) flags relationships that declare an unknown
+// `kind:` value. Without this pass, typos (e.g., `kind: shered-kernel`) silently
+// pass validation because checkRelationshipSymmetry only iterates the asymmetric
+// set.
+func checkRelationshipKinds(reg *Registry, severity string) []Finding {
+	var findings []Finding
+
+	knownKinds := map[string]bool{
+		"customer-supplier":    true,
+		"conformist":           true,
+		"partnership":          true,
+		"shared-kernel":        true,
+		"anticorruption-layer": true,
+		"open-host-service":    true,
+	}
+
+	for _, ctx := range reg.Contexts {
+		for _, rel := range ctx.Relationships {
+			if !knownKinds[rel.Kind] {
+				findings = append(findings, Finding{
+					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
+					Message:  fmt.Sprintf("unknown relationship kind %q in %q → %q", rel.Kind, ctx.Name, rel.To),
+					Severity: severity,
+				})
+			}
+		}
+	}
+	return findings
 }

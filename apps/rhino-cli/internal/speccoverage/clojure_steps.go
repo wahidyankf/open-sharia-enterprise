@@ -23,7 +23,7 @@ func extractClojureStepTexts(path string, sm *stepMatcher) error {
 		line := scanner.Text()
 		matches := cljStepRe.FindAllStringSubmatch(line, -1)
 		for _, m := range matches {
-			addStepToMatcher(sm, m[1])
+			addStepToMatcherWithOrigin(sm, m[1], path)
 		}
 	}
 	return scanner.Err()

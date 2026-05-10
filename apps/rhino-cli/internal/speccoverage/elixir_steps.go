@@ -27,7 +27,7 @@ func extractElixirStepTexts(path string, sm *stepMatcher) error {
 			if err != nil {
 				continue
 			}
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, pattern, path)
 		}
 	}
 	return scanner.Err()

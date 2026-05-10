@@ -114,7 +114,7 @@ context — use this when agent delegation is unavailable.
 
 ## Validation Dimensions
 
-The checker validates ten categories across all spec areas:
+The checker validates nine categories across all spec areas:
 
 | #   | Category                         | What It Checks                                                                                                            | Method                      |
 | --- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
@@ -127,22 +127,26 @@ The checker validates ten categories across all spec areas:
 | 7   | Spec-to-Implementation Alignment | Spec READMEs reference implementations that exist                                                                         | LLM                         |
 | 8   | Spec Tree Shape                  | C4-aware five-folder tree compliance per surface profile (product/, system-context/, containers/, components/, behavior/) | Deterministic via rhino-cli |
 | 9   | Adoption Gaps                    | BDD/DDD/Contracts adoption check per surface profile (full-stack, web-only, CLI)                                          | LLM with rhino-cli assist   |
-| 10  | Drift Detection                  | Route/endpoint/contract drift between spec files and implementation code                                                  | Deterministic via rhino-cli |
 
 ### Deterministic Offload
 
-Categories 8 and 10 (Spec Tree Shape and Drift Detection) are **deterministic checks** owned by
+Category 8 (Spec Tree Shape) is a **deterministic check** owned by
 `rhino-cli specs <subcmd>` Go code (per FR-14 of the App README vs Specs Convention). Agents shell
 out to these commands rather than re-implementing the check in prompt logic. Category 9 (Adoption
 Gaps) uses `rhino-cli specs validate-adoption` for the structural portion and LLM reasoning for
 the narrative justification assessment.
 
+Drift detection commands (`drift-routes`, `drift-endpoints`, `drift-contracts`) were removed in
+the BDD+DDD tooling gap-fill plan (2026-05) because reservation-pattern stubs that print "Not yet
+implemented" mislead callers into believing functionality exists. Reintroduction requires a
+dedicated plan implementing real drift logic.
+
 | rhino-cli command                         | Validates                              | Maps to Category |
 | ----------------------------------------- | -------------------------------------- | ---------------- |
 | `rhino-cli specs validate-tree <app>`     | Five-folder C4-aware tree shape        | 8                |
+| `rhino-cli specs validate-counts <app>`   | README count claims vs actual          | 8                |
+| `rhino-cli specs validate-links <app>`    | Markdown link integrity                | 6                |
 | `rhino-cli specs validate-adoption <app>` | BDD/DDD/Contracts adoption per profile | 9 (partial)      |
-| `rhino-cli specs drift-routes <app>`      | Routes/screens spec vs app code        | 10               |
-| `rhino-cli specs drift-endpoints <app>`   | Endpoint spec vs handler code          | 10               |
 
 Agents MUST NOT re-implement these checks with file-glob heuristics or LLM inference when the
 `rhino-cli` command exists. If the command is unavailable (pre-implementation), mark the finding

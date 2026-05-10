@@ -113,6 +113,42 @@
         "{workspaceRoot}/.opencode/agents/**/*.md"
       ],
       "outputs": []
+    },
+    "validate:specs-adoption": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-adoption",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/specs/apps/**/behavior/**/*.feature",
+        "{workspaceRoot}/specs/apps/**/ddd/bounded-contexts.yaml"
+      ],
+      "outputs": []
+    },
+    "validate:specs-tree": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-tree",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/specs/apps/**/README.md",
+        "{workspaceRoot}/specs/apps/**/{product,system-context,containers,components,behavior}/**"
+      ],
+      "outputs": []
+    },
+    "validate:specs-counts": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-counts",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/specs/apps/**/README.md",
+        "{workspaceRoot}/specs/apps/**/{product,system-context,containers,components,behavior}/**"
+      ],
+      "outputs": []
+    },
+    "validate:specs-links": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-links",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/**/*.md"],
+      "outputs": []
     }
   }
 }

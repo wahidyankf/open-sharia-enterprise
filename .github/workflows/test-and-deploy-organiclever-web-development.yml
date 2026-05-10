@@ -157,9 +157,19 @@ jobs:
         if: always()
         run: docker compose -f infra/dev/organiclever/docker-compose.yml -f infra/dev/organiclever/docker-compose.ci.yml down -v
 
+  specs-gate:
+    name: Specs gate (BDD+DDD validators)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-golang
+      - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+
   deploy:
     name: Deploy to staging
-    needs: [spec-coverage, fe-lint, be-integration, fe-integration, e2e]
+    needs: [spec-coverage, fe-lint, be-integration, fe-integration, e2e, specs-gate]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

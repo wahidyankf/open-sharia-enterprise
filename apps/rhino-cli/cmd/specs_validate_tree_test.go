@@ -219,6 +219,184 @@ func TestSpecsValidateTreeCmd_MissingGitRoot(t *testing.T) {
 	}
 }
 
+func TestResolveTreeApps(t *testing.T) {
+	tests := []struct {
+		name       string
+		positional []string
+		appsFlag   []string
+		want       []string
+	}{
+		{
+			name:       "no positional, no flag → defaults to allowlist",
+			positional: nil,
+			appsFlag:   nil,
+			want:       []string{"organiclever", "wahidyankf", "oseplatform", "ayokoding"},
+		},
+		{
+			name:       "explicit positional preserved as single-app list",
+			positional: []string{"organiclever"},
+			appsFlag:   nil,
+			want:       []string{"organiclever"},
+		},
+		{
+			name:       "--apps flag overrides defaults",
+			positional: nil,
+			appsFlag:   []string{"organiclever", "wahidyankf"},
+			want:       []string{"organiclever", "wahidyankf"},
+		},
+		{
+			name:       "positional wins over --apps flag (back-compat priority)",
+			positional: []string{"oseplatform"},
+			appsFlag:   []string{"organiclever", "wahidyankf"},
+			want:       []string{"oseplatform"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := resolveTreeApps(tt.positional, tt.appsFlag)
+			if len(got) != len(tt.want) {
+				t.Fatalf("resolveTreeApps() len = %d, want %d; got = %v, want = %v",
+					len(got), len(tt.want), got, tt.want)
+			}
+			for i := range tt.want {
+				if got[i] != tt.want[i] {
+					t.Errorf("resolveTreeApps()[%d] = %q, want %q", i, got[i], tt.want[i])
+				}
+			}
+		})
+	}
+}
+
+// TestSpecsValidateTree_NoArgsDefaultsToAllowlist verifies that calling
+// the command with zero positional args and no --apps flag iterates over
+// the allowlist.
+func TestSpecsValidateTree_NoArgsDefaultsToAllowlist(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateTreeFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateTreeFn = origFn
+		_ = specsValidateTreeCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateTreeFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateTreeCmd.SetOut(buf)
+	specsValidateTreeCmd.SetErr(buf)
+
+	if err := specsValidateTreeCmd.RunE(specsValidateTreeCmd, []string{}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 4 {
+		t.Errorf("expected validator called for 4 allowlist apps, got %d: %v",
+			len(calledFor), calledFor)
+	}
+}
+
+// TestSpecsValidateTree_AppsFlagOverrides verifies that --apps flag invokes
+// the validator for exactly the flag values.
+func TestSpecsValidateTree_AppsFlagOverrides(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateTreeFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateTreeFn = origFn
+		_ = specsValidateTreeCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateTreeFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	if err := specsValidateTreeCmd.Flags().Set("apps", "organiclever,wahidyankf"); err != nil {
+		t.Fatalf("failed to set --apps flag: %v", err)
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateTreeCmd.SetOut(buf)
+	specsValidateTreeCmd.SetErr(buf)
+
+	if err := specsValidateTreeCmd.RunE(specsValidateTreeCmd, []string{}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 2 {
+		t.Errorf("expected validator called for 2 apps, got %d: %v", len(calledFor), calledFor)
+	}
+	if len(calledFor) >= 2 && (calledFor[0] != "organiclever" || calledFor[1] != "wahidyankf") {
+		t.Errorf("expected [organiclever wahidyankf], got %v", calledFor)
+	}
+}
+
+// TestSpecsValidateTree_PositionalPreserved verifies that a single
+// positional arg keeps today's single-app behavior unchanged.
+func TestSpecsValidateTree_PositionalPreserved(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateTreeFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateTreeFn = origFn
+		_ = specsValidateTreeCmd.Flags().Set("apps", "")
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	calledFor := []string{}
+	specsValidateTreeFn = func(_, app string) []SpecFinding {
+		calledFor = append(calledFor, app)
+		return nil
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateTreeCmd.SetOut(buf)
+	specsValidateTreeCmd.SetErr(buf)
+
+	if err := specsValidateTreeCmd.RunE(specsValidateTreeCmd, []string{"organiclever"}); err != nil {
+		t.Fatalf("expected success, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	if len(calledFor) != 1 || calledFor[0] != "organiclever" {
+		t.Errorf("expected validator called once for [organiclever], got %v", calledFor)
+	}
+}
+
 func TestValidateSpecTree_Logic(t *testing.T) {
 	tests := []struct {
 		name         string

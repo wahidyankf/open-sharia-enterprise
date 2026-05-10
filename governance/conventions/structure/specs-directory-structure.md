@@ -316,11 +316,81 @@ The following `rhino-cli specs` commands validate the directory structure mechan
 | `rhino-cli specs validate-counts <folder>` | README count claims match actual `.feature` file counts                    |
 | `rhino-cli specs validate-links <folder>`  | Markdown link integrity within the spec tree                               |
 | `rhino-cli specs validate-adoption <app>`  | BDD/DDD/Contracts adoption gaps per surface profile                        |
-| `rhino-cli specs drift-routes <app>`       | Routes/screens spec vs actual Next.js page files                           |
-| `rhino-cli specs drift-endpoints <app>`    | Endpoint spec vs actual backend handler files                              |
-| `rhino-cli specs drift-contracts <app>`    | OpenAPI paths vs backend handler attributes                                |
 
 These commands run as part of the `specs-quality-gate` workflow deterministic-offload pass. See [Deterministic Offload](#deterministic-offload) below.
+
+#### Allowlist-driven default app selection
+
+`validate-adoption`, `validate-tree`, `validate-counts`, and `validate-links` all accept the same three calling shapes:
+
+- Positional `<folder>` or `<app>` — single-target legacy behavior preserved.
+- `--apps <csv>` — multi-app validation across an explicit list.
+- No positional, no flag — defaults to the `AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`).
+
+The single source of truth for the allowlist is `apps/rhino-cli/internal/allowlist/allowlist.go`. Pre-push and CI surfaces invoke the four targets without arguments so adding a new app is a one-line edit there.
+
+#### Per-bounded-context `code_lang:` field (DDD validators)
+
+`specs/apps/<app>/ddd/bounded-contexts.yaml` accepts an optional `code_lang: [<lang>, ...]` field per BC. Glossary code-identifier checks compute the file-extension glob list as the union of `SupportedLangGlobs[<lang>]` for every declared lang (e.g., `[fs]` → `*.fs`; `[ts, fs]` → `*.ts *.fs`). When omitted, the loader defaults to `[ts, tsx]` to preserve historical TS-only behaviour. Supported lang tags: `ts`, `tsx`, `fs`, `go`, `py`, `java`, `kt`, `rs`, `ex`, `exs`, `cs`, `clj`, `dart`.
+
+#### Multi-perspective `gherkin: []string` schema
+
+`specs/apps/<app>/ddd/bounded-contexts.yaml` accepts both scalar and list forms for the `gherkin:` field. A scalar auto-converts to a single-element list at load time:
+
+```yaml
+gherkin: behavior/web/gherkin/content # scalar (most BCs)
+gherkin: # list (multi-perspective BCs)
+  - behavior/web/gherkin/content
+  - behavior/api/gherkin/content
+```
+
+The validator iterates every declared path in `checkGherkin`, `registeredGherkin`, and `gherkinRoots`. Glossary `Used in features` lookups resolve under any declared path (first-match-wins). This unblocks BCs that legitimately have both web and api gherkin trees (e.g., ayokoding's `content`, `search`, `i18n`, `navigation`).
+
+#### Severity audit log + env var
+
+`OSE_RHINO_DDD_SEVERITY=warn` downgrades all `ddd bc` and `ddd ul` findings to warnings (exit 0 even when findings exist). Every honored downgrade emits a stderr audit line:
+
+```
+WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var
+```
+
+The legacy `ORGANICLEVER_RHINO_DDD_SEVERITY` env var was removed without a deprecation period in this same plan; every in-tree reference was renamed atomically. The flag form `--severity=warn|error` takes precedence over the env var.
+
+#### Reverse-direction step orphan check (Fix #15)
+
+Every `spec-coverage` invocation enforces both directions:
+
+- **Forward**: every Gherkin step has a matching impl.
+- **Reverse**: every impl matcher has at least one matching Gherkin step.
+
+Orphan impls fail the gate non-zero. There is no `--allow-orphan-steps` flag and no env var escape hatch — any orphan is either real drift or an extractor bug that must be fixed at source. The pre-flight audit ran across all 15 spec-coverage-wired projects in worktree as part of this plan and reached `FAIL=0` before merge.
+
+The validator handles Scenario Outline forms in both directions: outline steps are emitted with `<placeholder>` tokens intact for forward matching against vitest-cucumber per-scenario impls, and Examples-table-expanded variants feed both directions so playwright-bdd regex-pattern impls binding expanded values count as covered. Comments in `.ts/.tsx` source are stripped before extraction (line comments only when at line start to preserve regex literals; block comments anywhere; strings preserved verbatim) so commented-out placeholder doc lines do not become false-positive orphan matches.
+
+#### Combined gherkin scopes per app
+
+`spec-coverage validate` accepts a variadic specs-dirs list (`validate <specs-dir> [<specs-dir>...] <app-dir>`). Apps with multiple gherkin perspectives (oseplatform-web has web + api; ayokoding-web has web + api + build-tools) declare a single combined run in `project.json` so impls shared across scopes don't false-positive on per-scope orphan checks.
+
+#### Expanded relationship symmetry (DDD validators)
+
+`bcregistry/validator.go` flags asymmetric relationships for `customer-supplier`, `conformist`, `partnership`, and `shared-kernel` kinds. `anticorruption-layer` and `open-host-service` are intentionally one-way and silent. Unknown relationship kinds (e.g., typos like `shered-kernel`) produce an explicit "unknown relationship kind" finding via the new `checkRelationshipKinds` pass.
+
+#### Drift detection
+
+Drift detection commands (`drift-routes`, `drift-endpoints`, `drift-contracts`) are **not currently implemented**. The placeholder command files were removed in the BDD+DDD tooling gap-fill plan (2026-05) because reservation-pattern stubs that print "Not yet implemented" mislead callers into believing functionality exists. If drift detection is later required, a new plan adds those commands back as real implementations rather than stubs. Track via the tooling backlog.
+
+#### Pre-push + CI gating surfaces
+
+Every `validate:specs-*` target runs on all four gating surfaces — no surface lags behind:
+
+- `.husky/pre-push` (every developer push, single line)
+- `.github/workflows/pr-quality-gate.yml` (every PR, dedicated `specs-gate` job in `quality-gate.needs:`)
+- `.github/workflows/_reusable-test-and-deploy.yml` (called by 3 cron deploys, `specs-gate` job in `deploy.needs:`)
+- `.github/workflows/test-and-deploy-organiclever-web-development.yml` (cron on `main`, `specs-gate` job in `deploy.needs:`)
+
+`docs validate-links` is NOT gated by this plan — it scans the entire repo's markdown (governance/, docs/, app READMEs) and is owned by a separate planned validator-unification effort.
+
+After this plan ships, **zero specs/BDD/DDD scripts in `rhino-cli` are dead** — every command file under `apps/rhino-cli/cmd/specs_*.go`, `cmd/ddd_*.go`, and `cmd/spec_coverage*.go` is invoked by at least one Nx target or pre-push surface.
 
 ### LLM Semantic Validation (specs-checker)
 

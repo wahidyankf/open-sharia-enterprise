@@ -28,7 +28,7 @@ Cross-context checks:
 
 Severity is resolved in priority order:
   1. --severity flag
-  2. ORGANICLEVER_RHINO_DDD_SEVERITY environment variable
+  2. OSE_RHINO_DDD_SEVERITY environment variable
   3. Default: error`,
 	Example: `  # Validate organiclever glossaries
   rhino-cli ddd ul organiclever
@@ -83,8 +83,12 @@ func resolveUlSeverity(flagVal string) string {
 	if flagVal != "" {
 		return normaliseUlSeverity(flagVal)
 	}
-	if env := os.Getenv("ORGANICLEVER_RHINO_DDD_SEVERITY"); env != "" {
-		return normaliseUlSeverity(env)
+	if env := os.Getenv("OSE_RHINO_DDD_SEVERITY"); env != "" {
+		sev := normaliseUlSeverity(env)
+		if sev == "warn" {
+			fmt.Fprintln(os.Stderr, `WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var`)
+		}
+		return sev
 	}
 	return "error"
 }

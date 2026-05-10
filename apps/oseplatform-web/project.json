@@ -107,11 +107,7 @@
     "spec-coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin apps/oseplatform-web",
-          "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/api/gherkin apps/oseplatform-web"
-        ],
-        "parallel": false
+        "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/oseplatform/behavior/web/gherkin specs/apps/oseplatform/behavior/api/gherkin apps/oseplatform-web"
       },
       "cache": true,
       "inputs": [

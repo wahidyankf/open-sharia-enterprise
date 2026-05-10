@@ -278,3 +278,149 @@ Feature: No Background
 		t.Errorf("Title = %q, want %q", scenarios[0].Title, "Only scenario")
 	}
 }
+
+// TestParseFeatureFile_ScenarioOutline_BasicSupport — Fix #15 follow-on:
+// Scenario Outline headers are recognized and their unexpanded steps appear
+// in the returned scenarios.
+func TestParseFeatureFile_ScenarioOutline_BasicSupport(t *testing.T) {
+	dir := t.TempDir()
+	path := writeFeatureFile(t, dir, "outline.feature", `
+Feature: Routes
+
+  Scenario Outline: Each tab is reachable
+    When the user navigates to "<path>"
+    Then the "<screen>" screen is visible
+
+    Examples:
+      | path        | screen   |
+      | /app/home   | Home     |
+      | /app/history | History |
+`)
+
+	scenarios, err := ParseFeatureFile(path)
+	if err != nil {
+		t.Fatalf("ParseFeatureFile() error = %v", err)
+	}
+
+	// Outline scenario emitted with `<placeholder>` tokens intact.
+	if len(scenarios) != 1 {
+		t.Fatalf("expected 1 outline scenario, got %d: %+v", len(scenarios), scenarios)
+	}
+	if scenarios[0].Title != "Each tab is reachable" {
+		t.Errorf("title = %q, want %q", scenarios[0].Title, "Each tab is reachable")
+	}
+	if len(scenarios[0].Steps) != 2 {
+		t.Fatalf("expected 2 steps, got %d", len(scenarios[0].Steps))
+	}
+	wantStepText := `the user navigates to "<path>"`
+	if scenarios[0].Steps[0].Text != wantStepText {
+		t.Errorf("step[0].Text = %q, want %q", scenarios[0].Steps[0].Text, wantStepText)
+	}
+	// Variants populated with one entry per Examples row × outline step.
+	if len(scenarios[0].Steps[0].Variants) != 2 {
+		t.Errorf("step[0].Variants count = %d, want 2 (one per Examples row)",
+			len(scenarios[0].Steps[0].Variants))
+	}
+}
+
+// TestParseFeatureFile_ScenarioOutline_VariantsExpanded — Fix #15 follow-on:
+// each Examples row expands to a Variants entry per outline step.
+func TestParseFeatureFile_ScenarioOutline_VariantsExpanded(t *testing.T) {
+	dir := t.TempDir()
+	path := writeFeatureFile(t, dir, "outline.feature", `
+Feature: Disabled
+
+  Scenario Outline: Disabled routes 404
+    When a visitor requests <method> <path>
+    Then the response status is 404
+
+    Examples:
+      | method | path     |
+      | GET    | /login   |
+      | GET    | /profile |
+`)
+
+	scenarios, err := ParseFeatureFile(path)
+	if err != nil {
+		t.Fatalf("ParseFeatureFile() error = %v", err)
+	}
+	if len(scenarios) != 1 {
+		t.Fatalf("expected 1 outline scenario, got %d", len(scenarios))
+	}
+	step := scenarios[0].Steps[0]
+	wantUnexpanded := `a visitor requests <method> <path>`
+	if step.Text != wantUnexpanded {
+		t.Errorf("step.Text = %q, want %q", step.Text, wantUnexpanded)
+	}
+	wantVariants := []string{
+		"a visitor requests GET /login",
+		"a visitor requests GET /profile",
+	}
+	if len(step.Variants) != len(wantVariants) {
+		t.Fatalf("variants count = %d, want %d", len(step.Variants), len(wantVariants))
+	}
+	for i, want := range wantVariants {
+		if step.Variants[i] != want {
+			t.Errorf("variants[%d] = %q, want %q", i, step.Variants[i], want)
+		}
+	}
+}
+
+// TestExpandedOutlineStepTexts_ReturnsExpandedOnly verifies the helper that
+// feeds reverse-direction orphan checks: it returns expanded forms only,
+// never the unexpanded outline templates.
+func TestExpandedOutlineStepTexts_ReturnsExpandedOnly(t *testing.T) {
+	dir := t.TempDir()
+	path := writeFeatureFile(t, dir, "outline.feature", `
+Feature: Outline
+
+  Scenario Outline: Tab is reachable
+    Given the user is on "<path>"
+
+    Examples:
+      | path      |
+      | /app/home |
+      | /app/cv   |
+`)
+
+	expanded, err := ExpandedOutlineStepTexts(path)
+	if err != nil {
+		t.Fatalf("ExpandedOutlineStepTexts() error = %v", err)
+	}
+	want := []string{
+		`the user is on "/app/home"`,
+		`the user is on "/app/cv"`,
+	}
+	if len(expanded) != len(want) {
+		t.Fatalf("expanded count = %d, want %d: %+v", len(expanded), len(want), expanded)
+	}
+	for i, w := range want {
+		if expanded[i] != w {
+			t.Errorf("expanded[%d] = %q, want %q", i, expanded[i], w)
+		}
+	}
+}
+
+// TestParseFeatureFile_ScenarioOutline_NoExamples emits the unexpanded outline
+// scenario but no Variants when no Examples table is present.
+func TestParseFeatureFile_ScenarioOutline_NoExamples(t *testing.T) {
+	dir := t.TempDir()
+	path := writeFeatureFile(t, dir, "outline.feature", `
+Feature: Outline without examples
+
+  Scenario Outline: Placeholder
+    Given a "<x>" exists
+`)
+
+	scenarios, err := ParseFeatureFile(path)
+	if err != nil {
+		t.Fatalf("error: %v", err)
+	}
+	if len(scenarios) != 1 {
+		t.Fatalf("expected 1 scenario, got %d", len(scenarios))
+	}
+	if len(scenarios[0].Steps[0].Variants) != 0 {
+		t.Errorf("variants should be empty when no Examples table; got %v",
+			scenarios[0].Steps[0].Variants)
+	}
+}

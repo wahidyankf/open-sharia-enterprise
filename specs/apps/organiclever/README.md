@@ -139,7 +139,7 @@ Both commands default to `error` severity — a finding fails the build.
 
 ```bash
 # Downgrade to warnings locally (never commit with this set)
-ORGANICLEVER_RHINO_DDD_SEVERITY=warn nx run organiclever-web:test:quick
+OSE_RHINO_DDD_SEVERITY=warn nx run organiclever-web:test:quick
 
 # Or per-command
 rhino-cli ddd bc organiclever --severity=warn

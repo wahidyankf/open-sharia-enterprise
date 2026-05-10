@@ -41,6 +41,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc organiclever)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul organiclever)",
           "dotnet tool restore",
           "dotnet build tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj",
           "dotnet altcover --inputDirectory tests/OrganicLeverBe.Tests/bin/Debug/net10.0 --outputDirectory tests/OrganicLeverBe.Tests/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=OrganicLeverBe.Tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover|coverlet' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
@@ -55,7 +57,9 @@
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/**/*.fs",
         "{projectRoot}/generated-contracts/**/*",
-        "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/organiclever/ddd/bounded-contexts.yaml",
+        "{workspaceRoot}/specs/apps/organiclever/ddd/ubiquitous-language/**/*.md"
       ],
       "outputs": ["{projectRoot}/coverage/altcov.info"]
     },

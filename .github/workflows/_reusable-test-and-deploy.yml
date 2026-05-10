@@ -90,6 +90,15 @@ jobs:
       - if: always()
         run: docker compose -f infra/dev/${{ inputs.app-name }}/docker-compose.yml down -v
 
+  specs-gate:
+    name: Specs gate (BDD+DDD validators)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-golang
+      - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+
   detect-changes:
     name: Detect changes
     runs-on: ubuntu-latest
@@ -110,7 +119,7 @@ jobs:
 
   deploy:
     name: Deploy to production
-    needs: [lint, unit, integration, e2e, detect-changes]
+    needs: [lint, unit, integration, e2e, detect-changes, specs-gate]
     if: needs.detect-changes.outputs.has-changes == 'true'
     runs-on: ubuntu-latest
     steps:

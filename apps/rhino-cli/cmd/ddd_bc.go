@@ -30,7 +30,7 @@ Verifies relationship symmetry for asymmetric relationship kinds
 
 Severity is resolved in priority order:
   1. --severity flag
-  2. ORGANICLEVER_RHINO_DDD_SEVERITY environment variable
+  2. OSE_RHINO_DDD_SEVERITY environment variable
   3. Default: error`,
 	Example: `  # Validate organiclever bounded-context structure
   rhino-cli ddd bc organiclever
@@ -85,8 +85,12 @@ func resolveBcSeverity(flagVal string) string {
 	if flagVal != "" {
 		return normaliseSeverity(flagVal)
 	}
-	if env := os.Getenv("ORGANICLEVER_RHINO_DDD_SEVERITY"); env != "" {
-		return normaliseSeverity(env)
+	if env := os.Getenv("OSE_RHINO_DDD_SEVERITY"); env != "" {
+		sev := normaliseSeverity(env)
+		if sev == "warn" {
+			fmt.Fprintln(os.Stderr, `WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var`)
+		}
+		return sev
 	}
 	return "error"
 }

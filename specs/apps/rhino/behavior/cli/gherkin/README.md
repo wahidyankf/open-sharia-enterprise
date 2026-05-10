@@ -1,8 +1,8 @@
 # rhino-cli specs Gherkin Specs
 
 Gherkin feature files for the `specs` subcommand family of
-[rhino-cli](../../../../../../apps/rhino-cli/README.md) — deterministic spec validation and
-drift detection (FR-14).
+[rhino-cli](../../../../../../apps/rhino-cli/README.md) — deterministic spec validation
+(FR-14).
 
 ## Planned Feature Files
 
@@ -12,9 +12,6 @@ drift detection (FR-14).
 | `validate-counts.feature`   | `specs validate-counts`   | planned |
 | `validate-links.feature`    | `specs validate-links`    | planned |
 | `validate-adoption.feature` | `specs validate-adoption` | planned |
-| `drift-routes.feature`      | `specs drift-routes`      | planned |
-| `drift-endpoints.feature`   | `specs drift-endpoints`   | planned |
-| `drift-contracts.feature`   | `specs drift-contracts`   | planned |
 
 ## Conventions
 

@@ -40,7 +40,7 @@ func extractCSharpStepTexts(path string, sm *stepMatcher) error {
 	for _, m := range verbatimMatches {
 		// Unescape "" → " in verbatim strings
 		text := strings.ReplaceAll(m[1], `""`, `"`)
-		addStepToMatcher(sm, text)
+		addStepToMatcherWithOrigin(sm, text, path)
 	}
 
 	// Also try regular strings (without @" prefix)
@@ -48,7 +48,7 @@ func extractCSharpStepTexts(path string, sm *stepMatcher) error {
 	for _, m := range regularMatches {
 		// Skip if this match was already captured by the verbatim regex
 		// (the regular regex could partially match verbatim content)
-		addStepToMatcher(sm, m[1])
+		addStepToMatcherWithOrigin(sm, m[1], path)
 	}
 
 	return nil
@@ -69,9 +69,10 @@ func extractFSharpStepTexts(path string, sm *stepMatcher) error {
 		matches := fsStepRe.FindAllStringSubmatch(line, -1)
 		for _, m := range matches {
 			text := normalizeWS(m[1])
-			re, err := regexp.Compile("^" + text + "$")
+			pattern := "^" + text + "$"
+			re, err := regexp.Compile(pattern)
 			if err == nil {
-				sm.patterns = append(sm.patterns, re)
+				sm.addPatternWithOrigin(re, pattern, path)
 			}
 		}
 	}

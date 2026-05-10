@@ -60,10 +60,10 @@ the validated scope.
 10. **Directory structure violations** — Move feature files to correct nesting per
     [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md)
     (via `git mv`)
-11. **Drift findings (routes/endpoints)** — Rewrite routes-and-screens.md routes table or
-    components/be/api.md endpoints table using output from `rhino-cli specs drift-routes <app>`
-    or `rhino-cli specs drift-endpoints <app>`. Parse the JSONL output to determine which rows
-    to add, update, or remove.
+11. **Allowlist gate findings (HIGH)** — When `nx run rhino-cli:validate:specs-counts` reports a
+    `HIGH: missing required folder: <folder>` finding, create the folder with a `README.md` and a
+    placeholder `.md` spec file. When `nx run rhino-cli:validate:specs-links` reports a broken
+    internal link, repair the link target or remove the broken reference.
 
 ### Requires Review (MEDIUM confidence)
 
@@ -79,8 +79,9 @@ the validated scope.
    flat-root to C4-aware layout requires an atomic commit that also updates rhino-cli path
    constants, Nx cache inputs, and step definition files. The fixer flags and documents
    the violation but does NOT perform the migration. Migration is a plan-level operation.
-8. **Drift findings (contracts)** — `rhino-cli specs drift-contracts` mismatches are always
-   flag-only; fixer documents but does NOT modify `containers/contracts/openapi.yaml`.
+8. **Drift detection** — placeholder commands for routes/endpoints/contracts drift were
+   removed in the BDD+DDD tooling gap-fill plan; re-introduction (and any auto-fix logic for
+   them) requires a new dedicated plan, not stubs. Fixer flags only.
 
 ### Skip (FALSE_POSITIVE or unfixable)
 
@@ -97,7 +98,7 @@ the validated scope.
 4. **Sort by priority**: P0 (CRITICAL/HIGH conf) → P1 (CRITICAL/MEDIUM) → P2 (HIGH/HIGH) → etc.
 5. **Re-validate each finding**: Confirm issue still exists before fixing
 6. **Apply fix**: Use Edit tool for markdown, `git mv` via Bash for renames,
-   `rhino-cli specs drift-*` output for table rewrites
+   `nx run rhino-cli:validate:specs-{counts,links}` output for missing-folder + broken-link fixes
 7. **Post-fix verify**: Read the modified file to confirm fix is correct
 8. **Generate fix report**: Track all changes made
 

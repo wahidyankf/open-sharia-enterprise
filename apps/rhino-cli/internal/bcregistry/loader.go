@@ -31,6 +31,15 @@ func Load(repoRoot, app string) (*Registry, error) {
 		if len(reg.Contexts[i].Code) == 0 {
 			return nil, fmt.Errorf("registry for app %q context %q has empty code list at %s", app, reg.Contexts[i].Name, path)
 		}
+		if len(reg.Contexts[i].Gherkin) == 0 {
+			return nil, fmt.Errorf("registry for app %q context %q has empty gherkin list at %s", app, reg.Contexts[i].Name, path)
+		}
+		if len(reg.Contexts[i].CodeLang) == 0 {
+			reg.Contexts[i].CodeLang = []string{"ts", "tsx"}
+		}
+		if err := validateCodeLang(reg.Contexts[i].CodeLang); err != nil {
+			return nil, fmt.Errorf("registry context %q: %w", reg.Contexts[i].Name, err)
+		}
 	}
 	return &reg, nil
 }

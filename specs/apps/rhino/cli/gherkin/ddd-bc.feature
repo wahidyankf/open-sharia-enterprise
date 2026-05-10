@@ -76,9 +76,9 @@ Feature: Bounded-Context Structural Parity Validation
     Then the command exits successfully
     And the output contains the word "warning"
 
-  Scenario: ORGANICLEVER_RHINO_DDD_SEVERITY env var overrides default severity
+  Scenario: OSE_RHINO_DDD_SEVERITY env var overrides default severity
     Given a registry with an orphan code folder present on the filesystem
-    And the environment variable "ORGANICLEVER_RHINO_DDD_SEVERITY" is set to "warn"
+    And the environment variable "OSE_RHINO_DDD_SEVERITY" is set to "warn"
     When the developer runs "rhino-cli ddd bc organiclever"
     Then the command exits successfully
     And the output contains the word "warning"

@@ -62,11 +62,21 @@ func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 		for _, c := range ctx.Code {
 			codePaths = append(codePaths, filepath.Join(opts.RepoRoot, c))
 		}
-		gherkinPath := filepath.Join(opts.RepoRoot, ctx.Gherkin)
-		findings = append(findings, checkTerms(ctx.Glossary, g, codePaths, gherkinPath, sev)...)
+		// Compute the per-BC code-file glob list as the union of the globs for
+		// every declared code_lang. The loader has already defaulted CodeLang
+		// to ["ts", "tsx"] when absent, so this is always non-empty.
+		codeExts := []string{}
+		for _, lang := range ctx.CodeLang {
+			codeExts = append(codeExts, bcregistry.SupportedLangGlobs[lang]...)
+		}
+		gherkinPaths := make([]string, 0, len(ctx.Gherkin))
+		for _, gh := range ctx.Gherkin {
+			gherkinPaths = append(gherkinPaths, filepath.Join(opts.RepoRoot, gh))
+		}
+		findings = append(findings, checkTerms(ctx.Glossary, g, codePaths, codeExts, gherkinPaths, sev)...)
 
 		// Forbidden synonym usage.
-		findings = append(findings, checkForbiddenSynonyms(ctx.Glossary, g, codePaths, gherkinPath, sev)...)
+		findings = append(findings, checkForbiddenSynonyms(ctx.Glossary, g, codePaths, codeExts, gherkinPaths, sev)...)
 	}
 
 	// Cross-context term collision.
@@ -106,14 +116,14 @@ func checkTableHeader(file string, g *Glossary, sev string) []Finding {
 	return findings
 }
 
-func checkTerms(file string, g *Glossary, codePaths []string, gherkinPath, sev string) []Finding {
+func checkTerms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev string) []Finding {
 	var findings []Finding
 	for _, term := range g.Terms {
 		// Code identifier existence — sum matches across every declared code path.
 		for _, id := range term.CodeIdentifiers {
 			count := 0
 			for _, codePath := range codePaths {
-				count += grepFn(id, codePath, []string{"*.ts", "*.tsx"})
+				count += grepFn(id, codePath, codeExts)
 			}
 			if count == 0 {
 				findings = append(findings, Finding{
@@ -123,25 +133,9 @@ func checkTerms(file string, g *Glossary, codePaths []string, gherkinPath, sev s
 				})
 			}
 		}
-		// Feature reference existence.
+		// Feature reference existence — first match across any declared gherkin path wins.
 		for _, ref := range term.UsedInFeatures {
-			featurePath := filepath.Join(gherkinPath, filepath.Base(ref))
-			// ref may include a subdir like "journal/journal-mechanism.feature"
-			if strings.Contains(ref, "/") {
-				parts := strings.SplitN(ref, "/", 2)
-				featurePath = filepath.Join(filepath.Dir(gherkinPath), parts[0], parts[1])
-			}
-			if strings.Contains(featurePath, "*") {
-				// Glob pattern — at least one match required.
-				matches, _ := filepath.Glob(featurePath)
-				if len(matches) == 0 {
-					findings = append(findings, Finding{
-						File:     file,
-						Message:  fmt.Sprintf("missing feature reference: %s", ref),
-						Severity: sev,
-					})
-				}
-			} else if _, err := osStatFn(featurePath); err != nil {
+			if !featureRefResolves(ref, gherkinPaths) {
 				findings = append(findings, Finding{
 					File:     file,
 					Message:  fmt.Sprintf("missing feature reference: %s", ref),
@@ -153,14 +147,39 @@ func checkTerms(file string, g *Glossary, codePaths []string, gherkinPath, sev s
 	return findings
 }
 
-func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, gherkinPath, sev string) []Finding {
+// featureRefResolves returns true when ref resolves under any of the BC's
+// declared gherkin paths. Multi-path lookup (Fix #11) — first match wins.
+func featureRefResolves(ref string, gherkinPaths []string) bool {
+	for _, gherkinPath := range gherkinPaths {
+		featurePath := filepath.Join(gherkinPath, filepath.Base(ref))
+		// ref may include a subdir like "journal/journal-mechanism.feature"
+		if strings.Contains(ref, "/") {
+			parts := strings.SplitN(ref, "/", 2)
+			featurePath = filepath.Join(filepath.Dir(gherkinPath), parts[0], parts[1])
+		}
+		if strings.Contains(featurePath, "*") {
+			// Glob pattern — at least one match required.
+			if matches, _ := filepath.Glob(featurePath); len(matches) > 0 {
+				return true
+			}
+		} else if _, err := osStatFn(featurePath); err == nil {
+			return true
+		}
+	}
+	return false
+}
+
+func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev string) []Finding {
 	var findings []Finding
 	for _, fb := range g.ForbiddenSynonyms {
 		count := 0
 		for _, codePath := range codePaths {
-			count += grepFn(fb.Term, codePath, []string{"*.ts", "*.tsx"})
+			count += grepFn(fb.Term, codePath, codeExts)
 		}
-		count += grepFn(fb.Term, gherkinPath, []string{"*.feature"})
+		// Sum grep across every declared gherkin path (Fix #11).
+		for _, gherkinPath := range gherkinPaths {
+			count += grepFn(fb.Term, gherkinPath, []string{"*.feature"})
+		}
 		if count > 0 {
 			findings = append(findings, Finding{
 				File:     file,

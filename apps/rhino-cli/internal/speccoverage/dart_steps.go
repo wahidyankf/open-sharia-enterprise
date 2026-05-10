@@ -25,7 +25,7 @@ func extractDartStepTexts(path string, sm *stepMatcher) error {
 	matches := dartStepRe.FindAllStringSubmatch(src, -1)
 	for _, m := range matches {
 		text := unescapeString(firstNonEmpty(m[1], m[2]))
-		addStepToMatcher(sm, text)
+		addStepToMatcherWithOrigin(sm, text, path)
 	}
 	return nil
 }

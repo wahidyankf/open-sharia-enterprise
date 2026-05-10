@@ -395,6 +395,104 @@ func TestFormatText_WithBothFileAndScenarioGaps(t *testing.T) {
 	}
 }
 
+// --- Phase 5B.3 (Fix #15): orphan step impl rendering ---
+
+// TestFormatJSON_WithOrphanStepImpls verifies that the JSON output exposes
+// the new orphan_step_impls collection with file, matcher_kind, and
+// matcher_text fields.
+func TestFormatJSON_WithOrphanStepImpls(t *testing.T) {
+	result := &CheckResult{
+		TotalSpecs:     1,
+		TotalScenarios: 1,
+		TotalSteps:     1,
+		OrphanStepImpls: []OrphanStepImpl{
+			{File: "apps/example/src/steps.ts", MatcherKind: "exact", MatcherText: "an orphan"},
+			{File: "apps/example/src/godog_test.go", MatcherKind: "pattern", MatcherText: "^a unicorn appears$"},
+		},
+		Duration: 5 * time.Millisecond,
+	}
+
+	jsonStr, err := FormatJSON(result)
+	if err != nil {
+		t.Fatalf("FormatJSON() error = %v", err)
+	}
+
+	var raw map[string]any
+	if err := json.Unmarshal([]byte(jsonStr), &raw); err != nil {
+		t.Fatalf("Failed to parse JSON: %v", err)
+	}
+
+	if raw["status"] != "failure" {
+		t.Errorf("status = %v, want failure", raw["status"])
+	}
+
+	orphans, ok := raw["orphan_step_impls"].([]any)
+	if !ok {
+		t.Fatalf("expected orphan_step_impls to be a JSON array, got %T (raw=%s)", raw["orphan_step_impls"], jsonStr)
+	}
+	if len(orphans) != 2 {
+		t.Fatalf("orphan_step_impls len = %d, want 2", len(orphans))
+	}
+
+	first, ok := orphans[0].(map[string]any)
+	if !ok {
+		t.Fatalf("orphan[0] is not a JSON object: %T", orphans[0])
+	}
+	if first["file"] != "apps/example/src/steps.ts" {
+		t.Errorf("orphan[0].file = %v, want apps/example/src/steps.ts", first["file"])
+	}
+	if first["matcher_kind"] != "exact" {
+		t.Errorf("orphan[0].matcher_kind = %v, want exact", first["matcher_kind"])
+	}
+	if first["matcher_text"] != "an orphan" {
+		t.Errorf("orphan[0].matcher_text = %v, want an orphan", first["matcher_text"])
+	}
+
+	second, ok := orphans[1].(map[string]any)
+	if !ok {
+		t.Fatalf("orphan[1] is not a JSON object: %T", orphans[1])
+	}
+	if second["matcher_kind"] != "pattern" {
+		t.Errorf("orphan[1].matcher_kind = %v, want pattern", second["matcher_kind"])
+	}
+	if second["matcher_text"] != "^a unicorn appears$" {
+		t.Errorf("orphan[1].matcher_text = %v, want ^a unicorn appears$", second["matcher_text"])
+	}
+
+	count, ok := raw["orphan_step_impl_count"].(float64)
+	if !ok {
+		t.Fatalf("expected orphan_step_impl_count number, got %T", raw["orphan_step_impl_count"])
+	}
+	if int(count) != 2 {
+		t.Errorf("orphan_step_impl_count = %d, want 2", int(count))
+	}
+}
+
+// TestFormatText_WithOrphanStepImpls verifies the text formatter renders the
+// new finding type with file path, matcher kind tag, and text.
+func TestFormatText_WithOrphanStepImpls(t *testing.T) {
+	result := &CheckResult{
+		TotalSpecs:     1,
+		TotalScenarios: 1,
+		TotalSteps:     1,
+		OrphanStepImpls: []OrphanStepImpl{
+			{File: "apps/example/src/steps.ts", MatcherKind: "exact", MatcherText: "an orphan"},
+		},
+		Duration: 5 * time.Millisecond,
+	}
+
+	out := FormatText(result, false, false)
+	if !strings.Contains(out, "Orphan step implementations") {
+		t.Errorf("expected text section header, got: %q", out)
+	}
+	if !strings.Contains(out, "apps/example/src/steps.ts") {
+		t.Errorf("expected file path in output, got: %q", out)
+	}
+	if !strings.Contains(out, "[exact] an orphan") {
+		t.Errorf("expected '[exact] an orphan' marker, got: %q", out)
+	}
+}
+
 // TestFormatText_WithGapsAndStepGaps covers the separator branch (lines 45-47)
 // between scenario/file gaps and step gaps.
 func TestFormatText_WithGapsAndStepGaps(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -283,7 +284,7 @@ func oneContextRegistry() *bcregistry.Registry {
 			Layers:   []string{"domain"},
 			Code:     []string{"apps/test/src/contexts/ctx1"},
 			Glossary: "specs/apps/test/ubiquitous-language/ctx1.md",
-			Gherkin:  "specs/apps/test/fe/gherkin/ctx1",
+			Gherkin:  bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctx1"},
 		}},
 	}
 }
@@ -293,8 +294,8 @@ func twoContextRegistry() *bcregistry.Registry {
 		Version: bcregistry.SchemaVersion,
 		App:     "test",
 		Contexts: []bcregistry.Context{
-			{Name: "ctxa", Code: []string{"apps/test/src/contexts/ctxa"}, Glossary: "specs/apps/test/ubiquitous-language/ctxa.md", Gherkin: "specs/apps/test/fe/gherkin/ctxa"},
-			{Name: "ctxb", Code: []string{"apps/test/src/contexts/ctxb"}, Glossary: "specs/apps/test/ubiquitous-language/ctxb.md", Gherkin: "specs/apps/test/fe/gherkin/ctxb"},
+			{Name: "ctxa", Code: []string{"apps/test/src/contexts/ctxa"}, Glossary: "specs/apps/test/ubiquitous-language/ctxa.md", Gherkin: bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctxa"}},
+			{Name: "ctxb", Code: []string{"apps/test/src/contexts/ctxb"}, Glossary: "specs/apps/test/ubiquitous-language/ctxb.md", Gherkin: bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctxb"}},
 		},
 	}
 }
@@ -523,6 +524,210 @@ func TestValidateAll_ForbiddenSynonymInUse(t *testing.T) {
 	}
 	if !found {
 		t.Errorf("expected 'forbidden synonym used in own context' finding, got: %+v", findings)
+	}
+}
+
+// fsharpOnlyContextRegistry returns a one-context registry whose BC declares
+// code_lang: [fs] — used to verify the glossary validator computes globs from
+// the per-BC CodeLang field instead of hardcoding TS extensions.
+func fsharpOnlyContextRegistry() *bcregistry.Registry {
+	return &bcregistry.Registry{
+		Version: bcregistry.SchemaVersion,
+		App:     "test",
+		Contexts: []bcregistry.Context{{
+			Name:     "ctx1",
+			Layers:   []string{"domain"},
+			Code:     []string{"apps/test/src/contexts/ctx1"},
+			CodeLang: []string{"fs"},
+			Glossary: "specs/apps/test/ubiquitous-language/ctx1.md",
+			Gherkin:  bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctx1"},
+		}},
+	}
+}
+
+// tsAndFsharpContextRegistry returns a one-context registry whose BC declares
+// both TypeScript and F# — used to verify glob union behaviour.
+func tsAndFsharpContextRegistry() *bcregistry.Registry {
+	return &bcregistry.Registry{
+		Version: bcregistry.SchemaVersion,
+		App:     "test",
+		Contexts: []bcregistry.Context{{
+			Name:     "ctx1",
+			Layers:   []string{"domain"},
+			Code:     []string{"apps/test/src/contexts/ctx1"},
+			CodeLang: []string{"ts", "fs"},
+			Glossary: "specs/apps/test/ubiquitous-language/ctx1.md",
+			Gherkin:  bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctx1"},
+		}},
+	}
+}
+
+// tsDefaultContextRegistry returns a one-context registry whose BC declares
+// code_lang: [ts, tsx] — the default applied by the loader when the field is
+// absent. Used to verify backward-compatibility with today's behaviour.
+func tsDefaultContextRegistry() *bcregistry.Registry {
+	return &bcregistry.Registry{
+		Version: bcregistry.SchemaVersion,
+		App:     "test",
+		Contexts: []bcregistry.Context{{
+			Name:     "ctx1",
+			Layers:   []string{"domain"},
+			Code:     []string{"apps/test/src/contexts/ctx1"},
+			CodeLang: []string{"ts", "tsx"},
+			Glossary: "specs/apps/test/ubiquitous-language/ctx1.md",
+			Gherkin:  bcregistry.GherkinPaths{"specs/apps/test/fe/gherkin/ctx1"},
+		}},
+	}
+}
+
+// glossaryWithKnownTypeFn returns a stub osReadFileFn that yields a
+// well-formed glossary referencing one code identifier "KnownType".
+func glossaryWithKnownTypeFn() func(string) ([]byte, error) {
+	return func(_ string) ([]byte, error) {
+		return []byte(`# Ubiquitous Language — ctx1
+
+**Bounded context**: ` + "`ctx1`" + `
+**Maintainer**: t
+**Last reviewed**: 2026-01-01
+
+## Term index
+
+| Term | Code identifier(s) | Used in features |
+| --- | --- | --- |
+| Known | ` + "`KnownType`" + ` | ctx1/ctx1.feature |
+
+## Forbidden synonyms
+
+`), nil
+	}
+}
+
+// TestCheckTerms_FSharpOnlyBCSearchesFSFiles verifies that when a BC declares
+// code_lang: [fs], the validator passes ["*.fs"] (the F# glob from
+// SupportedLangGlobs) to grepFn rather than the historical ["*.ts", "*.tsx"].
+func TestCheckTerms_FSharpOnlyBCSearchesFSFiles(t *testing.T) {
+	var capturedExts [][]string
+	withMocks(t, func() {
+		loadRegistryFn = func(_, _ string) (*bcregistry.Registry, error) { return fsharpOnlyContextRegistry(), nil }
+		osReadFileFn = glossaryWithKnownTypeFn()
+		osStatFn = func(_ string) (os.FileInfo, error) { return fakeStatInfo{isDir: false}, nil }
+		grepFn = func(_, _ string, exts []string) int {
+			// Copy to avoid aliasing the caller's slice.
+			cp := append([]string{}, exts...)
+			capturedExts = append(capturedExts, cp)
+			return 1
+		}
+	})
+
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(capturedExts) == 0 {
+		t.Fatal("expected grepFn to be called for code-identifier check")
+	}
+	// First call is the code-identifier grep against the code path.
+	codeExts := capturedExts[0]
+	if len(codeExts) != 1 || codeExts[0] != "*.fs" {
+		t.Errorf("expected F#-only globs [*.fs], got %v", codeExts)
+	}
+}
+
+// TestCheckTerms_PolyglotBCUnionsGlobs verifies that when a BC declares
+// code_lang: [ts, fs], the validator passes the union of TS and F# globs
+// (["*.ts", "*.fs"]) to grepFn.
+func TestCheckTerms_PolyglotBCUnionsGlobs(t *testing.T) {
+	var capturedExts [][]string
+	withMocks(t, func() {
+		loadRegistryFn = func(_, _ string) (*bcregistry.Registry, error) { return tsAndFsharpContextRegistry(), nil }
+		osReadFileFn = glossaryWithKnownTypeFn()
+		osStatFn = func(_ string) (os.FileInfo, error) { return fakeStatInfo{isDir: false}, nil }
+		grepFn = func(_, _ string, exts []string) int {
+			cp := append([]string{}, exts...)
+			capturedExts = append(capturedExts, cp)
+			return 1
+		}
+	})
+
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(capturedExts) == 0 {
+		t.Fatal("expected grepFn to be called for code-identifier check")
+	}
+	codeExts := capturedExts[0]
+	// Expect the union [*.ts, *.fs] (in CodeLang order, since ts=[*.ts], fs=[*.fs]).
+	if len(codeExts) != 2 || codeExts[0] != "*.ts" || codeExts[1] != "*.fs" {
+		t.Errorf("expected union globs [*.ts *.fs], got %v", codeExts)
+	}
+}
+
+// TestCheckTerms_TSDefaultPreservesHistoricalBehavior verifies that a BC with
+// the default code_lang ([ts, tsx]) still searches *.ts and *.tsx — exactly
+// today's behaviour. This locks in backward-compatibility for all existing BCs.
+func TestCheckTerms_TSDefaultPreservesHistoricalBehavior(t *testing.T) {
+	var capturedExts [][]string
+	withMocks(t, func() {
+		loadRegistryFn = func(_, _ string) (*bcregistry.Registry, error) { return tsDefaultContextRegistry(), nil }
+		osReadFileFn = glossaryWithKnownTypeFn()
+		osStatFn = func(_ string) (os.FileInfo, error) { return fakeStatInfo{isDir: false}, nil }
+		grepFn = func(_, _ string, exts []string) int {
+			cp := append([]string{}, exts...)
+			capturedExts = append(capturedExts, cp)
+			return 1
+		}
+	})
+
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(capturedExts) == 0 {
+		t.Fatal("expected grepFn to be called for code-identifier check")
+	}
+	codeExts := capturedExts[0]
+	if len(codeExts) != 2 || codeExts[0] != "*.ts" || codeExts[1] != "*.tsx" {
+		t.Errorf("expected default globs [*.ts *.tsx], got %v", codeExts)
+	}
+}
+
+// TestFeatureRefResolves_FirstMatchWins — Fix #11:
+// a feature reference resolvable under any of the BC's declared gherkin paths
+// counts as found, regardless of which path lists it first.
+func TestFeatureRefResolves_FirstMatchWins(t *testing.T) {
+	origStat := osStatFn
+	defer func() { osStatFn = origStat }()
+
+	osStatFn = func(name string) (os.FileInfo, error) {
+		// Only the second declared path resolves the feature.
+		if strings.HasSuffix(name, "/behavior/api/gherkin/content/x.feature") {
+			return fakeStatInfo{isDir: false}, nil
+		}
+		return nil, errors.New("not found")
+	}
+	gherkinPaths := []string{
+		"/repo/specs/apps/test/behavior/web/gherkin/content",
+		"/repo/specs/apps/test/behavior/api/gherkin/content",
+	}
+	if !featureRefResolves("x.feature", gherkinPaths) {
+		t.Error("ref must resolve when found under the second declared gherkin path (Fix #11)")
+	}
+}
+
+// TestFeatureRefResolves_NoMatchReportsAsMissing — Fix #11:
+// a reference that resolves under no declared path returns false.
+func TestFeatureRefResolves_NoMatchReportsAsMissing(t *testing.T) {
+	origStat := osStatFn
+	defer func() { osStatFn = origStat }()
+
+	osStatFn = func(_ string) (os.FileInfo, error) { return nil, errors.New("not found") }
+	gherkinPaths := []string{
+		"/repo/specs/apps/test/behavior/web/gherkin/content",
+		"/repo/specs/apps/test/behavior/api/gherkin/content",
+	}
+	if featureRefResolves("missing.feature", gherkinPaths) {
+		t.Error("ref must not resolve when found under no declared gherkin path (Fix #11)")
 	}
 }
 

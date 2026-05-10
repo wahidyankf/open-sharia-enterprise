@@ -31,7 +31,7 @@ func (s *bcValidateUnitSteps) before(_ context.Context, _ *godog.Scenario) (cont
 	bcSeverity = ""
 	s.cmdErr = nil
 	s.cmdOutput = ""
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 
 	osGetwd = func() (string, error) { return "/mock-repo", nil }
 	osStat = func(name string) (os.FileInfo, error) {
@@ -51,7 +51,7 @@ func (s *bcValidateUnitSteps) after(_ context.Context, _ *godog.Scenario, _ erro
 	bcValidateAllFn = bcregistry.ValidateAll
 	osGetwd = os.Getwd
 	osStat = os.Stat
-	_ = os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY")
+	_ = os.Unsetenv("OSE_RHINO_DDD_SEVERITY")
 	return context.Background(), nil
 }
 
@@ -201,7 +201,7 @@ func (s *bcValidateUnitSteps) registryWithOrphanEnvWarn() error {
 }
 
 func (s *bcValidateUnitSteps) envVarWarnSet() error {
-	t := os.Setenv("ORGANICLEVER_RHINO_DDD_SEVERITY", "warn")
+	t := os.Setenv("OSE_RHINO_DDD_SEVERITY", "warn")
 	return t
 }
 
@@ -215,7 +215,7 @@ func (s *bcValidateUnitSteps) run() error {
 }
 
 func (s *bcValidateUnitSteps) runWithEnvWarn() error {
-	defer os.Unsetenv("ORGANICLEVER_RHINO_DDD_SEVERITY") //nolint:errcheck
+	defer os.Unsetenv("OSE_RHINO_DDD_SEVERITY") //nolint:errcheck
 	buf := new(bytes.Buffer)
 	dddBcCmd.SetOut(buf)
 	dddBcCmd.SetErr(buf)

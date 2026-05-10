@@ -36,17 +36,17 @@ func extractRustStepTexts(path string, sm *stepMatcher) error {
 			if compErr != nil {
 				continue
 			}
-			sm.patterns = append(sm.patterns, re)
+			sm.addPatternWithOrigin(re, pattern, path)
 		}
 
 		// Check expr form — may contain Cucumber expressions
 		for _, m := range rsStepExprRe.FindAllStringSubmatch(line, -1) {
-			addStepToMatcher(sm, m[1])
+			addStepToMatcherWithOrigin(sm, m[1], path)
 		}
 
 		// Check literal form — may also contain Cucumber expressions
 		for _, m := range rsStepLiteralRe.FindAllStringSubmatch(line, -1) {
-			addStepToMatcher(sm, m[1])
+			addStepToMatcherWithOrigin(sm, m[1], path)
 		}
 	}
 	return scanner.Err()

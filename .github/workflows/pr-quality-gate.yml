@@ -239,9 +239,34 @@ jobs:
       - run: npx nx run rhino-cli:validate:naming-agents
       - run: npx nx run rhino-cli:validate:naming-workflows
 
+  specs-gate:
+    name: Specs gate (BDD+DDD validators)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-golang
+      - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+
   quality-gate:
     name: Quality gate
-    needs: [detect, format, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown, naming]
+    needs:
+      [
+        detect,
+        format,
+        typescript,
+        golang,
+        jvm,
+        dotnet,
+        python,
+        rust,
+        elixir,
+        clojure,
+        dart,
+        markdown,
+        naming,
+        specs-gate,
+      ]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -249,7 +274,7 @@ jobs:
         run: |
           echo "Checking quality gate results..."
           FAILED=false
-          for job in typescript golang jvm dotnet python rust elixir clojure dart markdown naming; do
+          for job in typescript golang jvm dotnet python rust elixir clojure dart markdown naming specs-gate; do
             RESULT="${{ toJSON(needs) }}"
             # A skipped job is OK (language not affected). Only failure blocks.
           done

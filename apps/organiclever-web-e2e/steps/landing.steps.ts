@@ -33,8 +33,3 @@ Then("the URL navigates to {string}", async ({ page }, path: string) => {
   const url = page.url();
   expect(url).toContain(path);
 });
-
-Then("I see a 5-column features grid", async ({ page }) => {
-  await expect(page.getByText("Workouts").first()).toBeVisible();
-  await expect(page.getByText("Focus").first()).toBeVisible();
-});

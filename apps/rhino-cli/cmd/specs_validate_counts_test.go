@@ -80,7 +80,7 @@ func (s *specsValidateCountsUnitSteps) specFolderBehaviorMissing() error {
 	specsValidateCountsFn = func(_, _ string) []SpecFinding {
 		return []SpecFinding{{
 			Category:    "count",
-			Criticality: "MEDIUM",
+			Criticality: "HIGH",
 			File:        "specs/apps/testapp/behavior",
 			Evidence:    "missing required folder: behavior",
 			Expected:    "create specs/apps/testapp/behavior/README.md plus at least one spec .md file",
@@ -251,6 +251,117 @@ func TestCountNonReadmeMdFiles(t *testing.T) {
 			t.Errorf("got %d, want 0", got)
 		}
 	})
+}
+
+// TestValidateSpecCounts_Severity asserts that validateSpecCounts assigns
+// HIGH severity to missing required sub-folders and MEDIUM to empty sub-folders
+// (Fix #8 — severity reconciliation).
+func TestValidateSpecCounts_Severity(t *testing.T) {
+	origStat := osStat
+	origReadDir := readDirFn
+	origCountFn := specCountNonReadmeMdFilesFn
+	defer func() {
+		osStat = origStat
+		readDirFn = origReadDir
+		specCountNonReadmeMdFilesFn = origCountFn
+	}()
+
+	t.Run("missing required sub-folder reports HIGH", func(t *testing.T) {
+		osStat = func(name string) (os.FileInfo, error) {
+			if strings.HasSuffix(name, "/specs/apps/testapp") {
+				return &mockFileInfo{name: filepath.Base(name), isDir: true}, nil
+			}
+			if strings.HasSuffix(name, "/behavior") {
+				return nil, os.ErrNotExist
+			}
+			return &mockFileInfo{name: filepath.Base(name), isDir: true}, nil
+		}
+		specCountNonReadmeMdFilesFn = func(_ string) int { return 1 }
+
+		findings := validateSpecCounts("/mock-repo", "specs/apps/testapp")
+		var missingFinding *SpecFinding
+		for i, f := range findings {
+			if strings.Contains(f.Evidence, "missing required folder: behavior") {
+				missingFinding = &findings[i]
+				break
+			}
+		}
+		if missingFinding == nil {
+			t.Fatalf("expected a missing-folder finding; got %v", findings)
+		}
+		if missingFinding.Criticality != "HIGH" {
+			t.Errorf("missing required sub-folder severity: got %q, want HIGH (Fix #8)", missingFinding.Criticality)
+		}
+	})
+
+	t.Run("empty sub-folder reports MEDIUM", func(t *testing.T) {
+		osStat = func(name string) (os.FileInfo, error) {
+			return &mockFileInfo{name: filepath.Base(name), isDir: true}, nil
+		}
+		specCountNonReadmeMdFilesFn = func(dir string) int {
+			if strings.HasSuffix(dir, "/product") {
+				return 0
+			}
+			return 1
+		}
+
+		findings := validateSpecCounts("/mock-repo", "specs/apps/testapp")
+		var emptyFinding *SpecFinding
+		for i, f := range findings {
+			if strings.Contains(f.Evidence, "empty subfolder") {
+				emptyFinding = &findings[i]
+				break
+			}
+		}
+		if emptyFinding == nil {
+			t.Fatalf("expected an empty-subfolder finding; got %v", findings)
+		}
+		if emptyFinding.Criticality != "MEDIUM" {
+			t.Errorf("empty sub-folder severity: got %q, want MEDIUM", emptyFinding.Criticality)
+		}
+	})
+}
+
+// TestSpecsValidateCountsCmd_PrintfUsesCriticality asserts the runE printf
+// format uses f.Criticality rather than the hardcoded "MEDIUM" (Fix #8).
+func TestSpecsValidateCountsCmd_PrintfUsesCriticality(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := specsValidateCountsFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		specsValidateCountsFn = origFn
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+	specsValidateCountsFn = func(_, _ string) []SpecFinding {
+		return []SpecFinding{{
+			Category:    "count",
+			Criticality: "HIGH",
+			File:        "specs/apps/testapp/behavior",
+			Evidence:    "missing required folder: behavior",
+			Expected:    "create specs/apps/testapp/behavior/README.md plus at least one spec .md file",
+		}}
+	}
+
+	buf := new(bytes.Buffer)
+	specsValidateCountsCmd.SetOut(buf)
+	specsValidateCountsCmd.SetErr(buf)
+	_ = specsValidateCountsCmd.RunE(specsValidateCountsCmd, []string{"specs/apps/testapp"})
+	out := buf.String()
+	if !strings.Contains(out, "HIGH:") {
+		t.Errorf("output should print HIGH for HIGH-severity finding (Fix #8), got: %s", out)
+	}
+	if strings.Contains(out, "MEDIUM:") {
+		t.Errorf("output must not hardcode MEDIUM for HIGH-severity finding (Fix #8), got: %s", out)
+	}
 }
 
 func TestSpecsValidateCountsCmd_MissingGitRoot(t *testing.T) {

@@ -461,8 +461,6 @@ specs/apps/organiclever/
 | Spec tree top-level folder names wrong            | `rhino-cli specs validate-tree <app>`      | HIGH          |
 | README count claims differ from actual file count | `rhino-cli specs validate-counts <folder>` | HIGH/MEDIUM   |
 | BDD/DDD/Contracts adoption gap                    | `rhino-cli specs validate-adoption <app>`  | HIGH/MEDIUM   |
-| Routes/screens spec out of sync with app code     | `rhino-cli specs drift-routes <app>`       | MEDIUM        |
-| Endpoint spec out of sync with handler code       | `rhino-cli specs drift-endpoints <app>`    | MEDIUM        |
 
 ### LLM semantic checks (specs-checker)
 

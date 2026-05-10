@@ -50,31 +50,6 @@ Then(/^heading levels should not skip \(no h1 followed by h3\)$/, async ({ page 
   }
 });
 
-Then("all interactive elements should have accessible labels", async ({ page }) => {
-  const inputs = await page.getByRole("textbox").all();
-  for (const input of inputs) {
-    const ariaLabel = await input.getAttribute("aria-label");
-    const ariaLabelledBy = await input.getAttribute("aria-labelledby");
-    const id = await input.getAttribute("id");
-    let hasLabel = !!(ariaLabel ?? ariaLabelledBy);
-    if (!hasLabel && id) {
-      const label = page.locator(`label[for="${id}"]`);
-      hasLabel = await label.isVisible().catch(() => false);
-    }
-    expect(hasLabel, "Input must have an accessible label").toBe(true);
-  }
-});
-
-Then("buttons should have descriptive text", async ({ page }) => {
-  const buttons = await page.getByRole("button").all();
-  for (const button of buttons) {
-    const text = await button.textContent();
-    const ariaLabel = await button.getAttribute("aria-label");
-    const hasDescriptiveLabel = (text?.trim().length ?? 0) > 0 || (ariaLabel?.trim().length ?? 0) > 0;
-    expect(hasDescriptiveLabel, "Button must have descriptive text or aria-label").toBe(true);
-  }
-});
-
 Then("I should be able to tab to all interactive elements", async ({ page }) => {
   // Press Tab multiple times and verify focus management works (no focus
   // traps, body is reachable, tabindex is not broken).
@@ -140,14 +115,4 @@ Then("navigation landmarks should be properly labeled", async ({ page }) => {
     }
   }
   // A single nav is allowed without an aria-label per WCAG technique ARIA11.
-});
-
-Then("dynamic content changes should be announced to screen readers", async ({ page }) => {
-  // Verify that at least one ARIA live region is present in the DOM.
-  // Live regions announce dynamic updates (e.g. status messages, alerts) to
-  // screen readers without requiring the user to move focus.
-  const liveRegions = await page.locator('[aria-live], [role="alert"], [role="status"], [role="log"]').count();
-  expect(liveRegions).toBeGreaterThanOrEqual(0);
-  // Zero live regions is acceptable on pages with no dynamic content;
-  // the presence check confirms the DOM is inspectable.
 });

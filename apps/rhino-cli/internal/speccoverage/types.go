@@ -5,8 +5,12 @@ import "time"
 
 // ScanOptions configures how the spec coverage check should be performed.
 type ScanOptions struct {
-	RepoRoot    string   // Absolute path to repository root
-	SpecsDir    string   // Absolute path to specs directory
+	RepoRoot string // Absolute path to repository root
+	// SpecsDir is the legacy single-spec-tree input. When SpecsDirs is non-empty
+	// it takes precedence; SpecsDir is preserved for backward compatibility with
+	// callers that supply a single tree.
+	SpecsDir    string
+	SpecsDirs   []string // Absolute paths to one or more spec trees walked together
 	AppDir      string   // Absolute path to app directory
 	Verbose     bool     // Enable verbose logging
 	Quiet       bool     // Quiet mode (errors only)
@@ -34,13 +38,24 @@ type StepGap struct {
 	StepText      string // exact step text
 }
 
+// OrphanStepImpl is a step implementation in source code with no Gherkin step matching it.
+// Phase 5B (Fix #15): reverse-direction orphan check. A step impl is "orphan" when no
+// Gherkin step in any .feature file inside the spec tree matches its exact text or
+// compiled regex pattern.
+type OrphanStepImpl struct {
+	File        string // relative path from repo root
+	MatcherKind string // "exact" or "pattern"
+	MatcherText string // exact step text or raw regex source
+}
+
 // CheckResult contains the results of a spec coverage check.
 type CheckResult struct {
-	TotalSpecs     int
-	TotalScenarios int
-	TotalSteps     int
-	Gaps           []CoverageGap // file-level gaps
-	ScenarioGaps   []ScenarioGap // scenario-level gaps
-	StepGaps       []StepGap     // step-level gaps
-	Duration       time.Duration
+	TotalSpecs      int
+	TotalScenarios  int
+	TotalSteps      int
+	Gaps            []CoverageGap    // file-level gaps
+	ScenarioGaps    []ScenarioGap    // scenario-level gaps
+	StepGaps        []StepGap        // step-level gaps
+	OrphanStepImpls []OrphanStepImpl // reverse-direction: step impls with no matching Gherkin step
+	Duration        time.Duration
 }

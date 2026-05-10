@@ -12,7 +12,10 @@ import (
 func FormatText(result *CheckResult, verbose, quiet bool) string {
 	var out strings.Builder
 
-	hasGaps := len(result.Gaps) > 0 || len(result.ScenarioGaps) > 0 || len(result.StepGaps) > 0
+	hasGaps := len(result.Gaps) > 0 ||
+		len(result.ScenarioGaps) > 0 ||
+		len(result.StepGaps) > 0 ||
+		len(result.OrphanStepImpls) > 0
 
 	if !hasGaps {
 		if !quiet {
@@ -66,23 +69,35 @@ func FormatText(result *CheckResult, verbose, quiet bool) string {
 		}
 	}
 
+	if len(result.OrphanStepImpls) > 0 {
+		if len(result.Gaps) > 0 || len(result.ScenarioGaps) > 0 || len(result.StepGaps) > 0 {
+			_, _ = fmt.Fprintln(&out)
+		}
+		_, _ = fmt.Fprintf(&out, "Orphan step implementations (%d) — no Gherkin step matches:\n", len(result.OrphanStepImpls))
+		for _, o := range result.OrphanStepImpls {
+			_, _ = fmt.Fprintf(&out, "  - %s\n      [%s] %s\n", o.File, o.MatcherKind, o.MatcherText)
+		}
+	}
+
 	return out.String()
 }
 
 // JSONOutput represents the JSON output format for spec coverage.
 type JSONOutput struct {
-	Status           string        `json:"status"`
-	Timestamp        string        `json:"timestamp"`
-	TotalSpecs       int           `json:"total_specs"`
-	TotalScenarios   int           `json:"total_scenarios"`
-	TotalSteps       int           `json:"total_steps"`
-	GapCount         int           `json:"gap_count"`
-	ScenarioGapCount int           `json:"scenario_gap_count"`
-	StepGapCount     int           `json:"step_gap_count"`
-	DurationMS       int64         `json:"duration_ms"`
-	Gaps             []JSONGap     `json:"gaps"`
-	ScenarioGaps     []JSONScenGap `json:"scenario_gaps"`
-	StepGaps         []JSONStepGap `json:"step_gaps"`
+	Status              string           `json:"status"`
+	Timestamp           string           `json:"timestamp"`
+	TotalSpecs          int              `json:"total_specs"`
+	TotalScenarios      int              `json:"total_scenarios"`
+	TotalSteps          int              `json:"total_steps"`
+	GapCount            int              `json:"gap_count"`
+	ScenarioGapCount    int              `json:"scenario_gap_count"`
+	StepGapCount        int              `json:"step_gap_count"`
+	OrphanStepImplCount int              `json:"orphan_step_impl_count"`
+	DurationMS          int64            `json:"duration_ms"`
+	Gaps                []JSONGap        `json:"gaps"`
+	ScenarioGaps        []JSONScenGap    `json:"scenario_gaps"`
+	StepGaps            []JSONStepGap    `json:"step_gaps"`
+	OrphanStepImpls     []JSONOrphanImpl `json:"orphan_step_impls"`
 }
 
 // JSONGap represents a single file-level coverage gap in JSON output.
@@ -105,10 +120,21 @@ type JSONStepGap struct {
 	StepText      string `json:"step_text"`
 }
 
+// JSONOrphanImpl represents a reverse-direction orphan step implementation
+// in JSON output (Phase 5B / Fix #15).
+type JSONOrphanImpl struct {
+	File        string `json:"file"`
+	MatcherKind string `json:"matcher_kind"`
+	MatcherText string `json:"matcher_text"`
+}
+
 // FormatJSON formats the check result as JSON.
 func FormatJSON(result *CheckResult) (string, error) {
 	status := "success"
-	if len(result.Gaps) > 0 || len(result.ScenarioGaps) > 0 || len(result.StepGaps) > 0 {
+	if len(result.Gaps) > 0 ||
+		len(result.ScenarioGaps) > 0 ||
+		len(result.StepGaps) > 0 ||
+		len(result.OrphanStepImpls) > 0 {
 		status = "failure"
 	}
 
@@ -132,19 +158,26 @@ func FormatJSON(result *CheckResult) (string, error) {
 		})
 	}
 
+	orphans := make([]JSONOrphanImpl, 0, len(result.OrphanStepImpls))
+	for _, o := range result.OrphanStepImpls {
+		orphans = append(orphans, JSONOrphanImpl(o))
+	}
+
 	out := JSONOutput{
-		Status:           status,
-		Timestamp:        timeutil.Timestamp(),
-		TotalSpecs:       result.TotalSpecs,
-		TotalScenarios:   result.TotalScenarios,
-		TotalSteps:       result.TotalSteps,
-		GapCount:         len(result.Gaps),
-		ScenarioGapCount: len(result.ScenarioGaps),
-		StepGapCount:     len(result.StepGaps),
-		DurationMS:       result.Duration.Milliseconds(),
-		Gaps:             gaps,
-		ScenarioGaps:     scenGaps,
-		StepGaps:         stepGaps,
+		Status:              status,
+		Timestamp:           timeutil.Timestamp(),
+		TotalSpecs:          result.TotalSpecs,
+		TotalScenarios:      result.TotalScenarios,
+		TotalSteps:          result.TotalSteps,
+		GapCount:            len(result.Gaps),
+		ScenarioGapCount:    len(result.ScenarioGaps),
+		StepGapCount:        len(result.StepGaps),
+		OrphanStepImplCount: len(result.OrphanStepImpls),
+		DurationMS:          result.Duration.Milliseconds(),
+		Gaps:                gaps,
+		ScenarioGaps:        scenGaps,
+		StepGaps:            stepGaps,
+		OrphanStepImpls:     orphans,
 	}
 
 	bytes, err := json.MarshalIndent(out, "", "  ")
