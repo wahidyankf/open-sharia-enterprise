@@ -101,7 +101,7 @@ graph LR
 
 ### C4 + DDD Across Web Apps
 
-The DDD restructure isn't just `organiclever-web`. The same C4 + DDD specs format—bounded-context registries, ubiquitous-language glossaries, API slug ownership, and i18n bounded-context ownership—was adopted in `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` between 2026-05-09 and 2026-05-10. `rhino-cli` gained `bc validate` and `ul validate` subcommands that enforce structural and glossary parity between specs and code. Both run inside `test:quick` for the four web apps and block pre-push if specs drift from implementation.
+The DDD restructure isn't just `organiclever-web`. The same C4 + DDD specs format—bounded-context registries, ubiquitous-language glossaries, API slug ownership, and i18n bounded-context ownership—was adopted in `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` between 2026-05-09 and 2026-05-10. `rhino-cli` gained matching `ddd bc validate` and `ddd ul validate` subcommands that enforce structural and glossary parity between specs and code; the rhino-cli section below covers the validator design.
 
 ## Three-Repo Split
 
@@ -186,7 +186,7 @@ The publish path is intentionally asymmetric. `ose-public` and `ose-infra` follo
 
 ## `wahidyankf-web` Joins the Monorepo
 
-A fifth web app entered `ose-public` on 2026-04-19: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source, wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out of `wahidyankf-web` into `libs/ts-ui` on 2026-04-23 so the other web apps can use them too.
+A fourth web app entered `ose-public` on 2026-04-19: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source, wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out of `wahidyankf-web` into `libs/ts-ui` on 2026-04-23 so the other web apps can use them too.
 
 The portfolio itself is at <https://www.wahidyankf.com/>. Content was synced with the LinkedIn profile on the same day as the scaffold.
 
@@ -245,7 +245,7 @@ Several governance conventions were added or formalized this period across the t
 - **Test-Driven Development** (`ose-public`, propagated to `ose-primer` 2026-05-04) — Red → Green → Refactor required for code changes; plan delivery checklists must express code items as TDD-shaped steps.
 - **No-date-metadata** (`ose-primer` 2026-04-25, adopted to `ose-public`) — strip manual `lastUpdated`/date fields from non-website governance files; rely on git history.
 - **Git-push-default** (`ose-primer` 2026-04-25, propagated) — direct push to `main` for `ose-public` and `ose-infra`; PR-only for `ose-primer`.
-- **Plan anti-hallucination** (`ose-primer`, adopted to `ose-public`) — plans must cite concrete files, line numbers, and grep-able anchors rather than invented file paths.
+- **Plan anti-hallucination** (`ose-public` 2026-05-03, adopted to `ose-primer` 2026-05-04) — plans must cite concrete files, line numbers, and grep-able anchors rather than invented file paths.
 - **Worktree-path** — overrides the upstream coding-agent default. Worktrees in `ose-public` land at `worktrees/<name>/` (repo root); `ose-projects`, `ose-infra`, and `ose-primer` worktrees land at `<repo>/.claude/worktrees/<name>/`. Routed by a repo-local `WorktreeCreate` hook.
 - **Quality-gate-defaults** (`ose-infra` 2026-04-26, adopted) — strict mode and `max-iterations=7` are the defaults; lax/normal/ocd are explicit overrides.
 - **Post-push CI verification** — after pushing app or lib code to `origin main`, trigger relevant GitHub workflows and verify they pass before declaring work done.
