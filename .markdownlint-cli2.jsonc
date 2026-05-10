@@ -22,6 +22,7 @@
     "apps/*/test-results/**",
     "apps/*/.venv/**",
     ".claude/worktrees/**",
+    "worktrees/**",
     "local-temp/**",
     ".memsearch/**",
   ],
