@@ -141,7 +141,7 @@ The parent grew its own AI agent set—11 in total: `plan-maker`, `plan-checker`
 
 `ose-infra` shares its root commit with `ose-public`—same hash, same Phase 0 origin—because it was forked from `ose-public`. The divergence accelerated this period.
 
-**Rust is `ose-infra`'s chosen language so far.** The selection criteria for infrastructure are different from product code: long-running services, tight resource budgets, and robustness under load matter more than iteration velocity. Rust's ownership model, zero-cost abstractions, and minimum resource footprint fit that profile. `coralpolyp`'s Rust/Axum backend (below) is the first concrete adopter inside `ose-infra`; future infrastructure components are expected to follow.
+**Rust is `ose-infra`'s chosen language so far.** The selection criteria for infrastructure are different from product code: long-running services, tight resource budgets, and robustness under load matter more than iteration velocity. Rust's ownership model, zero-cost abstractions, and minimum resource footprint fit that profile. The framing matters: every CPU cycle and every megabyte the infrastructure does not consume is a CPU cycle and a megabyte that stays available for business logic and customer-facing features. Lean infra is not just an aesthetic preference—it is how we keep more of the budget on the user's side of the line. `coralpolyp`'s Rust/Axum backend (below) is the first concrete adopter inside `ose-infra`; future infrastructure components are expected to follow.
 
 Other notable changes this period:
 
