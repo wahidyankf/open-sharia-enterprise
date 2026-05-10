@@ -1,5 +1,55 @@
 # PRD: Consolidate CLI Specs Under `behavior/`
 
+## Product Overview
+
+Consolidate three CLI Gherkin spec directories (`specs/apps/oseplatform/cli/`,
+`specs/apps/ayokoding/cli/`, `specs/apps/rhino/cli/`) into their respective
+`behavior/cli/` subdirectories. No new features — pure structural reorganization
+of existing spec files and path-string updates in Go test files and project.json
+targets.
+
+## Personas
+
+- **Repo maintainer (engineer hat)**: executes file moves, path updates, and quality gates.
+- **Executing agent (orchestrated via plan-execution workflow)**: drives delivery checklist execution step-by-step.
+- **swe-golang-dev agent**: applies sed replace and edits project.json targets.
+
+## User Stories
+
+- As a maintainer, I want all CLI Gherkin specs under `behavior/cli/`, so that new
+  interface surfaces have a predictable home without top-level sprawl.
+- As the executing agent (orchestrated via plan-execution workflow), I want explicit file paths and commands per delivery step,
+  so that I can execute without guessing target locations.
+- As a swe-golang-dev agent, I want a single sed command covering all 36 rhino test
+  files, so that path updates are atomic and complete.
+
+## Product Scope
+
+### In Scope
+
+- Move `specs/apps/oseplatform/cli/` → `specs/apps/oseplatform/behavior/cli/`
+- Move `specs/apps/ayokoding/cli/` → `specs/apps/ayokoding/behavior/cli/`
+- Move 18 feature files from `specs/apps/rhino/cli/gherkin/` → `specs/apps/rhino/behavior/cli/gherkin/`
+- Update all Go test path strings in `apps/oseplatform-cli/cmd/`, `apps/ayokoding-cli/cmd/`, and `apps/rhino-cli/cmd/`
+- Update `spec-coverage` targets in `project.json` for all three apps
+- Update `behavior/README.md` files for oseplatform and ayokoding to document the new `cli/` perspective
+- Update app READMEs and governance docs that reference old paths
+
+### Out of Scope
+
+- Adding new Gherkin scenarios or modifying existing feature file content
+- Changing test logic or coverage thresholds
+- Migrating specs for any app not listed above (`organiclever`, `wahidyankf`, etc.)
+- Updating web or API behavior specs
+
+## Product Risks
+
+- **spec-coverage recursion into `specs/` subfolder**: rhino's `behavior/cli/gherkin/specs/`
+  contains 4 planned but unimplemented features. If spec-coverage recurses into it, the run
+  will fail. Mitigation: documented in delivery step 3.13.
+- **sed over-match**: the sed pattern could accidentally match unexpected files. Mitigation:
+  step 3.6 verifies exactly 36 files changed.
+
 ## Requirements
 
 ### R1 — Spec directory structure

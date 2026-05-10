@@ -23,6 +23,20 @@ home: `behavior/<surface>/`. No ad-hoc top-level directories required.
 **rhino already started this.** `specs/apps/rhino/behavior/cli/` was created for the `specs`
 subcommand. The top-level `cli/` is live legacy. This plan completes the migration.
 
+## Affected Roles
+
+- **Repo maintainer (engineer hat)**: migrates file paths, runs tests, reviews CI output.
+- **Executing agent (orchestrated via plan-execution workflow)**: executes delivery checklist.
+- **swe-golang-dev agent**: updates Go test files and project.json targets.
+- **repo-rules-checker agent**: validates governance doc after update.
+
+## Non-Goals
+
+- Adding new Gherkin spec content — this is a file-move only.
+- Changing test logic or coverage thresholds.
+- Migrating specs for `organiclever`, `wahidyankf`, or other apps not mentioned.
+- Updating web or API behavior specs.
+
 ## Success Criteria
 
 - No `specs/apps/*/cli/` directories remain.

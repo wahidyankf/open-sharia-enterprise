@@ -31,5 +31,4 @@ same kind as `web/` and `api/` — and belongs there.
 
 ## Worktree
 
-Execution inside `ose-public` worktree per subrepo worktree convention.
-See [delivery.md](./delivery.md) step 0.
+See [delivery.md](./delivery.md) §Worktree for the canonical declaration, path, and provisioning command.
