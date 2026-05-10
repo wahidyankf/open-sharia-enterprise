@@ -2,17 +2,17 @@
 
 ## Technology Stack
 
-| Concern     | Choice                                               | Confidence                                                                                                                                                  | Reason                                              |
-| ----------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Language    | Java 25                                              | `[Repo-grounded]` — matches `ose-primer/apps/crud-be-java-springboot/pom.xml`                                                                               | Matches `ose-primer` reference; latest LTS baseline |
-| Framework   | Spring Boot 4.0                                      | `[Repo-grounded]` — `spring-boot-starter-parent` 4.0.4 in ose-primer pom.xml; `[Web-cited]` — Spring Boot 4.0 is a major release requiring Java 17+ minimum | `spring-boot-starter-parent` 4.0.4                  |
-| Build       | Maven                                                | `[Repo-grounded]` — verified in ose-primer reference                                                                                                        | Standard JVM build tool for financial industry      |
-| Test runner | JUnit 5 + Cucumber JVM 7.34.2                        | `[Repo-grounded]` — `cucumber-bom` 7.34.2 in ose-primer pom.xml                                                                                             | Gherkin feature consumption                         |
-| Coverage    | JaCoCo 0.8.13                                        | `[Repo-grounded]` — `jacoco-maven-plugin` 0.8.13 in ose-primer pom.xml                                                                                      | XML report at `target/site/jacoco/jacoco.xml`       |
-| Lint        | Checkstyle 3.6.0 + PMD 3.28.0                        | `[Repo-grounded]` — versions verified in ose-primer pom.xml                                                                                                 | Google Java Style + code quality                    |
-| Null safety | NullAway 0.12.6 + ErrorProne 2.37.0 + JSpecify 1.0.0 | `[Repo-grounded]` — versions verified in ose-primer pom.xml                                                                                                 | Zero-NPE discipline                                 |
-| Codegen     | `openapi-generator-cli` java generator               | `[Repo-grounded]` — generator type verified in ose-primer project.json                                                                                      | Replaces `fsharp-giraffe-server`                    |
-| Container   | Maven multi-stage Docker image                       | `[Repo-grounded]` — Dockerfile.integration verified in ose-primer                                                                                           | Integration test runner                             |
+| Concern | Choice | Confidence | Reason |
+|---------|--------|------------|--------|
+| Language | Java 25 | `[Repo-grounded]` — matches `ose-primer/apps/crud-be-java-springboot/pom.xml` | Matches `ose-primer` reference; latest LTS baseline |
+| Framework | Spring Boot 4.0 | `[Repo-grounded]` — `spring-boot-starter-parent` 4.0.4 in ose-primer pom.xml; `[Judgment call]` — Spring Boot 4.0 requires Java 17+ minimum per Spring project conventions; Java 25 exceeds this minimum | `spring-boot-starter-parent` 4.0.4 |
+| Build | Maven | `[Repo-grounded]` — verified in ose-primer reference | Standard JVM build tool for financial industry |
+| Test runner | JUnit 5 + Cucumber JVM 7.34.2 | `[Repo-grounded]` — `cucumber-bom` 7.34.2 in ose-primer pom.xml | Gherkin feature consumption |
+| Coverage | JaCoCo 0.8.13 | `[Repo-grounded]` — `jacoco-maven-plugin` 0.8.13 in ose-primer pom.xml | XML report at `target/site/jacoco/jacoco.xml` |
+| Lint | Checkstyle 3.6.0 + PMD 3.28.0 | `[Repo-grounded]` — versions verified in ose-primer pom.xml | Google Java Style + code quality |
+| Null safety | NullAway 0.12.6 + ErrorProne 2.37.0 + JSpecify 1.0.0 | `[Repo-grounded]` — versions verified in ose-primer pom.xml | Zero-NPE discipline |
+| Codegen | `openapi-generator-cli` java generator | `[Repo-grounded]` — generator type verified in ose-primer project.json | Replaces `fsharp-giraffe-server` |
+| Container | Maven multi-stage Docker image | `[Repo-grounded]` — Dockerfile.integration verified in ose-primer | Integration test runner |
 
 ## Package Structure
 
@@ -80,7 +80,6 @@ unit test pattern exactly. Controller correctness is verified at the integration
 ### JaCoCo Exclusions
 
 Exclude from coverage measurement:
-
 - `OrganicleverBeApplication.class` — main entry point
 - `**/package-info.class` — no logic
 - `**/contracts/*.class` — OpenAPI-generated code
@@ -101,12 +100,12 @@ classes are OpenAPI-generated.
 
 ### Codegen Target Change
 
-| Attribute     | Old (F#)                   | New (Java)                           |
-| ------------- | -------------------------- | ------------------------------------ |
-| Generator     | `fsharp-giraffe-server`    | `java`                               |
-| Model package | `OrganicLeverBe.Contracts` | `com.organicleverbe.contracts`       |
-| Output        | `generated-contracts/`     | `generated-contracts/src/main/java/` |
-| Post-process  | none                       | _(none — see NOTE below)_            |
+| Attribute | Old (F#) | New (Java) |
+|-----------|----------|------------|
+| Generator | `fsharp-giraffe-server` | `java` |
+| Model package | `OrganicLeverBe.Contracts` | `com.organicleverbe.contracts` |
+| Output | `generated-contracts/` | `generated-contracts/src/main/java/` |
+| Post-process | none | _(none — see NOTE below)_ |
 
 > **NOTE — ose-public rhino-cli limitations**: `rhino-cli contracts java-clean-imports` and
 > `rhino-cli java validate-annotations` exist only in
@@ -228,7 +227,9 @@ classes are OpenAPI-generated.
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["cd apps/organiclever-be && mvn compile -Pnullcheck"],
+        "commands": [
+          "cd apps/organiclever-be && mvn compile -Pnullcheck"
+        ],
         "// NOTE": "rhino-cli java validate-annotations omitted — does not exist in ose-public apps/rhino-cli [Unverified — ose-primer only]; will be added when ose-primer propagation brings java subcommand to ose-public",
         "parallel": false
       },
@@ -239,7 +240,10 @@ classes are OpenAPI-generated.
       "// NOTE": "No --exclude-dir test-support flag needed — specs/apps/organiclever/behavior/be/gherkin/ has no test-support/ subdirectory [Repo-grounded]",
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/behavior/be/gherkin apps/organiclever-be",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature", "{projectRoot}/**/*.java"]
+      "inputs": [
+        "{workspaceRoot}/specs/apps/organiclever/behavior/be/gherkin/**/*.feature",
+        "{projectRoot}/**/*.java"
+      ]
     }
   },
   "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"],
@@ -329,11 +333,11 @@ they live in `src/test/java/com/organicleverbe/integration/`.
 
 ## Coverage Threshold Mapping
 
-| Old (F#/AltCover)      | New (Java/JaCoCo)                   |
-| ---------------------- | ----------------------------------- |
-| `altcov.info` LCOV     | `target/site/jacoco/jacoco.xml` XML |
-| AltCover `--linecover` | JaCoCo line coverage                |
-| ≥90% line              | ≥90% line                           |
+| Old (F#/AltCover) | New (Java/JaCoCo) |
+|-------------------|-------------------|
+| `altcov.info` LCOV | `target/site/jacoco/jacoco.xml` XML |
+| AltCover `--linecover` | JaCoCo line coverage |
+| ≥90% line | ≥90% line |
 
 `rhino-cli test-coverage validate` already supports both formats. No rhino-cli changes needed.
 
@@ -341,13 +345,13 @@ they live in `src/test/java/com/organicleverbe/integration/`.
 
 The following external toolchain components must be available before execution:
 
-| Dependency    | Version | How to verify   | How to install if missing                                                                 |
-| ------------- | ------- | --------------- | ----------------------------------------------------------------------------------------- |
-| Java 25       | JDK 25  | `java -version` | `npm run doctor -- --fix` (Volta-managed); or `sdk install java 25-open`                  |
-| Maven         | 3.9+    | `mvn -version`  | System package manager (`brew install maven`, `apt install maven`); or Docker-based build |
-| Docker        | 20+     | `docker info`   | Install Docker Desktop from docker.com                                                    |
-| Go            | 1.22+   | `go version`    | `npm run doctor -- --fix` (Volta/doctor managed)                                          |
-| Node.js / npx | 24.x    | `node -version` | Managed by Volta; `npm run doctor -- --fix`                                               |
+| Dependency | Version | How to verify | How to install if missing |
+|-----------|---------|---------------|--------------------------|
+| Java 25 | JDK 25 | `java -version` | `npm run doctor -- --fix` (Volta-managed); or `sdk install java 25-open` |
+| Maven | 3.9+ | `mvn -version` | System package manager (`brew install maven`, `apt install maven`); or Docker-based build |
+| Docker | 20+ | `docker info` | Install Docker Desktop from docker.com |
+| Go | 1.22+ | `go version` | `npm run doctor -- --fix` (Volta/doctor managed) |
+| Node.js / npx | 24.x | `node -version` | Managed by Volta; `npm run doctor -- --fix` |
 
 > **NOTE — ose-public rhino-cli gap**: `apps/rhino-cli` does not have `contracts java-clean-imports`
 > or `java validate-annotations` subcommands. These exist only in `ose-primer/apps/rhino-cli`.

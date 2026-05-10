@@ -76,6 +76,8 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ## Phase 1 — Remove F# Artifacts (Create Red State)
 
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/` (removals already staged by `git rm`; this stages any
+> remaining tracked changes) — then commit:
 > `chore(organiclever-be): remove F# source and dotnet tooling`
 
 - [ ] Delete `apps/organiclever-be/global.json`:
@@ -120,6 +122,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ## Phase 2 — Maven Project Scaffold (Green: compile passes)
 
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/` — then commit:
 > `feat(organiclever-be): add Java/Spring Boot project structure`
 
 - [ ] Create `apps/organiclever-be/pom.xml` (_New file_):
@@ -139,7 +142,8 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
     `maven-antrun-plugin` (copy gherkin features to test classpath),
     `maven-checkstyle-plugin` 3.6.0, `maven-pmd-plugin` 3.28.0
   - Profiles: `integration` (surefire includes `**/*IT.java`), `nullcheck` (NullAway)
-  - JaCoCo exclusions: application main, package-info, contracts, config classes
+  - JaCoCo exclusions: `**/OrganicleverBeApplication.class`, `**/package-info.class`,
+    `**/contracts/*.class`, `**/config/GlobalExceptionHandler.class`, `**/config/CorsConfig.class`
   - `cucumber-bom` version managed as `7.34.2`
   - Verify: `test -f apps/organiclever-be/pom.xml` exits 0 and
     `cd apps/organiclever-be && mvn validate` exits 0.
@@ -207,6 +211,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > endpoint).
 >
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/src/` — then commit:
 > `feat(organiclever-be): add Java/Spring Boot health endpoint with Cucumber BDD`
 
 - [ ] **Red**: Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
@@ -322,6 +327,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ## Phase 4 — Update Nx Targets
 
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/project.json` — then commit:
 > `refactor(organiclever-be): update Nx targets for Maven toolchain`
 
 **NOTE**: `rhino-cli contracts java-clean-imports` and `rhino-cli java validate-annotations`
@@ -403,10 +409,11 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 ## Phase 5 — Docker Integration Tests
 
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/Dockerfile.integration` — then commit:
 > `refactor(organiclever-be): replace Dockerfile.integration for Java`
 
-- [ ] Replace `apps/organiclever-be/Dockerfile.integration` with Java/Maven version — adapt from
-  `ose-primer/apps/crud-be-java-springboot/Dockerfile.integration` verbatim, replacing all
+- [ ] Replace `apps/organiclever-be/Dockerfile.integration` with Java/Maven version — using
+  `ose-primer/apps/crud-be-java-springboot/Dockerfile.integration` as reference, replacing all
   references to `demobejasb` → `organicleverbe` and `crud-be-java-springboot` →
   `organiclever-be`:
   - Base: `maven:3.9-eclipse-temurin-25-alpine`
@@ -463,6 +470,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 ## Phase 6 — Documentation and Cleanup
 
 > Commit thematically at end of this phase:
+> `git add apps/organiclever-be/README.md` — then commit:
 > `docs(organiclever-be): update README for Java Spring Boot`
 
 - [ ] Update `apps/organiclever-be/README.md`:
@@ -482,7 +490,39 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
 ---
 
-## Phase 6b — Local Quality Gates (Before Push)
+## Phase 6b — CI and Infra Updates
+
+> These files are not in `apps/organiclever-be/` but reference its F# implementation.
+> Must be updated before push — CI will break otherwise.
+>
+> Commit thematically at end of this phase:
+> `git add infra/dev/organiclever/ .github/actions/install-language-deps/action.yml` — then commit:
+> `refactor(infra): update organiclever-be dev infra and CI for Java/Spring Boot`
+
+- [ ] Replace `infra/dev/organiclever/Dockerfile.be.dev` with Java/Spring Boot version (_New content_):
+  - Base: `eclipse-temurin:25-jdk`
+  - `RUN apt-get update && apt-get install -y curl maven && rm -rf /var/lib/apt/lists/*`
+  - `WORKDIR /workspace`
+  - `CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]`
+  - Verify: `grep -q 'eclipse-temurin' infra/dev/organiclever/Dockerfile.be.dev` exits 0
+    AND `grep -v 'dotnet\|aspnet\|ASPNET' infra/dev/organiclever/Dockerfile.be.dev` returns all lines
+    (i.e., no dotnet references remain).
+- [ ] Update `infra/dev/organiclever/docker-compose.yml` — remove `ASPNETCORE_URLS` env var
+  from the `organiclever-be` service (dotnet-specific; Java uses `server.port` in `application.yml`):
+  - Verify: `grep -c 'ASPNETCORE_URLS' infra/dev/organiclever/docker-compose.yml` returns 0.
+- [ ] Update `.github/actions/install-language-deps/action.yml` — remove the `organiclever-be`
+  dotnet-restore branch (the Java build handles deps via `mvn`; no separate pre-restore step needed):
+  - Remove: the `if [ "${{ inputs.backend-name }}" = "organiclever-be" ]; then dotnet restore ...` block.
+  - If the entire `Restore .NET dependencies` step becomes empty, remove that step entirely.
+  - Verify: `grep -c 'OrganicLeverBe.fsproj' .github/actions/install-language-deps/action.yml`
+    returns 0.
+- [ ] Update `infra/dev/organiclever/README.md` — change backend description from
+  "F#/Giraffe REST API backend" to "Java/Spring Boot REST API backend":
+  - Verify: `grep -q 'Java/Spring Boot' infra/dev/organiclever/README.md` exits 0.
+
+---
+
+## Phase 6c — Local Quality Gates (Before Push)
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by
 > your changes. This follows the root cause orientation principle — proactively fix
