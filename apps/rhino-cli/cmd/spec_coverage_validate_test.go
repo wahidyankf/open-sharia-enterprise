@@ -174,7 +174,7 @@ func (s *specCoverageValidateUnitSteps) theDeveloperRunsValidateSpecCoverageShar
 
 func (s *specCoverageValidateUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -195,35 +195,35 @@ func (s *specCoverageValidateUnitSteps) theOutputReportsAllSpecsAsCovered() erro
 
 func (s *specCoverageValidateUnitSteps) theOutputIdentifiesFeatureFileAsUncoveredSpec() error {
 	if !strings.Contains(s.cmdErr.Error(), "gap") {
-		return fmt.Errorf("expected 'gap' in error but got: %v", s.cmdErr)
+		return fmt.Errorf("expected 'gap' in error but got: %w", s.cmdErr)
 	}
 	return nil
 }
 
 func (s *specCoverageValidateUnitSteps) theOutputIdentifiesScenarioAsUnimplemented() error {
 	if !strings.Contains(s.cmdErr.Error(), "gap") {
-		return fmt.Errorf("expected 'gap' in error but got: %v", s.cmdErr)
+		return fmt.Errorf("expected 'gap' in error but got: %w", s.cmdErr)
 	}
 	return nil
 }
 
 func (s *specCoverageValidateUnitSteps) theOutputIdentifiesStepAsUndefined() error {
 	if !strings.Contains(s.cmdErr.Error(), "gap") {
-		return fmt.Errorf("expected 'gap' in error but got: %v", s.cmdErr)
+		return fmt.Errorf("expected 'gap' in error but got: %w", s.cmdErr)
 	}
 	return nil
 }
 
 func (s *specCoverageValidateUnitSteps) commandValidatesStepsAcrossAllSourceFiles() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success in shared-steps mode but got: %v", s.cmdErr)
+		return fmt.Errorf("expected success in shared-steps mode but got: %w", s.cmdErr)
 	}
 	return nil
 }
 
 func (s *specCoverageValidateUnitSteps) testFilesMatchedUsingLanguageConventions() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success in multi-language mode but got: %v", s.cmdErr)
+		return fmt.Errorf("expected success in multi-language mode but got: %w", s.cmdErr)
 	}
 	return nil
 }

@@ -238,7 +238,7 @@ func (s *bcValidateUnitSteps) runUnknownApp() error {
 
 func (s *bcValidateUnitSteps) exitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -340,7 +340,7 @@ func (s *bcValidateUnitSteps) outputContainsWarning() error {
 func (s *bcValidateUnitSteps) outputMentionsNotFoundOrApp() error {
 	lc := strings.ToLower(s.cmdOutput + s.cmdErr.Error())
 	if !strings.Contains(lc, "not found") && !strings.Contains(lc, "unknownapp") {
-		return fmt.Errorf("expected 'not found' or 'unknownapp' in output but got: %s / err: %v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected 'not found' or 'unknownapp' in output but got: %s / err: %w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }

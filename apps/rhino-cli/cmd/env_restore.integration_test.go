@@ -71,10 +71,10 @@ func (s *envRestoreIntSteps) after(_ context.Context, _ *godog.Scenario, _ error
 func (s *envRestoreIntSteps) makeRestoreRepo(pattern string) (string, error) {
 	dir, err := os.MkdirTemp("", pattern)
 	if err != nil {
-		return "", fmt.Errorf("create repo dir: %w", err)
+		return "", fmt.Errorf("create repo dir: %v", err)
 	}
 	if err := os.MkdirAll(filepath.Join(dir, ".git"), 0o755); err != nil {
-		return "", fmt.Errorf("create .git dir: %w", err)
+		return "", fmt.Errorf("create .git dir: %v", err)
 	}
 	return dir, nil
 }
@@ -83,7 +83,7 @@ func (s *envRestoreIntSteps) makeRestoreRepo(pattern string) (string, error) {
 func (s *envRestoreIntSteps) makeRestoreBackupDir(pattern string) (string, error) {
 	dir, err := os.MkdirTemp("", pattern)
 	if err != nil {
-		return "", fmt.Errorf("create backup dir: %w", err)
+		return "", fmt.Errorf("create backup dir: %v", err)
 	}
 	return dir, nil
 }
@@ -186,7 +186,7 @@ func (s *envRestoreIntSteps) aBackupDirWithEnvFileAndReadme() error {
 	}
 	// Write README.md into backup dir — it should NOT be restored.
 	if err := os.WriteFile(filepath.Join(backup, "README.md"), []byte("# Backup\n"), 0o644); err != nil {
-		return fmt.Errorf("write README.md: %w", err)
+		return fmt.Errorf("write README.md: %v", err)
 	}
 
 	return os.Chdir(repo)
@@ -208,7 +208,7 @@ func (s *envRestoreIntSteps) aBackupDirWithNoEnvFiles() error {
 
 	// Write a non-env file to ensure dir is not empty but has no .env files.
 	if err := os.WriteFile(filepath.Join(backup, "notes.txt"), []byte("no env here\n"), 0o644); err != nil {
-		return fmt.Errorf("write notes.txt: %w", err)
+		return fmt.Errorf("write notes.txt: %v", err)
 	}
 
 	return os.Chdir(repo)
@@ -218,16 +218,16 @@ func (s *envRestoreIntSteps) aBackupDirWithEnvFileUnderFeatureBranchNamespace() 
 	// Create a repo directory whose basename is "feature-branch".
 	parent, err := os.MkdirTemp("", "int-env-restore-wt-parent-*")
 	if err != nil {
-		return fmt.Errorf("create parent dir: %w", err)
+		return fmt.Errorf("create parent dir: %v", err)
 	}
 	featureBranchDir := filepath.Join(parent, "feature-branch")
 	if err := os.MkdirAll(featureBranchDir, 0o755); err != nil {
-		return fmt.Errorf("create feature-branch dir: %w", err)
+		return fmt.Errorf("create feature-branch dir: %v", err)
 	}
 	s.repoDir = parent
 
 	if err := os.WriteFile(filepath.Join(featureBranchDir, ".git"), []byte("gitdir: /some/real/.git/worktrees/feature-branch\n"), 0o644); err != nil {
-		return fmt.Errorf("write .git file: %w", err)
+		return fmt.Errorf("write .git file: %v", err)
 	}
 
 	backup, err := s.makeRestoreBackupDir("int-env-restore-wt-bkup-*")
@@ -376,7 +376,7 @@ func (s *envRestoreIntSteps) theEnvFileCopiedBackToOriginalPathInWorktree() erro
 	// The restored file should land at the cwd (feature-branch dir) / .env.
 	cwd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("getwd: %w", err)
+		return fmt.Errorf("getwd: %v", err)
 	}
 	envPath := filepath.Join(cwd, ".env")
 	if _, err := os.Stat(envPath); err != nil {

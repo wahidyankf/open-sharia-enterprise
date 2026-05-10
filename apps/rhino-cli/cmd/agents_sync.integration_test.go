@@ -59,11 +59,11 @@ func (s *syncAgentsSteps) after(_ context.Context, _ *godog.Scenario, _ error) (
 func (s *syncAgentsSteps) createClaudeAgent(name, description, model string) error {
 	agentsDir := filepath.Join(s.tmpDir, ".claude", "agents")
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/agents dir: %w", err)
+		return fmt.Errorf("failed to create .claude/agents dir: %v", err)
 	}
 	content := fmt.Sprintf("---\nname: %s\ndescription: %s\ntools: Read\nmodel: %s\ncolor: blue\nskills:\n---\nBody.\n", name, description, model)
 	if err := os.WriteFile(filepath.Join(agentsDir, name+".md"), []byte(content), 0644); err != nil {
-		return fmt.Errorf("failed to write agent %s: %w", name, err)
+		return fmt.Errorf("failed to write agent %s: %v", name, err)
 	}
 	return nil
 }
@@ -71,11 +71,11 @@ func (s *syncAgentsSteps) createClaudeAgent(name, description, model string) err
 func (s *syncAgentsSteps) createClaudeSkill(name string) error {
 	skillDir := filepath.Join(s.tmpDir, ".claude", "skills", name)
 	if err := os.MkdirAll(skillDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/skills/%s dir: %w", name, err)
+		return fmt.Errorf("failed to create .claude/skills/%s dir: %v", name, err)
 	}
 	content := fmt.Sprintf("---\nname: %s\ndescription: A test skill\n---\nSkill content.\n", name)
 	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
-		return fmt.Errorf("failed to write SKILL.md for %s: %w", name, err)
+		return fmt.Errorf("failed to write SKILL.md for %s: %v", name, err)
 	}
 	return nil
 }
@@ -203,7 +203,7 @@ func (s *syncAgentsSteps) theCorrespondingOpenCodeAgentUsesTheOpenCodeGoModel() 
 	agentPath := filepath.Join(s.tmpDir, agents.OpenCodeAgentDir, "sync-agent.md")
 	data, err := os.ReadFile(agentPath)
 	if err != nil {
-		return fmt.Errorf("failed to read .opencode/agents/sync-agent.md: %w", err)
+		return fmt.Errorf("failed to read .opencode/agents/sync-agent.md: %v", err)
 	}
 	if !strings.Contains(string(data), "opencode-go/minimax-m2.7") {
 		return fmt.Errorf("expected .opencode agent to contain 'opencode-go/minimax-m2.7' but got:\n%s", string(data))

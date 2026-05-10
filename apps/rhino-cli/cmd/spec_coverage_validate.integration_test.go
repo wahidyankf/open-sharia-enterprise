@@ -62,7 +62,7 @@ func (s *validateSpecCoverageSteps) aSpecsDirectoryWhereEveryFeatureFileHasACorr
 	featureContent := "Feature: My Feature\n  Scenario: My scenario\n    Given my step\n"
 	featurePath := filepath.Join(s.tmpDir, s.specsDir, "my-feature.feature")
 	if err := os.WriteFile(featurePath, []byte(featureContent), 0644); err != nil {
-		return fmt.Errorf("failed to write feature file: %w", err)
+		return fmt.Errorf("failed to write feature file: %v", err)
 	}
 
 	testContent := `describeFeature(feature, ({ Scenario }) => {
@@ -73,7 +73,7 @@ func (s *validateSpecCoverageSteps) aSpecsDirectoryWhereEveryFeatureFileHasACorr
 `
 	testPath := filepath.Join(s.tmpDir, s.appDir, "my-feature.integration.test.ts")
 	if err := os.WriteFile(testPath, []byte(testContent), 0644); err != nil {
-		return fmt.Errorf("failed to write test file: %w", err)
+		return fmt.Errorf("failed to write test file: %v", err)
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func (s *validateSpecCoverageSteps) aSpecsDirectoryContainingAFeatureFileWithNoC
 	featureContent := "Feature: Uncovered Feature\n  Scenario: Uncovered scenario\n    Given an uncovered step\n"
 	featurePath := filepath.Join(s.tmpDir, s.specsDir, "uncovered-feature.feature")
 	if err := os.WriteFile(featurePath, []byte(featureContent), 0644); err != nil {
-		return fmt.Errorf("failed to write feature file: %w", err)
+		return fmt.Errorf("failed to write feature file: %v", err)
 	}
 	return nil
 }
@@ -92,7 +92,7 @@ func (s *validateSpecCoverageSteps) aFeatureFileWithAScenarioWhoseTitleDoesNotAp
 	featureContent := "Feature: My Feature\n  Scenario: My scenario\n    Given my step\n"
 	featurePath := filepath.Join(s.tmpDir, s.specsDir, "my-feature.feature")
 	if err := os.WriteFile(featurePath, []byte(featureContent), 0644); err != nil {
-		return fmt.Errorf("failed to write feature file: %w", err)
+		return fmt.Errorf("failed to write feature file: %v", err)
 	}
 
 	testContent := `describeFeature(feature, ({ Scenario }) => {
@@ -103,7 +103,7 @@ func (s *validateSpecCoverageSteps) aFeatureFileWithAScenarioWhoseTitleDoesNotAp
 `
 	testPath := filepath.Join(s.tmpDir, s.appDir, "my-feature.integration.test.ts")
 	if err := os.WriteFile(testPath, []byte(testContent), 0644); err != nil {
-		return fmt.Errorf("failed to write test file: %w", err)
+		return fmt.Errorf("failed to write test file: %v", err)
 	}
 
 	return nil
@@ -113,7 +113,7 @@ func (s *validateSpecCoverageSteps) aFeatureFileWithAStepTextThatDoesNotAppearIn
 	featureContent := "Feature: My Feature\n  Scenario: My scenario\n    Given my step\n"
 	featurePath := filepath.Join(s.tmpDir, s.specsDir, "my-feature.feature")
 	if err := os.WriteFile(featurePath, []byte(featureContent), 0644); err != nil {
-		return fmt.Errorf("failed to write feature file: %w", err)
+		return fmt.Errorf("failed to write feature file: %v", err)
 	}
 
 	testContent := `describeFeature(feature, ({ Scenario }) => {
@@ -124,7 +124,7 @@ func (s *validateSpecCoverageSteps) aFeatureFileWithAStepTextThatDoesNotAppearIn
 `
 	testPath := filepath.Join(s.tmpDir, s.appDir, "my-feature.integration.test.ts")
 	if err := os.WriteFile(testPath, []byte(testContent), 0644); err != nil {
-		return fmt.Errorf("failed to write test file: %w", err)
+		return fmt.Errorf("failed to write test file: %v", err)
 	}
 
 	return nil

@@ -163,7 +163,7 @@ func (s *validateClaudeUnitSteps) runValidateClaudeWithSkillsOnlyFlag() error {
 
 func (s *validateClaudeUnitSteps) commandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -189,7 +189,7 @@ func (s *validateClaudeUnitSteps) outputIdentifiesAgentAndMissingField() error {
 	}
 	lc := strings.ToLower(combined)
 	if !strings.Contains(lc, "failed") && !strings.Contains(lc, "validation failed") {
-		return fmt.Errorf("expected output to identify validation failure but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected output to identify validation failure but got output=%q err=%w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }
@@ -201,7 +201,7 @@ func (s *validateClaudeUnitSteps) outputReportsDuplicateAgentName() error {
 	}
 	lc := strings.ToLower(combined)
 	if !strings.Contains(lc, "same-agent") && !strings.Contains(lc, "duplicate") && !strings.Contains(lc, "failed") {
-		return fmt.Errorf("expected output to report duplicate agent name but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected output to report duplicate agent name but got output=%q err=%w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }

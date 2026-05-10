@@ -53,20 +53,20 @@ func (s *validateSyncSteps) createSyncedAgentPair() error {
 	agentsDir := filepath.Join(s.tmpDir, ".claude", "agents")
 	opencodeAgentDir := filepath.Join(s.tmpDir, agents.OpenCodeAgentDir)
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/agents dir: %w", err)
+		return fmt.Errorf("failed to create .claude/agents dir: %v", err)
 	}
 	if err := os.MkdirAll(opencodeAgentDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .opencode/agents dir: %w", err)
+		return fmt.Errorf("failed to create .opencode/agents dir: %v", err)
 	}
 
 	claudeContent := "---\nname: sync-agent\ndescription: A sync agent\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(agentsDir, "sync-agent.md"), []byte(claudeContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .claude agent: %w", err)
+		return fmt.Errorf("failed to write .claude agent: %v", err)
 	}
 
 	opencodeContent := "---\ndescription: A sync agent\nmodel: opencode-go/minimax-m2.7\ntools:\n  read: true\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(opencodeAgentDir, "sync-agent.md"), []byte(opencodeContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .opencode agent: %w", err)
+		return fmt.Errorf("failed to write .opencode agent: %v", err)
 	}
 
 	return nil
@@ -81,12 +81,12 @@ func (s *validateSyncSteps) createSyncedAgentPair() error {
 func (s *validateSyncSteps) createClaudeOnlySkill() error {
 	claudeSkillDir := filepath.Join(s.tmpDir, ".claude", "skills", "test-skill")
 	if err := os.MkdirAll(claudeSkillDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/skills dir: %w", err)
+		return fmt.Errorf("failed to create .claude/skills dir: %v", err)
 	}
 
 	skillContent := "---\nname: test-skill\ndescription: A test skill\n---\nSkill content.\n"
 	if err := os.WriteFile(filepath.Join(claudeSkillDir, "SKILL.md"), []byte(skillContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .claude skill: %w", err)
+		return fmt.Errorf("failed to write .claude skill: %v", err)
 	}
 
 	return nil
@@ -103,20 +103,20 @@ func (s *validateSyncSteps) anAgentInClaudeWhoseDescriptionDiffersFromItsOpenCod
 	agentsDir := filepath.Join(s.tmpDir, ".claude", "agents")
 	opencodeAgentDir := filepath.Join(s.tmpDir, agents.OpenCodeAgentDir)
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/agents dir: %w", err)
+		return fmt.Errorf("failed to create .claude/agents dir: %v", err)
 	}
 	if err := os.MkdirAll(opencodeAgentDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .opencode/agents dir: %w", err)
+		return fmt.Errorf("failed to create .opencode/agents dir: %v", err)
 	}
 
 	claudeContent := "---\nname: sync-agent\ndescription: A sync agent\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(agentsDir, "sync-agent.md"), []byte(claudeContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .claude agent: %w", err)
+		return fmt.Errorf("failed to write .claude agent: %v", err)
 	}
 
 	opencodeContent := "---\ndescription: Different description\nmodel: opencode-go/minimax-m2.7\ntools:\n  read: true\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(opencodeAgentDir, "sync-agent.md"), []byte(opencodeContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .opencode agent: %w", err)
+		return fmt.Errorf("failed to write .opencode agent: %v", err)
 	}
 
 	return nil
@@ -126,24 +126,24 @@ func (s *validateSyncSteps) claudeContainingMoreAgentsThanOpenCode() error {
 	agentsDir := filepath.Join(s.tmpDir, ".claude", "agents")
 	opencodeAgentDir := filepath.Join(s.tmpDir, agents.OpenCodeAgentDir)
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/agents dir: %w", err)
+		return fmt.Errorf("failed to create .claude/agents dir: %v", err)
 	}
 	if err := os.MkdirAll(opencodeAgentDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .opencode/agents dir: %w", err)
+		return fmt.Errorf("failed to create .opencode/agents dir: %v", err)
 	}
 
 	agent1 := "---\nname: sync-agent\ndescription: A sync agent\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\n---\nBody.\n"
 	agent2 := "---\nname: extra-agent\ndescription: An extra agent\ntools: Write\nmodel: sonnet\ncolor: green\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(agentsDir, "sync-agent.md"), []byte(agent1), 0644); err != nil {
-		return fmt.Errorf("failed to write first .claude agent: %w", err)
+		return fmt.Errorf("failed to write first .claude agent: %v", err)
 	}
 	if err := os.WriteFile(filepath.Join(agentsDir, "extra-agent.md"), []byte(agent2), 0644); err != nil {
-		return fmt.Errorf("failed to write second .claude agent: %w", err)
+		return fmt.Errorf("failed to write second .claude agent: %v", err)
 	}
 
 	opencodeContent := "---\ndescription: A sync agent\nmodel: opencode-go/minimax-m2.7\ntools:\n  read: true\nskills:\n---\nBody.\n"
 	if err := os.WriteFile(filepath.Join(opencodeAgentDir, "sync-agent.md"), []byte(opencodeContent), 0644); err != nil {
-		return fmt.Errorf("failed to write .opencode agent: %w", err)
+		return fmt.Errorf("failed to write .opencode agent: %v", err)
 	}
 
 	return nil

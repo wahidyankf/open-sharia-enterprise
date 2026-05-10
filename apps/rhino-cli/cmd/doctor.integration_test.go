@@ -137,7 +137,7 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 	}
 	for _, dir := range dirs {
 		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
-			return fmt.Errorf("mkdir %s: %w", dir, err)
+			return fmt.Errorf("mkdir %s: %v", dir, err)
 		}
 	}
 
@@ -154,7 +154,7 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 	}
 	for relPath, content := range files {
 		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {
-			return fmt.Errorf("write %s: %w", relPath, err)
+			return fmt.Errorf("write %s: %v", relPath, err)
 		}
 	}
 
@@ -178,7 +178,7 @@ func (s *doctorSteps) aRequiredDevelopmentToolIsNotFoundInTheSystemPATH() error 
 	// Create an empty bin dir so PATH resolution finds nothing
 	emptyBin, err := os.MkdirTemp("", "empty-bin-*")
 	if err != nil {
-		return fmt.Errorf("create empty bin dir: %w", err)
+		return fmt.Errorf("create empty bin dir: %v", err)
 	}
 	_ = os.Setenv("PATH", emptyBin)
 

@@ -140,7 +140,7 @@ func (s *doctorUnitSteps) theDeveloperRunsTheDoctorCommandWithJSONOutput() error
 
 func (s *doctorUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -171,7 +171,7 @@ func (s *doctorUnitSteps) theOutputIdentifiesTheMissingTool() error {
 
 func (s *doctorUnitSteps) theOutputReportsTheToolAsAWarningRatherThanAFailure() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected command to exit successfully (warnings don't fail) but got: %v", s.cmdErr)
+		return fmt.Errorf("expected command to exit successfully (warnings don't fail) but got: %w", s.cmdErr)
 	}
 	if !strings.Contains(s.cmdOutput, "⚠") && !strings.Contains(strings.ToLower(s.cmdOutput), "warning") {
 		return fmt.Errorf("expected output to contain warning indicator (⚠ or 'warning') but got: %s", s.cmdOutput)
@@ -182,7 +182,7 @@ func (s *doctorUnitSteps) theOutputReportsTheToolAsAWarningRatherThanAFailure() 
 func (s *doctorUnitSteps) theOutputIsValidJSON() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	return nil
 }
@@ -190,7 +190,7 @@ func (s *doctorUnitSteps) theOutputIsValidJSON() error {
 func (s *doctorUnitSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	tools, ok := parsed["tools"].([]any)
 	if !ok {

@@ -335,7 +335,7 @@ func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupWithWorktreeAware() error 
 
 func (s *envBackupUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -372,7 +372,7 @@ func (s *envBackupUnitSteps) theOutputWarnsBackupDirMustBeOutside() error {
 	}
 	// The error is returned from RunE; it will contain "inside repo root".
 	if !strings.Contains(s.cmdErr.Error(), "inside repo") {
-		return fmt.Errorf("expected error about 'inside repo' but got: %v", s.cmdErr)
+		return fmt.Errorf("expected error about 'inside repo' but got: %w", s.cmdErr)
 	}
 	return nil
 }
@@ -406,7 +406,7 @@ func (s *envBackupUnitSteps) theOutputReportsZeroFilesBackedUp() error {
 func (s *envBackupUnitSteps) theOutputIsValidJSON() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	return nil
 }
@@ -414,7 +414,7 @@ func (s *envBackupUnitSteps) theOutputIsValidJSON() error {
 func (s *envBackupUnitSteps) theJSONIncludesDirectionDirFilesCountsBackup() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	for _, key := range []string{"direction", "dir", "files", "copied", "skipped"} {
 		if _, ok := parsed[key]; !ok {
@@ -517,7 +517,7 @@ func (s *envBackupUnitSteps) theDeveloperRunsEnvBackupWithForce() error {
 
 func (s *envBackupUnitSteps) theEnvFileOverwrittenInBackupDir() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+		return fmt.Errorf("expected success but got: %w", s.cmdErr)
 	}
 	return nil
 }

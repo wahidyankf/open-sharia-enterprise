@@ -119,7 +119,7 @@ func (s *syncAgentsUnitSteps) theDeveloperRunsSyncAgentsWithTheAgentsOnlyFlag() 
 
 func (s *syncAgentsUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -142,14 +142,14 @@ func (s *syncAgentsUnitSteps) theOutputDescribesThePlannedOperations() error {
 func (s *syncAgentsUnitSteps) noFilesAreWrittenToTheOpenCodeDirectory() error {
 	// The mock is configured for dry-run mode (returns 0 converts) — just verify success
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected dry-run to succeed but got: %v", s.cmdErr)
+		return fmt.Errorf("expected dry-run to succeed but got: %w", s.cmdErr)
 	}
 	return nil
 }
 
 func (s *syncAgentsUnitSteps) onlyAgentFilesAreWrittenToTheOpenCodeDirectory() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected agents-only sync to succeed but got: %v", s.cmdErr)
+		return fmt.Errorf("expected agents-only sync to succeed but got: %w", s.cmdErr)
 	}
 	if !strings.Contains(s.cmdOutput, "SUCCESS") {
 		return fmt.Errorf("expected output to contain SUCCESS but got: %s", s.cmdOutput)
@@ -161,7 +161,7 @@ func (s *syncAgentsUnitSteps) theCorrespondingOpenCodeAgentUsesTheOpenCodeGoMode
 	// Model translation is handled by the internal agents package; the command
 	// delegates entirely. We just verify the sync succeeded.
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v", s.cmdErr)
+		return fmt.Errorf("expected success but got: %w", s.cmdErr)
 	}
 	return nil
 }

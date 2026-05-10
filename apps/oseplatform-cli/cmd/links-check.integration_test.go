@@ -124,7 +124,7 @@ func (s *linksCheckOseplatformSteps) theDeveloperRunsLinksCheckWithJSONOutput() 
 
 func (s *linksCheckOseplatformSteps) theOseplatformLinksCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected command to succeed but got error: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected command to succeed but got error: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -139,7 +139,7 @@ func (s *linksCheckOseplatformSteps) theOseplatformLinksCommandExitsWithAFailure
 func (s *linksCheckOseplatformSteps) theOseplatformLinksOutputIsValidJSON() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	return nil
 }

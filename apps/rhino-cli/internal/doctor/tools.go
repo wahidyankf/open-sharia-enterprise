@@ -305,6 +305,23 @@ func buildToolDefs(repoRoot string) []toolDef {
 				return []InstallStep{{Description: "Install jq", Command: "sudo", Args: []string{"apt-get", "install", "-y", "jq"}}}
 			},
 		},
+		// --- Static analysis ---
+		{
+			name:     "golangci-lint",
+			binary:   "golangci-lint",
+			source:   "(pinned: v2.11.1)",
+			args:     []string{"version"},
+			parseVer: parseGolangciLintVersion,
+			compare:  compareGTE,
+			readReq:  func() string { return "2.11.1" },
+			installCmd: func(req, platform string) []InstallStep {
+				return []InstallStep{{
+					Description: fmt.Sprintf("Install golangci-lint v%s via go install", req),
+					Command:     "bash",
+					Args:        []string{"-c", fmt.Sprintf("go install github.com/golangci/golangci-lint/cmd/golangci-lint@v%s", req)},
+				}}
+			},
+		},
 		// --- Playwright ---
 		{
 			name:     "playwright",

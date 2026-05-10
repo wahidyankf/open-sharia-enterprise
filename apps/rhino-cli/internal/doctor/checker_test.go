@@ -683,9 +683,10 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		"clj":     {stdout: "Clojure CLI version 1.12.4.1582\n", exitCode: 0},
 		"dart":    {stdout: "Dart SDK version: 3.11.3 (stable)\n", exitCode: 0},
 		"flutter": {stdout: "Flutter 3.41.5 • channel stable\n", exitCode: 0},
-		"docker":  {stdout: "Docker version 29.2.1, build a5c7197\n", exitCode: 0},
-		"jq":      {stdout: "jq-1.8.1\n", exitCode: 0},
-		"npx":     {stdout: "Version 1.58.2\n", exitCode: 0},
+		"docker":        {stdout: "Docker version 29.2.1, build a5c7197\n", exitCode: 0},
+		"jq":            {stdout: "jq-1.8.1\n", exitCode: 0},
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+		"npx":           {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
 	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner})
@@ -693,8 +694,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.OKCount != 19 {
-		t.Errorf("expected OKCount == 19, got %d", result.OKCount)
+	if result.OKCount != 20 {
+		t.Errorf("expected OKCount == 20, got %d", result.OKCount)
 	}
 	if result.WarnCount != 0 {
 		t.Errorf("expected WarnCount == 0, got %d", result.WarnCount)
@@ -702,8 +703,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 	if result.MissingCount != 0 {
 		t.Errorf("expected MissingCount == 0, got %d", result.MissingCount)
 	}
-	if len(result.Checks) != 19 {
-		t.Errorf("expected 19 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 20 {
+		t.Errorf("expected 20 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -718,8 +719,8 @@ func TestCheckAll_WithMissingTools(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.MissingCount != 19 {
-		t.Errorf("expected MissingCount == 19, got %d", result.MissingCount)
+	if result.MissingCount != 20 {
+		t.Errorf("expected MissingCount == 20, got %d", result.MissingCount)
 	}
 	if result.OKCount != 0 {
 		t.Errorf("expected OKCount == 0, got %d", result.OKCount)
@@ -798,8 +799,8 @@ func TestCheckAll_NilRunner_UsesRealRunner(t *testing.T) {
 	if result == nil {
 		t.Fatal("expected non-nil result")
 	}
-	if len(result.Checks) != 19 {
-		t.Errorf("expected 19 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 20 {
+		t.Errorf("expected 20 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -901,9 +902,10 @@ func TestCheckAll_FullScopeDefault(t *testing.T) {
 		"clj":     {stdout: "Clojure CLI version 1.12.4.1582\n", exitCode: 0},
 		"dart":    {stdout: "Dart SDK version: 3.11.3 (stable)\n", exitCode: 0},
 		"flutter": {stdout: "Flutter 3.41.5\n", exitCode: 0},
-		"docker":  {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
-		"jq":      {stdout: "jq-1.8.1\n", exitCode: 0},
-		"npx":     {stdout: "Version 1.58.2\n", exitCode: 0},
+		"docker":        {stdout: "Docker version 29.2.1, build abc\n", exitCode: 0},
+		"jq":            {stdout: "jq-1.8.1\n", exitCode: 0},
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+		"npx":           {stdout: "Version 1.58.2\n", exitCode: 0},
 	})
 
 	// Empty scope should behave as full
@@ -911,8 +913,8 @@ func TestCheckAll_FullScopeDefault(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CheckAll error: %v", err)
 	}
-	if len(result.Checks) != 19 {
-		t.Errorf("expected 19 checks for default scope, got %d", len(result.Checks))
+	if len(result.Checks) != 20 {
+		t.Errorf("expected 20 checks for default scope, got %d", len(result.Checks))
 	}
 }
 
@@ -1462,4 +1464,41 @@ func TestReadFlutterVersion(t *testing.T) {
 			t.Fatal("expected error")
 		}
 	})
+}
+
+func TestParseGolangciLintVersion(t *testing.T) {
+	tests := []struct{ input, want string }{
+		{"golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", "2.11.1"},
+		{"golangci-lint has version 2.12.2 built with go1.24.0 from abc1234 on 2025-12-01T10:00:00Z\n", "2.12.2"},
+		{"", ""},
+	}
+	for _, tt := range tests {
+		got := parseGolangciLintVersion(tt.input)
+		if got != tt.want {
+			t.Errorf("parseGolangciLintVersion(%q) = %q, want %q", tt.input, got, tt.want)
+		}
+	}
+}
+
+func TestRunOneDef_GolangciLint_Found(t *testing.T) {
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"golangci-lint": {stdout: "golangci-lint has version 2.11.1 built with go1.26.1 from 89a46a24 on 2026-03-06T14:04:16Z\n", exitCode: 0},
+	})
+	def := findDef(t, buildToolDefs(t.TempDir()), "golangci-lint")
+	check := runOneDef(runner, def)
+	if check.Status != StatusOK {
+		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
+	}
+	if check.InstalledVersion != "2.11.1" {
+		t.Errorf("expected version %q, got %q", "2.11.1", check.InstalledVersion)
+	}
+}
+
+func TestRunOneDef_GolangciLint_Missing(t *testing.T) {
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
+	def := findDef(t, buildToolDefs(t.TempDir()), "golangci-lint")
+	check := runOneDef(runner, def)
+	if check.Status != StatusMissing {
+		t.Errorf("expected StatusMissing, got %q", check.Status)
+	}
 }

@@ -174,7 +174,7 @@ func (s *envInitUnitSteps) theDeveloperRunsEnvInitWithForce() error {
 
 func (s *envInitUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected no error, got: %v", s.cmdErr)
+		return fmt.Errorf("expected no error, got: %w", s.cmdErr)
 	}
 	return nil
 }

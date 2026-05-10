@@ -121,7 +121,7 @@ func (s *linksCheckAyokodingSteps) theDeveloperRunsLinksCheckWithJSONOutput() er
 
 func (s *linksCheckAyokodingSteps) theLinksCheckCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected command to succeed but got error: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected command to succeed but got error: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -136,7 +136,7 @@ func (s *linksCheckAyokodingSteps) theLinksCheckCommandExitsWithAFailureCode() e
 func (s *linksCheckAyokodingSteps) theLinksOutputIsValidJSON() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
-		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
+		return fmt.Errorf("output is not valid JSON: %w\nOutput: %s", err, s.cmdOutput)
 	}
 	return nil
 }

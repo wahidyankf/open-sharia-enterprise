@@ -68,13 +68,13 @@ func (s *diffTestCoverageIntegrationSteps) after(_ context.Context, _ *godog.Sce
 func (s *diffTestCoverageIntegrationSteps) makeInitialCommit() error {
 	placeholder := filepath.Join(s.tmpDir, ".gitkeep")
 	if err := os.WriteFile(placeholder, []byte(""), 0644); err != nil {
-		return fmt.Errorf("write .gitkeep: %w", err)
+		return fmt.Errorf("write .gitkeep: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "add", ".").Run(); err != nil {
-		return fmt.Errorf("git add: %w", err)
+		return fmt.Errorf("git add: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "commit", "-m", "init").Run(); err != nil {
-		return fmt.Errorf("git commit init: %w", err)
+		return fmt.Errorf("git commit init: %v", err)
 	}
 	return nil
 }
@@ -83,7 +83,7 @@ func (s *diffTestCoverageIntegrationSteps) makeInitialCommit() error {
 func (s *diffTestCoverageIntegrationSteps) writeCoverFile(relPath, content string) error {
 	absPath := filepath.Join(s.tmpDir, relPath)
 	if err := os.WriteFile(absPath, []byte(content), 0644); err != nil {
-		return fmt.Errorf("write cover file: %w", err)
+		return fmt.Errorf("write cover file: %v", err)
 	}
 	s.coverFile = relPath
 	return nil
@@ -113,17 +113,17 @@ func (s *diffTestCoverageIntegrationSteps) aCoverageFileWhereAllChangedLinesAreC
 	// Add a new source file and commit it on main.
 	srcDir := filepath.Join(s.tmpDir, "pkg")
 	if err := os.MkdirAll(srcDir, 0755); err != nil {
-		return fmt.Errorf("mkdir pkg: %w", err)
+		return fmt.Errorf("mkdir pkg: %v", err)
 	}
 	srcFile := filepath.Join(srcDir, "file.go")
 	if err := os.WriteFile(srcFile, []byte("package pkg\n\nfunc Foo() {}\nfunc Bar() {}\nfunc Baz() {}\n"), 0644); err != nil {
-		return fmt.Errorf("write src: %w", err)
+		return fmt.Errorf("write src: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "add", "pkg/file.go").Run(); err != nil {
-		return fmt.Errorf("git add src: %w", err)
+		return fmt.Errorf("git add src: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "commit", "-m", "add pkg/file.go").Run(); err != nil {
-		return fmt.Errorf("git commit src: %w", err)
+		return fmt.Errorf("git commit src: %v", err)
 	}
 
 	// Use HEAD~1 as the base so the above commit appears in the diff.
@@ -147,17 +147,17 @@ func (s *diffTestCoverageIntegrationSteps) aCoverageFileWhereSomeChangedLinesMis
 
 	srcDir := filepath.Join(s.tmpDir, "pkg")
 	if err := os.MkdirAll(srcDir, 0755); err != nil {
-		return fmt.Errorf("mkdir pkg: %w", err)
+		return fmt.Errorf("mkdir pkg: %v", err)
 	}
 	srcFile := filepath.Join(srcDir, "file.go")
 	if err := os.WriteFile(srcFile, []byte("package pkg\n\nfunc Foo() {}\nfunc Bar() {}\nfunc Baz() {}\n"), 0644); err != nil {
-		return fmt.Errorf("write src: %w", err)
+		return fmt.Errorf("write src: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "add", "pkg/file.go").Run(); err != nil {
-		return fmt.Errorf("git add src: %w", err)
+		return fmt.Errorf("git add src: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "commit", "-m", "add pkg/file.go").Run(); err != nil {
-		return fmt.Errorf("git commit src: %w", err)
+		return fmt.Errorf("git commit src: %v", err)
 	}
 
 	// Use HEAD~1 as the base so the above commit appears in the diff.
@@ -181,17 +181,17 @@ func (s *diffTestCoverageIntegrationSteps) aCoverageFileAndChangesInExcludedFile
 
 	genDir := filepath.Join(s.tmpDir, "generated")
 	if err := os.MkdirAll(genDir, 0755); err != nil {
-		return fmt.Errorf("mkdir generated: %w", err)
+		return fmt.Errorf("mkdir generated: %v", err)
 	}
 	genFile := filepath.Join(genDir, "gen.go")
 	if err := os.WriteFile(genFile, []byte("package generated\n\nfunc Gen() {}\n"), 0644); err != nil {
-		return fmt.Errorf("write gen: %w", err)
+		return fmt.Errorf("write gen: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "add", "generated/gen.go").Run(); err != nil {
-		return fmt.Errorf("git add generated: %w", err)
+		return fmt.Errorf("git add generated: %v", err)
 	}
 	if err := exec.Command("git", "-C", s.tmpDir, "commit", "-m", "add generated/gen.go").Run(); err != nil {
-		return fmt.Errorf("git commit generated: %w", err)
+		return fmt.Errorf("git commit generated: %v", err)
 	}
 
 	// Use HEAD~1 as the base so the above commit appears in the diff.

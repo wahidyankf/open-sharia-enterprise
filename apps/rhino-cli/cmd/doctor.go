@@ -40,6 +40,7 @@ Tools checked:
   flutter        — from apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter
   docker         — any version (no config file)
   jq             — any version (no config file)
+  golangci-lint  — v2.11.1+ (pinned minimum)
   playwright     — browsers in Playwright cache directory
 
 Status codes:

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -420,6 +421,12 @@ func parseDockerVersion(output string) string {
 	return ""
 }
 
+// parseGolangciLintVersion extracts version from
+// "golangci-lint has version 2.11.1 built with go..." output.
+func parseGolangciLintVersion(output string) string {
+	return parseLineWord(output, "golangci-lint", 3, "")
+}
+
 // parseJqVersion extracts version from "jq-1.8.1" output.
 func parseJqVersion(output string) string {
 	trimmed := strings.TrimSpace(output)
@@ -504,7 +511,8 @@ func realRunner(name string, args ...string) (stdout, stderr string, exitCode in
 	stdout = stdoutBuf.String()
 	stderr = stderrBuf.String()
 	if runErr != nil {
-		if exitErr, ok := runErr.(*exec.ExitError); ok {
+		var exitErr *exec.ExitError
+		if errors.As(runErr, &exitErr) {
 			// Non-zero exit is not an error — we still have the output
 			return stdout, stderr, exitErr.ExitCode(), nil
 		}

@@ -123,7 +123,7 @@ func (s *validateSyncUnitSteps) theDeveloperRunsValidateSync() error {
 
 func (s *validateSyncUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -149,7 +149,7 @@ func (s *validateSyncUnitSteps) theOutputIdentifiesTheAgentWithTheMismatchedDesc
 	}
 	lc := strings.ToLower(combined)
 	if !strings.Contains(lc, "failed") && !strings.Contains(lc, "validation failed") {
-		return fmt.Errorf("expected output to identify failed check but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected output to identify failed check but got output=%q err=%w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }
@@ -161,7 +161,7 @@ func (s *validateSyncUnitSteps) theOutputReportsTheAgentCountMismatch() error {
 	}
 	lc := strings.ToLower(combined)
 	if !strings.Contains(lc, "failed") && !strings.Contains(lc, "validation failed") {
-		return fmt.Errorf("expected output to report count mismatch but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected output to report count mismatch but got output=%q err=%w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }

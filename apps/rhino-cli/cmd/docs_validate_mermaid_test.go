@@ -474,7 +474,7 @@ func (s *validateMermaidUnitSteps) theDeveloperRunsDocsValidateMermaidWithQuiet(
 
 func (s *validateMermaidUnitSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -488,7 +488,7 @@ func (s *validateMermaidUnitSteps) theCommandExitsWithAFailureCode() error {
 
 func (s *validateMermaidUnitSteps) theOutputReportsNoViolations() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected no violations, got error: %v (output: %s)", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected no violations, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -516,7 +516,7 @@ func (s *validateMermaidUnitSteps) theOutputIdentifiesFileAndBlockWithMultipleDi
 
 func (s *validateMermaidUnitSteps) theOutputContainsWarningAboutDiagramComplexity() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success (warning only), got error: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success (warning only), got error: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	if !strings.Contains(s.cmdOutput, "warning") && !strings.Contains(s.cmdOutput, "complex_diagram") {
 		return fmt.Errorf("expected output to mention warning or complex_diagram, got: %s", s.cmdOutput)
@@ -554,7 +554,7 @@ func (s *validateMermaidUnitSteps) theOutputContainsTableWithExpectedColumns() e
 
 func (s *validateMermaidUnitSteps) theOutputIncludesPerFileScanDetailLines() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success with verbose output, got: %v", s.cmdErr)
+		return fmt.Errorf("expected success with verbose output, got: %w", s.cmdErr)
 	}
 	// In verbose mode, even clean runs should emit the summary footer.
 	if s.cmdOutput == "" {

@@ -1,6 +1,7 @@
 package testcoverage
 
 import (
+	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -133,7 +134,8 @@ var getGitDiff = func(base string, staged bool) (string, error) {
 	out, err := cmd.Output()
 	if err != nil {
 		// If diff fails (e.g., no commits), return empty diff
-		if exitErr, ok := err.(*exec.ExitError); ok {
+		var exitErr *exec.ExitError
+		if errors.As(err, &exitErr) {
 			return "", fmt.Errorf("git diff failed: %s", strings.TrimSpace(string(exitErr.Stderr)))
 		}
 		return "", err

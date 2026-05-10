@@ -83,7 +83,7 @@ func (s *gitPreCommitUnitSteps) theOutputMentionsGitRepositoryNotFound() error {
 		combined += s.cmdErr.Error()
 	}
 	if !strings.Contains(combined, "git") {
-		return fmt.Errorf("expected output or error to mention 'git' but got output=%q err=%v", s.cmdOutput, s.cmdErr)
+		return fmt.Errorf("expected output or error to mention 'git' but got output=%q err=%w", s.cmdOutput, s.cmdErr)
 	}
 	return nil
 }

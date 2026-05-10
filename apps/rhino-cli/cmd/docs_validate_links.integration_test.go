@@ -107,7 +107,7 @@ func (s *validateDocsLinksSteps) aMarkdownFileContainingOnlyExternalHTTPSLinks()
 func (s *validateDocsLinksSteps) aMarkdownFileWithABrokenLinkThatHasNotBeenStagedInGit() error {
 	// Re-initialize tmpDir as a real git repo so git diff --cached works correctly.
 	if err := exec.Command("git", "init", s.tmpDir).Run(); err != nil {
-		return fmt.Errorf("git init failed: %w", err)
+		return fmt.Errorf("git init failed: %v", err)
 	}
 	_ = exec.Command("git", "-C", s.tmpDir, "config", "user.email", "test@example.com").Run()
 	_ = exec.Command("git", "-C", s.tmpDir, "config", "user.name", "Test User").Run()
@@ -145,7 +145,7 @@ func (s *validateDocsLinksSteps) theDeveloperRunsValidateDocsLinksWithTheStagedO
 
 func (s *validateDocsLinksSteps) theValidateDocsLinksCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected command to exit successfully, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected command to exit successfully, got error: %v (output: %s)", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -159,7 +159,7 @@ func (s *validateDocsLinksSteps) theValidateDocsLinksCommandExitsWithAFailureCod
 
 func (s *validateDocsLinksSteps) theOutputReportsNoBrokenLinksFound() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected no broken links, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected no broken links, got error: %v (output: %s)", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }

@@ -168,7 +168,7 @@ func (s *validateMermaidIntSteps) aMarkdownFileContainingNoMermaidCodeBlocks() e
 func (s *validateMermaidIntSteps) aMarkdownFileWithMermaidViolationNotStagedInGit() error {
 	// Initialize a real git repo so git diff --cached works correctly.
 	if err := exec.Command("git", "init", s.tmpDir).Run(); err != nil {
-		return fmt.Errorf("git init failed: %w", err)
+		return fmt.Errorf("git init failed: %v", err)
 	}
 	_ = exec.Command("git", "-C", s.tmpDir, "config", "user.email", "test@example.com").Run()
 	_ = exec.Command("git", "-C", s.tmpDir, "config", "user.name", "Test User").Run()
@@ -284,7 +284,7 @@ func (s *validateMermaidIntSteps) theDeveloperRunsDocsValidateMermaidWithQuiet()
 
 func (s *validateMermaidIntSteps) theValidateMermaidCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected command to exit successfully, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected command to exit successfully, got error: %v (output: %s)", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -298,7 +298,7 @@ func (s *validateMermaidIntSteps) theValidateMermaidCommandExitsWithAFailureCode
 
 func (s *validateMermaidIntSteps) theOutputReportsNoViolations() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected no violations, got error: %w (output: %s)", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected no violations, got error: %v (output: %s)", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
@@ -341,7 +341,7 @@ func (s *validateMermaidIntSteps) theOutputIsValidJSON() error {
 func (s *validateMermaidIntSteps) theJSONContainsViolationKindFilePathBlockIndexAndNodeID() error {
 	var result map[string]interface{}
 	if err := json.Unmarshal([]byte(s.cmdOutput), &result); err != nil {
-		return fmt.Errorf("failed to parse JSON: %w (output: %s)", err, s.cmdOutput)
+		return fmt.Errorf("failed to parse JSON: %v (output: %s)", err, s.cmdOutput)
 	}
 	if _, ok := result["violations"]; !ok {
 		return fmt.Errorf("JSON missing 'violations' field, got: %s", s.cmdOutput)

@@ -117,7 +117,7 @@ func (s *specsValidateLinksUnitSteps) runValidateLinksNosuchapp() error {
 
 func (s *specsValidateLinksUnitSteps) exitsSuccessfully() error {
 	if s.cmdErr != nil {
-		return fmt.Errorf("expected success but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+		return fmt.Errorf("expected success but got: %w\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }

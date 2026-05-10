@@ -72,10 +72,10 @@ func (s *envBackupIntSteps) after(_ context.Context, _ *godog.Scenario, _ error)
 func (s *envBackupIntSteps) makeRepo(pattern string) (string, error) {
 	dir, err := os.MkdirTemp("", pattern)
 	if err != nil {
-		return "", fmt.Errorf("create repo dir: %w", err)
+		return "", fmt.Errorf("create repo dir: %v", err)
 	}
 	if err := os.MkdirAll(filepath.Join(dir, ".git"), 0o755); err != nil {
-		return "", fmt.Errorf("create .git dir: %w", err)
+		return "", fmt.Errorf("create .git dir: %v", err)
 	}
 	return dir, nil
 }
@@ -84,7 +84,7 @@ func (s *envBackupIntSteps) makeRepo(pattern string) (string, error) {
 func (s *envBackupIntSteps) makeBackupDir(pattern string) (string, error) {
 	dir, err := os.MkdirTemp("", pattern)
 	if err != nil {
-		return "", fmt.Errorf("create backup dir: %w", err)
+		return "", fmt.Errorf("create backup dir: %v", err)
 	}
 	return dir, nil
 }
@@ -93,7 +93,7 @@ func (s *envBackupIntSteps) makeBackupDir(pattern string) (string, error) {
 func writeEnvFile(dir, relPath, content string) error {
 	full := filepath.Join(dir, relPath)
 	if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
-		return fmt.Errorf("mkdir for %s: %w", relPath, err)
+		return fmt.Errorf("mkdir for %s: %v", relPath, err)
 	}
 	return os.WriteFile(full, []byte(content), 0o644)
 }
@@ -155,7 +155,7 @@ func (s *envBackupIntSteps) aGitRepositoryContainingSymlinkOversizedAndRegularEn
 	target := filepath.Join(repo, ".env")
 	link := filepath.Join(repo, ".env.symlink")
 	if err := os.Symlink(target, link); err != nil {
-		return fmt.Errorf("create symlink: %w", err)
+		return fmt.Errorf("create symlink: %v", err)
 	}
 
 	// Oversized file (>1 MB).
@@ -241,12 +241,12 @@ func (s *envBackupIntSteps) aGitWorktreeContainingEnvFileAtRoot() error {
 	// Simulate a linked worktree: .git is a FILE.
 	tmpDir, err := os.MkdirTemp("", "int-env-backup-worktree-*")
 	if err != nil {
-		return fmt.Errorf("create worktree dir: %w", err)
+		return fmt.Errorf("create worktree dir: %v", err)
 	}
 	s.repoDir = tmpDir
 
 	if err := os.WriteFile(filepath.Join(tmpDir, ".git"), []byte("gitdir: /some/real/.git/worktrees/feature\n"), 0o644); err != nil {
-		return fmt.Errorf("write .git file: %w", err)
+		return fmt.Errorf("write .git file: %v", err)
 	}
 	if err := writeEnvFile(tmpDir, ".env", "WORKTREE=1\n"); err != nil {
 		return err
@@ -265,16 +265,16 @@ func (s *envBackupIntSteps) aGitWorktreeNamedFeatureBranchWithEnvFile() error {
 	// Create a directory whose basename is "feature-branch".
 	parent, err := os.MkdirTemp("", "int-env-backup-wt-parent-*")
 	if err != nil {
-		return fmt.Errorf("create parent dir: %w", err)
+		return fmt.Errorf("create parent dir: %v", err)
 	}
 	featureBranchDir := filepath.Join(parent, "feature-branch")
 	if err := os.MkdirAll(featureBranchDir, 0o755); err != nil {
-		return fmt.Errorf("create feature-branch dir: %w", err)
+		return fmt.Errorf("create feature-branch dir: %v", err)
 	}
 	s.repoDir = parent // parent holds the named dir; cleanup removes both
 
 	if err := os.WriteFile(filepath.Join(featureBranchDir, ".git"), []byte("gitdir: /some/real/.git/worktrees/feature-branch\n"), 0o644); err != nil {
-		return fmt.Errorf("write .git file: %w", err)
+		return fmt.Errorf("write .git file: %v", err)
 	}
 	if err := writeEnvFile(featureBranchDir, ".env", "WT=1\n"); err != nil {
 		return err
@@ -292,16 +292,16 @@ func (s *envBackupIntSteps) aGitWorktreeNamedFeatureBranchWithEnvFile() error {
 func (s *envBackupIntSteps) theMainGitRepositoryNamedOpenShariaEnterpriseWithEnvFile() error {
 	parent, err := os.MkdirTemp("", "int-env-backup-main-parent-*")
 	if err != nil {
-		return fmt.Errorf("create parent dir: %w", err)
+		return fmt.Errorf("create parent dir: %v", err)
 	}
 	mainRepoDir := filepath.Join(parent, "open-sharia-enterprise")
 	if err := os.MkdirAll(mainRepoDir, 0o755); err != nil {
-		return fmt.Errorf("create main repo dir: %w", err)
+		return fmt.Errorf("create main repo dir: %v", err)
 	}
 	s.repoDir = parent
 
 	if err := os.MkdirAll(filepath.Join(mainRepoDir, ".git"), 0o755); err != nil {
-		return fmt.Errorf("create .git dir: %w", err)
+		return fmt.Errorf("create .git dir: %v", err)
 	}
 	if err := writeEnvFile(mainRepoDir, ".env", "MAIN=1\n"); err != nil {
 		return err
@@ -340,12 +340,12 @@ func (s *envBackupIntSteps) theDeveloperRunsEnvBackupWithDirInside() error {
 	// Use os.Getwd() for the canonical path (resolves symlinks on macOS).
 	cwd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("getwd: %w", err)
+		return fmt.Errorf("getwd: %v", err)
 	}
 	// Set the backup dir to a subdirectory inside the repo root.
 	insideDir := filepath.Join(cwd, "env-backup-inside")
 	if err := os.MkdirAll(insideDir, 0o755); err != nil {
-		return fmt.Errorf("create inside dir: %w", err)
+		return fmt.Errorf("create inside dir: %v", err)
 	}
 	envBackupDir = insideDir
 	return s.runCmd()

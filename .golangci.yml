@@ -16,7 +16,12 @@ linters:
     - nilnesserr # returns different nil error after err != nil check
     - nilnil # simultaneous return of nil error and invalid value
     # Exhaustiveness
-    - exhaustive # exhaustive enum switch statements
+    - exhaustive # exhaustive enum switch statements (typed constants)
+    - gochecksumtype # exhaustive type switches over sealed interfaces with //sumtype:decl
+    # Error-handling discipline
+    - errorlint # forces errors.Is/errors.As; flags non-%w fmt.Errorf
+    # Const-block hygiene
+    - iotamixing # forbids mixing iota with non-iota constants in same block
     # Unused code
     - unparam # unused function parameters (and params always called with same value)
     - wastedassign # assignments whose written value is never subsequently read
@@ -87,3 +92,12 @@ linters:
       explicit-exhaustive-switch: false
       explicit-exhaustive-map: false
       default-case-required: false
+
+    errorlint:
+      errorf: true # require %w over %v when wrapping an error in fmt.Errorf
+      errorf-multi: true # multiple %w wraps OK
+      asserts: true # require errors.As over `err.(SomeErr)` type assertions
+      comparison: true # require errors.Is over `err == sentinel`
+
+    gochecksumtype:
+      default-signifies-exhaustive: false # default case does NOT waive exhaustiveness
