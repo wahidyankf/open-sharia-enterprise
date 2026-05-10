@@ -123,6 +123,51 @@ Concrete mapping (initial estimate; refine when reading actual `src/components/`
 
 (The actual file list is enumerated and locked in `delivery.md` Phase 4 step 4.0.)
 
+### Concrete file-by-file move table (locked at Phase 0.1)
+
+Actual source tree differs from the initial estimate above. Actual mapping after reading every file:
+
+**Files moved via `git mv`:**
+
+| Old path                                  | New path                                                       | BC        | Layer        |
+| ----------------------------------------- | -------------------------------------------------------------- | --------- | ------------ |
+| `src/components/Navigation.tsx`           | `src/contexts/app-shell/presentation/Navigation.tsx`           | app-shell | presentation |
+| `src/components/Navigation.unit.test.tsx` | `src/contexts/app-shell/presentation/Navigation.unit.test.tsx` | app-shell | presentation |
+| `src/app/data.ts`                         | `src/contexts/cv/application/data.ts`                          | cv        | application  |
+| `src/app/data.unit.test.ts`               | `src/contexts/cv/application/data.unit.test.ts`                | cv        | application  |
+| `src/utils/search.ts`                     | `src/contexts/search/application/search.ts`                    | search    | application  |
+| `src/utils/search.unit.test.ts`           | `src/contexts/search/application/search.unit.test.ts`          | search    | application  |
+| `src/utils/markdown.tsx`                  | `src/contexts/cv/application/markdown.tsx`                     | cv        | application  |
+| `src/utils/markdown.unit.test.tsx`        | `src/contexts/cv/application/markdown.unit.test.tsx`           | cv        | application  |
+
+**New files extracted (presentation-layer components):**
+
+Next.js App Router requires routing files (`page.tsx`) to stay in `src/app/`. To satisfy the DDD validator's code-dir check and give each BC's `presentation/` layer real TypeScript identifiers, the main UI logic is extracted into context components that `page.tsx` imports.
+
+| New path                                                                  | Extracted from                                                      | BC                | Layer        |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------- | ------------ |
+| `src/contexts/app-shell/presentation/style.ts`                            | `src/utils/style.ts` (moved, not extracted)                         | app-shell         | presentation |
+| `src/contexts/home/presentation/HomeContent.tsx`                          | `src/app/page.tsx` (`HomeContent` fn)                               | home              | presentation |
+| `src/contexts/cv/presentation/CvContent.tsx`                              | `src/app/cv/page.tsx` (`CvContent` fn)                              | cv                | presentation |
+| `src/contexts/personal-projects/application/projects.ts`                  | `src/app/personal-projects/page.tsx` (`projects` + `Project` type)  | personal-projects | application  |
+| `src/contexts/personal-projects/presentation/PersonalProjectsContent.tsx` | `src/app/personal-projects/page.tsx` (`PersonalProjectsContent` fn) | personal-projects | presentation |
+| `src/contexts/search/presentation/SearchSection.tsx`                      | inline usage in home/cv/personal-projects pages                     | search            | presentation |
+
+**Files staying in place (routing constraint or cross-cutting):**
+
+| File                                 | Reason stays                                               |
+| ------------------------------------ | ---------------------------------------------------------- |
+| `src/app/page.tsx`                   | Next.js App Router routing                                 |
+| `src/app/cv/page.tsx`                | Next.js App Router routing                                 |
+| `src/app/personal-projects/page.tsx` | Next.js App Router routing                                 |
+| `src/app/layout.tsx`                 | Next.js App Router routing                                 |
+| `src/utils/style.ts`                 | Moved to app-shell/presentation/style.ts; original removed |
+
+**Legacy folders removed after all moves:**
+
+- `src/components/` (empty after Navigation moved)
+- `src/utils/` (empty after search, markdown, style moved)
+
 ## `wahidyankf-web/project.json` changes
 
 Add to `test:quick` `commands`:
