@@ -188,6 +188,8 @@ The publish path is currently relaxed across all three subrepos. `ose-public`, `
 
 A fourth web app entered `ose-public` this period: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source, wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out of `wahidyankf-web` into `libs/ts-ui` shortly after so the other web apps can use them too.
 
+Beyond the portfolio itself, `wahidyankf-web` plays a structural role in `ose-public`: it represents the **simplest possible frontend / web tech stack**—a static-leaning Next.js app with no API layer, no local-first store, no domain logic—anchoring the low-complexity end of the FE spectrum. With `oseplatform-web` (content + tRPC), `ayokoding-web` (large bilingual content + tRPC + search + Mermaid + KaTeX), `organiclever-web` (local-first PGlite + DDD bounded contexts + XState), and `wahidyankf-web` (simple portfolio) all sitting in the same repo, the four-app spread spans the FE complexity range. That makes it the natural place to extract patterns behind every frontend in the repo: shared `ts-ui` components and tokens, the C4 + DDD specs format, validator targets, deployment shape, and the testing harness.
+
 The portfolio itself is at <https://www.wahidyankf.com/>. Content was synced with the LinkedIn profile on the same day as the scaffold.
 
 ## `ayokoding-web`: New Tutorials
