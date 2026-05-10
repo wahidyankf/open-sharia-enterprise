@@ -50,7 +50,7 @@ The promotional landing site (`www.organiclever.com`) and the journal app share 
 
 ### Nine Bounded Contexts
 
-The local-first pivot was the trigger to restructure `organiclever-web` along DDD lines. Between 2026-05-02 and 2026-05-03, the codebase was reorganized into nine bounded contexts under `apps/organiclever-web/src/contexts/`:
+The local-first pivot was the trigger to restructure `organiclever-web` along DDD lines. The codebase was reorganized into nine bounded contexts under `apps/organiclever-web/src/contexts/`:
 
 ```
 contexts/
@@ -101,7 +101,7 @@ graph LR
 
 ### C4 + DDD Across Web Apps
 
-The DDD restructure isn't just `organiclever-web`. The same C4 + DDD specs format—bounded-context registries, ubiquitous-language glossaries, API slug ownership, and i18n bounded-context ownership—was adopted in `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` between 2026-05-09 and 2026-05-10. `rhino-cli` gained matching `ddd bc validate` and `ddd ul validate` subcommands that enforce structural and glossary parity between specs and code; the rhino-cli section below covers the validator design.
+The DDD restructure isn't just `organiclever-web`. The same C4 + DDD specs format—bounded-context registries, ubiquitous-language glossaries, API slug ownership, and i18n bounded-context ownership—was adopted in `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` shortly after. `rhino-cli` gained matching `ddd bc validate` and `ddd ul validate` subcommands that enforce structural and glossary parity between specs and code; the rhino-cli section below covers the validator design.
 
 ## Three-Repo Split
 
@@ -137,7 +137,7 @@ graph TB
 
 ### `ose-projects` Was Brand New
 
-`ose-projects` did not exist when the previous update was published. Its root commit is 2026-04-06 21:15:09 +0700, and everything in it has been written since. The parent's job is orchestration: cross-repo plans, shared session settings (`additionalDirectories` for cross-repo file visibility from a single Claude Code or OpenCode session), generated-socials authoring (this update's LinkedIn companion will be drafted here), and bidirectional sync orchestration with `ose-primer`.
+`ose-projects` did not exist when the previous update was published; everything in it has been written since. The parent's job is orchestration: cross-repo plans, shared session settings (`additionalDirectories` for cross-repo file visibility from a single Claude Code or OpenCode session), generated-socials authoring (this update's LinkedIn companion will be drafted here), and bidirectional sync orchestration with `ose-primer`.
 
 The parent grew its own AI agent set—11 in total: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-executor`, `plan-execution-checker`, `repo-rules-maker`, `repo-rules-checker`, `repo-rules-fixer`, `repo-ose-primer-adoption-maker`, `repo-ose-primer-propagation-maker`, and `social-monthly-update-maker`. None of these existed before 2026-04-06. The parent also adopted `rhino-cli` and `golang-commons` from `ose-primer` on 2026-04-26 so the parent's own pre-commit and pre-push hooks run the same validators as the subrepos.
 
@@ -207,7 +207,7 @@ April 25 added `Textarea` and `Badge`. April 23 brought in the four migrated com
 
 `rhino-cli` (the Repository Hygiene & INtegration Orchestrator) absorbed most of the new automation work this period. It now runs as a pre-commit and pre-push validator across all four repositories (parent and three subrepos) and gates the PR quality flow on GitHub.
 
-Capabilities added since 2026-04-05:
+Capabilities added this period:
 
 - **`docs validate-mermaid`** — Mermaid diagram extractor + parser + graph + validator + reporter. Detects subgraph density violations, applies width constraints, scans `docs/`, `plans/`, `governance/`, `apps/*/content/`, and `apps/*/README.md`. Has `--staged-only` and `--changed-only` modes.
 - **`agents validate-naming` / `workflows validate-naming`** — enforce the agent and workflow filename conventions (`<scope>(-<qualifier>)*-<role>` and `<scope>(-<qualifier>)*-<type>`).
