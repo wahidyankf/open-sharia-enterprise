@@ -210,12 +210,14 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   behavior/README.md files, app READMEs, and governance docs.
   ```
 
-- [ ] 5.2 Push to `origin main` (direct-to-main per Trunk Based Development)
-- [ ] 5.3 Monitor CI after push:
-  - [ ] Run `gh run list --branch main --limit 5` to find the relevant workflow run
-  - [ ] Run `gh run watch <run-id>` or check every 3–5 min via `gh run view <run-id>`
-  - [ ] Verify all CI checks pass (build, typecheck, lint, test:quick, spec-coverage for affected projects)
-  - [ ] If any check fails: fix root cause, push follow-up commit, and re-verify before proceeding
+- [x] 5.2 Push to `origin main` (direct-to-main per Trunk Based Development)
+<!-- 2026-05-11 | Status: done | Pushed 5 commits after resolving pre-push MD violations (worktrees/ exclude, MD028/MD031 in organiclever-be-java-migration delivery.md, MD032 in tech-docs.md). -->
+- [x] 5.3 Monitor CI after push:
+  <!-- 2026-05-11 | Status: N/A — all workflows are schedule/workflow_dispatch only, no push triggers. Pre-push hook was the quality gate. All sub-items N/A. -->
+  - [x] Run `gh run list --branch main --limit 5` to find the relevant workflow run
+  - [x] Run `gh run watch <run-id>` or check every 3–5 min via `gh run view <run-id>`
+  - [x] Verify all CI checks pass (build, typecheck, lint, test:quick, spec-coverage for affected projects)
+  - [x] If any check fails: fix root cause, push follow-up commit, and re-verify before proceeding
 - [ ] 5.4 Archive plan:
   - [ ] 5.4a `git mv plans/in-progress/specs-cli-into-behavior plans/done/$(date +%Y-%m-%d)__specs-cli-into-behavior`
   - [ ] 5.4b Update `plans/in-progress/README.md` — remove `specs-cli-into-behavior` entry
