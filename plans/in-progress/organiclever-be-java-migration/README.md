@@ -29,6 +29,18 @@ NullAway, Cucumber-JVM, Docker-based integration tests) against a real, contract
 toolchain. Adapt naming (`demobejasb` → `organicleverbe`) and simplify to v0 scope (health
 endpoint only, no auth/CRUD/DB).
 
+## Worktree
+
+Worktree path: `worktrees/organiclever-be-java-migration/`
+
+Provision before execution (run from repo root):
+
+```bash
+claude --worktree organiclever-be-java-migration
+```
+
+See [delivery.md §Worktree](./delivery.md#worktree) for the full worktree specification.
+
 ## Documents
 
 | File | Purpose |
@@ -36,7 +48,7 @@ endpoint only, no auth/CRUD/DB).
 | [brd.md](./brd.md) | Business rationale |
 | [prd.md](./prd.md) | Product requirements + Gherkin acceptance criteria |
 | [tech-docs.md](./tech-docs.md) | Technical design and implementation guide |
-| [delivery.md](./delivery.md) | Step-by-step TDD delivery checklist |
+| [delivery.md](./delivery.md) | Step-by-step TDD delivery checklist (includes Worktree section) |
 
 ## Quality Gates
 

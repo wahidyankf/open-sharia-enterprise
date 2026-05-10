@@ -1,5 +1,32 @@
 # Product Requirements Document — organiclever-be-java-migration
 
+## Product Overview
+
+This plan delivers a Java/Spring Boot 4.0 replacement for the `organiclever-be` REST API
+backend, preserving the existing `GET /api/v1/health` contract and all Nx quality-gate
+targets while eliminating all F#/Giraffe/.NET artifacts from the codebase. The result is a
+production-quality Java backend aligned with the ose-primer reference implementation
+(`crud-be-java-springboot`) and ready for future feature additions (auth, CRUD, DB).
+
+## Personas
+
+| Persona | Hat | Relationship to this plan |
+|---------|-----|--------------------------|
+| BE Developer | Solo maintainer wearing backend engineer hat | Executes delivery checklist; writes Java source, pom.xml, Cucumber step definitions |
+| Tech Lead | Solo maintainer wearing architecture hat | Reviews Nx target design, NullAway config, JaCoCo exclusion decisions |
+
+Consuming agents: `plan-execution` workflow executes delivery checklist; `swe-java-dev`
+handles Java source creation steps; `plan-execution-checker` validates completed work.
+
+## User Stories
+
+- As a BE Developer, I want a Spring Boot health endpoint so that the app exposes its status
+  via the established `/api/v1/health` contract without requiring any changes to
+  `organiclever-web` or `organiclever-be-e2e`.
+- As a Tech Lead, I want Maven-based Nx targets (`build`, `typecheck`, `lint`, `test:quick`,
+  `test:integration`, `codegen`, `spec-coverage`) so that CI quality gates work identically
+  to other Java projects in the monorepo without custom scripting.
+
 ## Functional Requirements
 
 | ID | Requirement |
@@ -65,8 +92,11 @@ Feature: Java Spring Boot Migration — Quality Gate
   Scenario: Null-safety typecheck passes
     Given all public API methods in com.organicleverbe are annotated with JSpecify
     When "nx run organiclever-be:typecheck" executes
-    Then rhino-cli validate-annotations reports no missing annotations
-    And NullAway reports no null-safety violations in com.organicleverbe
+    Then "mvn compile -Pnullcheck" exits 0 with no NullAway errors in com.organicleverbe
+    And no missing annotation warnings are reported
+    (Note: rhino-cli validate-annotations is ose-primer-only; full annotation
+     coverage check will be added when ose-primer propagation brings java
+     subcommand to ose-public)
 
   Scenario: Spec coverage validates all Gherkin scenarios
     Given feature files exist under specs/apps/organiclever/behavior/be/gherkin/
@@ -85,7 +115,8 @@ Feature: Java Spring Boot Migration — Quality Gate
     When "nx run organiclever-be:codegen" executes
     Then Java model classes are generated under
       apps/organiclever-be/generated-contracts/src/main/java/com/organicleverbe/contracts/
-    And rhino-cli java-clean-imports removes unused import statements
+    And no import clean-up post-processing is applied
+      (rhino-cli contracts java-clean-imports is ose-primer-only, not in ose-public)
 
   Scenario: No F# toolchain artefacts remain
     Given the migration is complete
@@ -93,6 +124,15 @@ Feature: Java Spring Boot Migration — Quality Gate
     Then no files matching "*.fs", "*.fsproj", "global.json", "dotnet-tools.json",
       or "fsharplint.json" exist in the directory tree
 ```
+
+## Product Risks
+
+| Risk | Impact | Mitigation |
+|------|--------|-----------|
+| 90% JaCoCo coverage may be hard to meet with health-only scope | Unit tests might fall below threshold | JaCoCo exclusions configured for application main, package-info, generated contracts, and config classes; simulated state store tests cover HealthController indirectly via step defs |
+| Simulated unit test state store does not exercise real HTTP stack | Coverage gaps in HTTP-layer behavior may go undetected by unit tests | Controller correctness verified at Phase 5 via Docker integration tests that hit the real endpoint |
+| JaCoCo exclusion list may hide uncovered controller code | False sense of 90% coverage | Verify by inspecting the generated `jacoco.xml` report manually; review excluded classes list in `pom.xml` |
+| `typecheck` target omits annotation validation (ose-public rhino-cli lacks `java validate-annotations`) | Unannotated public APIs may escape detection until ose-primer propagation | NullAway via `mvn compile -Pnullcheck` still validates package-level `@NullMarked` annotations; full annotation coverage validated when ose-primer adopts the subcommand |
 
 ## Out of Scope
 

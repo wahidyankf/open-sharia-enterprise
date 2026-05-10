@@ -2,17 +2,17 @@
 
 ## Technology Stack
 
-| Concern | Choice | Reason |
-|---------|--------|--------|
-| Language | Java 25 | Matches `ose-primer` reference; latest LTS baseline |
-| Framework | Spring Boot 4.0 | `spring-boot-starter-parent` 4.0.4 |
-| Build | Maven | Standard JVM build tool for financial industry |
-| Test runner | JUnit 5 + Cucumber JVM 7.34.2 | Gherkin feature consumption |
-| Coverage | JaCoCo 0.8.13 | XML report at `target/site/jacoco/jacoco.xml` |
-| Lint | Checkstyle 3.6.0 + PMD 3.28.0 | Google Java Style + code quality |
-| Null safety | NullAway 0.12.6 + ErrorProne 2.37.0 + JSpecify 1.0.0 | Zero-NPE discipline |
-| Codegen | `openapi-generator-cli` java generator | Replaces `fsharp-giraffe-server` |
-| Container | Maven multi-stage Docker image | Integration test runner |
+| Concern | Choice | Confidence | Reason |
+|---------|--------|------------|--------|
+| Language | Java 25 | `[Repo-grounded]` — matches `ose-primer/apps/crud-be-java-springboot/pom.xml` | Matches `ose-primer` reference; latest LTS baseline |
+| Framework | Spring Boot 4.0 | `[Repo-grounded]` — `spring-boot-starter-parent` 4.0.4 in ose-primer pom.xml; `[Web-cited]` — Spring Boot 4.0 is a major release requiring Java 17+ minimum | `spring-boot-starter-parent` 4.0.4 |
+| Build | Maven | `[Repo-grounded]` — verified in ose-primer reference | Standard JVM build tool for financial industry |
+| Test runner | JUnit 5 + Cucumber JVM 7.34.2 | `[Repo-grounded]` — `cucumber-bom` 7.34.2 in ose-primer pom.xml | Gherkin feature consumption |
+| Coverage | JaCoCo 0.8.13 | `[Repo-grounded]` — `jacoco-maven-plugin` 0.8.13 in ose-primer pom.xml | XML report at `target/site/jacoco/jacoco.xml` |
+| Lint | Checkstyle 3.6.0 + PMD 3.28.0 | `[Repo-grounded]` — versions verified in ose-primer pom.xml | Google Java Style + code quality |
+| Null safety | NullAway 0.12.6 + ErrorProne 2.37.0 + JSpecify 1.0.0 | `[Repo-grounded]` — versions verified in ose-primer pom.xml | Zero-NPE discipline |
+| Codegen | `openapi-generator-cli` java generator | `[Repo-grounded]` — generator type verified in ose-primer project.json | Replaces `fsharp-giraffe-server` |
+| Container | Maven multi-stage Docker image | `[Repo-grounded]` — Dockerfile.integration verified in ose-primer | Integration test runner |
 
 ## Package Structure
 
@@ -105,7 +105,24 @@ classes are OpenAPI-generated.
 | Generator | `fsharp-giraffe-server` | `java` |
 | Model package | `OrganicLeverBe.Contracts` | `com.organicleverbe.contracts` |
 | Output | `generated-contracts/` | `generated-contracts/src/main/java/` |
-| Post-process | none | `rhino-cli contracts java-clean-imports` |
+| Post-process | none | _(none — see NOTE below)_ |
+
+> **NOTE — ose-public rhino-cli limitations**: `rhino-cli contracts java-clean-imports` and
+> `rhino-cli java validate-annotations` exist only in
+> `ose-primer/apps/rhino-cli` — they are NOT present in `apps/rhino-cli` (ose-public).
+> A scan of `apps/rhino-cli/cmd/` confirms no `contracts.go`, `java.go`, or
+> `java_validate_annotations.go` files exist. `[Unverified — ose-primer only]`
+>
+> Consequence for this plan:
+>
+> - `codegen` target: omit `java-clean-imports` post-processing — the plain java generator
+>   output is used directly without post-processing
+> - `typecheck` target: use only `mvn compile -Pnullcheck` (NullAway via Maven profile) —
+>   omit the `rhino-cli java validate-annotations` annotation-coverage check
+>
+> These commands will be adopted into ose-public's rhino-cli in a future plan via the
+> ose-primer propagation workflow (`repo-ose-primer-propagation-maker`). When adopted,
+> the `codegen` and `typecheck` targets should be updated to include them.
 
 ## Updated `project.json` Targets
 
@@ -119,8 +136,9 @@ classes are OpenAPI-generated.
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -g java -o $(pwd)/apps/organiclever-be/generated-contracts --model-package com.organicleverbe.contracts --additional-properties=library=resttemplate,dateLibrary=java8,openApiNullable=false,useBeanValidation=false,serializationLibrary=jackson --global-property=models,modelDocs=false,apiDocs=false && (WS_ROOT=$(pwd) && cd $(pwd)/apps/rhino-cli && CGO_ENABLED=0 go run main.go contracts java-clean-imports $WS_ROOT/apps/organiclever-be/generated-contracts)"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml -g java -o $(pwd)/apps/organiclever-be/generated-contracts --model-package com.organicleverbe.contracts --additional-properties=library=resttemplate,dateLibrary=java8,openApiNullable=false,useBeanValidation=false,serializationLibrary=jackson --global-property=models,modelDocs=false,apiDocs=false"
       },
+      "// NOTE": "java-clean-imports omitted — rhino-cli contracts java-clean-imports does not exist in ose-public apps/rhino-cli [Unverified — ose-primer only]",
       "dependsOn": ["organiclever-contracts:bundle"],
       "cache": true,
       "inputs": [
@@ -210,15 +228,16 @@ classes are OpenAPI-generated.
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/organiclever-be/src/main/java",
           "cd apps/organiclever-be && mvn compile -Pnullcheck"
         ],
+        "// NOTE": "rhino-cli java validate-annotations omitted — does not exist in ose-public apps/rhino-cli [Unverified — ose-primer only]; will be added when ose-primer propagation brings java subcommand to ose-public",
         "parallel": false
       },
       "dependsOn": ["codegen"],
       "cache": true
     },
     "spec-coverage": {
+      "// NOTE": "No --exclude-dir test-support flag needed — specs/apps/organiclever/behavior/be/gherkin/ has no test-support/ subdirectory [Repo-grounded]",
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate --shared-steps specs/apps/organiclever/behavior/be/gherkin apps/organiclever-be",
       "cache": true,
       "inputs": [
@@ -321,6 +340,47 @@ they live in `src/test/java/com/organicleverbe/integration/`.
 | ≥90% line | ≥90% line |
 
 `rhino-cli test-coverage validate` already supports both formats. No rhino-cli changes needed.
+
+## Dependencies
+
+The following external toolchain components must be available before execution:
+
+| Dependency | Version | How to verify | How to install if missing |
+|-----------|---------|---------------|--------------------------|
+| Java 25 | JDK 25 | `java -version` | `npm run doctor -- --fix` (Volta-managed); or `sdk install java 25-open` |
+| Maven | 3.9+ | `mvn -version` | System package manager (`brew install maven`, `apt install maven`); or Docker-based build |
+| Docker | 20+ | `docker info` | Install Docker Desktop from docker.com |
+| Go | 1.22+ | `go version` | `npm run doctor -- --fix` (Volta/doctor managed) |
+| Node.js / npx | 24.x | `node -version` | Managed by Volta; `npm run doctor -- --fix` |
+
+> **NOTE — ose-public rhino-cli gap**: `apps/rhino-cli` does not have `contracts java-clean-imports`
+> or `java validate-annotations` subcommands. These exist only in `ose-primer/apps/rhino-cli`.
+> See §Codegen Target Change NOTE above. This is a known limitation, not a setup gap — the
+> `project.json` targets for this plan are written to avoid these missing commands.
+
+## Rollback Procedure
+
+To revert the migration and restore the F# implementation from git history:
+
+```bash
+# Find the commit SHA just before Phase 1 removal commit
+git log --oneline apps/organiclever-be/ | head -20
+
+# Restore F# source files from before the migration
+git checkout <pre-migration-sha> -- apps/organiclever-be/
+
+# Commit the revert
+git add apps/organiclever-be/
+git commit -m "revert(organiclever-be): restore F#/Giraffe implementation"
+git push origin main
+```
+
+Alternatively, use `git revert <commit-sha>` for each migration phase commit in reverse
+order (Phase 6 docs → Phase 5 Docker → Phase 4 Nx targets → Phase 3 Java source →
+Phase 2 Maven scaffold → Phase 1 F# removal).
+
+The `apps/organiclever-be-e2e` and `organiclever-web` projects require no rollback action
+— neither was modified during this migration.
 
 ## `application.yml` (v0)
 
