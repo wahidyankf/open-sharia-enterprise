@@ -192,7 +192,7 @@ Feature: wahidyankf-web DDD + new specs format adoption
 - **Developer** (maintainer hat) — reshapes source and spec files, runs TDD cycles, checks that validators pass.
 - **Spec author** (documentation hat) — writes glossaries, bounded-context map, and per-BC READMEs.
 - **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist step by step.
-- **`plan-executor` agent** — reads delivery.md and executes each checkbox in order.
+- **`plan-execution-checker` agent** — validates completed execution against plan requirements.
 - **`swe-typescript-dev` agent** — performs TypeScript source moves and import updates.
 
 ## User Stories

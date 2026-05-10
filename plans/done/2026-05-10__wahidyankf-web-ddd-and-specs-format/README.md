@@ -1,6 +1,6 @@
 # wahidyankf-web — DDD + New Specs Format
 
-**Status**: In Progress
+**Status**: Done
 **Scope**: `ose-public` — `apps/wahidyankf-web/`, `specs/apps/wahidyankf/`
 
 ## Problem
