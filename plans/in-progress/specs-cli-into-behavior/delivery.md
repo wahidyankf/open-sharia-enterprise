@@ -190,13 +190,14 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits
-- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
-- [ ] Preferred split: one commit per app (`oseplatform`, `ayokoding`, `rhino`), or one
+- [x] Commit changes thematically — group related changes into logically cohesive commits
+- [x] Follow Conventional Commits format: `<type>(<scope>): <description>`
+- [x] Preferred split: one commit per app (`oseplatform`, `ayokoding`, `rhino`), or one
       atomic commit if all tests green together (see `tech-docs.md §Commit Strategy`)
-- [ ] Do NOT bundle unrelated fixes into a single commit
+- [x] Do NOT bundle unrelated fixes into a single commit
 
-- [ ] 5.1 Stage all changes and commit (example for atomic commit):
+- [x] 5.1 Stage all changes and commit (example for atomic commit):
+  <!-- 2026-05-11 | Status: done | 3 commits: fix(ayokoding-web) 0b1fcbe91, fix(organiclever-be) 7935a597e, refactor(specs) 8e6a64b94. Also created specs/apps/rhino/behavior/README.md (pre-commit broken-link fix). -->
 
   ```
   refactor(specs): consolidate cli/ specs under behavior/cli/ for all apps
