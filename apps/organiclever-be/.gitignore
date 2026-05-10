@@ -1,9 +1,6 @@
-bin/
-obj/
-dist/
-generated-contracts/
+target/
+*.class
+.mvn/
+generated-contracts/src/
 *.db
-coverage/
-.ionide/
-*.user
-*.suo
+.DS_Store
