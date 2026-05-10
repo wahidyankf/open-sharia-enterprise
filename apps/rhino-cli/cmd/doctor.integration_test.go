@@ -286,8 +286,8 @@ func (s *doctorSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	if !ok {
 		return fmt.Errorf("expected 'tools' array in JSON but got: %s", s.cmdOutput)
 	}
-	if len(tools) != 19 {
-		return fmt.Errorf("expected 19 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
+	if len(tools) != 20 {
+		return fmt.Errorf("expected 20 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
 	}
 	return nil
 }

@@ -2,19 +2,19 @@ package doctor
 
 import "testing"
 
-// TestScopeSealed_TypeSwitch verifies exhaustive type-switch over Scope variants.
+// TestScopeSealed_TypeSwitch verifies exhaustive type-switch over Scope variants,
+// including marker method coverage (unexported method bodies).
 func TestScopeSealed_TypeSwitch(t *testing.T) {
 	scopes := []Scope{ScopeFull{}, ScopeMinimal{}}
-	for _, s := range scopes {
+	wantCodes := []string{"full", "minimal"}
+	for i, s := range scopes {
+		s.isScope() // cover marker method body
+		if s.Code() != wantCodes[i] {
+			t.Errorf("Scope[%d].Code() = %q, want %q", i, s.Code(), wantCodes[i])
+		}
 		switch s.(type) {
 		case ScopeFull:
-			if s.Code() != "full" {
-				t.Errorf("ScopeFull.Code() = %q, want %q", s.Code(), "full")
-			}
 		case ScopeMinimal:
-			if s.Code() != "minimal" {
-				t.Errorf("ScopeMinimal.Code() = %q, want %q", s.Code(), "minimal")
-			}
 		}
 	}
 }
