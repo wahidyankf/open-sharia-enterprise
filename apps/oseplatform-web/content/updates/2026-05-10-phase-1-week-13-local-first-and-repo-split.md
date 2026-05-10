@@ -69,7 +69,7 @@ Each context has the layers it actually uses—not every context has all four. E
 
 ```mermaid
 %% Color Palette: Blue #0173B2 (presentation), Orange #DE8F05 (domain), Teal #029E73 (application), Purple #CC78BC (infrastructure)
-graph TB
+graph LR
     subgraph "organiclever-web — 9 bounded contexts"
         J["journal"]:::full
         R["routine"]:::full
