@@ -42,6 +42,8 @@ What replaced it on the client is substantial:
 
 The promotional landing site (`www.organiclever.com`) and the journal app share a single Next.js project. The CTA on the landing page navigates into the local-first app directly—no separate deployment, no cross-domain handoff.
 
+Alongside the app work, `organiclever-web` gained a staging environment wired into CI. Every green dev-workflow run auto-deploys to a staging Vercel target, and the FE E2E suite now includes staging-tagged scenarios (`@local-fullstack`) that exercise the deployed staging build before a production promotion is considered. The `apps-organiclever-web-deployer` agent was updated for the new CI staging-deploy model, and a 5-minute staging-deploy-delay note was added to the workflow docs to reflect Vercel propagation reality. Production promotion to `prod-organiclever-web` still requires explicit gates; staging is continuous.
+
 ### Nine Bounded Contexts
 
 The local-first pivot was the trigger to restructure `organiclever-web` along DDD lines. The codebase was reorganized into nine bounded contexts under `apps/organiclever-web/src/contexts/`:
