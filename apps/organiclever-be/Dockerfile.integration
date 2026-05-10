@@ -28,7 +28,7 @@ COPY apps/organiclever-be/src/ src/
 COPY apps/organiclever-be/tests/ tests/
 
 # Build the test project.
-RUN dotnet build tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj --no-restore
+RUN dotnet build tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj
 
 # Run integration-tagged tests in-process via WebApplicationFactory.
 # v0 has no external dependencies (no DB, no JWT, no auth); future tests that
