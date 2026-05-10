@@ -262,7 +262,7 @@ Several governance conventions were added or formalized this period across the t
 
 - **Test-Driven Development** (originated in `ose-public`, propagated to `ose-primer`) — Red → Green → Refactor required for code changes; plan delivery checklists must express code items as TDD-shaped steps.
 - **No-date-metadata** (originated in `ose-primer`, adopted to `ose-public`) — strip manual `lastUpdated`/date fields from non-website governance files; rely on git history.
-- **Git-push-default** (originated in `ose-primer`, propagated) — direct push to `main` for `ose-public` and `ose-infra`; PR-only for `ose-primer`.
+- **Git-push-default** (originated in `ose-primer`, propagated) — direct push to `main` is the default across all three subrepos; draft PRs are an option for review-warranting changes (apply-mode propagation to `ose-primer` defaults to a draft PR for cross-repo synthesis).
 - **Plan anti-hallucination** (originated in `ose-public`, adopted to `ose-primer`) — plans must cite concrete files, line numbers, and grep-able anchors rather than invented file paths.
 - **Worktree-path** — overrides the upstream coding-agent default. Worktrees in `ose-public` land at `worktrees/<name>/` (repo root); `ose-projects`, `ose-infra`, and `ose-primer` worktrees land at `<repo>/.claude/worktrees/<name>/`. Routed by a repo-local `WorktreeCreate` hook.
 - **Quality-gate-defaults** (originated in `ose-infra`, adopted) — strict mode and `max-iterations=7` are the defaults; lax/normal/ocd are explicit overrides.
