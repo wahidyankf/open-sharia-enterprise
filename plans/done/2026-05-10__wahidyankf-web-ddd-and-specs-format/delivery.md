@@ -248,11 +248,15 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
 - [x] Do NOT bundle unrelated fixes into a single commit.
   - Date: 2026-05-10 | Status: done
 
-- [ ] **8.1** Single atomic commit (or commit-per-phase if maintainer prefers; both legal):
-  - Message: `feat(wahidyankf-web): adopt C4 + DDD specs format`
-  - Body lists: 5 bounded contexts, source refactor scope, DDD validator wiring, spec-coverage gate.
-- [ ] **8.2** Push the worktree branch through whichever publish path applies (direct-to-main per Trunk Based Development is the default for `ose-public`; draft PR optional).
-- [ ] **8.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
-- [ ] **8.4** Move this plan folder to `plans/done/YYYY-MM-DD__wahidyankf-web-ddd-and-specs-format/` (date prefix added at archival per `governance/conventions/structure/plans.md`).
-- [ ] **8.5** Update `plans/in-progress/README.md` and `plans/done/README.md` indices.
-- [ ] **8.6** If `bdd-ddd-tooling-gap-fill` is still in-progress or backlog, post a note in its `delivery.md` Phase 0 confirming wahidyankf is now allowlist-eligible.
+- [x] **8.1** Single atomic commit (or commit-per-phase if maintainer prefers; both legal):
+  - Date: 2026-05-10 | Status: done | 4 thematic commits: docs(specs), refactor(src), feat(validators), chore(plan)
+- [x] **8.2** Push the worktree branch through whichever publish path applies (direct-to-main per Trunk Based Development is the default for `ose-public`; draft PR optional).
+  - Date: 2026-05-10 | Status: done | Rebased onto origin/main; pushed worktree/scalable-humming-llama:main
+- [x] **8.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+  - Date: 2026-05-10 | Status: done | Run 25616084542 on SHA 77ad0771e: conclusion=success
+- [x] **8.4** Move this plan folder to `plans/done/YYYY-MM-DD__wahidyankf-web-ddd-and-specs-format/` (date prefix added at archival per `governance/conventions/structure/plans.md`).
+  - Date: 2026-05-10 | Status: done | git mv to plans/done/2026-05-10\_\_wahidyankf-web-ddd-and-specs-format/
+- [x] **8.5** Update `plans/in-progress/README.md` and `plans/done/README.md` indices.
+  - Date: 2026-05-10 | Status: done | Removed from in-progress list; added to done/ with completion summary
+- [x] **8.6** If `bdd-ddd-tooling-gap-fill` is still in-progress or backlog, post a note in its `delivery.md` Phase 0 confirming wahidyankf is now allowlist-eligible.
+  - Date: 2026-05-10 | Status: done | Posted note in bdd-ddd-tooling-gap-fill/delivery.md Phase 0 item 0.1; all 3 plans done, Phase 0 fully unblocked

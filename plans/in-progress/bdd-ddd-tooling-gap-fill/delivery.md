@@ -32,6 +32,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **0.1** Confirm plans 1, 2, 3 are merged to `origin/main` and CI is green for all three. The allowlist gate (Phase 11) will fail if any of them is incomplete.
   - **Note (2026-05-10)**: Plan 3 (`oseplatform-web-ddd-and-specs-format`) merged to `origin/main`. `specs/apps/oseplatform/ddd/bounded-contexts.yaml` v2, 7 BCs. `oseplatform-web:test:quick` now runs `ddd bc/ul`. oseplatform is allowlist-eligible.
+  - **Note (2026-05-10)**: Plan 1 (`wahidyankf-web-ddd-and-specs-format`) merged to `origin/main` (SHA 77ad0771e). `specs/apps/wahidyankf/ddd/bounded-contexts.yaml` v2, 5 BCs. `wahidyankf-web:test:quick` now runs `ddd bc/ul`. wahidyankf is allowlist-eligible. CI run 25616084542 green. All three plans now done — Phase 0 fully unblocked.
 - [ ] **0.2** Inspect `specs/apps/{wahidyankf,oseplatform,ayokoding}/ddd/bounded-contexts.yaml` — confirm each has `version: 2`, ≥1 context, valid layers. If anything is broken, the dependency is not actually satisfied; halt and re-validate plans 1-3 first.
 - [ ] **0.3** Inspect `apps/{wahidyankf-web,oseplatform-web,ayokoding-web,organiclever-web}/project.json` — confirm each runs `ddd bc/ul` in `test:quick`. (organiclever-be is NOT yet wired; that's Phase 3.)
 - [ ] **0.4** Create worktree `worktrees/bdd-ddd-tooling-gap-fill/`.

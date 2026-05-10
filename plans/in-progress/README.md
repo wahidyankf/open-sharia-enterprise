@@ -5,8 +5,7 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [wahidyankf-web-ddd-and-specs-format](./wahidyankf-web-ddd-and-specs-format/README.md) — Apply C4 + DDD layout to wahidyankf-web (5 BCs, web-only)
-- [bdd-ddd-tooling-gap-fill](./bdd-ddd-tooling-gap-fill/README.md) — Close 10 enforcement gaps in rhino-cli BDD + DDD validators (gated on the three plans above; oseplatform + ayokoding done, awaiting wahidyankf to fully unblock)
+- [bdd-ddd-tooling-gap-fill](./bdd-ddd-tooling-gap-fill/README.md) — Close 10 enforcement gaps in rhino-cli BDD + DDD validators (oseplatform + ayokoding + wahidyankf all done — fully unblocked)
 
 ## Instructions
 
