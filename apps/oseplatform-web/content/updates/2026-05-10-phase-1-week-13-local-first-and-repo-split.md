@@ -222,10 +222,22 @@ Capabilities added this period:
 - **`specs validate-tree` / `validate-counts` / `validate-links` / `validate-adoption`** — specs structure and content validators with drift placeholders.
 - **`governance vendor-audit`** — scans `governance/` for vendor-specific terminology that violates the [vendor-independence convention](https://github.com/wahidyankf/ose-public/blob/main/governance/conventions/structure/governance-vendor-independence.md). 229 violations were remediated as part of `ose-primer`'s adoption of the convention; `ose-public` and `ose-projects` followed.
 - **`validate:cross-vendor-parity`** — enforces that AI agent definitions and tool permissions stay aligned across `.claude/agents/` and `.opencode/agents/` after the OpenCode Go provider migration.
-- **`doctor`** improvements — pins `golangci-lint`, enforces strict Go linting (`godot` + `revive` linters added late in the period), expands tool verification coverage.
+- **`doctor`** improvements — pins `golangci-lint`, enforces strict Go linting (see Go standards section below), expands tool verification coverage.
 - **`env init` / `env backup` / `env restore`** had landed previously; `--scope minimal` and `--fix --dry-run` continued to evolve.
 
 Three new repository-wide AI agent triplets back the validators: `repo-rules-maker/checker/fixer`, `repo-parity-checker/fixer`, and the two `repo-ose-primer-*-maker` agents. The validators run in iterative quality-gate workflows that loop check-fix-verify until two consecutive zero-finding passes (default `max-iterations=7`, strict mode).
+
+### Go Standards Hardening
+
+The Go toolchain picked up a stricter linter and discipline pass late in the period, applied across `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, and `libs/golang-commons`:
+
+- **`golangci-lint` pinned in `doctor`** so every machine and CI runner uses the same version; an exhaustive switch rule was made fatal (one of the early findings was a non-exhaustive `Direction` switch in the mermaid validator).
+- **Sealed-interface sum types** replace string-typed enums for `Format`, `ToolStatus`, `Scope`, and the mermaid enums. Each sum has unexported marker methods so adding a variant is a deliberate code change, not a stringly-typed add at any call site. Tests cover the marker methods directly to guarantee no orphan variants.
+- **`errorlint` discipline** added to the Go standards: error wraps go through `fmt.Errorf("...%w", err)` with `errors.Is/As` for inspection; `err == sentinelErr` and `switch err.(type)` are linter errors.
+- **`godot` and `revive` linters** added to enforce Go doc quality—public symbols must have a comment that starts with the symbol name and ends with a period, and the broader `revive` rule set catches naming, error-return, and exported-doc issues that `golangci-lint`'s default profile lets through.
+- **17 pre-existing `golangci-lint` issues** in `bcregistry` and `glossary` packages were resolved as part of standing the new strict ruleset up against the existing codebase.
+
+The result: the polyglot CLI tooling and `golang-commons` lib all build under the same stricter ruleset, and new Go code gets caught at pre-push if it slips below the bar.
 
 ## OpenCode and Tooling
 
@@ -272,14 +284,15 @@ What changed in five weeks:
 
 ## What's Next
 
-Six lines of work continue over the next month:
+Seven lines of work continue over the next month:
 
 - **Keep the pace high without sacrificing quality** — across the four repos this period saw 1,346 commits over 35 days, about 38 commits per day on average (705 in `ose-public`, 258 in `ose-primer`, 211 in `ose-projects`, 172 in `ose-infra`). The next month aims to hold or beat that cadence, but the safety margin comes from better guardrails rather than slowing down: hardening BDD step coverage, sharpening DDD bounded-context boundaries and ubiquitous-language glossaries across the four web apps, retiring scaffolding, fixing flake, and tightening the `rhino-cli` validator suite (`spec-coverage`, `ddd bc validate`, `ddd ul validate`, `specs validate-tree/counts/links/adoption`, `governance vendor-audit`, cross-vendor parity gate) so spec-vs-code drift is caught at pre-push rather than later.
 - **More development experiments using cheap Chinese LLM models** — driven mostly by the rising token cost of Claude Code. The [OpenCode Go subscription](https://opencode.ai/go) at $10/month bundles MiniMax M2.7 and GLM 5 into the agent loop alongside the existing Anthropic-backed Claude Code path, at a fraction of the per-token spend. The next month extends that exploration: comparing model output quality on real plan execution, validator iteration loops, and code generation; calibrating which capability tier each model fits; and stress-testing latency and reliability in everyday workflows so we can shift more routine work to the cheaper path without losing rigor.
 - **Harness-vendor-independent governance** — the temptation of cheaper alternate models (above) and the broader pull toward harness-tooling independence settled a question this period: the governance of this repo must not lock to any one CLI agent vendor. The substrate is already in place—vendor-audit, cross-vendor parity gate, dual Claude Code and OpenCode bindings, the vendor-neutrality convention—and the next month tightens it further so any agent harness (current or future) can plug in without governance rewrites.
 - **OrganicLever local-first feature build-out** — workout sessions, journal v3, history and progress views, settings, sync (eventually), and offline-first edge cases. Pre-Alpha will become Alpha when the daily flow is usable end-to-end.
 - **`ose-infra` continuous deployment** — the staging branch already auto-deploys; promotion to production environment branches is the next step. The previous update flagged CD as the priority and that has not changed; the local-first pivot consumed time that would otherwise have gone to it.
-- **`ose-primer` template hardening** — remaining classifier rows to settle, `pdf-chat-apps` demo family already in `plans/in-progress/`, and template parity checks running on every propagation.
+- **AI-powered demo apps** — exploratory scope, not on the OrganicLever critical path. The plan is to build one or more demo apps in `ose-primer`'s demo family on the topic of building AI-powered applications (chat, retrieval, agents, document Q&A); the `pdf-chat-apps` plan already in `plans/in-progress/` is the first. The output is meant for learning and reference—useful patterns and pitfalls captured against our governance + testing harness—and the results may inform how future Sharia-compliant AI features get architected, but the demos themselves stay in the template.
+- **`ose-primer` template hardening** — remaining classifier rows to settle, the AI-demo family entering `plans/in-progress/` (above), and template parity checks running on every propagation.
 
 Every commit visible on [GitHub](https://github.com/wahidyankf/ose-public). `ose-primer` at <https://github.com/wahidyankf/ose-primer>. Updates published here on oseplatform.com, with educational content on [ayokoding.com](https://ayokoding.com) and the personal portfolio at [wahidyankf.com](https://www.wahidyankf.com/).
 
