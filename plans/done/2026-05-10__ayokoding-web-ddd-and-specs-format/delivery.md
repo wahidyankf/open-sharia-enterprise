@@ -296,16 +296,23 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits.
-- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`.
-- [ ] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from i18n middleware migration separate from project.json wiring).
-- [ ] Do NOT bundle unrelated fixes into a single commit.
+- [x] Commit changes thematically — group related changes into logically cohesive commits.
+  - Date: 2026-05-10 | Status: Done | Notes: Plan 10.1 specifies single atomic commit covering this whole adoption — that thematic boundary IS the cohesive unit (one BC adoption surface change). No unrelated fixes bundled.
+- [x] Follow Conventional Commits format: `<type>(<scope>): <description>`.
+  - Date: 2026-05-10 | Status: Done | Notes: `feat(ayokoding-web): adopt C4 + DDD specs format with api slug + i18n BC ownership`.
+- [x] Split different domains/concerns into separate commits (e.g., spec scaffolding separate from tRPC router split separate from i18n middleware migration separate from project.json wiring).
+  - Date: 2026-05-10 | Status: Done (deliberately atomic per plan 10.1) | Notes: Plan 10.1 instructs single atomic commit covering all concerns since they comprise one cohesive C4+DDD adoption. The commit body itemizes each concern (spec reshape, DDD scaffolding, source layout BC-organized, i18n middleware migration, project.json wiring, e2e config, documentation). No preexisting fixes were bundled in (Phase 4-5 agent fixed 11 vitest step-file Gherkin path refs as part of Phase 4.7 work — unavoidable to keep tests passing — and that work is logically part of the spec reshape so still single-thematic).
+- [x] Do NOT bundle unrelated fixes into a single commit.
+  - Date: 2026-05-10 | Status: Done | Notes: No unrelated fixes bundled. The commit covers only the planned C4 + DDD adoption surface.
 
-- [ ] **10.1** Commit (single atomic):
+- [x] **10.1** Commit (single atomic):
   - Message: `feat(ayokoding-web): adopt C4 + DDD specs format with api slug + i18n BC ownership`
   - Body lists: 6 BCs, slug rename `be → api`, tRPC router split, i18n middleware migration, DDD wiring.
-- [ ] **10.2** Push via Trunk Based Development.
-- [ ] **10.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+  - Date: 2026-05-10 | Status: Done | Commit: abfed0b0b on `worktree/cosmic-crafting-wind` branch | Notes: 141 files changed, 2471 insertions, 572 deletions. Detailed body covers spec reshape, DDD scaffolding, source layout BC organization, i18n middleware migration, project.json wiring, verification results, e2e config updates, documentation updates, and the bdd-ddd-tooling-gap-fill unblock note.
+- [x] **10.2** Push via Trunk Based Development.
+  - Date: 2026-05-10 | Status: Done | Notes: Rebased worktree branch onto origin/main (5 new commits ahead — oseplatform-web fixes), re-ran pre-push gate (full green), then `git push origin HEAD:main` direct-to-main fast-forward. origin/main HEAD now = 4ee816c85.
+- [x] **10.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+  - Date: 2026-05-10 | Status: Done | Notes: First CI run 25615084062 (commit 4ee816c85) failed — `ddd bc ayokoding` flagged "missing layer infrastructure for context i18n" because the empty `i18n/infrastructure/` dir wasn't tracked by git. Fix commit 3f34cab83 honestly declared i18n layers as `[application, presentation]` only (no infrastructure code today). CI run 25615323712 all green: Unit tests, Integration, E2E, Spec coverage, Lint, Detect changes, Deploy to production all success. Workflow dispatched manually since these workflows trigger only on schedule (6 AM/6 PM WIB) or workflow_dispatch.
 - [ ] **10.4** Move plan folder to `plans/done/YYYY-MM-DD__ayokoding-web-ddd-and-specs-format/`.
 - [ ] **10.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] **10.6** Notify `bdd-ddd-tooling-gap-fill` plan: ayokoding now allowlist-eligible. With plans 1+2+3 done, plan 4 is unblocked.

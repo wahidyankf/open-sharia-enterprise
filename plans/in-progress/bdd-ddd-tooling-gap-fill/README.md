@@ -24,6 +24,7 @@ Close all the high- and medium-severity gaps. Result: every spec validator built
 ## Dependencies (hard)
 
 - **Plans 1, 2, 3 must be merged before this plan starts.** Plan 4 wires `specs validate-adoption` and `validate-tree` into pre-push for an allowlist of four web apps (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`). If plans 1-3 are not done, the allowlist gates fail on day one.
+  - Status (2026-05-10): `oseplatform-web` and `ayokoding-web` adoptions complete and merged to main. `wahidyankf-web-ddd-and-specs-format` is the remaining prerequisite. Once that lands, this plan is fully unblocked.
 - **CLI apps stay off the allowlist permanently.** `ayokoding-cli`, `oseplatform-cli`, `rhino-cli` adopt BDD only (existing `spec-coverage` targets); no DDD adoption is required of them. The allowlist excludes them by design.
 
 ## Scope: 11 fixes
