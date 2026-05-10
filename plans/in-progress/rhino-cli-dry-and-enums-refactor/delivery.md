@@ -4,13 +4,18 @@ All steps follow Red → Green → Refactor (TDD) where applicable. Where a
 change is pure mechanical replacement that breaks no test, RED is
 implicit (the existing test suite is the contract; it must stay green
 after each commit). Run `npx nx run rhino-cli:test:quick` at the end of
-every phase. Run `npx nx affected -t typecheck lint test:quick` before
-push.
+every phase. Run `npx nx affected -t typecheck lint test:quick spec-coverage`
+before push.
 
 ## Worktree
 
-Worktree path: `worktrees/async-rolling-gizmo/` (existing — reuse it;
-this plan was authored from inside this worktree).
+Worktree path: `worktrees/async-rolling-gizmo/` [Judgment call — reuses the
+existing worktree provisioned at plan authoring time. Convention requires
+`worktrees/rhino-cli-dry-and-enums-refactor/` but the existing worktree is
+already populated and on branch `worktree/async-rolling-gizmo`.]
+
+See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)
+and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
 
 If starting fresh, provision via:
 
@@ -25,6 +30,17 @@ if not already done):
 npm install
 npm run doctor -- --fix
 ```
+
+---
+
+## Commit Guidelines
+
+- Follow Conventional Commits: `<type>(<scope>): <description>`.
+  Type is `refactor` for all phases in this plan.
+- Commit one phase per commit as shown in each phase's COMMIT step.
+- Do NOT bundle multiple phases into a single commit.
+- Fix-forward commits for quality gate failures use the same scope as
+  the phase that introduced the failure.
 
 ---
 
@@ -130,7 +146,9 @@ Foundation phase. 24-file mechanical replace.
 
 ## Phase 3 — `speccoverage.matcherKind` typed enum
 
-Closed-universe phase. ~17 sites in `checker.go` + 1 in `reporter.go`.
+Closed-universe phase. ~12 sites across `checker.go`, `types.go`, and
+`rust_steps.go` (non-test). `reporter.go` requires no changes — it uses
+`o.MatcherKind` as a wire-format string field already.
 
 - [ ] **3.1 GREEN (type)** — Edit
       `apps/rhino-cli/internal/speccoverage/checker.go`: add
@@ -189,8 +207,14 @@ Closed-universe + DRY in one phase (small enough). Item 4 + Item 8.
       `normaliseUlSeverity`. Call site becomes
       `sev := resolveSeverity(ulSeverity)`.
 
+- [ ] **4.6b GREEN (delete old severity test file)** — Delete
+      `apps/rhino-cli/cmd/ddd_severity_test.go` (tests the now-deleted
+      `resolveBcSeverity` / `resolveUlSeverity` functions; will not compile
+      after steps 4.5 and 4.6). Acceptance criterion:
+      `go build ./apps/rhino-cli/cmd/...` exits 0.
+
 - [ ] **4.7 GREEN (test for severity precedence)** — Add
-      `apps/rhino-cli/cmd/severity_test.go` covering: flag wins,
+      `apps/rhino-cli/cmd/severity_test.go` (_New file_) covering: flag wins,
       env wins when no flag, default when neither, env "warn" emits
       stderr warning. RED on file creation, GREEN once impl works.
 
@@ -384,54 +408,78 @@ Largest LOC reduction. Item 6 + Item 7.
       covering: `scanLines` against a fixture, `scanFull` against a
       fixture, each strategy variant.
 
-- [ ] **10.3 GREEN (clojure migration)** — Replace
+- [ ] **10.3 GREEN (clojure migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/clojure_steps.go`: replace
       `extractClojureStepTexts` body with a `cljRules` declaration +
-      `scanLines(path, sm, cljRules)` call.
+      `scanLines(path, sm, cljRules)` call. Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.4 GREEN (java migration)** — Same pattern for
-      `extractJVMStepTexts` (java_steps.go).
+- [ ] **10.4 GREEN (java migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/java_steps.go`: same pattern for
+      `extractJVMStepTexts`. Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.5 GREEN (elixir migration)** — Same for
-      `extractElixirStepTexts`.
+- [ ] **10.5 GREEN (elixir migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/elixir_steps.go`: replace
+      `extractElixirStepTexts` body with an `elixirRules` declaration +
+      `scanLines(path, sm, elixirRules)` call. Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.6 GREEN (rust migration)** — Same for
-      `extractRustStepTexts`. Three rules in priority order: regex,
-      expr, literal.
+- [ ] **10.6 GREEN (rust migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/rust_steps.go`: replace
+      `extractRustStepTexts` body with a `rustRules` declaration +
+      `scanLines` call. Three rules in priority order: regex, expr, literal.
+      Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.7 GREEN (dart migration)** — Same for
-      `extractDartStepTexts` using `scanFull`.
+- [ ] **10.7 GREEN (dart migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/dart_steps.go`: replace
+      `extractDartStepTexts` body using `scanFull`. Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.8 GREEN (python migration)** — Same for
-      `extractPythonStepTexts` using `scanFull` and the
-      `strategyAddPython` strategy. Add the `{{ → {` transform to the
-      rule.
+- [ ] **10.8 GREEN (python migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/python_steps.go`: replace
+      `extractPythonStepTexts` body using `scanFull` and the
+      `strategyAddPython` strategy. Add the `{{ → {` transform to the rule.
+      Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.9 GREEN (csharp migration)** — Same for
-      `extractCSharpStepTexts` using `scanFull` with two rules
-      (verbatim string with `"" → "` transform; regular string).
+- [ ] **10.9 GREEN (csharp migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/dotnet_steps.go`: replace
+      `extractCSharpStepTexts` body using `scanFull` with two rules
+      (verbatim string with `"" → "` transform; regular string). Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.10 GREEN (fsharp migration)** — `extractFSharpStepTexts`
-      anchors with `^...$`. Either add `strategyAddAnchoredPattern`
+- [ ] **10.10 GREEN (fsharp migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/dotnet_steps.go` (both C# and
+      F# extractors live in this file): update `extractFSharpStepTexts`.
+      It anchors with `^...$`. Either add `strategyAddAnchoredPattern`
       or keep its own loop (decide by reviewing the helper signature
       complexity). If kept bespoke, document why with a comment
-      pointing at the anchoring requirement.
+      pointing at the anchoring requirement. Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.11 GREEN (TS migration)** — Migrate `extractTSStepTexts`
-      to two rules (string-style + regex-literal) using `scanFull`.
-      Comment-stripping via `stripJSComments` stays as-is.
+- [ ] **10.11 GREEN (TS migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/checker.go`: migrate
+      `extractTSStepTexts` to two rules (string-style + regex-literal)
+      using `scanFull`. Comment-stripping via `stripJSComments` stays as-is.
+      Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.12 GREEN (Go migration)** — Migrate `extractGoStepTexts`
-      to one rule using `scanLines` + `strategyAddPattern`.
+- [ ] **10.12 GREEN (Go migration)** — Edit
+      `apps/rhino-cli/internal/speccoverage/checker.go`: migrate
+      `extractGoStepTexts` to one rule using `scanLines` +
+      `strategyAddPattern`. Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.13 GREEN (extractor registry)** — Replace switch in
-      `extractAllStepTexts` (checker.go ~line 723) with
+- [ ] **10.13 GREEN (extractor registry)** — Edit
+      `apps/rhino-cli/internal/speccoverage/checker.go`: replace switch in
+      `extractAllStepTexts` (~line 723) with
       `var stepExtractorsByExt = map[string]func(string, *stepMatcher) error{...}` lookup.
+      Verify: `go build ./apps/rhino-cli/...` exits 0.
 
-- [ ] **10.14 GREEN (scenario extractor registry)** — Replace switch in
-      `extractScenarioTitles` (checker.go ~line 634) with
+- [ ] **10.14 GREEN (scenario extractor registry)** — Edit
+      `apps/rhino-cli/internal/speccoverage/checker.go`: replace switch in
+      `extractScenarioTitles` (~line 634) with
       `var scenarioExtractorsByExt = map[string]func(string) (map[string]bool, error){...}` lookup.
       Default (unmapped extension → TS extractor) preserved by an
-      explicit fallback after the lookup.
+      explicit fallback after the lookup. Verify:
+      `go build ./apps/rhino-cli/...` exits 0.
 
 - [ ] **10.15 PHASE GATE** — `npx nx run rhino-cli:test:quick` exits 0.
       Run `wc -l apps/rhino-cli/internal/speccoverage/{rust,dart,java,python,elixir,clojure,dotnet}_steps.go > /tmp/extractor-loc-after.txt` and verify ≥30%
@@ -446,7 +494,7 @@ Largest LOC reduction. Item 6 + Item 7.
 DRY. Item 11.
 
 - [ ] **11.1 GREEN (helpers)** — Create
-      `apps/rhino-cli/internal/agents/check_helpers.go` with
+      `apps/rhino-cli/internal/agents/check_helpers.go` (_New file_) with
       `passed`, `failed`, `warning` constructors per tech-docs.md
       item 11.
 
@@ -475,7 +523,7 @@ DRY. Item 11.
 - [ ] **12.3** — Run `npx nx run rhino-cli:lint`. Exit 0.
 
 - [ ] **12.4** — Run coverage validation:
-      `cd apps/rhino-cli && go run . test-coverage validate --threshold 90 --report cover.out`. Exit 0.
+      `cd apps/rhino-cli && go run . test-coverage validate cover.out 90`. Exit 0.
 
 - [ ] **12.5** — Re-run all Phase 0 captures and diff against
       baselines:
@@ -488,7 +536,7 @@ DRY. Item 11.
   Each diff must be empty.
 
 - [ ] **12.6** — Run repo-wide affected target:
-      `npx nx affected -t typecheck lint test:quick`. Exit 0.
+      `npx nx affected -t typecheck lint test:quick spec-coverage`. Exit 0.
 
 - [ ] **12.7** — Verify enum residue is gone — these greps must each
       return 0 hits:
@@ -528,6 +576,10 @@ DRY. Item 11.
 ---
 
 ## Quality Gates Summary
+
+> **Important**: Fix ALL failures found during quality gates — not just
+> those caused by your changes. Root cause orientation: proactively fix
+> preexisting errors encountered during work.
 
 Local gates (run during execution):
 

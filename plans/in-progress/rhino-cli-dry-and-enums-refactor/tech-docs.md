@@ -53,7 +53,9 @@ Two callers use string literals:
 - `addPatternWithOrigin` writes `Kind: "pattern"`.
 - `checkOrphanStepImpls` switches `case "exact":` and `case "pattern":`
   with no `default`.
-- `reporter.go:78` uses `o.MatcherKind` as string in formatted output.
+- `reporter.go:78` uses `o.MatcherKind` as a `string` field (already wire
+  format) — NO migration needed here. The string value is populated at the
+  orphan-collection site via `entry.Kind.String()`.
 
 **After**:
 

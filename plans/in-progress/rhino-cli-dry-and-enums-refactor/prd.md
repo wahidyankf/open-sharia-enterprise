@@ -23,20 +23,20 @@ and after. Test suite passes throughout.
 ## User Stories
 
 - **US-1** — As a CLI maintainer, I want a single canonical shape for
-  spec-validate subcommands so adding a fifth subcommand doesn't require
-  copy-pasting `resolveXxxApps` + driver + finding printer.
+  spec-validate subcommands so that adding a fifth subcommand doesn't
+  require copy-pasting `resolveXxxApps` + driver + finding printer.
 - **US-2** — As an agent author, I want the compiler to flag a typo in
-  a `ValidationCheck.Status` value so I cannot land a `"passsed"` typo
-  that silently no-ops the validator.
+  a `ValidationCheck.Status` value so that I cannot land a `"passsed"`
+  typo that silently no-ops the validator.
 - **US-3** — As a BDD author, I want adding a new language for
-  `spec-coverage` to be a single-map-entry change, not a multi-file
-  scavenger hunt across `extractAllStepTexts`, `extractScenarioTitles`,
-  `isTestFile`, and a new `<lang>_steps.go`.
+  `spec-coverage` to be a single-map-entry change so that I don't need a
+  multi-file scavenger hunt across `extractAllStepTexts`,
+  `extractScenarioTitles`, `isTestFile`, and a new `<lang>_steps.go`.
 - **US-4** — As a DDD author, I want `ddd bc` and `ddd ul` to share
-  one severity resolver so a fix to `--severity` precedence is a
+  one severity resolver so that a fix to `--severity` precedence is a
   one-line change, not a two-line change in two files.
 - **US-5** — As a CI consumer of `rhino-cli`, I want the refactor to
-  preserve every command's output byte-for-byte so my pre-push hooks
+  preserve every command's output byte-for-byte so that my pre-push hooks
   don't break.
 
 ## Functional Requirements

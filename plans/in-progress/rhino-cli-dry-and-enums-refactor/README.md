@@ -86,7 +86,7 @@ each item.
 flowchart LR
     subgraph Before["Before: scattered string-typed values"]
         A1["agents/*.go<br/>Status: 3 strings, untyped<br/>~232 string-literal sites"]
-        A2["speccoverage/checker.go<br/>Kind: 'exact'|'pattern'<br/>~17 sites, no exhaustivity"]
+        A2["speccoverage/checker.go<br/>Kind: 'exact'|'pattern'<br/>~12 sites, no exhaustivity"]
         A3["cmd/specs_*.go<br/>Criticality: 'HIGH'|'MEDIUM'<br/>12 sites, 4 dup resolvers"]
         A4["cmd/ddd_bc.go<br/>cmd/ddd_ul.go<br/>byte-identical sev helpers"]
         A5["7 per-lang *_steps.go<br/>~150 LOC duplication"]
