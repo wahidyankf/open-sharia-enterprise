@@ -139,7 +139,11 @@ The parent grew its own AI agent set—11 in total: `plan-maker`, `plan-checker`
 
 ### `ose-infra` Diverging
 
-`ose-infra` shares its root commit with `ose-public`—same hash, same Phase 0 origin—because it was forked from `ose-public`. The divergence accelerated this period:
+`ose-infra` shares its root commit with `ose-public`—same hash, same Phase 0 origin—because it was forked from `ose-public`. The divergence accelerated this period.
+
+**Rust is `ose-infra`'s chosen language so far.** The selection criteria for infrastructure are different from product code: long-running services, tight resource budgets, and robustness under load matter more than iteration velocity. Rust's ownership model, zero-cost abstractions, and minimum resource footprint fit that profile. `coralpolyp`'s Rust/Axum backend (below) is the first concrete adopter inside `ose-infra`; future infrastructure components are expected to follow.
+
+Other notable changes this period:
 
 - **Self-hosted GitHub Actions runner** (`gha-runner`): multi-arch Docker image, `launchd` supervisor, per-container resource caps (2 CPU / 8 GB), concurrency tuning (default 3), stale-runner cleanup, JIT registration. Most of `ose-infra`'s `fix(ci)` work this period is runner stability—port conflicts, BuildKit toggles, timeout calibration, e2e cleanup. The runner now serves `ose-infra`'s CI exclusively; `ose-public` still uses GitHub-hosted `ubuntu-latest`.
 - **`coralpolyp`** — a new app inside `ose-infra`. Rust/Axum backend with a health endpoint, Next.js + Effect TS frontend, Playwright BE+FE E2E suites, Docker dev and CI stacks, and C4 + Gherkin + OpenAPI specs. Scaffolded early in this period. The product purpose is intentionally not in scope for a public update.
