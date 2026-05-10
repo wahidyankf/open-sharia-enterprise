@@ -100,7 +100,7 @@ func Fix(result *DoctorResult, defs []toolDef, opts FixOptions, printf func(stri
 // then runs the fixer on the results.
 func FixAll(result *DoctorResult, opts CheckOptions, fixOpts FixOptions, printf func(string, ...any)) FixResult {
 	defs := buildToolDefs(opts.RepoRoot)
-	if opts.Scope == ScopeMinimal {
+	if _, ok := opts.Scope.(ScopeMinimal); ok {
 		filtered := make([]toolDef, 0)
 		for _, def := range defs {
 			if MinimalTools[def.name] {

@@ -534,7 +534,7 @@ func CheckAll(opts CheckOptions) (*DoctorResult, error) {
 	defs := buildToolDefs(opts.RepoRoot)
 
 	// Filter by scope
-	if opts.Scope == ScopeMinimal {
+	if _, ok := opts.Scope.(ScopeMinimal); ok {
 		filtered := make([]toolDef, 0)
 		for _, def := range defs {
 			if MinimalTools[def.name] {

@@ -858,7 +858,7 @@ func TestCheckAll_MinimalScope(t *testing.T) {
 		"jq":     {stdout: "jq-1.8.1\n", exitCode: 0},
 	})
 
-	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: ScopeMinimal})
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: ScopeMinimal{}})
 	if err != nil {
 		t.Fatalf("CheckAll error: %v", err)
 	}
@@ -868,8 +868,8 @@ func TestCheckAll_MinimalScope(t *testing.T) {
 	if result.OKCount != 7 {
 		t.Errorf("expected OKCount == 7, got %d", result.OKCount)
 	}
-	if result.Scope != ScopeMinimal {
-		t.Errorf("expected Scope == minimal, got %q", result.Scope)
+	if _, ok := result.Scope.(ScopeMinimal); !ok {
+		t.Errorf("expected Scope == minimal, got %q", scopeCode(result.Scope))
 	}
 
 	// Verify only minimal tools are present
@@ -909,7 +909,7 @@ func TestCheckAll_FullScopeDefault(t *testing.T) {
 	})
 
 	// Empty scope should behave as full
-	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: ""})
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner, Scope: nil})
 	if err != nil {
 		t.Fatalf("CheckAll error: %v", err)
 	}

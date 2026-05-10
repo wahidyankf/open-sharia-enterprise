@@ -66,7 +66,7 @@ func (s *doctorUnitSteps) allRequiredDevelopmentToolsArePresentWithMatchingVersi
 		Checks:       makeAllOKChecks(19),
 	}
 	doctorCheckAllFn = func(opts doctor.CheckOptions) (*doctor.DoctorResult, error) {
-		if opts.Scope == doctor.ScopeMinimal {
+		if _, ok := opts.Scope.(doctor.ScopeMinimal); ok {
 			minimalNames := []string{"git", "volta", "node", "npm", "golang", "docker", "jq"}
 			checks := make([]doctor.ToolCheck, len(minimalNames))
 			for i, name := range minimalNames {
@@ -79,7 +79,7 @@ func (s *doctorUnitSteps) allRequiredDevelopmentToolsArePresentWithMatchingVersi
 			return &doctor.DoctorResult{
 				OKCount: 7,
 				Checks:  checks,
-				Scope:   doctor.ScopeMinimal,
+				Scope:   doctor.ScopeMinimal{},
 			}, nil
 		}
 		return s.mockResult, nil

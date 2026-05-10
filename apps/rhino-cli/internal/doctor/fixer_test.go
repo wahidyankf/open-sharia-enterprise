@@ -311,7 +311,7 @@ func TestFixAll_WithMissingTools(t *testing.T) {
 		}
 	}
 	result := &DoctorResult{Checks: checks, OKCount: 6, MissingCount: 1}
-	opts := CheckOptions{RepoRoot: "/nonexistent", Scope: ScopeMinimal}
+	opts := CheckOptions{RepoRoot: "/nonexistent", Scope: ScopeMinimal{}}
 
 	origRunner := fixRunner
 	fixRunner = func(cmd string, args ...string) error { return nil }
@@ -340,7 +340,7 @@ func TestFixAll_FullScope(t *testing.T) {
 		},
 		OKCount: 1,
 	}
-	opts := CheckOptions{RepoRoot: "/nonexistent", Scope: ScopeFull}
+	opts := CheckOptions{RepoRoot: "/nonexistent", Scope: ScopeFull{}}
 
 	var output strings.Builder
 	printf := func(format string, args ...any) { fmt.Fprintf(&output, format, args...) }

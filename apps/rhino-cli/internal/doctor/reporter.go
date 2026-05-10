@@ -60,7 +60,7 @@ func FormatText(result *DoctorResult, verbose, quiet bool) string {
 	total := result.OKCount + result.WarnCount + result.MissingCount
 	summary := fmt.Sprintf("\nSummary: %d/%d tools OK, %d warning, %d missing",
 		result.OKCount, total, result.WarnCount, result.MissingCount)
-	if result.Scope == ScopeMinimal {
+	if _, ok := result.Scope.(ScopeMinimal); ok {
 		summary += " (scope: minimal)"
 	}
 	sb.WriteString(summary + "\n")
@@ -112,7 +112,7 @@ func FormatJSON(result *DoctorResult) (string, error) {
 
 	out := JSONOutput{
 		Status:       overallStatus(result),
-		Scope:        string(result.Scope),
+		Scope:        scopeCode(result.Scope),
 		Timestamp:    timeutil.Timestamp(),
 		OKCount:      result.OKCount,
 		WarnCount:    result.WarnCount,

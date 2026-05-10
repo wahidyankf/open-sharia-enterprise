@@ -26,15 +26,48 @@ type ToolCheck struct {
 	Note             string
 }
 
-// Scope controls which tools doctor checks.
-type Scope string
+// Scope is a sealed interface controlling which tools doctor checks.
+// Use ScopeFull{} or ScopeMinimal{} — type switches are enforced exhaustive
+// by gochecksumtype when //sumtype:decl is present.
+//
+//sumtype:decl
+type Scope interface {
+	isScope()
+	Code() string
+}
 
-const (
-	// ScopeFull checks all tools (default).
-	ScopeFull Scope = "full"
-	// ScopeMinimal checks only core tools required for basic development.
-	ScopeMinimal Scope = "minimal"
-)
+// ScopeFull checks all tools (default).
+type ScopeFull struct{}
+
+func (ScopeFull) isScope() {}
+func (ScopeFull) Code() string { return "full" }
+
+// ScopeMinimal checks only core tools required for basic development.
+type ScopeMinimal struct{}
+
+func (ScopeMinimal) isScope()    {}
+func (ScopeMinimal) Code() string { return "minimal" }
+
+// ParseScope converts a CLI string to a Scope variant.
+// Empty string defaults to ScopeFull. Returns false for unknown values.
+func ParseScope(s string) (Scope, bool) {
+	switch s {
+	case "", "full":
+		return ScopeFull{}, true
+	case "minimal":
+		return ScopeMinimal{}, true
+	default:
+		return nil, false
+	}
+}
+
+// scopeCode returns the Code() of a Scope, or "full" for a nil Scope.
+func scopeCode(s Scope) string {
+	if s == nil {
+		return "full"
+	}
+	return s.Code()
+}
 
 // MinimalTools lists the tool names included in the minimal scope.
 var MinimalTools = map[string]bool{
