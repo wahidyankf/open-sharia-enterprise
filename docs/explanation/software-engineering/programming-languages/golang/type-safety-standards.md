@@ -2840,6 +2840,37 @@ flowchart LR
 | Interface Types | Methods (contracts), Empty Interface (any), Type Assertion (runtime)      | —                                |
 | Generic Types   | Type Parameters ([T any]), Constraints (interface bounds), Type Inference | Generic Collections — Type Safe  |
 
+## Sum-Type Emulation (Sealed-Interface Pattern)
+
+Go has no native sum types. The sealed-interface pattern emulates discriminated unions with linter-enforced exhaustiveness.
+
+### Pattern
+
+```go
+//sumtype:decl
+type Result interface {
+    isResult()
+    Code() string
+    String() string
+}
+
+type Ok struct{ Value string }
+func (Ok) isResult()    {}
+func (Ok) Code() string { return "ok" }
+func (Ok) String() string { return "ok" }
+
+type Err struct{ Reason string }
+func (Err) isResult()    {}
+func (Err) Code() string { return "error" }
+func (Err) String() string { return "error" }
+```
+
+### Exhaustiveness Enforcement
+
+`gochecksumtype` linter enforces that every type switch over a `//sumtype:decl` interface covers all declared variants. Missing a case is a compile-time-equivalent lint error.
+
+See [Sealed-Interface Sum Types](./design-patterns.md#sealed-interface-sum-types) for the full pattern, `ParseX` helpers, JSON serialization, and when to choose sealed interface vs typed string enum.
+
 ## Compile-Time Type Checking
 
 ```mermaid

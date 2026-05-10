@@ -58,11 +58,41 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 - **Type Safety**: Strong static typing with interfaces
 - **Testing**: Table-driven tests, `go test`, benchmarks with `testing` package
-- **Error Handling**: Explicit error returns, error wrapping with `fmt.Errorf`
+- **Error Handling**: Explicit error returns, error wrapping with `fmt.Errorf` (`%w` — `errorlint` enforces)
 - **Performance**: Profile-guided optimization, avoid premature optimization
 - **Security**: Input validation, secure dependencies, no hardcoded secrets
 - **Coverage**: >=95% line coverage enforced via `rhino-cli test-coverage validate`
 - **CLI Naming**: All Go files use underscores; domain-prefixed Cobra subcommands (`{app} {domain} {action}`)
+
+### Linting Discipline (Enforced by golangci-lint)
+
+Three linters were added in 2026-05-10 to strengthen type safety:
+
+**`errorlint`** — Error-handling discipline:
+
+- Use `errors.Is(err, target)` — never `err == target`
+- Use `errors.As(err, &typed)` — never `err.(SomeType)`
+- Use `%w` in `fmt.Errorf` — never `%v` for error args
+
+**`gochecksumtype`** — Sealed-interface exhaustiveness:
+
+- Prefer sealed interfaces (`//sumtype:decl`) over typed string enums when variants may carry per-variant data
+- Every type switch over a `//sumtype:decl` interface must cover all variants
+- See [Sealed-Interface Sum Types](../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types)
+
+**`iotamixing`** — Const-block hygiene:
+
+- Never mix `iota` constants with literal constants in the same `const` block
+
+Canonical sealed-interface form:
+
+```go
+//sumtype:decl
+type Scope interface { isScope(); Code() string; String() string }
+type ScopeFull struct{}
+func (ScopeFull) isScope() {}; func (ScopeFull) Code() string { return "full" }; func (ScopeFull) String() string { return "full" }
+// ... other variants
+```
 
 ## Prerequisite Knowledge
 

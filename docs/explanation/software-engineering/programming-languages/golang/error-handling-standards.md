@@ -339,12 +339,12 @@ The difference between `%w` (wrap) and `%v` (format):
 func ProcessData(id int) error {
     data, err := FetchData(id)
 
-    // %w: Preserves error chain, allows errors.Is/As
+    // %w: Preserves error chain, allows errors.Is/As  ← REQUIRED by errorlint
     if err != nil {
         return fmt.Errorf("fetch data for id=%d: %w", id, err)
     }
 
-    // %v: Converts to string, breaks error chain
+    // %v: Converts to string, breaks error chain  ← errorlint flags this
     if err != nil {
         return fmt.Errorf("fetch data for id=%d: %v", id, err)
         // Can't use errors.Is/As on this error!
@@ -353,8 +353,43 @@ func ProcessData(id int) error {
     return nil
 }
 
-// RULE: Use %w when wrapping errors you want to inspect later
-// RULE: Use %v when you want to hide implementation details
+// RULE: Always use %w when the argument is an error — enforced by errorlint linter.
+// RULE: Use %v only for non-error values (strings, ints, structs).
+```
+
+### errorlint Rules (Enforced by Linter)
+
+The `errorlint` linter enforces three rules:
+
+**1. Use `%w` for error arguments in `fmt.Errorf`:**
+
+```go
+// BAD — errorlint: non-wrapping format verb for fmt.Errorf
+return fmt.Errorf("operation failed: %v", err)
+
+// GOOD
+return fmt.Errorf("operation failed: %w", err)
+```
+
+**2. Use `errors.Is` (not `==`) for error comparison:**
+
+```go
+// BAD — errorlint: comparison against error using ==
+if err == io.EOF {
+
+// GOOD
+if errors.Is(err, io.EOF) {
+```
+
+**3. Use `errors.As` (not type assertion) for error type checking:**
+
+```go
+// BAD — errorlint: type assertion on error; use errors.As
+if exitErr, ok := err.(*exec.ExitError); ok {
+
+// GOOD
+var exitErr *exec.ExitError
+if errors.As(err, &exitErr) {
 ```
 
 ### Error Wrapping Chain

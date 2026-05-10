@@ -3950,6 +3950,93 @@ type ReadCloser interface {
 
 ---
 
+## Sealed-Interface Sum Types
+
+Go has no native sum types, but the sealed-interface pattern emulates them with `gochecksumtype` exhaustiveness enforcement.
+
+### Canonical Form
+
+```go
+//sumtype:decl
+type ToolStatus interface {
+    isToolStatus() // unexported marker — prevents external implementations
+    Code() string  // string identity for JSON/logging
+    String() string // implements fmt.Stringer; enables %s in fmt.Sprintf
+}
+
+type StatusOK struct{}
+func (StatusOK) isToolStatus()   {}
+func (StatusOK) Code() string    { return "ok" }
+func (StatusOK) String() string  { return "ok" }
+
+type StatusWarning struct{}
+func (StatusWarning) isToolStatus()  {}
+func (StatusWarning) Code() string   { return "warning" }
+func (StatusWarning) String() string { return "warning" }
+
+type StatusMissing struct{}
+func (StatusMissing) isToolStatus()  {}
+func (StatusMissing) Code() string   { return "missing" }
+func (StatusMissing) String() string { return "missing" }
+
+// ParseToolStatus converts a CLI string to a ToolStatus variant.
+// Returns false if the string does not match any known variant.
+func ParseToolStatus(s string) (ToolStatus, bool) {
+    switch s {
+    case "ok":      return StatusOK{}, true
+    case "warning": return StatusWarning{}, true
+    case "missing": return StatusMissing{}, true
+    default:        return nil, false
+    }
+}
+```
+
+### Type Switches (Enforced by gochecksumtype)
+
+```go
+// Exhaustive type switch — gochecksumtype flags any missing case.
+switch status.(type) {
+case StatusOK:
+    result.OKCount++
+case StatusWarning:
+    result.WarnCount++
+case StatusMissing:
+    result.MissingCount++
+}
+
+// Single-case type assertion (no exhaustiveness requirement).
+if _, ok := status.(StatusMissing); ok {
+    return "not found"
+}
+```
+
+### MarshalJSON for Wire Compatibility
+
+When the sealed-interface type appears in a JSON-serialized struct, add a `scopeCode()` nil-safe helper or embed the Code() call at the struct level:
+
+```go
+// In JSON struct, use a separate string field to preserve the wire format.
+type jsonOutput struct {
+    Status string `json:"status"` // = status.Code()
+}
+out := jsonOutput{Status: status.Code()}
+```
+
+### When to Use vs Typed String Enum
+
+| Pattern | Use when |
+|---------|----------|
+| **Typed string enum** (`type X string`) | Flat ordinal — no variant-specific data; serialized as-is; `exhaustive` linter already sufficient |
+| **Sealed interface** (`//sumtype:decl`) | Variants may carry different data fields in future; cross-package type identity matters; stricter exhaustiveness desired |
+
+Both patterns are valid. Prefer sealed interface when variants are likely to evolve or carry per-variant state.
+
+### Cross-Package Limitation
+
+`gochecksumtype` only enforces exhaustiveness for type switches **within the same package** as the `//sumtype:decl` declaration. Switches in external packages are not checked — this is a known tool limitation, not a bug.
+
+---
+
 ## Related Documentation
 
 **Go-Specific Standards:**

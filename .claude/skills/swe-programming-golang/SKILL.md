@@ -68,13 +68,46 @@ func Map[T, U any](slice []T, f func(T) U) []U {
 }
 ```
 
-**Error Wrapping**: Use `fmt.Errorf` with `%w`
+**Error Wrapping**: Always `%w` for error args in `fmt.Errorf` — `errorlint` linter enforces:
 
 ```go
 if err != nil {
-    return fmt.Errorf("failed to process user: %w", err)
+    return fmt.Errorf("failed to process user: %w", err) // %w preserves chain
+}
+// Never: fmt.Errorf("...%v", err) — errorlint violation
+```
+
+**Error Comparison**: Always `errors.Is`/`errors.As` — `errorlint` linter enforces:
+
+```go
+if errors.Is(err, io.EOF) { ... }   // NOT: err == io.EOF
+
+var exitErr *exec.ExitError
+if errors.As(err, &exitErr) { ... } // NOT: err.(*exec.ExitError)
+```
+
+**Sealed-Interface Sum Types**: Use `//sumtype:decl` + `gochecksumtype` for exhaustive type switches:
+
+```go
+//sumtype:decl
+type MyStatus interface {
+    isMyStatus()
+    Code() string
+    String() string
+}
+type StatusA struct{}
+func (StatusA) isMyStatus()   {}
+func (StatusA) Code() string  { return "a" }
+func (StatusA) String() string { return "a" }
+
+// gochecksumtype enforces exhaustive coverage:
+switch s.(type) {
+case StatusA:
+    // ...
 }
 ```
+
+See [Sealed-Interface Sum Types](../../../docs/explanation/software-engineering/programming-languages/golang/design-patterns.md#sealed-interface-sum-types) for full pattern.
 
 **Struct Embedding**: Use for composition
 

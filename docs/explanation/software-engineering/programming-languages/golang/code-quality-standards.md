@@ -1230,6 +1230,9 @@ Document linter decisions:
 - **errcheck**: All errors must be checked
 - **govet**: All suspicious constructs fixed
 - **staticcheck**: All issues resolved
+- **errorlint**: `errors.Is`/`errors.As` for comparisons; `%w` for error wrapping in `fmt.Errorf`
+- **gochecksumtype**: Exhaustive type switches on sealed interfaces (`//sumtype:decl`)
+- **iotamixing**: No mixing of `iota` with non-iota constants in the same `const` block
 
 ## Disabled Linters
 
