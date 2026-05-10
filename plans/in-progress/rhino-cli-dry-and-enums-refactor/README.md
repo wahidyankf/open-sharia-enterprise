@@ -101,8 +101,8 @@ flowchart LR
     end
 
     subgraph After["After: typed enums + shared helpers"]
-        B1["agents.CheckStatus<br/>typed const + Add() method"]
-        B2["speccoverage.matcherKind<br/>iota + exhaustive switch"]
+        B1["agents.CheckStatus<br/>sealed interface + Add()"]
+        B2["speccoverage.matcherKind<br/>sealed iface + gochecksumtype"]
         B3["cmd.Criticality<br/>+ shared specs driver"]
         B4["cmd/severity.go<br/>shared resolver + driver"]
         B5["scanLines + scanFull<br/>+ ext registry map"]

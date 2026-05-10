@@ -99,20 +99,33 @@ Pattern: sealed interface (`//sumtype:decl`) per the
       ending in a period (godot + revive).
 
 - [ ] **1.2 GREEN (callsite migration — internal/agents)** — Replace every
-      string literal `Status: "passed"` / `"warning"` / `"failed"` in
+      string literal `Status: "passed"` / `"warning"` / `"failed"` and
+      every equality comparison / switch-case label using those strings in
       `apps/rhino-cli/internal/agents/*.go` (non-test) with the
-      corresponding zero-value variant (e.g., `StatusPassed{}`). Files
-      touched: `agent_validator.go`, `claude_validator.go`,
-      `skill_validator.go`, `sync_validator.go`, `yaml_formatting.go`.
+      corresponding zero-value variant (e.g., `StatusPassed{}`) or a type
+      assertion / type switch. Files touched: `agent_validator.go`,
+      `claude_validator.go`, `skill_validator.go`, `sync_validator.go`,
+      `yaml_formatting.go`, `reporter.go` (equality comparisons on
+      `check.Status` at lines ~225, ~243, ~347, ~366 and switch-case
+      labels at lines ~262, ~264, ~386, ~388 — migrate these to type
+      assertions / type switches).
       Verify with
-      `grep -rn 'Status:\s*"passed"\|Status:\s*"warning"\|Status:\s*"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go` —
-      must return 0.
+      `grep -rn '"passed"\|"warning"\|"failed"' apps/rhino-cli/internal/agents/*.go | grep -v _test.go | grep -v 'Code()'` —
+      must return 0 (the only allowed occurrences are in `Code()` method
+      bodies and JSON-wire population).
 
-- [ ] **1.3 GREEN (JSON wire-format)** — Add a wire-format struct in the
-      reporter (or marshalling helper) that exposes `Status string`
-      populated via `check.Status.Code()`, mirroring
-      `internal/doctor/reporter.go:105`. Existing JSON output
-      (`"status": "passed"`) is preserved byte-for-byte.
+- [ ] **1.3 GREEN (JSON wire-format)** — Edit
+      `apps/rhino-cli/internal/agents/reporter.go`: add or modify the JSON
+      serialisation for `ValidationCheck` so the emitted JSON field
+      `"status"` is populated from `check.Status.Code()` rather than a
+      direct `Status string` assignment. The approach mirrors
+      `internal/doctor/reporter.go:105` (`Status: check.Status.Code()` in
+      a wire-format struct). If the marshalling logic is large enough to
+      warrant extraction, create `apps/rhino-cli/internal/agents/wire.go`
+      (_New file_) instead. Existing JSON output (`"status": "passed"`)
+      is preserved byte-for-byte. Verify: `go build ./apps/rhino-cli/...`
+      exits 0 and the Phase 0 `agents validate-claude -o json` baseline
+      diff is empty.
 
 - [ ] **1.4 GREEN (test migration)** — Update `*_test.go` files in
       `apps/rhino-cli/internal/agents/` that compare `check.Status` to
@@ -144,14 +157,14 @@ Pattern: sealed interface (`//sumtype:decl`) per the
 
 ## Phase 2 — `cmd/helpers.go` `mustFindGitRoot`
 
-Foundation phase. 24-file mechanical replace.
+Foundation phase. 23-file mechanical replace.
 
 - [ ] **2.1 GREEN (helper)** — Edit
       `apps/rhino-cli/cmd/helpers.go`: add `mustFindGitRoot(cmd *cobra.Command) (string, error)`
       per tech-docs.md item 16.
 
 - [ ] **2.2 GREEN (callsite migration)** — Replace the 3-line
-      `findGitRoot()` + error-wrap preamble in 24 cmd files with
+      `findGitRoot()` + error-wrap preamble in 23 cmd files with
       `repoRoot, err := mustFindGitRoot(cmd); if err != nil { return err }`.
       Files affected: every `cmd/*.go` runE function that calls
       `findGitRoot()`. Use a single `sed` invocation followed by manual

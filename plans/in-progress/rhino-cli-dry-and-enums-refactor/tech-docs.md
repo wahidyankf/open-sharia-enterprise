@@ -136,7 +136,7 @@ cases).
 **File**: `internal/agents/types.go`
 
 **Before**: `ValidationCheck.Status string` with literal `"passed"`,
-`"warning"`, `"failed"` at ~232 sites across 5 files.
+`"warning"`, `"failed"` at ~232 sites across 7 files.
 
 **After** (sealed interface — matches `doctor.ToolStatus` shape):
 
@@ -184,7 +184,12 @@ Preserve via separate wire-format struct with `Status string` populated
 via `check.Status.Code()` at marshal time (same pattern doctor reporter
 already uses — see `internal/doctor/reporter.go:105`).
 
-**Migration**: Mechanical replace across 5 internal/agents non-test files.
+**Migration**: Mechanical replace across 7 internal/agents non-test files.
+Files touched: `agent_validator.go`, `claude_validator.go`,
+`skill_validator.go`, `sync_validator.go`, `yaml_formatting.go`,
+`reporter.go` (equality comparisons and switch cases — migrate to type
+assertions / type switches), `types.go` (doc comment only — no code
+change needed).
 Each `Status: "passed"` becomes `Status: StatusPassed{}`. Type switches on
 status (e.g., in `ValidationResult.Add` — see Item 10) use `.(type)`
 exhaustively. Test files migrate too: assertions like
@@ -762,7 +767,7 @@ func (sm *stepMatcher) matches(stepText string) bool {
         return true
     }
     for _, e := range sm.entries {
-        if e.Kind == kindPattern && e.Pattern.MatchString(normalized) {
+        if _, isPattern := e.Kind.(kindPattern); isPattern && e.Pattern.MatchString(normalized) {
             return true
         }
     }

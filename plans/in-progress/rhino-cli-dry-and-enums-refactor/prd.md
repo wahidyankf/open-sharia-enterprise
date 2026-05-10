@@ -276,14 +276,15 @@ Feature: rhino-cli refactor preserves every command's behaviour
 - **PR-3** — JSON wire format breakage. The existing JSON outputs use
   string values like `"passed"`, `"HIGH"`, `"error"`. Typed enums must
   marshal to the same string for downstream consumers. **Mitigation**:
-  Use string-typed enums (`type CheckStatus string`) where JSON output
-  is involved, NOT int-typed iota enums; matcherKind can be int-typed
-  because it never marshals.
+  The sealed-interface approach exposes a separate string wire field
+  populated from `value.Code()` (same pattern as
+  `internal/doctor/reporter.go:105`). The internal type is always the
+  sealed interface; no `MarshalJSON` pollution on the enum type itself.
 
 - **PR-4** — Internal API change for `bcregistry`/`glossary` `Severity`
   string-to-typed migration could affect a caller. **Likelihood**:
   Low — only `cmd/ddd_*.go` calls these packages and they're being
-  refactored in the same plan. **Mitigation**: Phase 5 sequences both
+  refactored in the same plan. **Mitigation**: Phase 4 sequences both
   ends in the same commit boundary.
 
 ## In-Scope / Out-of-Scope Recap
