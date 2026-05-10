@@ -159,7 +159,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > `git add apps/organiclever-be/` — then commit:
 > `feat(organiclever-be): add Java/Spring Boot project structure`
 
-- [ ] Create `apps/organiclever-be/pom.xml` (_New file_):
+- [x] Create `apps/organiclever-be/pom.xml` (_New file_):
   - `<parent>` → `spring-boot-starter-parent` 4.0.4
   - `<groupId>` → `com.organicleverbe`
   - `<artifactId>` → `organiclever-be`
@@ -181,16 +181,28 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - `cucumber-bom` version managed as `7.34.2`
   - Verify: `test -f apps/organiclever-be/pom.xml` exits 0 and
     `cd apps/organiclever-be && mvn validate` exits 0.
-- [ ] Create `apps/organiclever-be/checkstyle.xml` (_New file_):
+
+  > **Done** 2026-05-11 — pom.xml created; Spring Boot 4.0.4, Java 25, v0 scope (no security/JPA/JWT), correct JaCoCo excludes, antrun pointing to organiclever gherkin path. `mvn validate` exit 0.
+
+- [x] Create `apps/organiclever-be/checkstyle.xml` (_New file_):
   - Adapt from `ose-primer/apps/crud-be-java-springboot/checkstyle.xml` verbatim.
   - Verify: `test -f apps/organiclever-be/checkstyle.xml` exits 0.
-- [ ] Create `apps/organiclever-be/pmd-ruleset.xml` (_New file_):
+
+  > **Done** 2026-05-11 — checkstyle.xml copied verbatim from ose-primer reference.
+
+- [x] Create `apps/organiclever-be/pmd-ruleset.xml` (_New file_):
   - Adapt from `ose-primer/apps/crud-be-java-springboot/pmd-ruleset.xml` verbatim.
   - Verify: `test -f apps/organiclever-be/pmd-ruleset.xml` exits 0.
-- [ ] Create `apps/organiclever-be/.dockerignore` (_New file_) — exclude `target/`, `.git`,
+
+  > **Done** 2026-05-11 — pmd-ruleset.xml created; name/description updated to organiclever-be.
+
+- [x] Create `apps/organiclever-be/.dockerignore` (_New file_) — exclude `target/`, `.git`,
       `*.md`:
   - Verify: `test -f apps/organiclever-be/.dockerignore` exits 0.
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/package-info.java`
+
+  > **Done** 2026-05-11 — .dockerignore created with target/, .git, \*.md exclusions.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/package-info.java`
       (_New file_):
 
   ```java
@@ -202,7 +214,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/package-info.java`
   exits 0.
 
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/OrganicleverBeApplication.java`
+  > **Done** 2026-05-11 — package-info.java created with @NullMarked.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/OrganicleverBeApplication.java`
       (_New file_):
 
   ```java
@@ -215,24 +229,34 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/OrganicleverBeApplication.java`
   exits 0.
 
-- [ ] Create `apps/organiclever-be/src/main/resources/application.yml` (_New file_):
+  > **Done** 2026-05-11 — OrganicleverBeApplication.java created with @SpringBootApplication.
+
+- [x] Create `apps/organiclever-be/src/main/resources/application.yml` (_New file_):
   - `server.port: 8202`
   - `management.endpoint.health.show-details: never`
   - `management.endpoints.web.base-path: /`
   - `management.endpoints.web.exposure.include: health`
   - `spring.application.name: organiclever-be`
   - Verify: `test -f apps/organiclever-be/src/main/resources/application.yml` exits 0.
-- [ ] Update `apps/organiclever-be/.gitignore`:
+
+  > **Done** 2026-05-11 — application.yml created with port 8202, actuator health config.
+
+- [x] Update `apps/organiclever-be/.gitignore`:
   - Remove: `.fsproj`/`global.json`/dotnet patterns
   - Add: `target/`, `*.class`, `.mvn/`, `generated-contracts/src/`
   - Verify: `grep -q 'target/' apps/organiclever-be/.gitignore` exits 0.
-- [ ] Verify `mvn compile` passes in `apps/organiclever-be/`:
+
+  > **Done** 2026-05-11 — .gitignore replaced F# patterns with Java: target/, \*.class, .mvn/, generated-contracts/src/.
+
+- [x] Verify `mvn compile` passes in `apps/organiclever-be/`:
 
   ```bash
   cd apps/organiclever-be && mvn compile
   ```
 
   Verify: exits 0 — **expected Green**.
+
+  > **Done** 2026-05-11 — `mvn compile` exits 0; BUILD SUCCESS confirmed.
 
 ---
 
@@ -250,13 +274,16 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > `git add apps/organiclever-be/src/` — then commit:
 > `feat(organiclever-be): add Java/Spring Boot health endpoint with Cucumber BDD`
 
-- [ ] **Red**: Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
+- [x] **Red**: Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
       (_New file_) — unit test runner only, no step defs yet:
   - `@Suite @IncludeEngines("cucumber") @SelectClasspathResource("health/health-check.feature")`
   - Glue: `com.organicleverbe.unit.health, com.organicleverbe.unit.steps`
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitTest.java`
     exits 0.
-- [ ] Verify `mvn test` fails — **expected Red** (Cucumber reports undefined step definitions):
+
+  > **Done** 2026-05-11 — HealthUnitTest.java created with @Suite + glue config.
+
+- [x] Verify `mvn test` fails — **expected Red** (Cucumber reports undefined step definitions):
 
   ```bash
   cd apps/organiclever-be && mvn test
@@ -264,34 +291,54 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: exits non-zero with "undefined" or "pending" Cucumber output.
 
-- [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/package-info.java`
+  > **Done** 2026-05-11 — Red confirmed: "CucumberBackend Please annotate a glue class with some context configuration" (no @CucumberContextConfiguration yet).
+
+- [x] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/package-info.java`
       (_New file_):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/package-info.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitStateStore.java`
+
+  > **Done** 2026-05-11 — unit/package-info.java created with @NullMarked.
+
+- [x] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitStateStore.java`
       (_New file_) — `@Scope("cucumber-glue")` bean: `statusCode` (int) + `responseBody` (Object):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitStateStore.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitTestApplication.java`
+
+  > **Done** 2026-05-11 — UnitStateStore.java created with @Scope("cucumber-glue"), statusCode + responseBody fields.
+
+- [x] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitTestApplication.java`
       (_New file_) — `@SpringBootApplication(scanBasePackages = "com.organicleverbe")` minimal test app:
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitTestApplication.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/BaseUnitCucumberContextConfig.java`
+
+  > **Done** 2026-05-11 — UnitTestApplication.java created with @SpringBootApplication(scanBasePackages="com.organicleverbe").
+
+- [x] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/BaseUnitCucumberContextConfig.java`
       (_New file_) — empty base class (hook point for shared Spring config):
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/BaseUnitCucumberContextConfig.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitContextConfig.java`
+
+  > **Done** 2026-05-11 — BaseUnitCucumberContextConfig.java created as empty base class.
+
+- [x] Create `apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitContextConfig.java`
       (_New file_) —
       `@CucumberContextConfiguration @SpringBootTest(classes = UnitTestApplication.class, webEnvironment = NONE) @ActiveProfiles("unit-test")`:
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/health/HealthUnitContextConfig.java`
     exits 0.
-- [ ] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitCommonSteps.java`
+
+  > **Done** 2026-05-11 — HealthUnitContextConfig.java created with @CucumberContextConfiguration + @SpringBootTest(NONE) + @ActiveProfiles("unit-test").
+
+- [x] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitCommonSteps.java`
       (_New file_):
   - `@Given("the API is running")` → no-op (Spring context running = API up)
   - `@Then("the response status code should be {int}")` → assert `stateStore.getStatusCode()`
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitCommonSteps.java`
     exits 0.
-- [ ] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitHealthSteps.java`
+
+  > **Done** 2026-05-11 — UnitCommonSteps.java created with @Given("the API is running") + @Then status code assertion.
+
+- [x] Write `apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitHealthSteps.java`
       (_New file_):
   - `@When("an operations engineer sends GET /health")` → `stateStore.setStatusCode(200); stateStore.setResponseBody(Map.of("status", "UP"));`
   - `@When("an unauthenticated engineer sends GET /health")` → same
@@ -300,13 +347,22 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
     `toString()` does not contain "components"
   - Verify: `test -f apps/organiclever-be/src/test/java/com/organicleverbe/unit/steps/UnitHealthSteps.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/test/resources/application-unit-test.yml` (_New file_,
+
+  > **Done** 2026-05-11 — UnitHealthSteps.java created; `/` in step text escaped as `\/` to avoid Cucumber Expression parser error.
+
+- [x] Create `apps/organiclever-be/src/test/resources/application-unit-test.yml` (_New file_,
       empty — Cucumber picks up profile `unit-test`):
   - Verify: `test -f apps/organiclever-be/src/test/resources/application-unit-test.yml` exits 0.
-- [ ] Create `apps/organiclever-be/src/test/resources/junit-platform.properties` (_New file_) —
+
+  > **Done** 2026-05-11 — application-unit-test.yml created (empty file for unit-test profile).
+
+- [x] Create `apps/organiclever-be/src/test/resources/junit-platform.properties` (_New file_) —
       `cucumber.publish.quiet=true`:
   - Verify: `test -f apps/organiclever-be/src/test/resources/junit-platform.properties` exits 0.
-- [ ] Verify `mvn test` passes — **expected Green** (simulated state satisfies all assertions):
+
+  > **Done** 2026-05-11 — junit-platform.properties created with cucumber.publish.quiet=true.
+
+- [x] Verify `mvn test` passes — **expected Green** (simulated state satisfies all assertions):
 
   ```bash
   cd apps/organiclever-be && mvn test
@@ -314,11 +370,16 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: exits 0.
 
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/package-info.java`
+  > **Done** 2026-05-11 — Green: 2 tests run, 0 failures, BUILD SUCCESS.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/package-info.java`
       (_New file_):
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/package-info.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/HealthController.java`
+
+  > **Done** 2026-05-11 — health/controller/package-info.java created with @NullMarked.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/HealthController.java`
       (_New file_):
 
   ```java
@@ -333,19 +394,30 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/health/controller/HealthController.java`
   exits 0.
 
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/package-info.java`
+  > **Done** 2026-05-11 — HealthController.java created: @RestController @RequestMapping("/api/v1"), GET /health returns Map{"status":"UP"}.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/package-info.java`
       (_New file_):
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/package-info.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/GlobalExceptionHandler.java`
+
+  > **Done** 2026-05-11 — config/package-info.java created with @NullMarked.
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/GlobalExceptionHandler.java`
       (_New file_) — `@RestControllerAdvice` returning RFC 7807-style error body:
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/GlobalExceptionHandler.java`
     exits 0.
-- [ ] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/CorsConfig.java`
+
+  > **Done** 2026-05-11 — GlobalExceptionHandler.java created with @RestControllerAdvice, returns ProblemDetail (RFC 7807).
+
+- [x] Create `apps/organiclever-be/src/main/java/com/organicleverbe/config/CorsConfig.java`
       (_New file_) — `WebMvcConfigurer.addCorsMappings` for `/**`:
   - Verify: `test -f apps/organiclever-be/src/main/java/com/organicleverbe/config/CorsConfig.java`
     exits 0.
-- [ ] Verify `mvn test` still passes after adding main-source files — **Green** (controller
+
+  > **Done** 2026-05-11 — CorsConfig.java created with WebMvcConfigurer.addCorsMappings for /\*\*.
+
+- [x] Verify `mvn test` still passes after adding main-source files — **Green** (controller
       addition does not break unit tests):
 
   ```bash
@@ -354,13 +426,17 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: exits 0.
 
-- [ ] Verify 90% coverage — inspect `target/site/jacoco/jacoco.xml` line coverage ≥90%:
+  > **Done** 2026-05-11 — Green: 2 tests passed after main source files added.
+
+- [x] Verify 90% coverage — inspect `target/site/jacoco/jacoco.xml` line coverage ≥90%:
 
   ```bash
   cd apps/organiclever-be && mvn jacoco:report
   ```
 
   Verify: `jacoco.xml` contains line-coverage ≥90% for non-excluded classes.
+
+  > **Done** 2026-05-11 — jacoco.xml: LINE missed=0 covered=1 (HealthController only; all config/entry-point classes excluded). 100% ≥ 90%.
 
 ---
 
