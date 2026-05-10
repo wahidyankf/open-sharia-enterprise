@@ -186,11 +186,9 @@ The publish path is currently relaxed across all three subrepos. `ose-public`, `
 
 ## `wahidyankf-web` Joins the Monorepo
 
-A fourth web app entered `ose-public` this period: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source, wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out of `wahidyankf-web` into `libs/ts-ui` shortly after so the other web apps can use them too.
+A fourth web app entered `ose-public` this period: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source with content synced from the LinkedIn profile, and wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out into `libs/ts-ui` so the other web apps can use them too.
 
-Beyond the portfolio itself, `wahidyankf-web` plays a structural role in `ose-public`: it represents the **simplest possible frontend / web tech stack**—a static-leaning Next.js app with no API layer, no local-first store, no domain logic—anchoring the low-complexity end of the FE spectrum. With `oseplatform-web` (content + tRPC), `ayokoding-web` (large bilingual content + tRPC + search + Mermaid + KaTeX), `organiclever-web` (local-first PGlite + DDD bounded contexts + XState), and `wahidyankf-web` (simple portfolio) all sitting in the same repo, the four-app spread spans the FE complexity range. That makes it the natural place to extract patterns behind every frontend in the repo: shared `ts-ui` components and tokens, the C4 + DDD specs format, validator targets, deployment shape, and the testing harness.
-
-The portfolio itself is at <https://www.wahidyankf.com/>. Content was synced with the LinkedIn profile on the same day as the scaffold.
+Beyond the portfolio itself, `wahidyankf-web` plays a structural role: it represents the **simplest possible frontend / web tech stack**—a static-leaning Next.js app with no API layer, no local-first store, no domain logic. With `oseplatform-web` (content + tRPC), `ayokoding-web` (bilingual content + tRPC + search + Mermaid + KaTeX), `organiclever-web` (local-first PGlite + DDD + XState), and `wahidyankf-web` (simple portfolio) all in the same repo, the four-app spread covers the full FE complexity range. The simple end becomes the natural baseline for extracting patterns shared across every frontend: `ts-ui` components and tokens, C4 + DDD specs format, validator targets, deployment shape, testing harness.
 
 ## `ayokoding-web`: New Tutorials
 
@@ -254,7 +252,7 @@ The repo maintains dual compatibility with Claude Code (primary) and OpenCode (s
 
 ## License: MIT, Reverted From FSL-1.1-MIT
 
-Roughly two and a half weeks after the FSL-1.1-MIT rollout, the project reverted to MIT after a strategic reassessment. The reasoning is documented in [`docs/explanation/software-engineering/licensing/mit-license-rationale.md`](https://github.com/wahidyankf/ose-public/blob/main/docs/explanation/software-engineering/licensing/mit-license-rationale.md) on the public repo. The previous post was edited inline with a notice marking that section as a historical record.
+Roughly two and a half weeks after the FSL-1.1-MIT rollout, the reversion landed. The reasoning is documented in [`docs/explanation/software-engineering/licensing/mit-license-rationale.md`](https://github.com/wahidyankf/ose-public/blob/main/docs/explanation/software-engineering/licensing/mit-license-rationale.md) on the public repo, and the previous post was edited inline with a notice marking that section as a historical record.
 
 `ose-public` is MIT throughout. `ose-primer` is also MIT throughout. `ose-infra`, in contrast, migrated to a proprietary license. The split is intentional: code intended for public reuse stays MIT; the operational infrastructure that runs the platform stays private.
 
