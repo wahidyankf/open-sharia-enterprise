@@ -548,12 +548,12 @@ The result of this plan is that **every `specs *` and `ddd *` and `spec-coverage
 
 Three `.github/workflows/*.yml` files. After this fix, all four `validate:specs-*` targets run on every gating surface:
 
-| Surface                                                | File                                                  | Trigger                  | Aggregator that gains `specs-gate` in `needs:` |
-| ------------------------------------------------------ | ----------------------------------------------------- | ------------------------ | ---------------------------------------------- |
-| Pre-push (already in plan)                             | `.husky/pre-push`                                     | every developer push     | n/a (single line)                              |
-| PR quality gate                                        | `pr-quality-gate.yml`                                 | every PR                 | `quality-gate`                                 |
-| Reusable test-and-deploy (ayokoding/oseplatform/wahidyankf) | `_reusable-test-and-deploy.yml`                       | called by 3 cron deploys | `deploy`                                       |
-| OrganicLever development deploy                        | `test-and-deploy-organiclever-web-development.yml`    | cron on `main`           | `deploy`                                       |
+| Surface                                                     | File                                               | Trigger                  | Aggregator that gains `specs-gate` in `needs:` |
+| ----------------------------------------------------------- | -------------------------------------------------- | ------------------------ | ---------------------------------------------- |
+| Pre-push (already in plan)                                  | `.husky/pre-push`                                  | every developer push     | n/a (single line)                              |
+| PR quality gate                                             | `pr-quality-gate.yml`                              | every PR                 | `quality-gate`                                 |
+| Reusable test-and-deploy (ayokoding/oseplatform/wahidyankf) | `_reusable-test-and-deploy.yml`                    | called by 3 cron deploys | `deploy`                                       |
+| OrganicLever development deploy                             | `test-and-deploy-organiclever-web-development.yml` | cron on `main`           | `deploy`                                       |
 
 ### Why a dedicated `specs-gate` job
 
@@ -579,7 +579,8 @@ The `quality-gate` aggregator's `needs:` list is extended:
 ```yaml
 quality-gate:
   name: Quality gate
-  needs: [detect, format, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown, naming, specs-gate]
+  needs:
+    [detect, format, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown, naming, specs-gate]
 ```
 
 For documentation consistency, optionally extend the inert `for job in …` loop in the aggregator to include `specs-gate` (the actual failure detection uses `contains(needs.*.result, 'failure')`, which automatically covers every entry in `needs:` and therefore automatically covers `specs-gate` the moment it is added to the `needs:` list).
