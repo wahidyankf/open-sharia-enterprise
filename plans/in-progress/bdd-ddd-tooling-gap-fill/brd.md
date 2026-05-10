@@ -7,12 +7,13 @@
 - 4 of 7 `specs *` validators are dead code (no Nx target invokes them). The other 3 are placeholder `drift-*` stubs.
 - Of the apps that have specs (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`, plus the three CLIs), only `organiclever-web` has `ddd bc/ul` in `test:quick`. Plans 1-3 fix three of the remaining web apps; this plan fixes `organiclever-be` (which shares organiclever's registry but doesn't validate it).
 - Two `ddd` validators silently mis-cover multi-surface bounded contexts: `ddd ul` greps only TS/TSX, `ddd bc` walks only the first context's parent for orphans.
+- Even after wiring `validate:specs-*` into `.husky/pre-push`, four CI surfaces (`pr-quality-gate.yml` and three `test-and-deploy-*.yml` workflows that drive the main-branch deploy pipeline) still do not call those validators. Pre-push is bypassable (`--no-verify`); without parallel coverage on PR gate + main CI, structural spec drift can land on `main`.
 
 The gap is not in the validators. It is in the layer above them.
 
 ## Business value
 
-1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links` exit code on pre-push. The first kind drifts; the second kind doesn't. **Net result**: zero dead specs/BDD/DDD scripts in `rhino-cli` — every `specs *`, `ddd *`, and `spec-coverage *` command is gated or deleted.
+1. **Enforced governance, not aspirational governance.** Today's "BDD adoption is mandatory" is a sentence in `governance/`; tomorrow's is a `nx affected -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links` exit code on **every** gating surface — pre-push (catches at push time), PR quality gate (catches at merge time), and the four main-CI deploy workflows (catches at deploy time). The first kind drifts; the second kind doesn't. **Net result**: zero dead specs/BDD/DDD scripts in `rhino-cli` — every `specs *`, `ddd *`, and `spec-coverage *` command is gated on every relevant surface or deleted.
 2. **Multi-surface DDD becomes honest.** Plans 2 and 3 introduce bounded contexts that span web + api perspectives. Without fix #4 (per-BC `code_lang:`), `ddd ul` would silently fail to validate F# / TS / both for any cross-perspective BC. With fix #4, every code identifier in every glossary is grep-checked in the right files.
 3. **Drift-command housekeeping.** Three placeholder commands that appear functional in `--help` are a long-standing source of false security. Deleting or hiding them removes a lurking trap.
 4. **Future-app onboarding cost drops.** A new web app adopts DDD by adding to the allowlist + creating its `ddd/bounded-contexts.yaml`. No more per-project.json copy-paste of `ddd bc/ul` invocations once fix #1 + #2 wire the centralized gate.
@@ -27,16 +28,17 @@ The gap is not in the validators. It is in the layer above them.
 
 - ~10 phased TDD code changes inside `apps/rhino-cli/`, each with a Red→Green→Refactor cycle.
 - 4 `project.json` files updated (`organiclever-be`, plus tightening for the 3 web apps that plans 1-3 already wire).
-- 1 `.husky/pre-push` change adding four new `nx run` lines for the centralized `validate:specs-adoption`, `validate:specs-tree`, `validate:specs-counts`, and `validate:specs-links` targets.
+- 1 `.husky/pre-push` change adding the four new validate-specs targets to the existing `nx affected` line.
+- 3 `.github/workflows/*.yml` files updated for Fix #14: a new `specs-gate` job in `pr-quality-gate.yml` (added to the `quality-gate` aggregator's `needs`), a new `specs-gate` job in `_reusable-test-and-deploy.yml` (added to the `deploy` job's `needs`, blocking deploys on validate-specs failures), and a new `specs-gate` job in `test-and-deploy-organiclever-web-development.yml` (added to the `deploy` job's `needs`).
 - 1 `.claude/agents/specs-checker.md` and `specs-fixer.md` update to reflect the dropped `drift-*` commands.
-- ~20 lines of governance update (`governance/conventions/structure/specs-directory-structure.md`) clarifying allowlist policy.
+- ~20 lines of governance update (`governance/conventions/structure/specs-directory-structure.md`) clarifying allowlist policy and listing all gating surfaces (pre-push + PR gate + main-CI workflows).
 - New env var name `OSE_RHINO_DDD_SEVERITY`; legacy `ORGANICLEVER_RHINO_DDD_SEVERITY` deprecated for one minor rev with a stderr warning.
 
 ## Risk
 
 **Low to medium**, depending on fix:
 
-- **Low**: fixes #1, #2, #3, #7, #8, #9, #10 are mechanical — wiring, severity strings, whitelist expansion. Each lands behind a TDD red→green and a manual test.
+- **Low**: fixes #1, #2, #3, #7, #8, #9, #10, #14 are mechanical — wiring, severity strings, whitelist expansion. Each lands behind a TDD red→green and a manual test. Fix #14 yml edits add three new `specs-gate` jobs (PR + reusable-deploy + organiclever-development) that run `nx run-many -t validate:specs-* --projects=rhino-cli`; the steps are mechanical and do not change any validator code.
 - **Medium**: fixes #4 (per-BC `code_lang:`) and #5 (multi-parent orphan walk) edit the validator core (`bcregistry/validator.go`, `glossary/validator.go`). New tests cover positive + negative cases per the existing 90% coverage rule. Risk: test fixture drift across the existing 30+ rhino-cli test files. Mitigated by `(cd apps/rhino-cli && go test ./...)` after each phase.
 - **Medium**: fix #6 (multi-file scenario matching) changes spec-coverage's behavior in non-shared-steps mode. Today only `--shared-steps` mode is in production use; non-shared mode change is theoretically observable but practically zero-impact since no project uses it.
 
@@ -48,9 +50,11 @@ The gap is not in the validators. It is in the layer above them.
 - `[Judgment call]` `nx run rhino-cli:validate:specs-links` exits 0 for all four allowlisted web apps after this plan lands on `main`.
 - `[Judgment call]` `rhino-cli specs --help` lists exactly 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption) — no drift-\* placeholders.
 - `[Judgment call]` `OSE_RHINO_DDD_SEVERITY=warn rhino-cli ddd bc organiclever` emits a stderr audit line and exits 0 even when findings exist.
-- `[Judgment call]` `nx run rhino-cli:test:quick` reports coverage ≥90% after all 13 fixes.
+- `[Judgment call]` `nx run rhino-cli:test:quick` reports coverage ≥90% after all 14 fixes.
 - `[Judgment call]` The pre-push gate blocks a push that introduces a structural spec violation, missing required folder, or broken markdown link in any allowlisted app.
-- `[Judgment call]` **Zero dead specs/BDD/DDD scripts** — `git grep` over `apps/rhino-cli/cmd/specs_*.go` shows every command is invoked by either an Nx target or `.husky/pre-push`; the three `specs_drift_*.go` files are deleted.
+- `[Judgment call]` The `pr-quality-gate.yml` workflow's `specs-gate` job runs `nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli` on every PR and is in the `quality-gate` aggregator's `needs:` list (Fix #14).
+- `[Judgment call]` The reusable test-and-deploy workflow (`_reusable-test-and-deploy.yml`) and the OrganicLever development deploy workflow (`test-and-deploy-organiclever-web-development.yml`) both contain a `specs-gate` job blocking deploys; the three thin caller workflows for ayokoding-web, oseplatform-web, and wahidyankf-web inherit the gate at runtime via the reusable workflow with no per-file edit needed (Fix #14 — three file edits: PR gate + reusable deploy + organiclever-development; four runtime surfaces covered).
+- `[Judgment call]` **Zero dead specs/BDD/DDD scripts** — `git grep` over `apps/rhino-cli/cmd/specs_*.go` shows every command is invoked by either an Nx target wired to `.husky/pre-push`, the PR quality gate, or a main-CI deploy workflow; the three `specs_drift_*.go` files are deleted.
 
 ## Stakeholders
 

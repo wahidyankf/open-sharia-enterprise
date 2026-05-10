@@ -1,7 +1,7 @@
 # BDD + DDD Tooling Gap-Fill
 
 **Status**: In Progress (Phase 0 dependencies satisfied — plans 1-3 merged 2026-05-10)
-**Scope**: `ose-public` — `apps/rhino-cli/`, `apps/{organiclever,wahidyankf,oseplatform,ayokoding}-web/project.json` plus `apps/organiclever-be/project.json`, `.husky/pre-push`
+**Scope**: `ose-public` — `apps/rhino-cli/`, `apps/{organiclever,wahidyankf,oseplatform,ayokoding}-web/project.json` plus `apps/organiclever-be/project.json`, `.husky/pre-push`, and three `.github/workflows/` files (`pr-quality-gate.yml`, `_reusable-test-and-deploy.yml`, `test-and-deploy-organiclever-web-development.yml`)
 
 ## Problem
 
@@ -19,7 +19,7 @@ The BDD + DDD enforcement built on top of `rhino-cli` is **inner-validator-stron
 
 ## Goal
 
-Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD scripts in `rhino-cli`** — every `specs *`, `ddd *`, and `spec-coverage *` command is invoked by at least one gate or deleted; every non-CLI app participates in the same DDD enforcement; multi-surface contexts validate honestly across languages.
+Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD scripts in `rhino-cli`** — every `specs *`, `ddd *`, and `spec-coverage *` command is invoked across **every gating surface** (pre-push, PR quality gate, main-CI deploy workflows) or deleted; every non-CLI app participates in the same DDD enforcement; multi-surface contexts validate honestly across languages.
 
 ## Dependencies (hard)
 
@@ -27,7 +27,7 @@ Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD 
   - Status (2026-05-10): All three prerequisite plans merged to `origin/main` — `oseplatform-web-ddd-and-specs-format`, `ayokoding-web-ddd-and-specs-format`, `wahidyankf-web-ddd-and-specs-format`. Plan fully unblocked.
 - **CLI apps stay off the allowlist permanently.** `ayokoding-cli`, `oseplatform-cli`, `rhino-cli` adopt BDD only (existing `spec-coverage` targets); no DDD adoption is required of them. The allowlist excludes them by design.
 
-## Scope: 13 fixes
+## Scope: 14 fixes
 
 | #   | Severity | Fix                                                                                                                   |
 | --- | -------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -44,6 +44,7 @@ Close all the high- and medium-severity gaps. Result: **zero dead specs/BDD/DDD 
 | 11  | HIGH     | Extend `gherkin:` field to `[]string` (parallel to `code: []string`); resolves plans 2+3 multi-perspective workaround |
 | 12  | MEDIUM   | Wire `specs validate-counts` per allowlist into pre-push (paired with #8 severity reconciliation)                     |
 | 13  | MEDIUM   | Wire `specs validate-links` per allowlist into pre-push                                                               |
+| 14  | HIGH     | Wire `validate:specs-{adoption,tree,counts,links}` into PR quality gate + 4 main-CI deploy workflows                  |
 
 LOW-severity polish items from the audit (reverse-direction step check, AST-based step extraction) are tracked as backlog, not delivered here.
 
@@ -62,4 +63,4 @@ See [`delivery.md` § Worktree](./delivery.md#worktree) for the canonical worktr
 - [brd.md](./brd.md) — business rationale
 - [prd.md](./prd.md) — per-fix specification + Gherkin acceptance criteria
 - [tech-docs.md](./tech-docs.md) — implementation specifics per fix
-- [delivery.md](./delivery.md) — TDD-shaped 15-phase checklist (Phases 0–13 including 7B)
+- [delivery.md](./delivery.md) — TDD-shaped 16-phase checklist (Phases 0–13 including 7B and 7C)

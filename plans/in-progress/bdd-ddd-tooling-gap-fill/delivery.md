@@ -1,6 +1,6 @@
 # Delivery Checklist — BDD + DDD Tooling Gap-Fill
 
-All steps follow Red → Green → Refactor (TDD). After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
+All steps follow Red → Green → Refactor (TDD) where the artifact is Go code; YAML wiring (Phases 1.4, 7B.4, 7C) uses verify-by-invocation rather than Go unit tests. After each phase, run `(cd apps/rhino-cli && go build ./... && go test ./...)` plus `nx run rhino-cli:test:quick`. Do not advance phases out of order.
 
 > **Manual behavioral acceptance gate**: Per-phase steps implement the code change. The manual CLI smoke verification for each fix (expected inputs → expected stdout/stderr/exit-code) is consolidated in **Phase 12.10**. After each phase completes its TDD cycle, proceed; full behavioral assertion runs in Phase 12.
 
@@ -194,6 +194,53 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ---
 
+## Phase 7C — CI surface wiring (Fix #14)
+
+> **Why a dedicated phase**: Fixes #1, #2, #12, #13 wire `validate:specs-*` into `.husky/pre-push` only. PR quality gate (`pr-quality-gate.yml`) and the four main-CI deploy workflows do not call those validators. Pre-push is bypassable with `--no-verify`; this phase closes the gap by adding a dedicated `specs-gate` job to three workflow files. See `tech-docs.md` Fix #14 for exact YAML shape.
+
+### 7C.1 PR quality gate
+
+- [ ] **7C.1.1 PRE-FLIGHT** Run `grep -c "specs-gate" .github/workflows/pr-quality-gate.yml` — confirms zero (the new job does not yet exist; this is the baseline).
+- [ ] **7C.1.2 GREEN** Edit `.github/workflows/pr-quality-gate.yml` per `tech-docs.md` Fix #14:
+  - Add a new top-level `specs-gate:` job (after the `naming:` job) that uses `actions/checkout@v4` + `./.github/actions/setup-node` + `./.github/actions/setup-golang` + `npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli`.
+  - Extend the `quality-gate.needs:` list to include `specs-gate` (this is the load-bearing change — `contains(needs.*.result, 'failure')` automatically catches any failure in all `needs:` entries including `specs-gate`).
+  - Optionally update the inert `for job in ...` loop body to include `specs-gate` for documentation consistency (note: actual failure detection uses `contains(needs.*.result, 'failure')` so extending `needs:` is the load-bearing change; the loop variable is never consumed).
+- [ ] **7C.1.3 GREEN** Run `grep -A 20 "specs-gate:" .github/workflows/pr-quality-gate.yml` and confirm the job block matches the tech-docs YAML exactly. Run `grep "needs:" .github/workflows/pr-quality-gate.yml | grep "specs-gate"` and confirm the aggregator list contains it.
+- [ ] **7C.1.4 GREEN** Open a draft PR (or push to a branch and use the GitHub Actions UI) — confirm the `specs-gate` job runs, all four targets execute, and exit 0.
+- [ ] **7C.1.5** Manually introduce a structural spec violation (e.g., `git mv specs/apps/wahidyankf/containers specs/apps/wahidyankf/containers-bogus`), push to the PR branch, and confirm the `specs-gate` job aborts non-zero. Revert.
+
+### 7C.2 Reusable test-and-deploy workflow
+
+- [ ] **7C.2.1 PRE-FLIGHT** Run `grep -c "specs-gate" .github/workflows/_reusable-test-and-deploy.yml` — confirms zero.
+- [ ] **7C.2.2 GREEN** Edit `.github/workflows/_reusable-test-and-deploy.yml` per `tech-docs.md` Fix #14:
+  - Append a new `specs-gate:` job (after the `e2e:` job) with the same step shape as 7C.1.2.
+  - Extend the `deploy.needs:` list to include `specs-gate`.
+- [ ] **7C.2.3 GREEN** Run `grep -A 8 "specs-gate:" .github/workflows/_reusable-test-and-deploy.yml` and confirm the YAML block. Run `grep -A 2 "deploy:" .github/workflows/_reusable-test-and-deploy.yml | grep "specs-gate"` and confirm `deploy.needs:` lists it.
+- [ ] **7C.2.4 GREEN** Trigger one of `test-and-deploy-ayokoding-web.yml`, `test-and-deploy-oseplatform-web.yml`, or `test-and-deploy-wahidyankf-web.yml` via `workflow_dispatch` and confirm the `specs-gate` job runs and exits 0; deploy proceeds.
+
+### 7C.3 OrganicLever development deploy workflow
+
+- [ ] **7C.3.1 PRE-FLIGHT** Run `grep -c "specs-gate" .github/workflows/test-and-deploy-organiclever-web-development.yml` — confirms zero.
+- [ ] **7C.3.2 GREEN** Edit `.github/workflows/test-and-deploy-organiclever-web-development.yml` per `tech-docs.md` Fix #14:
+  - Append a new `specs-gate:` job (after the `e2e:` job) with `timeout-minutes: 10` and the same step shape as 7C.1.2.
+  - Extend the `deploy.needs:` list to include `specs-gate`.
+- [ ] **7C.3.3 GREEN** Trigger via `workflow_dispatch` and confirm the `specs-gate` job runs and exits 0; deploy proceeds.
+
+### 7C.4 Cross-surface verification
+
+- [ ] **7C.4.1 GREEN** Run the cross-surface presence audit:
+  ```bash
+  for surface in .husky/pre-push .github/workflows/pr-quality-gate.yml .github/workflows/_reusable-test-and-deploy.yml .github/workflows/test-and-deploy-organiclever-web-development.yml; do
+    echo "=== $surface ==="
+    for target in validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links; do
+      grep -q "$target" "$surface" || echo "MISSING: $target in $surface"
+    done
+  done
+  ```
+  Output must show zero `MISSING:` lines — every surface invokes all four targets.
+
+---
+
 ## Phase 8 — Severity audit log + env var rename (Fix #9)
 
 - [ ] **8.1 RED** Add unit tests in `cmd/ddd_bc_test.go` and `cmd/ddd_ul_test.go`:
@@ -273,6 +320,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Document `code_lang:` schema field (Phase 3).
   - Document drift-\* removal (Phase 6).
   - Document the four allowlist-driven pre-push gates: `validate:specs-adoption`, `validate:specs-tree`, `validate:specs-counts`, `validate:specs-links` (Phases 1, 7B). State explicitly that **zero `specs *` commands ship dead** after this plan.
+  - Document the four CI surfaces wired in Phase 7C: pre-push, PR quality gate (`pr-quality-gate.yml`), reusable test-and-deploy (`_reusable-test-and-deploy.yml`), OrganicLever development deploy (`test-and-deploy-organiclever-web-development.yml`). State that every `validate:specs-*` target runs on all four surfaces.
   - Document severity audit + env var rename (Phase 8).
   - Document expanded symmetry whitelist (Phase 9).
   - Document `gherkin: []string` extension (Phase 10).
@@ -297,6 +345,15 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [ ] **12.4b** `nx run rhino-cli:validate:specs-counts` — 0 findings.
 - [ ] **12.4c** `nx run rhino-cli:validate:specs-links` — 0 findings.
 - [ ] **12.4d** `git grep -l "cobra.Command" apps/rhino-cli/cmd/specs_*.go apps/rhino-cli/cmd/ddd_*.go apps/rhino-cli/cmd/spec_coverage*.go` cross-checked against `apps/rhino-cli/project.json` + `.husky/pre-push` + each app's `project.json` — every command file is referenced by at least one invocation; the three `specs_drift_*.go` files no longer exist. **Zero dead specs/BDD/DDD scripts confirmed.**
+- [ ] **12.4e** Cross-surface presence audit for Fix #14 (per Phase 7C.4.1):
+  ```bash
+  for surface in .husky/pre-push .github/workflows/pr-quality-gate.yml .github/workflows/_reusable-test-and-deploy.yml .github/workflows/test-and-deploy-organiclever-web-development.yml; do
+    for target in validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links; do
+      grep -q "$target" "$surface" || echo "MISSING: $target in $surface"
+    done
+  done
+  ```
+  Output must show zero `MISSING:` lines — confirms every gating surface invokes all four `validate:specs-*` targets.
 - [ ] **12.5** For each of the 4 web apps: `nx run <app>-web:test:quick` — DDD passes.
 - [ ] **12.6** `nx run organiclever-be:test:quick` — DDD passes.
 - [ ] **12.7** `nx affected -t typecheck lint test:quick spec-coverage validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --base=HEAD~1` — full pre-push gate green.
@@ -313,6 +370,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - **#11**: edit `specs/apps/ayokoding/ddd/bounded-contexts.yaml` to declare `gherkin: [behavior/web/gherkin/content, behavior/api/gherkin/content]` for content BC; `rhino-cli ddd bc ayokoding` exits 0. Revert.
   - **#12**: rename `specs/apps/wahidyankf/containers/` → `containers-bogus/`; `git push --dry-run` aborts via validate:specs-counts with HIGH severity. Revert.
   - **#13**: introduce a broken markdown link in `specs/apps/wahidyankf/system-context/context.md` (`[broken](./does-not-exist.md)`); `git push --dry-run` aborts via validate:specs-links. Revert.
+  - **#14**: open a draft PR with a structural spec violation (e.g., rename `specs/apps/wahidyankf/containers/` → `containers-bogus/`); confirm the `specs-gate` job in `pr-quality-gate.yml` aborts non-zero. Trigger one of the deploy workflows via `workflow_dispatch` and confirm the `specs-gate` job runs. Revert.
 
 ---
 
@@ -327,7 +385,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [ ] **13.1** Commit per phase OR single atomic. Recommended: **single atomic commit** since fixes are governance-shaped and tightly coupled.
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
-  - Body lists 13 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli".
+  - Body lists 14 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli; all four validate:specs-* targets gated on every CI surface (pre-push + PR gate + 4 main-CI deploy workflows)".
 - [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
 - [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
 - [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.

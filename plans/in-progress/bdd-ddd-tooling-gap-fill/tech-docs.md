@@ -542,9 +542,109 @@ npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adopti
 
 The result of this plan is that **every `specs *` and `ddd *` and `spec-coverage *` command** is gated; `docs validate-links` is the only related ungated rhino-cli command, and it lives outside the user-stated scope.
 
+## Fix #14 — Wire `validate:specs-*` into PR gate + main-CI deploy workflows
+
+### Surfaces touched
+
+Three `.github/workflows/*.yml` files. After this fix, all four `validate:specs-*` targets run on every gating surface:
+
+| Surface                                                | File                                                  | Trigger                  | Aggregator that gains `specs-gate` in `needs:` |
+| ------------------------------------------------------ | ----------------------------------------------------- | ------------------------ | ---------------------------------------------- |
+| Pre-push (already in plan)                             | `.husky/pre-push`                                     | every developer push     | n/a (single line)                              |
+| PR quality gate                                        | `pr-quality-gate.yml`                                 | every PR                 | `quality-gate`                                 |
+| Reusable test-and-deploy (ayokoding/oseplatform/wahidyankf) | `_reusable-test-and-deploy.yml`                       | called by 3 cron deploys | `deploy`                                       |
+| OrganicLever development deploy                        | `test-and-deploy-organiclever-web-development.yml`    | cron on `main`           | `deploy`                                       |
+
+### Why a dedicated `specs-gate` job
+
+`validate:specs-*` are workspace-level Nx targets owned by `rhino-cli`. The PR gate's existing language jobs (`golang`, `typescript`, …) condition on `needs.detect.outputs.has-<lang>` and use either `nx affected` or `nx run-many --projects='tag:lang:<lang>'`. Appending `validate:specs-*` to the `golang` job conflates spec validation with Go-affected detection — when no Go file changes but a spec changes, the job would skip. A dedicated job that always runs (no `if:` guard) and uses `--projects=rhino-cli` is the simplest correct shape and produces a clear PR check name in the status UI.
+
+### YAML shape (PR gate)
+
+`pr-quality-gate.yml` adds, near the existing `naming` job:
+
+```yaml
+specs-gate:
+  name: Specs gate (BDD+DDD validators)
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/setup-node
+    - uses: ./.github/actions/setup-golang
+    - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+```
+
+The `quality-gate` aggregator's `needs:` list is extended:
+
+```yaml
+quality-gate:
+  name: Quality gate
+  needs: [detect, format, typescript, golang, jvm, dotnet, python, rust, elixir, clojure, dart, markdown, naming, specs-gate]
+```
+
+For documentation consistency, optionally extend the inert `for job in …` loop in the aggregator to include `specs-gate` (the actual failure detection uses `contains(needs.*.result, 'failure')`, which automatically covers every entry in `needs:` and therefore automatically covers `specs-gate` the moment it is added to the `needs:` list).
+
+### YAML shape (`_reusable-test-and-deploy.yml`)
+
+A new job appended after `e2e:`:
+
+```yaml
+specs-gate:
+  name: Specs gate (BDD+DDD validators)
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/setup-node
+    - uses: ./.github/actions/setup-golang
+    - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+```
+
+The `deploy` job's `needs:` list is extended:
+
+```yaml
+deploy:
+  name: Deploy to production
+  needs: [lint, unit, integration, e2e, detect-changes, specs-gate]
+```
+
+This ensures the daily cron deploys for `ayokoding-web`, `oseplatform-web`, and `wahidyankf-web` all block on spec validators.
+
+### YAML shape (`test-and-deploy-organiclever-web-development.yml`)
+
+A new job appended after `e2e:`:
+
+```yaml
+specs-gate:
+  name: Specs gate (BDD+DDD validators)
+  runs-on: ubuntu-latest
+  timeout-minutes: 10
+  steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/setup-node
+    - uses: ./.github/actions/setup-golang
+    - run: npx nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli
+```
+
+The `deploy` job's `needs:` list is extended:
+
+```yaml
+deploy:
+  name: Deploy to staging
+  needs: [spec-coverage, fe-lint, be-integration, fe-integration, e2e, specs-gate]
+```
+
+### Caching note
+
+The four `validate:specs-*` targets are `cache: true` (Phase 1.3 + Phase 7B.3). On CI, the Nx cloud cache is not configured for this repo (local cache only), so each run re-executes. The four targets together are I/O-bound (read 4 web app spec trees + run `rhino-cli`); per-run cost is well under 30 seconds and dominated by node + go setup actions. Negligible cron cost.
+
+### Out-of-scope CI surfaces
+
+- `pr-validate-links.yml` already runs `rhino-cli docs validate-links` (a different command tree). The plan deliberately leaves that workflow alone — `docs validate-links` is out of scope per Fix #13's "Out-of-scope" note.
+- `test-organiclever-web-staging.yml` and `deploy-organiclever-web-to-production.yml` are post-merge deploy promotion workflows (no testing/validation logic). Adding spec gates there would duplicate `test-and-deploy-organiclever-web-development.yml`'s coverage with no incremental signal.
+
 ## Test plan
 
-Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~50 new test scenarios across the 13 fixes.
+Each fix has its own Gherkin scenarios in `prd.md`. Tests live in `apps/rhino-cli/cmd/<file>_test.go` (godog unit) and `apps/rhino-cli/cmd/<file>.integration_test.go` (godog integration with real fs). Aggregate: ~54 new test scenarios across the 14 fixes (Fix #14 contributes 4 acceptance scenarios verified via grep + workflow-run smoke tests rather than Go unit tests, since the artifact is YAML, not Go code).
 
 Coverage gate: ≥90% on `apps/rhino-cli/` (existing). Each fix's TDD red-step writes the failing test first; green-step implements; refactor cleans up.
 

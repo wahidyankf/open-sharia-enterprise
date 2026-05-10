@@ -1,6 +1,6 @@
 # PRD — BDD + DDD Tooling Gap-Fill
 
-This plan delivers 13 fixes against the 2026-05-09 optimality audit (11 from the original audit plus #12 and #13 added during the 2026-05-10 recheck to honor the "zero dead specs/BDD/DDD scripts" goal). Each fix carries its own Gherkin acceptance criteria.
+This plan delivers 14 fixes against the 2026-05-09 optimality audit (11 from the original audit plus #12 and #13 added during the 2026-05-10 recheck to honor the "zero dead specs/BDD/DDD scripts" goal, plus #14 added during the 2026-05-10 CI-surface recheck to ensure all four `validate:specs-*` targets run on every gating surface — pre-push, PR quality gate, and main-CI deploy workflows). Each fix carries its own Gherkin acceptance criteria.
 
 ## The allowlist
 
@@ -410,11 +410,49 @@ Feature: validate-links is invoked by pre-push gate
     And no finding is reported for the external URL
 ```
 
+## Fix #14 — Wire `validate:specs-*` into PR gate + main-CI deploy workflows (HIGH)
+
+**What**: After Fixes #1, #2, #12, #13 land, pre-push (`.husky/pre-push`) calls all four `validate:specs-*` Nx targets. But the **PR quality gate** (`.github/workflows/pr-quality-gate.yml`) and the four **main-CI deploy workflows** (`test-and-deploy-{ayokoding,oseplatform,wahidyankf}-web.yml` via the shared `_reusable-test-and-deploy.yml`, plus `test-and-deploy-organiclever-web-development.yml`) do not. Pre-push is bypassable with `--no-verify`; without parallel coverage on the PR gate and main-CI surfaces, structural spec drift can land on `main` undetected. This fix adds a dedicated `specs-gate` job to each of the three workflow files. The job runs `nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli` and is added to each workflow's gating aggregator (`quality-gate` for the PR workflow; `deploy.needs` for the main-CI workflows so a validator failure blocks deploy).
+
+**Why a dedicated job (not appending to an existing job)**: Validators belong to `rhino-cli` (workspace-level Nx project) and have no language-bucket affinity. The PR gate's per-language jobs already use `nx run-many --projects='tag:lang:golang'` patterns; reusing that with `--projects=rhino-cli` works but conflates Go-affected detection with workspace-wide spec validation. A separate job is clearer in CI logs, easier to reason about when only specs change, and trivial to extend if more `validate:*` targets are added later.
+
+**Acceptance**:
+
+```gherkin
+Feature: validate:specs-* runs on PR gate and main-CI deploy workflows
+
+  Scenario: PR quality gate enforces specs validators
+    Given a pull request is opened against main
+    When .github/workflows/pr-quality-gate.yml runs
+    Then a job named "specs-gate" runs "nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli"
+    And the "quality-gate" aggregator job's "needs:" list includes "specs-gate"
+    And a structural spec violation in the PR aborts the gate non-zero
+
+  Scenario: Reusable test-and-deploy workflow blocks deploys on spec violations
+    Given the daily cron triggers test-and-deploy-ayokoding-web.yml (or oseplatform-web.yml or wahidyankf-web.yml)
+    When _reusable-test-and-deploy.yml runs
+    Then a job named "specs-gate" runs "nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli"
+    And the "deploy" job's "needs:" list includes "specs-gate"
+    And a structural spec violation aborts the deploy step non-zero
+
+  Scenario: OrganicLever development deploy blocks on spec violations
+    Given the daily cron triggers test-and-deploy-organiclever-web-development.yml
+    When the workflow runs
+    Then a job named "specs-gate" runs "nx run-many -t validate:specs-adoption validate:specs-tree validate:specs-counts validate:specs-links --projects=rhino-cli"
+    And the "deploy" job's "needs:" list includes "specs-gate"
+    And a structural spec violation aborts the deploy step non-zero
+
+  Scenario: All four validators wired uniformly across surfaces
+    Given the plan has merged
+    When grep is run over .husky/pre-push, pr-quality-gate.yml, _reusable-test-and-deploy.yml, and test-and-deploy-organiclever-web-development.yml
+    Then each surface invokes "validate:specs-adoption", "validate:specs-tree", "validate:specs-counts", and "validate:specs-links" — exactly four targets, no surface partially wired
+```
+
 ## Personas
 
 - **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
 - **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
-- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
+- **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 7C for the CI-surface wiring covering Fix #14 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
 - **Delivery executor** (plan-execution workflow hat) — follows `governance/workflows/plan/plan-execution.md` to execute each delivery checkbox in order.
 - **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
 
@@ -428,6 +466,7 @@ Feature: validate-links is invoked by pre-push gate
 - As a developer, I want the three `specs drift-*` placeholder commands removed so that `rhino-cli specs --help` only lists commands that are actually implemented.
 - As a developer, I want `specs validate-counts` wired into pre-push so that a missing required spec folder aborts the push with HIGH severity, paired with the severity reconciliation already shipped in Fix #8.
 - As a developer, I want `specs validate-links` wired into pre-push so that a broken internal markdown link inside any allowlisted spec tree aborts the push, leaving zero dead specs/BDD/DDD scripts after this plan ships.
+- As a maintainer, I want the four `validate:specs-*` targets wired into the PR quality gate and every main-CI deploy workflow so that structural spec drift cannot reach `main` even if a developer pushes with `--no-verify`, ensuring belt-and-braces enforcement across pre-push, PR gate, and deploy time.
 
 ## Product Risks
 
