@@ -1,0 +1,92 @@
+version: 2
+app: wahidyankf
+contexts:
+  - name: app-shell
+    summary: >-
+      Site chrome — navigation bar, theme toggle, responsive layout, and
+      accessibility wiring. Pure presentation; no domain entities or data
+      access.
+    layers:
+      - presentation
+    code:
+      - apps/wahidyankf-web/src/contexts/app-shell
+    glossary: specs/apps/wahidyankf/ddd/ubiquitous-language/app-shell.md
+    gherkin: specs/apps/wahidyankf/behavior/web/gherkin/app-shell
+    relationships: []
+
+  - name: home
+    summary: >-
+      Landing page at / — intro hero, featured top skills and languages,
+      contact links. Pure presentation; data supplied by cv context.
+    layers:
+      - presentation
+    code:
+      - apps/wahidyankf-web/src/contexts/home
+    glossary: specs/apps/wahidyankf/ddd/ubiquitous-language/home.md
+    gherkin: specs/apps/wahidyankf/behavior/web/gherkin/home
+    relationships:
+      - to: personal-projects
+        kind: customer-supplier
+        role: customer
+      - to: search
+        kind: conformist
+        role: upstream
+
+  - name: cv
+    summary: >-
+      /cv page — work history timeline, skills, education. Owns CV data and
+      projection helpers (application layer) plus rendering (presentation
+      layer).
+    layers:
+      - application
+      - presentation
+    code:
+      - apps/wahidyankf-web/src/contexts/cv
+    glossary: specs/apps/wahidyankf/ddd/ubiquitous-language/cv.md
+    gherkin: specs/apps/wahidyankf/behavior/web/gherkin/cv
+    relationships:
+      - to: search
+        kind: conformist
+        role: upstream
+
+  - name: personal-projects
+    summary: >-
+      /personal-projects page — listing of personal projects with filterable
+      tech tags. Application layer owns the project records and filter logic;
+      presentation layer owns the UI.
+    layers:
+      - application
+      - presentation
+    code:
+      - apps/wahidyankf-web/src/contexts/personal-projects
+    glossary: specs/apps/wahidyankf/ddd/ubiquitous-language/personal-projects.md
+    gherkin: specs/apps/wahidyankf/behavior/web/gherkin/personal-projects
+    relationships:
+      - to: home
+        kind: customer-supplier
+        role: supplier
+      - to: search
+        kind: conformist
+        role: upstream
+
+  - name: search
+    summary: >-
+      Cross-area search — indexes home, cv, and personal-projects content;
+      ranks results; renders the search-input and results UI.
+    layers:
+      - application
+      - presentation
+    code:
+      - apps/wahidyankf-web/src/contexts/search
+    glossary: specs/apps/wahidyankf/ddd/ubiquitous-language/search.md
+    gherkin: specs/apps/wahidyankf/behavior/web/gherkin/search
+    relationships:
+      - to: home
+        kind: conformist
+        role: downstream
+      - to: cv
+        kind: conformist
+        role: downstream
+      - to: personal-projects
+        kind: conformist
+        role: downstream

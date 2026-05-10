@@ -35,7 +35,7 @@ nx run wahidyankf-web:lint
 # Unit tests (Vitest 4, jsdom)
 nx run wahidyankf-web:test:unit
 
-# Fast pre-push gate (unit + coverage ≥80% via rhino-cli)
+# Fast pre-push gate: ddd bc → ddd ul → unit tests + coverage ≥80%
 nx run wahidyankf-web:test:quick
 
 # Integration tests (node environment; empty at adoption time)
@@ -49,23 +49,39 @@ nx run wahidyankf-web:spec-coverage
 
 - **Vitest 4** + `@vitejs/plugin-react` + `jsdom` for unit tests
 - **`@amiceli/vitest-cucumber`** for Gherkin acceptance specs at the unit
-  level (feature files under `specs/apps/wahidyankf/fe/gherkin/`)
+  level (feature files under `specs/apps/wahidyankf/behavior/web/gherkin/`)
 - **`@testing-library/react`** + **`@testing-library/jest-dom`** for
   component interaction
 - Coverage enforced at ≥80% via `rhino-cli test-coverage validate` —
   aligned to `apps/ayokoding-web` and `apps/oseplatform-web`
 
 End-to-end tests live in the sibling project `apps/wahidyankf-web-fe-e2e/`
-(lands in P4 of the adoption plan) using Playwright-BDD and
-`@axe-core/playwright` for WCAG 2.1 AA smoke.
+using Playwright-BDD and `@axe-core/playwright` for WCAG 2.1 AA smoke.
+
+## Specs
+
+Platform-agnostic specifications for this app live at
+[`specs/apps/wahidyankf/`](../../specs/apps/wahidyankf/README.md):
+
+- **Five-folder C4 + DDD tree**: `product/`, `system-context/`, `containers/`,
+  `components/`, `behavior/`
+- **DDD registry**: [`specs/apps/wahidyankf/ddd/bounded-contexts.yaml`](../../specs/apps/wahidyankf/ddd/bounded-contexts.yaml) —
+  five bounded contexts (`app-shell`, `home`, `cv`, `personal-projects`, `search`)
+- **Ubiquitous-language glossaries**:
+  [`specs/apps/wahidyankf/ddd/ubiquitous-language/`](../../specs/apps/wahidyankf/ddd/ubiquitous-language/README.md)
+- **Gherkin features**:
+  [`specs/apps/wahidyankf/behavior/web/gherkin/`](../../specs/apps/wahidyankf/behavior/web/gherkin/README.md) —
+  7 feature files organized per bounded context
+
+`rhino-cli ddd bc wahidyankf` and `rhino-cli ddd ul wahidyankf` run as the first
+two commands in `test:quick` to enforce structural and vocabulary invariants before
+unit tests run.
 
 ## Deployment
 
 `prod-wahidyankf-web` branch receives force-pushes from `main` via the
 `apps-wahidyankf-web-deployer` agent. Vercel watches the branch and
-rebuilds on every push. The scheduled CI workflow
-(`.github/workflows/test-and-deploy-wahidyankf-web.yml`, lands in P6)
-runs quality gates and invokes the deployer.
+rebuilds on every push.
 
 ## Structure
 
@@ -73,17 +89,26 @@ runs quality gates and invokes the deployer.
 apps/wahidyankf-web/
 ├── public/                   # Static assets (favicon, fonts)
 ├── src/
-│   ├── app/                  # Next.js App Router pages
-│   │   ├── cv/page.tsx       # Curriculum vitae
+│   ├── app/                  # Next.js App Router routing shell (thin wrappers)
+│   │   ├── cv/page.tsx       # Routes to CvContent from cv context
 │   │   ├── personal-projects/page.tsx
 │   │   ├── fonts/            # GeistVF, GeistMonoVF woff
-│   │   ├── data.ts           # Portfolio content data
 │   │   ├── layout.tsx
 │   │   ├── head.tsx
-│   │   ├── page.tsx          # Home
+│   │   ├── page.tsx          # Routes to HomeContent from home context
 │   │   └── globals.css       # Tailwind 4 entry
-│   ├── components/           # React components
-│   ├── utils/                # Pure helpers (search, markdown, style)
+│   ├── contexts/             # DDD bounded contexts
+│   │   ├── app-shell/presentation/   # Navigation, style utility
+│   │   ├── cv/
+│   │   │   ├── application/  # data.ts (CVEntry, cvData, helpers), markdown.tsx
+│   │   │   └── presentation/ # CvContent.tsx
+│   │   ├── home/presentation/        # HomeContent.tsx
+│   │   ├── personal-projects/
+│   │   │   ├── application/  # projects.ts (Project, filterProjects)
+│   │   │   └── presentation/ # PersonalProjectsContent.tsx
+│   │   └── search/
+│   │       ├── application/  # search.ts (filterItems, SearchTerm, SearchResult)
+│   │       └── presentation/ # SearchSection.tsx (placeholder)
 │   └── test/setup.ts         # Vitest + Testing Library setup
 └── test/unit/steps/          # Gherkin step implementations
 ```
