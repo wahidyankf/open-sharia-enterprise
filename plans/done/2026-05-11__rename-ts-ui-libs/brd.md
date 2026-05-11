@@ -68,9 +68,9 @@ of the rename is fully verifiable through observable build and grep checks.
 
 ## Business Risks and Mitigations
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| A consumer import is missed, causing build breakage | Medium | Systematic `git grep` sweep before commit; typecheck gate catches any missed reference |
-| `package-lock.json` caches old package names, breaking `npm install` downstream | Low | Run `npm install` after all renames; commit updated lockfile |
-| Governance docs updated but agent prompts still reference old names at runtime | Low | Full grep sweep of `.claude/agents/` and `.claude/skills/`; verified by `git grep` post-update |
-| CI fails due to pre-existing unrelated issue, masking rename correctness | Low | Establish baseline: confirm CI green on `main` before starting work |
+| Risk                                                                            | Likelihood | Mitigation                                                                                     |
+| ------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| A consumer import is missed, causing build breakage                             | Medium     | Systematic `git grep` sweep before commit; typecheck gate catches any missed reference         |
+| `package-lock.json` caches old package names, breaking `npm install` downstream | Low        | Run `npm install` after all renames; commit updated lockfile                                   |
+| Governance docs updated but agent prompts still reference old names at runtime  | Low        | Full grep sweep of `.claude/agents/` and `.claude/skills/`; verified by `git grep` post-update |
+| CI fails due to pre-existing unrelated issue, masking rename correctness        | Low        | Establish baseline: confirm CI green on `main` before starting work                            |

@@ -10,12 +10,12 @@ For the business rationale see [brd.md](./brd.md).
 
 ## Personas
 
-| Hat | Concern |
-|---|---|
-| **Library author** | Lib-internal config (`project.json`, `package.json`, Storybook) correctly reflects new names |
-| **App developer** | All four Next.js consumer apps compile, type-check, and run with new import paths |
-| **Governance author** | Markdown references in governance, agents, and skills use new names |
-| **AI agent** | Agent definition files and skill files reference correct library names so future prompts generate correct import statements |
+| Hat                   | Concern                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Library author**    | Lib-internal config (`project.json`, `package.json`, Storybook) correctly reflects new names                                |
+| **App developer**     | All four Next.js consumer apps compile, type-check, and run with new import paths                                           |
+| **Governance author** | Markdown references in governance, agents, and skills use new names                                                         |
+| **AI agent**          | Agent definition files and skill files reference correct library names so future prompts generate correct import statements |
 
 ## User Stories
 
@@ -179,9 +179,9 @@ Scenario: CI passes after push
 
 ## Product Risks
 
-| Risk | AC violated | Mitigation |
-|---|---|---|
-| Missed import in a source file | AC-7, AC-9 | `git grep` post-update; typecheck gate |
-| `package-lock.json` not regenerated | AC-4 | Explicit `npm install` step in delivery checklist |
-| Storybook import updated but CSS import missed | AC-3 | Both Storybook files listed explicitly in delivery checklist |
-| organiclever-web `implicitDependencies` not updated | AC-6 | Explicit step in delivery checklist for `project.json` |
+| Risk                                                | AC violated | Mitigation                                                   |
+| --------------------------------------------------- | ----------- | ------------------------------------------------------------ |
+| Missed import in a source file                      | AC-7, AC-9  | `git grep` post-update; typecheck gate                       |
+| `package-lock.json` not regenerated                 | AC-4        | Explicit `npm install` step in delivery checklist            |
+| Storybook import updated but CSS import missed      | AC-3        | Both Storybook files listed explicitly in delivery checklist |
+| organiclever-web `implicitDependencies` not updated | AC-6        | Explicit step in delivery checklist for `project.json`       |

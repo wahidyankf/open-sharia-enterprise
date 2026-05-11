@@ -34,12 +34,12 @@ governance documentation.
 
 ## Navigation
 
-| Document | Purpose |
-|---|---|
-| [brd.md](./brd.md) | Business rationale, success metrics, risks |
-| [prd.md](./prd.md) | Product requirements, user stories, Gherkin acceptance criteria |
-| [tech-docs.md](./tech-docs.md) | Architecture, file-impact map, design decisions |
-| [delivery.md](./delivery.md) | Phased execution checklist |
+| Document                       | Purpose                                                         |
+| ------------------------------ | --------------------------------------------------------------- |
+| [brd.md](./brd.md)             | Business rationale, success metrics, risks                      |
+| [prd.md](./prd.md)             | Product requirements, user stories, Gherkin acceptance criteria |
+| [tech-docs.md](./tech-docs.md) | Architecture, file-impact map, design decisions                 |
+| [delivery.md](./delivery.md)   | Phased execution checklist                                      |
 
 ## Approach Summary
 
