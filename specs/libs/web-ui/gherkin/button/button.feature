@@ -1,6 +1,6 @@
 Feature: Button component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Button component to render correctly with all variants, sizes, and states
   So that I can build accessible and consistent user interfaces
 

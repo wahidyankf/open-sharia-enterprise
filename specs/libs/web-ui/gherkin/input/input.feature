@@ -1,6 +1,6 @@
 Feature: Input component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Input component to render correctly with all native input behaviors
   So that I can build accessible and functional form fields
 

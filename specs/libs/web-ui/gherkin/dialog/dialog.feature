@@ -1,6 +1,6 @@
 Feature: Dialog component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Dialog component to render correctly with trigger and content
   So that I can build accessible modal interactions
 

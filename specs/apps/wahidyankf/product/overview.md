@@ -27,7 +27,7 @@ deployed at [www.wahidyankf.com](https://www.wahidyankf.com).
 - CV page with full work history timeline
 - Personal projects page with tech-tag filter
 - Client-side search across all content
-- Dark mode toggle via theme-toggle from `@open-sharia-enterprise/ts-ui`
+- Dark mode toggle via theme-toggle from `@open-sharia-enterprise/web-ui`
 - Responsive navigation (sidebar on desktop, bottom tab bar on mobile)
 
 ## Out of scope (not planned)

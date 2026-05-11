@@ -1,6 +1,6 @@
 Feature: Alert component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Alert component to render correctly with title, description, and variants
   So that I can display accessible status messages and warnings
 

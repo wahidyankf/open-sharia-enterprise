@@ -18,9 +18,9 @@ entities.
 | `App shell`      | `appMachine` (XState v5 machine), `AppRuntimeContext` (React context)                         | `app-shell/*.feature` |
 | `AppMachine`     | `appMachine` (XState v5 machine), `AppMachineContext` (TS type)                               | `app-shell/*.feature` |
 | `i18n key`       | `useT` (hook), `TRANSLATIONS` (TS table)                                                      | `app-shell/*.feature` |
-| `Design token`   | CSS custom properties: --color-primary, --font-sans, etc. (in ts-ui-tokens; no TS identifier) | `app-shell/*.feature` |
-| `TabBar`         | `TabBar` (component from ts-ui)                                                               | `app-shell/*.feature` |
-| `SideNav`        | `SideNav` (component from ts-ui)                                                              | `app-shell/*.feature` |
+| `Design token`   | CSS custom properties: --color-primary, --font-sans, etc. (in web-ui-token; no TS identifier) | `app-shell/*.feature` |
+| `TabBar`         | `TabBar` (component from web-ui)                                                              | `app-shell/*.feature` |
+| `SideNav`        | `SideNav` (component from web-ui)                                                             | `app-shell/*.feature` |
 | `Overlay tree`   | `OverlayTree` (component)                                                                     | `app-shell/*.feature` |
 | `Logger`         | `FocusLogger`, `LearningLogger`, `ReadingLogger`, `CustomEntryLogger` (components)            | `app-shell/*.feature` |
 | `Error boundary` | React built-in — no app-shell export                                                          | `app-shell/*.feature` |
@@ -124,13 +124,13 @@ is `i18n key`); "String resource" (platform-specific jargon from Android/iOS).
 ### Term: `Design token`
 
 A semantic CSS variable (e.g. `--color-primary`, `--font-sans`) consumed by all
-contexts' presentation layers. Owned by `@open-sharia-enterprise/ts-ui-tokens`; applied
+contexts' presentation layers. Owned by `@open-sharia-enterprise/web-ui-token`; applied
 to `<html>` via `globals.css`. `app-shell` is the binding point where the OrganicLever
 warm OKLCH palette loads — no other context directly imports the token CSS files.
 
 **Code identifier(s)**:
 `--color-primary`, `--hue-sage`, `--font-sans`, etc. — CSS custom properties defined in
-`libs/ts-ui-tokens/src/organiclever.css`.
+`libs/web-ui-token/src/organiclever.css`.
 
 **Used in features**: `app-shell/*.feature`
 
@@ -146,11 +146,11 @@ preference).
 
 The 60 px mobile bottom navigation rendered at the bottom of the screen for the four
 main app tabs (Home, History, Progress, Settings). Visible only below the `lg`
-breakpoint. Owned by `ts-ui` component library; `app-shell` wires it to the URL router.
+breakpoint. Owned by `web-ui` component library; `app-shell` wires it to the URL router.
 
 **Code identifier(s)**:
-`TabBar` — the React component from `@open-sharia-enterprise/ts-ui`
-(`libs/ts-ui/src/components/tab-bar.tsx`).
+`TabBar` — the React component from `@open-sharia-enterprise/web-ui`
+(`libs/web-ui/src/components/tab-bar.tsx`).
 Consumed in `app-shell/presentation/components/tab-bar.tsx` (wrapper).
 
 **Used in features**: `app-shell/*.feature`
@@ -165,12 +165,12 @@ Consumed in `app-shell/presentation/components/tab-bar.tsx` (wrapper).
 ### Term: `SideNav`
 
 The 220 px desktop side navigation rendered at the left of the screen above the `lg`
-breakpoint. Mirrors the four-tab structure of `TabBar`. Owned by `ts-ui`; `app-shell`
+breakpoint. Mirrors the four-tab structure of `TabBar`. Owned by `web-ui`; `app-shell`
 wires it to the URL router.
 
 **Code identifier(s)**:
-`SideNav` — the React component from `@open-sharia-enterprise/ts-ui`
-(`libs/ts-ui/src/components/side-nav.tsx`).
+`SideNav` — the React component from `@open-sharia-enterprise/web-ui`
+(`libs/web-ui/src/components/side-nav.tsx`).
 Consumed in `app-shell/presentation/components/side-nav.tsx` (wrapper).
 
 **Used in features**: `app-shell/*.feature`

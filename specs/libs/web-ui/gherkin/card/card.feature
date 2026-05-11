@@ -1,6 +1,6 @@
 Feature: Card component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Card component to render correctly with all sub-components
   So that I can build consistent content containers
 

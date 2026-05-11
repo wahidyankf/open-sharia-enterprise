@@ -1,6 +1,6 @@
 Feature: Label component
 
-  As a developer using the ts-ui design system
+  As a developer using the web-ui design system
   I want the Label component to render correctly and associate with form controls
   So that I can build accessible form fields
 

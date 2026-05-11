@@ -4,8 +4,8 @@
 
 The OrganicLever web app uses a warm OKLCH (a perceptually uniform color space that
 produces more natural-looking colors than HSL) design system built on CSS custom
-properties (CSS variables). Tokens come from `@open-sharia-enterprise/ts-ui-tokens`;
-components come from `@open-sharia-enterprise/ts-ui`. No other apps in the monorepo
+properties (CSS variables). Tokens come from `@open-sharia-enterprise/web-ui-token`;
+components come from `@open-sharia-enterprise/web-ui`. No other apps in the monorepo
 share the warm OKLCH palette — it is opt-in via a separate CSS import.
 
 ## Palette
@@ -61,9 +61,9 @@ the previous:
 ```css
 /* apps/organiclever-web/src/app/globals.css */
 @import "tailwindcss"; /* Tailwind v4 base reset */
-@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}"; /* scan ts-ui for class names */
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css"; /* shared neutral baseline */
-@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css"; /* OL warm OKLCH palette */
+@source "../../../../libs/web-ui/src/**/*.{ts,tsx}"; /* scan web-ui for class names */
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css"; /* shared neutral baseline */
+@import "@open-sharia-enterprise/web-ui-token/src/organiclever.css"; /* OL warm OKLCH palette */
 
 @theme {
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
@@ -76,7 +76,7 @@ the previous:
 
 ## Key components
 
-All UI components come from `@open-sharia-enterprise/ts-ui`. OL-specific additions:
+All UI components come from `@open-sharia-enterprise/web-ui`. OL-specific additions:
 
 | Component      | OL addition                                                    |
 | -------------- | -------------------------------------------------------------- |
@@ -109,4 +109,4 @@ than a Tailwind class — Tailwind cannot detect template literals at build time
 
 - [Architecture](./architecture.md) — bounded-context layout and layer rules
 - [Routes and screens](./routes-and-screens.md) — URL routing and screen inventory
-- ts-ui library (`libs/ts-ui/README.md`) — full component catalog
+- web-ui library (`libs/web-ui/README.md`) — full component catalog
