@@ -5,7 +5,6 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [rename-governance-to-repo-governance](./rename-governance-to-repo-governance/README.md) — Rename `governance/` to `repo-governance/` to avoid GRC ambiguity
 
 ## Instructions
 
