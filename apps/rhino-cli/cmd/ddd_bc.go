@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -9,12 +8,17 @@ import (
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
+// bcSeverity holds the --severity flag value for the ddd bc command.
 var bcSeverity string
 
-var dddBcCmd = &cobra.Command{
-	Use:   "bc <app>",
-	Short: "Validate bounded-context structural parity against the registry",
-	Long: `Verify that the filesystem matches the registry at
+// dddBcCmd is the cobra.Command for "rhino-cli ddd bc".
+var dddBcCmd *cobra.Command
+
+func init() {
+	spec := dddCommandSpec{
+		Use:   "bc <app>",
+		Short: "Validate bounded-context structural parity against the registry",
+		Long: `Verify that the filesystem matches the registry at
 specs/apps/<app>/bounded-contexts.yaml.
 
 Checks for each registered context:
@@ -32,51 +36,30 @@ Severity is resolved in priority order:
   1. --severity flag
   2. OSE_RHINO_DDD_SEVERITY environment variable
   3. Default: error`,
-	Example: `  # Validate organiclever bounded-context structure
+		Example: `  # Validate organiclever bounded-context structure
   rhino-cli ddd bc organiclever
 
   # Downgrade findings to warnings (escape hatch only)
   rhino-cli ddd bc organiclever --severity=warn`,
-	Args:          cobra.ExactArgs(1),
-	SilenceErrors: true,
-	RunE:          runDddBc,
-}
-
-func init() {
+		ValidatorFn: func(repoRoot, app string) ([]dddFinding, error) {
+			sev := severity.Resolve(bcSeverity, os.Getenv("OSE_RHINO_DDD_SEVERITY"), os.Stderr)
+			raw, err := bcValidateAllFn(bcregistry.ValidateOptions{
+				RepoRoot: repoRoot,
+				App:      app,
+				Severity: sev,
+			})
+			if err != nil {
+				return nil, err
+			}
+			out := make([]dddFinding, len(raw))
+			for i, f := range raw {
+				out[i] = dddFinding{File: f.File, Message: f.Message, Severity: f.Severity}
+			}
+			return out, nil
+		},
+		FindingsLabel: "ddd bc",
+	}
+	dddBcCmd = newDddCommand(spec)
 	dddBcCmd.Flags().StringVar(&bcSeverity, "severity", "", "override finding severity: warn|error")
 	dddCmd.AddCommand(dddBcCmd)
-}
-
-func runDddBc(cmd *cobra.Command, args []string) error {
-	repoRoot, err := findGitRoot()
-	if err != nil {
-		return fmt.Errorf("failed to find git repository root: %w", err)
-	}
-
-	app := args[0]
-	sev := severity.Resolve(bcSeverity, os.Getenv("OSE_RHINO_DDD_SEVERITY"), os.Stderr)
-
-	findings, err := bcValidateAllFn(bcregistry.ValidateOptions{
-		RepoRoot: repoRoot,
-		App:      app,
-		Severity: sev,
-	})
-	if err != nil {
-		return err
-	}
-
-	for _, f := range findings {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity.Code(), f.Message)
-	}
-
-	errCount := 0
-	for _, f := range findings {
-		if _, isErr := f.Severity.(severity.SeverityError); isErr {
-			errCount++
-		}
-	}
-	if errCount > 0 {
-		return fmt.Errorf("%d error finding(s) found by ddd bc", errCount)
-	}
-	return nil
 }
