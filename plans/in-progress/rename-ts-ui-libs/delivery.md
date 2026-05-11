@@ -604,7 +604,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `repo-rules-maker`_
   - Date: 2026-05-11 | Status: Done | Notes: 72 agents synced, SUCCESS ✓
 
-- [ ] Stage and commit all governance and doc changes including the OpenCode mirror sync:
+- [x] Stage and commit all governance and doc changes including the OpenCode mirror sync:
 
   ```bash
   rtk git add .claude/agents/repo-rules-fixer.md \
@@ -615,11 +615,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   rtk git commit -m "docs(governance): update ts-ui → web-ui references in agents, skills, governance"
   ```
 
+  - Date: 2026-05-11 | Status: Done | Notes: 16 files changed, committed ✓
+
 ---
 
 ## Phase 5 — Regenerate Package-Lock
 
-- [ ] Run `npm install` from `worktrees/ui/` to regenerate `package-lock.json` with new package names:
+- [x] Run `npm install` from `worktrees/ui/` to regenerate `package-lock.json` with new package names:
 
   ```bash
   npm install
@@ -628,9 +630,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `npm install` exits 0; `grep "ts-ui" package-lock.json` returns empty
   (or only appears inside the `plans/` path exclusion context — cross-check with
   `grep '"@open-sharia-enterprise/ts-ui"' package-lock.json` which must return empty).
+  - Date: 2026-05-11 | Status: Done | Notes: npm install exited 0 ✓
 
-- [ ] Verify `grep '"@open-sharia-enterprise/web-ui"' package-lock.json` returns at least one match
+- [x] Verify `grep '"@open-sharia-enterprise/web-ui"' package-lock.json` returns at least one match
       and `grep '"@open-sharia-enterprise/web-ui-token"' package-lock.json` returns at least one match.
+  - Date: 2026-05-11 | Status: Done | Notes: both new names present; no ts-ui entries remain ✓
 
 - [ ] Stage and commit the updated lockfile:
 
