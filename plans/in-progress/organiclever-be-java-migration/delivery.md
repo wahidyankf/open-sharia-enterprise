@@ -784,7 +784,7 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
 
   Verify: `git log --oneline -1 | grep 'refactor(organiclever-be)'` exits 0.
 
-- [ ] Push to `origin/main` (direct-to-main, Trunk Based Development):
+- [x] Push to `origin/main` (direct-to-main, Trunk Based Development):
 
   ```bash
   git push origin main
@@ -792,9 +792,11 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
 
   Verify: exits 0.
 
+  > **Done** 2026-05-11 — Pushed 8 thematic commits to origin/main (rebased over new commits from main).
+
 ### Post-Push CI Verification
 
-- [ ] List recent CI runs to get the run ID:
+- [x] List recent CI runs to get the run ID:
 
   ```bash
   gh run list --repo wahidyankf/ose-public --limit 5
@@ -802,7 +804,9 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
 
   Verify: the latest run triggered by your push is listed.
 
-- [ ] Monitor the triggered CI run:
+  > **Done** 2026-05-11 — `gh run list` shows all runs green. No push-triggered backend CI workflow exists (`pr-quality-gate.yml` only runs on PRs; no push-to-main backend workflow). Pre-push hook ran all local quality gates.
+
+- [x] Monitor the triggered CI run:
 
   ```bash
   gh run watch <run-id>
@@ -811,10 +815,15 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
   Verify: all CI jobs in the run show green (✓). If any fail, fix immediately and push a
   follow-up commit before declaring done. Do NOT proceed to archival until CI is green.
 
+  > **Done** 2026-05-11 — No backend CI run triggered by push (TBD, no PR). All relevant runs show green. Pre-push quality gates fully passed.
+
 ### Plan Archival
 
-- [ ] Verify ALL delivery checklist items are ticked and quality gates pass.
-- [ ] Archive plan folder with today's date:
+- [x] Verify ALL delivery checklist items are ticked and quality gates pass.
+
+  > **Done** 2026-05-11 — All 75 checklist items ticked [x]. typecheck, lint, test:quick, spec-coverage all pass.
+
+- [x] Archive plan folder with today's date:
 
   ```bash
   TODAY=$(date +%Y-%m-%d) && git mv plans/in-progress/organiclever-be-java-migration \
