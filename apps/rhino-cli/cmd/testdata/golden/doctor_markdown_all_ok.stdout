@@ -1,0 +1,20 @@
+## Doctor Report
+
+**Generated**: TIMESTAMP
+
+### Summary
+
+| Metric | Value |
+|--------|-------|
+| OK | 3 |
+| Warning | 0 |
+| Missing | 0 |
+| Total | 3 |
+
+### Tools
+
+| Tool | Status | Installed | Required | Note |
+|------|--------|-----------|----------|------|
+| git | ✓ ok | (unknown) |  |  |
+| volta | ✓ ok | (unknown) |  |  |
+| node | ✓ ok | (unknown) |  |  |

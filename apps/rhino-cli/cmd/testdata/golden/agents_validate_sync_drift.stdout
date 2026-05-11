@@ -1,0 +1,14 @@
+Validation Complete
+==================================================
+
+Total Checks: 3
+Passed: 2
+Failed: 1
+Duration: 0s
+
+Failed Checks:
+
+  ❌ agent-sync
+     Message: description mismatch for plan-maker
+
+Status: ❌ VALIDATION FAILED

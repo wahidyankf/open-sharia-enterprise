@@ -1,0 +1,2 @@
+Agents naming validation: 1 violation(s)
+  [role-suffix] .claude/agents/bad_name.md — filename must end with a valid role suffix

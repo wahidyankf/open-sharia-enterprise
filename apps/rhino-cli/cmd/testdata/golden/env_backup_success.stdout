@@ -1,0 +1,3 @@
+  BACKUP  .env
+  BACKUP  apps/web/.env
+Backup complete: 2 file(s) backupd, 0 skipped

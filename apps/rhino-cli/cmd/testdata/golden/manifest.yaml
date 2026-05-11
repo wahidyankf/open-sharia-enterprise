@@ -1,0 +1,312 @@
+# Golden output manifest for rhino-cli cmd package.
+# Each entry drives one scenario in TestGolden (cmd/golden_test.go).
+#
+# Fields:
+#   name        - unique snake_case identifier; golden file is testdata/golden/<name>.stdout
+#   args        - cobra args passed to the subcommand RunE (positional args only; flags are
+#                 set via package-level variables in the test setup)
+#   exit_ok     - true  → RunE must return nil
+#                 false → RunE must return non-nil error
+#   mock_id     - which pre-wired mock scenario to activate (see golden_test.go setupMock)
+#   command_ref - human-readable description of which cobra command is exercised
+#
+# ── Global flags ───────────────────────────────────────────────────────────────
+
+fixtures:
+  # ── doctor ─────────────────────────────────────────────────────────────────
+  - name: doctor_text_all_ok
+    args: []
+    exit_ok: true
+    mock_id: doctor_all_ok
+    command_ref: "doctor (text, all tools ok)"
+
+  - name: doctor_text_missing_tool
+    args: []
+    exit_ok: false
+    mock_id: doctor_missing_tool
+    command_ref: "doctor (text, one tool missing)"
+
+  - name: doctor_json_all_ok
+    args: []
+    exit_ok: true
+    mock_id: doctor_all_ok_json
+    command_ref: "doctor -o json (all tools ok)"
+
+  - name: doctor_markdown_all_ok
+    args: []
+    exit_ok: true
+    mock_id: doctor_all_ok_markdown
+    command_ref: "doctor -o markdown (all tools ok)"
+
+  # ── test-coverage validate ──────────────────────────────────────────────────
+  - name: test_coverage_validate_go_pass
+    args: ["cover.out", "85"]
+    exit_ok: true
+    mock_id: tc_validate_go_pass
+    command_ref: "test-coverage validate (Go format, pass)"
+
+  - name: test_coverage_validate_go_fail
+    args: ["cover.out", "90"]
+    exit_ok: false
+    mock_id: tc_validate_go_fail
+    command_ref: "test-coverage validate (Go format, fail)"
+
+  - name: test_coverage_validate_lcov_pass
+    args: ["lcov.info", "85"]
+    exit_ok: true
+    mock_id: tc_validate_lcov_pass
+    command_ref: "test-coverage validate (LCOV format, pass)"
+
+  - name: test_coverage_validate_jacoco_pass
+    args: ["jacoco.xml", "85"]
+    exit_ok: true
+    mock_id: tc_validate_jacoco_pass
+    command_ref: "test-coverage validate (JaCoCo format, pass)"
+
+  - name: test_coverage_validate_cobertura_pass
+    args: ["cobertura.xml", "85"]
+    exit_ok: true
+    mock_id: tc_validate_cobertura_pass
+    command_ref: "test-coverage validate (Cobertura format, pass)"
+
+  # ── test-coverage merge ─────────────────────────────────────────────────────
+  - name: test_coverage_merge_two_lcov
+    args: ["coverage1.info", "coverage2.info"]
+    exit_ok: true
+    mock_id: tc_merge_two_lcov
+    command_ref: "test-coverage merge (two LCOV inputs)"
+
+  # ── test-coverage diff ──────────────────────────────────────────────────────
+  - name: test_coverage_diff_no_threshold
+    args: ["lcov.info"]
+    exit_ok: true
+    mock_id: tc_diff_no_threshold
+    command_ref: "test-coverage diff (no threshold)"
+
+  - name: test_coverage_diff_per_file
+    args: ["lcov.info"]
+    exit_ok: true
+    mock_id: tc_diff_per_file
+    command_ref: "test-coverage diff --per-file"
+
+  # ── spec-coverage validate ──────────────────────────────────────────────────
+  - name: spec_coverage_validate_pass
+    args: ["specs/apps/myapp/behavior", "apps/myapp"]
+    exit_ok: true
+    mock_id: spec_coverage_pass
+    command_ref: "spec-coverage validate (no gaps)"
+
+  - name: spec_coverage_validate_fail
+    args: ["specs/apps/myapp/behavior", "apps/myapp"]
+    exit_ok: false
+    mock_id: spec_coverage_fail
+    command_ref: "spec-coverage validate (gaps found)"
+
+  # ── docs validate-links ─────────────────────────────────────────────────────
+  - name: docs_validate_links_clean
+    args: []
+    exit_ok: true
+    mock_id: docs_links_clean
+    command_ref: "docs validate-links (no broken links)"
+
+  - name: docs_validate_links_broken
+    args: []
+    exit_ok: false
+    mock_id: docs_links_broken
+    command_ref: "docs validate-links (broken links found)"
+
+  # ── docs validate-mermaid ───────────────────────────────────────────────────
+  - name: docs_validate_mermaid_clean
+    args: []
+    exit_ok: true
+    mock_id: docs_mermaid_clean
+    command_ref: "docs validate-mermaid (no violations)"
+
+  - name: docs_validate_mermaid_violations
+    args: []
+    exit_ok: false
+    mock_id: docs_mermaid_violations
+    command_ref: "docs validate-mermaid (violations found)"
+
+  # ── agents validate-claude ──────────────────────────────────────────────────
+  - name: agents_validate_claude_pass
+    args: []
+    exit_ok: true
+    mock_id: agents_validate_claude_pass
+    command_ref: "agents validate-claude (all checks pass)"
+
+  - name: agents_validate_claude_fail
+    args: []
+    exit_ok: false
+    mock_id: agents_validate_claude_fail
+    command_ref: "agents validate-claude (checks failed)"
+
+  # ── agents validate-naming ──────────────────────────────────────────────────
+  - name: agents_validate_naming_pass
+    args: []
+    exit_ok: true
+    mock_id: agents_validate_naming_pass
+    command_ref: "agents validate-naming (no violations)"
+
+  - name: agents_validate_naming_violations
+    args: []
+    exit_ok: false
+    mock_id: agents_validate_naming_violations
+    command_ref: "agents validate-naming (violations found)"
+
+  # ── agents validate-sync ────────────────────────────────────────────────────
+  - name: agents_validate_sync_pass
+    args: []
+    exit_ok: true
+    mock_id: agents_validate_sync_pass
+    command_ref: "agents validate-sync (in sync)"
+
+  - name: agents_validate_sync_drift
+    args: []
+    exit_ok: false
+    mock_id: agents_validate_sync_drift
+    command_ref: "agents validate-sync (drift detected)"
+
+  # ── agents sync ─────────────────────────────────────────────────────────────
+  - name: agents_sync_dry_run
+    args: []
+    exit_ok: true
+    mock_id: agents_sync_dry_run
+    command_ref: "agents sync --dry-run"
+
+  # ── ddd bc ──────────────────────────────────────────────────────────────────
+  - name: ddd_bc_no_findings
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: ddd_bc_no_findings
+    command_ref: "ddd bc (no findings)"
+
+  - name: ddd_bc_with_findings
+    args: ["organiclever"]
+    exit_ok: false
+    mock_id: ddd_bc_with_findings
+    command_ref: "ddd bc (error findings)"
+
+  - name: ddd_bc_severity_warn
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: ddd_bc_severity_warn
+    command_ref: "ddd bc --severity=warn (downgraded)"
+
+  # ── ddd ul ──────────────────────────────────────────────────────────────────
+  - name: ddd_ul_no_findings
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: ddd_ul_no_findings
+    command_ref: "ddd ul (no findings)"
+
+  - name: ddd_ul_with_findings
+    args: ["organiclever"]
+    exit_ok: false
+    mock_id: ddd_ul_with_findings
+    command_ref: "ddd ul (error findings)"
+
+  - name: ddd_ul_severity_warn
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: ddd_ul_severity_warn
+    command_ref: "ddd ul --severity=warn (downgraded)"
+
+  # ── env backup ──────────────────────────────────────────────────────────────
+  - name: env_backup_success
+    args: []
+    exit_ok: true
+    mock_id: env_backup_success
+    command_ref: "env backup (success)"
+
+  # ── env restore ─────────────────────────────────────────────────────────────
+  - name: env_restore_success
+    args: []
+    exit_ok: true
+    mock_id: env_restore_success
+    command_ref: "env restore (success)"
+
+  # ── env init ────────────────────────────────────────────────────────────────
+  - name: env_init_no_examples
+    args: []
+    exit_ok: true
+    mock_id: env_init_no_examples
+    command_ref: "env init (no .env.example files)"
+
+  # ── governance vendor-audit ─────────────────────────────────────────────────
+  - name: governance_vendor_audit_clean
+    args: []
+    exit_ok: true
+    mock_id: governance_vendor_audit_clean
+    command_ref: "governance vendor-audit (no violations)"
+
+  - name: governance_vendor_audit_violations
+    args: []
+    exit_ok: false
+    mock_id: governance_vendor_audit_violations
+    command_ref: "governance vendor-audit (violations found)"
+
+  # ── specs validate-tree ─────────────────────────────────────────────────────
+  - name: specs_validate_tree_pass
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: specs_validate_tree_pass
+    command_ref: "specs validate-tree (pass)"
+
+  - name: specs_validate_tree_fail
+    args: ["organiclever"]
+    exit_ok: false
+    mock_id: specs_validate_tree_fail
+    command_ref: "specs validate-tree (missing folders)"
+
+  # ── specs validate-counts ───────────────────────────────────────────────────
+  - name: specs_validate_counts_pass
+    args: ["specs/apps/organiclever"]
+    exit_ok: true
+    mock_id: specs_validate_counts_pass
+    command_ref: "specs validate-counts (pass)"
+
+  - name: specs_validate_counts_fail
+    args: ["specs/apps/organiclever"]
+    exit_ok: false
+    mock_id: specs_validate_counts_fail
+    command_ref: "specs validate-counts (empty subfolder)"
+
+  # ── specs validate-links ────────────────────────────────────────────────────
+  - name: specs_validate_links_pass
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: specs_validate_links_pass
+    command_ref: "specs validate-links (no broken links)"
+
+  - name: specs_validate_links_fail
+    args: ["organiclever"]
+    exit_ok: false
+    mock_id: specs_validate_links_fail
+    command_ref: "specs validate-links (broken links found)"
+
+  # ── specs validate-adoption ─────────────────────────────────────────────────
+  - name: specs_validate_adoption_pass
+    args: ["organiclever"]
+    exit_ok: true
+    mock_id: specs_validate_adoption_pass
+    command_ref: "specs validate-adoption (pass)"
+
+  - name: specs_validate_adoption_fail
+    args: ["organiclever"]
+    exit_ok: false
+    mock_id: specs_validate_adoption_fail
+    command_ref: "specs validate-adoption (violations)"
+
+  # ── workflows validate-naming ───────────────────────────────────────────────
+  - name: workflows_validate_naming_pass
+    args: []
+    exit_ok: true
+    mock_id: workflows_validate_naming_pass
+    command_ref: "workflows validate-naming (no violations)"
+
+  - name: workflows_validate_naming_violations
+    args: []
+    exit_ok: false
+    mock_id: workflows_validate_naming_violations
+    command_ref: "workflows validate-naming (violations found)"

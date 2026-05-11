@@ -1,0 +1,3 @@
+✗ docs/diagram.md
+  block 0 (line 0): [label_too_long] node "" label "this label is way too long for any diagram" is 43 chars (max 30)
+Found 1 violation(s) and 0 warning(s) in 0 file(s) (1 block(s) scanned).

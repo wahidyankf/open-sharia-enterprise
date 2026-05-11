@@ -1,0 +1,26 @@
+{
+  "status": "ok",
+  "scope": "full",
+  "timestamp": "TIMESTAMP",
+  "ok_count": 3,
+  "warn_count": 0,
+  "missing_count": 0,
+  "duration_ms": 0,
+  "tools": [
+    {
+      "name": "git",
+      "binary": "git",
+      "status": "ok"
+    },
+    {
+      "name": "volta",
+      "binary": "volta",
+      "status": "ok"
+    },
+    {
+      "name": "node",
+      "binary": "node",
+      "status": "ok"
+    }
+  ]
+}

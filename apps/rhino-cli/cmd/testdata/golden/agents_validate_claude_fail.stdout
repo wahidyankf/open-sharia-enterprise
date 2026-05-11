@@ -1,0 +1,14 @@
+Validation Complete
+==================================================
+
+Total Checks: 5
+Passed: 4
+Failed: 1
+Duration: 0s
+
+Failed Checks:
+
+  ❌ agent-format
+     Message: missing required field: description
+
+Status: ❌ VALIDATION FAILED

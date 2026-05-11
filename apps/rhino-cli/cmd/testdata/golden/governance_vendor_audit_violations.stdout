@@ -1,0 +1,2 @@
+GOVERNANCE VENDOR AUDIT FAILED: 1 violation(s) found
+  governance/foo.md:5  Claude Code  →  "the coding agent"

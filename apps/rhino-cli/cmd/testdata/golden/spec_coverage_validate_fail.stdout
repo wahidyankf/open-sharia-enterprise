@@ -1,0 +1,7 @@
+✗ Spec coverage gaps found!
+
+Missing test files (1):
+  - login.feature
+    (expected test file with stem: )
+
+❌ Found 1 spec(s) without matching test files

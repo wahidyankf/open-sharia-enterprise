@@ -1,0 +1,8 @@
+Doctor Report
+=============
+
+✓ git        (unknown)      ()
+✓ volta      (unknown)      ()
+✗ golang     not found      (not found in PATH)
+
+Summary: 2/3 tools OK, 0 warning, 1 missing
