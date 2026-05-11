@@ -1081,6 +1081,49 @@ apps/rhino-cli/
 └── README.md                 # Documentation
 ```
 
+## Internal architecture
+
+Two shared packages underpin the entire CLI, extracting patterns that formerly appeared verbatim in every internal reporter and every `cmd/*.go` file.
+
+### `internal/cliout` — output format sealed enum and dispatcher
+
+`internal/cliout` provides:
+
+- `OutputFormat` — a `//sumtype:decl` sealed interface with three variants: `FormatText{}`, `FormatJSON{}`, `FormatMarkdown{}`. The `gochecksumtype` linter enforces that every `switch` over an `OutputFormat` covers all three variants at compile time, so adding a fourth format can never silently fall through to a default.
+- `Parse(s string) (OutputFormat, bool)` — converts the raw `--output` flag string to a typed value; returns `false` for unrecognised inputs.
+- `Dispatcher[T]` — a generic struct holding one callback per format (`Text`, `JSON`, `Markdown`). Each `cmd/*.go` file constructs one dispatcher and calls `d.Write(w, format, data)` instead of its own `switch`; the linter's exhaustiveness guarantee lives inside `Dispatcher.Write`.
+- `Envelope[T]` — a generic JSON wrapper that enforces canonical key ordering (`schema → status → result`) across all JSON payloads.
+
+### `internal/severity` — severity sealed enum for DDD validators
+
+`internal/severity` provides:
+
+- `Severity` — a `//sumtype:decl` sealed interface with two variants: `SeverityError{}` and `SeverityWarn{}`. `gochecksumtype` guarantees every `switch` on a `Severity` value is exhaustive.
+- `Parse(s string) Severity` — converts a raw severity string to the typed enum; any unrecognised value maps to `SeverityError{}`.
+- `Resolve(flagVal, envVal string, stderr io.Writer) Severity` — resolves the active severity from the `--severity` CLI flag, the `OSE_RHINO_DDD_SEVERITY` environment variable, and a default fallback; writes an audit line to stderr when a downgrade occurs via the environment variable.
+
+Both `ddd bc` and `ddd ul` share `severity.Resolve` instead of carrying hand-copied `normaliseSeverity` functions.
+
+### Sealed-interface sum-type recipe
+
+The pattern used by both packages (and by the pre-existing `internal/testcoverage`, `internal/doctor`, and `internal/mermaid` packages) is:
+
+```go
+//sumtype:decl
+type MyEnum interface {
+    isMyEnum()
+    Code() string
+    String() string
+}
+
+type VariantA struct{}
+func (VariantA) isMyEnum() {}
+func (VariantA) Code() string   { return "a" }
+func (VariantA) String() string { return "a" }
+```
+
+The unexported `isMyEnum()` method acts as a package-private discriminant — only types defined in the same package can satisfy the interface, making the set of variants sealed. The `//sumtype:decl` directive tells `gochecksumtype` to reject any `switch` statement over the interface that omits a case for a known concrete variant. This turns missing-case bugs from silent runtime surprises into hard compile-time (lint-time) failures.
+
 ## Development
 
 ### Build
@@ -1271,6 +1314,13 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.15.0 (2026-05-11)
+
+- Extracted `internal/cliout` package: sealed `OutputFormat` enum (`FormatText`, `FormatJSON`, `FormatMarkdown`) + generic `Dispatcher[T]` + `Envelope[T]` JSON wrapper; eliminates per-reporter format duplication across six internal packages
+- Extracted `internal/severity` package: sealed `Severity` enum (`SeverityError`, `SeverityWarn`) + `Parse`/`Resolve` helpers; `ddd bc` and `ddd ul` now share a single implementation instead of hand-copying `normaliseSeverity`
+- Both packages use the `//sumtype:decl` sealed-interface pattern enforced by `gochecksumtype`; every `switch` over either enum is exhaustively checked at lint time
+- Zero behavioural change: all stdout/stderr/exit-code outputs are byte-identical to pre-refactor (verified by golden output fixtures added in Phase 0)
 
 ### v0.14.0 (2026-03-31)
 
