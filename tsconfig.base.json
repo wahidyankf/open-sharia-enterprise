@@ -20,7 +20,9 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@open-sharia-enterprise/ts-*": ["libs/ts-*/src/index.ts"]
+      "@open-sharia-enterprise/ts-*": ["libs/ts-*/src/index.ts"],
+      "@open-sharia-enterprise/web-ui": ["libs/web-ui/src/index.ts"],
+      "@open-sharia-enterprise/web-ui-token": ["libs/web-ui-token/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "dist"]

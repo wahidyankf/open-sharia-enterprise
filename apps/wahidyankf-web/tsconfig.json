@@ -18,7 +18,9 @@
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@open-sharia-enterprise/web-ui": ["../../libs/web-ui/src/index.ts"],
+      "@open-sharia-enterprise/web-ui-token": ["../../libs/web-ui-token/src/index.ts"]
     },
     "target": "ES2017"
   },
