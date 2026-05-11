@@ -305,7 +305,7 @@ The new platform gained capabilities the Hugo site never had:
 - **KaTeX math rendering** — mathematical notation renders correctly in technical content
 - **tRPC API layer** — type-safe API routes for content querying, search, and navigation
 - **React Server Components** — content pages render on the server, shipping minimal JavaScript to the client
-- **Shared UI libraries** — components from **`libs/ts-ui`** and **`libs/ts-ui-tokens`** used across ayokoding-web, oseplatform-web, and OrganicLever
+- **Shared UI libraries** — components from **`libs/web-ui`** and **`libs/web-ui-token`** used across ayokoding-web, oseplatform-web, and OrganicLever
 
 Three completed plans tracked this migration: **`ayokoding-web-v2`** for the initial rewrite, **`ayokoding-web-v1-to-v2-migration`** for content migration and URL preservation, and **`ayokoding-web-ci-quality-standardization`** for test infrastructure.
 
@@ -332,7 +332,7 @@ graph LR
     subgraph After
         AN["ayokoding-web<br/>Next.js 16 + tRPC<br/>FlexSearch, Mermaid, KaTeX"]:::after
         ON["oseplatform-web<br/>Next.js 16 + tRPC"]:::after
-        UI["libs/ts-ui<br/>libs/ts-ui-tokens<br/>Shared Components"]:::shared
+        UI["libs/web-ui<br/>libs/web-ui-token<br/>Shared Components"]:::shared
     end
 
     AH --> M
@@ -501,14 +501,14 @@ The **`demo-ci-test-standardization`** and **`ci-standardization`** plans tracke
 
 - **`golang-commons`** — Shared Go utilities (existing)
 - **`hugo-commons`** — Hugo-specific utilities (existing, will be archived when Hugo sites are fully removed)
-- **`ts-ui`** — Shared React UI components built with shadcn-ui and Radix
-- **`ts-ui-tokens`** — Design tokens for consistent theming across TypeScript applications
+- **`web-ui`** — Shared React UI components built with shadcn-ui and Radix
+- **`web-ui-token`** — Design tokens for consistent theming across TypeScript applications
 - **`clojure-openapi-codegen`** — Custom OpenAPI code generator for Clojure (the ecosystem lacked a suitable one)
 - **`elixir-cabbage`** — Custom fork of the Cabbage BDD library for Elixir Gherkin testing
 - **`elixir-gherkin`** — Gherkin parser for Elixir
 - **`elixir-openapi-codegen`** — Custom OpenAPI code generator for Elixir
 
-Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment. It also illustrates the entropy cost: each custom library is code we now own and maintain. The Clojure and Elixir libraries serve the demo backends—they are not on the critical path for the production app. The two TypeScript libraries (**`ts-ui`**, **`ts-ui-tokens`**) are, and those have the ecosystem support to justify their maintenance cost.
+Four of the six new libraries were created to fill gaps in the Clojure and Elixir ecosystems where existing OpenAPI codegen or BDD tooling did not meet our needs. Building custom libraries was not the plan—it was the pragmatic response to real gaps discovered during the polyglot experiment. It also illustrates the entropy cost: each custom library is code we now own and maintain. The Clojure and Elixir libraries serve the demo backends—they are not on the critical path for the production app. The two TypeScript libraries (**`web-ui`**, **`web-ui-token`**) are, and those have the ecosystem support to justify their maintenance cost.
 
 ## FSL-1.1-MIT: Protecting the Mission (Historical Record)
 

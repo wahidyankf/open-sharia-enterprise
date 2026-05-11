@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Icon, Button } from "@open-sharia-enterprise/ts-ui";
+import { Icon, Button } from "@open-sharia-enterprise/web-ui";
 
 interface SideNavProps {
   onLogEntry: () => void;

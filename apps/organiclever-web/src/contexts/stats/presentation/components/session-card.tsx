@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Icon, Badge } from "@open-sharia-enterprise/ts-ui";
+import { Icon, Badge } from "@open-sharia-enterprise/web-ui";
 import type { JournalEntry } from "@/contexts/journal/application";
 import { kindToHue, kindToIcon } from "@/contexts/app-shell/presentation/components/home/kind-hue";
 

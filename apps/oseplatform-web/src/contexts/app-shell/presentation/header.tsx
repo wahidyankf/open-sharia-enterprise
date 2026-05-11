@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu, Search } from "lucide-react";
-import { Button } from "@open-sharia-enterprise/ts-ui";
+import { Button } from "@open-sharia-enterprise/web-ui";
 import { ThemeToggle } from "@/contexts/app-shell/presentation/theme-toggle";
 import { MobileNav } from "@/contexts/app-shell/presentation/mobile-nav";
 import { useSearchOpen } from "@/contexts/search/presentation/use-search";

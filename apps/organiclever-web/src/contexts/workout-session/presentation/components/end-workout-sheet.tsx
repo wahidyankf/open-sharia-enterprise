@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Sheet } from "@open-sharia-enterprise/ts-ui";
+import { Button, Sheet } from "@open-sharia-enterprise/web-ui";
 import { fmtTime } from "@/shared/utils/fmt";
 
 export interface EndWorkoutSheetProps {

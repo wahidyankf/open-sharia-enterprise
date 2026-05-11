@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Icon } from "@open-sharia-enterprise/ts-ui";
+import { Icon } from "@open-sharia-enterprise/web-ui";
 
 interface TabBarProps {
   onFabPress: () => void;

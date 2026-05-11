@@ -1,7 +1,7 @@
 "use client";
 
-import { Icon } from "@open-sharia-enterprise/ts-ui";
-import { Button } from "@open-sharia-enterprise/ts-ui";
+import { Icon } from "@open-sharia-enterprise/web-ui";
+import { Button } from "@open-sharia-enterprise/web-ui";
 import type { Hue } from "@/contexts/journal/application";
 
 export interface LoggerShellProps {

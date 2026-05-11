@@ -19,7 +19,7 @@ vi.mock("@/contexts/app-shell/presentation/Navigation", () => ({
   Navigation: () => <div data-testid="navigation">Navigation</div>,
 }));
 
-vi.mock("@open-sharia-enterprise/ts-ui", () => ({
+vi.mock("@open-sharia-enterprise/web-ui", () => ({
   SearchComponent: ({
     searchTerm,
     setSearchTerm,

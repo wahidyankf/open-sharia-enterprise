@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@open-sharia-enterprise/ts-ui";
+import { Icon } from "@open-sharia-enterprise/web-ui";
 import type { ActiveLoggerKind } from "@/contexts/app-shell/presentation/app-machine";
 import { ENTRY_MODULES } from "@/contexts/app-shell/presentation/components/home/kind-hue";
 

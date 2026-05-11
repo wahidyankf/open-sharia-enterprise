@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Button, Icon, ProgressRing } from "@open-sharia-enterprise/ts-ui";
+import { Button, Icon, ProgressRing } from "@open-sharia-enterprise/web-ui";
 import { fmtTime } from "@/shared/utils/fmt";
 
 export interface SetTimerSheetProps {

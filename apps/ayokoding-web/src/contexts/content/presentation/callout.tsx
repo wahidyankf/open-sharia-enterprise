@@ -1,4 +1,4 @@
-import { Alert, AlertDescription } from "@open-sharia-enterprise/ts-ui";
+import { Alert, AlertDescription } from "@open-sharia-enterprise/web-ui";
 import { AlertTriangle, Info, Lightbulb } from "lucide-react";
 import type { ReactNode } from "react";
 

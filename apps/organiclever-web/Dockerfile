@@ -6,18 +6,18 @@ WORKDIR /app
 COPY apps/organiclever-web/package.json ./
 RUN node -e " \
   const pkg = JSON.parse(require('fs').readFileSync('package.json','utf8')); \
-  delete pkg.dependencies['@open-sharia-enterprise/ts-ui']; \
+  delete pkg.dependencies['@open-sharia-enterprise/web-ui']; \
   require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2)); \
 " && npm install --ignore-scripts --legacy-peer-deps
 
-# Install ts-ui transitive dependencies
+# Install web-ui transitive dependencies
 RUN npm install --save class-variance-authority@^0.7.0 clsx@^2.1.1 lucide-react@^0.447.0 radix-ui@^1.0.0 tailwind-merge@^2.5.3 --ignore-scripts --legacy-peer-deps
 
 # Copy workspace libs as resolvable node_modules packages
-COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
-COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
+COPY libs/web-ui/src/ ./node_modules/@open-sharia-enterprise/web-ui/src/
+COPY libs/web-ui/package.json ./node_modules/@open-sharia-enterprise/web-ui/
+COPY libs/web-ui-token/src/ ./node_modules/@open-sharia-enterprise/web-ui-token/src/
+COPY libs/web-ui-token/package.json ./node_modules/@open-sharia-enterprise/web-ui-token/
 
 # Copy app source
 COPY apps/organiclever-web/src/ ./src/

@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@open-sharia-enterprise/ts-ui";
+import { Button } from "@open-sharia-enterprise/web-ui";
 import {
   DropdownMenu,
   DropdownMenuContent,

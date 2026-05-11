@@ -1,9 +1,9 @@
 @import "tailwindcss";
 @source "../../src/**/*.{ts,tsx}";
-@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
+@source "../../../../libs/web-ui/src/**/*.{ts,tsx}";
 @plugin "@tailwindcss/typography";
 
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css";
 
 @theme {
   /* oseplatform-web brand: primary blue */

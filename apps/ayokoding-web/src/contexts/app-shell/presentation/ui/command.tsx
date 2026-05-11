@@ -4,7 +4,14 @@ import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
-import { cn, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@open-sharia-enterprise/ts-ui";
+import {
+  cn,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@open-sharia-enterprise/web-ui";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (

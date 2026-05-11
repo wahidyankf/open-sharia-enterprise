@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Icon } from "@open-sharia-enterprise/ts-ui";
+import { Icon } from "@open-sharia-enterprise/web-ui";
 import { getLast7Days, getWeeklyStats } from "@/contexts/stats/application";
 import { listEntries } from "@/contexts/journal/application";
 import { listRoutines } from "@/contexts/routine/application";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@open-sharia-enterprise/ts-ui";
+import { Button } from "@open-sharia-enterprise/web-ui";
 
 export default function ContentError({ reset }: { error: Error; reset: () => void }) {
   return (

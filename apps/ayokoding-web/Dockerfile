@@ -5,8 +5,8 @@ FROM node:24-alpine AS deps
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/ayokoding-web/package.json ./apps/ayokoding-web/
-COPY libs/ts-ui/package.json ./libs/ts-ui/
-COPY libs/ts-ui-tokens/package.json ./libs/ts-ui-tokens/
+COPY libs/web-ui/package.json ./libs/web-ui/
+COPY libs/web-ui-token/package.json ./libs/web-ui-token/
 RUN npm ci --ignore-scripts
 
 FROM node:24-alpine AS builder
@@ -15,10 +15,10 @@ COPY --from=deps /workspace/node_modules ./node_modules
 COPY --from=deps /workspace/apps/ayokoding-web/node_modules ./apps/ayokoding-web/node_modules
 COPY apps/ayokoding-web/ ./apps/ayokoding-web/
 # Provide shared libs as resolvable node_modules packages
-COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
-COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
+COPY libs/web-ui/src/ ./node_modules/@open-sharia-enterprise/web-ui/src/
+COPY libs/web-ui/package.json ./node_modules/@open-sharia-enterprise/web-ui/
+COPY libs/web-ui-token/src/ ./node_modules/@open-sharia-enterprise/web-ui-token/src/
+COPY libs/web-ui-token/package.json ./node_modules/@open-sharia-enterprise/web-ui-token/
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN cd apps/ayokoding-web && npm run build
 

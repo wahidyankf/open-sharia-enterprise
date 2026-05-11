@@ -2,20 +2,20 @@ FROM node:24-alpine AS deps
 WORKDIR /workspace
 COPY ../../package.json ../../package-lock.json ./
 COPY apps/oseplatform-web/package.json apps/oseplatform-web/
-COPY libs/ts-ui/package.json libs/ts-ui/
-COPY libs/ts-ui-tokens/package.json libs/ts-ui-tokens/
+COPY libs/web-ui/package.json libs/web-ui/
+COPY libs/web-ui-token/package.json libs/web-ui-token/
 RUN npm ci --ignore-scripts
 
 FROM node:24-alpine AS builder
 WORKDIR /workspace
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY apps/oseplatform-web/ apps/oseplatform-web/
-COPY libs/ts-ui/ libs/ts-ui/
-COPY libs/ts-ui-tokens/ libs/ts-ui-tokens/
-COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
-COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
+COPY libs/web-ui/ libs/web-ui/
+COPY libs/web-ui-token/ libs/web-ui-token/
+COPY libs/web-ui/src/ ./node_modules/@open-sharia-enterprise/web-ui/src/
+COPY libs/web-ui/package.json ./node_modules/@open-sharia-enterprise/web-ui/
+COPY libs/web-ui-token/src/ ./node_modules/@open-sharia-enterprise/web-ui-token/src/
+COPY libs/web-ui-token/package.json ./node_modules/@open-sharia-enterprise/web-ui-token/
 WORKDIR /workspace/apps/oseplatform-web
 RUN npx tsx src/scripts/generate-search-data.ts
 RUN npm run build

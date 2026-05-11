@@ -11,8 +11,8 @@ vi.mock("lucide-react", () => ({
   Sun: () => <svg data-testid="sun-icon" />,
 }));
 
-// Mock @open-sharia-enterprise/ts-ui
-vi.mock("@open-sharia-enterprise/ts-ui", () => ({
+// Mock @open-sharia-enterprise/web-ui
+vi.mock("@open-sharia-enterprise/web-ui", () => ({
   Button: ({
     children,
     asChild,

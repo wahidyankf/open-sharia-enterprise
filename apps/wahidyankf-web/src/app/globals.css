@@ -1,6 +1,6 @@
 @import "tailwindcss";
-/* Scan ts-ui source so Tailwind includes classes used in transpiled components */
-@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
+/* Scan web-ui source so Tailwind includes classes used in transpiled components */
+@source "../../../../libs/web-ui/src/**/*.{ts,tsx}";
 
 @theme {
   --color-light-background: #ffffff;

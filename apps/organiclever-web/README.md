@@ -47,7 +47,7 @@ apps/organiclever-web/src/
 - **XState v5** — UI shell and workout-session FSMs
 - **Effect TS** — typed functional effects in infrastructure layer
 - **Tailwind CSS v4** — utility-first CSS
-- **`@open-sharia-enterprise/ts-ui`** — shared component library
+- **`@open-sharia-enterprise/web-ui`** — shared component library
 
 ## Behavior & Architecture
 

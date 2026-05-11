@@ -5,7 +5,7 @@ import { projects, filterProjects } from "@/contexts/personal-projects/applicati
 import { Github, Globe, Youtube } from "lucide-react";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 
 const LinkIcon = ({ type }: { type: string }) => {
   switch (type.toLowerCase()) {

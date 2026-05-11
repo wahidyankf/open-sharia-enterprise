@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Label, Sheet } from "@open-sharia-enterprise/ts-ui";
+import { Button, Input, Label, Sheet } from "@open-sharia-enterprise/web-ui";
 
 export interface SetEditSheetProps {
   isOpen: boolean;

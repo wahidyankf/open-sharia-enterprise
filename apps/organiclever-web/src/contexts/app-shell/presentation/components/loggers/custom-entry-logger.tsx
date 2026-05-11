@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Schema } from "effect";
-import { Input, Textarea, HuePicker, Icon } from "@open-sharia-enterprise/ts-ui";
-import type { HueName } from "@open-sharia-enterprise/ts-ui";
+import { Input, Textarea, HuePicker, Icon } from "@open-sharia-enterprise/web-ui";
+import type { HueName } from "@open-sharia-enterprise/web-ui";
 import { appendEntries } from "@/contexts/journal/application";
 import { EntryName, IsoTimestamp } from "@/contexts/journal/application";
 import type { JournalRuntime } from "@/contexts/journal/application";
 import { LoggerShell } from "./logger-shell";
-import type { IconName } from "@open-sharia-enterprise/ts-ui";
+import type { IconName } from "@open-sharia-enterprise/web-ui";
 
 export interface CustomEntryLoggerProps {
   isOpen: boolean;

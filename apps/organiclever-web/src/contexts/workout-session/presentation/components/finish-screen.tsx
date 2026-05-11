@@ -1,6 +1,6 @@
 "use client";
 
-import { AppHeader, Button, Icon, StatCard } from "@open-sharia-enterprise/ts-ui";
+import { AppHeader, Button, Icon, StatCard } from "@open-sharia-enterprise/web-ui";
 import type { CompletedSession } from "@/contexts/app-shell/presentation/app-machine";
 import { fmtTime } from "@/shared/utils/fmt";
 

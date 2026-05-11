@@ -170,11 +170,11 @@ ose-primer/apps/
 ose-primer/libs/
 ├── clojure-openapi-codegen       elixir-cabbage
 ├── elixir-gherkin                elixir-openapi-codegen
-├── golang-commons                ts-ui
-├── ts-ui-tokens
+├── golang-commons                web-ui
+├── web-ui-token
 ```
 
-`ose-public/libs/` is correspondingly smaller: `clojure-openapi-codegen`, `golang-commons`, `hugo-commons`, `ts-ui`, `ts-ui-tokens`. The three Elixir libraries that existed only to support the polyglot demos moved to `ose-primer` along with the demos themselves.
+`ose-public/libs/` is correspondingly smaller: `clojure-openapi-codegen`, `golang-commons`, `hugo-commons`, `web-ui`, `web-ui-token`. The three Elixir libraries that existed only to support the polyglot demos moved to `ose-primer` along with the demos themselves.
 
 ### Bidirectional Sync, Asymmetric Rules
 
@@ -186,9 +186,9 @@ The publish path is currently relaxed across all three subrepos. `ose-public`, `
 
 ## `wahidyankf-web` Joins the Monorepo
 
-A fourth web app entered `ose-public` this period: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source with content synced from the LinkedIn profile, and wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out into `libs/ts-ui` so the other web apps can use them too.
+A fourth web app entered `ose-public` this period: [`wahidyankf-web`](https://www.wahidyankf.com/), Wahidyan Kresna Fridayoka's personal portfolio. Scaffolded as an Nx app, ported from an external source with content synced from the LinkedIn profile, and wired to a `prod-wahidyankf-web` environment branch with a Vercel deploy workflow and a dedicated `apps-wahidyankf-web-deployer` agent. Playwright-BDD E2E tests live in `wahidyankf-web-fe-e2e`. Several reusable React components—`HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`—were migrated out into `libs/web-ui` so the other web apps can use them too.
 
-Beyond the portfolio itself, `wahidyankf-web` plays a structural role: it represents the **simplest possible frontend / web tech stack**—a static-leaning Next.js app with no API layer, no local-first store, no domain logic. With `oseplatform-web` (content + tRPC), `ayokoding-web` (bilingual content + tRPC + search + Mermaid + KaTeX), `organiclever-web` (local-first PGlite + DDD + XState), and `wahidyankf-web` (simple portfolio) all in the same repo, the four-app spread covers the full FE complexity range. The simple end becomes the natural baseline for extracting patterns shared across every frontend: `ts-ui` components and tokens, C4 + DDD specs format, validator targets, deployment shape, testing harness.
+Beyond the portfolio itself, `wahidyankf-web` plays a structural role: it represents the **simplest possible frontend / web tech stack**—a static-leaning Next.js app with no API layer, no local-first store, no domain logic. With `oseplatform-web` (content + tRPC), `ayokoding-web` (bilingual content + tRPC + search + Mermaid + KaTeX), `organiclever-web` (local-first PGlite + DDD + XState), and `wahidyankf-web` (simple portfolio) all in the same repo, the four-app spread covers the full FE complexity range. The simple end becomes the natural baseline for extracting patterns shared across every frontend: `web-ui` components and tokens, C4 + DDD specs format, validator targets, deployment shape, testing harness.
 
 ## `ayokoding-web`: New Tutorials
 
@@ -201,9 +201,9 @@ Beyond the portfolio itself, `wahidyankf-web` plays a structural role: it repres
 
 The tutorial production pattern is industrialized through the `apps-ayokoding-web-by-example-maker/checker/fixer` and `apps-ayokoding-web-in-the-field-maker/checker/fixer` agent triplets, which were used to draft and validate the new content.
 
-## `ts-ui`: One Shared Component Library, Two Token Systems
+## `web-ui`: One Shared Component Library, Two Token Systems
 
-`libs/ts-ui` and `libs/ts-ui-tokens` existed before this period but most of their components didn't. The bulk of the additions landed in a single early-period cluster:
+`libs/web-ui` and `libs/web-ui-token` existed before this period but most of their components didn't. The bulk of the additions landed in a single early-period cluster:
 
 - `Sheet`, `AppHeader`, `Toggle`, `Icon` (with 34 OrganicLever SVG icons)
 - `HuePicker`, `InfoTip`, `StatCard`, `TabBar`, `SideNav`
@@ -212,7 +212,7 @@ The tutorial production pattern is industrialized through the `apps-ayokoding-we
 
 `Textarea` and `Badge` followed soon after, and the four migrated components from `wahidyankf-web` came in alongside.
 
-`ts-ui-tokens` gained an OrganicLever-specific warm OKLCH token system in the same cluster, and `organiclever-web` was wired to use it along with Nunito and JetBrains Mono fonts. `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` continue to use the existing token set.
+`web-ui-token` gained an OrganicLever-specific warm OKLCH token system in the same cluster, and `organiclever-web` was wired to use it along with Nunito and JetBrains Mono fonts. `oseplatform-web`, `ayokoding-web`, and `wahidyankf-web` continue to use the existing token set.
 
 ## `rhino-cli`: From Scaffolding Helper to Governance Engine
 
@@ -284,7 +284,7 @@ What changed in five weeks:
 - **License (`ose-infra`)**: MIT → proprietary
 - **`rhino-cli` validators added**: `docs validate-mermaid`, `agents validate-naming`, `workflows validate-naming`, `ddd bc validate`, `ddd ul validate`, `specs validate-tree/counts/links/adoption`, `governance vendor-audit`, `validate:cross-vendor-parity`
 - **Parent AI agents**: 0 → 11 (5 plan-family, 3 repo-rules-family, 2 ose-primer-sync makers, 1 social-monthly-update-maker)
-- **`ts-ui` components added**: 15 (`Sheet`, `AppHeader`, `Toggle`, `Icon`, `HuePicker`, `InfoTip`, `StatCard`, `TabBar`, `SideNav`, `Textarea`, `Badge`, `HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`) plus alert/button variants
+- **`web-ui` components added**: 15 (`Sheet`, `AppHeader`, `Toggle`, `Icon`, `HuePicker`, `InfoTip`, `StatCard`, `TabBar`, `SideNav`, `Textarea`, `Badge`, `HighlightText`, `ScrollToTop`, `SearchComponent`, `ThemeToggle`) plus alert/button variants
 
 ## What's Next
 

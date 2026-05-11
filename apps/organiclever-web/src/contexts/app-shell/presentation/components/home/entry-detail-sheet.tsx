@@ -1,7 +1,7 @@
 "use client";
 
-import { Icon } from "@open-sharia-enterprise/ts-ui";
-import { Badge } from "@open-sharia-enterprise/ts-ui";
+import { Icon } from "@open-sharia-enterprise/web-ui";
+import { Badge } from "@open-sharia-enterprise/web-ui";
 import type { JournalEntry } from "@/contexts/journal/application";
 import { kindToHue, kindToIcon } from "./kind-hue";
 

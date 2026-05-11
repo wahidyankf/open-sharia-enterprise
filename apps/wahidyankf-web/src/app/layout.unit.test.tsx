@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import RootLayout from "./layout";
 
-vi.mock("@open-sharia-enterprise/ts-ui", () => ({
+vi.mock("@open-sharia-enterprise/web-ui", () => ({
   ScrollToTop: () => <div data-testid="scroll-to-top">ScrollToTop</div>,
   ThemeToggle: () => <div data-testid="theme-toggle">ThemeToggle</div>,
 }));

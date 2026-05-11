@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@open-sharia-enterprise/ts-ui";
+import { Button } from "@open-sharia-enterprise/web-ui";
 
 export function Hero() {
   return (

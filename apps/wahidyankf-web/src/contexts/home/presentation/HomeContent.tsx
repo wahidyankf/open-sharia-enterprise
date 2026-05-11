@@ -13,7 +13,7 @@ import {
 import { Navigation } from "@/contexts/app-shell/presentation/Navigation";
 import { useState, useEffect } from "react";
 import { filterItems } from "@/contexts/search/application/search";
-import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 import { parseMarkdownLinks } from "@/contexts/cv/application/markdown";
 
 export type Portfolio = {

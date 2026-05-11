@@ -32,7 +32,7 @@ import {
   getTopLanguagesLastFiveYears,
   getTopFrameworksLastFiveYears,
 } from "@/contexts/cv/application/data";
-import { SearchComponent, HighlightText } from "@open-sharia-enterprise/ts-ui";
+import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 import { parseMarkdownLinks } from "@/contexts/cv/application/markdown";
 
 // Update the type definition for topSkills, topLanguages, and topFrameworks

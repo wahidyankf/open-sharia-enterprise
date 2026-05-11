@@ -128,5 +128,5 @@
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
-  "implicitDependencies": ["organiclever-contracts", "rhino-cli", "ts-ui"]
+  "implicitDependencies": ["organiclever-contracts", "rhino-cli", "web-ui"]
 }

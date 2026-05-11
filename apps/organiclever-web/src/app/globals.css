@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
-@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css";
+@source "../../../../libs/web-ui/src/**/*.{ts,tsx}";
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css";
+@import "@open-sharia-enterprise/web-ui-token/src/organiclever.css";
 
 @theme {
   --font-sans: var(--font-nunito), ui-rounded, system-ui, -apple-system, sans-serif;

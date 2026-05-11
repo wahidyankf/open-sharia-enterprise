@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Badge, Icon, Toggle } from "@open-sharia-enterprise/ts-ui";
-import { Input } from "@open-sharia-enterprise/ts-ui";
+import { Button, Badge, Icon, Toggle } from "@open-sharia-enterprise/web-ui";
+import { Input } from "@open-sharia-enterprise/web-ui";
 import type { ExerciseTemplate } from "@/contexts/journal/application";
 import { fmtTime } from "@/shared/utils/fmt";
 

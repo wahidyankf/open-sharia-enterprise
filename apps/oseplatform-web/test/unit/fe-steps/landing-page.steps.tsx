@@ -20,8 +20,8 @@ vi.mock("lucide-react", () => ({
   Rss: () => <svg aria-label="rss-icon" />,
 }));
 
-// Mock @open-sharia-enterprise/ts-ui
-vi.mock("@open-sharia-enterprise/ts-ui", () => ({
+// Mock @open-sharia-enterprise/web-ui
+vi.mock("@open-sharia-enterprise/web-ui", () => ({
   Button: ({
     children,
     asChild,

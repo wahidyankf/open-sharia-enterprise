@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AppHeader, Button, HuePicker, Icon, Input } from "@open-sharia-enterprise/ts-ui";
-import type { HueName } from "@open-sharia-enterprise/ts-ui";
+import { AppHeader, Button, HuePicker, Icon, Input } from "@open-sharia-enterprise/web-ui";
+import type { HueName } from "@open-sharia-enterprise/web-ui";
 import type { Routine, ExerciseGroup } from "../../domain";
 import type { JournalRuntime } from "@/contexts/journal/application";
 import type { ExerciseTemplate } from "@/contexts/journal/application";

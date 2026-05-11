@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Input, Toggle, Alert, AlertDescription, InfoTip } from "@open-sharia-enterprise/ts-ui";
+import { Input, Toggle, Alert, AlertDescription, InfoTip } from "@open-sharia-enterprise/web-ui";
 import type { AppRuntime } from "@/shared/runtime";
 import { useSettings } from "../use-settings";
 import { saveSettings } from "../../application";

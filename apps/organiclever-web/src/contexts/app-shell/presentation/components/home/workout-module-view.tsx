@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { StatCard, Icon } from "@open-sharia-enterprise/ts-ui";
+import { StatCard, Icon } from "@open-sharia-enterprise/web-ui";
 import { getVolume } from "@/contexts/stats/application";
 import type { WeeklyStats } from "@/contexts/stats/application";
 import type { JournalRuntime } from "@/contexts/journal/application";

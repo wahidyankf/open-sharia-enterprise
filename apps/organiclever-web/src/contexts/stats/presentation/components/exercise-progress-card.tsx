@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ExerciseProgress, ExerciseProgressPoint } from "../../application";
-import { Badge } from "@open-sharia-enterprise/ts-ui";
+import { Badge } from "@open-sharia-enterprise/web-ui";
 
 export interface ExerciseProgressCardProps {
   name: string;

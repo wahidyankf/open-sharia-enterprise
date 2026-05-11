@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import type { JournalRuntime } from "@/contexts/journal/application";
 import { getExerciseProgress, getLast7Days } from "../../application";
 import type { ExerciseProgress, DayEntry } from "../../application";
-import { InfoTip } from "@open-sharia-enterprise/ts-ui";
+import { InfoTip } from "@open-sharia-enterprise/web-ui";
 import { ExerciseProgressCard } from "./exercise-progress-card";
 
 // ---------------------------------------------------------------------------

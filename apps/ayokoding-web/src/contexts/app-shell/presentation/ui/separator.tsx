@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Separator as SeparatorPrimitive } from "radix-ui";
 
-import { cn } from "@open-sharia-enterprise/ts-ui";
+import { cn } from "@open-sharia-enterprise/web-ui";
 
 function Separator({
   className,

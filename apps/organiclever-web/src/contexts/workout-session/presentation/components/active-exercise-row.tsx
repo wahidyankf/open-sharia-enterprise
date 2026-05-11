@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Icon } from "@open-sharia-enterprise/ts-ui";
+import { Badge, Icon } from "@open-sharia-enterprise/web-ui";
 import type { ActiveExercise, CompletedSet } from "@/contexts/journal/application";
 import type { CompletedSession } from "@/contexts/app-shell/presentation/app-machine";
 import { fmtSpec, fmtTime } from "@/shared/utils/fmt";

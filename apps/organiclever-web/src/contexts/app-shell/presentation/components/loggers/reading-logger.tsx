@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Schema } from "effect";
-import { Input, Textarea } from "@open-sharia-enterprise/ts-ui";
+import { Input, Textarea } from "@open-sharia-enterprise/web-ui";
 import { appendEntries } from "@/contexts/journal/application";
 import { EntryName, IsoTimestamp } from "@/contexts/journal/application";
 import type { JournalRuntime } from "@/contexts/journal/application";
