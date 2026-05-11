@@ -25,7 +25,7 @@ Liquibase (FSL-1.1-ALv2) is retained for existing Java apps with a documented li
 1. Add dedicated, community-blessed migration tooling to all 7 demo apps that currently lack it
 2. Upgrade `a-demo-be-csharp-aspnetcore` from `EnsureCreated` to proper EF Core Migrations
 3. Ensure all migration tools produce the same 5-table schema with 6 audit columns
-4. Generalize the [Database Audit Trail Pattern](../../../governance/development/pattern/database-audit-trail.md)
+4. Generalize the [Database Audit Trail Pattern](../../../repo-governance/development/pattern/database-audit-trail.md)
    from Liquibase/JPA-only to a language-agnostic standard
 5. Document migration setup in each app's README
 6. Document the Liquibase FSL-1.1-ALv2 licensing decision (and other LGPL/EPL decisions) in a new
@@ -78,7 +78,7 @@ licensing audit for each tool.
 - No rollback — failed migrations leave the database in an unknown state
 - No auditability — no record of which migrations have been applied
 - No incremental changes — cannot add a column without recreating the table
-- Violates the [Database Audit Trail Pattern](../../../governance/development/pattern/database-audit-trail.md)
+- Violates the [Database Audit Trail Pattern](../../../repo-governance/development/pattern/database-audit-trail.md)
   which mandates versioned schema migrations
 
 ### Licensing Decision

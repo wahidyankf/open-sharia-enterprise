@@ -129,7 +129,7 @@ func TestCollectMDDefaultDirs_ReturnsNoErrorOnMissingDirs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	// No docs/, governance/, .claude/, plans/ subdirs and no root *.md → empty result.
+	// No docs/, repo-governance/, .claude/, plans/ subdirs and no root *.md → empty result.
 	if len(files) != 0 {
 		t.Errorf("expected 0 files, got %d", len(files))
 	}

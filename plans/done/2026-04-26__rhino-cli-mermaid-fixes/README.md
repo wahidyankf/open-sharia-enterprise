@@ -8,7 +8,7 @@ non-renderable diagrams through:
 
 1. **Scope gap**: `plans/` is not in the default scan path. Plan diagrams (which
    often start as detailed working drafts) are never validated, even if they are
-   eventually copied into `docs/` or `governance/`.
+   eventually copied into `docs/` or `repo-governance/`.
 2. **Parser bug**: Mermaid's `&` multi-target edge operator
    (`A --> B & C & D`) is not expanded. Only the first target after each arrow is
    captured, so rank assignment is incorrect and width violations can go undetected.

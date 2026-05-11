@@ -107,7 +107,7 @@ After every edit (Edit tool or Bash sed/awk):
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -116,5 +116,5 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Related Conventions**:
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)

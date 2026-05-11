@@ -163,8 +163,8 @@ Verify that listed spec folders reference correct paths and implementations exis
 ### Category 8: Spec Tree Shape Compliance [Deterministic via rhino-cli]
 
 Verify that the top-level spec tree follows the C4-aware five-folder layout defined in
-[App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md)
-and [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md).
+[App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md)
+and [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md).
 
 Shell out to `rhino-cli specs validate-tree <app>` for the deterministic check. Parse JSONL output.
 
@@ -189,7 +189,7 @@ For each listed folder containing gherkin specs:
 ### Category 9: Adoption Gaps (BDD/DDD/Contracts) [Deterministic via rhino-cli]
 
 Validate that BDD, DDD, and API contract adoption follows the expectations in
-[App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md)
+[App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md)
 Standard 6.
 
 Shell out to `rhino-cli specs validate-adoption <app>` for the deterministic check. Parse JSONL output.
@@ -351,11 +351,11 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 ## Reference Documentation
 
-- [App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
-- [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules
+- [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
+- [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
-- [Agent Workflow Orchestration](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
-- [Specs Validation Workflow](../../governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
+- [Agent Workflow Orchestration](../../repo-governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
+- [Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-fixer](./specs-fixer.md), [specs-maker](./specs-maker.md)

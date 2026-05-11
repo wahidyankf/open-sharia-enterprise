@@ -92,7 +92,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 
 - **Monorepo Structure**: [docs/reference/monorepo-structure.md](../monorepo-structure.md)
 - **Adding New Apps**: [docs/how-to/add-new-app.md](../../how-to/add-new-app.md)
-- **Git Workflow**: [governance/development/workflow/commit-messages.md](../../../governance/development/workflow/commit-messages.md)
-- **Markdown Quality**: [governance/development/quality/markdown.md](../../../governance/development/quality/markdown.md)
-- **Trunk-Based Development**: [governance/development/workflow/trunk-based-development.md](../../../governance/development/workflow/trunk-based-development.md)
-- **Repository Architecture**: [governance/repository-governance-architecture.md](../../../governance/repository-governance-architecture.md)
+- **Git Workflow**: [repo-governance/development/workflow/commit-messages.md](../../../repo-governance/development/workflow/commit-messages.md)
+- **Markdown Quality**: [repo-governance/development/quality/markdown.md](../../../repo-governance/development/quality/markdown.md)
+- **Trunk-Based Development**: [repo-governance/development/workflow/trunk-based-development.md](../../../repo-governance/development/workflow/trunk-based-development.md)
+- **Repository Architecture**: [repo-governance/repository-governance-architecture.md](../../../repo-governance/repository-governance-architecture.md)

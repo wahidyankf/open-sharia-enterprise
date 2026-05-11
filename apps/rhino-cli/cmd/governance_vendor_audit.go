@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/governance"
+	governance "github.com/wahidyankf/ose-public/apps/rhino-cli/internal/repo-governance"
 )
 
 // governanceVendorAuditFn is the test-mockable entrypoint for the vendor audit.
@@ -27,20 +27,20 @@ The scanner respects several exemption regions:
   - The governance-vendor-independence.md convention definition file itself
 
 Exits with code 1 if any violations are found, 0 if clean.`,
-	Example: `  # Audit the default governance/ directory
-  rhino-cli governance vendor-audit
+	Example: `  # Audit the default repo-governance/ directory
+  rhino-cli repo-governance vendor-audit
 
   # Audit a specific path
-  rhino-cli governance vendor-audit docs/
+  rhino-cli repo-governance vendor-audit docs/
 
   # Output as JSON
-  rhino-cli governance vendor-audit -o json`,
+  rhino-cli repo-governance vendor-audit -o json`,
 	SilenceErrors: true,
 	RunE:          runGovernanceVendorAudit,
 }
 
 func init() {
-	governanceCmd.AddCommand(governanceVendorAuditCmd)
+	repoGovernanceCmd.AddCommand(governanceVendorAuditCmd)
 }
 
 func runGovernanceVendorAudit(cmd *cobra.Command, args []string) error {
@@ -49,7 +49,7 @@ func runGovernanceVendorAudit(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to find git repository root: %w", err)
 	}
 
-	scanPath := "governance"
+	scanPath := "repo-governance"
 	if len(args) > 0 {
 		scanPath = args[0]
 	}

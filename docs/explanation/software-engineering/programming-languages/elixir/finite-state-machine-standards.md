@@ -32,7 +32,7 @@ created: 2026-01-24
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply FSMs in THIS codebase, not WHAT FSMs are.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Elixir Finite State Machine Standards for OSE Platform
 
@@ -750,8 +750,8 @@ end
 
 **Principles**:
 
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ## References
 

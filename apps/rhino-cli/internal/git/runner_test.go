@@ -360,8 +360,8 @@ func TestStep7ValidateLinks_BrokenLinksFound_StderrContainsDetails(t *testing.T)
 		broken := docs.BrokenLink{
 			SourceFile: "plans/in-progress/example/delivery.md",
 			LineNumber: 140,
-			LinkText:   "../../../governance/development/pattern/workflow.md",
-			TargetPath: "governance/development/pattern/workflow.md",
+			LinkText:   "../../../repo-governance/development/pattern/workflow.md",
+			TargetPath: "repo-governance/development/pattern/workflow.md",
 			Category:   "Missing files",
 		}
 		return &docs.LinkValidationResult{
@@ -376,7 +376,7 @@ func TestStep7ValidateLinks_BrokenLinksFound_StderrContainsDetails(t *testing.T)
 	for _, want := range []string{
 		"plans/in-progress/example/delivery.md",
 		"140",
-		"../../../governance/development/pattern/workflow.md",
+		"../../../repo-governance/development/pattern/workflow.md",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("stderr missing %q\nfull stderr:\n%s", want, out)

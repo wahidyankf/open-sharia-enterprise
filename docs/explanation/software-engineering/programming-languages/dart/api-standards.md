@@ -26,7 +26,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to build APIs in THIS codebase, not WHAT REST is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -714,9 +714,9 @@ API standards are enforced through:
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

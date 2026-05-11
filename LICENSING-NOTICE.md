@@ -12,7 +12,7 @@ per-directory LICENSE files currently contain identical MIT text; the override m
 preserved so future maintainers can relicense specific subdirectories independently if needed.
 Internal CLI tools (`apps/rhino-cli/`) and E2E test suites (`apps/*-e2e/`) do not carry
 per-directory LICENSE files and fall back to the root LICENSE. See
-[Licensing Convention](./governance/conventions/structure/licensing.md) for the complete
+[Licensing Convention](./repo-governance/conventions/structure/licensing.md) for the complete
 exemption list.
 
 ## What This Means

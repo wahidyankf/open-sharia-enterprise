@@ -24,7 +24,7 @@ created: 2026-02-09
 
 **This document is OSE Platform-specific**, defining how to visualize DDD bounded contexts in C4 diagrams for THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -245,4 +245,4 @@ Before committing a bounded context visualization, verify:
 
 ## Principles Implemented
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By explicitly labeling context mapping patterns on relationships and showing clear bounded context boundaries, architectural decisions become visible rather than hidden in code.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By explicitly labeling context mapping patterns on relationships and showing clear bounded context boundaries, architectural decisions become visible rather than hidden in code.

@@ -140,8 +140,8 @@ git pull origin main
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -149,5 +149,5 @@ git pull origin main
 
 **Related Conventions**:
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)

@@ -218,17 +218,17 @@ This plan was executed in 3 phases:
   - Replaced all "Claude Code" references with "OpenCode"
   - Updated terminology throughout document
 
-  **Files Changed**: `governance/development/agents/ai-agents.md`
+  **Files Changed**: `repo-governance/development/agents/ai-agents.md`
   **Date**: 2026-01-04
   **Status**: ✅ Completed
 
 - [x] **3.4 Update all convention documents referencing agents/skills**
 
   **Files Updated**:
-  - `governance/conventions/structure/diataxis-framework.md`
-  - `../../../governance/conventions/writing/quality.md`
-  - `governance/development/pattern/maker-checker-fixer.md`
-  - `governance/development/quality/repository-validation.md`
+  - `repo-governance/conventions/structure/diataxis-framework.md`
+  - `../../../repo-governance/conventions/writing/quality.md`
+  - `repo-governance/development/pattern/maker-checker-fixer.md`
+  - `repo-governance/development/quality/repository-validation.md`
   - `.claude/skills/README.md`
   - All skill files in `.claude/skills/` (7 files)
 

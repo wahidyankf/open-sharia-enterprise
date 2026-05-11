@@ -125,12 +125,12 @@ These files contain paths used by Nx to locate specs for `test:unit` and `test:i
 | `CLAUDE.md`                                                                                            | Three-level testing standard references |
 | `apps/a-demo-be-*/README.md`                                                                           | ~8 backend app READMEs                  |
 | `apps/a-demo-be-e2e/README.md`                                                                         | E2E test suite README                   |
-| `governance/development/infra/bdd-spec-test-mapping.md`                                                | Spec mapping convention                 |
-| `governance/development/quality/three-level-testing-standard.md`                                       | Testing standard                        |
-| `governance/development/infra/nx-targets.md`                                                           | Nx target docs                          |
+| `repo-governance/development/infra/bdd-spec-test-mapping.md`                                           | Spec mapping convention                 |
+| `repo-governance/development/quality/three-level-testing-standard.md`                                  | Testing standard                        |
+| `repo-governance/development/infra/nx-targets.md`                                                      | Nx target docs                          |
 | `docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md` | BDD Playwright docs                     |
-| `governance/conventions/formatting/diagrams.md`                                                        | C4 example path references              |
-| `governance/workflows/specs/specs-validation.md`                                                       | Workflow example paths                  |
+| `repo-governance/conventions/formatting/diagrams.md`                                                   | C4 example path references              |
+| `repo-governance/workflows/specs/specs-validation.md`                                                  | Workflow example paths                  |
 | `specs/apps-labs/README.md`                                                                            | Cross-reference to demo specs           |
 | `.claude/agents/specs-checker.md`                                                                      | Example folder paths                    |
 | `.claude/agents/specs-maker.md`                                                                        | Example target paths                    |

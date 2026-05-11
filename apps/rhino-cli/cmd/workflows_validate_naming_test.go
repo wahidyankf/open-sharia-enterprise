@@ -57,7 +57,7 @@ func (s *validateWorkflowsNamingUnitSteps) treeAllConform() error {
 func (s *validateWorkflowsNamingUnitSteps) treeUnknownSuffix() error {
 	workflowsValidateNamingFn = func(_ string) ([]naming.Violation, error) {
 		return []naming.Violation{{
-			Path:    "/mock-repo/governance/workflows/specs/specs-validation.md",
+			Path:    "/mock-repo/repo-governance/workflows/specs/specs-validation.md",
 			Kind:    "type-suffix",
 			Message: `filename "specs-validation" does not end with any allowed suffix (quality-gate, execution, setup)`,
 		}}, nil
@@ -68,7 +68,7 @@ func (s *validateWorkflowsNamingUnitSteps) treeUnknownSuffix() error {
 func (s *validateWorkflowsNamingUnitSteps) treeFrontmatterMismatch() error {
 	workflowsValidateNamingFn = func(_ string) ([]naming.Violation, error) {
 		return []naming.Violation{{
-			Path:    "/mock-repo/governance/workflows/plan/plan-execution.md",
+			Path:    "/mock-repo/repo-governance/workflows/plan/plan-execution.md",
 			Kind:    "frontmatter-mismatch",
 			Message: `frontmatter name "wrong" does not match filename "plan-execution"`,
 		}}, nil
@@ -182,7 +182,7 @@ func TestValidateWorkflowsNaming_MissingGitRoot(t *testing.T) {
 // walker against a small tmp fixture so coverage reflects the walk logic.
 func TestWorkflowsValidateNaming_RealTree(t *testing.T) {
 	tmp := t.TempDir()
-	root := filepath.Join(tmp, "governance", "workflows")
+	root := filepath.Join(tmp, "repo-governance", "workflows")
 	planDir := filepath.Join(root, "plan")
 	metaDir := filepath.Join(root, "meta")
 	if err := os.MkdirAll(planDir, 0755); err != nil {

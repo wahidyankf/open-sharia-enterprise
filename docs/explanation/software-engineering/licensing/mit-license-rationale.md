@@ -112,5 +112,5 @@ for that positioning.
 ## Related Documentation
 
 - [LICENSING-NOTICE.md](../../../../LICENSING-NOTICE.md) — Licensing structure summary
-- [Per-Directory Licensing Convention](../../../../governance/conventions/structure/licensing.md) — License file placement rules
+- [Per-Directory Licensing Convention](../../../../repo-governance/conventions/structure/licensing.md) — License file placement rules
 - [Licensing Decisions](./licensing-decisions.md) — Analysis of notable dependency licenses

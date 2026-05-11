@@ -91,4 +91,4 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../governance/conventions/writing/quality.md)
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)

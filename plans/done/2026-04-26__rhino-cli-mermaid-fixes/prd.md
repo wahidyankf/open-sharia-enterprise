@@ -4,7 +4,7 @@
 
 This plan delivers three targeted fixes to the `rhino-cli docs validate-mermaid`
 command. First, the default scan directories are expanded to include `plans/` so
-plan diagrams receive the same mobile-readability checks as `docs/` and `governance/`
+plan diagrams receive the same mobile-readability checks as `docs/` and `repo-governance/`
 content. Second, the `&` multi-target edge operator is correctly parsed into a
 Cartesian product of edges, fixing silently incorrect rank-width calculations for
 any diagram using Mermaid's fan-out shortcut. Third, a new `MaxSubgraphNodes`
@@ -15,7 +15,7 @@ the existing `MaxWidth` rule.
 ## Personas
 
 **Maintainer as developer** — pushes a branch with new Mermaid diagrams (in `docs/`,
-`governance/`, or `plans/`). The pre-push hook runs
+`repo-governance/`, or `plans/`). The pre-push hook runs
 `rhino-cli docs validate-mermaid --changed-only` and must catch diagrams that will
 render poorly on mobile **before** the push reaches `main`.
 

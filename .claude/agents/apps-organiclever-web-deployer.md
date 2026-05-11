@@ -167,7 +167,7 @@ on `prod-organiclever-web` may be misconfigured. Inspect the run logs.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -175,5 +175,5 @@ on `prod-organiclever-web` may be misconfigured. Inspect the run logs.
 
 **Related Conventions**:
 
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
-- [GitHub Actions Workflow Naming](../../governance/development/infra/github-actions-workflow-naming.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
+- [GitHub Actions Workflow Naming](../../repo-governance/development/infra/github-actions-workflow-naming.md)

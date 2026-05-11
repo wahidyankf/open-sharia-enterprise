@@ -344,10 +344,10 @@ automated Playwright specs whenever the behavior recurs.
 
 **Canonical references**:
 
-- [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+- [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
   — full Red→Green→Refactor rules, "Manual verification is part of TDD" subsection, and all test
   levels covered.
-- [Manual Behavioral Verification](../../../governance/development/quality/manual-behavioral-verification.md)
+- [Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md)
   — Playwright MCP tool list, verification checklists, and `curl` for API verification.
 
 ## Related Standards

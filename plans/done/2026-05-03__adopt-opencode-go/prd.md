@@ -158,7 +158,7 @@ be added to `opencode.json` by any developer who prefers it.
 ### FR-8: model-selection.md updated
 
 The "OpenCode / GLM Equivalents" section of
-`governance/development/agents/model-selection.md` must reflect the new OpenCode
+`repo-governance/development/agents/model-selection.md` must reflect the new OpenCode
 Go provider, including:
 
 - Updated model ID mapping table

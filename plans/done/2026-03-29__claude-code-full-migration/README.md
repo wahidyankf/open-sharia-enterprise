@@ -44,7 +44,7 @@ This plan documented the complete migration from Claude Code to OpenCode format,
 2. **Eliminate Claude Code artifacts**: Remove `.claude/agents/`, CLAUDE.md, conversion scripts
 3. **Simplify maintenance**: No format conversion or synchronization
 4. **OpenCode-only workflow**: All AI tooling uses OpenCode exclusively
-5. **Governance integration**: Update all governance/docs to reference OpenCode format only
+5. **Governance integration**: Update all repo-governance/docs to reference OpenCode format only
 
 ### Secondary Goals
 
@@ -135,7 +135,7 @@ This plan documented the complete migration from Claude Code to OpenCode format,
 - OpenCode format is more explicit (permission-based tools)
 - Comprehensive documentation in AGENTS.md
 - Migration guide in delivery checklist
-- Examples and patterns in governance/docs
+- Examples and patterns in repo-governance/docs
 
 ## Success Criteria
 
@@ -232,7 +232,7 @@ This plan documented the complete migration from Claude Code to OpenCode format,
 ### Workflow Consistency
 
 - [ ] All workflows use OpenCode agent format
-  - **Validation**: Read all workflow definitions in `governance/workflows/`
+  - **Validation**: Read all workflow definitions in `repo-governance/workflows/`
   - **Validation**: Verify workflow agent references use OpenCode paths
 - [ ] All documentation examples show OpenCode format
   - **Validation**: Search for `examples` or `code blocks` in AGENTS.md
@@ -276,7 +276,7 @@ This plan is organized into four documents:
 
 ### Alternative 2: Tool-Agnostic Docs as Source
 
-**Approach**: Move agents to `governance/agents/`, sync to both formats
+**Approach**: Move agents to `repo-governance/agents/`, sync to both formats
 
 **Pros**:
 
@@ -347,9 +347,9 @@ This plan is organized into four documents:
 - [OpenCode vs Claude Code Comparison](https://www.nxcode.io/resources/news/opencode-vs-claude-code-vs-cursor-2026)
 - [Claude Code to OpenCode Migration Guide](https://medium.com/spillwave-solutions/claude-code-agents-to-opencode-agents-041f9c8e5ccd)
 - [Converting Claude Subagents to OpenCode](https://claude-plugins.dev/skills/@edheltzel/dotfiles/converting-claude-subagents)
-- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
-- [Plans Organization Convention](../../../../governance/conventions/structure/plans.md)
+- [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
+- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
 - Current conversion scripts: `scripts/convert-agents-to-opencode.py`, `scripts/validate-opencode-agents.py`, `scripts/sync-claude-opencode.py`
 - Existing dual-format plan: `plans/backl../2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
 

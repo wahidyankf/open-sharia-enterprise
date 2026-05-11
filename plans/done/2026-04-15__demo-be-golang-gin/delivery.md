@@ -326,7 +326,7 @@ if err != nil { return err }
   - Add Go/Gin row to Implementations table
 - [x] Update `apps/a-demo-be-e2e/project.json`:
   - Add `a-demo-be-golang-gin` to `implicitDependencies`
-- [x] Update `governance/development/infra/nx-targets.md`:
+- [x] Update `repo-governance/development/infra/nx-targets.md`:
   - Add `a-demo-be-golang-gin` row to Current Project Tags table:
     `["type:app", "platform:gin", "lang:golang", "domain:a-demo-be"]`
   - Add `platform:gin` to the Platform allowed values in the Four-Dimension Scheme table

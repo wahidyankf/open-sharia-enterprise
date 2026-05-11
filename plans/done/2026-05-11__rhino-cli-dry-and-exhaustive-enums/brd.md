@@ -6,7 +6,7 @@
 pre-commit, pre-push, and CI quality gate routes through it: `docs
 validate-links`, `agents sync`, `agents validate-claude`, `agents
 validate-sync`, `test-coverage validate`, `spec-coverage validate`, `doctor`,
-`docs validate-mermaid`, `ddd bc`, `ddd ul`, `governance vendor-audit`,
+`docs validate-mermaid`, `ddd bc`, `ddd ul`, `repo-governance vendor-audit`,
 `specs validate-*`, `workflows validate-naming`, `env backup/restore`,
 `git pre-commit`.
 

@@ -55,7 +55,7 @@ clean-up commit.
 | Metric | Status | Evidence |
 |---|---|---|
 | 1. Awareness layer present in 9 files | MET | All 9 files contain `ose-primer` references (grepped and confirmed) |
-| 2. Classifier present and parseable | MET | `governance/conventions/structure/ose-primer-sync.md` exists with Direction column |
+| 2. Classifier present and parseable | MET | `repo-governance/conventions/structure/ose-primer-sync.md` exists with Direction column |
 | 3. Both agents present in both harnesses | MET | `.claude/agents/` and `.opencode/agent/` both contain adoption-maker and propagation-maker |
 | 4. Shared skill present in both harnesses | MET | `.claude/skills/repo-syncing-with-ose-primer/SKILL.md` and `.opencode/skill/` mirror exist |
 | 5. Dry-run abort-notice reports generated | MET | Two abort-notice reports committed at `a8cc9fa1` |
@@ -146,9 +146,9 @@ clean-up commit.
 | `.claude/skills/repo-syncing-with-ose-primer/SKILL.md` | PRESENT |
 | `.opencode/skill/repo-syncing-with-ose-primer/SKILL.md` | PRESENT |
 | `.claude/skills/repo-syncing-with-ose-primer/reference/` (5 modules) | PRESENT — classifier-parsing.md, clone-management.md, extraction-scope.md, report-schema.md, transforms.md all confirmed |
-| `governance/conventions/structure/ose-primer-sync.md` | PRESENT |
-| `governance/workflows/repo/repo-ose-primer-sync-execution.md` | PRESENT |
-| `governance/workflows/repo/repo-ose-primer-extraction-execution.md` | PRESENT |
+| `repo-governance/conventions/structure/ose-primer-sync.md` | PRESENT |
+| `repo-governance/workflows/repo/repo-ose-primer-sync-execution.md` | PRESENT |
+| `repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md` | PRESENT |
 | `docs/reference/related-repositories.md` | PRESENT |
 
 ---
@@ -163,8 +163,8 @@ clean-up commit.
 
 The plan-documented sweep (`grep -rnI 'a-demo' . --include='*.md' --include='*.yml' ...`) was
 claimed as passing in delivery.md Phase 9.4. Independent re-execution of the sweep (excluding
-`plans/done/`, `plans/in-progress/`, `governance/conventions/structure/ose-primer-sync.md`,
-`governance/workflows/repo/repo-ose-primer-extraction-execution.md`, `package-lock.json`,
+`plans/done/`, `plans/in-progress/`, `repo-governance/conventions/structure/ose-primer-sync.md`,
+`repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md`, `package-lock.json`,
 `node_modules/`, `.clj-kondo/`, `generated-reports/`, and the new skill/agent directories that
 intentionally reference the frozen extraction scope) reveals the following surviving references
 OUTSIDE the BRD-allowed paths:
@@ -212,7 +212,7 @@ OUTSIDE the BRD-allowed paths:
 
 **Judgment on items 6-8**: These are in `apps/` content directories that were not in scope for
 Phase 8.F/8.G cleanup (those phases covered `README.md`, `CLAUDE.md`, `AGENTS.md`, `ROADMAP.md`,
-`governance/`, and `docs/reference/`). Product blog posts (item 6) and tutorial content (item 7)
+`repo-governance/`, and `docs/reference/`). Product blog posts (item 6) and tutorial content (item 7)
 referencing deleted apps by name in explanatory prose are not dead-link hazards — they describe
 historical state and the apps still exist in `ose-primer`. Item 8 is explicitly permitted.
 **Verdict on items 6-8: acceptable narrative mentions; not blocking.**
@@ -283,7 +283,7 @@ workflow guidance. No web UI or API changes to verify.
 
 **BRD Success Metric 8** states: the grep sweep returns matches ONLY in `plans/done/`,
 `plans/in-progress/2026-04-18__ose-primer-separation/`, and the classifier row in
-`governance/conventions/structure/ose-primer-sync.md`. **The current state has additional matches
+`repo-governance/conventions/structure/ose-primer-sync.md`. **The current state has additional matches
 in 5 file groups outside those allowed paths.** The delivery.md G8 evidence ("Phase 9.4 returns
 zero dangling references") is incorrect — the sweep result was not clean at archive time.
 
@@ -306,7 +306,7 @@ File: `apps/README.md` (lines ~42–43, ~109, ~128, ~262, ~302–303)
 References include a listing entry for `a-demo-be-golang-gin`, a `go.work` path, a `docker-compose`
 path, an `nx run a-demo-be-e2e:test:e2e` example, and a "Technologies used" cross-reference. The
 `apps/README.md` was not in scope for Phase 8.F (which covered the root-level `README.md`) or
-Phase 8.G (which covered `governance/` and `docs/`).
+Phase 8.G (which covered `repo-governance/` and `docs/`).
 
 Recommended fix: prune all a-demo entries from `apps/README.md`; commit with Phase 8.F-style scope.
 

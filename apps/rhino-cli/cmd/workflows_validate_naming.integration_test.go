@@ -31,8 +31,8 @@ func (s *validateWorkflowsNamingIntegSteps) before(_ context.Context, _ *godog.S
 	s.originalWd, _ = os.Getwd()
 	s.tmpDir, _ = os.MkdirTemp("", "validate-naming-workflows-*")
 	_ = os.MkdirAll(filepath.Join(s.tmpDir, ".git"), 0755)
-	_ = os.MkdirAll(filepath.Join(s.tmpDir, "governance", "workflows", "plan"), 0755)
-	_ = os.MkdirAll(filepath.Join(s.tmpDir, "governance", "workflows", "meta"), 0755)
+	_ = os.MkdirAll(filepath.Join(s.tmpDir, "repo-governance", "workflows", "plan"), 0755)
+	_ = os.MkdirAll(filepath.Join(s.tmpDir, "repo-governance", "workflows", "meta"), 0755)
 	verbose = false
 	quiet = false
 	output = "text"
@@ -48,7 +48,7 @@ func (s *validateWorkflowsNamingIntegSteps) after(_ context.Context, _ *godog.Sc
 
 func (s *validateWorkflowsNamingIntegSteps) writeWorkflow(dir, filename, frontmatterName string) error {
 	content := fmt.Sprintf("---\nname: %s\ngoal: test\n---\nbody\n", frontmatterName)
-	path := filepath.Join(s.tmpDir, "governance", "workflows", dir, filename+".md")
+	path := filepath.Join(s.tmpDir, "repo-governance", "workflows", dir, filename+".md")
 	return os.WriteFile(path, []byte(content), 0644)
 }
 

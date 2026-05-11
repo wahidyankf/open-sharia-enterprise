@@ -6,7 +6,7 @@
 
 ```
 docs/explanation/
-├── governance/                                    # Will be moved
+├── repo-governance/                                    # Will be moved
 │   ├── vision/                                # Layer 0: WHY we exist
 │   ├── principles/                             # Layer 1: WHY - values
 │   ├── conventions/                           # Layer 2: WHAT - documentation rules
@@ -32,7 +32,7 @@ docs/explanation/
 
 ```
 /                                                     # Repository root
-├── governance/                                          # System rules (normal markdown)
+├── repo-governance/                                          # System rules (normal markdown)
 │   ├── vision/                                     # Layer 0: WHY we exist
 │   ├── principles/                                  # Layer 1: WHY - values
 │   ├── conventions/                                # Layer 2: WHAT - documentation rules
@@ -43,7 +43,7 @@ docs/explanation/
 │
 ├── docs/                                            # Human-written (Obsidian format)
 │   ├── explanation/                                 # Conceptual understanding
-│   │   └── governance/                                 # TEMPORARY - will be removed
+│   │   └── repo-governance/                                 # TEMPORARY - will be removed
 │   │       └── agents/                             # NOT moving (separate plan)
 │   ├── tutorials/                                   # Learning-oriented
 │   ├── how-to/                                      # Problem-solving
@@ -62,23 +62,23 @@ docs/explanation/
 
 ### Directory Moves (git mv)
 
-| Source Path               | Target Path              | Layer         | File Count (approx) |
-| ------------------------- | ------------------------ | ------------- | ------------------- |
-| governance/vision/        | /governance/vision/      | Layer 0: WHY  | ~5 files            |
-| governance/principles/    | /governance/principles/  | Layer 1: WHY  | ~10 files           |
-| governance/conventions/   | /governance/conventions/ | Layer 2: WHAT | ~25 files           |
-| governance/development/   | /governance/development/ | Layer 3: HOW  | ~15 files           |
-| governance/workflows/     | /governance/workflows/   | Layer 5: WHEN | ~10 files           |
-| governance/ex-ru\_\_\*.md | /governance/             | Architecture  | 1 file              |
-| governance/README.md      | /governance/             | Index         | 1 file              |
+| Source Path                    | Target Path                   | Layer         | File Count (approx) |
+| ------------------------------ | ----------------------------- | ------------- | ------------------- |
+| repo-governance/vision/        | /repo-governance/vision/      | Layer 0: WHY  | ~5 files            |
+| repo-governance/principles/    | /repo-governance/principles/  | Layer 1: WHY  | ~10 files           |
+| repo-governance/conventions/   | /repo-governance/conventions/ | Layer 2: WHAT | ~25 files           |
+| repo-governance/development/   | /repo-governance/development/ | Layer 3: HOW  | ~15 files           |
+| repo-governance/workflows/     | /repo-governance/workflows/   | Layer 5: WHEN | ~10 files           |
+| repo-governance/ex-ru\_\_\*.md | /repo-governance/             | Architecture  | 1 file              |
+| repo-governance/README.md      | /repo-governance/             | Index         | 1 file              |
 
 **Total moved**: 67 files across 5 directories + 2 files
 
 ### NOT Moving
 
-| Path               | Reason                                                              |
-| ------------------ | ------------------------------------------------------------------- |
-| governance/agents/ | Handled by separate plan `2026-01-04__agents-docs-source-of-truth/` |
+| Path                    | Reason                                                              |
+| ----------------------- | ------------------------------------------------------------------- |
+| repo-governance/agents/ | Handled by separate plan `2026-01-04__agents-docs-source-of-truth/` |
 
 ---
 
@@ -86,25 +86,25 @@ docs/explanation/
 
 ### By Directory Type
 
-| Directory Type        | Count     | Path Pattern                                              | Examples                                      |
-| --------------------- | --------- | --------------------------------------------------------- | --------------------------------------------- |
-| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                | docs-applying-content-quality, wow-\*         |
-| **Workflows**         | ~10 files | governance/workflows/\*.md                                | ex-ru-wf-wo\_\_repository-rules-validation.md |
-| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                      | Repository-level documentation                |
-| **Governance**        | 1 file    | governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                         |
-| **Rules internal**    | ~67 files | governance/\*_/_.md                                       | All moved files with internal links           |
+| Directory Type        | Count     | Path Pattern                                                   | Examples                                      |
+| --------------------- | --------- | -------------------------------------------------------------- | --------------------------------------------- |
+| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                     | docs-applying-content-quality, wow-\*         |
+| **Workflows**         | ~10 files | repo-governance/workflows/\*.md                                | ex-ru-wf-wo\_\_repository-rules-validation.md |
+| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                           | Repository-level documentation                |
+| **Governance**        | 1 file    | repo-governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                         |
+| **Rules internal**    | ~67 files | repo-governance/\*_/_.md                                       | All moved files with internal links           |
 
 **Total requiring updates**: 151 files
 
 ### By File Category
 
-| Category         | Specific Files                                            | Count |
-| ---------------- | --------------------------------------------------------- | ----- |
-| **Skill files**  | All .claude/skills/\*/SKILL.md                            | 23    |
-| **Project docs** | CLAUDE.md, AGENTS.md                                      | 2     |
-| **Governance**   | governance/ex-ru\_\_repository-governance-architecture.md | 1     |
-| **Rules**        | All files in governance/ directories                      | ~67   |
-| **Workflows**    | All files in governance/workflows/                        | ~10   |
+| Category         | Specific Files                                                 | Count |
+| ---------------- | -------------------------------------------------------------- | ----- |
+| **Skill files**  | All .claude/skills/\*/SKILL.md                                 | 23    |
+| **Project docs** | CLAUDE.md, AGENTS.md                                           | 2     |
+| **Governance**   | repo-governance/ex-ru\_\_repository-governance-architecture.md | 1     |
+| **Rules**        | All files in repo-governance/ directories                      | ~67   |
+| **Workflows**    | All files in repo-governance/workflows/                        | ~10   |
 
 ---
 
@@ -117,20 +117,20 @@ docs/explanation/
 **Command**:
 
 ```bash
-find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 ```
 
 **Pattern Examples**:
 
-- `See: [convention writing](../../../governance/conventions/writing/quality.md)`
-- `[Reference docs](../../../governance/conventions/)`
-- `Rules location: governance/`
+- `See: [convention writing](../../../repo-governance/conventions/writing/quality.md)`
+- `[Reference docs](../../../repo-governance/conventions/)`
+- `Rules location: repo-governance/`
 
 **After**:
 
-- `See: [convention writing](../../../governance/conventions/writing/quality.md)`
-- `[Reference docs](../../../governance/conventions/)`
-- `Rules location: governance/`
+- `See: [convention writing](../../../repo-governance/conventions/writing/quality.md)`
+- `[Reference docs](../../../repo-governance/conventions/)`
+- `Rules location: repo-governance/`
 
 ---
 
@@ -139,20 +139,20 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/
 **Command**:
 
 ```bash
-find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 ```
 
 **Updates**: All 23 skill files
 
 **Pattern Examples**:
 
-- `See: [AI agents convention](../../../../governance/development/agents/ai-agents.md)`
-- `Related: governance/principles/`
+- `See: [AI agents convention](../../../repo-governance/development/agents/ai-agents.md)`
+- `Related: repo-governance/principles/`
 
 **After**:
 
-- `See: [AI agents convention](../../../../governance/development/agents/ai-agents.md)`
-- `Related: governance/principles/`
+- `See: [AI agents convention](../../../repo-governance/development/agents/ai-agents.md)`
+- `Related: repo-governance/principles/`
 
 ---
 
@@ -173,9 +173,9 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 
 **Scope**: All governance documentation
 
-- `governance/vision/` - Layer 0: WHY we exist
-- `governance/principles/` - Layer 1: WHY values
-- `governance/conventions/` - Layer 2: WHAT documentation rules
+- `repo-governance/vision/` - Layer 0: WHY we exist
+- `repo-governance/principles/` - Layer 1: WHY values
+- `repo-governance/conventions/` - Layer 2: WHAT documentation rules
 ```
 
 **After**:
@@ -187,9 +187,9 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 
 **Scope**: All governance documentation
 
-- `/governance/vision/` - Layer 0: WHY we exist
-- `/governance/principles/` - Layer 1: WHY values
-- `/governance/conventions/` - Layer 2: WHAT documentation rules
+- `/repo-governance/vision/` - Layer 0: WHY we exist
+- `/repo-governance/principles/` - Layer 1: WHY values
+- `/repo-governance/conventions/` - Layer 2: WHAT documentation rules
 ```
 
 **Example - repo-governance-maker.md**:
@@ -199,7 +199,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 ```markdown
 ## Reference
 
-- [Convention Writing Convention](../../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../../repo-governance/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
 **After**:
@@ -207,7 +207,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 ```markdown
 ## Reference
 
-- [Convention Writing Convention](../../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../../repo-governance/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
 **Example - repo-governance-fixer.md**:
@@ -226,28 +226,28 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 ```markdown
 ## Important Guidelines
 
-1. **Edit Tool Usage**: Use Edit tool for `governance/` files (NOT Bash tools)
+1. **Edit Tool Usage**: Use Edit tool for `repo-governance/` files (NOT Bash tools)
 2. **Bash Tool Usage**: Use Bash tools ONLY for `.claude/` files
 ```
 
 ---
 
-### Pattern 4: Workflow Files (governance/workflows/\*.md)
+### Pattern 4: Workflow Files (repo-governance/workflows/\*.md)
 
 **Command**:
 
 ```bash
-find governance/workflows -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find repo-governance/workflows -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 ```
 
-**Updates**: All workflow files in governance/workflows/
+**Updates**: All workflow files in repo-governance/workflows/
 
 **Pattern Example**:
 
 ```markdown
 ## IMPORTANT - Scope Clarification
 
-This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
+This workflow validates **source definitions only** in `repo-governance/`. It does NOT validate generated directories:
 ```
 
 **After**:
@@ -255,7 +255,7 @@ This workflow validates **source definitions only** in `governance/`. It does NO
 ```markdown
 ## IMPORTANT - Scope Clarification
 
-This workflow validates **source definitions only** in `/governance/`. It does NOT validate generated directories:
+This workflow validates **source definitions only** in `/repo-governance/`. It does NOT validate generated directories:
 ```
 
 ---
@@ -265,8 +265,8 @@ This workflow validates **source definitions only** in `/governance/`. It does N
 **Command**:
 
 ```bash
-sed -i 's|governance/|governance/|g' CLAUDE.md
-sed -i 's|governance/|governance/|g' AGENTS.md
+sed -i 's|repo-governance/|repo-governance/|g' CLAUDE.md
+sed -i 's|repo-governance/|repo-governance/|g' AGENTS.md
 ```
 
 **Updates**: CLAUDE.md and AGENTS.md
@@ -278,7 +278,7 @@ sed -i 's|governance/|governance/|g' AGENTS.md
 ```markdown
 ## Conventions
 
-**Location**: `governance/conventions/`
+**Location**: `repo-governance/conventions/`
 
 Layer 2: WHAT - Documentation Rules
 
@@ -290,7 +290,7 @@ All conventions governing documentation, content, formatting, and structure.
 ```markdown
 ## Conventions
 
-**Location**: `/governance/conventions/`
+**Location**: `/repo-governance/conventions/`
 
 Layer 2: WHAT - Documentation Rules
 
@@ -303,48 +303,48 @@ All conventions governing documentation, content, formatting, and structure.
 
 **Manual Update Required** (not automated sed)
 
-**File**: /governance/ex-ru\_\_repository-governance-architecture.md
+**File**: /repo-governance/ex-ru\_\_repository-governance-architecture.md
 
 **Sections Requiring Updates**:
 
 1. **Layer 0 (Vision)**:
-   - Update "Location" from `governance/vision/` to `/governance/vision/`
+   - Update "Location" from `repo-governance/vision/` to `/repo-governance/vision/`
    - Update example file paths
 
 2. **Layer 1 (Principles)**:
-   - Update "Location" from `governance/principles/` to `/governance/principles/`
+   - Update "Location" from `repo-governance/principles/` to `/repo-governance/principles/`
    - Update example file paths
 
 3. **Layer 2 (Conventions)**:
-   - Update "Location" from `governance/conventions/` to `/governance/conventions/`
+   - Update "Location" from `repo-governance/conventions/` to `/repo-governance/conventions/`
    - Update example file paths
 
 4. **Layer 3 (Development)**:
-   - Update "Location" from `governance/development/` to `/governance/development/`
+   - Update "Location" from `repo-governance/development/` to `/repo-governance/development/`
    - Update example file paths
 
 5. **Layer 5 (Workflows)**:
-   - Update "Location" from `governance/workflows/` to `/governance/workflows/`
+   - Update "Location" from `repo-governance/workflows/` to `/repo-governance/workflows/`
    - Update example file paths
 
 6. **Mermaid Diagram**:
-   - Update all node labels to show `/governance/` paths
+   - Update all node labels to show `/repo-governance/` paths
 
 7. **Text Descriptions**:
-   - Update all text references to use `/governance/`
+   - Update all text references to use `/repo-governance/`
 
 **Example Mermaid Update**:
 
 **Before**:
 
 ```mermaid
-L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>governance/conventions/]
+L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>repo-governance/conventions/]
 ```
 
 **After**:
 
 ```mermaid
-L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>governance/conventions/]
+L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>repo-governance/conventions/]
 ```
 
 ---
@@ -354,10 +354,10 @@ L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>governance/convention
 **Command**:
 
 ```bash
-find rules -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 ```
 
-**Updates**: All ~67 files in governance/ directories
+**Updates**: All ~67 files in repo-governance/ directories
 
 **Pattern Example**:
 
@@ -365,7 +365,7 @@ find rules -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
 ## Related Conventions
 
 - [AI Agents Convention](../development/agents/ai-agents.md)
-- [Directory structure](../../../governance/conventions/)
+- [Directory structure](../../../repo-governance/conventions/)
 ```
 
 **After**:
@@ -386,23 +386,23 @@ find rules -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
 **All checks must pass**:
 
 ```bash
-# Check 1: All expected directories exist in /governance/
-test -d /governance/vision/              # ✅ PASS if true
-test -d /governance/principles/           # ✅ PASS if true
-test -d /governance/conventions/         # ✅ PASS if true
-test -d /governance/development/         # ✅ PASS if true
-test -d /governance/workflows/          # ✅ PASS if true
+# Check 1: All expected directories exist in /repo-governance/
+test -d /repo-governance/vision/              # ✅ PASS if true
+test -d /repo-governance/principles/           # ✅ PASS if true
+test -d /repo-governance/conventions/         # ✅ PASS if true
+test -d /repo-governance/development/         # ✅ PASS if true
+test -d /repo-governance/workflows/          # ✅ PASS if true
 
-# Check 2: All expected files exist in /governance/
-test -f /governance/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
-test -f /governance/README.md          # ✅ PASS if true
+# Check 2: All expected files exist in /repo-governance/
+test -f /repo-governance/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
+test -f /repo-governance/README.md          # ✅ PASS if true
 
 # Check 3: Old directory removed (except agents/)
-! test -d governance/   # ✅ PASS if true (directory doesn't exist)
+! test -d repo-governance/   # ✅ PASS if true (directory doesn't exist)
 
 # Check 4: Git shows moves as renames
 git status | grep "renamed:"         # ✅ PASS if shows renames
-git log --follow --oneline -- governance/vision/ex-vi__open-sharia-enterprise.md | head -1  # ✅ PASS if shows pre-move commit
+git log --follow --oneline -- repo-governance/vision/ex-vi__open-sharia-enterprise.md | head -1  # ✅ PASS if shows pre-move commit
 
 # Check 5: Zero untracked files
 git status | grep "Untracked files:" | grep -v "agents/"  # ✅ PASS if no untracked (except agents/)
@@ -418,27 +418,27 @@ git status | grep "Untracked files:" | grep -v "agents/"  # ✅ PASS if no untra
 
 ```bash
 # Check 1: No old path references
-grep "governance/" governance/ex-ru__repository-governance-architecture.md
+grep "repo-governance/" repo-governance/ex-ru__repository-governance-architecture.md
 # ✅ PASS if returns zero matches
 
-# Check 2: All Layer references use /governance/
-grep -E "Layer [0-5]:" governance/ex-ru__repository-governance-architecture.md | grep "governance/"
-# ✅ PASS if shows all 5 layers with governance/
+# Check 2: All Layer references use /repo-governance/
+grep -E "Layer [0-5]:" repo-governance/ex-ru__repository-governance-architecture.md | grep "repo-governance/"
+# ✅ PASS if shows all 5 layers with repo-governance/
 
 # Check 3: Mermaid diagram updated
-grep "Location:.*governance/" governance/ex-ru__repository-governance-architecture.md
+grep "Location:.*repo-governance/" repo-governance/ex-ru__repository-governance-architecture.md
 # ✅ PASS if matches
 
 # Check 4: File parses correctly
-head -1 governance/ex-ru__repository-governance-architecture.md | grep "^---"
+head -1 repo-governance/ex-ru__repository-governance-architecture.md | grep "^---"
 # ✅ PASS if shows frontmatter start
 
 # Check 5: Layer-specific paths
-grep "Location: /governance/vision/" governance/ex-ru__repository-governance-architecture.md       # ✅ PASS
-grep "Location: /governance/principles/" governance/ex-ru__repository-governance-architecture.md    # ✅ PASS
-grep "Location: /governance/conventions/" governance/ex-ru__repository-governance-architecture.md  # ✅ PASS
-grep "Location: /governance/development/" governance/ex-ru__repository-governance-architecture.md    # ✅ PASS
-grep "Location: /governance/workflows/" governance/ex-ru__repository-governance-architecture.md         # ✅ PASS
+grep "Location: /repo-governance/vision/" repo-governance/ex-ru__repository-governance-architecture.md       # ✅ PASS
+grep "Location: /repo-governance/principles/" repo-governance/ex-ru__repository-governance-architecture.md    # ✅ PASS
+grep "Location: /repo-governance/conventions/" repo-governance/ex-ru__repository-governance-architecture.md  # ✅ PASS
+grep "Location: /repo-governance/development/" repo-governance/ex-ru__repository-governance-architecture.md    # ✅ PASS
+grep "Location: /repo-governance/workflows/" repo-governance/ex-ru__repository-governance-architecture.md         # ✅ PASS
 ```
 
 **Success criterion**: All 6 checks pass
@@ -451,21 +451,21 @@ grep "Location: /governance/workflows/" governance/ex-ru__repository-governance-
 
 ```bash
 # Check 1: No old path references anywhere
-find . -name "*.md" -type f -exec grep -l "governance/" {} \;
+find . -name "*.md" -type f -exec grep -l "repo-governance/" {} \;
 # ✅ PASS if returns zero results
 
-# Check 2: All references to /governance/ exist
-find . -name "*.md" -type f -exec grep -l "governance/" {} \;
+# Check 2: All references to /repo-governance/ exist
+find . -name "*.md" -type f -exec grep -l "repo-governance/" {} \;
 # ✅ PASS if returns multiple results
 
 # Check 3: Specific file validation
-grep "governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
-grep "governance/" AGENTS.md | head -5      # ✅ PASS if shows results
-grep "governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS
+grep "repo-governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
+grep "repo-governance/" AGENTS.md | head -5      # ✅ PASS if shows results
+grep "repo-governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS
 
 # Check 4: Relative path validation
-grep -r "\.\./governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
-grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
+grep -r "\.\./repo-governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
+grep -r "\.\./\.\./repo-governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
 ```
 
 **repo-governance-checker Integration**:
@@ -482,8 +482,8 @@ repo-governance-checker scope:all
 
 ```bash
 # Verify key links work
-head -50 governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*governance/" | head -5
-# ✅ PASS if shows links to /governance/
+head -50 repo-governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*repo-governance/" | head -5
+# ✅ PASS if shows links to /repo-governance/
 ```
 
 **Success criterion**: All automated checks pass AND repo-governance-checker reports zero broken links
@@ -509,11 +509,11 @@ git diff --cached --name-only | grep "AGENTS.md"       # ✅ PASS if modified
 git diff --cached --name-only | grep "ex-ru__repository-governance-architecture.md"  # ✅ PASS if modified
 
 # Check 4: All rules directories tracked
-git status | grep "new file:.*governance/"
-# ✅ PASS if shows new files in governance/
+git status | grep "new file:.*repo-governance/"
+# ✅ PASS if shows new files in repo-governance/
 
-# Check 5: No governance/ tracked
-git status | grep "governance/"
+# Check 5: No repo-governance/ tracked
+git status | grep "repo-governance/"
 # ✅ PASS if returns zero results (except agents/)
 ```
 
@@ -529,38 +529,38 @@ git status | grep "governance/"
 # Phase 3 - Update references
 
 # 1. Agent files (45 files)
-find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 
 # 2. Skill files (23 files)
-find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 
 # 3. Workflow files (~10 files)
-find governance/workflows -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find repo-governance/workflows -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 
 # 4. Rules internal files (~67 files)
-find rules -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i 's|repo-governance/|repo-governance/|g' {} \;
 
 # 5. Project docs (2 files)
-sed -i 's|governance/|governance/|g' CLAUDE.md
-sed -i 's|governance/|governance/|g' AGENTS.md
+sed -i 's|repo-governance/|repo-governance/|g' CLAUDE.md
+sed -i 's|repo-governance/|repo-governance/|g' AGENTS.md
 
 # 6. Meta-agents (MANUAL UPDATE - not sed)
 # Files: repo-governance-checker.md, repo-governance-maker.md, repo-governance-fixer.md
 # Edit manually to update paths in validation scopes, references, and examples
 
 # 7. Governance doc (MANUAL UPDATE - not sed)
-# File: governance/ex-ru__repository-governance-architecture.md
+# File: repo-governance/ex-ru__repository-governance-architecture.md
 # Edit manually to update Layer 0-5 paths, mermaid diagram, text descriptions
 ```
 
 ### Sed Pattern Explanations
 
-| Pattern                                              | What It Matches       | Example Replacement                    | Example Result |
-| ---------------------------------------------------- | --------------------- | -------------------------------------- | -------------- |
-| `s\|governance/\|governance/\|g`                     | Absolute paths        | `[governance/conventions/content/...]` |
-| `s\|\.\./governance/\|\.\./governance/\|g`           | Relative paths (1 up) | `../../../governance/conventions/`     |
-| `s\|\.\./\.\./governance/\|\.\./\.\./governance/\|g` | Relative paths (2 up) | `../../../../governance/conventions/`  |
-| `s\|docs/explanation/\|docs/\|g`                     | Combined paths        | `docs/tutorials/` vs `governance/`     |
+| Pattern                                                        | What It Matches       | Example Replacement                         | Example Result |
+| -------------------------------------------------------------- | --------------------- | ------------------------------------------- | -------------- |
+| `s\|repo-governance/\|repo-governance/\|g`                     | Absolute paths        | `[repo-governance/conventions/content/...]` |
+| `s\|\.\./repo-governance/\|\.\./repo-governance/\|g`           | Relative paths (1 up) | `../../../repo-governance/conventions/`     |
+| `s\|\.\./\.\./repo-governance/\|\.\./\.\./repo-governance/\|g` | Relative paths (2 up) | `../../../../repo-governance/conventions/`  |
+| `s\|docs/explanation/\|docs/\|g`                               | Combined paths        | `docs/tutorials/` vs `repo-governance/`     |
 
 **Note**: The `|` delimiter is used instead of `/` because file paths contain `/` characters.
 
@@ -591,10 +591,10 @@ sed -i 's|governance/|governance/|g' AGENTS.md
 git status | grep "renamed:"
 
 # Follow history across move
-git log --follow --oneline -- governance/vision/ex-vi__open-sharia-enterprise.md
+git log --follow --oneline -- repo-governance/vision/ex-vi__open-sharia-enterprise.md
 
 # Check blame shows old commits
-git blame governance/vision/ex-vi__open-sharia-enterprise.md | head -10
+git blame repo-governance/vision/ex-vi__open-sharia-enterprise.md | head -10
 ```
 
 ---
@@ -608,16 +608,16 @@ git blame governance/vision/ex-vi__open-sharia-enterprise.md | head -10
 **Pattern**:
 
 ```markdown
-[Link text](../../../../governance/conventions/)
+[Link text](../../../../repo-governance/conventions/)
 ```
 
 **After automated sed**:
 
 ```markdown
-[Link text](../../../../governance/conventions/)
+[Link text](../../../../repo-governance/conventions/)
 ```
 
-**Manual review needed**: Verify `../../../../governance/conventions/` actually resolves to correct target
+**Manual review needed**: Verify `../../../../repo-governance/conventions/` actually resolves to correct target
 
 ---
 
@@ -627,8 +627,8 @@ git blame governance/vision/ex-vi__open-sharia-enterprise.md | head -10
 
 ````markdown
 ```bash
-# Example: governance/conventions/
-ls governance/conventions/
+# Example: repo-governance/conventions/
+ls repo-governance/conventions/
 ```
 ````
 
@@ -653,13 +653,13 @@ See also: [tutorials](../../../docs/tutorials/)
 **Example**: Reference from doc to rule
 
 ```markdown
-See: [conventions](../../../governance/conventions/)
+See: [conventions](../../../repo-governance/conventions/)
 ```
 
 **After move**: This becomes
 
 ```markdown
-See: [conventions](../../../governance/conventions/)
+See: [conventions](../../../repo-governance/conventions/)
 ```
 
 **Problem**: Still references old location
@@ -667,7 +667,7 @@ See: [conventions](../../../governance/conventions/)
 **Fix**: Change to
 
 ```markdown
-See: [conventions](../../../governance/conventions/)
+See: [conventions](../../../repo-governance/conventions/)
 ```
 
 ---
@@ -739,7 +739,7 @@ git diff --cached --stat
 ```bash
 # After all validations pass:
 git add -A
-git commit -m "refactor: move governance/ to /governance/ (detailed message)"
+git commit -m "refactor: move repo-governance/ to /repo-governance/ (detailed message)"
 
 # No rollback plan (YOLO approach)
 ```

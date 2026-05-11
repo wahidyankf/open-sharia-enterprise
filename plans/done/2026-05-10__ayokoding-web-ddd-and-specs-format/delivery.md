@@ -14,15 +14,15 @@ Provision before execution (run from repo root):
 claude --worktree ayokoding-web-ddd-and-specs-format
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
 ## Environment Setup
 
-- [x] Provision worktree: `claude --worktree ayokoding-web-ddd-and-specs-format` (creates `worktrees/ayokoding-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [x] Provision worktree: `claude --worktree ayokoding-web-ddd-and-specs-format` (creates `worktrees/ayokoding-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)).
   - Date: 2026-05-10 | Status: Done | Notes: Executing in worktree/cosmic-crafting-wind which was provisioned for this plan.
-- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)).
   - Date: 2026-05-10 | Status: Done | Files Changed: package-lock.json (refresh) | Notes: npm install OK; doctor reports 19/19 tools OK.
 - [x] Verify existing tests pass before making changes: `nx run ayokoding-web:test:quick`.
   - Date: 2026-05-10 | Status: Done | Notes: 19 test files, 326 tests pass; coverage 86.34% ≥ 80% threshold; link check 0 broken (3734 links).
@@ -311,7 +311,7 @@ For each tRPC-bearing BC: extract from `src/server/router.ts` into `src/contexts
   - Date: 2026-05-10 | Status: Done | Commit: abfed0b0b on `worktree/cosmic-crafting-wind` branch | Notes: 141 files changed, 2471 insertions, 572 deletions. Detailed body covers spec reshape, DDD scaffolding, source layout BC organization, i18n middleware migration, project.json wiring, verification results, e2e config updates, documentation updates, and the bdd-ddd-tooling-gap-fill unblock note.
 - [x] **10.2** Push via Trunk Based Development.
   - Date: 2026-05-10 | Status: Done | Notes: Rebased worktree branch onto origin/main (5 new commits ahead — oseplatform-web fixes), re-ran pre-push gate (full green), then `git push origin HEAD:main` direct-to-main fast-forward. origin/main HEAD now = 4ee816c85.
-- [x] **10.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+- [x] **10.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `repo-governance/development/workflow/ci-monitoring.md`.
   - Date: 2026-05-10 | Status: Done | Notes: First CI run 25615084062 (commit 4ee816c85) failed — `ddd bc ayokoding` flagged "missing layer infrastructure for context i18n" because the empty `i18n/infrastructure/` dir wasn't tracked by git. Fix commit 3f34cab83 honestly declared i18n layers as `[application, presentation]` only (no infrastructure code today). CI run 25615323712 all green: Unit tests, Integration, E2E, Spec coverage, Lint, Detect changes, Deploy to production all success. Workflow dispatched manually since these workflows trigger only on schedule (6 AM/6 PM WIB) or workflow_dispatch.
 - [x] **10.4** Move plan folder to `plans/done/YYYY-MM-DD__ayokoding-web-ddd-and-specs-format/`.
   - Date: 2026-05-10 | Status: Done | Notes: `git mv plans/in-progress/ayokoding-web-ddd-and-specs-format/ → plans/done/2026-05-10__ayokoding-web-ddd-and-specs-format/`. All 5 plan docs preserved (README, brd, prd, tech-docs, delivery).

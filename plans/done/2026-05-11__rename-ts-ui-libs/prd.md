@@ -34,7 +34,7 @@ As the **app developer**, I want all four Next.js app consumers (`organiclever-w
 
 ### US-3 — Governance and agent docs updated
 
-As the **governance author / AI agent**, I want every `.md` file across `governance/`, `.claude/`,
+As the **governance author / AI agent**, I want every `.md` file across `repo-governance/`, `.claude/`,
 and `docs/` to reference `web-ui` and `web-ui-token` instead of `ts-ui` and `ts-ui-tokens`, so
 that future agent prompts suggest the correct package names.
 
@@ -134,11 +134,11 @@ Scenario: All TSX and CSS files updated to new import paths
 
 ```gherkin
 Scenario: Governance markdown files reference new names
-  Given 13 markdown files under `governance/`, `.claude/agents/`, and `.claude/skills/`
+  Given 13 markdown files under `repo-governance/`, `.claude/agents/`, and `.claude/skills/`
         reference `ts-ui` or `ts-ui-tokens`
     And 4 markdown files under `specs/apps/` reference `ts-ui` or `ts-ui-tokens`
   When the executor performs a global search-and-replace in all affected markdown files
-  Then `git grep -r "ts-ui" -- governance/ .claude/ specs/` returns empty output
+  Then `git grep -r "ts-ui" -- repo-governance/ .claude/ specs/` returns empty output
 ```
 
 ### AC-9 — Zero remaining ts-ui references

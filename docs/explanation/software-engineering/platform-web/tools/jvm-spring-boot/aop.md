@@ -33,7 +33,7 @@ related:
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to apply AOP in THIS platform, not WHAT AOP is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -812,17 +812,17 @@ class SelfMonitoringAspect {
 
 These AOP standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Custom annotations (`@Auditable`, `@RateLimited`) make cross-cutting concerns explicit
    - Pointcut expressions explicitly target specific classes/methods
    - `@Transactional` attributes explicit (rollback rules, propagation)
 
-2. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spring Boot auto-configures AOP support (no manual `@EnableAspectJAutoProxy` needed)
    - Transaction management automated by `@Transactional`
    - Domain events automatically published after repository save
 
-3. **[Separation of Concerns](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+3. **[Separation of Concerns](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Cross-cutting concerns (logging, metrics, auditing) separated from business logic
    - Aspects modularize infrastructure concerns
    - Domain events separate business logic from notification logic

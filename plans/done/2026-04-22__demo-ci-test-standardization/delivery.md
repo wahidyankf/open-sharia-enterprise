@@ -448,27 +448,27 @@ standardized configuration. Documentation must match the implementation.
 
 #### 6A: Governance and standards docs
 
-- [x] **governance/development/infra/nx-targets.md**
+- [x] **repo-governance/development/infra/nx-targets.md**
   - [x] Update "Mandatory Targets by Project Type" matrix to include `typecheck` for all backends
   - [x] Note spec-coverage validate is DEFERRED (not added to test:quick composition)
   - [x] Add/update "Cache and Inputs Convention" section with per-language canonical inputs
   - [x] Add "Codegen Dependency Chain" section: codegen → typecheck, codegen → build
   - [x] Document that test:unit inputs must include specs + contracts for cache invalidation
 
-- [x] **governance/development/quality/three-level-testing-standard.md**
+- [x] **repo-governance/development/quality/three-level-testing-standard.md**
   - [x] Add "Nx Cache Inputs Requirement" section with Gherkin spec and contract paths
   - [x] Note spec-coverage validate is deferred
   - [x] Verify three-level descriptions match current implementation
 
-- [x] **governance/development/infra/bdd-spec-test-mapping.md**
+- [x] **repo-governance/development/infra/bdd-spec-test-mapping.md**
   - [x] Added scope note: spec-coverage enforcement for demo-be is deferred
 
-- [x] **governance/development/infra/github-actions-workflow-naming.md**
+- [x] **repo-governance/development/infra/github-actions-workflow-naming.md**
   - [x] Updated workflow reference table (added TanStack Start, Flutter)
   - [x] Added "Version Alignment Policy" section
   - [x] Documented frontend workflows install Go for codegen
 
-- [x] **governance/development/quality/code.md**
+- [x] **repo-governance/development/quality/code.md**
   - [x] No changes needed — pre-push hook description already accurate
 
 #### 6B: Reference and how-to docs

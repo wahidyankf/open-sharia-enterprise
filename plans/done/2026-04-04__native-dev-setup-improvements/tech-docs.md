@@ -138,7 +138,7 @@ is equivalent to plain `doctor` (read-only check).
 
 The choice to use native package managers instead of Terraform, Ansible, or Docker Dev Containers
 is recorded in
-[Native-First Toolchain Management](../../../governance/development/workflow/native-first-toolchain.md).
+[Native-First Toolchain Management](../../../repo-governance/development/workflow/native-first-toolchain.md).
 Key insight: package managers already guarantee idempotency, and the installed binaries ARE the
 state — no external state file needed.
 
@@ -162,7 +162,7 @@ state — no external state file needed.
    `theJSONListsEveryCheckedToolWithItsStatus()`, remove Hugo-specific test scenarios
    5c. **`cmd/doctor.go`**: Remove Hugo from the Long help string tool list (line ~26)
 6. **Workflow doc**: Remove Phase 11 (Hugo) from
-   `governance/workflows/infra/development-environment-setup.md`
+   `repo-governance/workflows/infra/development-environment-setup.md`
 7. **Workflow doc**: Update tool inventory table (remove row 8, renumber)
 8. **Workflow doc**: Update minimal scope table if Hugo was referenced
 

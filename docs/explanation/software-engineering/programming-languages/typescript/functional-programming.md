@@ -12,7 +12,7 @@ tags:
 related:
   - ./best-practices.md
   - ./idioms.md
-  - ../../../../../governance/development/pattern/functional-programming.md
+  - ../../../../../repo-governance/development/pattern/functional-programming.md
 principles:
   - immutability
   - pure-functions
@@ -234,7 +234,7 @@ function mapEither<L, R, S>(either: Either<L, R>, fn: (value: R) => S): Either<L
 ## Related Documentation
 
 - **[TypeScript Best Practices](best-practices.md)** - Coding standards
-- **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming Principle](../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ---
 

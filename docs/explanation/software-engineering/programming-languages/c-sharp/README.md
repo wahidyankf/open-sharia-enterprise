@@ -76,7 +76,7 @@ OSE Platform C# applications MUST use the following stack:
 - **Current**: .NET 9 (short-term support) - C# 13, Task.WhenEach, LINQ improvements
 - **Upcoming**: .NET 10 LTS (C# 14, planned 2025) - collection extensions, params improvements
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for C#-specific release documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for C#-specific release documentation location
 
 ## Prerequisite Knowledge
 
@@ -91,21 +91,21 @@ OSE Platform C# applications MUST use the following stack:
 
 **What this documentation does NOT cover**: C# syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 C# development in OSE Platform enforces foundational software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Roslyn analyzers, `dotnet format`, `dotnet test`, NuGet restore, CI/CD pipelines, Coverlet coverage measurement, and code generation via Source Generators
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Roslyn analyzers, `dotnet format`, `dotnet test`, NuGet restore, CI/CD pipelines, Coverlet coverage measurement, and code generation via Source Generators
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through `#nullable enable` for nullable reference types, explicit DI registration lifetimes (Singleton/Scoped/Transient), explicit `async/await` throughout call chains, explicit `CancellationToken` propagation, and file-scoped namespaces that match folder structure
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through `#nullable enable` for nullable reference types, explicit DI registration lifetimes (Singleton/Scoped/Transient), explicit `async/await` throughout call chains, explicit `CancellationToken` propagation, and file-scoped namespaces that match folder structure
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use `record` types for value objects and DTOs (structural equality, `with` expressions), `init`-only properties, `IReadOnlyList<T>` and `IReadOnlyDictionary<T,V>` for exposed collections, and `readonly struct` for small value types
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - MUST use `record` types for value objects and DTOs (structural equality, `with` expressions), `init`-only properties, `IReadOnlyList<T>` and `IReadOnlyDictionary<T,V>` for exposed collections, and `readonly struct` for small value types
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, LINQ for collection transformations, and testable business logic isolated from ASP.NET Core infrastructure and EF Core I/O
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, LINQ for collection transformations, and testable business logic isolated from ASP.NET Core infrastructure and EF Core I/O
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `global.json` for SDK version pinning, `Directory.Packages.props` for centralized NuGet version management, `packages.lock.json` for lockfile-based restores, and `.editorconfig` for deterministic formatting
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `global.json` for SDK version pinning, `Directory.Packages.props` for centralized NuGet version management, `packages.lock.json` for lockfile-based restores, and `.editorconfig` for deterministic formatting
 
 ## .NET Version Strategy
 
@@ -291,16 +291,16 @@ graph LR
 - MUST collect Coverlet coverage and enforce threshold with `rhino-cli test-coverage validate`
 - SHOULD use pre-commit hooks for `dotnet format` and analyzer validation
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability with records)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability with records)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -313,16 +313,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

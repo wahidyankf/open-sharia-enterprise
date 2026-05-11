@@ -28,7 +28,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to implement security in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -428,8 +428,8 @@ class ZakatPayerEntity {
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ---
 

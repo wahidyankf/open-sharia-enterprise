@@ -26,7 +26,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Clojure tutorial. We define HOW to apply Clojure in THIS codebase, not WHAT Clojure is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -38,7 +38,7 @@ This document defines **authoritative coding standards** for Clojure development
 
 ## Software Engineering Principles
 
-These standards enforce the software engineering principles from `governance/principles/software-engineering/`:
+These standards enforce the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
@@ -81,7 +81,7 @@ These standards enforce the software engineering principles from `governance/pri
     (is (= 0M (calculate-zakat 3000M 5000M)))))
 ```
 
-**See**: [Automation Over Manual Principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+**See**: [Automation Over Manual Principle](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ### 2. Explicit Over Implicit
 
@@ -135,7 +135,7 @@ These standards enforce the software engineering principles from `governance/pri
   {:id cid :cost cost :profit profit :inst inst}) ;; No spec, no validation
 ```
 
-**See**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+**See**: [Explicit Over Implicit Principle](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ### 3. Immutability Over Mutability
 
@@ -175,7 +175,7 @@ These standards enforce the software engineering principles from `governance/pri
 ;; (.put state :zakat/amount 2500M) ;; Mutates! Avoid.
 ```
 
-**See**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+**See**: [Immutability Principle](../../../../../repo-governance/principles/software-engineering/immutability.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -213,7 +213,7 @@ These standards enforce the software engineering principles from `governance/pri
     amount))
 ```
 
-**See**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+**See**: [Pure Functions Principle](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ### 5. Reproducibility First
 
@@ -245,7 +245,7 @@ These standards enforce the software engineering principles from `governance/pri
   :coverage {:extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}}}}}
 ```
 
-**See**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Naming Conventions
 
@@ -552,11 +552,11 @@ These standards are enforced through:
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

@@ -3,7 +3,7 @@
 **Prerequisite**: none beyond the existing `apps/organiclever-web/` scaffolding.
 This plan does NOT depend on `2026-04-25__organiclever-web-landing-uikit`
 (no `Textarea` / `Badge` consumed). Bigger plan
-[`2026-04-25__organiclever-web-app/`](../../in-progress/2026-04-25__organiclever-web-app/README.md)
+[`2026-04-25__organiclever-web-app/`](../../done/2026-05-02__organiclever-web-app/README.md)
 starts after this gear-up archives.
 
 ---
@@ -26,7 +26,7 @@ starts after this gear-up archives.
 - [x] **Fix-all-issues rule**: if ANY of the above gates is red on a fresh clone
       (preexisting, not caused by this plan), STOP and fix the root cause first
       before introducing new code. Per the [Root Cause Orientation
-      principle](../../../governance/principles/general/root-cause-orientation.md),
+      principle](../../../repo-governance/principles/general/root-cause-orientation.md),
       do not bypass, comment-out, or work around the failure — the senior-engineer
       standard expects unrelated-but-encountered issues to be fixed properly.
   - Date: 2026-04-30 | Status: Done | All code-level gates green. E2E @local-fullstack failures are environment-dependent (need organiclever-be running), not code defects. @local-fullstack tag documents this requirement per project convention.
@@ -642,7 +642,7 @@ entry as T0` that captures the timestamp via `page.evaluate` for the
 - [x] **Fix-all-issues check**: every gate above is green. If any is red —
       including issues that predate this plan or appear in adjacent files
       surfaced by `nx affected` — fix the root cause now per the [Root Cause
-      Orientation principle](../../../governance/principles/general/root-cause-orientation.md).
+      Orientation principle](../../../repo-governance/principles/general/root-cause-orientation.md).
       Do not bypass with `// eslint-disable`, `// @ts-expect-error`,
       `--no-verify`, `passWithNoTests`, or coverage-exclude entries unless the
       decision is documented and approved.
@@ -650,7 +650,7 @@ entry as T0` that captures the timestamp via `page.evaluate` for the
 - [x] Commit and push to `main` (Trunk Based Development)
   - Date: 2026-04-30 | Status: Done | Pushed to origin/main (8 commits)
 - [x] **Post-push CI verification** per the [CI post-push verification
-      convention](../../../governance/development/workflow/ci-post-push-verification.md):
+      convention](../../../repo-governance/development/workflow/ci-post-push-verification.md):
       monitor the GitHub Actions run for `apps/organiclever-web` and
       `apps/organiclever-web-e2e`; if any job fails, fix and re-push before
       declaring done. Pre-push hook is not sufficient.
@@ -677,7 +677,7 @@ entry as T0` that captures the timestamp via `page.evaluate` for the
       and push to `origin main`
   - Date: 2026-04-30 | Status: Done | Committed and pushed (commit b10b909)
 - [x] Open the bigger plan
-      [`2026-04-25__organiclever-web-app/`](../../in-progress/2026-04-25__organiclever-web-app/README.md):
+      [`2026-04-25__organiclever-web-app/`](../../done/2026-05-02__organiclever-web-app/README.md):
       its Phase 0 / Phase 1 may now reference `lib/journal/journal-store.ts`,
       `lib/journal/run-migrations.ts`, and the individual migration files under
       `lib/journal/migrations/`, plus the existing v1 schema as the underlying

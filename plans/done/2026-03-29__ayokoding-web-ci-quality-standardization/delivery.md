@@ -16,7 +16,7 @@
 
 **Implementation Steps**:
 
-- [x] Open `governance/development/infra/nx-targets.md`
+- [x] Open `repo-governance/development/infra/nx-targets.md`
 - [x] In the Current Project Tags table, update ayokoding-web row from `["type:app", "platform:hugo", "domain:ayokoding"]` to `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`
 - [x] Verify no other references to ayokoding-web as a Hugo site in nx-targets.md
 - [x] Commit: `docs(nx-targets): fix stale ayokoding-web tag — platform:nextjs not hugo`

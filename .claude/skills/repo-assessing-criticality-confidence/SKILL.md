@@ -407,7 +407,7 @@ for finding in low_priority:
 
 **HIGH**:
 - Missing "Principles Respected" section (traceability violation)
-- Non-kebab-case filename in docs/ or governance/ (convention violation)
+- Non-kebab-case filename in docs/ or repo-governance/ (convention violation)
 
 **MEDIUM**:
 - Missing optional cross-reference
@@ -751,13 +751,13 @@ Add "Domain-Specific Confidence Examples" section:
 
 **Primary Conventions**:
 
-- [Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md) - Complete criticality system
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md) - Complete confidence system
+- [Criticality Levels Convention](../../../repo-governance/development/quality/criticality-levels.md) - Complete criticality system
+- [Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md) - Complete confidence system
 
 **Related Conventions**:
 
-- [Repository Validation Methodology](../../../governance/development/quality/repository-validation.md) - Standard validation patterns
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Repository Validation Methodology](../../../repo-governance/development/quality/repository-validation.md) - Standard validation patterns
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 **Related Skills**:
 

@@ -74,7 +74,7 @@ Evolve the canonical plan structure from four documents (`README.md`, `requireme
 Feature: Plans Organization Convention specifies five-document layout
 
   Scenario: Multi-file layout section lists all five documents
-    Given the file governance/conventions/structure/plans.md
+    Given the file repo-governance/conventions/structure/plans.md
     When I read the "Multi-File Structure" section
     Then it lists README.md, brd.md, prd.md, tech-docs.md, delivery.md as the five canonical files
     And it describes the purpose of each file
@@ -82,7 +82,7 @@ Feature: Plans Organization Convention specifies five-document layout
     And it clarifies that prd.md holds user stories, Gherkin acceptance criteria, and product scope
 
   Scenario: Single-file exception criteria are updated
-    Given the file governance/conventions/structure/plans.md
+    Given the file repo-governance/conventions/structure/plans.md
     When I read the "Single-File Structure" section
     Then it references the five-doc layout as the default
     And it retains the ≤1000-line threshold for the single-file exception
@@ -107,7 +107,7 @@ Feature: Plan agents reference the five-doc layout
     And the checker validates that Gherkin acceptance criteria live in prd.md, not brd.md
 
   Scenario: plan-execution workflow reads delivery.md
-    Given the file governance/workflows/plan/plan-execution.md
+    Given the file repo-governance/workflows/plan/plan-execution.md
     When I search for delivery-checklist location
     Then the calling context is instructed to read delivery.md (unchanged from prior convention)
     And the calling context may consult brd.md, prd.md, tech-docs.md for context
@@ -130,13 +130,13 @@ Feature: Plan agents reference the five-doc layout
 Feature: Plan workflows reference the five-doc layout
 
   Scenario: plan-quality-gate workflow lists the five canonical documents
-    Given the file governance/workflows/plan/plan-quality-gate.md
+    Given the file repo-governance/workflows/plan/plan-quality-gate.md
     When I read the "Plan-Specific Validation" section
     Then the completeness bullet enumerates README.md, brd.md, prd.md, tech-docs.md, delivery.md for multi-file plans
     And it clarifies the single-file exception still allows a single README.md when eligible
 
   Scenario: plan-execution workflow still drives from delivery.md
-    Given the file governance/workflows/plan/plan-execution.md
+    Given the file repo-governance/workflows/plan/plan-execution.md
     When I read the execution instructions
     Then the workflow reads delivery.md as the sequential checklist (unchanged)
     And it notes that the executor may consult brd.md, prd.md, tech-docs.md for context on ambiguous items
@@ -155,7 +155,7 @@ Feature: Skills and cross-referenced docs reflect the new layout
     And any example plan shown uses brd.md and prd.md
 
   Scenario: Cross-referenced docs are consistent
-    Given the files governance/development/infra/acceptance-criteria.md, docs/how-to/organize-work.md, AGENTS.md
+    Given the files repo-governance/development/infra/acceptance-criteria.md, docs/how-to/organize-work.md, AGENTS.md
     When I search for references to requirements.md
     Then every reference has been updated to brd.md, prd.md, or removed as appropriate
     And no stale reference to the four-document layout remains

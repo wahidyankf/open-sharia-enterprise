@@ -136,7 +136,7 @@ git pull origin main
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -144,4 +144,4 @@ git pull origin main
 
 **Related Conventions**:
 
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)

@@ -238,7 +238,7 @@ This framework documentation connects with:
 - **[Programming Languages](../programming-languages/README.md)** - Language-specific idioms (Java, Elixir, TypeScript)
 - **[Architecture](../architecture/README.md)** - C4 model, DDD patterns
 - **[Development Practices](../development/README.md)** - TDD, BDD, testing strategies
-- **[Functional Programming](../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 - **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
 
 ## Principles Reflected in Framework Documentation

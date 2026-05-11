@@ -102,15 +102,15 @@ Python / FastAPI reimplementation of the demo backend REST API — a functional 
 
 ## Files to Update
 
-| File                                         | Change                                                                  |
-| -------------------------------------------- | ----------------------------------------------------------------------- |
-| `CLAUDE.md`                                  | Add a-demo-be-python-fastapi to Current Apps list, add Python coverage  |
-| `README.md`                                  | Add a-demo-be-python-fastapi badge and description in demo apps section |
-| `specs/apps/a-demo/be/README.md`             | Add Python/FastAPI row to Implementations table                         |
-| `apps/a-demo-be-e2e/project.json`            | Add `a-demo-be-python-fastapi` to `implicitDependencies`                |
-| `.github/workflows/main-ci.yml`              | Add Python/uv setup + coverage upload step                              |
-| `package.json`                               | Add ruff format to lint-staged for Python files                         |
-| `governance/development/infra/nx-targets.md` | Add Python tags, update test:quick composition table                    |
+| File                                              | Change                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------- |
+| `CLAUDE.md`                                       | Add a-demo-be-python-fastapi to Current Apps list, add Python coverage  |
+| `README.md`                                       | Add a-demo-be-python-fastapi badge and description in demo apps section |
+| `specs/apps/a-demo/be/README.md`                  | Add Python/FastAPI row to Implementations table                         |
+| `apps/a-demo-be-e2e/project.json`                 | Add `a-demo-be-python-fastapi` to `implicitDependencies`                |
+| `.github/workflows/main-ci.yml`                   | Add Python/uv setup + coverage upload step                              |
+| `package.json`                                    | Add ruff format to lint-staged for Python files                         |
+| `repo-governance/development/infra/nx-targets.md` | Add Python tags, update test:quick composition table                    |
 
 ## Git Workflow
 

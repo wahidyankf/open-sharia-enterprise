@@ -8,7 +8,7 @@
 
 ## Problem Statement
 
-Currently, system rules and conventions exist under `governance/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
+Currently, system rules and conventions exist under `repo-governance/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
 
 **Key Issues**:
 
@@ -19,10 +19,10 @@ Currently, system rules and conventions exist under `governance/` and must follo
 
 ## Proposed Solution
 
-**Move `governance/` (excluding `agents/`) to repository root as `/governance/`**
+**Move `repo-governance/` (excluding `agents/`) to repository root as `/repo-governance/`**
 
 ```
-governance/           /governance/
+repo-governance/           /repo-governance/
 ├── vision/              →        vision/         (Layer 0: WHY we exist)
 ├── principles/         →        principles/       (Layer 1: WHY - values)
 ├── conventions/       →        conventions/     (Layer 2: WHAT - documentation rules)
@@ -32,14 +32,14 @@ governance/           /governance/
 └── README.md           →        README.md
 ```
 
-**NOT moving**: `governance/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
+**NOT moving**: `repo-governance/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
 
 ## Goals
 
 ### Primary Goals
 
 1. **Separate system rules from documentation**: System rules use normal markdown (no Obsidian constraints)
-2. **Clear directory purpose**: `/governance/` for system rules, `docs/` for human-written docs
+2. **Clear directory purpose**: `/repo-governance/` for system rules, `docs/` for human-written docs
 3. **Simplify agent creation**: Agents create rules without Obsidian formatting requirements
 4. **Preserve git history**: Use `git mv` for all directory moves
 
@@ -54,8 +54,8 @@ governance/           /governance/
 
 ### Separation of Concerns
 
-- **Clear boundary**: System rules (`/governance/`) vs. human-written docs (`docs/`)
-- **Purpose-aligned**: `/governance/` for governance, `docs/` for learning
+- **Clear boundary**: System rules (`/repo-governance/`) vs. human-written docs (`docs/`)
+- **Purpose-aligned**: `/repo-governance/` for governance, `docs/` for learning
 - **Format-appropriate**: Normal markdown for rules, Obsidian format for docs
 
 ### Maintainability
@@ -94,7 +94,7 @@ governance/           /governance/
 
 ### Directory Structure Change
 
-**Risk**: Team used to `governance/` path will need to learn new location
+**Risk**: Team used to `repo-governance/` path will need to learn new location
 
 **Mitigation**:
 
@@ -106,30 +106,30 @@ governance/           /governance/
 
 ### File Move Success
 
-- [ ] All 5 directories moved to `/governance/` (vision, principles, conventions, development, workflows)
-- [ ] 2 files moved to `/governance/` (ex-ru\_\_\*.md, README.md)
-- [ ] `governance/` directory removed (no leftover files)
+- [ ] All 5 directories moved to `/repo-governance/` (vision, principles, conventions, development, workflows)
+- [ ] 2 files moved to `/repo-governance/` (ex-ru\_\_\*.md, README.md)
+- [ ] `repo-governance/` directory removed (no leftover files)
 - [ ] Git shows moves as renames (history preserved)
 - [ ] Zero untracked files remaining
 
 ### Reference Update Success
 
-- [ ] Zero occurrences of `governance/` in entire repository
-- [ ] All references to `/governance/` work correctly
+- [ ] Zero occurrences of `repo-governance/` in entire repository
+- [ ] All references to `/repo-governance/` work correctly
 - [ ] repo-governance-checker reports zero broken links
 - [ ] Key documents (CLAUDE.md, AGENTS.md, governance) link correctly
 
 ### Documentation Success
 
-- [ ] Governance architecture updated with `/governance/` paths for all layers
-- [ ] Mermaid diagram in governance doc shows `/governance/` locations
+- [ ] Governance architecture updated with `/repo-governance/` paths for all layers
+- [ ] Mermaid diagram in governance doc shows `/repo-governance/` locations
 - [ ] 45 agent files updated with new paths
 - [ ] 23 skill files updated with new paths
 - [ ] 1 workflow (ex-ru-wf-wo\_\_repository-rules-validation.md) updated
 
 ### Validation Success
 
-- [ ] Phase 1 validation: All files in `/governance/` exist
+- [ ] Phase 1 validation: All files in `/repo-governance/` exist
 - [ ] Phase 2 validation: Zero old-path references in governance doc
 - [ ] Phase 3 validation: repo-governance-checker reports no broken links
 - [ ] Final validation: Git diff shows only expected changes
@@ -152,7 +152,7 @@ This plan is organized into four documents:
 ### Internal Dependencies
 
 - **Separate from**: `plans/backl../2026-01-04__agents-docs-source-of-truth/`
-- `governance/agents/` NOT moved (that plan handles it)
+- `repo-governance/agents/` NOT moved (that plan handles it)
 - All other rules directories moved by this plan
 
 ## Constraints
@@ -166,7 +166,7 @@ This plan is organized into four documents:
 
 1. repo-governance-checker agent is available and can validate links
 2. Git mv commands preserve history for moved files
-3. Team will adapt to new `/governance/` path
+3. Team will adapt to new `/repo-governance/` path
 4. ~150 files require path reference updates (agents, skills, docs)
 5. All docs/ content follows Obsidian rules (tutorials/, how-to/, reference/, explanation/)
 
@@ -174,7 +174,7 @@ This plan is organized into four documents:
 
 ### Alternative 1: Keep Current Structure (Status Quo)
 
-**Approach**: Keep `governance/` with Obsidian constraints
+**Approach**: Keep `repo-governance/` with Obsidian constraints
 
 **Pros**:
 
@@ -189,9 +189,9 @@ This plan is organized into four documents:
 
 **Decision**: Rejected - doesn't solve Obsidian constraint problem
 
-### Alternative 2: Move to Different Location (e.g., /system-governance/)
+### Alternative 2: Move to Different Location (e.g., /system-repo-governance/)
 
-**Approach**: Move to `/system-governance/` instead of `/governance/`
+**Approach**: Move to `/system-repo-governance/` instead of `/repo-governance/`
 
 **Pros**:
 
@@ -201,13 +201,13 @@ This plan is organized into four documents:
 **Cons**:
 
 - Longer path to type
-- Less intuitive than `/governance/`
+- Less intuitive than `/repo-governance/`
 
-**Decision**: Rejected - `/governance/` is concise and intuitive
+**Decision**: Rejected - `/repo-governance/` is concise and intuitive
 
 ### Alternative 3: Keep in docs/ but Remove Obsidian Rules
 
-**Approach**: Keep `governance/` but exempt from Obsidian rules
+**Approach**: Keep `repo-governance/` but exempt from Obsidian rules
 
 **Pros**:
 
@@ -216,15 +216,15 @@ This plan is organized into four documents:
 
 **Cons**:
 
-- Inconsistent rules application (docs/ follows Obsidian, but governance/ doesn't)
+- Inconsistent rules application (docs/ follows Obsidian, but repo-governance/ doesn't)
 - Complex documentation (which rules apply where?)
 - Confusing for contributors
 
 **Decision**: Rejected - inconsistent rules application
 
-### Alternative 4: Selected - Move to /governance/
+### Alternative 4: Selected - Move to /repo-governance/
 
-**Approach**: Move to `/governance/` at repository root
+**Approach**: Move to `/repo-governance/` at repository root
 
 **Pros**:
 
@@ -252,6 +252,6 @@ This plan is organized into four documents:
 
 ## References
 
-- Repository Governance Architecture (will be at `/governance/ex-ru__repository-governance-architecture.md` after move)
-- [Plans Organization](../../../governance/conventions/structure/plans.md)
-- [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `governance/agents/`
+- Repository Governance Architecture (will be at `/repo-governance/ex-ru__repository-governance-architecture.md` after move)
+- [Plans Organization](../../../repo-governance/conventions/structure/plans.md)
+- Agent and Skill Definitions as Documentation Source of Truth — Separate plan handling `repo-governance/agents/` (archived)

@@ -68,15 +68,15 @@ TDD applies to UI component and page work. Write the failing check before writin
 Mini-TDD passes work well for UI: one Red→Green→Refactor cycle per variant, state, or interaction.
 
 **Canonical reference**:
-[Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 — covers all test levels (unit, snapshot/visual, a11y, E2E, manual verification) and the full
 Red→Green→Refactor cycle.
 
 ## Governance References
 
-- [Design Tokens Convention](../../../governance/development/frontend/design-tokens.md)
-- [Component Patterns Convention](../../../governance/development/frontend/component-patterns.md)
-- [Accessibility Convention](../../../governance/development/frontend/accessibility.md)
-- [Styling Convention](../../../governance/development/frontend/styling.md)
-- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) — 5-color palette for docs only; UI uses any WCAG AA compliant colors
-- [Accessibility First Principle](../../../governance/principles/content/accessibility-first.md)
+- [Design Tokens Convention](../../../repo-governance/development/frontend/design-tokens.md)
+- [Component Patterns Convention](../../../repo-governance/development/frontend/component-patterns.md)
+- [Accessibility Convention](../../../repo-governance/development/frontend/accessibility.md)
+- [Styling Convention](../../../repo-governance/development/frontend/styling.md)
+- [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md) — 5-color palette for docs only; UI uses any WCAG AA compliant colors
+- [Accessibility First Principle](../../../repo-governance/principles/content/accessibility-first.md)

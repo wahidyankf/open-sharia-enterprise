@@ -274,5 +274,5 @@ nx run ayokoding-cli
 
 ## References
 
-- [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md)
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Hugo Content Convention - ayokoding-web](../../repo-governance/conventions/hugo/ayokoding.md)
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)

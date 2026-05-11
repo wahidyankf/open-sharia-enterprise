@@ -60,7 +60,7 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 **What this documentation does NOT cover**: TypeScript syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -82,17 +82,17 @@ All TypeScript code MUST follow the standards documented here:
 - **Testing Standards**: See [Test-Driven Development](test-driven-development.md)
 - **Security Practices**: See [Security](security.md)
 
-**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+**Related**: [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
 ## Software Engineering Principles
 
-TypeScript development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+TypeScript development in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - TypeScript automates through ESLint, Prettier, Husky hooks, automated testing with Jest/Vitest, and CI/CD pipelines
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - TypeScript enforces through explicit typing, no `any` types, explicit error handling with Result pattern, clear function signatures
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - TypeScript encourages immutable patterns through `readonly`, `const`, frozen objects, and functional programming patterns
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - TypeScript supports through first-class functions, arrow functions, functional core/imperative shell architecture
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - TypeScript enables through Volta pinning, package-lock.json, strict tsconfig, deterministic builds
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - TypeScript automates through ESLint, Prettier, Husky hooks, automated testing with Jest/Vitest, and CI/CD pipelines
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - TypeScript enforces through explicit typing, no `any` types, explicit error handling with Result pattern, clear function signatures
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - TypeScript encourages immutable patterns through `readonly`, `const`, frozen objects, and functional programming patterns
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - TypeScript supports through first-class functions, arrow functions, functional core/imperative shell architecture
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - TypeScript enables through Volta pinning, package-lock.json, strict tsconfig, deterministic builds
 
 **See Also**: [Functional Programming](functional-programming.md) for pure functions patterns, [Best Practices](best-practices.md) for explicit coding standards, [Type Safety](type-safety.md) for immutable type patterns.
 
@@ -735,7 +735,7 @@ nx affected -t test:quick
 nx graph
 ```
 
-**See**: [Nx Target Standards](../../../../../governance/development/infra/nx-targets.md) for canonical target names.
+**See**: [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.
 
 ## Reproducible TypeScript Development
 
@@ -1023,7 +1023,7 @@ jobs:
         run: npm run build
 ```
 
-**See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility First principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Cross-Language Comparisons
 
@@ -1491,10 +1491,10 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 ### OSE Platform Conventions
 
-- [File Naming Convention](../../../../../governance/conventions/structure/file-naming.md)
-- [Diátaxis Framework](../../../../../governance/conventions/structure/diataxis-framework.md)
-- [Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)
-- [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [File Naming Convention](../../../../../repo-governance/conventions/structure/file-naming.md)
+- [Diátaxis Framework](../../../../../repo-governance/conventions/structure/diataxis-framework.md)
+- [Functional Programming Principle](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ### Related Stack Documentation
 

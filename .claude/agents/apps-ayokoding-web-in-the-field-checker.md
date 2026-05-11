@@ -41,7 +41,7 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 **CRITICAL - Read these first**:
 
-- [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Primary validation authority
+- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - Primary validation authority
 
 ## Validation Scope
 
@@ -224,7 +224,7 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Complete standards
+- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - Complete standards
 
 **Related Agents:**
 

@@ -25,7 +25,7 @@ created: 2026-02-08
 
 **This document is OSE Platform-specific**, not a Playwright tutorial. We define HOW to configure Playwright in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -156,7 +156,7 @@ export default defineConfig({
 
 - [Playwright Framework Index](README.md)
 - [BDD Integration](bdd.md)
-- [Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Reproducibility](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

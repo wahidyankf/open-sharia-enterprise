@@ -5,7 +5,7 @@
 ## Platform Binding Examples
 
 This file is the Claude Code platform-binding shim. The single-line `@AGENTS.md` directive above imports the canonical, vendor-neutral instruction surface. The rest of this file documents Claude-Code-specific binding details and is intentionally vendor-specific. Per the
-[Governance Vendor-Independence Convention](./governance/conventions/structure/governance-vendor-independence.md),
+[Governance Vendor-Independence Convention](./repo-governance/conventions/structure/governance-vendor-independence.md),
 the vendor-audit scanner skips every line under this heading until the next same-level heading or end of file.
 
 ### Markdown Quality (Claude Code hook)
@@ -41,10 +41,10 @@ Repo maintains **dual compatibility** with Claude Code and OpenCode:
 **Format differences:**
 
 - **Tools**: Claude Code uses arrays `[Read, Write]`, OpenCode uses boolean flags `{ read: true, write: true }`
-- **Models**: Claude Code uses `sonnet`/`opus`/`haiku` (or omits for budget-adaptive opus-inherit — intentional, not legacy); OpenCode uses `opencode-go/minimax-m2.7` (opus/sonnet/omitted) and `opencode-go/glm-5` (haiku). See [model-selection.md](./governance/development/agents/model-selection.md) for full capability-tier mapping.
+- **Models**: Claude Code uses `sonnet`/`opus`/`haiku` (or omits for budget-adaptive opus-inherit — intentional, not legacy); OpenCode uses `opencode-go/minimax-m2.7` (opus/sonnet/omitted) and `opencode-go/glm-5` (haiku). See [model-selection.md](./repo-governance/development/agents/model-selection.md) for full capability-tier mapping.
 - **Skills**: NOT mirrored — OpenCode reads `.claude/skills/{name}/SKILL.md` natively per [opencode.ai/docs/skills](https://opencode.ai/docs/skills/). The validate:sync `No Synced Skill Mirror` check fails if a stale `.opencode/skill/` or `.opencode/skills/<claude-name>` mirror reappears.
 - **Permissions**: Claude Code uses `settings.json` permissions, OpenCode uses `opencode.json` permission block (both configured with equivalent access)
-- **Colors**: Claude Code agents use named colors (`blue`, `green`, `yellow`, `purple`, etc.) written by hand in `.claude/agents/*.md`. `rhino-cli agents sync` translates these to OpenCode theme tokens (`primary`, `success`, `warning`, `secondary`, etc.) when generating `.opencode/agents/*.md` — current OpenCode rejects named colors. See [Dual-Mode Color Translation](./governance/development/agents/ai-agents.md#dual-mode-color-translation-claude-code-to-opencode) for the full mapping.
+- **Colors**: Claude Code agents use named colors (`blue`, `green`, `yellow`, `purple`, etc.) written by hand in `.claude/agents/*.md`. `rhino-cli agents sync` translates these to OpenCode theme tokens (`primary`, `success`, `warning`, `secondary`, etc.) when generating `.opencode/agents/*.md` — current OpenCode rejects named colors. See [Dual-Mode Color Translation](./repo-governance/development/agents/ai-agents.md#dual-mode-color-translation-claude-code-to-opencode) for the full mapping.
 - **MCP/Plugins**: Claude Code uses plugins (Context7, Playwright, Nx, LSPs), OpenCode uses MCP servers (Playwright, Nx, Perplexity)
 
 **Security policy**: Only use skills from trusted sources. All skills in this repo maintained by project team.

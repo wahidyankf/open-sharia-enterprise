@@ -24,7 +24,7 @@ Live reference categories to update (exhaustive list — each must be swept per 
 - **Agent bodies**: every file under `.claude/agents/*.md` and `.opencode/agent/*.md` (agents often name sibling agents in their own bodies).
 - **Skills**: `.claude/skills/**/SKILL.md`, `.claude/skills/**/reference/**/*.md`, and `.opencode/skill/**/SKILL.md`.
 - **Root catalogs**: `CLAUDE.md`, `AGENTS.md`.
-- **Governance tree**: `governance/conventions/**`, `governance/development/**`, `governance/principles/**`, `governance/workflows/**`, `governance/vision/**`, `governance/README.md`, `governance/repository-governance-architecture.md`.
+- **Governance tree**: `repo-governance/conventions/**`, `repo-governance/development/**`, `repo-governance/principles/**`, `repo-governance/workflows/**`, `repo-governance/vision/**`, `repo-governance/README.md`, `repo-governance/repository-governance-architecture.md`.
 - **Docs tree**: `docs/tutorials/**`, `docs/how-to/**`, `docs/reference/**`, `docs/explanation/**`, `docs/README.md`.
 - **Plans**: `plans/in-progress/**`, `plans/backlog/**`, `plans/ideas.md`, `plans/README.md` (if present).
 - **App READMEs**: `apps/**/README.md` (content agents are often referenced in content-site docs).
@@ -46,11 +46,11 @@ After each rename, the success condition is: `Grep "<old-name>"` with the exclus
 
 ### Workflows
 
-| Old path / name                                                  | New path / name                                        | Rationale                                                                                                                                                                                        |
-| ---------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `governance/workflows/docs/quality-gate.md`                      | `governance/workflows/docs/docs-quality-gate.md`       | Align filename with existing `name: docs-quality-gate` frontmatter field.                                                                                                                        |
-| `governance/workflows/repository/repository-rules-validation.md` | `governance/workflows/repo/repo-rules-quality-gate.md` | Directory rename `repository/` → `repo/` aligns workflow scope vocabulary with agent scope (agents already use `repo-*`). Filename drops `-validation`, adopts `-quality-gate` (iterative loop). |
-| `governance/workflows/specs/specs-validation.md`                 | `governance/workflows/specs/specs-quality-gate.md`     | Iterative check-fix-verify loop = `quality-gate` type; drop ad-hoc `-validation`.                                                                                                                |
+| Old path / name                                                       | New path / name                                             | Rationale                                                                                                                                                                                        |
+| --------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `repo-governance/workflows/docs/quality-gate.md`                      | `repo-governance/workflows/docs/docs-quality-gate.md`       | Align filename with existing `name: docs-quality-gate` frontmatter field.                                                                                                                        |
+| `repo-governance/workflows/repository/repository-rules-validation.md` | `repo-governance/workflows/repo/repo-rules-quality-gate.md` | Directory rename `repository/` → `repo/` aligns workflow scope vocabulary with agent scope (agents already use `repo-*`). Filename drops `-validation`, adopts `-quality-gate` (iterative loop). |
+| `repo-governance/workflows/specs/specs-validation.md`                 | `repo-governance/workflows/specs/specs-quality-gate.md`     | Iterative check-fix-verify loop = `quality-gate` type; drop ad-hoc `-validation`.                                                                                                                |
 
 ## Role Vocabulary documentation (AC4)
 
@@ -97,7 +97,7 @@ Expected output: empty. Any line printed is a rule violation.
 
 ## Workflow Type Vocabulary documentation (AC10)
 
-Add Naming Rule + Type Vocabulary sections to `governance/workflows/README.md`:
+Add Naming Rule + Type Vocabulary sections to `repo-governance/workflows/README.md`:
 
 ```markdown
 ## Naming Rule
@@ -108,7 +108,7 @@ Every workflow filename follows: `<scope>(-<qualifier>)*-<type>`
 - `qualifier` — zero or more refinement tokens (e.g., `rules`, `by-example`, `software-engineering-separation`).
 - `type` — exactly one trailing token from the Type Vocabulary below.
 
-No other structure is permitted. No exceptions, except for reference material under `governance/workflows/meta/` (documented below).
+No other structure is permitted. No exceptions, except for reference material under `repo-governance/workflows/meta/` (documented below).
 
 ## Type Vocabulary
 
@@ -120,7 +120,7 @@ No other structure is permitted. No exceptions, except for reference material un
 
 ## Meta reference exception
 
-Files under `governance/workflows/meta/` are **reference documentation about the workflow system** (e.g., `execution-modes.md`, `workflow-identifier.md`). They describe how workflows work, not workflows themselves. They are exempt from the type-suffix rule.
+Files under `repo-governance/workflows/meta/` are **reference documentation about the workflow system** (e.g., `execution-modes.md`, `workflow-identifier.md`). They describe how workflows work, not workflows themselves. They are exempt from the type-suffix rule.
 ```
 
 ## Workflow rule compliance audit (AC10 scenario 4)
@@ -128,7 +128,7 @@ Files under `governance/workflows/meta/` are **reference documentation about the
 After renames + README update, every workflow file outside `meta/` must end in one of the three type suffixes:
 
 ```bash
-find governance/workflows -name '*.md' -not -name 'README.md' -not -path '*/meta/*' \
+find repo-governance/workflows -name '*.md' -not -name 'README.md' -not -path '*/meta/*' \
   | sed 's|.*/||; s|\.md$||' \
   | grep -vE -- '-(quality-gate|execution|setup)$'
 ```
@@ -137,9 +137,9 @@ Expected output: empty. Any line printed is a rule violation.
 
 ## Governance propagation (AC6)
 
-The `.claude/agents/README.md` Naming Rule is a harness-local summary; the normative source must live under `governance/`. Use `repo-rules-maker` to create:
+The `.claude/agents/README.md` Naming Rule is a harness-local summary; the normative source must live under `repo-governance/`. Use `repo-rules-maker` to create:
 
-**File**: `governance/conventions/structure/agent-naming.md`
+**File**: `repo-governance/conventions/structure/agent-naming.md`
 
 **Required content**:
 
@@ -155,8 +155,8 @@ The `.claude/agents/README.md` Naming Rule is a harness-local summary; the norma
 
 **Cross-reference updates required by repo-rules-maker**:
 
-- Add entry to `governance/conventions/structure/README.md` index.
-- Add entry to `governance/conventions/README.md` master index.
+- Add entry to `repo-governance/conventions/structure/README.md` index.
+- Add entry to `repo-governance/conventions/README.md` master index.
 - Add "See: agent-naming.md" link in `CLAUDE.md` under the AI Agents section.
 - Add link from `.claude/agents/README.md` and `.opencode/agent/README.md` Naming Rule sections pointing to the convention as normative source.
 
@@ -164,7 +164,7 @@ The `.claude/agents/README.md` Naming Rule is a harness-local summary; the norma
 
 Use `repo-rules-maker` to create a parallel convention for workflows:
 
-**File**: `governance/conventions/structure/workflow-naming.md`
+**File**: `repo-governance/conventions/structure/workflow-naming.md`
 
 **Required content**:
 
@@ -173,17 +173,17 @@ Use `repo-rules-maker` to create a parallel convention for workflows:
 - "The Rule" section — `<scope>(-<qualifier>)*-<type>` with scope and qualifier definitions. Scope matches parent directory name.
 - "Scope Vocabulary" section — enumerated scopes matching current directory structure (`ayokoding-web`, `ci`, `docs`, `infra`, `plan`, `repo`, `specs`, `ui`). Scope vocabulary aligned with agent-naming convention — both use `repo` (not `repository`).
 - "Type Vocabulary" section — the three types table (identical to workflows README).
-- "Meta reference exception" section — `governance/workflows/meta/` files exempt.
-- "Applies To" section — all `governance/workflows/**/*.md` except `README.md` and `meta/**`.
+- "Meta reference exception" section — `repo-governance/workflows/meta/` files exempt.
+- "Applies To" section — all `repo-governance/workflows/**/*.md` except `README.md` and `meta/**`.
 - "Enforcement" section — compliance audit command, `repo-rules-checker` integration.
 - "Examples" section — at least one example per type using current workflows.
-- Links to `governance/workflows/README.md` as operational catalog; link to `governance/conventions/structure/agent-naming.md` as sibling rule.
+- Links to `repo-governance/workflows/README.md` as operational catalog; link to `repo-governance/conventions/structure/agent-naming.md` as sibling rule.
 
 **Cross-reference updates required by repo-rules-maker**:
 
-- Add entry to `governance/conventions/structure/README.md` index.
-- Add entry to `governance/conventions/README.md` master index (under Structure section).
-- Add link to the convention in `governance/workflows/README.md` Naming Rule section as normative source.
+- Add entry to `repo-governance/conventions/structure/README.md` index.
+- Add entry to `repo-governance/conventions/README.md` master index (under Structure section).
+- Add link to the convention in `repo-governance/workflows/README.md` Naming Rule section as normative source.
 - Add "See: workflow-naming.md" reference in `CLAUDE.md` (root).
 
 ## rhino-cli validator implementation (AC13)
@@ -225,8 +225,8 @@ Unit test this package directly with ≥90% coverage (pure functions, easy). The
 ### Workflow validator specifics
 
 - Type vocabulary: `{quality-gate, execution, setup}`.
-- Sources: `governance/workflows/**/*.md`, recursive.
-- Exemptions: `governance/workflows/README.md` (index) and everything under `governance/workflows/meta/` (reference docs about the workflow system, per convention).
+- Sources: `repo-governance/workflows/**/*.md`, recursive.
+- Exemptions: `repo-governance/workflows/README.md` (index) and everything under `repo-governance/workflows/meta/` (reference docs about the workflow system, per convention).
 - Frontmatter check: same `name:` vs filename rule.
 
 ### Nx integration
@@ -251,7 +251,7 @@ Specs live under the existing `specs/apps/rhino/cli/gherkin/` layout — one `.f
 
 ### Pre-push and CI integration (AC14)
 
-- **Husky pre-push** (`.husky/pre-push`): add a gated block that runs `nx run rhino-cli:validate:naming-agents` only if `git diff --name-only @{u}..HEAD 2>/dev/null` matches `.claude/agents/`, `.opencode/agent/`; same for workflows against `governance/workflows/`. Uses the same affected-based cache warmth strategy as existing pre-push targets.
+- **Husky pre-push** (`.husky/pre-push`): add a gated block that runs `nx run rhino-cli:validate:naming-agents` only if `git diff --name-only @{u}..HEAD 2>/dev/null` matches `.claude/agents/`, `.opencode/agent/`; same for workflows against `repo-governance/workflows/`. Uses the same affected-based cache warmth strategy as existing pre-push targets.
 - **CI** (`.github/workflows/` in ose-public): extend the existing quality-gate workflow with two unconditional steps running the two Nx targets. Cache hits make them nearly free on no-op PRs; forced runs catch drift from hand-edited files that bypassed the local hook.
 
 ## Risks & mitigations

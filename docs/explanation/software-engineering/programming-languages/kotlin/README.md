@@ -77,7 +77,7 @@ OSE Platform Kotlin applications MUST use the following stack:
 - **JDK 17** - Minimum required for Spring Boot 3.x and Ktor 3.x
 - **JDK 21** - Recommended for virtual threads integration and latest LTS features
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for Kotlin-specific release documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Kotlin-specific release documentation location
 
 ## Prerequisite Knowledge
 
@@ -92,21 +92,21 @@ OSE Platform Kotlin applications MUST use the following stack:
 
 **What this documentation does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 Kotlin development in OSE Platform enforces foundational software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Gradle tasks, ktlint, Detekt, Kover, GitHub Actions CI/CD, Kotlin compiler plugins, and code generation via `ksp` (Kotlin Symbol Processing)
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Gradle tasks, ktlint, Detekt, Kover, GitHub Actions CI/CD, Kotlin compiler plugins, and code generation via `ksp` (Kotlin Symbol Processing)
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through Kotlin's null safety system (?/!! operators with explicit intent), sealed classes for exhaustive `when` expressions, explicit coroutine scope management, and explicit dependency injection configuration
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through Kotlin's null safety system (?/!! operators with explicit intent), sealed classes for exhaustive `when` expressions, explicit coroutine scope management, and explicit dependency injection configuration
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use `val` over `var`, data classes for value types, immutable collections (`listOf`, `mapOf`), and copy patterns instead of mutation; Kotlin's `val` and data class `copy()` enable true immutable programming
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - MUST use `val` over `var`, data classes for value types, immutable collections (`listOf`, `mapOf`), and copy patterns instead of mutation; Kotlin's `val` and data class `copy()` enable true immutable programming
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, extension functions for pure transformations, and `Flow` for reactive data pipelines with explicit side-effect management
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, extension functions for pure transformations, and `Flow` for reactive data pipelines with explicit side-effect management
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through Gradle Wrapper (`gradlew`), `libs.versions.toml` version catalog, Gradle build cache, Kotlin version pinning in `build.gradle.kts`, and SDKMAN/MISE for JDK version management
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through Gradle Wrapper (`gradlew`), `libs.versions.toml` version catalog, Gradle build cache, Kotlin version pinning in `build.gradle.kts`, and SDKMAN/MISE for JDK version management
 
 ## Kotlin Version Strategy
 
@@ -295,16 +295,16 @@ graph LR
 - MUST integrate quality checks in CI/CD pipeline (all checks must pass before merge)
 - SHOULD use Gradle build cache for faster incremental builds
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability, extension functions)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability, extension functions)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -317,16 +317,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

@@ -26,9 +26,9 @@ Before starting, ensure you have:
 - [ ] **Deep expertise** in the target language (5+ years experience recommended)
 - [ ] **Access to repository** with write permissions to `apps/ayokoding-web/`
 - [ ] **Familiarity with conventions**:
-  - [Programming Language Content Standard](../../governance/conventions/tutorials/programming-language-content.md)
-  - [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md)
-  - [Content Quality Principles](../../governance/conventions/writing/quality.md)
+  - [Programming Language Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md)
+  - [Hugo Content Convention - ayokoding](../../repo-governance/conventions/hugo/ayokoding.md)
+  - [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)
 - [ ] **AI agents available**:
   - `ayokoding-web-general-maker` (general content creation)
   - `ayokoding-web-by-example-maker` (by-example tutorial creation)
@@ -799,7 +799,7 @@ Before starting, ensure you have:
 
 **Issue:** ayokoding-web-general-checker reports Hugo convention violations
 
-**Solution:** Review [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md) and fix violations. Common issues:
+**Solution:** Review [Hugo Content Convention - ayokoding](../../repo-governance/conventions/hugo/ayokoding.md) and fix violations. Common issues:
 
 - Missing frontmatter fields
 - Incorrect weight values (use level-based system with correct levels)
@@ -906,9 +906,9 @@ Use this final checklist to verify completion:
 
 ## Related Documentation
 
-- [Programming Language Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Complete standard definition
-- [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
-- [Content Quality Principles](../../governance/conventions/writing/quality.md) - Quality requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - Tutorial level definitions
-- [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md) - Fact-checking methodology
-- [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) - Approved color palette
+- [Programming Language Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Complete standard definition
+- [Hugo Content Convention - ayokoding](../../repo-governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md) - Quality requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - Tutorial level definitions
+- [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md) - Fact-checking methodology
+- [Color Accessibility Convention](../../repo-governance/conventions/formatting/color-accessibility.md) - Approved color palette

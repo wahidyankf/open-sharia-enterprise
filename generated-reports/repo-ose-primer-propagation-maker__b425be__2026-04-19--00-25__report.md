@@ -21,12 +21,12 @@ The standout finding is **structural**: the primer recently merged its own clean
 **Findings by significance**:
 
 - high: 4 (new generic agent, new generic skill, new generic convention, plan-execution workflow product-rename leak)
-- medium: 6 (plan-* archival-checklist additions, docs-tutorial-checker convention links, plan-checker file-organisation rule, plan-creating-project-plans skill archival additions, specs-checker product-rename leak, governance/conventions/structure/programming-language-docs-separation product-coupled)
+- medium: 6 (plan-* archival-checklist additions, docs-tutorial-checker convention links, plan-checker file-organisation rule, plan-creating-project-plans skill archival additions, specs-checker product-rename leak, repo-governance/conventions/structure/programming-language-docs-separation product-coupled)
 - low: 5 (cosmetic structural drift: README.md/AGENTS.md hyperlink target adjustments, .gitignore pattern parity, .dockerignore pattern parity, .prettierrc.json formatter additions, codecov.yml flag schema)
 
 **Transform-gap files: 4** — files where ose-public has propagation-worthy intent but the current `identity` transform would inject product-app references (`OrganicLever`, `AyoKoding`, `OSE Platform`, `apps/(organiclever|ayokoding|oseplatform)-*`). The agent abstains and reports them for maintainer review.
 
-**Excluded findings: ~140 paths** — overwhelmingly bidirectional governance/skill content where divergence is primer-newer (post-cleanup-plan reformatting). These belong to the `repo-ose-primer-adoption-maker` invocation, not propagation. They are listed in the Excluded paths appendix so the reviewer can see what was deliberately dropped.
+**Excluded findings: ~140 paths** — overwhelmingly bidirectional repo-governance/skill content where divergence is primer-newer (post-cleanup-plan reformatting). These belong to the `repo-ose-primer-adoption-maker` invocation, not propagation. They are listed in the Excluded paths appendix so the reviewer can see what was deliberately dropped.
 
 **Classifier coverage gap**: One classifier conflict surfaced — the `apps/rhino-cli` row tags it `propagate`/`identity`, but ose-public's Phase 8 Commit J trimmed demo-only commands (`contracts*`, `java*`) that the primer still has and still uses. Propagating the trimmed ose-public version would BREAK the primer's demo apps. This is recorded as a **high-severity classifier conflict** below; the operator should not auto-apply this category in the upcoming Phase 10.2 apply pass.
 
@@ -61,15 +61,15 @@ Coverage table for every row evaluated. Counts are file-counts in `ose-public` m
 | `specs/apps/ayokoding/**`                                                                                         | `neither`         | n/a                   | Excluded.                                                                                                        |
 | `specs/apps/oseplatform/**`                                                                                       | `neither`         | n/a                   | Excluded.                                                                                                        |
 | `specs/apps/rhino/**`                                                                                             | `propagate`       | 16                    | Same trim conflict as rhino-cli — primer holds `contracts-dart-scaffold`, `contracts-java-clean-imports`, `java-validate-annotations` Gherkin specs ose-public deleted. Conflict folded into Findings high #4. |
-| `governance/principles/**`                                                                                        | `bidirectional`   | 16                    | Drift = primer-newer emoji retrofit; 0 propagation candidates after filtering.                                   |
-| `governance/vision/**`                                                                                            | `neither`         | n/a                   | Excluded.                                                                                                        |
-| `governance/conventions/**`                                                                                       | `bidirectional`   | 44                    | 1 propagation candidate (programming-language-docs-separation.md) — transform-gap.                               |
-| `governance/conventions/structure/licensing.md`                                                                   | `neither`         | n/a                   | Excluded.                                                                                                        |
-| `governance/conventions/structure/ose-primer-sync.md`                                                             | `neither`         | n/a                   | Excluded.                                                                                                        |
-| `governance/development/**`                                                                                       | `bidirectional`   | 62                    | Drift = primer-newer emoji retrofit; 0 propagation candidates after filtering.                                   |
-| `governance/workflows/**`                                                                                         | `bidirectional`   | 25                    | 2 propagation candidates (plan-execution.md additions + leak; plan-quality-gate.md additions, both surfaced under plan/**). |
-| `governance/workflows/repo/repo-ose-primer-*.md`                                                                  | `neither`         | n/a                   | Excluded; sync workflows live in ose-public only.                                                                |
-| `governance/workflows/plan/**`                                                                                    | `bidirectional`   | 4                     | Covered under governance/workflows/** above.                                                                     |
+| `repo-governance/principles/**`                                                                                        | `bidirectional`   | 16                    | Drift = primer-newer emoji retrofit; 0 propagation candidates after filtering.                                   |
+| `repo-governance/vision/**`                                                                                            | `neither`         | n/a                   | Excluded.                                                                                                        |
+| `repo-governance/conventions/**`                                                                                       | `bidirectional`   | 44                    | 1 propagation candidate (programming-language-docs-separation.md) — transform-gap.                               |
+| `repo-governance/conventions/structure/licensing.md`                                                                   | `neither`         | n/a                   | Excluded.                                                                                                        |
+| `repo-governance/conventions/structure/ose-primer-sync.md`                                                             | `neither`         | n/a                   | Excluded.                                                                                                        |
+| `repo-governance/development/**`                                                                                       | `bidirectional`   | 62                    | Drift = primer-newer emoji retrofit; 0 propagation candidates after filtering.                                   |
+| `repo-governance/workflows/**`                                                                                         | `bidirectional`   | 25                    | 2 propagation candidates (plan-execution.md additions + leak; plan-quality-gate.md additions, both surfaced under plan/**). |
+| `repo-governance/workflows/repo/repo-ose-primer-*.md`                                                                  | `neither`         | n/a                   | Excluded; sync workflows live in ose-public only.                                                                |
+| `repo-governance/workflows/plan/**`                                                                                    | `bidirectional`   | 4                     | Covered under repo-governance/workflows/** above.                                                                     |
 | `docs/tutorials/**`                                                                                               | `bidirectional`   | 1                     | Only README.md present; no drift after primer-newer filter.                                                      |
 | `docs/how-to/**`                                                                                                  | `bidirectional`   | 8                     | All drift = primer-newer emoji retrofit + product-name scrubs.                                                   |
 | `docs/reference/**`                                                                                               | `bidirectional`   | 12                    | All drift = primer-newer (and 1 ose-public-only file `related-repositories.md` is `neither`).                    |
@@ -222,7 +222,7 @@ Coverage table for every row evaluated. Counts are file-counts in `ose-public` m
   Sample inline marker:
 
   ```
-  This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
+  This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../repo-governance/conventions/structure/programming-language-docs-separation.md).
   ```
 
 - **Recommendation**: Transform-gap; abstain. Same options as the SES checker/fixer above; the skill, agent pair, and convention should be reclassified or generalised together.
@@ -276,20 +276,20 @@ Coverage table for every row evaluated. Counts are file-counts in `ose-public` m
 - **Path**: `.claude/agents/docs-tutorial-checker.md`
 - **Direction + transform**: `bidirectional` / `identity`
 - **Bucket**: medium
-- **Change**: Adds three relative links to `governance/conventions/tutorials/general.md` and `governance/conventions/tutorials/naming.md`. **NOTE**: those convention files exist only in ose-public (the classifier coverage table shows `governance/conventions/tutorials/` as ose-public-only). Propagating the agent without first propagating the convention files would create dangling links in the primer.
+- **Change**: Adds three relative links to `repo-governance/conventions/tutorials/general.md` and `repo-governance/conventions/tutorials/naming.md`. **NOTE**: those convention files exist only in ose-public (the classifier coverage table shows `repo-governance/conventions/tutorials/` as ose-public-only). Propagating the agent without first propagating the convention files would create dangling links in the primer.
 - **Diff snippet** (excerpt of 54-line diff):
 
   ```diff
   @@ -67,6 +67,9 @@
    This agent validates tutorials against standards defined in:
 
-  +- [Tutorial Convention](../../governance/conventions/tutorials/general.md) - Complete tutorial standards and validation criteria
-  +- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - Standardized tutorial types and depth levels
+  +- [Tutorial Convention](../../repo-governance/conventions/tutorials/general.md) - Complete tutorial standards and validation criteria
+  +- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - Standardized tutorial types and depth levels
   +
    The Tutorial Convention defines what to validate:
   ```
 
-- **Recommendation**: Conditionally propagate — verify the underlying `governance/conventions/tutorials/{general,naming}.md` files are also generic enough to propagate (sample read suggests yes; needs operator confirmation). If so, batch with the convention files. If not, this is a transform-gap.
+- **Recommendation**: Conditionally propagate — verify the underlying `repo-governance/conventions/tutorials/{general,naming}.md` files are also generic enough to propagate (sample read suggests yes; needs operator confirmation). If so, batch with the convention files. If not, this is a transform-gap.
 
 ##### medium #4 — `plan-creating-project-plans/SKILL.md`: archival checklist additions (parallel to plan-maker.md)
 
@@ -345,17 +345,17 @@ Coverage table for every row evaluated. Counts are file-counts in `ose-public` m
 
 - **Recommendation**: Transform-gap. The propagation candidate is **the reverse** — the primer's `demo` examples are correct; ose-public should adopt the primer's text via the adoption-maker. Do NOT propagate the ose-public version.
 
-##### medium #6 — `governance/conventions/structure/programming-language-docs-separation.md` is ose-public-only and product-coupled (transform-gap)
+##### medium #6 — `repo-governance/conventions/structure/programming-language-docs-separation.md` is ose-public-only and product-coupled (transform-gap)
 
-- **Path**: `governance/conventions/structure/programming-language-docs-separation.md`
+- **Path**: `repo-governance/conventions/structure/programming-language-docs-separation.md`
 - **Direction + transform**: `bidirectional` / `identity`
 - **Bucket**: medium
-- **Change**: Convention exists only in ose-public; matches `governance/conventions/**` → `bidirectional`/`identity`. Heavily references `OSE Platform`, `ayokoding-web`, `apps/ayokoding-web/`. Direct propagation would inject product names into the primer.
+- **Change**: Convention exists only in ose-public; matches `repo-governance/conventions/**` → `bidirectional`/`identity`. Heavily references `OSE Platform`, `ayokoding-web`, `apps/ayokoding-web/`. Direct propagation would inject product names into the primer.
 - **Diff snippet** (file primer-absent):
 
   ```
-  $ diff -rq primer/governance/conventions/structure ose-public/governance/conventions/structure | grep separation
-  Only in ose-public/governance/conventions/structure: programming-language-docs-separation.md
+  $ diff -rq primer/repo-governance/conventions/structure ose-public/repo-governance/conventions/structure | grep separation
+  Only in ose-public/repo-governance/conventions/structure: programming-language-docs-separation.md
   ```
 
   Inline markers:
@@ -446,10 +446,10 @@ The following propagate/bidirectional paths showed divergence between SHAs but w
 
 Primer-newer paths (drift caused by primer's `2026-04-18__ose-primer-template-cleanup` plan: tasteful-emoji retrofit, FSL scrub, demo-app rename, product-name removal):
 
-- All 13 modified files under `governance/principles/` (emoji retrofit only)
-- ~30 modified files under `governance/conventions/` (emoji + FSL scrub)
-- ~46 modified files under `governance/development/` (emoji + FSL scrub)
-- ~13 modified files under `governance/workflows/` (emoji + product-rename)
+- All 13 modified files under `repo-governance/principles/` (emoji retrofit only)
+- ~30 modified files under `repo-governance/conventions/` (emoji + FSL scrub)
+- ~46 modified files under `repo-governance/development/` (emoji + FSL scrub)
+- ~13 modified files under `repo-governance/workflows/` (emoji + product-rename)
 - ~7 modified files under `docs/how-to/` (emoji + product scrub)
 - ~6 modified files under `docs/reference/` (emoji + product scrub)
 - ~280 modified files under `docs/explanation/` (emoji retrofit dominant)
@@ -464,9 +464,9 @@ Primer-newer paths (drift caused by primer's `2026-04-18__ose-primer-template-cl
 - `apps/(organiclever|ayokoding|oseplatform)-*/**` and their `*-e2e` siblings — product apps, FSL-licensed
 - `apps/(oseplatform|ayokoding)-cli/**` — product CLIs
 - `specs/apps/(organiclever|ayokoding|oseplatform)/**` — product specs
-- `governance/vision/**`, `ROADMAP.md`, `LICENSE`, `LICENSING-NOTICE.md`
-- `governance/conventions/structure/{licensing,ose-primer-sync}.md`
-- `governance/workflows/repo/repo-ose-primer-{sync,extraction}-execution.md`
+- `repo-governance/vision/**`, `ROADMAP.md`, `LICENSE`, `LICENSING-NOTICE.md`
+- `repo-governance/conventions/structure/{licensing,ose-primer-sync}.md`
+- `repo-governance/workflows/repo/repo-ose-primer-{sync,extraction}-execution.md`
 - `.claude/agents/{repo-ose-primer-adoption-maker,repo-ose-primer-propagation-maker}.md`
 - `.claude/agents/apps-*.md`, `.claude/agents/social-*.md`
 - `.claude/skills/repo-syncing-with-ose-primer/`, `.claude/skills/apps-*/`
@@ -485,7 +485,7 @@ Noise-suppressed (neither propagation nor adoption candidates per the noise-supp
 ## Next steps
 
 1. **Operator review**: Read this report; decide which findings to authorize for the Phase 10.2 apply pass. Recommended scope for first apply: medium #1, medium #2, medium #4 only — they are clean `bidirectional/identity` candidates with no product-coupling and no classifier conflict. Bundle as a single conventional-commit-grouped PR.
-2. **Conditional bundle**: If the operator confirms `governance/conventions/tutorials/{general,naming}.md` are propagation-safe, fold medium #3 into the same PR (and propagate the convention files as low-bucket prerequisites).
+2. **Conditional bundle**: If the operator confirms `repo-governance/conventions/tutorials/{general,naming}.md` are propagation-safe, fold medium #3 into the same PR (and propagate the convention files as low-bucket prerequisites).
 3. **Defer (transform-gaps)**: high #1, high #2, high #3, medium #5, medium #6, low #5 should NOT be applied automatically. Each requires either a classifier amendment, a transform-vocabulary extension, or a hand-sync. Surface as governance backlog items.
 4. **Defer (classifier conflict)**: high #4 (`apps/rhino-cli` + `specs/apps/rhino` trim) requires a governance decision; do not attempt a propagation PR until the convention is amended.
 5. **Defer (low bucket)**: low #1, low #2, low #3, low #4 are opportunistic; bundle with the medium-bucket PR if convenient or skip.

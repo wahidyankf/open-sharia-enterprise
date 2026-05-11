@@ -16,7 +16,7 @@ related:
   - ../java/README.md
   - ../typescript/README.md
   - ../python/README.md
-  - ../../../../governance/principles/README.md
+  - ../../../../repo-governance/principles/README.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -69,7 +69,7 @@ Dart's design principles guide development:
 
 **What this documentation does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## OSE Platform Coding Standards (Authoritative)
 
@@ -108,17 +108,17 @@ Dart's design principles guide development:
 - **Framework**: [Framework Integration](./framework-integration.md) - Flutter, Riverpod, shelf
 - **Type Safety**: [Type Safety Standards](./type-safety-standards.md) - Null safety, sealed classes
 
-**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+**Related**: [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
 ## Software Engineering Principles
 
-Dart development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+Dart development in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Dart automates through dart test, dart format, dart analyze, and CI/CD pipelines
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Dart enforces through explicit imports, null safety annotations, clear type declarations, explicit async markers
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Dart encourages immutable patterns through final variables, const constructors, immutable collections, and freezed package
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Dart supports through first-class functions, functional programming patterns, and pure function design
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Dart enables through pubspec.lock, deterministic dependency resolution, and consistent build outputs
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Dart automates through dart test, dart format, dart analyze, and CI/CD pipelines
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Dart enforces through explicit imports, null safety annotations, clear type declarations, explicit async markers
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - Dart encourages immutable patterns through final variables, const constructors, immutable collections, and freezed package
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Dart supports through first-class functions, functional programming patterns, and pure function design
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Dart enables through pubspec.lock, deterministic dependency resolution, and consistent build outputs
 
 ## Dart Version Strategy
 

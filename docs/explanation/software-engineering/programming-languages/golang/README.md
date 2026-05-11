@@ -78,7 +78,7 @@ OSE Platform Go applications MUST use the following stack:
 - **Previous**: Go 1.25 - Green Tea GC (experimental), encoding/json/v2, container-aware GOMAXPROCS
 - **Latest**: Go 1.26 (RECOMMENDED for new projects) - Current stable release used across all OSE Platform Go modules
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for Go-specific release documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Go-specific release documentation location
 
 ## Prerequisite Knowledge
 
@@ -95,21 +95,21 @@ OSE Platform Go applications MUST use the following stack:
 
 **What this documentation does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 Go development in OSE Platform enforces foundational software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through code generation (`protoc`, `mockgen`, `stringer`), `go generate`, `golangci-lint`, `gofmt`, `go test`, and CI/CD integration for testing and linting
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through code generation (`protoc`, `mockgen`, `stringer`), `go generate`, `golangci-lint`, `gofmt`, `go test`, and CI/CD integration for testing and linting
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit error returns (no exceptions), clear imports (no dot imports), explicit configuration (no magic defaults), explicit type conversions, and explicit goroutine management
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit error returns (no exceptions), clear imports (no dot imports), explicit configuration (no magic defaults), explicit type conversions, and explicit goroutine management
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use value receivers for immutable methods, avoid pointer receivers for small types, copy data structures when mutation is needed, and prefer functional patterns with immutable data where appropriate
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - MUST use value receivers for immutable methods, avoid pointer receivers for small types, copy data structures when mutation is needed, and prefer functional patterns with immutable data where appropriate
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, first-class functions for functional patterns, and testable business logic isolated from I/O
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture, pure domain logic without side effects, first-class functions for functional patterns, and testable business logic isolated from I/O
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `go.mod` versioning, `go.sum` checksums for integrity, Go version pinning in `go.mod`, module proxies (proxy.golang.org), and `.tool-versions` for local Go version management
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `go.mod` versioning, `go.sum` checksums for integrity, Go version pinning in `go.mod`, module proxies (proxy.golang.org), and `.tool-versions` for local Go version management
 
 ## Go Version Strategy
 
@@ -238,7 +238,7 @@ Release Highlights (Go 1.18–1.26)
 - oseplatform-cli MUST use Go for OSE Platform site validation (link checking)
 - Administrative tools SHOULD use Go for fast startup and easy distribution (single binary)
 - Code generation and scaffolding MAY use Go with `text/template` or `html/template`
-- All OSE Platform CLI apps MUST use domain-prefixed Cobra subcommands (`{cli-name} {domain} {action}`) — see [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) for source file and Gherkin tag naming rules
+- All OSE Platform CLI apps MUST use domain-prefixed Cobra subcommands (`{cli-name} {domain} {action}`) — see [BDD Spec-to-Test Mapping Convention](../../../../../repo-governance/development/infra/bdd-spec-test-mapping.md) for source file and Gherkin tag naming rules
 
 **High-Performance Services**:
 
@@ -295,17 +295,17 @@ Release Highlights (Go 1.18–1.26)
 - MUST integrate `golangci-lint` in CI/CD pipeline
 - SHOULD use pre-commit hooks for `gofmt` and `golangci-lint`
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
-- [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) - MUST follow Go source file naming and Gherkin tag conventions for CLI commands with Godog integration tests
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [BDD Spec-to-Test Mapping Convention](../../../../../repo-governance/development/infra/bdd-spec-test-mapping.md) - MUST follow Go source file naming and Gherkin tag conventions for CLI commands with Godog integration tests
 
 **Code Review Requirements**:
 
@@ -318,16 +318,16 @@ Release Highlights (Go 1.18–1.26)
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

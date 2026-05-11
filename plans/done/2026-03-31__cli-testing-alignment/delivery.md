@@ -121,7 +121,7 @@ Integration tests should already be correct. Verify and adjust if needed.
 
 Update all governance docs and project docs to reflect the new architecture.
 
-- [x] **6.1** Update `governance/development/quality/three-level-testing-standard.md`:
+- [x] **6.1** Update `repo-governance/development/quality/three-level-testing-standard.md`:
   - Line 194 (CLI row in applicability table): Change "Go test mocks" to
     "Go test mocks + Gherkin (godog)" for unit column
   - Line 204 (CLI key rules): Update to "Unit + integration mandatory; both consume Gherkin
@@ -129,7 +129,7 @@ Update all governance docs and project docs to reflect the new architecture.
     `/tmp` fixtures; cacheable"
   - Add CLI-specific subsection under "Per-Backend Implementation Pattern" explaining the
     dual-consumption architecture with mocked vs real I/O
-- [x] **6.2** Update `governance/development/infra/bdd-spec-test-mapping.md`:
+- [x] **6.2** Update `repo-governance/development/infra/bdd-spec-test-mapping.md`:
   - Lines 20-21 (description): Update to mention CLI unit-level Gherkin consumption
   - Line 98 (section title): Rename "Integration Test to Tag" to "Unit & Integration Test
     to Tag"
@@ -138,7 +138,7 @@ Update all governance docs and project docs to reflect the new architecture.
     mocks alongside integration test
   - Add new subsection "CLI Apps: Dual-Level Spec Consumption" explaining how both levels
     consume the same Gherkin with different step implementations
-- [x] **6.3** Update `governance/development/infra/nx-targets.md`:
+- [x] **6.3** Update `repo-governance/development/infra/nx-targets.md`:
   - Line 105 (`test:unit` description): Add note about CLI unit tests consuming Gherkin
   - Line 214 (CLI row in mandatory targets table): Update to reflect Gherkin at unit level
   - Line 334 (in-process mocking row): Update description to mention both unit and

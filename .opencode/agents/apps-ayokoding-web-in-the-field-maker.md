@@ -40,8 +40,8 @@ Create In-the-Field tutorial content in `apps/ayokoding-web/` following ayokodin
 
 **CRITICAL - Read these first**:
 
-- [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - **PRIMARY AUTHORITY** for in-the-field standards
-- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - In-the-Field type definition
+- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - **PRIMARY AUTHORITY** for in-the-field standards
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - In-the-Field type definition
 
 ## When to Use This Agent
 
@@ -163,7 +163,7 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Complete in-the-field standards
+- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - Complete in-the-field standards
 
 **Related Agents:**
 

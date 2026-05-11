@@ -201,7 +201,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
   - Document `codegen` and `docs` Nx targets and dependency chain
   - Document `generated-contracts/` gitignore pattern
   - Add note about contract enforcement in Three-Level Testing section
-- [x] Update `governance/development/infra/nx-targets.md` — add `codegen` and `docs` as standard
+- [x] Update `repo-governance/development/infra/nx-targets.md` — add `codegen` and `docs` as standard
       targets for demo apps
 - [x] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
 - [x] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps

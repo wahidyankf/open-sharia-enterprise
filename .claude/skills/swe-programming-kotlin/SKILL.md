@@ -26,7 +26,7 @@ Progressive disclosure of Kotlin coding standards for agents writing Kotlin code
 
 **What this skill does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Quick Standards Reference
 
@@ -171,4 +171,4 @@ fun `calculateZakat returns 2_5 percent when above nisab`() = runTest {
 ## References
 
 - [Kotlin README](../../../docs/explanation/software-engineering/programming-languages/kotlin/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

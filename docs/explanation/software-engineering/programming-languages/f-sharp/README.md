@@ -73,7 +73,7 @@ OSE Platform F# applications MUST use the following stack:
 - **Recommended**: F# 8 / .NET 8 LTS (SHOULD use for production) — current LTS, improved type inference, `_.Property` shorthand
 - **Latest**: F# 9 / .NET 9 (RECOMMENDED for new projects) — nullable reference type integration, lock expression, improved `use!` in CEs
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for F#-specific release documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for F#-specific release documentation location
 
 ## Prerequisite Knowledge
 
@@ -88,21 +88,21 @@ OSE Platform F# applications MUST use the following stack:
 
 **What this documentation does NOT cover**: F# syntax, language fundamentals, discriminated union semantics, computation expression mechanics (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 F# development in OSE Platform enforces foundational software engineering principles. F# naturally enforces most of them — the language design makes compliance the path of least resistance:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Fantomas formatting, FSharpLint, `dotnet test`, Coverlet coverage collection, and CI/CD integration. F# `dotnet` tooling integrates directly with Nx via project targets.
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Fantomas formatting, FSharpLint, `dotnet test`, Coverlet coverage collection, and CI/CD integration. F# `dotnet` tooling integrates directly with Nx via project targets.
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit type annotations on public APIs, explicit `Result` and `Option` return types (no null), explicit module qualification, and explicit Fantomas configuration in `.fantomasrc`.
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit type annotations on public APIs, explicit `Result` and `Option` return types (no null), explicit module qualification, and explicit Fantomas configuration in `.fantomasrc`.
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - F# enforces this BY DEFAULT. All `let` bindings are immutable. Record types are immutable. MUST NOT use `mutable` except at proven hot paths with documented justification. The compiler is your enforcement mechanism.
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - F# enforces this BY DEFAULT. All `let` bindings are immutable. Record types are immutable. MUST NOT use `mutable` except at proven hot paths with documented justification. The compiler is your enforcement mechanism.
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core / imperative shell. Domain logic (Zakat calculations, Murabaha pricing, Nisab thresholds) MUST be pure functions. I/O, database access, and HTTP calls live at the shell. F# `Result` and `Async` types make the boundary visible.
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core / imperative shell. Domain logic (Zakat calculations, Murabaha pricing, Nisab thresholds) MUST be pure functions. I/O, database access, and HTTP calls live at the shell. F# `Result` and `Async` types make the boundary visible.
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `global.json` for SDK pinning, `.fsproj` with exact NuGet version constraints, `packages.lock.json` for lockfile enforcement (`RestoreLockedMode=true`), and `Directory.Build.props` for shared settings across the workspace.
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `global.json` for SDK pinning, `.fsproj` with exact NuGet version constraints, `packages.lock.json` for lockfile enforcement (`RestoreLockedMode=true`), and `Directory.Build.props` for shared settings across the workspace.
 
 ## F# Version Strategy
 
@@ -279,16 +279,16 @@ graph LR
 - MUST integrate Nx project targets for monorepo cross-project dependency tracking
 - SHOULD use pre-commit hooks for Fantomas formatting (Husky + lint-staged)
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - F# naturally aligns; MUST follow functional core / imperative shell
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - F# naturally aligns; MUST follow functional core / imperative shell
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -301,16 +301,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

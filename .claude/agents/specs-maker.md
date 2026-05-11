@@ -243,7 +243,7 @@ Niche terms (F#, Giraffe, PGlite, XState, Effect TS, bounded context, aggregate,
 language) are glossed on first use within each file. Mainstream SWE vocabulary (TypeScript,
 Next.js, Postgres, REST, OpenAPI, Docker, etc.) is never glossed.
 
-See [App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md)
+See [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md)
 Standard 5 for the complete PM-readability contract.
 
 ### Feature File Placement
@@ -252,7 +252,7 @@ Standard 5 for the complete PM-readability contract.
 - CLI: MUST be placed flat under `behavior/cli/gherkin/` (no domain subdirectories)
 - Libs: MUST be placed in package subdirectories under `gherkin/<package>/`
 
-See [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md)
+See [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md)
 for full rules.
 
 ### README Structure (Spec Area Root)
@@ -296,11 +296,11 @@ In any README listing, folders appear in canonical order:
 
 ## Reference Documentation
 
-- [App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption, spec tree shape
-- [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md) — canonical path patterns, per-surface variants, domain subdirectory rules
+- [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption, spec tree shape
+- [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) — canonical path patterns, per-surface variants, domain subdirectory rules
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
-- [Agent Workflow Orchestration](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
-- [Specs Validation Workflow](../../governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
+- [Agent Workflow Orchestration](../../repo-governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
+- [Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-checker](./specs-checker.md), [specs-fixer](./specs-fixer.md)

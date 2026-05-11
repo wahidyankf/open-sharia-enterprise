@@ -99,7 +99,7 @@ Feature: Uniform MIT license across ose-public
     And it does NOT describe FSL competing-use restrictions
 
   Scenario: Governance and docs contain no stale FSL references
-    Given all .md files under governance/, docs/, and apps/oseplatform-web/content/
+    Given all .md files under repo-governance/, docs/, and apps/oseplatform-web/content/
     When I search for "FSL" or "Functional Source License"
     Then no results reference this repository's own license as FSL
     And only historical plan files (plans/done/) may retain FSL references

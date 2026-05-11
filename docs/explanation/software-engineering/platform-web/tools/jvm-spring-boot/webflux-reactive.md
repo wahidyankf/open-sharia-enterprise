@@ -35,7 +35,7 @@ related:
 
 **This document is OSE Platform-specific**, not a Spring Boot WebFlux tutorial. We define WHEN and HOW to use WebFlux in THIS platform, not WHAT WebFlux is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -848,17 +848,17 @@ interface ZakatCalculationRepository : JpaRepository<ZakatCalculation, String> {
 
 These reactive programming standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Reactive types (Mono/Flux) make asynchronicity explicit in method signatures
    - Backpressure strategies explicitly configured (`onBackpressureBuffer()`)
    - Error handling explicit with `onErrorResume()` and `onErrorReturn()`
 
-2. **[Simplicity Over Complexity](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Simplicity Over Complexity](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Use blocking MVC by default (simpler)
    - Reactive WebFlux only when justified (high-concurrency, many I/O operations)
    - Avoid reactive for CPU-bound or simple CRUD operations
 
-3. **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)**
+3. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)**
    - Non-blocking I/O maximizes thread efficiency (8 threads handle 10,000 concurrent requests)
    - Backpressure prevents memory exhaustion
    - Parallel API calls reduce latency

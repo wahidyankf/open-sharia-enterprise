@@ -41,7 +41,7 @@ silently ignored. This command is read-only — it never modifies any file.`,
   rhino-cli docs validate-mermaid
 
   # Validate specific files or directories
-  rhino-cli docs validate-mermaid docs/ governance/
+  rhino-cli docs validate-mermaid docs/ repo-governance/
 
   # Only validate files staged in git (pre-commit use)
   rhino-cli docs validate-mermaid --staged-only
@@ -202,11 +202,11 @@ func collectMDFiles(repoRoot string, paths []string) ([]string, error) {
 	return files, nil
 }
 
-// collectMDDefaultDirs scans docs/, governance/, .claude/, plans/, and root *.md files.
+// collectMDDefaultDirs scans docs/, repo-governance/, .claude/, plans/, and root *.md files.
 func collectMDDefaultDirs(repoRoot string) ([]string, error) {
 	dirs := []string{
 		filepath.Join(repoRoot, "docs"),
-		filepath.Join(repoRoot, "governance"),
+		filepath.Join(repoRoot, "repo-governance"),
 		filepath.Join(repoRoot, ".claude"),
 		filepath.Join(repoRoot, "plans"),
 	}

@@ -1,10 +1,10 @@
-# BRD — Rename `governance/` to `repo-governance/`
+# BRD — Rename `repo-governance/` to `repo-governance/`
 
 ## Business Goal
 
 Eliminate naming ambiguity between the repository's internal governance directory and the GRC
 discipline "Governance, Risk & Compliance". As the platform evolves toward enterprise use cases,
-contributors with GRC backgrounds will encounter the `governance/` directory and may misidentify it
+contributors with GRC backgrounds will encounter the `repo-governance/` directory and may misidentify it
 as GRC-scoped. `repo-governance/` is unambiguous.
 
 ## Affected Roles
@@ -28,8 +28,8 @@ as GRC-scoped. `repo-governance/` is unambiguous.
 
 ## Business Risks
 
-| Risk                                                     | Mitigation                                                            |
-| -------------------------------------------------------- | --------------------------------------------------------------------- |
-| Broken links in external docs referencing old path       | Paths are internal-only; no external docs link to `governance/` paths |
-| Stale references in agent/skill files breaking workflows | Covered by mass sed replace + rhino-cli vendor-audit post-rename      |
-| Pre-push hook failing on renamed paths                   | `.husky/pre-push` updated as part of execution                        |
+| Risk                                                     | Mitigation                                                                 |
+| -------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Broken links in external docs referencing old path       | Paths are internal-only; no external docs link to `repo-governance/` paths |
+| Stale references in agent/skill files breaking workflows | Covered by mass sed replace + rhino-cli vendor-audit post-rename           |
+| Pre-push hook failing on renamed paths                   | `.husky/pre-push` updated as part of execution                             |

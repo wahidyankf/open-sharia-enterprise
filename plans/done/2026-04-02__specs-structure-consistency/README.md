@@ -53,6 +53,6 @@ Three areas deviate from this pattern:
 
 ## References
 
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

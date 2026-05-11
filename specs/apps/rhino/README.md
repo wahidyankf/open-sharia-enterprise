@@ -85,6 +85,6 @@ Coverage is measured at the unit level only (≥95% line coverage).
 ## Convention
 
 See
-[BDD Spec-to-Test Mapping Convention](../../../governance/development/infra/bdd-spec-test-mapping.md)
+[BDD Spec-to-Test Mapping Convention](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 for the mandatory 1:1 mapping between commands and `@tags`, file naming patterns, and coverage
 enforcement rules.

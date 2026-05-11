@@ -77,7 +77,7 @@ so that the gate is fast and only relevant files are checked without slowing dow
 rhino-cli docs validate-mermaid [flags] [paths...]
 ```
 
-When no `[paths...]` given, scans default directories: `docs/`, `governance/`, `.claude/`,
+When no `[paths...]` given, scans default directories: `docs/`, `repo-governance/`, `.claude/`,
 and repo root `*.md`.
 
 ### Flags
@@ -265,7 +265,7 @@ Feature: Mermaid Flowchart Structural Validation
 - `specs/apps/rhino/cli/gherkin/README.md` feature-file table updated with new entry.
 - `apps/rhino-cli/README.md` docs subcommand section updated with `validate-mermaid`
   including `--max-depth` flag documentation.
-- `governance/conventions/formatting/diagrams.md` updated to reference the new CLI
+- `repo-governance/conventions/formatting/diagrams.md` updated to reference the new CLI
   validator (so authors know to run it, not just read the convention manually).
 - Command is verified to be read-only: it never modifies any file under any code path.
 - Both-exceeded warning path verified: diagram with span > max-width AND depth > max-depth

@@ -172,7 +172,7 @@ the performance impact is minimal.
    tokens, documents both token formats, includes per-app brand context
 3. **Create two shared libraries** (`ts-ui-tokens` + `ts-ui`) — structural tokens shared,
    brand tokens per-app (see AD2 and AD3 in tech-docs.md)
-4. **Add UI conventions** to `governance/development/frontend/` — four focused documents
+4. **Add UI conventions** to `repo-governance/development/frontend/` — four focused documents
 5. **Add vitest-axe** to unit tests for accessibility automation
 6. **Add Playwright visual regression** — leverage existing Playwright setup with git-committed
    baselines

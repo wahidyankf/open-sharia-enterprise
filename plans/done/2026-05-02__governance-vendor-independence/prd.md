@@ -1,6 +1,6 @@
 ---
 title: "PRD — Governance Vendor-Independence Refactor"
-description: Product requirements and Gherkin acceptance criteria for the governance/ vendor-neutralization refactor.
+description: Product requirements and Gherkin acceptance criteria for the repo-governance/ vendor-neutralization refactor.
 created: 2026-05-02
 ---
 
@@ -8,15 +8,15 @@ created: 2026-05-02
 
 ## Personas
 
-| Persona                                           | Description                                                                       | Primary need from this refactor                                                                 |
-| ------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Cassie** — Cursor user, new contributor         | Joining the project, uses Cursor as her only AI tool, never installed Claude Code | Read `AGENTS.md` + `governance/` and ship a compliant PR without translating "Claude Code"-isms |
-| **Codex** — Codex CLI / Gemini CLI / Copilot user | Existing engineer in another org, brings their own preferred agent                | The repo loads agent context from `AGENTS.md` automatically; doesn't need `.claude/`            |
-| **Hassan** — Human-only contributor, no AI agent  | Reads governance directly to perform a manual code review                         | Plain-prose rules with no vendor-specific jargon to decode                                      |
-| **Maintainer Mira** — Repo maintainer             | Reviews PRs, owns governance evolution                                            | Automated check prevents vendor terms drifting back into `governance/`                          |
-| **Claude-Code Carl** — Existing power user        | Has invested heavily in current `.claude/` setup                                  | Nothing breaks; `CLAUDE.md` still works; existing agents and skills still load                  |
-| **OpenCode Olive** — Existing power user          | Uses OpenCode                                                                     | Nothing breaks; `AGENTS.md` already preferred by OpenCode; sync infrastructure intact           |
-| **Primer Pat** — `ose-primer` template adopter    | Forks the template to start a new product                                         | Inherits vendor-neutral governance; can plug in their own agent stack                           |
+| Persona                                           | Description                                                                       | Primary need from this refactor                                                                      |
+| ------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Cassie** — Cursor user, new contributor         | Joining the project, uses Cursor as her only AI tool, never installed Claude Code | Read `AGENTS.md` + `repo-governance/` and ship a compliant PR without translating "Claude Code"-isms |
+| **Codex** — Codex CLI / Gemini CLI / Copilot user | Existing engineer in another org, brings their own preferred agent                | The repo loads agent context from `AGENTS.md` automatically; doesn't need `.claude/`                 |
+| **Hassan** — Human-only contributor, no AI agent  | Reads governance directly to perform a manual code review                         | Plain-prose rules with no vendor-specific jargon to decode                                           |
+| **Maintainer Mira** — Repo maintainer             | Reviews PRs, owns governance evolution                                            | Automated check prevents vendor terms drifting back into `repo-governance/`                          |
+| **Claude-Code Carl** — Existing power user        | Has invested heavily in current `.claude/` setup                                  | Nothing breaks; `CLAUDE.md` still works; existing agents and skills still load                       |
+| **OpenCode Olive** — Existing power user          | Uses OpenCode                                                                     | Nothing breaks; `AGENTS.md` already preferred by OpenCode; sync infrastructure intact                |
+| **Primer Pat** — `ose-primer` template adopter    | Forks the template to start a new product                                         | Inherits vendor-neutral governance; can plug in their own agent stack                                |
 
 ## User Stories
 
@@ -26,11 +26,11 @@ created: 2026-05-02
 
 ### US-2: Plain-prose human readability
 
-> As **Hassan**, I want `governance/` documents to read in plain prose with no vendor-specific path or product names so that I can apply rules during code review without translating jargon.
+> As **Hassan**, I want `repo-governance/` documents to read in plain prose with no vendor-specific path or product names so that I can apply rules during code review without translating jargon.
 
 ### US-3: Vendor-term regression gate
 
-> As **Mira**, I want a validation check that flags vendor-specific terms reappearing in `governance/` so that the vendor-neutrality property is enforced over time, not just at this snapshot.
+> As **Mira**, I want a validation check that flags vendor-specific terms reappearing in `repo-governance/` so that the vendor-neutrality property is enforced over time, not just at this snapshot.
 
 ### US-4: Existing Claude Code workflow unchanged
 
@@ -58,7 +58,7 @@ created: 2026-05-02
 
 ### US-10: Future-binding extension point
 
-> As a future contributor adding Cursor support, I want a documented place for `.cursor/rules/*.mdc` and a documented relationship to `governance/` so that I can add a binding without mutating the neutral layer.
+> As a future contributor adding Cursor support, I want a documented place for `.cursor/rules/*.mdc` and a documented relationship to `repo-governance/` so that I can add a binding without mutating the neutral layer.
 
 ## Acceptance Criteria (Gherkin)
 
@@ -69,10 +69,10 @@ Feature: Vendor-term audit on governance prose
 
   Background:
     Given the repository is at the post-refactor state
-    And the governance/ tree contains 157+ markdown files
+    And the repo-governance/ tree contains 157+ markdown files
 
   Scenario: Plain-text governance prose contains no load-bearing vendor terms
-    When I run the vendor-term audit script over governance/**/*.md
+    When I run the vendor-term audit script over repo-governance/**/*.md
     And I exclude code fences explicitly tagged ```binding-example
     And I exclude any section under a heading "Platform Binding Examples"
     Then matches for "Claude Code" must be 0
@@ -82,7 +82,7 @@ Feature: Vendor-term audit on governance prose
     And matches for "\.claude/" or "\.opencode/" used as a load-bearing path must be 0
 
   Scenario: Capability-tier replaces vendor model names
-    When I grep governance/development/agents/ for model selection guidance
+    When I grep repo-governance/development/agents/ for model selection guidance
     Then results refer to capability tiers ("planning-grade", "execution-grade", "fast/light", or equivalent neutral terms)
     And specific Anthropic model names appear only inside platform-binding example blocks
 ````
@@ -97,7 +97,7 @@ Feature: AGENTS.md as canonical root instruction file
     When I list root-level files
     Then "AGENTS.md" is present
     And it contains a "Build/Test/Lint Commands" section
-    And it contains a "Conventions" section linking to governance/conventions/
+    And it contains a "Conventions" section linking to repo-governance/conventions/
     And it contains a "Platform Bindings" section pointing to .claude/, .opencode/, and future bindings
     And it does not duplicate governance content; it summarizes and links
 
@@ -116,12 +116,12 @@ Feature: New convention codifies the separation rule
 
   Scenario: Convention file is present and traceable
     Given the post-refactor state
-    When I read governance/conventions/structure/governance-vendor-independence.md
+    When I read repo-governance/conventions/structure/governance-vendor-independence.md
     Then it contains a "Principles Implemented/Respected" section linking back to Layer 1 principles
     And it specifies the prohibited vendor terms with regex patterns
     And it specifies allowed escape hatches (binding-example blocks, cross-reference links, allowlisted sections)
     And it specifies the platform-binding directory pattern (per-tool dotdir model)
-    And it is registered in governance/conventions/README.md and governance/conventions/structure/README.md
+    And it is registered in repo-governance/conventions/README.md and repo-governance/conventions/structure/README.md
 ```
 
 ### AC-4: Validation tooling enforces the rule
@@ -132,7 +132,7 @@ Feature: Vendor-term regression check
   Scenario: Checker exists and runs in CI
     Given the new convention is in place
     When I run the project's repository validation step
-    Then a vendor-term audit step executes against governance/**/*.md
+    Then a vendor-term audit step executes against repo-governance/**/*.md
     And it fails the run if a non-allowlisted vendor term is detected
     And the failure message points to the new convention
 
@@ -192,7 +192,7 @@ Feature: Discoverable platform-bindings catalog
 Feature: Vocabulary mapping table is the single source of truth
 
   Scenario: Vocabulary table appears in the new convention
-    When I read governance/conventions/structure/governance-vendor-independence.md
+    When I read repo-governance/conventions/structure/governance-vendor-independence.md
     Then it contains a "Vocabulary Map" table mapping old vendor terms to new vendor-neutral terms
     And entries cover: Claude Code → "the coding agent" / "AI agent"; OpenCode → as-needed cross-reference only; Skills → "Agent Skills"; slash commands → "agent commands"; subagents → "delegated agents"; Sonnet/Opus/Haiku → capability tier (planning-grade / execution-grade / fast); CLAUDE.md → AGENTS.md (canonical); MCP server → unchanged (cross-vendor standard)
     And every governance file refactored cites this table
@@ -205,7 +205,7 @@ Feature: Vision and principles do not change
 
   Scenario: Layer 0 and Layer 1 prose is unchanged
     Given the refactor scope
-    When I diff governance/vision/ and governance/principles/ before vs after
+    When I diff repo-governance/vision/ and repo-governance/principles/ before vs after
     Then any change is limited to (a) removing literal vendor names that crept in, (b) link-target fix-ups
     And no principle is added, removed, or semantically altered
 ```
@@ -229,7 +229,7 @@ Feature: Plan exits with archival evidence
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | AGENTS.md content diverges from CLAUDE.md over time if the `@AGENTS.md` shim import is removed or bypassed                                                 | Medium     | The shim shape is documented in the new convention; any removal triggers a convention violation flagged by `repo-rules-checker`                 |
 | Phase 3 Tier A rewrite introduces broken intra-doc links that the link-checker misses (anchors, not just file paths)                                       | Medium     | Per-file link-check step in the Phase 3 refactor recipe; docs-link-checker runs at each mid-phase gate                                          |
-| A future contributor treats AGENTS.md as the primary editing target and ignores the separation rule, causing governance drift                              | Low-Medium | Automated vendor-audit (`rhino-cli governance vendor-audit`) enforced in `test:quick`; convention spells out the forbidden terms                |
+| A future contributor treats AGENTS.md as the primary editing target and ignores the separation rule, causing governance drift                              | Low-Medium | Automated vendor-audit (`rhino-cli repo-governance vendor-audit`) enforced in `test:quick`; convention spells out the forbidden terms           |
 | Cassie persona (Cursor user) experiences `AGENTS.md` as incomplete because Platform Bindings section still has TODO markers when Phase 4 is not yet merged | Medium     | Phase 4 is a mandatory phase before plan archival; Phase 2 explicitly marks incomplete sections with TODO to make the gap visible               |
 | Vocabulary rewrites change the semantic meaning of a principle or convention, violating AC-9 (Layer 0 / Layer 1 unchanged)                                 | Low        | AC-9 Gherkin scenario guards this; Phase 3.A and 3.B explicitly flag Layer 0 and Layer 1 files for "literal vendor-name removal only" treatment |
 
@@ -242,7 +242,7 @@ Feature: Plan exits with archival evidence
 ## Out of Scope (re-stated for PRD readers)
 
 - Adding new platform bindings (`.cursor/`, `.github/copilot-instructions.md`, `GEMINI.md`). Tracked as future plans; this plan only carves out the placeholders.
-- Parent `ose-projects/governance/` refactor.
+- Parent `ose-projects/repo-governance/` refactor.
 - `ose-primer` propagation. Follow-on plan.
 - Renaming `.claude/` or `.opencode/` directory paths.
 - Rewriting agent prompts within `.claude/agents/` beyond updating dead links.

@@ -418,73 +418,73 @@
 - [x] **7.27** Update `docs/explanation/software-engineering/programming-languages/typescript/README.md`: update ayokoding-web reference
 - [x] **7.28** Scan remaining `docs/explanation/` files for `ayokoding-web-v2` references — update any found (most files reference `apps/ayokoding-web/content/` which stays correct)
 
-### 7h: governance/ — conventions files
+### 7h: repo-governance/ — conventions files
 
-- [x] **7.29** Update `governance/README.md`: update ayokoding-web description
-- [x] **7.30** Update `governance/repository-governance-architecture.md`: update ayokoding-web description
-- [x] **7.31** Update `governance/conventions/README.md`: update references
-- [x] **7.32** Update `governance/conventions/hugo/ayokoding.md`:
+- [x] **7.29** Update `repo-governance/README.md`: update ayokoding-web description
+- [x] **7.30** Update `repo-governance/repository-governance-architecture.md`: update ayokoding-web description
+- [x] **7.31** Update `repo-governance/conventions/README.md`: update references
+- [x] **7.32** Update `repo-governance/conventions/hugo/ayokoding.md`:
   - [x] **7.32a** Add deprecation notice: Hugo-specific conventions for the former Hugo-based ayokoding-web, preserved because content format unchanged
-- [x] **7.33** Update `governance/conventions/hugo/README.md`: note ayokoding-web migration to Next.js
-- [x] **7.34** Update `governance/conventions/hugo/shared.md`: scope to oseplatform-web only if ayokoding-specific
-- [x] **7.35** Update `governance/conventions/hugo/indonesian-content-policy.md`: update if Hugo-specific
-- [x] **7.36** Update `governance/conventions/hugo/ose-platform.md`: verify no ayokoding-web cross-refs
-- [x] **7.37** Update `governance/conventions/linking/internal-ayokoding-references.md`: update for Next.js routing
-- [x] **7.38** Update `governance/conventions/structure/README.md`: update references
-- [x] **7.39** Update `governance/conventions/structure/file-naming.md`: update ayokoding-web context
-- [x] **7.40** Update `governance/conventions/structure/programming-language-docs-separation.md`: update ayokoding-web context
-- [x] **7.41** Update `governance/conventions/formatting/indentation.md`: update ayokoding-web context if Hugo-specific
-- [x] **7.42** Update `governance/conventions/formatting/linking.md`: update ayokoding-web context
-- [x] **7.43** Update `governance/conventions/formatting/nested-code-fences.md`: update ayokoding-web context
-- [x] **7.44** Update `governance/conventions/tutorials/README.md`: update references
-- [x] **7.45** Update `governance/conventions/tutorials/by-concept.md`: update Hugo+ayokoding references
-- [x] **7.46** Update `governance/conventions/tutorials/by-example.md`: update Hugo+ayokoding references
-- [x] **7.47** Update `governance/conventions/tutorials/cookbook.md`: update references
-- [x] **7.48** Update `governance/conventions/tutorials/general.md`: update Hugo+ayokoding references
-- [x] **7.49** Update `governance/conventions/tutorials/in-the-field.md`: update Hugo+ayokoding references
-- [x] **7.50** Update `governance/conventions/tutorials/naming.md`: update references
-- [x] **7.51** Update `governance/conventions/tutorials/programming-language-content.md`: update references
-- [x] **7.52** Update `governance/conventions/tutorials/programming-language-structure.md`: update references
-- [x] **7.53** Update `governance/conventions/writing/conventions.md`: update references
-- [x] **7.54** Update `governance/conventions/writing/factual-validation.md`: update references
-- [x] **7.55** Update `governance/conventions/writing/quality.md`: update references
+- [x] **7.33** Update `repo-governance/conventions/hugo/README.md`: note ayokoding-web migration to Next.js
+- [x] **7.34** Update `repo-governance/conventions/hugo/shared.md`: scope to oseplatform-web only if ayokoding-specific
+- [x] **7.35** Update `repo-governance/conventions/hugo/indonesian-content-policy.md`: update if Hugo-specific
+- [x] **7.36** Update `repo-governance/conventions/hugo/ose-platform.md`: verify no ayokoding-web cross-refs
+- [x] **7.37** Update `repo-governance/conventions/linking/internal-ayokoding-references.md`: update for Next.js routing
+- [x] **7.38** Update `repo-governance/conventions/structure/README.md`: update references
+- [x] **7.39** Update `repo-governance/conventions/structure/file-naming.md`: update ayokoding-web context
+- [x] **7.40** Update `repo-governance/conventions/structure/programming-language-docs-separation.md`: update ayokoding-web context
+- [x] **7.41** Update `repo-governance/conventions/formatting/indentation.md`: update ayokoding-web context if Hugo-specific
+- [x] **7.42** Update `repo-governance/conventions/formatting/linking.md`: update ayokoding-web context
+- [x] **7.43** Update `repo-governance/conventions/formatting/nested-code-fences.md`: update ayokoding-web context
+- [x] **7.44** Update `repo-governance/conventions/tutorials/README.md`: update references
+- [x] **7.45** Update `repo-governance/conventions/tutorials/by-concept.md`: update Hugo+ayokoding references
+- [x] **7.46** Update `repo-governance/conventions/tutorials/by-example.md`: update Hugo+ayokoding references
+- [x] **7.47** Update `repo-governance/conventions/tutorials/cookbook.md`: update references
+- [x] **7.48** Update `repo-governance/conventions/tutorials/general.md`: update Hugo+ayokoding references
+- [x] **7.49** Update `repo-governance/conventions/tutorials/in-the-field.md`: update Hugo+ayokoding references
+- [x] **7.50** Update `repo-governance/conventions/tutorials/naming.md`: update references
+- [x] **7.51** Update `repo-governance/conventions/tutorials/programming-language-content.md`: update references
+- [x] **7.52** Update `repo-governance/conventions/tutorials/programming-language-structure.md`: update references
+- [x] **7.53** Update `repo-governance/conventions/writing/conventions.md`: update references
+- [x] **7.54** Update `repo-governance/conventions/writing/factual-validation.md`: update references
+- [x] **7.55** Update `repo-governance/conventions/writing/quality.md`: update references
 
-### 7i: governance/ — development files
+### 7i: repo-governance/ — development files
 
-- [x] **7.56** Update `governance/development/README.md`: update references
-- [x] **7.57** Update `governance/development/hugo/README.md`: note ayokoding-web is no longer Hugo
-- [x] **7.58** Update `governance/development/hugo/best-practices.md`: scope to oseplatform-web only
-- [x] **7.59** Update `governance/development/hugo/development.md`: scope to oseplatform-web only
-- [x] **7.60** Update `governance/development/quality/code.md`: update references
-- [x] **7.61** Update `governance/development/quality/criticality-levels.md`: update ayokoding-web context
-- [x] **7.62** Update `governance/development/quality/fixer-confidence-levels.md`: update context
-- [x] **7.63** Update `governance/development/pattern/maker-checker-fixer.md`: remove references to deleted agents
-- [x] **7.64** Update `governance/development/agents/ai-agents.md`: remove deleted agents, update Hugo→Next.js
-- [x] **7.65** Update `governance/development/agents/anti-patterns.md`: update ayokoding-web context
-- [x] **7.66** Update `governance/development/agents/best-practices.md`: update ayokoding-web context
-- [x] **7.67** Update `governance/development/infra/nx-targets.md`:
+- [x] **7.56** Update `repo-governance/development/README.md`: update references
+- [x] **7.57** Update `repo-governance/development/hugo/README.md`: note ayokoding-web is no longer Hugo
+- [x] **7.58** Update `repo-governance/development/hugo/best-practices.md`: scope to oseplatform-web only
+- [x] **7.59** Update `repo-governance/development/hugo/development.md`: scope to oseplatform-web only
+- [x] **7.60** Update `repo-governance/development/quality/code.md`: update references
+- [x] **7.61** Update `repo-governance/development/quality/criticality-levels.md`: update ayokoding-web context
+- [x] **7.62** Update `repo-governance/development/quality/fixer-confidence-levels.md`: update context
+- [x] **7.63** Update `repo-governance/development/pattern/maker-checker-fixer.md`: remove references to deleted agents
+- [x] **7.64** Update `repo-governance/development/agents/ai-agents.md`: remove deleted agents, update Hugo→Next.js
+- [x] **7.65** Update `repo-governance/development/agents/anti-patterns.md`: update ayokoding-web context
+- [x] **7.66** Update `repo-governance/development/agents/best-practices.md`: update ayokoding-web context
+- [x] **7.67** Update `repo-governance/development/infra/nx-targets.md`:
   - [x] **7.67a** Remove ayokoding-web Hugo targets
   - [x] **7.67b** Add/update ayokoding-web Next.js targets (previously ayokoding-web-v2)
-- [x] **7.68** Update `governance/development/infra/temporary-files.md`: update references
-- [x] **7.69** Update `governance/development/infra/github-actions-workflow-naming.md`: update workflow names
-- [x] **7.70** Update `governance/development/workflow/trunk-based-development.md`:
+- [x] **7.68** Update `repo-governance/development/infra/temporary-files.md`: update references
+- [x] **7.69** Update `repo-governance/development/infra/github-actions-workflow-naming.md`: update workflow names
+- [x] **7.70** Update `repo-governance/development/workflow/trunk-based-development.md`:
   - [x] **7.70a** Remove `prod-ayokoding-web-v2` branch reference
   - [x] **7.70b** Keep single `prod-ayokoding-web` for Next.js
 
-### 7j: governance/ — workflow files
+### 7j: repo-governance/ — workflow files
 
-- [x] **7.71** Update `governance/workflows/README.md`: update references
-- [x] **7.72** Update `governance/workflows/ayokoding-web/README.md`:
+- [x] **7.71** Update `repo-governance/workflows/README.md`: update references
+- [x] **7.72** Update `repo-governance/workflows/ayokoding-web/README.md`:
   - [x] **7.72a** Remove Hugo-specific workflow references
   - [x] **7.72b** Update to reflect Next.js platform
-- [x] **7.73** Update `governance/workflows/ayokoding-web/ayokoding-web-general-quality-gate.md`: remove Hugo-specific steps (title regen, nav regen)
-- [x] **7.74** Update `governance/workflows/ayokoding-web/ayokoding-web-by-example-quality-gate.md`: remove Hugo-specific references
-- [x] **7.75** Update `governance/workflows/ayokoding-web/ayokoding-web-in-the-field-quality-gate.md`: remove Hugo-specific references
-- [x] **7.76** Update `governance/workflows/docs/docs-software-engineering-separation-quality-gate.md`: update ayokoding-web paths context
-- [x] **7.77** Update `governance/workflows/docs/README.md`: update references
-- [x] **7.78** Update `governance/workflows/meta/workflow-identifier.md`: update references
-- [x] **7.79** Update `governance/workflows/plan/README.md`: update references
-- [x] **7.80** Update `governance/workflows/repository/README.md`: update references
+- [x] **7.73** Update `repo-governance/workflows/ayokoding-web/ayokoding-web-general-quality-gate.md`: remove Hugo-specific steps (title regen, nav regen)
+- [x] **7.74** Update `repo-governance/workflows/ayokoding-web/ayokoding-web-by-example-quality-gate.md`: remove Hugo-specific references
+- [x] **7.75** Update `repo-governance/workflows/ayokoding-web/ayokoding-web-in-the-field-quality-gate.md`: remove Hugo-specific references
+- [x] **7.76** Update `repo-governance/workflows/docs/docs-software-engineering-separation-quality-gate.md`: update ayokoding-web paths context
+- [x] **7.77** Update `repo-governance/workflows/docs/README.md`: update references
+- [x] **7.78** Update `repo-governance/workflows/meta/workflow-identifier.md`: update references
+- [x] **7.79** Update `repo-governance/workflows/plan/README.md`: update references
+- [x] **7.80** Update `repo-governance/workflows/repository/README.md`: update references
 
 ### 7k: specs/ files
 

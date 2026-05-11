@@ -16,7 +16,7 @@ This guide covers common Nx workflows and commands for working with the monorepo
 
 ## Basic Project Commands
 
-> **Standard target names**: All target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md). Use `test:quick` for the pre-push gate, `test:unit` for isolated unit tests, `dev` for development servers, `start` for production server mode. Avoid `nx test`, `nx serve`, and other non-standard names.
+> **Standard target names**: All target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). Use `test:quick` for the pre-push gate, `test:unit` for isolated unit tests, `dev` for development servers, `start` for production server mode. Avoid `nx test`, `nx serve`, and other non-standard names.
 
 ### Run a Single Project
 
@@ -352,7 +352,7 @@ jobs:
     run: nx affected -t lint --base=origin/main --head=HEAD
 ```
 
-> **Note**: `test:quick` is the required GitHub Actions status check before PR merge. E2E tests (`test:e2e`) run separately on a scheduled cron job, not on every PR. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the full execution model.
+> **Note**: `test:quick` is the required GitHub Actions status check before PR merge. E2E tests (`test:e2e`) run separately on a scheduled cron job, not on every PR. See [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the full execution model.
 
 ### Optimize CI with Caching
 
@@ -484,7 +484,7 @@ nx graph --file=graph.json | jq '.dependencies'
 
 ## Related Documentation
 
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and execution model
+- [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and execution model
 - [Add New App](./add-new-app.md)
 - [Add New Library](./add-new-lib.md)
 - [Monorepo Structure Reference](../reference/monorepo-structure.md)

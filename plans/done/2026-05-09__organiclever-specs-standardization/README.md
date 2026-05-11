@@ -38,7 +38,7 @@ Today is the cheapest moment to consolidate before further drift.
 **In scope:**
 
 - **Reorganize `specs/apps/organiclever/`** to the five-folder C4-aware tree: `product/`, `system-context/`, `containers/`, `components/`, `behavior/`. All existing files (`be/`, `web/`, `ddd/`, `c4/`, `contracts/`) move into their new homes via `git mv`
-- **Update specs validator agents + workflow** to enforce the new tree shape: `.claude/agents/specs-checker.md`, `specs-fixer.md`, `specs-maker.md`, `governance/workflows/specs/specs-quality-gate.md` — all updated by `repo-rules-maker`. Adds spec-vs-app drift detection per FR-13 (e.g., routes spec vs Next.js routes). OpenCode mirrors synced
+- **Update specs validator agents + workflow** to enforce the new tree shape: `.claude/agents/specs-checker.md`, `specs-fixer.md`, `specs-maker.md`, `repo-governance/workflows/specs/specs-quality-gate.md` — all updated by `repo-rules-maker`. Adds spec-vs-app drift detection per FR-13 (e.g., routes spec vs Next.js routes). OpenCode mirrors synced
 - **New rhino-cli `specs` subcommands** for deterministic offload (FR-14): `validate-tree`, `validate-counts`, `validate-links`, `validate-adoption`, `drift-routes`, `drift-endpoints`, `drift-contracts`. Implemented in Go for speed; agents shell out via Bash. Each subcommand has Gherkin specs + ≥90% coverage
 - Move `apps/organiclever-web/docs/explanation/bounded-context-map.md` → `specs/apps/organiclever/components/web/ddd/bounded-context-map.md` (final tree position)
 - Trim `apps/organiclever-web/README.md` to dev-runtime sections only
@@ -70,7 +70,7 @@ The diagram below shows where this plan sits in a repo-wide standardization sequ
 flowchart LR
     Pilot["organiclever<br/>(this plan)<br/>web · be · 2× e2e<br/>infra/dev · infra/k8s<br/>specs/"]:::pilot
 
-    Convention["governance/conventions/<br/>structure/<br/>app-readme-vs-specs.md<br/>(created IN pilot via<br/>repo-rules-maker)"]:::convention
+    Convention["repo-governance/conventions/<br/>structure/<br/>app-readme-vs-specs.md<br/>(created IN pilot via<br/>repo-rules-maker)"]:::convention
 
     Findings{{"pilot-findings.md<br/>(amends convention<br/>if rule strains)"}}:::findings
 
@@ -114,8 +114,8 @@ flowchart LR
 6. Every new file under `specs/apps/organiclever/` opens with an "Audience" line and a "Plain-language summary" paragraph; technical terms are glossed on first use within each file
 7. `specs/apps/organiclever/README.md` includes a "For Product/Project Managers" reading-path section calibrated for SWE-background TPMs (and as a starting point any non-engineering reader can follow with help)
 8. `infra/dev/organiclever/` and `infra/k8s/organiclever/` READMEs contain only dev-runtime / Docker Compose / kubectl content; deployment topology lives in `specs/apps/organiclever/containers/deployment.md`
-9. `governance/conventions/structure/app-readme-vs-specs.md` exists (single combined doc covering content-split rule + spec-tree-shape rule + PM-Readability Contract); created via `repo-rules-maker` delegation
-10. `governance/conventions/structure/specs-directory-structure.md` is REWRITTEN (not just cross-linked) to define the new C4-aware tree shape as the repo-wide spec organization standard; done via `repo-rules-maker`
+9. `repo-governance/conventions/structure/app-readme-vs-specs.md` exists (single combined doc covering content-split rule + spec-tree-shape rule + PM-Readability Contract); created via `repo-rules-maker` delegation
+10. `repo-governance/conventions/structure/specs-directory-structure.md` is REWRITTEN (not just cross-linked) to define the new C4-aware tree shape as the repo-wide spec organization standard; done via `repo-rules-maker`
 11. `repo-rules-checker` reports zero violations of the new conventions against the pilot artifacts; rhino-cli compile+test pass against new spec paths
 12. New rhino-cli `specs` subcommands exist (validate-tree, validate-counts, validate-links, validate-adoption, drift-routes, drift-endpoints, drift-contracts), each with Gherkin specs at `specs/apps/rhino/behavior/cli/gherkin/specs/` and ≥90% Go test coverage
 13. Every per-bounded-context `components/web/ddd/ubiquitous-language/<bc>.md` file (9 files) carries a `## Term index` jump table and a `## Terms in detail` section with one `### Term: <name>` H3 per term, each containing a definition paragraph, a "why this term" line, code-identifier path(s), used-in-features cross-link, and per-term forbidden synonyms with reasons (FR-16). Term names, code identifiers, and forbidden synonyms remain byte-identical to pre-deepening; `rhino-cli ddd ul organiclever` passes against the deepened files
@@ -129,7 +129,7 @@ See [prd.md](./prd.md) for the full Gherkin acceptance scenarios.
 
 After this plan closes, three outputs feed the repo-wide rollout:
 
-1. **New repo-wide convention** — `governance/conventions/structure/app-readme-vs-specs.md`. Created IN this pilot (not deferred) by delegating to `repo-rules-maker`. The convention codifies the Content Split Rule + PM-Readability Contract from [tech-docs.md](./tech-docs.md). Marked `Status: Pilot — initial issue` in its own frontmatter so future readers know it was born from this plan and refined as the rollout progresses. See [§Governance Propagation](./tech-docs.md#governance-propagation) for the full file list.
+1. **New repo-wide convention** — `repo-governance/conventions/structure/app-readme-vs-specs.md`. Created IN this pilot (not deferred) by delegating to `repo-rules-maker`. The convention codifies the Content Split Rule + PM-Readability Contract from [tech-docs.md](./tech-docs.md). Marked `Status: Pilot — initial issue` in its own frontmatter so future readers know it was born from this plan and refined as the rollout progresses. See [§Governance Propagation](./tech-docs.md#governance-propagation) for the full file list.
 2. **Updates to related governance docs** — `specs-directory-structure.md`, the structure-conventions index, and `readme-quality.md` cross-link to the new convention. Done via `repo-rules-maker`.
 3. **Per-app follow-up plans** — separate plans under `plans/backlog/` for each remaining app family. Each follow-up plan APPLIES the new convention (no longer drafts it) and cites this pilot as the reference implementation:
    - `ayokoding` (web + cli + 2 e2e)
@@ -143,7 +143,7 @@ After this plan closes, three outputs feed the repo-wide rollout:
 
 ## Related
 
-- [Specs Directory Structure Convention](../../../governance/conventions/structure/specs-directory-structure.md)
+- [Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md)
 - [DDD adoption plan (done)](../../done/2026-05-03__organiclever-adopt-ddd/README.md)
 - [organiclever-web developing-content skill](../../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)

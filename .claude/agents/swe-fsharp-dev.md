@@ -72,7 +72,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 1. **[F# Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/f-sharp/)** - Initial setup, overview (0-95% language coverage)
 2. **[F# By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/f-sharp/by-example/)** - 75+ annotated code examples
 
-**See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -111,9 +111,9 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -122,12 +122,12 @@ reason, implement the minimum code to pass, then refactor. For F# projects the r
 usually unit (Expecto), integration (Expecto with real DB, no HTTP dispatch), or E2E (Playwright).
 Property-based testing via FsCheck covers invariants over generated inputs. Coverage enforced via
 AltCover. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

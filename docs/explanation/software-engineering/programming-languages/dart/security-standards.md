@@ -25,7 +25,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to implement security in THIS codebase, not WHAT security is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -586,9 +586,9 @@ Security standards are enforced through:
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
 
 ---
 

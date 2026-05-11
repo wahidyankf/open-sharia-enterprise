@@ -41,7 +41,7 @@ claude --worktree organiclever-be-java-migration
 
 See [delivery.md §Worktree](./delivery.md#worktree) for the full worktree specification.
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Documents
 

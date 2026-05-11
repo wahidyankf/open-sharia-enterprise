@@ -6,7 +6,7 @@ created: 2026-02-07
 
 # Validating Software Engineering Documentation Separation
 
-This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md).
+This Skill provides comprehensive guidance for validating the separation between repository-specific style guides (docs/explanation/software-engineering/) and educational content (apps/ayokoding-web/), as defined in the [Programming Language Documentation Separation Convention](../../../repo-governance/conventions/structure/programming-language-docs-separation.md).
 
 ## Purpose
 
@@ -43,7 +43,7 @@ Use this Skill when:
 - **AyoKoding** = Educational (language syntax, by-example tutorials, generic patterns)
 - **docs/explanation/** = Style guides (OSE Platform naming, framework choices, repository patterns)
 
-See [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
+See [Programming Language Documentation Separation Convention](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for complete rules.
 
 ## What to Validate
 
@@ -225,13 +225,13 @@ These are OSE Platform-specific style guides, not educational tutorials.
 
 ## Related Conventions
 
-**Primary**: [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md)
+**Primary**: [Programming Language Documentation Separation Convention](../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 **Supporting**:
 
 - [Software Design Reference](../../../docs/explanation/software-engineering/software-design-reference.md)
-- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
-- [Content Quality Standards](../../../governance/conventions/writing/quality.md)
+- [Diátaxis Framework](../../../repo-governance/conventions/structure/diataxis-framework.md)
+- [Content Quality Standards](../../../repo-governance/conventions/writing/quality.md)
 
 ## Related Skills
 

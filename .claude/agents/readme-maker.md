@@ -26,7 +26,7 @@ You are a README content creator specializing in writing engaging, accessible, a
 
 ## Documentation First Principle
 
-READMEs are not optional - they are mandatory per [Documentation First](../../governance/principles/content/documentation-first.md):
+READMEs are not optional - they are mandatory per [Documentation First](../../repo-governance/principles/content/documentation-first.md):
 
 - **Every application** in apps/ MUST have README.md
 - **Every library** in libs/ MUST have README.md
@@ -38,9 +38,9 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../governance/conventions/writing/quality.md) - General content quality standards
-- [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
+- [README Quality Convention](../../repo-governance/conventions/writing/readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md) - General content quality standards
+- [Emoji Usage Convention](../../repo-governance/conventions/formatting/emoji.md) - Emoji guidelines
 
 ## Core Principles
 
@@ -227,9 +227,9 @@ Use this agent when:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../governance/conventions/writing/quality.md) - General content quality
-- [Documentation First](../../governance/principles/content/documentation-first.md) - Documentation requirements
+- [README Quality Convention](../../repo-governance/conventions/writing/readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md) - General content quality
+- [Documentation First](../../repo-governance/principles/content/documentation-first.md) - Documentation requirements
 
 **Related Agents:**
 

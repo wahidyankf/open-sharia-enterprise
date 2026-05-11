@@ -81,7 +81,7 @@ All feature files follow the OSE Platform BDD standards:
   feature file structure, naming, ubiquitous language
 - [Scenario Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md) —
   scenario independence, naming, assertions
-- [Spec-to-Test Mapping](../governance/development/infra/bdd-spec-test-mapping.md) —
+- [Spec-to-Test Mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md) —
   mandatory 1:1 mapping between CLI commands and feature file `@tags`
 
 ## Adding Specs

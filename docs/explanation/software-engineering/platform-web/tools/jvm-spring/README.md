@@ -46,7 +46,7 @@ This documentation covers Spring Framework 6.x (latest stable) with Java 17+ and
 - Work through [Spring Framework By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
 - Reference [Spring Framework In-the-Field](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
 
-**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-web) and standards (this documentation).
+**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-web) and standards (this documentation).
 
 **What this documentation covers**: OSE Platform Spring Framework standards, naming conventions, framework integration patterns, how to apply Spring knowledge in THIS codebase.
 
@@ -79,13 +79,13 @@ All Spring Framework applications MUST follow the patterns and practices documen
 
 ## Software Engineering Principles
 
-Spring Framework usage in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../../governance/principles/software-engineering/README.md):
+Spring Framework usage in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Spring automates through component scanning, auto-wiring, transaction management
-2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Spring enforces through explicit bean definitions, clear dependency declarations, visible configuration
-3. **[Immutability Over Mutability](../../../../../../governance/principles/software-engineering/immutability.md)** - Use immutable value objects, stateless services, declarative transaction boundaries
-4. **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Apply functional core/imperative shell: pure domain logic, side effects at boundaries
-5. **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Spring enables through explicit configuration, version pinning, environment profiles
+1. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Spring automates through component scanning, auto-wiring, transaction management
+2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Spring enforces through explicit bean definitions, clear dependency declarations, visible configuration
+3. **[Immutability Over Mutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)** - Use immutable value objects, stateless services, declarative transaction boundaries
+4. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Apply functional core/imperative shell: pure domain logic, side effects at boundaries
+5. **[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Spring enables through explicit configuration, version pinning, environment profiles
 
 ## Quick Reference
 
@@ -1524,7 +1524,7 @@ public class GlobalExceptionHandler {
 ### Development Practices
 
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD with Spring
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ### Core Spring Modules
 

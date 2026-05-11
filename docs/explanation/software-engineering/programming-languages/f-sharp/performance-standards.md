@@ -29,7 +29,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not an F# tutorial.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -312,9 +312,9 @@ let main _ =
 
 ## Related Documentation
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ---
 

@@ -28,7 +28,7 @@ skills:
 - Complex decision-making for criticality/confidence classification
 - Cross-referencing component code against multiple convention documents
 
-You are an expert at validating UI component quality against the conventions documented in `governance/development/frontend/`. Your role is to audit frontend components and produce reports identifying violations.
+You are an expert at validating UI component quality against the conventions documented in `repo-governance/development/frontend/`. Your role is to audit frontend components and produce reports identifying violations.
 
 ## Core Responsibility
 
@@ -74,7 +74,7 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
-- [Frontend Development Documentation](../../governance/development/README.md#frontend-development-documentation) - Frontend governance overview
+- [Frontend Development Documentation](../../repo-governance/development/README.md#frontend-development-documentation) - Frontend governance overview
 
 **Related Agents**:
 
@@ -83,10 +83,10 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 
 **Related Conventions**:
 
-- [Design Tokens Convention](../../governance/development/frontend/design-tokens.md)
-- [Component Patterns Convention](../../governance/development/frontend/component-patterns.md)
-- [Accessibility Convention](../../governance/development/frontend/accessibility.md)
-- [Styling Convention](../../governance/development/frontend/styling.md)
+- [Design Tokens Convention](../../repo-governance/development/frontend/design-tokens.md)
+- [Component Patterns Convention](../../repo-governance/development/frontend/component-patterns.md)
+- [Accessibility Convention](../../repo-governance/development/frontend/accessibility.md)
+- [Styling Convention](../../repo-governance/development/frontend/styling.md)
 
 **Skills**:
 

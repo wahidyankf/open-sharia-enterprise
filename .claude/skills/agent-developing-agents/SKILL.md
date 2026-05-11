@@ -28,7 +28,7 @@ After editing `.claude/agents/` sources, run `npm run sync:claude-to-opencode` s
 
 ## References
 
-[AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+[AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
 
 ## Tool Usage Documentation
 
@@ -87,7 +87,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 ## Tools Usage
 
 - **Read**: Read audit reports and files to fix
-- **Edit**: Apply fixes to docs/, governance/, `.claude/`, and `.opencode/` files
+- **Edit**: Apply fixes to docs/, repo-governance/, `.claude/`, and `.opencode/` files
 - **Bash**: Run shell commands, bulk sed substitutions across many files, timestamp/UUID generation
 - **Write**: Generate fix reports to generated-reports/
 ```
@@ -227,7 +227,7 @@ Add "When to Use This Agent" section:
 
 ## Updated References
 
-[AI Agents Convention - Complete specification](../../../governance/development/agents/ai-agents.md)
+[AI Agents Convention - Complete specification](../../../repo-governance/development/agents/ai-agents.md)
 [Agent Documenting References Skill](./SKILL.md)
 [Agent Selecting Models Skill](./SKILL.md)
 
@@ -439,8 +439,8 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md)
-- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md)
+- [Diátaxis Framework](../../../repo-governance/conventions/structure/diataxis-framework.md)
 
 **Related Agents**:
 
@@ -451,9 +451,9 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md)
-- [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
-- [Linking Convention](../../../governance/conventions/formatting/linking.md)
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md)
+- [Factual Validation Convention](../../../repo-governance/conventions/writing/factual-validation.md)
+- [Linking Convention](../../../repo-governance/conventions/formatting/linking.md)
 
 **Skills**:
 
@@ -471,7 +471,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../../governance/conventions/writing/readme-quality.md)
+- [README Quality Convention](../../../repo-governance/conventions/writing/readme-quality.md)
 
 **Related Agents**:
 
@@ -482,8 +482,8 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [README Quality Convention](../../../governance/conventions/writing/readme-quality.md)
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md)
+- [README Quality Convention](../../../repo-governance/conventions/writing/readme-quality.md)
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md)
 
 **Skills**:
 
@@ -500,20 +500,20 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
 - `plan-maker` - Creates project plans
 - `plan-checker` - Validates plan quality
-- [plan-execution workflow](../../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
 **Related Conventions**:
 
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
-- [Gherkin Acceptance Criteria](../../../governance/development/infra/acceptance-criteria.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
+- [Gherkin Acceptance Criteria](../../../repo-governance/development/infra/acceptance-criteria.md)
 
 **Skills**:
 

@@ -2,37 +2,37 @@
 
 ## Context
 
-The [Governance Vendor-Independence Convention](../../../governance/conventions/structure/governance-vendor-independence.md) lists nine forbidden vendor terms in its forbidden-terms table (line 63). One term — `\bSkills\b` (capitalized branded concept) — is present in the table but missing from two enforcement artifacts:
+The [Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md) lists nine forbidden vendor terms in its forbidden-terms table (line 63). One term — `\bSkills\b` (capitalized branded concept) — is present in the table but missing from two enforcement artifacts:
 
 1. The convention's own combined audit regex on line 68 enumerates only eight terms.
-2. The scanner at `apps/rhino-cli/internal/governance/governance_vendor_audit.go:28-41` enforces only the same eight terms.
+2. The scanner at `apps/rhino-cli/internal/repo-governance/governance_vendor_audit.go:28-41` enforces only the same eight terms.
 
-Result: capitalized `Skills` (the branded concept, not the lowercase generic noun) sneaks past `rhino-cli governance vendor-audit` and the pre-push gate even though the convention forbids it. The vocabulary map in the convention prescribes lowercase "agent skills" as the neutral replacement.
+Result: capitalized `Skills` (the branded concept, not the lowercase generic noun) sneaks past `rhino-cli repo-governance vendor-audit` and the pre-push gate even though the convention forbids it. The vocabulary map in the convention prescribes lowercase "agent skills" as the neutral replacement.
 
-This plan brings scanner + convention combined-regex into agreement with the convention table, then remediates the small set of existing capitalized `Skills` violations the new term surfaces in `governance/`. It is independent of the in-progress `2026-05-03__governance-vendor-neutrality` plan, which handles the broader vendor-prose rewrite (capability tiers, model-name removal, `.claude/` path replacement). This plan closes one specific scanner gap.
+This plan brings scanner + convention combined-regex into agreement with the convention table, then remediates the small set of existing capitalized `Skills` violations the new term surfaces in `repo-governance/`. It is independent of the in-progress `2026-05-03__governance-vendor-neutrality` plan, which handles the broader vendor-prose rewrite (capability tiers, model-name removal, `.claude/` path replacement). This plan closes one specific scanner gap.
 
 ## Scope
 
 **In-scope**:
 
-- Add `\bSkills\b` entry to `forbiddenTerms` slice in `apps/rhino-cli/internal/governance/governance_vendor_audit.go`
-- Sync convention's combined regex (line 68 of `governance/conventions/structure/governance-vendor-independence.md`) to include `\bSkills\b`
-- Add per-term unit test in `apps/rhino-cli/internal/governance/governance_vendor_audit_test.go`
-- Add Gherkin scenarios for capitalization sensitivity (capitalized fails, lowercase passes, fence-exempt) in `specs/apps/rhino/cli/gherkin/governance-vendor-audit.feature`
-- Remediate existing capitalized `Skills` violations in `governance/` (replace with lowercase "agent skills" or "agent skill" per grammar)
+- Add `\bSkills\b` entry to `forbiddenTerms` slice in `apps/rhino-cli/internal/repo-governance/governance_vendor_audit.go`
+- Sync convention's combined regex (line 68 of `repo-governance/conventions/structure/governance-vendor-independence.md`) to include `\bSkills\b`
+- Add per-term unit test in `apps/rhino-cli/internal/repo-governance/governance_vendor_audit_test.go`
+- Add Gherkin scenarios for capitalization sensitivity (capitalized fails, lowercase passes, fence-exempt) in `specs/apps/rhino/cli/gherkin/repo-governance-vendor-audit.feature`
+- Remediate existing capitalized `Skills` violations in `repo-governance/` (replace with lowercase "agent skills" or "agent skill" per grammar)
 
 **Out of scope**:
 
 - Broader vendor-prose rewrite (capability tiers, `.claude/` path replacement, etc.) — owned by `2026-05-03__governance-vendor-neutrality`
 - Lowercase "skills" usages — already convention-compliant
-- The convention file's own `\bSkills\b` mention on line 63 — file is permanently allowlisted at `internal/governance/governance_vendor_audit.go:23` (`forbiddenConvention` constant)
+- The convention file's own `\bSkills\b` mention on line 63 — file is permanently allowlisted at `internal/repo-governance/governance_vendor_audit.go:23` (`forbiddenConvention` constant)
 - `.claude/`, `.opencode/`, `AGENTS.md`, `CLAUDE.md`, `plans/` content — explicitly out of scope per convention
 
 **Affected subrepo**: `ose-public` only.
 
 ## Business rationale (condensed BRD)
 
-**Why this matters**: An enforcement gap between a convention's prescriptive table and its enforcement scanner is invisible drift. Capitalized branded `Skills` slips through pre-push and CI gates undetected, so violations accumulate in `governance/` over time without triggering remediation. Closing the gap restores convention-as-enforced-rule rather than convention-as-aspiration.
+**Why this matters**: An enforcement gap between a convention's prescriptive table and its enforcement scanner is invisible drift. Capitalized branded `Skills` slips through pre-push and CI gates undetected, so violations accumulate in `repo-governance/` over time without triggering remediation. Closing the gap restores convention-as-enforced-rule rather than convention-as-aspiration.
 
 **Affected roles**:
 
@@ -43,7 +43,7 @@ This plan brings scanner + convention combined-regex into agreement with the con
 
 **Success metrics** (observable):
 
-- `rhino-cli governance vendor-audit governance/` returns 0 violations after remediation (verifiable on demand)
+- `rhino-cli repo-governance vendor-audit repo-governance/` returns 0 violations after remediation (verifiable on demand)
 - Combined regex on convention line 68 enumerates exactly the same nine terms as the table on line 63 (verifiable via grep)
 - New unit + integration tests pass; rhino-cli test coverage stays ≥90%
 
@@ -54,8 +54,8 @@ This plan brings scanner + convention combined-regex into agreement with the con
 
 **Risks and mitigations**:
 
-- _Risk_: Adding a new forbidden term creates a churn wave across `governance/` if violations are widespread.
-  _Mitigation_: Audit baseline first; expected scope is small (~8-12 spots, primarily `governance/development/agents/ai-agents.md`).
+- _Risk_: Adding a new forbidden term creates a churn wave across `repo-governance/` if violations are widespread.
+  _Mitigation_: Audit baseline first; expected scope is small (~8-12 spots, primarily `repo-governance/development/agents/ai-agents.md`).
 - _Risk_: New regex incorrectly matches benign occurrences inside link URLs or code spans.
   _Mitigation_: Existing `stripNonProse` exemptions (inline code, link URLs, HTML comments) and code-fence handling apply automatically — no new state required. Verified by existing exemption tests.
 
@@ -64,14 +64,14 @@ This plan brings scanner + convention combined-regex into agreement with the con
 **Personas**:
 
 - _Maintainer (rhino-cli developer hat)_: extends `forbiddenTerms` slice, adds tests, runs unit + integration suite locally before push.
-- _Maintainer (governance steward hat)_: runs scanner against `governance/`, edits prose to replace branded `Skills` with lowercase "agent skills".
+- _Maintainer (governance steward hat)_: runs scanner against `repo-governance/`, edits prose to replace branded `Skills` with lowercase "agent skills".
 - _Plan-executor agent_: drives the delivery checklist top to bottom; its only failure modes are TDD red-phase test failures (expected) and prose-cleanup misses (caught by the verification audit).
 - _Future AI coding agents_ (Cursor, Codex CLI, Aider, etc.): inherit the corrected, vendor-neutral governance prose and the strengthened scanner without modification.
 
 **User stories**:
 
 - _As a_ maintainer extending the scanner, _I want_ adding a forbidden term to be a one-line change with a matching one-test addition, _so that_ the scanner stays simple and contributors can extend it without restructuring.
-- _As a_ governance steward, _I want_ `rhino-cli governance vendor-audit` to flag every convention violation, _so that_ I do not need to manually grep for each forbidden term separately.
+- _As a_ governance steward, _I want_ `rhino-cli repo-governance vendor-audit` to flag every convention violation, _so that_ I do not need to manually grep for each forbidden term separately.
 - _As a_ future contributor writing governance prose, _I want_ the pre-push hook to fail when I introduce capitalized `Skills`, _so that_ I learn about the convention violation before my commit lands on `main`.
 
 **Acceptance criteria** (Gherkin):
@@ -81,24 +81,24 @@ Feature: Capitalized Skills is forbidden in governance prose
 
 Scenario: Capitalized Skills branded term in plain prose fails the audit
   Given a governance markdown file containing "Use Skills to delegate work"
-  When I run "rhino-cli governance vendor-audit"
+  When I run "rhino-cli repo-governance vendor-audit"
   Then the audit fails with exit code 1
   And the finding suggests replacement with "agent skills"
 
 Scenario: Lowercase agent skills phrase passes the audit
   Given a governance markdown file containing "Use agent skills to delegate work"
-  When I run "rhino-cli governance vendor-audit"
+  When I run "rhino-cli repo-governance vendor-audit"
   Then the audit passes with exit code 0
 
 Scenario: Capitalized Skills inside a code fence is exempt
   Given a governance markdown file with "Skills" inside a fenced code block
-  When I run "rhino-cli governance vendor-audit"
+  When I run "rhino-cli repo-governance vendor-audit"
   Then the audit passes with exit code 0
 ```
 
 **Product scope**:
 
-- _In_: scanner term, convention regex sync, prose remediation in `governance/`.
+- _In_: scanner term, convention regex sync, prose remediation in `repo-governance/`.
 - _Out_: lowercase "skills" usages, broader prose rewrite, platform binding directories.
 
 **Product risks**:
@@ -109,7 +109,7 @@ Scenario: Capitalized Skills inside a code fence is exempt
 
 ### Scanner change
 
-`apps/rhino-cli/internal/governance/governance_vendor_audit.go:28-41` defines `forbiddenTerms` as a slice of `{re, displayTerm, replacement}` tuples. Add one entry:
+`apps/rhino-cli/internal/repo-governance/governance_vendor_audit.go:28-41` defines `forbiddenTerms` as a slice of `{re, displayTerm, replacement}` tuples. Add one entry:
 
 ```go
 {regexp.MustCompile(`\bSkills\b`), "Skills", `"agent skills" (lowercase)`},
@@ -128,7 +128,7 @@ The new entry plugs into the existing `Walk()` → `ScanFile()` → `scanLines()
 
 ### Convention combined-regex sync
 
-`governance/conventions/structure/governance-vendor-independence.md:68` currently reads:
+`repo-governance/conventions/structure/governance-vendor-independence.md:68` currently reads:
 
 ```
 Claude Code|OpenCode|Anthropic|\bSonnet\b|\bOpus\b|\bHaiku\b|\.claude/|\.opencode/
@@ -146,7 +146,7 @@ This sync is required so the manual-grep escape hatch documented in the "Migrati
 
 Two test files extended:
 
-1. **Unit test** — `apps/rhino-cli/internal/governance/governance_vendor_audit_test.go`:
+1. **Unit test** — `apps/rhino-cli/internal/repo-governance/governance_vendor_audit_test.go`:
 
    Add `TestScanLines_DetectsCapitalizedSkillsTerm` mirroring the pattern of `TestScanLines_DetectsModelTierTerms`. Assert that:
    - `"Use Skills to delegate work"` produces exactly one finding with `Match == "Skills"`.
@@ -155,13 +155,13 @@ Two test files extended:
 
    Update `TestScanLines_MultipleForbiddenTermsSameLine` if it asserts a hard count of forbidden terms.
 
-2. **Gherkin scenario** — `specs/apps/rhino/cli/gherkin/governance-vendor-audit.feature`:
+2. **Gherkin scenario** — `specs/apps/rhino/cli/gherkin/repo-governance-vendor-audit.feature`:
 
    Add the three scenarios listed under Acceptance Criteria above. Existing step definitions in `apps/rhino-cli/cmd/steps_common_test.go` should already cover them — no new step impl required if the existing scenarios use generic "forbidden term" steps.
 
 ### Prose remediation strategy
 
-After the scanner is upgraded, run `go run apps/rhino-cli/main.go governance vendor-audit governance/` to enumerate every capitalized `Skills` occurrence. Apply the vocabulary-map replacement from convention line 116:
+After the scanner is upgraded, run `go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/` to enumerate every capitalized `Skills` occurrence. Apply the vocabulary-map replacement from convention line 116:
 
 | Old form (branded)                  | New form (neutral)                 |
 | ----------------------------------- | ---------------------------------- |
@@ -172,16 +172,16 @@ Grammar review per file — preserve sentence structure; adjust article ("a Skil
 
 ### Reusable assets (no new code paths)
 
-- Walk + exemption pipeline: `Walk()`, `ScanFile()`, `scanLines()` — `internal/governance/governance_vendor_audit.go`
+- Walk + exemption pipeline: `Walk()`, `ScanFile()`, `scanLines()` — `internal/repo-governance/governance_vendor_audit.go`
 - Term-detection test pattern: `TestScanLines_DetectsModelTierTerms` (mirror for `Skills`)
-- Convention file allowlist: `forbiddenConvention` constant — `internal/governance/governance_vendor_audit.go:23`
-- Nx target `validate:governance-vendor-audit`: `apps/rhino-cli/project.json:97` (already wired into pre-push hook at `.husky/pre-push:26`)
+- Convention file allowlist: `forbiddenConvention` constant — `internal/repo-governance/governance_vendor_audit.go:23`
+- Nx target `validate:repo-governance-vendor-audit`: `apps/rhino-cli/project.json:97` (already wired into pre-push hook at `.husky/pre-push:26`)
 
 ### Rollback
 
 If issues arise after merge:
 
-1. `git revert` the scanner commit; `validate:governance-vendor-audit` returns to enforcing 8 terms.
+1. `git revert` the scanner commit; `validate:repo-governance-vendor-audit` returns to enforcing 8 terms.
 2. Convention regex sync commit can be reverted independently; the table-vs-regex discrepancy returns but does not break enforcement.
 3. Prose remediation commit can be reverted independently; lowercase replacements stay valid prose either way.
 
@@ -195,26 +195,26 @@ If issues arise after merge:
 
 ### Phase 1: TDD Red — write failing tests first
 
-- [ ] Add `TestScanLines_DetectsCapitalizedSkillsTerm` to `apps/rhino-cli/internal/governance/governance_vendor_audit_test.go`
-- [ ] Add three Gherkin scenarios for capitalized fails / lowercase passes / fence-exempt to `specs/apps/rhino/cli/gherkin/governance-vendor-audit.feature`
+- [ ] Add `TestScanLines_DetectsCapitalizedSkillsTerm` to `apps/rhino-cli/internal/repo-governance/governance_vendor_audit_test.go`
+- [ ] Add three Gherkin scenarios for capitalized fails / lowercase passes / fence-exempt to `specs/apps/rhino/cli/gherkin/repo-governance-vendor-audit.feature`
 - [ ] Run `nx run rhino-cli:test:unit` — expect failure on the new unit test
 - [ ] Run `nx run rhino-cli:test:integration` — expect failure on the new Gherkin scenarios
 
 ### Phase 2: TDD Green — extend scanner
 
-- [ ] Add `{regexp.MustCompile(\`\bSkills\b\`), "Skills", \`"agent skills" (lowercase)\`}`to`forbiddenTerms`slice in`apps/rhino-cli/internal/governance/governance_vendor_audit.go`
+- [ ] Add `{regexp.MustCompile(\`\bSkills\b\`), "Skills", \`"agent skills" (lowercase)\`}`to`forbiddenTerms`slice in`apps/rhino-cli/internal/repo-governance/governance_vendor_audit.go`
 - [ ] Run `nx run rhino-cli:test:unit` — expect pass
 - [ ] Run `nx run rhino-cli:test:integration` — expect pass
 
 ### Phase 3: Audit and remediate governance prose
 
-- [ ] Run `go run apps/rhino-cli/main.go governance vendor-audit governance/` and capture full violation list
+- [ ] Run `go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/` and capture full violation list
 - [ ] Replace each capitalized `Skills` with lowercase `agent skills` (or `agent skill` for singular) per vocabulary map, preserving grammar (articles, pluralization)
-- [ ] Re-run `go run apps/rhino-cli/main.go governance vendor-audit governance/` — expect 0 violations
+- [ ] Re-run `go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/` — expect 0 violations
 
 ### Phase 4: Sync convention combined regex
 
-- [ ] Update `governance/conventions/structure/governance-vendor-independence.md` line 68 combined regex to include `\bSkills\b`
+- [ ] Update `repo-governance/conventions/structure/governance-vendor-independence.md` line 68 combined regex to include `\bSkills\b`
 
 ### Phase 5: Quality gates
 
@@ -250,16 +250,16 @@ If issues arise after merge:
 
 ## Quality gates
 
-| Gate                      | Tool                                            | Pass condition                                               |
-| ------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
-| Unit tests                | `nx run rhino-cli:test:unit`                    | All pass; coverage ≥90%                                      |
-| Integration tests         | `nx run rhino-cli:test:integration`             | All Gherkin scenarios pass                                   |
-| Spec coverage             | `nx affected -t spec-coverage`                  | New scenarios mapped to step impls; no orphan steps          |
-| Affected typecheck + lint | `nx affected -t typecheck lint`                 | All pass                                                     |
-| Markdown lint             | `npm run lint:md`                               | 0 violations                                                 |
-| Vendor audit              | `rhino-cli governance vendor-audit governance/` | 0 violations                                                 |
-| Pre-push hook             | Husky                                           | All four targets pass for affected projects                  |
-| Post-push CI              | GitHub Actions                                  | `pr-quality-gate.yml` and any push-triggered workflows green |
+| Gate                      | Tool                                                      | Pass condition                                               |
+| ------------------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
+| Unit tests                | `nx run rhino-cli:test:unit`                              | All pass; coverage ≥90%                                      |
+| Integration tests         | `nx run rhino-cli:test:integration`                       | All Gherkin scenarios pass                                   |
+| Spec coverage             | `nx affected -t spec-coverage`                            | New scenarios mapped to step impls; no orphan steps          |
+| Affected typecheck + lint | `nx affected -t typecheck lint`                           | All pass                                                     |
+| Markdown lint             | `npm run lint:md`                                         | 0 violations                                                 |
+| Vendor audit              | `rhino-cli repo-governance vendor-audit repo-governance/` | 0 violations                                                 |
+| Pre-push hook             | Husky                                                     | All four targets pass for affected projects                  |
+| Post-push CI              | GitHub Actions                                            | `pr-quality-gate.yml` and any push-triggered workflows green |
 
 ## Verification
 
@@ -277,10 +277,10 @@ nx run rhino-cli:test:unit
 nx run rhino-cli:test:integration
 
 # 3. Audit baseline — list violations to remediate
-go run apps/rhino-cli/main.go governance vendor-audit governance/
+go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/
 
 # 4. After prose remediation
-go run apps/rhino-cli/main.go governance vendor-audit governance/
+go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/
 # expect: GOVERNANCE VENDOR AUDIT PASSED: no violations found
 
 # 5. Pre-push gate
@@ -292,4 +292,4 @@ git push origin main
 gh run watch  # or background-monitor pattern from ci-monitoring.md
 ```
 
-Spot-check after merge: open `governance/development/agents/ai-agents.md` and grep for `\bSkills\b` — should match nothing outside fenced regions; lowercase `agent skills` should appear in the prose where the branded form was previously used.
+Spot-check after merge: open `repo-governance/development/agents/ai-agents.md` and grep for `\bSkills\b` — should match nothing outside fenced regions; lowercase `agent skills` should appear in the prose where the branded form was previously used.

@@ -105,15 +105,15 @@ All of the following MUST remain green:
 
 ## Non-functional requirements
 
-| #     | Requirement                                                                                                                                                                   |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NFR-1 | Migration phased; each phase ends with all gates green.                                                                                                                       |
-| NFR-2 | Every code move follows TDD discipline — tests for moved code MUST pass before and after the move.                                                                            |
-| NFR-3 | Each phase commits independently; commit messages follow Conventional Commits (`refactor(organiclever-web): ...`).                                                            |
-| NFR-4 | No new external dependencies beyond an ESLint boundaries plugin already used elsewhere in the workspace (or its first introduction).                                          |
-| NFR-5 | All Mermaid diagrams in new docs comply with the [Accessible Diagrams Skill](../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md).                             |
-| NFR-6 | All new markdown follows [Content Quality](../../../governance/conventions/writing/quality.md) and [Markdown Standards](../../../governance/development/quality/markdown.md). |
-| NFR-7 | All file names follow the [File Naming Convention](../../../governance/conventions/structure/file-naming.md) (lowercase kebab-case).                                          |
+| #     | Requirement                                                                                                                                                                             |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-1 | Migration phased; each phase ends with all gates green.                                                                                                                                 |
+| NFR-2 | Every code move follows TDD discipline — tests for moved code MUST pass before and after the move.                                                                                      |
+| NFR-3 | Each phase commits independently; commit messages follow Conventional Commits (`refactor(organiclever-web): ...`).                                                                      |
+| NFR-4 | No new external dependencies beyond an ESLint boundaries plugin already used elsewhere in the workspace (or its first introduction).                                                    |
+| NFR-5 | All Mermaid diagrams in new docs comply with the [Accessible Diagrams Skill](../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md).                                       |
+| NFR-6 | All new markdown follows [Content Quality](../../../repo-governance/conventions/writing/quality.md) and [Markdown Standards](../../../repo-governance/development/quality/markdown.md). |
+| NFR-7 | All file names follow the [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) (lowercase kebab-case).                                               |
 
 ## Acceptance criteria (Gherkin)
 
@@ -205,7 +205,7 @@ Feature: OrganicLever DDD adoption acceptance
 - [DDD Standards (authoritative)](../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
 - [BDD with DDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
 - [TDD with DDD Standards](../../../docs/explanation/software-engineering/development/test-driven-development-tdd/tdd-with-ddd-standards.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- [Markdown Standards](../../../governance/development/quality/markdown.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md)
+- [Markdown Standards](../../../repo-governance/development/quality/markdown.md)

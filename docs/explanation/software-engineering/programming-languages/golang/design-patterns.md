@@ -26,7 +26,7 @@ related:
   - ./coding-standards.md#part-1-core-idioms
   - ./type-safety-standards.md
   - ./concurrency-standards.md
-  - ../../../../../governance/development/pattern/functional-programming.md
+  - ../../../../../repo-governance/development/pattern/functional-programming.md
 ---
 
 # Go Design Patterns
@@ -60,7 +60,7 @@ This document defines **authoritative design pattern standards** for Go developm
 
 **Status**: Normative (MUST follow for OSE Platform Go code)
 
-**Governance**: This document implements [Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md), [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md), and [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md).
+**Governance**: This document implements [Functional Programming Principle](../../../../../repo-governance/development/pattern/functional-programming.md), [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md), and [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md).
 
 ---
 
@@ -4024,9 +4024,9 @@ out := jsonOutput{Status: status.Code()}
 
 ### When to Use vs Typed String Enum
 
-| Pattern | Use when |
-|---------|----------|
-| **Typed string enum** (`type X string`) | Flat ordinal — no variant-specific data; serialized as-is; `exhaustive` linter already sufficient |
+| Pattern                                 | Use when                                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Typed string enum** (`type X string`) | Flat ordinal — no variant-specific data; serialized as-is; `exhaustive` linter already sufficient                        |
 | **Sealed interface** (`//sumtype:decl`) | Variants may carry different data fields in future; cross-package type identity matters; stricter exhaustiveness desired |
 
 Both patterns are valid. Prefer sealed interface when variants are likely to evolve or carry per-variant state.
@@ -4054,9 +4054,9 @@ Both patterns are valid. Prefer sealed interface when variants are likely to evo
 
 **Governance Principles:**
 
-- [Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md) - Project-wide FP standards
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Functional Programming Principle](../../../../../repo-governance/development/pattern/functional-programming.md) - Project-wide FP standards
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ## Further Reading
 

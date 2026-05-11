@@ -175,7 +175,7 @@ enough to accommodate different brand palettes across apps.
 
 ### G4: No UI Conventions Documentation
 
-**What exists**: No files in `governance/development/` address frontend UI conventions.
+**What exists**: No files in `repo-governance/development/` address frontend UI conventions.
 
 **Impact**: New developers (human or AI) have no reference for:
 
@@ -187,9 +187,9 @@ enough to accommodate different brand palettes across apps.
 
 ### G5: No Color Accessibility Verification for UI Components
 
-**What exists**: The repo has a [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+**What exists**: The repo has a [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md)
 with a 5-color accessible palette for **documentation** (diagrams, Mermaid, agent categorization)
-and an [Accessibility First](../../../governance/principles/content/accessibility-first.md)
+and an [Accessibility First](../../../repo-governance/principles/content/accessibility-first.md)
 principle requiring WCAG AA compliance.
 
 **Scope clarification**: The Color Accessibility Convention explicitly states that **UI design
@@ -238,7 +238,7 @@ detection. The only safety net is manual visual review.
 ### G8: No UI-Focused Agent Trio or Quality Gate Workflow
 
 **What exists**: No agents in `.claude/agents/` for UI creation, validation, or fixing. No
-workflow in `governance/workflows/` for UI quality automation.
+workflow in `repo-governance/workflows/` for UI quality automation.
 
 **Impact**: No automated way to audit existing components against conventions. No automated
 way to create new components following all conventions. No iterative quality gate for UI changes.
@@ -258,10 +258,10 @@ Feature: UI Conventions and AI Skills
 
   Background:
     Given the monorepo has frontend apps organiclever-web, ayokoding-web, and a-demo-fe-ts-nextjs
-    And the governance directory exists at governance/development/
+    And the governance directory exists at repo-governance/development/
 
   Scenario: UI conventions are documented with concrete examples
-    When I check governance/development/frontend/
+    When I check repo-governance/development/frontend/
     Then I find documented conventions for:
       | Convention | File | Must Include |
       | Design tokens | design-tokens.md | Token categories, naming rules, per-app override pattern, dark mode |

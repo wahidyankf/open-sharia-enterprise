@@ -32,7 +32,7 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **REQUIRED Test Runner:**
 
-- **Nx Monorepo**: `nx run [project-name]:test:quick` (pre-push gate), `nx run [project-name]:test:unit` (isolated unit tests), `nx affected -t test:quick` (affected projects). See [Nx Target Standards](../../../../../governance/development/infra/nx-targets.md) for canonical target names.
+- **Nx Monorepo**: `nx run [project-name]:test:quick` (pre-push gate), `nx run [project-name]:test:unit` (isolated unit tests), `nx affected -t test:quick` (affected projects). See [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.
 
 **PROHIBITED:**
 
@@ -54,21 +54,21 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **What this documentation does NOT cover**: TDD fundamentals, Red-Green-Refactor basics, generic testing patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 TDD standards in OSE Platform align with core software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Red-Green-Refactor cycle automates verification. Tests run constantly (every 1-2 minutes), replacing manual testing entirely. FIRST principles enable continuous automated testing.
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Red-Green-Refactor cycle automates verification. Tests run constantly (every 1-2 minutes), replacing manual testing entirely. FIRST principles enable continuous automated testing.
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Test-first approach makes requirements explicit before implementation. AAA pattern (Arrange-Act-Assert) explicitly declares test structure. Test names explicitly describe expected behavior.
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Test-first approach makes requirements explicit before implementation. AAA pattern (Arrange-Act-Assert) explicitly declares test structure. Test names explicitly describe expected behavior.
 
-3. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - FIRST principles (Independent, Repeatable) ensure reproducible test execution. Deterministic tests produce same results across environments and time. No flaky tests.
+3. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - FIRST principles (Independent, Repeatable) ensure reproducible test execution. Deterministic tests produce same results across environments and time. No flaky tests.
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable—no mocks, no setup, no teardown. TDD drives toward pure, composable functions through test feedback.
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable—no mocks, no setup, no teardown. TDD drives toward pure, composable functions through test feedback.
 
-5. **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Green phase enforces simplest code to pass. Refactor phase improves design incrementally. Each cycle takes minutes—simplicity through tiny verified steps.
+5. **[Simplicity Over Complexity](../../../../../repo-governance/principles/general/simplicity-over-complexity.md)** - Green phase enforces simplest code to pass. Refactor phase improves design incrementally. Each cycle takes minutes—simplicity through tiny verified steps.
 
 ## OSE Platform TDD Standards
 
@@ -266,8 +266,8 @@ Before merging code, verify:
 
 ## Principles Implemented
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By automating verification through Red-Green-Refactor cycles and continuous test execution, TDD eliminates manual testing and provides immediate feedback.
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By automating verification through Red-Green-Refactor cycles and continuous test execution, TDD eliminates manual testing and provides immediate feedback.
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By writing tests first, requirements become explicit specifications. AAA pattern and descriptive test names make expected behavior clear.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By writing tests first, requirements become explicit specifications. AAA pattern and descriptive test names make expected behavior clear.
 
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: By enforcing FIRST principles (Independent, Repeatable), tests produce consistent results across environments and time, enabling reliable CI/CD pipelines.
+- **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: By enforcing FIRST principles (Independent, Repeatable), tests produce consistent results across environments and time, enabling reliable CI/CD pipelines.

@@ -102,7 +102,7 @@ Every agent filename follows: `<scope>(-<qualifier>)*-<role>`
 
 No other structure is permitted. No exceptions.
 
-Normative source: [Agent Naming Convention](../../governance/conventions/structure/agent-naming.md).
+Normative source: [Agent Naming Convention](../../repo-governance/conventions/structure/agent-naming.md).
 
 ## Role Vocabulary
 
@@ -189,4 +189,4 @@ All agents follow governance principles:
 - **Simplicity Over Complexity** - Single-purpose agents, minimal abstraction
 - **Accessibility First** - WCAG AA compliance in all outputs
 
-**See**: [governance/principles/README.md](../../governance/principles/README.md)
+**See**: [repo-governance/principles/README.md](../../repo-governance/principles/README.md)

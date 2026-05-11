@@ -29,7 +29,7 @@
 
 ## Phase 4: Specs Validation Gate (OCD Mode)
 
-Run the [specs-validation workflow](../../../governance/workflows/specs/specs-quality-gate.md) in
+Run the [specs-validation workflow](../../../repo-governance/workflows/specs/specs-quality-gate.md) in
 **OCD mode** on the newly merged `specs/apps/a-demo/` to catch all issues before propagating paths
 to 11 backends. This is the quality gate — fix everything in the specs themselves before touching
 any application code.
@@ -124,12 +124,12 @@ radius contained to `specs/apps/a-demo/` only.
 - [x] `apps/a-demo-be-kotlin-ktor/README.md`
 - [x] `apps/a-demo-be-clojure-pedestal/README.md`
 - [x] `apps/a-demo-be-e2e/README.md`
-- [x] `governance/development/infra/bdd-spec-test-mapping.md`
-- [x] `governance/development/quality/three-level-testing-standard.md`
-- [x] `governance/development/infra/nx-targets.md`
+- [x] `repo-governance/development/infra/bdd-spec-test-mapping.md`
+- [x] `repo-governance/development/quality/three-level-testing-standard.md`
+- [x] `repo-governance/development/infra/nx-targets.md`
 - [x] `docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md`
-- [x] `governance/conventions/formatting/diagrams.md`
-- [x] `governance/workflows/specs/specs-quality-gate.md` (update example paths)
+- [x] `repo-governance/conventions/formatting/diagrams.md`
+- [x] `repo-governance/workflows/specs/specs-quality-gate.md` (update example paths)
 - [x] `specs/apps-labs/README.md`
 - [x] `.claude/agents/specs-checker.md` (update example folder paths)
 - [x] `.claude/agents/specs-maker.md` (update example target paths)

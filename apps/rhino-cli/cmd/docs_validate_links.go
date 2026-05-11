@@ -20,7 +20,7 @@ This command scans markdown files in the repository and validates that all
 internal links point to existing files. External URLs, Hugo paths, and
 placeholder links are automatically skipped.
 
-By default, scans all markdown files in core directories (docs/, governance/,
+By default, scans all markdown files in core directories (docs/, repo-governance/,
 .claude/, and root). Use --staged-only to validate only staged files.`,
 	Example: `  # Validate all markdown files
   rhino-cli docs validate-links

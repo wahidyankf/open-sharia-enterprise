@@ -203,7 +203,7 @@ rhino-cli docs validate-links -q
 
 **What it does:**
 
-- Scans markdown files in core directories (docs/, governance/, .claude/, and root)
+- Scans markdown files in core directories (docs/, repo-governance/, .claude/, and root)
 - Validates that all internal links point to existing files
 - Automatically skips external URLs (http://, https://)
 - Automatically skips Hugo paths (starting with /)
@@ -228,8 +228,8 @@ rhino-cli docs validate-links -q
 
 1. **Missing files** - Common files like CODE_OF_CONDUCT.md, CHANGELOG.md
 2. **General/other paths** - All other broken links
-3. **workflows/ paths** - Links to workflows/ (not governance/workflows/)
-4. **vision/ paths** - Links to vision/ (not governance/vision/)
+3. **workflows/ paths** - Links to workflows/ (not repo-governance/workflows/)
+4. **vision/ paths** - Links to vision/ (not repo-governance/vision/)
 5. **conventions README** - Links to conventions/README.md
 
 **Example output (text):**
@@ -287,11 +287,11 @@ etc.) are silently skipped. The following directories are always excluded from r
 walks: `.next` (Next.js build artifacts), `node_modules`, `.git`.
 
 ```bash
-# Validate governance/ and .claude/ (default Nx target scope)
-rhino-cli docs validate-mermaid governance/ .claude/
+# Validate repo-governance/ and .claude/ (default Nx target scope)
+rhino-cli docs validate-mermaid repo-governance/ .claude/
 
 # Validate specific files or directories
-rhino-cli docs validate-mermaid docs/ governance/
+rhino-cli docs validate-mermaid docs/ repo-governance/
 
 # Only validate files staged in git (pre-commit use)
 rhino-cli docs validate-mermaid --staged-only
@@ -530,28 +530,28 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
-### governance vendor-audit
+### repo-governance vendor-audit
 
 Scan all `.md` files under a path for forbidden vendor-specific terms in prose.
 
 ```bash
-# Audit governance/ (default path)
-rhino-cli governance vendor-audit
+# Audit repo-governance/ (default path)
+rhino-cli repo-governance vendor-audit
 
 # Audit a specific path
-rhino-cli governance vendor-audit governance/
+rhino-cli repo-governance vendor-audit repo-governance/
 
 # Output as JSON
-rhino-cli governance vendor-audit -o json
+rhino-cli repo-governance vendor-audit -o json
 
 # Via Nx (cached)
-npx nx run rhino-cli:validate:governance-vendor-audit
+npx nx run rhino-cli:validate:repo-governance-vendor-audit
 ```
 
 **What it detects:**
 
 Forbidden vendor terms in prose that violate the
-[governance-vendor-independence convention](../../governance/conventions/structure/governance-vendor-independence.md):
+[governance-vendor-independence convention](../../repo-governance/conventions/structure/governance-vendor-independence.md):
 
 | Forbidden term | Suggested replacement         |
 | -------------- | ----------------------------- |
@@ -583,7 +583,7 @@ Forbidden vendor terms in prose that violate the
 
 ```
 GOVERNANCE VENDOR AUDIT FAILED: 1 violation(s) found
-  governance/README.md:31  .claude/  →  "primary binding directory"
+  repo-governance/README.md:31  .claude/  →  "primary binding directory"
 ```
 
 **Example output (clean):**

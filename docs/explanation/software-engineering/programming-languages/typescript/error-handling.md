@@ -15,7 +15,7 @@ related:
   - ./type-safety.md
   - ./functional-programming.md
   - ./anti-patterns.md
-  - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
+  - ../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
   - pure-functions
@@ -675,7 +675,7 @@ async function calculateZakatWithContext(wealth: number, nisab: number): Promise
 
 ### Development Practices
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear error handling
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Clear error handling
 
 ---
 

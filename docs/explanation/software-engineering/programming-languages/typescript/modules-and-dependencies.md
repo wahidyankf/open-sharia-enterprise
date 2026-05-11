@@ -12,7 +12,7 @@ tags:
   - bun
 related:
   - ./best-practices.md
-  - ../../../../../governance/principles/software-engineering/reproducibility.md
+  - ../../../../../repo-governance/principles/software-engineering/reproducibility.md
 principles:
   - reproducibility
   - explicit-over-implicit
@@ -342,7 +342,7 @@ packages:
 ## Related Documentation
 
 - **[TypeScript Best Practices](best-practices.md)** - Coding standards
-- **[Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)** - Reproducible builds
+- **[Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Reproducible builds
 
 ---
 

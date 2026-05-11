@@ -10,13 +10,13 @@ Provision before execution (run from repo root inside `ose-public`):
 claude --worktree specs-cli-into-behavior
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
 ## Phase 0 — Setup
 
-- [x] 0.1 Provision worktree (run from ose-public repo root): `claude --worktree specs-cli-into-behavior` — creates `worktrees/specs-cli-into-behavior/` per [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)
+- [x] 0.1 Provision worktree (run from ose-public repo root): `claude --worktree specs-cli-into-behavior` — creates `worktrees/specs-cli-into-behavior/` per [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
 <!-- 2026-05-11 | Status: SKIPPED per user override | User explicitly said "do it here" — executing in main checkout /Users/wkf/ose-projects/ose-public. Parallel-safety acknowledged. -->
 - [x] 0.2 Run `npm install && npm run doctor -- --fix` in worktree root
 <!-- 2026-05-11 | Status: done | Files Changed: none | npm install clean, 20/20 tools OK -->
@@ -141,14 +141,14 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   Verify: `grep "cli/" specs/apps/rhino/README.md | grep -v behavior` returns empty.
 
-- [x] 3.10 Update `governance/development/infra/bdd-spec-test-mapping.md`: replace `specs/apps/rhino/cli/gherkin` with `specs/apps/rhino/behavior/cli/gherkin`:
-  <!-- 2026-05-11 | Status: done | Files Changed: governance/development/infra/bdd-spec-test-mapping.md | Also updated template pattern specs/{app}/cli/gherkin/ → specs/{app}/behavior/cli/gherkin/ | Verify: empty. -->
+- [x] 3.10 Update `repo-governance/development/infra/bdd-spec-test-mapping.md`: replace `specs/apps/rhino/cli/gherkin` with `specs/apps/rhino/behavior/cli/gherkin`:
+  <!-- 2026-05-11 | Status: done | Files Changed: repo-governance/development/infra/bdd-spec-test-mapping.md | Also updated template pattern specs/{app}/cli/gherkin/ → specs/{app}/behavior/cli/gherkin/ | Verify: empty. -->
 
   ```bash
-  sed -i '' 's|specs/apps/rhino/cli/gherkin|specs/apps/rhino/behavior/cli/gherkin|g' governance/development/infra/bdd-spec-test-mapping.md
+  sed -i '' 's|specs/apps/rhino/cli/gherkin|specs/apps/rhino/behavior/cli/gherkin|g' repo-governance/development/infra/bdd-spec-test-mapping.md
   ```
 
-  Verify: `grep "cli/gherkin" governance/development/infra/bdd-spec-test-mapping.md | grep -v behavior` returns empty.
+  Verify: `grep "cli/gherkin" repo-governance/development/infra/bdd-spec-test-mapping.md | grep -v behavior` returns empty.
 
 - [x] 3.11 Run `nx run rhino-cli:test:quick` — must pass
 <!-- 2026-05-11 | Status: done | PASS 90.42% >= 90% -->

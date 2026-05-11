@@ -33,7 +33,7 @@ The `swe-hugo-developer` agent remains necessary for `oseplatform-web`, which co
 
 Content format (frontmatter, weights, bilingual structure) did not change — only the rendering
 engine changed. Hugo content conventions in governance remain relevant for content creation. The
-`governance/conventions/hugo/ayokoding.md` file receives a deprecation notice rather than deletion.
+`repo-governance/conventions/hugo/ayokoding.md` file receives a deprecation notice rather than deletion.
 
 ### 7. Coverage threshold
 

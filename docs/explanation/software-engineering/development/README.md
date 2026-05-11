@@ -230,13 +230,13 @@ The open-sharia-enterprise project applies both TDD and BDD:
 
 - [Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md) - TDD/BDD test domain models
 - [C4 Architecture Model](../architecture/c4-architecture-model/README.md) - Document tested components
-- [Functional Programming](../../../../governance/development/pattern/functional-programming.md) - Pure functions enable easier testing
+- [Functional Programming](../../../../repo-governance/development/pattern/functional-programming.md) - Pure functions enable easier testing
 
 ## Related Documentation
 
 - **[Software Design Index](../README.md)** - Parent software design documentation
 - **[Architecture](../architecture/README.md)** - C4 and DDD documentation
 - **[Explanation Documentation Index](../../README.md)** - All conceptual documentation
-- **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)** - FP practices in this repository
-- **[Implementation Workflow](../../../../governance/development/workflow/implementation.md)** - TDD in development process
-- **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Testing requirements
+- **[Functional Programming Principles](../../../../repo-governance/development/pattern/functional-programming.md)** - FP practices in this repository
+- **[Implementation Workflow](../../../../repo-governance/development/workflow/implementation.md)** - TDD in development process
+- **[Code Quality Standards](../../../../repo-governance/development/quality/code.md)** - Testing requirements

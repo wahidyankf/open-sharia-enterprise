@@ -4,7 +4,7 @@
 
 ### Why This Work Matters
 
-`governance/` must be readable and actionable by any contributor — human or agent — regardless of which AI coding platform they use. **Prose neutrality in `governance/` is necessary but not sufficient.** AGENTS.md is the canonical root instruction file read natively by OpenCode, OpenAI Codex CLI, and Aider per [`docs/reference/platform-bindings.md`](../../../docs/reference/platform-bindings.md); CLAUDE.md is a thin shim that imports AGENTS.md. Vendor terms in AGENTS.md propagate to every non-Claude agent at session boot, and behavioral parity additionally depends on:
+`repo-governance/` must be readable and actionable by any contributor — human or agent — regardless of which AI coding platform they use. **Prose neutrality in `repo-governance/` is necessary but not sufficient.** AGENTS.md is the canonical root instruction file read natively by OpenCode, OpenAI Codex CLI, and Aider per [`docs/reference/platform-bindings.md`](../../../docs/reference/platform-bindings.md); CLAUDE.md is a thin shim that imports AGENTS.md. Vendor terms in AGENTS.md propagate to every non-Claude agent at session boot, and behavioral parity additionally depends on:
 
 - Binding sync (`.claude/agents/*.md` ↔ `.opencode/agents/*.md`) being current
 - Color-translation map covering every named color used in agent frontmatter
@@ -36,22 +36,22 @@ The agents that consume the artifacts:
 
 ### Success Metrics
 
-- `rhino-cli governance vendor-audit governance/` returns 0 violations (Phase 0 may already show this — judgment call: re-baseline before assuming remediation work remains)
-- `rhino-cli governance vendor-audit AGENTS.md CLAUDE.md` (or equivalent invocation against those two files after convention amendment) returns 0 violations outside `binding-example` fences and "Platform Binding Examples" sections
+- `rhino-cli repo-governance vendor-audit repo-governance/` returns 0 violations (Phase 0 may already show this — judgment call: re-baseline before assuming remediation work remains)
+- `rhino-cli repo-governance vendor-audit AGENTS.md CLAUDE.md` (or equivalent invocation against those two files after convention amendment) returns 0 violations outside `binding-example` fences and "Platform Binding Examples" sections
 - `npm run sync:claude-to-opencode` is a no-op on a freshly-synced tree
 - `.claude/agents/*.md` count matches `.opencode/agents/*.md` count (currently 70 vs 71 — `.opencode` has one orphan `ci-monitor-subagent.md` that `.claude` does not have; this plan will investigate and resolve)
-- Every named color used in `.claude/agents/*.md` frontmatter has a corresponding entry in the color-translation map in `governance/development/agents/ai-agents.md`
-- Every model tier referenced in `.claude/` and `.opencode/` agent frontmatter has a corresponding entry in `governance/development/agents/model-selection.md`
+- Every named color used in `.claude/agents/*.md` frontmatter has a corresponding entry in the color-translation map in `repo-governance/development/agents/ai-agents.md`
+- Every model tier referenced in `.claude/` and `.opencode/` agent frontmatter has a corresponding entry in `repo-governance/development/agents/model-selection.md`
 - Governance layer-test guidance includes a vendor-specific content decision
 - `repo-parity-checker` (green) and `repo-parity-fixer` (yellow) agents exist in `.claude/agents/` and are mirrored to `.opencode/agents/` by `npm run sync:claude-to-opencode`
 - `nx run rhino-cli:validate:cross-vendor-parity` exits 0 on a green tree (all five invariants pass) and is wired into `.husky/pre-push`
-- `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` workflow exists, follows the same iterative check-fix-verify pattern as `plan-quality-gate.md`, and terminates on double-zero on a green tree
+- `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` workflow exists, follows the same iterative check-fix-verify pattern as `plan-quality-gate.md`, and terminates on double-zero on a green tree
 
 > Reasoning basis: The 70 vs 71 count was verified via `find .claude/agents -name "*.md" ! -name "README.md" | wc -l` (70) and `find .opencode/agents -name "*.md" ! -name "README.md" | wc -l` (71) on 2026-05-03; `.opencode` has one extra file (`ci-monitor-subagent.md`) not present in `.claude`. This is an observable fact, not a fabricated metric. All other success metrics are check-or-fail invariants (binary: passes or fails the named command), not estimated targets.
 
 ### Business Scope — In
 
-- Governance files in `governance/` directory (including `ai-agents.md` explicitly)
+- Governance files in `repo-governance/` directory (including `ai-agents.md` explicitly)
 - Benchmark data in `docs/reference/`
 - Layer-test documentation updates
 - Convention amendment of `governance-vendor-independence.md` (Scope section + Exceptions list)
@@ -69,7 +69,7 @@ The agents that consume the artifacts:
 ### Business Risks
 
 1. **Incomplete migration in governance prose**
-   - Mitigation: Run `rhino-cli governance vendor-audit` and require 0 violations before push
+   - Mitigation: Run `rhino-cli repo-governance vendor-audit` and require 0 violations before push
 2. **Convention-amendment cascade** — bringing AGENTS.md / CLAUDE.md into scope retroactively flags content that was previously legal. New violations surface immediately.
    - Mitigation: Convention amendment phase runs BEFORE the AGENTS.md / CLAUDE.md audit phase; remediation is scheduled in the same plan
 3. **Binding-sync drift hidden by no-automated-check** — pre-existing 70 vs 71 count delta; `.opencode` has one orphan `ci-monitor-subagent.md` not present in `.claude`, suggesting a `.claude` agent was deleted after the last sync

@@ -26,7 +26,7 @@ Progressive disclosure of Dart coding standards for agents writing Dart code.
 
 **What this skill does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Quick Standards Reference
 
@@ -226,4 +226,4 @@ await storage.write(key: 'api_token', value: token);
 ## References
 
 - [Dart README](../../../docs/explanation/software-engineering/programming-languages/dart/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

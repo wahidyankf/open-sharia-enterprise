@@ -140,24 +140,24 @@ Update line:
 Rewrite the `## 📜 License` section. Remove FSL competing-use explanation, per-version rolling
 conversion table, and the split-license rationale. Replace with a short MIT section.
 
-### governance/vision/README.md
+### repo-governance/vision/README.md
 
 Find and update the license reference from `Source-available (FSL-1.1-MIT)` back to
 `Open source (MIT)`.
 
-### governance/conventions/structure/licensing.md
+### repo-governance/conventions/structure/licensing.md
 
 This file likely documents the per-directory FSL/MIT split. Rewrite to describe uniform MIT.
 
-### governance/conventions/writing/oss-documentation.md
+### repo-governance/conventions/writing/oss-documentation.md
 
 Remove or update FSL badge examples and FSL template references.
 
-### governance/conventions/writing/readme-quality.md
+### repo-governance/conventions/writing/readme-quality.md
 
 Update example text that shows `license: FSL-1.1-MIT` in YAML to `license: MIT`.
 
-### governance/principles/general/simplicity-over-complexity.md
+### repo-governance/principles/general/simplicity-over-complexity.md
 
 Update YAML code example that shows `license: FSL-1.1-MIT`.
 

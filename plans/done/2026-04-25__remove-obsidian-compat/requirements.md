@@ -4,7 +4,7 @@ This document captures the user stories and acceptance criteria (Gherkin format)
 
 ## Stakeholders
 
-- **Primary**: Repository maintainers who author and edit `docs/`, `governance/`, and `.claude/` content.
+- **Primary**: Repository maintainers who author and edit `docs/`, `repo-governance/`, and `.claude/` content.
 - **Secondary**: AI agents (`docs-maker`, `docs-file-manager`, `docs-link-general-checker`) that read and write docs.
 - **Tertiary**: Contributors browsing `docs/` via GitHub web, VS Code, or any modern markdown viewer.
 
@@ -116,7 +116,7 @@ Feature: All internal links resolve after rename using GitHub-compatible syntax
     Then every target file exists at the linked path
 
   Scenario: Governance index pages link to renamed convention files
-    Given governance/conventions/README.md
+    Given repo-governance/conventions/README.md
     When I follow every link
     Then every target file exists
 
@@ -138,7 +138,7 @@ Feature: All internal links resolve after rename using GitHub-compatible syntax
 ### US-4: Rewrite the File Naming Convention on a markdown + GitHub basis
 
 **As a** contributor learning how to name new files,
-**I want** `governance/conventions/structure/file-naming.md` rewritten with **standard markdown + GitHub compatibility** as its explicit rationale,
+**I want** `repo-governance/conventions/structure/file-naming.md` rewritten with **standard markdown + GitHub compatibility** as its explicit rationale,
 **so that** the rule is justified by where the files are actually rendered (GitHub web, standard markdown viewers) rather than by tools the project no longer uses.
 
 #### Acceptance criteria
@@ -180,7 +180,7 @@ Feature: File Naming Convention anchors on standard markdown + GitHub compatibil
     Then the total is at most 120 lines
 
   Scenario: Dependent docs no longer cite the prefix scheme
-    Given governance/conventions/README.md and docs/README.md
+    Given repo-governance/conventions/README.md and docs/README.md
     When I grep each for "prefix", "ex-go-", "hoto__", "tu__", "re__", "ex__"
     Then zero matches are found
 ```
@@ -188,7 +188,7 @@ Feature: File Naming Convention anchors on standard markdown + GitHub compatibil
 ### US-4b: Refresh the Linking Convention on the same basis
 
 **As a** contributor writing cross-references,
-**I want** `governance/conventions/formatting/linking.md` rewritten so its rationale is **standard markdown + GitHub compatibility** (not cross-compat with Obsidian or any other tool),
+**I want** `repo-governance/conventions/formatting/linking.md` rewritten so its rationale is **standard markdown + GitHub compatibility** (not cross-compat with Obsidian or any other tool),
 **so that** the linking rules are justified by the platforms where links are actually followed.
 
 #### Acceptance criteria
@@ -246,8 +246,8 @@ Feature: Linking Convention anchors on standard markdown + GitHub compatibility
 ```gherkin
 Feature: No Obsidian references in active repository content
   Scenario: Governance files are Obsidian-free
-    Given the governance/ directory
-    When I run "ripgrep -i obsidian governance/"
+    Given the repo-governance/ directory
+    When I run "ripgrep -i obsidian repo-governance/"
     Then zero matches are found
 
   Scenario: .claude agents and skills are Obsidian-free
@@ -256,12 +256,12 @@ Feature: No Obsidian references in active repository content
     Then zero matches are found
 
   Scenario: TAB-for-Obsidian rule is removed
-    Given governance/conventions/writing/conventions.md
+    Given repo-governance/conventions/writing/conventions.md
     When I read the bullet-indentation rule
     Then it no longer states "for Obsidian compatibility"
 
   Scenario: YAML-quoting justification is Obsidian-free
-    Given governance/workflows/meta/workflow-identifier.md
+    Given repo-governance/workflows/meta/workflow-identifier.md
     When I read the YAML Syntax Requirements section
     Then it cites YAML parsers generally, not Obsidian specifically
 
@@ -413,9 +413,9 @@ Feature: All related references are updated in lockstep
     Then every referenced file exists at the specified path
 
   Scenario: Governance docs no longer describe the prefix encoding scheme
-    Given the full governance/ directory
+    Given the full repo-governance/ directory
     When I grep for "hierarchical-prefix", "subdirectory code", "ex-go-", "ex-soen-", "hoto__", or "tu__"
-    Then zero matches are found outside governance/conventions/structure/plans.md (which may retain a "not applicable to plans/" note)
+    Then zero matches are found outside repo-governance/conventions/structure/plans.md (which may retain a "not applicable to plans/" note)
 
   Scenario: Prefix-pattern grep is clean across the repo
     Given the repository after all edits

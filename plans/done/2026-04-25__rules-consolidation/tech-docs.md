@@ -55,15 +55,15 @@ Based on official Anthropic documentation:
 
 The following 7 Skills need "References" sections added (using new gerund names):
 
-| Skill (New Name)                     | Authoritative Source                                                                                                |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `creating-by-example-tutorials`      | `governance/conventions/tutorials/by-example.md`                                                                    |
-| `assessing-criticality-confidence`   | `governance/development/quality/criticality-levels.md`, `governance/development/quality/fixer-confidence-levels.md` |
-| `developing-ayokoding-content`       | `governance/conventions/hugo/ayokoding.md`                                                                          |
-| `validating-factual-accuracy`        | `governance/conventions/writing/factual-validation.md`                                                              |
-| `writing-gherkin-criteria`           | `governance/development/infra/acceptance-criteria.md`                                                               |
-| `developing-ose-content`             | `governance/conventions/hugo/ose-platform.md`                                                                       |
-| `practicing-trunk-based-development` | `governance/development/workflow/trunk-based-development.md`                                                        |
+| Skill (New Name)                     | Authoritative Source                                                                                                          |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `creating-by-example-tutorials`      | `repo-governance/conventions/tutorials/by-example.md`                                                                         |
+| `assessing-criticality-confidence`   | `repo-governance/development/quality/criticality-levels.md`, `repo-governance/development/quality/fixer-confidence-levels.md` |
+| `developing-ayokoding-content`       | `repo-governance/conventions/hugo/ayokoding.md`                                                                               |
+| `validating-factual-accuracy`        | `repo-governance/conventions/writing/factual-validation.md`                                                                   |
+| `writing-gherkin-criteria`           | `repo-governance/development/infra/acceptance-criteria.md`                                                                    |
+| `developing-ose-content`             | `repo-governance/conventions/hugo/ose-platform.md`                                                                            |
+| `practicing-trunk-based-development` | `repo-governance/development/workflow/trunk-based-development.md`                                                             |
 
 Skills with References (3, will be renamed): `creating-accessible-diagrams`, `applying-maker-checker-fixer`, `understanding-repository-architecture`
 
@@ -493,7 +493,7 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 
 ## Related Documentation
 
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
-- [Convention Writing Convention](../../../governance/conventions/writing/quality.md)
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)
+- [Convention Writing Convention](../../../repo-governance/conventions/writing/quality.md)
+- [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
 - [Skills Directory](../../.././.claude/skills/README.md)

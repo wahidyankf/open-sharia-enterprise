@@ -16,8 +16,8 @@ Provision before execution (run from repo root):
 claude --worktree rhino-cli-dry-and-exhaustive-enums
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
@@ -27,7 +27,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Provision: `cd ose-public && claude --worktree rhino-cli-dry-and-exhaustive-enums`
     (creates `worktrees/rhino-cli-dry-and-exhaustive-enums/` in repo root)
   - Initialize toolchain (in worktree root): `npm install && npm run doctor -- --fix`
-    (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md))
+    (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md))
   - Verify baseline: `nx run rhino-cli:test:quick` — exits 0 before any changes are made
 
   <!-- implementation-notes
@@ -57,7 +57,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - `ddd bc` (no-finding, with-finding, env-downgrade)
   - `ddd ul` (same three cases)
   - `env backup`, `env restore`, `env init`
-  - `governance vendor-audit`
+  - `repo-governance vendor-audit`
   - `specs validate-tree`, `validate-counts`, `validate-links`,
     `validate-adoption`
   - `workflows validate-naming`

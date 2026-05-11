@@ -145,7 +145,7 @@ property/fuzz (fast-check for invariants over generated inputs). Pick the cheape
 captures the behavior.
 
 **Canonical reference**:
-[Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 
 ## Related Skills
 
@@ -155,4 +155,4 @@ captures the behavior.
 ## References
 
 - [TypeScript README](../../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

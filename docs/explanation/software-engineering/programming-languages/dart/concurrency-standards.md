@@ -27,7 +27,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to handle concurrency in THIS codebase, not WHAT async/await is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -541,9 +541,9 @@ Concurrency standards are enforced through:
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ---
 

@@ -433,7 +433,7 @@ File discovery mirrors `docs validate-links`:
 - `--staged-only`: `git diff --cached --name-only --diff-filter=ACMR` filtered to `*.md`
 - `--changed-only`: `git diff --name-only @{u}..HEAD` filtered to `*.md`; if no
   upstream (`@{u}` fails), falls back to scanning default directories
-- No flags: scan default directories (`docs/`, `governance/`, `.claude/`, root `*.md`)
+- No flags: scan default directories (`docs/`, `repo-governance/`, `.claude/`, root `*.md`)
 - Positional args: scan the given paths (files or directories)
 
 ---
@@ -447,7 +447,7 @@ File discovery mirrors `docs validate-links`:
   "inputs": [
     "{projectRoot}/**/*.go",
     "{workspaceRoot}/docs/**/*.md",
-    "{workspaceRoot}/governance/**/*.md",
+    "{workspaceRoot}/repo-governance/**/*.md",
     "{workspaceRoot}/.claude/**/*.md",
     "{workspaceRoot}/*.md"
   ],
@@ -474,7 +474,7 @@ if [ -n "$RANGE" ]; then
   if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agent/)'; then
     npx nx run rhino-cli:validate:naming-agents
   fi
-  if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
+  if echo "$CHANGED" | grep -qE '^repo-governance/workflows/'; then
     npx nx run rhino-cli:validate:naming-workflows
   fi
   # ADD THIS BLOCK:
@@ -505,14 +505,14 @@ above for the complete list (`internal/mermaid/types.go`, `extractor.go`, `parse
 
 **Existing files modified**:
 
-| File                                            | Change                                          |
-| ----------------------------------------------- | ----------------------------------------------- |
-| `apps/rhino-cli/project.json`                   | Add `validate:mermaid` Nx target                |
-| `apps/rhino-cli/cmd/testable.go`                | Add `docsValidateMermaidFn` delegation variable |
-| `.husky/pre-push`                               | Add conditional mermaid validation block        |
-| `apps/rhino-cli/README.md`                      | Document new `validate-mermaid` subcommand      |
-| `specs/apps/rhino/cli/gherkin/README.md`        | Add row to feature-file table                   |
-| `governance/conventions/formatting/diagrams.md` | Add reference to new CLI validator              |
+| File                                                 | Change                                          |
+| ---------------------------------------------------- | ----------------------------------------------- |
+| `apps/rhino-cli/project.json`                        | Add `validate:mermaid` Nx target                |
+| `apps/rhino-cli/cmd/testable.go`                     | Add `docsValidateMermaidFn` delegation variable |
+| `.husky/pre-push`                                    | Add conditional mermaid validation block        |
+| `apps/rhino-cli/README.md`                           | Document new `validate-mermaid` subcommand      |
+| `specs/apps/rhino/cli/gherkin/README.md`             | Add row to feature-file table                   |
+| `repo-governance/conventions/formatting/diagrams.md` | Add reference to new CLI validator              |
 
 ---
 

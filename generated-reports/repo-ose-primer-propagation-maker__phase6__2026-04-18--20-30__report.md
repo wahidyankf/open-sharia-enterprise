@@ -4,7 +4,7 @@ mode: dry-run
 invoked-at: 2026-04-18 20:30 +0700
 ose-public-sha: ca1cf57eb3233891b82d68ae5943a1944cde449a
 ose-primer-sha: 8823126c2c3171623360c38ee8c27d401128f58a
-classifier-sha: see governance/conventions/structure/ose-primer-sync.md at ose-public-sha
+classifier-sha: see repo-governance/conventions/structure/ose-primer-sync.md at ose-public-sha
 report-uuid-chain: phase6-smoke
 status: PRE_FLIGHT_ABORT
 ---

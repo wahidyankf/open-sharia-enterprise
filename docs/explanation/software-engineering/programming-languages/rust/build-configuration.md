@@ -26,7 +26,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Rust tutorial.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -345,9 +345,9 @@ cargo deny check
 
 **Software Engineering Principles**:
 
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ---
 

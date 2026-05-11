@@ -138,10 +138,10 @@ Feature: .opencode mirror matches .claude source
 ### AC7: Agent-naming governance convention codified
 
 ```gherkin
-Feature: Agent naming rule lives in governance/ as an enforceable convention
+Feature: Agent naming rule lives in repo-governance/ as an enforceable convention
   Scenario: Convention file exists with required content
     Given the governance tree
-    When I read "governance/conventions/structure/agent-naming.md"
+    When I read "repo-governance/conventions/structure/agent-naming.md"
     Then it exists with YAML frontmatter (title, description, category, tags, created, updated)
     And it states the rule "<scope>(-<qualifier>)*-<role>"
     And it enumerates all seven roles (maker, checker, fixer, dev, deployer, executor, manager) with semantics and examples
@@ -149,14 +149,14 @@ Feature: Agent naming rule lives in governance/ as an enforceable convention
     And it states "zero exceptions" explicitly
 
   Scenario: Convention index links to new doc
-    Given "governance/conventions/structure/README.md"
+    Given "repo-governance/conventions/structure/README.md"
     When I read the file
     Then it lists "agent-naming.md" with a one-line description
 
   Scenario: Cross-references wired up
     Given the convention file exists
     When I read ".claude/agents/README.md"
-    Then it links to "governance/conventions/structure/agent-naming.md" as the normative source
+    Then it links to "repo-governance/conventions/structure/agent-naming.md" as the normative source
     And "CLAUDE.md" (root) references the convention in the AI Agents section
 
   Scenario: repo-rules-checker recognises the convention
@@ -172,19 +172,19 @@ Feature: Agent naming rule lives in governance/ as an enforceable convention
 Feature: docs-quality-gate workflow file aligns with its name field
   Scenario: File exists under new path
     Given the repository contains workflow sources
-    When I list governance/workflows/docs/
+    When I list repo-governance/workflows/docs/
     Then "docs-quality-gate.md" exists
     And "quality-gate.md" does not exist in that directory
 
   Scenario: Frontmatter name field matches filename
-    Given the workflow file "governance/workflows/docs/docs-quality-gate.md"
+    Given the workflow file "repo-governance/workflows/docs/docs-quality-gate.md"
     When I read its YAML frontmatter
     Then the "name" field equals "docs-quality-gate"
 
   Scenario: No live references to old path
     Given all markdown files outside plans/done/, generated-reports/,
       AND plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/
-    When I search for "governance/workflows/docs/quality-gate.md"
+    When I search for "repo-governance/workflows/docs/quality-gate.md"
     Then zero matches are returned
 ```
 
@@ -193,19 +193,19 @@ Feature: docs-quality-gate workflow file aligns with its name field
 ```gherkin
 Feature: repo-rules-quality-gate exists under new directory and name
   Scenario: Directory renamed
-    Given governance/workflows/
+    Given repo-governance/workflows/
     When I list its child directories
     Then "repo" exists
     And "repository" does not exist
 
   Scenario: Workflow file at new path with new name
-    Given governance/workflows/repo/
+    Given repo-governance/workflows/repo/
     When I list it
     Then "repo-rules-quality-gate.md" exists
-    And no file named "repository-rules-validation.md" or "repository-rules-quality-gate.md" exists anywhere under governance/workflows/
+    And no file named "repository-rules-validation.md" or "repository-rules-quality-gate.md" exists anywhere under repo-governance/workflows/
 
   Scenario: Frontmatter name field updated
-    Given the workflow file "governance/workflows/repo/repo-rules-quality-gate.md"
+    Given the workflow file "repo-governance/workflows/repo/repo-rules-quality-gate.md"
     When I read its YAML frontmatter
     Then the "name" field equals "repo-rules-quality-gate"
 
@@ -226,13 +226,13 @@ Feature: repo-rules-quality-gate exists under new directory and name
 ```gherkin
 Feature: specs-quality-gate exists under new name
   Scenario: File renamed
-    Given governance/workflows/specs/
+    Given repo-governance/workflows/specs/
     When I list it
     Then "specs-quality-gate.md" exists
     And "specs-validation.md" does not exist
 
   Scenario: Frontmatter name field updated
-    Given the workflow file "governance/workflows/specs/specs-quality-gate.md"
+    Given the workflow file "repo-governance/workflows/specs/specs-quality-gate.md"
     When I read its YAML frontmatter
     Then the "name" field equals "specs-quality-gate"
 
@@ -248,25 +248,25 @@ Feature: specs-quality-gate exists under new name
 ```gherkin
 Feature: Workflow naming rule and type vocabulary are documented
   Scenario: README defines unified rule
-    Given "governance/workflows/README.md"
+    Given "repo-governance/workflows/README.md"
     When I read the file
     Then it contains a section titled "Naming Rule" or equivalent
     And it states the pattern "<scope>(-<qualifier>)*-<type>"
 
   Scenario: README enumerates all three types with semantics
-    Given "governance/workflows/README.md"
+    Given "repo-governance/workflows/README.md"
     When I read the "Type Vocabulary" section
     Then it defines each of: quality-gate, execution, setup
     And each type has a one-line semantic definition
     And each type has at least one example workflow from the repo
 
   Scenario: README documents meta/ reference exception
-    Given "governance/workflows/README.md"
+    Given "repo-governance/workflows/README.md"
     When I read the "Type Vocabulary" section
-    Then it explicitly notes that files under "governance/workflows/meta/" are reference documentation about the workflow system, not workflows, and are exempt from the type suffix rule
+    Then it explicitly notes that files under "repo-governance/workflows/meta/" are reference documentation about the workflow system, not workflows, and are exempt from the type suffix rule
 
   Scenario: No workflow violates the rule
-    Given every file under governance/workflows/ matching "*.md" except README.md and files under meta/
+    Given every file under repo-governance/workflows/ matching "*.md" except README.md and files under meta/
     When I parse the filename as "<scope>(-<qualifier>)*-<type>"
     Then the trailing type segment is one of the three defined types
     And no filename contains a type suffix outside the vocabulary
@@ -275,10 +275,10 @@ Feature: Workflow naming rule and type vocabulary are documented
 ### AC12: Workflow-naming governance convention codified
 
 ```gherkin
-Feature: Workflow naming rule lives in governance/ as an enforceable convention
+Feature: Workflow naming rule lives in repo-governance/ as an enforceable convention
   Scenario: Convention file exists with required content
     Given the governance tree
-    When I read "governance/conventions/structure/workflow-naming.md"
+    When I read "repo-governance/conventions/structure/workflow-naming.md"
     Then it exists with YAML frontmatter (title, description, category, tags, created, updated)
     And it states the rule "<scope>(-<qualifier>)*-<type>"
     And it enumerates all three types (quality-gate, execution, setup) with semantics and examples
@@ -288,13 +288,13 @@ Feature: Workflow naming rule lives in governance/ as an enforceable convention
 
   Scenario: Convention indices updated
     Given the convention file exists
-    When I read "governance/conventions/structure/README.md" and "governance/conventions/README.md"
+    When I read "repo-governance/conventions/structure/README.md" and "repo-governance/conventions/README.md"
     Then both index it with a one-line description
 
   Scenario: Cross-references wired up
     Given the convention file exists
-    When I read "governance/workflows/README.md"
-    Then it links to "governance/conventions/structure/workflow-naming.md" as the normative source
+    When I read "repo-governance/workflows/README.md"
+    Then it links to "repo-governance/conventions/structure/workflow-naming.md" as the normative source
     And "CLAUDE.md" (root) references the convention
 
   Scenario: repo-rules-checker recognises the convention
@@ -340,13 +340,13 @@ Feature: rhino-cli enforces naming rules mechanically
     And stdout reports the number of workflow files checked (excluding README.md and meta/)
 
   Scenario: workflows validate-naming catches type-suffix violations
-    Given a test fixture with a file named "governance/workflows/specs/specs-thing.md"
+    Given a test fixture with a file named "repo-governance/workflows/specs/specs-thing.md"
     When I run "rhino-cli workflows validate-naming"
     Then the command exits non-zero
     And stderr names the file and the invalid type suffix
 
   Scenario: workflows validate-naming exempts meta/ files
-    Given "governance/workflows/meta/execution-modes.md" exists (no type suffix)
+    Given "repo-governance/workflows/meta/execution-modes.md" exists (no type suffix)
     When I run "rhino-cli workflows validate-naming"
     Then the command exits 0 and does not flag the meta/ file
 
@@ -373,7 +373,7 @@ Feature: Naming validators run automatically at push and PR time
     And any violation aborts the push with a clear error
 
   Scenario: pre-push hook runs validators when workflows staged
-    Given a commit touching "governance/workflows/repo/repo-rules-quality-gate.md"
+    Given a commit touching "repo-governance/workflows/repo/repo-rules-quality-gate.md"
     When I run "git push"
     Then "rhino-cli workflows validate-naming" is invoked
     And any violation aborts the push
@@ -415,5 +415,5 @@ Feature: Repo quality gates hold after renames
 - Renaming `docs-link-checker` further to reflect broader-than-docs scope.
 - Adding new agents, workflows, or deleting existing ones.
 - Touching agent or workflow bodies beyond frontmatter `name` and self-references.
-- Renaming `governance/workflows/meta/*.md` (reference docs, not workflows).
+- Renaming `repo-governance/workflows/meta/*.md` (reference docs, not workflows).
 - Collapsing workflow directory structure (e.g., moving files between `ci/`, `docs/`, etc.).

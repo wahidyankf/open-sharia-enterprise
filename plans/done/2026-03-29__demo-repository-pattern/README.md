@@ -21,7 +21,7 @@ This plan introduces proper repository abstractions in the 4 apps that lack them
 All work is committed directly to `main` (Trunk Based Development). One commit per app, in phase
 order. No feature branches required.
 
-See [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md).
+See [Trunk Based Development Convention](../../../repo-governance/development/workflow/trunk-based-development.md).
 
 ## Quick Links
 

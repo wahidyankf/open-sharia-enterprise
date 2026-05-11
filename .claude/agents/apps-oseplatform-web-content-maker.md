@@ -26,7 +26,7 @@ Create landing page content for oseplatform-web (Next.js 16 with tRPC, English-o
 
 ## Reference
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
 - Skills: `apps-oseplatform-web-developing-content` (PaperMod patterns, date structure), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -38,7 +38,7 @@ Create landing page content for oseplatform-web (Next.js 16 with tRPC, English-o
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -47,5 +47,5 @@ Create landing page content for oseplatform-web (Next.js 16 with tRPC, English-o
 
 **Related Conventions**:
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
-- [Content Quality Principles](../../governance/conventions/writing/quality.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)

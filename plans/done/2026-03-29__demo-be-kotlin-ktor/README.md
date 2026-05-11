@@ -102,14 +102,14 @@ Kotlin + Ktor reimplementation of the demo backend REST API — a functional twi
 
 ## Files to Update
 
-| File                                         | Change                                                                   |
-| -------------------------------------------- | ------------------------------------------------------------------------ |
-| `CLAUDE.md`                                  | Add a-demo-be-kotlin-ktor to Current Apps list, add Kotlin coverage info |
-| `README.md`                                  | Add a-demo-be-kotlin-ktor badge and description in demo apps section     |
-| `specs/apps/a-demo/be/README.md`             | Add Kotlin/Ktor row to Implementations table                             |
-| `apps/a-demo-be-e2e/project.json`            | Add `a-demo-be-kotlin-ktor` to `implicitDependencies`                    |
-| `.github/workflows/main-ci.yml`              | Add JDK setup (already present) + Kover XML coverage upload              |
-| `governance/development/infra/nx-targets.md` | Add `platform:ktor` to tag vocabulary, add Kotlin row                    |
+| File                                              | Change                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------ |
+| `CLAUDE.md`                                       | Add a-demo-be-kotlin-ktor to Current Apps list, add Kotlin coverage info |
+| `README.md`                                       | Add a-demo-be-kotlin-ktor badge and description in demo apps section     |
+| `specs/apps/a-demo/be/README.md`                  | Add Kotlin/Ktor row to Implementations table                             |
+| `apps/a-demo-be-e2e/project.json`                 | Add `a-demo-be-kotlin-ktor` to `implicitDependencies`                    |
+| `.github/workflows/main-ci.yml`                   | Add JDK setup (already present) + Kover XML coverage upload              |
+| `repo-governance/development/infra/nx-targets.md` | Add `platform:ktor` to tag vocabulary, add Kotlin row                    |
 
 ## See Also
 

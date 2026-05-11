@@ -26,7 +26,7 @@ created: 2026-02-08
 
 **This document is OSE Platform-specific**, not a Playwright tutorial. We define HOW to select elements in THIS codebase, not WHAT Playwright selectors are.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -38,7 +38,7 @@ This document defines **authoritative selector standards** for Playwright end-to
 
 ## Software Engineering Principles
 
-These standards enforce software engineering principles from `governance/principles/`:
+These standards enforce software engineering principles from `repo-governance/principles/`:
 
 ### 1. Accessibility First
 
@@ -102,7 +102,7 @@ test("calculates zakat", async ({ page }) => {
 
 **Why it fails**: CSS class selectors don't verify accessibility, break easily on styling changes, and don't encourage semantic HTML.
 
-**See**: [Accessibility First Principle](../../../../../../governance/principles/content/accessibility-first.md)
+**See**: [Accessibility First Principle](../../../../../../repo-governance/principles/content/accessibility-first.md)
 
 ### 2. Explicit Over Implicit
 
@@ -161,7 +161,7 @@ export class MurabahaContractPage {
 }
 ```
 
-**See**: [Explicit Over Implicit Principle](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+**See**: [Explicit Over Implicit Principle](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ## Selector Strategy Priority
 
@@ -532,8 +532,8 @@ form.getByRole("textbox").nth(2); // Third textbox within specific form
 
 **Principles**:
 
-- [Accessibility First](../../../../../../governance/principles/content/accessibility-first.md)
-- [Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Accessibility First](../../../../../../repo-governance/principles/content/accessibility-first.md)
+- [Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ---
 

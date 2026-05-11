@@ -1821,15 +1821,15 @@ Production patterns using Spring Framework idioms:
 
 ### Development Practices
 
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD practices
 
 ### OSE Platform Principles
 
-- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Configuration clarity
-- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Spring IoC automation
-- **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)** - Immutable bean properties
-- **[Pure Functions](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Functional bean patterns
+- **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Configuration clarity
+- **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Spring IoC automation
+- **[Immutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)** - Immutable bean properties
+- **[Pure Functions](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Functional bean patterns
 
 ## See Also
 

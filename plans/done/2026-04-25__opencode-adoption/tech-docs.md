@@ -729,7 +729,7 @@ done
 ## Project Overview
 
 Open Sharia Enterprise - democratizing Shariah-compliant enterprise through
-open-source solutions. See [Vision](governance/vision/ex-vi__open-sharia-enterprise.md).
+open-source solutions. See [Vision](repo-governance/vision/ex-vi__open-sharia-enterprise.md).
 
 ## Quick Reference
 
@@ -749,7 +749,7 @@ Six-layer governance hierarchy:
 5. **Agents** (Layer 4) - AI task executors (40+ agents)
 6. **Workflows** (Layer 5) - Multi-step processes
 
-See [Repository Architecture](governance/repository-governance-architecture.md).
+See [Repository Architecture](repo-governance/repository-governance-architecture.md).
 
 ## Key Conventions
 
@@ -829,7 +829,7 @@ development practices, agent definitions, and workflow patterns.
     "edit": "allow"
   },
 
-  "instructions": ["AGENTS.md", "governance/conventions/README.md", "governance/development/README.md"],
+  "instructions": ["AGENTS.md", "repo-governance/conventions/README.md", "repo-governance/development/README.md"],
 
   "tui": {
     "scroll_speed": 3,

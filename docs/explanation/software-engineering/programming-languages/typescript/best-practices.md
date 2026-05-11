@@ -16,7 +16,7 @@ related:
   - ./anti-patterns.md
   - ./type-safety.md
   - ../../../reference/monorepo-structure.md
-  - ../../../../../governance/development/quality/code.md
+  - ../../../../../repo-governance/development/quality/code.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -54,7 +54,7 @@ This document provides comprehensive best practices for TypeScript development i
 
 ## Alignment with Software Engineering Principles
 
-TypeScript development follows the the software engineering principles from `governance/principles/software-engineering/`:
+TypeScript development follows the the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
@@ -405,7 +405,7 @@ class ZakatCalculator {
 
 **Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 10,000 SAR wealth with 5,000 SAR nisab - always get 250 SAR (2.5%). Scholars and users can independently verify calculations match Shariah requirements. No hidden side effects that could manipulate results.
 
-**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+**See Also**: [Pure Functions Principle](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ### 5. Reproducibility First
 
@@ -498,7 +498,7 @@ CMD ["npm", "start"]
 
 **Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build produces identical binaries with identical behavior.
 
-**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See Also**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 
@@ -818,7 +818,7 @@ class ZakatCalculator {
 
 ## Automation Over Manual
 
-TypeScript development should leverage automation to reduce manual, error-prone tasks. This aligns with the [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) principle.
+TypeScript development should leverage automation to reduce manual, error-prone tasks. This aligns with the [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md) principle.
 
 ### Build Automation
 
@@ -957,7 +957,7 @@ jobs:
 
 ## Reproducibility First
 
-TypeScript development should ensure reproducible builds across environments. This aligns with the [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md) principle.
+TypeScript development should ensure reproducible builds across environments. This aligns with the [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md) principle.
 
 ### Version Pinning
 
@@ -2336,8 +2336,8 @@ class DonationDistributionService {
 ### Development Practices
 
 - **[Test-Driven Development](../../development/test-driven-development-tdd/README.md)** - TDD with TypeScript
-- **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
-- **[Code Quality Standards](../../../../../governance/development/quality/code.md)** - Platform standards
+- **[Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
+- **[Code Quality Standards](../../../../../repo-governance/development/quality/code.md)** - Platform standards
 
 ### Architecture
 

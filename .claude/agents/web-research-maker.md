@@ -50,7 +50,7 @@ When you receive a research query:
 
 2. **Check the repo first**: Before hitting the web, use `Read`, `Grep`, and `Glob` to see if the repo already contains the answer. Priority paths:
    - `docs/` (Diátaxis-structured documentation)
-   - `governance/conventions/`, `governance/development/`, `governance/principles/`
+   - `repo-governance/conventions/`, `repo-governance/development/`, `repo-governance/principles/`
    - `apps/*/README.md`
    - `specs/apps/*/gherkin/` for behaviour specs
    - `plans/in-progress/`, `plans/done/` for recent project context
@@ -209,11 +209,11 @@ each with a confidence tag.
 
 ## Governance Alignment
 
-- **[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md)** — the authoritative source of the rule that makes this agent the default primitive for public-web research across the repository. This agent is the named target of that delegation rule; every agent with `WebSearch`/`WebFetch` tools delegates here above the threshold.
-- **[Documentation First](../../governance/principles/content/documentation-first.md)** — cite every claim and link primary sources.
-- **[Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md)** — confidence tags make certainty explicit rather than implied.
-- **[Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md)** — structured output, no free-form essays.
-- **[Accessibility First](../../governance/principles/content/accessibility-first.md)** — tables and headings use proper hierarchy; no colour-only signalling.
+- **[Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md)** — the authoritative source of the rule that makes this agent the default primitive for public-web research across the repository. This agent is the named target of that delegation rule; every agent with `WebSearch`/`WebFetch` tools delegates here above the threshold.
+- **[Documentation First](../../repo-governance/principles/content/documentation-first.md)** — cite every claim and link primary sources.
+- **[Explicit Over Implicit](../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** — confidence tags make certainty explicit rather than implied.
+- **[Simplicity Over Complexity](../../repo-governance/principles/general/simplicity-over-complexity.md)** — structured output, no free-form essays.
+- **[Accessibility First](../../repo-governance/principles/content/accessibility-first.md)** — tables and headings use proper hierarchy; no colour-only signalling.
 
 ## References
 

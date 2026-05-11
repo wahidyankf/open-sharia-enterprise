@@ -58,7 +58,7 @@ the validated scope.
 8. **C4 README file listings** — Update to match actual diagram files present
 9. **Cross-folder stale references** — Update paths between listed folders
 10. **Directory structure violations** — Move feature files to correct nesting per
-    [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md)
+    [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md)
     (via `git mv`)
 11. **Allowlist gate findings (HIGH)** — When `nx run rhino-cli:validate:specs-counts` reports a
     `HIGH: missing required folder: <folder>` finding, create the folder with a `README.md` and a
@@ -193,11 +193,11 @@ The following files were modified. The next checker run uses this list to enable
 
 ## Reference Documentation
 
-- [App README vs Specs Convention](../../governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
-- [Specs Directory Structure Convention](../../governance/conventions/structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules
+- [App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) — combined convention: content split rule, PM-readability contract, BDD/DDD/Contracts adoption
+- [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) — canonical path patterns and domain subdirectory rules
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
-- [Agent Workflow Orchestration](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
-- [Specs Validation Workflow](../../governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
+- [Agent Workflow Orchestration](../../repo-governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
+- [Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-checker](./specs-checker.md), [specs-maker](./specs-maker.md)

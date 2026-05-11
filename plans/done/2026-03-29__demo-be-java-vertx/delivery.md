@@ -361,7 +361,7 @@ Execute phases in order. Each phase produces a working, committable state.
   - Add Java/Vert.x row to Implementations table
 - [x] Update `apps/a-demo-be-e2e/project.json`:
   - Add `a-demo-be-java-vertx` to `implicitDependencies`
-- [x] Update `governance/development/infra/nx-targets.md`:
+- [x] Update `repo-governance/development/infra/nx-targets.md`:
   - Add `platform:vertx` to platform vocabulary table
   - Add a-demo-be-java-vertx row to app registry
 - [x] Update `plans/in-progress/README.md`:

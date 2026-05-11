@@ -33,7 +33,7 @@ created: 2026-02-04
 
 **This document is OSE Platform-specific**, not a Go tutorial. We define HOW to apply Go in THIS codebase, not WHAT Go is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -85,7 +85,7 @@ This document covers Go 1.18-1.26 with emphasis on:
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles from `governance/principles/software-engineering/`:
+These standards enforce the the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
@@ -135,7 +135,7 @@ func TestCalculateZakat_WealthAboveNisab_Returns2Point5Percent(t *testing.T) {
 }
 ```
 
-**See**: [Automation Over Manual Principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+**See**: [Automation Over Manual Principle](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ### 2. Explicit Over Implicit
 
@@ -192,7 +192,7 @@ func CreateMurabahaContract(
 }
 ```
 
-**See**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+**See**: [Explicit Over Implicit Principle](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ### 3. Immutability Over Mutability
 
@@ -255,7 +255,7 @@ func CorrectZakatTransaction(
 }
 ```
 
-**See**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+**See**: [Immutability Principle](../../../../../repo-governance/principles/software-engineering/immutability.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -316,7 +316,7 @@ func TestCalculateZakat(t *testing.T) {
 }
 ```
 
-**See**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+**See**: [Pure Functions Principle](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ### 5. Reproducibility First
 
@@ -375,7 +375,7 @@ EXPOSE 8080
 CMD ["./zakat-service"]
 ```
 
-**See**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Part 1: Core Idioms
 
@@ -1000,7 +1000,7 @@ docs-validate-links.go
 | Unit test        | `{domain}_{action}_test.go`             | `agents_validate_sync_test.go`             |
 | Integration test | `{domain}_{action}.integration_test.go` | `agents_validate_sync.integration_test.go` |
 
-**See**: [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) for how this maps to Gherkin feature file names (which use hyphens) and `@tag` identifiers.
+**See**: [BDD Spec-to-Test Mapping Convention](../../../../../repo-governance/development/infra/bdd-spec-test-mapping.md) for how this maps to Gherkin feature file names (which use hyphens) and `@tag` identifiers.
 
 #### Constants
 
@@ -1404,11 +1404,11 @@ These standards are enforced through:
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

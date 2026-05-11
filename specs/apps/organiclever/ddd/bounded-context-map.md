@@ -290,5 +290,5 @@ The capture group lets rules distinguish **own-context layer crossings** (always
 - [DDD adoption tech-docs](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
 - [DDD adoption delivery checklist](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/delivery.md)
 - [DDD Standards (platform-wide)](../../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
-- [Three-Level Testing Standard](../../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../../governance/development/workflow/test-driven-development.md)
+- [Three-Level Testing Standard](../../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../../repo-governance/development/workflow/test-driven-development.md)

@@ -48,7 +48,7 @@ Drive upstream-to-downstream content flow with three distinct modes. Every mode 
 ### All modes
 
 1. Run pre-flight per the shared skill's `reference/clone-management.md`.
-2. Parse the classifier in `governance/conventions/structure/ose-primer-sync.md`.
+2. Parse the classifier in `repo-governance/conventions/structure/ose-primer-sync.md`.
 3. Confirm mode-specific preconditions (see below).
 4. Emit the mode-specific report at `generated-reports/`.
 
@@ -95,7 +95,7 @@ This agent MUST NOT:
 
 ## Safety invariants
 
-1. **No `neither` propagation**: The following path prefixes MUST NEVER appear in the propagate-findings list: `apps/organiclever-`, `apps/ayokoding-`, `apps/oseplatform-`, `specs/apps/organiclever/`, `specs/apps/ayokoding/`, `specs/apps/oseplatform/`, `apps/a-demo-*` (post-extraction), `specs/apps/a-demo/`, `apps-labs/`, `plans/**`, `generated-reports/**`, `local-temp/**`, `generated-socials/**`, `archived/**`, `infra/**`, `ROADMAP.md`, `LICENSE`, `LICENSING-NOTICE.md`, `open-sharia-enterprise.sln`, `governance/conventions/structure/licensing.md`, `governance/conventions/structure/ose-primer-sync.md`, `governance/workflows/repo/repo-ose-primer-*.md`, `.claude/agents/repo-ose-primer-*.md`, `.claude/skills/repo-syncing-with-ose-primer/`, `.claude/agents/apps-*.md`, `.claude/skills/apps-*/`, `docs/reference/related-repositories.md`, `docs/metadata/**`, `.claude/agents/social-*.md`. If any such path surfaces in findings, that is a Skill-level defect, not a judgement call.
+1. **No `neither` propagation**: The following path prefixes MUST NEVER appear in the propagate-findings list: `apps/organiclever-`, `apps/ayokoding-`, `apps/oseplatform-`, `specs/apps/organiclever/`, `specs/apps/ayokoding/`, `specs/apps/oseplatform/`, `apps/a-demo-*` (post-extraction), `specs/apps/a-demo/`, `apps-labs/`, `plans/**`, `generated-reports/**`, `local-temp/**`, `generated-socials/**`, `archived/**`, `infra/**`, `ROADMAP.md`, `LICENSE`, `LICENSING-NOTICE.md`, `open-sharia-enterprise.sln`, `repo-governance/conventions/structure/licensing.md`, `repo-governance/conventions/structure/ose-primer-sync.md`, `repo-governance/workflows/repo/repo-ose-primer-*.md`, `.claude/agents/repo-ose-primer-*.md`, `.claude/skills/repo-syncing-with-ose-primer/`, `.claude/agents/apps-*.md`, `.claude/skills/apps-*/`, `docs/reference/related-repositories.md`, `docs/metadata/**`, `.claude/agents/social-*.md`. If any such path surfaces in findings, that is a Skill-level defect, not a judgement call.
 2. **Dry-run default**: `mode=dry-run` is the default. Operators opt into `apply` or `parity-check` explicitly.
 3. **Clean-tree precondition**: Pre-flight aborts if either clone's working tree is dirty (except `apply` mode, which tolerates the worktree path being populated — the main tree is still required clean).
 4. **Transform-gap abstention**: When a transform cannot handle a file cleanly, the agent reports the file under Transform-gap and emits no finding for it.
@@ -117,8 +117,8 @@ The agent consumes the `repo-syncing-with-ose-primer` skill for all procedures. 
 
 ## Related Documents
 
-- [ose-primer sync convention](../../governance/conventions/structure/ose-primer-sync.md) — classifier + safety invariants.
+- [ose-primer sync convention](../../repo-governance/conventions/structure/ose-primer-sync.md) — classifier + safety invariants.
 - Shared skill `repo-syncing-with-ose-primer` (at `.claude/skills/repo-syncing-with-ose-primer/SKILL.md`) — classifier parsing, clone management, transforms, report schemas.
-- [Sync execution workflow](../../governance/workflows/repo/repo-ose-primer-sync-execution.md) — orchestrator for `dry-run` and `apply`.
-- [Extraction execution workflow](../../governance/workflows/repo/repo-ose-primer-extraction-execution.md) — orchestrator invoking `parity-check` and `apply` modes during Phase 7 and Phase 8.
+- [Sync execution workflow](../../repo-governance/workflows/repo/repo-ose-primer-sync-execution.md) — orchestrator for `dry-run` and `apply`.
+- [Extraction execution workflow](../../repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md) — orchestrator invoking `parity-check` and `apply` modes during Phase 7 and Phase 8.
 - [Adoption maker](./repo-ose-primer-adoption-maker.md) — counterpart agent handling the reverse direction.

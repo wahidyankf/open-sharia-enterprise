@@ -16,7 +16,7 @@ related:
   - ./type-safety.md
   - ./interfaces-and-types.md
   - ./anti-patterns.md
-  - ../../../../../governance/development/pattern/functional-programming.md
+  - ../../../../../repo-governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -1482,8 +1482,8 @@ function handlePayment(payment: Payment): void {
 
 ### Development Practices
 
-- **[Functional Programming](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear configuration
+- **[Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Clear configuration
 
 ---
 

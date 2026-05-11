@@ -43,4 +43,4 @@ the testing matrix.
 - [`../README.md`](../README.md) — top-level oseplatform specs
 - [`../components/`](../components/README.md) — C4 L3 component diagrams (per perspective)
 - [`../behavior/`](../behavior/README.md) — Gherkin scenarios (per perspective)
-- [Three-Level Testing Standard](../../../../governance/development/quality/three-level-testing-standard.md)
+- [Three-Level Testing Standard](../../../../repo-governance/development/quality/three-level-testing-standard.md)

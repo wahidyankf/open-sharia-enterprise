@@ -166,7 +166,7 @@ Weeks 9-10 brought strategic pivots and performance infrastructure that would en
 
 Week 9 brought a strategic pivot to architecture-first development. We began C4 model exploration (Context, Container, Component, Code) to establish clear architecture before building services. This decision to pause active service development (including the bootstrapped Dolphin-BE Learning Management System) in favor of architectural clarity prevented technical debt and established patterns that guide Phase 1 development.
 
-Repository organization improved with the rules/ → governance/ rename at root, better reflecting the governance hierarchy's scope. Markdown quality infrastructure was established with markdownlint-cli2 achieving zero violations across all documentation. We returned to Claude Code as the primary AI development tool after evaluating OpenCode with GLM-4.7, maintaining dual-platform compatibility for quarterly reassessment.
+Repository organization improved with the rules/ → repo-governance/ rename at root, better reflecting the governance hierarchy's scope. Markdown quality infrastructure was established with markdownlint-cli2 achieving zero violations across all documentation. We returned to Claude Code as the primary AI development tool after evaluating OpenCode with GLM-4.7, maintaining dual-platform compatibility for quarterly reassessment.
 
 Development infrastructure migrated to a home server devbox using Ansible and Cloudflare tunnels, cutting costs while enabling 24/7 AI agent operation for autonomous tasks. This infrastructure investment compounded throughout Phase 0, providing reliable development environments that persisted across work sessions.
 

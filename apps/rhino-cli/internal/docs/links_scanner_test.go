@@ -38,7 +38,7 @@ func TestShouldSkipLink(t *testing.T) {
 		{"Valid relative link", "../docs/README.md", false},
 		{"Valid same dir link", "./file.md", false},
 		{"Valid parent link", "../../file.md", false},
-		{"Valid nested link", "../governance/conventions/file.md", false},
+		{"Valid nested link", "../repo-governance/conventions/file.md", false},
 		{"Valid with anchor", "../docs/README.md#section", false},
 	}
 
@@ -70,7 +70,7 @@ Internal [anchor](#section) should be skipped.
 Email [contact](mailto:test@example.com) should be skipped.
 
 This [placeholder](path.md) should be skipped.
-This [real link](../../governance/README.md) should not be skipped.
+This [real link](../../repo-governance/README.md) should not be skipped.
 
 Hugo [path](/docs/page) should be skipped.
 `
@@ -86,9 +86,9 @@ Hugo [path](/docs/page) should be skipped.
 
 	// Expected links (not skipped)
 	expected := map[string]int{
-		"../docs/README.md":          3,
-		"./file.md":                  3,
-		"../../governance/README.md": 14,
+		"../docs/README.md":               3,
+		"./file.md":                       3,
+		"../../repo-governance/README.md": 14,
 	}
 
 	if len(links) != len(expected) {
@@ -258,7 +258,7 @@ func TestGetMarkdownFiles_WithSkipPaths(t *testing.T) {
 }
 
 func TestFilterSkipPaths_Empty(t *testing.T) {
-	files := []string{"/repo/docs/file.md", "/repo/governance/other.md"}
+	files := []string{"/repo/docs/file.md", "/repo/repo-governance/other.md"}
 	result := filterSkipPaths(files, "/repo", []string{})
 	if len(result) != len(files) {
 		t.Errorf("expected all files with empty skip paths, got %d files", len(result))
@@ -269,7 +269,7 @@ func TestFilterSkipPaths_WithSkipPath(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	docsDir := filepath.Join(tmpDir, "docs")
-	govDir := filepath.Join(tmpDir, "governance")
+	govDir := filepath.Join(tmpDir, "repo-governance")
 	if err := os.MkdirAll(docsDir, 0755); err != nil {
 		t.Fatalf("failed to create docs: %v", err)
 	}
@@ -282,11 +282,11 @@ func TestFilterSkipPaths_WithSkipPath(t *testing.T) {
 		filepath.Join(govDir, "other.md"),
 		filepath.Join(docsDir, "nested", "deep.md"),
 	}
-	result := filterSkipPaths(files, tmpDir, []string{"governance"})
+	result := filterSkipPaths(files, tmpDir, []string{"repo-governance"})
 
 	for _, f := range result {
 		rel, _ := filepath.Rel(tmpDir, f)
-		if len(rel) > 10 && rel[:10] == "governance" {
+		if len(rel) > 10 && rel[:10] == "repo-governance" {
 			t.Errorf("expected governance files to be filtered out, got %v", result)
 		}
 	}

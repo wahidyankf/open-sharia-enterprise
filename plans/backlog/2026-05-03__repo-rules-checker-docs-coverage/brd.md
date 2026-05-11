@@ -2,19 +2,19 @@
 
 ## Business Goal
 
-Close the validation gap between `governance/` (fully scanned) and `docs/` (~80% unscanned by rules-governance dimension) so that the same universal rules — file naming, frontmatter, no-date-metadata, broken cross-refs, traceability — are enforced consistently across both. Add vendor-binding drift detection as the headline new capability so vendor-binding documentation cannot silently fall out of sync with `.claude/`, `.opencode/`, root-level `CLAUDE.md`, and `AGENTS.md` reality.
+Close the validation gap between `repo-governance/` (fully scanned) and `docs/` (~80% unscanned by rules-governance dimension) so that the same universal rules — file naming, frontmatter, no-date-metadata, broken cross-refs, traceability — are enforced consistently across both. Add vendor-binding drift detection as the headline new capability so vendor-binding documentation cannot silently fall out of sync with `.claude/`, `.opencode/`, root-level `CLAUDE.md`, and `AGENTS.md` reality.
 
 ## Business Impact
 
 **Pain points addressed**:
 
 - _Judgment call:_ vendor-binding drift between `docs/reference/platform-bindings.md` and the actual filesystem is currently uncatchable; nothing today detects when documentation describes capabilities or directories that no longer exist (or have been renamed). When the maintainer eventually trips over a stale claim, the cost is loss of trust in the documentation surface as a whole, not just one wrong line.
-- _Judgment call:_ inconsistent rule enforcement (`governance/` fully scanned, `docs/` mostly unscanned) means quality drift accumulates in unscanned territory and surfaces as a long tail of findings only when the maintainer eventually runs a manual sweep.
+- _Judgment call:_ inconsistent rule enforcement (`repo-governance/` fully scanned, `docs/` mostly unscanned) means quality drift accumulates in unscanned territory and surfaces as a long tail of findings only when the maintainer eventually runs a manual sweep.
 - Observable check after migration: `npx nx affected -t lint` and the existing `docs-link-checker` agent already cover link reachability and markdown lint; this plan does NOT duplicate them, it adds the rules-governance dimension that no agent currently covers for `docs/tutorials/`, `docs/how-to/`, `docs/reference/`, and `docs/metadata/`.
 
 **Expected benefits**:
 
-- One agent enforces the rules-governance dimension uniformly across `governance/` and `docs/` — no special-casing per subdirectory.
+- One agent enforces the rules-governance dimension uniformly across `repo-governance/` and `docs/` — no special-casing per subdirectory.
 - Vendor-binding drift fails the quality gate immediately, before it propagates to readers or downstream `ose-primer` propagation.
 - Specialized `docs/` agent family (`docs-checker`, `docs-tutorial-checker`, `docs-link-checker`, `docs-software-engineering-separation-checker`) keeps its existing scope; this extension adds the missing dimension without disturbing them.
 

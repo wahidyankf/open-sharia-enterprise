@@ -14,18 +14,18 @@ Provision before execution (run from repo root):
 claude --worktree oseplatform-web-ddd-and-specs-format
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
 ## Environment Setup
 
-- [x] Provision worktree: `claude --worktree oseplatform-web-ddd-and-specs-format` (creates `worktrees/oseplatform-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [x] Provision worktree: `claude --worktree oseplatform-web-ddd-and-specs-format` (creates `worktrees/oseplatform-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)).
   - **Date**: 2026-05-10
   - **Status**: Done (user override — using existing `worktrees/cozy-dazzling-orbit/` per explicit instruction "do it in this worktree")
   - **Files Changed**: none
   - **Notes**: User explicitly overrode workflow Step 0 worktree gate. Execution proceeds in `worktrees/cozy-dazzling-orbit/` rather than `worktrees/oseplatform-web-ddd-and-specs-format/`.
-- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)).
   - **Date**: 2026-05-10
   - **Status**: Done
   - **Files Changed**: node_modules/, package-lock.json (worktree-local)
@@ -55,7 +55,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - **Status**: Done
   - **Files Changed**: none
   - **Notes**: c4/component-be.md confirms tRPC procs `content.{getBySlug,listUpdates}`, `search.query`, `meta.health` + route handlers `feed.xml`, `sitemap.xml`, `robots.txt`. c4/component-web.md confirms UI components match prd.md BCs. All 7 BCs in registry accounted for; no missing domain.
-- [x] **0.4** Create worktree `worktrees/oseplatform-web-ddd/` per `governance/conventions/structure/worktree-path.md`.
+- [x] **0.4** Create worktree `worktrees/oseplatform-web-ddd/` per `repo-governance/conventions/structure/worktree-path.md`.
   - **Date**: 2026-05-10
   - **Status**: Done (override per ENV-1)
   - **Files Changed**: none
@@ -474,7 +474,7 @@ For each BC: move UI files from `src/components/` and `src/app/` into `src/conte
   - **Date**: 2026-05-10
   - **Status**: Done — pushed to origin/main
   - **Notes**: FF-merged worktree/cozy-dazzling-orbit to local main; pushed origin main. 135 files changed, 2924 insertions, 605 deletions.
-- [x] **9.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+- [x] **9.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `repo-governance/development/workflow/ci-monitoring.md`.
   - **Date**: 2026-05-10
   - **Status**: Done (no CI trigger on push to main — expected)
   - **Notes**: `gh run list --commit=$HEAD` returns 0 runs. The "Test and Deploy - OSE Platform Web" workflow triggers on push to `prod-oseplatform-web` (deployment branch), not on push to `main`. All local quality gates passed: typecheck ✓ lint ✓ test:quick 136 tests 90.84% ✓ be-E2E 12/12 ✓ fe-E2E 42/42 ✓ spec-coverage ✓.

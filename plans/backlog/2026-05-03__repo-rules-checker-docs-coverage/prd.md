@@ -2,7 +2,7 @@
 
 ## Product Overview
 
-Extend `.claude/agents/repo-rules-checker.md` [Repo-grounded] with a new validation step "Cross-Documentation Rules Governance" that walks the full `docs/` tree and applies the universal rules-governance dimension. Add the headline new capability — vendor-binding drift detection between `docs/reference/platform-bindings.md` [Repo-grounded] and the actual filesystem state of `.claude/`, `.opencode/`, root-level `CLAUDE.md`, and `AGENTS.md` [Repo-grounded]. Mirror new fix recipes in `.claude/agents/repo-rules-fixer.md` [Repo-grounded]. Update `governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] Scope Clarification block to advertise the expanded coverage.
+Extend `.claude/agents/repo-rules-checker.md` [Repo-grounded] with a new validation step "Cross-Documentation Rules Governance" that walks the full `docs/` tree and applies the universal rules-governance dimension. Add the headline new capability — vendor-binding drift detection between `docs/reference/platform-bindings.md` [Repo-grounded] and the actual filesystem state of `.claude/`, `.opencode/`, root-level `CLAUDE.md`, and `AGENTS.md` [Repo-grounded]. Mirror new fix recipes in `.claude/agents/repo-rules-fixer.md` [Repo-grounded]. Update `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] Scope Clarification block to advertise the expanded coverage.
 
 ## Personas
 
@@ -18,7 +18,7 @@ Solo-maintainer repo — these are hats the maintainer wears and agents that con
 
 **US-1**: As a maintainer, I want `repo-rules-checker` to detect when `docs/reference/platform-bindings.md` cites binding directories that no longer exist on the filesystem, so that documentation drift fails the quality gate before I merge.
 
-**US-2**: As a maintainer, I want the same file-naming, frontmatter, no-date-metadata, and traceability rules enforced across `governance/` and the full `docs/` tree, so that quality drift cannot accumulate silently in the unscanned `docs/` subtrees.
+**US-2**: As a maintainer, I want the same file-naming, frontmatter, no-date-metadata, and traceability rules enforced across `repo-governance/` and the full `docs/` tree, so that quality drift cannot accumulate silently in the unscanned `docs/` subtrees.
 
 **US-3**: As a maintainer, I want the `repo-rules-fixer` to auto-apply mechanical fixes (renamed file paths, missing required frontmatter fields, broken cross-link path corrections) for the new findings, so that I do not manually apply fixes the agent could derive from repo state.
 
@@ -58,7 +58,7 @@ Scenario: A docs/tutorials/ file violates the no-date-metadata convention
   Given a file at docs/tutorials/getting-started.md contains "**Last Updated**: 2026-01-15" in the body
   When repo-rules-checker runs Step 8b
   Then a HIGH finding is emitted for the No-Date-Metadata violation
-  And the finding references governance/conventions/structure/no-date-metadata.md
+  And the finding references repo-governance/conventions/structure/no-date-metadata.md
 ```
 
 ### AC-4: Universal rules apply to docs/how-to/, docs/reference/, docs/metadata/
@@ -66,7 +66,7 @@ Scenario: A docs/tutorials/ file violates the no-date-metadata convention
 ```gherkin
 Scenario: A file in any docs/ subtree fails universal-rule validation
   Given a markdown file under docs/how-to/, docs/reference/, or docs/metadata/
-  And the file violates file-naming, frontmatter, no-date-metadata, or has a broken cross-ref to governance/
+  And the file violates file-naming, frontmatter, no-date-metadata, or has a broken cross-ref to repo-governance/
   When repo-rules-checker runs Step 8b
   Then a finding is emitted at the appropriate criticality level per the existing rules-governance criticality scale
   And the finding is included in the audit report under "Step 8b: Cross-Documentation Rules Governance"
@@ -86,9 +86,9 @@ Scenario: A finding is detectable by both Step 8b and a specialized docs agent
 
 ```gherkin
 Scenario: Workflow doc advertises full docs/ coverage
-  Given the Scope Clarification block in governance/workflows/repo/repo-rules-quality-gate.md
+  Given the Scope Clarification block in repo-governance/workflows/repo/repo-rules-quality-gate.md
   When the maintainer reads the block
-  Then the block states "Validates: docs/ (full tree — file naming, frontmatter, no-date-metadata, traceability, cross-refs to governance/, vendor-binding drift)"
+  Then the block states "Validates: docs/ (full tree — file naming, frontmatter, no-date-metadata, traceability, cross-refs to repo-governance/, vendor-binding drift)"
   And the block no longer states "Skips: rest of docs/ (out of scope for this workflow today)"
 ```
 

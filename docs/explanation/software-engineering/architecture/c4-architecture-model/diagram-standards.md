@@ -22,7 +22,7 @@ created: 2026-02-09
 
 **This document is OSE Platform-specific**, not a C4 tutorial. We define HOW to apply C4 in THIS codebase, not WHAT C4 is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -289,8 +289,8 @@ This consistency ensures readers can instantly recognize element types by color 
 - **[Notation Standards](./notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, C4 element color mapping
 - **[Bounded Context Visualization](./bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers
 - **[Nx Workspace Visualization](./nx-workspace-visualization.md)** - Representing Nx apps and libs
-- **[Color Accessibility Convention](../../../../../governance/conventions/formatting/color-accessibility.md)** - Verified accessible color palette and WCAG compliance
+- **[Color Accessibility Convention](../../../../../repo-governance/conventions/formatting/color-accessibility.md)** - Verified accessible color palette and WCAG compliance
 
 ## Principles Implemented
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: All relationships must have explicit labels with protocols, technology choices must be visible on containers, and system boundaries must be clearly defined.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: All relationships must have explicit labels with protocols, technology choices must be visible on containers, and system boundaries must be clearly defined.

@@ -232,7 +232,7 @@ identity matters for product differentiation.
 
 ### AD4: Convention Documentation Location
 
-**Decision**: Create `governance/development/frontend/` directory with four focused documents.
+**Decision**: Create `repo-governance/development/frontend/` directory with four focused documents.
 
 **Trade-offs**:
 
@@ -285,26 +285,26 @@ or `bashPattern` fields.
 
 **Anti-pattern catalog** (repo-specific, with code examples):
 
-| Anti-Pattern                | Example From Our Codebase                                                | Correct Approach                                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| Hardcoded hex in CSS        | `background-color: #f6f8fa !important;` (ayokoding-web globals.css)      | Use token: `bg-muted` or `var(--color-muted)`                                                                       |
-| `!important` in Tailwind    | `color: #24292e !important;` (ayokoding-web globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers                                                                      |
-| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-web)          | Use `next/font` for optimization                                                                                    |
-| Old Radix imports           | `import { Slot } from "@radix-ui/react-slot"`                            | `import { Slot } from "radix-ui"`                                                                                   |
-| forwardRef pattern          | `React.forwardRef<HTMLButtonElement, Props>`                             | `function Button(props: React.ComponentProps<"button">)`                                                            |
-| Missing data-slot           | `<button className={...}>`                                               | `<button data-slot="button" className={...}>`                                                                       |
-| Inline styles in production | `style={{ color: 'red' }}`                                               | Use Tailwind utility: `className="text-destructive"`                                                                |
-| Card inside Card            | `<Card><Card>nested</Card></Card>`                                       | Use spacing/dividers for hierarchy                                                                                  |
-| Color-only status           | `<span className="text-red-500">Error</span>`                            | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
-| Unverified color contrast   | Using arbitrary colors without checking WCAG AA contrast                 | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios                |
-| Missing focus-visible       | `focus:ring-2`                                                           | `focus-visible:ring-2` (keyboard users only)                                                                        |
-| `transition: all`           | `className="transition-all"`                                             | `className="transition-colors"` (explicit properties)                                                               |
-| bounce/elastic easing       | `animate-bounce`                                                         | Custom `@keyframes` with `ease-out` or `cubic-bezier(0, 0, 0.2, 1)` timing                                          |
+| Anti-Pattern                | Example From Our Codebase                                                | Correct Approach                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Hardcoded hex in CSS        | `background-color: #f6f8fa !important;` (ayokoding-web globals.css)      | Use token: `bg-muted` or `var(--color-muted)`                                                                            |
+| `!important` in Tailwind    | `color: #24292e !important;` (ayokoding-web globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers                                                                           |
+| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-web)          | Use `next/font` for optimization                                                                                         |
+| Old Radix imports           | `import { Slot } from "@radix-ui/react-slot"`                            | `import { Slot } from "radix-ui"`                                                                                        |
+| forwardRef pattern          | `React.forwardRef<HTMLButtonElement, Props>`                             | `function Button(props: React.ComponentProps<"button">)`                                                                 |
+| Missing data-slot           | `<button className={...}>`                                               | `<button data-slot="button" className={...}>`                                                                            |
+| Inline styles in production | `style={{ color: 'red' }}`                                               | Use Tailwind utility: `className="text-destructive"`                                                                     |
+| Card inside Card            | `<Card><Card>nested</Card></Card>`                                       | Use spacing/dividers for hierarchy                                                                                       |
+| Color-only status           | `<span className="text-red-500">Error</span>`                            | Include text label + shape per [Accessibility First](../../../repo-governance/principles/content/accessibility-first.md) |
+| Unverified color contrast   | Using arbitrary colors without checking WCAG AA contrast                 | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios                     |
+| Missing focus-visible       | `focus:ring-2`                                                           | `focus-visible:ring-2` (keyboard users only)                                                                             |
+| `transition: all`           | `className="transition-all"`                                             | `className="transition-colors"` (explicit properties)                                                                    |
+| bounce/elastic easing       | `animate-bounce`                                                         | Custom `@keyframes` with `ease-out` or `cubic-bezier(0, 0, 0.2, 1)` timing                                               |
 
 ### AD6: Agent Strategy — Full Maker-Checker-Fixer Trio + Quality Gate Workflow
 
 **Decision**: Create the full agent trio (`swe-ui-maker`, `swe-ui-checker`, `swe-ui-fixer`)
-plus a `ui-quality-gate` workflow in `governance/workflows/`.
+plus a `ui-quality-gate` workflow in `repo-governance/workflows/`.
 
 **Trade-offs**:
 
@@ -397,7 +397,7 @@ workflow.
 
 ### AD6b: Quality Gate Workflow
 
-**Decision**: Create `governance/workflows/ui/ui-quality-gate.md` following the established
+**Decision**: Create `repo-governance/workflows/ui/ui-quality-gate.md` following the established
 quality gate pattern.
 
 **Workflow structure**:
@@ -808,10 +808,10 @@ Every architecture decision in this plan traces to one or more governance princi
 
 ### Color Accessibility Compliance
 
-The [Accessibility First](../../../governance/principles/content/accessibility-first.md) principle
+The [Accessibility First](../../../repo-governance/principles/content/accessibility-first.md) principle
 requires WCAG AA compliance for all visual elements.
 
-**Important scope distinction**: The [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+**Important scope distinction**: The [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md)
 defines a 5-color palette for **documentation** (Mermaid diagrams, agent categorization, markdown
 visuals). It explicitly states that **UI application interface colors are out of scope**. UI
 applications can and should use a full color spectrum — any color is acceptable as long as it

@@ -82,7 +82,7 @@ identifier(s)`, `Used in features`) but Phase 2.5 removed the `Definition` colum
 ### G2: specs-quality-gate.md missing EXECUTION_SCOPE in Step 4
 
 - **Severity**: LOW
-- **File**: `governance/workflows/specs/specs-quality-gate.md`
+- **File**: `repo-governance/workflows/specs/specs-quality-gate.md`
 - **Issue**: Step 1 passes `EXECUTION_SCOPE: specs` to the checker agent; Step 4
   (re-validate) does not. This means re-validation starts a fresh UUID chain instead of
   appending to the Phase 1 chain.

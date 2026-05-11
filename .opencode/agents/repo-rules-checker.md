@@ -58,14 +58,14 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 
 **Scope**: All governance documentation
 
-- `governance/vision/` - Layer 0: WHY we exist
-- `governance/principles/` - Layer 1: WHY values
-- `governance/conventions/` - Layer 2: WHAT documentation rules
-- `governance/development/` - Layer 3: HOW software practices
+- `repo-governance/vision/` - Layer 0: WHY we exist
+- `repo-governance/principles/` - Layer 1: WHY values
+- `repo-governance/conventions/` - Layer 2: WHAT documentation rules
+- `repo-governance/development/` - Layer 3: HOW software practices
 - `.claude/agents/` - Layer 4: WHO enforces rules
-- `governance/workflows/` - Layer 5: WHEN multi-step processes
-- `governance/repository-governance-architecture.md` - Architecture guide
-- `governance/README.md` - Rules index
+- `repo-governance/workflows/` - Layer 5: WHEN multi-step processes
+- `repo-governance/repository-governance-architecture.md` - Architecture guide
+- `repo-governance/README.md` - Rules index
 - `docs/explanation/README.md` - Explanation index
 
 **Validation Categories**:
@@ -92,7 +92,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 - Verify agent names match actual agent files
 - Validate skill names match actual skill files
 - Check frontmatter field requirements match actual agent frontmatter
-- **No-Date-Metadata violation**: Flag any of the following in non-website files (per [No Manual Date Metadata Convention](../../governance/conventions/structure/no-date-metadata.md)): (a) `updated:` frontmatter field, (b) `**Last Updated**` footer block, (c) standalone inline body date annotation lines such as `- **Created**: YYYY-MM-DD` or `- **Last Updated**: YYYY-MM-DD` in document body sections (not frontmatter). Website content under `apps/ayokoding-web/`, `apps/oseplatform-web/`, `apps/organiclever-web/`, `apps/wahidyankf-web/` is exempt. Dates inside actual document content (changelog entries, examples, plan steps, commit references) are also exempt. Criticality: HIGH
+- **No-Date-Metadata violation**: Flag any of the following in non-website files (per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md)): (a) `updated:` frontmatter field, (b) `**Last Updated**` footer block, (c) standalone inline body date annotation lines such as `- **Created**: YYYY-MM-DD` or `- **Last Updated**: YYYY-MM-DD` in document body sections (not frontmatter). Website content under `apps/ayokoding-web/`, `apps/oseplatform-web/`, `apps/organiclever-web/`, `apps/wahidyankf-web/` is exempt. Dates inside actual document content (changelog entries, examples, plan steps, commit references) are also exempt. Criticality: HIGH
 
 **Inconsistencies**:
 
@@ -249,14 +249,14 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ## Reference
 
-**Conventions**: All conventions in `governance/conventions/`
+**Conventions**: All conventions in `repo-governance/conventions/`
 
-**Development Practices**: All practices in `governance/development/`
+**Development Practices**: All practices in `repo-governance/development/`
 
 **Related Documentation**:
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
-- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report generation standards
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
+- [Temporary Files Convention](../../repo-governance/development/infra/temporary-files.md) - Report generation standards
 
 ## Validation Process
 
@@ -309,7 +309,7 @@ When a UUID chain exists from a previous iteration (re-validation mode, identifi
 
 This prevents scanning all ~265 software documentation files when only 3-4 agent files were changed by the fixer.
 
-Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Manual Date Metadata Convention](../../governance/conventions/structure/no-date-metadata.md).
+Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md).
 
 ### Step 2: Agent-to-Agent Duplication Detection
 
@@ -650,13 +650,13 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 **Validate contradictions, inaccuracies, and inconsistencies** across all governance layers:
 
 1. **Read all governance files**:
-   - `governance/vision/**/*.md`
-   - `governance/principles/**/*.md`
-   - `governance/conventions/**/*.md`
-   - `governance/development/**/*.md`
-   - `governance/workflows/**/*.md`
-   - `governance/repository-governance-architecture.md`
-   - `governance/README.md`
+   - `repo-governance/vision/**/*.md`
+   - `repo-governance/principles/**/*.md`
+   - `repo-governance/conventions/**/*.md`
+   - `repo-governance/development/**/*.md`
+   - `repo-governance/workflows/**/*.md`
+   - `repo-governance/repository-governance-architecture.md`
+   - `repo-governance/README.md`
    - `docs/explanation/README.md`
 
 2. **Contradiction Detection**:
@@ -689,7 +689,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - Verify conventions/development → agents alignment
    - Verify agents → workflows alignment
 
-7. **Licensing Convention Compliance** (see [Per-Directory Licensing Convention](../../governance/conventions/structure/licensing.md)):
+7. **Licensing Convention Compliance** (see [Per-Directory Licensing Convention](../../repo-governance/conventions/structure/licensing.md)):
    - Verify all product app directories have MIT LICENSE
    - Verify all `libs/*` directories have MIT LICENSE
    - Verify `specs/` root has MIT LICENSE
@@ -757,7 +757,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 **Validate links between software docs and governance documentation**:
 
 1. **Extract Cross-References**:
-   - Find all links from software docs to `governance/`
+   - Find all links from software docs to `repo-governance/`
    - Find all links from governance docs to `docs/explanation/software-engineering/`
    - Build bidirectional reference map
 
@@ -768,7 +768,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 
 3. **Check Bidirectional References**:
    - When software doc references governance, check if governance should reference back
-   - Example: If `programming-languages/java/functional-programming.md` references `governance/development/pattern/functional-programming.md`, the governance doc should list Java in "Language Support" section
+   - Example: If `programming-languages/java/functional-programming.md` references `repo-governance/development/pattern/functional-programming.md`, the governance doc should list Java in "Language Support" section
 
 4. **Criticality Levels**:
    - **CRITICAL**: Broken link (404, target doesn't exist)
@@ -782,7 +782,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 ### Finding: Cross-Reference Completeness
 
 **Category**: Cross-Reference
-**Files**: docs/explanation/software-engineering/programming-languages/java/functional-programming.md → governance/development/pattern/functional-programming.md
+**Files**: docs/explanation/software-engineering/programming-languages/java/functional-programming.md → repo-governance/development/pattern/functional-programming.md
 **Criticality**: HIGH
 
 **Issue**: One-way cross-reference (should be bidirectional)
@@ -792,7 +792,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 - Java doc references governance FP document ✓
 - Governance FP document doesn't list Java in language support ✗
 
-**Recommendation**: Add Java to "Language-Specific Implementations" section in governance/development/pattern/functional-programming.md
+**Recommendation**: Add Java to "Language-Specific Implementations" section in repo-governance/development/pattern/functional-programming.md
 ```
 
 #### 8.3 File Naming Convention Adherence
@@ -1162,8 +1162,8 @@ Update report status to "Complete", add summary statistics by category:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
 
 **Related Agents**:
 
@@ -1172,5 +1172,5 @@ Update report status to "Complete", add summary statistics by category:
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md)

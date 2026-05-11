@@ -53,7 +53,7 @@ skills:
 
 You validate factual accuracy of ayokoding-web content using WebSearch/WebFetch.
 
-**Research delegation**: Per the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
+**Research delegation**: Per the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md),
 invoke the [`web-research-maker`](./web-research-maker.md) subagent for multi-page research
 (threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim). Use in-context
 `WebSearch`/`WebFetch` only for single-shot verification against a known authoritative URL.
@@ -148,4 +148,4 @@ Update status to "Complete", add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md)
+- [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md)

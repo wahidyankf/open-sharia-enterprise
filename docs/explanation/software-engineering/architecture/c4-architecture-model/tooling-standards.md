@@ -22,7 +22,7 @@ created: 2026-02-09
 
 **This document is OSE Platform-specific**, defining required tools and validation methods for THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -276,6 +276,6 @@ Before committing a C4 diagram, verify:
 
 ## Principles Implemented
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By using diagram-as-code with Mermaid and automated validation tools, diagram quality is enforced through CI/CD rather than manual review.
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By using diagram-as-code with Mermaid and automated validation tools, diagram quality is enforced through CI/CD rather than manual review.
 
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: By mandating Mermaid with standardized syntax and color palette, diagrams can be consistently reproduced across environments, editors, and time periods.
+- **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: By mandating Mermaid with standardized syntax and color palette, diagrams can be consistently reproduced across environments, editors, and time periods.

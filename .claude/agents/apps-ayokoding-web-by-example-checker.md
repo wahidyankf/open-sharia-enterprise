@@ -41,9 +41,9 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 **CRITICAL - Read these first**:
 
-- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary validation authority
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example definition
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/by-example.md) - Primary validation authority
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example definition
 
 ## Validation Scope
 
@@ -247,7 +247,7 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 

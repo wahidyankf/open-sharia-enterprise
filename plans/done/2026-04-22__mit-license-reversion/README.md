@@ -56,13 +56,13 @@ against `main`.
 | `LICENSING-NOTICE.md`                                                                            | Rewrite for uniform MIT        |
 | `CLAUDE.md`                                                                                      | License field update           |
 | `README.md`                                                                                      | License section rewrite        |
-| `governance/vision/README.md`                                                                    | License reference update       |
-| `governance/conventions/README.md`                                                               | Remove FSL references          |
-| `governance/conventions/structure/README.md`                                                     | Remove FSL references          |
-| `governance/conventions/structure/licensing.md`                                                  | Rewrite for MIT                |
-| `governance/conventions/writing/oss-documentation.md`                                            | Remove FSL examples/references |
-| `governance/conventions/writing/readme-quality.md`                                               | Update example text            |
-| `governance/principles/general/simplicity-over-complexity.md`                                    | Update YAML example            |
+| `repo-governance/vision/README.md`                                                               | License reference update       |
+| `repo-governance/conventions/README.md`                                                          | Remove FSL references          |
+| `repo-governance/conventions/structure/README.md`                                                | Remove FSL references          |
+| `repo-governance/conventions/structure/licensing.md`                                             | Rewrite for MIT                |
+| `repo-governance/conventions/writing/oss-documentation.md`                                       | Remove FSL examples/references |
+| `repo-governance/conventions/writing/readme-quality.md`                                          | Update example text            |
+| `repo-governance/principles/general/simplicity-over-complexity.md`                               | Update YAML example            |
 | `docs/how-to/add-new-lib.md`                                                                     | Update license defaults        |
 | `docs/explanation/software-engineering/licensing/`                                               | Update explanations            |
 | `apps/oseplatform-web/content/about.md`                                                          | Update license section         |

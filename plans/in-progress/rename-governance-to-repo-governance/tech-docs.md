@@ -1,17 +1,17 @@
-# Tech Docs — Rename `governance/` to `repo-governance/`
+# Tech Docs — Rename `repo-governance/` to `repo-governance/`
 
 ## Architecture
 
 Six sed passes + three `git mv` operations:
 
-| Pass | Token                                                      | Scope                                      | What it covers                                                |
-| ---- | ---------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
-| A    | `governance/` → `repo-governance/`                         | All text files (excl. `.opencode/agents/`) | Path tokens with trailing slash                               |
-| B    | `"governance"` → `"repo-governance"`                       | `*.go` only                                | Bare quoted directory-name string literals + test fixtures    |
-| C    | `governance vendor-audit` → `repo-governance vendor-audit` | All text files                             | CLI verb (space-separated, no slash)                          |
-| D    | `governance-vendor-audit` → `repo-governance-vendor-audit` | All text files                             | Hyphenated form: Nx target, Gherkin tag, spec/convention refs |
-| E    | Go package rename (manual + sed)                           | `internal/repo-governance/`                | Package decl + import paths                                   |
-| F    | Cobra cmd rename (manual)                                  | `cmd/governance.go` + callers              | `Use:`, variable name, registration                           |
+| Pass | Token                                                           | Scope                                      | What it covers                                                |
+| ---- | --------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
+| A    | `governance/` → `repo-governance/`                              | All text files (excl. `.opencode/agents/`) | Path tokens with trailing slash                               |
+| B    | `"governance"` → `"repo-governance"`                            | `*.go` only                                | Bare quoted directory-name string literals + test fixtures    |
+| C    | `repo-governance vendor-audit` → `repo-governance vendor-audit` | All text files                             | CLI verb (space-separated, no slash)                          |
+| D    | `repo-governance-vendor-audit` → `repo-governance-vendor-audit` | All text files                             | Hyphenated form: Nx target, Gherkin tag, spec/convention refs |
+| E    | Go package rename (manual + sed)                                | `internal/repo-governance/`                | Package decl + import paths                                   |
+| F    | Cobra cmd rename (manual)                                       | `cmd/governance.go` + callers              | `Use:`, variable name, registration                           |
 
 Plus one sync command after agents update: `npm run sync:claude-to-opencode`.
 
@@ -19,7 +19,7 @@ No logic changes. No schema changes. No API changes.
 
 ---
 
-## Pass A — Path Tokens (`governance/`)
+## Pass A — Path Tokens (`repo-governance/`)
 
 Catches all string literals with a trailing slash across `.md`, `.sh`, `.go`, `.json`, `.yaml`,
 `.yml`, `.feature` files.
@@ -31,23 +31,23 @@ Instead: update `.claude/agents/` via Pass A, then regenerate `.opencode/agents/
 
 Agent/skill files caught by Pass A [Repo-grounded, 73 agent + 37 skill files]:
 
-- All `governance/` path links in `.claude/agents/*.md` (relative links pointing into `governance/conventions/`, `governance/development/`, etc.)
+- All `repo-governance/` path links in `.claude/agents/*.md` (relative links pointing into `repo-governance/conventions/`, `repo-governance/development/`, etc.)
 - Functional glob patterns in `repo-rules-checker.md` lines 648–656
 - Directory checks in `repo-rules-fixer.md` line 267
 - Layer-to-path mapping in `repo-understanding-repository-architecture/SKILL.md` lines 44–49
 
 Workflow files caught by Pass A [Repo-grounded]:
 
-- `governance/workflows/meta/workflow-identifier.md` (7 refs)
-- `governance/workflows/README.md` (6 refs)
-- `governance/workflows/repo/repo-rules-quality-gate.md` (2 refs)
-- `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` (2 refs)
-- `governance/workflows/plan/plan-execution.md` (2 refs)
+- `repo-governance/workflows/meta/workflow-identifier.md` (7 refs)
+- `repo-governance/workflows/README.md` (6 refs)
+- `repo-governance/workflows/repo/repo-rules-quality-gate.md` (2 refs)
+- `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` (2 refs)
+- `repo-governance/workflows/plan/plan-execution.md` (2 refs)
 
 Spec files caught by Pass A:
 
 - `specs/apps/rhino/behavior/cli/gherkin/workflows-validate-naming.feature` —
-  `governance/workflows/meta/` in scenario steps
+  `repo-governance/workflows/meta/` in scenario steps
 
 ---
 
@@ -67,37 +67,37 @@ Scoped to `*.go` only. Catches `filepath.Join` segments, default-value assignmen
 
 ---
 
-## Pass C — CLI Verb (`governance vendor-audit` with space)
+## Pass C — CLI Verb (`repo-governance vendor-audit` with space)
 
 NOT caught by Pass A (no slash). Applies to all text file types.
 
 Confirmed locations [Repo-grounded]:
 
-| File                                                                    | Lines                      | Content                               |
-| ----------------------------------------------------------------------- | -------------------------- | ------------------------------------- |
-| `apps/rhino-cli/project.json`                                           | 98                         | `governance vendor-audit governance/` |
-| `apps/rhino-cli/scripts/validate-cross-vendor-parity.sh`                | 40, 41, 50, 51             | `governance vendor-audit ...`         |
-| `governance/conventions/structure/governance-vendor-independence.md`    | 110, 200, 212, 218, 232    | CLI usage examples                    |
-| `specs/apps/rhino/behavior/cli/gherkin/governance-vendor-audit.feature` | 10, 16, 22, 28, 34, 40, 46 | Gherkin step text                     |
-| Any agent/skill help text mentioning the CLI verb                       | various                    | Documentation                         |
+| File                                                                         | Lines                      | Content                                         |
+| ---------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------- |
+| `apps/rhino-cli/project.json`                                                | 98                         | `repo-governance vendor-audit repo-governance/` |
+| `apps/rhino-cli/scripts/validate-cross-vendor-parity.sh`                     | 40, 41, 50, 51             | `repo-governance vendor-audit ...`              |
+| `repo-governance/conventions/structure/governance-vendor-independence.md`    | 110, 200, 212, 218, 232    | CLI usage examples                              |
+| `specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature` | 10, 16, 22, 28, 34, 40, 46 | Gherkin step text                               |
+| Any agent/skill help text mentioning the CLI verb                            | various                    | Documentation                                   |
 
 ---
 
-## Pass D — Hyphenated Form (`governance-vendor-audit`)
+## Pass D — Hyphenated Form (`repo-governance-vendor-audit`)
 
 NOT caught by Pass A (no slash). Applies to all text file types.
 
 Confirmed locations [Repo-grounded]:
 
-| File                                                                    | Lines      | Content                                                 |
-| ----------------------------------------------------------------------- | ---------- | ------------------------------------------------------- |
-| `apps/rhino-cli/project.json`                                           | target key | `validate:governance-vendor-audit`                      |
-| `.husky/pre-push`                                                       | —          | `npx nx run rhino-cli:validate:governance-vendor-audit` |
-| `governance/conventions/structure/governance-vendor-independence.md`    | 221, 232   | Nx target reference                                     |
-| `specs/apps/rhino/behavior/cli/gherkin/README.md`                       | 22         | Feature file entry                                      |
-| `specs/apps/rhino/behavior/cli/gherkin/governance-vendor-audit.feature` | 1          | `@governance-vendor-audit` tag                          |
+| File                                                                         | Lines      | Content                                                      |
+| ---------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------ |
+| `apps/rhino-cli/project.json`                                                | target key | `validate:repo-governance-vendor-audit`                      |
+| `.husky/pre-push`                                                            | —          | `npx nx run rhino-cli:validate:repo-governance-vendor-audit` |
+| `repo-governance/conventions/structure/governance-vendor-independence.md`    | 221, 232   | Nx target reference                                          |
+| `specs/apps/rhino/behavior/cli/gherkin/README.md`                            | 22         | Feature file entry                                           |
+| `specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature` | 1          | `@repo-governance-vendor-audit` tag                          |
 
-**Note**: The `.feature` file itself is named `governance-vendor-audit.feature` — it also needs a
+**Note**: The `.feature` file itself is named `repo-governance-vendor-audit.feature` — it also needs a
 `git mv` (see §File Renames below).
 
 ---
@@ -106,12 +106,12 @@ Confirmed locations [Repo-grounded]:
 
 Module: `github.com/wahidyankf/ose-public/apps/rhino-cli` [Repo-grounded]
 
-### Files in `internal/governance/` [Repo-grounded]
+### Files in `internal/repo-governance/` [Repo-grounded]
 
-| File                                                  | Package declaration  |
-| ----------------------------------------------------- | -------------------- |
-| `internal/governance/governance_vendor_audit.go`      | `package governance` |
-| `internal/governance/governance_vendor_audit_test.go` | `package governance` |
+| File                                                       | Package declaration  |
+| ---------------------------------------------------------- | -------------------- |
+| `internal/repo-governance/governance_vendor_audit.go`      | `package governance` |
+| `internal/repo-governance/governance_vendor_audit_test.go` | `package governance` |
 
 ### E1 — `git mv`
 
@@ -157,11 +157,11 @@ governance "github.com/wahidyankf/ose-public/apps/rhino-cli/internal/repo-govern
 
 Three directories/files renamed via `git mv`:
 
-| Old path                                                                | New path                                                                     |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `governance/`                                                           | `repo-governance/`                                                           |
-| `apps/rhino-cli/internal/governance/`                                   | `apps/rhino-cli/internal/repo-governance/`                                   |
-| `specs/apps/rhino/behavior/cli/gherkin/governance-vendor-audit.feature` | `specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature` |
+| Old path                                                                     | New path                                                                     |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `repo-governance/`                                                           | `repo-governance/`                                                           |
+| `apps/rhino-cli/internal/repo-governance/`                                   | `apps/rhino-cli/internal/repo-governance/`                                   |
+| `specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature` | `specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature` |
 
 ---
 
@@ -192,25 +192,25 @@ npm run sync:claude-to-opencode
 | `apps/rhino-cli/project.json`                                        | A, C, D       | Wrong CLI verb; wrong Nx target key       |
 | `.husky/pre-push`                                                    | D             | Hook invokes non-existent Nx target       |
 | `apps/rhino-cli/scripts/validate-cross-vendor-parity.sh`             | A, C          | Wrong CLI verb + wrong paths              |
-| `specs/.../governance-vendor-audit.feature`                          | C, D + git mv | Wrong CLI verb in step text; tag mismatch |
+| `specs/.../repo-governance-vendor-audit.feature`                     | C, D + git mv | Wrong CLI verb in step text; tag mismatch |
 
 ### High-impact documentation
 
-| Group                                                                | Pass     | Refs                   |
-| -------------------------------------------------------------------- | -------- | ---------------------- |
-| Root docs (`AGENTS.md`, `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`) | A        | ~56                    |
-| `.claude/agents/` (73 files)                                         | A        | ~500                   |
-| `.claude/skills/` (37 files)                                         | A        | ~300                   |
-| `.opencode/agents/` (73 files)                                       | sync cmd | ~500 (regenerated)     |
-| `docs/metadata/external-links-status.yaml`                           | A        | ~50                    |
-| `governance/conventions/structure/governance-vendor-independence.md` | A, C, D  | CLI + target refs      |
-| `specs/apps/rhino/` (9 files)                                        | A, C, D  | Path + verb + tag refs |
+| Group                                                                     | Pass     | Refs                   |
+| ------------------------------------------------------------------------- | -------- | ---------------------- |
+| Root docs (`AGENTS.md`, `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`)      | A        | ~56                    |
+| `.claude/agents/` (73 files)                                              | A        | ~500                   |
+| `.claude/skills/` (37 files)                                              | A        | ~300                   |
+| `.opencode/agents/` (73 files)                                            | sync cmd | ~500 (regenerated)     |
+| `docs/metadata/external-links-status.yaml`                                | A        | ~50                    |
+| `repo-governance/conventions/structure/governance-vendor-independence.md` | A, C, D  | CLI + target refs      |
+| `specs/apps/rhino/` (9 files)                                             | A, C, D  | Path + verb + tag refs |
 
 ### Cross-repo
 
-| File                                                | Refs                                                                                          |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `/Users/wkf/ose-projects/CLAUDE.md` [Repo-grounded] | 1 (`ose-public/governance/` occurrence; the parent's own `./governance/` refs are unaffected) |
+| File                                                | Refs                                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `/Users/wkf/ose-projects/CLAUDE.md` [Repo-grounded] | 1 (`ose-public/repo-governance/` occurrence; the parent's own `./repo-governance/` refs are unaffected) |
 
 ### Excluded
 
@@ -234,7 +234,7 @@ or produce inconsistent state. Correct sequence: update source (`.claude/`), the
 Using `import governance "...internal/repo-governance"` preserves all `governance.Walk(...)` call
 sites. Minimises diff noise while making import path accurate.
 
-**`governance-vendor-audit.feature` file rename**
+**`repo-governance-vendor-audit.feature` file rename**
 The filename itself is the hyphenated form. Pass D updates text content; a `git mv` renames the
 file. Both needed.
 
@@ -250,7 +250,7 @@ User decision: maximum consistency. Pass B covers all bare `"governance"` in `*_
 git mv repo-governance governance
 git mv apps/rhino-cli/internal/repo-governance apps/rhino-cli/internal/governance
 git mv specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature \
-       specs/apps/rhino/behavior/cli/gherkin/governance-vendor-audit.feature
+       specs/apps/rhino/behavior/cli/gherkin/repo-governance-vendor-audit.feature
 
 # 2. Reverse Pass A
 find . -not -path './.git/*' -not -path './node_modules/*' \
@@ -259,7 +259,7 @@ find . -not -path './.git/*' -not -path './node_modules/*' \
   -type f \( -name '*.md' -o -name '*.sh' -o -name '*.go' -o -name '*.json' \
     -o -name '*.yaml' -o -name '*.yml' -o -name '*.feature' \) \
   | xargs grep -l 'repo-governance/' \
-  | xargs sed -i '' 's|repo-governance/|governance/|g'
+  | xargs sed -i '' 's|repo-governance/|repo-governance/|g'
 
 # 3. Reverse Pass B
 find apps/rhino-cli -name '*.go' | xargs grep -l '"repo-governance"' \
@@ -267,11 +267,11 @@ find apps/rhino-cli -name '*.go' | xargs grep -l '"repo-governance"' \
 
 # 4. Reverse Pass C
 find . ... -type f ... | xargs grep -l 'repo-governance vendor-audit' \
-  | xargs sed -i '' 's|repo-governance vendor-audit|governance vendor-audit|g'
+  | xargs sed -i '' 's|repo-governance vendor-audit|repo-governance vendor-audit|g'
 
 # 5. Reverse Pass D
 find . ... -type f ... | xargs grep -l 'repo-governance-vendor-audit' \
-  | xargs sed -i '' 's|repo-governance-vendor-audit|governance-vendor-audit|g'
+  | xargs sed -i '' 's|repo-governance-vendor-audit|repo-governance-vendor-audit|g'
 
 # 6. Reverse Pass E — edit package decls and import aliases manually
 
@@ -281,7 +281,7 @@ find . ... -type f ... | xargs grep -l 'repo-governance-vendor-audit' \
 npm run sync:claude-to-opencode
 
 # 9. Restore parent CLAUDE.md
-sed -i '' 's|ose-public/repo-governance/|ose-public/governance/|g' \
+sed -i '' 's|ose-public/repo-governance/|ose-public/repo-governance/|g' \
   /Users/wkf/ose-projects/CLAUDE.md
 ```
 

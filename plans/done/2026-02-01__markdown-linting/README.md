@@ -8,7 +8,7 @@
 
 ## Background
 
-The repository contains extensive markdown documentation across multiple directories (governance/, docs/, .claude/, apps/, plans/, root files).
+The repository contains extensive markdown documentation across multiple directories (repo-governance/, docs/, .claude/, apps/, plans/, root files).
 
 **Current State** (verified 2026-01-17):
 
@@ -206,7 +206,7 @@ Research shows Claude Code hooks provide deterministic automation for formatting
 
 **Deliverables**:
 
-1. Document markdown linting in governance/
+1. Document markdown linting in repo-governance/
    - Configuration rationale
    - Rule explanations
    - How to run linting locally
@@ -547,7 +547,7 @@ Based on repository conventions and existing content:
 
 ### Phase 6: Documentation & Training
 
-- [x] Document linting in `governance/development/quality/markdown.md` (new file)
+- [x] Document linting in `repo-governance/development/quality/markdown.md` (new file)
   - Configuration rationale
   - Rule explanations
   - How to run linting locally
@@ -698,9 +698,9 @@ After markdown linting implementation:
 
 **Related Conventions**:
 
-- [Content Quality Convention](../../../../governance/conventions/writing/quality.md)
-- [Indentation Convention](../../../../governance/conventions/formatting/indentation.md)
-- [Code Quality Convention](../../../governance/development/quality/code.md)
+- [Content Quality Convention](../../../repo-governance/conventions/writing/quality.md)
+- [Indentation Convention](../../../repo-governance/conventions/formatting/indentation.md)
+- [Code Quality Convention](../../../repo-governance/development/quality/code.md)
 
 **External Resources**:
 

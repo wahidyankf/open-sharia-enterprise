@@ -444,7 +444,7 @@ graph TD
 
 **Documentation**:
 
-- **Before**: [Repository Architecture](../../../governance/repository-governance-architecture.md) references 17 Skills
+- **Before**: [Repository Architecture](../../../repo-governance/repository-governance-architecture.md) references 17 Skills
 - **After**: Updated to reflect 21-24 Skills with new categories
 - **Changes**: Update Skills count, add new Skills to categories list
 
@@ -570,7 +570,7 @@ Initialize report at execution start, write findings incrementally
 
 #### Documentation Updates
 
-**File**: `governance/repository-governance-architecture.md`
+**File**: `repo-governance/repository-governance-architecture.md`
 
 **Before** (line 313):
 
@@ -886,22 +886,22 @@ Skills don't grant agents additional tool access. Skill references are knowledge
 
 This plan implements the following core principles:
 
-- **[Simplicity Over Complexity](../../../governance/principles/general/simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
+- **[Simplicity Over Complexity](../../../repo-governance/principles/general/simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
 
-- **[Documentation First](../../../governance/principles/content/documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
+- **[Documentation First](../../../repo-governance/principles/content/documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
 
-- **[Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
+- **[Explicit Over Implicit](../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
 
-- **[Automation Over Manual](../../../governance/principles/software-engineering/automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
+- **[Automation Over Manual](../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
 
 ### Conventions Respected
 
 This plan respects the following conventions:
 
-- **[AI Agents Convention](../../../governance/development/agents/ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
+- **[AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
 
-- **[Repository Architecture](../../../governance/repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
+- **[Repository Architecture](../../../repo-governance/repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
 
-- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)**: Progressive writing of audit reports to generated-reports/
+- **[Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)**: Progressive writing of audit reports to generated-reports/
 
-- **[Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)**: All Mermaid diagrams use accessible palette
+- **[Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md)**: All Mermaid diagrams use accessible palette

@@ -506,19 +506,19 @@ mvn clean verify
 
 ## Software Engineering Principles
 
-**[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
+**[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**:
 
 - Spotless automates code formatting (no manual style enforcement)
 - Error Prone automates bug detection at compile time
 - JaCoCo automates coverage measurement
 
-**[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
+**[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**:
 
 - NullAway makes null safety explicit via annotations
 - ArchUnit makes architectural constraints explicit via tests
 - Error Prone makes anti-patterns explicit via compiler errors
 
-**[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)**:
+**[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)**:
 
 - Consistent formatting via Spotless ensures reproducible code style
 - ArchUnit tests ensure reproducible architecture

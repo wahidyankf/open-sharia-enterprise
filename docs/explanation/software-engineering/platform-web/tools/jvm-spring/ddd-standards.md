@@ -25,7 +25,7 @@ created: 2026-02-06
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Spring Framework DDD Standards for OSE Platform
 
@@ -784,17 +784,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Aggregate roots make consistency boundaries explicit
    - Domain events make side effects explicit
    - Repository interfaces make data access explicit
 
-2. **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)**
+2. **[Immutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - Value objects are immutable records
    - Domain events are immutable records
    - Business methods return new instances (not mutate state)
 
-3. **[Simplicity Over Complexity](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+3. **[Simplicity Over Complexity](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - One repository per aggregate (not per entity)
    - Factory methods for creation (not complex constructors)
    - Package-by-feature simplifies navigation

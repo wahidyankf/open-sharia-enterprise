@@ -28,7 +28,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not an F# tutorial.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -288,9 +288,9 @@ let findZakatRecords (conn: IDbConnection) (payerId: PayerId) =
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
 
 ---
 

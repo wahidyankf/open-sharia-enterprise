@@ -379,7 +379,7 @@ Both paths guarantee `test:quick` runs. PRs additionally run `typecheck` and `li
 - **Coverage sections** — Update to clarify coverage is now measured from `test:unit` runs only (not integration). Coverage file paths may change for some backends.
 - **`test:quick` description** — Update to reflect that `test:quick` includes only unit + coverage + specs coverage, NOT lint or typecheck (those are separate targets).
 
-#### 2. `governance/development/infra/nx-targets.md`
+#### 2. `repo-governance/development/infra/nx-targets.md`
 
 **Sections to update**:
 
@@ -389,7 +389,7 @@ Both paths guarantee `test:quick` runs. PRs additionally run `typecheck` and `li
 - **Caching rules** — Only `test:unit` is cacheable. `test:integration` and `test:e2e` are NOT cacheable (`cache: false` in nx.json).
 - **Mandatory targets table** — Update with the per-project-type matrix defined above.
 
-#### 3. `governance/development/infra/bdd-spec-test-mapping.md`
+#### 3. `repo-governance/development/infra/bdd-spec-test-mapping.md`
 
 **Sections to update**:
 
@@ -436,8 +436,8 @@ These projects don't need the same README/architecture documentation rewrite as 
 - **`libs/hugo-commons/`** — Already compliant (Go unit + Godog integration), no changes needed.
 - **`libs/elixir-cabbage/`** — Already compliant (ExUnit), no changes needed.
 - **`libs/elixir-gherkin/`** — Already compliant (ExUnit), no changes needed.
-- **`governance/conventions/`** — No convention changes needed.
-- **`governance/principles/`** — Principles remain the same.
+- **`repo-governance/conventions/`** — No convention changes needed.
+- **`repo-governance/principles/`** — Principles remain the same.
 
 #### 7. `.github/workflows/` — CI Workflow Updates
 

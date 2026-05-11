@@ -14,7 +14,7 @@ created: 2026-05-02
 ose-public/
 ├── AGENTS.md                            # NEW — canonical, vendor-neutral root instruction file
 ├── CLAUDE.md                            # EXISTING — becomes thin shim importing AGENTS.md + Claude-specific notes
-├── governance/                          # vendor-NEUTRAL prose only
+├── repo-governance/                          # vendor-NEUTRAL prose only
 │   ├── vision/
 │   ├── principles/
 │   ├── conventions/
@@ -74,14 +74,14 @@ This table is the single source of truth, copied into the new convention file.
 
 ## 3. New Convention: `governance-vendor-independence.md`
 
-Lives at `governance/conventions/structure/governance-vendor-independence.md`.
+Lives at `repo-governance/conventions/structure/governance-vendor-independence.md`.
 
 Required sections:
 
 1. **Title and frontmatter** — standard kebab-case.
 2. **Principles Implemented/Respected** — links to relevant Layer-1 principles (Simplicity Over Complexity; Explicit Over Implicit; Accessibility First — broadly read as accessible to any contributor; Documentation First).
 3. **Purpose** — separate vendor-neutral governance from vendor-specific bindings.
-4. **Scope** — applies to all of `governance/**/*.md`. Out of scope: `.claude/`, `.opencode/`, `AGENTS.md`, `CLAUDE.md`, `docs/reference/platform-bindings.md`.
+4. **Scope** — applies to all of `repo-governance/**/*.md`. Out of scope: `.claude/`, `.opencode/`, `AGENTS.md`, `CLAUDE.md`, `docs/reference/platform-bindings.md`.
 5. **Forbidden vendor terms** — exact list with regex patterns.
 6. **Allowlist mechanism** — explicit `binding-example` fenced blocks; sections under `Platform Binding Examples` heading.
 7. **Vocabulary Map** — full table from §2 above.
@@ -110,13 +110,13 @@ Required sections:
 
 ## Conventions
 
-- Linking: see governance/conventions/formatting/linking.md
-- File naming: see governance/conventions/structure/file-naming.md
-- ... (links into governance/, no duplication)
+- Linking: see repo-governance/conventions/formatting/linking.md
+- File naming: see repo-governance/conventions/structure/file-naming.md
+- ... (links into repo-governance/, no duplication)
 
 ## Plans
 
-See governance/conventions/structure/plans.md and the plans/ directory.
+See repo-governance/conventions/structure/plans.md and the plans/ directory.
 
 ## Worktree Workflow
 
@@ -135,7 +135,7 @@ Concrete tool integrations live OUTSIDE governance:
 
 This repo describes model selection by capability tier (planning-grade / execution-grade / fast).
 Concrete vendor models resolve in the platform binding (e.g., .claude/agents/<name>.md frontmatter).
-See governance/development/agents/model-selection.md for the tier definitions.
+See repo-governance/development/agents/model-selection.md for the tier definitions.
 ```
 
 ### 4.2 CLAUDE.md transition
@@ -177,7 +177,7 @@ Lives at `docs/reference/platform-bindings.md`. Table-driven.
 > Claude→OpenCode color map landed 2026-05-02 (commit `7e003e106`):
 > `apps/rhino-cli/internal/agents/types.go` `ClaudeToOpenCodeColor` is the
 > single source of truth, with the policy authored at
-> `governance/development/agents/ai-agents.md` "Dual-Mode Color Translation
+> `repo-governance/development/agents/ai-agents.md` "Dual-Mode Color Translation
 > (Claude Code to OpenCode)" subsection. The catalog Phase 4 step adds a
 > "Translation artifacts" subsection listing all such mappings (model IDs,
 > tool names, color, etc.) per tool; future entries follow the same shape.
@@ -198,7 +198,7 @@ Lives at `docs/reference/platform-bindings.md`. Table-driven.
 
 ### 6.1 Selected approach: `rhino-cli` subcommand
 
-`rhino-cli governance vendor-audit` (or `rhino-cli vi audit`, naming TBD during delivery). Reasons:
+`rhino-cli repo-governance vendor-audit` (or `rhino-cli vi audit`, naming TBD during delivery). Reasons:
 
 - Consistent with existing `rhino-cli` pattern (Go CLI, has `bc validate`, `ul validate`, etc. per the OrganicLever DDD enforcement plan).
 - Cacheable as part of `test:quick` for the rhino-cli project itself.
@@ -208,9 +208,9 @@ Lives at `docs/reference/platform-bindings.md`. Table-driven.
 ### 6.2 Behavior contract
 
 ````
-rhino-cli governance vendor-audit [--root <path>] [--exclude <glob>]
+rhino-cli repo-governance vendor-audit [--root <path>] [--exclude <glob>]
 
-Default root: governance/
+Default root: repo-governance/
 Default excludes: <none> — scan everything under root
 
 For each .md file:
@@ -253,33 +253,33 @@ Files identified as vendor-tainted (65 of 157), grouped by refactor weight:
 > expanded to 12 files after a thorough sweep. `delivery.md` is the authoritative
 > execution checklist; this section is an illustrative sample of the heaviest files.
 
-- `governance/development/agents/ai-agents.md` (115 KB)
-- `governance/conventions/tutorials/in-the-field.md` (99 KB)
-- `governance/conventions/hugo/ayokoding.md` (78 KB)
-- `governance/conventions/tutorials/by-example.md` (66 KB)
-- `governance/conventions/formatting/diagrams.md` (65 KB)
-- `governance/development/quality/criticality-levels.md` (43 KB)
-- `governance/development/pattern/maker-checker-fixer.md` (40 KB)
-- `governance/workflows/plan/plan-execution.md` (39 KB)
-- `governance/conventions/structure/ose-primer-sync.md` (39 KB)
-- `governance/conventions/formatting/color-accessibility.md` (37 KB)
-- `governance/development/quality/fixer-confidence-levels.md` (36 KB)
-- `governance/repository-governance-architecture.md` (31 KB)
+- `repo-governance/development/agents/ai-agents.md` (115 KB)
+- `repo-governance/conventions/tutorials/in-the-field.md` (99 KB)
+- `repo-governance/conventions/hugo/ayokoding.md` (78 KB)
+- `repo-governance/conventions/tutorials/by-example.md` (66 KB)
+- `repo-governance/conventions/formatting/diagrams.md` (65 KB)
+- `repo-governance/development/quality/criticality-levels.md` (43 KB)
+- `repo-governance/development/pattern/maker-checker-fixer.md` (40 KB)
+- `repo-governance/workflows/plan/plan-execution.md` (39 KB)
+- `repo-governance/conventions/structure/ose-primer-sync.md` (39 KB)
+- `repo-governance/conventions/formatting/color-accessibility.md` (37 KB)
+- `repo-governance/development/quality/fixer-confidence-levels.md` (36 KB)
+- `repo-governance/repository-governance-architecture.md` (31 KB)
 
 **Tier B — moderate lift (10-30 KB)**:
 
-- `governance/development/agents/model-selection.md` (23.8 KB)
-- `governance/development/agents/skill-context-architecture.md` (10.8 KB)
-- `governance/conventions/structure/agent-naming.md` (8.6 KB)
-- `governance/conventions/structure/plans.md` (27.9 KB)
-- `governance/workflows/plan/plan-execution.md` (size TBD)
-- `governance/workflows/plan/plan-quality-gate.md`
-- `governance/workflows/repo/repo-rules-quality-gate.md`
-- `governance/workflows/repo/repo-ose-primer-*.md` (multiple)
-- `governance/conventions/writing/web-research-delegation.md`
-- `governance/development/agents/anti-patterns.md`
-- `governance/development/agents/best-practices.md`
-- `governance/development/agents/README.md`
+- `repo-governance/development/agents/model-selection.md` (23.8 KB)
+- `repo-governance/development/agents/skill-context-architecture.md` (10.8 KB)
+- `repo-governance/conventions/structure/agent-naming.md` (8.6 KB)
+- `repo-governance/conventions/structure/plans.md` (27.9 KB)
+- `repo-governance/workflows/plan/plan-execution.md` (size TBD)
+- `repo-governance/workflows/plan/plan-quality-gate.md`
+- `repo-governance/workflows/repo/repo-rules-quality-gate.md`
+- `repo-governance/workflows/repo/repo-ose-primer-*.md` (multiple)
+- `repo-governance/conventions/writing/web-research-delegation.md`
+- `repo-governance/development/agents/anti-patterns.md`
+- `repo-governance/development/agents/best-practices.md`
+- `repo-governance/development/agents/README.md`
 - (others — see full list under §7.3)
 
 **Tier C — light lift (< 10 KB or surgical replacements)**:
@@ -306,24 +306,24 @@ For each vendor-tainted file:
 
 ## 8. Linkage Side-Effects
 
-These files reference governance/ paths or vendor terms and may need updates as governance content shifts:
+These files reference repo-governance/ paths or vendor terms and may need updates as governance content shifts:
 
 - `ose-public/CLAUDE.md` — replace canonical references with `AGENTS.md`; keep Claude-specific notes only.
 - `ose-public/AGENTS.md` (new) — canonical content.
-- `ose-public/.claude/agents/*.md` — many agents grep into `governance/`; check for hardcoded vendor terms appearing in their reference paths.
+- `ose-public/.claude/agents/*.md` — many agents grep into `repo-governance/`; check for hardcoded vendor terms appearing in their reference paths.
 - `ose-public/.claude/skills/*/SKILL.md` — same check.
 - `ose-public/.opencode/agents/*.md` — same; auto-synced from `.claude/agents/` so usually no separate edit.
 - `ose-public/docs/explanation/repository-governance.md` (if exists) — link target updates.
-- `parent ose-projects/governance/` — out of scope (companion plan).
+- `parent ose-projects/repo-governance/` — out of scope (companion plan).
 - `ose-primer/*` — out of scope; future propagation plan.
 
 ## 9. Cross-References to Existing Conventions and Practices
 
-- [governance/conventions/structure/plans.md](../../../governance/conventions/structure/plans.md) — this plan's structure follows it.
-- [governance/conventions/writing/web-research-delegation.md](../../../governance/conventions/writing/web-research-delegation.md) — already followed; web research delegated to `web-research-maker`.
-- [governance/development/workflow/test-driven-development.md](../../../governance/development/workflow/test-driven-development.md) — validation tooling delivery items are TDD-shaped.
-- [governance/development/workflow/trunk-based-development.md](../../../governance/development/workflow/trunk-based-development.md) — refactor lands on `main` via direct-to-main publish per Standard 14.
-- [governance/development/quality/code.md](../../../governance/development/quality/code.md) — pre-push hook gates remain green throughout.
+- [repo-governance/conventions/structure/plans.md](../../../repo-governance/conventions/structure/plans.md) — this plan's structure follows it.
+- [repo-governance/conventions/writing/web-research-delegation.md](../../../repo-governance/conventions/writing/web-research-delegation.md) — already followed; web research delegated to `web-research-maker`.
+- [repo-governance/development/workflow/test-driven-development.md](../../../repo-governance/development/workflow/test-driven-development.md) — validation tooling delivery items are TDD-shaped.
+- [repo-governance/development/workflow/trunk-based-development.md](../../../repo-governance/development/workflow/trunk-based-development.md) — refactor lands on `main` via direct-to-main publish per Standard 14.
+- [repo-governance/development/quality/code.md](../../../repo-governance/development/quality/code.md) — pre-push hook gates remain green throughout.
 
 ## 10. Decisions Made (Reconciling PRD Open Questions)
 
@@ -331,7 +331,7 @@ These files reference governance/ paths or vendor terms and may need updates as 
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Symlink vs shim for `CLAUDE.md` | **Shim with `@AGENTS.md` import** — portable across Windows clones, keeps Claude-Code-only notes scoped                                                                                           |
 | Allowlist mechanism             | **Both**: `binding-example` fence (granular) PLUS "Platform Binding Examples" heading-scoped sections (page-level). Convention specifies precedence (fence wins for in-line; heading for grouped) |
-| Validation tooling location     | **`rhino-cli governance vendor-audit` subcommand** — consistent with existing rhino-cli pattern, cacheable, CI-friendly                                                                           |
+| Validation tooling location     | **`rhino-cli repo-governance vendor-audit` subcommand** — consistent with existing rhino-cli pattern, cacheable, CI-friendly                                                                      |
 
 ## 11. Rollback Strategy
 
@@ -341,16 +341,16 @@ This refactor proceeds via serial, atomic commits (one file or logical group per
 
 ### Phase-boundary rollback points
 
-| After phase          | State of the repo                                                | Rollback action                                                                                                                     |
-| -------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Phase 0              | Baselines captured; no files changed                             | Nothing to revert                                                                                                                   |
-| Phase 1              | New convention file added; no governance prose changed           | `git revert` the Phase 1 commit; remove the convention file                                                                         |
-| Phase 2              | AGENTS.md added; CLAUDE.md converted to shim                     | `git revert` the Phase 2 commit; CLAUDE.md reverts to original; AGENTS.md removed                                                   |
-| Phase 3 (mid-Tier A) | Some governance files vocabulary-cleaned; others not yet changed | `git revert <sha>` per file; each file was its own commit — rollback is granular                                                    |
-| Phase 3 (complete)   | All 65 vendor-tainted governance files rewritten                 | `git revert` range from Phase 3 start to Phase 3 end; all governance files revert atomically                                        |
-| Phase 4              | Platform-bindings catalog added                                  | `git revert` the Phase 4 commit; remove `docs/reference/platform-bindings.md`; restore TODO markers                                 |
-| Phase 5              | Validation tooling (`rhino-cli governance vendor-audit`) added   | `git revert` the Phase 5 commits; remove the new rhino-cli subcommand; tooling reverts to absent                                    |
-| Phase 6              | Plan archived; worktree merged to main                           | Revert on main requires explicit approval per `ci-blocker-resolution.md`; always fix-forward unless governance failure is confirmed |
+| After phase          | State of the repo                                                   | Rollback action                                                                                                                     |
+| -------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Phase 0              | Baselines captured; no files changed                                | Nothing to revert                                                                                                                   |
+| Phase 1              | New convention file added; no governance prose changed              | `git revert` the Phase 1 commit; remove the convention file                                                                         |
+| Phase 2              | AGENTS.md added; CLAUDE.md converted to shim                        | `git revert` the Phase 2 commit; CLAUDE.md reverts to original; AGENTS.md removed                                                   |
+| Phase 3 (mid-Tier A) | Some governance files vocabulary-cleaned; others not yet changed    | `git revert <sha>` per file; each file was its own commit — rollback is granular                                                    |
+| Phase 3 (complete)   | All 65 vendor-tainted governance files rewritten                    | `git revert` range from Phase 3 start to Phase 3 end; all governance files revert atomically                                        |
+| Phase 4              | Platform-bindings catalog added                                     | `git revert` the Phase 4 commit; remove `docs/reference/platform-bindings.md`; restore TODO markers                                 |
+| Phase 5              | Validation tooling (`rhino-cli repo-governance vendor-audit`) added | `git revert` the Phase 5 commits; remove the new rhino-cli subcommand; tooling reverts to absent                                    |
+| Phase 6              | Plan archived; worktree merged to main                              | Revert on main requires explicit approval per `ci-blocker-resolution.md`; always fix-forward unless governance failure is confirmed |
 
 ### Reversibility principles
 
@@ -365,9 +365,9 @@ This refactor proceeds via serial, atomic commits (one file or logical group per
 1. **Phase 0** — Pre-flight: confirm worktree, run baselines.
 2. **Phase 1** — New convention `governance-vendor-independence.md` lands first (Documentation First).
 3. **Phase 2** — `AGENTS.md` introduction at root + `CLAUDE.md` shim conversion.
-4. **Phase 3** — Bulk vocabulary refactor in governance/, file-by-file in tier order (A → B → C).
+4. **Phase 3** — Bulk vocabulary refactor in repo-governance/, file-by-file in tier order (A → B → C).
 5. **Phase 4** — Platform-bindings catalog at `docs/reference/platform-bindings.md`.
-6. **Phase 5** — Validation tooling: TDD-shaped `rhino-cli governance vendor-audit`. Wired into `test:quick` and pre-push.
+6. **Phase 5** — Validation tooling: TDD-shaped `rhino-cli repo-governance vendor-audit`. Wired into `test:quick` and pre-push.
 7. **Phase 6** — Final pass: full-tree audit, link-checker green, sync-mirror green, plan-execution-checker green; archive.
 
 Each phase has its own pre-flight, exit gates, and rollback plan in `delivery.md`.

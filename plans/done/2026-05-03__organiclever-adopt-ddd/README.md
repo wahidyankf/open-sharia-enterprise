@@ -4,7 +4,7 @@
 **Owner**: Wahidyan Kresna Fridayoka
 **Started**: 2026-05-02
 **Scope**: `ose-public` only — `apps/organiclever-web/` and `specs/apps/organiclever/`
-**Subrepo worktree**: REQUIRED — Scope A per the parent repo's Subrepo Worktree Workflow Convention. Run all delivery items inside `.claude/worktrees/organiclever-adopt-ddd/` after `cd ose-public && claude --worktree organiclever-adopt-ddd`; initialize the worktree per [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md). Publish path: **direct-to-main** (Trunk Based Development default for `ose-public`).
+**Subrepo worktree**: REQUIRED — Scope A per the parent repo's Subrepo Worktree Workflow Convention. Run all delivery items inside `.claude/worktrees/organiclever-adopt-ddd/` after `cd ose-public && claude --worktree organiclever-adopt-ddd`; initialize the worktree per [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md). Publish path: **direct-to-main** (Trunk Based Development default for `ose-public`).
 
 ## Goal
 
@@ -86,10 +86,10 @@ This plan is done when **all** of the following are true:
 - [Domain-Driven Design (DDD) — Authoritative Standards](../../../docs/explanation/software-engineering/architecture/domain-driven-design-ddd/README.md)
 - [BDD with DDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
 - [TDD with DDD Standards](../../../docs/explanation/software-engineering/development/test-driven-development-tdd/tdd-with-ddd-standards.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md)
-- [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
+- [Trunk Based Development Convention](../../../repo-governance/development/workflow/trunk-based-development.md)
+- [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)
 - [organiclever-web README](../../../apps/organiclever-web/README.md)
 - [organiclever specs README](../../../specs/apps/organiclever/README.md)
-- [Downstream plan: organiclever-rhino-cli-ddd-enforcement](../2026-05-02__organiclever-rhino-cli-ddd-enforcement/README.md) — hard serial dependency; begins only after this plan is archived to `done/`
+- [Downstream plan: organiclever-rhino-cli-ddd-enforcement](../2026-05-03__organiclever-rhino-cli-ddd-enforcement/README.md) — hard serial dependency; begins only after this plan is archived to `done/`

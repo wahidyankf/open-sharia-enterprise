@@ -65,7 +65,7 @@ duplication, inconsistent patterns, and undocumented conventions.
 | GitHub Actions workflows | PR quality gate, backend/frontend test workflows, test-and-deploy, codecov |
 | Local Docker development | docker-compose dev setups with autoreload for all app types                |
 | CI Docker infrastructure | Integration test Dockerfiles, CI overlays, layer caching                   |
-| Governance documentation | CI conventions doc in `governance/development/`                            |
+| Governance documentation | CI conventions doc in `repo-governance/development/`                       |
 | Compliance enforcement   | ci-checker/ci-fixer agents, ci-quality-gate workflow, ci-standards skill   |
 
 ### Out of Scope
@@ -344,8 +344,8 @@ flowchart TD
 
 ## Related Documentation
 
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Code Quality](../../../governance/development/quality/code.md)
-- [Markdown Quality](../../../governance/development/quality/markdown.md)
-- [Nx Targets](../../../governance/development/infra/nx-targets.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Code Quality](../../../repo-governance/development/quality/code.md)
+- [Markdown Quality](../../../repo-governance/development/quality/markdown.md)
+- [Nx Targets](../../../repo-governance/development/infra/nx-targets.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)

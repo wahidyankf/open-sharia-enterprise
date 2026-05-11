@@ -28,7 +28,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -546,19 +546,19 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Maven Surefire/Failsafe automatically run tests on every build
    - JaCoCo enforces ≥85% coverage threshold (build fails if not met)
    - CI/CD pipeline runs all tests before merge approval
 
-2. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+2. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - In-memory repositories reset in `@BeforeEach` — identical state every test run
    - WireMock stubs provide deterministic external service responses
    - Testcontainers (E2E only) spin up identical database instances for real system tests
    - Tests isolated with `@BeforeEach` setup (no shared state between tests)
    - Cucumber BDD scenarios provide reproducible acceptance criteria
 
-3. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+3. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Test names explicitly describe behavior (`shouldCalculateTaxWhenAmountAboveThreshold`)
    - AssertJ provides explicit, readable assertions (`assertThat(result).isNotNull().isEqualByComparingTo(expected)`)
    - `@ExtendWith(MockitoExtension.class)` makes mocking framework explicit

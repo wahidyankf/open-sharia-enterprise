@@ -90,7 +90,7 @@ appropriate package manager for the current platform (macOS only for initial imp
 
 - Must support both macOS and Ubuntu/Linux (detected via `runtime.GOOS`)
 - Must be idempotent — running `--fix` when all tools are installed is a no-op (see
-  [idempotency contract](../../../governance/development/workflow/native-first-toolchain.md))
+  [idempotency contract](../../../repo-governance/development/workflow/native-first-toolchain.md))
 - Must handle tools that require version managers (Volta → Node/npm, SDKMAN → Java/Maven,
   asdf → Elixir/Erlang, pyenv → Python, rustup → Rust)
 - Must handle tools installed directly via Homebrew (go, jq, dotnet, clojure, flutter)

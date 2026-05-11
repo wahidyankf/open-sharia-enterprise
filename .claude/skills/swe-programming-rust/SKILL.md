@@ -22,7 +22,7 @@ Complete the AyoKoding Rust learning path first:
 1. **[Rust Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - 0-95% language coverage
 2. **[Rust By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated examples
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Quick Standards Reference
 
@@ -197,4 +197,4 @@ cargo test           # Run all tests
 ## References
 
 - [Rust README](../../../docs/explanation/software-engineering/programming-languages/rust/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

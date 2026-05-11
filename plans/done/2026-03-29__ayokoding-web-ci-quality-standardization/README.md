@@ -5,7 +5,7 @@
 
 ## Overview
 
-Align ayokoding-web's CI pipelines, quality gates, and Nx target configurations with the monorepo's canonical standards defined in [Nx Target Standards](../../../governance/development/infra/nx-targets.md) and [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md). The app is largely compliant today, but several inconsistencies and gaps need resolution.
+Align ayokoding-web's CI pipelines, quality gates, and Nx target configurations with the monorepo's canonical standards defined in [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md) and [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md). The app is largely compliant today, but several inconsistencies and gaps need resolution.
 
 **Git Workflow**: Commit to `main` (Trunk Based Development)
 

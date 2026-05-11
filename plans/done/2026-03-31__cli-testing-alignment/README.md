@@ -58,4 +58,4 @@ All three Go CLI apps in the monorepo:
 
 - **Specs**: `specs/apps/rhino-cli/README.md`, `specs/apps/ayokoding-cli/README.md`, and
   `specs/apps/oseplatform-cli/README.md` all updated to reflect dual consumption
-- **Documentation**: 6+ governance/docs files that define CLI testing patterns
+- **Documentation**: 6+ repo-governance/docs files that define CLI testing patterns

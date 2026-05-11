@@ -15,8 +15,8 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			want: "workflows/ paths",
 		},
 		{
-			name: "governance/workflows/ should NOT match",
-			link: "../../governance/workflows/deployment.md",
+			name: "repo-governance/workflows/ should NOT match",
+			link: "../../repo-governance/workflows/deployment.md",
 			want: "General/other paths",
 		},
 
@@ -27,8 +27,8 @@ func TestCategorizeBrokenLink(t *testing.T) {
 			want: "vision/ paths",
 		},
 		{
-			name: "governance/vision/ should NOT match",
-			link: "../../governance/vision/mission.md",
+			name: "repo-governance/vision/ should NOT match",
+			link: "../../repo-governance/vision/mission.md",
 			want: "General/other paths",
 		},
 
@@ -40,7 +40,7 @@ func TestCategorizeBrokenLink(t *testing.T) {
 		},
 		{
 			name: "conventions README nested",
-			link: "../../governance/conventions/README.md",
+			link: "../../repo-governance/conventions/README.md",
 			want: "conventions README",
 		},
 

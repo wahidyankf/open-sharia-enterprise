@@ -23,7 +23,7 @@ As of 2026-04-18, one related repository is actively tracked: [`ose-primer`](htt
 
 ### Upstream / downstream relationship
 
-`ose-public` is **upstream**: all scaffolding originates here, then flows to `ose-primer` through the propagation flow documented in the [ose-primer sync convention](../../governance/conventions/structure/ose-primer-sync.md).
+`ose-public` is **upstream**: all scaffolding originates here, then flows to `ose-primer` through the propagation flow documented in the [ose-primer sync convention](../../repo-governance/conventions/structure/ose-primer-sync.md).
 
 `ose-primer` is **downstream**: it receives scaffolding updates, but its product layer (anything a consumer builds on top) is never pulled back into `ose-public`. Generic improvements that consumers contribute to `ose-primer` (for example, new governance patterns, Skill definitions, or demo-app implementations) can flow back to `ose-public` through the adoption flow documented in the same convention.
 
@@ -37,11 +37,11 @@ The two flows are directional — propagation (upstream → downstream) and adop
 
 ### Non-Goals for this document
 
-- This document does not describe sync automation mechanics or release cadence. Those details live in the [ose-primer sync convention](../../governance/conventions/structure/ose-primer-sync.md) and the orchestrating workflows under `governance/workflows/repo/`.
+- This document does not describe sync automation mechanics or release cadence. Those details live in the [ose-primer sync convention](../../repo-governance/conventions/structure/ose-primer-sync.md) and the orchestrating workflows under `repo-governance/workflows/repo/`.
 - This document does not enumerate every file-by-file classification. The authoritative classifier table lives in the sync convention.
 - This document does not describe how to clone, set up, or build `ose-primer` itself; that belongs in `ose-primer`'s own README.
 
 ### Where to look next
 
-- [ose-primer sync convention](../../governance/conventions/structure/ose-primer-sync.md) — directional classification, transforms, safety invariants, and audit rules.
+- [ose-primer sync convention](../../repo-governance/conventions/structure/ose-primer-sync.md) — directional classification, transforms, safety invariants, and audit rules.
 - [ose-primer on GitHub](https://github.com/wahidyankf/ose-primer) — downstream template repository.

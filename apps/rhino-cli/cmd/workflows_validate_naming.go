@@ -23,8 +23,8 @@ var workflowsValidateNamingFn = workflowsValidateNaming
 var workflowsValidateNamingCmd = &cobra.Command{
 	Use:   "validate-naming",
 	Short: "Validate workflow filename suffixes and frontmatter name consistency",
-	Long: `Validate that every workflow file under governance/workflows/ follows the
-naming convention documented in governance/conventions/structure/workflow-naming.md.
+	Long: `Validate that every workflow file under repo-governance/workflows/ follows the
+naming convention documented in repo-governance/conventions/structure/workflow-naming.md.
 
 The command enforces two rules:
 - Filename (sans .md) ends with one of: quality-gate, execution, setup.
@@ -32,7 +32,7 @@ The command enforces two rules:
 
 Exempt from validation:
 - Any README.md.
-- Any file under governance/workflows/meta/ (reference docs, not workflows).`,
+- Any file under repo-governance/workflows/meta/ (reference docs, not workflows).`,
 	Example: `  # Validate workflow naming across the governance tree
   rhino-cli workflows validate-naming
 
@@ -74,11 +74,11 @@ func runValidateWorkflowsNaming(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// workflowsValidateNaming walks governance/workflows/ recursively, excluding
+// workflowsValidateNaming walks repo-governance/workflows/ recursively, excluding
 // README.md files and anything under `meta/`, and returns every naming
 // violation.
 func workflowsValidateNaming(repoRoot string) ([]naming.Violation, error) {
-	root := filepath.Join(repoRoot, "governance", "workflows")
+	root := filepath.Join(repoRoot, "repo-governance", "workflows")
 	files, err := listWorkflowFiles(root)
 	if err != nil {
 		return nil, err

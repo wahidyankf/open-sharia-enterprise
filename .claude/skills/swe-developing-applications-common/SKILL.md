@@ -62,7 +62,7 @@ This platform uses **Nx** for monorepo management with clear separation of conce
 
 ### Common Nx Commands
 
-All target names follow [Nx Target Standards](../../../governance/development/infra/nx-targets.md). Use canonical names: `dev` (not `serve`), `test:quick` (not `test`), `start` (not `serve` for production).
+All target names follow [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md). Use canonical names: `dev` (not `serve`), `test:quick` (not `test`), `start` (not `serve` for production).
 
 **Development**:
 
@@ -228,7 +228,7 @@ When code files are modified, **Husky + lint-staged** automatically run:
 - **Run `test:quick` for affected projects**: Executes the fast quality gate (`nx affected -t test:quick`) — this is the canonical pre-push check. Every project must expose a `test:quick` target.
 - **Markdown linting**: Final markdown quality check
 
-> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project. See [Nx Target Standards](../../../governance/development/infra/nx-targets.md) for the full execution model.
+> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project. See [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md) for the full execution model.
 
 ### Trust the Automation
 
@@ -295,7 +295,7 @@ CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-con
 
 ### When to Run Environment Setup
 
-- **Immediately after creating or entering a git worktree** — run BOTH `npm install` AND `npm run doctor -- --fix` in the root repository worktree, in that order. This is a mandatory two-step init; the `postinstall` hook's implicit `doctor || true` does NOT substitute for the explicit `doctor --fix` call. See [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)
+- **Immediately after creating or entering a git worktree** — run BOTH `npm install` AND `npm run doctor -- --fix` in the root repository worktree, in that order. This is a mandatory two-step init; the `postinstall` hook's implicit `doctor || true` does NOT substitute for the explicit `doctor --fix` call. See [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)
 - **Before starting any implementation work** — verify tools and env files are ready
 - **After pulling changes** that modify `package.json`, `go.mod`, `.tool-versions`, or other version config
 - **After switching between projects** that use different toolchains
@@ -304,7 +304,7 @@ CGO_ENABLED=0 go run -C apps/rhino-cli main.go env restore --force --include-con
 ### Full Setup Guide
 
 For complete step-by-step environment setup (new machine, fresh OS, or broken toolchain), see:
-[Development Environment Setup Workflow](../../../governance/workflows/infra/development-environment-setup.md)
+[Development Environment Setup Workflow](../../../repo-governance/workflows/infra/development-environment-setup.md)
 
 ## Development Workflow Pattern
 
@@ -341,10 +341,10 @@ All language developers follow this pattern:
 
 - **[CLAUDE.md](../../../CLAUDE.md)**: Primary guidance for all agents
 - **[Monorepo Structure](../../../docs/reference/monorepo-structure.md)**: Nx workspace organization
-- **[Commit Messages Convention](../../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
-- **[Code Quality Convention](../../../governance/development/quality/code.md)**: Git hooks and automation
-- **[Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
-- **[Development Environment Setup](../../../governance/workflows/infra/development-environment-setup.md)**: Complete toolchain setup (doctor, rhino-cli env, all language runtimes)
+- **[Commit Messages Convention](../../../repo-governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
+- **[Code Quality Convention](../../../repo-governance/development/quality/code.md)**: Git hooks and automation
+- **[Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
+- **[Development Environment Setup](../../../repo-governance/workflows/infra/development-environment-setup.md)**: Complete toolchain setup (doctor, rhino-cli env, all language runtimes)
 
 ### Language-Specific Documentation
 
@@ -386,37 +386,37 @@ and `curl` for API verification. Promote manual scripts to automated tests whene
 one per behavior. Each cycle is independently committable.
 
 **Canonical reference**:
-[Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 — covers the full Red→Green→Refactor cycle, all test levels, the "Scope: Which Tests TDD Covers"
 table, manual verification guidance, and applying TDD to delivery checklists.
 
 See also:
-[Manual Behavioral Verification](../../../governance/development/quality/manual-behavioral-verification.md),
-[Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md).
+[Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md),
+[Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md).
 
 ## Related Conventions
 
 **Workflow Conventions**:
 
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow details (default = direct push to main regardless of execution context; branch + draft PR is opt-in only when explicitly requested)
-- [PR Merge Protocol](../../../governance/development/workflow/pr-merge-protocol.md) - Explicit user approval required, all quality gates must pass
-- [Commit Messages Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
-- [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Make it work → right → fast
-- [Test-Driven Development](../../../governance/development/workflow/test-driven-development.md) - Required for all code changes (Red→Green→Refactor, all levels)
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow details (default = direct push to main regardless of execution context; branch + draft PR is opt-in only when explicitly requested)
+- [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) - Explicit user approval required, all quality gates must pass
+- [Commit Messages Convention](../../../repo-governance/development/workflow/commit-messages.md) - Conventional Commits specification
+- [Implementation Workflow](../../../repo-governance/development/workflow/implementation.md) - Make it work → right → fast
+- [Test-Driven Development](../../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes (Red→Green→Refactor, all levels)
 
 **Quality Conventions**:
 
-- [Code Quality Convention](../../../governance/development/quality/code.md) - Git hooks, linting, formatting
-- [Manual Behavioral Verification](../../../governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API testing
-- [Feature Change Completeness](../../../governance/development/quality/feature-change-completeness.md) - Specs, contracts, and tests must update with every feature change
-- [CI Blocker Resolution](../../../governance/development/quality/ci-blocker-resolution.md) - Preexisting CI failures must be investigated and fixed, never bypassed
-- [Reproducible Environments](../../../governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
+- [Code Quality Convention](../../../repo-governance/development/quality/code.md) - Git hooks, linting, formatting
+- [Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API testing
+- [Feature Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md) - Specs, contracts, and tests must update with every feature change
+- [CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md) - Preexisting CI failures must be investigated and fixed, never bypassed
+- [Reproducible Environments](../../../repo-governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
 
 **Architecture Conventions**:
 
 - [Monorepo Structure Reference](../../../docs/reference/monorepo-structure.md) - Nx workspace organization
-- [Nx Target Standards](../../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md) - FP principles across languages
+- [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md) - FP principles across languages
 
 ## Related Skills
 

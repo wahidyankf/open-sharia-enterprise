@@ -12,14 +12,14 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 ## Phase Summary
 
-| Phase | Name                           | Deliverables                                   | Duration Estimate |
-| ----- | ------------------------------ | ---------------------------------------------- | ----------------- |
-| 0     | Pre-Migration Setup            | Tag, backup                                    | Setup             |
-| 1     | Move Rules to Root             | Directories moved to /governance/, old removed | ~5s               |
-| 2     | Update Governance Architecture | Governance doc updated                         | ~30s              |
-| 3     | Update All References          | 151 files updated via sed + manual             | ~90s              |
-| 4     | Final Validation               | All validations pass                           | ~1m               |
-| 5     | Single Atomic Commit           | All changes committed together                 | ~10s              |
+| Phase | Name                           | Deliverables                                        | Duration Estimate |
+| ----- | ------------------------------ | --------------------------------------------------- | ----------------- |
+| 0     | Pre-Migration Setup            | Tag, backup                                         | Setup             |
+| 1     | Move Rules to Root             | Directories moved to /repo-governance/, old removed | ~5s               |
+| 2     | Update Governance Architecture | Governance doc updated                              | ~30s              |
+| 3     | Update All References          | 151 files updated via sed + manual                  | ~90s              |
+| 4     | Final Validation               | All validations pass                                | ~1m               |
+| 5     | Single Atomic Commit           | All changes committed together                      | ~10s              |
 
 **Total estimated time**: ~3-4 minutes (excluding repo-governance-checker validation)
 
@@ -85,21 +85,21 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 ## Phase 1: Move Rules to Root
 
-**Goal**: Move all rules directories to /governance/ (excluding agents/) using git mv
+**Goal**: Move all rules directories to /repo-governance/ (excluding agents/) using git mv
 
 ### Execution Steps
 
 ```bash
 # Step 1.1: Move directories with git mv (preserves history)
-git mv governance/vision governance/
-git mv governance/principles governance/
-git mv governance/conventions governance/
-git mv governance/development governance/
-git mv governance/workflows governance/
+git mv repo-governance/vision repo-governance/
+git mv repo-governance/principles repo-governance/
+git mv repo-governance/conventions repo-governance/
+git mv repo-governance/development repo-governance/
+git mv repo-governance/workflows repo-governance/
 
 # Step 1.2: Move individual files with git mv
-git mv governance/ex-ru__*.md governance/
-git mv governance/README.md governance/
+git mv repo-governance/ex-ru__*.md repo-governance/
+git mv repo-governance/README.md repo-governance/
 
 # Step 1.3: Verify moves
 git status | grep "renamed:"  # ✅ Should show all moves
@@ -113,27 +113,27 @@ git add -A
 
 ### Validation Checklist
 
-- [x] All 5 directories exist in /governance/:
+- [x] All 5 directories exist in /repo-governance/:
 
   ```bash
-  test -d governance/vision/              # ✅ PASS if true
-  test -d governance/principles/           # ✅ PASS if true
-  test -d governance/conventions/         # ✅ PASS if true
-  test -d governance/development/         # ✅ PASS if true
-  test -d governance/workflows/          # ✅ PASS if true
+  test -d repo-governance/vision/              # ✅ PASS if true
+  test -d repo-governance/principles/           # ✅ PASS if true
+  test -d repo-governance/conventions/         # ✅ PASS if true
+  test -d repo-governance/development/         # ✅ PASS if true
+  test -d repo-governance/workflows/          # ✅ PASS if true
   ```
 
-- [x] All 2 files exist in /governance/:
+- [x] All 2 files exist in /repo-governance/:
 
   ```bash
-  test -f governance/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
-  test -f governance/README.md          # ✅ PASS if true
+  test -f repo-governance/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
+  test -f repo-governance/README.md          # ✅ PASS if true
   ```
 
-- [x] governance/ directory removed (except agents/):
+- [x] repo-governance/ directory removed (except agents/):
 
   ```bash
-  ! test -d governance/   # ✅ PASS if true (directory doesn't exist)
+  ! test -d repo-governance/   # ✅ PASS if true (directory doesn't exist)
   ```
 
 - [x] Git shows moves as renames:
@@ -145,7 +145,7 @@ git add -A
 - [x] Git history preserved:
 
   ```bash
-  git log --follow --oneline -- governance/vision/ex-vi__open-sharia-enterprise.md | head -1
+  git log --follow --oneline -- repo-governance/vision/ex-vi__open-sharia-enterprise.md | head -1
   # ✅ PASS if shows pre-move commit
   ```
 
@@ -168,45 +168,45 @@ git add -A
 
 ## Phase 2: Update Governance Architecture
 
-**Goal**: Update /governance/ex-ru\_\_repository-governance-architecture.md with /governance/ paths
+**Goal**: Update /repo-governance/ex-ru\_\_repository-governance-architecture.md with /repo-governance/ paths
 
 ### Execution Steps (Manual Update Required)
 
 #### Update Layer Paths
 
 - [x] Update Layer 0 path in text:
-  - Change `Location: governance/vision/` → `Location: /governance/vision/`
+  - Change `Location: repo-governance/vision/` → `Location: /repo-governance/vision/`
   - Update example file paths for vision documents
 
 - [x] Update Layer 1 path in text:
-  - Change `Location: governance/principles` → `Location: /governance/principles/`
+  - Change `Location: repo-governance/principles` → `Location: /repo-governance/principles/`
   - Update example file paths for principles documents
 
 - [x] Update Layer 2 path in text:
-  - Change `Location: governance/conventions/` → `Location: /governance/conventions/`
+  - Change `Location: repo-governance/conventions/` → `Location: /repo-governance/conventions/`
   - Update example file path examples for conventions documents
 
 - [x] Update Layer 3 path in text:
-  - Change `Location: governance/final/ development/` → `Location: /governance/development/`
+  - Change `Location: repo-governance/final/ development/` → `Location: /repo-governance/development/`
   - Update example file paths for development documents
 
 - [x] Update Layer 5 path in text:
-  - Change `Location: governance/final: workflows` → `Location: /governance/workflows/`
+  - Change `Location: repo-governance/final: workflows` → `Location: /repo-governance/workflows/`
   - Update example file path examples for workflow documents
 
 - [x] Update all directory path examples:
-  - Change `../../../governance/vision/` → `../../../governance/vision/`
-  - Change `../../governance/principles/` → `../../governance/principles/`
-  - Change `../../governance/conventions/` → `../../governance/conventions/`
-  - Change `../../governance/development/` → `../../governance/development/`
-  - Change `../../governance/workflows/` → `../../governance/workflows/`
+  - Change `../../../repo-governance/vision/` → `../../../repo-governance/vision/`
+  - Change `../../repo-governance/principles/` → `../../repo-governance/principles/`
+  - Change `../../repo-governance/conventions/` → `../../repo-governance/conventions/`
+  - Change `../../repo-governance/development/` → `../../repo-governance/development/`
+  - Change `../../repo-governance/workflows/` → `../../repo-governance/workflows/`
 
 - [x] Update Layer 3 path in text:
-  - Change `Location: governance/development/` → `Location: /governance/development/`
+  - Change `Location: repo-governance/development/` → `Location: /repo-governance/development/`
   - Update example file paths for development documents
 
 - [x] Update Layer 5 path in text:
-  - Change `Location: governance/workflows/` → `Location: /governance/workflows/`
+  - Change `Location: repo-governance/workflows/` → `Location: /repo-governance/workflows/`
   - Update example file paths for workflow documents
 
 #### Update Mermaid Diagram
@@ -214,25 +214,25 @@ git add -A
 - [x] Update Layer 0 node:
 
   ```mermaid
-  L0[Layer 0: Vision<br/>WHY WE EXIST<br/>/governance/vision/]
+  L0[Layer 0: Vision<br/>WHY WE EXIST<br/>/repo-governance/vision/]
   ```
 
 - [x] Update Layer 1 node:
 
   ```mermaid
-  L1[Layer 1: Principies<br/>WHY - Values<br/>/governance/principles/]
+  L1[Layer 1: Principies<br/>WHY - Values<br/>/repo-governance/principles/]
   ```
 
 - [x] Update Layer 2 node:
 
   ```mermaid
-  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/governance/conventions/]
+  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/repo-governance/conventions/]
   ```
 
 - [x] Update Layer 3 node:
 
   ````mermaid
-  L3[Layer 3: Development<br/>HOW - Software Practices<br/>/governance/development/]
+  L3[Layer 3: Development<br/>HOW - Software Practices<br/>/repo-governance/development/]
   |  ```
 
   ````
@@ -240,55 +240,55 @@ git add -A
 - [x] Update Layer 5 node:
 
   ```mermaid
-  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/governance/workflows/]
+  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/repo-governance/workflows/]
   ```
 
 #### Update Text References
 
-- [x] Remove all `governance/` references
-- [x] Update all internal links to use `/governance/` paths
+- [x] Remove all `repo-governance/` references
+- [x] Update all internal links to use `/repo-governance/` paths
 - [x] Update all directory path examples
 
 #### Stage Changes
 
 ```bash
-git add governance/ex-ru__repository-governance-architecture.md
+git add repo-governance/ex-ru__repository-governance-architecture.md
 ```
 
 - [x] Update Layer 1 node:
 
   ```mermaid
-  L1[Layer 1: Principies<br/>WHY - Values<br/>/governance/principles/]
+  L1[Layer 1: Principies<br/>WHY - Values<br/>/repo-governance/principles/]
   ```
 
 - [x] Update Layer 2 node:
 
   ```mermaid
-  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/governance/conventions/]
+  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/repo-governance/conventions/]
   ```
 
 - [x] Update Layer 3 node:
 
   | `mermaid
-L3[Layer 3: Development<br/>HOW - Software Practices<br/>/governance/development/]
+L3[Layer 3: Development<br/>HOW - Software Practices<br/>/repo-governance/development/]
 |`
 
 - [x] Update Layer 5 node:
 
   ```mermaid
-  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/governance/workflows/]
+  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/repo-governance/workflows/]
   ```
 
 #### Update Text References
 
-- [x] Remove all `governance/` references
-- [x] Update all internal links to use `/governance/` paths
+- [x] Remove all `repo-governance/` references
+- [x] Update all internal links to use `/repo-governance/` paths
 - [x] Update all directory path examples
 
 #### Stage Changes
 
 ```bash
-git add governance/ex-ru__repository-governance-architecture.md
+git add repo-governance/ex-ru__repository-governance-architecture.md
 ```
 
 ### Validation Checklist
@@ -296,35 +296,35 @@ git add governance/ex-ru__repository-governance-architecture.md
 - [x] Zero old path references:
 
   ```bash
-  grep "governance/" governance/ex-ru__repository-governance-architecture.md
+  grep "repo-governance/" repo-governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if returns zero matches
   ```
 
 - [x] All Layer paths updated:
 
   ```bash
-  grep "Location: /governance/" governance/ex-ru__repository-governance-architecture.md
+  grep "Location: /repo-governance/" repo-governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if shows multiple results (all layers)
   ```
 
 - [x] Mermaid diagram updated:
 
   ```bash
-  grep "Location:.*governance/" governance/ex-ru__repository-governance-architecture.md
+  grep "Location:.*repo-governance/" repo-governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if matches
   ```
 
 - [x] File parses correctly:
 
   ```bash
-  head -1 governance/ex-ru__repository-governance-architecture.md | grep "^---"
+  head -1 repo-governance/ex-ru__repository-governance-architecture.md | grep "^---"
   # ✅ PASS if shows frontmatter start
   ```
 
 - [x] Valid markdown:
 
   ```bash
-  grep -E "^## " governance/ex-ru__repository-governance-architecture.md | head -10
+  grep -E "^## " repo-governance/ex-ru__repository-governance-architecture.md | head -10
   # ✅ PASS if shows valid markdown headings
   ```
 
@@ -338,7 +338,7 @@ git add governance/ex-ru__repository-governance-architecture.md
 
 ## Phase 3: Update All References
 
-**Goal**: Update all path references from `governance/` to `/governance/` in ~151 files
+**Goal**: Update all path references from `repo-governance/` to `/repo-governance/` in ~151 files
 
 ### Execution Steps
 
@@ -346,7 +346,7 @@ git add governance/ex-ru__repository-governance-architecture.md
 
 ```bash
 # Update all agent definition files (portable syntax - works on Linux and macOS)
-find .claude/agents -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i.bak 's|repo-governance/|repo-governance/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/agents/"
@@ -358,7 +358,7 @@ git status | grep "modified:" | grep ".claude/agents/"
 
 ```bash
 # Update all skill definition files (portable syntax - works on Linux and macOS)
-find .claude/skills -name "SKILL.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i.bak 's|repo-governance/|repo-governance/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/skills/"
@@ -370,22 +370,22 @@ git status | grep "modified:" | grep ".claude/skills/"
 
 ```bash
 # Update all workflow files (portable syntax - works on Linux and macOS)
-find governance/workflows -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
+find repo-governance/workflows -name "*.md" -type f -exec sed -i.bak 's|repo-governance/|repo-governance/|g' {} \;
 
 # Verify update
-git status | grep "modified:" | grep "governance/workflows/"
+git status | grep "modified:" | grep "repo-governance/workflows/"
 ```
 
-**Files updated**: All workflow files in governance/workflows/ ✅
+**Files updated**: All workflow files in repo-governance/workflows/ ✅
 
 #### Step 3.4: Update Rules Internal Files (~67 files)
 
 ```bash
 # Update all files in rules directories (portable syntax - works on Linux and macOS)
-find rules -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i.bak 's|repo-governance/|repo-governance/|g' {} \;
 
 # Verify update
-git status | grep "modified:" | grep "governance/"
+git status | grep "modified:" | grep "repo-governance/"
 ```
 
 **Files updated**: All moved files with internal links ✅
@@ -394,10 +394,10 @@ git status | grep "modified:" | grep "governance/"
 
 ```bash
 # Update CLAUDE.md (portable syntax - works on Linux and macOS)
-sed -i.bak 's|governance/|governance/|g' CLAUDE.md
+sed -i.bak 's|repo-governance/|repo-governance/|g' CLAUDE.md
 
 # Update AGENTS.md (portable syntax - works on Linux and macOS)
-sed -i.bak 's|governance/|governance/|g' AGENTS.md
+sed -i.bak 's|repo-governance/|repo-governance/|g' AGENTS.md
 
 # Verify updates
 git status | grep "modified:" | grep -E "(CLAUDE.md|AGENTS.md)"
@@ -421,30 +421,30 @@ find . -name "*.md.bak" -delete
 - [x] Zero old path references anywhere:
 
   ```bash
-  find . -name "*.md" -type f -exec grep -l "docs/explanation/governance/" {} \;
+  find . -name "*.md" -type f -exec grep -l "docs/explanation/repo-governance/" {} \;
   # ✅ PASS if returns zero results
   ```
 
-- [x] All references to /governance/ exist:
+- [x] All references to /repo-governance/ exist:
 
   ```bash
-  find . -name "*.md" -type f -exec grep -l "governance/" {} \;
+  find . -name "*.md" -type f -exec grep -l "repo-governance/" {} \;
   # ✅ PASS if returns multiple results
   ```
 
 - [x] Specific file validation:
 
   ```bash
-  grep "governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
-  grep "governance/" AGENTS.md | head -5      # ✅ PASS if shows results
-  grep "governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS if shows results
+  grep "repo-governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
+  grep "repo-governance/" AGENTS.md | head -5      # ✅ PASS if shows results
+  grep "repo-governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS if shows results
   ```
 
 - [x] Relative path validation:
 
   ```bash
-  grep -r "\.\./governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
-  grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
+  grep -r "\.\./repo-governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
+  grep -r "\.\./\.\./repo-governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
   ```
 
 #### repo-governance-checker Integration
@@ -466,8 +466,8 @@ find . -name "*.md.bak" -delete
 
   ```bash
   # Test a few links manually
-  head -50 governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*governance/"
-  # ✅ PASS if shows links to /governance/
+  head -50 repo-governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*repo-governance/"
+  # ✅ PASS if shows links to /repo-governance/
   ```
 
 ### Success Criteria
@@ -517,12 +517,12 @@ git diff --cached --name-only | grep "ex-ru__repository-governance-architecture.
 #### Step 4.4: Verify All Rules Directories Tracked
 
 ```bash
-# Check for new files in governance/
-git status | grep "new file:.*governance/"
+# Check for new files in repo-governance/
+git status | grep "new file:.*repo-governance/"
 # ✅ PASS if shows new files
 
 # Check old directory removed
-git status | grep "governance/"
+git status | grep "repo-governance/"
 # ✅ PASS if returns zero results (except agents/)
 ```
 
@@ -562,14 +562,14 @@ repo-governance-checker scope:all
 - [x] All rules directories tracked:
 
   ```bash
-  git status | grep "new file:.*governance/"
+  git status | grep "new file:.*repo-governance/"
   # ✅ PASS if shows results
   ```
 
-- [x] No governance/ tracked (except agents/):
+- [x] No repo-governance/ tracked (except agents/):
 
   ```bash
-  git status | grep "docs/explanation/governance/"
+  git status | grep "docs/explanation/repo-governance/"
   # ✅ PASS if returns nothing
   ```
 
@@ -605,31 +605,31 @@ git diff --cached --stat
 # (User reviews commit message below)
 
 # Step 5.4: Commit changes
-git commit -m "refactor: move governance/ to /governance/ (separate from Obsidian docs)
+git commit -m "refactor: move repo-governance/ to /repo-governance/ (separate from Obsidian docs)
 
 ## Changes
 
 ### Directory Moves (git mv - preserves history)
-- governance/vision/ → /governance/vision/ (Layer 0: WHY we exist)
-- governance/principles/ → /governance/principles/ (Layer 1: WHY - values)
-- governance/conventions/ → /governance/conventions/ (Layer 2: WHAT - documentation rules)
-- governance/development/ → /governance/development/ (Layer 3: HOW - software practices)
-- governance/workflows/ → /governance/workflows/ (Layer 5: WHEN - multi-step processes)
-- governance/ex-ru__repository-governance-architecture.md → /governance/ex-ru__repository-governance-architecture.md
-- governance/README.md → /governance/README.md
-- Removed governance/ directory (agents/ subdirectory remains via separate plan)
+- repo-governance/vision/ → /repo-governance/vision/ (Layer 0: WHY we exist)
+- repo-governance/principles/ → /repo-governance/principles/ (Layer 1: WHY - values)
+- repo-governance/conventions/ → /repo-governance/conventions/ (Layer 2: WHAT - documentation rules)
+- repo-governance/development/ → /repo-governance/development/ (Layer 3: HOW - software practices)
+- repo-governance/workflows/ → /repo-governance/workflows/ (Layer 5: WHEN - multi-step processes)
+- repo-governance/ex-ru__repository-governance-architecture.md → /repo-governance/ex-ru__repository-governance-architecture.md
+- repo-governance/README.md → /repo-governance/README.md
+- Removed repo-governance/ directory (agents/ subdirectory remains via separate plan)
 
 ### Documentation Updates
-- Updated /governance/ex-ru__repository-governance-architecture.md with Layer 0-5 paths
-- Updated mermaid diagram to show /governance/ locations for all layers
-- Updated all text references to /governance/ paths
+- Updated /repo-governance/ex-ru__repository-governance-architecture.md with Layer 0-5 paths
+- Updated mermaid diagram to show /repo-governance/ locations for all layers
+- Updated all text references to /repo-governance/ paths
 - Updated 45 agent definition files (.claude/agents/*.md)
 - Updated 23 skill definition files (.claude/skills/*/SKILL.md)
 - Updated 3 meta-agent files (repo-governance-checker, repo-governance-maker, repo-governance-fixer) - manual updates
-- Updated all workflow files (governance/workflows/*.md)
-- Updated all internal links in governance/ (~67 files)
-- Updated CLAUDE.md with /governance/ directory structure
-- Updated AGENTS.md with /governance/ directory structure
+- Updated all workflow files (repo-governance/workflows/*.md)
+- Updated all internal links in repo-governance/ (~67 files)
+- Updated CLAUDE.md with /repo-governance/ directory structure
+- Updated AGENTS.md with /repo-governance/ directory structure
 
 ## Rationale
 
@@ -638,11 +638,11 @@ Separate system rules (normal markdown, no Obsidian constraints) from human-writ
 Rules are agent-generated or manually edited without Obsidian formatting requirements, making the separation necessary for:
 
 - Clear boundary: System rules vs. documentation
-- Purpose alignment: /governance/ for governance, docs/ for learning
+- Purpose alignment: /repo-governance/ for governance, docs/ for learning
 - Format appropriateness: Normal markdown for rules, Obsidian format for docs
 - Simplified agent creation: Agents can create rules without Obsidian knowledge
 
-All docs/ follows Obsidian rules including file naming with __ separator. /governance/ uses normal markdown without Obsidian constraints.
+All docs/ follows Obsidian rules including file naming with __ separator. /repo-governance/ uses normal markdown without Obsidian constraints.
 
 ## References
 - Moved ~67 files across 5 directories + 2 files
@@ -653,7 +653,7 @@ All docs/ follows Obsidian rules including file naming with __ separator. /gover
 
 ## Validation Results
 
-Phase 1 (move): ✅ All files in /governance/, old directory removed, history preserved
+Phase 1 (move): ✅ All files in /repo-governance/, old directory removed, history preserved
 Phase 2 (governance): ✅ Zero old-path references, all layers updated
 Phase 3 (references): ✅ Zero old-path references, repo-governance-checker reports zero broken links
 Phase 4 (final): ✅ ~150 files modified, no unexpected changes
@@ -679,7 +679,7 @@ git log -1 --oneline
 
   ```bash
   git log -1 --oneline
-  # ✅ PASS if shows "refactor: move docs/explanation/governance/ to /governance/"
+  # ✅ PASS if shows "refactor: move docs/explanation/repo-governance/ to /repo-governance/"
   ```
 
 - [x] Commit includes all expected changes:
@@ -716,7 +716,7 @@ git log -1 --oneline
 git revert HEAD
 
 # Verify reversion
-git log -1 --oneline  # Should show "Revert refactor: move governance/ to /governance/"
+git log -1 --oneline  # Should show "Revert refactor: move repo-governance/ to /repo-governance/"
 
 # Manually fix issues if needed
 # Edit files to address problems
@@ -734,13 +734,13 @@ git commit -m "fix: issues found after rules move rollback"
 
 After Phase 5 completion:
 
-- [x] All rules directories exist at `/governance/` (vision, principles, conventions, development, workflows)
-- [x] All rules files exist at `/governance/` (ex-ru\_\_\*.md, README.md)
-- [x] `docs/explanation/governance/` directory removed (except agents/ subdirectory)
-- [x] Zero occurrences of `docs/explanation/governance/` in entire repository
-- [x] All references to `governance/` work correctly
+- [x] All rules directories exist at `/repo-governance/` (vision, principles, conventions, development, workflows)
+- [x] All rules files exist at `/repo-governance/` (ex-ru\_\_\*.md, README.md)
+- [x] `docs/explanation/repo-governance/` directory removed (except agents/ subdirectory)
+- [x] Zero occurrences of `docs/explanation/repo-governance/` in entire repository
+- [x] All references to `repo-governance/` work correctly
 - [x] repo-governance-checker reports zero broken links
-- [x] CLAUDE.md and AGENTS.md reference `governance/` correctly
+- [x] CLAUDE.md and AGENTS.md reference `repo-governance/` correctly
 - [x] Git history preserved (all moves via git mv)
 - [x] Single atomic commit with detailed message
 - [x] All ~151 files updated successfully

@@ -796,7 +796,7 @@ services:
 | Hugo Sites section | Rename organiclever-web section                                        |
 | AI Agents section  | Update deployer agent name                                             |
 
-### Governance (`governance/`)
+### Governance (`repo-governance/`)
 
 14+ files referencing `organiclever-web` -- all need `organiclever-web` -> `organiclever-web`
 replacement and addition of `organiclever-be` where backend apps are listed.

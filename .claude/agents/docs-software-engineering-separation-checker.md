@@ -45,7 +45,7 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 
 **Criticality Assessment**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
-**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md).
+**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md).
 
 ## What You Check
 
@@ -427,20 +427,20 @@ Validation is successful when:
 **Project Guidance**:
 
 - [AGENTS.md](../../AGENTS.md) - Primary project guidance
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure and conventions
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent structure and conventions
 
 **Domain Conventions**:
 
 - [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
-- [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
-- [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
-- [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
+- [Diátaxis Framework](../../repo-governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
+- [Content Quality Standards](../../repo-governance/conventions/writing/quality.md) - Prerequisites section formatting
+- [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - Cross-reference link standards
 
 **Quality Standards**:
 
-- [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md) - Criticality classification
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - Criticality classification
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md) - Six-layer hierarchy
 
 **Related Agents**:
 
@@ -453,7 +453,7 @@ Validation is successful when:
 **Authoritative Sources**:
 
 - [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
-- [Diátaxis Framework](../../governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
+- [Diátaxis Framework](../../repo-governance/conventions/structure/diataxis-framework.md) - Tutorials vs. reference distinction
 
 **Skills to Use**:
 
@@ -466,18 +466,18 @@ Validation is successful when:
 
 **Repository Governance**:
 
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - Naming patterns
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [File Naming Convention](../../repo-governance/conventions/structure/file-naming.md) - Naming patterns
 
 **Content Quality**:
 
-- [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
-- [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
+- [Content Quality Standards](../../repo-governance/conventions/writing/quality.md) - Prerequisites section formatting
+- [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - Cross-reference link standards
 
 **Validation Standards**:
 
-- [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md) - Criticality classification
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - Criticality classification
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 ## Related Agents
 

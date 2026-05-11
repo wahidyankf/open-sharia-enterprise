@@ -27,7 +27,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a C# tutorial. We define HOW to apply C# in THIS codebase, not WHAT C# is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -74,7 +74,7 @@ public class ZakatCalculatorTests
 }
 ```
 
-**See**: [Automation Over Manual Principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+**See**: [Automation Over Manual Principle](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ### 2. Explicit Over Implicit
 
@@ -133,7 +133,7 @@ public sealed class MurabahaService(IMurabahaRepository repository)
 }
 ```
 
-**See**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+**See**: [Explicit Over Implicit Principle](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ### 3. Immutability Over Mutability
 
@@ -166,7 +166,7 @@ public sealed record ZakatTransaction
 }
 ```
 
-**See**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+**See**: [Immutability Principle](../../../../../repo-governance/principles/software-engineering/immutability.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -215,7 +215,7 @@ public class ZakatCalculatorTests
 }
 ```
 
-**See**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+**See**: [Pure Functions Principle](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ### 5. Reproducibility First
 
@@ -256,7 +256,7 @@ public class ZakatCalculatorTests
 </Project>
 ```
 
-**See**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Part 1: Naming Conventions
 
@@ -694,11 +694,11 @@ These standards are enforced through:
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

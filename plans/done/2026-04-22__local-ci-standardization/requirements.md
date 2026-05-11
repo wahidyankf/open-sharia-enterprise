@@ -187,7 +187,7 @@ The pre-push hook runs `typecheck` → `lint` sequentially — keeping both woul
 twice per push with zero additional coverage. `lint` is therefore **removed**; `typecheck` is the
 sole static-analysis gate. Nx silently skips Flutter for `nx affected -t lint`.
 
-Per the [Dart/Flutter exception in nx-targets.md](../../../governance/development/infra/nx-targets.md):
+Per the [Dart/Flutter exception in nx-targets.md](../../../repo-governance/development/infra/nx-targets.md):
 `flutter analyze` combines type checking and linting, so only `typecheck` is declared. This is the
 documented exception for Flutter projects, not an ad-hoc decision.
 
@@ -268,7 +268,7 @@ projects missing the target.
 - **Speed**: `test:quick` must complete fast enough for use in the pre-push hook. Go tests,
   Hugo builds, and oxlint all complete within seconds. Maven tests and Flutter tests are slower
   but acceptable at the pre-push gate. See caching rules in
-  [nx-targets.md](../../../governance/development/infra/nx-targets.md) — `test:quick` has
+  [nx-targets.md](../../../repo-governance/development/infra/nx-targets.md) — `test:quick` has
   `cache: true` so repeated runs hit the Nx cache.
 - **No behavioral changes**: Only target names, additions, and removals where a target is provably
   redundant. All existing commands remain unchanged.

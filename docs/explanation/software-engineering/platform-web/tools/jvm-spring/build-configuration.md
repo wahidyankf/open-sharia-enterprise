@@ -601,19 +601,19 @@ api → application → domain ← infrastructure
 
 ## Software Engineering Principles
 
-**[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)**:
+**[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)**:
 
 - Maven BOM ensures consistent Spring versions across modules
 - Maven Wrapper (`mvnw`) ensures reproducible builds across environments
 - Version pinning in parent POM prevents dependency drift
 
-**[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
+**[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**:
 
 - Explicit dependency declarations in child POMs
 - Explicit Spring version via BOM, not transitive dependencies
 - Explicit Jakarta EE version requirements
 
-**[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
+**[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**:
 
 - Maven Enforcer Plugin automates version validation
 - Spotless automates code formatting

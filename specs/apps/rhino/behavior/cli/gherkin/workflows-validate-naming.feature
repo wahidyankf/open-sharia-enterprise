@@ -23,8 +23,8 @@ Feature: Workflow Naming Convention Validation
     Then the command exits with a failure code
     And the output identifies the frontmatter mismatch
 
-  Scenario: A file under governance/workflows/meta/ is exempt from the naming rule
-    Given a repository with a file under governance/workflows/meta/ whose name does not follow the type-suffix rule
+  Scenario: A file under repo-governance/workflows/meta/ is exempt from the naming rule
+    Given a repository with a file under repo-governance/workflows/meta/ whose name does not follow the type-suffix rule
     When the developer runs workflows validate-naming
     Then the command exits successfully
     And the output reports zero naming violations

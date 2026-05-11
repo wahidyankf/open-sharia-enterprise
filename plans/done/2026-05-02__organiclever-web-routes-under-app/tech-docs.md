@@ -355,9 +355,9 @@ No data migration is involved; PGlite tables are not touched. Settings keys (`ol
 
 ## Related Documentation
 
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
-- [Plan Execution Workflow](../../../governance/workflows/plan/plan-execution.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Acceptance Criteria Convention](../../../governance/development/infra/acceptance-criteria.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
+- [Plan Execution Workflow](../../../repo-governance/workflows/plan/plan-execution.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria.md)
 - [Next.js App Router `permanentRedirect`](https://nextjs.org/docs/app/api-reference/functions/permanentRedirect) (accessed 2026-05-02)
 - [Test and Deploy Workflow — Development](../../../.github/workflows/test-and-deploy-organiclever-web-development.yml) — triggered manually as the final post-push CI gate

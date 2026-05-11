@@ -70,7 +70,7 @@ changes, layout adjustments). Review the `git diff` on `.png` files before commi
 
 ## Conventions
 
-All components follow the patterns in [Component Patterns Convention](../../governance/development/frontend/component-patterns.md):
+All components follow the patterns in [Component Patterns Convention](../../repo-governance/development/frontend/component-patterns.md):
 
 - `React.ComponentProps<"element">` (not forwardRef)
 - `radix-ui` unified imports (not @radix-ui/\* individual packages)

@@ -16,7 +16,7 @@ This Skill consolidates every procedure both `repo-ose-primer-adoption-maker` an
 - `repo-ose-primer-adoption-maker` — reads classifier rows tagged `adopt` or `bidirectional`; compares primer → `ose-public`.
 - `repo-ose-primer-propagation-maker` — reads classifier rows tagged `propagate` or `bidirectional`; compares `ose-public` → primer. Supports three modes: `dry-run`, `apply`, `parity-check`.
 
-**Authoritative data source**: [`governance/conventions/structure/ose-primer-sync.md`](../../../governance/conventions/structure/ose-primer-sync.md) — the classifier table, transforms, and safety invariants live there; this Skill only describes how to consume them.
+**Authoritative data source**: [`repo-governance/conventions/structure/ose-primer-sync.md`](../../../repo-governance/conventions/structure/ose-primer-sync.md) — the classifier table, transforms, and safety invariants live there; this Skill only describes how to consume them.
 
 ## Classifier lookup
 

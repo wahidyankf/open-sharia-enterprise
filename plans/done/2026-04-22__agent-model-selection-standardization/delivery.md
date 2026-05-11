@@ -19,7 +19,7 @@
 
 ---
 
-## Phase 1: Update `governance/development/agents/model-selection.md` _(done)_
+## Phase 1: Update `repo-governance/development/agents/model-selection.md` _(done)_
 
 - [x] **1.1** Budget-Adaptive Inheritance block added to Opus tier section _(applied 2026-04-19)_
 - [x] **1.2** "Current Model Versions (April 2026)" table added _(applied 2026-04-19)_
@@ -40,8 +40,8 @@
 
 ## Phase 3: Propagate to Related Governance Docs _(done)_
 
-- [x] **3.1** `governance/development/agents/ai-agents.md` — budget-adaptive note added to model field spec + Model Selection Guidelines _(applied 2026-04-19)_
-- [x] **3.2** `governance/development/agents/best-practices.md` — budget-adaptive rationale added; plan-maker example corrected to show omit _(applied 2026-04-19)_
+- [x] **3.1** `repo-governance/development/agents/ai-agents.md` — budget-adaptive note added to model field spec + Model Selection Guidelines _(applied 2026-04-19)_
+- [x] **3.2** `repo-governance/development/agents/best-practices.md` — budget-adaptive rationale added; plan-maker example corrected to show omit _(applied 2026-04-19)_
 - [x] **3.3** `.claude/agents/README.md` — "Opus-tier agents omit `model` by design" note added _(applied 2026-04-19)_
 - [x] **3.4** Committed: `docs(agents): propagate budget-adaptive model inheritance note` _(2026-04-19)_
 
@@ -116,7 +116,7 @@ Add benchmark citations (with links to `docs/reference/ai-model-benchmarks.md`) 
 policy docs that make tier-based claims. Use `repo-rules-maker` to identify and update
 all affected governance files.
 
-- [x] **6.1** Invoke `repo-rules-maker` to update `governance/development/agents/model-selection.md`:
+- [x] **6.1** Invoke `repo-rules-maker` to update `repo-governance/development/agents/model-selection.md`:
   - In the Tier Comparison Summary table, add benchmark score column citing the reference doc
   - In "Current Model Versions", add inline links to the reference doc for each score
   - In the OpenCode / GLM Equivalents section, add caveat about GLM-5-turbo having no

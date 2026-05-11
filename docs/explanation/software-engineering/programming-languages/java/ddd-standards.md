@@ -23,7 +23,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Java DDD Standards for OSE Platform
 
@@ -579,19 +579,19 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Strong-typed IDs (DonationId, not String) make domain concepts explicit
    - Factory methods explicitly enforce invariants at creation
    - Domain events explicitly document state changes
    - CQRS explicitly separates writes (commands) from reads (queries)
 
-2. **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)**
+2. **[Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - Record types for value objects guarantee immutability
    - Domain events are immutable (cannot be modified after creation)
    - Aggregates return new instances from operations (not mutate state)
    - Collections exposed as immutable views (`Collections.unmodifiableList`)
 
-3. **[Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)**
+3. **[Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)**
    - Value object operations are pure (Money.add returns new Money, no side effects)
    - Domain logic isolated in aggregates (no infrastructure dependencies)
    - Event sourcing replays events to rebuild state (deterministic)

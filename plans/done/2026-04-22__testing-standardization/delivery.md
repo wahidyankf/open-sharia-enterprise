@@ -32,14 +32,14 @@ Update governance and documentation files before changing any code.
   - [x] Update coverage sections — clarify coverage is measured from `test:unit` only, not integration
   - [x] Update `test:quick` description — includes unit + coverage + specs coverage only (lint/typecheck are separate targets)
   - [x] Commit: `docs: update CLAUDE.md testing sections for three-level standard` → push
-- [x] **1.2 Update `governance/development/infra/nx-targets.md`**
+- [x] **1.2 Update `repo-governance/development/infra/nx-targets.md`**
   - [x] Update `test:unit` definition — "Must consume Gherkin specs with mocked dependencies (demo-be). Calls application code directly."
   - [x] Rewrite `test:integration` definition — "Demo-be: real PostgreSQL via docker-compose, no HTTP, direct code calls. Others: existing patterns (MSW, Godog)."
   - [x] Update `test:e2e` definition — "Must consume Gherkin specs (demo-be). Uses Playwright."
   - [x] Update caching rules — only `test:unit` is cacheable; `test:integration` and `test:e2e` are NOT cacheable
   - [x] Add mandatory targets matrix table (per-project-type)
   - [x] Commit: `docs: update nx-targets.md with three-level testing standard and caching rules` → push
-- [x] **1.3 Update `governance/development/infra/bdd-spec-test-mapping.md`**
+- [x] **1.3 Update `repo-governance/development/infra/bdd-spec-test-mapping.md`**
   - [x] Extend scope beyond CLI apps to include demo-be backends
   - [x] Document three-level consumption model (unit/integration/e2e with different step implementations)
   - [x] Define how to validate all 76 scenarios pass at each level

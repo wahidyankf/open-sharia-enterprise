@@ -112,7 +112,7 @@ nx affected -t test:quick        # Run fast quality gate for affected projects
 nx graph                         # Visualize dependencies
 ```
 
-See [Code Quality](./governance/development/quality/code.md) and [Commit Messages](./governance/development/workflow/commit-messages.md) for details.
+See [Code Quality](./repo-governance/development/quality/code.md) and [Commit Messages](./repo-governance/development/workflow/commit-messages.md) for details.
 
 ## 📊 CI & Test Coverage
 
@@ -140,7 +140,7 @@ See [`docs/README.md`](./docs/README.md) for details.
 
 ## 🔗 Related Repositories
 
-- **[`ose-primer`](https://github.com/wahidyankf/ose-primer)** — public, MIT-licensed template repository derived from `ose-public`. Packages scaffolding (governance, AI agents, skills, conventions, CI harness, polyglot demo apps) into a reusable starting point. `ose-public` is upstream source of truth; propagation and adoption flows are defined by the [ose-primer sync convention](./governance/conventions/structure/ose-primer-sync.md). For the upstream/downstream relationship and license difference, see [Related Repositories reference](./docs/reference/related-repositories.md).
+- **[`ose-primer`](https://github.com/wahidyankf/ose-primer)** — public, MIT-licensed template repository derived from `ose-public`. Packages scaffolding (governance, AI agents, skills, conventions, CI harness, polyglot demo apps) into a reusable starting point. `ose-public` is upstream source of truth; propagation and adoption flows are defined by the [ose-primer sync convention](./repo-governance/conventions/structure/ose-primer-sync.md). For the upstream/downstream relationship and license difference, see [Related Repositories reference](./docs/reference/related-repositories.md).
 
 ## 🎯 Motivation
 
@@ -168,7 +168,7 @@ Our mission is to democratize access to trustworthy, Sharia-compliant enterprise
 - 📚 **Learning in public** - Share our research and knowledge through [ayokoding.com](https://ayokoding.com)
 - 🏗️ **Long-term foundation over quick wins** - Building solid foundations for a life-long project
 
-For complete principles, see [governance/principles/](./governance/principles/README.md).
+For complete principles, see [repo-governance/principles/](./repo-governance/principles/README.md).
 
 ## 🤝 Contributing
 
@@ -184,4 +184,4 @@ fork, modify, and distribute for any purpose.
 
 See [LICENSING-NOTICE.md](./LICENSING-NOTICE.md) for full details |
 [LICENSE](./LICENSE) for the root license text |
-[Licensing Convention](./governance/conventions/structure/licensing.md) for internal rules.
+[Licensing Convention](./repo-governance/conventions/structure/licensing.md) for internal rules.

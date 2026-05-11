@@ -6,7 +6,7 @@
 
 ## Context
 
-The current [Plans Organization Convention](../../../governance/conventions/structure/plans.md) defines a four-document plan layout:
+The current [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md) defines a four-document plan layout:
 
 - `README.md` — context + navigation
 - `requirements.md` — user stories, acceptance criteria (Gherkin), and business requirements lumped together
@@ -40,24 +40,24 @@ YYYY-MM-DD__project-id/
 
 ### In Scope
 
-- Update `governance/conventions/structure/plans.md` to define five-document layout, BRD/PRD content rules, and updated single-file exception criteria.
-- Update four plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-execution-checker` (the prior `plan-executor` agent was removed in a separate refactor; plan execution is now orchestrated directly by the calling context via the [plan-execution workflow](../../../governance/workflows/plan/plan-execution.md)).
-- Update two plan workflows under `governance/workflows/plan/`: `plan-quality-gate.md` (completeness bullet enumerates five docs) and `plan-execution.md` (adds context-consultation note; verifies no stale `requirements.md` references).
+- Update `repo-governance/conventions/structure/plans.md` to define five-document layout, BRD/PRD content rules, and updated single-file exception criteria.
+- Update four plan agents under `.claude/agents/`: `plan-maker`, `plan-checker`, `plan-fixer`, `plan-execution-checker` (the prior `plan-executor` agent was removed in a separate refactor; plan execution is now orchestrated directly by the calling context via the [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md)).
+- Update two plan workflows under `repo-governance/workflows/plan/`: `plan-quality-gate.md` (completeness bullet enumerates five docs) and `plan-execution.md` (adds context-consultation note; verifies no stale `requirements.md` references).
 - Update `.claude/skills/plan-creating-project-plans/SKILL.md` to reflect new structure.
-- Update cross-references: `governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old four-document layout.
+- Update cross-references: `repo-governance/development/infra/acceptance-criteria.md`, `docs/how-to/organize-work.md`, `AGENTS.md`, any README that quotes the old four-document layout.
 - Sync `.claude/` → `.opencode/` via `npm run sync:claude-to-opencode`.
 - Migrate the one active in-progress plan (`2026-04-16__organiclever-web-local-first/`) from `requirements.md` → `brd.md` + `prd.md` so the repository contains zero plans using the deprecated layout.
 
 ### Out of Scope
 
 - **Archived plans in `plans/done/`** — historical records, left as-is.
-- **Parent `ose-projects` plan convention** (the sibling `plans.md` at `governance/conventions/structure/plans.md` inside the `ose-projects` parent repo) — mirrors the ose-public convention but lives in a different repo. Tracked as follow-up work, not bundled here, because updating it requires a separate parent-repo plan and this plan's Scope is ose-public only.
+- **Parent `ose-projects` plan convention** (the sibling `plans.md` at `repo-governance/conventions/structure/plans.md` inside the `ose-projects` parent repo) — mirrors the ose-public convention but lives in a different repo. Tracked as follow-up work, not bundled here, because updating it requires a separate parent-repo plan and this plan's Scope is ose-public only.
 - **New `brd-` / `prd-` prefix naming for other documents** — this plan does not rename `tech-docs.md` or introduce further taxonomy changes.
 - **Automated migration tooling** — the single active plan migrates by hand; no generator/codemod needed for one artifact.
 
 ## Approach Summary
 
-1. **Author the convention change first** in `governance/conventions/structure/plans.md` so downstream documents have a stable referent.
+1. **Author the convention change first** in `repo-governance/conventions/structure/plans.md` so downstream documents have a stable referent.
 2. **Cascade updates into the four plan agents**, keeping wording consistent so `plan-checker` and `plan-execution-checker` agree on what "compliant plan" means.
 3. **Update the two plan workflows** (`plan-quality-gate.md`, `plan-execution.md`) so quality-gate validation and execution mechanics stay consistent with the new convention.
 4. **Update the creation skill and cross-linked docs** (`AGENTS.md`, `organize-work.md`, `acceptance-criteria.md`) in the same commit set so no reference lags.

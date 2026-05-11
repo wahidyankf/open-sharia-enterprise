@@ -7,15 +7,15 @@ governance docs, skill files, agent files, and Prettier config._
 
 ### 1.1 Document UI Conventions
 
-**Goal**: Create `governance/development/frontend/` with four convention documents.
+**Goal**: Create `repo-governance/development/frontend/` with four convention documents.
 
-- [x] Create `governance/development/frontend/` directory
-- [x] Write `governance/development/frontend/README.md` — index linking all four convention docs
+- [x] Create `repo-governance/development/frontend/` directory
+- [x] Write `repo-governance/development/frontend/README.md` — index linking all four convention docs
 - [x] Write `design-tokens.md`
 - [x] Write `component-patterns.md`
 - [x] Write `accessibility.md`
 - [x] Write `styling.md`
-- [x] Update `governance/development/README.md` to add a "Frontend" section linking to the new directory
+- [x] Update `repo-governance/development/README.md` to add a "Frontend" section linking to the new directory
 - [x] Verify all new docs pass `npm run lint:md`
 
 ### 1.2 Create UI Development Skill
@@ -80,13 +80,13 @@ governance docs, skill files, agent files, and Prettier config._
 
 ### 1.4 Create UI Quality Gate Workflow
 
-**Goal**: Create `governance/workflows/ui/ui-quality-gate.md` following the established quality
+**Goal**: Create `repo-governance/workflows/ui/ui-quality-gate.md` following the established quality
 gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-web-general-quality-gate.md`).
 
-- [x] Create `governance/workflows/ui/` directory
-- [x] Create `governance/workflows/ui/README.md` — index for UI workflows
-- [x] Create `governance/workflows/ui/ui-quality-gate.md`
-- [x] Update `governance/workflows/README.md` to list the UI quality gate workflow
+- [x] Create `repo-governance/workflows/ui/` directory
+- [x] Create `repo-governance/workflows/ui/README.md` — index for UI workflows
+- [x] Create `repo-governance/workflows/ui/ui-quality-gate.md`
+- [x] Update `repo-governance/workflows/README.md` to list the UI quality gate workflow
 - [x] Verify workflow file passes `npm run lint:md`
 
 ### 1.5 Add Prettier Tailwind Plugin

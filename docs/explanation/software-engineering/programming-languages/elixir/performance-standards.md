@@ -30,7 +30,7 @@ principles:
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir in THIS codebase, not WHAT Elixir is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -950,13 +950,13 @@ For learning Elixir fundamentals and concepts referenced in these standards, see
 
 These standards enforce core software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Benchee automates performance measurement
    - Telemetry automates metrics collection
    - Observer provides automated system monitoring
    - GenStage automates backpressure handling
 
-2. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+2. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Benchee provides reproducible measurements
    - ETS caching eliminates environmental variability
    - BEAM VM guarantees consistent concurrency behavior

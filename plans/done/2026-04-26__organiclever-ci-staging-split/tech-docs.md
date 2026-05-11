@@ -507,12 +507,12 @@ Replace `test-and-deploy-organiclever.yml` with
 `test-and-deploy-organiclever-web-development.yml`. Update prose: this workflow deploys
 to staging; production is via `deploy-organiclever-web-to-production.yml`.
 
-### `governance/development/infra/ci-conventions.md` — 2 occurrences (~lines 385, 388)
+### `repo-governance/development/infra/ci-conventions.md` — 2 occurrences (~lines 385, 388)
 
 Replace both with `test-and-deploy-organiclever-web-development.yml`. If full inventory
 table, add rows for the two new workflows.
 
-### `governance/development/infra/github-actions-workflow-naming.md` — 5 occurrences (~lines 89, 106, 110, 150, 152)
+### `repo-governance/development/infra/github-actions-workflow-naming.md` — 5 occurrences (~lines 89, 106, 110, 150, 152)
 
 - **~Line 89 — codebase reference table**: replace single old row with three rows:
 
@@ -528,7 +528,7 @@ table, add rows for the two new workflows.
 - **~Lines 150, 152 — version alignment table** (Go, .NET rows): replace with
   `test-and-deploy-organiclever-web-development.yml`.
 
-### `governance/development/workflow/ci-post-push-verification.md` — 5 occurrences (~lines 53, 142, 145, 178, 190)
+### `repo-governance/development/workflow/ci-post-push-verification.md` — 5 occurrences (~lines 53, 142, 145, 178, 190)
 
 All five occurrences: replace `test-and-deploy-organiclever.yml` with
 `test-and-deploy-organiclever-web-development.yml`.
@@ -549,7 +549,7 @@ Update to reflect both Vercel environments:
   branch (promoted on demand by `deploy-organiclever-web-to-production.yml`)
 ```
 
-### `governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
+### `repo-governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
 
 Current text lists `prod-organiclever-web` as a CI-managed environment branch:
 

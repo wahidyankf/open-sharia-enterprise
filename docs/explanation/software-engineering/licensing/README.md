@@ -27,5 +27,5 @@ Open-source licenses impose conditions on how software may be used, modified, an
 
 ## Related Documentation
 
-- [Database Audit Trail Pattern](../../../../governance/development/pattern/database-audit-trail.md) - Migration tool selection per language ecosystem
+- [Database Audit Trail Pattern](../../../../repo-governance/development/pattern/database-audit-trail.md) - Migration tool selection per language ecosystem
 - [Software Engineering Index](../README.md) - All software engineering documentation

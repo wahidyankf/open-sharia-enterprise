@@ -100,11 +100,11 @@ All TypeScript code MUST follow the platform coding standards:
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow
-- [Code Quality Standards](../../governance/development/quality/code.md) - Quality gates
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Code Quality Standards](../../repo-governance/development/quality/code.md) - Quality gates
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -113,12 +113,12 @@ reason, implement the minimum code to pass, then refactor. The right test level 
 one that captures the behavior — unit (Vitest), integration (MSW), E2E (Playwright), property
 (fast-check), or manual verification when TDD-shaped. Mini-TDD passes (one small Red→Green→Refactor
 cycle per behavior) are encouraged. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

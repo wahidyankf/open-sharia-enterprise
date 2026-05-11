@@ -23,7 +23,7 @@ created: 2026-02-06
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Spring Framework Error Handling Standards for OSE Platform
 
@@ -664,17 +664,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - `@Transactional(rollbackFor = Exception.class)` makes rollback rules explicit
    - `@ResponseStatus` explicitly maps exceptions to HTTP status codes
    - ErrorResponse with correlation IDs makes error tracking explicit
 
-2. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - `@ControllerAdvice` automatically handles exceptions across all controllers
    - Spring AOP automatically logs errors without manual try-catch blocks
    - Bean Validation automatically validates requests before method execution
 
-3. **[Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Transaction isolation levels guarantee consistent error behavior
    - Correlation IDs enable error reproduction from logs
    - Atomic transactions ensure consistent state on rollback

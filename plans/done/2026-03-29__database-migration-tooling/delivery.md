@@ -173,14 +173,14 @@ for reference. Phase 6 (validation) runs after all phases complete.
 
 ### Phase 5: Documentation, Governance, and Licensing
 
-- [x] Update `governance/development/pattern/database-audit-trail.md`:
+- [x] Update `repo-governance/development/pattern/database-audit-trail.md`:
   - [x] Add a "Migration Tool by Language" table listing all 12 demo apps and their migration tools
   - [x] Generalize the migration section to be language-agnostic
   - [x] Keep Liquibase/JPA-specific guidance as a "Java / Spring Boot" subsection
   - [x] Add brief examples for other ecosystems + references
-- [x] Update `governance/development/pattern/README.md`:
+- [x] Update `repo-governance/development/pattern/README.md`:
   - [x] Change Database Audit Trail entry description to reflect multi-language migration support
-- [x] Update `governance/development/README.md`:
+- [x] Update `repo-governance/development/README.md`:
   - [x] Updated Database Audit Trail entry to reflect multi-language scope
 - [x] Create `docs/explanation/software-engineering/licensing/README.md` — index file
 - [x] Create `docs/explanation/software-engineering/licensing/ex-soen-lc__licensing-decisions.md`:

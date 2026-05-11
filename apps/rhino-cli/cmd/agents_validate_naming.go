@@ -14,7 +14,7 @@ import (
 
 // agentRoles enumerates the trailing role tokens permitted by the agent
 // naming convention. Kept in lockstep with
-// `governance/conventions/structure/agent-naming.md`.
+// `repo-governance/conventions/structure/agent-naming.md`.
 var agentRoles = []string{"maker", "checker", "fixer", "dev", "deployer", "manager"}
 
 // agentsValidateNamingFn is the indirection point tests use to mock out the
@@ -27,7 +27,7 @@ var agentsValidateNamingCmd = &cobra.Command{
 	Short: "Validate agent filename suffixes and frontmatter name consistency",
 	Long: `Validate that every agent file in .claude/agents/ and .opencode/agents/
 follows the naming convention documented in
-governance/conventions/structure/agent-naming.md.
+repo-governance/conventions/structure/agent-naming.md.
 
 The command enforces three rules:
 - Filename (sans .md) ends with one of: maker, checker, fixer, dev,
@@ -178,7 +178,7 @@ func formatNamingText(label string, violations []naming.Violation, verbose, quie
 		fmt.Fprintf(&b, "  [%s] %s — %s\n", v.Kind, v.Path, v.Message)
 	}
 	if verbose {
-		b.WriteString("\nSee governance/conventions/structure/agent-naming.md (or workflow-naming.md) for the normative rule.\n")
+		b.WriteString("\nSee repo-governance/conventions/structure/agent-naming.md (or workflow-naming.md) for the normative rule.\n")
 	}
 	return b.String()
 }

@@ -4,16 +4,16 @@
 
 ### Current State
 
-`governance/` may contain vendor-specific content in load-bearing prose. AGENTS.md and CLAUDE.md are currently excluded from the vendor-independence convention even though AGENTS.md is the highest-leverage cross-vendor instruction surface (read natively by OpenCode, Codex CLI, Aider). The binding-sync layer has no automated count-parity / color-map / tier-map check — `.claude/agents/*.md` and `.opencode/agents/*.md` already differ (70 vs 71 as of 2026-05-03; `.opencode` has one orphan `ci-monitor-subagent.md` not present in `.claude`).
+`repo-governance/` may contain vendor-specific content in load-bearing prose. AGENTS.md and CLAUDE.md are currently excluded from the vendor-independence convention even though AGENTS.md is the highest-leverage cross-vendor instruction surface (read natively by OpenCode, Codex CLI, Aider). The binding-sync layer has no automated count-parity / color-map / tier-map check — `.claude/agents/*.md` and `.opencode/agents/*.md` already differ (70 vs 71 as of 2026-05-03; `.opencode` has one orphan `ci-monitor-subagent.md` not present in `.claude`).
 
 | File / Surface                                                                                                                   | Issue                                                                                                                                                                                                                      | Target                                                                                                                                                                              |
 | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `governance/development/agents/model-selection.md`                                                                               | Concrete model names, benchmark citations                                                                                                                                                                                  | Rewrite using capability tiers; link to docs/reference/                                                                                                                             |
-| `governance/development/agents/ai-agents.md`                                                                                     | Vendor-specific examples (color translation map, OpenCode 1.14.31+ note — this note describes current state of the file and will be replaced with "current OpenCode" per delivery step, etc.) likely in load-bearing prose | Wrap vendor specifics in `binding-example` fences; neutralize surrounding prose                                                                                                     |
-| `governance/README.md`                                                                                                           | Layer 4 references `.claude/agents/`; missing vendor-specific content test                                                                                                                                                 | Replace with "platform binding agents"; add layer-test entry                                                                                                                        |
-| `governance/repository-governance-architecture.md`                                                                               | Skills delivery role clarification                                                                                                                                                                                         | Clarify Skills are delivery infra                                                                                                                                                   |
-| `governance/principles/`                                                                                                         | Any model-name citations                                                                                                                                                                                                   | Rewrite using tier language                                                                                                                                                         |
-| `governance/conventions/structure/governance-vendor-independence.md`                                                             | Currently excludes AGENTS.md / CLAUDE.md from scope                                                                                                                                                                        | Amend Scope section + Exceptions list to include both; preserve `plans/` exclusion                                                                                                  |
+| `repo-governance/development/agents/model-selection.md`                                                                          | Concrete model names, benchmark citations                                                                                                                                                                                  | Rewrite using capability tiers; link to docs/reference/                                                                                                                             |
+| `repo-governance/development/agents/ai-agents.md`                                                                                | Vendor-specific examples (color translation map, OpenCode 1.14.31+ note — this note describes current state of the file and will be replaced with "current OpenCode" per delivery step, etc.) likely in load-bearing prose | Wrap vendor specifics in `binding-example` fences; neutralize surrounding prose                                                                                                     |
+| `repo-governance/README.md`                                                                                                      | Layer 4 references `.claude/agents/`; missing vendor-specific content test                                                                                                                                                 | Replace with "platform binding agents"; add layer-test entry                                                                                                                        |
+| `repo-governance/repository-governance-architecture.md`                                                                          | Skills delivery role clarification                                                                                                                                                                                         | Clarify Skills are delivery infra                                                                                                                                                   |
+| `repo-governance/principles/`                                                                                                    | Any model-name citations                                                                                                                                                                                                   | Rewrite using tier language                                                                                                                                                         |
+| `repo-governance/conventions/structure/governance-vendor-independence.md`                                                        | Currently excludes AGENTS.md / CLAUDE.md from scope                                                                                                                                                                        | Amend Scope section + Exceptions list to include both; preserve `plans/` exclusion                                                                                                  |
 | `AGENTS.md` (repo root)                                                                                                          | Currently out of scope; contains vendor-specific terms (`.claude/`, "Claude Code", model IDs)                                                                                                                              | Apply vocabulary map; wrap vendor specifics in `binding-example` fences                                                                                                             |
 | `CLAUDE.md` (repo root)                                                                                                          | Currently out of scope; should remain a thin shim importing AGENTS.md                                                                                                                                                      | Verify it remains a shim; if it duplicates load-bearing AGENTS.md content, consolidate; allow Claude-specific content under "Platform Binding Examples" or `binding-example` fences |
 | `.claude/agents/*.md` ↔ `.opencode/agents/*.md` count drift (70 vs 71 observed; `.opencode` has orphan `ci-monitor-subagent.md`) | No automated parity check                                                                                                                                                                                                  | Investigate orphan, then run `npm run sync:claude-to-opencode` and verify counts equalize                                                                                           |
@@ -24,7 +24,7 @@
 ### Target State
 
 ```
-governance/                          # Vendor-neutral prose
+repo-governance/                          # Vendor-neutral prose
 ├── conventions/structure/
 │   └── governance-vendor-independence.md   # Amended: AGENTS.md + CLAUDE.md now in-scope
 ├── development/agents/
@@ -102,7 +102,7 @@ flowchart LR
 | `.claude/agents/`           | "the agent definition file" or `<platform-binding>/agents/`                        |
 | "Anthropic"                 | drop or "model vendor"                                                             |
 
-(Full map lives in `governance/conventions/structure/governance-vendor-independence.md` Vocabulary Map table; this plan executes against that map.)
+(Full map lives in `repo-governance/conventions/structure/governance-vendor-independence.md` Vocabulary Map table; this plan executes against that map.)
 
 **CLAUDE.md special-case treatment**: CLAUDE.md is a Claude-Code-specific shim by design. It MAY contain vendor terms but only inside `binding-example` fences or under a "Platform Binding Examples" heading after the convention amendment. The single `@AGENTS.md` import line counts as an inline binding directive and is allowed.
 
@@ -112,15 +112,15 @@ flowchart LR
 
 **Phase 1-3 (governance prose, conditional on Phase 0 baseline)**:
 
-- `governance/development/agents/model-selection.md` — Remove benchmark prose, use capability tiers; ensure tier map covers every tier used in `.claude/` and `.opencode/` agent frontmatter
-- `governance/development/agents/ai-agents.md` — Explicit modify target; wrap vendor-specific examples (color translation map entries, OpenCode 1.14.31+ note — this note describes the current state of the file and will be replaced with "current OpenCode" per delivery step) in `binding-example` fences; neutralize surrounding prose; ensure color-translation map covers every named color used in `.claude/agents/*.md` frontmatter
-- `governance/README.md` — Update Layer 4 description, replace vendor paths, add vendor-specific content test to layer-test guidance
-- `governance/repository-governance-architecture.md` — Clarify Skills delivery role
-- `governance/principles/**/*.md` — Audit and rewrite any model-name citations
+- `repo-governance/development/agents/model-selection.md` — Remove benchmark prose, use capability tiers; ensure tier map covers every tier used in `.claude/` and `.opencode/` agent frontmatter
+- `repo-governance/development/agents/ai-agents.md` — Explicit modify target; wrap vendor-specific examples (color translation map entries, OpenCode 1.14.31+ note — this note describes the current state of the file and will be replaced with "current OpenCode" per delivery step) in `binding-example` fences; neutralize surrounding prose; ensure color-translation map covers every named color used in `.claude/agents/*.md` frontmatter
+- `repo-governance/README.md` — Update Layer 4 description, replace vendor paths, add vendor-specific content test to layer-test guidance
+- `repo-governance/repository-governance-architecture.md` — Clarify Skills delivery role
+- `repo-governance/principles/**/*.md` — Audit and rewrite any model-name citations
 
 **Phase X (convention amendment, blocking for Phase 4)**:
 
-- `governance/conventions/structure/governance-vendor-independence.md` — Amend Scope section to include AGENTS.md and CLAUDE.md; remove them from the Exceptions list; preserve `plans/` exclusion; add a note explaining that CLAUDE.md is a Claude-Code-specific shim where vendor terms are allowed inside fences and Platform Binding Examples sections
+- `repo-governance/conventions/structure/governance-vendor-independence.md` — Amend Scope section to include AGENTS.md and CLAUDE.md; remove them from the Exceptions list; preserve `plans/` exclusion; add a note explaining that CLAUDE.md is a Claude-Code-specific shim where vendor terms are allowed inside fences and Platform Binding Examples sections
 
 **Phase 4 (newly in scope)**:
 
@@ -133,20 +133,20 @@ flowchart LR
 
 ### Files to Create/Expand
 
-- `docs/reference/ai-model-benchmarks.md` — Ensure comprehensive benchmark coverage for every model referenced in `governance/`, AGENTS.md, and CLAUDE.md
-- `governance/README.md` — Add vendor-specific content test to layer-test guidance
+- `docs/reference/ai-model-benchmarks.md` — Ensure comprehensive benchmark coverage for every model referenced in `repo-governance/`, AGENTS.md, and CLAUDE.md
+- `repo-governance/README.md` — Add vendor-specific content test to layer-test guidance
 - `.claude/agents/repo-parity-checker.md` — **NEW** (Phase 6.1) — green checker agent invoking existing tools to validate parity invariants
 - `.claude/agents/repo-parity-fixer.md` — **NEW** (Phase 6.1) — yellow fixer agent for limited auto-remediation (sync drift only)
 - `.opencode/agents/repo-parity-checker.md` — auto-generated by `npm run sync:claude-to-opencode`
 - `.opencode/agents/repo-parity-fixer.md` — auto-generated by sync
-- `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` — **NEW** (Phase 6.3) — iterative check-fix-verify orchestration mirroring `plan-quality-gate.md`
-- `governance/workflows/README.md` — add catalog entry for the new workflow
+- `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` — **NEW** (Phase 6.3) — iterative check-fix-verify orchestration mirroring `plan-quality-gate.md`
+- `repo-governance/workflows/README.md` — add catalog entry for the new workflow
 - `apps/rhino-cli/project.json` — add `validate:cross-vendor-parity` Nx target (or new `repo-parity` meta-project — pick whichever is more idiomatic)
 - `.husky/pre-push` — extend to invoke the new Nx target
 
 ## Parity Checker Agent Specification
 
-This section specifies the new agents added in Phase 6. Both follow the [Agent Definition Files](../../../governance/development/agents/ai-agents.md) convention.
+This section specifies the new agents added in Phase 6. Both follow the [Agent Definition Files](../../../repo-governance/development/agents/ai-agents.md) convention.
 
 ### `repo-parity-checker` (green)
 
@@ -156,15 +156,15 @@ This section specifies the new agents added in Phase 6. Both follow the [Agent D
 | Model tier                     | execution-grade (`sonnet` for Claude Code, mapped equivalently for OpenCode)                                                                                                                                                    |
 | Tools                          | `Bash, Read, Glob, Grep, WebFetch, Write`                                                                                                                                                                                       |
 | Output                         | `generated-reports/parity__<uuid>__<YYYY-MM-DD--HH-MM>__audit.md` (dual-label criticality/confidence per [repo-assessing-criticality-confidence skill](../../../.claude/skills/repo-assessing-criticality-confidence/SKILL.md)) |
-| Invokes (no logic duplication) | `rhino-cli governance vendor-audit`, `npm run sync:claude-to-opencode`, `ls`, `grep -h "^color:" .claude/agents/*.md`, `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md`, WebFetch on Aider docs                    |
+| Invokes (no logic duplication) | `rhino-cli repo-governance vendor-audit`, `npm run sync:claude-to-opencode`, `ls`, `grep -h "^color:" .claude/agents/*.md`, `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md`, WebFetch on Aider docs               |
 
 **Five invariants checked**:
 
-1. `rhino-cli governance vendor-audit governance/` returns 0 violations
+1. `rhino-cli repo-governance vendor-audit repo-governance/` returns 0 violations
 2. `npm run sync:claude-to-opencode` is a no-op (`git diff --quiet` after invocation)
 3. `.claude/agents/*.md` count (excluding `README.md`) equals `.opencode/agents/*.md` count
-4. Color-translation map in `governance/development/agents/ai-agents.md` covers every named color used in `.claude/agents/*.md` frontmatter
-5. Capability-tier map in `governance/development/agents/model-selection.md` covers every model tier referenced in `.claude/` and `.opencode/` agent frontmatter
+4. Color-translation map in `repo-governance/development/agents/ai-agents.md` covers every named color used in `.claude/agents/*.md` frontmatter
+5. Capability-tier map in `repo-governance/development/agents/model-selection.md` covers every model tier referenced in `.claude/` and `.opencode/` agent frontmatter
 6. Aider entry in `docs/reference/platform-bindings.md` matches Aider's own documentation at <https://aider.chat/docs/usage/conventions.html> (WebFetch — flag drift)
 
 Each finding labeled with criticality (CRITICAL/HIGH/MEDIUM/LOW) and confidence (HIGH/MEDIUM/FALSE_POSITIVE).
@@ -188,7 +188,7 @@ The target invokes the same shell commands the checker uses, **not** the agent i
 ```bash
 # Pseudocode for the target
 nx run rhino-cli:validate:cross-vendor-parity:
-  ./apps/rhino-cli/dist/rhino-cli governance vendor-audit governance/ || exit 1
+  ./apps/rhino-cli/dist/rhino-cli repo-governance vendor-audit repo-governance/ || exit 1
   npm run sync:claude-to-opencode
   git diff --quiet || { echo "sync drift"; exit 1; }
   CL=$(ls .claude/agents/*.md | grep -v README | wc -l)
@@ -201,12 +201,12 @@ The target is wired into `.husky/pre-push` and runs on every push touching gover
 
 ### Workflow `repo-cross-vendor-parity-quality-gate`
 
-The workflow at `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` orchestrates the iterative check-fix-verify pattern across the two new agents. Mirrors the structure of `governance/workflows/plan/plan-quality-gate.md`:
+The workflow at `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` orchestrates the iterative check-fix-verify pattern across the two new agents. Mirrors the structure of `repo-governance/workflows/plan/plan-quality-gate.md`:
 
 | Aspect                 | Value                                                                                                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Path                   | `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md`                                                                                                             |
-| Naming                 | Per [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) — `<scope>(-<qualifier>)*-<type>` → `repo-cross-vendor-parity-quality-gate`       |
+| Path                   | `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md`                                                                                                        |
+| Naming                 | Per [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md) — `<scope>(-<qualifier>)*-<type>` → `repo-cross-vendor-parity-quality-gate`  |
 | Inputs                 | `scope` (which invariants), `mode` (lax/normal/strict/ocd), `min-iterations`, `max-iterations` (default 7), `max-concurrency` (default 2)                                        |
 | Outputs                | `final-status` ∈ {pass, partial, fail}, `iterations-completed`, `final-report` (`generated-reports/parity__*__audit.md`)                                                         |
 | Termination            | Zero findings on **two consecutive** validations (consecutive-pass requirement, same as plan-quality-gate)                                                                       |
@@ -239,17 +239,17 @@ grep -h "^color:" .claude/agents/*.md | sort -u
 grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u
 
 # 6. Cross-check #4 against the color-translation map in ai-agents.md
-grep -A2 "Dual-Mode Color Translation" governance/development/agents/ai-agents.md
+grep -A2 "Dual-Mode Color Translation" repo-governance/development/agents/ai-agents.md
 
 # 7. Cross-check #5 against the capability-tier map in model-selection.md
-grep -A2 "capability tier" governance/development/agents/model-selection.md
+grep -A2 "capability tier" repo-governance/development/agents/model-selection.md
 
 # 8. Final audit (after all remediation)
-go run apps/rhino-cli/main.go governance vendor-audit governance/
-go run apps/rhino-cli/main.go governance vendor-audit AGENTS.md CLAUDE.md   # After convention amendment
+go run apps/rhino-cli/main.go repo-governance vendor-audit repo-governance/
+go run apps/rhino-cli/main.go repo-governance vendor-audit AGENTS.md CLAUDE.md   # After convention amendment
 ```
 
-If `rhino-cli governance vendor-audit` does not yet accept arbitrary file targets (only `governance/` directory by default), Phase 4 prep includes either extending the CLI to accept file paths OR running an equivalent grep against AGENTS.md / CLAUDE.md using the combined audit regex from the convention.
+If `rhino-cli repo-governance vendor-audit` does not yet accept arbitrary file targets (only `repo-governance/` directory by default), Phase 4 prep includes either extending the CLI to accept file paths OR running an equivalent grep against AGENTS.md / CLAUDE.md using the combined audit regex from the convention.
 
 ## External Standards Verification (web research 2026-05-03)
 
@@ -269,15 +269,15 @@ Verified via `web-research-maker` against current public docs. Findings inform p
 **Plan adjustments driven by these findings**:
 
 - Aider entry in `docs/reference/platform-bindings.md` and `AGENTS.md` (Platform Bindings section) now in scope (Phase 4 sub-task) — fix the documented-file claim
-- "OpenCode 1.14.31+" wording in `governance/development/agents/ai-agents.md` to be replaced with "current OpenCode"
-- Capability-tier internal-coinage note added to `governance/development/agents/model-selection.md`
+- "OpenCode 1.14.31+" wording in `repo-governance/development/agents/ai-agents.md` to be replaced with "current OpenCode"
+- Capability-tier internal-coinage note added to `repo-governance/development/agents/model-selection.md`
 
 ## Dependencies
 
-- `rhino-cli governance vendor-audit` — Validation tool for governance/, AGENTS.md, CLAUDE.md (post-amendment)
+- `rhino-cli repo-governance vendor-audit` — Validation tool for repo-governance/, AGENTS.md, CLAUDE.md (post-amendment)
 - `npm run sync:claude-to-opencode` — Binding-sync command
 - `docs/reference/ai-model-benchmarks.md` — Must be comprehensive before governance / AGENTS.md links to it
-- `governance/conventions/structure/governance-vendor-independence.md` — Amended in Phase X; blocks Phase 4
+- `repo-governance/conventions/structure/governance-vendor-independence.md` — Amended in Phase X; blocks Phase 4
 
 ## Rollback
 

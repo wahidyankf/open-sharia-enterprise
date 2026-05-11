@@ -29,7 +29,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to optimize performance in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -361,9 +361,9 @@ open class ZakatCalculationBenchmark {
 
 ## Related Documentation
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md)
 
 ---
 

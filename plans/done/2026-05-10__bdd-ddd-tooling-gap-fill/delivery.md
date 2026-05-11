@@ -16,18 +16,18 @@ Provision before execution (run from repo root):
 claude --worktree graceful-brewing-patterson
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
 ## Environment Setup
 
-- [x] Provision worktree: `claude --worktree bdd-ddd-tooling-gap-fill` (creates `worktrees/bdd-ddd-tooling-gap-fill/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [x] Provision worktree: `claude --worktree bdd-ddd-tooling-gap-fill` (creates `worktrees/bdd-ddd-tooling-gap-fill/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)).
   - **Date**: 2026-05-10
   - **Status**: Aligned to existing worktree `worktrees/graceful-brewing-patterson/` per user direction "do it in current worktree". Worktree spec in this delivery.md updated to match (line 11). Both Worktree section + this checkbox now reflect current cwd.
   - **Files Changed**: `plans/in-progress/bdd-ddd-tooling-gap-fill/delivery.md` (Worktree path → graceful-brewing-patterson)
   - **Notes**: `pwd` = `/Users/wkf/ose-projects/ose-public/worktrees/graceful-brewing-patterson`; `git rev-parse --show-toplevel` matches. Worktree gate satisfied.
-- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)).
   - **Date**: 2026-05-10
   - **Status**: Done. Doctor 19/19 OK; 1718 packages installed; 0 warning, 0 missing.
   - **Files Changed**: none (node_modules + lockfile already current)
@@ -370,7 +370,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 - [x] **5B.4.3** Apply each cleanup (real orphans deleted, matcher tweaks added) as its own commit. Each commit message: `fix(<project>): remove orphan step impl <description>` or `fix(rhino-cli): handle <case> in step extraction`.
 - [x] **5B.4.4 GREEN** Re-run the 5B.4.1 audit script. Confirm `FAIL=0`. If still failing, repeat 5B.4.2-5B.4.3.
-- [x] **5B.4.5** Document the audit result in `governance/conventions/structure/specs-directory-structure.md` (Phase 11.1 picks this up): cite the audit ran in worktree as part of this plan and that all 15 projects are orphan-clean at merge time.
+- [x] **5B.4.5** Document the audit result in `repo-governance/conventions/structure/specs-directory-structure.md` (Phase 11.1 picks this up): cite the audit ran in worktree as part of this plan and that all 15 projects are orphan-clean at merge time.
 
 > **Phase 5B.4 implementation notes** (5B.4.2–5B.4.5): Date 2026-05-10. Status GREEN. **Resolution**: 4 of the 7 originally-affected projects were resolved by validator improvements rather than impl deletion (orphans were extractor false positives, not real drift). The other 3 projects had real orphans cleaned up via deletion of unused utility step impls.
 >
@@ -415,9 +415,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   `go build` exits 0.
 
 - [x] **6.3 GREEN** `go build ./...` succeeds. `rhino-cli specs --help` lists 4 subcommands (validate-tree, validate-counts, validate-links, validate-adoption).
-- [x] **6.4** Update `governance/conventions/structure/specs-directory-structure.md`: add a "Drift detection" subsection noting these commands are not currently implemented; track via the tooling backlog.
+- [x] **6.4** Update `repo-governance/conventions/structure/specs-directory-structure.md`: add a "Drift detection" subsection noting these commands are not currently implemented; track via the tooling backlog.
 
-> **Phase 6 implementation notes** (6.1–6.4): Date 2026-05-10. Status GREEN. Files Changed: `apps/rhino-cli/cmd/specs_help_test.go` (new — TestSpecsHelpHasNoDriftRoutes + TestSpecsHelpListsValidateCommands), removed `apps/rhino-cli/cmd/specs_drift_routes.go`, `apps/rhino-cli/cmd/specs_drift_endpoints.go`, `apps/rhino-cli/cmd/specs_drift_contracts.go`, edited `governance/conventions/structure/specs-directory-structure.md` removing 3 drift-\* table rows + adding "Drift detection" subsection citing the tooling backlog. RED — `specs --help still contains "drift-routes"` failed correctly with the 3 drift commands registered. GREEN — `git rm` 3 placeholders, `go build ./...` exits 0, `go run main.go specs --help` lists exactly 4 subcommands (validate-adoption, validate-counts, validate-links, validate-tree). Both new tests pass.
+> **Phase 6 implementation notes** (6.1–6.4): Date 2026-05-10. Status GREEN. Files Changed: `apps/rhino-cli/cmd/specs_help_test.go` (new — TestSpecsHelpHasNoDriftRoutes + TestSpecsHelpListsValidateCommands), removed `apps/rhino-cli/cmd/specs_drift_routes.go`, `apps/rhino-cli/cmd/specs_drift_endpoints.go`, `apps/rhino-cli/cmd/specs_drift_contracts.go`, edited `repo-governance/conventions/structure/specs-directory-structure.md` removing 3 drift-\* table rows + adding "Drift detection" subsection citing the tooling backlog. RED — `specs --help still contains "drift-routes"` failed correctly with the 3 drift commands registered. GREEN — `git rm` 3 placeholders, `go build ./...` exits 0, `go run main.go specs --help` lists exactly 4 subcommands (validate-adoption, validate-counts, validate-links, validate-tree). Both new tests pass.
 
 ---
 
@@ -600,7 +600,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 11 — Documentation + agent-binding updates
 
-- [x] **11.1** Update `governance/conventions/structure/specs-directory-structure.md`:
+- [x] **11.1** Update `repo-governance/conventions/structure/specs-directory-structure.md`:
   - Document the allowlist policy (Phase 1).
   - Document `code_lang:` schema field (Phase 3).
   - Document drift-\* removal (Phase 6).
@@ -618,7 +618,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [x] **11.4** Run `npm run validate:sync` — parity confirmed.
 - [x] **11.5** `npm run lint:md` — fix violations.
 
-> **Phase 11 implementation notes** (11.1–11.5): Date 2026-05-10. Status GREEN. Files Changed: `governance/conventions/structure/specs-directory-structure.md` (added 7 new subsections under Enforcement: allowlist-driven default, code*lang field, gherkin []string schema, severity audit log, reverse-direction step orphan check, combined gherkin scopes, expanded relationship symmetry, pre-push + CI gating surfaces; replaced drift table rows with the new 4-row validate-* table), `.claude/agents/specs-checker.md` (drift-\_ table replaced with 4 validate-\* targets, drift findings example replaced with allowlist gate finding example, execution pattern updated to `nx run rhino-cli:validate:specs-{adoption,tree,counts,links}`), `.claude/agents/specs-fixer.md` (drift fix section replaced with allowlist-gate-fix recipe, drift-contracts flag-only note replaced with drift-detection-not-implemented note, apply-fix step updated). `npm run sync:claude-to-opencode` synced 72 agents to `.opencode/`; `npm run validate:sync` confirms 75/75 checks pass; `npm run lint:md` 0 violations across 2421 files.
+> **Phase 11 implementation notes** (11.1–11.5): Date 2026-05-10. Status GREEN. Files Changed: `repo-governance/conventions/structure/specs-directory-structure.md` (added 7 new subsections under Enforcement: allowlist-driven default, code*lang field, gherkin []string schema, severity audit log, reverse-direction step orphan check, combined gherkin scopes, expanded relationship symmetry, pre-push + CI gating surfaces; replaced drift table rows with the new 4-row validate-* table), `.claude/agents/specs-checker.md` (drift-\_ table replaced with 4 validate-\* targets, drift findings example replaced with allowlist gate finding example, execution pattern updated to `nx run rhino-cli:validate:specs-{adoption,tree,counts,links}`), `.claude/agents/specs-fixer.md` (drift fix section replaced with allowlist-gate-fix recipe, drift-contracts flag-only note replaced with drift-detection-not-implemented note, apply-fix step updated). `npm run sync:claude-to-opencode` synced 72 agents to `.opencode/`; `npm run validate:sync` confirms 75/75 checks pass; `npm run lint:md` 0 violations across 2421 files.
 
 ---
 
@@ -633,7 +633,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [x] **12.4** `nx run rhino-cli:validate:specs-tree` — 0 findings. Confirmed.
 - [x] **12.4b** `nx run rhino-cli:validate:specs-counts` — 0 findings. Confirmed.
 - [x] **12.4c** `nx run rhino-cli:validate:specs-links` — 0 findings. Confirmed.
-- [x] **12.4d** `git grep -l "cobra.Command" apps/rhino-cli/cmd/specs_*.go apps/rhino-cli/cmd/ddd_*.go apps/rhino-cli/cmd/spec_coverage*.go` cross-checked against `apps/rhino-cli/project.json` + `.husky/pre-push` + each app's `project.json` — every command file is referenced by at least one invocation; the three `specs_drift_*.go` files no longer exist. **Zero dead specs/BDD/DDD scripts confirmed.** Remaining `drift-*` mentions in `governance/conventions/structure/specs-directory-structure.md` and `governance/workflows/specs/specs-quality-gate.md` document the removal (not active scripts). Stale references in `governance/conventions/structure/app-readme-vs-specs.md` (drift table rows) and `specs/apps/rhino/behavior/cli/gherkin/README.md` (planned drift features) cleaned up in this phase.
+- [x] **12.4d** `git grep -l "cobra.Command" apps/rhino-cli/cmd/specs_*.go apps/rhino-cli/cmd/ddd_*.go apps/rhino-cli/cmd/spec_coverage*.go` cross-checked against `apps/rhino-cli/project.json` + `.husky/pre-push` + each app's `project.json` — every command file is referenced by at least one invocation; the three `specs_drift_*.go` files no longer exist. **Zero dead specs/BDD/DDD scripts confirmed.** Remaining `drift-*` mentions in `repo-governance/conventions/structure/specs-directory-structure.md` and `repo-governance/workflows/specs/specs-quality-gate.md` document the removal (not active scripts). Stale references in `repo-governance/conventions/structure/app-readme-vs-specs.md` (drift table rows) and `specs/apps/rhino/behavior/cli/gherkin/README.md` (planned drift features) cleaned up in this phase.
 - [x] **12.4e** Cross-surface presence audit for Fix #14 (per Phase 7C.4.1):
 
   ```bash
@@ -683,7 +683,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Message: `feat(rhino-cli): close BDD+DDD tooling enforcement gaps`
   - Body lists 15 fixes by number, ending with the headline outcome: "zero dead specs/BDD/DDD scripts in rhino-cli; zero orphan step impls across the 15 spec-coverage-wired projects; all four validate:specs-\* targets gated on every CI surface (pre-push + PR gate + 4 main-CI deploy workflows); spec-coverage now enforces forward + reverse direction default-on with no escape hatch".
 - [ ] **13.2** Push via Trunk Based Development (default) or draft PR (optional).
-- [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+- [ ] **13.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `repo-governance/development/workflow/ci-monitoring.md`.
 - [ ] **13.4** Move plan folder to `plans/done/YYYY-MM-DD__bdd-ddd-tooling-gap-fill/`.
 - [ ] **13.5** Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] **13.6** Surface for downstream: confirm `repo-ose-primer-propagation-maker` has the new constants, agent definitions, and validator changes on its propagation list. The maker runs in dry-run by default; an actual primer PR is a separate decision.

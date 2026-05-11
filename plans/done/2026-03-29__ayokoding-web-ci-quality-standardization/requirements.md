@@ -4,7 +4,7 @@
 
 ### Gap 1: Stale Tag in nx-targets.md Documentation
 
-The [Current Project Tags table](../../../governance/development/infra/nx-targets.md) lists ayokoding-web as `platform:hugo`, but the actual `project.json` declares `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`. The documentation is stale.
+The [Current Project Tags table](../../../repo-governance/development/infra/nx-targets.md) lists ayokoding-web as `platform:hugo`, but the actual `project.json` declares `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`. The documentation is stale.
 
 **Impact**: Misleading for anyone referencing the governance doc to understand the workspace.
 
@@ -31,7 +31,7 @@ The scheduled workflow `test-and-deploy-ayokoding-web.yml` runs:
 1. `unit` job: `nx run ayokoding-web:test:quick`
 2. `e2e` job: BE and FE E2E tests via Playwright
 
-But `test:integration` (vitest `--project integration`) is never run in any CI workflow. Per the [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md), integration tests should run in scheduled CI.
+But `test:integration` (vitest `--project integration`) is never run in any CI workflow. Per the [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md), integration tests should run in scheduled CI.
 
 **Impact**: Medium — integration test regressions are only caught locally, never in CI.
 

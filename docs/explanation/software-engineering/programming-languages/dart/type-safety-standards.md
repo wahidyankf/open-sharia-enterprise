@@ -27,7 +27,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to leverage Dart's type system in THIS codebase, not WHAT null safety is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -583,9 +583,9 @@ Type safety is enforced through:
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ---
 

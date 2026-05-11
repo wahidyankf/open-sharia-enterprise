@@ -20,7 +20,7 @@ Single subrepo: `ose-public`. Files changed:
 - `apps/rhino-cli/README.md` — document new command
 - `apps/rhino-cli/project.json` — add `validate:mermaid` Nx target
 - `apps/rhino-cli/cmd/testable.go` — add `docsValidateMermaidFn` delegation
-- `governance/conventions/formatting/diagrams.md` — reference new validator
+- `repo-governance/conventions/formatting/diagrams.md` — reference new validator
 
 ## The Three Rules
 
@@ -56,7 +56,7 @@ all five direction keywords — direction only changes which screen axis maps to
 
 **Rule 1 — label length basis**: Mermaid's `wrappingWidth` config defaults to 200 px. At the default 16 px
 sans-serif font, approximately 28–30 characters fill 200 px. The default of 30 chars is grounded in this
-official Mermaid configuration value. This repo's `governance/conventions/formatting/diagrams.md` sets a
+official Mermaid configuration value. This repo's `repo-governance/conventions/formatting/diagrams.md` sets a
 stricter 20-char limit for Hugo/Hextra production diagrams; use `--max-label-len 20` to enforce that.
 
 ## Navigation

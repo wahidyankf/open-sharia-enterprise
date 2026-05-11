@@ -82,7 +82,7 @@ specs/apps/ayokoding/**/*.feature
 
 ### Change 1: Fix nx-targets.md Tag Table
 
-In `governance/development/infra/nx-targets.md`, update the Current Project Tags table:
+In `repo-governance/development/infra/nx-targets.md`, update the Current Project Tags table:
 
 ```diff
 - | `ayokoding-web`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |

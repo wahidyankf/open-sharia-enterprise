@@ -15,7 +15,7 @@ created: 2025-11-22
 
 ## What is Explanation Documentation?
 
-Per the [Diátaxis framework](../../governance/conventions/structure/diataxis-framework.md), Explanation documentation:
+Per the [Diátaxis framework](../../repo-governance/conventions/structure/diataxis-framework.md), Explanation documentation:
 
 - **Deepens understanding** of concepts, design decisions, and systems
 - **Answers "why?"** questions and provides context
@@ -43,9 +43,9 @@ This directory contains conceptual documentation across multiple areas:
 
 The repository follows a **six-layer governance architecture** (Vision → Principles → Conventions → Development → Agents → Workflows) where each layer builds on the foundation above.
 
-**See [Rules](../../governance/README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
+**See [Rules](../../repo-governance/README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
 
-**See [Repository Governance Architecture](../../governance/repository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
+**See [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
 
 ---
 
@@ -53,8 +53,8 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 
 ### Repository Governance
 
-- **[Rules](../../governance/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
-- **[Repository Governance Architecture](../../governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
+- **[Rules](../../repo-governance/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
+- **[Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
 
 ### Software Engineering
 

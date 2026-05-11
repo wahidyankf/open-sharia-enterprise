@@ -96,7 +96,7 @@ after migration.
 - `apps/oseplatform-cli/README.md` — spec path reference updated
 - `apps/ayokoding-cli/README.md` — spec path reference updated
 - `specs/apps/rhino/README.md` — structure diagram updated
-- `governance/development/infra/bdd-spec-test-mapping.md` — example path updated
+- `repo-governance/development/infra/bdd-spec-test-mapping.md` — example path updated
 
 ## Acceptance Criteria (Gherkin)
 

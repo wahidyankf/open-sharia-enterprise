@@ -47,15 +47,15 @@ All of this gets deleted.
 
 **Prefix patterns observed** (from the File Naming Convention doc):
 
-| Prefix shape                 | Example                                   | Target directory                                                                                      |
-| ---------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `tu__name.md`                | `tu__getting-started.md`                  | `docs/tutorials/`                                                                                     |
-| `hoto__name.md`              | `hoto__organize-work.md`                  | `docs/how-to/`                                                                                        |
-| `re__name.md`                | `re__monorepo-structure.md`               | `docs/reference/`                                                                                     |
-| `ex__name.md`                | _(rare root-level explanation file)_      | `docs/explanation/`                                                                                   |
-| `ex-go-co-st__name.md`       | `ex-go-co-st__file-naming.md`             | `docs/explanation/governance/conventions/structure/` _(historical paths; most now under governance/)_ |
-| `ex-soen-prla-ty__name.md`   | `ex-soen-prla-ty__best-practices.md`      | `docs/explanation/software-engineering/programming-languages/typescript/`                             |
-| `ex-soen-ar-c4armo__name.md` | `ex-soen-ar-c4armo__tooling-standards.md` | `docs/explanation/software-engineering/architecture/c4-architecture-model/`                           |
+| Prefix shape                 | Example                                   | Target directory                                                                                                |
+| ---------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `tu__name.md`                | `tu__getting-started.md`                  | `docs/tutorials/`                                                                                               |
+| `hoto__name.md`              | `hoto__organize-work.md`                  | `docs/how-to/`                                                                                                  |
+| `re__name.md`                | `re__monorepo-structure.md`               | `docs/reference/`                                                                                               |
+| `ex__name.md`                | _(rare root-level explanation file)_      | `docs/explanation/`                                                                                             |
+| `ex-go-co-st__name.md`       | `ex-go-co-st__file-naming.md`             | `docs/explanation/repo-governance/conventions/structure/` _(historical paths; most now under repo-governance/)_ |
+| `ex-soen-prla-ty__name.md`   | `ex-soen-prla-ty__best-practices.md`      | `docs/explanation/software-engineering/programming-languages/typescript/`                                       |
+| `ex-soen-ar-c4armo__name.md` | `ex-soen-ar-c4armo__tooling-standards.md` | `docs/explanation/software-engineering/architecture/c4-architecture-model/`                                     |
 
 **Rename rule**: split basename on the first `__`, discard the left side, keep the right side plus the extension.
 
@@ -74,20 +74,20 @@ From the baseline `ripgrep -il obsidian` scan (filtering out `plans/done/*`, `.o
 | `docs/explanation/software-engineering/architecture/c4-architecture-model/ex-soen-ar-c4armo__tooling-standards.md` | Remove Obsidian references (file will be renamed)                                    |
 | `README.md` (root)                                                                                                 | Remove any Obsidian references (TBD — verify with ripgrep)                           |
 | `ROADMAP.md`                                                                                                       | Remove Obsidian references                                                           |
-| `governance/conventions/README.md`                                                                                 | Remove Obsidian mention in formatting subsection description                         |
-| `governance/conventions/structure/file-naming.md`                                                                  | **Rewrite entire file** (see §4)                                                     |
-| `governance/conventions/formatting/linking.md`                                                                     | Remove "ensures links work consistently across GitHub web, Obsidian" language        |
-| `governance/conventions/formatting/diagrams.md`                                                                    | Remove Obsidian platform mention                                                     |
-| `governance/conventions/formatting/emoji.md`                                                                       | Remove Obsidian from "render consistency" list                                       |
-| `governance/conventions/formatting/indentation.md`                                                                 | Remove Obsidian references                                                           |
-| `governance/conventions/formatting/nested-code-fences.md`                                                          | Remove Obsidian preview recommendation                                               |
-| `governance/conventions/formatting/mathematical-notation.md`                                                       | Remove "Obsidian/GitHub dual compatibility" framing                                  |
-| `governance/conventions/formatting/color-accessibility.md`                                                         | Remove Obsidian from cross-platform consistency notes                                |
-| `governance/conventions/writing/conventions.md`                                                                    | Remove "TAB indentation for Obsidian compatibility" checklist item                   |
-| `governance/conventions/tutorials/general.md`                                                                      | Remove Obsidian references                                                           |
-| `governance/conventions/hugo/shared.md`                                                                            | Remove Obsidian contrast notes (docs/ vs Hugo)                                       |
-| `governance/development/agents/ai-agents.md`                                                                       | Remove wiki-link anti-pattern example and cross-platform Obsidian mention            |
-| `governance/workflows/meta/workflow-identifier.md`                                                                 | Remove Obsidian YAML-parser justification (keep the quoting rule, change the reason) |
+| `repo-governance/conventions/README.md`                                                                            | Remove Obsidian mention in formatting subsection description                         |
+| `repo-governance/conventions/structure/file-naming.md`                                                             | **Rewrite entire file** (see §4)                                                     |
+| `repo-governance/conventions/formatting/linking.md`                                                                | Remove "ensures links work consistently across GitHub web, Obsidian" language        |
+| `repo-governance/conventions/formatting/diagrams.md`                                                               | Remove Obsidian platform mention                                                     |
+| `repo-governance/conventions/formatting/emoji.md`                                                                  | Remove Obsidian from "render consistency" list                                       |
+| `repo-governance/conventions/formatting/indentation.md`                                                            | Remove Obsidian references                                                           |
+| `repo-governance/conventions/formatting/nested-code-fences.md`                                                     | Remove Obsidian preview recommendation                                               |
+| `repo-governance/conventions/formatting/mathematical-notation.md`                                                  | Remove "Obsidian/GitHub dual compatibility" framing                                  |
+| `repo-governance/conventions/formatting/color-accessibility.md`                                                    | Remove Obsidian from cross-platform consistency notes                                |
+| `repo-governance/conventions/writing/conventions.md`                                                               | Remove "TAB indentation for Obsidian compatibility" checklist item                   |
+| `repo-governance/conventions/tutorials/general.md`                                                                 | Remove Obsidian references                                                           |
+| `repo-governance/conventions/hugo/shared.md`                                                                       | Remove Obsidian contrast notes (docs/ vs Hugo)                                       |
+| `repo-governance/development/agents/ai-agents.md`                                                                  | Remove wiki-link anti-pattern example and cross-platform Obsidian mention            |
+| `repo-governance/workflows/meta/workflow-identifier.md`                                                            | Remove Obsidian YAML-parser justification (keep the quoting rule, change the reason) |
 | `.claude/skills/docs-validating-links/SKILL.md`                                                                    | Remove wiki-link error class                                                         |
 | `.claude/agents/docs-maker.md`                                                                                     | Remove "do NOT use Obsidian-only wiki links" language                                |
 | `.claude/agents/docs-file-manager.md`                                                                              | Remove "No Obsidian wiki links" rule                                                 |
@@ -98,25 +98,25 @@ From `ripgrep '(hoto__|tu__|re__[a-z]|ex-go-|ex-soen-|ex-ru-|ex-wf-|ex-de-|ex-co
 
 **Governance files that describe or cite the prefix scheme** (~22 files):
 
-- `governance/conventions/README.md`, `structure/README.md`, `tutorials/README.md`
-- `governance/conventions/structure/file-naming.md` (full rewrite — §4)
-- `governance/conventions/structure/plans.md` — retains a "not applicable to plans/" note; verify it still renders
-- `governance/conventions/structure/diataxis-framework.md`
-- `governance/conventions/structure/programming-language-docs-separation.md`
-- `governance/conventions/formatting/linking.md` (rationale rewrite — §4b)
-- `governance/conventions/formatting/diagrams.md`
-- `governance/conventions/writing/readme-quality.md`
-- `governance/conventions/tutorials/general.md`
-- `governance/conventions/tutorials/programming-language-content.md`
-- `governance/conventions/hugo/ayokoding.md`
-- `governance/principles/general/simplicity-over-complexity.md`
-- `governance/principles/software-engineering/README.md`
-- `governance/principles/content/documentation-first.md`
-- `governance/principles/content/progressive-disclosure.md`
-- `governance/development/agents/ai-agents.md`, `skill-context-architecture.md`
-- `governance/development/pattern/database-audit-trail.md`
-- `governance/development/quality/criticality-levels.md`, `three-level-testing-standard.md`
-- `governance/workflows/infra/development-environment-setup.md`
+- `repo-governance/conventions/README.md`, `structure/README.md`, `tutorials/README.md`
+- `repo-governance/conventions/structure/file-naming.md` (full rewrite — §4)
+- `repo-governance/conventions/structure/plans.md` — retains a "not applicable to plans/" note; verify it still renders
+- `repo-governance/conventions/structure/diataxis-framework.md`
+- `repo-governance/conventions/structure/programming-language-docs-separation.md`
+- `repo-governance/conventions/formatting/linking.md` (rationale rewrite — §4b)
+- `repo-governance/conventions/formatting/diagrams.md`
+- `repo-governance/conventions/writing/readme-quality.md`
+- `repo-governance/conventions/tutorials/general.md`
+- `repo-governance/conventions/tutorials/programming-language-content.md`
+- `repo-governance/conventions/hugo/ayokoding.md`
+- `repo-governance/principles/general/simplicity-over-complexity.md`
+- `repo-governance/principles/software-engineering/README.md`
+- `repo-governance/principles/content/documentation-first.md`
+- `repo-governance/principles/content/progressive-disclosure.md`
+- `repo-governance/development/agents/ai-agents.md`, `skill-context-architecture.md`
+- `repo-governance/development/pattern/database-audit-trail.md`
+- `repo-governance/development/quality/criticality-levels.md`, `three-level-testing-standard.md`
+- `repo-governance/workflows/infra/development-environment-setup.md`
 
 **`.claude/` agents that reference prefixed paths** (16 files):
 
@@ -285,7 +285,7 @@ Any matches outside historical files indicate a missed rewrite.
 
 ## 4. File Naming Convention Rewrite
 
-The new `governance/conventions/structure/file-naming.md` should be short, directive, and explicitly anchored on **standard markdown + GitHub compatibility** as its sole rationale. The rule exists because files are viewed and linked through GitHub web and standard markdown tooling — not because of any specific authoring tool.
+The new `repo-governance/conventions/structure/file-naming.md` should be short, directive, and explicitly anchored on **standard markdown + GitHub compatibility** as its sole rationale. The rule exists because files are viewed and linked through GitHub web and standard markdown tooling — not because of any specific authoring tool.
 
 Outline:
 
@@ -305,7 +305,7 @@ created: 2025-11-19
 
 # File Naming Convention
 
-Files in `docs/`, `governance/`, and similar repository locations follow a single rule designed for **standard markdown and GitHub compatibility**.
+Files in `docs/`, `repo-governance/`, and similar repository locations follow a single rule designed for **standard markdown and GitHub compatibility**.
 
 ## Why This Rule Exists
 
@@ -378,7 +378,7 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 
 ## 4b. Linking Convention Rewrite
 
-The existing `governance/conventions/formatting/linking.md` is already GitHub-compatible in substance — the rules (`.md` extension, relative paths, descriptive link text, no wiki links) are correct. What changes is the **rationale framing**: today it justifies GitHub-compatibility as "works consistently across GitHub web, Obsidian, and other markdown viewers"; the rewrite reframes the same rules as "standard markdown + GitHub web is where links are followed, so links must render there".
+The existing `repo-governance/conventions/formatting/linking.md` is already GitHub-compatible in substance — the rules (`.md` extension, relative paths, descriptive link text, no wiki links) are correct. What changes is the **rationale framing**: today it justifies GitHub-compatibility as "works consistently across GitHub web, Obsidian, and other markdown viewers"; the rewrite reframes the same rules as "standard markdown + GitHub web is where links are followed, so links must render there".
 
 ### What to change
 
@@ -409,9 +409,9 @@ The existing `governance/conventions/formatting/linking.md` is already GitHub-co
 ### Verification
 
 ```bash
-ripgrep -i obsidian governance/conventions/formatting/linking.md   # expect zero hits
-ripgrep -n 'standard markdown' governance/conventions/formatting/linking.md  # expect at least one hit
-ripgrep -n 'GitHub' governance/conventions/formatting/linking.md  # expect multiple hits
+ripgrep -i obsidian repo-governance/conventions/formatting/linking.md   # expect zero hits
+ripgrep -n 'standard markdown' repo-governance/conventions/formatting/linking.md  # expect at least one hit
+ripgrep -n 'GitHub' repo-governance/conventions/formatting/linking.md  # expect multiple hits
 ```
 
 ## 5. Broader Reference Scrub Strategy
@@ -442,15 +442,15 @@ For files in §1.3.b that **describe** the prefix encoding (not just reference a
 
 **High-touch files for 5b** (likely to need narrative rewrites, not just basename substitution):
 
-- `governance/conventions/structure/file-naming.md` (full rewrite — §4)
-- `governance/conventions/structure/README.md`
-- `governance/conventions/structure/diataxis-framework.md`
-- `governance/conventions/structure/programming-language-docs-separation.md`
-- `governance/conventions/structure/plans.md` (retain the "not applicable to plans/" note, but confirm it still makes sense)
-- `governance/conventions/README.md`
-- `governance/conventions/tutorials/README.md`, `general.md`, `programming-language-content.md`
-- `governance/development/agents/ai-agents.md` (may explain prefix encoding to agent authors)
-- `governance/development/agents/skill-context-architecture.md`
+- `repo-governance/conventions/structure/file-naming.md` (full rewrite — §4)
+- `repo-governance/conventions/structure/README.md`
+- `repo-governance/conventions/structure/diataxis-framework.md`
+- `repo-governance/conventions/structure/programming-language-docs-separation.md`
+- `repo-governance/conventions/structure/plans.md` (retain the "not applicable to plans/" note, but confirm it still makes sense)
+- `repo-governance/conventions/README.md`
+- `repo-governance/conventions/tutorials/README.md`, `general.md`, `programming-language-content.md`
+- `repo-governance/development/agents/ai-agents.md` (may explain prefix encoding to agent authors)
+- `repo-governance/development/agents/skill-context-architecture.md`
 - `.claude/agents/docs-maker.md`, `docs-file-manager.md`, `repo-governance-checker.md`, `repo-governance-fixer.md`
 - `CLAUDE.md`, `AGENTS.md`, `docs/README.md` (any narrative referring to the scheme)
 
@@ -540,7 +540,7 @@ apps/rhino-cli/cmd/docs_validate_links.go               + _test.go + .integratio
 1. **`apps/rhino-cli/cmd/docs.go`** — no edit required. The `validate-naming` registration (`docsCmd.AddCommand(validateDocsNamingCmd)`) is in `docs_validate_naming.go`'s `init()` function; it is automatically removed when that file is deleted. The `validate-links` registration remains intact.
 2. **`apps/rhino-cli/README.md`** — delete the section describing `validate-naming`, its flags (`--staged-only`, `-o json`, `-o markdown`, `--fix`, `--apply`, `--no-update-links`), and any example outputs.
 3. **`apps/rhino-cli/internal/docs/README.md` (if present)** — update the package-level docs to describe only the `links_*` surface.
-4. **Any agent or skill that documents the `validate-naming` command** — grep `.claude/` and `governance/` for `validate-naming` and remove instructions pointing at it.
+4. **Any agent or skill that documents the `validate-naming` command** — grep `.claude/` and `repo-governance/` for `validate-naming` and remove instructions pointing at it.
 
 ### 6.4 Coverage verification
 
@@ -574,36 +574,36 @@ Every updated `.claude/` source should have a matching mirror change. The pre-co
 
 ## 8. Validation Matrix
 
-| Validation                                                                                 | Tool                        | Phase         |
-| ------------------------------------------------------------------------------------------ | --------------------------- | ------------- |
-| `docs/.obsidian/` absent                                                                   | `find`                      | After P2      |
-| `.gitignore` has no Obsidian lines                                                         | `ripgrep`                   | After P2      |
-| rhino-cli `validate-naming` cmd and internal files deleted                                 | `find`                      | After P3b     |
-| rhino-cli `links_*` files preserved                                                        | `find`                      | After P3b     |
-| `nx run rhino-cli:build` passes                                                            | `go build`                  | After P3b     |
-| `nx run rhino-cli:test:quick` passes with coverage ≥90%                                    | rhino-cli test-coverage     | After P3b     |
-| `apps/rhino-cli/README.md` does not mention `validate-naming`                              | `ripgrep`                   | After P3b     |
-| Zero `*__*.md` files in `docs/`                                                            | `find`                      | After P4      |
-| No collisions in mapping                                                                   | `awk + uniq -d`             | Before P4     |
-| `git log --follow` shows history for sampled renames                                       | `git log`                   | After P4      |
-| All renamed filenames match `^[a-z0-9-]+\.[a-z]+$` and contain no GitHub-unsafe characters | `find` + regex              | After P4      |
-| No case-only filename collisions inside any directory                                      | shell script                | After P4      |
-| `npm run lint:md` passes                                                                   | `markdownlint-cli2` via npm | After P5      |
-| Zero stale prefixed references outside allowed paths                                       | `ripgrep`                   | After P5      |
-| All rewritten links use `[Text](./path.md)` form with `.md` extension                      | `ripgrep`                   | After P5      |
-| `governance/conventions/structure/file-naming.md` ≤120 lines                               | `wc -l`                     | After P3      |
-| `governance/conventions/structure/file-naming.md` cites "standard markdown" and "GitHub"   | `ripgrep`                   | After P3      |
-| `governance/conventions/formatting/linking.md` cites "standard markdown" and "GitHub"      | `ripgrep`                   | After P6      |
-| `governance/conventions/formatting/linking.md` has zero Obsidian mentions                  | `ripgrep -i`                | After P6      |
-| Zero "Obsidian" matches outside allowed paths                                              | `ripgrep -i`                | After P6      |
-| Prefix-pattern grep returns zero matches outside allowed false-positive paths              | `ripgrep`                   | After P6      |
-| All 12 `swe-*-developer` agents link to existing (unprefixed) docs files                   | link resolver               | After P6      |
-| All 11 `swe-programming-*` skills link to existing (unprefixed) docs files                 | link resolver               | After P6      |
-| All 16+ `docs/**/README.md` index files list children by new filenames                     | manual + lint               | After P6      |
-| `.opencode/` mirrors match `.claude/` sources                                              | `git diff` + sync script    | After P7      |
-| Pre-push hook passes (`typecheck`, `lint`, `test:quick`)                                   | Husky                       | Before commit |
-| `nx affected -t test:quick` passes (catches rhino-cli and any other downstream)            | Nx                          | Before commit |
-| `ayokoding-cli links check` or equivalent passes (if applicable)                           | `nx` target                 | After P5      |
+| Validation                                                                                    | Tool                        | Phase         |
+| --------------------------------------------------------------------------------------------- | --------------------------- | ------------- |
+| `docs/.obsidian/` absent                                                                      | `find`                      | After P2      |
+| `.gitignore` has no Obsidian lines                                                            | `ripgrep`                   | After P2      |
+| rhino-cli `validate-naming` cmd and internal files deleted                                    | `find`                      | After P3b     |
+| rhino-cli `links_*` files preserved                                                           | `find`                      | After P3b     |
+| `nx run rhino-cli:build` passes                                                               | `go build`                  | After P3b     |
+| `nx run rhino-cli:test:quick` passes with coverage ≥90%                                       | rhino-cli test-coverage     | After P3b     |
+| `apps/rhino-cli/README.md` does not mention `validate-naming`                                 | `ripgrep`                   | After P3b     |
+| Zero `*__*.md` files in `docs/`                                                               | `find`                      | After P4      |
+| No collisions in mapping                                                                      | `awk + uniq -d`             | Before P4     |
+| `git log --follow` shows history for sampled renames                                          | `git log`                   | After P4      |
+| All renamed filenames match `^[a-z0-9-]+\.[a-z]+$` and contain no GitHub-unsafe characters    | `find` + regex              | After P4      |
+| No case-only filename collisions inside any directory                                         | shell script                | After P4      |
+| `npm run lint:md` passes                                                                      | `markdownlint-cli2` via npm | After P5      |
+| Zero stale prefixed references outside allowed paths                                          | `ripgrep`                   | After P5      |
+| All rewritten links use `[Text](./path.md)` form with `.md` extension                         | `ripgrep`                   | After P5      |
+| `repo-governance/conventions/structure/file-naming.md` ≤120 lines                             | `wc -l`                     | After P3      |
+| `repo-governance/conventions/structure/file-naming.md` cites "standard markdown" and "GitHub" | `ripgrep`                   | After P3      |
+| `repo-governance/conventions/formatting/linking.md` cites "standard markdown" and "GitHub"    | `ripgrep`                   | After P6      |
+| `repo-governance/conventions/formatting/linking.md` has zero Obsidian mentions                | `ripgrep -i`                | After P6      |
+| Zero "Obsidian" matches outside allowed paths                                                 | `ripgrep -i`                | After P6      |
+| Prefix-pattern grep returns zero matches outside allowed false-positive paths                 | `ripgrep`                   | After P6      |
+| All 12 `swe-*-developer` agents link to existing (unprefixed) docs files                      | link resolver               | After P6      |
+| All 11 `swe-programming-*` skills link to existing (unprefixed) docs files                    | link resolver               | After P6      |
+| All 16+ `docs/**/README.md` index files list children by new filenames                        | manual + lint               | After P6      |
+| `.opencode/` mirrors match `.claude/` sources                                                 | `git diff` + sync script    | After P7      |
+| Pre-push hook passes (`typecheck`, `lint`, `test:quick`)                                      | Husky                       | Before commit |
+| `nx affected -t test:quick` passes (catches rhino-cli and any other downstream)               | Nx                          | Before commit |
+| `ayokoding-cli links check` or equivalent passes (if applicable)                              | `nx` target                 | After P5      |
 
 ## 9. Rollback Plan
 
@@ -621,16 +621,16 @@ No phase rollback requires more than a single `git revert` because commits are s
 
 ## 10. Open Questions
 
-| Question                                                                                    | Resolution path                                                                       |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Are any external tools (CI, deploy scripts) depending on the prefix pattern?                | Grep all workflow files, package.json scripts, and `nx.json`. Resolve during Phase 1. |
-| Does `ayokoding-cli links check` cover `docs/` or only `apps/ayokoding-web/content/`?       | Read the CLI's README during Phase 1.                                                 |
-| Are any `apps/*/content/` files referencing docs filenames via the prefix?                  | Ripgrep during Phase 1.                                                               |
-| Should Obsidian mentions in `governance/conventions/hugo/shared.md` be removed or reframed? | Remove — Hugo convention can describe its rules without contrasting against Obsidian. |
+| Question                                                                                         | Resolution path                                                                       |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Are any external tools (CI, deploy scripts) depending on the prefix pattern?                     | Grep all workflow files, package.json scripts, and `nx.json`. Resolve during Phase 1. |
+| Does `ayokoding-cli links check` cover `docs/` or only `apps/ayokoding-web/content/`?            | Read the CLI's README during Phase 1.                                                 |
+| Are any `apps/*/content/` files referencing docs filenames via the prefix?                       | Ripgrep during Phase 1.                                                               |
+| Should Obsidian mentions in `repo-governance/conventions/hugo/shared.md` be removed or reframed? | Remove — Hugo convention can describe its rules without contrasting against Obsidian. |
 
 ## 11. Non-Goals
 
 - Preserving any form of prefix-based uniqueness scheme.
 - Maintaining Obsidian wiki-link detection in link-checkers for defensive reasons.
 - Migrating, reorganizing, or splitting Diátaxis categories.
-- Altering `governance/` filename conventions (they already follow kebab-case).
+- Altering `repo-governance/` filename conventions (they already follow kebab-case).

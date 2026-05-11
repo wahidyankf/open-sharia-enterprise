@@ -23,7 +23,7 @@ created: 2026-02-09
 
 **This document is OSE Platform-specific**, not a C4 tutorial. We define HOW to apply C4 notation in THIS codebase, not WHAT C4 notation is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -310,10 +310,10 @@ Before committing a C4 diagram, verify:
 ## Related Standards
 
 - **[Diagram Standards](./diagram-standards.md)** - When to create diagrams, required levels
-- **[Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
+- **[Diagram Convention](../../../../../repo-governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
 
 ## Principles Implemented
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: All relationships must have explicit labels with protocols. Technology choices must be explicitly shown in container labels. No implicit relationships without labels.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: All relationships must have explicit labels with protocols. Technology choices must be explicitly shown in container labels. No implicit relationships without labels.
 
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: Standardized WCAG color palette and Mermaid syntax ensures diagrams can be consistently reproduced across teams and time periods.
+- **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: Standardized WCAG color palette and Mermaid syntax ensures diagrams can be consistently reproduced across teams and time periods.

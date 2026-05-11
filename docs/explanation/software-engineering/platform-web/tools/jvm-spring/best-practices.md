@@ -1582,8 +1582,8 @@ class DonationReportGenerator(
 
 ### Development Practices
 
-- **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
-- **[Implementation Workflow](../../../../../../governance/development/workflow/implementation.md)** - Development process
+- **[Code Quality Standards](../../../../../../repo-governance/development/quality/code.md)** - Quality requirements
+- **[Implementation Workflow](../../../../../../repo-governance/development/workflow/implementation.md)** - Development process
 
 ## See Also
 

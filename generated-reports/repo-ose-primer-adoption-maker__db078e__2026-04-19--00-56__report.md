@@ -16,7 +16,7 @@ Phase 11.1 dry-run of the `repo-ose-primer-adoption-maker` agent against the
 `ose-primer` clone at `/Users/wkf/ose-projects/ose-primer` (bare repository,
 `origin/main` at `7c34e73f8ea557411c1153fc718e5aff53f71c45`) and `ose-public`
 HEAD at `23a712b73de8ca98af8083e9c2a0347ec73ed802`. The classifier section of
-`governance/conventions/structure/ose-primer-sync.md` was parsed (sha256
+`repo-governance/conventions/structure/ose-primer-sync.md` was parsed (sha256
 `ba65c7914e91ae11881df49b5f29b635d8ade758632036681b0b8b146d5123c8`); zero rows
 carry direction `adopt`, so all candidates come from `bidirectional` rows.
 
@@ -41,8 +41,8 @@ non-actionable categories:
 
 After filtering, **2 findings are genuinely actionable** (both `high`
 significance): primer added new generic governance content not present in
-public — a "Tasteful Usage" section in `governance/conventions/formatting/emoji.md`
-and several diagram-guidance sections in `governance/conventions/structure/plans.md`.
+public — a "Tasteful Usage" section in `repo-governance/conventions/formatting/emoji.md`
+and several diagram-guidance sections in `repo-governance/conventions/structure/plans.md`.
 
 No `neither`-tagged path leaked into the findings list. Five primer-only paths
 in `.github/workflows/test-demo-*.yml` and how-to docs reference extracted
@@ -58,10 +58,10 @@ adoption candidates.
 
 | Pattern                                       | Primer files matched | Comment                                                       |
 | --------------------------------------------- | -------------------- | ------------------------------------------------------------- |
-| `governance/principles/**`                    | 16                   | All governance principles                                     |
-| `governance/conventions/**`                   | 26                   | Excludes `licensing.md` and `ose-primer-sync.md` (neither)    |
-| `governance/development/**`                   | 57                   | Full development tree                                         |
-| `governance/workflows/**`                     | 19                   | Excludes `repo/repo-ose-primer-*.md` (neither)                |
+| `repo-governance/principles/**`                    | 16                   | All governance principles                                     |
+| `repo-governance/conventions/**`                   | 26                   | Excludes `licensing.md` and `ose-primer-sync.md` (neither)    |
+| `repo-governance/development/**`                   | 57                   | Full development tree                                         |
+| `repo-governance/workflows/**`                     | 19                   | Excludes `repo/repo-ose-primer-*.md` (neither)                |
 | `docs/tutorials/**`                           | 1                    | Just the README                                               |
 | `docs/how-to/**`                              | 13                   | Includes 5 primer-only demo-related how-tos                   |
 | `docs/reference/**`                           | 12                   | Excludes `related-repositories.md` (neither)                  |
@@ -110,7 +110,7 @@ Patterns whose direction is `propagate` (e.g. `apps/rhino-cli`,
 have zero coverage entries here because the adoption-maker never reads from
 them. Patterns whose direction is `neither` (e.g. `apps/{ayokoding,oseplatform,
 organiclever}-*`, `apps/oseplatform-cli`, `apps/ayokoding-cli`, `apps-labs/`,
-`libs/ts-ui`, `libs/hugo-commons`, `governance/vision/**`, `infra/**`,
+`libs/ts-ui`, `libs/hugo-commons`, `repo-governance/vision/**`, `infra/**`,
 `plans/**`, `archived/**`, `LICENSE`, `LICENSING-NOTICE.md`, `ROADMAP.md`,
 `open-sharia-enterprise.sln`, `graph.html`, `bin/**`, all build-artifact and
 editor-cache patterns) are also excluded by design.
@@ -124,7 +124,7 @@ Summary and are NOT proposed for adoption.
 
 ### `bidirectional` / `high`
 
-#### Finding 1 — `governance/conventions/formatting/emoji.md`
+#### Finding 1 — `repo-governance/conventions/formatting/emoji.md`
 
 - **Direction**: `bidirectional`
 - **Transform**: `identity`
@@ -173,7 +173,7 @@ Diff snippet (primer-side `< `, public-side `> `; first 20 lines, elided):
        blocks)
 ```
 
-#### Finding 2 — `governance/conventions/structure/plans.md`
+#### Finding 2 — `repo-governance/conventions/structure/plans.md`
 
 - **Direction**: `bidirectional`
 - **Transform**: `identity`
@@ -184,7 +184,7 @@ Diff snippet (primer-side `< `, public-side `> `; first 20 lines, elided):
   new `### Example: Plan-Appropriate Flowchart` subsection containing a
   worked Mermaid example with palette-conformant `style` declarations. The
   new content is generic and consistent with ose-public's diagram standards
-  (it explicitly defers to `governance/conventions/formatting/diagrams.md`).
+  (it explicitly defers to `repo-governance/conventions/formatting/diagrams.md`).
 - **Why actionable**: The new "When SHOULD / When MAY" framing is
   decision-aiding guidance ose-public's current `plans.md` lacks. The
   Mermaid example is generic (uses abstract `Plan in backlog/`,
@@ -228,7 +228,7 @@ non-actionable categories described in the Summary.
 ### `bidirectional` / `low`
 
 None recommended. The dominant low-bucket pattern (decorative emojis added to
-H2/H3 headings on ~70 governance/conventions/principles/skill files) is a
+H2/H3 headings on ~70 repo-governance/conventions/principles/skill files) is a
 style-only choice the primer made unilaterally; absent a deliberate decision
 in ose-public to opt into the same heading style, adopting these is not
 recommended.
@@ -251,9 +251,9 @@ None encountered. The diff sweep traversed only `bidirectional`-classified
 paths; `neither` paths under `apps/`, `apps-labs/`, `archived/`, `infra/`,
 `plans/`, `generated-reports/`, `generated-socials/`, `local-temp/`,
 `docs/metadata/`, `docs/reference/related-repositories.md`,
-`governance/vision/`, `governance/conventions/structure/licensing.md`,
-`governance/conventions/structure/ose-primer-sync.md`,
-`governance/workflows/repo/repo-ose-primer-*.md`,
+`repo-governance/vision/`, `repo-governance/conventions/structure/licensing.md`,
+`repo-governance/conventions/structure/ose-primer-sync.md`,
+`repo-governance/workflows/repo/repo-ose-primer-*.md`,
 `.claude/agents/{social,apps,repo-ose-primer}-*.md`,
 `.claude/skills/{apps-,repo-syncing-with-ose-primer}*`,
 `libs/{ts-ui,ts-ui-tokens,hugo-commons,clojure-openapi-codegen,elixir-*}`,
@@ -301,17 +301,17 @@ The largest category by file count. Primer-side commits `cb49fa19b` (`a-demo-*`
 product refs) replaced ose-public-flavored references with primer-flavored
 ones. Adopting these diffs would invert the substitution and re-import the
 primer's voice into ose-public. Examples (representative; full set is ~430
-files across `docs/explanation/**`, `governance/development/**`,
-`governance/principles/**`, `governance/conventions/**`,
-`governance/workflows/**`, `.claude/agents/{repo,docs,specs,readme,ci,
+files across `docs/explanation/**`, `repo-governance/development/**`,
+`repo-governance/principles/**`, `repo-governance/conventions/**`,
+`repo-governance/workflows/**`, `.claude/agents/{repo,docs,specs,readme,ci,
 agent,swe,web}-*.md`, `.claude/skills/* (other)`):
 
-- `governance/principles/general/simplicity-over-complexity.md` — primer
+- `repo-governance/principles/general/simplicity-over-complexity.md` — primer
   replaces `PASS:` / `FAIL:` markers with `✅` / `❌`; replaces
   `license: FSL-1.1-MIT` with `license: MIT`.
-- `governance/principles/README.md` — primer adds H2 emojis (`🧪`, `🔗`,
+- `repo-governance/principles/README.md` — primer adds H2 emojis (`🧪`, `🔗`,
   `🧭`).
-- `governance/conventions/structure/README.md` — primer removes the
+- `repo-governance/conventions/structure/README.md` — primer removes the
   ose-primer-sync, licensing, and programming-language-docs-separation
   index entries (those exist only in public).
 - `.claude/agents/repo-rules-checker.md` — primer replaces
@@ -349,9 +349,9 @@ runs:
 - `docs/how-to/setup-development-environment.md` — primer's prerequisites
   list spans 11 languages; ose-public's lean version (TypeScript, Go, F#)
   is correct for the current state.
-- `governance/development/infra/nx-targets.md` — primer's tag table covers
+- `repo-governance/development/infra/nx-targets.md` — primer's tag table covers
   `demo-be-*`, `demo-fe-*` projects ose-public lacks.
-- `governance/workflows/infra/development-environment-setup.md` — primer's
+- `repo-governance/workflows/infra/development-environment-setup.md` — primer's
   19-tool checklist vs. ose-public's 9-tool checklist; the difference
   reflects extraction, not omission.
 - `.github/workflows/codecov-upload.yml`,
@@ -370,11 +370,11 @@ noise category.
 
 1. **Review the two actionable findings** above. The maintainer should
    decide whether to adopt the new generic content from primer:
-   - `governance/conventions/formatting/emoji.md` — port the entire
+   - `repo-governance/conventions/formatting/emoji.md` — port the entire
      `## Tasteful Usage` H2 section (lines 63–153 of the primer file) into
      ose-public, immediately after the existing Rule 7 block. Bump the
      `updated:` frontmatter to today's date.
-   - `governance/conventions/structure/plans.md` — port the rewritten
+   - `repo-governance/conventions/structure/plans.md` — port the rewritten
      `## Mermaid Diagrams in Plans` section, including the new SHOULD/MAY
      subsections, the Accessibility and Palette Requirements subsection, and
      the Example: Plan-Appropriate Flowchart subsection. Do NOT adopt the
@@ -383,7 +383,7 @@ noise category.
      example.
 
 2. **Apply by direct commit to `main`** (per Trunk-Based Development
-   Safety Invariant 5 in `governance/conventions/structure/ose-primer-sync.md`).
+   Safety Invariant 5 in `repo-governance/conventions/structure/ose-primer-sync.md`).
    Adoption changes do not require a PR in ose-public. Two suggested commits:
    - `docs(conventions): adopt primer's tasteful-usage section in emoji.md`
    - `docs(conventions): adopt primer's diagram-guidance subsections in plans.md`

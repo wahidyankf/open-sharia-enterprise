@@ -12,9 +12,9 @@ what root instruction file it reads, its current status, and what mechanical tra
 between bindings.
 
 A **platform binding** is the platform-specific directory and configuration that wires an AI coding
-agent to this repository. Governance prose lives in `governance/` (vendor-neutral). Platform
+agent to this repository. Governance prose lives in `repo-governance/` (vendor-neutral). Platform
 bindings live in their own directories and are explicitly excluded from the
-[Governance Vendor-Independence Convention](../../governance/conventions/structure/governance-vendor-independence.md).
+[Governance Vendor-Independence Convention](../../repo-governance/conventions/structure/governance-vendor-independence.md).
 
 ## Platform Binding Directories
 
@@ -47,7 +47,7 @@ agent frontmatter. OpenCode uses theme tokens (`primary`, `success`, `warning`, 
 - **Source**: `.claude/agents/<name>.md` frontmatter `color:` field
 - **Transform**: `ClaudeToOpenCodeColor` in `apps/rhino-cli/internal/agents/types.go`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `color:` field
-- **Policy**: [Dual-Mode Color Translation](../../governance/development/agents/ai-agents.md)
+- **Policy**: [Dual-Mode Color Translation](../../repo-governance/development/agents/ai-agents.md)
   ("Dual-Mode Color Translation — Claude Code to OpenCode" subsection)
 
 | Claude Code color | OpenCode theme token | Role hint         |
@@ -70,7 +70,7 @@ planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
 - **Source**: `.claude/agents/<name>.md` frontmatter `model:` field
 - **Transform**: `ClaudeToOpenCodeModel` in `apps/rhino-cli/internal/agents/types.go`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `model:` field
-- **Policy**: [Model Selection Convention](../../governance/development/agents/model-selection.md)
+- **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
   ("Platform Binding Equivalents" section)
 
 | Claude Code alias | OpenCode model ID          | Capability tier |
@@ -100,11 +100,11 @@ To add a new binding (e.g., `.cursor/rules/`):
 
 ## Related
 
-- [Governance Vendor-Independence Convention](../../governance/conventions/structure/governance-vendor-independence.md) —
+- [Governance Vendor-Independence Convention](../../repo-governance/conventions/structure/governance-vendor-independence.md) —
   policy separating vendor-neutral governance from platform bindings
-- [AI Agents Development Guide](../../governance/development/agents/ai-agents.md) — agent authoring
+- [AI Agents Development Guide](../../repo-governance/development/agents/ai-agents.md) — agent authoring
   guide with binding-specific Platform Binding Examples
-- [Model Selection Convention](../../governance/development/agents/model-selection.md) — capability
+- [Model Selection Convention](../../repo-governance/development/agents/model-selection.md) — capability
   tiers and how they resolve to per-binding model IDs
 - `AGENTS.md` at repo root — canonical root instruction file read by most platforms
 - `CLAUDE.md` at repo root — Claude Code shim importing `AGENTS.md`

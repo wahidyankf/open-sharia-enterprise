@@ -541,8 +541,8 @@ Scenario: Preview shows latest changes
 
 **Related Conventions**:
 
-- [Plans Organization](../../../governance/conventions/structure/plans.md) - Acceptance criteria in plans
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Clear specification writing
+- [Plans Organization](../../../repo-governance/conventions/structure/plans.md) - Acceptance criteria in plans
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Clear specification writing
 
 **Related Skills**:
 
@@ -566,14 +566,14 @@ This Skill packages essential Gherkin acceptance criteria knowledge for writing 
 
 ## References
 
-**Primary Convention**: [Acceptance Criteria Convention](../../../governance/development/infra/acceptance-criteria.md)
+**Primary Convention**: [Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria.md)
 
-**Directory Structure Convention**: [Specs Directory Structure Convention](../../../governance/conventions/structure/specs-directory-structure.md) — Where to place feature files in the specs/ directory
+**Directory Structure Convention**: [Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md) — Where to place feature files in the specs/ directory
 
 **Related Conventions**:
 
-- [Plans Organization](../../../governance/conventions/structure/plans.md) - Using Gherkin in plans
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Validation workflow
+- [Plans Organization](../../../repo-governance/conventions/structure/plans.md) - Using Gherkin in plans
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md) - Validation workflow
 
 **Related Skills**:
 

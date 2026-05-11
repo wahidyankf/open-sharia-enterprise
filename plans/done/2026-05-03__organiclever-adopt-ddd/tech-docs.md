@@ -274,7 +274,7 @@ Mechanical helpers:
 
 ### Test strategy
 
-Per [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md) and [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md):
+Per [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md) and [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md):
 
 - Unit tests live next to the code they test (`*.unit.test.ts(x)`). Moving a file moves its tests.
 - Integration tests (`*.int.test.ts`) for journal/routine/settings stores remain co-located with the infrastructure adapter.

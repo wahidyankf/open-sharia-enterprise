@@ -210,6 +210,6 @@ After each audit, record the outcome as a brief note in the relevant dependency 
 
 ## Related Documentation
 
-- [Database Audit Trail Pattern](../../../../governance/development/pattern/database-audit-trail.md) - Migration tool selection and audit column requirements per language ecosystem
+- [Database Audit Trail Pattern](../../../../repo-governance/development/pattern/database-audit-trail.md) - Migration tool selection and audit column requirements per language ecosystem
 - [Software Engineering Index](../README.md) - All software engineering documentation
 - [Licensing Index](./README.md) - Index of all licensing documents

@@ -2,9 +2,9 @@
 
 ## Context
 
-`repo-rules-checker` today validates `governance/` fully but only two slices of `docs/` (`docs/explanation/README.md` and `docs/explanation/software-engineering/`). The rest of `docs/` (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`, the non-software-engineering parts of `docs/explanation/`, and `docs/metadata/`) is invisible to the rules-governance dimension. Vendor-binding documentation in `docs/reference/platform-bindings.md` [Repo-grounded] silently drifts when `.claude/`, `.opencode/`, root-level `CLAUDE.md`, or `AGENTS.md` change without a paired update — no agent currently catches that drift.
+`repo-rules-checker` today validates `repo-governance/` fully but only two slices of `docs/` (`docs/explanation/README.md` and `docs/explanation/software-engineering/`). The rest of `docs/` (`docs/tutorials/`, `docs/how-to/`, `docs/reference/`, the non-software-engineering parts of `docs/explanation/`, and `docs/metadata/`) is invisible to the rules-governance dimension. Vendor-binding documentation in `docs/reference/platform-bindings.md` [Repo-grounded] silently drifts when `.claude/`, `.opencode/`, root-level `CLAUDE.md`, or `AGENTS.md` change without a paired update — no agent currently catches that drift.
 
-This plan extends `repo-rules-checker` with a new validation step covering all of `docs/` for the rules-governance dimension only (file naming, frontmatter, no-date-metadata, traceability, broken cross-refs to `governance/`, and vendor-binding drift detection). Existing `docs-checker` / `docs-tutorial-checker` / `docs-link-checker` / `docs-software-engineering-separation-checker` retain their domain-specific responsibilities — this extension does not duplicate them.
+This plan extends `repo-rules-checker` with a new validation step covering all of `docs/` for the rules-governance dimension only (file naming, frontmatter, no-date-metadata, traceability, broken cross-refs to `repo-governance/`, and vendor-binding drift detection). Existing `docs-checker` / `docs-tutorial-checker` / `docs-link-checker` / `docs-software-engineering-separation-checker` retain their domain-specific responsibilities — this extension does not duplicate them.
 
 ## Scope
 
@@ -13,7 +13,7 @@ This plan extends `repo-rules-checker` with a new validation step covering all o
 - `.claude/agents/repo-rules-checker.md` [Repo-grounded] — add a new validation step (provisional name "Step 8b: Cross-Documentation Rules Governance") covering the full `docs/` tree
 - `.claude/agents/repo-rules-fixer.md` [Repo-grounded] — add fix recipes for the new finding categories surfaced by Step 8b
 - `.opencode/agents/repo-rules-checker.md` [Repo-grounded] and `.opencode/agents/repo-rules-fixer.md` [Repo-grounded] — auto-synced from `.claude/` via `npm run sync:claude-to-opencode` per the dual-mode configuration in [`AGENTS.md`](../../../AGENTS.md)
-- `governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] — update the Scope Clarification block to reflect the expanded coverage (replace the current `Skips: rest of docs/` line with full `docs/` coverage)
+- `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] — update the Scope Clarification block to reflect the expanded coverage (replace the current `Skips: rest of docs/` line with full `docs/` coverage)
 
 **Out of scope**:
 
@@ -21,7 +21,7 @@ This plan extends `repo-rules-checker` with a new validation step covering all o
 - Factual accuracy of `docs/` content (stays with `docs-checker`)
 - Link reachability / dead-link detection (stays with `docs-link-checker`)
 - Software-engineering separation between platforms (stays with `docs-software-engineering-separation-checker`)
-- Anything in `apps/`, `libs/`, `specs/`, or `governance/` (governance is already covered)
+- Anything in `apps/`, `libs/`, `specs/`, or `repo-governance/` (governance is already covered)
 - Any new agent or workflow file (this plan extends one existing agent, no new artifacts)
 
 ## Approach Summary

@@ -198,7 +198,7 @@ nx lint ts-library-name
 nx run-many -t build
 ```
 
-**See**: [Nx Target Standards](../governance/development/infra/nx-targets.md) for canonical target names and mandatory targets per project type.
+**See**: [Nx Target Standards](../repo-governance/development/infra/nx-targets.md) for canonical target names and mandatory targets per project type.
 
 ## Future Language Support
 

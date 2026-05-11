@@ -1,6 +1,6 @@
 ---
 name: repo-workflow-maker
-description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
+description: Creates workflow documentation in repo-governance/workflows/ following workflow pattern convention.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
@@ -28,7 +28,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -40,7 +40,7 @@ Create workflow documentation following workflow pattern convention.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -49,5 +49,5 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
-- [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
+- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../repo-governance/workflows/meta/execution-modes.md)

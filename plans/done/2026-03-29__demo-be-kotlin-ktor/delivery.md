@@ -358,7 +358,7 @@ apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 
   - Add Kotlin/Ktor row to Implementations table
 - [x] Update `apps/a-demo-be-e2e/project.json`:
   - Add `a-demo-be-kotlin-ktor` to `implicitDependencies`
-- [x] Update `governance/development/infra/nx-targets.md`:
+- [x] Update `repo-governance/development/infra/nx-targets.md`:
   - Add `platform:ktor` to tag vocabulary table
   - Update Kotlin/JVM row if present, or add new row
 - [x] Commit

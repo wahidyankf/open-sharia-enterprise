@@ -4011,7 +4011,7 @@ graph TD
 ```
 
 ```gherkin
-# File: governance/features/scenario_quality.feature
+# File: repo-governance/features/scenario_quality.feature
 Feature: BDD Scenario Quality Governance
   # => Feature: tests scenario quality policies
   # => Governance: enforce organization-wide standards
@@ -4048,8 +4048,8 @@ Feature: BDD Scenario Quality Governance
 **Governance Tool Implementation**:
 
 ```typescript
-// File: governance/scenario_linter.ts
-// => File: governance/scenario_linter.ts
+// File: repo-governance/scenario_linter.ts
+// => File: repo-governance/scenario_linter.ts
 // => State: modified in current scope
 import * as fs from "fs";
 // => Import: file system

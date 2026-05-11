@@ -25,7 +25,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -395,18 +395,18 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+1. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - `.sdkmanrc` pins exact Java version (every developer uses same JDK)
    - Maven Wrapper ensures exact Maven version across all environments
    - `<dependencyManagement>` in parent POM guarantees consistent library versions
    - No SNAPSHOT dependencies in production (Maven Enforcer Plugin enforces this)
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Explicit version properties in parent POM (single source of truth: `<spring-boot.version>4.0.0</spring-boot.version>`)
    - No `LATEST` or version ranges (non-reproducible)
    - Child POMs explicitly inherit from parent (no implicit version inheritance)
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Maven Enforcer Plugin automatically fails builds with SNAPSHOT dependencies in production
    - Maven Wrapper automatically downloads correct Maven version (no manual installation)
    - Private Nexus/Artifactory automatically caches and scans dependencies

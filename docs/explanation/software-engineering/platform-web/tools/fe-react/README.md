@@ -57,13 +57,13 @@ All React applications MUST follow the patterns and practices documented here:
 
 ## Software Engineering Principles
 
-React usage in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../../governance/principles/software-engineering/README.md):
+React usage in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - React automates through Fast Refresh, ESLint plugins, automated testing, build optimization
-2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - React enforces through explicit props typing, clear component contracts, TypeScript integration
-3. **[Immutability Over Mutability](../../../../../../governance/principles/software-engineering/immutability.md)** - React requires immutable state updates, pure components, functional updates
-4. **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - React encourages pure rendering logic, effects isolation in useEffect, functional components
-5. **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - React enables through Volta pinning, package-lock.json, deterministic builds, snapshot testing
+1. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - React automates through Fast Refresh, ESLint plugins, automated testing, build optimization
+2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - React enforces through explicit props typing, clear component contracts, TypeScript integration
+3. **[Immutability Over Mutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)** - React requires immutable state updates, pure components, functional updates
+4. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - React encourages pure rendering logic, effects isolation in useEffect, functional components
+5. **[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - React enables through Volta pinning, package-lock.json, deterministic builds, snapshot testing
 
 **See Also**: [Functional Programming](functional-programming.md) for FP patterns with React.
 
@@ -1467,13 +1467,13 @@ export const Button: React.FC<ButtonProps> = ({
 
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD with React
 - **[Behavior-Driven Development](../../../development/behavior-driven-development-bdd/README.md)** - BDD with React Testing Library
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ### Code Quality
 
-- **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
-- **[Implementation Workflow](../../../../../../governance/development/workflow/implementation.md)** - Development process
-- **[Commit Messages](../../../../../../governance/development/workflow/commit-messages.md)** - Conventional Commits
+- **[Code Quality Standards](../../../../../../repo-governance/development/quality/code.md)** - Quality requirements
+- **[Implementation Workflow](../../../../../../repo-governance/development/workflow/implementation.md)** - Development process
+- **[Commit Messages](../../../../../../repo-governance/development/workflow/commit-messages.md)** - Conventional Commits
 
 ## React Ecosystem
 
@@ -1971,9 +1971,9 @@ useEffect(() => {
 
 ### Platform-Specific Documentation
 
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 - **[Software Design](../../README.md)** - Architecture patterns
-- **[Content Quality Standards](../../../../../../governance/conventions/writing/quality.md)** - Accessibility requirements
+- **[Content Quality Standards](../../../../../../repo-governance/conventions/writing/quality.md)** - Accessibility requirements
 
 ## React vs Other Frontend Libraries
 
@@ -1991,5 +1991,5 @@ useEffect(() => {
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
 - **[Software Design](../../README.md)** - Architecture and development practices
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
-- **[Accessibility Standards](../../../../../../governance/conventions/writing/quality.md)** - WCAG guidelines
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
+- **[Accessibility Standards](../../../../../../repo-governance/conventions/writing/quality.md)** - WCAG guidelines

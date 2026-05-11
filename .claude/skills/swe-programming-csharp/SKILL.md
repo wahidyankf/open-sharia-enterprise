@@ -22,7 +22,7 @@ Complete the AyoKoding C# learning path first:
 1. **[C# Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - 0-95% language coverage
 2. **[C# By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated examples
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Quick Standards Reference
 
@@ -181,4 +181,4 @@ public class ZakatCalculatorTests
 ## References
 
 - [C# README](../../../docs/explanation/software-engineering/programming-languages/c-sharp/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

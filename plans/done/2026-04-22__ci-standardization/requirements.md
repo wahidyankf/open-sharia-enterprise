@@ -251,7 +251,7 @@ covering at minimum:
 - Color contrast (WCAG AA 4.5:1 for text, 3:1 for UI components)
 - Image alt text (descriptive for informative, `alt=""` for decorative)
 
-See [governance/development/frontend/accessibility.md](../../../governance/development/frontend/accessibility.md).
+See [repo-governance/development/frontend/accessibility.md](../../../repo-governance/development/frontend/accessibility.md).
 
 ### Environment Variable Standard
 

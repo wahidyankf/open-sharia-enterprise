@@ -80,7 +80,7 @@ The original pilot framing deferred convention creation to a post-pilot rollout.
 - Rollout plans become "apply convention X to app Y" — much smaller in scope and easier to delegate
 - The convention's own `Status:` field carries `Pilot — initial issue` so future readers know the rule may be amended as rollouts surface edge cases
 
-The convention is governance Layer 2 (per the [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)), so it lives at `governance/conventions/structure/app-readme-vs-specs.md`.
+The convention is governance Layer 2 (per the [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)), so it lives at `repo-governance/conventions/structure/app-readme-vs-specs.md`.
 
 ## Affected Roles
 
@@ -122,7 +122,7 @@ The convention is governance Layer 2 (per the [Repository Governance Architectur
 
 ### Pilot outcomes (feeding the rollout)
 
-- One combined governance doc: `governance/conventions/structure/app-readme-vs-specs.md` codifying THREE rules: (a) Content Split Rule, (b) Spec Tree Shape (the C4-aware five-folder layout), (c) PM-Readability Contract — created in this plan, validated against the pilot artifacts before archival
+- One combined governance doc: `repo-governance/conventions/structure/app-readme-vs-specs.md` codifying THREE rules: (a) Content Split Rule, (b) Spec Tree Shape (the C4-aware five-folder layout), (c) PM-Readability Contract — created in this plan, validated against the pilot artifacts before archival
 - `specs-directory-structure.md` REWRITTEN (not just cross-linked) to define the new tree shape as the repo-wide standard
 - Cross-links from the structure-conventions index and `readme-quality.md` to the new convention
 - A reference implementation for `ayokoding`, `oseplatform`, `wahidyankf`, `rhino` follow-up plans — each follow-up adopts the SAME tree shape (with surfaces it actually has, e.g., `cli/` instead of `web/`)

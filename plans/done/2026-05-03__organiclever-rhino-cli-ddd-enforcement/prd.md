@@ -6,7 +6,7 @@ Add two new `rhino-cli` subcommands and one skill extension that together enforc
 
 ## Personas
 
-- **rhino-cli developer (solo maintainer)** — Adds `bc validate` and `ul validate` subcommands to `apps/rhino-cli/`. Follows existing rhino-cli patterns: Cobra command structure, golang-commons utilities, godog scenarios at unit and integration levels per the [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md). Maintains ≥90% coverage.
+- **rhino-cli developer (solo maintainer)** — Adds `bc validate` and `ul validate` subcommands to `apps/rhino-cli/`. Follows existing rhino-cli patterns: Cobra command structure, golang-commons utilities, godog scenarios at unit and integration levels per the [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md). Maintains ≥90% coverage.
 - **organiclever-web feature developer (any agent or human)** — Reads the `apps-organiclever-web-developing-content` skill DDD section before adding new code. Uses the BC registry to place files, layer rules to decide between `domain/` / `application/` / `infrastructure/` / `presentation/`, the xstate placement rule for new machines, and the glossary authoring rules for new terms.
 - **plan-executor** — Consumes `delivery.md` phase-by-phase checklist and the Gherkin acceptance criteria in this file as the completion contract.
 - **plan-execution-checker** — Verifies each Gherkin scenario passes after execution and reports any gap between the delivered state and the acceptance criteria.
@@ -77,7 +77,7 @@ A new subcommand `rhino-cli bc validate <app>` MUST exist under `apps/rhino-cli/
 - Verifies relationship symmetry: if context A declares `relationships: [{ to: B, kind: customer-supplier, role: supplier }]`, context B MUST declare a reciprocal entry (`role: customer`); single-sided kinds (`independent`) are exempt.
 - Supports `--severity=warn|error` flag (default `error`).
 - Exits zero if all checks pass; non-zero with file/line findings on violation.
-- Has Godog scenarios for the registry-parity, orphan-detection, and relationship-symmetry rules at both unit and integration levels per the [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md) (mocked filesystem at unit, real filesystem at integration).
+- Has Godog scenarios for the registry-parity, orphan-detection, and relationship-symmetry rules at both unit and integration levels per the [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md) (mocked filesystem at unit, real filesystem at integration).
 
 ### FR-3 — `rhino-cli ul validate` subcommand
 
@@ -149,8 +149,8 @@ All of the following MUST remain green:
 | NFR-2 | TDD discipline: every subcommand feature written test-first (godog scenario → implementation → green).                                                                                                                                                                                           |
 | NFR-3 | rhino-cli ≥90% line coverage maintained throughout.                                                                                                                                                                                                                                              |
 | NFR-4 | Subcommand wall-clock time for `bc validate` and `ul validate` combined SHOULD be <2 seconds against the current 9-context registry; MUST be <5 seconds. Subcommand additions to `test:quick` SHOULD NOT regress total wall-clock by more than 5 seconds.                                        |
-| NFR-5 | All new markdown follows [Content Quality](../../../governance/conventions/writing/quality.md) and [Markdown Standards](../../../governance/development/quality/markdown.md).                                                                                                                    |
-| NFR-6 | All file names follow the [File Naming Convention](../../../governance/conventions/structure/file-naming.md) (lowercase kebab-case).                                                                                                                                                             |
+| NFR-5 | All new markdown follows [Content Quality](../../../repo-governance/conventions/writing/quality.md) and [Markdown Standards](../../../repo-governance/development/quality/markdown.md).                                                                                                          |
+| NFR-6 | All file names follow the [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) (lowercase kebab-case).                                                                                                                                                        |
 | NFR-7 | Subcommand UX consistent with existing rhino-cli subcommands (`docs validate-links`, `mermaid validate`, `spec-coverage`, `test-coverage validate`): same flag conventions, same exit-code conventions, same finding-line format (`<file>:<line>:<col> <severity>: <message>` where applicable). |
 
 ## Acceptance criteria (Gherkin)
@@ -315,12 +315,12 @@ Feature: rhino-cli DDD enforcement acceptance
 
 ## Dependencies
 
-- [OrganicLever DDD Adoption Plan (sibling, hard dependency)](../../done/2026-05-02__organiclever-adopt-ddd/README.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md)
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- [Markdown Standards](../../../governance/development/quality/markdown.md)
-- [Content Quality](../../../governance/conventions/writing/quality.md)
+- [OrganicLever DDD Adoption Plan (sibling, hard dependency)](../../done/2026-05-03__organiclever-adopt-ddd/README.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
+- [Trunk Based Development Convention](../../../repo-governance/development/workflow/trunk-based-development.md)
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md)
+- [Markdown Standards](../../../repo-governance/development/quality/markdown.md)
+- [Content Quality](../../../repo-governance/conventions/writing/quality.md)
 - [rhino-cli README](../../../apps/rhino-cli/README.md)
 - [apps-organiclever-web-developing-content skill](../../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md)

@@ -65,7 +65,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../governance/conventions/structure/file-naming.md):
+Before any operation, understand the [File Naming Convention](../../repo-governance/conventions/structure/file-naming.md):
 
 ### Pattern
 
@@ -79,8 +79,8 @@ Use plain kebab-case filenames. Category is encoded by the directory the file li
 
 - `docs/how-to/add-new-app.md`
 - `docs/how-to/setup-development-environment.md`
-- `governance/conventions/structure/file-naming.md`
-- `governance/development/quality/three-level-testing-standard.md`
+- `repo-governance/conventions/structure/file-naming.md`
+- `repo-governance/development/quality/three-level-testing-standard.md`
 - `docs/reference/monorepo-structure.md`
 
 ### Exceptions
@@ -290,7 +290,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../governance/conventions/formatting/linking.md):
+All links must follow [Linking Convention](../../repo-governance/conventions/formatting/linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -537,7 +537,7 @@ After completing file management operation:
 
 ### Operations Performed
 
-- Renamed 8 files in governance/conventions/ (kebab-case compliance)
+- Renamed 8 files in repo-governance/conventions/ (kebab-case compliance)
 - Deleted 2 deprecated files
 - Moved 1 file to new location
 
@@ -549,7 +549,7 @@ After completing file management operation:
 ### Indices Updated
 
 - Updated docs/explanation/README.md
-- Updated governance/conventions/README.md
+- Updated repo-governance/conventions/README.md
 - Removed entries for deleted files
 
 ### Git Operations
@@ -597,14 +597,14 @@ Proceed anyway? (Please confirm)
 
 **Agent Conventions:**
 
-- `governance/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
+- `repo-governance/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
 
 **Documentation Conventions:**
 
-- `governance/conventions/README.md` - Index of all conventions
-- `governance/conventions/structure/file-naming.md` - Kebab-case file naming rules (required reading)
-- `governance/conventions/formatting/linking.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `governance/conventions/formatting/emoji.md` - When and where to use emojis
+- `repo-governance/conventions/README.md` - Index of all conventions
+- `repo-governance/conventions/structure/file-naming.md` - Kebab-case file naming rules (required reading)
+- `repo-governance/conventions/formatting/linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `repo-governance/conventions/formatting/emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

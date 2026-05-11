@@ -87,7 +87,7 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 ## Reference
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
 - Skills: `apps-oseplatform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
@@ -95,7 +95,7 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -104,5 +104,5 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 **Related Conventions**:
 
-- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
-- [Content Quality Principles](../../governance/conventions/writing/quality.md)
+- [oseplatform-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)

@@ -1004,12 +1004,12 @@ mix hex.outdated
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Explicit changeset validations make requirements clear
    - Explicit role checks in authorization policies
    - Explicit CSP directives define allowed resources
 
-2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Phoenix automatically escapes HTML by default
    - Guardian automatically validates JWT expiration
    - CSRF protection automatically validates tokens

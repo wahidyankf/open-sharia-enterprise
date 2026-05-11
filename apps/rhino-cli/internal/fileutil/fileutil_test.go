@@ -85,7 +85,7 @@ func TestWalkMarkdownDirs_RootLevelMdFiles(t *testing.T) {
 func TestWalkMarkdownDirs_MultipleDirs(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	for _, dir := range []string{"docs", "governance"} {
+	for _, dir := range []string{"docs", "repo-governance"} {
 		d := filepath.Join(tmpDir, dir)
 		if err := os.MkdirAll(d, 0755); err != nil {
 			t.Fatalf("failed to create dir: %v", err)
@@ -95,7 +95,7 @@ func TestWalkMarkdownDirs_MultipleDirs(t *testing.T) {
 		}
 	}
 
-	files, err := WalkMarkdownDirs(tmpDir, []string{"docs", "governance"})
+	files, err := WalkMarkdownDirs(tmpDir, []string{"docs", "repo-governance"})
 	if err != nil {
 		t.Fatalf("WalkMarkdownDirs() error: %v", err)
 	}

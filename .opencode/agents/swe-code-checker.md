@@ -87,7 +87,7 @@ See `repo-generating-validation-reports` Skill for UUID chain, timestamp, progre
 
 ### Step 2: Nx Target Infrastructure (All Languages)
 
-**Reference**: `governance/development/infra/nx-targets.md`
+**Reference**: `repo-governance/development/infra/nx-targets.md`
 
 For each project, validate:
 
@@ -250,7 +250,7 @@ For each Java project:
 
 ### Step 6.5: TDD Compliance
 
-**Reference**: `governance/development/workflow/test-driven-development.md`
+**Reference**: `repo-governance/development/workflow/test-driven-development.md`
 
 For each code change or project under review, validate TDD compliance:
 
@@ -293,7 +293,7 @@ has only informal manual notes and no automated coverage plan.
 **Confidence**: HIGH | MEDIUM | FALSE_POSITIVE
 
 **Issue**: [tests missing / wrong level / manual verification unstructured]
-**Standard**: [Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+**Standard**: [Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 **Recommendation**: [write failing test first; move to cheaper level; structure manual script]
 ```
 
@@ -348,7 +348,7 @@ Each finding follows the standard format:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Mandatory targets and conventions
+- [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Mandatory targets and conventions
 
 **Coding Standards** (Authoritative):
 

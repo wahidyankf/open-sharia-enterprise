@@ -10,10 +10,10 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 
 ## Reference Documents
 
-- [CI/CD Conventions](../../../governance/development/infra/ci-conventions.md) — Central CI conventions reference
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md) — Test level definitions
-- [Nx Target Standards](../../../governance/development/infra/nx-targets.md) — Mandatory targets per project type
-- [Specs Directory Structure Convention](../../../governance/conventions/structure/specs-directory-structure.md) — Canonical path patterns for specs/ directory
+- [CI/CD Conventions](../../../repo-governance/development/infra/ci-conventions.md) — Central CI conventions reference
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md) — Test level definitions
+- [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md) — Mandatory targets per project type
+- [Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md) — Canonical path patterns for specs/ directory
 
 ## Mandatory Nx Targets Per App Type
 

@@ -23,7 +23,7 @@ NOT_ALLOWLISTED = [ayokoding-cli, oseplatform-cli, rhino-cli]
 The allowlist is encoded in two places:
 
 1. New rhino-cli command flag `--apps` accepting a comma-separated list (default value pulled from a config constant).
-2. `governance/conventions/structure/specs-directory-structure.md` documents the policy in prose.
+2. `repo-governance/conventions/structure/specs-directory-structure.md` documents the policy in prose.
 
 ## Fix #1 — Wire `specs validate-adoption` per allowlist into pre-push (HIGH)
 
@@ -520,9 +520,9 @@ Feature: spec-coverage validate enforces reverse-direction orphan-free step impl
 ## Personas
 
 - **Developer** (maintainer hat) — implements fixes in `apps/rhino-cli/` following TDD Red→Green→Refactor cycles, wires Nx targets, updates pre-push hook.
-- **Spec author** (documentation hat) — updates `governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
+- **Spec author** (documentation hat) — updates `repo-governance/conventions/structure/specs-directory-structure.md` and agent definition files to reflect new commands and removed placeholders.
 - **Refactor executor** (delivery-checklist hat) — follows the phased delivery checklist (Phase 0 pre-flight + per-fix phases 1–10 + Phase 5B for the reverse-direction orphan check + pre-flight audit covering Fix #15 + Phase 7B for the validator-wiring batch covering Fix #12 + #13 + Phase 7C for the CI-surface wiring covering Fix #14 + Phase 11 docs + Phase 12 final validation + Phase 13 commit/archive).
-- **Delivery executor** (plan-execution workflow hat) — follows `governance/workflows/plan/plan-execution.md` to execute each delivery checkbox in order.
+- **Delivery executor** (plan-execution workflow hat) — follows `repo-governance/workflows/plan/plan-execution.md` to execute each delivery checkbox in order.
 - **`swe-golang-dev` agent** — implements Go-language fixes inside `apps/rhino-cli/`.
 
 ## User Stories

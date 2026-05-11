@@ -84,7 +84,7 @@ OSE Platform Rust applications MUST use the following stack:
 - **Upcoming**: Rust 2024 edition (SHOULD adopt when stabilized)
 - **Version**: Rust 1.82+ (stable)
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for Rust-specific release documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Rust-specific release documentation location
 
 ## Prerequisite Knowledge
 
@@ -99,21 +99,21 @@ OSE Platform Rust applications MUST use the following stack:
 
 **What this documentation does NOT cover**: Rust syntax, ownership/borrowing fundamentals, language concepts (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 Rust development in OSE Platform enforces foundational software engineering principles — and uniquely, Rust ENFORCES many of them at the compiler level rather than by convention:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through `rustfmt` (formatting), Clippy (linting), `cargo test` (testing), `cargo audit` (security), `cargo deny` (dependencies), and CI/CD integration. The compiler itself automates correctness verification.
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through `rustfmt` (formatting), Clippy (linting), `cargo test` (testing), `cargo audit` (security), `cargo deny` (dependencies), and CI/CD integration. The compiler itself automates correctness verification.
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit error returns (`Result<T, E>`), explicit lifetime annotations when needed, explicit type declarations for public APIs, explicit `mut` declarations for mutability, and explicit `unsafe` blocks for unsafe operations.
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through explicit error returns (`Result<T, E>`), explicit lifetime annotations when needed, explicit type declarations for public APIs, explicit `mut` declarations for mutability, and explicit `unsafe` blocks for unsafe operations.
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Rust ENFORCES immutability by default at the compiler level. All bindings are immutable unless explicitly declared `mut`. The ownership system prevents shared mutable state. No other language in the OSE Platform stack enforces this principle at compile time.
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - Rust ENFORCES immutability by default at the compiler level. All bindings are immutable unless explicitly declared `mut`. The ownership system prevents shared mutable state. No other language in the OSE Platform stack enforces this principle at compile time.
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture. Rust's ownership system naturally encourages pure functions (functions that take ownership or borrow data and return new values). Iterator combinators produce functional pipelines. The borrow checker prevents hidden shared mutable state.
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement functional core/imperative shell architecture. Rust's ownership system naturally encourages pure functions (functions that take ownership or borrow data and return new values). Iterator combinators produce functional pipelines. The borrow checker prevents hidden shared mutable state.
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `Cargo.toml` with semantic versioning, `Cargo.lock` committed for binaries (not libraries), `rust-toolchain.toml` for exact toolchain pinning, and `cargo vendor` for offline builds.
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `Cargo.toml` with semantic versioning, `Cargo.lock` committed for binaries (not libraries), `rust-toolchain.toml` for exact toolchain pinning, and `cargo vendor` for offline builds.
 
 ## Rust Edition Strategy
 
@@ -289,16 +289,16 @@ graph LR
 - SHOULD integrate `cargo clippy` and `cargo test` in CI/CD pipeline
 - MUST use `cargo build --release` with LTO for production binaries
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles; Rust's ownership system naturally enforces functional style
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work -> make it right -> make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles; Rust's ownership system naturally enforces functional style
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work -> make it right -> make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -312,16 +312,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

@@ -1,6 +1,6 @@
 # Delivery — OrganicLever DDD Adoption
 
-11 phases. Each phase ends with all gates green and a single commit (or small commit cluster) on the worktree branch. Worktree branch fast-forward-merges into `main` once per phase or once at end-of-plan, per the parent repo's Subrepo Worktree Workflow Convention and [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). TDD discipline is mandatory: never move code without tests passing before AND after.
+11 phases. Each phase ends with all gates green and a single commit (or small commit cluster) on the worktree branch. Worktree branch fast-forward-merges into `main` once per phase or once at end-of-plan, per the parent repo's Subrepo Worktree Workflow Convention and [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md). TDD discipline is mandatory: never move code without tests passing before AND after.
 
 ## Pre-flight
 
@@ -124,7 +124,7 @@
 
 - [x] `npm run lint:md` passes.
   - Date: 2026-05-02. Notes: 2274 files, 0 errors.
-- [x] All file names follow [File Naming Convention](../../../governance/conventions/structure/file-naming.md) (lowercase kebab-case).
+- [x] All file names follow [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) (lowercase kebab-case).
   - Date: 2026-05-02. Notes: All glossary files match `[a-z0-9-]+\.md`. `workout-session.md` and `app-shell.md` use kebab-case.
 - [x] Every bounded context in the Phase 0 ADR has a glossary file.
   - Date: 2026-05-02. Notes: 9 ADR contexts → 9 glossary files (journal, routine, workout-session, stats, settings, app-shell, health, landing, routing).
@@ -423,6 +423,6 @@ For each of `health`, `landing`, `routing`:
 3. **No behavior change** allowed in any phase. Refactors only.
 4. **Never bypass pre-push** (`--no-verify`). If the hook fails, fix the cause.
 5. **Worktree discipline**. All edits inside the subrepo worktree.
-6. **Direct-to-main publish path** per [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). Draft PR is optional; not required for this plan.
+6. **Direct-to-main publish path** per [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md). Draft PR is optional; not required for this plan.
 7. **Glossary updates ride with code/feature changes** in the same commit, not a separate one.
 8. **Roll back the phase, not the file**, if anything leaves the gates red and is not fixable in one pass.

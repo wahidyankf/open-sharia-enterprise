@@ -32,7 +32,7 @@ This directory contains OSE Platform-specific standards for automation testing t
 ## Related Documentation
 
 - **[Software Engineering Index](../README.md)** - Parent documentation
-- **[Testing Principles](../../../../governance/development/quality/code.md)** - Quality standards
+- **[Testing Principles](../../../../repo-governance/development/quality/code.md)** - Quality standards
 - **[TypeScript Standards](../programming-languages/typescript/README.md)** - Language standards
 
 ---

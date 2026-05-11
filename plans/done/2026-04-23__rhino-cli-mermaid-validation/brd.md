@@ -7,7 +7,7 @@ Mermaid flowchart diagrams in repository markdown files degrade silently:
 1. **Label overflow**: Long node labels render truncated or overflow the box in GitHub
    preview, VS Code, and Mermaid Live Editor — the diagram becomes unreadable without
    the viewer knowing text was clipped. This repo has already experienced this: production
-   C4 diagrams in `governance/conventions/formatting/diagrams.md` show labels clipping at
+   C4 diagrams in `repo-governance/conventions/formatting/diagrams.md` show labels clipping at
    ~22 characters in Hugo/Hextra rendering. Mermaid's `wrappingWidth` config defaults to
    200 px; at the default 16 px font that accommodates ~28–30 characters before wrapping
    or overflow begins. Setting the default warning at **30 characters** is grounded in

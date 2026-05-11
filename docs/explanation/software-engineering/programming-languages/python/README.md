@@ -15,7 +15,7 @@ related:
   - ../java/README.md
   - ../elixir/README.md
   - ../golang/README.md
-  - ../../../../governance/principles/README.md
+  - ../../../../repo-governance/principles/README.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -68,7 +68,7 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 **What this documentation does NOT cover**: Python syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -90,17 +90,17 @@ All Python code MUST follow the standards documented here:
 - **Testing Standards**: See [Test-Driven Development](./test-driven-development.md)
 - **Security Practices**: See [Security](./security.md)
 
-**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+**Related**: [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
 ## Software Engineering Principles
 
-Python development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+Python development in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Python automates through pytest testing, black/ruff formatting, mypy type checking, and CI/CD pipelines
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Python enforces through explicit imports, type hints, explicit error handling, clear function signatures
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Python encourages immutable patterns through frozen dataclasses, tuples, functional programming, and immutable defaults
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Python supports through first-class functions, functional tools (map/filter/reduce), and functional core architecture
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Python enables through pyproject.toml, requirements.txt pinning, virtual environments, and deterministic builds
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Python automates through pytest testing, black/ruff formatting, mypy type checking, and CI/CD pipelines
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Python enforces through explicit imports, type hints, explicit error handling, clear function signatures
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - Python encourages immutable patterns through frozen dataclasses, tuples, functional programming, and immutable defaults
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Python supports through first-class functions, functional tools (map/filter/reduce), and functional core architecture
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Python enables through pyproject.toml, requirements.txt pinning, virtual environments, and deterministic builds
 
 **See Also**: [Functional Programming](./functional-programming.md) for pure functions patterns, [Best Practices](./best-practices.md) for explicit coding standards, [Type Safety](./type-safety.md) for immutable type patterns.
 
@@ -1283,7 +1283,7 @@ python_version = "3.11"
 strict = true
 ```
 
-**See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility First principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ### Official Python Documentation
 
@@ -1328,11 +1328,11 @@ strict = true
 
 ### Governance and Conventions
 
-- [Repository Principles](../../../../../governance/principles/README.md) - Core principles
-- [File Naming Convention](../../../../../governance/conventions/structure/file-naming.md) - Documentation standards
-- [Content Quality Convention](../../../../../governance/conventions/writing/quality.md) - Writing standards
-- [Diátaxis Framework](../../../../../governance/conventions/structure/diataxis-framework.md) - Documentation organization
-- [Color Accessibility Convention](../../../../../governance/conventions/formatting/color-accessibility.md) - WCAG AA compliance
+- [Repository Principles](../../../../../repo-governance/principles/README.md) - Core principles
+- [File Naming Convention](../../../../../repo-governance/conventions/structure/file-naming.md) - Documentation standards
+- [Content Quality Convention](../../../../../repo-governance/conventions/writing/quality.md) - Writing standards
+- [Diátaxis Framework](../../../../../repo-governance/conventions/structure/diataxis-framework.md) - Documentation organization
+- [Color Accessibility Convention](../../../../../repo-governance/conventions/formatting/color-accessibility.md) - WCAG AA compliance
 
 ### Community Resources
 

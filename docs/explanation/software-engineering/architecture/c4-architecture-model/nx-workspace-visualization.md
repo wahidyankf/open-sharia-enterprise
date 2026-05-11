@@ -20,7 +20,7 @@ created: 2026-02-09
 
 **This document is OSE Platform-specific**, defining how to visualize Nx workspace structure in C4 diagrams for THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -181,4 +181,4 @@ Before committing an Nx workspace visualization, verify:
 
 ## Principles Implemented
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By explicitly mapping Nx apps to C4 containers and showing project dependencies, the monorepo structure becomes visible in architecture documentation rather than hidden in `nx.json`.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By explicitly mapping Nx apps to C4 containers and showing project dependencies, the monorepo structure becomes visible in architecture documentation rather than hidden in `nx.json`.

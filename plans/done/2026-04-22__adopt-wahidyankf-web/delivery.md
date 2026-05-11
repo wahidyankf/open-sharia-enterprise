@@ -63,7 +63,7 @@ the worktree branch, not `main`. Concretely:
 - [x] Commit: `docs(plans): record wahidyankf-web adoption prep notes`.
 - [x] Push to origin worktree branch.
 
-> **P0 notes (2026-04-19)** — Baseline verified (17 PNG + 3 YAML + README = 21 files). Upstream SHA `9b17637e3d454ade45281474da244148edfc7d57`. No upstream LICENSE file; adopted app inherits repo FSL-1.1-MIT (content) + MIT (impl) per `LICENSING-NOTICE.md`. Port 3201 free. Sibling pins recorded in `prep-notes.md` — content-platform siblings agree on every test-stack row. Tag allowlist hits: 9 `project.json` files + `governance/development/infra/nx-targets.md` — recorded in prep-notes for P6 use.
+> **P0 notes (2026-04-19)** — Baseline verified (17 PNG + 3 YAML + README = 21 files). Upstream SHA `9b17637e3d454ade45281474da244148edfc7d57`. No upstream LICENSE file; adopted app inherits repo FSL-1.1-MIT (content) + MIT (impl) per `LICENSING-NOTICE.md`. Port 3201 free. Sibling pins recorded in `prep-notes.md` — content-platform siblings agree on every test-stack row. Tag allowlist hits: 9 `project.json` files + `repo-governance/development/infra/nx-targets.md` — recorded in prep-notes for P6 use.
 
 ## Phase P1 — Scaffold & Port Source
 
@@ -218,8 +218,8 @@ to already be merged; that gate is placed immediately before the push.
 - [x] Verify `.github/workflows/_reusable-test-and-deploy.yml` already handles an arbitrary `app-name` / `prod-branch` input (no change expected; flag if it does not).
 - [x] Create `.claude/agents/apps-wahidyankf-web-deployer.md` by copying `.claude/agents/apps-organiclever-web-deployer.md` and replacing `organiclever-web` → `wahidyankf-web` and `prod-organiclever-web` → `prod-wahidyankf-web` throughout.
 - [x] Run `npm run sync:claude-to-opencode` so `.opencode/agent/apps-wahidyankf-web-deployer.md` lands.
-- [x] Update `governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
-- [x] Update `governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
+- [x] Update `repo-governance/development/infra/nx-targets.md` — add `wahidyankf` to the `domain:` allowed values row, and add `wahidyankf-web` + `wahidyankf-web-e2e` rows to the "Current Project Tags" table.
+- [x] Update `repo-governance/conventions/formatting/emoji.md` (and any other convention enumerating allowed-file categories) if `.claude/agents/` hasn't already been listed — verify only.
 - [x] Run `nx affected -t typecheck lint test:quick spec-coverage` once more; confirm exit 0.
 - [x] Commit: `ci(wahidyankf-web): add Vercel deploy workflow and deployer agent`.
 - [x] Push to `origin worktree-cached-brewing-cocoa` (updates the open draft PR against `main`; this push includes the deployment-infrastructure files created above).
@@ -228,7 +228,7 @@ to already be merged; that gate is placed immediately before the push.
 - [ ] From a clean `main` (after PR merge and local pull), create the production branch: `git push origin main:prod-wahidyankf-web`.
 - [ ] Confirm remote branch exists: `git ls-remote origin prod-wahidyankf-web`.
 
-> **P6 notes (2026-04-19)** — Infrastructure files created: apps/wahidyankf-web/vercel.json (security headers + prod-wahidyankf-web ignoreCommand), Dockerfile (Next.js standalone build, port 3201, labeled for OCI), .dockerignore, .github/workflows/test-and-deploy-wahidyankf-web.yml (cron 6am/6pm WIB, uses \_reusable-test-and-deploy.yml). Deployer agent at .claude/agents/apps-wahidyankf-web-deployer.md (Haiku model, purple Implementor, force-push to prod-wahidyankf-web). `npm run sync:claude-to-opencode` synced 70 agents + 37 skills; .opencode/agent/apps-wahidyankf-web-deployer.md confirmed present. governance/development/infra/nx-targets.md: added `wahidyankf` to the domain: allowlist row and wahidyankf-web + wahidyankf-web-e2e rows to the Current Project Tags table. Post-push monitoring and production-branch creation left as manual follow-ups — they fire only after the draft PR merges to `origin/main`, which is outside this plan execution's scope (the merge is the user's decision point per the branching model).
+> **P6 notes (2026-04-19)** — Infrastructure files created: apps/wahidyankf-web/vercel.json (security headers + prod-wahidyankf-web ignoreCommand), Dockerfile (Next.js standalone build, port 3201, labeled for OCI), .dockerignore, .github/workflows/test-and-deploy-wahidyankf-web.yml (cron 6am/6pm WIB, uses \_reusable-test-and-deploy.yml). Deployer agent at .claude/agents/apps-wahidyankf-web-deployer.md (Haiku model, purple Implementor, force-push to prod-wahidyankf-web). `npm run sync:claude-to-opencode` synced 70 agents + 37 skills; .opencode/agent/apps-wahidyankf-web-deployer.md confirmed present. repo-governance/development/infra/nx-targets.md: added `wahidyankf` to the domain: allowlist row and wahidyankf-web + wahidyankf-web-e2e rows to the Current Project Tags table. Post-push monitoring and production-branch creation left as manual follow-ups — they fire only after the draft PR merges to `origin/main`, which is outside this plan execution's scope (the merge is the user's decision point per the branching model).
 
 ## Phase P7 — Docs & Close-out
 

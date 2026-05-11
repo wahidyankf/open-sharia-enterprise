@@ -104,15 +104,15 @@ Java + Vert.x reimplementation of the demo backend REST API — a functional twi
 
 ## Files to Update
 
-| File                                         | Change                                                               |
-| -------------------------------------------- | -------------------------------------------------------------------- |
-| `CLAUDE.md`                                  | Add a-demo-be-java-vertx to Current Apps list                        |
-| `README.md`                                  | Add a-demo-be-java-vertx badge and description in demo apps section  |
-| `specs/apps/a-demo/be/README.md`             | Add Java/Vert.x row to Implementations table                         |
-| `apps/a-demo-be-e2e/project.json`            | Add `a-demo-be-java-vertx` to `implicitDependencies`                 |
-| `.github/workflows/main-ci.yml`              | Add coverage upload step for a-demo-be-java-vertx                    |
-| `governance/development/infra/nx-targets.md` | Add `platform:vertx` to platform vocab; add a-demo-be-java-vertx row |
-| `plans/in-progress/README.md`                | Remove this plan from active plans list (move to done)               |
+| File                                              | Change                                                               |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| `CLAUDE.md`                                       | Add a-demo-be-java-vertx to Current Apps list                        |
+| `README.md`                                       | Add a-demo-be-java-vertx badge and description in demo apps section  |
+| `specs/apps/a-demo/be/README.md`                  | Add Java/Vert.x row to Implementations table                         |
+| `apps/a-demo-be-e2e/project.json`                 | Add `a-demo-be-java-vertx` to `implicitDependencies`                 |
+| `.github/workflows/main-ci.yml`                   | Add coverage upload step for a-demo-be-java-vertx                    |
+| `repo-governance/development/infra/nx-targets.md` | Add `platform:vertx` to platform vocab; add a-demo-be-java-vertx row |
+| `plans/in-progress/README.md`                     | Remove this plan from active plans list (move to done)               |
 
 ## See Also
 

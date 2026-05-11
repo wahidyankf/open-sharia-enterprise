@@ -22,7 +22,7 @@ skills:
 applies a fixed list of validation rules to deterministic command outputs. The cognitive
 complexity is in interpreting tool outputs and classifying findings, not in open-ended
 reasoning — that fits the execution-grade tier per the
-[Model Selection Convention](../../governance/development/agents/model-selection.md).
+[Model Selection Convention](../../repo-governance/development/agents/model-selection.md).
 
 ## Temporary Reports
 
@@ -32,14 +32,14 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 ## Validation Scope — Five Cross-Vendor Parity Invariants
 
 The agent enforces the cross-vendor behavioral-parity contract defined by the
-[Governance Vendor-Independence Convention](../../governance/conventions/structure/governance-vendor-independence.md).
+[Governance Vendor-Independence Convention](../../repo-governance/conventions/structure/governance-vendor-independence.md).
 For each invariant, it invokes the listed existing tool and classifies any finding using the
 dual-label criticality / confidence schema from the
 [Repo Assessing Criticality Confidence skill](../../.claude/skills/repo-assessing-criticality-confidence/SKILL.md).
 
 ### Invariant 1 — Governance prose vendor-neutrality
 
-- **Tool**: `cd apps/rhino-cli && go run main.go governance vendor-audit governance/`
+- **Tool**: `cd apps/rhino-cli && go run main.go repo-governance vendor-audit repo-governance/`
 - **Pass**: command exits 0 with `GOVERNANCE VENDOR AUDIT PASSED: no violations found`
 - **Fail**: any non-zero exit; report each violation with file path, line number, forbidden
   term, and suggested replacement (already in tool output)
@@ -48,7 +48,7 @@ dual-label criticality / confidence schema from the
 
 ### Invariant 2 — Root instruction surface vendor-neutrality
 
-- **Tool**: `cd apps/rhino-cli && go run main.go governance vendor-audit AGENTS.md` and same for `CLAUDE.md`
+- **Tool**: `cd apps/rhino-cli && go run main.go repo-governance vendor-audit AGENTS.md` and same for `CLAUDE.md`
 - **Pass**: both files exit 0 with no violations outside `binding-example` fences and "Platform Binding Examples" headings
 - **Fail**: any violation in load-bearing prose
 - **Default criticality**: HIGH (root surface read by multiple coding agents)
@@ -73,8 +73,8 @@ dual-label criticality / confidence schema from the
 ### Invariant 5 — Translation-map coverage
 
 - **Tools**:
-  - Color map: `grep -h "^color:" .claude/agents/*.md | sort -u` vs Color Translation Table in `governance/development/agents/ai-agents.md`
-  - Tier map: `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u` vs capability-tier map in `governance/development/agents/model-selection.md`
+  - Color map: `grep -h "^color:" .claude/agents/*.md | sort -u` vs Color Translation Table in `repo-governance/development/agents/ai-agents.md`
+  - Tier map: `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u` vs capability-tier map in `repo-governance/development/agents/model-selection.md`
 - **Pass**: every distinct frontmatter value appears in the corresponding map
 - **Fail**: any value not in the map — report the missing entry
 - **Default criticality**: MEDIUM (sync may produce wrong-translated output for the missing entry)
@@ -101,12 +101,12 @@ inline tool calls; fork-scoping is not required for any of the six invariants ab
 ## Workflow Integration
 
 This agent is the green checker stage of the
-[`repo-cross-vendor-parity-quality-gate` workflow](../../governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md).
+[`repo-cross-vendor-parity-quality-gate` workflow](../../repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md).
 The workflow alternates this agent with `repo-parity-fixer` until two consecutive
 zero-finding validations land (double-zero termination), bounded by `max-iterations`.
 
 ## Related Conventions
 
-- [Governance Vendor-Independence Convention](../../governance/conventions/structure/governance-vendor-independence.md)
-- [Agent Naming Convention](../../governance/conventions/structure/agent-naming.md)
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
+- [Governance Vendor-Independence Convention](../../repo-governance/conventions/structure/governance-vendor-independence.md)
+- [Agent Naming Convention](../../repo-governance/conventions/structure/agent-naming.md)
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md)

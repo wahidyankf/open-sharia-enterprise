@@ -30,12 +30,12 @@ describe FSL-1.1-MIT:
 
 - `README.md` — License section
 - `CLAUDE.md` — Two `License: MIT` references
-- `governance/vision/README.md` — Vision statement referencing MIT
+- `repo-governance/vision/README.md` — Vision statement referencing MIT
 - `apps/oseplatform-web/content/about.md` — License section and key resources line
-- `governance/conventions/writing/oss-documentation.md` — MIT badge example, README template
+- `repo-governance/conventions/writing/oss-documentation.md` — MIT badge example, README template
   license section, and "Current Project: MIT License" declaration
-- `governance/conventions/writing/readme-quality.md` — Good/bad example text using MIT
-- `governance/principles/general/simplicity-over-complexity.md` — `license: MIT` in YAML example
+- `repo-governance/conventions/writing/readme-quality.md` — Good/bad example text using MIT
+- `repo-governance/principles/general/simplicity-over-complexity.md` — `license: MIT` in YAML example
 - `docs/how-to/hoto__add-new-lib.md` — `MIT` in new-lib README template
 
 Files referencing third-party dependency licenses (e.g., "DbUp MIT license") or other products'
@@ -137,7 +137,7 @@ Feature: Repository is licensed under FSL-1.1-MIT
     Then all instances show "FSL-1.1-MIT" (not "MIT")
 
   Scenario: Vision document reflects licensing model
-    Given "governance/vision/README.md"
+    Given "repo-governance/vision/README.md"
     When I search for license references
     Then the text describes FSL-1.1-MIT with eventual MIT conversion
 
@@ -148,15 +148,15 @@ Feature: Repository is licensed under FSL-1.1-MIT
 
   Scenario: Convention docs reflect FSL-1.1-MIT
     Given the following convention files:
-      | governance/conventions/writing/oss-documentation.md        |
-      | governance/conventions/writing/readme-quality.md           |
+      | repo-governance/conventions/writing/oss-documentation.md        |
+      | repo-governance/conventions/writing/readme-quality.md           |
     When I search for license examples and declarations
     Then project-specific examples use FSL-1.1-MIT
     And generic license lists (e.g., "MIT, Apache 2.0, GPL") remain unchanged
 
   Scenario: Template and example files use FSL-1.1-MIT
     Given the following template/example files:
-      | governance/principles/general/simplicity-over-complexity.md |
+      | repo-governance/principles/general/simplicity-over-complexity.md |
       | docs/how-to/hoto__add-new-lib.md                            |
     When I search for license references
     Then project-specific license fields show FSL-1.1-MIT

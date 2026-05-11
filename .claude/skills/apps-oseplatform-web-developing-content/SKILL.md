@@ -444,12 +444,12 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../repo-governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Next.js Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Next.js patterns
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
+- [Next.js Content Shared](../../../repo-governance/conventions/hugo/shared.md) - Shared Next.js patterns
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 
@@ -512,12 +512,12 @@ Or use the `apps-oseplatform-web-deployer` agent for a guided deployment.
 
 ## References
 
-**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../repo-governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Next.js Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Next.js patterns
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
+- [Next.js Content Shared](../../../repo-governance/conventions/hugo/shared.md) - Shared Next.js patterns
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
 

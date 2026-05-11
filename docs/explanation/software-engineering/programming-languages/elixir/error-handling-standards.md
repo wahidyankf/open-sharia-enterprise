@@ -28,7 +28,7 @@ created: 2026-01-23
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir in THIS codebase, not WHAT Elixir is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Elixir Error Handling Standards for OSE Platform
 
@@ -830,22 +830,22 @@ For learning Elixir fundamentals and concepts referenced in these standards, see
 
 These standards enforce repository core principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Tagged tuples make errors explicit (`:ok` or `:error` in return values)
    - Supervision trees make failure handling explicit (restart strategies defined upfront)
    - with construct makes error paths explicit (else clause shows all failure modes)
 
-2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Supervisors automatically restart crashed processes
    - Circuit breakers automatically fail-fast when services are down
    - Retry policies with exponential backoff automatically retry transient failures
 
-3. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - "Let it crash" philosophy ensures clean state on restart (no state corruption)
    - Idempotency keys prevent duplicate transactions
    - Atomic transactions guarantee consistent state (all-or-nothing)
 
-4. **[Simplicity Over Complexity](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+4. **[Simplicity Over Complexity](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - "Let it crash" eliminates defensive programming
    - Pattern matching on tagged tuples is simpler than exception hierarchies
    - Supervision handles failure recovery (no manual error propagation)

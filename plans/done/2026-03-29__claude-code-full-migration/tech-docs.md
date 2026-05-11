@@ -406,7 +406,7 @@ Content of the skill...
 ```yaml
 # In agent body
 Read .claude/agents/docs-checker.md
-Validate format against governance/development/agents/ai-agents.md
+Validate format against repo-governance/development/agents/ai-agents.md
 ```
 
 **After**:
@@ -414,7 +414,7 @@ Validate format against governance/development/agents/ai-agents.md
 ```yaml
 # In agent body
 Read .opencode/agent/docs-checker.md
-Validate format against governance/development/agents/ai-agents.md (updated to OpenCode format)
+Validate format against repo-governance/development/agents/ai-agents.md (updated to OpenCode format)
 ```
 
 ### Dual-Format Support Removal
@@ -533,9 +533,9 @@ validate_opencode_schema()
 
 **Remove from CLAUDE.md** (move to governance docs):
 
-- Project principles → `governance/principles/`
-- Development practices → `governance/development/`
-- Repository architecture → `governance/explanation/`
+- Project principles → `repo-governance/principles/`
+- Development practices → `repo-governance/development/`
+- Repository architecture → `repo-governance/explanation/`
 
 **Merge into AGENTS.md**:
 
@@ -758,9 +758,9 @@ Before deletion, consider extracting useful functions:
 
 - [OpenCode Agent Format](https://opencode.ai/docs/agents)
 - [OpenCode Skills Documentation](https://opencode.ai/docs/skills)
-- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Plans Organization Convention](../../../../governance/conventions/structure/plans.md)
+- [AI Agents Convention](../../../../repo-governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md)
+- [Plans Organization Convention](../../../../repo-governance/conventions/structure/plans.md)
 - Current conversion: `scripts/convert-agents-to-opencode.py`
 - Current validation: `scripts/validate-opencode-agents.py`
 - Migration plan: `plans/backlog/2025-01-12__claude-code-full-migration/`

@@ -29,9 +29,9 @@ import (
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/doctor"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/envbackup"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/glossary"
-	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/governance"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/mermaid"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/naming"
+	governance "github.com/wahidyankf/ose-public/apps/rhino-cli/internal/repo-governance"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/speccoverage"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/testcoverage"
@@ -702,7 +702,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 			return nil
 		}
 
-	// ── governance vendor-audit ─────────────────────────────────────────────
+	// ── repo-governance vendor-audit ─────────────────────────────────────────────
 	case "governance_vendor_audit_clean":
 		governanceVendorAuditFn = func(_ string) ([]governance.Finding, error) {
 			return nil, nil
@@ -711,7 +711,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 	case "governance_vendor_audit_violations":
 		governanceVendorAuditFn = func(_ string) ([]governance.Finding, error) {
 			return []governance.Finding{
-				{Path: "governance/foo.md", Line: 5, Match: "Claude Code", Replacement: `"the coding agent"`},
+				{Path: "repo-governance/foo.md", Line: 5, Match: "Claude Code", Replacement: `"the coding agent"`},
 			}, nil
 		}
 
@@ -788,7 +788,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 	case "workflows_validate_naming_violations":
 		workflowsValidateNamingFn = func(_ string) ([]naming.Violation, error) {
 			return []naming.Violation{
-				{Path: "governance/workflows/bad.md", Kind: "type-suffix", Message: "filename must end with a valid type suffix"},
+				{Path: "repo-governance/workflows/bad.md", Kind: "type-suffix", Message: "filename must end with a valid type suffix"},
 			}, nil
 		}
 

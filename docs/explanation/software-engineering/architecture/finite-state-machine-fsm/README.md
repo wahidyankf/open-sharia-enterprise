@@ -62,17 +62,17 @@ OSE Platform FSM implementations MUST use the following frameworks:
 
 **What this documentation does NOT cover**: FSM fundamentals, basic state/transition concepts, generic FSM theory (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 FSM in OSE Platform enforces foundational software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make entity state explicit (not inferred from boolean flags), transition rules must be explicit in state machine configuration, guards must explicitly define allowed transitions
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make entity state explicit (not inferred from boolean flags), transition rules must be explicit in state machine configuration, guards must explicitly define allowed transitions
 
-2. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use immutable events for state transitions, state context must be immutable in functional approaches, state machine definitions must be immutable after initialization
+2. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - MUST use immutable events for state transitions, state context must be immutable in functional approaches, state machine definitions must be immutable after initialization
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate state validation through FSM, audit trail logging must be automated, state transition permissions must be enforced by FSM not manual checks
+3. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate state validation through FSM, audit trail logging must be automated, state transition permissions must be enforced by FSM not manual checks
 
 ## OSE Platform FSM Standards (Authoritative)
 
@@ -287,8 +287,8 @@ FSM implementations MUST pass the following validation checks:
 
 ## Principles Implemented/Respected
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By making entity state explicit in FSM rather than inferred from boolean flags, state becomes visible and verifiable.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By making entity state explicit in FSM rather than inferred from boolean flags, state becomes visible and verifiable.
 
-- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**: By using immutable events for transitions and immutable state context, race conditions and unexpected state mutations are eliminated.
+- **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)**: By using immutable events for transitions and immutable state context, race conditions and unexpected state mutations are eliminated.
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By automating state validation, transition guards, and audit trail logging through FSM framework, manual error-prone checks are eliminated.
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By automating state validation, transition guards, and audit trail logging through FSM framework, manual error-prone checks are eliminated.

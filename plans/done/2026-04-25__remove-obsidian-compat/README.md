@@ -11,8 +11,8 @@
 The `docs/` directory was originally structured as an [Obsidian](https://obsidian.md/) vault. Three artifacts of that decision still exist, but Obsidian is no longer part of the authoring workflow:
 
 1. **Vault config** — `docs/.obsidian/` holds 9 JSON files (plugins, hotkeys, graph settings) for an Obsidian vault nobody opens. The `.gitignore` carries matching ignore rules for Obsidian workspace state, `.trash/`, and `.smart-connections/`.
-2. **Prefix-heavy filenames** — 304 of 352 files in `docs/` follow the `[hierarchical-prefix]__[content-identifier].md` pattern (e.g., `ex-soen-ar-c4armo__tooling-standards.md`). The [File Naming Convention](../../../governance/conventions/structure/file-naming.md) explicitly scopes this rule to "the Obsidian vault" and justifies it with "global uniqueness… across the entire documentation vault" — a concern specific to Obsidian's flat vault model. GitHub, VS Code, and every other tool the team actually uses handle uniqueness through directory structure.
-3. **Cross-cutting Obsidian references** — ~15 governance/convention files and several agent/skill definitions contain Obsidian-specific rules (wiki-link rejection, YAML-parser quirks, TAB indentation "for Obsidian"), cross-platform compatibility callouts, and documentation warnings.
+2. **Prefix-heavy filenames** — 304 of 352 files in `docs/` follow the `[hierarchical-prefix]__[content-identifier].md` pattern (e.g., `ex-soen-ar-c4armo__tooling-standards.md`). The [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) explicitly scopes this rule to "the Obsidian vault" and justifies it with "global uniqueness… across the entire documentation vault" — a concern specific to Obsidian's flat vault model. GitHub, VS Code, and every other tool the team actually uses handle uniqueness through directory structure.
+3. **Cross-cutting Obsidian references** — ~15 repo-governance/convention files and several agent/skill definitions contain Obsidian-specific rules (wiki-link rejection, YAML-parser quirks, TAB indentation "for Obsidian"), cross-platform compatibility callouts, and documentation warnings.
 
 ### Key issues
 
@@ -52,7 +52,7 @@ Remove all Obsidian-specific artifacts and conventions from the repository. Conc
 
 ### 4. Rewrite the File Naming Convention
 
-- Replace `governance/conventions/structure/file-naming.md` with a concise convention that:
+- Replace `repo-governance/conventions/structure/file-naming.md` with a concise convention that:
   - Anchors explicitly on **standard markdown + GitHub compatibility** as the guiding rationale (not Obsidian, not any other tool).
   - Requires lowercase kebab-case filenames for portability across case-sensitive filesystems and GitHub's URL slug behavior.
   - Forbids characters that break on GitHub web or Windows/macOS case-insensitive filesystems (spaces, uppercase, `:`, `?`, `*`, `<`, `>`, `|`, `"`, backslash, and non-ASCII unless deliberately scoped).
@@ -63,7 +63,7 @@ Remove all Obsidian-specific artifacts and conventions from the repository. Conc
 
 ### 4b. Refresh the Linking Convention on the same axis
 
-- Rewrite the opening paragraphs of `governance/conventions/formatting/linking.md` so the rationale is **standard markdown + GitHub compatibility**, full stop. Remove the "works consistently across GitHub web, Obsidian, and other markdown viewers" framing and the "instead of Obsidian wiki links" comparison.
+- Rewrite the opening paragraphs of `repo-governance/conventions/formatting/linking.md` so the rationale is **standard markdown + GitHub compatibility**, full stop. Remove the "works consistently across GitHub web, Obsidian, and other markdown viewers" framing and the "instead of Obsidian wiki links" comparison.
 - Keep the existing GitHub-compatible link rules intact:
   - `[Display Text](./relative/path.md)` with a mandatory `.md` extension on docs links.
   - Relative paths only; no absolute filesystem paths.
@@ -107,22 +107,22 @@ Remove Obsidian-specific rules, callouts, anti-patterns, and any descriptive tex
 
 **Governance — convention and rule files** (~22 files):
 
-- `governance/conventions/README.md`, `structure/README.md`, `tutorials/README.md`
-- `governance/conventions/structure/file-naming.md` (full rewrite — see step 4)
-- `governance/conventions/structure/plans.md`, `diataxis-framework.md`, `programming-language-docs-separation.md`
-- `governance/conventions/formatting/linking.md` (rationale rewrite — see step 4b)
-- `governance/conventions/formatting/{diagrams,emoji,indentation,nested-code-fences,mathematical-notation,color-accessibility}.md`
-- `governance/conventions/writing/{conventions,quality,readme-quality}.md`
-- `governance/conventions/tutorials/{general,programming-language-content}.md`
-- `governance/conventions/hugo/{shared,ayokoding}.md`
-- `governance/principles/general/simplicity-over-complexity.md`
-- `governance/principles/software-engineering/README.md`
-- `governance/principles/content/{documentation-first,progressive-disclosure}.md`
-- `governance/development/agents/{ai-agents,skill-context-architecture}.md`
-- `governance/development/pattern/database-audit-trail.md`
-- `governance/development/quality/{criticality-levels,three-level-testing-standard}.md`
-- `governance/workflows/meta/workflow-identifier.md`
-- `governance/workflows/infra/development-environment-setup.md`
+- `repo-governance/conventions/README.md`, `structure/README.md`, `tutorials/README.md`
+- `repo-governance/conventions/structure/file-naming.md` (full rewrite — see step 4)
+- `repo-governance/conventions/structure/plans.md`, `diataxis-framework.md`, `programming-language-docs-separation.md`
+- `repo-governance/conventions/formatting/linking.md` (rationale rewrite — see step 4b)
+- `repo-governance/conventions/formatting/{diagrams,emoji,indentation,nested-code-fences,mathematical-notation,color-accessibility}.md`
+- `repo-governance/conventions/writing/{conventions,quality,readme-quality}.md`
+- `repo-governance/conventions/tutorials/{general,programming-language-content}.md`
+- `repo-governance/conventions/hugo/{shared,ayokoding}.md`
+- `repo-governance/principles/general/simplicity-over-complexity.md`
+- `repo-governance/principles/software-engineering/README.md`
+- `repo-governance/principles/content/{documentation-first,progressive-disclosure}.md`
+- `repo-governance/development/agents/{ai-agents,skill-context-architecture}.md`
+- `repo-governance/development/pattern/database-audit-trail.md`
+- `repo-governance/development/quality/{criticality-levels,three-level-testing-standard}.md`
+- `repo-governance/workflows/meta/workflow-identifier.md`
+- `repo-governance/workflows/infra/development-environment-setup.md`
 
 **.claude/ agents** (~16 files with prefix or Obsidian references):
 
@@ -176,11 +176,11 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 6. **Zero broken links post-rename** — markdown linters and link checkers pass; every link in the repo renders on GitHub web.
 7. **Git history preserved** — all renames use `git mv`.
 8. **rhino-cli docs naming validator removed** — `docs validate-naming` command and all its supporting Go files deleted; `docs validate-links` preserved; rhino-cli's ≥90% coverage threshold still met.
-9. **All related agents, skills, and governance docs consistent** — every `.claude/agents/*`, `.claude/skills/*`, `governance/**`, root navigation file (`CLAUDE.md`, `AGENTS.md`, `README.md`, `ROADMAP.md`), subproject `apps/*/README.md`, and `playwright.config.ts` that referenced a renamed docs file or explained the prefix scheme has been updated.
+9. **All related agents, skills, and governance docs consistent** — every `.claude/agents/*`, `.claude/skills/*`, `repo-governance/**`, root navigation file (`CLAUDE.md`, `AGENTS.md`, `README.md`, `ROADMAP.md`), subproject `apps/*/README.md`, and `playwright.config.ts` that referenced a renamed docs file or explained the prefix scheme has been updated.
 
 ### Secondary goals
 
-1. **Minimal churn in `governance/`** — surgical removals, not a rewrite of unrelated content.
+1. **Minimal churn in `repo-governance/`** — surgical removals, not a rewrite of unrelated content.
 2. **Single-PR-on-main execution** — all commits land on `main` in sequence via Trunk Based Development; each commit is independently revertible.
 3. **Maker-checker-fixer compatible** — no change to agent orchestration patterns; only textual cleanup.
 4. **Updated CLAUDE.md / AGENTS.md references** — both navigation files point at the new filenames after the rename.
@@ -209,18 +209,18 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 
 ### Convention rewrite success
 
-- [x] `governance/conventions/structure/file-naming.md` contains zero occurrences of "Obsidian", "vault", "prefix", `ex-`, `hoto__`, `ex-go-`, etc.
-- [x] `governance/conventions/structure/file-naming.md` explicitly states "standard markdown" and "GitHub-compatible" as the rationale
+- [x] `repo-governance/conventions/structure/file-naming.md` contains zero occurrences of "Obsidian", "vault", "prefix", `ex-`, `hoto__`, `ex-go-`, etc.
+- [x] `repo-governance/conventions/structure/file-naming.md` explicitly states "standard markdown" and "GitHub-compatible" as the rationale
 - [x] The rewritten convention is ≤120 lines
-- [x] `governance/conventions/formatting/linking.md` opening paragraph states the rationale as "standard markdown + GitHub compatibility" with no Obsidian cross-compat framing
-- [x] `governance/conventions/formatting/linking.md` retains all GitHub-compatible link rules (`.md` extension, relative paths, descriptive link text, kebab-case anchor slugs, wiki-link rejection on GitHub-rendering grounds)
-- [x] `governance/conventions/README.md` index entry for file-naming reflects the new scope
+- [x] `repo-governance/conventions/formatting/linking.md` opening paragraph states the rationale as "standard markdown + GitHub compatibility" with no Obsidian cross-compat framing
+- [x] `repo-governance/conventions/formatting/linking.md` retains all GitHub-compatible link rules (`.md` extension, relative paths, descriptive link text, kebab-case anchor slugs, wiki-link rejection on GitHub-rendering grounds)
+- [x] `repo-governance/conventions/README.md` index entry for file-naming reflects the new scope
 
 ### Obsidian scrub success
 
 - [x] `ripgrep -i obsidian` over tracked files returns zero matches outside `plans/done/`, this plan folder (`plans/in-progress/2026-04-11__remove-obsidian-compat/`), and other explicitly allowed historical files
-- [x] `governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
-- [x] `governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
+- [x] `repo-governance/conventions/writing/conventions.md` no longer requires "TAB indentation for Obsidian compatibility"
+- [x] `repo-governance/workflows/meta/workflow-identifier.md` no longer cites Obsidian YAML-parser quirks as the reason for quoting
 - [x] `.claude/skills/docs-validating-links/SKILL.md` no longer flags Obsidian wiki links as an error class
 
 ### rhino-cli removal success
@@ -307,7 +307,7 @@ After editing `.claude/` agents and skills, run `npm run sync:claude-to-opencode
 
 ### Alternative 4 (SELECTED): Delete vault, rename files to plain kebab-case, rewrite convention
 
-- **Pros**: Removes the motivating constraint and its downstream artifacts in one coherent change. Aligns `docs/` with how `governance/` already names files. Simplifies future agent and human authoring.
+- **Pros**: Removes the motivating constraint and its downstream artifacts in one coherent change. Aligns `docs/` with how `repo-governance/` already names files. Simplifies future agent and human authoring.
 - **Cons**: ~304 file renames; large single diff.
 - **Decision**: **SELECTED** — addresses the root cause and leaves the repo in a consistent state.
 
@@ -349,8 +349,8 @@ This plan uses the multi-file layout:
 
 ## References
 
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) — the target of the rewrite
-- [Plans Organization](../../../governance/conventions/structure/plans.md) — structure for this plan
-- [Linking Convention](../../../governance/conventions/formatting/linking.md) — target of Obsidian-reference removal
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) — the target of the rewrite
+- [Plans Organization](../../../repo-governance/conventions/structure/plans.md) — structure for this plan
+- [Linking Convention](../../../repo-governance/conventions/formatting/linking.md) — target of Obsidian-reference removal
 - [docs-validating-links Skill](../../../.claude/skills/docs-validating-links/SKILL.md) — target of wiki-link rule removal
-- [Prior plan: Move Rules to Root](../../done/2026-01-06__move-rules-to-root/README.md) — historical precedent; its Problem Statement cited "Obsidian constraints" as motivation for separating `governance/` from `docs/`; this plan finishes the job
+- [Prior plan: Move Rules to Root](../../done/2026-02-01__move-rules-to-root/README.md) — historical precedent; its Problem Statement cited "Obsidian constraints" as motivation for separating `repo-governance/` from `docs/`; this plan finishes the job

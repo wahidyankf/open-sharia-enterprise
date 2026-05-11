@@ -491,8 +491,8 @@ end
 
 This standard implements the following governance principles:
 
-- **[Simplicity Over Complexity](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Use message passing instead of complex shared state mechanisms
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Explicit timeouts, concurrency limits, and error handling
+- **[Simplicity Over Complexity](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: Use message passing instead of complex shared state mechanisms
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: Explicit timeouts, concurrency limits, and error handling
 
 ## Common Violations
 

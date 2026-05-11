@@ -136,7 +136,7 @@ stmt.setString(1, userId);
 ### Java Comprehensive Documentation
 
 - [Java README](../../../docs/explanation/software-engineering/programming-languages/java/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)
 
 ---
 

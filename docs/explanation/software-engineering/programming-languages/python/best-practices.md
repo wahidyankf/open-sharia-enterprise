@@ -59,7 +59,7 @@ Python best practices establish coding standards ensuring consistency, maintaina
 
 ## Alignment with Software Engineering Principles
 
-Python development follows the the software engineering principles from `governance/principles/software-engineering/`:
+Python development follows the the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
@@ -477,7 +477,7 @@ class ZakatCalculator:
 
 **Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 10,000 SAR wealth with 5,000 SAR nisab - always get 250 SAR (2.5%). Scholars and users can independently verify calculations match Shariah requirements without database access or API keys.
 
-**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+**See Also**: [Pure Functions Principle](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ### 5. Reproducibility First
 
@@ -548,7 +548,7 @@ pytest  # Latest version changes over time
 
 **Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Exact dependency pinning prevents silent behavior changes.
 
-**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See Also**: [Reproducibility Principle](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

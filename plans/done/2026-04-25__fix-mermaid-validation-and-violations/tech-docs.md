@@ -231,7 +231,7 @@ Must return zero lines before committing each batch.
 
 ### Target File
 
-`governance/conventions/formatting/diagrams.md`
+`repo-governance/conventions/formatting/diagrams.md`
 
 ### Changes (via `repo-rules-maker`)
 

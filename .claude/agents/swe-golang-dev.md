@@ -130,7 +130,7 @@ func (ScopeFull) isScope() {}; func (ScopeFull) Code() string { return "full" };
 3. **[Go In the Field](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
 4. **[Go Release Highlights](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC default, self-referential generics, errors.AsType)
 
-**See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -182,12 +182,12 @@ All Go code MUST follow the platform coding standards organized into two categor
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow
-- [Code Quality Standards](../../governance/development/quality/code.md) - Quality gates
-- [BDD Spec-to-Test Mapping](../../governance/development/infra/bdd-spec-test-mapping.md) - CLI command naming convention, Gherkin specs, integration tests
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Code Quality Standards](../../repo-governance/development/quality/code.md) - Quality gates
+- [BDD Spec-to-Test Mapping](../../repo-governance/development/infra/bdd-spec-test-mapping.md) - CLI command naming convention, Gherkin specs, integration tests
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -196,12 +196,12 @@ reason, implement the minimum code to pass, then refactor. For Go projects the r
 usually unit (Go `testing` + Godog), integration (Godog `//go:build integration` + real filesystem),
 property (gopter), or manual verification when TDD-shaped. Gherkin scenarios from `prd.md` are the
 natural source of first failing step implementations. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

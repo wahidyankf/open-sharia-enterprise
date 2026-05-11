@@ -1,5 +1,5 @@
 ---
-description: Surfaces candidates for adoption FROM the downstream `ose-primer` template INTO `ose-public`. Reads the classifier in `governance/conventions/structure/ose-primer-sync.md`, inspects both repositories via the shared `repo-syncing-with-ose-primer` skill, and writes a dry-run findings report grouped by direction (`adopt`, `bidirectional`) and significance (`high`, `medium`, `low`). Runs in dry-run mode only — this agent never writes to `ose-public` files outside `generated-reports/` and never touches the primer clone.
+description: Surfaces candidates for adoption FROM the downstream `ose-primer` template INTO `ose-public`. Reads the classifier in `repo-governance/conventions/structure/ose-primer-sync.md`, inspects both repositories via the shared `repo-syncing-with-ose-primer` skill, and writes a dry-run findings report grouped by direction (`adopt`, `bidirectional`) and significance (`high`, `medium`, `low`). Runs in dry-run mode only — this agent never writes to `ose-public` files outside `generated-reports/` and never touches the primer clone.
 model: opencode-go/minimax-m2.7
 tools:
   bash: true
@@ -36,7 +36,7 @@ Inspect the downstream `ose-primer` repository and identify changes that should 
 ## Responsibilities
 
 1. **Pre-flight**: confirm `$OSE_PRIMER_CLONE` is set, the clone is on `main` and clean, and `fetch --prune` completes. Abort if any precondition fails.
-2. **Classifier parse**: locate the classifier table in `governance/conventions/structure/ose-primer-sync.md`, parse its rows, and load the intentional-zero-match whitelist. Follow the procedure in `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md`.
+2. **Classifier parse**: locate the classifier table in `repo-governance/conventions/structure/ose-primer-sync.md`, parse its rows, and load the intentional-zero-match whitelist. Follow the procedure in `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md`.
 3. **Diff inspection**: for every path classified `adopt` or `bidirectional`, compare the primer version against the `ose-public` version. Apply the classifier's transform to the primer content before diffing.
 4. **Noise suppression**: drop trailing-whitespace, EOL, frontmatter-timestamp-only diffs. Drop `.gitignore`-covered paths. Drop ephemeral artifacts.
 5. **Significance bucketing**: classify each surviving finding as `high`, `medium`, or `low` per the shared skill's definition.
@@ -74,7 +74,7 @@ The agent consumes the `repo-syncing-with-ose-primer` skill for classifier parsi
 
 ## Related Documents
 
-- [ose-primer sync convention](../../governance/conventions/structure/ose-primer-sync.md) — classifier + safety invariants.
+- [ose-primer sync convention](../../repo-governance/conventions/structure/ose-primer-sync.md) — classifier + safety invariants.
 - Shared skill `repo-syncing-with-ose-primer` (at `.claude/skills/repo-syncing-with-ose-primer/SKILL.md`) — classifier parsing, transforms, report schema.
-- [Sync execution workflow](../../governance/workflows/repo/repo-ose-primer-sync-execution.md) — orchestrator invoking this agent.
+- [Sync execution workflow](../../repo-governance/workflows/repo/repo-ose-primer-sync-execution.md) — orchestrator invoking this agent.
 - Propagation maker `repo-ose-primer-propagation-maker` (at `.claude/agents/repo-ose-primer-propagation-maker.md`) — counterpart agent handling the reverse direction.

@@ -22,7 +22,7 @@ created: 2026-01-25
 
 This document establishes the separation between:
 
-- **Governance conventions** (governance/conventions/) - Cross-language, repository-wide rules
+- **Governance conventions** (repo-governance/conventions/) - Cross-language, repository-wide rules
 - **Software design documentation** (docs/explanation/software-engineering/) - Language-specific, framework-specific, architecture-specific guidance
 
 ## Authoritative Sources
@@ -115,7 +115,7 @@ Frameworks covered:
 
 Software design documentation in `docs/explanation/software-engineering/` contains **repository-specific style guides**, NOT educational content. Educational content lives in AyoKoding.
 
-**See**: [Programming Language Documentation Separation Convention](../../../governance/conventions/structure/programming-language-docs-separation.md) for complete separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for complete separation rules.
 
 **Critical Rule**: docs/explanation/ content **MUST NOT duplicate** AyoKoding educational content. Style guides focus exclusively on OSE Platform-specific conventions.
 
@@ -174,7 +174,7 @@ When writing code or making architectural decisions:
 2. **Apply framework patterns** from docs/explanation/software-engineering/platform-web/[framework]/
 3. **Use architecture models** from docs/explanation/software-engineering/architecture/
 4. **Apply development practices** from docs/explanation/software-engineering/development/
-5. **Comply with repository conventions** from governance/conventions/
+5. **Comply with repository conventions** from repo-governance/conventions/
 
 Skills available for quick reference:
 
@@ -197,12 +197,12 @@ The `repo-rules-checker` agent validates:
 
 This document implements/respects the following core principles:
 
-- **[Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By establishing clear separation between governance conventions and software design documentation, this document makes it explicit where to find authoritative guidance. No guessing whether standards live in governance/ or docs/explanation/software-engineering/ - the boundary is defined.
+- **[Explicit Over Implicit](../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By establishing clear separation between governance conventions and software design documentation, this document makes it explicit where to find authoritative guidance. No guessing whether standards live in repo-governance/ or docs/explanation/software-engineering/ - the boundary is defined.
 
-- **[Documentation First](../../../governance/principles/content/documentation-first.md)**: By creating a clear reference structure pointing to authoritative software design documentation, this document ensures documentation exists and is discoverable. AI agents and developers have explicit paths to language-specific standards, architecture patterns, and framework guidance.
+- **[Documentation First](../../../repo-governance/principles/content/documentation-first.md)**: By creating a clear reference structure pointing to authoritative software design documentation, this document ensures documentation exists and is discoverable. AI agents and developers have explicit paths to language-specific standards, architecture patterns, and framework guidance.
 
 ## Related Documentation
 
 - **[Programming Languages Overview](./programming-languages/README.md)** - Language comparison and selection
 - **[Architecture Overview](./architecture/README.md)** - Architecture patterns
-- **[Functional Programming Principles](../../../governance/development/pattern/functional-programming.md)** - Cross-language FP guidance
+- **[Functional Programming Principles](../../../repo-governance/development/pattern/functional-programming.md)** - Cross-language FP guidance

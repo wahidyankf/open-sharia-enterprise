@@ -62,7 +62,7 @@ forcing everything into the suggested single commit.
 - [x] **ENV.2** Converge the full polyglot toolchain (required for Go / rhino-cli
       build): `npm run doctor -- --fix`. The `postinstall` hook runs `doctor || true`
       and silently tolerates drift — explicit `doctor --fix` is mandatory here.
-      See [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md). - Date: 2026-05-02 - Status: done — 19/19 tools OK, nothing to fix - Files: none
+      See [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md). - Date: 2026-05-02 - Status: done — 19/19 tools OK, nothing to fix - Files: none
 - [x] **ENV.3** Verify existing tests pass before making any changes:
       `nx run rhino-cli:test:unit`. All tests must be green before Phase 1 begins. - Date: 2026-05-02 - Status: done — all packages green (cmd, agents, docs, doctor,
       envbackup, fileutil, git, mermaid, naming, speccoverage, testcoverage) - Files: none
@@ -291,10 +291,10 @@ duplication of skills.
       `.claude/skills/README.md`; per Iron Rule 3 also bulk-fixed
       residual references in
       `.claude/skills/agent-developing-agents/SKILL.md`,
-      `governance/development/agents/ai-agents.md`,
-      `governance/conventions/formatting/emoji.md`,
-      `governance/conventions/writing/web-research-delegation.md`,
-      `governance/workflows/repo/repo-rules-quality-gate.md`,
+      `repo-governance/development/agents/ai-agents.md`,
+      `repo-governance/conventions/formatting/emoji.md`,
+      `repo-governance/conventions/writing/web-research-delegation.md`,
+      `repo-governance/workflows/repo/repo-rules-quality-gate.md`,
       `docs/how-to/create-new-skill.md`,
       `apps/rhino-cli/cmd/docs_validate_links.go` (skip-paths),
       `apps/rhino-cli/internal/git/runner.go` (skip-paths),
@@ -303,7 +303,7 @@ duplication of skills.
       intentionally describe the policy (correct). - Files: CLAUDE.md, AGENTS.md, .claude/skills/README.md,
       .claude/skills/agent-developing-agents/SKILL.md,
       .claude/skills/plan-writing-gherkin-criteria/SKILL.md,
-      governance/\* (4 files), docs/how-to/create-new-skill.md,
+      repo-governance/\* (4 files), docs/how-to/create-new-skill.md,
       apps/rhino-cli/cmd/docs_validate_links.go,
       apps/rhino-cli/internal/git/runner.go,
       apps/rhino-cli/README.md

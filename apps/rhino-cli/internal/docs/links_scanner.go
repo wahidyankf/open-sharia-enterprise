@@ -75,7 +75,7 @@ func getStagedMarkdownFiles(repoRoot string) ([]string, error) {
 
 // getAllMarkdownFiles returns all markdown files in core directories.
 func getAllMarkdownFiles(repoRoot string) ([]string, error) {
-	return fileutil.WalkMarkdownDirs(repoRoot, []string{"governance", "docs", ".claude"})
+	return fileutil.WalkMarkdownDirs(repoRoot, []string{"repo-governance", "docs", ".claude"})
 }
 
 // ExtractLinks extracts markdown links from a file with line numbers.

@@ -500,7 +500,7 @@ Execute phases in order. Each phase produces a working, committable state.
 ### Update Governance Docs
 
 - [x] Grep for `platform:hugo` references to oseplatform-web -- updated nx-targets.md
-- [x] Grep for Hugo-specific oseplatform-web references in governance/ -- many exist, key files updated
+- [x] Grep for Hugo-specific oseplatform-web references in repo-governance/ -- many exist, key files updated
 - [x] Check if `swe-hugo-developer` agent is still needed — no platform:hugo projects, but kept for hugo-commons lib
 - [x] Check if `libs/hugo-commons` is still needed (used by oseplatform-cli -- yes, keep)
 

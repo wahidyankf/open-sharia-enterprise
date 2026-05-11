@@ -3,7 +3,7 @@
 ## Commit Strategy
 
 Commit after each phase using
-[Conventional Commits](../../../governance/development/workflow/commit-messages.md) format.
+[Conventional Commits](../../../repo-governance/development/workflow/commit-messages.md) format.
 One commit per phase keeps the history readable and makes individual phases easy to revert.
 
 All commits go directly to `main` (Trunk Based Development — no feature branches needed for

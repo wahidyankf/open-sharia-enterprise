@@ -100,14 +100,14 @@ Go + Gin reimplementation of the demo backend REST API — a functional twin of
 
 ## Files to Update
 
-| File                                         | Change                                                              |
-| -------------------------------------------- | ------------------------------------------------------------------- |
-| `CLAUDE.md`                                  | Add a-demo-be-golang-gin to Current Apps list, add Go coverage info |
-| `README.md`                                  | Add a-demo-be-golang-gin badge and description in demo apps section |
-| `specs/apps/a-demo/be/README.md`             | Add Go/Gin row to Implementations table                             |
-| `apps/a-demo-be-e2e/project.json`            | Add `a-demo-be-golang-gin` to `implicitDependencies`                |
-| `.github/workflows/main-ci.yml`              | Add coverage upload step for `apps/a-demo-be-golang-gin/cover.out`  |
-| `governance/development/infra/nx-targets.md` | Add `a-demo-be-golang-gin` to Current Project Tags table            |
+| File                                              | Change                                                              |
+| ------------------------------------------------- | ------------------------------------------------------------------- |
+| `CLAUDE.md`                                       | Add a-demo-be-golang-gin to Current Apps list, add Go coverage info |
+| `README.md`                                       | Add a-demo-be-golang-gin badge and description in demo apps section |
+| `specs/apps/a-demo/be/README.md`                  | Add Go/Gin row to Implementations table                             |
+| `apps/a-demo-be-e2e/project.json`                 | Add `a-demo-be-golang-gin` to `implicitDependencies`                |
+| `.github/workflows/main-ci.yml`                   | Add coverage upload step for `apps/a-demo-be-golang-gin/cover.out`  |
+| `repo-governance/development/infra/nx-targets.md` | Add `a-demo-be-golang-gin` to Current Project Tags table            |
 
 ## See Also
 

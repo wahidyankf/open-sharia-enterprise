@@ -485,13 +485,13 @@ int x = 10;  // This line declares a variable named x and assigns it the integer
 
 ## References
 
-**Primary Convention**: [By Example Tutorial Convention](../../../governance/conventions/tutorials/by-example.md)
+**Primary Convention**: [By Example Tutorial Convention](../../../repo-governance/conventions/tutorials/by-example.md)
 
 **Related Conventions**:
 
-- [Programming Language Tutorial Structure](../../../governance/conventions/tutorials/programming-language-structure.md) - Dual-path organization
-- [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md) - Universal content architecture
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Code annotation standards for ayokoding-web
+- [Programming Language Tutorial Structure](../../../repo-governance/conventions/tutorials/programming-language-structure.md) - Dual-path organization
+- [Programming Language Content Standard](../../../repo-governance/conventions/tutorials/programming-language-content.md) - Universal content architecture
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Code annotation standards for ayokoding-web
 
 **Related Skills**:
 

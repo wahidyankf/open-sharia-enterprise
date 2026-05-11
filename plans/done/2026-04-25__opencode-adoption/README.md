@@ -398,12 +398,12 @@ And repository MCP servers connect successfully
 
 These documents define our project's governance and should inform AGENTS.md content:
 
-- [Repository Architecture: Six-Layer Hierarchy](../../../governance/repository-governance-architecture.md) - Complete governance architecture
-- [Vision: Open Sharia Enterprise](../../../governance/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
-- [Core Principles Index](../../../governance/principles/README.md) - 10 foundational values
-- [Conventions Index](../../../governance/conventions/README.md) - 24 documentation standards
-- [Development Index](../../governance/development/README.md) - 15 software practices
-- [Workflows Index](../../../governance/workflows/README.md) - Multi-step orchestrated processes
+- [Repository Architecture: Six-Layer Hierarchy](../../../repo-governance/repository-governance-architecture.md) - Complete governance architecture
+- [Vision: Open Sharia Enterprise](../../../repo-governance/vision/open-sharia-enterprise.md) - WHY we exist
+- [Core Principles Index](../../../repo-governance/principles/README.md) - 10 foundational values
+- [Conventions Index](../../../repo-governance/conventions/README.md) - 24 documentation standards
+- [Development Index](../../../repo-governance/development/README.md) - 15 software practices
+- [Workflows Index](../../../repo-governance/workflows/README.md) - Multi-step orchestrated processes
 
 ### OpenCode Documentation
 
@@ -411,7 +411,7 @@ These documents define our project's governance and should inform AGENTS.md cont
 - [OpenCode Agents](https://opencode.ai/docs/agents/) - Agent definition format
 - [OpenCode Skills](https://opencode.ai/docs/skills/) - Skills specification
 - [OpenCode MCP](https://opencode.ai/docs/mcp-servers/) - MCP server setup
-- [OpenCode Rules](https://opencode.ai/docs/governance/) - AGENTS.md format
+- [OpenCode Rules](https://opencode.ai/docs/repo-governance/) - AGENTS.md format
 
 ### Claude Code Documentation
 

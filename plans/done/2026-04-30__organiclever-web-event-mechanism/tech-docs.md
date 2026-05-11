@@ -12,7 +12,7 @@ flowchart LR
 ```
 
 `/app/page.tsx` is **provisional** for this gear-up. The bigger plan
-([`2026-04-25__organiclever-web-app/`](../2026-04-25__organiclever-web-app/README.md))
+([`2026-04-25__organiclever-web-app/`](../2026-05-02__organiclever-web-app/README.md))
 explicitly replaces it with `<AppRoot />` (TabBar / SideNav / hash routing).
 This plan deliberately does NOT introduce hash routing — the page is a single
 mount with one screen.
@@ -1149,7 +1149,7 @@ export function formatRelativeTime(iso: string, now?: Date): string;
 | Unit — page render  | `@effect/vitest` + RTL + PGlite in-memory (Layer-swapped) | `journal-page.unit.test.tsx` covers empty state, batch submit, validation errors, edit flow, delete-confirm flow, bump reorder, error-banner narrowing                                                                                                                               |
 | FE E2E — round-trip | Playwright-BDD                                            | `apps/organiclever-web-e2e/steps/journal-mechanism.steps.ts` consumes `journal-mechanism.feature` (all batch / edit / delete / bump scenarios)                                                                                                                                       |
 
-**Three test levels per the [three-level testing standard](../../../governance/development/quality/three-level-testing-standard.md)**:
+**Three test levels per the [three-level testing standard](../../../repo-governance/development/quality/three-level-testing-standard.md)**:
 
 #### `test:unit` — fast, isolated
 

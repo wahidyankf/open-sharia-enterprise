@@ -52,20 +52,20 @@
 
 ## Phase 4: Governance Docs
 
-- [x] Update `governance/vision/README.md`: license reference → `Open source (MIT)`
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/vision/README.md -->
-- [x] Rewrite `governance/conventions/structure/licensing.md` for MIT-only model
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/conventions/structure/licensing.md -->
-- [x] Update `governance/conventions/writing/oss-documentation.md`: remove FSL badge/template
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/conventions/writing/oss-documentation.md (3 edits) -->
-- [x] Update `governance/conventions/writing/readme-quality.md`: update YAML example
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/conventions/writing/readme-quality.md -->
-- [x] Update `governance/principles/general/simplicity-over-complexity.md`: update YAML example
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/principles/general/simplicity-over-complexity.md -->
-- [x] Update `governance/conventions/README.md`: remove or update any FSL-1.1-MIT references
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/conventions/README.md -->
-- [x] Update `governance/conventions/structure/README.md`: remove or update any FSL-1.1-MIT references
-<!-- Date: 2026-04-22 | Status: done | Files Changed: governance/conventions/structure/README.md -->
+- [x] Update `repo-governance/vision/README.md`: license reference → `Open source (MIT)`
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/vision/README.md -->
+- [x] Rewrite `repo-governance/conventions/structure/licensing.md` for MIT-only model
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/conventions/structure/licensing.md -->
+- [x] Update `repo-governance/conventions/writing/oss-documentation.md`: remove FSL badge/template
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/conventions/writing/oss-documentation.md (3 edits) -->
+- [x] Update `repo-governance/conventions/writing/readme-quality.md`: update YAML example
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/conventions/writing/readme-quality.md -->
+- [x] Update `repo-governance/principles/general/simplicity-over-complexity.md`: update YAML example
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/principles/general/simplicity-over-complexity.md -->
+- [x] Update `repo-governance/conventions/README.md`: remove or update any FSL-1.1-MIT references
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/conventions/README.md -->
+- [x] Update `repo-governance/conventions/structure/README.md`: remove or update any FSL-1.1-MIT references
+<!-- Date: 2026-04-22 | Status: done | Files Changed: repo-governance/conventions/structure/README.md -->
 
 ## Phase 5: Other Docs
 
@@ -141,7 +141,7 @@
     `git add LICENSE apps/ayokoding-cli/LICENSE apps/ayokoding-web/LICENSE apps/organiclever-be/LICENSE apps/organiclever-web/LICENSE apps/oseplatform-cli/LICENSE apps/oseplatform-web/LICENSE apps/wahidyankf-web/LICENSE specs/LICENSE`
     `git add package.json package-lock.json`
     `git add LICENSING-NOTICE.md CLAUDE.md README.md`
-    `git add governance/ docs/ apps/oseplatform-web/content/`
+    `git add repo-governance/ docs/ apps/oseplatform-web/content/`
 <!-- Date: 2026-04-22 | Status: done | Notes: 39 files staged -->
 - [x] Commit: `chore(license): revert to MIT from FSL-1.1-MIT`
 <!-- Date: 2026-04-22 | Status: done | Notes: commit 029cfef1e -->

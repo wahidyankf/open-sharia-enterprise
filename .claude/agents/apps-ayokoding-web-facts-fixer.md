@@ -45,7 +45,7 @@ You validate facts-checker findings before applying fixes.
 ## Web Research Delegation
 
 This agent has `WebSearch` and `WebFetch` tools but invokes **Exception 2 (fixer re-validation)**
-of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Fixer agents re-validate single audit findings in the same context as the fix they apply, so
 delegating to [`web-research-maker`](./web-research-maker.md) would break the re-validation-plus-fix
 coupling. The agent therefore uses in-context `WebSearch`/`WebFetch` for single-finding
@@ -124,4 +124,4 @@ After every edit (Edit tool or Bash sed/awk):
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md)
+- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md)

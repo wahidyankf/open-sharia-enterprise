@@ -36,9 +36,9 @@ Create By Example tutorial content in `apps/ayokoding-web/` following ayokoding-
 
 **CRITICAL - Read these first**:
 
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example type definition
-- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary authority for by-example standards
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example type definition
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/by-example.md) - Primary authority for by-example standards
 
 ## When to Use This Agent
 
@@ -156,8 +156,8 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example definition
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example definition
 
 **Related Agents:**
 

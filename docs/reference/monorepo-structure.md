@@ -393,7 +393,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 }
 ```
 
-**Target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md)**: Use `test:quick` for the mandatory pre-push gate, `test:unit` for isolated unit tests. Avoid generic `test` targets.
+**Target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)**: Use `test:quick` for the mandatory pre-push gate, `test:unit` for isolated unit tests. Avoid generic `test` targets.
 
 **Fields**:
 
@@ -603,7 +603,7 @@ All build outputs are gitignored.
 
 ## Related Documentation
 
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
+- [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
 - [How to Add New App](../how-to/add-new-app.md)
 - [How to Add New Library](../how-to/add-new-lib.md)
 - [How to Run Nx Commands](../how-to/run-nx-commands.md)

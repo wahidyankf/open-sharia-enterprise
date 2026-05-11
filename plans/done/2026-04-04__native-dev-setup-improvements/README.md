@@ -63,12 +63,12 @@ compatible with **git worktrees** (used heavily for AI agent isolation).
 
 **Governance**:
 
-- `governance/development/workflow/native-first-toolchain.md` — architectural decision record
+- `repo-governance/development/workflow/native-first-toolchain.md` — architectural decision record
   (why native package managers, not Terraform/Ansible/Docker Dev Containers)
 
 **Secondary**:
 
 - `package.json` — fix postinstall script
 - `Brewfile` (new) — declarative Homebrew dependencies
-- `governance/workflows/infra/development-environment-setup.md` — update to reference new commands
+- `repo-governance/workflows/infra/development-environment-setup.md` — update to reference new commands
 - `docs/how-to/hoto__setup-development-environment.md` — update setup guide

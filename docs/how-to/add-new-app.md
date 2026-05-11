@@ -325,9 +325,9 @@ specs/apps/[domain]/
 
 - Include `{projectRoot}/generated-contracts/**/*`
 - Include `{workspaceRoot}/specs/apps/[domain]/be/gherkin/**/*.feature` for backends
-- Include language-specific source file globs (see `governance/development/infra/nx-targets.md` for per-language patterns)
+- Include language-specific source file globs (see `repo-governance/development/infra/nx-targets.md` for per-language patterns)
 
-**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names, caching rules, and per-language input patterns.
+**See**: [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for canonical target names, caching rules, and per-language input patterns.
 
 ## Common Issues
 
@@ -355,6 +355,6 @@ specs/apps/[domain]/
 - [Add New Library](./add-new-lib.md)
 - [Run Nx Commands](./run-nx-commands.md)
 - [Monorepo Structure Reference](../reference/monorepo-structure.md)
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md)
-- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md)
+- [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)
+- [Three-Level Testing Standard](../../repo-governance/development/quality/three-level-testing-standard.md)
 - [Specs README](../../specs/README.md) - Standard folder layout for Gherkin specs and contracts

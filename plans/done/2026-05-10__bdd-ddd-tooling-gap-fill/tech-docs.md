@@ -221,7 +221,7 @@ Three approaches considered; chosen approach: **delete entirely**.
 - Move to `_stub_/` (rejected): adds dead code that future maintainers must distinguish from live code.
 - Hide via cobra `Hidden: true` (rejected): the `Run` function still exists and prints "Not yet implemented" — same false-functionality.
 
-Governance docs that reference the drift commands (`governance/conventions/structure/specs-directory-structure.md` line 211 area) get a one-line update: "Drift detection commands are not currently implemented; track via the [tooling backlog]" with link to a backlog-item heading in the same governance doc.
+Governance docs that reference the drift commands (`repo-governance/conventions/structure/specs-directory-structure.md` line 211 area) get a one-line update: "Drift detection commands are not currently implemented; track via the [tooling backlog]" with link to a backlog-item heading in the same governance doc.
 
 ## Fix #8 — Severity reconciliation
 
@@ -535,7 +535,7 @@ npx nx affected -t typecheck lint test:quick spec-coverage validate:specs-adopti
 
 ### Out-of-scope: `docs validate-links`
 
-`rhino-cli` also ships `docs validate-links`, which scans the entire repo's markdown (including `governance/`, `docs/`, `apps/*/README.md`). It is currently ungated. This plan does not wire it because:
+`rhino-cli` also ships `docs validate-links`, which scans the entire repo's markdown (including `repo-governance/`, `docs/`, `apps/*/README.md`). It is currently ungated. This plan does not wire it because:
 
 - The `docs *` command tree is broader than the specs/BDD/DDD enforcement scope this plan owns.
 - A separate plan covering validator unification with `lint:md` and `markdown-link-check` is the natural home for that work.

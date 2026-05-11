@@ -25,7 +25,7 @@ created: 2026-02-08
 
 **This document is OSE Platform-specific**, not a Playwright tutorial.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 

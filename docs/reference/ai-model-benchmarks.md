@@ -18,7 +18,7 @@ Canonical benchmark reference for all AI models used in this project. Last updat
 
 This document provides cited benchmark scores for every model used in `.claude/agents/` and
 `.opencode/agents/`. Its purpose is to make tier assignments in
-[AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md) **auditable and
+[AI Agent Model Selection Convention](../../repo-governance/development/agents/model-selection.md) **auditable and
 defensible** — anyone reading a tier decision can follow the citation chain from claim to
 primary source here.
 
@@ -553,7 +553,7 @@ Check the live model list in the OpenCode TUI or at [opencode.ai/docs/go](https:
 
 ## Model Selection Mapping
 
-Cross-reference with [AI Agent Model Selection Convention](../../governance/development/agents/model-selection.md)
+Cross-reference with [AI Agent Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
 tier assignments. The Claude-to-OpenCode mapping reflects what `npm run sync:claude-to-opencode` produces
 for the current agent frontmatter aliases.
 

@@ -85,7 +85,7 @@ tools:
 
 ## Changes Required
 
-### Change 1: `governance/development/agents/model-selection.md` _(applied 2026-04-19)_
+### Change 1: `repo-governance/development/agents/model-selection.md` _(applied 2026-04-19)_
 
 **Section updates applied**:
 
@@ -118,7 +118,7 @@ Target line in "Format Differences":
 
 # AFTER
 
-- **Models**: Claude Code uses `sonnet`/`opus`/`haiku` (or omits for legacy compat); OpenCode uses `zai-coding-plan/glm-5.1` (opus/sonnet/omitted) and `zai-coding-plan/glm-5-turbo` (haiku). See [model-selection.md](./governance/development/agents/model-selection.md) for full tier mapping.
+- **Models**: Claude Code uses `sonnet`/`opus`/`haiku` (or omits for legacy compat); OpenCode uses `zai-coding-plan/glm-5.1` (opus/sonnet/omitted) and `zai-coding-plan/glm-5-turbo` (haiku). See [model-selection.md](./repo-governance/development/agents/model-selection.md) for full tier mapping.
 ```
 
 ### Change 3: OpenCode re-sync

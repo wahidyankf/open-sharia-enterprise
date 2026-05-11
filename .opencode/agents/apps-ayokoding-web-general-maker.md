@@ -58,4 +58,4 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [Programming Language Content](../../governance/conventions/tutorials/programming-language-content.md)
+- [Programming Language Content](../../repo-governance/conventions/tutorials/programming-language-content.md)

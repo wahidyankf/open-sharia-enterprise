@@ -155,7 +155,7 @@ Reads the registry to locate every `glossary:` file, then validates each:
 
 ## Related
 
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/oseplatform-web/](../../../apps/oseplatform-web/README.md) — Next.js implementation
 - [apps/oseplatform-cli/](../../../apps/oseplatform-cli/README.md) — CLI tool (content link validation)

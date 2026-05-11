@@ -47,7 +47,7 @@ This plan executes inside the `ose-public` subrepo worktree:
   ```
 
 - [ ] Converge the full polyglot toolchain (required — `postinstall` runs `doctor || true` and
-      silently tolerates drift; see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)):
+      silently tolerates drift; see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)):
 
   ```bash
   npm run doctor -- --fix
@@ -477,7 +477,7 @@ This plan executes inside the `ose-public` subrepo worktree:
 
 ### 3.5 Update model-selection.md
 
-- [x] Updated `governance/development/agents/model-selection.md` with vendor-neutral
+- [x] Updated `repo-governance/development/agents/model-selection.md` with vendor-neutral
       language ("primary binding" / "secondary binding") and the new OpenCode Go
       model mapping table
 
@@ -607,9 +607,9 @@ the followup so OpenCode loads cleanly across all 70 mirrored agent files.
       and OpenCode (Maker=primary, Checker=success, Fixer=warning,
       Implementor=secondary), pointing at `ClaudeToOpenCodeColor` as the single
       source of truth. Landed in commit `b84127177` —
-      `governance/development/agents/ai-agents.md` (new "Dual-Mode Color
+      `repo-governance/development/agents/ai-agents.md` (new "Dual-Mode Color
       Translation" subsection + 8-color `Values` enumeration),
-      `governance/development/pattern/maker-checker-fixer.md` (cross-link),
+      `repo-governance/development/pattern/maker-checker-fixer.md` (cross-link),
       and `CLAUDE.md` (Format Differences bullet).
 
 ### 5.5 Commit Phase 5

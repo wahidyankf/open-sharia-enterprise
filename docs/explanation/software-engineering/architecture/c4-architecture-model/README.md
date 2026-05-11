@@ -65,17 +65,17 @@ OSE Platform C4 diagrams MUST use the following tools and conventions:
 
 **What this documentation does NOT cover**: C4 fundamentals, basic diagram types, generic C4 notation (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 C4 Architecture diagrams in OSE Platform enforce foundational software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make system boundaries explicit through clear diagram levels, label all relationships with protocols and data formats, show technology choices on all containers, and define explicit integration patterns between bounded contexts
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make system boundaries explicit through clear diagram levels, label all relationships with protocols and data formats, show technology choices on all containers, and define explicit integration patterns between bounded contexts
 
-2. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST use diagram-as-code (Mermaid) for version control, standardized notation across all diagrams, WCAG-compliant color palette consistently, and automated diagram generation from architecture decision records
+2. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST use diagram-as-code (Mermaid) for version control, standardized notation across all diagrams, WCAG-compliant color palette consistently, and automated diagram generation from architecture decision records
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate diagram generation from code when possible, validate diagram accessibility in CI/CD, use consistent Mermaid templates, and regenerate diagrams from architectural changes
+3. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate diagram generation from code when possible, validate diagram accessibility in CI/CD, use consistent Mermaid templates, and regenerate diagrams from architectural changes
 
 ## OSE Platform C4 Standards (Authoritative)
 
@@ -253,15 +253,15 @@ graph TD
 ## Related Documentation
 
 - **[DDD Standards](../domain-driven-design-ddd/README.md)** - Domain-Driven Design alignment
-- **[Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
+- **[Diagram Convention](../../../../../repo-governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
 - **[Nx Workspace Structure](../../../../reference/monorepo-structure.md)** - Monorepo organization
 
 ## Principles Implemented/Respected
 
 This documentation implements/respects the following core principles:
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By requiring explicit labels on all relationships, clear technology choices on containers, and visible integration patterns, C4 diagrams eliminate hidden assumptions in architecture documentation.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By requiring explicit labels on all relationships, clear technology choices on containers, and visible integration patterns, C4 diagrams eliminate hidden assumptions in architecture documentation.
 
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: By mandating diagram-as-code with Mermaid and standardized WCAG color palette, C4 diagrams can be consistently reproduced across teams and time periods.
+- **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: By mandating diagram-as-code with Mermaid and standardized WCAG color palette, C4 diagrams can be consistently reproduced across teams and time periods.
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By using Mermaid syntax and automated validation tools, C4 diagram quality is enforced through CI/CD rather than manual review processes.
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By using Mermaid syntax and automated validation tools, C4 diagram quality is enforced through CI/CD rather than manual review processes.

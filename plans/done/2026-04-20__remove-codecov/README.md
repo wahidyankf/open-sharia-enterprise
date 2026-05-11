@@ -209,10 +209,10 @@ Subtitle (line 17-18) will be fully rewritten to:
 | `docs/reference/code-coverage.md`                                                              | 8, 17–18, 29–30, 37, 97–168, 170–176          | Remove `codecov` frontmatter tag; rewrite subtitle fully; update line 29-30 algorithm sentence (remove "Codecov's line-based"); remove line 37 Codecov badge reference; delete "Local vs Codecov Differences" section; remove Codecov steps from CI Integration; remove Codecov Flags subsection; remove Codecov troubleshooting items |
 | `docs/reference/project-dependency-graph.md`                                                   | 216                                           | Reword link description — replace "Coverage measurement, tools, and Codecov integration" with "Coverage measurement and tools"                                                                                                                                                                                                         |
 | `docs/reference/README.md`                                                                     | 28                                            | Reword description — replace "How coverage is measured locally (rhino-cli) and on Codecov, per-project details, exclusion patterns, and troubleshooting" with "How coverage is measured locally (rhino-cli), per-project thresholds, exclusion patterns, and troubleshooting"                                                          |
-| `governance/development/infra/github-actions-workflow-naming.md`                               | 88                                            | Remove `\| Codecov Upload \| codecov-upload.yml \|` row                                                                                                                                                                                                                                                                                |
-| `governance/development/infra/ci-conventions.md`                                               | 418                                           | Remove "Add a coverage upload step to `codecov-upload.yml`" from new-project checklist (one reference only)                                                                                                                                                                                                                            |
-| `governance/conventions/structure/ose-primer-sync.md`                                          | 148                                           | Remove `codecov.yml` bidirectional entry row                                                                                                                                                                                                                                                                                           |
-| `governance/development/quality/three-level-testing-standard.md`                               | 173, 265, 446                                 | Line 173: remove/replace `codecov-upload.yml` CRON reference; line 265: remove `codecov-upload.yml` workflow comparison table row; line 446: update code-coverage.md link description — remove "local vs Codecov differences" text                                                                                                     |
+| `repo-governance/development/infra/github-actions-workflow-naming.md`                          | 88                                            | Remove `\| Codecov Upload \| codecov-upload.yml \|` row                                                                                                                                                                                                                                                                                |
+| `repo-governance/development/infra/ci-conventions.md`                                          | 418                                           | Remove "Add a coverage upload step to `codecov-upload.yml`" from new-project checklist (one reference only)                                                                                                                                                                                                                            |
+| `repo-governance/conventions/structure/ose-primer-sync.md`                                     | 148                                           | Remove `codecov.yml` bidirectional entry row                                                                                                                                                                                                                                                                                           |
+| `repo-governance/development/quality/three-level-testing-standard.md`                          | 173, 265, 446                                 | Line 173: remove/replace `codecov-upload.yml` CRON reference; line 265: remove `codecov-upload.yml` workflow comparison table row; line 446: update code-coverage.md link description — remove "local vs Codecov differences" text                                                                                                     |
 | `docs/explanation/software-engineering/programming-languages/elixir/code-quality-standards.md` | 799–800                                       | Remove `codecov/codecov-action@v3` step (name + uses lines) from the CI YAML example; preceding `run:` step (Dialyzer) remains intact                                                                                                                                                                                                  |
 | `docs/explanation/software-engineering/programming-languages/golang/build-configuration.md`    | 729–730                                       | Remove `codecov/codecov-action@v4` step (name + uses lines) from the CI YAML example; preceding `run:` step (go test) remains intact                                                                                                                                                                                                   |
 
@@ -297,7 +297,7 @@ and must not be edited.
 <!-- Date: 2026-04-20 | Status: done | Notes: completed, audit warnings only -->
 - [x] Converge the polyglot toolchain: `npm run doctor -- --fix`
     (Required — the `postinstall` hook runs `doctor || true` and silently tolerates
-    drift. See `governance/development/workflow/worktree-setup.md` for rationale.)
+    drift. See `repo-governance/development/workflow/worktree-setup.md` for rationale.)
 <!-- Date: 2026-04-20 | Status: done | Notes: 19/19 tools OK, 0 missing -->
 - [x] Verify existing markdown linting passes before making changes: `npm run lint:md`
 <!-- Date: 2026-04-20 | Status: done | Notes: 0 errors on 2157 files -->
@@ -453,18 +453,18 @@ occurrences with "standard line-based algorithm" (or equivalent accurate phrase)
 
 ### Phase 5 — Update governance docs
 
-- [x] `governance/development/infra/github-actions-workflow-naming.md` — remove Codecov Upload table row
-<!-- Date: 2026-04-20 | Status: done | Files: governance/development/infra/github-actions-workflow-naming.md -->
-- [x] `governance/development/infra/ci-conventions.md` — remove new-project checklist item at line 418 referencing `codecov-upload.yml` (one reference only)
-<!-- Date: 2026-04-20 | Status: done | Files: governance/development/infra/ci-conventions.md -->
-- [x] `governance/conventions/structure/ose-primer-sync.md` — remove `codecov.yml` table row
-<!-- Date: 2026-04-20 | Status: done | Files: governance/conventions/structure/ose-primer-sync.md -->
-- [x] `governance/development/quality/three-level-testing-standard.md` line 173 — remove/replace the `codecov-upload.yml` CRON reference
-<!-- Date: 2026-04-20 | Status: done | Files: governance/development/quality/three-level-testing-standard.md -->
-- [x] `governance/development/quality/three-level-testing-standard.md` line 265 — remove the `codecov-upload.yml` workflow comparison table row
-<!-- Date: 2026-04-20 | Status: done | Files: governance/development/quality/three-level-testing-standard.md -->
-- [x] `governance/development/quality/three-level-testing-standard.md` line 446 — update code-coverage.md link description
-<!-- Date: 2026-04-20 | Status: done | Files: governance/development/quality/three-level-testing-standard.md -->
+- [x] `repo-governance/development/infra/github-actions-workflow-naming.md` — remove Codecov Upload table row
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/development/infra/github-actions-workflow-naming.md -->
+- [x] `repo-governance/development/infra/ci-conventions.md` — remove new-project checklist item at line 418 referencing `codecov-upload.yml` (one reference only)
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/development/infra/ci-conventions.md -->
+- [x] `repo-governance/conventions/structure/ose-primer-sync.md` — remove `codecov.yml` table row
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/conventions/structure/ose-primer-sync.md -->
+- [x] `repo-governance/development/quality/three-level-testing-standard.md` line 173 — remove/replace the `codecov-upload.yml` CRON reference
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/development/quality/three-level-testing-standard.md -->
+- [x] `repo-governance/development/quality/three-level-testing-standard.md` line 265 — remove the `codecov-upload.yml` workflow comparison table row
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/development/quality/three-level-testing-standard.md -->
+- [x] `repo-governance/development/quality/three-level-testing-standard.md` line 446 — update code-coverage.md link description
+<!-- Date: 2026-04-20 | Status: done | Files: repo-governance/development/quality/three-level-testing-standard.md -->
 
 ### Phase 5a — Update specs C4 diagrams
 

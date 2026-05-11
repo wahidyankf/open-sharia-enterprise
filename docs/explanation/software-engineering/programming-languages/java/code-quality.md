@@ -28,7 +28,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -445,19 +445,19 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spotless auto-formats code on every compilation (no manual formatting)
    - Error Prone catches bugs at compile time (before code review)
    - NullAway prevents NullPointerException at compile time (not runtime)
    - JaCoCo enforces ≥85% coverage automatically (build fails if not met)
    - Pre-commit hooks format code before commit (zero-friction quality)
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Explicit `@Nullable` annotations make nullability contracts clear
    - Explicit SpotBugs severity thresholds (`CVSS >= 7.0` fails build)
    - Explicit quality rules in `ose_checks.xml` (no hidden style expectations)
 
-3. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Same Spotless version across all developer machines (enforced in parent POM)
    - Error Prone runs identically in CI/CD and local builds
    - Quality tool versions pinned in Maven configuration

@@ -32,7 +32,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -47,7 +47,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 **Criticality Assessment**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
-**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md).
+**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md).
 
 ## What You Check
 
@@ -86,7 +86,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 3. Mathematical Notation Validation
 
-Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md):
+Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../repo-governance/conventions/formatting/mathematical-notation.md):
 
 **Critical checks:**
 
@@ -144,11 +144,11 @@ $$
 - Correct: `- Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../governance/conventions/formatting/indentation.md).
+See [Indentation Convention](../../repo-governance/conventions/formatting/indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../governance/conventions/formatting/linking.md):
+**Two-tier formatting** per [Linking Convention](../../repo-governance/conventions/formatting/linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -163,7 +163,7 @@ See [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../governance/conventions/formatting/indentation.md):
+Per [Indentation Convention](../../repo-governance/conventions/formatting/indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -174,7 +174,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 8. Nested Code Fence Validation
 
-**Correct nesting** per [Nested Code Fence Convention](../../governance/conventions/formatting/nested-code-fences.md):
+**Correct nesting** per [Nested Code Fence Convention](../../repo-governance/conventions/formatting/nested-code-fences.md):
 
 - Outer fence: 4 backticks
 - Inner fence: 3 backticks
@@ -182,7 +182,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 9. Documentation Completeness Validation
 
-Per [Documentation First](../../governance/principles/content/documentation-first.md) principle:
+Per [Documentation First](../../repo-governance/principles/content/documentation-first.md) principle:
 
 **Check:**
 
@@ -215,14 +215,14 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 - Focus: Factual correctness and content accuracy
 - Checks: Technical claims, command syntax, contradictions, examples
 - Tools: WebSearch and WebFetch for verification
-- **Research delegation**: Per the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
+- **Research delegation**: Per the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md),
   invoke the [`web-research-maker`](./web-research-maker.md) subagent for multi-page research
   (threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim). Use in-context
   `WebSearch`/`WebFetch` only for single-shot verification against a known authoritative URL.
 
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../repo-governance/development/infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
@@ -581,18 +581,18 @@ Some sites block automation:
 
 **Agent Conventions:**
 
-- `governance/development/agents/ai-agents.md` - AI agents convention
+- `repo-governance/development/agents/ai-agents.md` - AI agents convention
 
 **Documentation Conventions:**
 
-- `governance/conventions/writing/factual-validation.md` - Factual validation methodology
-- `governance/conventions/writing/quality.md` - Content quality standards
-- `governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
-- `governance/conventions/formatting/nested-code-fences.md` - Code fence nesting
-- `governance/conventions/formatting/indentation.md` - Indentation standards
-- `governance/conventions/formatting/linking.md` - Rule reference formatting
-- `governance/development/infra/temporary-files.md` - Report file generation
-- `governance/development/quality/criticality-levels.md` - Criticality system
+- `repo-governance/conventions/writing/factual-validation.md` - Factual validation methodology
+- `repo-governance/conventions/writing/quality.md` - Content quality standards
+- `repo-governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
+- `repo-governance/conventions/formatting/nested-code-fences.md` - Code fence nesting
+- `repo-governance/conventions/formatting/indentation.md` - Indentation standards
+- `repo-governance/conventions/formatting/linking.md` - Rule reference formatting
+- `repo-governance/development/infra/temporary-files.md` - Report file generation
+- `repo-governance/development/quality/criticality-levels.md` - Criticality system
 
 **Related Agents:**
 

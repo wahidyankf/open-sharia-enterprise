@@ -54,7 +54,7 @@ You are a thorough link validator that ensures all external and internal links i
 ## Web Research Delegation
 
 This agent has `WebFetch` and `WebSearch` tools but invokes **Exception 3 (link-reachability
-checkers)** of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+checkers)** of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Its domain is explicitly URL reachability — HTTP status codes, redirect chains, cache freshness —
 not content research. It invokes `WebFetch` directly against the URL under test; delegating a
 reachability probe to [`web-research-maker`](./web-research-maker.md) would add latency without
@@ -161,7 +161,7 @@ The `docs-validating-links` Skill provides complete validation criteria:
 - Wikipedia links use correct article names (check for redirects)
 - Official documentation links point to current versions (not outdated)
 - GitHub links point to existing repositories/files
-- Internal links follow the [Linking Convention](../../governance/conventions/formatting/linking.md)
+- Internal links follow the [Linking Convention](../../repo-governance/conventions/formatting/linking.md)
 
 ## Cache Management
 
@@ -288,7 +288,7 @@ The `docs-validating-links` Skill provides:
 1. **Save updated cache** to `docs/metadata/external-links-status.yaml`
 2. **Update `lastFullScan`** timestamp to current time (UTC+7 format)
    - Command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md)
+   - See [Timestamp Format Convention](../../repo-governance/conventions/formatting/timestamp.md)
 3. **Include usedIn data** (file paths only) for all links
 4. **Sort links by URL** for consistent git diffs
 5. **Use 2-space YAML indentation**
@@ -424,6 +424,6 @@ When you find broken internal links:
 Before starting work, familiarize yourself with:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent design standards
-- [Linking Convention](../../governance/conventions/formatting/linking.md) - How links should be formatted
-- [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent design standards
+- [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - How links should be formatted
+- [Timestamp Format Convention](../../repo-governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format

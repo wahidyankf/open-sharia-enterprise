@@ -110,11 +110,11 @@ Documentation evolved organically without clear separation between:
 - OSE linting and formatting (Checkstyle, Spotless, Error Prone)
 - OSE-specific patterns (hexagonal architecture, event sourcing)
 - **Alignment with software engineering principles**:
-  - Automation Over Manual (governance/principles/software-engineering/automation-over-manual.md)
-  - Explicit Over Implicit (governance/principles/software-engineering/explicit-over-implicit.md)
-  - Immutability (governance/principles/software-engineering/immutability.md)
-  - Pure Functions (governance/principles/software-engineering/pure-functions.md)
-  - Reproducibility (governance/principles/software-engineering/reproducibility.md)
+  - Automation Over Manual (repo-governance/principles/software-engineering/automation-over-manual.md)
+  - Explicit Over Implicit (repo-governance/principles/software-engineering/explicit-over-implicit.md)
+  - Immutability (repo-governance/principles/software-engineering/immutability.md)
+  - Pure Functions (repo-governance/principles/software-engineering/pure-functions.md)
+  - Reproducibility (repo-governance/principles/software-engineering/reproducibility.md)
 
 **Quality Assurance**:
 
@@ -264,7 +264,7 @@ Documentation evolved organically without clear separation between:
 5. Consolidate overlapping style guide content
 6. Add cross-references to ayokoding-web for learning
 7. Apply MUST/SHOULD/MAY directive keywords
-8. Validate against governance/principles/
+8. Validate against repo-governance/principles/
 
 **Agents**:
 
@@ -276,7 +276,7 @@ Documentation evolved organically without clear separation between:
 
 - Refined docs/explanation/software-engineering/programming-languages/java/ structure
 - Style guide README.md with authoritative reference marker
-- Cross-references to ayokoding-web and governance/
+- Cross-references to ayokoding-web and repo-governance/
 
 ### Phase 4: Quality Assurance & Validation
 
@@ -586,7 +586,7 @@ Documentation evolved organically without clear separation between:
   - Document framework stack (Spring Boot 4, Jakarta EE 11)
   - Add clear MUST/SHOULD/MAY directives
   - Link to ayokoding-web for learning
-  - Link to governance/principles/ for foundations
+  - Link to repo-governance/principles/ for foundations
   - Agent: `docs-maker`
   - **Completed**: Transformed from 1,585 to ~270 lines with authoritative positioning, MUST/SHOULD/MAY directives, ayokoding-web learning links, and framework stack documentation
 
@@ -659,22 +659,22 @@ Documentation evolved organically without clear separation between:
   - **Completed**: Added comprehensive "Learning Resources" sections to all 12 files with specific topic links to ayokoding-web tutorials
 
 - [x] **3.9: Align with software engineering principles**
-  - **Automation Over Manual** (governance/principles/software-engineering/automation-over-manual.md):
+  - **Automation Over Manual** (repo-governance/principles/software-engineering/automation-over-manual.md):
     - Document automated linting (Spotless, Error Prone)
     - Automated testing (JUnit 5, TestContainers)
     - Automated dependency management (Maven Enforcer)
-  - **Explicit Over Implicit** (governance/principles/software-engineering/explicit-over-implicit.md):
+  - **Explicit Over Implicit** (repo-governance/principles/software-engineering/explicit-over-implicit.md):
     - Explicit configuration over magic
     - Explicit dependencies over hidden coupling
     - Explicit error handling over silent failures
-  - **Immutability** (governance/principles/software-engineering/immutability.md):
+  - **Immutability** (repo-governance/principles/software-engineering/immutability.md):
     - Prefer records over mutable POJOs
     - Final fields by default
     - Immutable collections (List.of, Set.of)
-  - **Pure Functions** (governance/principles/software-engineering/pure-functions.md):
+  - **Pure Functions** (repo-governance/principles/software-engineering/pure-functions.md):
     - Functional core, imperative shell
     - Pure domain logic with side effects at boundaries
-  - **Reproducibility** (governance/principles/software-engineering/reproducibility.md):
+  - **Reproducibility** (repo-governance/principles/software-engineering/reproducibility.md):
     - Maven wrapper for build reproducibility
     - Version pinning in parent POM
     - .sdkmanrc for Java version pinning
@@ -710,7 +710,7 @@ Documentation evolved organically without clear separation between:
 
 - [x] **3.13: Validate cross-references**
   - Check all links to ayokoding-web (by-example/, in-practice/, release-highlights/)
-  - Verify links to governance/principles/software-engineering/
+  - Verify links to repo-governance/principles/software-engineering/
   - Validate internal style guide links
   - Ensure "Learn more" sections point to ayokoding-web
   - Agent: `docs-link-general-checker`
@@ -734,7 +734,7 @@ Documentation evolved organically without clear separation between:
 - OSE-specific content consolidated: [~3,070 lines created] ✅
 - Software engineering principles referenced: [5/5 principles in all files] ✅
 - Cross-references to ayokoding-web: [98 links verified] ✅
-- Cross-references to governance/: [20 principle links verified] ✅
+- Cross-references to repo-governance/: [20 principle links verified] ✅
 - Java 25 LTS alignment: [Verified with minor issues] ✅
 - Validation: [4/4 validation tasks passed] ✅
   - Principles alignment: PASS
@@ -754,14 +754,14 @@ Documentation evolved organically without clear separation between:
 **Principles Alignment** (BLOCKING):
 
 - ✅ All 5 software engineering principles referenced
-- ✅ Each principle linked to governance/principles/
+- ✅ Each principle linked to repo-governance/principles/
 - ✅ Principle-driven directives present (e.g., immutability → records)
 - ✅ No contradictions with principles
 
 **Cross-References** (BLOCKING):
 
 - ✅ All links to ayokoding-web tested (zero broken)
-- ✅ All links to governance/ tested (zero broken)
+- ✅ All links to repo-governance/ tested (zero broken)
 - ✅ "Learn more" sections point to ayokoding-web appropriately
 - ✅ Style guide assumes ayokoding-web knowledge (no re-explanation)
 
@@ -824,8 +824,8 @@ Documentation evolved organically without clear separation between:
 - [x] **4.5: Validate all cross-references**
   - Test docs/explanation → ayokoding-web links (by-example/, in-practice/, release-highlights/)
   - Test ayokoding-web → docs/explanation links
-  - Test docs/explanation → governance/principles/software-engineering/ links
-  - Test docs/explanation → governance/conventions/ links
+  - Test docs/explanation → repo-governance/principles/software-engineering/ links
+  - Test docs/explanation → repo-governance/conventions/ links
   - Verify absolute paths in ayokoding-web (no .md extension)
   - Agent: `docs-link-general-checker`
   - **Completed**: 2026-02-03 - 98/98 links working (100% pass rate)
@@ -870,7 +870,7 @@ Documentation evolved organically without clear separation between:
   - Proper heading hierarchy
   - WCAG AA compliance
   - Links to ayokoding-web for learning
-  - Links to governance/principles/software-engineering/
+  - Links to repo-governance/principles/software-engineering/
   - Agent: `docs-checker`
   - **Completed**: 2026-02-03 - All 5 principles aligned, PASS
 
@@ -900,7 +900,7 @@ Documentation evolved organically without clear separation between:
 
 - [x] **4.13: Update related documentation**
   - Update CLAUDE.md if needed
-  - Update governance/conventions/ references
+  - Update repo-governance/conventions/ references
   - Update agent documentation
   - **Completed**: 2026-02-03 - No updates needed
 
@@ -1089,7 +1089,7 @@ Given content split across two locations
 When migration completes
 Then docs/explanation links to ayokoding-web for universal topics
   And ayokoding-web links to docs/explanation for OSE conventions
-  And governance/principles/ referenced appropriately
+  And repo-governance/principles/ referenced appropriately
   And all links validated by docs-link-general-checker
 ```
 
@@ -1180,7 +1180,7 @@ Then markdown passes Prettier and markdownlint checks
 | ----------------------------- | ------ | ----------------------------------------------------------------------- | ------------- | ------------------------------- | -------------------------------------------- |
 | Content loss during migration | High   | 1. Maintain categorization matrix<br>2. Validate each file<br>3. Git VC | plan-executor | Before each file deletion (2.x) | Line count comparison: source vs destination |
 | Broken cross-references       | Medium | 1. Use docs-link-general-checker<br>2. Systematic validation            | plan-executor | After Phase 2 and 3 complete    | Link checker returns non-zero broken links   |
-| Inconsistent style guide      | Medium | 1. MUST/SHOULD/MAY keywords<br>2. Reference governance/                 | docs-maker    | During Phase 3 execution        | docs-checker flags missing directives        |
+| Inconsistent style guide      | Medium | 1. MUST/SHOULD/MAY keywords<br>2. Reference repo-governance/            | docs-maker    | During Phase 3 execution        | docs-checker flags missing directives        |
 
 ### Medium Risks
 
@@ -1347,7 +1347,7 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
   - [ ] Immutability referenced (records, final fields, immutable collections)
   - [ ] Pure Functions referenced (functional core/imperative shell, domain logic)
   - [ ] Reproducibility referenced (Maven wrapper, version pinning, .sdkmanrc)
-  - [ ] All principles linked to governance/principles/software-engineering/
+  - [ ] All principles linked to repo-governance/principles/software-engineering/
 
 - [ ] **Style guide quality**
   - [ ] MUST/SHOULD/MAY directives used consistently
@@ -1381,8 +1381,8 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 - [ ] **Cross-reference completeness**
   - [ ] docs/explanation → ayokoding-web links tested (by-example/, in-practice/, release-highlights/)
   - [ ] ayokoding-web → docs/explanation links tested
-  - [ ] docs/explanation → governance/principles/ links tested
-  - [ ] docs/explanation → governance/conventions/ links tested
+  - [ ] docs/explanation → repo-governance/principles/ links tested
+  - [ ] docs/explanation → repo-governance/conventions/ links tested
   - [ ] All links validated by docs-link-general-checker (zero broken links)
 
 - [ ] **Navigation functionality**
@@ -1429,11 +1429,11 @@ cp plans/in-progress/2026-02-03__java-docs-solidification/backup/ex-soen-prla-ja
 
 ## Related Documentation
 
-- [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md)
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- [By-Example Tutorial Guide](../../../governance/conventions/tutorials/by-example.md)
-- [Markdown Quality Standards](../../../governance/development/quality/markdown.md)
-- [Documentation First Principle](../../../governance/principles/content/documentation-first.md)
+- [Diátaxis Framework](../../../repo-governance/conventions/structure/diataxis-framework.md)
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md)
+- [By-Example Tutorial Guide](../../../repo-governance/conventions/tutorials/by-example.md)
+- [Markdown Quality Standards](../../../repo-governance/development/quality/markdown.md)
+- [Documentation First Principle](../../../repo-governance/principles/content/documentation-first.md)
 
 ## Appendix A: File-by-File Analysis
 
@@ -1875,9 +1875,9 @@ apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/j
 3. **Quick Reference**
    - MUST/SHOULD/MAY directives index
    - Link to ayokoding-web for learning Java
-   - Link to governance/principles/ for foundations
+   - Link to repo-governance/principles/ for foundations
 4. **Related Documentation**
-   - Cross-references to governance/, ayokoding-web, other docs/
+   - Cross-references to repo-governance/, ayokoding-web, other docs/
 
 ### New Style Guide Files
 

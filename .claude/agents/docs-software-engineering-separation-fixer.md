@@ -72,13 +72,13 @@ Your primary job is to:
 
 **Criticality Levels**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
 
-**Confidence Levels**: See [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) for universal three-level system:
+**Confidence Levels**: See [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) for universal three-level system:
 
 - **HIGH_CONFIDENCE** → Apply fix automatically (objective, verifiable issues)
 - **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
 - **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Priority Execution**: See [Fixer Confidence Levels - Integration](../../governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
+**Priority Execution**: See [Fixer Confidence Levels - Integration](../../repo-governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
 
 ### Domain-Specific Confidence Examples
 
@@ -393,21 +393,21 @@ After every edit (Edit tool or Bash sed/awk):
 **Project Guidance**:
 
 - [AGENTS.md](../../AGENTS.md) - Primary project guidance
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure and conventions
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent structure and conventions
 
 **Domain Conventions**:
 
 - [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
-- [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Content Quality Standards](../../repo-governance/conventions/writing/quality.md) - Prerequisites section formatting
+- [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - Cross-reference link standards
 
 **Quality Standards**:
 
-- [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md) - Criticality classification
-- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - Criticality classification
+- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md) - Six-layer hierarchy
 
 **Related Agents**:
 
@@ -419,7 +419,7 @@ After every edit (Edit tool or Bash sed/awk):
 **Authoritative Sources**:
 
 - [Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md) - Prerequisite mappings table
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
 
 **Skills to Use**:
 
@@ -431,19 +431,19 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Repository Governance**:
 
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [File Naming Convention](../../governance/conventions/structure/file-naming.md) - Naming patterns
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [File Naming Convention](../../repo-governance/conventions/structure/file-naming.md) - Naming patterns
 
 **Content Quality**:
 
-- [Content Quality Standards](../../governance/conventions/writing/quality.md) - Prerequisites section formatting
-- [Linking Convention](../../governance/conventions/formatting/linking.md) - Cross-reference link standards
+- [Content Quality Standards](../../repo-governance/conventions/writing/quality.md) - Prerequisites section formatting
+- [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - Cross-reference link standards
 
 **Quality Standards**:
 
-- [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md) - Criticality classification
-- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - Criticality classification
+- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 ## Related Agents
 

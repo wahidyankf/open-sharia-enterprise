@@ -30,7 +30,7 @@ created: 2026-01-23
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply type safety in THIS codebase, not WHAT typespecs are.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 

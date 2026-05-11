@@ -14,15 +14,15 @@ Provision before execution (run from repo root):
 claude --worktree wahidyankf-web-ddd-and-specs-format
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
 ## Environment Setup
 
-- [x] Provision worktree: `claude --worktree wahidyankf-web-ddd-and-specs-format` (creates `worktrees/wahidyankf-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)).
+- [x] Provision worktree: `claude --worktree wahidyankf-web-ddd-and-specs-format` (creates `worktrees/wahidyankf-web-ddd-and-specs-format/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)).
   - Date: 2026-05-10 | Status: skipped | Files Changed: none | Executing in worktrees/scalable-humming-llama/ per user instruction
-- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+- [x] Initialize toolchain in the root worktree: `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)).
   - Date: 2026-05-10 | Status: done | Files Changed: none | npm install OK, 19/19 tools OK
 - [x] Verify existing tests pass before making changes: `nx run wahidyankf-web:test:quick`.
   - Date: 2026-05-10 | Status: done | Files Changed: none | 66 tests pass, 80.09% coverage
@@ -35,7 +35,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Date: 2026-05-10 | Status: done | Files Changed: tech-docs.md | Concrete move table locked: 8 git-mv files, 6 extracted presentation components, routing files stay in app/
 - [x] **0.2** Confirm `apps/wahidyankf-web-fe-e2e/` step files do not import directly from `apps/wahidyankf-web/src/components/` (they should query selectors, not import code). Record findings.
   - Date: 2026-05-10 | Status: done | Files Changed: none | 7 step files use selector queries only, no src imports found
-- [x] **0.3** Stash any in-flight work; create worktree `worktrees/wahidyankf-web-ddd/` per `governance/conventions/structure/worktree-path.md`.
+- [x] **0.3** Stash any in-flight work; create worktree `worktrees/wahidyankf-web-ddd/` per `repo-governance/conventions/structure/worktree-path.md`.
   - Date: 2026-05-10 | Status: skipped | Files Changed: none | Already executing inside worktrees/scalable-humming-llama/ per user instruction
 
 ---
@@ -252,9 +252,9 @@ For each BC, follow the same micro-cycle: skeleton → move → fix imports → 
   - Date: 2026-05-10 | Status: done | 4 thematic commits: docs(specs), refactor(src), feat(validators), chore(plan)
 - [x] **8.2** Push the worktree branch through whichever publish path applies (direct-to-main per Trunk Based Development is the default for `ose-public`; draft PR optional).
   - Date: 2026-05-10 | Status: done | Rebased onto origin/main; pushed worktree/scalable-humming-llama:main
-- [x] **8.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `governance/development/workflow/ci-monitoring.md`.
+- [x] **8.3** Wait for `main` CI green — specifically monitor the `CI` workflow at `https://github.com/wahidyankf/ose-public/actions` for the push commit. Per `repo-governance/development/workflow/ci-monitoring.md`.
   - Date: 2026-05-10 | Status: done | Run 25616084542 on SHA 77ad0771e: conclusion=success
-- [x] **8.4** Move this plan folder to `plans/done/YYYY-MM-DD__wahidyankf-web-ddd-and-specs-format/` (date prefix added at archival per `governance/conventions/structure/plans.md`).
+- [x] **8.4** Move this plan folder to `plans/done/YYYY-MM-DD__wahidyankf-web-ddd-and-specs-format/` (date prefix added at archival per `repo-governance/conventions/structure/plans.md`).
   - Date: 2026-05-10 | Status: done | git mv to plans/done/2026-05-10\_\_wahidyankf-web-ddd-and-specs-format/
 - [x] **8.5** Update `plans/in-progress/README.md` and `plans/done/README.md` indices.
   - Date: 2026-05-10 | Status: done | Removed from in-progress list; added to done/ with completion summary

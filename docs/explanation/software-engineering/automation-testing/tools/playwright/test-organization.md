@@ -25,7 +25,7 @@ created: 2026-02-08
 
 **This document is OSE Platform-specific**, not a Playwright tutorial. We define HOW to organize tests in THIS codebase, not WHAT Playwright test organization is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -37,7 +37,7 @@ This document defines **authoritative test organization standards** for Playwrig
 
 ## Software Engineering Principles
 
-These standards enforce the software engineering principles from `governance/principles/software-engineering/`:
+These standards enforce the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
@@ -102,7 +102,7 @@ test.describe("Zakat Calculation", () => {
 });
 ```
 
-**See**: [Automation Over Manual Principle](../../../../../../governance/principles/software-engineering/automation-over-manual.md)
+**See**: [Automation Over Manual Principle](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
 
 ### 2. Explicit Over Implicit
 
@@ -173,7 +173,7 @@ test.describe("Murabaha Contract Creation", () => {
 });
 ```
 
-**See**: [Explicit Over Implicit Principle](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+**See**: [Explicit Over Implicit Principle](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ### 3. Reproducibility First
 
@@ -254,7 +254,7 @@ test.describe('Zakat Payment Flow', () => {
 });
 ```
 
-**See**: [Reproducibility Principle](../../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Reproducibility Principle](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Test Organization Standards
 
@@ -827,9 +827,9 @@ test("calculates zakat for gold above nisab", async ({ page }) => {
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Reproducibility](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

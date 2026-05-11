@@ -118,7 +118,7 @@ const (
 	stepWorkflowsTreeAllConform               = `^a repository where every workflow filename ends with an allowed type suffix$`
 	stepWorkflowsTreeUnknownSuffix            = `^a repository with one workflow whose filename ends in an unknown suffix$`
 	stepWorkflowsTreeFrontmatterMismatch      = `^a repository with a workflow file whose frontmatter name differs from its filename$`
-	stepWorkflowsTreeMetaExempt               = `^a repository with a file under governance/workflows/meta/ whose name does not follow the type-suffix rule$`
+	stepWorkflowsTreeMetaExempt               = `^a repository with a file under repo-governance/workflows/meta/ whose name does not follow the type-suffix rule$`
 	stepDeveloperRunsWorkflowsValidateNaming  = `^the developer runs workflows validate-naming$`
 	stepOutputIdentifiesWorkflowUnknownSuffix = `^the output identifies the offending workflow file and its unknown suffix$`
 )

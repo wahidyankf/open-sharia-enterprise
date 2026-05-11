@@ -13,7 +13,7 @@
 
 ### W1: Governance & Documentation
 
-- [x] Create `governance/development/infra/ci-conventions.md` with sections:
+- [x] Create `repo-governance/development/infra/ci-conventions.md` with sections:
   - [x] Git hooks standard (pre-commit, commit-msg, pre-push)
   - [x] Nx target naming and caching rules (reference existing nx-targets.md)
   - [x] Three-level testing definitions (universal: unit/integration/e2e boundaries)
@@ -43,7 +43,7 @@
   - [x] Adding to PR quality gate detection
   - [x] Adding to codecov-upload.yml
   - [x] Nx tags configuration (type, platform, language, domain)
-- [x] Update `governance/development/quality/three-level-testing-standard.md`:
+- [x] Update `repo-governance/development/quality/three-level-testing-standard.md`:
   - [x] Align definitions with R0.2 (unit = mocked, integration = real dep + no network, e2e = full)
   - [x] Add coverage enforcement section (test:quick enforces at pre-push, PR, and CRON)
   - [x] Add coverage threshold rationale section
@@ -61,13 +61,13 @@
     - [x] Add explicit entry for `a-demo-fs-ts-nextjs` with 75% threshold (fullstack tier, distinct
           from the 70% frontend tier -- currently missing from CLAUDE.md coverage section)
     - [x] Verify `apps/a-demo-fs-ts-nextjs/project.json` enforces 75% (update from 70% if needed)
-  - [x] Update `governance/development/infra/nx-targets.md` (caching rules, 5-track CRON)
-  - [x] Update `governance/development/quality/code.md` (hook changes, formatting additions)
-  - [x] Update `governance/development/quality/markdown.md` (if hook behavior changes)
-  - [x] Update `governance/development/workflow/commit-messages.md` (if commit-msg hook changes)
+  - [x] Update `repo-governance/development/infra/nx-targets.md` (caching rules, 5-track CRON)
+  - [x] Update `repo-governance/development/quality/code.md` (hook changes, formatting additions)
+  - [x] Update `repo-governance/development/quality/markdown.md` (if hook behavior changes)
+  - [x] Update `repo-governance/development/workflow/commit-messages.md` (if commit-msg hook changes)
   - [x] Update `docs/how-to/hoto__add-new-app.md` (Docker Compose, specs folder, CI checklist)
   - [x] Update `docs/reference/re__monorepo-structure.md` (infra/dev/ structure, specs standard)
-  - [x] Update `governance/conventions/structure/plans.md` (if any plan-related conventions change)
+  - [x] Update `repo-governance/conventions/structure/plans.md` (if any plan-related conventions change)
   - [x] Update `specs/README.md` (new folder standard: contracts, c4, {role}/gherkin/)
   - [x] Update `apps/README.md` (naming pattern: {service-name}-{part})
   - [x] Update relevant app-level README.md files (test level changes, Docker dev instructions)
@@ -336,7 +336,7 @@ This must be fixed so all test levels verify behavioral specs.
   - [x] If no tool satisfies all criteria, document the constraint and propose alternative
         (e.g., custom Gherkin parser, or defer Gherkin-at-unit-level for FE apps)
   - [x] **If deferral is selected**: document as a known gap in
-        `governance/development/quality/three-level-testing-standard.md` under a "Known Gaps"
+        `repo-governance/development/quality/three-level-testing-standard.md` under a "Known Gaps"
         section. Skip the remaining W11 steps below. The spec-coverage W10 target for FE projects
         should still be added (using whatever step definitions exist). Owner: plan executor. No
         additional approval needed for deferral -- this is a pragmatic decision based on tool
@@ -576,7 +576,7 @@ ongoing enforcement layer — without it, standards decay as new projects are ad
 in parallel with W14 (governance propagation) since it only depends on the conventions doc.
 
 - [x] Create `ci-standards` inline skill (`.claude/skills/ci-standards/SKILL.md`):
-  - [x] Reference CI conventions governance doc (`governance/development/infra/ci-conventions.md`)
+  - [x] Reference CI conventions governance doc (`repo-governance/development/infra/ci-conventions.md`)
   - [x] Include: mandatory Nx targets per app type, coverage thresholds, test level requirements,
         Docker setup requirements, pairing rules, Gherkin consumption mandate, env variable standard
   - [x] Serve `swe-*-developer` agents so they set up new projects correctly from the start
@@ -598,7 +598,7 @@ in parallel with W14 (governance propagation) since it only depends on the conve
   - [x] Applies validated fixes from ci-checker audit reports
   - [x] Re-validates findings before applying (prevents false positives)
   - [x] Skills: `ci-standards`, `repo-applying-maker-checker-fixer`
-- [x] Create `ci-quality-gate` workflow (`governance/workflows/ci/ci-quality-gate.md`):
+- [x] Create `ci-quality-gate` workflow (`repo-governance/workflows/ci/ci-quality-gate.md`):
   - [x] Orchestrates ci-checker → ci-fixer iteratively (same pattern as plan-quality-gate)
   - [x] Terminates on double-zero findings or max-iterations
   - [x] Scope: all projects, specific app type, or single project

@@ -101,7 +101,7 @@ Next.js apps (`apps/ayokoding-web/`, `apps/oseplatform-web/`,
   `.opencode/agent/` mirror via `npm run sync:claude-to-opencode`)
 - New production branch `prod-wahidyankf-web` for Vercel deploy
 - Tag-vocabulary extension: add `domain:wahidyankf` to
-  `governance/development/infra/nx-targets.md` controlled vocabulary
+  `repo-governance/development/infra/nx-targets.md` controlled vocabulary
 - `docs/`, `apps/README.md`, top-level `CLAUDE.md` and `README.md` updates
   that list the new app and its commands
 
@@ -213,8 +213,8 @@ to the local dev server — NEVER to a refetched live URL.
   [`apps/oseplatform-web/`](../../../apps/oseplatform-web/README.md),
   [`apps/organiclever-web/`](../../../apps/organiclever-web/README.md)
 - [How to Add a New App](../../../docs/how-to/add-new-app.md)
-- [Nx Target Standards](../../../governance/development/infra/nx-targets.md)
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+- [Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md)
+- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)

@@ -142,9 +142,9 @@ See [`README.md`](./README.md) for overview, [`brd.md`](./brd.md) for business i
   > Date: 2026-04-20 | Status: done | Files Changed: docs/reference/system-architecture/applications.md
 - [x] Verify whether `"JSON data files for content"` still applies to the landing-page-only surface; remove it from the Features list if not applicable
   > Date: 2026-04-20 | Status: done | Notes: removed — landing page is a static React component with no JSON data files
-- [x] Grep `docs/` and `governance/` for BFF references: `grep -rn "BFF" docs/ governance/`
-  > Date: 2026-04-20 | Status: done | Notes: 0 matches in docs/ and governance/
-- [x] Grep `docs/` and `governance/` for `/api/auth` references: `grep -rn "/api/auth" docs/ governance/`
+- [x] Grep `docs/` and `repo-governance/` for BFF references: `grep -rn "BFF" docs/ repo-governance/`
+  > Date: 2026-04-20 | Status: done | Notes: 0 matches in docs/ and repo-governance/
+- [x] Grep `docs/` and `repo-governance/` for `/api/auth` references: `grep -rn "/api/auth" docs/ repo-governance/`
   > Date: 2026-04-20 | Status: done | Notes: 14 matches, all in generic educational explanation docs (security.md, testing.md, etc.) — none are organiclever-web-specific BFF references
 - [x] Update or remove any BFF or `/api/auth` references found
   > Date: 2026-04-20 | Status: N/A — no organiclever-web-specific references found; all matches are generic educational examples

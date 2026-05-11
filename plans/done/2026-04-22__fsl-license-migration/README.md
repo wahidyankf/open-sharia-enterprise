@@ -36,16 +36,16 @@ the change date.
 
 ### Documentation Referencing Project License
 
-| File                                                          | Current Reference                           | Change                                        |
-| ------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------- |
-| `README.md`                                                   | MIT License section                         | Update to describe FSL-1.1-MIT                |
-| `CLAUDE.md` (x2)                                              | `License: MIT`                              | Change to `License: FSL-1.1-MIT`              |
-| `governance/vision/README.md`                                 | `Open source (MIT)`                         | `Source-available (FSL-1.1-MIT)` + conversion |
-| `apps/oseplatform-web/content/about.md` (x2)                  | `MIT License` in license section            | Update to describe FSL-1.1-MIT                |
-| `governance/conventions/writing/oss-documentation.md`         | MIT badge, template, "Current Project: MIT" | Update to FSL-1.1-MIT                         |
-| `governance/conventions/writing/readme-quality.md`            | MIT in good/bad example text                | Update examples to FSL-1.1-MIT                |
-| `governance/principles/general/simplicity-over-complexity.md` | `license: MIT` in YAML example              | Change to `license: FSL-1.1-MIT`              |
-| `docs/how-to/hoto__add-new-lib.md`                            | `MIT` in new-lib README template            | Change to `FSL-1.1-MIT`                       |
+| File                                                               | Current Reference                           | Change                                        |
+| ------------------------------------------------------------------ | ------------------------------------------- | --------------------------------------------- |
+| `README.md`                                                        | MIT License section                         | Update to describe FSL-1.1-MIT                |
+| `CLAUDE.md` (x2)                                                   | `License: MIT`                              | Change to `License: FSL-1.1-MIT`              |
+| `repo-governance/vision/README.md`                                 | `Open source (MIT)`                         | `Source-available (FSL-1.1-MIT)` + conversion |
+| `apps/oseplatform-web/content/about.md` (x2)                       | `MIT License` in license section            | Update to describe FSL-1.1-MIT                |
+| `repo-governance/conventions/writing/oss-documentation.md`         | MIT badge, template, "Current Project: MIT" | Update to FSL-1.1-MIT                         |
+| `repo-governance/conventions/writing/readme-quality.md`            | MIT in good/bad example text                | Update examples to FSL-1.1-MIT                |
+| `repo-governance/principles/general/simplicity-over-complexity.md` | `license: MIT` in YAML example              | Change to `license: FSL-1.1-MIT`              |
+| `docs/how-to/hoto__add-new-lib.md`                                 | `MIT` in new-lib README template            | Change to `FSL-1.1-MIT`                       |
 
 ### External Platform Attributes
 
@@ -72,9 +72,9 @@ license). They remain unchanged:
 - `libs/elixir-cabbage/README.md` — upstream fork license
 - `apps/a-demo-be-fsharp-giraffe/README.md` — DbUp dependency license
 - `apps/a-demo-be-csharp-aspnetcore/README.md` — EF Core dependency license
-- `governance/development/pattern/database-audit-trail.md` — dependency license table
+- `repo-governance/development/pattern/database-audit-trail.md` — dependency license table
 - `docs/explanation/software-engineering/licensing/*.md` — licensing docs (reference MIT generically)
-- `governance/conventions/writing/oss-documentation.md` (generic license lists like "MIT, Apache 2.0, GPL")
+- `repo-governance/conventions/writing/oss-documentation.md` (generic license lists like "MIT, Apache 2.0, GPL")
 
 ### Files NOT Changed (Historical Records)
 
@@ -94,7 +94,7 @@ time and are not updated retroactively:
 
 ### Why FSL-1.1-MIT
 
-The project's [vision](../../../governance/vision/open-sharia-enterprise.md) aims to democratize
+The project's [vision](../../../repo-governance/vision/open-sharia-enterprise.md) aims to democratize
 Shariah-compliant enterprise systems. FSL-1.1-MIT is the **middle path** between fully proprietary
 and fully permissive licensing:
 

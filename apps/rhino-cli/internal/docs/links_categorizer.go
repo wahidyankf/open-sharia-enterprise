@@ -6,13 +6,13 @@ import "strings"
 func CategorizeBrokenLink(link string) string {
 	// Check patterns in order (most specific first)
 
-	// workflows/ paths (but not governance/workflows/)
-	if strings.Contains(link, "workflows/") && !strings.Contains(link, "governance/workflows/") {
+	// workflows/ paths (but not repo-governance/workflows/)
+	if strings.Contains(link, "workflows/") && !strings.Contains(link, "repo-governance/workflows/") {
 		return "workflows/ paths"
 	}
 
-	// vision/ paths (but not governance/vision/)
-	if strings.Contains(link, "vision/") && !strings.Contains(link, "governance/vision/") {
+	// vision/ paths (but not repo-governance/vision/)
+	if strings.Contains(link, "vision/") && !strings.Contains(link, "repo-governance/vision/") {
 		return "vision/ paths"
 	}
 

@@ -28,11 +28,11 @@ flowchart LR
 
 Step 8b walks `docs/**/*.md` excluding the subtrees already covered by Step 1 (`docs/explanation/README.md`) and Step 8 (`docs/explanation/software-engineering/`). For each remaining markdown file, apply the universal rules-governance dimension:
 
-1. **File naming compliance** — kebab-case `[a-z0-9-]+\.md` per [File Naming Convention](../../../governance/conventions/structure/file-naming.md). Exception: `README.md`.
+1. **File naming compliance** — kebab-case `[a-z0-9-]+\.md` per [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md). Exception: `README.md`.
 2. **Frontmatter compliance** — required fields present per the file's category (Diátaxis: tutorial / how-to / reference / explanation).
-3. **No-Date-Metadata violation** — detect `updated:` frontmatter, `**Last Updated**` footer, standalone inline body date annotations per [No Manual Date Metadata Convention](../../../governance/conventions/structure/no-date-metadata.md).
+3. **No-Date-Metadata violation** — detect `updated:` frontmatter, `**Last Updated**` footer, standalone inline body date annotations per [No Manual Date Metadata Convention](../../../repo-governance/conventions/structure/no-date-metadata.md).
 4. **Traceability sections** — explanation docs SHOULD have "Principles Implemented/Respected" or equivalent; reference docs SHOULD link to the governance source they reference.
-5. **Cross-reference integrity** — relative links to `governance/`, `apps/`, `libs/` must resolve on the current commit.
+5. **Cross-reference integrity** — relative links to `repo-governance/`, `apps/`, `libs/` must resolve on the current commit.
 
 ### Vendor-Binding Drift Detection (Headline)
 
@@ -79,7 +79,7 @@ Mechanical drift only on first iteration. Semantic drift (capability claims, beh
 
 ### D-4: Fixer auto-apply boundary
 
-**Decision**: auto-apply ONLY when (a) the fix is mechanically derivable (closest-match directory rename, missing required frontmatter field with a known default, broken cross-link with an unambiguous replacement) AND (b) the verification recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard) confirms the replacement. Otherwise classify MEDIUM. **Rationale**: replacing one fabrication with another fabrication is the single most damaging fixer behaviour; refuse-on-uncertainty per the convention.
+**Decision**: auto-apply ONLY when (a) the fix is mechanically derivable (closest-match directory rename, missing required frontmatter field with a known default, broken cross-link with an unambiguous replacement) AND (b) the verification recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard) confirms the replacement. Otherwise classify MEDIUM. **Rationale**: replacing one fabrication with another fabrication is the single most damaging fixer behaviour; refuse-on-uncertainty per the convention.
 
 ### D-5: No new convention or workflow file
 
@@ -87,13 +87,13 @@ Mechanical drift only on first iteration. Semantic drift (capability claims, beh
 
 ## File Impact
 
-| File                                                                   | Type | Change                                                                                                                       |
-| ---------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/agents/repo-rules-checker.md` [Repo-grounded]                 | EDIT | Insert new Step 8b "Cross-Documentation Rules Governance" after existing Step 8; add finding format for vendor-binding drift |
-| `.claude/agents/repo-rules-fixer.md` [Repo-grounded]                   | EDIT | Add fix recipes for the new finding categories; preserve existing recipes                                                    |
-| `.opencode/agents/repo-rules-checker.md` [Repo-grounded]               | SYNC | Auto-generated from `.claude/agents/repo-rules-checker.md` via `npm run sync:claude-to-opencode`                             |
-| `.opencode/agents/repo-rules-fixer.md` [Repo-grounded]                 | SYNC | Auto-generated from `.claude/agents/repo-rules-fixer.md` via `npm run sync:claude-to-opencode`                               |
-| `governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] | EDIT | Update Scope Clarification block to advertise full `docs/` coverage; remove the "Skips: rest of docs/" line                  |
+| File                                                                        | Type | Change                                                                                                                       |
+| --------------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/agents/repo-rules-checker.md` [Repo-grounded]                      | EDIT | Insert new Step 8b "Cross-Documentation Rules Governance" after existing Step 8; add finding format for vendor-binding drift |
+| `.claude/agents/repo-rules-fixer.md` [Repo-grounded]                        | EDIT | Add fix recipes for the new finding categories; preserve existing recipes                                                    |
+| `.opencode/agents/repo-rules-checker.md` [Repo-grounded]                    | SYNC | Auto-generated from `.claude/agents/repo-rules-checker.md` via `npm run sync:claude-to-opencode`                             |
+| `.opencode/agents/repo-rules-fixer.md` [Repo-grounded]                      | SYNC | Auto-generated from `.claude/agents/repo-rules-fixer.md` via `npm run sync:claude-to-opencode`                               |
+| `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded] | EDIT | Update Scope Clarification block to advertise full `docs/` coverage; remove the "Skips: rest of docs/" line                  |
 
 No new files. No deletions. No renames.
 

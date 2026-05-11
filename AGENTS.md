@@ -65,7 +65,7 @@ ose-public/
 │   ├── how-to/               # Problem-solving
 │   ├── reference/            # Technical reference
 │   └── explanation/          # Conceptual understanding
-├── governance/               # Governance documentation (vendor-neutral)
+├── repo-governance/               # Governance documentation (vendor-neutral)
 │   ├── conventions/          # Documentation standards
 │   ├── development/          # Development practices
 │   ├── principles/           # Core principles
@@ -132,9 +132,9 @@ npm run doctor -- --fix --dry-run # Preview what would be installed
 npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm, go, docker, jq)
 ```
 
-**Note on `npm install` + doctor**: `postinstall` hook runs `npm run doctor || true` — trailing `|| true` swallows doctor failures silently. `npm install` can complete while polyglot toolchain broken. For **worktree setup** (after `git worktree add` or entering an existing worktree session), run BOTH `npm install` AND `npm run doctor -- --fix` explicitly in root worktree, that order. Explicit `doctor --fix` is the only action guaranteeing 18+ polyglot toolchains (Go, Java, Rust, Elixir, Python, .NET, Dart, Clojure, Kotlin, C#, Node) converge. See [Worktree Toolchain Initialization](./governance/development/workflow/worktree-setup.md) for full rationale and procedure.
+**Note on `npm install` + doctor**: `postinstall` hook runs `npm run doctor || true` — trailing `|| true` swallows doctor failures silently. `npm install` can complete while polyglot toolchain broken. For **worktree setup** (after `git worktree add` or entering an existing worktree session), run BOTH `npm install` AND `npm run doctor -- --fix` explicitly in root worktree, that order. Explicit `doctor --fix` is the only action guaranteeing 18+ polyglot toolchains (Go, Java, Rust, Elixir, Python, .NET, Dart, Clojure, Kotlin, C#, Node) converge. See [Worktree Toolchain Initialization](./repo-governance/development/workflow/worktree-setup.md) for full rationale and procedure.
 
-**See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
+**See**: [repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
 **Coverage thresholds** (all enforced via `rhino-cli test-coverage validate` in `test:quick`):
 
@@ -159,7 +159,7 @@ Both unit and integration levels consume same Gherkin specs — step implementat
 
 For the broader polyglot three-level testing examples (demo backends in Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure), see the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) repository.
 
-**See**: [governance/development/quality/three-level-testing-standard.md](./governance/development/quality/three-level-testing-standard.md)
+**See**: [repo-governance/development/quality/three-level-testing-standard.md](./repo-governance/development/quality/three-level-testing-standard.md)
 
 ## Markdown Quality
 
@@ -174,7 +174,7 @@ All markdown files auto-linted and formatted:
 npm run lint:md:fix
 ```
 
-**See**: [governance/development/quality/markdown.md](./governance/development/quality/markdown.md)
+**See**: [repo-governance/development/quality/markdown.md](./repo-governance/development/quality/markdown.md)
 
 ## Monorepo Architecture
 
@@ -200,7 +200,7 @@ nx affected -t test:quick    # Run pre-push quality gate for affected projects
 nx graph                     # Visualize dependencies
 ```
 
-**See**: [docs/reference/monorepo-structure.md](./docs/reference/monorepo-structure.md), [docs/how-to/add-new-app.md](./docs/how-to/add-new-app.md), [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md)
+**See**: [docs/reference/monorepo-structure.md](./docs/reference/monorepo-structure.md), [docs/how-to/add-new-app.md](./docs/how-to/add-new-app.md), [repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md)
 
 ## Git Workflow
 
@@ -219,13 +219,13 @@ nx graph                     # Visualize dependencies
   - No period at end
 - **Split commits by domain**: Different types/domains/concerns = separate commits
 
-**See**: [governance/development/workflow/commit-messages.md](./governance/development/workflow/commit-messages.md)
+**See**: [repo-governance/development/workflow/commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
 
 ### Worktree Path
 
 Worktrees in this repo land at **`worktrees/<name>/`** in the repo root, overriding the upstream coding-agent default that would otherwise place them under the platform binding directory. Routing is handled by a repo-local `WorktreeCreate` hook. Both paths are gitignored.
 
-**See**: [governance/conventions/structure/worktree-path.md](./governance/conventions/structure/worktree-path.md)
+**See**: [repo-governance/conventions/structure/worktree-path.md](./repo-governance/conventions/structure/worktree-path.md)
 
 ## Git Hooks (Automated Quality)
 
@@ -242,7 +242,7 @@ Husky + lint-staged enforce quality:
   - Runs markdown linting
   - All four Nx targets cacheable — if pre-push times out, run `npx nx affected -t typecheck lint test:quick spec-coverage` first to warm cache, then push again
 
-**See**: [governance/development/quality/code.md](./governance/development/quality/code.md)
+**See**: [repo-governance/development/quality/code.md](./repo-governance/development/quality/code.md)
 
 ## Documentation Organization
 
@@ -255,11 +255,11 @@ Husky + lint-staged enforce quality:
 
 **File Naming**: Lowercase kebab-case. Exception: `README.md` for index files.
 
-**See**: [governance/conventions/structure/file-naming.md](./governance/conventions/structure/file-naming.md), [governance/conventions/structure/diataxis-framework.md](./governance/conventions/structure/diataxis-framework.md)
+**See**: [repo-governance/conventions/structure/file-naming.md](./repo-governance/conventions/structure/file-naming.md), [repo-governance/conventions/structure/diataxis-framework.md](./repo-governance/conventions/structure/diataxis-framework.md)
 
 ## Conventions
 
-All work follows foundational principles from `governance/principles/` (key ones below — see [Principles Index](./governance/principles/README.md) for complete list):
+All work follows foundational principles from `repo-governance/principles/` (key ones below — see [Principles Index](./repo-governance/principles/README.md) for complete list):
 
 - **Deliberate Problem-Solving**: Understand before acting; prefer reversible decisions
 - **Simplicity Over Complexity**: Minimum viable abstraction
@@ -279,45 +279,45 @@ All work follows foundational principles from `governance/principles/` (key ones
 Lowercase kebab-case (`[a-z0-9-]+`) with standard extension; rule anchored on standard markdown and GitHub compatibility.
 Exception: `README.md` for index files, `docs/metadata/` files.
 
-**See**: [governance/conventions/structure/file-naming.md](./governance/conventions/structure/file-naming.md)
+**See**: [repo-governance/conventions/structure/file-naming.md](./repo-governance/conventions/structure/file-naming.md)
 
 ### Linking
 
 GitHub-compatible markdown: `Text` with `.md` extension.
 Next.js sites (ayokoding-web, oseplatform-web) use standard GitHub-compatible markdown links with `.md` extension.
 
-**See**: [governance/conventions/formatting/linking.md](./governance/conventions/formatting/linking.md)
+**See**: [repo-governance/conventions/formatting/linking.md](./repo-governance/conventions/formatting/linking.md)
 
 ### Indentation
 
 Markdown nested bullets: 2 spaces per level. YAML frontmatter: 2 spaces. Code: language-specific.
 
-**See**: [governance/conventions/formatting/indentation.md](./governance/conventions/formatting/indentation.md)
+**See**: [repo-governance/conventions/formatting/indentation.md](./repo-governance/conventions/formatting/indentation.md)
 
 ### Emoji Usage
 
-Allowed: `docs/`, README files, `plans/`, `governance/`, `AGENTS.md`, `CLAUDE.md`, agent definition files, Agent Skill files.
+Allowed: `docs/`, README files, `plans/`, `repo-governance/`, `AGENTS.md`, `CLAUDE.md`, agent definition files, Agent Skill files.
 Forbidden: config files (`*.json`, `*.yaml`, `*.toml`), source code.
 
-**See**: [governance/conventions/formatting/emoji.md](./governance/conventions/formatting/emoji.md)
+**See**: [repo-governance/conventions/formatting/emoji.md](./repo-governance/conventions/formatting/emoji.md)
 
 ### Diagrams
 
 Mermaid diagrams with color-blind friendly palette, proper accessibility.
 
-**See**: [governance/conventions/formatting/diagrams.md](./governance/conventions/formatting/diagrams.md)
+**See**: [repo-governance/conventions/formatting/diagrams.md](./repo-governance/conventions/formatting/diagrams.md)
 
 ### Content Quality
 
 Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast.
 
-**See**: [governance/conventions/writing/quality.md](./governance/conventions/writing/quality.md)
+**See**: [repo-governance/conventions/writing/quality.md](./repo-governance/conventions/writing/quality.md)
 
 ### Dynamic Collection References
 
 Never hardcode counts of dynamic collections (agents, skills, conventions, practices, principles, workflows) in docs. Reference collection by name and link.
 
-**See**: [governance/conventions/writing/dynamic-collection-references.md](./governance/conventions/writing/dynamic-collection-references.md)
+**See**: [repo-governance/conventions/writing/dynamic-collection-references.md](./repo-governance/conventions/writing/dynamic-collection-references.md)
 
 ## Development Practices
 
@@ -325,38 +325,38 @@ Never hardcode counts of dynamic collections (agents, skills, conventions, pract
 
 Prefer immutability, pure functions, functional core/imperative shell.
 
-**See**: [governance/development/pattern/functional-programming.md](./governance/development/pattern/functional-programming.md)
+**See**: [repo-governance/development/pattern/functional-programming.md](./repo-governance/development/pattern/functional-programming.md)
 
 ### Implementation Workflow
 
 Make it work → Make it right → Make it fast.
 
-**See**: [governance/development/workflow/implementation.md](./governance/development/workflow/implementation.md)
+**See**: [repo-governance/development/workflow/implementation.md](./repo-governance/development/workflow/implementation.md)
 
 ### Test-Driven Development
 
 Write the failing test first, then make it pass, then refactor — Red → Green → Refactor. Required for all code changes. Mini-TDD passes encouraged: split a feature into several small Red→Green→Refactor cycles. Plan delivery checklists must express code items as TDD-shaped steps; Gherkin acceptance criteria in `prd.md` are the natural source of first failing tests.
 
-**See**: [governance/development/workflow/test-driven-development.md](./governance/development/workflow/test-driven-development.md)
+**See**: [repo-governance/development/workflow/test-driven-development.md](./repo-governance/development/workflow/test-driven-development.md)
 
 ### Reproducible Environments
 
 Volta for Node.js/npm pinning, package-lock.json, .env.example.
 
-**See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
+**See**: [repo-governance/development/workflow/reproducible-environments.md](./repo-governance/development/workflow/reproducible-environments.md)
 
 ### Agent Workflow Orchestration
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated agents for focused subtasks, verify before done, autonomous bug fixing, self-improvement loop after corrections.
 
-**See**: [governance/development/agents/agent-workflow-orchestration.md](./governance/development/agents/agent-workflow-orchestration.md)
+**See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
 
 ### Manual Verification & CI Blockers
 
-- **Verify behavior**: Playwright MCP for UI, curl for API ([manual-behavioral-verification.md](./governance/development/quality/manual-behavioral-verification.md))
-- **CI blockers**: Investigate root cause, fix properly, never bypass ([ci-blocker-resolution.md](./governance/development/quality/ci-blocker-resolution.md))
-- **CI post-push verification**: After pushing app or lib code to `origin main`, trigger relevant GitHub CI workflows and verify they pass before declaring work done — pre-push hook alone is not sufficient ([ci-post-push-verification.md](./governance/development/workflow/ci-post-push-verification.md))
-- **CI monitoring**: Check every 3-5 min via scheduling a background wake-up + one `gh run view` per wakeup. Never tight-loop poll. `gh run watch` only for jobs <5 min. If rate-limited (HTTP 403): wait ~35 min before retrying ([ci-monitoring.md](./governance/development/workflow/ci-monitoring.md))
+- **Verify behavior**: Playwright MCP for UI, curl for API ([manual-behavioral-verification.md](./repo-governance/development/quality/manual-behavioral-verification.md))
+- **CI blockers**: Investigate root cause, fix properly, never bypass ([ci-blocker-resolution.md](./repo-governance/development/quality/ci-blocker-resolution.md))
+- **CI post-push verification**: After pushing app or lib code to `origin main`, trigger relevant GitHub CI workflows and verify they pass before declaring work done — pre-push hook alone is not sufficient ([ci-post-push-verification.md](./repo-governance/development/workflow/ci-post-push-verification.md))
+- **CI monitoring**: Check every 3-5 min via scheduling a background wake-up + one `gh run view` per wakeup. Never tight-loop poll. `gh run watch` only for jobs <5 min. If rate-limited (HTTP 403): wait ~35 min before retrying ([ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md))
 
 ## AI Agents
 
@@ -366,7 +366,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer
 
-**Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (see [plan-execution workflow](./governance/workflows/plan/plan-execution.md))
+**Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (see [plan-execution workflow](./repo-governance/workflows/plan/plan-execution.md))
 
 **Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev
 
@@ -376,7 +376,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE).
 
-**Web Research Default**: `web-research-maker` is the default primitive for public-web information gathering. See [Web Research Delegation Convention](./governance/conventions/writing/web-research-delegation.md) for delegation threshold and exceptions.
+**Web Research Default**: `web-research-maker` is the default primitive for public-web information gathering. See [Web Research Delegation Convention](./repo-governance/conventions/writing/web-research-delegation.md) for delegation threshold and exceptions.
 
 **Agent skills infrastructure**: Agents leverage agent skills providing two modes:
 
@@ -393,7 +393,7 @@ Agent skills serve agents with knowledge and execution services but don't govern
 .claude/skills/<name>/SKILL.md      # Agent skill files
 ```
 
-**See**: [governance/development/agents/ai-agents.md](./governance/development/agents/ai-agents.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md), [Agent Naming Convention](./governance/conventions/structure/agent-naming.md), [Workflow Naming Convention](./governance/conventions/structure/workflow-naming.md)
+**See**: [repo-governance/development/agents/ai-agents.md](./repo-governance/development/agents/ai-agents.md), [repo-governance/development/pattern/maker-checker-fixer.md](./repo-governance/development/pattern/maker-checker-fixer.md), [Agent Naming Convention](./repo-governance/conventions/structure/agent-naming.md), [Workflow Naming Convention](./repo-governance/conventions/structure/workflow-naming.md)
 
 ## Repository Architecture
 
@@ -408,7 +408,7 @@ Six-layer governance hierarchy:
 
 **Agent skills**: Delivery infrastructure (inline and fork modes) serving agents — not a governance layer. See AI Agents section above.
 
-**See**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md)
+**See**: [repo-governance/repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md)
 
 ## Web Sites
 
@@ -528,7 +528,7 @@ AI agents use designated directories:
   - Checkers MUST write progressive reports during execution
 - **`local-temp/`**: Misc temporary files
 
-**See**: [governance/development/infra/temporary-files.md](./governance/development/infra/temporary-files.md)
+**See**: [repo-governance/development/infra/temporary-files.md](./repo-governance/development/infra/temporary-files.md)
 
 ## Plans
 
@@ -545,7 +545,7 @@ Project planning in `plans/` folder:
 - `in-progress/` — `[project-identifier]/` (no date prefix; strip it when moving from backlog)
 - `done/` — `YYYY-MM-DD__[project-identifier]/` (completion date prefix; add it when archiving)
 
-**See**: [governance/conventions/structure/plans.md](./governance/conventions/structure/plans.md)
+**See**: [repo-governance/conventions/structure/plans.md](./repo-governance/conventions/structure/plans.md)
 
 ## Important Notes
 
@@ -557,12 +557,12 @@ Project planning in `plans/` folder:
 
 ## Related Documentation
 
-- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) — Documentation writing and org standards
-- **Development Index**: [governance/development/README.md](./governance/development/README.md) — Software dev practices and workflows
-- **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) — Foundational values governing all layers
+- **Conventions Index**: [repo-governance/conventions/README.md](./repo-governance/conventions/README.md) — Documentation writing and org standards
+- **Development Index**: [repo-governance/development/README.md](./repo-governance/development/README.md) — Software dev practices and workflows
+- **Principles Index**: [repo-governance/principles/README.md](./repo-governance/principles/README.md) — Foundational values governing all layers
 - **Primary Binding Agents Index**: [agent catalog](./.claude/agents/README.md) — Specialized agents organized by role
-- **Workflows Index**: [governance/workflows/README.md](./governance/workflows/README.md) — Orchestrated processes
-- **Repository Architecture**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md) — Six-layer governance hierarchy
+- **Workflows Index**: [repo-governance/workflows/README.md](./repo-governance/workflows/README.md) — Orchestrated processes
+- **Repository Architecture**: [repo-governance/repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md) — Six-layer governance hierarchy
 
 ## Related Repositories
 
@@ -575,7 +575,7 @@ Content flows in both directions under classifier-driven rules:
 
 Product-specific paths (`apps/organiclever-*`, `apps/ayokoding-*`, `apps/oseplatform-*`, product specs, product roadmap, product plans) are classified `neither` and never sync.
 
-See: [Related Repositories reference](./docs/reference/related-repositories.md), [ose-primer sync convention](./governance/conventions/structure/ose-primer-sync.md).
+See: [Related Repositories reference](./docs/reference/related-repositories.md), [ose-primer sync convention](./repo-governance/conventions/structure/ose-primer-sync.md).
 
 ## Models
 
@@ -587,7 +587,7 @@ This repo describes model selection by capability tier, not by vendor product na
 
 Concrete vendor model IDs resolve in each platform binding's agent definition files (see the Platform Binding Examples section near the end of this file for the canonical layout).
 
-See [governance/development/agents/model-selection.md](./governance/development/agents/model-selection.md) for the capability tier definitions and how they map to agent roles.
+See [repo-governance/development/agents/model-selection.md](./repo-governance/development/agents/model-selection.md) for the capability tier definitions and how they map to agent roles.
 
 ## General Guidelines for Working with Nx
 
@@ -611,13 +611,13 @@ See [governance/development/agents/model-selection.md](./governance/development/
 ## Platform Binding Examples
 
 The content under this heading is intentionally vendor-specific. Per the
-[Governance Vendor-Independence Convention](./governance/conventions/structure/governance-vendor-independence.md),
+[Governance Vendor-Independence Convention](./repo-governance/conventions/structure/governance-vendor-independence.md),
 the vendor-audit scanner skips every line under a "Platform Binding Examples"
 heading until the next same-level heading or end of file.
 
 ### Platform Bindings Catalog
 
-Concrete tool integrations live **outside** `governance/` in platform-binding directories:
+Concrete tool integrations live **outside** `repo-governance/` in platform-binding directories:
 
 - **Claude Code** → `.claude/`, with `CLAUDE.md` as the Claude-Code-discoverable shim importing this file
 - **OpenCode** → `.opencode/agents/` (auto-synced from `.claude/`); reads this file (`AGENTS.md`) natively; reads agent skill files at `.claude/skills/<name>/SKILL.md` natively

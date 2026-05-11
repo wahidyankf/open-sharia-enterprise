@@ -10,7 +10,7 @@
 # invokes existing tools (rhino-cli vendor-audit, npm sync, ls/grep/diff)
 # rather than re-implementing their logic. See:
 #   .claude/agents/repo-parity-checker.md
-#   governance/conventions/structure/governance-vendor-independence.md
+#   repo-governance/conventions/structure/governance-vendor-independence.md
 
 set -euo pipefail
 
@@ -37,21 +37,21 @@ pass() {
 
 # Invariant 1: governance prose vendor-neutrality.
 print_invariant 1 "Governance prose vendor-neutrality"
-if (cd apps/rhino-cli && CGO_ENABLED=0 go run main.go governance vendor-audit governance/ >/tmp/parity-inv1.log 2>&1); then
-  pass "rhino-cli governance vendor-audit governance/ (0 violations)"
+if (cd apps/rhino-cli && CGO_ENABLED=0 go run main.go repo-governance vendor-audit repo-governance/ >/tmp/parity-inv1.log 2>&1); then
+  pass "rhino-cli repo-governance vendor-audit repo-governance/ (0 violations)"
 else
   cat /tmp/parity-inv1.log
-  fail "rhino-cli governance vendor-audit governance/ reported violations"
+  fail "rhino-cli repo-governance vendor-audit repo-governance/ reported violations"
 fi
 
 # Invariant 2: root instruction surface vendor-neutrality.
 print_invariant 2 "AGENTS.md and CLAUDE.md vendor-neutrality"
 for target in AGENTS.md CLAUDE.md; do
-  if (cd apps/rhino-cli && CGO_ENABLED=0 go run main.go governance vendor-audit "${target}" >/tmp/parity-inv2.log 2>&1); then
-    pass "rhino-cli governance vendor-audit ${target} (0 violations)"
+  if (cd apps/rhino-cli && CGO_ENABLED=0 go run main.go repo-governance vendor-audit "${target}" >/tmp/parity-inv2.log 2>&1); then
+    pass "rhino-cli repo-governance vendor-audit ${target} (0 violations)"
   else
     cat /tmp/parity-inv2.log
-    fail "rhino-cli governance vendor-audit ${target} reported violations"
+    fail "rhino-cli repo-governance vendor-audit ${target} reported violations"
   fi
 done
 
@@ -90,7 +90,7 @@ fi
 # Invariant 5a: color-translation map coverage.
 print_invariant 5a "Color-translation map coverage"
 COLOR_VALUES=$(grep -h '^color:' .claude/agents/*.md 2>/dev/null | awk '{print $2}' | sort -u)
-COLOR_MAP_FILE="governance/development/agents/ai-agents.md"
+COLOR_MAP_FILE="repo-governance/development/agents/ai-agents.md"
 MISSING_COLORS=""
 for color in ${COLOR_VALUES}; do
   case "${color}" in
@@ -114,7 +114,7 @@ fi
 # Invariant 5b: capability-tier map coverage.
 print_invariant 5b "Capability-tier map coverage"
 TIER_VALUES=$(grep -h '^model:' .claude/agents/*.md .opencode/agents/*.md 2>/dev/null | awk '{print $2}' | grep -v '^$' | sort -u || true)
-TIER_MAP_FILE="governance/development/agents/model-selection.md"
+TIER_MAP_FILE="repo-governance/development/agents/model-selection.md"
 for tier in ${TIER_VALUES}; do
   if grep -qE "(\`${tier}\`|model: ${tier}\b)" "${TIER_MAP_FILE}"; then
     pass "tier '${tier}' is mapped"

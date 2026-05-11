@@ -213,7 +213,7 @@ list per-workflow mapping (5 entries) including stag-organiclever-web and the
 new production-deploy workflow with explicit "deploys to staging, not
 production" callout.
 
-### 2.4 `governance/development/infra/ci-conventions.md` — 2 occurrences
+### 2.4 `repo-governance/development/infra/ci-conventions.md` — 2 occurrences
 
 - [x] Read the file around both occurrences
 - [x] Replace both → `test-and-deploy-organiclever-web-development.yml`
@@ -225,7 +225,7 @@ example cells were updated to the new development filename. The full
 codebase reference table lives in `github-actions-workflow-naming.md`
 (updated in 2.5).
 
-### 2.5 `governance/development/infra/github-actions-workflow-naming.md` — 5 occurrences
+### 2.5 `repo-governance/development/infra/github-actions-workflow-naming.md` — 5 occurrences
 
 - [x] Read the full file
 - [x] **Codebase reference table**: replace the single old row with three new rows:
@@ -252,7 +252,7 @@ OrganicLever rows (development + staging + production). PASS example,
 derivation walkthrough, and both version-alignment rows updated. All 5
 original occurrences resolved.
 
-### 2.6 `governance/development/workflow/ci-post-push-verification.md` — 5 occurrences
+### 2.6 `repo-governance/development/workflow/ci-post-push-verification.md` — 5 occurrences
 
 - [x] Read the file around all five occurrences (~lines 53, 142, 145, 178, 190)
 - [x] Replace all five → `test-and-deploy-organiclever-web-development.yml`
@@ -272,7 +272,7 @@ all 5 occurrences resolved.
 **Implementation notes (2026-04-26)**: Deployment bullet rewritten as
 specified.
 
-### 2.8 `governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
+### 2.8 `repo-governance/development/workflow/trunk-based-development.md` — 1 occurrence (~line 397)
 
 - [x] Read the paragraph around line 397
 - [x] Add `stag-organiclever-web` to the environment branches list

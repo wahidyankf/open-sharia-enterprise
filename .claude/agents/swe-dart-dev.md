@@ -71,7 +71,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 1. **[Dart Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/)** - Initial setup, overview, quick start (0-95% language coverage)
 2. **[Dart By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example/)** - 75+ annotated code examples (beginner to advanced)
 
-**See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -123,11 +123,11 @@ All Dart code MUST follow the platform coding standards:
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow
-- [Code Quality Standards](../../governance/development/quality/code.md) - Quality gates
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Code Quality Standards](../../repo-governance/development/quality/code.md) - Quality gates
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -135,12 +135,12 @@ TDD is required for every code change: write the failing test first, confirm it 
 reason, implement the minimum code to pass, then refactor. For Dart/Flutter projects the right
 level is usually unit (package:test + mockito), widget test (flutter_test), integration
 (flutter_test with real services), or E2E (Playwright or integration_test). See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

@@ -72,7 +72,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 1. **[Rust Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - Initial setup, overview (0-95% language coverage)
 2. **[Rust By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated code examples
 
-**See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -108,9 +108,9 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [docs/explanation/software-engineering/programming-languages/rust/README.md](../../docs/explanation/software-engineering/programming-languages/rust/README.md)
-- [Functional Programming](../../governance/development/pattern/functional-programming.md)
-- [Implementation Workflow](../../governance/development/workflow/implementation.md)
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md)
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md)
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -118,12 +118,12 @@ TDD is required for every code change: write the failing test first, confirm it 
 reason, implement the minimum code to pass, then refactor. For Rust projects the right level is
 usually unit (cargo test), integration (cargo test with real services), or E2E (Playwright).
 Property-based testing via proptest covers invariants over generated inputs. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

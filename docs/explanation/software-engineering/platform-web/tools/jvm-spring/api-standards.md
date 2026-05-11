@@ -23,7 +23,7 @@ created: 2026-02-06
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Spring Framework API Standards for OSE Platform
 
@@ -712,17 +712,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - HTTP status codes explicitly communicate operation results
    - `@Valid` explicitly triggers validation
    - `ResponseEntity<T>` makes HTTP response structure explicit
 
-2. **[Simplicity Over Complexity](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Simplicity Over Complexity](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Standard HTTP methods reduce cognitive load
    - Consistent pagination parameters (`page`, `size`, `sort`)
    - URI-based versioning is simpler than header-based
 
-3. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Bean Validation automatically validates requests
    - `@ControllerAdvice` automatically handles errors
    - Spring Data pagination automatically generates metadata

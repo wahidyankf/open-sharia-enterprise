@@ -26,7 +26,7 @@ created: 2026-02-08
 
 **This document is OSE Platform-specific**, not a Playwright tutorial. We define HOW to write Page Objects in THIS codebase, not WHAT Page Object Model is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -123,7 +123,7 @@ export class LoginPage {
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
-- [Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 ---
 

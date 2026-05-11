@@ -187,8 +187,8 @@ The `web` container consumes specs at two test levels:
 
 ## Related
 
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [BDD Spec-Test Mapping](../../../governance/development/infra/bdd-spec-test-mapping.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [BDD Spec-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — Next.js implementation
 - [apps/ayokoding-cli/](../../../apps/ayokoding-cli/README.md) — CLI tool (content link validation)

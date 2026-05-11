@@ -411,7 +411,7 @@ All use the same validation workflow and confidence classification.
 ### Delegate Research to `web-research-maker` for Context Isolation
 
 The authoritative rule for when to delegate public-web research lives in the
-[Web Research Delegation Convention](../../../governance/conventions/writing/web-research-delegation.md).
+[Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md).
 This skill follows that convention and does not re-state the threshold here. In summary: delegate to
 `web-research-maker` whenever verifying a single claim requires 2+ `WebSearch` calls or 3+ `WebFetch` calls;
 in-context work remains correct for single-shot verification against a known authoritative URL and for
@@ -427,7 +427,7 @@ Prompt: "Verify whether <specific claim>. Return cited findings with confidence 
 `web-research-maker` returns a synthesised, cited summary using the same `[Verified]/[Outdated]/[Unverified]/[Needs Verification]` confidence tags defined in this skill. You then translate those tags into dual-labelled findings (`[Verified]/[Error]/[Outdated]/[Unverified]` + `CRITICAL/HIGH/MEDIUM/LOW`) for your audit report.
 
 See [`web-research-maker`](../../agents/web-research-maker.md) for the agent contract and the
-[Web Research Delegation Convention](../../../governance/conventions/writing/web-research-delegation.md)
+[Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md)
 for the normative rule and its enumerated exceptions.
 
 ## Common Mistakes
@@ -503,13 +503,13 @@ Step 3: Compare and classify
 
 ## Reference Documentation
 
-**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../repo-governance/conventions/writing/factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal content standards
-- [Criticality Levels](../../../governance/development/quality/criticality-levels.md) - Severity classification system
-- [Timestamp Format](../../../governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Universal content standards
+- [Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md) - Severity classification system
+- [Timestamp Format](../../../repo-governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
 
 **Related Skills**:
 
@@ -527,13 +527,13 @@ This Skill packages critical factual validation methodology for maintaining accu
 
 ## References
 
-**Primary Convention**: [Factual Validation Convention](../../../governance/conventions/writing/factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../repo-governance/conventions/writing/factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal content standards
-- [Criticality Levels](../../../governance/development/quality/criticality-levels.md) - Severity classification
-- [Timestamp Format](../../../governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md) - Universal content standards
+- [Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md) - Severity classification
+- [Timestamp Format](../../../repo-governance/conventions/formatting/timestamp.md) - Validation metadata timestamps
 
 **Related Skills**:
 

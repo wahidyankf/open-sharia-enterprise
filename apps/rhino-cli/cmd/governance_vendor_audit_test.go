@@ -11,10 +11,10 @@ import (
 	"testing"
 
 	"github.com/cucumber/godog"
-	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/governance"
+	governance "github.com/wahidyankf/ose-public/apps/rhino-cli/internal/repo-governance"
 )
 
-// Step constant patterns for governance vendor-audit scenarios.
+// Step constant patterns for repo-governance vendor-audit scenarios.
 // The first four use a capture group so any forbidden term ("Claude Code",
 // "Skills", "Sonnet", etc.) drives the same step implementation.
 const (
@@ -23,8 +23,8 @@ const (
 	stepGovernanceFileWithForbiddenTermInBindingFence       = `^a governance markdown file containing "([^"]+)" inside a binding-example fence$`
 	stepGovernanceFileWithForbiddenTermUnderPlatformHeading = `^a governance markdown file containing "([^"]+)" under a "Platform Binding Examples" heading$`
 	stepGovernanceDirectoryWithNoForbiddenTerms             = `^a governance directory with no forbidden terms in prose$`
-	stepDeveloperRunsGovernanceVendorAuditOnFile            = `^the developer runs governance vendor-audit on the file$`
-	stepDeveloperRunsGovernanceVendorAuditOnDir             = `^the developer runs governance vendor-audit on the directory$`
+	stepDeveloperRunsGovernanceVendorAuditOnFile            = `^the developer runs repo-governance vendor-audit on the file$`
+	stepDeveloperRunsGovernanceVendorAuditOnDir             = `^the developer runs repo-governance vendor-audit on the directory$`
 	stepOutputIdentifiesForbiddenTerm                       = `^the output identifies the forbidden term and its location$`
 	stepOutputReportsZeroGovernanceFindings                 = `^the output reports zero findings$`
 )
@@ -70,7 +70,7 @@ func (s *governanceVendorAuditUnitSteps) fileWithForbiddenTermInProse(term strin
 	s.activeTerm = term
 	governanceVendorAuditFn = func(_ string) ([]governance.Finding, error) {
 		return []governance.Finding{{
-			Path:        "/mock-repo/governance/foo.md",
+			Path:        "/mock-repo/repo-governance/foo.md",
 			Line:        23,
 			Match:       term,
 			Replacement: `"vendor-neutral replacement"`,
@@ -106,7 +106,7 @@ func (s *governanceVendorAuditUnitSteps) runOnFile() error {
 	buf := new(bytes.Buffer)
 	governanceVendorAuditCmd.SetOut(buf)
 	governanceVendorAuditCmd.SetErr(buf)
-	s.cmdErr = governanceVendorAuditCmd.RunE(governanceVendorAuditCmd, []string{"governance/"})
+	s.cmdErr = governanceVendorAuditCmd.RunE(governanceVendorAuditCmd, []string{"repo-governance/"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -115,7 +115,7 @@ func (s *governanceVendorAuditUnitSteps) runOnDir() error {
 	buf := new(bytes.Buffer)
 	governanceVendorAuditCmd.SetOut(buf)
 	governanceVendorAuditCmd.SetErr(buf)
-	s.cmdErr = governanceVendorAuditCmd.RunE(governanceVendorAuditCmd, []string{"governance/"})
+	s.cmdErr = governanceVendorAuditCmd.RunE(governanceVendorAuditCmd, []string{"repo-governance/"})
 	s.cmdOutput = buf.String()
 	return nil
 }
@@ -141,7 +141,7 @@ func (s *governanceVendorAuditUnitSteps) outputIdentifiesForbiddenTerm() error {
 	if !strings.Contains(s.cmdOutput, s.activeTerm) {
 		return fmt.Errorf("expected output to contain %q, got: %s", s.activeTerm, s.cmdOutput)
 	}
-	if !strings.Contains(s.cmdOutput, "governance/foo.md") {
+	if !strings.Contains(s.cmdOutput, "repo-governance/foo.md") {
 		return fmt.Errorf("expected output to contain file path, got: %s", s.cmdOutput)
 	}
 	return nil
@@ -176,7 +176,7 @@ func TestUnitGovernanceVendorAudit(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsDirUnitGovernanceVendorAudit},
 			TestingT: t,
-			Tags:     "governance-vendor-audit",
+			Tags:     "repo-governance-vendor-audit",
 		},
 	}
 	if suite.Run() != 0 {
@@ -211,7 +211,7 @@ func TestGovernanceVendorAudit_MissingGitRoot(t *testing.T) {
 // against a small tmp fixture to verify coverage of the walk logic.
 func TestGovernanceVendorAudit_RealTree(t *testing.T) {
 	tmp := t.TempDir()
-	govDir := filepath.Join(tmp, "governance")
+	govDir := filepath.Join(tmp, "repo-governance")
 	if err := os.MkdirAll(govDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -230,7 +230,7 @@ func TestGovernanceVendorAudit_RealTree(t *testing.T) {
 	// Clean file — no violation.
 	writeFile(filepath.Join(govDir, "bar.md"), "# Clean\n\nNo issues here.\n")
 	// The convention definition file — must be skipped even with forbidden terms.
-	convPath := filepath.Join(tmp, "governance", "conventions", "structure", "governance-vendor-independence.md")
+	convPath := filepath.Join(tmp, "repo-governance", "conventions", "structure", "governance-vendor-independence.md")
 	writeFile(convPath, "# Convention\n\nClaude Code\nOpenCode\nAnthropic\n")
 
 	findings, err := governanceVendorAudit(govDir)
@@ -270,7 +270,7 @@ func TestGovernanceVendorAudit_OutputFormats(t *testing.T) {
 	}
 	governanceVendorAuditFn = func(_ string) ([]governance.Finding, error) {
 		return []governance.Finding{{
-			Path:        "/mock-repo/governance/foo.md",
+			Path:        "/mock-repo/repo-governance/foo.md",
 			Line:        5,
 			Match:       "Claude Code",
 			Replacement: `"the coding agent"`,
@@ -295,7 +295,7 @@ func TestGovernanceVendorAudit_OutputFormats(t *testing.T) {
 }
 
 // TestGovernanceVendorAudit_DefaultPathUsesGovernance verifies that when no
-// path argument is provided, the default "governance" path is used.
+// path argument is provided, the default "repo-governance" path is used.
 func TestGovernanceVendorAudit_DefaultPathUsesGovernance(t *testing.T) {
 	origGetwd := osGetwd
 	origStat := osStat
@@ -325,7 +325,7 @@ func TestGovernanceVendorAudit_DefaultPathUsesGovernance(t *testing.T) {
 	governanceVendorAuditCmd.SetErr(buf)
 	_ = governanceVendorAuditCmd.RunE(governanceVendorAuditCmd, []string{})
 
-	expected := "/mock-repo/governance"
+	expected := "/mock-repo/repo-governance"
 	if capturedPath != expected {
 		t.Errorf("expected path %q, got %q", expected, capturedPath)
 	}

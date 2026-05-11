@@ -3,7 +3,7 @@
 **Plan**: Plan Convention — Split Requirements into BRD + PRD
 **Date**: 2026-04-18
 
-Granular checkboxes per the [one checkbox = one action](../../../governance/conventions/structure/plans.md#granular-checklist-items-in-deliverymd) rule. Execute phases in order.
+Granular checkboxes per the [one checkbox = one action](../../../repo-governance/conventions/structure/plans.md#granular-checklist-items-in-deliverymd) rule. Execute phases in order.
 
 ## Phase 0 — Environment Setup
 
@@ -25,7 +25,7 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
 
 ## Phase 1 — Update the canonical convention document
 
-- [x] Read current `governance/conventions/structure/plans.md` in full to map every section touching the four-doc layout.
+- [x] Read current `repo-governance/conventions/structure/plans.md` in full to map every section touching the four-doc layout.
   - **Implementation Notes**: Sections touching 4-doc layout: Plan Contents → Structure Decision (lines 181-197), Multi-File Structure (213-228), Single-File Structure (199-211), Examples (418-455), Related Documentation footer (364-380), maintenance note at top (17-24). File-Purposes mention requirements.md explicitly at line 226.
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -34,37 +34,37 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Implementation Notes**: Rewrote Multi-File/Single-File descriptions; multi-file is now default five-doc (README/brd/prd/tech-docs/delivery); single-file is explicit exception for ≤1000 line trivially small plans.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Rewrite the "Multi-File Structure" subsection to list `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`.
   - **Implementation Notes**: Tree + File purposes rewritten; brd/prd roles described with solo-maintainer framing (no sign-off).
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Add a "Content-Placement Rules" subsection mirroring the rules in [tech-docs.md](./tech-docs.md#content-placement-rules) (business content → `brd.md`; product content → `prd.md`; ambiguous cross-cutting → split per convention).
   - **Implementation Notes**: Inserted between Multi-File Structure and Granular Checklist Items. Mirrors tech-docs content-placement rules verbatim — solo-maintainer framing, BRD goes/PRD goes bullets, metric-honesty options 1-4 with inline-evidence rule for internet citations, ambiguous-case handling.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Update the Single-File Structure subsection so README sections include condensed BRD + condensed PRD coverage.
   - **Implementation Notes**: README sections list expanded from 4 to 8 mandatory ordered sections; Business rationale (condensed BRD) at 3 and Product requirements (condensed PRD) at 4; promotion-to-multi-file note added when sections don't fit.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Update the "Large Plan (Multi-File)" example to show the five-doc layout.
   - **Implementation Notes**: Example tree now has README/brd/prd/tech-docs/delivery with plausible line counts.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Update the "Small Plan (Single-File)" example README outline to include Business rationale + Product requirements sections.
   - **Implementation Notes**: Example README outline expanded to 8 sections matching single-file mandatory layout: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, Delivery Checklist, Quality Gates, Verification.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Update the "Last Updated" footer date to 2026-04-18.
   - **Implementation Notes**: Footer date bumped from 2026-03-27 to 2026-04-18.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/conventions/structure/plans.md
+  - **Files Changed**: repo-governance/conventions/structure/plans.md
 - [x] Run `npm run lint:md` on the convention file and confirm zero violations.
   - **Implementation Notes**: 1 file linted, 0 errors.
   - **Date**: 2026-04-18
@@ -119,9 +119,9 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Status**: Completed
   - **Files Changed**: (verification only)
 
-## Phase 3 — Update plan workflows under `governance/workflows/plan/`
+## Phase 3 — Update plan workflows under `repo-governance/workflows/plan/`
 
-- [x] Read `governance/workflows/plan/plan-quality-gate.md` and locate the "Plan-Specific Validation" section.
+- [x] Read `repo-governance/workflows/plan/plan-quality-gate.md` and locate the "Plan-Specific Validation" section.
   - **Implementation Notes**: Located at line 311. Completeness bullet at line 315 currently reads "All required sections present (requirements, deliverables, checklists)".
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -130,13 +130,13 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Implementation Notes**: Completeness bullet rewritten — names five canonical docs for multi-file plans, single-file exception spelled out with eight mandatory README sections.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/workflows/plan/plan-quality-gate.md
+  - **Files Changed**: repo-governance/workflows/plan/plan-quality-gate.md
 - [x] Add a clarifying note that the single-file exception still allows a single `README.md` when eligible per the convention.
   - **Implementation Notes**: Note folded into the completeness bullet itself (same sentence names the five canonical docs AND the single-file exception conditions + eight mandatory sections).
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/workflows/plan/plan-quality-gate.md
-- [x] Read `governance/workflows/plan/plan-execution.md` and verify every `delivery.md` reference remains correct (no rename of `delivery.md`).
+  - **Files Changed**: repo-governance/workflows/plan/plan-quality-gate.md
+- [x] Read `repo-governance/workflows/plan/plan-execution.md` and verify every `delivery.md` reference remains correct (no rename of `delivery.md`).
   - **Implementation Notes**: 19 delivery.md references in plan-execution.md, all semantically correct (delivery.md not renamed; it remains the sequential checklist file).
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -145,8 +145,8 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Implementation Notes**: Step 2 loop item 2 ("Analyze the item") extended with inline guidance: orchestrator MAY consult brd.md (business intent), prd.md (product scope + Gherkin), tech-docs.md (architecture) for ambiguous checklist text.
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/workflows/plan/plan-execution.md
-- [x] Grep `governance/workflows/plan/` for any mention of `requirements.md` and remove/update as needed.
+  - **Files Changed**: repo-governance/workflows/plan/plan-execution.md
+- [x] Grep `repo-governance/workflows/plan/` for any mention of `requirements.md` and remove/update as needed.
   - **Implementation Notes**: One mention in plan-execution.md line 158, intentional legacy-fallback ("or the legacy four-doc layout (requirements.md in place of brd.md + prd.md)"). No updates needed.
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -169,16 +169,16 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: .claude/skills/plan-creating-project-plans/SKILL.md
-- [x] Grep repository for `requirements.md` references and enumerate every hit outside archived plans: `grep -r 'requirements\.md' governance/ docs/ AGENTS.md .claude/ --include='*.md'`.
+- [x] Grep repository for `requirements.md` references and enumerate every hit outside archived plans: `grep -r 'requirements\.md' repo-governance/ docs/ AGENTS.md .claude/ --include='*.md'`.
   - **Implementation Notes**: Found 11 refs in acceptance-criteria.md (2), ai-agents.md (1), plan-execution.md (1 legacy-fallback), plans.md (2 stragglers from Phase 1), organize-work.md (4), docs-maker.md (2), plan-execution-checker.md (2 legacy-fallback). Updated acceptance-criteria, ai-agents, plans.md stragglers, organize-work, docs-maker. Legacy-fallback mentions left intentionally.
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (grep only, fix tasks separate)
-- [x] Update `governance/development/infra/acceptance-criteria.md` to reference `prd.md` as the canonical Gherkin location (if referenced).
+- [x] Update `repo-governance/development/infra/acceptance-criteria.md` to reference `prd.md` as the canonical Gherkin location (if referenced).
   - **Implementation Notes**: Two references updated (line 35 Plans Organization reference; line 344 `Requirements files` → `Product requirements files (plans/*/prd.md)` with legacy fallback noted).
   - **Date**: 2026-04-18
   - **Status**: Completed
-  - **Files Changed**: governance/development/infra/acceptance-criteria.md
+  - **Files Changed**: repo-governance/development/infra/acceptance-criteria.md
 - [x] Update `docs/how-to/organize-work.md` to reflect the five-doc layout (if referenced).
   - **Implementation Notes**: Four references updated — Standard Plan Files list (lines 92-98), notification-system workflow tree (lines 156-161), brand-strategy workflow tree (lines 188-193), and From plans/ideas step 2 (line 299).
   - **Date**: 2026-04-18
@@ -189,7 +189,7 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (no changes needed)
-- [x] Verify no stale `requirements.md` reference remains in governance/, docs/, AGENTS.md, .claude/agents/, .claude/skills/ (grep returns only historical/migration context).
+- [x] Verify no stale `requirements.md` reference remains in repo-governance/, docs/, AGENTS.md, .claude/agents/, .claude/skills/ (grep returns only historical/migration context).
   - **Implementation Notes**: Final grep excluding legacy/historical/fallback patterns returns zero results. All remaining mentions are intentional legacy-fallback contexts (plan-execution.md line 158, plan-execution-checker.md lines 63/73) or historical notes.
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -273,12 +273,12 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (verification only)
-- [x] Grep `governance/`, `docs/`, `AGENTS.md` for `requirements.md` → expect only historical mentions.
+- [x] Grep `repo-governance/`, `docs/`, `AGENTS.md` for `requirements.md` → expect only historical mentions.
   - **Implementation Notes**: 2 mentions — acceptance-criteria.md line 344 ("legacy plans may still use") and plan-execution.md line 158 ("legacy four-doc layout"). Both intentional.
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (verification only)
-- [x] Grep `governance/workflows/plan/` for `requirements.md` → expect zero matches.
+- [x] Grep `repo-governance/workflows/plan/` for `requirements.md` → expect zero matches.
   - **Implementation Notes**: 1 mention in plan-execution.md line 158 (intentional legacy-fallback). Interpreting "zero matches" as "zero canonical references" — legacy-fallback context is allowed.
   - **Date**: 2026-04-18
   - **Status**: Completed
@@ -288,12 +288,12 @@ Granular checkboxes per the [one checkbox = one action](../../../governance/conv
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (verification only)
-- [x] Confirm `governance/conventions/structure/plans.md` contains both `brd.md` and `prd.md` strings.
+- [x] Confirm `repo-governance/conventions/structure/plans.md` contains both `brd.md` and `prd.md` strings.
   - **Implementation Notes**: Grep returned 14 matches across file (Multi-File Structure tree, Content-Placement Rules section, examples, Acceptance Criteria note). Both names present.
   - **Date**: 2026-04-18
   - **Status**: Completed
   - **Files Changed**: (verification only)
-- [x] Confirm `governance/workflows/plan/plan-quality-gate.md` completeness bullet enumerates the five canonical documents.
+- [x] Confirm `repo-governance/workflows/plan/plan-quality-gate.md` completeness bullet enumerates the five canonical documents.
   - **Implementation Notes**: Line 315 contains "All five canonical documents present in multi-file plans — `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`".
   - **Date**: 2026-04-18
   - **Status**: Completed

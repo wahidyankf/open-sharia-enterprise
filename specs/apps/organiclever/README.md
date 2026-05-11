@@ -197,6 +197,6 @@ new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
 
 ## Related
 
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [BDD Spec-Test Mapping](../../../governance/development/infra/bdd-spec-test-mapping.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [BDD Spec-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)

@@ -64,7 +64,7 @@ Documentation files (pre-written, verify accuracy during Phase 16.5):
     apps/organiclever-web/README.md                           ← CHANGE: add Design System section
     libs/ts-ui/README.md                                     ← CHANGE: add OL component catalog
     libs/ts-ui-tokens/README.md                              ← CHANGE: add per-app brand files section
-    governance/development/frontend/design-tokens.md         ← CHANGE: add OKLCH section, update dark variant
+    repo-governance/development/frontend/design-tokens.md         ← CHANGE: add OKLCH section, update dark variant
     .claude/skills/apps-organiclever-web-developing-content/SKILL.md  ← CHANGE: add Design System section
 ```
 
@@ -1194,7 +1194,7 @@ Target content:
 - Explicit opt-in statement: sibling apps not affected
 - Updated Customization Layers (5 layers, now including brand token file as layer 2)
 
-### `governance/development/frontend/design-tokens.md` — OKLCH section
+### `repo-governance/development/frontend/design-tokens.md` — OKLCH section
 
 Target content:
 

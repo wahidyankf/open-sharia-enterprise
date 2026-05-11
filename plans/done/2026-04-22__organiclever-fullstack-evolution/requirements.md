@@ -221,7 +221,7 @@
 - **FR-8.4.1**: Update all 14+ governance files referencing `organiclever-web`
 - **FR-8.4.2**: Update all 14+ docs files referencing `organiclever-web`
 - **FR-8.4.3**: Add `organiclever-be` to technology stack, CI/CD, and deployment docs
-- **FR-8.4.4**: Update `governance/development/infra/github-actions-workflow-naming.md`
+- **FR-8.4.4**: Update `repo-governance/development/infra/github-actions-workflow-naming.md`
 
 ## Non-Functional Requirements
 
@@ -355,7 +355,7 @@ Scenario: No stale references to organiclever-web
   Then no results are found in CLAUDE.md
   And no results are found in .claude/agents/
   And no results are found in .claude/skills/
-  And no results are found in governance/
+  And no results are found in repo-governance/
   And no results are found in docs/
   And the only results are in archived/organiclever-web/ or plans/
 ```

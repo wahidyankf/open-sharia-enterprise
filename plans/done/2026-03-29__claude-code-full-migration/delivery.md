@@ -138,7 +138,7 @@
 1. Analyze CLAUDE.md content (348 lines)
 2. Classify each section:
    - Agent-specific (migrate to AGENTS.md)
-   - General project guidance (exists in governance/)
+   - General project guidance (exists in repo-governance/)
    - Duplicate (remove)
    - OpenCode-specific (add)
 3. Extract content migration plan
@@ -152,15 +152,15 @@
 
 ### CLAUDE.md Sections (lines 1-348)
 
-| Section             | Line Range | Classification           | Destination                                                            |
-| ------------------- | ---------- | ------------------------ | ---------------------------------------------------------------------- |
-| Project Overview    | 1-50       | General project guidance | Move to `governance/explanation/repository-governance-architecture.md` |
-| Agent Format        | 51-100     | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
-| Agent Invocation    | 101-150    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
-| Agent Tools         | 151-200    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
-| Skills              | 201-250    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
-| Maker-Checker-Fixer | 251-300    | Agent-specific           | Keep, already dual-format compatible                                   |
-| Model Config        | 301-348    | Agent-specific           | Update to GLM models, merge into AGENTS.md                             |
+| Section             | Line Range | Classification           | Destination                                                                 |
+| ------------------- | ---------- | ------------------------ | --------------------------------------------------------------------------- |
+| Project Overview    | 1-50       | General project guidance | Move to `repo-governance/explanation/repository-governance-architecture.md` |
+| Agent Format        | 51-100     | Agent-specific           | Update to OpenCode, merge into AGENTS.md                                    |
+| Agent Invocation    | 101-150    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                                    |
+| Agent Tools         | 151-200    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                                    |
+| Skills              | 201-250    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                                    |
+| Maker-Checker-Fixer | 251-300    | Agent-specific           | Keep, already dual-format compatible                                        |
+| Model Config        | 301-348    | Agent-specific           | Update to GLM models, merge into AGENTS.md                                  |
 
 **Classification Criteria**:
 
@@ -168,7 +168,7 @@
   - **Destination**: AGENTS.md (update to OpenCode format)
 
 - **General project guidance**: Content describing project principles, conventions, development practices, architecture
-  - **Destination**: Existing governance docs (`governance/`)
+  - **Destination**: Existing governance docs (`repo-governance/`)
 
 - **Duplicate**: Content that already exists in AGENTS.md
   - **Destination**: Delete (don't duplicate)
@@ -483,7 +483,7 @@
 - [x] agent-maker updated
 - [x] All path references updated
 - [x] All governance documentation updated
-- [x] All governance/workflows/ READMEs updated
+- [x] All repo-governance/workflows/ READMEs updated
 - [x] All convention docs with agent references updated
 - [x] All related READMEs updated (.opencode/agent/README.md)
 
@@ -779,7 +779,7 @@
 - [x] agent-maker updated
 - [x] All path references updated
 - [x] All governance documentation updated
-- [x] All governance/workflows/ READMEs updated
+- [x] All repo-governance/workflows/ READMEs updated
 - [x] All convention docs with agent references updated
 - [x] All related READMEs updated (.opencode/agent/README.md)
 
@@ -819,10 +819,10 @@
 
 ## References
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
 - [OpenCode Agent Format](https://opencode.ai/docs/agents)
 - [OpenCode Skills Documentation](https://opencode.ai/docs/skills)
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
 - Migration test suite: `tests/migration-validation.ts`
 - Schema validator: `scripts/validate-opencode-schema.py`

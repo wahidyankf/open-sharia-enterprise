@@ -85,19 +85,19 @@
     "validate:naming-workflows": {
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go workflows validate-naming",
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/governance/workflows/**/*.md"],
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/workflows/**/*.md"],
       "outputs": []
     },
     "validate:mermaid": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-mermaid --max-depth=4 governance/ .claude/",
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-mermaid --max-depth=4 repo-governance/ .claude/",
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/governance/**/*.md", "{workspaceRoot}/.claude/**/*.md"],
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/**/*.md", "{workspaceRoot}/.claude/**/*.md"],
       "outputs": []
     },
-    "validate:governance-vendor-audit": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go governance vendor-audit governance/",
+    "validate:repo-governance-vendor-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance vendor-audit repo-governance/",
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/governance/**/*.md"],
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/**/*.md"],
       "outputs": []
     },
     "validate:cross-vendor-parity": {
@@ -106,7 +106,7 @@
       "inputs": [
         "{projectRoot}/**/*.go",
         "{projectRoot}/scripts/validate-cross-vendor-parity.sh",
-        "{workspaceRoot}/governance/**/*.md",
+        "{workspaceRoot}/repo-governance/**/*.md",
         "{workspaceRoot}/AGENTS.md",
         "{workspaceRoot}/CLAUDE.md",
         "{workspaceRoot}/.claude/agents/**/*.md",

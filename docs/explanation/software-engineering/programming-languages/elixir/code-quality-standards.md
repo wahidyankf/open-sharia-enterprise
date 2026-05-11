@@ -816,18 +816,18 @@ jobs:
 
 These standards enforce the the software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - mix format auto-formats code on every compilation (no manual formatting)
    - Credo catches quality issues at commit time (before code review)
    - Dialyzer prevents type errors at compile time (not runtime)
    - Pre-commit hooks enforce quality automatically (zero-friction quality)
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Explicit `@spec` annotations make type contracts clear
    - Explicit Credo severity thresholds (cyclomatic complexity ≤15)
    - Explicit quality rules in `.credo.exs` (no hidden style expectations)
 
-3. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Same mix format version across all developer machines (enforced in mix.exs)
    - Credo runs identically in CI/CD and local builds
    - Quality tool versions pinned in mix.exs configuration

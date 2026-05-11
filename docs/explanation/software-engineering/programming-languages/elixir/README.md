@@ -76,21 +76,21 @@ OSE Platform Elixir applications MUST use the following framework stack:
 
 **What this documentation does NOT cover**: Elixir syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 Elixir development in OSE Platform enforces foundational software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Mix build tool, ExUnit testing framework, mix format, Credo for code quality, Dialyzer for static type analysis, and doctests for documentation validation
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through Mix build tool, ExUnit testing framework, mix format, Credo for code quality, Dialyzer for static type analysis, and doctests for documentation validation
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through pattern matching for control flow visibility, explicit error tuples `{:ok, result}` | `{:error, reason}`, supervision strategies explicitly defined, and configuration via `config/runtime.exs`
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through pattern matching for control flow visibility, explicit error tuples `{:ok, result}` | `{:error, reason}`, supervision strategies explicitly defined, and configuration via `config/runtime.exs`
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use immutable data structures (all Elixir data is immutable by default), pure functions without side effects, data transformations through pipe operator, and functional core/imperative shell architecture
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - MUST use immutable data structures (all Elixir data is immutable by default), pure functions without side effects, data transformations through pipe operator, and functional core/imperative shell architecture
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement pure domain logic without side effects, explicit state management with GenServer, side effects isolated at system boundaries (Ecto, Phoenix), and testable business logic separated from I/O
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - MUST implement pure domain logic without side effects, explicit state management with GenServer, side effects isolated at system boundaries (Ecto, Phoenix), and testable business logic separated from I/O
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through Mix lock file (`mix.lock`), version pinning in `mix.exs`, asdf/MISE with `.tool-versions` for Elixir and Erlang versions, and deterministic builds
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through Mix lock file (`mix.lock`), version pinning in `mix.exs`, asdf/MISE with `.tool-versions` for Elixir and Erlang versions, and deterministic builds
 
 ## Elixir Version Strategy
 
@@ -320,16 +320,16 @@ graph LR
 - MUST integrate Credo and Dialyzer in CI/CD pipeline
 - SHOULD use pre-commit hooks for `mix format` and `mix credo`
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (pure functions, immutability)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -342,16 +342,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

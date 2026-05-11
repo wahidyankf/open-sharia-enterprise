@@ -48,7 +48,7 @@ flowchart LR
 | `apps/rhino-cli/cmd/agents_validate_sync.integration_test.go`   | Update model assertions                                                                                                                                                                                                                                                                                                                                                    |
 | `apps/rhino-cli/cmd/agents_validate_naming.integration_test.go` | Update model in fixture                                                                                                                                                                                                                                                                                                                                                    |
 | `.opencode/opencode.json`                                       | Switch `model`/`small_model` + add provider block; remove Z.ai MCPs                                                                                                                                                                                                                                                                                                        |
-| `governance/development/agents/model-selection.md`              | Update OpenCode/GLM Equivalents table                                                                                                                                                                                                                                                                                                                                      |
+| `repo-governance/development/agents/model-selection.md`         | Update OpenCode/GLM Equivalents table                                                                                                                                                                                                                                                                                                                                      |
 | `.opencode/agents/*.md` (all)                                   | Regenerated automatically via `npm run sync:claude-to-opencode`. Path is plural per [opencode.ai/docs/agents](https://opencode.ai/docs/agents/); the singular `.opencode/agent/` path is removed by the prerequisite [validate-claude-opencode-sync-correctness](../../done/2026-05-02__validate-claude-opencode-sync-correctness/README.md) plan before this plan starts. |
 
 **Out of scope**:
@@ -96,7 +96,7 @@ sync-correctness plan must complete (filesystem moved, validators relaxed,
 test matrix added) before Phase 1 of this plan begins.
 
 This plan remains independent of the two organiclever in-progress plans
-([`2026-04-25__organiclever-web-app/`](../../done/2026-04-25__organiclever-web-app/README.md)
+([`2026-04-25__organiclever-web-app/`](../../done/2026-05-02__organiclever-web-app/README.md)
 and [`2026-04-28__organiclever-web-event-mechanism/`](../../done/2026-04-30__organiclever-web-event-mechanism/README.md)).
 It modifies only tooling configuration and `rhino-cli` internals; it does not touch
 app source code. No blocking dependency in either direction with those.

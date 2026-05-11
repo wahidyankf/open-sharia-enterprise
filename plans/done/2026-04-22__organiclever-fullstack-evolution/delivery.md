@@ -201,7 +201,7 @@ follow-up plan.
 
 ### Milestone 4.6: UI Quality Gate
 
-- [x] Run UI quality gate workflow (`governance/workflows/ui/ui-quality-gate.md`) for
+- [x] Run UI quality gate workflow (`repo-governance/workflows/ui/ui-quality-gate.md`) for
       `apps/organiclever-web/src/components/` -- validates token compliance, accessibility,
       component patterns, dark mode, responsive design
 - [x] Resolve all findings from `swe-ui-checker` (iterate with `swe-ui-fixer` until zero findings)
@@ -310,7 +310,7 @@ follow-up plan.
 ### Milestone 7.4: Governance Files
 
 - [x] Update all governance files referencing `organiclever-web`
-      (bulk-replaced across governance/ — no remaining references found)
+      (bulk-replaced across repo-governance/ — no remaining references found)
 
 ### Milestone 7.5: Docs Files
 

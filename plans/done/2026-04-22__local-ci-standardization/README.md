@@ -3,7 +3,7 @@
 **Status**: Done
 **Date**: 2026-02-23
 **Priority**: High
-**Standard**: [governance/development/infra/nx-targets.md](../../../governance/development/infra/nx-targets.md)
+**Standard**: [repo-governance/development/infra/nx-targets.md](../../../repo-governance/development/infra/nx-targets.md)
 
 ## Overview
 
@@ -56,7 +56,7 @@ cannot be invoked via the workspace-level `nx affected -t test:e2e` cron pattern
 
 This plan uses **Trunk Based Development** — all changes commit directly to `main`.
 
-Commit after each phase using [Conventional Commits](../../../governance/development/workflow/commit-messages.md)
+Commit after each phase using [Conventional Commits](../../../repo-governance/development/workflow/commit-messages.md)
 format. Suggested messages per phase:
 
 - Phase 1: `chore(infra): update nx.json targetDefaults and package.json test scripts`

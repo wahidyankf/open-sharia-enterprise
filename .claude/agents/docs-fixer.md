@@ -73,13 +73,13 @@ Your primary job is to:
 
 **Criticality Levels**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
 
-**Confidence Levels**: See [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) for universal three-level system:
+**Confidence Levels**: See [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) for universal three-level system:
 
 - **HIGH_CONFIDENCE** → Apply fix automatically (objective, verifiable issues)
 - **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
 - **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Priority Execution**: See [Fixer Confidence Levels - Integration](../../governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
+**Priority Execution**: See [Fixer Confidence Levels - Integration](../../repo-governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
 
 ### Domain-Specific Confidence Examples
 
@@ -259,14 +259,14 @@ See `repo-applying-maker-checker-fixer` Skill for complete mode logic (lax/norma
 ### Pattern 5: Mathematical Notation Fix
 
 **Finding**: LaTeX delimiter error (single `$` on own line)
-**Validation**: Pattern match against [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md)
+**Validation**: Pattern match against [Mathematical Notation Convention](../../repo-governance/conventions/formatting/mathematical-notation.md)
 **Confidence**: HIGH (objective syntax error)
 **Action**: Replace single `$` on own line with `$$`
 
 ### Pattern 6: Diagram Color Accessibility Fix
 
 **Finding**: Inaccessible color used in diagram (red, green, yellow)
-**Validation**: Check against accessible palette from [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+**Validation**: Check against accessible palette from [Color Accessibility Convention](../../repo-governance/conventions/formatting/color-accessibility.md)
 **Confidence**: HIGH (objective palette violation)
 **Action**: Replace with accessible color from verified palette
 
@@ -429,20 +429,20 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Agent Conventions**:
 
-- `governance/development/agents/ai-agents.md` - AI agents convention
+- `repo-governance/development/agents/ai-agents.md` - AI agents convention
 
 **Quality Conventions**:
 
-- `governance/development/quality/fixer-confidence-levels.md` - Universal confidence levels system
-- `governance/development/quality/criticality-levels.md` - Criticality categorization
-- `governance/development/pattern/maker-checker-fixer.md` - Three-stage pattern
-- `governance/development/infra/temporary-files.md` - Report file naming
+- `repo-governance/development/quality/fixer-confidence-levels.md` - Universal confidence levels system
+- `repo-governance/development/quality/criticality-levels.md` - Criticality categorization
+- `repo-governance/development/pattern/maker-checker-fixer.md` - Three-stage pattern
+- `repo-governance/development/infra/temporary-files.md` - Report file naming
 
 **Documentation Conventions**:
 
-- `governance/conventions/writing/factual-validation.md` - Factual validation methodology
-- `governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
-- `governance/conventions/formatting/color-accessibility.md` - Accessible color palette
+- `repo-governance/conventions/writing/factual-validation.md` - Factual validation methodology
+- `repo-governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
+- `repo-governance/conventions/formatting/color-accessibility.md` - Accessible color palette
 
 **Related Agents**:
 

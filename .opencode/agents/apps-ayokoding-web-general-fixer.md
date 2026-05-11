@@ -131,4 +131,4 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Related Conventions**:
 
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)

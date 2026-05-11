@@ -15,7 +15,7 @@ This plan delivers **three things**:
    `label_too_long`.
 
 3. **Governance propagation** (Phase 2): updates to
-   `governance/conventions/formatting/diagrams.md` (via `repo-rules-maker`) documenting
+   `repo-governance/conventions/formatting/diagrams.md` (via `repo-rules-maker`) documenting
    the direction-aware width rules and fix strategy guide so future contributors have a
    canonical reference.
 
@@ -82,7 +82,7 @@ next batch.
 
 ### R6 — Governance convention documents width constraints and fix strategies
 
-`governance/conventions/formatting/diagrams.md` must be updated (via `repo-rules-maker`)
+`repo-governance/conventions/formatting/diagrams.md` must be updated (via `repo-rules-maker`)
 to include:
 
 1. A "Flowchart Width Constraints" section documenting:
@@ -112,7 +112,7 @@ The `repo-rules-quality-gate` must pass in strict mode after these changes.
 - Fixing `width_exceeded` and `label_too_long` violations in affected `docs/` files
   after Phase 0 re-audit (Phase 1)
 - Preserving diagram semantics (node relationships, information content)
-- Updating `governance/conventions/formatting/diagrams.md` with width constraints
+- Updating `repo-governance/conventions/formatting/diagrams.md` with width constraints
   and fix strategy guide (Phase 2, via `repo-rules-maker`)
 
 **Out of scope**:
@@ -120,7 +120,7 @@ The `repo-rules-quality-gate` must pass in strict mode after these changes.
 - `complex_diagram` warnings as a separate concern — they disappear after MaxDepth=math.MaxInt
 - Adding new threshold parameter types beyond MaxWidth/MaxDepth/MaxLabelLen
 - Changes to `.claude/` files — audited clean; governance changes are limited to
-  `governance/conventions/formatting/diagrams.md` (Phase 2 only)
+  `repo-governance/conventions/formatting/diagrams.md` (Phase 2 only)
 - Extending the pre-push hook to scan `docs/`
 - Adding new diagrams or expanding documentation content
 
@@ -190,14 +190,14 @@ Feature: Mermaid width constraints documented in governance convention
     And Phase 2 (governance propagation) is complete
 
   Scenario: diagrams.md documents direction-aware width constraints
-    When I read governance/conventions/formatting/diagrams.md
+    When I read repo-governance/conventions/formatting/diagrams.md
     Then it contains a section documenting MaxWidth=4 as the horizontal limit
     And it explains that horizontal dimension is direction-aware
     And it states LR/RL diagrams use depth as horizontal
     And it states TD/TB/BT diagrams use span as horizontal
 
   Scenario: diagrams.md contains the fix strategy guide
-    When I read governance/conventions/formatting/diagrams.md
+    When I read repo-governance/conventions/formatting/diagrams.md
     Then it contains a fix strategy section with direction flip as the first strategy
     And it describes sequential chaining as a structural fix option
     And it describes diagram splitting as an alternative fix

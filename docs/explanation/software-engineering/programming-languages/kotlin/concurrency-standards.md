@@ -28,7 +28,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to use concurrency in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -412,9 +412,9 @@ class BadCache {
 
 ## Related Documentation
 
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
 
 ---
 

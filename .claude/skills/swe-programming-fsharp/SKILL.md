@@ -26,7 +26,7 @@ Progressive disclosure of F# coding standards for agents writing F# code.
 
 **What this skill does NOT cover**: F# syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Quick Standards Reference
 
@@ -208,4 +208,4 @@ let zakatProperties =
 ## References
 
 - [F# README](../../../docs/explanation/software-engineering/programming-languages/f-sharp/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

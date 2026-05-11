@@ -53,10 +53,10 @@ When a concern is genuinely cross-cutting (e.g., a success criterion is both a b
 
 ### Governance (authoritative convention)
 
-| File                                                  | Change                                                                                                                        |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `governance/conventions/structure/plans.md`           | Rewrite Multi-File Structure section for five-doc layout; update Single-File Structure exception wording; update all examples |
-| `governance/development/infra/acceptance-criteria.md` | Update any reference from `requirements.md` to `prd.md` as the canonical Gherkin location                                     |
+| File                                                       | Change                                                                                                                        |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/conventions/structure/plans.md`           | Rewrite Multi-File Structure section for five-doc layout; update Single-File Structure exception wording; update all examples |
+| `repo-governance/development/infra/acceptance-criteria.md` | Update any reference from `requirements.md` to `prd.md` as the canonical Gherkin location                                     |
 
 ### Agents (`.claude/agents/`)
 
@@ -73,7 +73,7 @@ When a concern is genuinely cross-cutting (e.g., a success criterion is both a b
 | -------------------------------------- | ----------------------------------------------------------- |
 | `plan-creating-project-plans/SKILL.md` | Update plan-structure reference to five-doc; update example |
 
-### Workflows (`governance/workflows/plan/`)
+### Workflows (`repo-governance/workflows/plan/`)
 
 | Workflow               | Change                                                                                                                                                                                                                                                                                                                                        |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -152,13 +152,13 @@ Example (not acceptable):
 
 ### Grep invariants (post-change)
 
-| Check                                                         | Expected result                    |
-| ------------------------------------------------------------- | ---------------------------------- |
-| `plans/in-progress/ plans/backlog/ -name 'requirements.md'`   | zero matches                       |
-| grep "requirements.md" in `.claude/`                          | only historical/migration mentions |
-| grep "requirements.md" in `governance/`, `docs/`, `AGENTS.md` | only historical mentions           |
-| grep "brd.md" in `governance/conventions/structure/plans.md`  | present                            |
-| grep "prd.md" in `governance/conventions/structure/plans.md`  | present                            |
+| Check                                                              | Expected result                    |
+| ------------------------------------------------------------------ | ---------------------------------- |
+| `plans/in-progress/ plans/backlog/ -name 'requirements.md'`        | zero matches                       |
+| grep "requirements.md" in `.claude/`                               | only historical/migration mentions |
+| grep "requirements.md" in `repo-governance/`, `docs/`, `AGENTS.md` | only historical mentions           |
+| grep "brd.md" in `repo-governance/conventions/structure/plans.md`  | present                            |
+| grep "prd.md" in `repo-governance/conventions/structure/plans.md`  | present                            |
 
 ### Agent round-trip test
 
@@ -182,7 +182,7 @@ All changed files pass.
 nx affected -t typecheck lint test:quick spec-coverage
 ```
 
-No code changes in this plan, so affected graph should be minimal or empty; any failures indicate regression elsewhere and must be investigated per [CI Blocker Resolution Convention](../../../governance/development/quality/ci-blocker-resolution.md).
+No code changes in this plan, so affected graph should be minimal or empty; any failures indicate regression elsewhere and must be investigated per [CI Blocker Resolution Convention](../../../repo-governance/development/quality/ci-blocker-resolution.md).
 
 ## Rollback
 

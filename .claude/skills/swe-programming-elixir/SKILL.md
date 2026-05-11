@@ -191,7 +191,7 @@ config :my_app, api_key: System.get_env("API_KEY")
 ### Elixir Comprehensive Documentation
 
 - **[Elixir README](../../../docs/explanation/software-engineering/programming-languages/elixir/README.md)**
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)
 
 ---
 

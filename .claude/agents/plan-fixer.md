@@ -60,7 +60,7 @@ Your primary job is to:
 ## Web Research Delegation
 
 This agent has `WebSearch` and `WebFetch` tools but invokes **Exception 2 (fixer re-validation)**
-of the [Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Fixer agents re-validate single audit findings in the same context as the fix they apply, so
 delegating to [`web-research-maker`](./web-research-maker.md) would break the re-validation-plus-fix
 coupling. The agent therefore uses in-context `WebSearch`/`WebFetch` for single-finding
@@ -87,7 +87,7 @@ Apply HIGH_CONFIDENCE fixes automatically, skip others, report summary.
 
 #### BRD/PRD Content-Placement Fixes
 
-When the audit reports misplaced content per the [Content-Placement Rules](../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), apply the following moves (HIGH confidence — mechanical, unambiguous):
+When the audit reports misplaced content per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), apply the following moves (HIGH confidence — mechanical, unambiguous):
 
 - **Business framing found in `prd.md`** (sign-off language, sponsors, stakeholders, KPIs, ceremony language) → **move to `brd.md`**, typically into the Business Impact or Affected Roles subsection. If sign-off / approval-gate language is present at all, **strip it** — this repo is single-maintainer with code-review as the only gate; sign-off ceremonies are forbidden by the convention.
 - **User stories or Gherkin scenarios found in `brd.md`** → **move to `prd.md`**, into User Stories or Acceptance Criteria section.
@@ -98,7 +98,7 @@ When the audit reports misplaced content per the [Content-Placement Rules](../..
 
 After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
 
-#### Unsolicited PR Step Removal (per [Git Push Default Convention](../../governance/development/workflow/git-push-default.md))
+#### Unsolicited PR Step Removal (per [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md))
 
 When plan-checker flags a HIGH finding for an unsolicited PR step in a delivery checklist, remove such steps (HIGH confidence — mechanical, unambiguous):
 
@@ -192,19 +192,19 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
+- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - Plan standards
 
 **Related Agents / Workflows:**
 
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans (generates audit reports)
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve plan quality while avoiding false positives.
 
@@ -370,7 +370,7 @@ When plan-checker reports a MEDIUM finding for ASCII art in plan files where Mer
 
 ### How to Convert ASCII Art to Mermaid
 
-Follow [governance/conventions/formatting/diagrams.md](../../governance/conventions/formatting/diagrams.md) for full syntax rules. Key standards:
+Follow [repo-governance/conventions/formatting/diagrams.md](../../repo-governance/conventions/formatting/diagrams.md) for full syntax rules. Key standards:
 
 1. **Choose the right diagram type**:
    - Component interactions, decision branches → `flowchart LR`
@@ -380,7 +380,7 @@ Follow [governance/conventions/formatting/diagrams.md](../../governance/conventi
 
 2. **Orientation**: Default to `flowchart LR` unless top-down is semantically required; add a `%%` comment explaining why.
 
-3–5. Follow the color-blind-friendly palette, `%%` comment syntax, and common syntax pitfalls documented in the `docs-creating-accessible-diagrams` Skill and [governance/conventions/formatting/diagrams.md](../../governance/conventions/formatting/diagrams.md).
+3–5. Follow the color-blind-friendly palette, `%%` comment syntax, and common syntax pitfalls documented in the `docs-creating-accessible-diagrams` Skill and [repo-governance/conventions/formatting/diagrams.md](../../repo-governance/conventions/formatting/diagrams.md).
 
 ### Exception: Do Not Convert
 
@@ -411,7 +411,7 @@ Provision before execution (run from repo root):
 claude --worktree <plan-identifier>
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 ````
 
 **Single-file plans** — insert into `README.md` before the `## Delivery Checklist` heading using the same template as above.
@@ -501,7 +501,7 @@ After rewriting, re-read the checkbox and confirm a sonnet-tier agent could exec
 ## Anti-Hallucination Fixes (Step 5f Findings)
 
 When `plan-checker` reports Anti-Pattern Catalog violations (AP-1 through AP-10) per the
-[Plan Anti-Hallucination Convention](../../governance/development/quality/plan-anti-hallucination.md),
+[Plan Anti-Hallucination Convention](../../repo-governance/development/quality/plan-anti-hallucination.md),
 apply the fix only AFTER running the verification recipe for that claim category. If the
 recipe cannot establish the correct value, classify MEDIUM (manual review) — never invent
 a replacement. The single most damaging fixer behaviour is replacing one hallucination with
@@ -512,7 +512,7 @@ another that happens to look more plausible.
 Before applying ANY fix that introduces or replaces a factual claim (file path, Nx target,
 package version, function name, agent name, test name, command, cross-link), re-verify per
 the recipe in
-[Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard):
+[Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard):
 
 ```bash
 # File path replacement — confirm the target exists OR mark _New file_

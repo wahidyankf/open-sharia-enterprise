@@ -41,13 +41,13 @@ Hugo removal and Playwright/version additions).
   - [x] Verify `aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion()` uses `"node"`
         (not `"hugo"`) — no change needed if already correct
 - [x] Update `cmd/doctor.go` Long help string — remove Hugo from the tool list
-- [x] Remove Phase 11 (Hugo) from `governance/workflows/infra/development-environment-setup.md`
+- [x] Remove Phase 11 (Hugo) from `repo-governance/workflows/infra/development-environment-setup.md`
 - [x] Remove Hugo row from Tool Inventory table in the workflow doc (row 8)
 - [x] Renumber subsequent tool rows in the inventory table
 - [x] Update minimal scope table in workflow doc if Hugo was listed
 - [x] Update the workflow doc's YAML frontmatter `inputs` description if it references "19 tools"
       (currently says "full: all 19 tools for all projects")
-- [x] Update `governance/development/workflow/native-first-toolchain.md` opening paragraph
+- [x] Update `repo-governance/development/workflow/native-first-toolchain.md` opening paragraph
       "19 toolchains" → "18 toolchains" (or remove hardcoded count)
 - [x] Run `nx run rhino-cli:test:quick` — verify all tests pass
 - [x] Run `npm run doctor` — verify 18/18 tools OK, no Hugo in output
@@ -71,7 +71,7 @@ Hugo removal and Playwright/version additions).
 - [x] Add `Brewfile.lock.json` to `.gitignore`
 - [x] Verify `brew info dotnet` to confirm correct formula name (may be `dotnet@10`)
 - [x] Verify `brew bundle check` passes on current machine
-- [x] Update `governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
+- [x] Update `repo-governance/workflows/infra/development-environment-setup.md` Phase 1 to mention
       `brew bundle` as alternative to individual installs
 - [x] Commit: `feat(infra): add Brewfile for declarative Homebrew dependencies`
 
@@ -91,7 +91,7 @@ Hugo removal and Playwright/version additions).
 - [x] Test manually: remove one `.env` file, run `env init`, verify it's created
 - [x] Test manually: run `env init` again, verify existing file is skipped
 - [x] Test manually: run `env init --force`, verify file is overwritten
-- [x] Update Phase 12.3 in `governance/workflows/infra/development-environment-setup.md` to
+- [x] Update Phase 12.3 in `repo-governance/workflows/infra/development-environment-setup.md` to
       mention `env init` as fallback when no backup exists
 - [x] Commit: `feat(rhino-cli): add env init command to bootstrap .env from .env.example`
 
@@ -162,7 +162,7 @@ Hugo removal and Playwright/version additions).
 - [x] Run `nx run rhino-cli:test:quick` — verify tests pass
 - [x] Run `npm run doctor -- --scope minimal` — verify only 7 tools checked
 - [x] Run `npm run doctor` — verify all tools checked (backward compatible)
-- [x] Update `governance/workflows/infra/development-environment-setup.md` minimal scope
+- [x] Update `repo-governance/workflows/infra/development-environment-setup.md` minimal scope
       section to reference `doctor --scope minimal`
 - [x] Commit: `feat(rhino-cli): add --scope flag to doctor for minimal tool checks`
 
@@ -230,7 +230,7 @@ libssl-dev ...`) before `asdf install erlang`
 - [x] Test manually: run `doctor --fix` with all tools installed — verify "nothing to fix"
 - [x] Test manually: run `doctor --fix --dry-run` — verify it prints what would be installed
       without executing any commands
-- [x] Update `governance/workflows/infra/development-environment-setup.md` to add `doctor --fix`
+- [x] Update `repo-governance/workflows/infra/development-environment-setup.md` to add `doctor --fix`
       as the recommended setup path
 - [x] Update `docs/how-to/hoto__setup-development-environment.md` to mention `doctor --fix`
 - [x] Commit: `feat(rhino-cli): add doctor --fix for auto-installing missing tools`
@@ -243,7 +243,7 @@ libssl-dev ...`) before `asdf install erlang`
       and `npm run doctor -- --scope minimal`
 - [x] Update CLAUDE.md tool count if it mentions "19 tools"
 - [x] Update this plan's own `README.md` "checks 19 tools" in Current State section
-- [x] Verify `governance/workflows/infra/development-environment-setup.md` is consistent with
+- [x] Verify `repo-governance/workflows/infra/development-environment-setup.md` is consistent with
       all changes — specifically:
   - [x] Quick Start section exists referencing `doctor --fix` and `doctor --fix --dry-run`
   - [x] Phase 11 (Hugo) removed, tool inventory renumbered

@@ -705,11 +705,11 @@ monorepo paths correctly. Test each integration before committing.
 | `.github/workflows/_reusable-backend-e2e.yml`           | Backend E2E test workflow               |
 | `.github/workflows/_reusable-frontend-e2e.yml`          | Frontend E2E test workflow              |
 | `.github/workflows/_reusable-test-and-deploy.yml`       | Test + deploy workflow                  |
-| `governance/development/infra/ci-conventions.md`        | CI conventions governance doc           |
+| `repo-governance/development/infra/ci-conventions.md`   | CI conventions governance doc           |
 | `.claude/agents/ci-checker.md`                          | CI compliance checker agent             |
 | `.claude/agents/ci-fixer.md`                            | CI compliance fixer agent               |
 | `.claude/skills/ci-standards/SKILL.md`                  | CI standards inline skill               |
-| `governance/workflows/ci/ci-quality-gate.md`            | CI compliance quality gate workflow     |
+| `repo-governance/workflows/ci/ci-quality-gate.md`       | CI compliance quality gate workflow     |
 
 ### Files to Update (existing, not new)
 

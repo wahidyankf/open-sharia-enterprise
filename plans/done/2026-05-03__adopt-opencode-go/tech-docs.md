@@ -433,7 +433,7 @@ add it, append to the `mcp` block in `.opencode/opencode.json`:
 }
 ```
 
-### 13. `governance/development/agents/model-selection.md`
+### 13. `repo-governance/development/agents/model-selection.md`
 
 **Section to update**: "OpenCode / GLM Equivalents".
 

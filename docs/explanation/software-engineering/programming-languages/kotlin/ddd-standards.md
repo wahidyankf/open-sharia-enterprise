@@ -28,7 +28,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to apply Domain-Driven Design in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -452,9 +452,9 @@ class ApproveZakatApplicationUseCase(
 
 ## Related Documentation
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ---
 

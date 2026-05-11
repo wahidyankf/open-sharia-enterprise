@@ -22,7 +22,7 @@ skills:
 **Model Selection Justification**: This agent uses `model: sonnet` (execution-grade) because
 it applies a small, fixed set of mechanical fixes derived from a checker report. No
 open-ended reasoning is required — that fits the execution-grade tier per the
-[Model Selection Convention](../../governance/development/agents/model-selection.md).
+[Model Selection Convention](../../repo-governance/development/agents/model-selection.md).
 
 ## Auto-Fix Scope
 
@@ -45,7 +45,7 @@ When the checker reports drift in `.opencode/` after `npm run sync:claude-to-ope
 The fixer DOES NOT auto-remediate the following findings — it surfaces them in its summary
 report and exits non-zero so the orchestrator (or workflow) escalates:
 
-- **Invariant 1 fails** (governance vendor-audit violations): rewriting governance prose
+- **Invariant 1 fails** (repo-governance vendor-audit violations): rewriting governance prose
   requires human-judgment per the convention's Migration Guidance
 - **Invariant 2 fails** (AGENTS.md / CLAUDE.md vendor-audit violations): same — rewriting
   load-bearing root-instruction prose requires human-judgment
@@ -61,12 +61,12 @@ report and exits non-zero so the orchestrator (or workflow) escalates:
 ## Workflow Integration
 
 This agent is the yellow fixer stage of the
-[`repo-cross-vendor-parity-quality-gate` workflow](../../governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md).
+[`repo-cross-vendor-parity-quality-gate` workflow](../../repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md).
 The workflow alternates `repo-parity-checker` and this agent until two consecutive
 zero-finding validations land (double-zero termination), bounded by `max-iterations`.
 
 ## Related Conventions
 
-- [Governance Vendor-Independence Convention](../../governance/conventions/structure/governance-vendor-independence.md)
-- [Agent Naming Convention](../../governance/conventions/structure/agent-naming.md)
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
+- [Governance Vendor-Independence Convention](../../repo-governance/conventions/structure/governance-vendor-independence.md)
+- [Agent Naming Convention](../../repo-governance/conventions/structure/agent-naming.md)
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md)

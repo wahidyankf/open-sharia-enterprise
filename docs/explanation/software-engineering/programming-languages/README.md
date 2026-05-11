@@ -366,8 +366,8 @@ This language documentation complements other areas:
 
 - **[Development Practices](../development/README.md)** - TDD, BDD, testing strategies
 - **[Architecture](../architecture/README.md)** - C4 model, DDD patterns
-- **[Functional Programming](../../../../governance/development/pattern/functional-programming.md)** - Cross-language FP principles
-- **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Quality requirements
+- **[Functional Programming](../../../../repo-governance/development/pattern/functional-programming.md)** - Cross-language FP principles
+- **[Code Quality Standards](../../../../repo-governance/development/quality/code.md)** - Quality requirements
 - **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
 
 ## Principles Reflected in Language Documentation
@@ -426,4 +426,4 @@ To document a new language:
 - **[Development Practices](../development/README.md)** - TDD and BDD documentation
 - **[Explanation Documentation Index](../../README.md)** - All conceptual documentation
 - **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Project organization
-- **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Quality requirements
+- **[Code Quality Standards](../../../../repo-governance/development/quality/code.md)** - Quality requirements

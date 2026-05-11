@@ -15,7 +15,7 @@ related:
   - ./interfaces-and-types.md
   - ./best-practices.md
   - ./anti-patterns.md
-  - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
+  - ../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -838,8 +838,8 @@ const handleUSD: USDHandler = handleMoney; // ✓ OK
 
 ### Development Practices
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear configuration
-- **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable patterns
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Clear configuration
+- **[Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - Immutable patterns
 
 ---
 

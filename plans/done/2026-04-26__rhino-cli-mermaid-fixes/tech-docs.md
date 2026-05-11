@@ -21,7 +21,7 @@
 ### Current
 
 ```go
-// collectMDDefaultDirs scans docs/, governance/, .claude/, and root *.md files.
+// collectMDDefaultDirs scans docs/, repo-governance/, .claude/, and root *.md files.
 func collectMDDefaultDirs(repoRoot string) ([]string, error) {
     dirs := []string{
         filepath.Join(repoRoot, "docs"),
@@ -35,7 +35,7 @@ func collectMDDefaultDirs(repoRoot string) ([]string, error) {
 ### After
 
 ```go
-// collectMDDefaultDirs scans docs/, governance/, .claude/, plans/, and root *.md files.
+// collectMDDefaultDirs scans docs/, repo-governance/, .claude/, plans/, and root *.md files.
 func collectMDDefaultDirs(repoRoot string) ([]string, error) {
     dirs := []string{
         filepath.Join(repoRoot, "docs"),
@@ -473,7 +473,7 @@ Tests must explicitly cover the multi-source-multi-target case.
 - `archived/` is frozen — adding scope would either flood with old findings
   (bad) or require excluding (drift).
 - `apps-labs/` is experimental.
-  Keeping the scope to `docs/`, `governance/`, `.claude/`, `plans/` matches the
+  Keeping the scope to `docs/`, `repo-governance/`, `.claude/`, `plans/` matches the
   existing pattern (places where intentional diagrams live).
 
 **5. Subgraph `StartLine` uses block-relative line numbers.**

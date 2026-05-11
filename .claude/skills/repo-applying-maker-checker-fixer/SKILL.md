@@ -494,7 +494,7 @@ Support `mode` parameter for quality-gate workflows:
 - Skip MEDIUM_CONFIDENCE findings (flag for manual review)
 - Skip FALSE_POSITIVE findings (report to improve checker)
 - Use the right tool for the edit shape:
-  - Single-file targeted edits: `Edit` tool (including under `.claude/`, `.opencode/`, `docs/`, `governance/`)
+  - Single-file targeted edits: `Edit` tool (including under `.claude/`, `.opencode/`, `docs/`, `repo-governance/`)
   - Bulk mechanical substitutions across many files: `Bash` with `sed` / `awk`
   - New file creation: `Write` tool
 
@@ -835,19 +835,19 @@ If checker and fixer disagree on the same finding for 2+ iterations, escalate to
 
 The pattern integrates with:
 
-- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
-- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
-- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
-- **[Repository Validation Methodology](../../../governance/development/quality/repository-validation.md)** - Standard validation patterns
-- **[AI Agents Convention](../../../governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
+- **[Criticality Levels Convention](../../../repo-governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
+- **[Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
+- **[Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
+- **[Repository Validation Methodology](../../../repo-governance/development/quality/repository-validation.md)** - Standard validation patterns
+- **[AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
 
 ## References
 
-- **[Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
-- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Severity classification
-- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Confidence assessment
-- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)** - Report file organization and naming
-- **[Repository Validation Methodology](../../../governance/development/quality/repository-validation.md)** - Validation patterns
+- **[Maker-Checker-Fixer Pattern Convention](../../../repo-governance/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
+- **[Criticality Levels Convention](../../../repo-governance/development/quality/criticality-levels.md)** - Severity classification
+- **[Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md)** - Confidence assessment
+- **[Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)** - Report file organization and naming
+- **[Repository Validation Methodology](../../../repo-governance/development/quality/repository-validation.md)** - Validation patterns
 
 ## Related Skills
 

@@ -1,4 +1,4 @@
-# PRD — Rename `governance/` to `repo-governance/`
+# PRD — Rename `repo-governance/` to `repo-governance/`
 
 ## Product Overview
 
@@ -28,11 +28,11 @@ Scenario: Directory renamed
   Given the ose-public repo at HEAD
   When the rename is applied
   Then `repo-governance/` exists at repo root
-  And `governance/` does not exist at repo root
+  And `repo-governance/` does not exist at repo root
 
 Scenario: No stray path references remain in functional files
   Given the rename has been applied
-  When grep is run for "governance/" in *.go and *.sh files
+  When grep is run for "repo-governance/" in *.go and *.sh files
   Then zero matches are found outside the repo-governance/ directory itself
 
 Scenario: Pre-push hook still functions
@@ -60,8 +60,8 @@ Scenario: Markdown lint passes
 
 **In scope:**
 
-- `governance/` directory rename via `git mv`
-- All `governance/` path tokens in `.md`, `.sh`, `.go`, `.json`, `.yaml`, `.yml`, `.feature` files
+- `repo-governance/` directory rename via `git mv`
+- All `repo-governance/` path tokens in `.md`, `.sh`, `.go`, `.json`, `.yaml`, `.yml`, `.feature` files
 - Parent repo `/Users/wkf/ose-projects/CLAUDE.md`
 
 **Out of scope:**

@@ -21,7 +21,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Java Error Handling Standards for OSE Platform
 
@@ -415,17 +415,17 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Result/Either types make errors explicit in method signatures (`Result<T, E>` forces callers to handle errors)
    - Sealed exception hierarchies enable exhaustive pattern matching (compiler verifies all error types handled)
    - Structured error codes (`ZAK_CALC_ERROR`) make errors machine-readable
 
-2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Circuit breakers automatically fail-fast when external services are down
    - Retry policies with exponential backoff automatically retry transient failures
    - Audit logging automatically captures all error events
 
-3. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Deterministic error handling (same input always produces same error)
    - Idempotency tokens prevent duplicate transactions after rollback
    - Atomic transactions guarantee consistent state (all-or-nothing)

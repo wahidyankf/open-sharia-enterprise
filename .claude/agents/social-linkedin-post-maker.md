@@ -45,4 +45,4 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../governance/conventions/writing/quality.md)
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)

@@ -37,7 +37,7 @@ Goal: ground the plan's anchor docs before any agent is authored. Produces enoug
 ### 1.1 — Reference doc
 
 - [x] Create `docs/reference/related-repositories.md` with Diátaxis `reference` frontmatter (category: reference; subcategory: ecosystem; tags: reference, ose-primer, ecosystem; created/updated: 2026-04-18).
-- [x] Write the doc body: one paragraph on what `ose-primer` is; one paragraph on the `ose-public` → `ose-primer` upstream-downstream relationship; one paragraph on license difference (FSL-1.1-MIT product apps vs MIT template); an explicit "Non-Goals" section ("this doc does not describe sync automation or release cadence"); one paragraph pointing at `governance/conventions/structure/ose-primer-sync.md` for the classifier.
+- [x] Write the doc body: one paragraph on what `ose-primer` is; one paragraph on the `ose-public` → `ose-primer` upstream-downstream relationship; one paragraph on license difference (FSL-1.1-MIT product apps vs MIT template); an explicit "Non-Goals" section ("this doc does not describe sync automation or release cadence"); one paragraph pointing at `repo-governance/conventions/structure/ose-primer-sync.md` for the classifier.
 - [x] Add a dated "As of" marker in the doc body ("As of 2026-04-18 …").
 - [x] Verify with `markdownlint-cli2 docs/reference/related-repositories.md` — zero findings.
 
@@ -48,7 +48,7 @@ Goal: ground the plan's anchor docs before any agent is authored. Produces enoug
 
 ### 1.3 — Governance convention stub
 
-- [x] Create `governance/conventions/structure/ose-primer-sync.md` with frontmatter (title, description, category: explanation, subcategory: conventions, tags: conventions, structure, ose-primer, sync, cross-repo; created/updated: 2026-04-18).
+- [x] Create `repo-governance/conventions/structure/ose-primer-sync.md` with frontmatter (title, description, category: explanation, subcategory: conventions, tags: conventions, structure, ose-primer, sync, cross-repo; created/updated: 2026-04-18).
 - [x] Write the convention's Purpose, Principles Implemented/Respected (Explicit Over Implicit, Simplicity Over Complexity, Automation Over Manual), and Scope sections.
 - [x] Write the "The two repositories" section naming `ose-public` and `ose-primer` with URLs and license notes.
 - [x] Write the "Sync directions" section defining `propagate`, `adopt`, `bidirectional`, `neither`.
@@ -60,16 +60,16 @@ Goal: ground the plan's anchor docs before any agent is authored. Produces enoug
 - [x] Write the "Clone management" section documenting `$OSE_PRIMER_CLONE/` and the pre-flight steps (pointer to the skill for implementation detail).
 - [x] Write the "Safety invariants" section summarising the hard rules (no `neither` propagation, dry-run default, clean-tree precondition, transform-gap abstention).
 - [x] Write the "Relationship to other conventions" section cross-linking Licensing, File Naming, Agent Naming, Plans Organization.
-- [x] Verify the doc passes `markdownlint-cli2 governance/conventions/structure/ose-primer-sync.md` with zero findings.
+- [x] Verify the doc passes `markdownlint-cli2 repo-governance/conventions/structure/ose-primer-sync.md` with zero findings.
 
 ### 1.4 — Conventions index
 
-- [x] Edit `governance/conventions/structure/README.md`: add a link to `ose-primer-sync.md` under the conventions listing.
+- [x] Edit `repo-governance/conventions/structure/README.md`: add a link to `ose-primer-sync.md` under the conventions listing.
 - [x] Bump `updated:` to 2026-04-18.
 
 ### 1.5 — Root README awareness
 
-- [x] Edit `README.md`: add a "## Related Repositories" section (placed after "Documentation" and before "Motivation") with a single sub-heading for `ose-primer` including: one-line description, link to `https://github.com/wahidyankf/ose-primer`, link to `docs/reference/related-repositories.md`, link to `governance/conventions/structure/ose-primer-sync.md`.
+- [x] Edit `README.md`: add a "## Related Repositories" section (placed after "Documentation" and before "Motivation") with a single sub-heading for `ose-primer` including: one-line description, link to `https://github.com/wahidyankf/ose-primer`, link to `docs/reference/related-repositories.md`, link to `repo-governance/conventions/structure/ose-primer-sync.md`.
 
 ### 1.6 — CLAUDE.md awareness
 
@@ -102,18 +102,18 @@ Goal: extend Phase 1's stub classifier table to cover every `ose-public` top-lev
 - [x] Run `ls -1 ose-public/.claude/agents/*.md | sort` and record every agent.
 - [x] Run `ls -1 ose-public/.claude/skills/ | sort` and record every skill.
 - [x] Run `ls -1 ose-public/docs/ | sort`, then `ls -1 ose-public/docs/*/ | sort` and record the docs tree one level deep.
-- [x] Run `ls -1 ose-public/governance/ | sort`, then `ls -1 ose-public/governance/*/ | sort`.
+- [x] Run `ls -1 ose-public/repo-governance/ | sort`, then `ls -1 ose-public/repo-governance/*/ | sort`.
 
 ### 2.2 — Classifier coverage
 
-- [x] For each enumerated path, verify at least one row in `governance/conventions/structure/ose-primer-sync.md`'s classifier table matches (literal or glob).
+- [x] For each enumerated path, verify at least one row in `repo-governance/conventions/structure/ose-primer-sync.md`'s classifier table matches (literal or glob).
 - [x] For every path NOT matched, add a row (direction + transform + rationale) to the classifier table. — Added rows for `archived/`, `bin/`, `graph.html`, `commitlint.config.js`, `openapitools.json`, `opencode.json`, `go.work.sum`, dotfile ignores, tool caches, `.vscode/`.
 - [x] Verify no classifier row matches zero actual paths at this point (exception: the `apps/a-demo-*` and `specs/apps/a-demo/**` rows WILL match paths pre-Phase-8 and will intentionally match nothing post-Phase-8 — that whitelist is documented in the audit-rule section).
 
 ### 2.3 — Commit Phase 2
 
 - [x] Commit with message: `docs(governance): complete classifier coverage for ose-primer sync convention`.
-- [x] **[C]** Verify only `governance/conventions/structure/ose-primer-sync.md` changed.
+- [x] **[C]** Verify only `repo-governance/conventions/structure/ose-primer-sync.md` changed.
 
 ## Phase 3 — Shared skill authoring
 
@@ -127,7 +127,7 @@ Goal: author the skill that both sync agents consume. Skill encapsulates classif
 
 ### 3.2 — Reference modules
 
-- [x] Create `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md` specifying: how to locate `governance/conventions/structure/ose-primer-sync.md`, how to parse the classifier table (H3 "Classifier table" → next markdown table, one row per entry), how to resolve glob patterns, how to handle the orphan-path default.
+- [x] Create `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md` specifying: how to locate `repo-governance/conventions/structure/ose-primer-sync.md`, how to parse the classifier table (H3 "Classifier table" → next markdown table, one row per entry), how to resolve glob patterns, how to handle the orphan-path default.
 - [x] Create `.claude/skills/repo-syncing-with-ose-primer/reference/clone-management.md` specifying:
   - **Clone path**: resolved from `OSE_PRIMER_CLONE` env var; convention default `~/ose-projects/ose-primer`; no absolute-path leakage in committed docs.
   - **First-time setup**: `export OSE_PRIMER_CLONE="$HOME/ose-projects/ose-primer"` + `git clone` command.
@@ -158,32 +158,32 @@ Goal: author the skill that both sync agents consume. Skill encapsulates classif
 
 ## Phase 3.5 — Workflow authoring
 
-Goal: author two workflow orchestration documents under `governance/workflows/repo/` — the ongoing sync workflow and the one-time extraction workflow. Both conform to the [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) and the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern.
+Goal: author two workflow orchestration documents under `repo-governance/workflows/repo/` — the ongoing sync workflow and the one-time extraction workflow. Both conform to the [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md) and the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern.
 
 ### 3.5a — Sync workflow document
 
-- [x] Create `governance/workflows/repo/repo-ose-primer-sync-execution.md` with YAML frontmatter per `tech-docs.md` §Workflow Specifications (name, goal, termination, inputs: direction/mode/clone-path, outputs: report-file/pr-url).
+- [x] Create `repo-governance/workflows/repo/repo-ose-primer-sync-execution.md` with YAML frontmatter per `tech-docs.md` §Workflow Specifications (name, goal, termination, inputs: direction/mode/clone-path, outputs: report-file/pr-url).
 - [x] Write the workflow body with sections: Purpose; Phases (pre-flight, agent invocation, report finalisation, optional apply, post-flight); Agent coordination (which agent is invoked per direction); Gherkin success criteria (adopt dry-run, propagate apply, dirty-clone abort).
 - [x] Cross-link the shared skill and both agent definitions. — Prose refs used (not markdown links) to avoid pre-commit link-validator breakage when target files don't yet exist at author time.
 - [x] Verify basename `repo-ose-primer-sync-execution` parses against the Workflow Naming Convention regex as scope=`repo`, qualifier=`ose-primer-sync`, type=`execution`. — `rhino-cli workflows validate-naming` PASSED (0 violations).
 
 ### 3.5b — Extraction workflow document
 
-- [x] Create `governance/workflows/repo/repo-ose-primer-extraction-execution.md` with YAML frontmatter per `tech-docs.md` §Workflow Specifications (name, goal, termination, inputs: extraction-scope/clone-path/max-catch-up-iterations, outputs: parity-report/extraction-commits/final-status).
+- [x] Create `repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md` with YAML frontmatter per `tech-docs.md` §Workflow Specifications (name, goal, termination, inputs: extraction-scope/clone-path/max-catch-up-iterations, outputs: parity-report/extraction-commits/final-status).
 - [x] Write the workflow body with sections: Purpose (one-time orchestration; pattern reusable if a future extraction plan emerges); Phases (pre-flight, parity-check gate, catch-up loop, extraction commits A–J, post-extraction verification, classifier flip, close-out); Gherkin success criteria (parity success, parity failure with catch-up, catch-up exhausted, post-verification failure, complete).
 - [x] Cross-link the propagation agent (parity-check + apply modes), the sync workflow (invoked during catch-up), the shared skill's `extraction-scope.md` reference module, and the tech-docs Demo Extraction section.
 - [x] Verify basename `repo-ose-primer-extraction-execution` parses as scope=`repo`, qualifier=`ose-primer-extraction`, type=`execution`. — Passed the same validator.
 
 ### 3.5c — Workflows index update
 
-- [x] Edit `governance/workflows/repo/README.md` (create if absent): add links to the two new workflows with one-line descriptions.
-- [x] Edit `governance/workflows/README.md` (top-level): add entries under the `repo` scope section if the top-level index enumerates individual workflows.
+- [x] Edit `repo-governance/workflows/repo/README.md` (create if absent): add links to the two new workflows with one-line descriptions.
+- [x] Edit `repo-governance/workflows/README.md` (top-level): add entries under the `repo` scope section if the top-level index enumerates individual workflows.
 
 ### 3.5d — Naming + markdown validation
 
 - [x] Run the Workflow Naming Convention audit: both new filenames match `-(quality-gate|execution|setup)$`; confirm each ends specifically in `-execution`.
-- [x] Run `markdownlint-cli2 'governance/workflows/repo/repo-ose-primer-*.md' governance/workflows/repo/README.md` — zero findings.
-- [x] Confirm the `governance/workflows/README.md` top-level index still lints clean.
+- [x] Run `markdownlint-cli2 'repo-governance/workflows/repo/repo-ose-primer-*.md' repo-governance/workflows/repo/README.md` — zero findings.
+- [x] Confirm the `repo-governance/workflows/README.md` top-level index still lints clean.
 
 ### 3.5e — Repo-rules-checker dry run
 
@@ -194,7 +194,7 @@ Goal: author two workflow orchestration documents under `governance/workflows/re
 
 - [x] Stage the two workflow files + index updates explicitly.
 - [x] Commit with message: `feat(workflows): add repo-ose-primer-sync-execution and extraction-execution workflows`.
-- [x] **[C]** Verify commit scope is only `governance/workflows/repo/` files. — Commit also touched `governance/workflows/README.md` top-level index (3.5c requirement); in-spirit-of scope.
+- [x] **[C]** Verify commit scope is only `repo-governance/workflows/repo/` files. — Commit also touched `repo-governance/workflows/README.md` top-level index (3.5c requirement); in-spirit-of scope.
 
 ## Phase 4 — Adoption agent authoring
 
@@ -277,7 +277,7 @@ Goal: invoke both agents in their safest modes against the real state of both re
 
 - [~] Invoke `repo-ose-primer-adoption-maker` in dry-run mode (via Agent tool or natural-language instruction). — **PRE-FLIGHT ABORT**: agent design aborts on dirty primer tree before classifier parse (safety invariant). Substituted with a written abort-notice report at `generated-reports/repo-ose-primer-adoption-maker__phase6__2026-04-18--20-30__report.md`.
 - [x] Verify exactly one new file appears at `generated-reports/repo-ose-primer-adoption-maker__<uuid-chain>__<timestamp>__report.md`. — Abort-notice file present.
-- [~] Verify the report's frontmatter contains every mandatory field (agent, mode=dry-run, invoked-at, ose-public-sha, ose-primer-sha, classifier-sha, report-uuid-chain). — All fields present except `classifier-sha` (noted "see governance/conventions/structure/ose-primer-sync.md at ose-public-sha"). Status field added: `PRE_FLIGHT_ABORT`.
+- [~] Verify the report's frontmatter contains every mandatory field (agent, mode=dry-run, invoked-at, ose-public-sha, ose-primer-sha, classifier-sha, report-uuid-chain). — All fields present except `classifier-sha` (noted "see repo-governance/conventions/structure/ose-primer-sync.md at ose-public-sha"). Status field added: `PRE_FLIGHT_ABORT`.
 - [~] Verify the report's body contains Summary, Classifier coverage, Findings (grouped by direction+significance), Excluded paths appendix, Next steps. — Abort report body differs intentionally (no classifier coverage or findings since pre-flight aborted); Summary + Primer state snapshot + Next steps + Decision recorded sections present.
 - [x] Verify no file in `ose-public` outside `generated-reports/` was modified.
 - [x] Verify no file in `$OSE_PRIMER_CLONE/` was modified.
@@ -293,7 +293,7 @@ Goal: invoke both agents in their safest modes against the real state of both re
 ### 6.4 — Report review
 
 - [x] Skim both reports. Confirm findings read intelligibly, path references are correct, significance bucketing is non-trivial. — No findings produced; both reports document pre-flight abort condition intelligibly.
-- [x] If either report reveals a classifier coverage gap or a transform-gap, file a classifier amendment into `governance/conventions/structure/ose-primer-sync.md` and re-run Phase 6 (back to 6.2). — No gaps surfaced by abort path; observation logged: primer uses `apps/demo-*` naming vs `ose-public` `apps/a-demo-*`; handled in Phase 7 verdict, not via classifier amendment.
+- [x] If either report reveals a classifier coverage gap or a transform-gap, file a classifier amendment into `repo-governance/conventions/structure/ose-primer-sync.md` and re-run Phase 6 (back to 6.2). — No gaps surfaced by abort path; observation logged: primer uses `apps/demo-*` naming vs `ose-public` `apps/a-demo-*`; handled in Phase 7 verdict, not via classifier amendment.
 
 ### 6.5 — Commit Phase 6 artifacts
 
@@ -343,7 +343,7 @@ Goal: confirm `ose-primer` carries every `a-demo-*` path at byte-equivalent or s
 
 Goal: execute the one-time removal of demo apps, specs, workflows, and associated references. Granular commits (A → J) for reviewable atomicity. Every commit references the Phase 7 parity report SHA in its message.
 
-**Branch policy invariant for this phase**: All Phase 8 commits (A → J) land **directly on `ose-public`'s `main` branch** per [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). No feature branch is created; no PR is opened against `ose-public`. Husky pre-commit + pre-push hooks are the only quality gate. Pushes go to `origin/main` as each commit lands. If a commit needs fixing, a new commit is made on top — commits are never amended or force-pushed. (This invariant applies only to the `ose-public` side; every `ose-primer` mutation continues to go through the PR flow per the sync safety rules in `tech-docs.md`.)
+**Branch policy invariant for this phase**: All Phase 8 commits (A → J) land **directly on `ose-public`'s `main` branch** per [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md). No feature branch is created; no PR is opened against `ose-public`. Husky pre-commit + pre-push hooks are the only quality gate. Pushes go to `origin/main` as each commit lands. If a commit needs fixing, a new commit is made on top — commits are never amended or force-pushed. (This invariant applies only to the `ose-public` side; every `ose-primer` mutation continues to go through the PR flow per the sync safety rules in `tech-docs.md`.)
 
 ### 8.A — Commit A: Delete demo CI workflows + demo-only custom actions
 
@@ -460,15 +460,15 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 
 ### 8.G — Commit G: Prune governance / docs prose references
 
-- [x] Edit `governance/development/quality/three-level-testing-standard.md`: replace demo-be examples with product-be references (organiclever-be for F#, or note "see ose-primer for polyglot examples"); remove bullets that cannot be usefully substituted.
-- [x] Edit `governance/development/infra/nx-targets.md`: same pattern.
+- [x] Edit `repo-governance/development/quality/three-level-testing-standard.md`: replace demo-be examples with product-be references (organiclever-be for F#, or note "see ose-primer for polyglot examples"); remove bullets that cannot be usefully substituted.
+- [x] Edit `repo-governance/development/infra/nx-targets.md`: same pattern.
 - [x] Edit `docs/reference/monorepo-structure.md`: remove the demo-app inventory rows; reframe any "polyglot showcase" prose to point at `ose-primer`.
 - [x] Edit `docs/reference/nx-configuration.md`: prune demo-specific target configuration examples.
 - [x] Edit `docs/reference/project-dependency-graph.md`: regenerate the Mermaid graph from the current Nx graph (via `nx graph --file` or equivalent) to drop demo nodes; update any demo-referencing dependency table row.
 - [x] Edit `docs/reference/README.md`: remove the link to the deleted `demo-apps-ci-coverage.md` (if not already removed in Phase 1).
 - [x] Edit `docs/how-to/add-new-app.md`: replace demo-path examples with product-app paths.
 - [x] Edit `docs/how-to/add-new-lib.md`: same.
-- [x] Run `grep -rnI 'a-demo' governance/ docs/ --include='*.md'` — remaining matches MUST be limited to: narrative changelog mentions, the classifier row in `governance/conventions/structure/ose-primer-sync.md` (untouched in this commit), and archived plans under `plans/done/`.
+- [x] Run `grep -rnI 'a-demo' repo-governance/ docs/ --include='*.md'` — remaining matches MUST be limited to: narrative changelog mentions, the classifier row in `repo-governance/conventions/structure/ose-primer-sync.md` (untouched in this commit), and archived plans under `plans/done/`.
 - [x] Commit with message: `docs(governance,docs): prune a-demo references from docs and governance examples (Phase 8 Commit G)`.
 - [x] Push: `git push origin main`.
 - [x] Monitor GitHub Actions for the pushed commit; verify all triggered workflows pass before proceeding to Commit H. If any CI check fails, fix immediately and push a follow-up commit before continuing.
@@ -476,7 +476,7 @@ Goal: execute the one-time removal of demo apps, specs, workflows, and associate
 
 ### 8.H — Commit H: Update classifier to reflect extraction
 
-- [x] Edit `governance/conventions/structure/ose-primer-sync.md`:
+- [x] Edit `repo-governance/conventions/structure/ose-primer-sync.md`:
   - [x] Flip `apps/a-demo-*` row: Direction `propagate` → `neither (post-extraction)`; Transform `identity` → `—`; Rationale → `extracted 2026-04-18; ose-primer is authoritative; path no longer exists in ose-public`. Note: rows were pre-tagged `neither (post-extraction)` in Phase 1 delivery; this commit confirms/finalises the rationale text.
   - [x] Add or update `apps/a-demo-*-e2e` row similarly.
   - [x] Flip `specs/apps/a-demo/**` row: Direction `propagate` → `neither (post-extraction)`; same Rationale pattern.
@@ -518,7 +518,7 @@ Pre-flight checks first; deletion only after both return clean.
 - [x] Inspect `apps/rhino-cli/cmd/root.go` (or equivalent command registration) and remove any remaining references to the deleted commands; confirm the CLI still builds.
 - [x] Edit `apps/rhino-cli/README.md`: remove docstring sections for the three removed commands; confirm the surviving command list reads cleanly.
 - [x] Edit `CLAUDE.md`: remove the `(includes java validate-annotations)` parenthetical (or similar) next to `rhino-cli` in the Common Development Commands / apps listing.
-- [x] Greps for lingering references: `grep -rnI -E '(validate-annotations|java-clean-imports|dart-scaffold)' apps/rhino-cli/ CLAUDE.md AGENTS.md docs/ governance/ 2>/dev/null` — must return zero matches.
+- [x] Greps for lingering references: `grep -rnI -E '(validate-annotations|java-clean-imports|dart-scaffold)' apps/rhino-cli/ CLAUDE.md AGENTS.md docs/ repo-governance/ 2>/dev/null` — must return zero matches.
 - [x] Under `specs/apps/rhino/`, check for Gherkin features naming the removed commands; if any, delete those feature files or prune the affected scenarios; commit-message note references the specs change.
 - [x] Rebuild: `nx run rhino-cli:build` — must succeed.
 - [x] Run unit tests: `nx run rhino-cli:test:unit` — must pass with coverage ≥ 90%.
@@ -567,7 +567,7 @@ Goal: verify `ose-public` is healthy after extraction; catch any dangling refere
 
 ### 9.4 — Dangling-reference grep sweep
 
-- [x] Run the sweep: `grep -rnI 'a-demo' . --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^./plans/done/' | grep -v '^./plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v './governance/conventions/structure/ose-primer-sync.md'`.
+- [x] Run the sweep: `grep -rnI 'a-demo' . --include='*.md' --include='*.yml' --include='*.yaml' --include='*.json' --include='*.toml' --include='Brewfile' --include='*.sln' --include='go.work' 2>/dev/null | grep -v '^./plans/done/' | grep -v '^./plans/in-progress/2026-04-18__ose-primer-separation/' | grep -v './repo-governance/conventions/structure/ose-primer-sync.md'`.
 - [x] The command MUST return zero lines. Any line is a dangling reference; resolve it (Commit I or an amendment to the relevant Phase 8 commit) before proceeding.
 
 ### 9.5 — Link validation
@@ -671,7 +671,7 @@ Goal: close out and archive.
 
 ### 12.2 — Move plan folder
 
-- [x] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (creation date is preserved per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md)).
+- [x] `git mv plans/in-progress/2026-04-18__ose-primer-separation plans/done/2026-04-18__ose-primer-separation` (creation date is preserved per the [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)).
 
 ### 12.3 — Update indices
 
@@ -688,7 +688,7 @@ Goal: close out and archive.
 | Gate                                                         | Evidence                                                                                                                                                                                                       |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **G1** — Classifier covers every `ose-public` top-level path | Phase 2 complete; `repo-rules-checker` reports zero orphan paths.                                                                                                                                              |
-| **G1.5** — Both workflows present and naming-compliant       | Phase 3.5 complete; `repo-ose-primer-sync-execution.md` and `repo-ose-primer-extraction-execution.md` under `governance/workflows/repo/`; workflow-naming regex passes.                                        |
+| **G1.5** — Both workflows present and naming-compliant       | Phase 3.5 complete; `repo-ose-primer-sync-execution.md` and `repo-ose-primer-extraction-execution.md` under `repo-governance/workflows/repo/`; workflow-naming regex passes.                                   |
 | **G2** — Both agents present and naming-compliant            | Phase 4 & 5 complete; regex audit passes for both; frontmatter declares `model: opus`.                                                                                                                         |
 | **G3** — Skill present in both harnesses                     | Phase 3 complete; `.claude/skills/` and `.opencode/skill/` mirror.                                                                                                                                             |
 | **G4** — Smoke-test reports readable                         | Phase 6 complete (abort-notice variant); two pre-flight-abort reports committed at `a8cc9fa1`. Live dry-run reschedules for a future primer-quiescent window (Phase 10).                                       |

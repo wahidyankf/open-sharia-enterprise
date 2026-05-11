@@ -34,7 +34,7 @@ related:
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to deploy Spring Boot in THIS platform, not WHAT Spring Boot deployment is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -1020,19 +1020,19 @@ dependencies {
 
 These deployment standards enforce the the software engineering principles:
 
-1. **[Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)**
+1. **[Reproducibility](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - Executable JAR bundles exact dependency versions (no classpath conflicts)
    - Layered Docker images ensure consistent layer caching
    - Environment variables externalize configuration (same artifact, multiple environments)
    - GraalVM native images deterministic build (same source = same binary)
 
-2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Embedded server version explicit in `build.gradle.kts`
    - Health probe configuration explicit in `application.yml`
    - Resource limits explicit in Kubernetes manifests
    - Profile activation explicit via `SPRING_PROFILES_ACTIVE`
 
-3. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spring Boot auto-configures embedded server (no manual setup)
    - Actuator endpoints auto-configured for health checks
    - Kubernetes probes auto-trigger pod lifecycle actions

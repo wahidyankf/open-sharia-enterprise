@@ -1190,8 +1190,8 @@ public class MurabahaContractService {
 
 ### Development Practices
 
-- **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Code Quality Standards](../../../../../../repo-governance/development/quality/code.md)** - Quality requirements
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ## See Also
 

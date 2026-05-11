@@ -74,7 +74,7 @@
   - `repo-governance-checker`
   - `repo-governance-fixer`
 - [x] Replace with `repo-rules-maker`, `repo-rules-checker`, `repo-rules-fixer` respectively
-- [x] **Special attention**: `governance/conventions/structure/agent-naming.md` (created earlier by the previous repo-governance-maker run) already mentions the old names; update those hits here, not later
+- [x] **Special attention**: `repo-governance/conventions/structure/agent-naming.md` (created earlier by the previous repo-governance-maker run) already mentions the old names; update those hits here, not later
 - [x] `npm run sync:claude-to-opencode` — confirm no drift
 - [x] Verify zero live refs remain: `Grep "repo-governance-(maker|checker|fixer)"` excluding `plans/done`,
       `generated-reports`, `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`,
@@ -93,10 +93,10 @@
 
 ## Phase 6: Propagate to governance (via `repo-rules-maker`)
 
-- [x] Invoke `repo-rules-maker` (the renamed agent, post-Phase-4) with the spec in [tech-docs.md](./tech-docs.md) §"Governance propagation" — task: create `governance/conventions/structure/agent-naming.md` capturing the unified rule, scope vocabulary, role vocabulary, enforcement command, and examples
+- [x] Invoke `repo-rules-maker` (the renamed agent, post-Phase-4) with the spec in [tech-docs.md](./tech-docs.md) §"Governance propagation" — task: create `repo-governance/conventions/structure/agent-naming.md` capturing the unified rule, scope vocabulary, role vocabulary, enforcement command, and examples
 - [x] Verify the file exists with required frontmatter (title, description, category, subcategory, tags, created, updated) and all required sections
-- [x] Confirm `repo-rules-maker` added the convention to `governance/conventions/structure/README.md` index
-- [x] Confirm `repo-rules-maker` added the convention to `governance/conventions/README.md` master index
+- [x] Confirm `repo-rules-maker` added the convention to `repo-governance/conventions/structure/README.md` index
+- [x] Confirm `repo-rules-maker` added the convention to `repo-governance/conventions/README.md` master index
 - [x] Confirm `CLAUDE.md` AI Agents section references the new convention
 - [x] Confirm `.claude/agents/README.md` and `.opencode/agent/README.md` Naming Rule sections link to the convention as normative source
 - [x] Run rule compliance audit from [tech-docs.md](./tech-docs.md) — still empty output
@@ -106,9 +106,9 @@
 
 ## Phase 7: Rename `docs/quality-gate.md` → `docs/docs-quality-gate.md`
 
-- [x] `git mv governance/workflows/docs/quality-gate.md governance/workflows/docs/docs-quality-gate.md`
+- [x] `git mv repo-governance/workflows/docs/quality-gate.md repo-governance/workflows/docs/docs-quality-gate.md`
 - [x] Confirm frontmatter `name:` is already `docs-quality-gate` (no change needed — filename was the outlier)
-- [x] Grep sweep live refs for the old path `governance/workflows/docs/quality-gate.md` across: `CLAUDE.md`, `AGENTS.md`, all of `governance/**`, all of `docs/**`, `.claude/agents/**`, `.opencode/agent/**`, `.claude/skills/**`, `.opencode/skill/**`, `plans/in-progress/**`, `plans/backlog/**`
+- [x] Grep sweep live refs for the old path `repo-governance/workflows/docs/quality-gate.md` across: `CLAUDE.md`, `AGENTS.md`, all of `repo-governance/**`, all of `docs/**`, `.claude/agents/**`, `.opencode/agent/**`, `.claude/skills/**`, `.opencode/skill/**`, `plans/in-progress/**`, `plans/backlog/**`
 - [x] Replace old path → new path in each live hit
 - [x] Verify zero live refs remain (excluding `plans/done`, `generated-reports`,
       `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`)
@@ -117,20 +117,20 @@
 
 ## Phase 8: Move `workflows/repository/` → `workflows/repo/` and rename to `repo-rules-quality-gate`
 
-- [x] `mkdir -p governance/workflows/repo/`
-- [x] `git mv governance/workflows/repository/repository-rules-validation.md governance/workflows/repo/repo-rules-quality-gate.md`
-- [x] `git mv governance/workflows/repository/README.md governance/workflows/repo/README.md`
-- [x] Update content of `governance/workflows/repo/README.md`:
+- [x] `mkdir -p repo-governance/workflows/repo/`
+- [x] `git mv repo-governance/workflows/repository/repository-rules-validation.md repo-governance/workflows/repo/repo-rules-quality-gate.md`
+- [x] `git mv repo-governance/workflows/repository/README.md repo-governance/workflows/repo/README.md`
+- [x] Update content of `repo-governance/workflows/repo/README.md`:
   - [ ] Replace `repo-governance-checker` → `repo-rules-checker`
   - [ ] Replace `repo-governance-fixer` → `repo-rules-fixer`
   - [ ] Update the internal file link to `./repo-rules-quality-gate.md`
-- [x] Verify `governance/workflows/repository/` is now empty and removed by git: `ls governance/workflows/` must not show `repository`
+- [x] Verify `repo-governance/workflows/repository/` is now empty and removed by git: `ls repo-governance/workflows/` must not show `repository`
 - [x] Update `name:` frontmatter in the renamed workflow file to `repo-rules-quality-gate`
 - [x] Grep sweep live refs (same path list as Phase 6) for all of:
   - string `repository-rules-validation`
-  - path `governance/workflows/repository/`
+  - path `repo-governance/workflows/repository/`
   - string `repository-rules-quality-gate` (in case any earlier draft or cross-ref uses the interim name)
-- [x] Replace each with `repo-rules-quality-gate` / `governance/workflows/repo/` as appropriate in live hits
+- [x] Replace each with `repo-rules-quality-gate` / `repo-governance/workflows/repo/` as appropriate in live hits
 - [x] Verify zero live refs to `repository-rules-*` or `workflows/repository/` remain
       (excluding `plans/done`, `generated-reports`,
       `plans/in-progress/2026-04-17__agent-and-workflow-naming-consistency/`, `.git`, `node_modules`)
@@ -139,7 +139,7 @@
 
 ## Phase 9: Rename `specs-validation` → `specs-quality-gate`
 
-- [x] `git mv governance/workflows/specs/specs-validation.md governance/workflows/specs/specs-quality-gate.md`
+- [x] `git mv repo-governance/workflows/specs/specs-validation.md repo-governance/workflows/specs/specs-quality-gate.md`
 - [x] Update `name:` frontmatter in the renamed file to `specs-quality-gate`
 - [x] Grep sweep live refs (same path list as Phase 6)
 - [x] Replace `specs-validation` → `specs-quality-gate` in each live hit
@@ -150,7 +150,7 @@
 
 ## Phase 10: Publish Workflow Naming Rule + Type Vocabulary
 
-- [x] Add "Naming Rule" + "Type Vocabulary" + "Meta reference exception" sections to `governance/workflows/README.md` per [tech-docs.md](./tech-docs.md)
+- [x] Add "Naming Rule" + "Type Vocabulary" + "Meta reference exception" sections to `repo-governance/workflows/README.md` per [tech-docs.md](./tech-docs.md)
 - [x] Verify README contains the rule statement and all three types (quality-gate, execution, setup) with semantics and examples
 - [x] Run workflow rule compliance audit from [tech-docs.md](./tech-docs.md) — expect empty output
 - [x] `npm run lint:md` passes
@@ -158,12 +158,12 @@
 
 ## Phase 11: Propagate workflow rule to governance (via `repo-rules-maker`)
 
-- [x] Invoke `repo-rules-maker` with the spec in [tech-docs.md](./tech-docs.md) §"Governance propagation — workflow-naming" — task: create `governance/conventions/structure/workflow-naming.md`
+- [x] Invoke `repo-rules-maker` with the spec in [tech-docs.md](./tech-docs.md) §"Governance propagation — workflow-naming" — task: create `repo-governance/conventions/structure/workflow-naming.md`
 - [x] Verify the file exists with required frontmatter and all required sections
-- [x] Confirm `repo-rules-maker` added the convention to `governance/conventions/structure/README.md` index
-- [x] Confirm `repo-rules-maker` added the convention to `governance/conventions/README.md` master index
+- [x] Confirm `repo-rules-maker` added the convention to `repo-governance/conventions/structure/README.md` index
+- [x] Confirm `repo-rules-maker` added the convention to `repo-governance/conventions/README.md` master index
 - [x] Confirm `CLAUDE.md` references the new convention
-- [x] Confirm `governance/workflows/README.md` Naming Rule section links to the convention as normative source
+- [x] Confirm `repo-governance/workflows/README.md` Naming Rule section links to the convention as normative source
 - [x] Run workflow rule compliance audit — still empty output
 - [x] `npm run lint:md` passes
 - [x] Run `repo-rules-checker` — no new violations raised by workflow-naming rule
@@ -183,7 +183,7 @@
 - [x] Add godog integration tests (`//go:build integration`; exercise real repo tree via `cmd.RunE()`)
 - [x] Add Nx targets to `apps/rhino-cli/project.json`:
   - [ ] `validate:naming-agents` with inputs covering `.claude/agents/**` and `.opencode/agent/**`
-  - [ ] `validate:naming-workflows` with inputs covering `governance/workflows/**`
+  - [ ] `validate:naming-workflows` with inputs covering `repo-governance/workflows/**`
   - [ ] Both cacheable, `outputs: []`
 - [x] `nx run rhino-cli:test:quick` passes with coverage ≥ 90%
 - [x] `nx run rhino-cli:test:integration` passes
@@ -197,10 +197,10 @@
 
 - [x] Extend `.husky/pre-push` with a gated block:
   - [ ] If `git diff --name-only @{u}..HEAD 2>/dev/null` touches `.claude/agents/**` or `.opencode/agent/**`, run `nx run rhino-cli:validate:naming-agents`
-  - [ ] If the push range touches `governance/workflows/**`, run `nx run rhino-cli:validate:naming-workflows`
+  - [ ] If the push range touches `repo-governance/workflows/**`, run `nx run rhino-cli:validate:naming-workflows`
   - [ ] Non-zero exit aborts the push with a readable error message
 - [x] Extend the ose-public CI quality-gate workflow (`.github/workflows/`) with two unconditional steps running both Nx validator targets
-- [x] Update [governance/development/quality/code.md](../../../governance/development/quality/code.md) to document the new pre-push step
+- [x] Update [repo-governance/development/quality/code.md](../../../repo-governance/development/quality/code.md) to document the new pre-push step
 - [x] Dry-run: make a no-op branch touching an agent file, push, confirm the hook triggers the validator
 - [x] Dry-run: push a branch touching only `docs/` and confirm the validator does not run (scope gate)
 - [x] Dry-run: synthesise a naming violation locally, confirm pre-push blocks the push

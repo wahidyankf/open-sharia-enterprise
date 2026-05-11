@@ -23,7 +23,7 @@ created: 2026-02-06
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Spring Framework Concurrency Standards for OSE Platform
 
@@ -628,17 +628,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the the software engineering principles:
 
-1. **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)**
+1. **[Immutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - Singleton beans use only immutable dependencies (final fields)
    - Stateless methods prevent concurrent modification issues
    - Immutable cache entries ensure thread safety
 
-2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - `@Async("ioTaskExecutor")` explicitly specifies executor
    - Thread pool configuration makes sizing and policies explicit
    - Virtual thread naming makes operations traceable
 
-3. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spring Boot auto-configures virtual threads with property flag
    - @Async automatically handles thread management
    - Structured concurrency automatically cancels subtasks on failure

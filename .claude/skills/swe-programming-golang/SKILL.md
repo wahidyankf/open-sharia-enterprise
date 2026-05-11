@@ -28,7 +28,7 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 
 **What this skill does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Quick Standards Reference
 
@@ -287,7 +287,7 @@ integration (Godog `//go:build integration` + real `/tmp` filesystem). Property-
 gopter covers invariants over generated inputs.
 
 **Canonical reference**:
-[Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 
 ## Related Skills
 
@@ -297,4 +297,4 @@ gopter covers invariants over generated inputs.
 ## References
 
 - [Go README](../../../docs/explanation/software-engineering/programming-languages/golang/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md)

@@ -25,7 +25,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Dart tutorial. We define HOW to measure and optimize Dart performance in THIS codebase, not WHAT performance optimization is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -532,9 +532,9 @@ Performance standards are enforced through:
 
 ## Related Documentation
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
 
 ---
 

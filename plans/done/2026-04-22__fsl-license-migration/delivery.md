@@ -34,7 +34,7 @@ order. Phase 5 (validation) must be last.
       per-version rolling conversion (see [tech-docs.md](./tech-docs.md) for exact wording)
 - [x] Update `CLAUDE.md` line ~10: change `**License**: MIT` to `**License**: FSL-1.1-MIT`
 - [x] Update `CLAUDE.md` line ~688: change `- **License**: MIT` to `- **License**: FSL-1.1-MIT`
-- [x] Update `governance/vision/README.md`: change `Open source (MIT)` to
+- [x] Update `repo-governance/vision/README.md`: change `Open source (MIT)` to
       `Source-available (FSL-1.1-MIT)` with conversion note
 - [x] Update `apps/oseplatform-web/content/about.md`:
   - License section (~line 187): change "MIT License" description to FSL-1.1-MIT
@@ -50,16 +50,16 @@ order. Phase 5 (validation) must be last.
 **Goal**: Update governance convention docs, principles examples, and templates that use MIT as the
 project's license in examples or declarations.
 
-- [x] Update `governance/conventions/writing/oss-documentation.md`:
+- [x] Update `repo-governance/conventions/writing/oss-documentation.md`:
   - Badge example (~line 141): change `license-MIT-blue` to `license-FSL--1.1--MIT-blue`
   - README template license section (~line 187): change MIT to FSL-1.1-MIT
   - "Current Project" declaration (~line 724): change to `FSL-1.1-MIT License`
   - Leave generic license lists (e.g., "MIT, Apache 2.0, GPL") unchanged — they enumerate
     license types in general, not this project's specific license
-- [x] Update `governance/conventions/writing/readme-quality.md`:
+- [x] Update `repo-governance/conventions/writing/readme-quality.md`:
   - Bad example (~line 248): change MIT License to FSL-1.1-MIT
   - Good example (~line 254): change MIT License to FSL-1.1-MIT with updated description
-- [x] Update `governance/principles/general/simplicity-over-complexity.md`:
+- [x] Update `repo-governance/principles/general/simplicity-over-complexity.md`:
   - YAML example (~line 175): change `license: MIT` to `license: FSL-1.1-MIT`
 - [x] Update `docs/how-to/hoto__add-new-lib.md`:
   - New lib README template (~line 249): change `MIT` to `FSL-1.1-MIT`
@@ -137,12 +137,12 @@ FSL-1.1-MIT.
 - [x] Verify `README.md` License section describes FSL-1.1-MIT with per-version rolling conversion
 - [x] Verify `CLAUDE.md` has no remaining `License: MIT` references (except in Change License
       context)
-- [x] Verify `governance/vision/README.md` reflects FSL-1.1-MIT
+- [x] Verify `repo-governance/vision/README.md` reflects FSL-1.1-MIT
 - [x] Verify `apps/oseplatform-web/content/about.md` reflects FSL-1.1-MIT (both references)
-- [x] Verify `governance/conventions/writing/oss-documentation.md` updated (badge, template,
+- [x] Verify `repo-governance/conventions/writing/oss-documentation.md` updated (badge, template,
       "Current Project")
-- [x] Verify `governance/conventions/writing/readme-quality.md` updated (good/bad examples)
-- [x] Verify `governance/principles/general/simplicity-over-complexity.md` YAML example updated
+- [x] Verify `repo-governance/conventions/writing/readme-quality.md` updated (good/bad examples)
+- [x] Verify `repo-governance/principles/general/simplicity-over-complexity.md` YAML example updated
 - [x] Verify `docs/how-to/hoto__add-new-lib.md` README template updated
 
 #### 5c: Third-Party Code Preservation

@@ -198,17 +198,17 @@ The plan MUST delegate the governance updates to the `repo-rules-maker` agent. `
 
 **File created via repo-rules-maker:**
 
-| File                                                      | Purpose                                                                                                                                                                                                                             |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `governance/conventions/structure/app-readme-vs-specs.md` | ONE COMBINED convention codifying: (1) Content Split Rule, (2) Spec Tree Shape (the C4-aware five-folder layout from FR-9), (3) PM-Readability Contract. Status frontmatter: `Pilot — initial issue` with empty `## Refinement log` |
+| File                                                           | Purpose                                                                                                                                                                                                                             |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/conventions/structure/app-readme-vs-specs.md` | ONE COMBINED convention codifying: (1) Content Split Rule, (2) Spec Tree Shape (the C4-aware five-folder layout from FR-9), (3) PM-Readability Contract. Status frontmatter: `Pilot — initial issue` with empty `## Refinement log` |
 
 **Files updated via repo-rules-maker:**
 
-| File                                                            | Update                                                                                                                                                                                                               |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `governance/conventions/structure/specs-directory-structure.md` | **REWRITE** — replace the current `be/`, `web/`, `cli/`, `build-tools/` flat-root pattern with the new C4-aware five-folder tree as the repo-wide spec organization standard. Cross-link to `app-readme-vs-specs.md` |
-| `governance/conventions/structure/README.md` (Structure index)  | Add the new convention to the document list with one-line description; update the description of `specs-directory-structure.md` to reflect the rewrite                                                               |
-| `governance/conventions/writing/readme-quality.md`              | Cross-link statement: app/infra READMEs are also governed by `app-readme-vs-specs.md`                                                                                                                                |
+| File                                                                 | Update                                                                                                                                                                                                               |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repo-governance/conventions/structure/specs-directory-structure.md` | **REWRITE** — replace the current `be/`, `web/`, `cli/`, `build-tools/` flat-root pattern with the new C4-aware five-folder tree as the repo-wide spec organization standard. Cross-link to `app-readme-vs-specs.md` |
+| `repo-governance/conventions/structure/README.md` (Structure index)  | Add the new convention to the document list with one-line description; update the description of `specs-directory-structure.md` to reflect the rewrite                                                               |
+| `repo-governance/conventions/writing/readme-quality.md`              | Cross-link statement: app/infra READMEs are also governed by `app-readme-vs-specs.md`                                                                                                                                |
 
 **Mandatory contents of the new convention** (executor must verify):
 
@@ -281,13 +281,13 @@ The convention's Refinement log carries the entry: `2026-05-09 — CLI DDD adopt
 
 The plan MUST update the following agents/workflow so that all new spec trees (this pilot AND the four rollouts) are enforced automatically:
 
-| Path                                               | Operation | Owner agent      | Update                                                                                                                                                                                                                                                                                                            |
-| -------------------------------------------------- | --------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | ----------- |
-| `.claude/agents/specs-checker.md`                  | UPDATE    | repo-rules-maker | AMEND Category 1 (Structural Completeness) — README required at all 5 top-level folders + per-surface subfolders. AMEND Category 8 (Directory Structure Convention Compliance) — replace flat-root be/fe/cli rule with C4-aware five-folder tree rule. ADD Category 9 (Adoption Gaps) per FR-10 validation hooks. |
-| `.claude/agents/specs-fixer.md`                    | UPDATE    | repo-rules-maker | Auto-fix list: missing top-level README at any of the 5 folders (template scaffold per per-surface variant); missing per-surface README. Adoption gaps emit MEDIUM/HIGH findings — NOT auto-fixed (require human decision)                                                                                        |
-| `.claude/agents/specs-maker.md`                    | UPDATE    | repo-rules-maker | Scaffolding template REPLACED — when caller provides `target: specs/apps/<new-app>`, scaffold creates the canonical 5-folder tree (or per-surface variant if caller specifies `surface-profile: web-only                                                                                                          | cli-only | full-stack | multi-cli`) |
-| `governance/workflows/specs/specs-quality-gate.md` | UPDATE    | repo-rules-maker | "Validation Dimensions" table gains rows for Spec Tree Shape (Cat 8 amend) and Adoption Gaps (new Cat 9). Iteration Example updated to show new shape findings.                                                                                                                                                   |
-| `.opencode/agents/specs-{checker,fixer,maker}.md`  | UPDATE    | sync             | After `repo-rules-maker` updates `.claude/`, run `npm run sync:claude-to-opencode` to mirror                                                                                                                                                                                                                      |
+| Path                                                    | Operation | Owner agent      | Update                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------- | --------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------- | ----------- |
+| `.claude/agents/specs-checker.md`                       | UPDATE    | repo-rules-maker | AMEND Category 1 (Structural Completeness) — README required at all 5 top-level folders + per-surface subfolders. AMEND Category 8 (Directory Structure Convention Compliance) — replace flat-root be/fe/cli rule with C4-aware five-folder tree rule. ADD Category 9 (Adoption Gaps) per FR-10 validation hooks. |
+| `.claude/agents/specs-fixer.md`                         | UPDATE    | repo-rules-maker | Auto-fix list: missing top-level README at any of the 5 folders (template scaffold per per-surface variant); missing per-surface README. Adoption gaps emit MEDIUM/HIGH findings — NOT auto-fixed (require human decision)                                                                                        |
+| `.claude/agents/specs-maker.md`                         | UPDATE    | repo-rules-maker | Scaffolding template REPLACED — when caller provides `target: specs/apps/<new-app>`, scaffold creates the canonical 5-folder tree (or per-surface variant if caller specifies `surface-profile: web-only                                                                                                          | cli-only | full-stack | multi-cli`) |
+| `repo-governance/workflows/specs/specs-quality-gate.md` | UPDATE    | repo-rules-maker | "Validation Dimensions" table gains rows for Spec Tree Shape (Cat 8 amend) and Adoption Gaps (new Cat 9). Iteration Example updated to show new shape findings.                                                                                                                                                   |
+| `.opencode/agents/specs-{checker,fixer,maker}.md`       | UPDATE    | sync             | After `repo-rules-maker` updates `.claude/`, run `npm run sync:claude-to-opencode` to mirror                                                                                                                                                                                                                      |
 
 After update, `repo-rules-checker` is run against the new convention + agent set to confirm self-consistency. If the agents disagree with the convention, fix the convention via repo-rules-maker (amend) or fix the agent — log the resolution in the convention's Refinement log.
 
@@ -383,7 +383,7 @@ Before any push to `origin main` during plan execution, the executor MUST verify
 
 **Failure handling**: if ANY gate fails, do NOT push. Diagnose and fix in a follow-up commit on the same worktree branch. Re-run the full gate matrix. Only push when all green.
 
-**Post-push CI monitoring**: after pushing, monitor GitHub Actions per [CI Post-Push Verification](../../../governance/development/workflow/ci-post-push-verification.md). Iron Rule 13 codifies this.
+**Post-push CI monitoring**: after pushing, monitor GitHub Actions per [CI Post-Push Verification](../../../repo-governance/development/workflow/ci-post-push-verification.md). Iron Rule 13 codifies this.
 
 ### FR-16: Ubiquitous Language file depth (detailed per-term explanations)
 
@@ -419,7 +419,7 @@ After the Phase 2A move (`ddd/ubiquitous-language/` → `components/web/ddd/ubiq
 - `specs/apps/organiclever/components/web/ddd/ubiquitous-language/health.md`
 - `specs/apps/organiclever/components/web/ddd/ubiquitous-language/landing.md`
 - `specs/apps/organiclever/components/web/ddd/ubiquitous-language/routing.md`
-- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md` (index — gains "Authoring rules" addendum requiring per-term H3 detail; existing 5 authoring rules retained, NEW rule 6 added: "Each term has a `### Term: <name>` H3 section with definition paragraph, why-this-term, code identifiers, persisted-as line, used-in-features, forbidden-synonyms-in-context, related links — see [example: journal.md](./journal.md)")
+- `specs/apps/organiclever/components/web/ddd/ubiquitous-language/README.md` (index — gains "Authoring rules" addendum requiring per-term H3 detail; existing 5 authoring rules retained, NEW rule 6 added: "Each term has a `### Term: <name>` H3 section with definition paragraph, why-this-term, code identifiers, persisted-as line, used-in-features, forbidden-synonyms-in-context, related links — see [example: journal.md](../../../specs/apps/organiclever/ddd/ubiquitous-language/journal.md)")
 
 **Length budget**: there is no upper line cap on glossary files (they are reference material, not narrative; readers jump to the term they need). The lower bound is whatever depth a SWE-background TPM needs to disambiguate the term from its synonyms. Empty fields (e.g., a term with no `Persisted as` because it is purely in-memory) are omitted from that term's H3 rather than carried as `N/A`.
 
@@ -467,7 +467,7 @@ Each `### Term: <name>` H3 MAY include an optional `**Diagram**:` field BETWEEN 
 
 Mermaid diagrams that mirror runtime artefacts (XState machines, OpenAPI flows, schema relationships) MUST match the runtime artefact. If `workoutSessionMachine.ts` defines states `[idle, running, resting, finishing, finished]`, the diagram in `workout-session.md` MUST list exactly those states and exactly those transitions. A drift here is the same severity as a stale code identifier — `rhino-cli specs drift-routes` and `drift-endpoints` (FR-14) catch route/endpoint drift; XState-vs-diagram drift is caught by hand review during Phase 2.5 (one-time pilot effort) and tracked as a `pilot-findings.md` candidate for future automation.
 
-**Color palette**: every Mermaid diagram uses the color-blind-safe palette per [governance/conventions/formatting/diagrams.md](../../../governance/conventions/formatting/diagrams.md): Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080`. Stroke colors `#000`. Text on dark fills uses `#FFF`; text on light fills uses `#000`. The palette is already used in `delivery.md`'s phase-flow diagram and the existing C4 diagrams — preserve consistency.
+**Color palette**: every Mermaid diagram uses the color-blind-safe palette per [repo-governance/conventions/formatting/diagrams.md](../../../repo-governance/conventions/formatting/diagrams.md): Blue `#0173B2`, Teal `#029E73`, Orange `#DE8F05`, Gray `#808080`. Stroke colors `#000`. Text on dark fills uses `#FFF`; text on light fills uses `#000`. The palette is already used in `delivery.md`'s phase-flow diagram and the existing C4 diagrams — preserve consistency.
 
 **Accessibility**: every Mermaid block is preceded by a prose sentence that states the diagram's key takeaway. A screen-reader user MUST get the same insight from the prose alone — the diagram amplifies, never substitutes.
 
@@ -535,7 +535,7 @@ Feature: Bounded-context map lives with the DDD registry
 
   Scenario: Inbound BC map links are rewritten
     Given the plan has completed
-    When I grep for "organiclever-web/docs/explanation/bounded-context-map" under apps/, specs/, governance/, docs/, and .claude/skills/
+    When I grep for "organiclever-web/docs/explanation/bounded-context-map" under apps/, specs/, repo-governance/, docs/, and .claude/skills/
     Then the result excludes plans/done/ and generated-reports/
     And the count of results is exactly zero
 
@@ -705,7 +705,7 @@ Feature: Mermaid diagrams in specs/ files where appropriate (FR-17)
 Feature: Governance propagation (FR-8)
   Scenario: New convention exists and follows the convention-writing standard
     Given the plan has completed
-    Then the file governance/conventions/structure/app-readme-vs-specs.md exists
+    Then the file repo-governance/conventions/structure/app-readme-vs-specs.md exists
     And the file's frontmatter contains "category: explanation"
     And the file's frontmatter contains "Status: Pilot — initial issue"
     And the file contains a Standards section enumerating forbidden vs required app-README sections
@@ -715,9 +715,9 @@ Feature: Governance propagation (FR-8)
 
   Scenario: Cross-links from related governance docs exist
     Given the plan has completed
-    Then governance/conventions/structure/specs-directory-structure.md links to app-readme-vs-specs.md
-    And governance/conventions/structure/README.md lists app-readme-vs-specs.md in its document list
-    And governance/conventions/writing/readme-quality.md cross-references app-readme-vs-specs.md
+    Then repo-governance/conventions/structure/specs-directory-structure.md links to app-readme-vs-specs.md
+    And repo-governance/conventions/structure/README.md lists app-readme-vs-specs.md in its document list
+    And repo-governance/conventions/writing/readme-quality.md cross-references app-readme-vs-specs.md
 
   Scenario: repo-rules-checker validates pilot artifacts against the new convention
     Given the plan has completed
@@ -729,7 +729,7 @@ Feature: Governance propagation (FR-8)
   Scenario: Convention created via repo-rules-maker delegation
     Given the plan delivery checklist contains the governance phase
     Then the corresponding step explicitly delegates to the repo-rules-maker agent
-    And the human executor does not hand-edit governance/conventions/ files outside that delegation
+    And the human executor does not hand-edit repo-governance/conventions/ files outside that delegation
 
 Feature: C4-aware spec tree shape (FR-9)
   Scenario: Top-level folders match the five-folder convention
@@ -781,13 +781,13 @@ Feature: C4-aware spec tree shape (FR-9)
 
   Scenario: Convention codifies the tree shape for repo-wide rollout
     Given the new convention exists
-    Then governance/conventions/structure/app-readme-vs-specs.md contains a Standards subsection titled "Spec Tree Shape"
+    Then repo-governance/conventions/structure/app-readme-vs-specs.md contains a Standards subsection titled "Spec Tree Shape"
     And that subsection lists the five top-level folders with their purposes
     And that subsection includes the per-surface variant table (full-stack, web-only, CLI-only, multi-CLI)
 
   Scenario: specs-directory-structure.md is rewritten
     Given the plan has completed
-    Then governance/conventions/structure/specs-directory-structure.md describes the C4-aware five-folder tree as the canonical pattern
+    Then repo-governance/conventions/structure/specs-directory-structure.md describes the C4-aware five-folder tree as the canonical pattern
     And the doc no longer prescribes the old flat-root be/web/cli/build-tools layout for new apps
     And the doc cross-links to app-readme-vs-specs.md
 
@@ -827,7 +827,7 @@ Feature: Specs agents + workflow updated (FR-11)
 
   Scenario: specs-quality-gate validation dimensions updated
     Given the plan has completed
-    When I open governance/workflows/specs/specs-quality-gate.md
+    When I open repo-governance/workflows/specs/specs-quality-gate.md
     Then the Validation Dimensions table includes Spec Tree Shape and (if separate) Adoption Gaps rows
 
   Scenario: OpenCode mirrors are synced
@@ -867,7 +867,7 @@ Feature: Spec-vs-app drift detection (FR-13)
 
   Scenario: Drift modes match existing gate modes
     Given the plan has completed
-    When I open governance/workflows/specs/specs-quality-gate.md
+    When I open repo-governance/workflows/specs/specs-quality-gate.md
     Then drift findings respect the existing lax/normal/strict/ocd modes (no separate "drift" mode)
     And the Validation Dimensions table includes the new drift-detection categories
 

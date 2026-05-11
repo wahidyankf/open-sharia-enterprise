@@ -95,7 +95,7 @@ which conflicts with the monorepo E2E pattern.
 oseplatform-web ensures architectural parity and gives developers a visual onboarding path.
 The diagrams are tailored to oseplatform-web's simpler architecture (no i18n, different tRPC
 procedures, RSS/SEO routes). The accessible color palette is mandatory per
-`governance/conventions/formatting/diagrams.md`.
+`repo-governance/conventions/formatting/diagrams.md`.
 
 ### Decision 7: Docker CONTENT_DIR uses `/workspace/` (not `/app/`)
 

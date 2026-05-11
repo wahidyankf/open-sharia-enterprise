@@ -124,7 +124,7 @@ state.
 **US-D-1**
 As a developer I want all design system documentation updated — `apps/organiclever-web/README.md`,
 `libs/ts-ui/README.md`, `libs/ts-ui-tokens/README.md`,
-`governance/development/frontend/design-tokens.md`, and the organiclever-web SKILL — so I can
+`repo-governance/development/frontend/design-tokens.md`, and the organiclever-web SKILL — so I can
 understand how to use OL tokens and components without reading source code.
 
 ---
@@ -296,7 +296,7 @@ Feature: Design System Documentation
     Then it describes the organiclever.css opt-in import pattern
 
   Scenario: governance design-tokens doc has OKLCH section
-    Given the file governance/development/frontend/design-tokens.md is read
+    Given the file repo-governance/development/frontend/design-tokens.md is read
     When the OKLCH Brand Tokens section is located
     Then it explains why OKLCH is used for OrganicLever
     And it shows the data-theme="dark" selector in the @custom-variant example

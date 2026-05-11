@@ -7,8 +7,8 @@ Worktree path: `worktrees/ddd/`
 Provisioned via `claude --worktree ddd` from the `ose-public` subrepo root. Branch
 `worktree/ddd`. Plan authoring and execution both run inside this worktree; commits
 publish to `main` via `git push origin worktree/ddd:main` per Trunk-Based Development.
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Commit Guidelines
 
@@ -65,10 +65,10 @@ flowchart TD
 
 ### Environment Setup
 
-- [x] **Environment setup**: Provision worktree if not already done — `claude --worktree organiclever-specs-standardization` (creates `worktrees/organiclever-specs-standardization/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md)) - Date: 2026-05-09. Status: done. Files Changed: none (existing `worktrees/ddd/` worktree branch `worktree/ddd` reused; declared path updated upfront).
+- [x] **Environment setup**: Provision worktree if not already done — `claude --worktree organiclever-specs-standardization` (creates `worktrees/organiclever-specs-standardization/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)) - Date: 2026-05-09. Status: done. Files Changed: none (existing `worktrees/ddd/` worktree branch `worktree/ddd` reused; declared path updated upfront).
 - [x] **Initialize polyglot toolchain** in the worktree root: `npm install && npm run doctor -- --fix`
       (ensures Go, .NET, and other polyglot toolchains are initialized; see
-      [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md)).
+      [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)).
       Acceptance: `npm run doctor` exits 0 with no missing tools. - Date: 2026-05-09. Status: done. Files Changed: node_modules (1718 pkgs). Doctor 19/19 tools OK, nothing to fix.
 
 > **Fix-all-issues rule**: Fix ALL failures found during quality gates — including preexisting issues
@@ -473,7 +473,7 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
   - Date: 2026-05-09. Status: done. Delegated to repo-rules-maker agent. All 7 files created/updated.
 
   ```text
-  Create governance/conventions/structure/app-readme-vs-specs.md as a SINGLE
+  Create repo-governance/conventions/structure/app-readme-vs-specs.md as a SINGLE
   COMBINED convention codifying FOUR rules from
   plans/in-progress/organiclever-specs-standardization/tech-docs.md:
     1. Content Split Rule (Category A app-README vs Category B specs/)
@@ -493,13 +493,13 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
   wahidyankf / rhino vs BDD / DDD / Contracts).
 
   ALSO update these files:
-  1. governance/conventions/structure/specs-directory-structure.md (REWRITE)
+  1. repo-governance/conventions/structure/specs-directory-structure.md (REWRITE)
      — Replace flat-root be/web/cli/build-tools layout with the C4-aware
        five-folder tree as the repo-wide standard. Per-surface variants. Migration path.
        Cross-link to app-readme-vs-specs.md.
-  2. governance/conventions/structure/README.md (UPDATE)
+  2. repo-governance/conventions/structure/README.md (UPDATE)
      — Add new convention to Documents list; update specs-directory-structure description.
-  3. governance/conventions/writing/readme-quality.md (UPDATE)
+  3. repo-governance/conventions/writing/readme-quality.md (UPDATE)
      — Add §Scope vs structural conventions cross-linking app-readme-vs-specs.md.
   4. .claude/agents/specs-checker.md (UPDATE — FR-11)
      — AMEND Category 1: README required at all 5 top-level folders + per-surface subfolders
@@ -520,7 +520,7 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
      — Scaffolding template REPLACED to emit canonical 5-folder tree.
      — Support `surface-profile` parameter (web-only / cli-only / full-stack / multi-cli)
        to populate only the relevant subdirectories.
-  7. governance/workflows/specs/specs-quality-gate.md (UPDATE — FR-11/13)
+  7. repo-governance/workflows/specs/specs-quality-gate.md (UPDATE — FR-11/13)
      — Validation Dimensions table gains "Spec Tree Shape" (Cat 8 amend) and
        "Adoption Gaps" (Cat 9) and "Drift Detection" (NEW) rows.
      — Iteration Example updated to show new findings.
@@ -534,18 +534,18 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
 
 - [x] **6.2 Verify all SEVEN files exist and conform**:
   - Date: 2026-05-09. All 7 files verified. See sub-bullet results.
-  - [x] `governance/conventions/structure/app-readme-vs-specs.md`:
-        `test -f governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
-        `grep -q "Status: Pilot" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
-        `grep -q "## Standards" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
-        `grep -q "## Examples" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
-        `grep -q "Refinement log" governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
-        `grep -q "CLI DDD adoption deferred" governance/conventions/structure/app-readme-vs-specs.md` → exit 0 (seeded Refinement log entry).
-  - [x] `governance/conventions/structure/specs-directory-structure.md`:
+  - [x] `repo-governance/conventions/structure/app-readme-vs-specs.md`:
+        `test -f repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "Status: Pilot" repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "## Standards" repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "## Examples" repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "Refinement log" repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0.
+        `grep -q "CLI DDD adoption deferred" repo-governance/conventions/structure/app-readme-vs-specs.md` → exit 0 (seeded Refinement log entry).
+  - [x] `repo-governance/conventions/structure/specs-directory-structure.md`:
         PASS. product present, app-readme-vs-specs cross-link present.
-  - [x] `governance/conventions/structure/README.md`:
+  - [x] `repo-governance/conventions/structure/README.md`:
         PASS. app-readme-vs-specs listed (2 occurrences).
-  - [x] `governance/conventions/writing/readme-quality.md`:
+  - [x] `repo-governance/conventions/writing/readme-quality.md`:
         PASS. app-readme-vs-specs cross-link present (2 occurrences).
   - [x] `.claude/agents/specs-checker.md`:
         PASS. Category 9/Adoption Gaps (1), Deterministic/rhino-cli (13), Drift Detection (1).
@@ -553,7 +553,7 @@ The executor MUST delegate this phase to `repo-rules-maker`. Hand-editing govern
         PASS. scaffold/top-level README present, Requires Review present (4).
   - [x] `.claude/agents/specs-maker.md`:
         PASS. surface-profile/web-only present (12).
-  - [x] `governance/workflows/specs/specs-quality-gate.md`:
+  - [x] `repo-governance/workflows/specs/specs-quality-gate.md`:
         PASS. Spec Tree Shape (4), Adoption Gaps+Drift (7), Deterministic Offload+rhino-cli (15).
 - [x] **6.3 `npm run lint:md`** exit 0
   - Date: 2026-05-09. Status: PASS. 2336 files, 0 errors.

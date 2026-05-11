@@ -11,8 +11,8 @@ already provisioned. If the worktree does not exist, provision it from the repo 
 claude --worktree ui
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ---
 
@@ -27,7 +27,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - Date: 2026-05-11 | Status: Done | Notes: npm install completed successfully ✓
 - [x] Run `npm run doctor -- --fix` from `worktrees/ui/` to converge polyglot toolchain.
       (Required — `postinstall` silently tolerates drift. See
-      [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md).)
+      [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md).)
   - Date: 2026-05-11 | Status: Done | Notes: 20/20 tools OK, 0 missing ✓
 - [x] Establish baseline: run `npx nx run-many -t typecheck lint test:quick -p ts-ui ts-ui-tokens`
       from `worktrees/ui/` — all targets must pass before any rename begins. Note any pre-existing
@@ -436,7 +436,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 - [x] Update prose references in the 6 Gherkin feature files under `specs/libs/web-ui/gherkin/`
       that contain "ts-ui design system" wording. These files are moved by `git mv` in Phase 1 to
       their new location at `specs/libs/web-ui/`. Without this step, AC-8's grep
-      `git grep -r "ts-ui" -- governance/ .claude/ specs/` will match them and fail. Run AFTER
+      `git grep -r "ts-ui" -- repo-governance/ .claude/ specs/` will match them and fail. Run AFTER
       Phase 1 (the directory rename must complete before these paths exist):
 
   ```bash
@@ -547,46 +547,46 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   _Suggested executor: `repo-rules-maker`_
 
-- [x] Edit `governance/conventions/structure/licensing.md` — replace `ts-ui` references.
+- [x] Edit `repo-governance/conventions/structure/licensing.md` — replace `ts-ui` references.
 
-  Acceptance criterion: `grep "ts-ui" governance/conventions/structure/licensing.md` returns empty.
-
-  _Suggested executor: `repo-rules-maker`_
-
-- [x] Edit `governance/conventions/structure/ose-primer-sync.md` — replace `ts-ui` references.
-
-  Acceptance criterion: `grep "ts-ui" governance/conventions/structure/ose-primer-sync.md` returns empty.
+  Acceptance criterion: `grep "ts-ui" repo-governance/conventions/structure/licensing.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [x] Edit `governance/development/frontend/design-tokens.md` — replace `ts-ui-tokens` references.
+- [x] Edit `repo-governance/conventions/structure/ose-primer-sync.md` — replace `ts-ui` references.
 
-  Acceptance criterion: `grep "ts-ui" governance/development/frontend/design-tokens.md` returns empty.
-
-  _Suggested executor: `repo-rules-maker`_
-
-- [x] Edit `governance/development/infra/docker-monorepo-builds.md` — replace `ts-ui` references.
-
-  Acceptance criterion: `grep "ts-ui" governance/development/infra/docker-monorepo-builds.md` returns empty.
+  Acceptance criterion: `grep "ts-ui" repo-governance/conventions/structure/ose-primer-sync.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [x] Edit `governance/development/infra/nx-targets.md` — replace `ts-ui` references.
+- [x] Edit `repo-governance/development/frontend/design-tokens.md` — replace `ts-ui-tokens` references.
 
-  Acceptance criterion: `grep "ts-ui" governance/development/infra/nx-targets.md` returns empty.
+  Acceptance criterion: `grep "ts-ui" repo-governance/development/frontend/design-tokens.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [x] Edit `governance/development/quality/three-level-testing-standard.md` — replace `ts-ui` references.
+- [x] Edit `repo-governance/development/infra/docker-monorepo-builds.md` — replace `ts-ui` references.
 
-  Acceptance criterion: `grep "ts-ui" governance/development/quality/three-level-testing-standard.md`
+  Acceptance criterion: `grep "ts-ui" repo-governance/development/infra/docker-monorepo-builds.md` returns empty.
+
+  _Suggested executor: `repo-rules-maker`_
+
+- [x] Edit `repo-governance/development/infra/nx-targets.md` — replace `ts-ui` references.
+
+  Acceptance criterion: `grep "ts-ui" repo-governance/development/infra/nx-targets.md` returns empty.
+
+  _Suggested executor: `repo-rules-maker`_
+
+- [x] Edit `repo-governance/development/quality/three-level-testing-standard.md` — replace `ts-ui` references.
+
+  Acceptance criterion: `grep "ts-ui" repo-governance/development/quality/three-level-testing-standard.md`
   returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [x] Edit `governance/workflows/ui/ui-quality-gate.md` — replace `ts-ui` references.
+- [x] Edit `repo-governance/workflows/ui/ui-quality-gate.md` — replace `ts-ui` references.
 
-  Acceptance criterion: `grep "ts-ui" governance/workflows/ui/ui-quality-gate.md` returns empty.
+  Acceptance criterion: `grep "ts-ui" repo-governance/workflows/ui/ui-quality-gate.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
@@ -610,7 +610,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   rtk git add .claude/agents/repo-rules-fixer.md \
     .claude/agents/swe-ui-maker.md \
     .claude/skills/ \
-    governance/ \
+    repo-governance/ \
     .opencode/
   rtk git commit -m "docs(governance): update ts-ui → web-ui references in agents, skills, governance"
   ```

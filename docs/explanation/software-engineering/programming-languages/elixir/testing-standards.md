@@ -53,11 +53,11 @@ This document defines **authoritative testing standards** for Elixir development
 
 ## ⚙️ Alignment with Software Engineering Principles
 
-These testing standards directly support OSE Platform's [Software Engineering Principles](../../../../../governance/principles/README.md):
+These testing standards directly support OSE Platform's [Software Engineering Principles](../../../../../repo-governance/principles/README.md):
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: Automated test suites replace manual validation
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Tests explicitly document expected behavior and edge cases
-- **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**: Tests provide consistent, repeatable validation across environments
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: Automated test suites replace manual validation
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: Tests explicitly document expected behavior and edge cases
+- **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**: Tests provide consistent, repeatable validation across environments
 
 All testing practices in this document MUST align with these foundational principles.
 

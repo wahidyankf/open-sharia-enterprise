@@ -214,7 +214,7 @@ pre-push gate use identical thresholds.
 ### Batch 10 — Remaining files (catch-all)
 
 - [x] Identify remaining files: `grep "^✗" /tmp/mermaid-post-phase0.txt` (any not yet fixed)
-<!-- Date: 2026-04-25 | Status: done | Notes: 9 files: java, kotlin, rust, clojure, f-sharp, c-sharp READMEs, development/README, project-dependency-graph, governance/hugo. -->
+<!-- Date: 2026-04-25 | Status: done | Notes: 9 files: java, kotlin, rust, clojure, f-sharp, c-sharp READMEs, development/README, project-dependency-graph, repo-governance/hugo. -->
 - [x] Fix each file
 <!-- Date: 2026-04-25 | Status: done | Files Changed: 9 misc files | Notes: S0, S2, S4. -->
 - [x] Verify: `go run ./apps/rhino-cli/main.go docs validate-mermaid 2>&1 | grep "^✗"` → zero lines (full repo)
@@ -241,11 +241,11 @@ pre-push gate use identical thresholds.
 
 ## Phase 2 — Governance Propagation
 
-### 2.1 — Update `governance/conventions/formatting/diagrams.md`
+### 2.1 — Update `repo-governance/conventions/formatting/diagrams.md`
 
-- [x] Invoke `repo-rules-maker` agent to update `governance/conventions/formatting/diagrams.md`
+- [x] Invoke `repo-rules-maker` agent to update `repo-governance/conventions/formatting/diagrams.md`
       with the following changes (see `tech-docs.md` §"Phase 2" for details):
-  <!-- Date: 2026-04-25 | Status: done | Files Changed: governance/conventions/formatting/diagrams.md -->
+  <!-- Date: 2026-04-25 | Status: done | Files Changed: repo-governance/conventions/formatting/diagrams.md -->
   - [x] Add "Flowchart Width Constraints" section (MaxWidth=4, direction-aware rules,
         label limits, `rhino-cli docs validate-mermaid` reference)
   - [x] Add "Width Violation Fix Strategy Guide" with decision tree
@@ -260,7 +260,7 @@ pre-push gate use identical thresholds.
 - [x] Confirm zero CRITICAL, HIGH, and MEDIUM findings
 <!-- Date: 2026-04-25 | Status: done | Notes: After repo-rules-fixer: 0 CRITICAL, 0 HIGH, 0 MEDIUM. -->
 - [x] Fix any findings before proceeding
-<!-- Date: 2026-04-25 | Status: done | Files Changed: governance/conventions/formatting/diagrams.md | Notes: Fixed error numbering (Error 8→7, Error 9→8) and moved Related Docs to end of file. -->
+<!-- Date: 2026-04-25 | Status: done | Files Changed: repo-governance/conventions/formatting/diagrams.md | Notes: Fixed error numbering (Error 8→7, Error 9→8) and moved Related Docs to end of file. -->
 
 ### 2.3 — Commit Phase 2
 
@@ -269,7 +269,7 @@ docs(governance): document direction-aware mermaid width constraints and fix str
 ```
 
 - [x] Committed Phase 2
-<!-- Date: 2026-04-25 | Status: done | Files Changed: governance/conventions/formatting/diagrams.md | Notes: 1 file, 92 insertions, 85 deletions. -->
+<!-- Date: 2026-04-25 | Status: done | Files Changed: repo-governance/conventions/formatting/diagrams.md | Notes: 1 file, 92 insertions, 85 deletions. -->
 
 ### 2.4 — Final validation
 

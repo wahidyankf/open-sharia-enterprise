@@ -79,5 +79,5 @@ Motivation:
 - `apps/organiclever-web/` — affected app
 - `apps/organiclever-be/` — untouched; future re-enablement target
 - `.github/workflows/test-and-deploy-organiclever.yml` — deploy pipeline
-- [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
 - [CLAUDE.md](../../../CLAUDE.md) — `organiclever-web` section

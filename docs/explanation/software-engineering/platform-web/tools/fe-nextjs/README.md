@@ -57,13 +57,13 @@ All Next.js applications MUST follow the patterns and practices documented here:
 
 ## Software Engineering Principles
 
-Next.js usage in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../../governance/principles/software-engineering/README.md):
+Next.js usage in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
 
-1. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Next.js automates through Fast Refresh, automatic code splitting, image optimization, font optimization
-2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Next.js enforces through file-system routing, explicit data fetching, clear rendering strategies
-3. **[Immutability Over Mutability](../../../../../../governance/principles/software-engineering/immutability.md)** - Use immutable state updates, Server Components (read-only), pure server functions
-4. **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Server Components are pure, Server Actions handle side effects, functional core patterns
-5. **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Next.js enables through Volta pinning, package-lock.json, consistent builds, predictable caching
+1. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Next.js automates through Fast Refresh, automatic code splitting, image optimization, font optimization
+2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Next.js enforces through file-system routing, explicit data fetching, clear rendering strategies
+3. **[Immutability Over Mutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)** - Use immutable state updates, Server Components (read-only), pure server functions
+4. **[Pure Functions Over Side Effects](../../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Server Components are pure, Server Actions handle side effects, functional core patterns
+5. **[Reproducibility First](../../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Next.js enables through Volta pinning, package-lock.json, consistent builds, predictable caching
 
 **See Also**: [Functional Programming](functional-programming.md) for FP patterns with Next.js.
 
@@ -1363,12 +1363,12 @@ export const config = {
 ### Development Practices
 
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD workflows
-- **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming](../../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ### Code Quality
 
-- **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
-- **[Implementation Workflow](../../../../../../governance/development/workflow/implementation.md)** - Development process
+- **[Code Quality Standards](../../../../../../repo-governance/development/quality/code.md)** - Quality requirements
+- **[Implementation Workflow](../../../../../../repo-governance/development/workflow/implementation.md)** - Development process
 
 ## Next.js Ecosystem
 

@@ -2,10 +2,10 @@
 
 ## Phase 0: Re-Baseline
 
-- [x] Run `rhino-cli governance vendor-audit governance/` and record exact violation count
+- [x] Run `rhino-cli repo-governance vendor-audit repo-governance/` and record exact violation count
   - Date: 2026-05-03
-  - Status: completed (corrected — initial baseline call used `../../governance/` which `findGitRoot()`+`filepath.Join` resolved to a non-existent path, returning a false-pass; corrected by running with `governance/` as repo-relative path)
-  - Result: corrected baseline = **1 violation** at `governance/development/workflow/worktree-setup.md:132` ("Claude Code" in load-bearing prose). Fixed inline (same Phase 0 patch — rewrite to "the upstream coding-agent default" + "platform binding directory"). Post-fix audit: `GOVERNANCE VENDOR AUDIT PASSED: no violations found` (0).
+  - Status: completed (corrected — initial baseline call used `../../repo-governance/` which `findGitRoot()`+`filepath.Join` resolved to a non-existent path, returning a false-pass; corrected by running with `repo-governance/` as repo-relative path)
+  - Result: corrected baseline = **1 violation** at `repo-governance/development/workflow/worktree-setup.md:132` ("Claude Code" in load-bearing prose). Fixed inline (same Phase 0 patch — rewrite to "the upstream coding-agent default" + "platform binding directory"). Post-fix audit: `GOVERNANCE VENDOR AUDIT PASSED: no violations found` (0).
 - [x] Document the actual baseline finding inline in this checklist (e.g., "0 violations as of YYYY-MM-DD HH:MM" or "N violations across M files")
   - Date: 2026-05-03
   - Status: completed
@@ -27,7 +27,7 @@
 
 ## Phase 1: Audit & Inventory
 
-- [x] Catalog all governance/ violations by category (model names, benchmarks, vendor paths)
+- [x] Catalog all repo-governance/ violations by category (model names, benchmarks, vendor paths)
   - Date: 2026-05-03
   - Status: completed (verify-only)
   - Result: 0 violations across all categories — nothing to catalog. Verbose `vendor-audit` confirms `PASSED: no violations found`.
@@ -40,13 +40,13 @@
   - Status: completed
   - Result: 238-line reference with frontmatter, Benchmark Definitions table, per-model sections (Claude / OpenCode / etc.) with citations to primary sources (Anthropic API docs, release posts, system cards) and `[Verified]` confidence labels. Comprehensive and Diátaxis-conformant. Backs tier assignments in `model-selection.md`.
 
-## Phase 2: Content Migration & Rewrite (governance/)
+## Phase 2: Content Migration & Rewrite (repo-governance/)
 
 - [x] Verify `docs/reference/ai-model-benchmarks.md` has benchmark data for every model referenced in governance files — add any missing entries before proceeding
   - Date: 2026-05-03
   - Status: completed (verify-only)
   - Result: distinct model values across both bindings: `haiku`, `sonnet`, `opencode-go/glm-5`, `opencode-go/minimax-m2.7`, omitted (opus inherit). `model-selection.md` covers all five via the capability-tier map with links to `ai-model-benchmarks.md`. Benchmarks doc has Claude Opus 4.7 / Sonnet 4.6 / Haiku 4.5 sections plus OpenCode notes — full coverage.
-- [x] Update `governance/development/agents/model-selection.md`:
+- [x] Update `repo-governance/development/agents/model-selection.md`:
   - Rewrite model references using capability tiers (planning-grade, execution-grade, fast)
   - Remove benchmark scores from governance prose
   - Link to `docs/reference/ai-model-benchmarks.md` as canonical source
@@ -54,32 +54,32 @@
   - Add a one-line note clarifying that "planning-grade / execution-grade / fast" is internal repo vocabulary, not an externally-recognized cross-vendor standard (web research 2026-05-03 found no community usage)
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/development/agents/model-selection.md`
+  - Files changed: `repo-governance/development/agents/model-selection.md`
   - Result: capability-tier rewrite + benchmark-scores-removed + canonical-link + tier-map coverage already present from earlier work; **added terminology Note** (planning-grade / execution-grade / fast = internal repo vocabulary, not externally-recognized cross-vendor standard, web research 2026-05-03 found no community usage). Vendor-audit re-run after edit: still 0 violations.
-- [x] Update `governance/development/agents/ai-agents.md` (explicit Phase 2 target):
+- [x] Update `repo-governance/development/agents/ai-agents.md` (explicit Phase 2 target):
   - Wrap vendor-specific examples (color-translation map entries, OpenCode named-color rejection note, etc.) in `binding-example` fences. Drop the specific version number "1.14.31" — unverified per OpenCode public changelog; use "current OpenCode" instead
   - Neutralize load-bearing prose around the fences
   - Confirm the color-translation map covers every named color used in `.claude/agents/*.md` frontmatter (extract via `grep -h "^color:" .claude/agents/*.md | sort -u`)
   - Date: 2026-05-03
   - Status: completed (verify-only)
   - Result: `binding-example` fences already present (lines 67, 674, 2512, 2543, 2561). "1.14.31" version string already removed. Distinct colors in `.claude/agents/*.md` frontmatter: `blue`, `green`, `purple`, `yellow` — all four covered by Color Translation Table at line 759 (under "## Platform Binding Examples" heading, properly scoped). Reserved colors `red`/`orange`/`pink`/`cyan` also documented.
-- [x] Update `governance/README.md`:
+- [x] Update `repo-governance/README.md`:
   - Replace `.claude/agents/` references with "platform binding agents"
   - Update Layer 4 description to reflect vendor-neutrality
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/README.md`
+  - Files changed: `repo-governance/README.md`
   - Result: line 31 layer summary now reads "platform-binding agent catalogs in `.claude/agents/` (primary binding)"; Layer 4 expanded section adds vendor-neutrality clarifier and references both `.claude/agents/` and `.opencode/agents/`. Vendor-audit re-run: still 0 violations.
-- [x] Update `governance/repository-governance-architecture.md`:
+- [x] Update `repo-governance/repository-governance-architecture.md`:
   - Clarify agent skills are delivery infrastructure (not Layer 4.5)
   - Ensure agent color palette examples are not load-bearing prose
   - Date: 2026-05-03
   - Status: completed (verify-only)
   - Result: agent-skills-as-delivery-infrastructure framing already present at lines 60, 119, 132, 359, 420, 482, 484, 497, 507-508, 632 (incl explicit "agent skills are delivery infrastructure, NOT a governance layer" callout). Color palette refs (`blue|green|yellow|purple`): grep returns 0 matches — no load-bearing color prose in this file.
-- [x] Check other governance files (including `governance/principles/`) for vendor-specific content
+- [x] Check other governance files (including `repo-governance/principles/`) for vendor-specific content
   - Date: 2026-05-03
   - Status: completed (verify-only)
-  - Result: scoped audit on `governance/principles/` returns 0 violations. Whole-tree audit (`governance/`) also at 0. No vendor-specific content remains anywhere in governance prose.
+  - Result: scoped audit on `repo-governance/principles/` returns 0 violations. Whole-tree audit (`repo-governance/`) also at 0. No vendor-specific content remains anywhere in governance prose.
 - [x] Verify vendor-specific benchmark content is complete in `docs/reference/ai-model-benchmarks.md`
   - Date: 2026-05-03
   - Status: completed
@@ -87,21 +87,21 @@
 
 ## Phase 3: Layer-Test Update
 
-- [x] Update `governance/README.md` Layer Test with Vendor-Specific Content Test
+- [x] Update `repo-governance/README.md` Layer Test with Vendor-Specific Content Test
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/README.md`
+  - Files changed: `repo-governance/README.md`
   - Result: added new "Vendor-Specific Content Test" section after Workflows Test routing vendor-specific content to platform-binding dirs OR `docs/reference/` (with `binding-example` fence escape hatch); extended Quick Decision Tree with vendor-specific branch. Vendor-audit re-run: 0 violations.
-- [x] Update `governance/conventions/structure/governance-vendor-independence.md` (minor edits only; major Scope expansion happens in Phase X)
+- [x] Update `repo-governance/conventions/structure/governance-vendor-independence.md` (minor edits only; major Scope expansion happens in Phase X)
   - Date: 2026-05-03
   - Status: completed (verify-only)
-  - Result: convention is comprehensive (Scope, Forbidden Vendor Terms with regex tables for product names / binding paths / model-vendor company names / model-product names / version strings, Allowlist mechanism, Migration Guidance, automated enforcement via `rhino-cli governance vendor-audit`). No minor edits surfaced — content is current as of recent vendor-independence-related plan completion. Phase X handles major Scope expansion (moving AGENTS.md/CLAUDE.md to in-scope).
+  - Result: convention is comprehensive (Scope, Forbidden Vendor Terms with regex tables for product names / binding paths / model-vendor company names / model-product names / version strings, Allowlist mechanism, Migration Guidance, automated enforcement via `rhino-cli repo-governance vendor-audit`). No minor edits surfaced — content is current as of recent vendor-independence-related plan completion. Phase X handles major Scope expansion (moving AGENTS.md/CLAUDE.md to in-scope).
 
 ## Phase X: Convention Amendment (BLOCKING for Phase 4)
 
 This phase MUST run before Phase 4. It expands the scope of the vendor-independence convention so that the AGENTS.md / CLAUDE.md audit has a convention to enforce against.
 
-- [x] Amend `governance/conventions/structure/governance-vendor-independence.md`:
+- [x] Amend `repo-governance/conventions/structure/governance-vendor-independence.md`:
   - Update the Scope section: AGENTS.md and CLAUDE.md are now in scope (move them OUT of "Out of scope" list)
   - Update the Exceptions list: remove the entry that exempts AGENTS.md and CLAUDE.md
   - Preserve the `plans/` exclusion (plans intentionally permit vendor-specific implementation discussion)
@@ -109,26 +109,26 @@ This phase MUST run before Phase 4. It expands the scope of the vendor-independe
   - Add a brief note explaining that the single-line `@AGENTS.md` import in CLAUDE.md is treated as an inline binding directive (not a forbidden vendor term)
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/conventions/structure/governance-vendor-independence.md`
+  - Files changed: `repo-governance/conventions/structure/governance-vendor-independence.md`
   - Result: Scope section now lists AGENTS.md and CLAUDE.md as in-scope canonical root surfaces with the two specific allowances (binding-example fences inside CLAUDE.md, single-line `@AGENTS.md` import allowance). Out-of-scope list trimmed to `.claude/`, `.opencode/`, `docs/reference/platform-bindings.md`, `plans/`. Exceptions list updated: replaced "AGENTS.md and CLAUDE.md at the repo root: explicitly out of scope" with a narrowed entry for the single-line `@AGENTS.md` import directive only.
 - [x] Run `npm run lint:md:fix && npm run lint:md` against the convention file
   - Date: 2026-05-03
   - Status: completed
   - Result: `markdownlint-cli2` against the three Phase 2/X-edited governance files reports `0 errors`.
-- [x] Run `rhino-cli governance vendor-audit governance/` — must remain at 0 violations after amendment (the convention file itself is allowlisted)
+- [x] Run `rhino-cli repo-governance vendor-audit repo-governance/` — must remain at 0 violations after amendment (the convention file itself is allowlisted)
   - Date: 2026-05-03
   - Status: completed
-  - Result: post-amendment audit: 0 violations. Convention file is permanently allowlisted by `forbiddenConvention` constant in `apps/rhino-cli/internal/governance/governance_vendor_audit.go:23`.
+  - Result: post-amendment audit: 0 violations. Convention file is permanently allowlisted by `forbiddenConvention` constant in `apps/rhino-cli/internal/repo-governance/governance_vendor_audit.go:23`.
 - [ ] Commit the amendment: `refactor(governance): expand vendor-independence convention to include AGENTS.md and CLAUDE.md`
 
 ## Phase 4: AGENTS.md and CLAUDE.md Neutrality Audit
 
 This phase requires Phase X (convention amendment) to be committed first.
 
-- [x] Audit `AGENTS.md` for vendor terms using the combined audit regex from the convention (or `rhino-cli governance vendor-audit AGENTS.md` if the CLI accepts file targets)
+- [x] Audit `AGENTS.md` for vendor terms using the combined audit regex from the convention (or `rhino-cli repo-governance vendor-audit AGENTS.md` if the CLI accepts file targets)
   - Date: 2026-05-03
   - Status: completed
-  - Result: AGENTS.md = **15 violations**; CLAUDE.md = **31 violations** (both audited via `rhino-cli governance vendor-audit <file>` from `apps/rhino-cli` so the CLI's `findGitRoot()`+`filepath.Join` resolves the path to `<repoRoot>/<arg>`).
+  - Result: AGENTS.md = **15 violations**; CLAUDE.md = **31 violations** (both audited via `rhino-cli repo-governance vendor-audit <file>` from `apps/rhino-cli` so the CLI's `findGitRoot()`+`filepath.Join` resolves the path to `<repoRoot>/<arg>`).
 - [x] Catalog AGENTS.md violations and classify each per the convention's Migration Guidance:
   - Load-bearing prose → rewrite using the Vocabulary Map
   - Cross-reference link → rewrite anchor text and link target to neutral equivalent
@@ -156,7 +156,7 @@ This phase requires Phase X (convention amendment) to be committed first.
 - [x] Re-run audit against both files — expect 0 violations outside fences and Platform Binding Examples sections
   - Date: 2026-05-03
   - Status: completed
-  - Result: AGENTS.md = 0 violations; CLAUDE.md = 0 violations; governance/ = 0 violations.
+  - Result: AGENTS.md = 0 violations; CLAUDE.md = 0 violations; repo-governance/ = 0 violations.
 - [x] Run `npm run lint:md:fix && npm run lint:md` against both files
   - Date: 2026-05-03
   - Status: completed
@@ -205,14 +205,14 @@ This phase verifies the binding-sync layer is in a known-good state. It runs ver
   - Result: investigation: the orphan `ci-monitor-subagent.md` was added in commit `8e569d99a` ("chore: add Nx-generated AI agent configs for Copilot, Codex, and OpenCode") by an Nx generator and never had a `.claude` counterpart — it carries OpenCode-specific frontmatter (`mode: subagent`) and references MCP tool calls. With no Claude Code counterpart and no consumer in `.claude/commands/`, the file was a true orphan. Resolution: deleted via `git rm .opencode/agents/ci-monitor-subagent.md`. Added `.opencode/agents/README.md` as a thin mirror of the canonical `.claude/agents/README.md` (so directory-level navigation and the raw `*.md` count parity both hold).
 - [x] Verify color-translation map coverage:
   - Extract distinct colors from `.claude/agents/*.md` frontmatter: `grep -h "^color:" .claude/agents/*.md | sort -u`
-  - Compare against the Dual-Mode Color Translation table in `governance/development/agents/ai-agents.md`
+  - Compare against the Dual-Mode Color Translation table in `repo-governance/development/agents/ai-agents.md`
   - Any gap is a finding — add missing color entries to the map; commit the map update
   - Date: 2026-05-03
   - Status: completed
-  - Result: distinct colors in agent frontmatter: `blue`, `green`, `purple`, `yellow` — all four covered by the Color Translation Table in `governance/development/agents/ai-agents.md` (lines 759-768) under "## Platform Binding Examples". No gaps; 4 reserved-future colors (`red`/`orange`/`pink`/`cyan`) also documented in the same table.
+  - Result: distinct colors in agent frontmatter: `blue`, `green`, `purple`, `yellow` — all four covered by the Color Translation Table in `repo-governance/development/agents/ai-agents.md` (lines 759-768) under "## Platform Binding Examples". No gaps; 4 reserved-future colors (`red`/`orange`/`pink`/`cyan`) also documented in the same table.
 - [x] Verify capability-tier map coverage:
   - Extract distinct model tiers from agent frontmatter (both bindings): `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u`
-  - Compare against the capability-tier map in `governance/development/agents/model-selection.md`
+  - Compare against the capability-tier map in `repo-governance/development/agents/model-selection.md`
   - Any gap is a finding — add missing tier entries to the map; commit the map update
   - Date: 2026-05-03
   - Status: completed
@@ -220,7 +220,7 @@ This phase verifies the binding-sync layer is in a known-good state. It runs ver
 - [x] If `rhino-cli` exposes a `validate:sync` Nx target or equivalent, run it and resolve any findings; if absent, document the gap (a future plan can add the automated check)
   - Date: 2026-05-03
   - Status: completed (gap documented; addressed in Phase 6.2)
-  - Result: `apps/rhino-cli/project.json` does NOT currently expose a `validate:sync` Nx target (existing targets: `validate:naming-agents`, `validate:naming-workflows`, `validate:mermaid`, `validate:governance-vendor-audit`, plus `test:*` and coverage targets). Gap is intentionally addressed by Phase 6.2 of this plan, which adds a new `validate:cross-vendor-parity` Nx target wiring sync no-op + count parity + color-map + tier-map invariants. No separate future plan needed.
+  - Result: `apps/rhino-cli/project.json` does NOT currently expose a `validate:sync` Nx target (existing targets: `validate:naming-agents`, `validate:naming-workflows`, `validate:mermaid`, `validate:repo-governance-vendor-audit`, plus `test:*` and coverage targets). Gap is intentionally addressed by Phase 6.2 of this plan, which adds a new `validate:cross-vendor-parity` Nx target wiring sync no-op + count parity + color-map + tier-map invariants. No separate future plan needed.
 
 ## Phase 6: Operationalize Parity (new agent + Nx gate)
 
@@ -228,7 +228,7 @@ Phase 5 verifies invariants manually via shell commands. Phase 6 promotes those 
 
 ### Phase 6.1: Create the parity checker agent
 
-- [x] **Author** `.claude/agents/repo-parity-checker.md` — green checker agent following [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md) and [Agent Definition Files](../../../governance/development/agents/ai-agents.md):
+- [x] **Author** `.claude/agents/repo-parity-checker.md` — green checker agent following [Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md) and [Agent Definition Files](../../../repo-governance/development/agents/ai-agents.md):
   - Frontmatter: `name: repo-parity-checker`, `color: green`, `model: sonnet`, `description: Validates cross-vendor behavioral-parity invariants by invoking existing tools (rhino-cli vendor-audit, npm run sync:claude-to-opencode, ls/grep/diff). Outputs dual-label findings to generated-reports/.`
   - Tools: `Bash, Read, Glob, Grep, WebFetch, Write` (Bash for sync/ls/grep, WebFetch for Aider docs drift check, Write for audit report)
   - Body documents the five invariants checked (sync no-op, count parity, color-map coverage, tier-map coverage, Aider entry accuracy in `docs/reference/platform-bindings.md`) and the dual-label criticality/confidence output format from [Repo Assessing Criticality Confidence skill](../../../.claude/skills/repo-assessing-criticality-confidence/SKILL.md)
@@ -261,14 +261,14 @@ Phase 5 verifies invariants manually via shell commands. Phase 6 promotes those 
 ### Phase 6.2: Wire Nx target + pre-push hook
 
 - [x] **Author** Nx target `validate:cross-vendor-parity` on the `rhino-cli` project (or a new `repo-parity` meta-project — pick whichever is more idiomatic per existing repo patterns; consult `apps/rhino-cli/project.json`). Target invokes the agent's underlying commands directly (not the agent itself — Nx targets shouldn't invoke AI agents):
-  - Run `rhino-cli governance vendor-audit governance/` — exit non-zero on violations
+  - Run `rhino-cli repo-governance vendor-audit repo-governance/` — exit non-zero on violations
   - Run `npm run sync:claude-to-opencode` and check `git diff --quiet` — exit non-zero on drift
   - Compare counts via shell — exit non-zero on mismatch
   - Color-map and tier-map coverage via grep + diff — exit non-zero on gaps
   - Date: 2026-05-03
   - Status: completed
   - Files changed: `apps/rhino-cli/project.json`, `apps/rhino-cli/scripts/validate-cross-vendor-parity.sh` (new)
-  - Result: chose to extend the existing `rhino-cli` project (more idiomatic — same project hosts governance vendor-audit, mermaid validation, naming validation). Nx target `validate:cross-vendor-parity` runs `bash apps/rhino-cli/scripts/validate-cross-vendor-parity.sh`. Script implements all 6 invariants from the checker agent (governance audit, AGENTS/CLAUDE audit, sync no-op, count parity, color-map coverage, tier-map coverage). Cache disabled (`cache: false`) because sync mutation is part of validation.
+  - Result: chose to extend the existing `rhino-cli` project (more idiomatic — same project hosts repo-governance vendor-audit, mermaid validation, naming validation). Nx target `validate:cross-vendor-parity` runs `bash apps/rhino-cli/scripts/validate-cross-vendor-parity.sh`. Script implements all 6 invariants from the checker agent (governance audit, AGENTS/CLAUDE audit, sync no-op, count parity, color-map coverage, tier-map coverage). Cache disabled (`cache: false`) because sync mutation is part of validation.
 - [x] **Verify** target runs locally and exits 0 once Phases 1-6 are green
   - Date: 2026-05-03
   - Status: completed
@@ -277,7 +277,7 @@ Phase 5 verifies invariants manually via shell commands. Phase 6 promotes those 
   - Date: 2026-05-03
   - Status: completed
   - Files changed: `.husky/pre-push`
-  - Result: added a scoped invocation (matches the existing per-surface pattern used by other validators) — pre-push runs `nx run rhino-cli:validate:cross-vendor-parity` when any of `governance/**/*.md`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, or `.opencode/agents/` is in the diff against upstream.
+  - Result: added a scoped invocation (matches the existing per-surface pattern used by other validators) — pre-push runs `nx run rhino-cli:validate:cross-vendor-parity` when any of `repo-governance/**/*.md`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, or `.opencode/agents/` is in the diff against upstream.
 - [x] **Polish** — confirm `npm install` + git commit triggers pre-push and the target runs
   - Date: 2026-05-03
   - Status: completed (functional verification deferred to first push of this commit batch)
@@ -287,7 +287,7 @@ Phase 5 verifies invariants manually via shell commands. Phase 6 promotes those 
 
 The new agents need a workflow document that orchestrates the iterative check-fix-verify pattern (mirrors `plan-quality-gate.md`). The workflow is what makes the maker-checker-fixer pattern complete — the agents alone don't loop themselves.
 
-- [x] **Author** `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` following [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) (`<scope>(-<qualifier>)*-<type>` → `repo-cross-vendor-parity-quality-gate`, scope token `repo` matches parent dir `governance/workflows/repo/`). Use [`governance/workflows/plan/plan-quality-gate.md`](../../../governance/workflows/plan/plan-quality-gate.md) as the structural template (frontmatter: name, goal, termination, inputs, outputs; body: execution mode, steps, termination criteria, iteration example, safety features):
+- [x] **Author** `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` following [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md) (`<scope>(-<qualifier>)*-<type>` → `repo-cross-vendor-parity-quality-gate`, scope token `repo` matches parent dir `repo-governance/workflows/repo/`). Use [`repo-governance/workflows/plan/plan-quality-gate.md`](../../../repo-governance/workflows/plan/plan-quality-gate.md) as the structural template (frontmatter: name, goal, termination, inputs, outputs; body: execution mode, steps, termination criteria, iteration example, safety features):
   - Frontmatter `name: repo-cross-vendor-parity-quality-gate`, `goal: Validate cross-vendor behavioral-parity invariants and apply fixes iteratively until zero findings achieved`, `termination: Zero findings on two consecutive validations (max-iterations defaults to 7)`
   - Inputs: `scope` (default: all five invariants), `mode` (lax/normal/strict/ocd), `min-iterations`, `max-iterations` (default 7), `max-concurrency` (default 2)
   - Outputs: `final-status` (pass/partial/fail), `iterations-completed`, `final-report` (`generated-reports/parity__*__audit.md`)
@@ -296,7 +296,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
   - Document the limited fixer scope: only sync drift is auto-remediated; color-map / tier-map / orphan / Aider-drift findings require human resolution
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` (new)
+  - Files changed: `repo-governance/workflows/repo/repo-cross-vendor-parity-quality-gate.md` (new)
   - Result: workflow file authored, mirroring plan-quality-gate structure; double-zero termination, escalation warning at iteration 5, false-positive skip list, scoped re-validation, limited auto-fix scope all documented. Convention compliance: filename matches `<scope>(-<qualifier>)*-<type>` with scope `repo` matching parent dir.
 - [x] **Verify** by reading the workflow file end-to-end (sanity check structure)
   - Date: 2026-05-03
@@ -306,10 +306,10 @@ The new agents need a workflow document that orchestrates the iterative check-fi
   - Date: 2026-05-03
   - Status: completed
   - Result: `markdownlint-cli2` against the workflow file plus the two new agents reports `0 errors`.
-- [x] **Wire** the workflow into the existing workflow catalog: update `governance/workflows/README.md` with an entry for `repo-cross-vendor-parity-quality-gate`
+- [x] **Wire** the workflow into the existing workflow catalog: update `repo-governance/workflows/README.md` with an entry for `repo-cross-vendor-parity-quality-gate`
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/workflows/README.md`
+  - Files changed: `repo-governance/workflows/README.md`
   - Result: added one row to the Available Workflows table for "Repository Cross-Vendor Parity Validation" pointing at the new workflow file, agents (`repo-parity-checker`, `repo-parity-fixer`), and Medium complexity (matches `repo-rules-quality-gate`).
 
 ### Phase 6.4: First green-run + plan handoff
@@ -317,7 +317,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 - [x] **Run** `nx run rhino-cli:validate:cross-vendor-parity` — must exit 0 (counts equal, sync no-op, all maps cover all observed values)
   - Date: 2026-05-03
   - Status: completed
-  - Result: target exits 0 — all six invariants pass (governance vendor-audit, AGENTS.md and CLAUDE.md vendor-audit, sync no-op, count parity 73=73, color map covers blue/green/purple/yellow, tier map covers haiku/opencode-go/glm-5/opencode-go/minimax-m2.7/sonnet).
+  - Result: target exits 0 — all six invariants pass (repo-governance vendor-audit, AGENTS.md and CLAUDE.md vendor-audit, sync no-op, count parity 73=73, color map covers blue/green/purple/yellow, tier map covers haiku/opencode-go/glm-5/opencode-go/minimax-m2.7/sonnet).
 - [x] **Run** the workflow end-to-end (`User: "Run repo-cross-vendor-parity-quality-gate workflow"`) and confirm:
   - Iteration 1 finds zero findings (or any findings are immediately fixable by the fixer)
   - Iteration 2 confirms zero findings (double-zero termination)
@@ -329,10 +329,10 @@ The new agents need a workflow document that orchestrates the iterative check-fi
   - Date: 2026-05-03
   - Status: completed
   - Result: both `.opencode/agents/repo-parity-checker.md` and `.opencode/agents/repo-parity-fixer.md` exist; sync command exits SUCCESS; color tokens translated correctly (`green`→`success`, `yellow`→`warning`); model values pass through (`sonnet` → `opencode-go/minimax-m2.7`).
-- [x] **Document** in `governance/development/agents/ai-agents.md` (or wherever the agent catalog lives) that `repo-parity-checker` / `repo-parity-fixer` exist, what they cover, and how the `repo-cross-vendor-parity-quality-gate` workflow orchestrates them
+- [x] **Document** in `repo-governance/development/agents/ai-agents.md` (or wherever the agent catalog lives) that `repo-parity-checker` / `repo-parity-fixer` exist, what they cover, and how the `repo-cross-vendor-parity-quality-gate` workflow orchestrates them
   - Date: 2026-05-03
   - Status: completed
-  - Files changed: `governance/development/agents/ai-agents.md`
+  - Files changed: `repo-governance/development/agents/ai-agents.md`
   - Result: added `repo-parity-checker` to the mandatory `*-checker` agents list (entry #20); added a callout note describing the parity checker/fixer pair, what they cover, the workflow that orchestrates them, and the auto-fix limitation (sync drift only).
 - [x] **Commit thematically**:
   - `feat(agents): add repo-parity-checker for cross-vendor invariants`
@@ -344,7 +344,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 
 ## Phase 7: Final Validation
 
-- [x] Run `rhino-cli governance vendor-audit governance/` — expect 0 violations
+- [x] Run `rhino-cli repo-governance vendor-audit repo-governance/` — expect 0 violations
   - Date: 2026-05-03 / Result: PASSED, 0 violations.
 - [x] Run audit against AGENTS.md and CLAUDE.md (via CLI or grep with the combined regex) — expect 0 violations outside fences and Platform Binding Examples sections
   - Date: 2026-05-03 / Result: AGENTS.md = 0; CLAUDE.md = 0.
@@ -367,7 +367,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 
 ### Development Environment Setup (First-Time)
 
-- [x] Provision worktree: `claude --worktree cross-vendor-agent-parity` (creates `worktrees/cross-vendor-agent-parity/` in repo root, per `governance/conventions/structure/worktree-path.md`)
+- [x] Provision worktree: `claude --worktree cross-vendor-agent-parity` (creates `worktrees/cross-vendor-agent-parity/` in repo root, per `repo-governance/conventions/structure/worktree-path.md`)
   - Date: 2026-05-03 / Status: completed (deviation noted) / Result: executed in current parent-rooted session per user instruction "run plan-execution... push all to origin main"; worktree provisioning skipped because the user invoked plan execution directly, not via `claude --worktree`. This is the documented escape hatch — direct execution from a session that already has `additionalDirectories` covering the subrepo. No parallel work or dirty-gitlink hazard surfaced during execution.
 - [x] Run `npm install && npm run doctor -- --fix` to converge toolchain
   - Date: 2026-05-03 / Status: completed / Result: existing session already had a converged toolchain from the previous plan; `npm install` not re-run (no new dependencies introduced); doctor not re-run (no missing tools surfaced — every Go/Node/script invocation succeeded).
@@ -376,7 +376,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 
 ### Local Quality Gates (Before Push)
 
-- [x] Run `rhino-cli governance vendor-audit governance/` — 0 violations
+- [x] Run `rhino-cli repo-governance vendor-audit repo-governance/` — 0 violations
   - Date: 2026-05-03 / Result: PASSED (0 violations).
 - [x] Run audit against AGENTS.md and CLAUDE.md — 0 violations outside fences and Platform Binding Examples sections
   - Date: 2026-05-03 / Result: AGENTS.md = 0; CLAUDE.md = 0.
@@ -389,14 +389,14 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 - [x] Run `nx affected -t typecheck lint test:quick spec-coverage` — all pass
   - Date: 2026-05-03 / Result: 14 projects, 60 tasks, all PASS.
 - [x] Verify no new vendor-specific content introduced
-  - Date: 2026-05-03 / Result: confirmed — Phase 7 vendor-audit on governance/, AGENTS.md, CLAUDE.md all return 0 violations; no vendor-specific content added outside `binding-example` fences or "Platform Binding Examples" headings.
+  - Date: 2026-05-03 / Result: confirmed — Phase 7 vendor-audit on repo-governance/, AGENTS.md, CLAUDE.md all return 0 violations; no vendor-specific content added outside `binding-example` fences or "Platform Binding Examples" headings.
 
 ### Post-Push Verification
 
 - [x] Push changes to `main`
-  - Date: 2026-05-03 / Result: pushed all session commits to `origin/main` at SHA `3b751c6f9`. Pre-push hook ran `nx affected -t typecheck lint test:quick spec-coverage`, `npm run lint:md`, `validate:naming-agents`, `validate:naming-workflows`, `validate:mermaid`, `validate:governance-vendor-audit`, and the new `validate:cross-vendor-parity` — all green.
+  - Date: 2026-05-03 / Result: pushed all session commits to `origin/main` at SHA `3b751c6f9`. Pre-push hook ran `nx affected -t typecheck lint test:quick spec-coverage`, `npm run lint:md`, `validate:naming-agents`, `validate:naming-workflows`, `validate:mermaid`, `validate:repo-governance-vendor-audit`, and the new `validate:cross-vendor-parity` — all green.
 - [x] Monitor GitHub Actions: watch `pr-quality-gate.yml` and any push-triggered workflows (markdown lint, link validation)
-  - Date: 2026-05-03 / Result: no new GitHub Actions runs triggered against the new SHAs (`683c44fb9`, `1436d1dc6`, `73d74a259`, `fc822551c`, `26a7ebe88`, `9edc38015`, `34233bb6d`, `3b751c6f9`). The changed paths (`governance/`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, `.opencode/agents/`, `plans/`, `apps/rhino-cli/scripts/`, `apps/rhino-cli/project.json`, `.husky/pre-push`) don't match any app-deploy workflow path filter — those gate on `apps/{ayokoding-web,oseplatform-web,organiclever-web}/**` only. Markdown lint and link validation run as pre-commit/pre-push, not as GitHub workflows.
+  - Date: 2026-05-03 / Result: no new GitHub Actions runs triggered against the new SHAs (`683c44fb9`, `1436d1dc6`, `73d74a259`, `fc822551c`, `26a7ebe88`, `9edc38015`, `34233bb6d`, `3b751c6f9`). The changed paths (`repo-governance/`, `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`, `.opencode/agents/`, `plans/`, `apps/rhino-cli/scripts/`, `apps/rhino-cli/project.json`, `.husky/pre-push`) don't match any app-deploy workflow path filter — those gate on `apps/{ayokoding-web,oseplatform-web,organiclever-web}/**` only. Markdown lint and link validation run as pre-commit/pre-push, not as GitHub workflows.
 - [x] Verify all CI checks pass
   - Date: 2026-05-03 / Result: no CI checks gating these paths exist (see prior item). Pre-existing organiclever-web staging E2E failure on SHA `abe98c1d8` (the previous session's broken-link reporter fix commit) is unrelated to this plan and was already failing before execution began.
 - [x] If any CI check fails, fix immediately and push a follow-up commit
@@ -419,7 +419,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 - [x] Follow Conventional Commits format: `<type>(<scope>): <description>`
   - Date: 2026-05-03 / Result: every commit message uses the `<type>(<scope>): <description>` form (refactor/feat/fix/chore/docs); commitlint accepted all commits.
 - [x] Split benchmark content migration from governance prose cleanup into separate commits if files differ significantly
-  - Date: 2026-05-03 / Result: not applicable — Phase 0 baseline showed governance/ already vendor-neutral; no benchmark migration was needed (verify-only mode collapsed Phase 1-3 to confirmation), so no split was needed. Phase X convention amendment landed in its own dedicated commit before Phase 4.
+  - Date: 2026-05-03 / Result: not applicable — Phase 0 baseline showed repo-governance/ already vendor-neutral; no benchmark migration was needed (verify-only mode collapsed Phase 1-3 to confirmation), so no split was needed. Phase X convention amendment landed in its own dedicated commit before Phase 4.
 - [x] Convention-amendment commit (Phase X) MUST land before AGENTS.md / CLAUDE.md remediation commits (Phase 4)
   - Date: 2026-05-03 / Result: confirmed — Phase X commit `683c44fb9` landed first; Phase 4 commit `1436d1dc6` referenced it explicitly in its message body.
 
@@ -428,7 +428,7 @@ The new agents need a workflow document that orchestrates the iterative check-fi
 - [x] Verify ALL delivery checklist items are ticked
   - Date: 2026-05-03 / Result: all 91 checklist items ticked with implementation notes.
 - [x] Verify ALL quality gates pass (local + CI)
-  - Date: 2026-05-03 / Result: all local quality gates green (vendor-audit 0 across governance/AGENTS/CLAUDE; lint:md 0 errors; nx affected typecheck/lint/test:quick/spec-coverage all pass; validate:cross-vendor-parity exits 0). CI verification is a no-op for this plan (changed paths don't match app-deploy workflow filters; pre-existing organiclever-web staging E2E failure is unrelated).
+  - Date: 2026-05-03 / Result: all local quality gates green (vendor-audit 0 across repo-governance/AGENTS/CLAUDE; lint:md 0 errors; nx affected typecheck/lint/test:quick/spec-coverage all pass; validate:cross-vendor-parity exits 0). CI verification is a no-op for this plan (changed paths don't match app-deploy workflow filters; pre-existing organiclever-web staging E2E failure is unrelated).
 - [x] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`
   - Date: 2026-05-03 / Result: `git mv plans/in-progress/2026-05-03__cross-vendor-agent-parity plans/done/2026-05-03__cross-vendor-agent-parity`.
 - [x] Update `plans/in-progress/README.md` — remove the plan entry

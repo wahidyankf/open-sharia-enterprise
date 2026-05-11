@@ -56,21 +56,21 @@ All acceptance criteria and stakeholder-facing specifications MUST follow the BD
 
 **What this documentation does NOT cover**: BDD fundamentals, basic Gherkin syntax, generic collaboration techniques (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 BDD standards in OSE Platform align with core software engineering principles:
 
-1. **[Documentation First](../../../../../governance/principles/content/documentation-first.md)** - Gherkin scenarios serve as executable specifications written before implementation. Living documentation stays synchronized with code through automated testing.
+1. **[Documentation First](../../../../../repo-governance/principles/content/documentation-first.md)** - Gherkin scenarios serve as executable specifications written before implementation. Living documentation stays synchronized with code through automated testing.
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then makes preconditions, actions, and outcomes explicit. Ubiquitous language in scenarios eliminates ambiguous requirements.
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then makes preconditions, actions, and outcomes explicit. Ubiquitous language in scenarios eliminates ambiguous requirements.
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios execute automatically in CI/CD. Living documentation updates automatically when behavior changes.
+3. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Scenarios execute automatically in CI/CD. Living documentation updates automatically when behavior changes.
 
-4. **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Three Amigos (just 3 roles) prevents bloated meetings. 25-minute Example Mapping time-box prevents over-engineering.
+4. **[Simplicity Over Complexity](../../../../../repo-governance/principles/general/simplicity-over-complexity.md)** - Three Amigos (just 3 roles) prevents bloated meetings. 25-minute Example Mapping time-box prevents over-engineering.
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Scenarios in version control ensure reproducible specifications. Deterministic Given steps produce consistent outcomes.
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - Scenarios in version control ensure reproducible specifications. Deterministic Given steps produce consistent outcomes.
 
 ## OSE Platform BDD Standards
 
@@ -249,8 +249,8 @@ Before merging feature files, verify:
 
 ## Principles Implemented
 
-- **[Documentation First](../../../../../governance/principles/content/documentation-first.md)**: By writing Gherkin scenarios before implementation, requirements become executable documentation that drives development and validation.
+- **[Documentation First](../../../../../repo-governance/principles/content/documentation-first.md)**: By writing Gherkin scenarios before implementation, requirements become executable documentation that drives development and validation.
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By using Given-When-Then structure and ubiquitous language, scenarios make preconditions, actions, and outcomes explicit rather than assuming context.
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**: By using Given-When-Then structure and ubiquitous language, scenarios make preconditions, actions, and outcomes explicit rather than assuming context.
 
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By executing scenarios automatically in CI/CD, BDD eliminates manual acceptance testing and ensures living documentation stays current.
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**: By executing scenarios automatically in CI/CD, BDD eliminates manual acceptance testing and ensures living documentation stays current.

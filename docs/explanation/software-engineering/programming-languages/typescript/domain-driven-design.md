@@ -16,7 +16,7 @@ related:
   - ./best-practices.md
   - ./type-safety.md
   - ./functional-programming.md
-  - ../../../../../governance/development/pattern/functional-programming.md
+  - ../../../../../repo-governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -1693,7 +1693,7 @@ runZakatDistributionExample().catch(console.error);
 
 - **[TypeScript Best Practices](best-practices.md)** - Coding standards
 - **[TypeScript Type Safety](type-safety.md)** - Advanced type patterns
-- **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
+- **[Functional Programming Principle](../../../../../repo-governance/development/pattern/functional-programming.md)** - FP principles
 
 ---
 

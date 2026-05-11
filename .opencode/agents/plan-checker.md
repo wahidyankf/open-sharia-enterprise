@@ -46,7 +46,7 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 ## Core Responsibility
 
-Validate project plans against standards defined in [Plans Organization Convention](../../governance/conventions/structure/plans.md).
+Validate project plans against standards defined in [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md).
 
 ## Validation Scope
 
@@ -61,7 +61,7 @@ Validate project plans against standards defined in [Plans Organization Conventi
 
 ### 2. Requirements Validation (BRD + PRD)
 
-Per the [Content-Placement Rules](../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), business and product concerns live in separate files. Flag misplacement as distinct findings — content in the wrong file is a structural violation, not a stylistic issue.
+Per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), business and product concerns live in separate files. Flag misplacement as distinct findings — content in the wrong file is a structural violation, not a stylistic issue.
 
 **In `brd.md` (business perspective)**:
 
@@ -104,7 +104,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 
 - **Flag MEDIUM** when a plan contains ASCII art that depicts component interactions, data flows, sequences, state machines, or decision branches — a Mermaid diagram would be more appropriate.
 - **Acceptable ASCII** exception: simple directory-tree listings (e.g., `apps/foo/bar.ts`) are not diagrams and do not require flagging.
-- **Reference**: [governance/conventions/structure/plans.md §Diagrams in Plans](../../governance/conventions/structure/plans.md) and [governance/conventions/formatting/diagrams.md](../../governance/conventions/formatting/diagrams.md).
+- **Reference**: [repo-governance/conventions/structure/plans.md §Diagrams in Plans](../../repo-governance/conventions/structure/plans.md) and [repo-governance/conventions/formatting/diagrams.md](../../repo-governance/conventions/formatting/diagrams.md).
 
 ### 4. Delivery Checklist Validation
 
@@ -114,10 +114,10 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - Validation criteria are specific
 - Acceptance criteria are testable
 - Git workflow is specified
-- **TDD-shaped steps**: Any checklist item that ships code MUST have a corresponding test-first step (Red→Green→Refactor structure). Flag as **HIGH** any code delivery item that does not include a failing-test step before the implementation step. See [Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md) for required TDD step shapes.
-- **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
+- **TDD-shaped steps**: Any checklist item that ships code MUST have a corresponding test-first step (Red→Green→Refactor structure). Flag as **HIGH** any code delivery item that does not include a failing-test step before the implementation step. See [Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md) for required TDD step shapes.
+- **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
 
-#### PR Step Authorization Check (per [Git Push Default Convention](../../governance/development/workflow/git-push-default.md))
+#### PR Step Authorization Check (per [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md))
 
 Flag as **HIGH** any delivery checklist containing a `- [ ] Create PR`, `- [ ] Open PR`, or equivalent PR creation step unless EITHER:
 
@@ -232,14 +232,14 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
-- [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
-- [Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md) - TDD-shaped delivery checklist requirement (RED→GREEN→REFACTOR)
+- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - Plan standards
+- [Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow standards
+- [Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md) - TDD-shaped delivery checklist requirement (RED→GREEN→REFACTOR)
 
 **Related Agents / Workflows:**
 
 - `plan-maker` - Creates plans
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
@@ -279,7 +279,7 @@ Use `docs-validating-factual-accuracy` Skill methodology:
 - Report unverified claims as MEDIUM findings (may be correct but cannot confirm)
 
 **Delegate multi-page research to `web-research-maker`**: Per the
-[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md),
+[Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md),
 invoke the [`web-research-maker`](./web-research-maker.md) subagent for multi-page research
 (threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim). This keeps the
 plan audit context lean and returns a cited, synthesised summary. Use in-context
@@ -401,7 +401,7 @@ After validating manual assertions (Step 5c), verify the plan declares a worktre
    - Missing or wrong command: **MEDIUM** finding.
 
 4. **Cross-reference**
-   - The section SHOULD link to [Worktree Path Convention](../../governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../governance/conventions/structure/plans.md#worktree-specification).
+   - The section SHOULD link to [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
    - Missing cross-reference: **LOW** finding.
 
 #### Finding Severity
@@ -420,7 +420,7 @@ After validating the worktree specification (Step 5d), audit every delivery chec
 Every checkbox in `delivery.md` (or the Delivery Checklist section of a single-file plan's `README.md`) MUST satisfy ALL of the following that apply to the action:
 
 1. **Explicit file path(s)** when the action touches a known file
-   - Acceptable: `apps/oseplatform-web/src/server/trpc.ts`, `governance/conventions/structure/plans.md`, etc.
+   - Acceptable: `apps/oseplatform-web/src/server/trpc.ts`, `repo-governance/conventions/structure/plans.md`, etc.
    - When the path cannot be determined at authoring time, the checkbox MUST give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
    - Bare "the auth file", "the relevant config", "wherever needed": **HIGH** finding.
 
@@ -450,7 +450,7 @@ For each `- [ ]` line:
 
 ### 12. Anti-Hallucination Scan (Step 5f — MANDATORY HARD RULE)
 
-After validating execution-grade clarity (Step 5e), scan the entire plan for unverified factual claims that match any pattern in the [Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog). This is the dedicated hallucination-detection step.
+After validating execution-grade clarity (Step 5e), scan the entire plan for unverified factual claims that match any pattern in the [Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../repo-governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog). This is the dedicated hallucination-detection step.
 
 #### What to Validate
 
@@ -487,7 +487,7 @@ Every `[Web-cited]` claim MUST include URL + access date + excerpt inline. Missi
 #### How to Audit
 
 1. Read each file in the plan top-to-bottom.
-2. For every sentence asserting a file path, Nx target, version, API surface, agent/skill name, behavior claim, or numeric metric: check the corresponding row of the verification recipe table from the [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
+2. For every sentence asserting a file path, Nx target, version, API surface, agent/skill name, behavior claim, or numeric metric: check the corresponding row of the verification recipe table from the [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
 3. Run the recipe (`Bash test -f`, `Glob`, `Grep`, `jq` against `project.json`, etc.) to confirm the claim.
 4. If the recipe fails, file a finding under the appropriate Anti-Pattern.
 5. For external claims, verify the inline citation includes URL + access date + excerpt. If the claim warranted multi-page research, verify the plan documents `web-research-maker` delegation (output linked or summarized).

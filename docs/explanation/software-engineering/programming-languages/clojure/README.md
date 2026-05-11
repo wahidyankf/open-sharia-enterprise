@@ -77,7 +77,7 @@ OSE Platform Clojure applications MUST use the following stack:
 - **1.11** (recommended) - `clojure.math`, `update-keys`/`update-vals`, keyword args from maps
 - **1.12** (latest, RECOMMENDED for new projects) - Method values, array class syntax, Java interop improvements
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for Clojure-specific documentation location
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Clojure-specific documentation location
 
 ## Prerequisite Knowledge
 
@@ -92,21 +92,21 @@ OSE Platform Clojure applications MUST use the following stack:
 
 **What this documentation does NOT cover**: Clojure syntax, language fundamentals, REPL basics, S-expression syntax (those are in ayokoding-web).
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
 Clojure development in OSE Platform enforces foundational software engineering principles. Clojure's design **naturally enforces** many of these principles through immutable persistent data structures, pure functions as the default, and the functional programming model:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through `clj-kondo` linting, `cljfmt` formatting, `cloverage` coverage measurement, `tools.build` for artifact creation, and CI/CD integration for all quality gates
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through `clj-kondo` linting, `cljfmt` formatting, `cloverage` coverage measurement, `tools.build` for artifact creation, and CI/CD integration for all quality gates
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through namespaced keywords (`:zakat/amount`), explicit namespace aliases in `require`, `ex-info` with structured data maps for errors, explicit system lifecycle with Integrant configuration, and `s/def` specs as explicit domain contracts
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST enforce explicitness through namespaced keywords (`:zakat/amount`), explicit namespace aliases in `require`, `ex-info` with structured data maps for errors, explicit system lifecycle with Integrant configuration, and `s/def` specs as explicit domain contracts
 
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Clojure's persistent data structures (lists, vectors, maps, sets) are **immutable by default**. MUST leverage this natural immutability: use `assoc`/`dissoc`/`update` to produce new maps rather than mutating state, reserve atoms/refs/agents for intentional shared mutable state, and prefer pure data transformation pipelines
+3. **[Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)** - Clojure's persistent data structures (lists, vectors, maps, sets) are **immutable by default**. MUST leverage this natural immutability: use `assoc`/`dissoc`/`update` to produce new maps rather than mutating state, reserve atoms/refs/agents for intentional shared mutable state, and prefer pure data transformation pipelines
 
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Clojure's functional core encourages pure functions by default. MUST implement functional core/imperative shell architecture: pure domain functions (zakat calculation, contract validation) isolated from I/O (database, HTTP), side-effecting functions marked with `!` suffix, and REPL-testable pure functions
+4. **[Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)** - Clojure's functional core encourages pure functions by default. MUST implement functional core/imperative shell architecture: pure domain functions (zakat calculation, contract validation) isolated from I/O (database, HTTP), side-effecting functions marked with `!` suffix, and REPL-testable pure functions
 
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `deps.edn` with exact dependency coordinates and SHA hashes, committed `deps.lock` files (where applicable), pinned JVM version in `.tool-versions` or `.sdkmanrc`, and deterministic builds via `tools.build`
+5. **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure reproducibility through `deps.edn` with exact dependency coordinates and SHA hashes, committed `deps.lock` files (where applicable), pinned JVM version in `.tool-versions` or `.sdkmanrc`, and deterministic builds via `tools.build`
 
 ## Clojure Version Strategy
 
@@ -279,16 +279,16 @@ graph LR
 - MUST integrate `clj-kondo` and `cljfmt` checks in CI/CD pipeline
 - SHOULD use pre-commit hooks for `cljfmt` formatting and `clj-kondo` linting
 
-**See**: [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+**See**: [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md), [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ## Integration with Repository Governance
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (Clojure naturally enforces these)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process, leveraging REPL for interactive iteration
-- [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
-- [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md) - MUST follow FP principles for domain logic (Clojure naturally enforces these)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process, leveraging REPL for interactive iteration
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md) - MUST meet platform-wide quality requirements
+- [Commit Messages](../../../../../repo-governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
 
 **Code Review Requirements**:
 
@@ -301,16 +301,16 @@ graph LR
 
 **Software Engineering Principles**:
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
-- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)
-- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
+- [Immutability Over Mutability](../../../../../repo-governance/principles/software-engineering/immutability.md)
+- [Pure Functions Over Side Effects](../../../../../repo-governance/principles/software-engineering/pure-functions.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 **Development Practices**:
 
-- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md)
-- [Maker-Checker-Fixer Pattern](../../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Functional Programming](../../../../../repo-governance/development/pattern/functional-programming.md)
+- [Maker-Checker-Fixer Pattern](../../../../../repo-governance/development/pattern/maker-checker-fixer.md)
 
 **Platform Documentation**:
 

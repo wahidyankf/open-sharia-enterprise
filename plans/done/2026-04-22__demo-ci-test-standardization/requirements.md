@@ -286,14 +286,14 @@ All documentation must be updated to reflect the standardized configuration:
 
 **Governance docs** (authoritative standards):
 
-- `governance/development/infra/nx-targets.md` — canonical target definitions, mandatory targets
+- `repo-governance/development/infra/nx-targets.md` — canonical target definitions, mandatory targets
   matrix, cache/inputs convention, codegen dependency chain, spec-coverage requirement
-- `governance/development/quality/three-level-testing-standard.md` — spec-coverage enforcement,
+- `repo-governance/development/quality/three-level-testing-standard.md` — spec-coverage enforcement,
   input requirements for cache invalidation
-- `governance/development/infra/bdd-spec-test-mapping.md` — spec-coverage enforcement reference
-- `governance/development/infra/github-actions-workflow-naming.md` — version alignment policy,
+- `repo-governance/development/infra/bdd-spec-test-mapping.md` — spec-coverage enforcement reference
+- `repo-governance/development/infra/github-actions-workflow-naming.md` — version alignment policy,
   workflow language installation documentation
-- `governance/development/quality/code.md` — pre-push hook description if changed
+- `repo-governance/development/quality/code.md` — pre-push hook description if changed
 
 **Reference and how-to docs**:
 

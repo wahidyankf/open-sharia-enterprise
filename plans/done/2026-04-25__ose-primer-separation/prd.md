@@ -5,23 +5,23 @@
 This plan delivers five product outcomes inside `ose-public`:
 
 1. **Awareness layer** — cross-references so humans and AI agents discover the `ose-primer` template from within `ose-public`.
-2. **Governance doc** — `governance/conventions/structure/ose-primer-sync.md`: the authoritative classifier mapping every top-level path to one of `{propagate, adopt, bidirectional, neither}`, plus safety rules and access patterns.
+2. **Governance doc** — `repo-governance/conventions/structure/ose-primer-sync.md`: the authoritative classifier mapping every top-level path to one of `{propagate, adopt, bidirectional, neither}`, plus safety rules and access patterns.
 3. **Shared skill** — `.claude/skills/repo-syncing-with-ose-primer/` containing the operational knowledge (classifier lookup, clone management, report format, noise-suppression rules) that both sync agents consume.
 4. **Two maker agents**:
    - `repo-ose-primer-adoption-maker` — reads the local primer clone; proposes changes to pull into `ose-public`.
    - `repo-ose-primer-propagation-maker` — reads `ose-public`; proposes changes to push to the primer clone and optionally opens a draft PR against `wahidyankf/ose-primer:main`. Also operates in **parity-check mode** to verify primer-side demo state before extraction.
 5. **One-time extraction** — removal of the `a-demo-*` polyglot showcase from `ose-public`: 17 app directories under `apps/`, the `specs/apps/a-demo/` spec area, 14 `test-a-demo-*.yml` workflows, the `docs/reference/demo-apps-ci-coverage.md` reference page, all inbound references in `README.md` / `CLAUDE.md` / `AGENTS.md` / `ROADMAP.md` / governance docs, and the demo entries in `codecov.yml`, `go.work`, `open-sharia-enterprise.sln`. Also: four orphaned `libs/` entries (`clojure-openapi-codegen`, `elixir-cabbage`, `elixir-gherkin`, `elixir-openapi-codegen`) whose only consumers were the extracted demos. Also: three `rhino-cli` commands whose only targets were demo apps (`java validate-annotations`, `contracts java-clean-imports`, `contracts dart-scaffold`) plus their supporting code under `apps/rhino-cli/cmd/` and `apps/rhino-cli/internal/java/`. Product apps (OrganicLever, AyoKoding, OSE Platform), `rhino-cli` (trimmed), and the remaining generic libraries remain.
-6. **Two workflow orchestrations** under `governance/workflows/repo/`:
+6. **Two workflow orchestrations** under `repo-governance/workflows/repo/`:
    - `repo-ose-primer-sync-execution.md` — ongoing sync cycle; parameterised by `direction` (adopt|propagate) and `mode` (dry-run|apply); invokes the relevant agent; optional PR creation in apply+propagate mode.
    - `repo-ose-primer-extraction-execution.md` — one-time extraction orchestrator; gates on parity-check; runs catch-up loop on failure; executes the ten extraction commits; runs post-extraction verification.
-     Both workflows are `type: execution` per the [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) and follow the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern.
+     Both workflows are `type: execution` per the [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md) and follow the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern.
 7. **Agents configured for Opus** — `model: opus` in the frontmatter of both agents. See `tech-docs.md` §Model Choice for rationale.
 
-No production code changes to retained apps. No new Nx project. No new npm script. The new artifacts are all in `docs/`, `governance/`, `.claude/`, and `.opencode/` (the latter via the existing sync pipeline). The extraction is pure deletion plus reference pruning; no replacement code is authored.
+No production code changes to retained apps. No new Nx project. No new npm script. The new artifacts are all in `docs/`, `repo-governance/`, `.claude/`, and `.opencode/` (the latter via the existing sync pipeline). The extraction is pure deletion plus reference pruning; no replacement code is authored.
 
 ## Personas
 
-Solo-maintainer framing per the [Plans Organization Convention](../../../governance/conventions/structure/plans.md): personas here are **content-placement containers**, not external stakeholder roles. Each persona is either a hat the maintainer wears or an agent that consumes the artifact.
+Solo-maintainer framing per the [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md): personas here are **content-placement containers**, not external stakeholder roles. Each persona is either a hat the maintainer wears or an agent that consumes the artifact.
 
 ### P1 — Maintainer in propagation mode
 
@@ -60,7 +60,7 @@ The governance checker runs its standard pass. Expects:
 
 - The new convention doc to parse, to have all required frontmatter, and to pass the normal governance-doc validation (single H1, Diátaxis-compatible placement, internal cross-links resolve).
 - The classifier table to have no orphan paths (every top-level `ose-public` path appears in the table).
-- Both new agents to conform to the [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md) (regex `<scope>(-<qualifier>)*-<role>` with role in `{maker, checker, fixer, dev, deployer, manager}`).
+- Both new agents to conform to the [Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md) (regex `<scope>(-<qualifier>)*-<role>` with role in `{maker, checker, fixer, dev, deployer, manager}`).
 - The shared skill's `SKILL.md` to conform to the skills convention (frontmatter, `context` mode, referenced skills exist).
 
 ### P6 — `docs-link-checker` on a normal audit pass
@@ -141,7 +141,7 @@ A visitor (who may have seen `ose-public` pre-extraction with the demos present)
 ### US-8 — Classifier audit
 
 **As** `repo-rules-checker` (P5),
-**I want** the classifier in `governance/conventions/structure/ose-primer-sync.md` to list every top-level `ose-public` path explicitly,
+**I want** the classifier in `repo-governance/conventions/structure/ose-primer-sync.md` to list every top-level `ose-public` path explicitly,
 **So that** orphan paths (present in the repo, absent from the classifier) raise a governance finding and cannot silently become propagation hazards.
 
 ### US-9 — Report reproducibility
@@ -165,7 +165,7 @@ A visitor (who may have seen `ose-public` pre-extraction with the demos present)
 ### US-12 — Granular extraction delivery
 
 **As the** maintainer in extraction mode (P7),
-**I want** the extraction delivered as separately reviewable commits (one per app family, one for specs, one for workflows, one for configs, one for reference docs, one for README/CLAUDE.md/AGENTS.md updates, one for governance/doc cross-reference pruning),
+**I want** the extraction delivered as separately reviewable commits (one per app family, one for specs, one for workflows, one for configs, one for reference docs, one for README/CLAUDE.md/AGENTS.md updates, one for repo-governance/doc cross-reference pruning),
 **So that** a review-time concern about any one category can be addressed without reverting the entire extraction.
 
 ### US-13 — Dangling-reference grep sweep
@@ -229,7 +229,7 @@ Feature: ose-primer awareness inside ose-public
     And the direction of source-of-truth flow ("ose-public is upstream; ose-primer is derived") is explicit
     And a link to "https://github.com/wahidyankf/ose-primer" is present
     And a pointer to "docs/reference/related-repositories.md" is present
-    And a pointer to the new "governance/conventions/structure/ose-primer-sync.md" convention is present
+    And a pointer to the new "repo-governance/conventions/structure/ose-primer-sync.md" convention is present
 
   Scenario: AGENTS.md mirrors the same awareness for OpenCode
     Given an OpenCode agent loading "ose-public/AGENTS.md" at session start
@@ -246,13 +246,13 @@ Feature: ose-primer awareness inside ose-public
       names its relationship to ose-public (upstream, source of truth),
       identifies the license difference (MIT vs FSL-1.1-MIT for product apps),
       states what is out of scope of this doc (sync automation, release cadence),
-      links to "governance/conventions/structure/ose-primer-sync.md",
+      links to "repo-governance/conventions/structure/ose-primer-sync.md",
       and is dated 2026-04-18.
 
 Feature: ose-primer sync convention (classifier)
 
   Scenario: Classifier convention exists and parses
-    Given "governance/conventions/structure/ose-primer-sync.md" at HEAD on main
+    Given "repo-governance/conventions/structure/ose-primer-sync.md" at HEAD on main
     When a reader opens the file
     Then frontmatter includes title, description, category, subcategory, tags, created, updated
     And the file contains a classifier table
@@ -262,7 +262,7 @@ Feature: ose-primer sync convention (classifier)
   Scenario: Classifier has no orphan paths
     Given the classifier table at HEAD on main
     When the classifier is compared against the actual top-level structure of ose-public
-    Then every directory directly under "apps/", "libs/", "specs/apps/", "governance/", "docs/", ".claude/agents/", ".claude/skills/" is either matched by at least one classifier row
+    Then every directory directly under "apps/", "libs/", "specs/apps/", "repo-governance/", "docs/", ".claude/agents/", ".claude/skills/" is either matched by at least one classifier row
     Or explicitly covered by a wildcard pattern in the classifier
 
   Scenario: FSL-licensed paths are tagged neither
@@ -481,7 +481,7 @@ Feature: Demo extraction (Phase 8)
 
   Scenario: Classifier is updated to reflect post-extraction state
     Given extraction has executed
-    When a reader opens "governance/conventions/structure/ose-primer-sync.md"
+    When a reader opens "repo-governance/conventions/structure/ose-primer-sync.md"
     Then the rows for "apps/a-demo-*" and "specs/apps/a-demo/" show Direction="neither"
     And the Rationale column reads "extracted 2026-04-18; ose-primer is authoritative"
 
@@ -506,7 +506,7 @@ Feature: Post-extraction health (Phase 9)
   Scenario: Dangling-reference grep sweep is clean
     Given extraction has executed
     When the close-out grep command runs
-    Then the only matches are in "plans/done/" (archived historical plans), "plans/in-progress/2026-04-18__ose-primer-separation/" (this plan), and the single classifier row inside "governance/conventions/structure/ose-primer-sync.md"
+    Then the only matches are in "plans/done/" (archived historical plans), "plans/in-progress/2026-04-18__ose-primer-separation/" (this plan), and the single classifier row inside "repo-governance/conventions/structure/ose-primer-sync.md"
 
   Scenario: Link checker passes post-extraction
     Given extraction has executed
@@ -640,7 +640,7 @@ Feature: Sync workflow (repo-ose-primer-sync-execution)
 
   Scenario: Workflow document exists and is naming-convention compliant
     Given the ose-public repository at HEAD on main after Phase 3.5 completes
-    When the reader lists "governance/workflows/repo/"
+    When the reader lists "repo-governance/workflows/repo/"
     Then "repo-ose-primer-sync-execution.md" is present
     And its basename parses against the Workflow Naming Convention as scope=repo, qualifier=ose-primer-sync, type=execution
     And its frontmatter declares name, goal, termination, inputs (direction, mode, clone-path), outputs (report-file, pr-url)
@@ -681,7 +681,7 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 
   Scenario: Extraction workflow document exists and is naming-convention compliant
     Given the ose-public repository at HEAD on main after Phase 3.5 completes
-    When the reader lists "governance/workflows/repo/"
+    When the reader lists "repo-governance/workflows/repo/"
     Then "repo-ose-primer-extraction-execution.md" is present
     And its basename parses as scope=repo, qualifier=ose-primer-extraction, type=execution
     And its frontmatter declares name, goal, termination, inputs (extraction-scope, clone-path, max-catch-up-iterations), outputs (parity-report, extraction-commits, final-status)
@@ -729,9 +729,9 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 
 **Phase 1–6: Sync infrastructure (additive)** — includes the awareness layer (Phase 1), full classifier (Phase 2), shared skill (Phase 3), workflow documents (Phase 3.5), adoption agent (Phase 4), propagation agent (Phase 5), smoke-test dry runs (Phase 6).
 
-- Existing markdown files edited: `README.md`, `CLAUDE.md`, `AGENTS.md`, `docs/reference/README.md`, `governance/conventions/structure/README.md`, `plans/in-progress/README.md`.
+- Existing markdown files edited: `README.md`, `CLAUDE.md`, `AGENTS.md`, `docs/reference/README.md`, `repo-governance/conventions/structure/README.md`, `plans/in-progress/README.md`.
 - One new reference doc: `docs/reference/related-repositories.md`.
-- One new governance convention: `governance/conventions/structure/ose-primer-sync.md` containing the classifier table and sync policy.
+- One new governance convention: `repo-governance/conventions/structure/ose-primer-sync.md` containing the classifier table and sync policy.
 - One new shared skill directory: `.claude/skills/repo-syncing-with-ose-primer/` with `SKILL.md` and reference modules.
 - Two new agent definitions: `.claude/agents/repo-ose-primer-adoption-maker.md` and `.claude/agents/repo-ose-primer-propagation-maker.md`, plus their `.opencode/agent/` mirrors produced by the existing sync pipeline.
 - Updates to `.claude/agents/README.md` and `.opencode/agent/README.md` to catalogue the two new agents.
@@ -750,7 +750,7 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 - Edits to remove demo references from: `README.md` (demo-app summary; coverage badges table), `CLAUDE.md` (apps list; tech-stack commentary; three-level-testing examples where demo paths are used), `AGENTS.md` (mirror of CLAUDE.md), `ROADMAP.md` (phase-complete narrative if it cites demos).
 - Edits to remove demo projects from: `codecov.yml` (demo flags), `go.work` (demo `use` directives), `open-sharia-enterprise.sln` (demo project entries).
 - Edits to `_reusable-backend-*.yml` files ONLY if they list demo projects explicitly; otherwise untouched.
-- Edits to governance docs that cite demo paths as examples: `governance/development/quality/three-level-testing-standard.md`, `governance/development/infra/nx-targets.md`, `docs/reference/monorepo-structure.md`, `docs/reference/nx-configuration.md`, `docs/reference/project-dependency-graph.md`, `docs/how-to/add-new-app.md`, `docs/how-to/add-new-lib.md`. Mechanical edits only — update or remove path references; DO NOT rewrite the principle content.
+- Edits to governance docs that cite demo paths as examples: `repo-governance/development/quality/three-level-testing-standard.md`, `repo-governance/development/infra/nx-targets.md`, `docs/reference/monorepo-structure.md`, `docs/reference/nx-configuration.md`, `docs/reference/project-dependency-graph.md`, `docs/how-to/add-new-app.md`, `docs/how-to/add-new-lib.md`. Mechanical edits only — update or remove path references; DO NOT rewrite the principle content.
 - **Commit I: orphaned library removal** — delete `libs/clojure-openapi-codegen/`, `libs/elixir-cabbage/`, `libs/elixir-gherkin/`, `libs/elixir-openapi-codegen/`; update `libs/README.md` index. Pre-flight grep confirms no retained app depends on any of the four.
 - **Commit J: `rhino-cli` trim** — delete `apps/rhino-cli/cmd/java_validate_annotations*.go`, `apps/rhino-cli/cmd/contracts_java_clean_imports*.go`, `apps/rhino-cli/cmd/contracts_dart_scaffold*.go`, `apps/rhino-cli/cmd/java.go`, `apps/rhino-cli/cmd/contracts.go`, `apps/rhino-cli/internal/java/`; update `apps/rhino-cli/README.md` and prune the `validate-annotations` mention in `CLAUDE.md`; prune any Gherkin feature under `specs/apps/rhino/` naming the removed commands. Format parsers under `apps/rhino-cli/internal/testcoverage/` are NOT touched.
 
@@ -780,7 +780,7 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 - Rewriting product-flavoured prose in `ose-public` into generic prose for the template (propagator reports gaps, does not author replacements).
 - Substantive rewriting of governance examples that cited demo paths — only mechanical path substitution or removal; deeper rewrite is a docs-quality follow-up.
 - Trimming `scripts/doctor/` toolchain coverage — logical follow-up, separate plan.
-- License changes to retained product apps — the FSL-1.1-MIT / MIT split under `governance/conventions/structure/licensing.md` is unchanged.
+- License changes to retained product apps — the FSL-1.1-MIT / MIT split under `repo-governance/conventions/structure/licensing.md` is unchanged.
 - Re-introducing any demo app into `ose-public` — the extraction is one-way, enforced by the classifier.
 
 ## Product-Level Risks
@@ -823,7 +823,7 @@ Feature: Extraction workflow (repo-ose-primer-extraction-execution)
 
 ### PR-7 — Governance docs with demo examples degrade silently
 
-**Risk**: `governance/development/quality/three-level-testing-standard.md` and similar docs quote demo-be paths as examples. Mechanically removing the paths leaves hanging sentences or breaks the docs' pedagogy.
+**Risk**: `repo-governance/development/quality/three-level-testing-standard.md` and similar docs quote demo-be paths as examples. Mechanically removing the paths leaves hanging sentences or breaks the docs' pedagogy.
 
 **Mitigation**: Phase 8 governance-doc edits are scoped to either (a) replace the demo path with a product-app path of equivalent language, or (b) delete the bullet entirely when no product-app equivalent exists. Rewriting the docs substantively is explicitly a **follow-up plan**, not this plan.
 

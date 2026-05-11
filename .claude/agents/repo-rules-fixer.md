@@ -232,7 +232,7 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 **Missing LICENSE (CRITICAL)**:
 
 1. Re-validate LICENSE file is truly missing
-2. Determine correct license type per [Licensing Convention](../../governance/conventions/structure/licensing.md)
+2. Determine correct license type per [Licensing Convention](../../repo-governance/conventions/structure/licensing.md)
 3. Copy from reference: `cp libs/web-ui/LICENSE apps/[dir]/LICENSE` (MIT)
 4. Confidence: HIGH (mechanical check, no ambiguity)
 
@@ -264,7 +264,7 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 1. Read file frontmatter
 2. Check if principle is still missing
 3. Verify principle should apply (analyze document content)
-4. Confirm principle file exists in `governance/principles/`
+4. Confirm principle file exists in `repo-governance/principles/`
 
 **Confidence Assessment**:
 
@@ -326,7 +326,7 @@ Add "See Also" or "Related Documentation" section if missing, then add reference
 **Example Fix**:
 
 ```markdown
-**File**: governance/development/pattern/functional-programming.md
+**File**: repo-governance/development/pattern/functional-programming.md
 **Confidence**: HIGH
 **Applied**: Added Java reference to "Language-Specific Implementations" section
 ```
@@ -695,7 +695,7 @@ Include this list in the fix report under `## Changed Files (for Scoped Re-valid
 The following files were modified. Pass this list to the next checker run to enable scoped re-validation:
 
 - .claude/agents/agent-name.md
-- governance/conventions/writing/quality.md
+- repo-governance/conventions/writing/quality.md
 ```
 
 When requesting re-validation, specify these files. The checker will focus its expensive Step 8 validation (~265 software documentation files) only on changed files, instead of scanning the entire corpus.
@@ -751,10 +751,10 @@ See repo-generating-validation-reports Skill for report structure.
 
 ## Related Documentation
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report standards
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
+- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
+- [Temporary Files Convention](../../repo-governance/development/infra/temporary-files.md) - Report standards
 
 ## Process Summary
 
@@ -775,7 +775,7 @@ See repo-generating-validation-reports Skill for report structure.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -784,5 +784,5 @@ See repo-generating-validation-reports Skill for report structure.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
+- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)

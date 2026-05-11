@@ -16,17 +16,17 @@ if [ -n "$RANGE" ]; then
   if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agent/)'; then
     npx nx run rhino-cli:validate:naming-agents
   fi
-  if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
+  if echo "$CHANGED" | grep -qE '^repo-governance/workflows/'; then
     npx nx run rhino-cli:validate:naming-workflows
   fi
   if echo "$CHANGED" | grep -qE '\.md$'; then
     npx nx run rhino-cli:validate:mermaid --args="--changed-only"
   fi
-  if echo "$CHANGED" | grep -qE '^governance/.*\.md$'; then
-    npx nx run rhino-cli:validate:governance-vendor-audit
+  if echo "$CHANGED" | grep -qE '^repo-governance/.*\.md$'; then
+    npx nx run rhino-cli:validate:repo-governance-vendor-audit
   fi
   # Cross-vendor behavioral-parity gate: run when any of the parity-relevant surfaces change.
-  if echo "$CHANGED" | grep -qE '^(governance/.*\.md$|AGENTS\.md$|CLAUDE\.md$|\.claude/agents/|\.opencode/agents/)'; then
+  if echo "$CHANGED" | grep -qE '^(repo-governance/.*\.md$|AGENTS\.md$|CLAUDE\.md$|\.claude/agents/|\.opencode/agents/)'; then
     npx nx run rhino-cli:validate:cross-vendor-parity
   fi
 fi

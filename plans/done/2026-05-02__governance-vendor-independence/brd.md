@@ -1,6 +1,6 @@
 ---
 title: "BRD — Governance Vendor-Independence Refactor"
-description: Business rationale for separating ose-public/governance/ from any single AI coding agent vendor.
+description: Business rationale for separating ose-public/repo-governance/ from any single AI coding agent vendor.
 created: 2026-05-02
 ---
 
@@ -8,7 +8,7 @@ created: 2026-05-02
 
 ## Problem Statement
 
-`ose-public/governance/` is the authoritative repository policy layer (Vision → Principles → Conventions → Development → AI Agents → Workflows). It defines how all software, documentation, and process are produced in the repo. Today, 65 of its 157 markdown files (~41%) reference vendor-specific concepts:
+`ose-public/repo-governance/` is the authoritative repository policy layer (Vision → Principles → Conventions → Development → AI Agents → Workflows). It defines how all software, documentation, and process are produced in the repo. Today, 65 of its 157 markdown files (~41%) reference vendor-specific concepts:
 
 - "Claude Code" by name (31 occurrences across files)
 - "OpenCode" by name (38 occurrences)
@@ -53,7 +53,7 @@ This plan brings `ose-public` in line with that convergence. Doing nothing means
 
 ## Goals
 
-1. **Vendor neutrality of governance prose**: Any reader (human or agent, regardless of tool) can read `governance/` and apply the rules without translating from Claude/OpenCode jargon.
+1. **Vendor neutrality of governance prose**: Any reader (human or agent, regardless of tool) can read `repo-governance/` and apply the rules without translating from Claude/OpenCode jargon.
 2. **Bindings live OUTSIDE governance**: All `.claude/...` / `.opencode/...` paths, vendor names, and vendor-specific model tiers are pushed out to platform-binding files.
 3. **AGENTS.md becomes the canonical root instruction file** for the repo, with `CLAUDE.md` reduced to a Claude-Code-specific binding (or symlink target) per current AAIF practitioner consensus.
 4. **A new convention** codifies the separation rule going forward and is enforced by automated check.
@@ -66,17 +66,17 @@ This plan brings `ose-public` in line with that convergence. Doing nothing means
 - Not rewriting agent definitions inside `.claude/agents/`. Their content can remain Claude-specific because they ARE the Claude binding.
 - Not changing the six-layer architecture (Vision → Principles → Conventions → Development → AI Agents → Workflows). The architecture stays; the prose gets neutralized.
 - Not removing OpenCode dual-mode infrastructure. OpenCode remains a first-class binding alongside Claude Code.
-- Not touching parent `ose-projects/governance/`. Future companion plan, same logic, different worktree scope.
+- Not touching parent `ose-projects/repo-governance/`. Future companion plan, same logic, different worktree scope.
 - Not touching `ose-primer/` directly. Propagation handled separately by `repo-ose-primer-propagation-maker` once this plan archives.
 
 ## Success Outcomes
 
-- A new contributor using Cursor (or any non-Claude tool) can clone `ose-public`, read `AGENTS.md` + `governance/`, and produce a compliant change without ever opening `.claude/`.
+- A new contributor using Cursor (or any non-Claude tool) can clone `ose-public`, read `AGENTS.md` + `repo-governance/`, and produce a compliant change without ever opening `.claude/`.
 - A reader scanning governance documents encounters no load-bearing vendor-specific terms
   outside designated platform-binding example sections — tool names, model names, and
   vendor dotdir paths appear only where explicitly labelled as binding examples, not
   woven into the explanatory prose.
-- The `repo-rules-checker` (or a new linter) flags vendor-term reintroduction in `governance/` as a CRITICAL/HIGH governance finding.
+- The `repo-rules-checker` (or a new linter) flags vendor-term reintroduction in `repo-governance/` as a CRITICAL/HIGH governance finding.
 - All four prod sites still build green; all subagent workflows still execute green; pre-push hook still passes.
 
 ## Constraints
@@ -89,20 +89,20 @@ This plan brings `ose-public` in line with that convergence. Doing nothing means
 
 ## Risks and Mitigations
 
-| Risk                                                                                                                         | Mitigation                                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mass refactor breaks intra-doc links (relative links `../../../.claude/agents/` from inside `governance/`)                   | Use `docs-link-checker` after each phase; inventory link targets before any rename                                                                          |
-| AGENTS.md content collision with existing CLAUDE.md content (duplication, drift)                                             | `CLAUDE.md` becomes a symlink to `AGENTS.md`, OR a thin Claude-specific shim that imports `AGENTS.md` via `@AGENTS.md`. Pick one and document.              |
-| Hidden vendor terms remaining (e.g., in YAML frontmatter, code blocks, mermaid diagrams)                                     | Validation tooling scans frontmatter, code blocks, and headings. Allowlist for explicit binding-examples sections.                                          |
-| Regression in dual-mode sync (`.claude/` → `.opencode/`)                                                                     | Run `npm run sync:claude-to-opencode` and validate after the AGENTS.md introduction; existing sync logic does not depend on governance prose so risk is low |
-| `ose-primer` propagation classifier becomes inaccurate                                                                       | Update classifier in a follow-on plan; do not block this plan on classifier work                                                                            |
-| Agent prompts under `.claude/agents/` hardcode references to vendor terms in governance/ that no longer exist after refactor | Pre-flight scan: agent prompts that grep into governance/ for vendor terms. Update them in the same phase that updates the corresponding governance file.   |
+| Risk                                                                                                                              | Mitigation                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mass refactor breaks intra-doc links (relative links `../../../.claude/agents/` from inside `repo-governance/`)                   | Use `docs-link-checker` after each phase; inventory link targets before any rename                                                                             |
+| AGENTS.md content collision with existing CLAUDE.md content (duplication, drift)                                                  | `CLAUDE.md` becomes a symlink to `AGENTS.md`, OR a thin Claude-specific shim that imports `AGENTS.md` via `@AGENTS.md`. Pick one and document.                 |
+| Hidden vendor terms remaining (e.g., in YAML frontmatter, code blocks, mermaid diagrams)                                          | Validation tooling scans frontmatter, code blocks, and headings. Allowlist for explicit binding-examples sections.                                             |
+| Regression in dual-mode sync (`.claude/` → `.opencode/`)                                                                          | Run `npm run sync:claude-to-opencode` and validate after the AGENTS.md introduction; existing sync logic does not depend on governance prose so risk is low    |
+| `ose-primer` propagation classifier becomes inaccurate                                                                            | Update classifier in a follow-on plan; do not block this plan on classifier work                                                                               |
+| Agent prompts under `.claude/agents/` hardcode references to vendor terms in repo-governance/ that no longer exist after refactor | Pre-flight scan: agent prompts that grep into repo-governance/ for vendor terms. Update them in the same phase that updates the corresponding governance file. |
 
 ## Authoring Standards
 
 This plan follows:
 
-- [governance/conventions/structure/plans.md](../../../governance/conventions/structure/plans.md) — multi-file structure, content-placement rules.
-- [governance/conventions/structure/file-naming.md](../../../governance/conventions/structure/file-naming.md) — kebab-case file names.
-- [governance/development/workflow/test-driven-development.md](../../../governance/development/workflow/test-driven-development.md) — delivery items expressed as TDD-shaped steps where applicable.
-- [governance/conventions/writing/web-research-delegation.md](../../../governance/conventions/writing/web-research-delegation.md) — public-web research delegated to `web-research-maker` (already done; numeric/date claims cited inline in this BRD's Strategic Context section, vocabulary findings cited in tech-docs.md).
+- [repo-governance/conventions/structure/plans.md](../../../repo-governance/conventions/structure/plans.md) — multi-file structure, content-placement rules.
+- [repo-governance/conventions/structure/file-naming.md](../../../repo-governance/conventions/structure/file-naming.md) — kebab-case file names.
+- [repo-governance/development/workflow/test-driven-development.md](../../../repo-governance/development/workflow/test-driven-development.md) — delivery items expressed as TDD-shaped steps where applicable.
+- [repo-governance/conventions/writing/web-research-delegation.md](../../../repo-governance/conventions/writing/web-research-delegation.md) — public-web research delegated to `web-research-maker` (already done; numeric/date claims cited inline in this BRD's Strategic Context section, vocabulary findings cited in tech-docs.md).

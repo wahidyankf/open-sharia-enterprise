@@ -460,7 +460,7 @@ NEVER silence a finding by lowering severity in production. Use `--severity=warn
 
 ### Three-level testing layout
 
-Per the [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md), each subcommand ships with:
+Per the [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md), each subcommand ships with:
 
 - **Unit (`test:unit`)** — Godog scenarios consume mocked filesystem; mocks installed via package-level function variables (existing rhino-cli pattern). Coverage measured here, ≥90%.
 - **Integration (`test:integration`)** — Same Gherkin scenarios consume real `/tmp` filesystem fixtures; drives commands in-process via `cmd.RunE()`; cacheable.
@@ -540,7 +540,7 @@ Revert the SKILL.md edit. The existing "developing content" sections are untouch
 
 ## References
 
-- [OrganicLever DDD Adoption Plan (sibling)](../../done/2026-05-02__organiclever-adopt-ddd/tech-docs.md) — full design intent for the BC layout this plan validates.
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [Test-Driven Development Convention](../../../governance/development/workflow/test-driven-development.md)
+- [OrganicLever DDD Adoption Plan (sibling)](../../done/2026-05-03__organiclever-adopt-ddd/tech-docs.md) — full design intent for the BC layout this plan validates.
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 - [rhino-cli existing subcommands (reference for style)](../../../apps/rhino-cli/cmd/) — follow established patterns.

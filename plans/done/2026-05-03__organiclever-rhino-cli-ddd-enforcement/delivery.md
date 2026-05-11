@@ -1,6 +1,6 @@
 # Delivery — OrganicLever rhino-cli DDD Enforcement + Skill Extension
 
-7 phases (0–6). Each phase ends with all gates green and a single commit (or small commit cluster). Worktree branch fast-forward-merges into `main` once per phase or once at end-of-plan, per the parent repo's Subrepo Worktree Workflow Convention and [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). TDD discipline is mandatory: never ship subcommand behaviour without a Godog scenario first.
+7 phases (0–6). Each phase ends with all gates green and a single commit (or small commit cluster). Worktree branch fast-forward-merges into `main` once per phase or once at end-of-plan, per the parent repo's Subrepo Worktree Workflow Convention and [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md). TDD discipline is mandatory: never ship subcommand behaviour without a Godog scenario first.
 
 > **Fix all failures rule**: At every quality gate in this plan, fix ALL failures found — including preexisting issues not caused by this plan's changes. Root-cause orientation, not bypass. Never use `--no-verify` or silence findings.
 
@@ -262,7 +262,7 @@
 4. **No behavior change to `organiclever-web`** allowed in any phase. Only adding subcommand calls and skill content.
 5. **Never bypass pre-push** (`--no-verify`). If the hook fails, fix the cause.
 6. **Worktree discipline**. All edits inside the subrepo worktree.
-7. **Direct-to-main publish path** per [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md). Draft PR is optional; not required for this plan.
+7. **Direct-to-main publish path** per [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md). Draft PR is optional; not required for this plan.
 8. **Default severity is `error`**. Warning severity is a local escape hatch only — never the production setting.
 9. **Roll back the phase, not the file**, if anything leaves the gates red and is not fixable in one pass.
 10. **Fix all failures rule** at every quality gate — including preexisting issues — per the root-cause-orientation principle.

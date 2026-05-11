@@ -48,7 +48,7 @@ erode trust in the policy document.
 ### Pain Point 4: CLAUDE.md Describes the Wrong Plan Format
 
 `CLAUDE.md` says "Default plan layout: four documents — README.md, requirements.md,
-tech-docs.md, delivery.md." The actual plans convention (`governance/conventions/structure/plans.md`,
+tech-docs.md, delivery.md." The actual plans convention (`repo-governance/conventions/structure/plans.md`,
 updated 2026-04-18) specifies five documents: README.md, brd.md, prd.md, tech-docs.md,
 delivery.md. This discrepancy in the primary developer onboarding document actively misleads
 anyone creating a new plan.

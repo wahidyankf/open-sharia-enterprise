@@ -56,7 +56,7 @@ You validate link-checker findings before applying fixes.
 
 This agent has `WebFetch` and `WebSearch` tools but invokes **both Exception 2 (fixer
 re-validation) and Exception 3 (link-reachability checkers)** of the
-[Web Research Delegation Convention](../../governance/conventions/writing/web-research-delegation.md).
+[Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Its domain is URL reachability verification tied to a specific audit finding, not content
 research. It invokes `WebFetch` directly against the URL under test in its own context;
 delegating a reachability probe to [`web-research-maker`](./web-research-maker.md) would both break the

@@ -203,12 +203,12 @@ test("murabaha contract creation workflow", async ({ page }) => {
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow
-- [Code Quality Standards](../../governance/development/quality/code.md) - Quality gates
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all E2E test authoring
-- [Manual Behavioral Verification](../../governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Code Quality Standards](../../repo-governance/development/quality/code.md) - Quality gates
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all E2E test authoring
+- [Manual Behavioral Verification](../../repo-governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
 
 ### Test-Driven Development
 
@@ -225,13 +225,13 @@ Red→Green→Refactor cycle:
 Manual verification scripts are TDD-compliant when they are written, dated, repeatable, and contain
 discrete expected observations — not informal "click around and see" checks. Promote manual scripts
 to automated Playwright specs whenever feasible. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
-and [Manual Behavioral Verification](../../governance/development/quality/manual-behavioral-verification.md).
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
+and [Manual Behavioral Verification](../../repo-governance/development/quality/manual-behavioral-verification.md).
 
 **Related Agents**:
 
 - `swe-typescript-dev` - Develops TypeScript application code
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for test coverage
 
 **Skills**:

@@ -1,6 +1,6 @@
 # Classifier Parsing
 
-Procedure for locating and parsing the authoritative classifier table in [`governance/conventions/structure/ose-primer-sync.md`](../../../../governance/conventions/structure/ose-primer-sync.md).
+Procedure for locating and parsing the authoritative classifier table in [`repo-governance/conventions/structure/ose-primer-sync.md`](../../../../repo-governance/conventions/structure/ose-primer-sync.md).
 
 ## Locate the table
 

@@ -175,7 +175,7 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
 ## Phase 4 — Nx Target
 
 - [x] Add `validate:mermaid` target to `apps/rhino-cli/project.json`:
-  <!-- Date: 2026-04-23 | Status: done | Scoped to governance/ .claude/ only (docs/ has 236 pre-existing violations; fixed governance violations, deferred docs/ to follow-up) -->
+  <!-- Date: 2026-04-23 | Status: done | Scoped to repo-governance/ .claude/ only (docs/ has 236 pre-existing violations; fixed governance violations, deferred docs/ to follow-up) -->
 
   ```json
   "validate:mermaid": {
@@ -184,7 +184,7 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
     "inputs": [
       "{projectRoot}/**/*.go",
       "{workspaceRoot}/docs/**/*.md",
-      "{workspaceRoot}/governance/**/*.md",
+      "{workspaceRoot}/repo-governance/**/*.md",
       "{workspaceRoot}/.claude/**/*.md",
       "{workspaceRoot}/*.md"
     ],
@@ -196,7 +196,7 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
   the cache (the default scan includes repo root `*.md`).
 
 - [x] Verify `nx run rhino-cli:validate:mermaid` runs without error on current repo
-<!-- Date: 2026-04-23 | Status: done | 0 violations after fixing 33 governance violations + EffectiveLabelLen br/\n handling. Scoped to governance/ .claude/ -->
+<!-- Date: 2026-04-23 | Status: done | 0 violations after fixing 33 governance violations + EffectiveLabelLen br/\n handling. Scoped to repo-governance/ .claude/ -->
 
 ---
 
@@ -218,7 +218,7 @@ All work in `ose-public` subrepo. Run commands from the repo root unless noted.
     if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agent/)'; then
       npx nx run rhino-cli:validate:naming-agents
     fi
-    if echo "$CHANGED" | grep -qE '^governance/workflows/'; then
+    if echo "$CHANGED" | grep -qE '^repo-governance/workflows/'; then
       npx nx run rhino-cli:validate:naming-workflows
     fi
     # ADD THIS BLOCK:
@@ -265,7 +265,7 @@ Direct CLI invocation to verify the command works end-to-end:
 
 - [x] Add `validate-mermaid` entry to `apps/rhino-cli/README.md` docs subcommand table
 <!-- Date: 2026-04-23 | Status: done | Full section added with all flags, exit codes, 3 rules explained -->
-- [x] Update `governance/conventions/formatting/diagrams.md`:
+- [x] Update `repo-governance/conventions/formatting/diagrams.md`:
   <!-- Date: 2026-04-23 | Status: done | Automated enforcement note added after quick-reference table -->
   - [x] Add a note that `rhino-cli docs validate-mermaid` enforces rules mechanically
   - [x] Note that `--max-label-len 20` matches the stricter 20-char Hugo/Hextra limit

@@ -765,14 +765,14 @@ The plan creates one new governance convention and updates three existing files.
 
 | Path                                                                    | Operation | Owner agent                     | Purpose                                                                                                                                         |
 | ----------------------------------------------------------------------- | --------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `governance/conventions/structure/app-readme-vs-specs.md`               | CREATE    | repo-rules-maker                | ONE combined convention: Content Split Rule + Spec Tree Shape + PM-Readability Contract + BDD/DDD/Contracts Adoption                            |
-| `governance/conventions/structure/specs-directory-structure.md`         | REWRITE   | repo-rules-maker                | Replace the current flat-root be/web/cli/build-tools layout with the new C4-aware five-folder tree                                              |
-| `governance/conventions/structure/README.md`                            | UPDATE    | repo-rules-maker                | Add new convention to "Documents" list; update the description of `specs-directory-structure.md`                                                |
-| `governance/conventions/writing/readme-quality.md`                      | UPDATE    | repo-rules-maker                | Cross-link statement: app/infra READMEs governed by `app-readme-vs-specs.md`                                                                    |
+| `repo-governance/conventions/structure/app-readme-vs-specs.md`          | CREATE    | repo-rules-maker                | ONE combined convention: Content Split Rule + Spec Tree Shape + PM-Readability Contract + BDD/DDD/Contracts Adoption                            |
+| `repo-governance/conventions/structure/specs-directory-structure.md`    | REWRITE   | repo-rules-maker                | Replace the current flat-root be/web/cli/build-tools layout with the new C4-aware five-folder tree                                              |
+| `repo-governance/conventions/structure/README.md`                       | UPDATE    | repo-rules-maker                | Add new convention to "Documents" list; update the description of `specs-directory-structure.md`                                                |
+| `repo-governance/conventions/writing/readme-quality.md`                 | UPDATE    | repo-rules-maker                | Cross-link statement: app/infra READMEs governed by `app-readme-vs-specs.md`                                                                    |
 | `.claude/agents/specs-checker.md`                                       | UPDATE    | repo-rules-maker                | Amend Cat 1 (READMEs at all 5 top-level folders + per-surface). Replace Cat 8 (flat-root → C4-aware). Add Cat 9 (Adoption Gaps) per FR-10       |
 | `.claude/agents/specs-fixer.md`                                         | UPDATE    | repo-rules-maker                | Auto-fix list gains: scaffold missing top-level / per-surface READMEs from template. Adoption gaps go to Requires Review (not auto-fix)         |
 | `.claude/agents/specs-maker.md`                                         | UPDATE    | repo-rules-maker                | Scaffolding template REPLACED — emit canonical 5-folder tree (per-surface variants) when caller targets `specs/apps/<new-app>/`                 |
-| `governance/workflows/specs/specs-quality-gate.md`                      | UPDATE    | repo-rules-maker                | Validation Dimensions table gains Spec Tree Shape (amended Cat 8) and Adoption Gaps (Cat 9) rows. Update Iteration Example to show new findings |
+| `repo-governance/workflows/specs/specs-quality-gate.md`                 | UPDATE    | repo-rules-maker                | Validation Dimensions table gains Spec Tree Shape (amended Cat 8) and Adoption Gaps (Cat 9) rows. Update Iteration Example to show new findings |
 | `.opencode/agents/specs-checker.md`, `specs-fixer.md`, `specs-maker.md` | SYNC      | npm run sync:claude-to-opencode | Mirror `.claude/` updates after `repo-rules-maker` finishes                                                                                     |
 
 ### Skeleton for `app-readme-vs-specs.md` (combined convention)
@@ -879,9 +879,9 @@ and the spec-tree-shape audit (top-level folder names)…
 - Cross-link to `app-readme-vs-specs.md` as the source-of-truth combined convention
 - Include the dual-audience (eng + PM/PdM) note carried over from `app-readme-vs-specs.md`'s PM-Readability Contract
 
-**`governance/conventions/structure/README.md`** — insert the new convention into the alphabetical-by-link-text "Documents" list with a single-line description: `[App README vs Specs Convention](./app-readme-vs-specs.md) - …`.
+**`repo-governance/conventions/structure/README.md`** — insert the new convention into the alphabetical-by-link-text "Documents" list with a single-line description: `[App README vs Specs Convention](../../../repo-governance/conventions/structure/app-readme-vs-specs.md) - …`.
 
-**`governance/conventions/writing/readme-quality.md`** — add a `### Scope vs structural conventions` subsection clarifying: "this convention governs README quality (clarity, voice, scannability); structural placement of content (what belongs in app README vs specs/) is governed by [App README vs Specs Convention](../structure/app-readme-vs-specs.md)."
+**`repo-governance/conventions/writing/readme-quality.md`** — add a `### Scope vs structural conventions` subsection clarifying: "this convention governs README quality (clarity, voice, scannability); structural placement of content (what belongs in app README vs specs/) is governed by [App README vs Specs Convention](../../../repo-governance/conventions/structure/app-readme-vs-specs.md)."
 
 ### Why repo-rules-maker, not direct edits
 

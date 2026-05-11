@@ -155,9 +155,9 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Project Guidance:**
 
-- [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Standards for fix validation
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/by-example.md) - Standards for fix validation
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
@@ -166,7 +166,7 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.

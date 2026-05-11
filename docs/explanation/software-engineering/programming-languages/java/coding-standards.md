@@ -23,7 +23,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -227,12 +227,12 @@ See [Java Code Quality](./code-quality.md) for enforcement configuration.
 
 These standards enforce the the software engineering principles:
 
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spotless auto-formats code on every compile (no manual formatting needed)
    - Checkstyle validates naming conventions automatically
    - ArchUnit validates architectural boundaries in tests
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - PascalCase for classes makes types immediately recognizable
    - Package structure explicitly shows hexagonal architecture layers
    - Method names start with verbs (explicit action: `calculateTax`, `validateInvoice`)

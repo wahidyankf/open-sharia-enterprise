@@ -175,13 +175,13 @@ Note: After the directory rename these files are accessed at their new paths:
 | `.claude/skills/swe-developing-frontend-ui/reference/component-patterns.md` | References to `ts-ui`                   |
 | `.claude/skills/swe-developing-frontend-ui/reference/design-tokens.md`      | References to `ts-ui-tokens`            |
 | `.claude/skills/swe-developing-frontend-ui/SKILL.md`                        | References to `ts-ui`                   |
-| `governance/conventions/structure/licensing.md`                             | References to `ts-ui`                   |
-| `governance/conventions/structure/ose-primer-sync.md`                       | References to `ts-ui`                   |
-| `governance/development/frontend/design-tokens.md`                          | References to `ts-ui-tokens`            |
-| `governance/development/infra/docker-monorepo-builds.md`                    | References to `ts-ui`                   |
-| `governance/development/infra/nx-targets.md`                                | References to `ts-ui`                   |
-| `governance/development/quality/three-level-testing-standard.md`            | References to `ts-ui`                   |
-| `governance/workflows/ui/ui-quality-gate.md`                                | References to `ts-ui`                   |
+| `repo-governance/conventions/structure/licensing.md`                        | References to `ts-ui`                   |
+| `repo-governance/conventions/structure/ose-primer-sync.md`                  | References to `ts-ui`                   |
+| `repo-governance/development/frontend/design-tokens.md`                     | References to `ts-ui-tokens`            |
+| `repo-governance/development/infra/docker-monorepo-builds.md`               | References to `ts-ui`                   |
+| `repo-governance/development/infra/nx-targets.md`                           | References to `ts-ui`                   |
+| `repo-governance/development/quality/three-level-testing-standard.md`       | References to `ts-ui`                   |
+| `repo-governance/workflows/ui/ui-quality-gate.md`                           | References to `ts-ui`                   |
 
 ## Dependencies
 

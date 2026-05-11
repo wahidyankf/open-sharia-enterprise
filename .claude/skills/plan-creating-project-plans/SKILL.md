@@ -64,7 +64,7 @@ plans/in-progress/complex-feature/
 └── delivery.md               # Phased checklist (one checkbox = one action)
 ```
 
-**Content-placement split** (authoritative — see [Content-Placement Rules](../../../governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd)):
+**Content-placement split** (authoritative — see [Content-Placement Rules](../../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd)):
 
 - **`brd.md`** — WHY: business goal, impact, affected roles, business-level success metrics, business-scope Non-Goals, business risks. Solo-maintainer repo — no sign-off / sponsor / stakeholder ceremony language.
 - **`prd.md`** — WHAT: product overview, personas, user stories, Gherkin acceptance criteria, product scope (in + out), product risks.
@@ -97,7 +97,7 @@ If the plan grows past 1000 lines or authoring feels crowded, promote to the fiv
 
 ## Worktree Specification (Mandatory — Applies to ALL Plans)
 
-Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent.
+Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent.
 
 **Where to declare**:
 
@@ -122,7 +122,7 @@ Provision before execution (run from repo root):
 claude --worktree <plan-identifier>
 ```
 
-See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 ````
 
 **This applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
@@ -181,13 +181,13 @@ Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-gra
 - [ ] Run `npx nx affected -t lint` — exits 0 with no errors reported.
 ```
 
-See [Plans Organization Convention §Execution-Grade Clarity](../../../governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule) for the authoritative rule.
+See [Plans Organization Convention §Execution-Grade Clarity](../../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule) for the authoritative rule.
 
 ## Pre-Write Verification (Anti-Hallucination — HARD)
 
 Before writing any non-trivial factual claim into a plan, run the verification recipe for the claim's category. Hallucinated content (fabricated file paths, invented Nx targets, made-up versions, fictitious APIs, fabricated KPIs) turns a plan into broken work the moment execution begins. Verify at authoring time — it is the cheapest place to catch fabrication.
 
-See [Plan Anti-Hallucination Convention](../../../governance/development/quality/plan-anti-hallucination.md) for the authoritative rules.
+See [Plan Anti-Hallucination Convention](../../../repo-governance/development/quality/plan-anti-hallucination.md) for the authoritative rules.
 
 ### Verification Recipes
 
@@ -233,9 +233,9 @@ Forbidden: writing the claim without a label and hoping it is correct.
 
 For plan content the threshold is LOWER than the universal convention:
 
-> **Any external claim that is not already documented in the repo (`docs/`, `governance/`, `apps/*/README.md`, `package.json`, `go.mod`, etc.) and that requires more than a single `WebFetch` against an already-known authoritative URL MUST be delegated to `web-research-maker`.**
+> **Any external claim that is not already documented in the repo (`docs/`, `repo-governance/`, `apps/*/README.md`, `package.json`, `go.mod`, etc.) and that requires more than a single `WebFetch` against an already-known authoritative URL MUST be delegated to `web-research-maker`.**
 
-Concretely: most external claims require delegation. Single-shot fetches against a known URL are the only in-context exception. See [Plan Anti-Hallucination Convention §Web-Research Delegation](../../../governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
+Concretely: most external claims require delegation. Single-shot fetches against a known URL are the only in-context exception. See [Plan Anti-Hallucination Convention §Web-Research Delegation](../../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
 
 ### Anti-Pattern Catalog (MUST NOT)
 
@@ -448,14 +448,14 @@ Every plan must start with environment setup steps:
 ```markdown
 ### Environment Setup
 
-- [ ] Provision worktree: `claude --worktree <plan-identifier>` (creates `worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md))
-- [ ] Initialize toolchain in the root worktree (not the new worktree): `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md))
+- [ ] Provision worktree: `claude --worktree <plan-identifier>` (creates `worktrees/<plan-identifier>/` in repo root; see [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md))
+- [ ] Initialize toolchain in the root worktree (not the new worktree): `npm install && npm run doctor -- --fix` (see [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md))
 - [ ] [Add project-specific setup: env vars, DB, Docker, etc.]
 - [ ] Verify dev server starts: `nx dev [project-name]`
 - [ ] Verify existing tests pass before making changes
 ```
 
-> **Note**: Worktrees are created at `worktrees/<name>/` in the repo root (not `.claude/worktrees/<name>/`). This is enforced by the `WorktreeCreate` hook. See [Worktree Path Convention](../../../governance/conventions/structure/worktree-path.md) for rationale.
+> **Note**: Worktrees are created at `worktrees/<name>/` in the repo root (not `.claude/worktrees/<name>/`). This is enforced by the `WorktreeCreate` hook. See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) for rationale.
 
 ### Fix-All-Issues Instruction
 
@@ -553,18 +553,18 @@ Every delivery plan MUST end with a plan archival section:
 
 ## References
 
-**Primary Convention**: [Plans Organization Convention](../../../governance/conventions/structure/plans.md)
+**Primary Convention**: [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md)
 
 **Related Conventions**:
 
-- [Plan Anti-Hallucination Convention](../../../governance/development/quality/plan-anti-hallucination.md) - Pre-write verification recipes, repo-grounding rule, refuse-on-uncertainty, anti-pattern catalog (AP-1 through AP-10), specialized-executor annotation
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow (default = direct push to main regardless of execution context; branch + draft PR is opt-in only when explicitly requested)
-- [PR Merge Protocol](../../../governance/development/workflow/pr-merge-protocol.md) - Explicit approval required, all quality gates must pass
-- [Feature Change Completeness](../../../governance/development/quality/feature-change-completeness.md) - Specs, contracts, and tests must update with every feature change
-- [Manual Behavioral Verification](../../../governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
-- [CI Blocker Resolution](../../../governance/development/quality/ci-blocker-resolution.md) - Preexisting CI failures must be fixed, never bypassed
-- [Acceptance Criteria Convention](../../../governance/development/infra/acceptance-criteria.md) - Gherkin format details
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming standards
+- [Plan Anti-Hallucination Convention](../../../repo-governance/development/quality/plan-anti-hallucination.md) - Pre-write verification recipes, repo-grounding rule, refuse-on-uncertainty, anti-pattern catalog (AP-1 through AP-10), specialized-executor annotation
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow (default = direct push to main regardless of execution context; branch + draft PR is opt-in only when explicitly requested)
+- [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) - Explicit approval required, all quality gates must pass
+- [Feature Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md) - Specs, contracts, and tests must update with every feature change
+- [Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
+- [CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md) - Preexisting CI failures must be fixed, never bypassed
+- [Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria.md) - Gherkin format details
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md) - Naming standards
 
 **Related Skills**:
 

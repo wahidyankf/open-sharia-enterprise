@@ -12,7 +12,7 @@ flowchart TD
     classDef human fill:#FAFAE8,stroke:#B8B82C,color:#6F6F0B
 
     subgraph ose_public ["ose-public (source of truth)"]
-        conv_doc["`governance/conventions/structure/ose-primer-sync.md
+        conv_doc["`repo-governance/conventions/structure/ose-primer-sync.md
         (classifier + policy)`"]:::conv
         shared_skill["`.claude/skills/repo-syncing-with-ose-primer/
         (classifier lookup, clone mgmt, report schema)`"]:::skill
@@ -60,7 +60,7 @@ flowchart TD
 2. **Classifier lives in a governance convention, not in the skill** — Conventions are the authoritative location for rules; skills consume them. The skill references the convention and parses its table at runtime. This keeps `repo-rules-checker` responsible for classifier audit.
 3. **Local clone, not a gitlink** — Adding `ose-primer` as a third gitlink at the parent level (alongside `ose-public` and `ose-infra`) creates session-visibility complications without material benefit. A plain local clone at `$OSE_PRIMER_CLONE/` keeps the sync primitives simple and sidesteps the subrepo-worktree workflow entirely.
 4. **Dry-run by default** — Both agents default to report-only. Apply mode is an explicit flag the maintainer passes after reviewing the dry-run report. This makes the failure mode "unreviewed noise" rather than "unreviewed mutation."
-5. **`maker` role for both agents** — Both agents produce proposal artifacts (reports); under the [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md) this maps cleanly to the `maker` role. See the "Agent Naming Choice" section below for the full analysis.
+5. **`maker` role for both agents** — Both agents produce proposal artifacts (reports); under the [Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md) this maps cleanly to the `maker` role. See the "Agent Naming Choice" section below for the full analysis.
 
 ## Access Pattern to `ose-primer`
 
@@ -125,7 +125,7 @@ After the invocation:
 - **Parallel safety**: Multiple propagation applies can run without blocking the main clone's checkout state. A second agent invocation, a manual `git` command, or a concurrent parity-check all work because the main clone never leaves `main`.
 - **Clean main state**: The next pre-flight (for any mode) finds the main clone exactly where it expects — on `main`, clean tree — because apply never changed it.
 - **Cleaner recovery on failure**: Failed applies leave a well-named worktree directory the maintainer can inspect and `git worktree remove` when done. No stale branches clutter the main clone's branch list.
-- **Alignment with repo convention**: The existing [Subrepo Worktree Workflow Convention](https://github.com/wahidyankf/ose-projects/blob/main/governance/conventions/structure/subrepo-worktrees.md) at the parent level already treats `.claude/worktrees/` as a gitignored worktree sink for subrepos. `ose-primer` (derived from `ose-public`) inherits that `.gitignore` entry, so worktrees placed under `$OSE_PRIMER_CLONE/.claude/worktrees/` are automatically ignored — no primer-side config change required.
+- **Alignment with repo convention**: The existing [Subrepo Worktree Workflow Convention](https://github.com/wahidyankf/ose-projects/blob/main/repo-governance/conventions/structure/subrepo-worktrees.md) at the parent level already treats `.claude/worktrees/` as a gitignored worktree sink for subrepos. `ose-primer` (derived from `ose-public`) inherits that `.gitignore` entry, so worktrees placed under `$OSE_PRIMER_CLONE/.claude/worktrees/` are automatically ignored — no primer-side config change required.
 
 **Apply-mode procedure**:
 
@@ -195,7 +195,7 @@ Transforms are mechanically specified in the governance doc and implemented in t
 
 ### Classifier table (authoritative lives in the governance doc)
 
-The table below is a **blueprint**; the final authoritative version lives in `governance/conventions/structure/ose-primer-sync.md`. When plan and convention disagree, the convention wins.
+The table below is a **blueprint**; the final authoritative version lives in `repo-governance/conventions/structure/ose-primer-sync.md`. When plan and convention disagree, the convention wins.
 
 | Path pattern                                               | Direction                   | Transform              | Rationale                                                                                                                                                                                                                                         |
 | ---------------------------------------------------------- | --------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -220,14 +220,14 @@ The table below is a **blueprint**; the final authoritative version lives in `go
 | `libs/ts-ui-tokens`                                        | `neither`                   | —                      | Consumed only by `organiclever-web` (FSL-1.1-MIT product app); same rationale as `libs/ts-ui`.                                                                                                                                                    |
 | `libs/*` (other)                                           | `propagate`                 | identity               | Default assumption for generic libs; overridden per-lib if product-specific.                                                                                                                                                                      |
 | `specs/apps/organiclever/**`                               | `neither`                   | —                      | Product specs.                                                                                                                                                                                                                                    |
-| `governance/principles/**`                                 | `bidirectional`             | identity               | Universal values; improvements from either side should surface.                                                                                                                                                                                   |
-| `governance/vision/**`                                     | `neither`                   | —                      | Product vision is `ose-public`-specific.                                                                                                                                                                                                          |
-| `governance/conventions/**`                                | `bidirectional`             | identity               | Conventions are generic by design; mixed cases flagged per-file below.                                                                                                                                                                            |
-| `governance/conventions/structure/licensing.md`            | `neither`                   | —                      | Licensing is fundamentally different (FSL vs MIT).                                                                                                                                                                                                |
-| `governance/conventions/structure/ose-primer-sync.md`      | `neither`                   | —                      | This very convention is ose-public-specific; primer does not need a sync-with-itself convention.                                                                                                                                                  |
-| `governance/development/**`                                | `bidirectional`             | identity               | Development practices are generic.                                                                                                                                                                                                                |
-| `governance/workflows/**`                                  | `bidirectional`             | identity               | Workflows are generic unless they name a product app.                                                                                                                                                                                             |
-| `governance/workflows/plan/**`                             | `bidirectional`             | identity               | Plan lifecycle is generic.                                                                                                                                                                                                                        |
+| `repo-governance/principles/**`                            | `bidirectional`             | identity               | Universal values; improvements from either side should surface.                                                                                                                                                                                   |
+| `repo-governance/vision/**`                                | `neither`                   | —                      | Product vision is `ose-public`-specific.                                                                                                                                                                                                          |
+| `repo-governance/conventions/**`                           | `bidirectional`             | identity               | Conventions are generic by design; mixed cases flagged per-file below.                                                                                                                                                                            |
+| `repo-governance/conventions/structure/licensing.md`       | `neither`                   | —                      | Licensing is fundamentally different (FSL vs MIT).                                                                                                                                                                                                |
+| `repo-governance/conventions/structure/ose-primer-sync.md` | `neither`                   | —                      | This very convention is ose-public-specific; primer does not need a sync-with-itself convention.                                                                                                                                                  |
+| `repo-governance/development/**`                           | `bidirectional`             | identity               | Development practices are generic.                                                                                                                                                                                                                |
+| `repo-governance/workflows/**`                             | `bidirectional`             | identity               | Workflows are generic unless they name a product app.                                                                                                                                                                                             |
+| `repo-governance/workflows/plan/**`                        | `bidirectional`             | identity               | Plan lifecycle is generic.                                                                                                                                                                                                                        |
 | `docs/tutorials/**`                                        | `bidirectional`             | strip-product-sections | Generic tutorials; product-specific tutorials stripped.                                                                                                                                                                                           |
 | `docs/how-to/**`                                           | `bidirectional`             | strip-product-sections | Same rationale.                                                                                                                                                                                                                                   |
 | `docs/reference/**`                                        | `bidirectional`             | strip-product-sections | Same rationale; monorepo-structure and similar diagrams need product-node removal.                                                                                                                                                                |
@@ -273,7 +273,7 @@ Paths NOT listed are `neither` by default. The governance doc makes this explici
 The checker runs a new audit:
 
 1. Enumerate every top-level file and directory under `ose-public/`.
-2. Enumerate every immediate subdirectory of `apps/`, `libs/`, `specs/apps/`, `governance/*/`, `docs/*/`, `.claude/agents/` (as files), `.claude/skills/`.
+2. Enumerate every immediate subdirectory of `apps/`, `libs/`, `specs/apps/`, `repo-governance/*/`, `docs/*/`, `.claude/agents/` (as files), `.claude/skills/`.
 3. For each path, find at least one classifier row (literal or glob) whose pattern matches.
 4. Report every unmatched path as a governance finding.
 5. Report every classifier row whose pattern matches zero actual paths as a governance finding (stale classifier).
@@ -375,8 +375,8 @@ Actions explicitly **retained** (consumers remain after extraction):
 
 **Governance doc edits** (examples/references pruned, principle content untouched):
 
-- `governance/development/quality/three-level-testing-standard.md` — replace demo-be examples with product-be references (organiclever-be is F#/Giraffe; ayokoding-be / oseplatform are tRPC) or remove the example bullet.
-- `governance/development/infra/nx-targets.md` — same approach.
+- `repo-governance/development/quality/three-level-testing-standard.md` — replace demo-be examples with product-be references (organiclever-be is F#/Giraffe; ayokoding-be / oseplatform are tRPC) or remove the example bullet.
+- `repo-governance/development/infra/nx-targets.md` — same approach.
 - `docs/reference/monorepo-structure.md` — remove demo rows from the app-inventory tables; update prose that describes the monorepo's "polyglot showcase" aspect.
 - `docs/reference/nx-configuration.md` — remove demo-specific target configuration examples.
 - `docs/reference/project-dependency-graph.md` — regenerate or remove demo nodes from the Mermaid diagram and dependency tables.
@@ -463,7 +463,7 @@ flowchart TD
     reusable workflows)`"]:::step
     s6["`Commit F: prune README/CLAUDE.md/
     AGENTS.md/ROADMAP.md references`"]:::step
-    s7["`Commit G: prune governance/docs
+    s7["`Commit G: prune repo-governance/docs
     demo examples`"]:::step
     s8["`Commit H: update classifier
     (a-demo rows: propagate → neither
@@ -560,7 +560,7 @@ skills:
 ### Responsibilities
 
 1. Pre-flight per §Access Pattern: verify clone, fetch, verify clean tree on `main`.
-2. Parse the classifier from `governance/conventions/structure/ose-primer-sync.md`.
+2. Parse the classifier from `repo-governance/conventions/structure/ose-primer-sync.md`.
 3. For every path tagged `adopt` or `bidirectional`, compute the diff between the primer's current state and `ose-public`'s current state.
 4. Apply the direction-appropriate filter (noise suppression from the skill; transforms inverted for adoption).
 5. Group findings into significance buckets (structural / substantive / trivial) and classifier-direction buckets (`adopt` / `bidirectional`).
@@ -677,7 +677,7 @@ name: repo-syncing-with-ose-primer
 description: >
   Shared knowledge for the repo-ose-primer-adoption-maker and
   repo-ose-primer-propagation-maker agents. Covers the classifier
-  (loaded from governance/conventions/structure/ose-primer-sync.md),
+  (loaded from repo-governance/conventions/structure/ose-primer-sync.md),
   clone management at $OSE_PRIMER_CLONE, transform
   implementations, noise-suppression rules, and the standard report
   format. Invoke inline; both agents load this skill.
@@ -697,7 +697,7 @@ version: 1.0.0
 - **Significance classification**: structural (add/remove file, rename, change frontmatter), substantive (content change ≥ 3 lines, heading change, acceptance-criteria change), trivial (< 3 line edit, wording polish, typo).
 - **Report format**: see §Report Format below.
 
-## Governance Doc Spec — `governance/conventions/structure/ose-primer-sync.md`
+## Governance Doc Spec — `repo-governance/conventions/structure/ose-primer-sync.md`
 
 ### Frontmatter
 
@@ -744,7 +744,7 @@ created: 2026-04-18
 generated-reports/<agent-name>__<uuid-chain>__<yyyy-mm-dd--hh-mm>__report.md
 ```
 
-UUID chain per existing convention (see `governance/conventions/writing/` for report generation rules). Timestamp in UTC+7.
+UUID chain per existing convention (see `repo-governance/conventions/writing/` for report generation rules). Timestamp in UTC+7.
 
 ### Frontmatter
 
@@ -787,7 +787,7 @@ report-uuid-chain: <chain>
 
 Different rules apply to `ose-public` vs `ose-primer` — explicit by design:
 
-1. **`ose-public`: direct-to-main** (Trunk Based Development). Phase 8 extraction commits A through J land directly on `ose-public`'s `main` branch. No feature branch is created for the extraction. No PR is opened against `ose-public`. This matches the repo-wide [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) practice and the existing environment-branch-only convention for non-main branches. Commits are pushed to `origin/main` as they land; pre-commit + pre-push hooks are the quality gate.
+1. **`ose-public`: direct-to-main** (Trunk Based Development). Phase 8 extraction commits A through J land directly on `ose-public`'s `main` branch. No feature branch is created for the extraction. No PR is opened against `ose-public`. This matches the repo-wide [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md) practice and the existing environment-branch-only convention for non-main branches. Commits are pushed to `origin/main` as they land; pre-commit + pre-push hooks are the quality gate.
 2. **`ose-primer`: PR-only** (every mutation). Propagation-maker's apply mode is the **only** way any commit reaches `ose-primer`. The flow is mandatory:
    1. Create a git worktree attached to the primer clone.
    2. Create a new branch tracking `origin/main` inside the worktree.
@@ -801,7 +801,7 @@ Different rules apply to `ose-public` vs `ose-primer` — explicit by design:
 
 ## Agent Naming Choice (Analysis)
 
-The [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md) permits exactly six role suffixes: `maker`, `checker`, `fixer`, `dev`, `deployer`, `manager`. Zero exceptions.
+The [Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md) permits exactly six role suffixes: `maker`, `checker`, `fixer`, `dev`, `deployer`, `manager`. Zero exceptions.
 
 Candidates evaluated for the new agents:
 
@@ -836,9 +836,9 @@ No model amendment required in any governance document — `model` is a per-agen
 
 ## Workflow Specifications
 
-Two workflow documents under `governance/workflows/repo/` orchestrate the agents. Both follow the [Workflow Naming Convention](../../../governance/conventions/structure/workflow-naming.md) and the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern (YAML frontmatter with name / goal / termination / inputs / outputs; phase breakdown; agent coordination; Gherkin success criteria).
+Two workflow documents under `repo-governance/workflows/repo/` orchestrate the agents. Both follow the [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md) and the [repo-defining-workflows](../../../.claude/skills/repo-defining-workflows/SKILL.md) pattern (YAML frontmatter with name / goal / termination / inputs / outputs; phase breakdown; agent coordination; Gherkin success criteria).
 
-### `governance/workflows/repo/repo-ose-primer-sync-execution.md`
+### `repo-governance/workflows/repo/repo-ose-primer-sync-execution.md`
 
 Type: `execution` (single forward procedure per invocation; not iterative zero-finding termination).
 
@@ -893,7 +893,7 @@ outputs:
 - Given a clean primer clone, when invoked with `direction=propagate mode=apply`, then a propagation report exists AND a draft PR URL is returned AND the PR description references the report filename.
 - Given a dirty clone (working tree has uncommitted changes), when invoked without `--use-clone-as-is`, then the workflow aborts before any agent runs.
 
-### `governance/workflows/repo/repo-ose-primer-extraction-execution.md`
+### `repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md`
 
 Type: `execution` (one-time forward procedure with an internal catch-up loop on parity failure).
 
@@ -974,11 +974,11 @@ outputs:
 | `AGENTS.md`                                                                                | Edit               | Mirror of CLAUDE.md addition.                                                                                                                         |
 | `docs/reference/related-repositories.md`                                                   | **New**            | Reference doc.                                                                                                                                        |
 | `docs/reference/README.md`                                                                 | Edit               | Index link to the new reference doc.                                                                                                                  |
-| `governance/conventions/structure/ose-primer-sync.md`                                      | **New**            | Authoritative classifier and sync convention.                                                                                                         |
-| `governance/conventions/structure/README.md`                                               | Edit               | Index link to the new convention.                                                                                                                     |
-| `governance/workflows/repo/repo-ose-primer-sync-execution.md`                              | **New**            | Ongoing sync workflow (direction + mode parameterised; invokes adopter or propagator).                                                                |
-| `governance/workflows/repo/repo-ose-primer-extraction-execution.md`                        | **New**            | One-time extraction workflow (parity-check → catch-up → A–J commits → post-verification).                                                             |
-| `governance/workflows/repo/README.md`                                                      | Edit               | Index link(s) to the new workflows.                                                                                                                   |
+| `repo-governance/conventions/structure/ose-primer-sync.md`                                 | **New**            | Authoritative classifier and sync convention.                                                                                                         |
+| `repo-governance/conventions/structure/README.md`                                          | Edit               | Index link to the new convention.                                                                                                                     |
+| `repo-governance/workflows/repo/repo-ose-primer-sync-execution.md`                         | **New**            | Ongoing sync workflow (direction + mode parameterised; invokes adopter or propagator).                                                                |
+| `repo-governance/workflows/repo/repo-ose-primer-extraction-execution.md`                   | **New**            | One-time extraction workflow (parity-check → catch-up → A–J commits → post-verification).                                                             |
+| `repo-governance/workflows/repo/README.md`                                                 | Edit               | Index link(s) to the new workflows.                                                                                                                   |
 | `.claude/skills/repo-syncing-with-ose-primer/SKILL.md`                                     | **New**            | Shared skill entry point.                                                                                                                             |
 | `.claude/skills/repo-syncing-with-ose-primer/reference/classifier-parsing.md`              | **New**            | Skill reference module.                                                                                                                               |
 | `.claude/skills/repo-syncing-with-ose-primer/reference/clone-management.md`                | **New**            | Skill reference module.                                                                                                                               |
@@ -1022,15 +1022,15 @@ outputs:
 | `CLAUDE.md`                                                                                | Edit               | Phase 8, Commit F: remove demo apps inventory + coverage table rows + demo-path examples.                                                             |
 | `AGENTS.md`                                                                                | Edit               | Phase 8, Commit F: mirror CLAUDE.md demo-reference removals.                                                                                          |
 | `ROADMAP.md`                                                                               | Edit               | Phase 8, Commit F: prune demo mentions; add extraction changelog entry.                                                                               |
-| `governance/development/quality/three-level-testing-standard.md`                           | Edit               | Phase 8, Commit G: prune demo-be path examples (replace with product-be or remove).                                                                   |
-| `governance/development/infra/nx-targets.md`                                               | Edit               | Phase 8, Commit G: prune demo-path examples.                                                                                                          |
+| `repo-governance/development/quality/three-level-testing-standard.md`                      | Edit               | Phase 8, Commit G: prune demo-be path examples (replace with product-be or remove).                                                                   |
+| `repo-governance/development/infra/nx-targets.md`                                          | Edit               | Phase 8, Commit G: prune demo-path examples.                                                                                                          |
 | `docs/reference/monorepo-structure.md`                                                     | Edit               | Phase 8, Commit G: remove demo rows from app inventory; update polyglot-showcase framing.                                                             |
 | `docs/reference/nx-configuration.md`                                                       | Edit               | Phase 8, Commit G: prune demo-specific configuration examples.                                                                                        |
 | `docs/reference/project-dependency-graph.md`                                               | Edit               | Phase 8, Commit G: regenerate or prune demo graph nodes.                                                                                              |
 | `docs/reference/README.md`                                                                 | Edit               | Phase 8, Commit G: remove link to deleted `demo-apps-ci-coverage.md`.                                                                                 |
 | `docs/how-to/add-new-app.md`                                                               | Edit               | Phase 8, Commit G: replace demo-path examples with product-app paths.                                                                                 |
 | `docs/how-to/add-new-lib.md`                                                               | Edit               | Phase 8, Commit G: same.                                                                                                                              |
-| `governance/conventions/structure/ose-primer-sync.md`                                      | Edit               | Phase 8, Commit H: classifier rows for `apps/a-demo-*`, `specs/apps/a-demo/**`, and the 4 Elixir/Clojure libs flip to `neither` with dated rationale. |
+| `repo-governance/conventions/structure/ose-primer-sync.md`                                 | Edit               | Phase 8, Commit H: classifier rows for `apps/a-demo-*`, `specs/apps/a-demo/**`, and the 4 Elixir/Clojure libs flip to `neither` with dated rationale. |
 | `scripts/**` (conditional)                                                                 | Edit (conditional) | Phase 8 (scope within Commit E): any script enumerating demo project names has its list pruned.                                                       |
 | `libs/clojure-openapi-codegen/`                                                            | **Delete**         | Phase 8, Commit I: unused-after-extraction library removal.                                                                                           |
 | `libs/elixir-cabbage/`                                                                     | **Delete**         | Phase 8, Commit I: unused-after-extraction library removal.                                                                                           |
@@ -1073,6 +1073,6 @@ Mitigations summarised in README §Risks at a Glance. Full analysis in the `brd.
 - [brd.md](./brd.md) — business perspective.
 - [prd.md](./prd.md) — product perspective, Gherkin acceptance criteria.
 - [delivery.md](./delivery.md) — sequential delivery checklist.
-- [Agent Naming Convention](../../../governance/conventions/structure/agent-naming.md).
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md).
-- [Licensing Convention](../../../governance/conventions/structure/licensing.md).
+- [Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md).
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
+- [Licensing Convention](../../../repo-governance/conventions/structure/licensing.md).

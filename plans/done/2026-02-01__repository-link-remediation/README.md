@@ -7,7 +7,7 @@
 
 ## Background
 
-During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive link validation discovered **675 broken markdown links** across 113 files in governance/, docs/, .claude/, and root directories.
+During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive link validation discovered **675 broken markdown links** across 113 files in repo-governance/, docs/, .claude/, and root directories.
 
 ## Problem Statement
 
@@ -28,7 +28,7 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 1. **File Renaming** (76 links): Files renamed from `ex-ru-*` prefix pattern, but links not updated
 2. **Path Calculation Errors** (520+ links): Incorrect relative path depths (wrong number of `../`)
-3. **Directory Restructuring** (48 links): vision/ moved to governance/vision/, workflows/ moved to governance/workflows/, but links not updated to reflect new paths
+3. **Directory Restructuring** (48 links): vision/ moved to repo-governance/vision/, workflows/ moved to repo-governance/workflows/, but links not updated to reflect new paths
 4. **Missing Files** (2 files): CODE_OF_CONDUCT.md and CHANGELOG.md referenced but don't exist
 
 ## Broken Links by Category
@@ -48,7 +48,7 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 **Success Criteria**:
 
-- Zero broken links in core files (governance/, docs/, .claude/, root)
+- Zero broken links in core files (repo-governance/, docs/, .claude/, root)
 - All cross-references resolve correctly
 - Link validation passes in OCD mode
 - No new broken links introduced
@@ -90,9 +90,9 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
    - Apply fixes with validation
 
 2. Fix vision/ directory paths (15 links)
-   - Pattern: Update to `governance/vision/`
+   - Pattern: Update to `repo-governance/vision/`
 3. Fix workflows/ directory paths (33 links)
-   - Pattern: Update to `governance/workflows/`
+   - Pattern: Update to `repo-governance/workflows/`
 
 **P2: Medium Priority (29 links)**
 
@@ -106,7 +106,7 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 1. Run OCD validation to verify zero findings
 2. Add link validation to pre-commit hooks
 3. Add link validation to CI/CD pipeline
-4. Document link conventions in governance/
+4. Document link conventions in repo-governance/
 
 ## Selected Approach
 
@@ -185,7 +185,7 @@ This approach balances speed (automated batch processing) with accuracy (manual 
   - Trigger: `pull_request` events (opened, synchronize, reopened)
   - Steps: Checkout → Setup Python → Run validation script → Fail PR if broken links found
   - Integration: Similar pattern to existing `format-pr.yml` workflow
-- [x] ~~Document link conventions in governance/~~ (already documented in governance/conventions/formatting/linking.md)
+- [x] ~~Document link conventions in repo-governance/~~ (already documented in repo-governance/conventions/formatting/linking.md)
 - [x] Clean up temporary files
   - ~~Delete `scripts/validate-links.py`~~ (KEEP - needed by pre-commit hooks and CI)
   - Delete `scripts/fix-links.py` (one-time use, no longer needed) ✓
@@ -279,7 +279,7 @@ This approach balances speed (automated batch processing) with accuracy (manual 
 
 After link remediation:
 
-1. Document link conventions in `governance/conventions/formatting/linking.md`
+1. Document link conventions in `repo-governance/conventions/formatting/linking.md`
 2. Add link validation examples to documentation
 3. Create `CONTRIBUTING.md` guide for link best practices
 4. Schedule periodic link validation audits
@@ -288,8 +288,8 @@ After link remediation:
 
 **Related Conventions**:
 
-- [Linking Convention](../../../../governance/conventions/formatting/linking.md)
-- [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
+- [Linking Convention](../../../../repo-governance/conventions/formatting/linking.md)
+- [File Naming Convention](../../../repo-governance/conventions/structure/file-naming.md)
 
 **Related Plans**:
 

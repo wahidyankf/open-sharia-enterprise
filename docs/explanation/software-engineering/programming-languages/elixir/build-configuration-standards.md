@@ -26,7 +26,7 @@ created: 2026-02-05
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir build tools in THIS codebase, not WHAT Mix or Hex are.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Elixir Build Configuration Standards
 
@@ -40,9 +40,9 @@ This document defines **authoritative build configuration standards** for Elixir
 
 **Principles Applied**:
 
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST ensure deterministic builds
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST declare all configuration explicitly
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate build processes
+- **[Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)** - MUST ensure deterministic builds
+- **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - MUST declare all configuration explicitly
+- **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - MUST automate build processes
 
 ## 🔧 Mix Build Tool
 
@@ -1185,14 +1185,14 @@ jobs:
 
 **Software Engineering Principles**:
 
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)
 
 **Development Practices**:
 
-- [Code Quality Standards](../../../../../governance/development/quality/code.md)
-- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md)
+- [Implementation Workflow](../../../../../repo-governance/development/workflow/implementation.md)
 
 ## Sources
 

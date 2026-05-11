@@ -23,7 +23,7 @@ created: 2026-02-03
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 # Java Security Standards for OSE Platform
 
@@ -597,18 +597,18 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 These standards enforce the the software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - `@PreAuthorize` annotations make permission requirements explicit at method level
    - Explicit `@Nullable` annotations define nullability contracts
    - Structured error codes (`INSUFFICIENT_FUNDS`) make errors machine-readable and consistent
 
-2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - OWASP Dependency-Check automatically scans all dependencies in CI/CD
    - Rate limiters automatically reject excessive requests
    - API key rotation alerts fire automatically before expiration
    - Audit logs automatically capture all financial transactions
 
-3. **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)**
+3. **[Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - AES-256-GCM encryption uses random IV per encryption (never reused)
    - Audit logs stored in append-only database (tamper-proof)
    - JWT tokens are immutable (signed and cannot be modified)

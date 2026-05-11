@@ -79,7 +79,7 @@ graph TD
 
 ### Complete Architecture with Skills Infrastructure
 
-This diagram shows the full six-layer governance architecture with Skills as delivery infrastructure. This is the diagram that will be added to `governance/repository-governance-architecture.md`:
+This diagram shows the full six-layer governance architecture with Skills as delivery infrastructure. This is the diagram that will be added to `repo-governance/repository-governance-architecture.md`:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
@@ -861,27 +861,27 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 ### Conventions Affected
 
-| Convention Document                                                  | Impact Description                                    | Phase   |
-| -------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
-| `governance/conventions/writing/quality.md`                          | Skills content must follow (no changes to convention) | N/A     |
-| `governance/conventions/formatting/linking.md`                       | Skills must follow linking conventions (no changes)   | N/A     |
-| `governance/conventions/formatting/diagrams.md`                      | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
-| `governance/conventions/formatting/color-accessibility.md`           | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
-| `governance/conventions/hugo/ayokoding.md`                           | Referenced by hugo-ayokoding-development Skill        | Phase 2 |
-| `governance/conventions/hugo/ose-platform.md`                        | Referenced by hugo-ose-development Skill (optional)   | Phase 2 |
-| `governance/conventions/tutorials/programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
-| `governance/conventions/writing/factual-validation.md`               | Referenced by factual-validation-methodology Skill    | Phase 2 |
+| Convention Document                                                       | Impact Description                                    | Phase   |
+| ------------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
+| `repo-governance/conventions/writing/quality.md`                          | Skills content must follow (no changes to convention) | N/A     |
+| `repo-governance/conventions/formatting/linking.md`                       | Skills must follow linking conventions (no changes)   | N/A     |
+| `repo-governance/conventions/formatting/diagrams.md`                      | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
+| `repo-governance/conventions/formatting/color-accessibility.md`           | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
+| `repo-governance/conventions/hugo/ayokoding.md`                           | Referenced by hugo-ayokoding-development Skill        | Phase 2 |
+| `repo-governance/conventions/hugo/ose-platform.md`                        | Referenced by hugo-ose-development Skill (optional)   | Phase 2 |
+| `repo-governance/conventions/tutorials/programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
+| `repo-governance/conventions/writing/factual-validation.md`               | Referenced by factual-validation-methodology Skill    | Phase 2 |
 
 ### Development Documents Affected
 
-| Development Document                                         | Impact Description                                | Phase            |
-| ------------------------------------------------------------ | ------------------------------------------------- | ---------------- |
-| `governance/development/agents/ai-agents.md`                 | Add `skills:` frontmatter field documentation     | Phase 1, Phase 2 |
-| `governance/development/pattern/maker-checker-fixer.md`      | Referenced by maker-checker-fixer-pattern Skill   | Phase 1          |
-| `governance/development/workflow/trunk-based-development.md` | Referenced by trunk-based-development Skill       | Phase 2          |
-| `governance/development/quality/criticality-levels.md`       | Referenced by criticality-confidence-system Skill | Phase 2          |
-| `governance/development/quality/fixer-confidence-levels.md`  | Referenced by criticality-confidence-system Skill | Phase 2          |
-| `governance/development/infra/temporary-files.md`            | Skills not temporary (no changes needed)          | N/A              |
+| Development Document                                              | Impact Description                                | Phase            |
+| ----------------------------------------------------------------- | ------------------------------------------------- | ---------------- |
+| `repo-governance/development/agents/ai-agents.md`                 | Add `skills:` frontmatter field documentation     | Phase 1, Phase 2 |
+| `repo-governance/development/pattern/maker-checker-fixer.md`      | Referenced by maker-checker-fixer-pattern Skill   | Phase 1          |
+| `repo-governance/development/workflow/trunk-based-development.md` | Referenced by trunk-based-development Skill       | Phase 2          |
+| `repo-governance/development/quality/criticality-levels.md`       | Referenced by criticality-confidence-system Skill | Phase 2          |
+| `repo-governance/development/quality/fixer-confidence-levels.md`  | Referenced by criticality-confidence-system Skill | Phase 2          |
+| `repo-governance/development/infra/temporary-files.md`            | Skills not temporary (no changes needed)          | N/A              |
 
 ### Skills Created (New)
 
@@ -924,15 +924,15 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 ### Infrastructure Files Affected
 
-| File                                               | Impact Description                                           | Phase   |
-| -------------------------------------------------- | ------------------------------------------------------------ | ------- |
-| `CLAUDE.md`                                        | Add Skills Infrastructure section, optimize with Skills refs | Phase 2 |
-| `.claude/skills/README.md` (NEW)                   | Skills directory documentation                               | Phase 1 |
-| `.claude/skills/TEMPLATE.md` (NEW)                 | Single-file Skill creation template                          | Phase 1 |
-| `.claude/skills/MULTI-FILE-TEMPLATE/` (NEW)        | Multi-file Skill creation template directory                 | Phase 2 |
-| `.claude/agents/README.md`                         | Add mention of Skills as complementary to agents             | Phase 2 |
-| `governance/repository-governance-architecture.md` | Add Delivery Infrastructure section with Skills              | Phase 2 |
-| `docs/how-to/hoto__create-new-skill.md` (NEW)      | How-to guide for creating new Skills                         | Phase 2 |
+| File                                                    | Impact Description                                           | Phase   |
+| ------------------------------------------------------- | ------------------------------------------------------------ | ------- |
+| `CLAUDE.md`                                             | Add Skills Infrastructure section, optimize with Skills refs | Phase 2 |
+| `.claude/skills/README.md` (NEW)                        | Skills directory documentation                               | Phase 1 |
+| `.claude/skills/TEMPLATE.md` (NEW)                      | Single-file Skill creation template                          | Phase 1 |
+| `.claude/skills/MULTI-FILE-TEMPLATE/` (NEW)             | Multi-file Skill creation template directory                 | Phase 2 |
+| `.claude/agents/README.md`                              | Add mention of Skills as complementary to agents             | Phase 2 |
+| `repo-governance/repository-governance-architecture.md` | Add Delivery Infrastructure section with Skills              | Phase 2 |
+| `docs/how-to/hoto__create-new-skill.md` (NEW)           | How-to guide for creating new Skills                         | Phase 2 |
 
 ## Documentation Updates Required
 
@@ -949,16 +949,16 @@ This section lists all documentation that must be updated as part of Skills impl
 
 ### Files to Update
 
-| File                                               | Update Description                                                                                                      | Phase            |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| `governance/repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
-| `governance/development/agents/ai-agents.md`       | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
-| `CLAUDE.md`                                        | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
-| `.claude/agents/README.md`                         | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
+| File                                                    | Update Description                                                                                                      | Phase            |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `repo-governance/repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
+| `repo-governance/development/agents/ai-agents.md`       | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
+| `CLAUDE.md`                                             | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
+| `.claude/agents/README.md`                              | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
 
 ### Proposed Changes to Repository Architecture Document
 
-**File**: `governance/repository-governance-architecture.md`
+**File**: `repo-governance/repository-governance-architecture.md`
 
 **Add new section** after "📊 The Six Layers" section:
 

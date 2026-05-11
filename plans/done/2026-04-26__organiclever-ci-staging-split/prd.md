@@ -134,7 +134,7 @@ Feature: OrganicLever CI Staging Split
         --exclude-dir=node_modules returns no matches
     And docs/reference/system-architecture/applications.md reflects both
         stag-organiclever-web and prod-organiclever-web Vercel deployments
-    And governance/development/workflow/trunk-based-development.md lists
+    And repo-governance/development/workflow/trunk-based-development.md lists
         stag-organiclever-web as an environment branch and notes
         prod-organiclever-web is dispatch-only
 ```

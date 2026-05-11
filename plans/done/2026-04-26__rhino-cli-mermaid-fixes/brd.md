@@ -13,7 +13,7 @@ slipped through with subgraphs of 7+ nodes that render unreadably narrow on mobi
 Diagnosing why required reading the validator source. Three causes combined:
 
 1. **Plans are not scanned.** The default scan paths in
-   `cmd/docs_validate_mermaid.go:202` are `docs/`, `governance/`, `.claude/`, and
+   `cmd/docs_validate_mermaid.go:202` are `docs/`, `repo-governance/`, `.claude/`, and
    root `*.md` only. Diagrams in `plans/` — including five-document plans like the
    organiclever-ci-staging-split — are never opened by the validator. The pre-push
    hook (`--changed-only`) compounds this: a changed file outside the scan dirs is
@@ -24,7 +24,7 @@ Diagnosing why required reading the validator source. Three causes combined:
    When a developer writes `T1 --> SC & LINT & BEI & FEI & DC` (the standard
    Mermaid shortcut for fan-out), only the edge `T1 → SC` is captured. The other
    four targets become orphan nodes with rank 0, breaking the rank-width
-   calculation. Even diagrams in `docs/` and `governance/` that use `&` are
+   calculation. Even diagrams in `docs/` and `repo-governance/` that use `&` are
    miscounted.
 
 3. **Rank-width does not equal render-width.** The validator's `MaxWidth=4`

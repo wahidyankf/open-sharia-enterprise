@@ -27,7 +27,7 @@ created: 2026-03-09
 
 **This document is OSE Platform-specific**, not a Kotlin tutorial. We define HOW to enforce code quality in THIS codebase.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -451,9 +451,9 @@ git add -A
 
 ## Related Documentation
 
-- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Code Quality Standards](../../../../../governance/development/quality/code.md)
-- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)
+- [Code Quality Standards](../../../../../repo-governance/development/quality/code.md)
+- [Reproducibility First](../../../../../repo-governance/principles/software-engineering/reproducibility.md)
 
 ---
 

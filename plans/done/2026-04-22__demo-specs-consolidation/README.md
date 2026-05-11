@@ -18,7 +18,7 @@ specs reflects this reality.
 3. Update all 107+ file references across the entire codebase (source code, Docker configs, CI, docs,
    governance, plans)
 4. Ensure every directory has a `README.md`
-5. Run [specs-validation](../../../governance/workflows/specs/specs-quality-gate.md) in **OCD mode**
+5. Run [specs-validation](../../../repo-governance/workflows/specs/specs-quality-gate.md) in **OCD mode**
    on the merged `specs/apps/a-demo/` before rewiring app references — fix all issues while the
    blast radius is small (specs only, no app code touched yet)
 6. Pass ALL CI — locally (lint, typecheck, test:quick) and on GitHub Actions (Main CI, all 11
@@ -86,5 +86,5 @@ specs/apps/a-demo/
 
 - Current BE specs: `specs/apps/demo-be/`
 - Current FE specs: `specs/apps/demo-fe/`
-- [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
-- [BDD Spec-Test Mapping](../../../governance/development/infra/bdd-spec-test-mapping.md)
+- [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
+- [BDD Spec-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)

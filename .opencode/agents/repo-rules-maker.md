@@ -1,5 +1,5 @@
 ---
-description: Creates repository rules and conventions in governance/ directories. Documents standards, patterns, and quality requirements.
+description: Creates repository rules and conventions in repo-governance/ directories. Documents standards, patterns, and quality requirements.
 model: opencode-go/minimax-m2.7
 tools:
   edit: true
@@ -32,7 +32,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../governance/conventions/writing/conventions.md)
+- [Convention Writing Convention](../../repo-governance/conventions/writing/conventions.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -44,7 +44,7 @@ Document standards following convention structure (Purpose, Standards, Examples,
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -53,5 +53,5 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Related Conventions**:
 
-- [Convention Writing Convention](../../governance/conventions/writing/conventions.md)
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Convention Writing Convention](../../repo-governance/conventions/writing/conventions.md)
+- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)

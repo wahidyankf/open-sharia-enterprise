@@ -56,7 +56,7 @@ graph LR
 - [x] Run `npm install` in `ose-public/` to install dependencies
 - [x] Run `npm run doctor -- --fix` to converge the full polyglot toolchain (required — the
       `postinstall` hook runs `doctor || true` and silently tolerates drift; see
-      [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md))
+      [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md))
 - [x] Verify dev server starts: `nx dev wahidyankf-web`
 - [x] Run existing tests to establish baseline:
   - [x] `npx nx run wahidyankf-web:test:quick`

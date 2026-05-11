@@ -76,7 +76,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 1. **[Clojure Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/)** - Initial setup, overview (0-95% language coverage)
 2. **[Clojure By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - 75+ annotated code examples
 
-**See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Coding Standards
 
@@ -119,11 +119,11 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Development Practices**:
 
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow
-- [Code Quality Standards](../../governance/development/quality/code.md) - Quality gates
-- [Test-Driven Development](../../governance/development/workflow/test-driven-development.md) - Required for all code changes
+- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md) - Cross-language FP principles
+- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Code Quality Standards](../../repo-governance/development/quality/code.md) - Quality gates
+- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
 
 ### Test-Driven Development
 
@@ -131,12 +131,12 @@ TDD is required for every code change: write the failing test first, confirm it 
 reason, implement the minimum code to pass, then refactor. For Clojure projects the right level is
 usually unit (clojure.test + Midje), integration (clojure.test with real DB or in-process mocks),
 or E2E (Playwright). Property-based testing via test.check covers invariants. See
-[Test-Driven Development Convention](../../governance/development/workflow/test-driven-development.md)
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
 for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Skills**:

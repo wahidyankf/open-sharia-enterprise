@@ -596,7 +596,7 @@ each section is accurate against the actual implementation before committing.
 - [x] **16.5.3** Verify `libs/ts-ui-tokens/README.md` — confirm the `## Per-App Brand Token
 Files` section and `organiclever.css` entry are accurate
   - Date: 2026-04-21 | Status: Done | Section already present and accurate — no changes needed
-- [x] **16.5.4** Verify `governance/development/frontend/design-tokens.md` — confirm the
+- [x] **16.5.4** Verify `repo-governance/development/frontend/design-tokens.md` — confirm the
       `## OKLCH Brand Tokens (OrganicLever)` section and updated `@custom-variant dark`
       example are accurate
   - Date: 2026-04-21 | Status: Done | Section already present and accurate — no changes needed

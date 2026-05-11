@@ -118,6 +118,6 @@ for Go projects instead.
 
 ## Related Documentation
 
-- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) - Coverage thresholds and testing levels
+- [Three-Level Testing Standard](../../repo-governance/development/quality/three-level-testing-standard.md) - Coverage thresholds and testing levels
 - [Project Dependency Graph](./project-dependency-graph.md) - Which projects depend on rhino-cli
 - [Nx Configuration](./nx-configuration.md) - How test:quick targets are configured

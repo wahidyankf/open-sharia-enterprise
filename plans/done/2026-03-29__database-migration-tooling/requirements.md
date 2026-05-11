@@ -90,7 +90,7 @@ accepted in the repository.
 
 ### Gap 4: Governance Doc Is Spring Boot/Liquibase-Specific
 
-The [Database Audit Trail Pattern](../../../governance/development/pattern/database-audit-trail.md)
+The [Database Audit Trail Pattern](../../../repo-governance/development/pattern/database-audit-trail.md)
 mandates 6 audit columns for every table but only documents the implementation via Liquibase SQL
 changelogs and Spring Data JPA Auditing. Other language ecosystems have no guidance. The doc should
 be generalized to multi-language while keeping Liquibase as the Java-specific example.
@@ -272,7 +272,7 @@ Feature: Database migration tooling for all demo apps
   # is tool-level and does not depend on which schema option is in use.
 
   Scenario: Governance documentation is language-agnostic
-    Given the file "governance/development/pattern/database-audit-trail.md"
+    Given the file "repo-governance/development/pattern/database-audit-trail.md"
     When I read the document
     Then it includes a "Migration Tool by Language" table listing all 12 demo apps
     And it generalizes the migration pattern beyond Liquibase-only

@@ -31,7 +31,7 @@ Complete reference for Nx workspace configuration files, options, and settings.
 
 ### Complete Example
 
-> **Note**: `targetDefaults` uses the canonical target names defined in [Nx Target Standards](../../governance/development/infra/nx-targets.md). The standard targets are `test:quick`, `test:unit`, `test:integration`, and `test:e2e` — not a generic `test` target. See the governance document for caching rules and mandatory targets per project type.
+> **Note**: `targetDefaults` uses the canonical target names defined in [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md). The standard targets are `test:quick`, `test:unit`, `test:integration`, and `test:e2e` — not a generic `test` target. See the governance document for caching rules and mandatory targets per project type.
 
 ```json
 {
@@ -185,7 +185,7 @@ Default configuration for targets across all projects.
 }
 ```
 
-**Standard target names**: Use `test:quick`, `test:unit`, `test:integration`, `test:e2e` — not a generic `test` target. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the complete target naming standard.
+**Standard target names**: Use `test:quick`, `test:unit`, `test:integration`, `test:e2e` — not a generic `test` target. See [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for the complete target naming standard.
 
 **Codegen dependency chain** (demo apps): All demo app `typecheck` and `build` targets must declare `dependsOn: ["codegen"]`. This ensures generated types from the OpenAPI spec are always up to date before type checking or building. Example:
 
@@ -343,7 +343,7 @@ Per-project:
 }
 ```
 
-**Target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md)**: `test:quick` is the mandatory pre-push gate; `test:unit` runs isolated unit tests. Avoid generic `test` targets.
+**Target names follow [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md)**: `test:quick` is the mandatory pre-push gate; `test:unit` runs isolated unit tests. Avoid generic `test` targets.
 
 ### Tag Convention
 
@@ -622,7 +622,7 @@ Nx wrapper scripts.
 }
 ```
 
-**Note**: Use `test:quick` (not `test`) as the standard pre-push quality gate target. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names.
+**Note**: Use `test:quick` (not `test`) as the standard pre-push quality gate target. See [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) for canonical target names.
 
 #### `volta`
 
@@ -714,7 +714,7 @@ NX_DAEMON=false nx build oseplatform-web
 
 ## Related Documentation
 
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
+- [Nx Target Standards](../../repo-governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
 - [How to Add New App](../how-to/add-new-app.md)
 - [How to Add New Library](../how-to/add-new-lib.md)
 - [How to Run Nx Commands](../how-to/run-nx-commands.md)

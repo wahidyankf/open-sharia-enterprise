@@ -160,7 +160,7 @@ Two lines to change:
 - Line ~10: `**License**: MIT` → `**License**: FSL-1.1-MIT`
 - Line ~688: `- **License**: MIT` → `- **License**: FSL-1.1-MIT`
 
-### governance/vision/README.md Update
+### repo-governance/vision/README.md Update
 
 Change:
 
@@ -189,12 +189,12 @@ distribute` to `License: FSL-1.1-MIT - source-available with 2-year rolling conv
 These files use MIT as a project-specific example. Update only the project-specific references,
 not generic license lists:
 
-| File                                                          | What to Change                                                                              | What NOT to Change                           |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `governance/conventions/writing/oss-documentation.md`         | Badge (`license-MIT-blue`), README template license section, "Current Project: MIT License" | Generic lists ("MIT, Apache 2.0, GPL, etc.") |
-| `governance/conventions/writing/readme-quality.md`            | Good/bad example text ("licensed under the MIT License")                                    | The instructional text about writing style   |
-| `governance/principles/general/simplicity-over-complexity.md` | `license: MIT` in YAML example                                                              | Everything else in the principle doc         |
-| `docs/how-to/hoto__add-new-lib.md`                            | `MIT` in new-lib README template                                                            | Everything else in the how-to guide          |
+| File                                                               | What to Change                                                                              | What NOT to Change                           |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `repo-governance/conventions/writing/oss-documentation.md`         | Badge (`license-MIT-blue`), README template license section, "Current Project: MIT License" | Generic lists ("MIT, Apache 2.0, GPL, etc.") |
+| `repo-governance/conventions/writing/readme-quality.md`            | Good/bad example text ("licensed under the MIT License")                                    | The instructional text about writing style   |
+| `repo-governance/principles/general/simplicity-over-complexity.md` | `license: MIT` in YAML example                                                              | Everything else in the principle doc         |
+| `docs/how-to/hoto__add-new-lib.md`                                 | `MIT` in new-lib README template                                                            | Everything else in the how-to guide          |
 
 ### GitHub Repository Attributes
 

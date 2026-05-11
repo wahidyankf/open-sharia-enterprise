@@ -166,14 +166,14 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
-- [Code Quality Convention](../../governance/development/quality/code.md) - Quality standards
+- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - Plan standards
+- [Code Quality Convention](../../repo-governance/development/quality/code.md) - Quality standards
 
 **Related Agents:**
 
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans
-- [plan-execution workflow](../../governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute plans (calling context orchestrates; no dedicated subagent)
 - `plan-fixer` - Fixes plan issues
 
 **Remember**: This is the final quality gate. Be thorough, independent, and uncompromising on quality.
@@ -313,7 +313,7 @@ After verifying manual assertions (Step 5c), verify that the plan was properly a
 
 ### 9. Verify Worktree Was Used (Step 5e — MANDATORY)
 
-After verifying archival (Step 5d), verify that execution actually happened inside the declared worktree per the [plan-execution Step 0 gate](../../governance/workflows/plan/plan-execution.md#0-verify-worktree-specification-sequential-hard-gate). The plan-execution workflow refuses to start without a worktree, but this step independently confirms the gate held.
+After verifying archival (Step 5d), verify that execution actually happened inside the declared worktree per the [plan-execution Step 0 gate](../../repo-governance/workflows/plan/plan-execution.md#0-verify-worktree-specification-sequential-hard-gate). The plan-execution workflow refuses to start without a worktree, but this step independently confirms the gate held.
 
 #### What to Validate
 
@@ -394,10 +394,10 @@ For every relative cross-link in plan files:
 #### How to Audit
 
 1. Read all plan files top-to-bottom.
-2. For each factual claim, run the recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
+2. For each factual claim, run the recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
 3. Compare results against the post-execution repo state.
 4. File findings per severity table below.
-5. For external behavior claims, delegate multi-page verification to `web-research-maker` per the lower threshold in [Plan Anti-Hallucination Convention §Web-Research Delegation](../../governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
+5. For external behavior claims, delegate multi-page verification to `web-research-maker` per the lower threshold in [Plan Anti-Hallucination Convention §Web-Research Delegation](../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
 
 #### Finding Severity
 
