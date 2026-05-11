@@ -5,26 +5,38 @@ Hygiene & INtegration Orchestrator CLI.
 
 ## Feature Files
 
-| File                                   | Command(s)                     | Scenarios |
-| -------------------------------------- | ------------------------------ | --------- |
-| `agents-sync.feature`                  | `agents sync`                  | 7         |
-| `agents-validate-claude.feature`       | `agents validate-claude`       | 5         |
-| `agents-validate-naming.feature`       | `agents validate-naming`       | 4         |
-| `ddd-bc.feature`                       | `ddd bc`                       | 11        |
-| `ddd-ul.feature`                       | `ddd ul`                       | 7         |
-| `docs-validate-links.feature`          | `docs validate-links`          | 4         |
-| `docs-validate-mermaid.feature`        | `docs validate-mermaid`        | 22        |
-| `doctor.feature`                       | `doctor`                       | 9         |
-| `env-backup.feature`                   | `env backup`                   | 18        |
-| `env-init.feature`                     | `env init`                     | 4         |
-| `env-restore.feature`                  | `env restore`                  | 13        |
-| `git-pre-commit.feature`               | `git pre-commit`               | 1         |
-| `repo-governance-vendor-audit.feature` | `repo-governance vendor-audit` | 7         |
-| `spec-coverage-validate.feature`       | `spec-coverage validate`       | 6         |
-| `test-coverage-diff.feature`           | `test-coverage diff`           | 4         |
-| `test-coverage-merge.feature`          | `test-coverage merge`          | 3         |
-| `test-coverage-validate.feature`       | `test-coverage validate`       | 10        |
-| `workflows-validate-naming.feature`    | `workflows validate-naming`    | 4         |
+| File                                         | Command(s)                           | Scenarios |
+| -------------------------------------------- | ------------------------------------ | --------- |
+| `agents-detect-duplication.feature`          | `agents detect-duplication`          | 4         |
+| `agents-sync.feature`                        | `agents sync`                        | 7         |
+| `agents-validate-claude.feature`             | `agents validate-claude`             | 5         |
+| `agents-validate-naming.feature`             | `agents validate-naming`             | 4         |
+| `ddd-bc.feature`                             | `ddd bc`                             | 11        |
+| `ddd-ul.feature`                             | `ddd ul`                             | 7         |
+| `docs-validate-frontmatter.feature`          | `docs validate-frontmatter`          | 5         |
+| `docs-validate-heading-hierarchy.feature`    | `docs validate-heading-hierarchy`    | 4         |
+| `docs-validate-links.feature`                | `docs validate-links`                | 4         |
+| `docs-validate-mermaid.feature`              | `docs validate-mermaid`              | 22        |
+| `docs-validate-naming.feature`               | `docs validate-naming`               | 3         |
+| `doctor.feature`                             | `doctor`                             | 9         |
+| `env-backup.feature`                         | `env backup`                         | 18        |
+| `env-init.feature`                           | `env init`                           | 4         |
+| `env-restore.feature`                        | `env restore`                        | 13        |
+| `git-pre-commit.feature`                     | `git pre-commit`                     | 1         |
+| `repo-governance-agents-md-size.feature`     | `repo-governance agents-md-size`     | 3         |
+| `repo-governance-audit.feature`              | `repo-governance audit`              | 5         |
+| `repo-governance-emoji-audit.feature`        | `repo-governance emoji-audit`        | 4         |
+| `repo-governance-frontmatter-audit.feature`  | `repo-governance frontmatter-audit`  | 5         |
+| `repo-governance-layer-coherence.feature`    | `repo-governance layer-coherence`    | 3         |
+| `repo-governance-license-audit.feature`      | `repo-governance license-audit`      | 4         |
+| `repo-governance-readme-index-audit.feature` | `repo-governance readme-index-audit` | 4         |
+| `repo-governance-traceability-audit.feature` | `repo-governance traceability-audit` | 5         |
+| `repo-governance-vendor-audit.feature`       | `repo-governance vendor-audit`       | 7         |
+| `spec-coverage-validate.feature`             | `spec-coverage validate`             | 6         |
+| `test-coverage-diff.feature`                 | `test-coverage diff`                 | 4         |
+| `test-coverage-merge.feature`                | `test-coverage merge`                | 3         |
+| `test-coverage-validate.feature`             | `test-coverage validate`             | 10        |
+| `workflows-validate-naming.feature`          | `workflows validate-naming`          | 4         |
 
 ## `specs/` Subfolder — Planned Feature Files
 
