@@ -102,13 +102,34 @@ context — use this when agent delegation is unavailable.
 
 ## Steps
 
+### 0.5. Deterministic Preflight (Sequential)
+
+Run the `rhino-cli` orchestrator to harvest all deterministic governance findings before invoking the AI checker. Deterministic categories (file naming, frontmatter shape, license presence, README index integrity, emoji codepoints, layer-coherence, doc heading hierarchy, agent-skill verbatim duplication) execute in milliseconds and cache via Nx; the AI checker then runs only the AI-only categories (paraphrased duplication, semantic contradictions, terminology alignment, principle-appropriateness judgement).
+
+**Command**:
+
+```bash
+mkdir -p generated-reports
+npx nx run rhino-cli:validate:repo-governance-audit -o json > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json
+```
+
+- **Output**: `{preflight-report}` — JSON envelope at the captured path; schema `rhino-cli/repo-governance-audit/v1`
+- **Exit handling**:
+  - Exit 0 (clean): All deterministic categories pass; pass JSON path to checker.
+  - Exit 1 (findings): Deterministic findings present; pass JSON path to checker (the checker incorporates the deterministic findings verbatim into the final audit's "Deterministic Findings (rhino-cli preflight)" section).
+  - Exit 2 (invocation error): Terminate workflow with `fail` status.
+
+**Success criteria**: Preflight completes; JSON file exists at expected path; JSON parses as valid `AuditEnvelope` with `schema` field set to `rhino-cli/repo-governance-audit/v1`.
+
+**Depends on**: None (first step in each iteration). Runs again before every re-validation iteration; if the JSON SHA-256 is unchanged from the prior iteration, the checker reuses the deterministic findings section unchanged and only re-evaluates AI-only categories.
+
 ### 1. Initial Validation (Sequential)
 
 Run repository-wide consistency check to identify all issues.
 
 **Agent**: `repo-rules-checker`
 
-- **Args**: `scope: all, EXECUTION_SCOPE: repo-rules`
+- **Args**: `scope: all, EXECUTION_SCOPE: repo-rules, preflight-report: {step0_5.outputs.preflight-report}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
 
 **UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../development/infra/temporary-files.md#uuid-generation) for details.
@@ -176,11 +197,17 @@ Apply validated fixes from the audit report based on mode level.
 
 ### 4. Re-validate (Sequential)
 
-Run checker again to verify fixes resolved issues and no new issues introduced.
+Re-run the deterministic preflight (Step 0.5) first, then invoke the AI checker. If the preflight JSON SHA-256 is unchanged from the prior iteration, the checker reuses the deterministic findings section unchanged and only re-evaluates AI-only categories.
+
+**Preflight re-run**:
+
+```bash
+npx nx run rhino-cli:validate:repo-governance-audit -o json > generated-reports/repo-governance-audit__{uuid}__{timestamp}.json
+```
 
 **Agent**: `repo-rules-checker`
 
-- **Args**: `scope: all`
+- **Args**: `scope: all, preflight-report: {step4_preflight.outputs.preflight-report}`
 - **Output**: `{audit-report-N}` - Verification audit report
 - **Depends on**: Step 3 completion
 
