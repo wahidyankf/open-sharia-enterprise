@@ -3,6 +3,7 @@
 All phases follow Red → Green → Refactor where code is being authored. Run `npx nx affected -t typecheck lint test:quick spec-coverage` at the end of every phase. Fix ALL failures found, including preexisting issues not caused by this plan (root cause orientation).
 
 > **Reference Materials** (read-only):
+>
 > - F# pattern: `ose-primer/apps/crud-be-fsharp-giraffe/`
 > - F# minimal baseline (prior `organiclever-be`): commit `c5a7058c8^` (see `git show c5a7058c8^:apps/organiclever-be/...`)
 > - TS pattern: `apps/organiclever-web/`
@@ -78,28 +79,28 @@ Sibling folders to `containers/`. Establishes the DDD bounded-contexts surface b
 
 - [ ] Author `specs/apps/ose-grc/behavior/be/gherkin/health.feature` with **one** scenario:
 
-      ```gherkin
-      Feature: BE health endpoint
-        As a system operator
-        I want the BE to advertise liveness
-        So that orchestrators can route traffic only to healthy instances
+  ```gherkin
+  Feature: BE health endpoint
+    As a system operator
+    I want the BE to advertise liveness
+    So that orchestrators can route traffic only to healthy instances
 
-        Scenario: Health endpoint returns 200
-          Given the ose-grc-be service is running
-          When I send GET /api/v1/health
-          Then the response status is 200
-          And the response body has a "status" field equal to "healthy"
-      ```
+    Scenario: Health endpoint returns 200
+      Given the ose-grc-be service is running
+      When I send GET /api/v1/health
+      Then the response status is 200
+      And the response body has a "status" field equal to "healthy"
+  ```
 
 - [ ] Author `specs/apps/ose-grc/behavior/web/gherkin/smoke.feature` with **one** scenario:
 
-      ```gherkin
-      Feature: FE smoke load
-        Scenario: Home page loads
-          Given the ose-grc-web dev server is running
-          When I navigate to "/"
-          Then I see the heading "OSE GRC"
-      ```
+  ```gherkin
+  Feature: FE smoke load
+    Scenario: Home page loads
+      Given the ose-grc-web dev server is running
+      When I navigate to "/"
+      Then I see the heading "OSE GRC"
+  ```
 
 - [ ] Create the remaining stub folders so the tree mirrors organiclever's: `specs/apps/ose-grc/components/{README.md,.gitkeep}`, `specs/apps/ose-grc/product/{README.md,.gitkeep}`, `specs/apps/ose-grc/system-context/{README.md,.gitkeep}`. READMEs are one-liner placeholders pointing to future feature plans.
 
@@ -133,20 +134,20 @@ Patterns mirror `ose-primer/apps/crud-be-fsharp-giraffe/` for project shape, pac
 
 - [ ] Author `apps/ose-grc-be/.env.example` with placeholders:
 
-      ```dotenv
-      # OpenRouter (see tech-docs.md §DD-10) — placeholders only; never commit a real key
-      OPENROUTER_API_KEY=
-      OPENROUTER_MODEL=openrouter/auto
-      OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
-      # PostgreSQL
-      DATABASE_URL=postgresql://ose_grc:ose_grc@localhost:5432/ose_grc_dev
-      ```
+  ```dotenv
+  # OpenRouter (see tech-docs.md §DD-10) — placeholders only; never commit a real key
+  OPENROUTER_API_KEY=
+  OPENROUTER_MODEL=openrouter/auto
+  OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+  # PostgreSQL
+  DATABASE_URL=postgresql://ose_grc:ose_grc@localhost:5432/ose_grc_dev
+  ```
 
 - [ ] Author `apps/ose-grc-be/src/OseGrcBe/OseGrcBe.fsproj` mirroring `ose-primer/apps/crud-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj` shape:
   - `Microsoft.NET.Sdk.Web`, `<TargetFramework>net10.0</TargetFramework>`, `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`, `<Nullable>enable</Nullable>`.
   - `<RootNamespace>OseGrcBe</RootNamespace>`, `<AssemblyName>OseGrcBe</AssemblyName>`.
   - Compile order: generated contracts (HealthResponse, ErrorResponse) → `Contracts/ContractWrappers.fs` → `Domain/Types.fs` → `Domain/RegulatorySource.fs` → `Domain/InternalPolicy.fs` → `Domain/GapAnalysis.fs` → `Domain/AiOrchestration.fs` → `Infrastructure/AppDbContext.fs` → `Infrastructure/Migrations.fs` → `Handlers/HealthHandler.fs` → `Program.fs`.
-  - Package set per `tech-docs.md §Dependencies`: Giraffe 7, EFCore 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 + EFCore.NamingConventions 10, FSharp.SystemTextJson 1, dbup-core + dbup-postgresql 5, G-Research.FSharp.Analyzers 0.* + FSharp.Analyzers.Build 0.*.
+  - Package set per `tech-docs.md §Dependencies`: Giraffe 7, EFCore 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 + EFCore.NamingConventions 10, FSharp.SystemTextJson 1, dbup-core + dbup-postgresql 5, `G-Research.FSharp.Analyzers 0.*` + `FSharp.Analyzers.Build 0.*`.
 
 - [ ] Author each F# source file with **minimal** content sufficient to compile + serve the health endpoint:
   - `Contracts/ContractWrappers.fs` — empty `module OseGrcBe.Contracts.Wrappers` (placeholder).
@@ -311,18 +312,14 @@ Patterns mirror `apps/organiclever-web/` exactly except: no PGlite, no `gen-migr
 
 - [ ] Edit `infra/dev/ose-grc/Dockerfile.fe.dev` mirroring `infra/dev/organiclever/Dockerfile.fe.dev`.
 
-- [ ] Edit `infra/dev/ose-grc/.env.example` with all placeholders documented (DATABASE_URL, OPENROUTER_*).
+- [ ] Edit `infra/dev/ose-grc/.env.example` with all placeholders documented (DATABASE*URL, OPENROUTER*\*).
 
 - [ ] Edit `infra/dev/ose-grc/docker-compose.ci.yml` mirroring `infra/dev/organiclever/docker-compose.ci.yml` (CI override for prebuilt images if used).
 
 - [ ] Edit `infra/dev/ose-grc/README.md` mirroring `infra/dev/organiclever/README.md`.
 
 - [ ] **Manual verification** (AC-7):
-      `docker compose -f infra/dev/ose-grc/docker-compose.yml down -v && docker compose -f infra/dev/ose-grc/docker-compose.yml up --build -d`
-      - Within 60 s: `docker compose -f infra/dev/ose-grc/docker-compose.yml ps` shows `postgres` healthy.
-      - Within 120 s: `curl -sf http://localhost:8302/api/v1/health` returns 200.
-      - Within 120 s: `curl -sf http://localhost:3300` returns 200.
-      - Teardown: `docker compose -f infra/dev/ose-grc/docker-compose.yml down -v` succeeds.
+      `docker compose -f infra/dev/ose-grc/docker-compose.yml down -v && docker compose -f infra/dev/ose-grc/docker-compose.yml up --build -d` - Within 60 s: `docker compose -f infra/dev/ose-grc/docker-compose.yml ps` shows `postgres` healthy. - Within 120 s: `curl -sf http://localhost:8302/api/v1/health` returns 200. - Within 120 s: `curl -sf http://localhost:3300` returns 200. - Teardown: `docker compose -f infra/dev/ose-grc/docker-compose.yml down -v` succeeds.
 
 ---
 
