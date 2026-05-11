@@ -575,7 +575,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
 ## Phase 5b — Manual API Verification (curl)
 
-- [ ] Start dev server on port 8202:
+- [x] Start dev server on port 8202:
 
   ```bash
   npx nx run organiclever-be:dev
@@ -583,7 +583,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: process prints "Started OrganicleverBeApplication" and port 8202 is listening.
 
-- [ ] Verify health endpoint returns service status UP:
+  > **Done** 2026-05-11 — `npx nx run organiclever-be:dev` started, port 8202 listening, response received.
+
+- [x] Verify health endpoint returns service status UP:
 
   ```bash
   curl -s http://localhost:8202/api/v1/health | jq .
@@ -591,7 +593,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: response is `{"status":"UP"}`.
 
-- [ ] Verify anonymous access returns HTTP 200:
+  > **Done** 2026-05-11 — curl returns `{"status":"UP"}`.
+
+- [x] Verify anonymous access returns HTTP 200:
 
   ```bash
   curl -o /dev/null -w '%{http_code}' http://localhost:8202/api/v1/health
@@ -599,7 +603,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: returns `200`.
 
-- [ ] Verify no component details in response:
+  > **Done** 2026-05-11 — HTTP 200 confirmed.
+
+- [x] Verify no component details in response:
 
   ```bash
   curl -s http://localhost:8202/api/v1/health | jq 'has("components")'
@@ -607,8 +613,12 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: returns `false`.
 
-- [ ] Stop dev server (Ctrl-C or `kill` the process).
+  > **Done** 2026-05-11 — `jq 'has("components")'` returns false.
+
+- [x] Stop dev server (Ctrl-C or `kill` the process).
       Verify: port 8202 no longer listening.
+
+  > **Done** 2026-05-11 — dev server stopped; port 8202 no longer listening (verified via curl timeout).
 
 ---
 
@@ -618,13 +628,16 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 > `git add apps/organiclever-be/README.md` — then commit:
 > `docs(organiclever-be): update README for Java Spring Boot`
 
-- [ ] Update `apps/organiclever-be/README.md`:
+- [x] Update `apps/organiclever-be/README.md`:
   - Replace .NET/F# badges and commands with Maven/Java equivalents
   - Update tech stack section: Java 25, Spring Boot 4.0, Maven
   - Keep port (8202), API routes, and Nx command table unchanged
   - Verify: `grep -cE 'dotnet|F#|\.fsproj|AltCover' apps/organiclever-be/README.md` returns 0
     AND `grep -q 'mvn\|Java 25\|Spring Boot' apps/organiclever-be/README.md` exits 0.
-- [ ] Verify no F# toolchain artifacts remain:
+
+  > **Done** 2026-05-11 — README updated: dotnet/F#/AltCover refs = 0, mvn/Java 25/Spring Boot present.
+
+- [x] Verify no F# toolchain artifacts remain:
 
   ```bash
   find apps/organiclever-be/ -name '*.fs' -o -name '*.fsproj' -o -name 'global.json' \
@@ -632,6 +645,8 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   ```
 
   Verify: command returns no output (empty — no matches).
+
+  > **Done** 2026-05-11 — 0 F# artifacts found; stale generated-contracts/OpenAPI/ dir removed.
 
 ---
 
