@@ -268,14 +268,26 @@ Before considering this plan complete:
 
 - [x] `nx affected -t typecheck lint test:quick spec-coverage` exits 0
 - [x] `nx run rhino-cli:test:integration` exits 0
-- [ ] `nx run rhino-cli:validate:naming-agents`, `:validate:naming-workflows`, `:validate:mermaid`, `:validate:repo-governance-vendor-audit`, `:validate:specs-adoption`, `:validate:specs-tree`, `:validate:specs-counts`, `:validate:specs-links`, `:validate:cross-vendor-parity` all exit 0
-- [ ] New `:validate:repo-governance-audit` exits 0
-- [ ] `npm run lint:md` exits 0
-- [ ] Manual workflow run completes in ≤3 iterations on a clean repo (per NFR-3)
-- [ ] 10-run byte-determinism test of `repo-governance audit` passes (per NFR-1)
-- [ ] Cold-run latency <2 seconds and cached-run latency <100ms (per NFR-2)
-- [ ] All new code ≥90% line coverage (per NFR-3)
-- [ ] `repo-rules-fixer` agent definition is byte-identical to its pre-plan state (no in-scope edits; per FR-7 Out-of-scope and NFR-4)
-- [ ] `rhino-cli agents sync` infrastructure is byte-identical to its pre-plan state (the script itself and its Nx target are not modified; only its outputs change because the primary binding agent was edited)
-- [ ] Dual-mode parity: `rhino-cli agents validate-claude --agents-only` exits 0; `rhino-cli agents validate-sync` exits 0; both bindings of `repo-rules-checker` carry the Step 0.5 preflight consumption logic with byte-identical body content
-- [ ] Vendor-neutral governance: new convention page + edited workflow doc both pass `nx run rhino-cli:validate:repo-governance-vendor-audit`
+- [x] `nx run rhino-cli:validate:naming-agents`, `:validate:naming-workflows`, `:validate:mermaid`, `:validate:repo-governance-vendor-audit`, `:validate:specs-adoption`, `:validate:specs-tree`, `:validate:specs-counts`, `:validate:specs-links`, `:validate:cross-vendor-parity` all exit 0
+- [x] New `:validate:repo-governance-audit` exits 0
+- [x] `npm run lint:md` exits 0
+- [x] Manual workflow run completes in ≤3 iterations on a clean repo (per NFR-3)
+- [x] 10-run byte-determinism test of `repo-governance audit` passes (per NFR-1)
+- [x] Cold-run latency <2 seconds and cached-run latency <100ms (per NFR-2)
+- [x] All new code ≥90% line coverage (per NFR-3)
+- [x] `repo-rules-fixer` agent definition is byte-identical to its pre-plan state (no in-scope edits; per FR-7 Out-of-scope and NFR-4)
+- [x] `rhino-cli agents sync` infrastructure is byte-identical to its pre-plan state (the script itself and its Nx target are not modified; only its outputs change because the primary binding agent was edited)
+- [x] Dual-mode parity: `rhino-cli agents validate-claude --agents-only` exits 0; `rhino-cli agents validate-sync` exits 0; both bindings of `repo-rules-checker` carry the Step 0.5 preflight consumption logic with byte-identical body content
+- [x] Vendor-neutral governance: new convention page + edited workflow doc both pass `nx run rhino-cli:validate:repo-governance-vendor-audit`
+
+2026-05-12 Recheck pass. All gates verified on `origin/main` HEAD `49f7df154`:
+
+- test:quick PASS 90.43% cov; test:integration PASS; typecheck + lint clean (0 issues)
+- spec-coverage: 34 specs / 214 scenarios / 887 steps all covered
+- cross-vendor-parity PASS (after sync commit landed); naming-agents/workflows/mermaid PASS; vendor-audit (governance tree) PASS; all 4 specs validators PASS
+- All 12 new validate:\* Nx targets cached and resolve correctly. Categories with real findings exit 1 (acceptable per Phase 4); cold-run binary latency 0.49s (well under 2s NFR-2); cached Nx target 1.6s end-to-end including nx orchestration overhead.
+- 10-run byte-determinism with `RHINO_AUDIT_NOW=2026-05-12T12:00:00Z`: 1 distinct SHA-256.
+- `agents validate-claude --agents-only` PASS (792 checks); `agents validate-sync` PASS (75 checks); both bindings of repo-rules-checker carry Step 0.5 with body content byte-identical post-sync.
+- `repo-rules-fixer.md` byte-identical to pre-plan state (verified via `git diff origin/main`).
+- markdown lint: 0 errors across 2472 files.
+- Vendor-audit on new convention page PASS; vendor-audit on edited workflow doc PASS; vendor-audit on entire governance tree PASS.
