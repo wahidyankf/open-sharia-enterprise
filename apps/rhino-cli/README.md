@@ -958,6 +958,113 @@ Checks: frontmatter presence, terms table structure, stale code identifiers (via
 
 **See**: [`apps-organiclever-web-developing-content` skill](../../.claude/skills/apps-organiclever-web-developing-content/SKILL.md) § Domain-Driven Design for authoring rules and the BC registry at [`specs/apps/organiclever/ddd/bounded-contexts.yaml`](../../specs/apps/organiclever/ddd/bounded-contexts.yaml).
 
+### repo-governance agents-md-size
+
+Reads `AGENTS.md` and classifies its size against the 30000/35000/40000-byte thresholds. Exits 0 ≤ target, 1 over hard limit.
+
+```bash
+rhino-cli repo-governance agents-md-size
+rhino-cli repo-governance agents-md-size -o json
+```
+
+### repo-governance frontmatter-audit
+
+Walks `.md` files and flags forbidden manual date metadata: `updated:` frontmatter, `**Last Updated**` footer blocks, and standalone body annotations. Honors website-app exemption list. Default paths if none given: `repo-governance/`, `docs/explanation/software-engineering/`, `.claude/agents/`, `.claude/skills/`, `plans/`.
+
+```bash
+rhino-cli repo-governance frontmatter-audit
+rhino-cli repo-governance frontmatter-audit --path repo-governance/
+```
+
+### repo-governance traceability-audit
+
+Verifies the governance traceability invariants: every principle has `## Vision Supported`, every convention has `## Principles Implemented/Respected`, every development doc has both `## Principles Implemented/Respected` and `## Conventions Implemented/Respected`, every workflow references at least one `.claude/agents/*.md`. README index files are exempt.
+
+```bash
+rhino-cli repo-governance traceability-audit
+```
+
+### repo-governance license-audit
+
+Verifies each product app, lib, and `specs/` has a `LICENSE` file with SPDX identifier matching the row in `LICENSING-NOTICE.md`.
+
+```bash
+rhino-cli repo-governance license-audit
+```
+
+### repo-governance readme-index-audit
+
+Diffs README link listings vs actual `*.md` siblings in each tracked directory. Reports orphans (file on disk not in README) and ghosts (in README, file absent). Honors `--exclude <glob>` repeatable.
+
+```bash
+rhino-cli repo-governance readme-index-audit
+rhino-cli repo-governance readme-index-audit --exclude '**/draft-*.md'
+```
+
+### repo-governance emoji-audit
+
+Walks forbidden file extensions (`.go`, `.ts`, `.json`, `.yaml`, ...) and reports any emoji codepoint in `U+1F000..U+1FFFF`, `U+2600..U+27BF`, or related ranges. Multibyte non-emoji (CJK, Arabic) does not trigger findings.
+
+```bash
+rhino-cli repo-governance emoji-audit
+```
+
+### repo-governance layer-coherence
+
+Extracts layer numbering from `repo-governance/repository-governance-architecture.md` and `repo-governance/README.md`, verifies both files agree on numbers and names, and checks the numbering is gap-free.
+
+```bash
+rhino-cli repo-governance layer-coherence
+```
+
+### docs validate-naming
+
+Walks `.md` files and verifies basenames match `^[a-z0-9-]+\.md$`. Exempts `README.md` and any `--exempt <glob>`.
+
+```bash
+rhino-cli docs validate-naming
+rhino-cli docs validate-naming docs/ repo-governance/
+```
+
+### docs validate-frontmatter
+
+Parses YAML frontmatter and enforces a per-area required-field schema. Software-engineering docs require `title`, `description`, `category=software`, `subcategory`, `tags`; governance docs require at least `title`.
+
+```bash
+rhino-cli docs validate-frontmatter
+```
+
+### docs validate-heading-hierarchy
+
+Tokenizes `.md` heading lines and enforces exactly one H1 per file and no skipped levels. Code fences are excluded from heading detection.
+
+```bash
+rhino-cli docs validate-heading-hierarchy
+```
+
+### agents detect-duplication
+
+Reads all `.claude/agents/*.md` and `.claude/skills/*/SKILL.md`, strips frontmatter, normalizes whitespace, and reports any 10-line verbatim window appearing in 2+ files. Heading-only and whitespace-only windows are excluded.
+
+```bash
+rhino-cli agents detect-duplication
+```
+
+### repo-governance audit
+
+Orchestrator. Invokes all 11 deterministic categories above in fixed order and emits a single JSON envelope (`schema: "rhino-cli/repo-governance-audit/v1"`) with canonical key order. Supports `--skip <category>` and `--include-category <name>` repeatable filters. Verified byte-deterministic given a fixed clock.
+
+```bash
+# Full audit, JSON output captured for the AI checker
+rhino-cli repo-governance audit -o json > generated-reports/preflight.json
+
+# Run only one category
+rhino-cli repo-governance audit --include-category agents-md-size
+
+# Skip a noisy category
+rhino-cli repo-governance audit --skip emoji-audit
+```
+
 ## Help Commands
 
 ```bash
@@ -1314,6 +1421,15 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.16.0 (2026-05-12)
+
+- Added 11 deterministic governance audit commands: `repo-governance agents-md-size`, `repo-governance frontmatter-audit`, `repo-governance traceability-audit`, `repo-governance license-audit`, `repo-governance readme-index-audit`, `repo-governance emoji-audit`, `repo-governance layer-coherence`, `docs validate-naming`, `docs validate-frontmatter`, `docs validate-heading-hierarchy`, `agents detect-duplication`. Each emits text/JSON/markdown via `internal/cliout.Dispatcher[T]` + `cliout.Envelope[T]`.
+- Added orchestrator `repo-governance audit`: invokes all 11 deterministic categories in fixed order, aggregates into a single `AuditEnvelope` JSON with canonical key order (schema `rhino-cli/repo-governance-audit/v1`). Verified byte-deterministic via 10-run SHA-256 gate.
+- Added 12 Nx cached targets under `apps/rhino-cli/project.json`: `validate:agents-md-size`, `validate:frontmatter-audit`, `validate:traceability-audit`, `validate:license-audit`, `validate:readme-index-audit`, `validate:emoji-audit`, `validate:layer-coherence`, `validate:docs-validate-naming`, `validate:docs-validate-frontmatter`, `validate:docs-validate-heading-hierarchy`, `validate:agents-detect-duplication`, `validate:repo-governance-audit`. Each declares precise input globs for build-system cache invalidation.
+- Wired into `repo-governance/workflows/repo/repo-rules-quality-gate.md` as the new Step 0.5 "Deterministic Preflight": the AI checker (`repo-rules-checker`) now consumes the orchestrator's JSON envelope and skips deterministic categories on the AI-side path, reserving its tokens for AI-only categories (paraphrased duplication, contradictions, terminology alignment, semantic principle-appropriateness).
+- 12 new Gherkin feature files under `specs/apps/rhino/behavior/cli/gherkin/` with full unit + integration test coverage; `nx run rhino-cli:spec-coverage` covers all 33 specs, 209+ scenarios.
+- New convention page `repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md` documenting the split, the JSON envelope contract, and the rule for adding new categories.
 
 ### v0.15.0 (2026-05-11)
 
