@@ -350,8 +350,13 @@ The PR quality gate (`.github/workflows/pr-quality-gate.yml`) already routes `la
   - **Web Sites** section: add an "ose-grc-web" subsection at the end (after `wahidyankf-web`) mirroring the organiclever-web subsection. Mark URL as "TBD (no Vercel project yet)".
   - _Suggested executor: `readme-maker`_
 
-- [ ] Edit `plans/in-progress/README.md`: append a new bullet under "Active Plans":
-      `- [ose-grc-bootstrap](./ose-grc-bootstrap/README.md) — Scaffold ose-grc-web, ose-grc-web-e2e, ose-grc-be, ose-grc-be-e2e (Next.js 16 FE + F#/Giraffe BE + Playwright-BDD E2E + DDD specs + CI workflows)`
+- [ ] Edit `plans/in-progress/README.md`: append a new bullet under "Active Plans" with the form:
+
+  ```markdown
+  - [ose-grc-bootstrap](./ose-grc-bootstrap/README.md) — Scaffold ose-grc-web, ose-grc-web-e2e, ose-grc-be, ose-grc-be-e2e (Next.js 16 FE + F#/Giraffe BE + Playwright-BDD E2E + DDD specs + CI workflows)
+  ```
+
+  The link resolves correctly when authored inside `plans/in-progress/README.md` itself.
 
 - [ ] Verify: `grep -c 'ose-grc' AGENTS.md` returns ≥ 8 (apps catalog ×4 + project tree ×4 + web-sites section). `grep -c 'ose-grc-bootstrap' plans/in-progress/README.md` returns ≥ 1.
 
