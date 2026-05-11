@@ -4,10 +4,10 @@ Docker Compose setup for running the full OrganicLever stack locally.
 
 ## Services
 
-| Service          | Port | Description                 |
-| ---------------- | ---- | --------------------------- |
-| organiclever-be  | 8202 | F#/Giraffe REST API backend |
-| organiclever-web | 3200 | Next.js 16 frontend         |
+| Service          | Port | Description                       |
+| ---------------- | ---- | --------------------------------- |
+| organiclever-be  | 8202 | Java/Spring Boot REST API backend |
+| organiclever-web | 3200 | Next.js 16 frontend               |
 
 ## Quick Start
 

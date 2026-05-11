@@ -1,5 +1,5 @@
 name: "Install Language Dependencies"
-description: "Install language-specific dependencies needed before build/lint/test (.NET restore for retained F# backends)"
+description: "Install language-specific dependencies needed before build/lint/test"
 inputs:
   language:
     required: true
@@ -7,14 +7,10 @@ inputs:
   backend-name:
     required: false
     default: ""
-    description: "Backend project name (used to scope dependency installation for .NET projects)"
+    description: "Backend project name (used to scope dependency installation)"
 runs:
   using: "composite"
   steps:
-    - name: Restore .NET dependencies
-      if: inputs.language == 'dotnet'
+    - name: No-op
       shell: bash
-      run: |
-        if [ "${{ inputs.backend-name }}" = "organiclever-be" ]; then
-          dotnet restore apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj
-        fi
+      run: echo "No language-specific pre-install required"

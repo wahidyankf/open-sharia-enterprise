@@ -659,7 +659,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 > `git add infra/dev/organiclever/ .github/actions/install-language-deps/action.yml` — then commit:
 > `refactor(infra): update organiclever-be dev infra and CI for Java/Spring Boot`
 
-- [ ] Replace `infra/dev/organiclever/Dockerfile.be.dev` with Java/Spring Boot version (_New content_):
+- [x] Replace `infra/dev/organiclever/Dockerfile.be.dev` with Java/Spring Boot version (_New content_):
   - Base: `eclipse-temurin:25-jdk`
   - `RUN apt-get update && apt-get install -y curl maven && rm -rf /var/lib/apt/lists/*`
   - `WORKDIR /workspace`
@@ -667,18 +667,29 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   - Verify: `grep -q 'eclipse-temurin' infra/dev/organiclever/Dockerfile.be.dev` exits 0
     AND `grep -v 'dotnet\|aspnet\|ASPNET' infra/dev/organiclever/Dockerfile.be.dev` returns all lines
     (i.e., no dotnet references remain).
-- [ ] Update `infra/dev/organiclever/docker-compose.yml` — remove `ASPNETCORE_URLS` env var
+
+  > **Done** 2026-05-11 — Dockerfile.be.dev replaced with eclipse-temurin:25-jdk + apt maven. No dotnet refs.
+
+- [x] Update `infra/dev/organiclever/docker-compose.yml` — remove `ASPNETCORE_URLS` env var
       from the `organiclever-be` service (dotnet-specific; Java uses `server.port` in `application.yml`):
   - Verify: `grep -c 'ASPNETCORE_URLS' infra/dev/organiclever/docker-compose.yml` returns 0.
-- [ ] Update `.github/actions/install-language-deps/action.yml` — remove the `organiclever-be`
+
+  > **Done** 2026-05-11 — ASPNETCORE_URLS env var removed from docker-compose.yml.
+
+- [x] Update `.github/actions/install-language-deps/action.yml` — remove the `organiclever-be`
       dotnet-restore branch (the Java build handles deps via `mvn`; no separate pre-restore step needed):
   - Remove: the `if [ "${{ inputs.backend-name }}" = "organiclever-be" ]; then dotnet restore ...` block.
   - If the entire `Restore .NET dependencies` step becomes empty, remove that step entirely.
   - Verify: `grep -c 'OrganicLeverBe.fsproj' .github/actions/install-language-deps/action.yml`
     returns 0.
-- [ ] Update `infra/dev/organiclever/README.md` — change backend description from
+
+  > **Done** 2026-05-11 — dotnet-restore block removed; entire step replaced with no-op echo. No fsproj refs.
+
+- [x] Update `infra/dev/organiclever/README.md` — change backend description from
       "F#/Giraffe REST API backend" to "Java/Spring Boot REST API backend":
   - Verify: `grep -q 'Java/Spring Boot' infra/dev/organiclever/README.md` exits 0.
+
+  > **Done** 2026-05-11 — README updated: "F#/Giraffe REST API backend" → "Java/Spring Boot REST API backend".
 
 ---
 

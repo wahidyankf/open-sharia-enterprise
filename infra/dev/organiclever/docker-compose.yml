@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile.be.dev
     ports:
       - "8202:8202"
-    environment:
-      ASPNETCORE_URLS: "http://+:8202"
     volumes:
       - ../../../apps/organiclever-be:/workspace:rw
       - ../../../specs/apps/organiclever/behavior/be/gherkin:/specs/apps/organiclever/behavior/be/gherkin:ro

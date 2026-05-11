@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
+FROM eclipse-temurin:25-jdk
 
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y curl maven && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
 
-CMD ["dotnet", "watch", "run", "--project", "src/OrganicLeverBe/OrganicLeverBe.fsproj"]
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]
