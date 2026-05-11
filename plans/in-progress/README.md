@@ -6,7 +6,6 @@ Active project plans currently being worked on.
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
 - [ose-grc-bootstrap](./ose-grc-bootstrap/README.md) — Scaffold ose-grc-web (Next.js 16), ose-grc-be (F#/Giraffe), ose-grc-web-e2e, ose-grc-be-e2e with DDD specs, BDD smoke specs, OpenAPI contracts, docker-compose, CI workflows
-- [optimize-repo-rules-quality-gate-with-rhino-cli](./optimize-repo-rules-quality-gate-with-rhino-cli/README.md) — Push deterministic checks of repo-rules-quality-gate into rhino-cli so the AI checker handles only judgment-grade categories
 
 ## Instructions
 
