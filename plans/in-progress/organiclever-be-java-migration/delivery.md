@@ -548,7 +548,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 > `git add apps/organiclever-be/Dockerfile.integration` — then commit:
 > `refactor(organiclever-be): replace Dockerfile.integration for Java`
 
-- [ ] Replace `apps/organiclever-be/Dockerfile.integration` with Java/Maven version — using
+- [x] Replace `apps/organiclever-be/Dockerfile.integration` with Java/Maven version — using
       `ose-primer/apps/crud-be-java-springboot/Dockerfile.integration` as reference, replacing all
       references to `demobejasb` → `organicleverbe` and `crud-be-java-springboot` →
       `organiclever-be`:
@@ -558,13 +558,18 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
   - CMD: `mvn test -Pintegration -Dsurefire.failIfNoSpecifiedTests=false`
   - Verify: `docker build -f apps/organiclever-be/Dockerfile.integration .` exits 0
     (or equivalent check that the Dockerfile is syntactically valid).
-- [ ] Run `npx nx run organiclever-be:test:integration` — verify Docker runner exits 0:
+
+  > **Done** 2026-05-11 — Dockerfile.integration replaced: eclipse-temurin:25-jdk-alpine + apk maven, monorepo-root build context paths. `docker build` exits 0.
+
+- [x] Run `npx nx run organiclever-be:test:integration` — verify Docker runner exits 0:
 
   ```bash
   npx nx run organiclever-be:test:integration
   ```
 
   Verify: exits 0 and all integration test containers tear down cleanly.
+
+  > **Done** 2026-05-11 — test:integration exit 0; Docker container mvn BUILD SUCCESS, container torn down cleanly.
 
 ---
 

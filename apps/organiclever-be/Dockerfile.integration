@@ -1,37 +1,20 @@
 # Integration test runner
-# Build context is the monorepo root (../../ relative to this file).
-# This allows specs/ to be copied into the image so TickSpec can find feature files at build time.
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
+# Build context is the monorepo root (context: ../.. in docker-compose.integration.yml).
+# Specs are mounted at /specs via volume; pom.xml antrun resolves ${project.basedir}/../../specs = /specs.
+FROM eclipse-temurin:25-jdk-alpine
+RUN apk add --no-cache maven
 
 WORKDIR /build
 
-# Copy solution-level files first for dependency caching.
-# Paths are relative to the monorepo root (build context).
-COPY apps/organiclever-be/global.json .
-COPY apps/organiclever-be/dotnet-tools.json .
-COPY apps/organiclever-be/.editorconfig .
+# Copy pom.xml first for dependency caching.
+COPY apps/organiclever-be/pom.xml .
+RUN mvn dependency:go-offline -B -q
 
-# Copy project files for restore (before code to cache the restore layer).
-COPY apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj src/OrganicLeverBe/
-COPY apps/organiclever-be/tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj tests/OrganicLeverBe.Tests/
-
-# Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
-# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\organiclever\behavior\be\gherkin\**\*.feature
-# Going up 4 levels from /build/tests/OrganicLeverBe.Tests/ resolves to /specs/apps/organiclever/behavior/be/gherkin.
-COPY specs/apps/organiclever/behavior/be/gherkin /specs/apps/organiclever/behavior/be/gherkin
-
-# Restore dependencies (layer cache until project files change).
-RUN dotnet restore tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj
-
-# Copy source and test code
+# Copy source code and generated contracts.
 COPY apps/organiclever-be/src/ src/
-COPY apps/organiclever-be/tests/ tests/
+COPY apps/organiclever-be/generated-contracts/ generated-contracts/
 
-# Build the test project.
-RUN dotnet build tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj
-
-# Run integration-tagged tests in-process via WebApplicationFactory.
-# v0 has no external dependencies (no DB, no JWT, no auth); future tests that
-# need them should add the relevant compose service + env vars and document
-# them here.
-CMD ["dotnet", "test", "tests/OrganicLeverBe.Tests/OrganicLeverBe.Tests.fsproj", "--no-build", "--filter", "Category=Integration", "--logger", "console;verbosity=normal"]
+# Run integration tests.
+# Specs volume is mounted at /specs by docker-compose.integration.yml.
+# Maven antrun copies features from /specs/apps/organiclever/behavior/be/gherkin to test classpath.
+CMD ["sh", "-c", "mvn test -Pintegration -B -Dsurefire.failIfNoSpecifiedTests=false"]
