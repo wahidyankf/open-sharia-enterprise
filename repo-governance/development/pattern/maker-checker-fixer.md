@@ -164,14 +164,14 @@ Maker Agent (apps-ayokoding-web-general-maker):
 
 **Examples**:
 
-| Agent                                 | Validates                                       | Generates Report                                                |
-| ------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
-| repo-rules-checker                    | AGENTS.md, agents, conventions, documentation   | `repo-rules__{uuid-chain}__{timestamp}__audit.md`               |
-| apps-ayokoding-web-general-checker    | General Next.js content (frontmatter, links)    | `ayokoding-web__{uuid-chain}__{timestamp}__audit.md`            |
-| apps-ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
-| docs-tutorial-checker                 | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{uuid-chain}__{timestamp}__audit.md`            |
-| apps-oseplatform-web-content-checker  | Platform content (structure, formatting, links) | `oseplatform-web__{uuid-chain}__{timestamp}__audit.md`          |
-| readme-checker                        | README engagement, accessibility, jargon        | `readme__{uuid-chain}__{timestamp}__audit.md`                   |
+| Agent                                 | Validates                                                                                                                                        | Generates Report                                                |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| repo-rules-checker                    | AGENTS.md, agents, conventions, documentation (preflight JSON consumed; report has `## Deterministic Findings` + `## AI-Only Findings` sections) | `repo-rules__{uuid-chain}__{timestamp}__audit.md`               |
+| apps-ayokoding-web-general-checker    | General Next.js content (frontmatter, links)                                                                                                     | `ayokoding-web__{uuid-chain}__{timestamp}__audit.md`            |
+| apps-ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)                                                                                                     | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
+| docs-tutorial-checker                 | Tutorial pedagogy, narrative flow, visual aids                                                                                                   | `docs-tutorial__{uuid-chain}__{timestamp}__audit.md`            |
+| apps-oseplatform-web-content-checker  | Platform content (structure, formatting, links)                                                                                                  | `oseplatform-web__{uuid-chain}__{timestamp}__audit.md`          |
+| readme-checker                        | README engagement, accessibility, jargon                                                                                                         | `readme__{uuid-chain}__{timestamp}__audit.md`                   |
 
 **Note on Report File Naming**: The `__` (double underscore) in report filenames (e.g., `readme__{timestamp}__audit.md`) is the **report file naming separator** defined in the [Temporary Files Convention](../infra/temporary-files.md), separating agent-family prefix, UUID chain, and timestamp. This is NOT an old agent name - it is the standard 4-part pattern: `{agent-family}__{uuid-chain}__{timestamp}__{type}.md`.
 
