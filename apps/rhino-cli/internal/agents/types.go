@@ -93,6 +93,17 @@ type ValidationCheck struct {
 	Message  string
 }
 
+// StatusValue parses the Status string into a typed Status enum value.
+// Returns StatusFailed when the string is not a recognized status so that
+// callers using type-switch always produce safe output.
+func (c ValidationCheck) StatusValue() Status {
+	s, err := ParseStatus(c.Status)
+	if err != nil {
+		return StatusFailed{}
+	}
+	return s
+}
+
 // ---- Claude validation types (from former internal/claude) ----
 
 // ClaudeAgentFull represents a complete Claude Code agent with all required fields.

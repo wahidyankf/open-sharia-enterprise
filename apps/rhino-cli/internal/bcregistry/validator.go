@@ -298,18 +298,14 @@ func detectOrphanFiles(root string, registered map[string]bool, kind, notReason 
 func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context, sev severity.Severity) []Finding {
 	var findings []Finding
 
-	// asymmetricKinds require a reciprocal entry.
-	// anticorruption-layer and open-host-service are intentionally one-way; not in this map.
-	asymmetricKinds := map[string]bool{
-		"customer-supplier": true,
-		"conformist":        true,
-		"partnership":       true, // Fix #10 — must be reciprocal
-		"shared-kernel":     true, // Fix #10 — must be reciprocal
-	}
-
 	for _, ctx := range reg.Contexts {
 		for _, rel := range ctx.Relationships {
-			if !asymmetricKinds[rel.Kind] {
+			kind, err := ParseRelationshipKind(rel.Kind)
+			if err != nil {
+				// Unknown kinds are reported by checkRelationshipKinds; skip here.
+				continue
+			}
+			if !kind.IsAsymmetric() {
 				continue
 			}
 			target, ok := contextByName[rel.To]
@@ -349,18 +345,9 @@ func hasReciprocal(ctx *Context, sourceName, kind string) bool {
 func checkRelationshipKinds(reg *Registry, sev severity.Severity) []Finding {
 	var findings []Finding
 
-	knownKinds := map[string]bool{
-		"customer-supplier":    true,
-		"conformist":           true,
-		"partnership":          true,
-		"shared-kernel":        true,
-		"anticorruption-layer": true,
-		"open-host-service":    true,
-	}
-
 	for _, ctx := range reg.Contexts {
 		for _, rel := range ctx.Relationships {
-			if !knownKinds[rel.Kind] {
+			if _, err := ParseRelationshipKind(rel.Kind); err != nil {
 				findings = append(findings, Finding{
 					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf("unknown relationship kind %q in %q → %q", rel.Kind, ctx.Name, rel.To),

@@ -258,12 +258,12 @@ func FormatValidationText(result *ValidationResult, verbose, quiet bool) string 
 	if verbose {
 		sb.WriteString("\nAll Checks:\n")
 		for _, check := range result.Checks {
-			switch check.Status {
-			case "passed":
+			switch check.StatusValue().(type) {
+			case StatusPassed:
 				_, _ = fmt.Fprintf(&sb, "  ✓ %s\n", check.Name)
-			case "warning":
+			case StatusWarning:
 				_, _ = fmt.Fprintf(&sb, "  ⚠ %s\n", check.Name)
-			default:
+			case StatusFailed:
 				_, _ = fmt.Fprintf(&sb, "  ❌ %s\n", check.Name)
 			}
 			if verbose && check.Message != "" {
@@ -382,12 +382,12 @@ func FormatValidationMarkdown(result *ValidationResult, verbose bool) string {
 	if verbose {
 		sb.WriteString("## All Checks\n\n")
 		for _, check := range result.Checks {
-			switch check.Status {
-			case "passed":
+			switch check.StatusValue().(type) {
+			case StatusPassed:
 				_, _ = fmt.Fprintf(&sb, "- ✓ %s", check.Name)
-			case "warning":
+			case StatusWarning:
 				_, _ = fmt.Fprintf(&sb, "- ⚠ %s", check.Name)
-			default:
+			case StatusFailed:
 				_, _ = fmt.Fprintf(&sb, "- ❌ %s", check.Name)
 			}
 			if check.Message != "" {

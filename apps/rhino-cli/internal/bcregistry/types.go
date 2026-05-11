@@ -73,6 +73,18 @@ type Relationship struct {
 	Role string `yaml:"role"`
 }
 
+// KindValue parses the Kind string into a typed RelationshipKind enum.
+// Returns an error when the Kind string is not a recognized value.
+func (r Relationship) KindValue() (RelationshipKind, error) {
+	return ParseRelationshipKind(r.Kind)
+}
+
+// RoleValue parses the Role string into a typed RelationshipRole enum.
+// Returns an error when the Role string is not a recognized value.
+func (r Relationship) RoleValue() (RelationshipRole, error) {
+	return ParseRelationshipRole(r.Role)
+}
+
 // Finding is one validation finding produced by Validate.
 type Finding struct {
 	File     string
