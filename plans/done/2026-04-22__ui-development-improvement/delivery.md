@@ -385,7 +385,7 @@ flowchart TD
     A[1.1 Document UI Conventions]
     B[1.2 Create UI Skill]
     C[1.3 Create Agent Trio]
-    D[1.4 Create Quality Gate Workflow]
+    D[1.4 Quality Gate\nWorkflow]
     D2[1.5 Add Prettier Plugin]
     A --> B
     A --> D2
@@ -418,7 +418,7 @@ flowchart TD
     P[4.2 Write Stories]
     Q[4.3 Add Nx Targets]
     R[4.4 JSDoc Documentation]
-    S[4.5 Migrate organiclever-web Storybook]
+    S[4.5 Migrate\norganiclever Storybook]
     M[3.3 Visual Regression]
     O --> P
     O --> Q

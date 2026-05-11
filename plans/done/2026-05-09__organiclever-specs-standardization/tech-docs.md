@@ -14,17 +14,17 @@ The output of this plan — `specs/apps/organiclever/` — has a different audie
 flowchart LR
     subgraph Before["BEFORE — content drift + flat-root spec tree"]
         direction TB
-        appWebBefore["apps/organiclever-web/README.md<br/>301 lines"]:::heavy
-        appBeBefore["apps/organiclever-be/README.md<br/>110 lines"]:::heavy
-        bcMapBefore["apps/organiclever-web/docs/<br/>explanation/bounded-context-map.md<br/>orphan"]:::heavy
-        specsBefore["specs/apps/organiclever/<br/>flat root: be/ web/ ddd/ c4/ contracts/<br/>(mixed orgs axes)"]:::heavy
+        appWebBefore["organiclever-web/README.md\n301 lines"]:::heavy
+        appBeBefore["organiclever-be/README.md\n110 lines"]:::heavy
+        bcMapBefore["docs/explanation/\nbounded-context-map.md\n(orphan)"]:::heavy
+        specsBefore["specs/apps/organiclever/\nflat root: be/ web/ ddd/\nc4/ contracts/"]:::heavy
     end
 
     subgraph After["AFTER — thin app READMEs + C4-aware spec tree"]
         direction TB
-        appWebAfter["apps/organiclever-web/README.md<br/>≤ 120 lines · dev-runtime only"]:::light
+        appWebAfter["organiclever-web/README.md\n≤ 120 lines · dev-runtime only"]:::light
         appBeAfter["apps/organiclever-be/README.md<br/>≤ 120 lines · dev-runtime only"]:::light
-        specsAfter["specs/apps/organiclever/<br/>──────────────────────<br/>product/         (PM-first)<br/>system-context/  (C4 L1)<br/>containers/      (C4 L2 + contracts/ + deployment.md)<br/>components/      (C4 L3 incl. ddd/)<br/>behavior/        (Gherkin, cross-cutting)"]:::canonical
+        specsAfter["specs/apps/organiclever/\nproduct/ (PM-first)\nsystem-context/ (C4 L1)\ncontainers/ (C4 L2)\ncomponents/ (C4 L3)\nbehavior/ (Gherkin)"]:::canonical
     end
 
     Before -.->|"trim READMEs<br/>+ git mv specs/<br/>+ rhino-cli paths<br/>+ Nx cache inputs"| After
@@ -38,32 +38,25 @@ flowchart LR
 
 ```mermaid
 %% Color palette: Blue #0173B2 | Teal #029E73 | Orange #DE8F05 | Gray #808080
-flowchart TD
-    Start(["Reading a paragraph<br/>in apps/organiclever-*/README.md"]):::start
-
-    Q1{"Does it answer<br/>'how do I run THIS<br/>checkout locally?'"}:::question
-    Q2{"Does it answer<br/>'what does the system do?'<br/>(behavior, contract,<br/>architecture, design intent)"}:::question
-    Q3{"Both?"}:::question
-
-    KeepApp["KEEP in app README<br/>(Category A — dev-runtime)"]:::keep
-    MoveSpec["MOVE to specs/<br/>(Category B — behavior/arch)"]:::move
-    Split["SPLIT —<br/>'how' part stays in app,<br/>'what' part moves to specs/<br/>+ one-line cross-link"]:::split
+flowchart LR
+    Start(["Paragraph\nin app README"]):::start
+    Q1{"How to run\nlocally?"}:::question
+    Q2{"System behavior\nor arch?"}:::question
+    KeepApp["Cat A: KEEP\nin app README"]:::keep
+    MoveSpec["Cat B: MOVE\nto specs/"]:::move
+    SplitOrDisc["Both → SPLIT\nNeither → discuss"]:::split
 
     Start --> Q1
     Q1 -->|Yes| KeepApp
     Q1 -->|No| Q2
-    Q2 -->|Yes| MoveSpec
-    Q2 -->|No, neither| Discuss["Surface as<br/>pilot-finding"]:::warn
-    Q2 -->|Yes, but also Q1| Q3
-    Q3 -->|Yes| Split
-    Q3 -->|No, only Q2| MoveSpec
+    Q2 -->|behavior| MoveSpec
+    Q2 -->|mixed| SplitOrDisc
 
     classDef start fill:#808080,stroke:#000,color:#FFF
     classDef question fill:#DE8F05,stroke:#000,color:#000
     classDef keep fill:#029E73,stroke:#000,color:#FFF
     classDef move fill:#0173B2,stroke:#000,color:#FFF
     classDef split fill:#0173B2,stroke:#000,color:#FFF,stroke-dasharray:4 2
-    classDef warn fill:#DE8F05,stroke:#000,color:#000,stroke-width:3px
 ```
 
 ## Content Split Rule

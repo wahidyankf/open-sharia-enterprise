@@ -26,16 +26,16 @@ The diagram below shows the phase ordering and the additive-before-subtractive c
 %% Color palette: Blue #0173B2 | Teal #029E73 | Orange #DE8F05 | Gray #808080
 flowchart TD
     Pre["Pre-flight<br/>baseline metrics<br/>discovery scans"]:::pre
-    P1["Phase 1 — scaffold tree<br/>create empty specs/apps/organiclever/<br/>{product,system-context,containers,<br/>components,behavior}/ + READMEs"]:::add
-    P2["Phase 2 — atomic reorg<br/>git mv old subfolders into new tree<br/>+ rhino-cli path constant<br/>+ Nx project.json paths<br/>+ 16 step files<br/>+ e2e configs<br/>(ONE commit, tests pass after)"]:::big
-    P25["Phase 2.5 — deepen UL glossary<br/>per-term H3 sections in<br/>9 ubiquitous-language/&lt;bc&gt;.md files<br/>+ README authoring rule 6<br/>(FR-16, separate commit)"]:::add
-    P3["Phase 3 — additive content<br/>create new files at final tree positions:<br/>product/overview.md<br/>containers/deployment.md<br/>components/be/api.md<br/>components/web/architecture.md<br/>components/web/design-system.md<br/>components/web/routes-and-screens.md<br/>+ git mv BC map"]:::add
-    P4["Phase 4 — subtractive<br/>trim app READMEs<br/>(web, be, web-e2e, be-e2e)"]:::sub
-    P5["Phase 5 — subtractive<br/>trim infra/ READMEs<br/>(dev, k8s, staging, production)"]:::sub
-    P6["Phase 6 — governance<br/>repo-rules-maker:<br/>create app-readme-vs-specs.md<br/>rewrite specs-directory-structure.md<br/>update specs-checker/fixer/maker agents<br/>update specs-quality-gate workflow"]:::gov
-    P65["Phase 6.5 — rhino-cli<br/>add specs validate-tree/<br/>validate-counts/validate-links/<br/>validate-adoption + drift-routes/<br/>drift-endpoints/drift-contracts<br/>(deterministic offload, FR-14)"]:::rhinocli
-    P7["Phase 7 — sync<br/>.claude/skills/+agents → .opencode/"]:::sync
-    P8["Phase 8 — verify + push + archive<br/>FR-15 gate matrix · PM-readability<br/>repo-rules-checker · pilot-findings.md<br/>push origin main · GH Actions CI<br/>archive plan"]:::verify
+    P1["Phase 1 — scaffold tree<br/>empty specs/apps/organiclever/<br/>+ 5 dirs + READMEs"]:::add
+    P2["Phase 2 — atomic reorg<br/>git mv + rhino-cli paths<br/>+ Nx paths + step files<br/>(ONE commit, tests pass)"]:::big
+    P25["Phase 2.5 — deepen UL<br/>per-term H3 sections<br/>+ README rule 6 (FR-16)"]:::add
+    P3["Phase 3 — additive content<br/>new files: overview,<br/>deployment, api,<br/>architecture, routes<br/>+ git mv BC map"]:::add
+    P4["Phase 4 — subtractive<br/>trim app READMEs<br/>(web, be, e2e)"]:::sub
+    P5["Phase 5 — subtractive<br/>trim infra/ READMEs<br/>(dev, k8s, staging, prod)"]:::sub
+    P6["Phase 6 — governance<br/>app-readme-vs-specs.md<br/>specs-directory-structure<br/>agents + quality-gate"]:::gov
+    P65["Phase 6.5 — rhino-cli<br/>specs validate-tree/<br/>validate-counts/links/<br/>adoption (FR-14)"]:::rhinocli
+    P7["Phase 7 — sync<br/>.claude/skills → .opencode/"]:::sync
+    P8["Phase 8 — verify + archive<br/>FR-15 gate · PM-readability<br/>repo-rules-checker<br/>push + CI + archive"]:::verify
 
     Pre --> P1
     P1 --> P2

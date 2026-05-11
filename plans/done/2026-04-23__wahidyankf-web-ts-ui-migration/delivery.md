@@ -7,14 +7,18 @@
 <!-- Uses colors: Orange #DE8F05 (migration), Blue #0173B2 (dep/verify), Gray #808080 (setup), Teal #029E73 (verify) -->
 
 ```mermaid
-graph LR
-    setup["Env Setup"]:::gray
-    p1["Phase 1<br/>ts-ui dep"]:::blue
-    p2["Phase 2<br/>HighlightText"]:::orange
-    p3["Phase 3<br/>ScrollToTop"]:::orange
-    p4["Phase 4<br/>SearchComponent"]:::orange
-    p5["Phase 5<br/>ThemeToggle"]:::orange
-    p6["Phase 6<br/>Verify"]:::teal
+graph TD
+    subgraph Setup["Setup"]
+        setup["Env Setup"]:::gray
+        p1["Phase 1\nts-ui dep"]:::blue
+    end
+    subgraph Migration["Migration Phases"]
+        p2["Phase 2\nHighlightText"]:::orange
+        p3["Phase 3\nScrollToTop"]:::orange
+        p4["Phase 4\nSearchComponent"]:::orange
+        p5["Phase 5\nThemeToggle"]:::orange
+    end
+    p6["Phase 6\nVerify"]:::teal
 
     setup --> p1 --> p2 --> p3 --> p4 --> p5 --> p6
 
@@ -30,14 +34,18 @@ after push; deploy runs automatically when CI is green and changes detected:
 <!-- Uses colors: Blue #0173B2 (local), Purple #CC78BC (CI/push), Teal #029E73 (prod), Brown #CA9161 (archive) -->
 
 ```mermaid
-graph LR
-    lqa["Local QA"]:::blue
-    commit["Atomic Commit<br/>Phases 2-5"]:::blue
-    ui["Manual UI<br/>Verify"]:::blue
-    push["Push to main"]:::purple
-    ci["GitHub Actions<br/>CI trigger"]:::purple
-    deploy["Deploy<br/>prod branch"]:::teal
-    smoke["Prod Smoke<br/>Test"]:::teal
+graph TD
+    subgraph Local["Local"]
+        lqa["Local QA"]:::blue
+        commit["Atomic Commit\nPhases 2-5"]:::blue
+        ui["Manual UI\nVerify"]:::blue
+    end
+    subgraph Remote["Remote"]
+        push["Push to main"]:::purple
+        ci["GitHub Actions\nCI trigger"]:::purple
+        deploy["Deploy\nprod branch"]:::teal
+        smoke["Prod Smoke\nTest"]:::teal
+    end
     archive["Plan Archival"]:::brown
 
     lqa --> commit --> ui --> push --> ci --> deploy --> smoke --> archive

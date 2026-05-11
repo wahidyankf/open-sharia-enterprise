@@ -104,238 +104,27 @@ duplication, inconsistent patterns, and undocumented conventions.
 
 ```mermaid
 flowchart TD
-    subgraph local["Local (Git Hooks)"]
-        direction LR
-        subgraph precommit["pre-commit (rhino-cli, 9 steps)"]
-            PC1["1. Validate .claude/.opencode config"]
-            PC2["2. Validate docker-compose files"]
-            PC3["3. nx affected run-pre-commit (warn only)"]
-            PC4["4. Stage ayokoding-web content"]
-            PC5["5. lint-staged (Prettier, gofmt, mix format)"]
-            PC6["6. Sync app package-lock.json"]
-            PC7["7. Validate docs file naming"]
-            PC8["8. Validate markdown links"]
-            PC9["9. Lint all markdown"]
-            PC1 --> PC2 --> PC3 --> PC4 --> PC5 --> PC6 --> PC7 --> PC8 --> PC9
-        end
-        CM["commit-msg (commitlint)"]
-        subgraph prepush["pre-push (nx affected, parallel)"]
-            PPT["typecheck"]
-            PPL["lint"]
-            PPQ["test:quick"]
-        end
-        PPM["lint:md (sequential, after nx affected)"]
-        precommit --> CM --> prepush --> PPM
-    end
+    local["Local Git Hooks\npre-commit (9 steps)\ncommit-msg + pre-push"]
+    pr["PR Workflows\npr-quality-gate (monolithic)\npr-format + pr-validate-links"]
+    scheduled["Scheduled Workflows\n11 BE + 3 FE + 1 FS tests\ntest-organiclever"]
+    deploy["Test & Deploy\nayokoding-web\noseplatform-web"]
+    codecov["Coverage Upload\n27 reports on push to main"]
 
-    subgraph pr["PR Workflows (on pull_request)"]
-        direction LR
-        subgraph qg["pr-quality-gate.yml (monolithic)"]
-            direction LR
-            QGS["Setup: 13+ runtimes in single job<br/>(Go, Java 21+25, .NET 10, Elixir,<br/>Python, Rust, Flutter, Clojure CLI,<br/>Hugo, Node/Volta)"]
-            QGT["typecheck (affected)"]
-            QGL["lint (affected)"]
-            QGQ["test:quick (affected)"]
-            QGMD["lint:md"]
-            QGS --> QGT --> QGL --> QGQ --> QGMD
-        end
-        AF["pr-format.yml<br/>(Prettier, auto-commit)"]
-        VL["pr-validate-links.yml<br/>(rhino-cli docs validate-links)"]
-    end
-
-    subgraph scheduled["Scheduled Workflows (cron 2x daily + dispatch)"]
-        direction LR
-
-        subgraph be_tests["11 Backend Test Workflows (one file each)"]
-            direction LR
-            BEgo["golang-gin<br/>+ default FE"]
-            BEjava["java-springboot<br/>+ default FE"]
-            BEjv["java-vertx<br/>+ default FE"]
-            BEfs["fsharp-giraffe<br/>+ default FE"]
-            BEcs["csharp-aspnetcore<br/>+ default FE"]
-            BEkt["kotlin-ktor<br/>+ default FE"]
-            BEpy["python-fastapi<br/>+ default FE"]
-            BErs["rust-axum<br/>+ default FE"]
-            BEts["ts-effect<br/>+ default FE"]
-            BEex["elixir-phoenix<br/>+ default FE"]
-            BEcl["clojure-pedestal<br/>+ default FE"]
-        end
-
-        subgraph be_pattern["Each Backend: integration → e2e"]
-            INT["integration-tests<br/>(docker-compose + real DB)"]
-            E2E["e2e<br/>(docker-compose full stack<br/>+ Playwright BE & FE)"]
-            INT --> E2E
-        end
-
-        subgraph fe_tests["3 Frontend Test Workflows"]
-            direction LR
-            FEnx["fe-ts-nextjs<br/>+ default BE"]
-            FEts["fe-ts-tanstack-start<br/>+ default BE"]
-            FEdt["fe-dart-flutterweb<br/>+ default BE"]
-        end
-
-        subgraph fe_pattern["Each Frontend: e2e only"]
-            FEE2E["e2e<br/>(docker-compose + Playwright)"]
-        end
-
-        subgraph fs_test["1 Fullstack Workflow"]
-            FSts["fs-ts-nextjs<br/>(unit → e2e)"]
-        end
-
-        OL["test-organiclever.yml<br/>(be-integration + fe-integration<br/>→ e2e BE & FE)"]
-
-        be_tests -.-> be_pattern
-        fe_tests -.-> fe_pattern
-    end
-
-    subgraph deploy["Test & Deploy (cron + dispatch)"]
-        direction LR
-        subgraph aw["test-and-deploy-ayokoding-web.yml"]
-            AW_U["unit"]
-            AW_I["integration"]
-            AW_E["e2e (docker)"]
-            AW_D["detect-changes"]
-            AW_DEP["deploy → prod-ayokoding-web"]
-            AW_U & AW_I & AW_E & AW_D --> AW_DEP
-        end
-        subgraph ow["test-and-deploy-oseplatform-web.yml"]
-            OW_U["unit + typecheck + lint"]
-            OW_I["integration"]
-            OW_E["e2e (docker)"]
-            OW_D["detect-changes"]
-            OW_DEP["deploy → prod-oseplatform-web"]
-            OW_U & OW_I & OW_E & OW_D --> OW_DEP
-        end
-    end
-
-    subgraph codecov["Coverage (on push to main)"]
-        CC_S["Setup all 13+ runtimes"]
-        CC_CG["Codegen all contracts"]
-        CC_TC["typecheck (all, parallel)"]
-        CC_TQ["test:quick (all, parallel)"]
-        CC_UP["Upload 27 coverage reports<br/>(11 BE + 3 FE + 1 FS + 4 product<br/>+ 3 CLI + 3 libs + 2 content)"]
-        CC_S --> CC_CG --> CC_TC --> CC_TQ --> CC_UP
-    end
-
-    local --> pr
-    pr --> scheduled
-    scheduled --> deploy
-    deploy --> codecov
+    local --> pr --> scheduled --> deploy --> codecov
 ```
 
 ### Target CI Architecture (To-Be)
 
 ```mermaid
 flowchart TD
-    subgraph local["Local (Git Hooks)"]
-        direction LR
-        subgraph precommit_to["pre-commit (rhino-cli, streamlined)"]
-            PCS["lint-staged<br/>(9 languages:<br/>Prettier, gofmt, mix format,<br/>ruff, rustfmt, dotnet format,<br/>cljfmt, dart format)"]
-            PCO["config validation +<br/>markdown checks"]
-        end
-        CM_TO["commit-msg<br/>(commitlint)"]
-        subgraph prepush_to["pre-push (nx affected, cacheable)"]
-            PPT_TO["typecheck"]
-            PPL_TO["lint"]
-            PPQ_TO["test:quick<br/>(+ coverage)"]
-            PPS_TO["spec-coverage"]
-            PPM_TO["lint:md"]
-        end
-        precommit_to --> CM_TO --> prepush_to
-    end
+    local["Local Git Hooks\npre-commit + commit-msg\npre-push (cacheable)"]
+    actions["Reusable GH Actions\n11 composite setup-*\n3 reusable workflows"]
+    pr["PR Workflows\nquality-gate (lang-scoped)\nformat + validate-links"]
+    scheduled["Scheduled Workflows\n11 BE + 3 FE + 1 FS\ntest-organiclever"]
+    deploy["Test & Deploy\nayokoding-web\noseplatform-web"]
+    codecov_to["Coverage Upload\n27 reports on push"]
 
-    subgraph actions["Reusable GitHub Actions (DRY building blocks)"]
-        direction LR
-        subgraph composites["Composite Actions (setup-*)"]
-            direction LR
-            CA1["setup-golang"]
-            CA2["setup-jvm"]
-            CA3["setup-dotnet"]
-            CA4["setup-python"]
-            CA5["setup-rust"]
-            CA6["setup-elixir"]
-            CA7["setup-node"]
-            CA8["setup-flutter"]
-            CA9["setup-clojure"]
-            CA10["setup-dart"]
-            CA11["setup-hugo"]
-        end
-        subgraph reusables["Reusable Workflows"]
-            direction LR
-            RW1["backend-test.yml<br/>(5-track: lint, typecheck,<br/>test:quick, spec-coverage,<br/>integration → e2e)"]
-            RW2["frontend-test.yml<br/>(lint, typecheck,<br/>test:quick, e2e)"]
-            RW3["test-and-deploy.yml<br/>(unit, integration, e2e,<br/>detect-changes → deploy)"]
-        end
-    end
-
-    subgraph pr["PR Workflows (on pull_request)"]
-        direction LR
-        subgraph qg_to["pr-quality-gate.yml (parallel, language-scoped)"]
-            direction LR
-            QG_DET["detect affected<br/>languages"]
-            QG_GO["Go jobs"]
-            QG_JVM["JVM jobs"]
-            QG_NET[".NET jobs"]
-            QG_PY["Python jobs"]
-            QG_RS["Rust jobs"]
-            QG_EX["Elixir jobs"]
-            QG_TS["Node/TS jobs"]
-            QG_FL["Flutter jobs"]
-            QG_CLJ["Clojure jobs"]
-            QG_DET --> QG_GO & QG_JVM & QG_NET & QG_PY & QG_RS & QG_EX & QG_TS & QG_FL & QG_CLJ
-        end
-        AF_TO["pr-format.yml"]
-        VL_TO["pr-validate-links.yml"]
-    end
-
-    subgraph scheduled["Scheduled Workflows (cron 2x daily + dispatch)"]
-        direction LR
-
-        subgraph be_wf["11 Backend Workflows (one file each, calls reusable)"]
-            direction LR
-            BEgo_to["golang-gin<br/>+ default FE"]
-            BEjava_to["java-springboot<br/>+ default FE"]
-            BEjv_to["java-vertx<br/>+ default FE"]
-            BEfs_to["fsharp-giraffe<br/>+ default FE"]
-            BEcs_to["csharp-aspnetcore<br/>+ default FE"]
-            BEkt_to["kotlin-ktor<br/>+ default FE"]
-            BEpy_to["python-fastapi<br/>+ default FE"]
-            BErs_to["rust-axum<br/>+ default FE"]
-            BEts_to["ts-effect<br/>+ default FE"]
-            BEex_to["elixir-phoenix<br/>+ default FE"]
-            BEcl_to["clojure-pedestal<br/>+ default FE"]
-        end
-
-        subgraph fe_wf["3 Frontend Workflows (one file each, calls reusable)"]
-            direction LR
-            FEnx_to["fe-ts-nextjs<br/>+ default BE"]
-            FEts_to["fe-ts-tanstack-start<br/>+ default BE"]
-            FEdt_to["fe-dart-flutterweb<br/>+ default BE"]
-        end
-
-        subgraph fs_wf["1 Fullstack Workflow"]
-            FSts_to["fs-ts-nextjs"]
-        end
-
-        OL_TO["test-organiclever"]
-    end
-
-    subgraph deploy["Test & Deploy (cron + dispatch)"]
-        direction LR
-        AW_TO["test-and-deploy-ayokoding-web<br/>(calls reusable)"]
-        OW_TO["test-and-deploy-oseplatform-web<br/>(calls reusable)"]
-    end
-
-    subgraph codecov_to["Coverage (on push to main)"]
-        CC_TO["codecov-upload<br/>(uses composite actions,<br/>all projects, 27 reports)"]
-    end
-
-    composites --> reusables
-    be_wf --> RW1
-    fe_wf --> RW2
-    deploy --> RW3
-    qg_to --> composites
-
+    actions --> pr
     local --> pr
     pr --> scheduled
     scheduled --> deploy

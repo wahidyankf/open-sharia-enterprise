@@ -194,23 +194,16 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    subgraph Startup["Startup Phase"]
-        CM[CLAUDE.md]:::teal
-    end
-
-    subgraph Runtime["Runtime Phase"]
-        O[Orchestrator<br/>main conversation]:::blue
-        A1[Agent A<br/>isolated context]:::purple
-        A2[Agent B<br/>isolated context]:::purple
-        S1[Skills<br/>via skills: field]:::orange
-        S2[Skills<br/>via skills: field]:::orange
-    end
+    CM[CLAUDE.md]:::teal
+    O[Orchestrator\nmain conversation]:::blue
+    A1[Agent A\nisolated context]:::purple
+    A2[Agent B\nisolated context]:::purple
 
     CM -->|loaded at startup| O
     O -->|spawns| A1
     O -->|spawns| A2
-    S1 -.->|delivers to| A1
-    S2 -.->|delivers to| A2
+    A1 -. Skills A\nvia skills: field .-> A1
+    A2 -. Skills B\nvia skills: field .-> A2
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px

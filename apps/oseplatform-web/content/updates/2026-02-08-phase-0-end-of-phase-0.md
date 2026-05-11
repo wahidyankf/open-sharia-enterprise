@@ -32,9 +32,9 @@ Phase 1 is different. It's about solidifying infrastructure and gaining developm
 ```mermaid
 %% Color Palette: Blue #0173B2 (weeks 1-8), Teal #029E73 (weeks 9-10), Orange #DE8F05 (weeks 11-12)
 graph LR
-    W18["Weeks 1-8: Foundation - 437 commits"]:::w18
-    W910["Weeks 9-10: Infrastructure Maturity"]:::w910
-    W1112["Weeks 11-12: Final Sprint - 431 commits"]:::w1112
+    W18["Weeks 1-8: Foundation\n437 commits"]:::w18
+    W910["Weeks 9-10:\nInfrastructure Maturity"]:::w910
+    W1112["Weeks 11-12: Final Sprint\n431 commits"]:::w1112
 
     W18 --> W910 --> W1112
 
@@ -96,12 +96,12 @@ Week 8 marked the shift from exploration to production-ready systems. The six-la
 %% Color Palette: Gray #808080 (vision/skills), Blue #0173B2 (principles), Orange #DE8F05 (conventions), Teal #029E73 (development), Purple #CC78BC (agents), Brown #CA9161 (workflows)
 graph TD
     L0["Layer 0: Vision - WHY we exist"]:::vision
-    L1["Layer 1: Principles - WHY we value approaches"]:::principles
-    L2["Layer 2: Conventions - WHAT rules apply"]:::conventions
-    L3["Layer 3: Development - HOW we build"]:::development
-    L4["Layer 4: AI Agents - WHO enforces"]:::agents
-    L5["Layer 5: Workflows - WHEN we execute"]:::workflows
-    SK["Skills: Delivery Infrastructure"]:::skills
+    L1["L1: Principles\nWHY we value approaches"]:::principles
+    L2["L2: Conventions\nWHAT rules apply"]:::conventions
+    L3["L3: Development\nHOW we build"]:::development
+    L4["L4: AI Agents\nWHO enforces"]:::agents
+    L5["L5: Workflows\nWHEN we execute"]:::workflows
+    SK["Skills:\nDelivery Infrastructure"]:::skills
 
     L0 --> L1
     L1 --> L2

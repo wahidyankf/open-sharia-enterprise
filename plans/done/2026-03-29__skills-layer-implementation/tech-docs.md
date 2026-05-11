@@ -6,18 +6,17 @@
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    L0[Layer 0: Vision<br/>WHY WE EXIST]
-    L1[Layer 1: Principles<br/>WHY - Values]
-    L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-    L3[Layer 3: Development<br/>HOW - Software Practices]
-    L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
-    L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+graph LR
+    L0[L0: Vision\nWHY WE EXIST]
+    L1[L1: Principles\nWHY - Values]
+    L2[L2: Conventions\nWHAT - Doc Rules]
+    L3[L3: Development\nHOW - Practices]
+    L4[L4: AI Agents\nWHO - Executors]
+    L5[L5: Workflows\nWHEN - Orchestration]
 
     L0 -->|inspires| L1
     L1 -->|governs| L2
     L1 -->|governs| L3
-    L2 -->|governs| L3
     L2 -->|governs| L4
     L3 -->|governs| L4
     L4 -->|orchestrated by| L5
@@ -37,28 +36,24 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 %% This diagram shows how knowledge flows from source layers through delivery infrastructure to agents
-graph TD
-    subgraph Governance[Governance Layers - Define Rules]
-        L2[L2: Conventions<br/>WHAT rules to follow]
-        L3[L3: Development<br/>HOW to implement]
-        L4[L4: Agents<br/>WHO executes tasks]
+graph LR
+    subgraph Governance["Governance"]
+        direction TB
+        L2[L2: Conventions\nWHAT rules]
+        L3[L3: Development\nHOW to implement]
     end
 
-    subgraph Delivery[Delivery Infrastructure - Transport Knowledge]
-        CM[CLAUDE.md<br/>Always loaded at startup]
-        SK[Skills<br/>Auto-loaded when needed]
-        DR[Direct References<br/>Explicit links in prompts]
+    subgraph Delivery["Delivery Infra"]
+        direction TB
+        CM[CLAUDE.md\nAlways loaded]
+        SK[Skills\nAuto-loaded]
+        DR[Direct Refs\nExplicit links]
     end
 
-    L2 -->|packages rules into| CM
-    L2 -->|packages rules into| SK
-    L2 -->|links to| DR
-    L3 -->|packages practices into| CM
-    L3 -->|packages practices into| SK
-    L3 -->|links to| DR
-    CM -->|delivers knowledge to| L4
-    SK -->|delivers knowledge to| L4
-    DR -->|delivers knowledge to| L4
+    L4[L4: Agents\nWHO executes]
+
+    Governance -->|packages into| Delivery
+    CM & SK & DR -->|delivers to| L4
 
     style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -84,39 +79,30 @@ This diagram shows the full six-layer governance architecture with Skills as del
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 %% Complete architecture showing governance layers + delivery infrastructure
-graph TD
-    subgraph Governance[Six-Layer Governance Architecture - UNCHANGED]
-        L0[Layer 0: Vision<br/>WHY WE EXIST]
-        L1[Layer 1: Principles<br/>WHY - Foundational Values]
-        L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-        L3[Layer 3: Development<br/>HOW - Software Practices]
-        L4[Layer 4: AI Agents<br/>WHO - Task Executors]
-        L5[Layer 5: Workflows<br/>WHEN - Multi-Step Orchestration]
+graph LR
+    subgraph Governance["Six-Layer Governance (UNCHANGED)"]
+        direction TB
+        L0[L0: Vision\nWHY WE EXIST]
+        L1[L1: Principles\nWHY - Values]
+        L2[L2: Conventions\nWHAT - Doc Rules]
+        L3[L3: Development\nHOW - Practices]
+        L4[L4: AI Agents\nWHO - Executors]
+        L5[L5: Workflows\nWHEN - Orchestration]
+        L0 --> L1 --> L2
+        L1 --> L3
+        L2 --> L4
+        L3 --> L4
+        L4 --> L5
     end
 
-    subgraph Delivery[Delivery Infrastructure - NEW]
-        CM[CLAUDE.md<br/>Startup context, navigation]
-        SK[Skills<br/>On-demand deep knowledge]
-        DR[Direct References<br/>Explicit convention links]
+    subgraph Delivery["Delivery Infrastructure (NEW)"]
+        direction TB
+        CM[CLAUDE.md\nStartup context]
+        SK[Skills\nOn-demand knowledge]
+        DR[Direct References\nConvention links]
     end
 
-    L0 -->|inspires| L1
-    L1 -->|governs| L2
-    L1 -->|governs| L3
-    L2 -->|governs| L3
-
-    L2 -->|summarized in| CM
-    L2 -->|encoded in| SK
-    L2 -->|linked via| DR
-    L3 -->|summarized in| CM
-    L3 -->|encoded in| SK
-    L3 -->|linked via| DR
-
-    CM -->|always delivers to| L4
-    SK -->|auto-delivers to| L4
-    DR -->|explicitly delivers to| L4
-
-    L4 -->|orchestrated by| L5
+    Delivery -->|delivers to| L4
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -593,7 +579,7 @@ All work happens on `main` branch with small, frequent commits.
 %% Two-phase delivery with validation checkpoints
 graph TD
     Phase1[Phase 1: Foundation<br/>3 Skills + Infrastructure<br/>~8-12 commits]
-    Phase2[Phase 2: Knowledge Migration + Polish<br/>5-7 Skills + Agent Updates + Rules Components<br/>~25-30 commits]
+    Phase2[Phase 2: Knowledge Migration\n5-7 Skills + Agent Updates\n~25-30 commits]
 
     Phase1 -->|Validation checkpoint:<br/>Skills auto-load, structure valid| Phase2
     Phase2 -->|Final validation:<br/>wow__rules-checker passes| Complete[Skills Implementation Complete<br/>8-10 Skills, All agents have skills field]

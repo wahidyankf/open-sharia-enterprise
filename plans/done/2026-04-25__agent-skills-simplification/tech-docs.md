@@ -7,17 +7,28 @@
 The repository follows a six-layer governance architecture with Skills as delivery infrastructure (not a governance layer):
 
 ```mermaid
-graph TD
-    L0[Layer 0: Vision<br/>WHY we exist] -->|governs| L1[Layer 1: Principles<br/>WHY we value]
-    L1 -->|governs| L2[Layer 2: Conventions<br/>WHAT docs rules]
-    L1 -->|governs| L3[Layer 3: Development<br/>HOW we develop]
-    L2 -->|implemented by| L4[Layer 4: AI Agents<br/>WHO enforces]
-    L3 -->|implemented by| L4
-    L4 -->|orchestrated by| L5[Layer 5: Workflows<br/>WHEN multi-step]
+graph LR
+    subgraph Gov["Governance (top-down)"]
+        direction TB
+        L0[L0: Vision]
+        L1[L1: Principles]
+        L2[L2: Conventions]
+        L3[L3: Development]
+        L0 --> L1 --> L2
+        L1 --> L3
+    end
+    subgraph Del["Delivery (sideways)"]
+        direction TB
+        CLAUDE[CLAUDE.md]
+        SKILLS[Skills]
+        REFS[Direct Refs]
+    end
+    L4[L4: AI Agents]
+    L5[L5: Workflows]
 
-    CLAUDE[CLAUDE.md<br/>Navigation] -.delivers to.-> L4
-    SKILLS[Skills<br/>Progressive Knowledge] -.delivers to.-> L4
-    REFS[Direct References<br/>Specific Links] -.delivers to.-> L4
+    L2 & L3 -->|governs| L4
+    CLAUDE & SKILLS & REFS -.->|delivers to| L4
+    L4 -->|orchestrated by| L5
 
     style L0 fill:#0173B2,stroke:#000,color:#fff
     style L1 fill:#0173B2,stroke:#000,color:#fff
@@ -28,12 +39,6 @@ graph TD
     style CLAUDE fill:#CA9161,stroke:#000,color:#fff
     style SKILLS fill:#CA9161,stroke:#000,color:#fff
     style REFS fill:#CA9161,stroke:#000,color:#fff
-
-    classDef blue fill:#0173B2,stroke:#000,color:#fff
-    classDef teal fill:#029E73,stroke:#000,color:#fff
-    classDef purple fill:#CC78BC,stroke:#000,color:#fff
-    classDef orange fill:#DE8F05,stroke:#000,color:#000
-    classDef brown fill:#CA9161,stroke:#000,color:#fff
 ```
 
 **Key Insight**: Skills don't GOVERN agents (like Conventions do). Skills DELIVER knowledge to agents. Governance flows down (L0→L1→L2/L3→L4→L5). Delivery flows sideways (CLAUDE.md/Skills/Direct Refs → L4).

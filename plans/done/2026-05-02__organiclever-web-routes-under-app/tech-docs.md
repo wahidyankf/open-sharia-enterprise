@@ -47,7 +47,7 @@ flowchart LR
     P4["app/app/progress/page.tsx"]:::page
     P5["app/app/settings/page.tsx"]:::page
     P6["app/app/workout/page.tsx"]:::flow
-    P7["app/app/workout/finish/page.tsx"]:::flow
+    P7["app/app/workout/\nfinish/page.tsx"]:::flow
     P8["app/app/routines/edit/page.tsx"]:::flow
 
     L --> P1
@@ -59,9 +59,9 @@ flowchart LR
     L --> P7
     L --> P8
 
-    L --- LR["JournalRuntime + appMachine (overlay only)"]:::supporting
-    L --- LN["TabBar / SideNav (next/link)"]:::supporting
-    L --- LO["Overlay tree (AddEntrySheet, Loggers)"]:::supporting
+    L --- LR["JournalRuntime + appMachine\n(overlay only)"]:::supporting
+    L --- LN["TabBar / SideNav\n(next/link)"]:::supporting
+    L --- LO["Overlay tree\n(AddEntrySheet, Loggers)"]:::supporting
 
     classDef layout fill:#0173B2,stroke:#000,color:#FFF
     classDef page fill:#029E73,stroke:#000,color:#FFF

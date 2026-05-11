@@ -17,7 +17,7 @@ graph TD
     JwtUtil["JwtUtil<br/>(sign / validate JWT)"]:::blue
     AuthController["AuthController<br/>(/api/v1/auth)"]:::teal
     AuthService["AuthService"]:::teal
-    UserDetailsService["UserDetailsServiceImpl<br/>(implements UserDetailsService)"]:::teal
+    UserDetailsService["UserDetailsServiceImpl<br/>(impl. UserDetailsService)"]:::teal
     UserRepository["UserRepository<br/>(Spring Data JPA)"]:::purple
     DB[("PostgreSQL<br/>(dev/staging/prod)<br/>or H2 (test)")]:::brown
 

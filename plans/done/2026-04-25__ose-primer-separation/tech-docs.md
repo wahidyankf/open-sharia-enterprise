@@ -23,13 +23,13 @@ flowchart TD
     end
 
     subgraph primer_clone ["$OSE_PRIMER_CLONE (local clone)"]
-        primer_main["main branch (tracking origin/main)"]:::repo
+        primer_main["main branch\n(tracking origin/main)"]:::repo
         primer_branch["worktree branch (on demand)"]:::repo
     end
 
     subgraph reports ["generated-reports/ (ephemeral)"]
-        adoption_report["`repo-ose-primer-adoption-maker__<uuid>__<ts>__report.md`"]:::report
-        propagation_report["`repo-ose-primer-propagation-maker__<uuid>__<ts>__report.md`"]:::report
+        adoption_report["`adoption-maker\n__<uuid>__<ts>__report.md`"]:::report
+        propagation_report["`propagation-maker\n__<uuid>__<ts>__report.md`"]:::report
     end
 
     maintainer["`**Maintainer**

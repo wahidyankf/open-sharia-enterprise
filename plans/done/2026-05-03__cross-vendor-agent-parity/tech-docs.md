@@ -59,7 +59,7 @@ flowchart LR
     PX["Phase X\nConvention Amendment\n#40;BLOCKING for Phase 4#41;"]:::orange
     P4["Phase 4\nAGENTS.md / CLAUDE.md\nNeutrality Audit"]:::blue
     P5["Phase 5\nBehavioral-Parity\nInvariants"]:::teal
-    P6["Phase 6\nOperationalize Parity\n#40;agents + workflow + Nx + hook#41;"]:::purple
+    P6["Phase 6\nOperationalize Parity\n(agents+workflow+Nx)"]:::purple
     P7["Phase 7\nFinal Validation\n+ Archive"]:::blue
 
     P0 --> DEC

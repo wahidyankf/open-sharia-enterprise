@@ -1984,16 +1984,19 @@ Living documentation automatically generates specification documents from BDD sc
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-graph TD
-    A[Feature Files in Git] --> B[CI Pipeline]
-    B --> C[Run BDD Tests]
-    C --> D[Generate Spec JSON]
-    D --> E[Spec Generator Script]
-    E --> F[Structured Spec Docs]
-    F --> G[Publish to Wiki/Portal]
-    G --> H[Stakeholders Access Specs]
-    H --> I[Feedback Loop]
-    I --> A
+flowchart TD
+    A[Feature Files in Git]
+    B[CI Pipeline]
+    C[Run BDD Tests]
+    D[Generate Spec JSON]
+    E[Spec Generator Script]
+    F[Structured Spec Docs]
+    G[Publish to Wiki/Portal]
+    H[Stakeholders Access Specs]
+    I[Feedback Loop]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+    I -.->|back to source| A
 
     style A fill:#0173B2,stroke:#000,color:#fff
     style B fill:#DE8F05,stroke:#000,color:#000
@@ -3550,12 +3553,12 @@ Observability BDD verifies monitoring infrastructure correctly captures metrics,
 graph TD
     A[BDD Scenario Triggers Action] --> B[Service Under Test]
     B --> C[Emit Metric: request_count++]
-    B --> D[Write Log: INFO request processed]
+    B --> D[Write Log:\nINFO request processed]
     B --> E[Create Trace Span]
     C --> F[Prometheus Metrics Store]
     D --> G[Log Aggregator]
     E --> H[Distributed Trace Store]
-    F --> I[BDD Assertion: metric value correct]
+    F --> I[BDD Assertion:\nmetric value correct]
     G --> I
     H --> I
 

@@ -79,7 +79,7 @@ graph LR
     end
 
     PG["PGlite (WASM)<br/>browser-resident DB"]:::infra
-    XS["XState<br/>appMachine, workoutSessionMachine"]:::application
+    XS["XState\nappMachine,\nworkoutSessionMachine"]:::application
 
     J --> PG
     R --> PG

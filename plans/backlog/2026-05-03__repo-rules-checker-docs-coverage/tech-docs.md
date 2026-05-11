@@ -5,13 +5,13 @@
 The new validation logic lives entirely inside `.claude/agents/repo-rules-checker.md` [Repo-grounded] as an additional step in the existing Validation Process. No new agent files, no new workflow files, no new conventions — this is a single-agent extension.
 
 ```mermaid
-flowchart LR
-    A[repo-rules-checker invocation] --> B[Step 0: Initialize Report]
-    B --> C[Step 1: Core Repository Validation]
-    C --> D[Step 2-7: Existing checks]
-    D --> E[Step 8: Software Doc Validation]
-    E --> F[Step 8b NEW: Cross-Doc Rules Governance]
-    F --> G[Step 9: Finalize Report]
+flowchart TD
+    A[repo-rules-checker\ninvocation] --> B[Step 0:\nInitialize Report]
+    B --> C[Step 1:\nCore Validation]
+    C --> D[Steps 2-7:\nExisting checks]
+    D --> E[Step 8:\nSoftware Doc Validation]
+    E --> F[Step 8b NEW:\nCross-Doc Rules]
+    F --> G[Step 9:\nFinalize Report]
 
     style A fill:#0173B2,stroke:#000,color:#FFF
     style B fill:#CA9161,stroke:#000,color:#FFF

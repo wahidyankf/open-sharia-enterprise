@@ -10,21 +10,17 @@ flowchart TD
     TRIGGER(["schedule 2x daily\nworkflow_dispatch"]):::trigger
 
     subgraph WF["test-and-deploy-organiclever.yml"]
-        SC["spec-coverage"]:::job
-        LINT["fe-lint"]:::job
-        BEI["be-integration\n(Development - Organic Lever env)"]:::job
-        FEI["fe-integration"]:::job
-        E2E["e2e\n(Development - Organic Lever env)"]:::job
-        DC["detect-changes"]:::job
+        JOBS["spec-cov + fe-lint\nbe-int + fe-int\ndetect-changes (parallel)"]:::job
+        E2E["e2e\n(Development env)"]:::job
         DEPLOY["deploy\nif has-changes == true"]:::job
     end
 
-    TRIGGER --> SC & LINT & BEI & FEI & DC
-    BEI & FEI --> E2E
-    SC & LINT & BEI & FEI & E2E & DC --> DEPLOY
+    TRIGGER --> JOBS
+    JOBS --> E2E
+    JOBS & E2E --> DEPLOY
 
-    DEPLOY -->|"git push --force"| PROD["prod-organiclever-web branch"]:::branch
-    PROD --> VERCEL_PROD["Vercel → www.organiclever.com"]:::external
+    DEPLOY -->|"git push --force"| PROD["prod-organiclever-web\nbranch"]:::branch
+    PROD --> VERCEL_PROD["Vercel →\nwww.organiclever.com"]:::external
 
     classDef trigger fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef job fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -39,50 +35,27 @@ promotion is gated and manual.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0173B2", "primaryTextColor": "#FFFFFF", "primaryBorderColor": "#000000", "lineColor": "#000000"}}}%%
-flowchart TD
-    T1(["schedule: 3 AM / 3 PM WIB\nworkflow_dispatch"]):::trigger
-    T2(["schedule: 5 AM / 5 PM WIB\nworkflow_dispatch"]):::trigger
-    T3(["workflow_dispatch only"]):::trigger
-
-    subgraph WF1["test-and-deploy-organiclever-web-development.yml"]
-        SC["spec-coverage"]:::job
-        LINT["fe-lint"]:::job
-        BEI["be-integration\n(organiclever-web-development env)"]:::job
-        FEI["fe-integration"]:::job
-        E2E["e2e\n(organiclever-web-development env)"]:::job
-        DC["detect-changes"]:::job
-        DS["deploy to staging\nif has-changes == true"]:::job
+flowchart LR
+    subgraph Dev["WF1 (3 AM/3 PM)"]
+        WF1["test-and-deploy\ndevelopment.yml"]:::trigger
+    end
+    subgraph Stag["WF2 (5 AM/5 PM)"]
+        WF2["test-staging.yml\nPlaywright e2e"]:::trigger
+    end
+    subgraph Prod["WF3 (manual)"]
+        WF3["deploy-to-prod.yml\ne2e gate + promote"]:::trigger
     end
 
-    subgraph WF2["test-organiclever-web-staging.yml"]
-        ES["e2e-staging\n(organiclever-web-staging env)\nWEB_BASE_URL from vars"]:::job
-    end
+    STAG["Vercel Staging"]:::branch
+    PROD["Vercel Production"]:::branch
 
-    subgraph WF3["deploy-organiclever-web-to-production.yml"]
-        EG["e2e-staging gate\n(organiclever-web-staging env)\nWEB_BASE_URL from vars"]:::job
-        PP["promote-to-production\nneeds: e2e-staging\n(organiclever-web-production env)\ncheckout stag-organiclever-web"]:::job
-    end
+    WF1 --> STAG
+    WF2 -.-> STAG
+    WF3 -.-> STAG
+    STAG --> PROD
 
-    T1 --> SC & LINT & BEI & FEI & DC
-    BEI & FEI --> E2E
-    SC & LINT & BEI & FEI & E2E & DC --> DS
-
-    DS -->|"git push --force"| STAG["stag-organiclever-web branch"]:::branch
-    STAG --> VERCEL_STAG["Vercel → staging URL"]:::external
-
-    T2 --> ES
-    ES -.->|"Playwright HTTP"| VERCEL_STAG
-
-    T3 --> EG
-    EG -.->|"Playwright HTTP"| VERCEL_STAG
-    EG --> PP
-    PP -->|"git push --force\nfrom stag-organiclever-web"| PROD["prod-organiclever-web branch"]:::branch
-    PROD --> VERCEL_PROD["Vercel → www.organiclever.com"]:::external
-
-    classDef trigger fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef job fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef trigger fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef branch fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef external fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Schedule timeline (daily)
