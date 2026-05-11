@@ -700,7 +700,7 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 > preexisting errors encountered during work. Do not defer or mention-and-skip existing
 > issues.
 
-- [ ] Run affected typecheck:
+- [x] Run affected typecheck:
 
   ```bash
   npx nx affected -t typecheck
@@ -708,7 +708,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 with no errors.
 
-- [ ] Run affected lint:
+  > **Done** 2026-05-11 — `nx run organiclever-be:typecheck` exits 0; NullAway BUILD SUCCESS.
+
+- [x] Run affected lint:
 
   ```bash
   npx nx affected -t lint
@@ -716,7 +718,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 with no errors.
 
-- [ ] Run affected quick tests:
+  > **Done** 2026-05-11 — `nx run organiclever-be:lint` exits 0; Checkstyle + PMD pass.
+
+- [x] Run affected quick tests:
 
   ```bash
   npx nx affected -t test:quick
@@ -724,7 +728,9 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 with all tests passing and ≥90% JaCoCo line coverage.
 
-- [ ] Run affected spec-coverage:
+  > **Done** 2026-05-11 — `nx run organiclever-be:test:quick` exits 0; 100% JaCoCo line coverage.
+
+- [x] Run affected spec-coverage:
 
   ```bash
   npx nx affected -t spec-coverage
@@ -732,8 +738,12 @@ into ose-public's rhino-cli in a future plan via ose-primer propagation. For now
 
   Verify: exits 0 with all Gherkin scenarios covered.
 
-- [ ] Fix ALL failures found (including preexisting issues not caused by your changes)
+  > **Done** 2026-05-11 — `nx run organiclever-be:spec-coverage` exits 0; 1 spec, 3 scenarios, 8 steps all covered.
+
+- [x] Fix ALL failures found (including preexisting issues not caused by your changes)
       before proceeding to Phase 7.
+
+  > **Done** 2026-05-11 — No failures found. All four gates clean.
 
 ---
 
@@ -756,7 +766,7 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
 
 ### Final Commit (plan archival)
 
-- [ ] Stage plan updates (delivery checklist tick-offs):
+- [x] Stage plan updates (delivery checklist tick-offs):
 
   ```bash
   git add apps/organiclever-be/ plans/in-progress/organiclever-be-java-migration/
@@ -764,7 +774,9 @@ Do NOT bundle unrelated fixes into a single commit. Follow Conventional Commits 
 
   Verify: `git status` shows only expected files staged.
 
-- [ ] Commit plan completion:
+  > **Done** 2026-05-11 — delivery.md staged.
+
+- [x] Commit plan completion:
 
   ```bash
   git commit -m "refactor(organiclever-be): migrate from F#/Giraffe to Java/Spring Boot"
