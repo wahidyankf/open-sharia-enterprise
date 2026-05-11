@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/bcregistry"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 // osStatFn is injectable for unit tests.
@@ -25,8 +26,8 @@ var grepFn = grepFiles
 // ValidateAll loads the registry and validates all glossary files.
 func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 	sev := opts.Severity
-	if sev == "" {
-		sev = "error"
+	if sev == nil {
+		sev = severity.SeverityError{}
 	}
 
 	reg, err := loadRegistryFn(opts.RepoRoot, opts.App)
@@ -88,7 +89,7 @@ func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 	return findings, nil
 }
 
-func checkFrontmatter(file string, g *Glossary, sev string) []Finding {
+func checkFrontmatter(file string, g *Glossary, sev severity.Severity) []Finding {
 	var findings []Finding
 	for _, key := range requiredFrontmatterKeys {
 		if _, ok := g.Frontmatter[key]; !ok {
@@ -102,7 +103,7 @@ func checkFrontmatter(file string, g *Glossary, sev string) []Finding {
 	return findings
 }
 
-func checkTableHeader(file string, g *Glossary, sev string) []Finding {
+func checkTableHeader(file string, g *Glossary, sev severity.Severity) []Finding {
 	var findings []Finding
 	for _, pe := range g.ParseErrors {
 		if strings.Contains(pe.Message, "malformed terms table header") {
@@ -116,7 +117,7 @@ func checkTableHeader(file string, g *Glossary, sev string) []Finding {
 	return findings
 }
 
-func checkTerms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev string) []Finding {
+func checkTerms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev severity.Severity) []Finding {
 	var findings []Finding
 	for _, term := range g.Terms {
 		// Code identifier existence — sum matches across every declared code path.
@@ -169,7 +170,7 @@ func featureRefResolves(ref string, gherkinPaths []string) bool {
 	return false
 }
 
-func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev string) []Finding {
+func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, codeExts []string, gherkinPaths []string, sev severity.Severity) []Finding {
 	var findings []Finding
 	for _, fb := range g.ForbiddenSynonyms {
 		count := 0
@@ -191,7 +192,7 @@ func checkForbiddenSynonyms(file string, g *Glossary, codePaths []string, codeEx
 	return findings
 }
 
-func checkTermCollisions(reg *bcregistry.Registry, glossaries map[string]*Glossary, sev string) []Finding {
+func checkTermCollisions(reg *bcregistry.Registry, glossaries map[string]*Glossary, sev severity.Severity) []Finding {
 	// Build term → []contextName index.
 	termContexts := map[string][]string{}
 	for _, ctx := range reg.Contexts {

@@ -60,7 +60,7 @@ func runValidateWorkflowsNaming(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("validation failed: %w", err)
 	}
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return formatNamingText("Workflows", violations, v, q) },
 		json:     func() (string, error) { return formatNamingJSON("workflows", violations) },
 		markdown: func() string { return formatNamingMarkdown("Workflows", violations) },

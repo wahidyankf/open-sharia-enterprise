@@ -8,12 +8,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func TestWriteFormatted_JSONError(t *testing.T) {
+func TestWriteFormattedV2_JSONError(t *testing.T) {
 	cmd := &cobra.Command{}
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
+	output = "json"
+	defer func() { output = "text" }()
 
-	err := writeFormatted(cmd, "json", false, false, outputFuncs{
+	err := writeFormattedV2(cmd, false, false, outputFuncs{
 		text:     func(v, q bool) string { return "text" },
 		json:     func() (string, error) { return "", fmt.Errorf("marshal error") },
 		markdown: func() string { return "markdown" },
@@ -24,12 +26,14 @@ func TestWriteFormatted_JSONError(t *testing.T) {
 	}
 }
 
-func TestWriteFormatted_TextOutput(t *testing.T) {
+func TestWriteFormattedV2_TextOutput(t *testing.T) {
 	cmd := &cobra.Command{}
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
+	output = "text"
+	defer func() { output = "text" }()
 
-	err := writeFormatted(cmd, "text", false, false, outputFuncs{
+	err := writeFormattedV2(cmd, false, false, outputFuncs{
 		text:     func(v, q bool) string { return "text output" },
 		json:     func() (string, error) { return "", nil },
 		markdown: func() string { return "markdown output" },
@@ -43,13 +47,15 @@ func TestWriteFormatted_TextOutput(t *testing.T) {
 	}
 }
 
-func TestWriteFormatted_UnknownFormat(t *testing.T) {
+func TestWriteFormattedV2_UnknownFormat(t *testing.T) {
 	cmd := &cobra.Command{}
 	buf := new(bytes.Buffer)
 	cmd.SetOut(buf)
+	// Unknown format falls through to default (text) inside writeFormattedV2.
+	output = "xml"
+	defer func() { output = "text" }()
 
-	// Unknown format falls through to default (text)
-	err := writeFormatted(cmd, "xml", false, false, outputFuncs{
+	err := writeFormattedV2(cmd, false, false, outputFuncs{
 		text:     func(v, q bool) string { return "default text" },
 		json:     func() (string, error) { return "", nil },
 		markdown: func() string { return "markdown" },

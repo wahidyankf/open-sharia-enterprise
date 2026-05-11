@@ -117,7 +117,7 @@ func runEnvRestore(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("env restore failed: %w", err)
 	}
 
-	return writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	return writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return envbackup.FormatText(result, v, q) },
 		json:     func() (string, error) { return envbackup.FormatJSON(result) },
 		markdown: func() string { return envbackup.FormatMarkdown(result) },

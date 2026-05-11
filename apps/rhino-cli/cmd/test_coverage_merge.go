@@ -93,7 +93,7 @@ func runMergeTestCoverage(cmd *cobra.Command, args []string) error {
 	result := testcoverage.ResultFromCoverageMap(merged, threshold)
 	result.File = "merged"
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return testcoverage.FormatText(&result, v, q) },
 		json:     func() (string, error) { return testcoverage.FormatJSON(&result, false, 0) },
 		markdown: func() string { return testcoverage.FormatMarkdown(&result, false, 0) },

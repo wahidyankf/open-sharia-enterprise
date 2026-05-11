@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 // fakeStatInfo implements os.FileInfo for testing stat calls.
@@ -293,7 +295,7 @@ func TestValidateAll_LoadError(t *testing.T) {
 
 	osReadFileFn = func(_ string) ([]byte, error) { return nil, errors.New("not found") }
 
-	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err == nil {
 		t.Fatal("expected error from ValidateAll when Load fails")
 	}
@@ -315,7 +317,7 @@ func TestValidateAll_DefaultSeverity(t *testing.T) {
 	osStatFn = func(_ string) (os.FileInfo, error) { return fakeStatInfo{isDir: true}, nil }
 	osReadDirFn = func(_ string) ([]os.DirEntry, error) { return nil, nil }
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: ""})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: nil})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -339,15 +341,15 @@ func TestCheckContext_MissingCodeDir(t *testing.T) {
 		Glossary: "specs/apps/test/ubiquitous-language/journal.md",
 		Gherkin:  GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
-	findings := checkContext("/repo", ctx, "error")
+	findings := checkContext("/repo", ctx, severity.SeverityError{})
 	// Expect findings for code + glossary + gherkin (each independently checked).
 	if len(findings) != 3 {
 		t.Fatalf("expected 3 findings (code, glossary, gherkin all missing), got %d: %+v", len(findings), findings)
 	}
 	hasCodeFinding := false
 	for _, f := range findings {
-		if f.Severity != "error" {
-			t.Errorf("expected severity 'error', got %q", f.Severity)
+		if _, isErr := f.Severity.(severity.SeverityError); !isErr {
+			t.Errorf("expected severity SeverityError, got %T", f.Severity)
 		}
 		if f.File == "apps/test/src/contexts/journal" {
 			hasCodeFinding = true
@@ -390,7 +392,7 @@ func TestCheckContext_AllPresent(t *testing.T) {
 		return origReadDir2(p)
 	}
 
-	findings := checkContext("/repo", ctx, "error")
+	findings := checkContext("/repo", ctx, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings, got %d: %+v", len(findings), findings)
 	}
@@ -409,7 +411,7 @@ func TestCheckLayers_MissingLayer(t *testing.T) {
 		Layers: []string{"domain", "application"},
 		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for missing layer, got %d: %+v", len(findings), findings)
 	}
@@ -431,7 +433,7 @@ func TestCheckLayers_ExtraLayer(t *testing.T) {
 		Layers: []string{"domain", "application"},
 		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for extra layer, got %d: %+v", len(findings), findings)
 	}
@@ -450,7 +452,7 @@ func TestCheckLayers_ExactMatch(t *testing.T) {
 		Layers: []string{"domain", "application"},
 		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings, got %d", len(findings))
 	}
@@ -469,7 +471,7 @@ func TestCheckLayers_ReadDirError(t *testing.T) {
 		Layers: []string{"domain"},
 		Code:   []string{"apps/test/src/contexts/journal"},
 	}
-	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], "error")
+	findings := checkLayersAtPath("/repo", ctx, ctx.Code[0], severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for readdir error, got %d", len(findings))
 	}
@@ -485,7 +487,7 @@ func TestCheckGherkin_MissingDir(t *testing.T) {
 		Name:    "journal",
 		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
-	findings := checkGherkin("/repo", ctx, "error")
+	findings := checkGherkin("/repo", ctx, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for missing gherkin dir, got %d", len(findings))
 	}
@@ -508,7 +510,7 @@ func TestCheckGherkin_NoFeatureFiles(t *testing.T) {
 		Name:    "journal",
 		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
-	findings := checkGherkin("/repo", ctx, "error")
+	findings := checkGherkin("/repo", ctx, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for no feature files, got %d", len(findings))
 	}
@@ -531,7 +533,7 @@ func TestCheckGherkin_HasFeatureFile(t *testing.T) {
 		Name:    "journal",
 		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
-	findings := checkGherkin("/repo", ctx, "error")
+	findings := checkGherkin("/repo", ctx, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings, got %d", len(findings))
 	}
@@ -554,7 +556,7 @@ func TestCheckGherkin_ReadDirError(t *testing.T) {
 		Name:    "journal",
 		Gherkin: GherkinPaths{"specs/apps/test/fe/gherkin/journal"},
 	}
-	findings := checkGherkin("/repo", ctx, "error")
+	findings := checkGherkin("/repo", ctx, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for readdir error, got %d", len(findings))
 	}
@@ -569,7 +571,7 @@ func TestDetectOrphanDirs_FindsOrphan(t *testing.T) {
 	}
 
 	registered := map[string]bool{"/repo/apps/test/src/contexts/journal": true}
-	findings := detectOrphanDirs("/repo/apps/test/src/contexts", registered, "orphan code directory", "registered in bounded-contexts.yaml", "error")
+	findings := detectOrphanDirs("/repo/apps/test/src/contexts", registered, "orphan code directory", "registered in bounded-contexts.yaml", severity.SeverityError{})
 
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 orphan finding, got %d", len(findings))
@@ -585,7 +587,7 @@ func TestDetectOrphanDirs_NoOrphan(t *testing.T) {
 	}
 
 	registered := map[string]bool{"/repo/apps/test/src/contexts/journal": true}
-	findings := detectOrphanDirs("/repo/apps/test/src/contexts", registered, "orphan code directory", "registered in bounded-contexts.yaml", "error")
+	findings := detectOrphanDirs("/repo/apps/test/src/contexts", registered, "orphan code directory", "registered in bounded-contexts.yaml", severity.SeverityError{})
 
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings, got %d", len(findings))
@@ -600,7 +602,7 @@ func TestDetectOrphanDirs_ReadDirError(t *testing.T) {
 		return nil, errors.New("no such directory")
 	}
 
-	findings := detectOrphanDirs("/nonexistent", map[string]bool{}, "orphan", "reason", "error")
+	findings := detectOrphanDirs("/nonexistent", map[string]bool{}, "orphan", "reason", severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings on readdir error, got %d", len(findings))
 	}
@@ -615,7 +617,7 @@ func TestDetectOrphanFiles_FindsOrphan(t *testing.T) {
 	}
 
 	registered := map[string]bool{"/repo/specs/apps/test/ubiquitous-language/journal.md": true}
-	findings := detectOrphanFiles("/repo/specs/apps/test/ubiquitous-language", registered, "orphan glossary file", "registered in bounded-contexts.yaml", "error")
+	findings := detectOrphanFiles("/repo/specs/apps/test/ubiquitous-language", registered, "orphan glossary file", "registered in bounded-contexts.yaml", severity.SeverityError{})
 
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 orphan finding, got %d", len(findings))
@@ -630,7 +632,7 @@ func TestDetectOrphanFiles_SkipsREADME(t *testing.T) {
 		return dirEntries("README.md", false), nil
 	}
 
-	findings := detectOrphanFiles("/repo/specs/apps/test/ubiquitous-language", map[string]bool{}, "orphan glossary file", "registered", "error")
+	findings := detectOrphanFiles("/repo/specs/apps/test/ubiquitous-language", map[string]bool{}, "orphan glossary file", "registered", severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected README.md to be skipped, got %d findings", len(findings))
 	}
@@ -644,7 +646,7 @@ func TestDetectOrphanFiles_SkipsDirectories(t *testing.T) {
 		return dirEntries("subdir", true), nil
 	}
 
-	findings := detectOrphanFiles("/repo", map[string]bool{}, "orphan", "reason", "error")
+	findings := detectOrphanFiles("/repo", map[string]bool{}, "orphan", "reason", severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected directories to be skipped, got %d findings", len(findings))
 	}
@@ -658,7 +660,7 @@ func TestDetectOrphanFiles_ReadDirError(t *testing.T) {
 		return nil, errors.New("permission denied")
 	}
 
-	findings := detectOrphanFiles("/nonexistent", map[string]bool{}, "orphan", "reason", "error")
+	findings := detectOrphanFiles("/nonexistent", map[string]bool{}, "orphan", "reason", severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings on readdir error, got %d", len(findings))
 	}
@@ -676,7 +678,7 @@ func TestCheckRelationshipSymmetry_Symmetric(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings for symmetric relationships, got %d: %+v", len(findings), findings)
 	}
@@ -694,7 +696,7 @@ func TestCheckRelationshipSymmetry_Asymmetric(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for asymmetric relationship, got %d", len(findings))
 	}
@@ -708,7 +710,7 @@ func TestCheckRelationshipSymmetry_MissingTarget(t *testing.T) {
 		},
 	}
 	ctxByName := map[string]*Context{"a": &reg.Contexts[0]}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for missing target, got %d", len(findings))
 	}
@@ -726,7 +728,7 @@ func TestCheckRelationshipSymmetry_ConformistKind(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for asymmetric conformist, got %d", len(findings))
 	}
@@ -744,7 +746,7 @@ func TestCheckRelationshipSymmetry_IgnoresOneWayACL(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("anticorruption-layer is intentionally one-way, expected 0 findings, got %d", len(findings))
 	}
@@ -762,7 +764,7 @@ func TestCheckRelationshipSymmetry_IgnoresOneWayOHS(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("open-host-service is intentionally one-way, expected 0 findings, got %d", len(findings))
 	}
@@ -781,7 +783,7 @@ func TestCheckRelationshipSymmetry_PartnershipAsymmetric(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("partnership must be reciprocal (Fix #10), expected 1 finding, got %d", len(findings))
 	}
@@ -800,7 +802,7 @@ func TestCheckRelationshipSymmetry_SharedKernelAsymmetric(t *testing.T) {
 		"a": &reg.Contexts[0],
 		"b": &reg.Contexts[1],
 	}
-	findings := checkRelationshipSymmetry(reg, ctxByName, "error")
+	findings := checkRelationshipSymmetry(reg, ctxByName, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("shared-kernel must be reciprocal (Fix #10), expected 1 finding, got %d", len(findings))
 	}
@@ -815,7 +817,7 @@ func TestCheckRelationshipKinds_UnknownReported(t *testing.T) {
 			{Name: "b", Relationships: []Relationship{}},
 		},
 	}
-	findings := checkRelationshipKinds(reg, "error")
+	findings := checkRelationshipKinds(reg, severity.SeverityError{})
 	if len(findings) == 0 {
 		t.Fatal("unknown relationship kind must produce a finding (Fix #10)")
 	}
@@ -833,7 +835,7 @@ func TestCheckRelationshipKinds_KnownKindsAreSilent(t *testing.T) {
 				{Name: "a", Relationships: []Relationship{{To: "b", Kind: k}}},
 			},
 		}
-		findings := checkRelationshipKinds(reg, "error")
+		findings := checkRelationshipKinds(reg, severity.SeverityError{})
 		if len(findings) != 0 {
 			t.Errorf("known kind %q should not produce a kind finding, got %d: %+v", k, len(findings), findings)
 		}
@@ -933,7 +935,7 @@ func TestDetectOrphans_MultiParentGlossaryAndGherkin(t *testing.T) {
 		"/repo/specs/apps/test/behavior/api/gherkin/ctx-api": true,
 	}
 
-	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, "error")
+	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, severity.SeverityError{})
 
 	// Collect orphan filenames by category.
 	var glossaryOrphans, gherkinOrphans []string
@@ -997,7 +999,7 @@ func TestDetectOrphans_MultiPerspectiveBC(t *testing.T) {
 		"/repo/specs/apps/test/behavior/web/gherkin/content": true,
 		"/repo/specs/apps/test/behavior/api/gherkin/content": true,
 	}
-	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, "error")
+	findings := detectOrphans("/repo", reg, registeredCode, registeredGlossary, registeredGherkin, severity.SeverityError{})
 
 	var gherkinOrphans []string
 	for _, f := range findings {
@@ -1044,7 +1046,7 @@ func TestValidate_SortsFindings(t *testing.T) {
 		},
 	}
 
-	findings := validate("/repo", reg, "error")
+	findings := validate("/repo", reg, severity.SeverityError{})
 	if !sort.SliceIsSorted(findings, func(i, j int) bool {
 		return findings[i].File < findings[j].File
 	}) {

@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/bcregistry"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 var bcSeverity string
@@ -54,7 +54,7 @@ func runDddBc(cmd *cobra.Command, args []string) error {
 	}
 
 	app := args[0]
-	sev := resolveBcSeverity(bcSeverity)
+	sev := severity.Resolve(bcSeverity, os.Getenv("OSE_RHINO_DDD_SEVERITY"), os.Stderr)
 
 	findings, err := bcValidateAllFn(bcregistry.ValidateOptions{
 		RepoRoot: repoRoot,
@@ -66,12 +66,12 @@ func runDddBc(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, f := range findings {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity, f.Message)
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity.Code(), f.Message)
 	}
 
 	errCount := 0
 	for _, f := range findings {
-		if f.Severity == "error" {
+		if _, isErr := f.Severity.(severity.SeverityError); isErr {
 			errCount++
 		}
 	}
@@ -79,27 +79,4 @@ func runDddBc(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%d error finding(s) found by ddd bc", errCount)
 	}
 	return nil
-}
-
-func resolveBcSeverity(flagVal string) string {
-	if flagVal != "" {
-		return normaliseSeverity(flagVal)
-	}
-	if env := os.Getenv("OSE_RHINO_DDD_SEVERITY"); env != "" {
-		sev := normaliseSeverity(env)
-		if sev == "warn" {
-			fmt.Fprintln(os.Stderr, `WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var`)
-		}
-		return sev
-	}
-	return "error"
-}
-
-func normaliseSeverity(s string) string {
-	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "warn", "warning":
-		return "warn"
-	default:
-		return "error"
-	}
 }

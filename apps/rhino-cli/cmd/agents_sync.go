@@ -99,7 +99,7 @@ func runSyncAgents(cmd *cobra.Command, args []string) error {
 	}
 
 	// Format and print output
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return agents.FormatSyncText(result, v, q) },
 		json:     func() (string, error) { return agents.FormatSyncJSON(result) },
 		markdown: func() string { return agents.FormatSyncMarkdown(result) },

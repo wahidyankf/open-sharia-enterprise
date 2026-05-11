@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 // SchemaVersion is the registry schema version this loader accepts.
@@ -75,14 +77,14 @@ type Relationship struct {
 type Finding struct {
 	File     string
 	Message  string
-	Severity string // "error" or "warning"
+	Severity severity.Severity
 }
 
 // ValidateOptions configures a ValidateAll call.
 type ValidateOptions struct {
 	RepoRoot string
 	App      string
-	Severity string // "error" or "warning"; empty defaults to "error"
+	Severity severity.Severity
 }
 
 // SupportedLangGlobs maps each supported code_lang tag to the file-extension

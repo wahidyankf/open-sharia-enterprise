@@ -60,7 +60,7 @@ func runGovernanceVendorAudit(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("vendor audit failed: %w", err)
 	}
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return formatVendorAuditText(findings) },
 		json:     func() (string, error) { return formatVendorAuditJSON(findings) },
 		markdown: func() string { return formatVendorAuditMarkdown(findings) },

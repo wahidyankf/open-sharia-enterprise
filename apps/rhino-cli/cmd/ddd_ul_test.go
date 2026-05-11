@@ -12,6 +12,7 @@ import (
 
 	"github.com/cucumber/godog"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/glossary"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 var specsDirUlValidate = func() string {
@@ -63,7 +64,7 @@ func (s *ulValidateSteps) missingMaintainerKey() error {
 		return []glossary.Finding{{
 			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "missing frontmatter key: Maintainer",
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -74,7 +75,7 @@ func (s *ulValidateSteps) malformedTableHeader() error {
 		return []glossary.Finding{{
 			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "malformed terms table header",
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -96,7 +97,7 @@ func (s *ulValidateSteps) missingFeatureReference() error {
 		return []glossary.Finding{{
 			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  "missing feature reference: journal/ghost.feature",
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -107,7 +108,7 @@ func (s *ulValidateSteps) termCollision() error {
 		return []glossary.Finding{{
 			File:     "specs/apps/organiclever/ddd/bounded-contexts.yaml",
 			Message:  `term collision: "Entry" defined in [journal, routine] without mutual Forbidden-synonyms cross-link`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil

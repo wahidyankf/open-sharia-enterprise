@@ -3,8 +3,6 @@ package cmd
 import (
 	"fmt"
 	"path/filepath"
-
-	"github.com/spf13/cobra"
 )
 
 // findGitRoot finds the root directory of the git repository by walking up from the current directory.
@@ -32,27 +30,9 @@ func findGitRoot() (string, error) {
 }
 
 // outputFuncs holds the three formatting callbacks for a command's output.
+// It is used by writeFormattedV2 in output.go.
 type outputFuncs struct {
 	text     func(verbose, quiet bool) string
 	json     func() (string, error)
 	markdown func() string
-}
-
-// writeFormatted selects the right formatter, writes to cmd.OutOrStdout(), and returns any error.
-func writeFormatted(cmd *cobra.Command, format string, verbose, quiet bool, f outputFuncs) error {
-	var out string
-	switch format {
-	case "json":
-		var err error
-		out, err = f.json()
-		if err != nil {
-			return fmt.Errorf("failed to format JSON: %w", err)
-		}
-	case "markdown":
-		out = f.markdown()
-	default:
-		out = f.text(verbose, quiet)
-	}
-	_, _ = fmt.Fprint(cmd.OutOrStdout(), out)
-	return nil
 }

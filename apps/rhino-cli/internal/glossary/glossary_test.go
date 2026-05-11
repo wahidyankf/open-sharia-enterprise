@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/bcregistry"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 // fakeStatInfo implements os.FileInfo for testing stat calls.
@@ -308,7 +309,7 @@ func TestValidateAll_LoadError(t *testing.T) {
 		return nil, errors.New("not found")
 	}
 
-	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err == nil {
 		t.Fatal("expected error when registry load fails")
 	}
@@ -351,7 +352,7 @@ func TestValidateAll_MissingFrontmatterKey(t *testing.T) {
 		grepFn = func(_, _ string, _ []string) int { return 1 }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -391,7 +392,7 @@ func TestValidateAll_StaleCodeIdentifier(t *testing.T) {
 		grepFn = func(_, _ string, _ []string) int { return 0 }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -431,7 +432,7 @@ func TestValidateAll_MissingFeatureReference(t *testing.T) {
 		osStatFn = func(_ string) (os.FileInfo, error) { return nil, errors.New("not found") }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -471,7 +472,7 @@ func TestValidateAll_TermCollision(t *testing.T) {
 		grepFn = func(_, _ string, _ []string) int { return 1 }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -511,7 +512,7 @@ func TestValidateAll_ForbiddenSynonymInUse(t *testing.T) {
 		grepFn = func(_, _ string, _ []string) int { return 3 }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -619,7 +620,7 @@ func TestCheckTerms_FSharpOnlyBCSearchesFSFiles(t *testing.T) {
 		}
 	})
 
-	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -649,7 +650,7 @@ func TestCheckTerms_PolyglotBCUnionsGlobs(t *testing.T) {
 		}
 	})
 
-	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -679,7 +680,7 @@ func TestCheckTerms_TSDefaultPreservesHistoricalBehavior(t *testing.T) {
 		}
 	})
 
-	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	_, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -755,7 +756,7 @@ func TestValidateAll_CleanGlossary(t *testing.T) {
 		grepFn = func(_, _ string, _ []string) int { return 1 }
 	})
 
-	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: "error"})
+	findings, err := ValidateAll(ValidateOptions{RepoRoot: "/repo", App: "test", Severity: severity.SeverityError{}})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -823,7 +824,7 @@ func TestCheckTableHeader_MalformedInParseErrors(t *testing.T) {
 	g := &Glossary{
 		ParseErrors: []ParseError{{Message: "malformed terms table header: column BadColumn expected Code identifier(s)"}},
 	}
-	findings := checkTableHeader("test.md", g, "error")
+	findings := checkTableHeader("test.md", g, severity.SeverityError{})
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding from parse error, got %d", len(findings))
 	}
@@ -837,7 +838,7 @@ func TestCheckFrontmatter_AllPresent(t *testing.T) {
 			"Last reviewed":   "2026-01-01",
 		},
 	}
-	findings := checkFrontmatter("test.md", g, "error")
+	findings := checkFrontmatter("test.md", g, severity.SeverityError{})
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings when all keys present, got %d", len(findings))
 	}

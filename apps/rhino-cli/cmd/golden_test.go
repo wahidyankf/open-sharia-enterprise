@@ -32,6 +32,7 @@ import (
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/governance"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/mermaid"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/naming"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/speccoverage"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/testcoverage"
 )
@@ -634,7 +635,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 	case "ddd_bc_with_findings":
 		bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 			return []bcregistry.Finding{
-				{File: "apps/organiclever/contexts/journal", Severity: "error", Message: "missing layer: infrastructure"},
+				{File: "apps/organiclever/contexts/journal", Severity: severity.SeverityError{}, Message: "missing layer: infrastructure"},
 			}, nil
 		}
 
@@ -642,7 +643,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 		bcSeverity = "warn"
 		bcValidateAllFn = func(_ bcregistry.ValidateOptions) ([]bcregistry.Finding, error) {
 			return []bcregistry.Finding{
-				{File: "apps/organiclever/contexts/journal", Severity: "warn", Message: "missing layer: infrastructure"},
+				{File: "apps/organiclever/contexts/journal", Severity: severity.SeverityWarn{}, Message: "missing layer: infrastructure"},
 			}, nil
 		}
 
@@ -655,7 +656,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 	case "ddd_ul_with_findings":
 		ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 			return []glossary.Finding{
-				{File: "specs/apps/organiclever/ddd/glossary.md", Severity: "error", Message: "missing term header"},
+				{File: "specs/apps/organiclever/ddd/glossary.md", Severity: severity.SeverityError{}, Message: "missing term header"},
 			}, nil
 		}
 
@@ -663,7 +664,7 @@ func activateGoldenMock(t *testing.T, mockID string) {
 		ulSeverity = "warn"
 		ulValidateAllFn = func(_ glossary.ValidateOptions) ([]glossary.Finding, error) {
 			return []glossary.Finding{
-				{File: "specs/apps/organiclever/ddd/glossary.md", Severity: "warn", Message: "missing term header"},
+				{File: "specs/apps/organiclever/ddd/glossary.md", Severity: severity.SeverityWarn{}, Message: "missing term header"},
 			}, nil
 		}
 

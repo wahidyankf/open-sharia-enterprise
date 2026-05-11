@@ -26,6 +26,7 @@ var rootCmd = &cobra.Command{
 	Long:              `Command-line tools for repository management and automation.`,
 	Version:           "0.15.0",
 	CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
+	PersistentPreRunE: parseOutputFormat,
 	Run: func(cmd *cobra.Command, args []string) {
 		if sayMsg != "" {
 			if verbose && !quiet {

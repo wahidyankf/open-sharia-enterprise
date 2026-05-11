@@ -67,7 +67,7 @@ func runValidateDocsLinks(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("validation failed: %w", err)
 	}
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return docs.FormatLinkText(result, v, q) },
 		json:     func() (string, error) { return docs.FormatLinkJSON(result) },
 		markdown: func() string { return docs.FormatLinkMarkdown(result) },

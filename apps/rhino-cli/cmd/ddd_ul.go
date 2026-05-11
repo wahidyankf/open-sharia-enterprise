@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/glossary"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 var ulSeverity string
@@ -52,7 +52,7 @@ func runDddUl(cmd *cobra.Command, args []string) error {
 	}
 
 	app := args[0]
-	sev := resolveUlSeverity(ulSeverity)
+	sev := severity.Resolve(ulSeverity, os.Getenv("OSE_RHINO_DDD_SEVERITY"), os.Stderr)
 
 	findings, err := ulValidateAllFn(glossary.ValidateOptions{
 		RepoRoot: repoRoot,
@@ -64,12 +64,12 @@ func runDddUl(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, f := range findings {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity, f.Message)
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: %s: %s\n", f.File, f.Severity.Code(), f.Message)
 	}
 
 	errCount := 0
 	for _, f := range findings {
-		if f.Severity == "error" {
+		if _, isErr := f.Severity.(severity.SeverityError); isErr {
 			errCount++
 		}
 	}
@@ -77,27 +77,4 @@ func runDddUl(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%d error finding(s) found by ddd ul", errCount)
 	}
 	return nil
-}
-
-func resolveUlSeverity(flagVal string) string {
-	if flagVal != "" {
-		return normaliseUlSeverity(flagVal)
-	}
-	if env := os.Getenv("OSE_RHINO_DDD_SEVERITY"); env != "" {
-		sev := normaliseUlSeverity(env)
-		if sev == "warn" {
-			fmt.Fprintln(os.Stderr, `WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var`)
-		}
-		return sev
-	}
-	return "error"
-}
-
-func normaliseUlSeverity(s string) string {
-	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "warn", "warning":
-		return "warn"
-	default:
-		return "error"
-	}
 }

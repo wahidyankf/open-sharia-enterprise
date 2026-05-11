@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 // osStatFn and osReadDirFn are injectable for unit tests.
@@ -17,8 +19,8 @@ var (
 // ValidateAll loads the registry and performs all structural parity checks.
 func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 	sev := opts.Severity
-	if sev == "" {
-		sev = "error"
+	if sev == nil {
+		sev = severity.SeverityError{}
 	}
 
 	reg, err := Load(opts.RepoRoot, opts.App)
@@ -28,7 +30,7 @@ func ValidateAll(opts ValidateOptions) ([]Finding, error) {
 	return validate(opts.RepoRoot, reg, sev), nil
 }
 
-func validate(repoRoot string, reg *Registry, severity string) []Finding {
+func validate(repoRoot string, reg *Registry, sev severity.Severity) []Finding {
 	var findings []Finding
 
 	registeredCode := make(map[string]bool)
@@ -50,19 +52,19 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 
 	// Check each registered context.
 	for _, ctx := range reg.Contexts {
-		findings = append(findings, checkContext(repoRoot, ctx, severity)...)
+		findings = append(findings, checkContext(repoRoot, ctx, sev)...)
 	}
 
 	// Detect orphans (only when contexts exist to infer roots).
 	if len(reg.Contexts) > 0 {
-		findings = append(findings, detectOrphans(repoRoot, reg, registeredCode, registeredGlossary, registeredGherkin, severity)...)
+		findings = append(findings, detectOrphans(repoRoot, reg, registeredCode, registeredGlossary, registeredGherkin, sev)...)
 	}
 
 	// Check relationship symmetry.
-	findings = append(findings, checkRelationshipSymmetry(reg, contextByName, severity)...)
+	findings = append(findings, checkRelationshipSymmetry(reg, contextByName, sev)...)
 
 	// Check relationship kinds (Fix #10) — flag typos / unrecognized values.
-	findings = append(findings, checkRelationshipKinds(reg, severity)...)
+	findings = append(findings, checkRelationshipKinds(reg, sev)...)
 
 	sort.SliceStable(findings, func(i, j int) bool {
 		return findings[i].File < findings[j].File
@@ -70,7 +72,7 @@ func validate(repoRoot string, reg *Registry, severity string) []Finding {
 	return findings
 }
 
-func checkContext(repoRoot string, ctx Context, severity string) []Finding {
+func checkContext(repoRoot string, ctx Context, sev severity.Severity) []Finding {
 	var findings []Finding
 
 	// Each declared code path must independently satisfy the layer structure.
@@ -80,11 +82,11 @@ func checkContext(repoRoot string, ctx Context, severity string) []Finding {
 			findings = append(findings, Finding{
 				File:     codeRel,
 				Message:  fmt.Sprintf("missing code directory for context %q", ctx.Name),
-				Severity: severity,
+				Severity: sev,
 			})
 			continue // can't check layers for this path if dir missing; other paths still checked
 		}
-		findings = append(findings, checkLayersAtPath(repoRoot, ctx, codeRel, severity)...)
+		findings = append(findings, checkLayersAtPath(repoRoot, ctx, codeRel, sev)...)
 	}
 
 	// Glossary file must exist.
@@ -93,19 +95,19 @@ func checkContext(repoRoot string, ctx Context, severity string) []Finding {
 		findings = append(findings, Finding{
 			File:     ctx.Glossary,
 			Message:  fmt.Sprintf("missing glossary for context %q", ctx.Name),
-			Severity: severity,
+			Severity: sev,
 		})
 	}
 
 	// Gherkin directory must exist with ≥1 .feature file.
-	findings = append(findings, checkGherkin(repoRoot, ctx, severity)...)
+	findings = append(findings, checkGherkin(repoRoot, ctx, sev)...)
 
 	return findings
 }
 
 // checkLayersAtPath enforces declared layer subfolders against a single code path.
 // Per-path independent: every code path must contain ALL declared layers.
-func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) []Finding {
+func checkLayersAtPath(repoRoot string, ctx Context, codeRel string, sev severity.Severity) []Finding {
 	var findings []Finding
 	codePath := filepath.Join(repoRoot, codeRel)
 
@@ -114,7 +116,7 @@ func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) [
 		return []Finding{{
 			File:     codeRel,
 			Message:  fmt.Sprintf("cannot read code directory for context %q: %v", ctx.Name, err),
-			Severity: severity,
+			Severity: sev,
 		}}
 	}
 
@@ -135,7 +137,7 @@ func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) [
 			findings = append(findings, Finding{
 				File:     filepath.Join(codeRel, l),
 				Message:  fmt.Sprintf("missing layer %q for context %q", l, ctx.Name),
-				Severity: severity,
+				Severity: sev,
 			})
 		}
 	}
@@ -145,7 +147,7 @@ func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) [
 			findings = append(findings, Finding{
 				File:     filepath.Join(codeRel, name),
 				Message:  fmt.Sprintf("extra layer %q found on filesystem but not declared in registry for context %q", name, ctx.Name),
-				Severity: severity,
+				Severity: sev,
 			})
 		}
 	}
@@ -153,7 +155,7 @@ func checkLayersAtPath(repoRoot string, ctx Context, codeRel, severity string) [
 	return findings
 }
 
-func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
+func checkGherkin(repoRoot string, ctx Context, sev severity.Severity) []Finding {
 	var findings []Finding
 	for _, gh := range ctx.Gherkin {
 		gherkinPath := filepath.Join(repoRoot, gh)
@@ -161,7 +163,7 @@ func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
 			findings = append(findings, Finding{
 				File:     gh,
 				Message:  fmt.Sprintf("missing gherkin directory for context %q", ctx.Name),
-				Severity: severity,
+				Severity: sev,
 			})
 			continue
 		}
@@ -171,7 +173,7 @@ func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
 			findings = append(findings, Finding{
 				File:     gh,
 				Message:  fmt.Sprintf("cannot read gherkin directory for context %q: %v", ctx.Name, err),
-				Severity: severity,
+				Severity: sev,
 			})
 			continue
 		}
@@ -187,14 +189,14 @@ func checkGherkin(repoRoot string, ctx Context, severity string) []Finding {
 			findings = append(findings, Finding{
 				File:     gh,
 				Message:  fmt.Sprintf("no feature files found in gherkin directory for context %q", ctx.Name),
-				Severity: severity,
+				Severity: sev,
 			})
 		}
 	}
 	return findings
 }
 
-func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlossary, registeredGherkin map[string]bool, severity string) []Finding {
+func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlossary, registeredGherkin map[string]bool, sev severity.Severity) []Finding {
 	var findings []Finding
 
 	// Code roots = union of parents of every code path across every context.
@@ -211,7 +213,7 @@ func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlo
 	}
 	sort.Strings(sortedCodeRoots)
 	for _, root := range sortedCodeRoots {
-		findings = append(findings, detectOrphanDirs(root, registeredCode, "orphan code directory", "registered in bounded-contexts.yaml", severity)...)
+		findings = append(findings, detectOrphanDirs(root, registeredCode, "orphan code directory", "registered in bounded-contexts.yaml", sev)...)
 	}
 
 	// Glossary roots = union of parents of every glossary path across every
@@ -231,7 +233,7 @@ func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlo
 	}
 	sort.Strings(sortedGlossaryRoots)
 	for _, root := range sortedGlossaryRoots {
-		findings = append(findings, detectOrphanFiles(root, registeredGlossary, "orphan glossary file", "registered in bounded-contexts.yaml", severity)...)
+		findings = append(findings, detectOrphanFiles(root, registeredGlossary, "orphan glossary file", "registered in bounded-contexts.yaml", sev)...)
 	}
 
 	sortedGherkinRoots := make([]string, 0, len(gherkinRoots))
@@ -240,13 +242,13 @@ func detectOrphans(repoRoot string, reg *Registry, registeredCode, registeredGlo
 	}
 	sort.Strings(sortedGherkinRoots)
 	for _, root := range sortedGherkinRoots {
-		findings = append(findings, detectOrphanDirs(root, registeredGherkin, "orphan gherkin directory", "registered in bounded-contexts.yaml", severity)...)
+		findings = append(findings, detectOrphanDirs(root, registeredGherkin, "orphan gherkin directory", "registered in bounded-contexts.yaml", sev)...)
 	}
 
 	return findings
 }
 
-func detectOrphanDirs(root string, registered map[string]bool, kind, notReason, severity string) []Finding {
+func detectOrphanDirs(root string, registered map[string]bool, kind, notReason string, sev severity.Severity) []Finding {
 	entries, err := osReadDirFn(root)
 	if err != nil {
 		return nil
@@ -261,14 +263,14 @@ func detectOrphanDirs(root string, registered map[string]bool, kind, notReason, 
 			findings = append(findings, Finding{
 				File:     fullPath,
 				Message:  fmt.Sprintf(`%s %q not %s`, kind, e.Name(), notReason),
-				Severity: severity,
+				Severity: sev,
 			})
 		}
 	}
 	return findings
 }
 
-func detectOrphanFiles(root string, registered map[string]bool, kind, notReason, severity string) []Finding {
+func detectOrphanFiles(root string, registered map[string]bool, kind, notReason string, sev severity.Severity) []Finding {
 	entries, err := osReadDirFn(root)
 	if err != nil {
 		return nil
@@ -286,14 +288,14 @@ func detectOrphanFiles(root string, registered map[string]bool, kind, notReason,
 			findings = append(findings, Finding{
 				File:     fullPath,
 				Message:  fmt.Sprintf(`%s %q not %s`, kind, e.Name(), notReason),
-				Severity: severity,
+				Severity: sev,
 			})
 		}
 	}
 	return findings
 }
 
-func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context, severity string) []Finding {
+func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context, sev severity.Severity) []Finding {
 	var findings []Finding
 
 	// asymmetricKinds require a reciprocal entry.
@@ -315,7 +317,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 				findings = append(findings, Finding{
 					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf("relationship target %q declared by %q does not exist in registry", rel.To, ctx.Name),
-					Severity: severity,
+					Severity: sev,
 				})
 				continue
 			}
@@ -323,7 +325,7 @@ func checkRelationshipSymmetry(reg *Registry, contextByName map[string]*Context,
 				findings = append(findings, Finding{
 					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf(`relationship asymmetry: %q → %q (%s) but %q has no reciprocal entry`, ctx.Name, rel.To, rel.Kind, rel.To),
-					Severity: severity,
+					Severity: sev,
 				})
 			}
 		}
@@ -344,7 +346,7 @@ func hasReciprocal(ctx *Context, sourceName, kind string) bool {
 // `kind:` value. Without this pass, typos (e.g., `kind: shered-kernel`) silently
 // pass validation because checkRelationshipSymmetry only iterates the asymmetric
 // set.
-func checkRelationshipKinds(reg *Registry, severity string) []Finding {
+func checkRelationshipKinds(reg *Registry, sev severity.Severity) []Finding {
 	var findings []Finding
 
 	knownKinds := map[string]bool{
@@ -362,7 +364,7 @@ func checkRelationshipKinds(reg *Registry, severity string) []Finding {
 				findings = append(findings, Finding{
 					File:     "specs/apps/" + reg.App + "/ddd/bounded-contexts.yaml",
 					Message:  fmt.Sprintf("unknown relationship kind %q in %q → %q", rel.Kind, ctx.Name, rel.To),
-					Severity: severity,
+					Severity: sev,
 				})
 			}
 		}

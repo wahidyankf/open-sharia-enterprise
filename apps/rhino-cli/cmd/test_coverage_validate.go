@@ -99,7 +99,7 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 		perFileText = testcoverage.FormatTextPerFile(&result, belowThreshold)
 	}
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text: func(v, q bool) string {
 			return testcoverage.FormatText(&result, v, q) + perFileText
 		},

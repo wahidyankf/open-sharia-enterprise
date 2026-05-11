@@ -1,5 +1,7 @@
 package glossary
 
+import "github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
+
 // Glossary is the parsed representation of a ubiquitous-language markdown file.
 type Glossary struct {
 	Path              string
@@ -37,12 +39,12 @@ type ParseError struct {
 type Finding struct {
 	File     string
 	Message  string
-	Severity string
+	Severity severity.Severity
 }
 
 // ValidateOptions carries the inputs to ValidateAll.
 type ValidateOptions struct {
 	RepoRoot string
 	App      string
-	Severity string
+	Severity severity.Severity
 }

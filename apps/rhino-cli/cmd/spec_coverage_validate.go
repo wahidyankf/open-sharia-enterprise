@@ -84,7 +84,7 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("spec coverage check failed: %w", err)
 	}
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return speccoverage.FormatText(result, v, q) },
 		json:     func() (string, error) { return speccoverage.FormatJSON(result) },
 		markdown: func() string { return speccoverage.FormatMarkdown(result) },

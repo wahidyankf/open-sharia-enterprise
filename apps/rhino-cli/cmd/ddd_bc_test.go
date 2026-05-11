@@ -12,6 +12,7 @@ import (
 
 	"github.com/cucumber/godog"
 	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/bcregistry"
+	"github.com/wahidyankf/ose-public/apps/rhino-cli/internal/severity"
 )
 
 var specsDirUnitBcValidate = func() string {
@@ -73,7 +74,7 @@ func (s *bcValidateUnitSteps) registryNotListingPhantom() error {
 		return []bcregistry.Finding{{
 			File:     "apps/organiclever-web/src/contexts/phantom",
 			Message:  `orphan code directory "phantom" not registered in bounded-contexts.yaml`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -86,7 +87,7 @@ func (s *bcValidateUnitSteps) registryWithMissingGlossary() error {
 		return []bcregistry.Finding{{
 			File:     "specs/apps/organiclever/ddd/ubiquitous-language/journal.md",
 			Message:  `missing glossary for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -99,7 +100,7 @@ func (s *bcValidateUnitSteps) registryWithMissingLayer() error {
 		return []bcregistry.Finding{{
 			File:     "apps/organiclever-web/src/contexts/journal/infrastructure",
 			Message:  `missing layer "infrastructure" for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -112,7 +113,7 @@ func (s *bcValidateUnitSteps) registryWithExtraLayer() error {
 		return []bcregistry.Finding{{
 			File:     "apps/organiclever-web/src/contexts/journal/infrastructure",
 			Message:  `extra layer "infrastructure" found on filesystem but not declared in registry for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -125,7 +126,7 @@ func (s *bcValidateUnitSteps) registryWithMissingGherkin() error {
 		return []bcregistry.Finding{{
 			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `missing gherkin directory for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -138,7 +139,7 @@ func (s *bcValidateUnitSteps) registryWithEmptyGherkin() error {
 		return []bcregistry.Finding{{
 			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -149,7 +150,7 @@ func (s *bcValidateUnitSteps) gherkinFolderExistsButEmpty() error {
 		return []bcregistry.Finding{{
 			File:     "specs/apps/organiclever/behavior/web/gherkin/journal",
 			Message:  `no feature files found in gherkin directory for context "journal"`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil
@@ -160,7 +161,7 @@ func (s *bcValidateUnitSteps) registryWithRelationshipAsymmetry() error {
 		return []bcregistry.Finding{{
 			File:     "specs/apps/organiclever/ddd/bounded-contexts.yaml",
 			Message:  `relationship asymmetry: "workout-session" → "journal" (customer-supplier) but "journal" has no reciprocal entry`,
-			Severity: "error",
+			Severity: severity.SeverityError{},
 		}}, nil
 	}
 	return nil

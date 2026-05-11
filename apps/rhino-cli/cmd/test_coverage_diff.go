@@ -73,7 +73,7 @@ func runDiffTestCoverage(cmd *cobra.Command, args []string) error {
 		perFileText = testcoverage.FormatTextPerFile(&result, 0)
 	}
 
-	if writeErr := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if writeErr := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text: func(v, q bool) string {
 			return testcoverage.FormatText(&result, v, q) + perFileText
 		},

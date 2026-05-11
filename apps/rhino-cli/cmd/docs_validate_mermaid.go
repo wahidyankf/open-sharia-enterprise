@@ -132,7 +132,7 @@ func runValidateMermaid(cmd *cobra.Command, args []string) error {
 	result := docsValidateMermaidFn(allBlocks, opts)
 	result.FilesScanned = len(fileSet)
 
-	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+	if err := writeFormattedV2(cmd, verbose, quiet, outputFuncs{
 		text:     func(v, q bool) string { return mermaid.FormatText(result, v, q) },
 		json:     func() (string, error) { return mermaid.FormatJSON(result) },
 		markdown: func() string { return mermaid.FormatMarkdown(result) },
