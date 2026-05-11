@@ -158,20 +158,28 @@ For EACH command below, the sub-phase is: (a) write Gherkin feature file, (b) wr
 - [ ] Run `nx run rhino-cli:validate:naming-workflows`. Acceptance: exit 0 (workflow naming unchanged).
 - [ ] Run `npm run lint:md`. Acceptance: exit 0. (Lints all markdown files including the newly modified workflow file.)
 
-## Phase 6 — Checker agent modification
+## Phase 6 — Checker agent modification (dual-mode)
 
-- [ ] Edit `.claude/agents/repo-rules-checker.md` to add a new "Step 0.5: Consume Deterministic Preflight" section before Step 1 per [tech-docs.md §Checker agent change]. Acceptance: file lints clean; skip-set covers all 11 categories; preflight hash reuse logic documented.
+The primary binding is `.claude/agents/repo-rules-checker.md`; the secondary `.opencode/agents/repo-rules-checker.md` is auto-generated via `rhino-cli agents sync` (driven by `npm run sync:claude-to-opencode`). Every edit lands in `.claude/` first, then sync. Both bindings MUST stay semantically equivalent — validated by `rhino-cli agents validate-sync`. Agent skill packages live under `.claude/skills/<name>/SKILL.md` and are read natively by OpenCode (no mirror) per the dual-mode convention; this plan adds none.
+
+- [ ] Edit `.claude/agents/repo-rules-checker.md` (primary binding — source of truth) to add a new "Step 0.5: Consume Deterministic Preflight" section before Step 1 per [tech-docs.md §Checker agent change]. Acceptance: file lints clean; skip-set covers all 11 categories; preflight hash reuse logic documented; frontmatter `tools`, `model`, `color`, `skills` fields unchanged.
 - [ ] Edit Steps 1-8 in the same file to reference the skip set introduced by Step 0.5 — each step that overlaps with a deterministic category gets a one-line "If preflight covered X, skip" annotation. Acceptance: every deterministic category has a corresponding skip annotation in the matching step.
 - [ ] Add a new section "## Final Audit Report Structure" documenting the two-section split: "Deterministic Findings (rhino-cli preflight)" first, "AI-Only Findings" second. Acceptance: section present; report format example included.
-- [ ] Sync to OpenCode: `npm run sync:claude-to-opencode`. Acceptance: `.opencode/agents/repo-rules-checker.md` updated; `npx nx run rhino-cli:validate:cross-vendor-parity` exits 0.
-- [ ] Run `nx run rhino-cli:validate:naming-agents`. Acceptance: exit 0.
+- [ ] Validate primary binding format: `go run -C apps/rhino-cli main.go agents validate-claude --agents-only`. Acceptance: exit 0 (frontmatter syntax, required fields, tool names, model name, color, skills references all valid).
+- [ ] Sync primary → secondary binding: `npm run sync:claude-to-opencode`. Acceptance: command exits 0; `.opencode/agents/repo-rules-checker.md` is updated; the diff shows model `sonnet` mapped to `opencode-go/minimax-m2.7` (or `opencode-go/glm-5` if `haiku` — verify against the dual-mode model mapping); `tools` array converted to boolean map; `color` translated from named (e.g., `green`) to OpenCode theme token (e.g., `success`).
+- [ ] Validate dual-mode semantic equivalence: `go run -C apps/rhino-cli main.go agents validate-sync`. Acceptance: exit 0; all checks pass (description identical, model correctly mapped, tools correctly converted, skills array matches, body content identical between primary and secondary bindings).
+- [ ] Run cross-vendor parity gate: `npx nx run rhino-cli:validate:cross-vendor-parity`. Acceptance: exit 0; no drift detected.
+- [ ] Run primary-binding naming validation: `npx nx run rhino-cli:validate:naming-agents`. Acceptance: exit 0; agent filename + frontmatter name still match across both bindings.
+- [ ] Run vendor-audit on the workflow doc edited in Phase 5: `go run -C apps/rhino-cli main.go repo-governance vendor-audit repo-governance/workflows/repo/repo-rules-quality-gate.md`. Acceptance: exit 0; the workflow doc contains zero forbidden vendor terms (vendor-neutral governance prose).
 
 ## Phase 7 — Conventions + cross-references
 
-- [ ] Create `repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md` documenting which validation categories live in rhino-cli vs the AI checker, when to add a new category, and the contract between preflight and checker per [prd.md FR-7]. Include "Principles Implemented/Respected" section linking to relevant principles. Acceptance: file lints clean; convention follows existing structure pattern (per [docs-applying-content-quality skill]).
+- [ ] Create `repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md` documenting which validation categories live in rhino-cli vs the AI checker, when to add a new category, and the contract between preflight and checker per [prd.md FR-7]. Use vendor-neutral phrasing throughout — refer to "the AI checker", "the primary binding directory", "the coding agent" rather than vendor product names (`Claude Code`, `OpenCode`, `Sonnet`, etc.) per the [Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md). Include "Principles Implemented/Respected" section linking to relevant principles. Acceptance: file lints clean; convention follows existing structure pattern (per [docs-applying-content-quality skill]).
+- [ ] Validate vendor-neutrality of the new convention page: `go run -C apps/rhino-cli main.go repo-governance vendor-audit repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md`. Acceptance: exit 0; zero forbidden vendor terms in prose (vendor-specific examples, if any, must be inside fenced code blocks or under "Platform Binding Examples" headings per the allowlist mechanism).
 - [ ] Add link from `repo-governance/conventions/README.md` to the new convention page. Acceptance: link resolves; `go run -C apps/rhino-cli main.go docs validate-links repo-governance/` exits 0 or 1 (findings OK; only exit 2 is a hard failure).
 - [ ] Add link from `apps/rhino-cli/README.md` "Commands" section listing the 12 new commands with brief descriptions matching existing format. Acceptance: file lints clean; each command has a fenced bash example.
 - [ ] Update `apps/rhino-cli/README.md` "Version History" with a new top entry (`v0.16.0` or next available) summarizing the additions. Acceptance: version-history pattern matches prior entries.
+- [ ] Re-run vendor-audit on the entire governance tree: `npx nx run rhino-cli:validate:repo-governance-vendor-audit`. Acceptance: exit 0; no new vendor terms introduced anywhere under `repo-governance/`.
 
 ## Phase 8 — End-to-end validation
 
@@ -179,7 +187,8 @@ For EACH command below, the sub-phase is: (a) write Gherkin feature file, (b) wr
 - [ ] Run the full deterministic orchestrator: `dist/rhino-cli repo-governance audit -o json | jq .`. Acceptance: valid JSON with `schema: "rhino-cli/repo-governance-audit/v1"`, all 11 categories listed.
 - [ ] Capture baseline preflight against current repo state: `dist/rhino-cli repo-governance audit -o json > /tmp/preflight-baseline.json`. Acceptance: file written; cumulative findings count reported.
 - [ ] Run byte-determinism test: `for i in $(seq 1 10); do dist/rhino-cli repo-governance audit -o json > /tmp/run-$i.json; done && sha256sum /tmp/run-*.json | awk '{print $1}' | sort -u | wc -l`. Acceptance: output is `1` (all 10 runs identical).
-- [ ] Run full workflow against the repo: `claude` → "Run repository rules quality gate workflow in strict mode". Acceptance: workflow executes Step 0.5 first; preflight JSON written to `generated-reports/`; AI checker consumes it; workflow terminates with `pass` or `partial` per existing termination criteria; iteration count ≤3 on a clean repo.
+- [ ] Run full workflow against the repo from the primary binding harness (Claude Code session): prompt "Run repository rules quality gate workflow in strict mode". Acceptance: workflow executes Step 0.5 first; preflight JSON written to `generated-reports/`; AI checker consumes it; workflow terminates with `pass` or `partial` per existing termination criteria; iteration count ≤3 on a clean repo.
+- [ ] Run the same workflow from the secondary binding harness (OpenCode session, if available): prompt the same. Acceptance: identical Step 0.5 preflight invocation (`nx run rhino-cli:validate:repo-governance-audit`); secondary binding's `.opencode/agents/repo-rules-checker.md` correctly consumes the preflight JSON; final audit report follows the same two-section structure. If OpenCode is not configured locally, document the prerequisite in `apps/rhino-cli/README.md` and skip this step (acceptance: skip note recorded in delivery report).
 
 ## Phase 9 — Pre-push gates + publish
 
@@ -222,4 +231,7 @@ Before considering this plan complete:
 - [ ] 10-run byte-determinism test of `repo-governance audit` passes (per NFR-1)
 - [ ] Cold-run latency <2 seconds and cached-run latency <100ms (per NFR-2)
 - [ ] All new code ≥90% line coverage (per NFR-3)
-- [ ] `repo-rules-fixer` and `.opencode/` sync untouched (per FR-7 Out-of-scope and NFR-4)
+- [ ] `repo-rules-fixer` agent definition is byte-identical to its pre-plan state (no in-scope edits; per FR-7 Out-of-scope and NFR-4)
+- [ ] `rhino-cli agents sync` infrastructure is byte-identical to its pre-plan state (the script itself and its Nx target are not modified; only its outputs change because the primary binding agent was edited)
+- [ ] Dual-mode parity: `rhino-cli agents validate-claude --agents-only` exits 0; `rhino-cli agents validate-sync` exits 0; both bindings of `repo-rules-checker` carry the Step 0.5 preflight consumption logic with byte-identical body content
+- [ ] Vendor-neutral governance: new convention page + edited workflow doc both pass `nx run rhino-cli:validate:repo-governance-vendor-audit`

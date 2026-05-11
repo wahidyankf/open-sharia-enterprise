@@ -271,4 +271,32 @@ Feature: Deterministic preflight feeds repo-rules-quality-gate
     When I run "nx run rhino-cli:validate:repo-governance-audit" twice
     Then the second run is a cache hit
     And the second run completes in under 100ms
+
+  Scenario: Checker agent edits sync to secondary binding
+    Given the primary binding ".claude/agents/repo-rules-checker.md" was modified in Phase 6
+    When I run "npm run sync:claude-to-opencode"
+    Then ".opencode/agents/repo-rules-checker.md" is regenerated
+    And the secondary binding's model field is mapped per the dual-mode model mapping
+    And the secondary binding's tools field is converted to a boolean map
+    And the secondary binding's body content is byte-identical to the primary binding's body
+
+  Scenario: Dual-mode semantic equivalence
+    Given Phase 6 sync has run
+    When I run "rhino-cli agents validate-sync"
+    Then the exit code is 0
+    And every equivalence check passes (description, model, tools, skills, body)
+
+  Scenario: Governance prose stays vendor-neutral
+    Given Phase 5 modified "repo-governance/workflows/repo/repo-rules-quality-gate.md"
+    And Phase 7 created "repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md"
+    When I run "nx run rhino-cli:validate:repo-governance-vendor-audit"
+    Then the exit code is 0
+    And no forbidden vendor terms appear in the new or modified governance files
+
+  Scenario: Workflow runs identically from both bindings
+    Given both ".claude/agents/repo-rules-checker.md" and ".opencode/agents/repo-rules-checker.md" are in sync
+    When repo-rules-quality-gate is invoked from either primary or secondary binding harness
+    Then Step 0.5 invokes the identical Nx target "nx run rhino-cli:validate:repo-governance-audit"
+    And the resulting preflight JSON is byte-identical regardless of which harness invoked the workflow
+    And the checker agent consumes the JSON via the same Step 0.5 logic
 ```

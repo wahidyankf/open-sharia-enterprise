@@ -11,16 +11,21 @@ flowchart TB
     classDef artifact fill:#CA9161,stroke:#CA9161,color:#fff
 
     USER[User invokes workflow]:::user
-    WF[repo-rules-quality-gate.md]:::workflow
+    WF[repo-rules-quality-gate]:::workflow
+    PRE[Step 0.5 Preflight]:::workflow
+    RC[rhino-cli audit]:::rhino
+    JSON[preflight JSON]:::artifact
+    CHECKER[repo-rules-checker]:::ai
+    AUDIT[final audit report]:::artifact
+    FIXER[repo-rules-fixer loop]:::ai
 
     USER --> WF
-    WF --> PRE[Step 0.5 Deterministic Preflight]:::workflow
-    PRE --> RC[rhino-cli repo-governance audit]:::rhino
-    RC --> JSON[preflight JSON]:::artifact
-    JSON --> CHECKER[repo-rules-checker agent]:::ai
-    CHECKER --> AUDIT[final audit report]:::artifact
-    AUDIT --> FIXER[repo-rules-fixer]:::ai
-    FIXER --> WF
+    WF --> PRE
+    PRE --> RC
+    RC --> JSON
+    JSON --> CHECKER
+    CHECKER --> AUDIT
+    AUDIT --> FIXER
 ```
 
 The preflight phase runs first, produces a JSON envelope of all deterministic findings, and the AI checker consumes it as input. The AI checker skips categories already covered by preflight and runs only AI-only categories (paraphrased duplication, contradictions, terminology alignment, semantic principle-appropriateness). On re-validation iterations the preflight runs again (fast, Nx-cached); if the JSON hash is identical, the AI checker reuses deterministic findings without re-evaluation.
@@ -237,6 +242,31 @@ In `.claude/agents/repo-rules-checker.md` Validation Process, add new Step 0.5 b
 
 **On re-validation iteration**: compute SHA-256 of preflight JSON. If identical to prior iteration's preflight hash, reuse the deterministic findings section unchanged and only re-run AI-only categories.
 ```
+
+## Dual-Mode Compatibility (primary + secondary platform binding)
+
+This plan keeps the `repo-rules-quality-gate` workflow fully functional under both supported coding-agent platform bindings (primary: `.claude/`; secondary: `.opencode/`) per the dual-mode convention. Three properties make this work:
+
+1. **rhino-cli is platform-agnostic.** The 12 new commands (Phase 1-3) are Go binaries invoked via `nx run …` / `go run …`. Neither the workflow nor the agent shells out to vendor-specific tooling; both bindings invoke the identical preflight target (`nx run rhino-cli:validate:repo-governance-audit`). No vendor lock-in is introduced.
+2. **Agent edits go to the primary binding only; sync propagates them.** The Phase 6 modification to the checker agent lands in `.claude/agents/repo-rules-checker.md` (single source of truth). `rhino-cli agents sync` (`npm run sync:claude-to-opencode`) auto-regenerates `.opencode/agents/repo-rules-checker.md` with the standard frontmatter transforms: tools array → boolean map, model `sonnet` → `opencode-go/minimax-m2.7` (or `haiku` → `opencode-go/glm-5`), named colors → OpenCode theme tokens. The body content stays byte-identical between the two bindings.
+3. **Skill packages stay native to the primary binding directory.** OpenCode reads `.claude/skills/<name>/SKILL.md` natively per its documented behavior (no mirror copy). This plan adds zero skills, so the existing native-read path is unchanged.
+
+### Validation gates that guarantee dual-mode parity
+
+| Gate                       | Command                                                   | Purpose                                                                                                                                                                                                           |
+| -------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Primary binding format     | `rhino-cli agents validate-claude --agents-only`          | YAML frontmatter, required fields, valid tool names, valid model name, valid color, skills references resolve, no YAML comments                                                                                   |
+| Sync semantic equivalence  | `rhino-cli agents validate-sync`                          | Description identical; model correctly mapped; tools correctly converted; skills array identical; body content identical between primary and secondary bindings                                                   |
+| Cross-vendor parity        | `nx run rhino-cli:validate:cross-vendor-parity`           | Full repository-level drift gate (governance docs, AGENTS.md, CLAUDE.md, both agent dirs)                                                                                                                         |
+| Vendor-neutral governance  | `rhino-cli repo-governance vendor-audit repo-governance/` | New convention page + edited workflow doc contain no forbidden vendor terms per the [Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md) |
+| Cached preflight Nx target | `nx run rhino-cli:validate:repo-governance-audit`         | Same input → same output regardless of invoking platform; cache hits on unchanged repo state                                                                                                                      |
+
+### Scope-of-edit invariants
+
+- Governance prose (under `repo-governance/`) is vendor-neutral — uses "primary binding directory" / "secondary binding directory" / "the AI checker" / "the coding agent" — never the vendor product names.
+- Platform-binding artifacts (under `.claude/agents/` and `.opencode/agents/`) are intentionally vendor-specific.
+- `.opencode/` is never hand-edited; only `rhino-cli agents sync` writes there.
+- Plan documents themselves (this directory) may reference vendor specifics when describing implementation details (per the [Governance Vendor-Independence Convention §Out of scope](../../../repo-governance/conventions/structure/governance-vendor-independence.md)). The new convention page authored in Phase 7 is held to the stricter governance standard.
 
 ## Caching strategy
 
