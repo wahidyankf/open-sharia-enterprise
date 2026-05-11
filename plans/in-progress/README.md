@@ -5,6 +5,7 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
+- [rename-ts-ui-libs](./rename-ts-ui-libs/README.md) — Rename `libs/ts-ui` → `libs/web-ui` and `libs/ts-ui-tokens` → `libs/web-ui-token`, update all consumers and governance docs
 
 ## Instructions
 
