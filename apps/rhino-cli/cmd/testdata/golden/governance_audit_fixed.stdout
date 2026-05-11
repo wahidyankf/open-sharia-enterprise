@@ -1,0 +1,112 @@
+{
+  "schema": "rhino-cli/repo-governance-audit/v1",
+  "status": "failed",
+  "result": {
+    "git_sha": "abc1234",
+    "ran_at": "TIMESTAMP",
+    "total_findings": 1,
+    "by_severity": {
+      "high": 1
+    },
+    "by_category": {
+      "agents-detect-duplication": 0,
+      "agents-md-size": 1,
+      "docs-validate-frontmatter": 0,
+      "docs-validate-heading-hierarchy": 0,
+      "docs-validate-naming": 0,
+      "emoji-audit": 0,
+      "frontmatter-audit": 0,
+      "layer-coherence": 0,
+      "license-audit": 0,
+      "readme-index-audit": 0,
+      "traceability-audit": 0
+    },
+    "categories": [
+      {
+        "name": "agents-md-size",
+        "command": "repo-governance agents-md-size",
+        "passed": false,
+        "findings": [
+          {
+            "key": "agents-md-size|AGENTS.md|deadbeef",
+            "severity": "high",
+            "criticality": "HIGH",
+            "file": "AGENTS.md",
+            "line": 1,
+            "message": "AGENTS.md exceeds hard limit"
+          }
+        ]
+      },
+      {
+        "name": "frontmatter-audit",
+        "command": "repo-governance frontmatter-audit",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "traceability-audit",
+        "command": "repo-governance traceability-audit",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "license-audit",
+        "command": "repo-governance license-audit",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "readme-index-audit",
+        "command": "repo-governance readme-index-audit",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "emoji-audit",
+        "command": "repo-governance emoji-audit",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "layer-coherence",
+        "command": "repo-governance layer-coherence",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "docs-validate-naming",
+        "command": "docs validate-naming",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "docs-validate-frontmatter",
+        "command": "docs validate-frontmatter",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "docs-validate-heading-hierarchy",
+        "command": "docs validate-heading-hierarchy",
+        "passed": true,
+        "findings": []
+      },
+      {
+        "name": "agents-detect-duplication",
+        "command": "agents detect-duplication",
+        "passed": true,
+        "findings": []
+      }
+    ],
+    "skipped_false_positives": [
+      {
+        "key": "emoji-audit|apps/example.go|cafef00d",
+        "severity": "high",
+        "criticality": "HIGH",
+        "file": "apps/example.go",
+        "line": 12,
+        "message": "forbidden emoji codepoint U+1F600 at column 5"
+      }
+    ]
+  }
+}
