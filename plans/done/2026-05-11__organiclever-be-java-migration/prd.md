@@ -10,10 +10,10 @@ production-quality Java backend aligned with the ose-primer reference implementa
 
 ## Personas
 
-| Persona | Hat | Relationship to this plan |
-|---------|-----|--------------------------|
+| Persona      | Hat                                          | Relationship to this plan                                                           |
+| ------------ | -------------------------------------------- | ----------------------------------------------------------------------------------- |
 | BE Developer | Solo maintainer wearing backend engineer hat | Executes delivery checklist; writes Java source, pom.xml, Cucumber step definitions |
-| Tech Lead | Solo maintainer wearing architecture hat | Reviews Nx target design, NullAway config, JaCoCo exclusion decisions |
+| Tech Lead    | Solo maintainer wearing architecture hat     | Reviews Nx target design, NullAway config, JaCoCo exclusion decisions               |
 
 Consuming agents: `plan-execution` workflow executes delivery checklist; `swe-java-dev`
 handles Java source creation steps; `plan-execution-checker` validates completed work.
@@ -29,26 +29,26 @@ handles Java source creation steps; `plan-execution-checker` validates completed
 
 ## Functional Requirements
 
-| ID | Requirement |
-|----|------------|
-| FR-1 | `GET /api/v1/health` returns HTTP 200 with body `{"status":"UP"}` |
+| ID   | Requirement                                                          |
+| ---- | -------------------------------------------------------------------- |
+| FR-1 | `GET /api/v1/health` returns HTTP 200 with body `{"status":"UP"}`    |
 | FR-2 | Anonymous access to `/api/v1/health` is permitted (no auth required) |
-| FR-3 | Health response does not expose internal component details |
-| FR-4 | Application starts on port 8202 |
-| FR-5 | CORS allows any origin/method/header (matches v0 F# behaviour) |
+| FR-3 | Health response does not expose internal component details           |
+| FR-4 | Application starts on port 8202                                      |
+| FR-5 | CORS allows any origin/method/header (matches v0 F# behaviour)       |
 
 ## Non-Functional Requirements
 
-| ID | Requirement |
-|----|------------|
-| NFR-1 | Maven build completes in a clean environment without .NET toolchain |
-| NFR-2 | Unit test coverage ≥90% (JaCoCo line coverage, `target/site/jacoco/jacoco.xml`) |
-| NFR-3 | Zero Checkstyle violations (Google Java Style subset) |
-| NFR-4 | Zero PMD violations (configured ruleset) |
-| NFR-5 | Zero NullAway violations in `com.organicleverbe` package (JSpecify annotations) |
+| ID    | Requirement                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------- |
+| NFR-1 | Maven build completes in a clean environment without .NET toolchain                               |
+| NFR-2 | Unit test coverage ≥90% (JaCoCo line coverage, `target/site/jacoco/jacoco.xml`)                   |
+| NFR-3 | Zero Checkstyle violations (Google Java Style subset)                                             |
+| NFR-4 | Zero PMD violations (configured ruleset)                                                          |
+| NFR-5 | Zero NullAway violations in `com.organicleverbe` package (JSpecify annotations)                   |
 | NFR-6 | All Gherkin scenarios in `specs/apps/organiclever/behavior/be/gherkin/` have step implementations |
-| NFR-7 | Docker-based integration runner exits 0 |
-| NFR-8 | No F#/dotnet artifacts remain in `apps/organiclever-be/` |
+| NFR-7 | Docker-based integration runner exits 0                                                           |
+| NFR-8 | No F#/dotnet artifacts remain in `apps/organiclever-be/`                                          |
 
 ## Acceptance Criteria (Gherkin)
 
@@ -127,12 +127,12 @@ Feature: Java Spring Boot Migration — Quality Gate
 
 ## Product Risks
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| 90% JaCoCo coverage may be hard to meet with health-only scope | Unit tests might fall below threshold | JaCoCo exclusions configured for application main, package-info, generated contracts, and config classes; simulated state store tests cover HealthController indirectly via step defs |
-| Simulated unit test state store does not exercise real HTTP stack | Coverage gaps in HTTP-layer behavior may go undetected by unit tests | Controller correctness verified at Phase 5 via Docker integration tests that hit the real endpoint |
-| JaCoCo exclusion list may hide uncovered controller code | False sense of 90% coverage | Verify by inspecting the generated `jacoco.xml` report manually; review excluded classes list in `pom.xml` |
-| `typecheck` target omits annotation validation (ose-public rhino-cli lacks `java validate-annotations`) | Unannotated public APIs may escape detection until ose-primer propagation | NullAway via `mvn compile -Pnullcheck` still validates package-level `@NullMarked` annotations; full annotation coverage validated when ose-primer adopts the subcommand |
+| Risk                                                                                                    | Impact                                                                    | Mitigation                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 90% JaCoCo coverage may be hard to meet with health-only scope                                          | Unit tests might fall below threshold                                     | JaCoCo exclusions configured for application main, package-info, generated contracts, and config classes; simulated state store tests cover HealthController indirectly via step defs |
+| Simulated unit test state store does not exercise real HTTP stack                                       | Coverage gaps in HTTP-layer behavior may go undetected by unit tests      | Controller correctness verified at Phase 5 via Docker integration tests that hit the real endpoint                                                                                    |
+| JaCoCo exclusion list may hide uncovered controller code                                                | False sense of 90% coverage                                               | Verify by inspecting the generated `jacoco.xml` report manually; review excluded classes list in `pom.xml`                                                                            |
+| `typecheck` target omits annotation validation (ose-public rhino-cli lacks `java validate-annotations`) | Unannotated public APIs may escape detection until ose-primer propagation | NullAway via `mvn compile -Pnullcheck` still validates package-level `@NullMarked` annotations; full annotation coverage validated when ose-primer adopts the subcommand              |
 
 ## Out of Scope
 

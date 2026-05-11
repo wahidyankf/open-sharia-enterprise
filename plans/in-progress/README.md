@@ -4,9 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [organiclever-be-java-migration](./organiclever-be-java-migration/README.md) — Migrate `organiclever-be` from F#/Giraffe to Java/Spring Boot 4.0
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [rhino-cli-dry-and-enums-refactor](./rhino-cli-dry-and-enums-refactor/README.md) — 16-item DRY + typed-enum refactor pass across `apps/rhino-cli`
 
 ## Instructions
 

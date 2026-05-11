@@ -13,15 +13,15 @@ NullAway, Cucumber-JVM, Docker-based integration tests) against a real, contract
 
 ## Scope
 
-| Area | In scope |
-|------|----------|
-| `apps/organiclever-be/` | Full replacement (F# → Java) |
-| `apps/organiclever-be/project.json` | All Nx targets rewritten for Maven |
-| Generated contracts | Switch generator from `fsharp-giraffe-server` to `java` |
-| Specs / Gherkin features | Unchanged (language-agnostic) |
-| OpenAPI contract | Unchanged |
-| DDD / ubiquitous-language | Unchanged |
-| `organiclever-web`, `organiclever-be-e2e` | Unchanged (API contract preserved) |
+| Area                                      | In scope                                                |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `apps/organiclever-be/`                   | Full replacement (F# → Java)                            |
+| `apps/organiclever-be/project.json`       | All Nx targets rewritten for Maven                      |
+| Generated contracts                       | Switch generator from `fsharp-giraffe-server` to `java` |
+| Specs / Gherkin features                  | Unchanged (language-agnostic)                           |
+| OpenAPI contract                          | Unchanged                                               |
+| DDD / ubiquitous-language                 | Unchanged                                               |
+| `organiclever-web`, `organiclever-be-e2e` | Unchanged (API contract preserved)                      |
 
 ## Reference Implementation
 
@@ -45,12 +45,12 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Documents
 
-| File | Purpose |
-|------|---------|
-| [brd.md](./brd.md) | Business rationale |
-| [prd.md](./prd.md) | Product requirements + Gherkin acceptance criteria |
-| [tech-docs.md](./tech-docs.md) | Technical design and implementation guide |
-| [delivery.md](./delivery.md) | Step-by-step TDD delivery checklist (includes Worktree section) |
+| File                           | Purpose                                                         |
+| ------------------------------ | --------------------------------------------------------------- |
+| [brd.md](./brd.md)             | Business rationale                                              |
+| [prd.md](./prd.md)             | Product requirements + Gherkin acceptance criteria              |
+| [tech-docs.md](./tech-docs.md) | Technical design and implementation guide                       |
+| [delivery.md](./delivery.md)   | Step-by-step TDD delivery checklist (includes Worktree section) |
 
 ## Quality Gates
 
