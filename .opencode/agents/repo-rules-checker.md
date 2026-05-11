@@ -264,7 +264,39 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 See `repo-generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
 
+### Step 0.5: Consume Deterministic Preflight
+
+**Input**: `preflight-report` argument — path to `generated-reports/repo-governance-audit__*.json`. The orchestrating workflow (`repo-governance/workflows/repo/repo-rules-quality-gate.md`) runs `nx run rhino-cli:validate:repo-governance-audit -o json` and passes the resulting JSON file path here.
+
+**Procedure**:
+
+1. **Read the preflight JSON**. Use `Read` on the path supplied.
+2. **Validate envelope**: confirm `schema` field equals `rhino-cli/repo-governance-audit/v1`. If missing or different, treat preflight as absent and run all Steps 1-8 in full (defensive fallback).
+3. **Extract findings**: parse `result.categories[]` (each carries `name`, `command`, `passed`, `findings[]`) and `result.skipped_false_positives[]`.
+4. **Populate the deterministic skip set** for this run — each category listed below tells which validation step (or sub-step) is already covered by rhino-cli and MUST NOT be re-evaluated by the AI checker:
+
+   | Preflight category                | Step covered (skip)                                         |
+   | --------------------------------- | ----------------------------------------------------------- |
+   | `agents-md-size`                  | Step 6 "AGENTS.md Size Monitoring"                          |
+   | `frontmatter-audit`               | Step 1 frontmatter portion (No-Last-Updated convention)     |
+   | `traceability-audit`              | Step 7 traceability portion (Vision/Principles/Conventions) |
+   | `license-audit`                   | Step 7 licensing portion                                    |
+   | `readme-index-audit`              | Step 8.7 README index portion                               |
+   | `emoji-audit`                     | Step 1 emoji portion                                        |
+   | `layer-coherence`                 | Step 7 layer-coherence portion                              |
+   | `docs-validate-naming`            | Step 8.3 naming portion                                     |
+   | `docs-validate-frontmatter`       | Step 8.4 frontmatter portion                                |
+   | `docs-validate-heading-hierarchy` | Step 8.4 heading-hierarchy portion                          |
+   | `agents-detect-duplication`       | Step 2 (verbatim) and Step 3 (verbatim) portions            |
+
+5. **Embed preflight findings in the final audit verbatim** under a new top-level section `## Deterministic Findings (rhino-cli preflight)` placed before `## AI-Only Findings`. Render each preflight finding as a regular report finding entry (same key/severity/criticality/file/line/message shape).
+6. **Re-validation iteration optimization**: compute `sha256(preflight-json-bytes)`. If identical to the prior iteration's preflight hash (stored under `generated-reports/.preflight-hash-<uuid-chain>`), reuse the prior deterministic findings section unchanged and ONLY re-evaluate AI-only categories. Store the new hash for the next iteration.
+
+**On failure**: If `preflight-report` argument is missing, the JSON file is absent, or the schema check fails, log a `[WARN]` line in the audit report explaining that preflight was unavailable, then proceed to Steps 1-8 in full as the defensive fallback.
+
 ### Step 1: Core Repository Validation
+
+**Preflight skip annotation**: If preflight covered `frontmatter-audit` (No-Last-Updated convention) and `emoji-audit`, SKIP the frontmatter and emoji sub-portions of this step. Re-evaluate only the remaining sub-rules (file naming for non-doc paths, linking, convention compliance not already covered).
 
 #### Known False Positive Skip List
 
@@ -312,6 +344,8 @@ This prevents scanning all ~265 software documentation files when only 3-4 agent
 Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md).
 
 ### Step 2: Agent-to-Agent Duplication Detection
+
+**Preflight skip annotation**: If preflight covered `agents-detect-duplication`, SKIP the verbatim-match portion of this step. Re-evaluate only paraphrased / non-verbatim duplication (AI-only judgement).
 
 **CRITICAL VALIDATION**: Detect when multiple agents duplicate the same content.
 
@@ -447,6 +481,8 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 - Focus on high-confidence duplications (>20 lines)
 
 ### Step 3: Agent-Skill Duplication Detection
+
+**Preflight skip annotation**: If preflight covered `agents-detect-duplication`, SKIP the verbatim-match portion of this step. Re-evaluate only paraphrased / non-verbatim agent-skill duplication.
 
 **For each agent in `.claude/agents/`**:
 
@@ -639,6 +675,8 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 ### Step 6: AGENTS.md Size Check
 
+**Preflight skip annotation**: If preflight covered `agents-md-size`, SKIP this entire step. The deterministic finding (if any) is already embedded in the `## Deterministic Findings (rhino-cli preflight)` section.
+
 1. Read AGENTS.md
 2. Count characters
 3. Calculate percentage of limits
@@ -646,6 +684,8 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 5. Write finding if over target
 
 ### Step 7: Rules Governance Validation
+
+**Preflight skip annotations**: If preflight covered `traceability-audit`, SKIP the traceability sub-portion (Vision Supported / Principles Implemented / Conventions Implemented headings). If preflight covered `license-audit`, SKIP the licensing sub-portion. If preflight covered `layer-coherence`, SKIP the cross-doc layer numbering sub-portion. Re-evaluate only the AI-only sub-portions (contradictions, inaccuracies, semantic inconsistencies, terminology alignment).
 
 **Validate contradictions, inaccuracies, and inconsistencies** across all governance layers:
 
@@ -700,6 +740,8 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 8. **Write findings progressively** using report format above
 
 ### Step 8: Software Documentation Validation
+
+**Preflight skip annotations**: If preflight covered `docs-validate-naming`, SKIP the file-naming sub-portion (Step 8.3). If preflight covered `docs-validate-frontmatter`, SKIP the frontmatter shape sub-portion (Step 8.4 frontmatter). If preflight covered `docs-validate-heading-hierarchy`, SKIP the heading-hierarchy sub-portion (Step 8.4 hierarchy). If preflight covered `readme-index-audit`, SKIP the README index integrity sub-portion (Step 8.7). Re-evaluate only the AI-only sub-portions (content accuracy, principle-alignment judgement, cross-doc terminology consistency).
 
 **Scope**: `docs/explanation/software-engineering/` (~265 files, ~345k lines)
 
@@ -1136,6 +1178,26 @@ Update report status to "Complete", add summary statistics by category:
 - AGENTS.md size findings
 - Rules governance findings (contradictions, inaccuracies, inconsistencies, traceability, layer coherence, licensing compliance)
 - Software documentation findings (principle alignment, cross-references, file naming, structure patterns, templates, diagrams, README indices, version docs)
+
+## Final Audit Report Structure
+
+When preflight is supplied (Step 0.5 succeeded), the final audit report is split into two top-level sections, in this fixed order:
+
+1. **`## Deterministic Findings (rhino-cli preflight)`** — embeds every finding from the preflight JSON envelope verbatim. Each finding renders as:
+
+   ```markdown
+   ### [SEVERITY] [CRITICALITY] <category> — <file>:<line>
+
+   **Key**: `<category>|<file>|<short-hash>`
+   **Message**: <message>
+   **Source**: `rhino-cli repo-governance <category>` (preflight)
+   ```
+
+   Findings are grouped under per-category H3 sub-headings to mirror the preflight envelope's `result.categories[]` ordering. Skipped false-positives are listed under an `### [INFO] Skipped (known false positives)` sub-section.
+
+2. **`## AI-Only Findings`** — findings produced by the AI-only validation sub-portions of Steps 1-8 (paraphrased duplication, contradictions, terminology alignment, semantic principle-appropriateness, README content quality, etc.). Each entry uses the existing finding format.
+
+When preflight is unavailable (`[WARN]` logged in Step 0.5), the report uses a single top-level `## Findings` section containing all findings produced by the full Steps 1-8 evaluation — backward-compatible with the pre-preflight format.
 
 ## Important Notes
 
