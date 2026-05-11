@@ -84,7 +84,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 **Inaccuracies**:
 
 - Validate file path references (e.g., in "See X" links)
-- Check layer numbering is consistent (0, 1, 2, 3, 5)
+- Check layer numbering is consistent (0, 1, 2, 3, 4, 5)
 - Verify agent names match actual agent files
 - Validate skill names match actual skill files
 - Check frontmatter field requirements match actual agent frontmatter

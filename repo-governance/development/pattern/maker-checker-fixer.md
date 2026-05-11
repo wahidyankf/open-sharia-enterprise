@@ -175,6 +175,8 @@ Maker Agent (apps-ayokoding-web-general-maker):
 
 **Note on Report File Naming**: The `__` (double underscore) in report filenames (e.g., `readme__{timestamp}__audit.md`) is the **report file naming separator** defined in the [Temporary Files Convention](../infra/temporary-files.md), separating agent-family prefix, UUID chain, and timestamp. This is NOT an old agent name - it is the standard 4-part pattern: `{agent-family}__{uuid-chain}__{timestamp}__{type}.md`.
 
+**Note on `repo-rules-checker` Two-Section Reports**: The `repo-rules-checker` row above produces audit reports with two top-level sections — `## Deterministic Findings (rhino-cli preflight)` first, then `## AI-Only Findings`. The split is defined in the [Deterministic vs AI Validation Split Convention](../../conventions/structure/deterministic-vs-ai-validation-split.md); the JSON envelope contract that drives the deterministic half is documented there as well.
+
 **Key Responsibilities**:
 
 - PASS: Validate content against conventions
