@@ -191,17 +191,13 @@ Notes: All 5 test functions written; confirmed RED before package creation.
   - `Dispatcher[T any]` struct with `Text`, `JSON`, `Markdown` callbacks and `Write` method.
   - Tests pass.
 
-- [ ] **1B.3 RED + GREEN** — `internal/cliout/envelope_test.go` and `envelope.go`:
-  - `Envelope[T]` generic helper with `Schema`, `Status`, `Result` fields.
-  - `MarshalJSON` produces canonical key ordering matching the **existing**
-    JSON envelopes (compare against goldens from Phase 0).
-  - Tests pass.
+<!-- NOTE: duplicate removed — see ticked 1B.3 below -->
 
 <!-- implementation-notes
 Date: 2026-05-11
 Status: DONE
-Files Changed: apps/rhino-cli/internal/cliout/format.go (created), apps/rhino-cli/internal/cliout/dispatcher.go (created)
-Notes: OutputFormat sealed interface + FormatText{}/FormatJSON{}/FormatMarkdown{} with //sumtype:decl. Dispatcher[T any] generic. Parse(). All 13 tests pass.
+Files Changed: apps/rhino-cli/internal/cliout/format.go (created — contains OutputFormat interface AND Dispatcher[T] type; no separate dispatcher.go)
+Notes: OutputFormat sealed interface + FormatText{}/FormatJSON{}/FormatMarkdown{} with //sumtype:decl. Dispatcher[T any] generic. Parse(). All 13 tests pass. (Note: implementation note previously claimed dispatcher.go was a separate file; corrected — Dispatcher[T] lives in format.go)
 -->
 
 - [x] **1B.3 RED + GREEN** — `internal/cliout/envelope_test.go` and `envelope.go`:
@@ -290,7 +286,7 @@ Notes: go test ./cmd -run TestGolden: 47/47 pass after cliout migration.
 
 ### 1D — Cmd-side adoption of `severity`
 
-- [ ] **1D.1 RED** — extend `cmd/ddd_bc_test.go` and `cmd/ddd_ul_test.go` to
+- [x] **1D.1 RED** — extend `cmd/ddd_bc_test.go` and `cmd/ddd_ul_test.go` to
       assert the resolved severity value comes from `severity.Resolve` (mock
       stderr write site).
 
@@ -458,7 +454,7 @@ Notes: TestGolden 47/47 pass. nx run rhino-cli:lint: 0 issues.
 
 ### 2C — `internal/agents` reporter `Status`
 
-- [ ] **2C.1 RED** — `internal/agents/reporter_test.go`: a deliberately
+- [x] **2C.1 RED** — `internal/agents/reporter_test.go`: a deliberately
       non-exhaustive switch fails `gochecksumtype` (with `nolint` comment to
       verify diagnostic).
 
@@ -636,22 +632,50 @@ Notes: SKIP — all four files 13-14% shared structure (unique validators, walke
 
 ## Phase 4 — Reporter consolidation
 
-- [ ] **4.1 MEASURE** — for each of the six internal reporters
+- [x] **4.1 MEASURE** — for each of the six internal reporters
       (`agents`, `doctor`, `envbackup`, `mermaid`, `speccoverage`,
       `testcoverage`), count lines that would be deleted by switching
       `FormatJSON` to `cliout.Envelope[T]` and reuse of shared helpers.
       Record per-package delta in this checklist.
 
-- [ ] **4.2 GATE** — apply consolidation only to packages where the net
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: agents(FormatSyncJSON 38L, FormatValidationJSON 24L), doctor(31L), envbackup(29L), mermaid(46L), speccoverage(58L), testcoverage(29L). All use flat JSON shape incompatible with cliout.Envelope[T] which wraps in {"schema":...,"status":...,"result":...}.
+-->
+
+- [x] **4.2 GATE** — apply consolidation only to packages where the net
       deletion is ≥30 lines AND the resulting reporter remains readable.
       Skip the rest.
 
-- [ ] **4.3 RED + GREEN** — for each passing package:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: All 6 reporters SKIP — shape incompatibility is a hard blocker. Migrating to Envelope[T] would change observable JSON output, break external consumers, and fail TestGolden byte-identical assertions. Envelope[T] designed for new commands adopting envelope shape from start.
+-->
+
+- [x] **4.3 RED + GREEN** — for each passing package:
   - Migrate `FormatJSON` to use `cliout.MarshalJSON[T]` with the existing
     schema string and status string.
   - Confirm output byte-identical via `TestGolden`.
 
-- [ ] **4.4 GOLDEN + LINT**.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: N/A — no packages passed gate. Nothing to migrate.
+-->
+
+- [x] **4.4 GOLDEN + LINT**.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass. lint 0 issues. test:quick 90.17%. No commit (no code changes).
+-->
 
 **Commit**: `refactor(rhino-cli): share JSON envelope across internal reporters`
 
@@ -659,14 +683,28 @@ Notes: SKIP — all four files 13-14% shared structure (unique validators, walke
 
 ## Phase 5 — Documentation + closeout
 
-- [ ] **5.1** — update `apps/rhino-cli/README.md` "Internal architecture"
+- [x] **5.1** — update `apps/rhino-cli/README.md` "Internal architecture"
       section: short paragraph + bullet list pointing to `internal/cliout`,
       `internal/severity`, plus the sealed-enum pattern recipe.
 
-- [ ] **5.2** — add a one-line entry to `apps/rhino-cli/CHANGELOG.md` (if
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/README.md (new ## Internal architecture section added)
+Notes: Added cliout, severity subsections and sealed-interface sum-type recipe. Added v0.15.0 entry in Version History.
+-->
+
+- [x] **5.2** — add a one-line entry to `apps/rhino-cli/CHANGELOG.md` (if
       that file exists; otherwise add a brief note in README).
 
-- [ ] **5.3** — run full quality gate from a clean state:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/README.md (v0.15.0 entry in Version History)
+Notes: CHANGELOG.md does not exist. Entry added to ## Version History in README.md. Committed: docs(rhino-cli): document cliout/severity sealed-enum pattern and v0.15.0 refactor (f7fa67aeb)
+-->
+
+- [x] **5.3** — run full quality gate from a clean state:
   - `nx run rhino-cli:typecheck`
   - `nx run rhino-cli:lint`
   - `nx run rhino-cli:test:quick`
@@ -674,19 +712,47 @@ Notes: SKIP — all four files 13-14% shared structure (unique validators, walke
   - `nx run rhino-cli:build`
   - Confirm pre-push hook passes locally.
 
-- [ ] **5.4** — push worktree branch direct to `origin main` per Trunk-Based
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: typecheck PASS, lint PASS (0 issues), test:quick PASS (90.17%), test:integration PASS, build PASS. No preexisting failures.
+-->
+
+- [x] **5.4** — push worktree branch direct to `origin main` per Trunk-Based
       Development default for `ose-public` (or open draft PR if review-warranted).
 
-- [ ] **5.4b** — after pushing, monitor GitHub Actions for the `ose-public`
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: git push origin HEAD:main — pushed successfully. HEAD: f7fa67aeb.
+-->
+
+- [x] **5.4b** — after pushing, monitor GitHub Actions for the `ose-public`
       repository. Verify all CI checks pass. If any check fails, diagnose root
       cause and push a fix commit before proceeding to step 5.5. Do not declare
       work done until CI is green.
 
-- [ ] **5.5** — wait for SHA to reach `origin/main`. Run `plan-execution-checker`
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: No CI workflows triggered — rhino-cli (Go CLI) is not in path scope of any web-app CI workflow (all are scoped to web app directories). Quality validated via pre-push hook (typecheck+lint+test:quick+spec-coverage all passed) and explicit Nx runs. SHA f7fa67aeb confirmed on origin/main.
+-->
+
+- [x] **5.5** — wait for SHA to reach `origin/main`. Run `plan-execution-checker`
       against this plan. Confirm `TestGolden` is part of `test:quick` going
       forward (acts as ongoing behaviour-preservation guard).
 
-- [ ] **5.6** — run from the `ose-public` worktree root:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: generated-reports/plan-execution__d6b68a__2026-05-11--12-27__validation.md (created by checker)
+Notes: SHA f7fa67aeb confirmed on origin/main. plan-execution-checker: APPROVE WITH ACTION REQUIRED. All quality gates pass. TestGolden 47/47 confirmed as part of test:quick. Fixed 3 unchecked boxes (1B.3 duplicate, 1D.1, 2C.1) and false dispatcher.go note per checker findings.
+-->
+
+- [x] **5.6** — run from the `ose-public` worktree root:
       `git mv plans/in-progress/rhino-cli-dry-and-exhaustive-enums plans/done/$(date +%Y-%m-%d)__rhino-cli-dry-and-exhaustive-enums`
       Update both in-progress and done README indexes.
 
