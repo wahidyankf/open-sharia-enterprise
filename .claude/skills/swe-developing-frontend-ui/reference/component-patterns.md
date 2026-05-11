@@ -59,7 +59,7 @@ export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
 import * as React from "react";
 import { Slot } from "radix-ui";
 
-import { cn } from "@open-sharia-enterprise/ts-ui";
+import { cn } from "@open-sharia-enterprise/web-ui";
 import { buttonVariants, type ButtonVariantProps } from "./button.variants";
 
 function Button({
@@ -116,7 +116,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 ### cn() Usage
 
 ```tsx
-import { cn } from "@open-sharia-enterprise/ts-ui";
+import { cn } from "@open-sharia-enterprise/web-ui";
 
 // Conditional classes
 <div className={cn("flex items-center", isActive && "bg-primary")} />

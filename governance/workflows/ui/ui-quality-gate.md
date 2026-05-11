@@ -5,7 +5,7 @@ termination: "Zero findings on two consecutive validations (max-iterations defau
 inputs:
   - name: scope
     type: string
-    description: Files or directories to validate (e.g., "libs/ts-ui/", "apps/organiclever-web/src/components/")
+    description: Files or directories to validate (e.g., "libs/web-ui/", "apps/organiclever-web/src/components/")
     required: false
     default: all frontend components
   - name: mode
@@ -55,7 +55,7 @@ outputs:
 **How to Execute**:
 
 ```
-User: "Run UI quality gate workflow for libs/ts-ui/"
+User: "Run UI quality gate workflow for libs/web-ui/"
 User: "Run UI quality gate for apps/organiclever-web/src/components/ui/"
 ```
 
@@ -133,9 +133,9 @@ User: "Run UI quality gate for apps/organiclever-web/src/components/ui/"
 ## Example Usage
 
 ```
-User: "Run UI quality gate for libs/ts-ui/ in strict mode"
+User: "Run UI quality gate for libs/web-ui/ in strict mode"
 
-AI: Invoking swe-ui-checker for libs/ts-ui/...
+AI: Invoking swe-ui-checker for libs/web-ui/...
     Found 12 findings (3 HIGH, 5 MEDIUM, 4 LOW)
     Invoking swe-ui-fixer with audit report...
     Fixed 10 findings, 2 remaining (1 MEDIUM confidence, 1 FALSE_POSITIVE)

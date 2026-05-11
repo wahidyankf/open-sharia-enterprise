@@ -4,7 +4,7 @@
 
 The monorepo uses a two-tier token system:
 
-- **Structural tokens** (shared in `libs/ts-ui-tokens/`): radius, spacing, typography, base neutrals, semantic colors
+- **Structural tokens** (shared in `libs/web-ui-token/`): radius, spacing, typography, base neutrals, semantic colors
 - **Brand tokens** (per-app in `globals.css`): primary, secondary, accent, app-specific tokens
 
 ## Current Token Values

@@ -39,7 +39,7 @@ This Skill provides guidance for developing and managing the **organiclever-web*
 | Framework  | Next.js 16 (App Router)                   |
 | UI Runtime | React 19                                  |
 | Styling    | TailwindCSS + OL warm OKLCH design tokens |
-| Components | `@open-sharia-enterprise/ts-ui`           |
+| Components | `@open-sharia-enterprise/web-ui`          |
 | Storage    | PGlite (Postgres-WASM, IndexedDB)         |
 | Effects    | Effect TS (infrastructure layer only)     |
 | State      | XState v5 (app-shell, workout-session)    |
@@ -113,17 +113,17 @@ src/contexts/<bc>/
 ## Design System
 
 `organiclever-web` uses the OrganicLever warm OKLCH design system. All visual tokens come
-from `@open-sharia-enterprise/ts-ui-tokens`, and all UI components from
-`@open-sharia-enterprise/ts-ui`.
+from `@open-sharia-enterprise/web-ui-token`, and all UI components from
+`@open-sharia-enterprise/web-ui`.
 
 ### Token import chain
 
 ```css
 /* apps/organiclever-web/src/app/globals.css */
 @import "tailwindcss";
-@source "../../../../libs/ts-ui/src/**/*.{ts,tsx}";
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css"; /* shared neutral baseline */
-@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css"; /* OL warm OKLCH palette */
+@source "../../../../libs/web-ui/src/**/*.{ts,tsx}";
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css"; /* shared neutral baseline */
+@import "@open-sharia-enterprise/web-ui-token/src/organiclever.css"; /* OL warm OKLCH palette */
 
 @theme {
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
@@ -163,16 +163,16 @@ var(--color-primary)   /* Maps to --hue-sage */
 var(--color-ring)      /* Maps to --hue-teal */
 ```
 
-### ts-ui component usage
+### web-ui component usage
 
-Use components from `@open-sharia-enterprise/ts-ui` — NOT from `@/components/ui/`. The
-shared `ts-ui` library owns the canonical component implementations.
+Use components from `@open-sharia-enterprise/web-ui` — NOT from `@/components/ui/`. The
+shared `web-ui` library owns the canonical component implementations.
 
 ```tsx
 import {
   Button, Alert, Input, Icon, Toggle, ProgressRing,
   Sheet, AppHeader, StatCard, InfoTip, HuePicker, TabBar, SideNav,
-} from "@open-sharia-enterprise/ts-ui";
+} from "@open-sharia-enterprise/web-ui";
 
 // Brand variants
 <Button variant="teal">Primary action</Button>
@@ -204,7 +204,7 @@ literal class names at build time:
 
 ### Storybook
 
-`libs/ts-ui/.storybook/preview.ts` imports `organiclever.css` so all ts-ui stories
+`libs/web-ui/.storybook/preview.ts` imports `organiclever.css` so all web-ui stories
 render with the warm OL palette. Dark mode toggle uses `.dark` class (Storybook
 `addon-themes` with `withThemeByClassName({ dark: 'dark' })`).
 
@@ -215,7 +215,7 @@ Components live inside the bounded context that owns them, not in a global `src/
 ### Where components live
 
 - **Context-owned**: `src/contexts/<bc>/presentation/components/` — components that belong to a specific bounded context
-- **Shared primitives**: `@open-sharia-enterprise/ts-ui` — the shared design system library. Import from here, not from `src/`
+- **Shared primitives**: `@open-sharia-enterprise/web-ui` — the shared design system library. Import from here, not from `src/`
 - **App routing chrome**: `src/app/` — Next.js `page.tsx` and `layout.tsx` thin wrappers only; no business logic
 
 ```typescript
@@ -223,8 +223,8 @@ Components live inside the bounded context that owns them, not in a global `src/
 import { JournalList } from "@/contexts/journal/presentation";
 import { HistoryScreen } from "@/contexts/stats/presentation";
 
-// Correct — import from ts-ui design system
-import { Button, StatCard, TabBar } from "@open-sharia-enterprise/ts-ui";
+// Correct — import from web-ui design system
+import { Button, StatCard, TabBar } from "@open-sharia-enterprise/web-ui";
 
 // Wrong — no global src/components/ exists
 import { SomeComponent } from "@/components/SomeComponent"; // ❌
@@ -421,7 +421,7 @@ docker compose -f infra/dev/organiclever-web/docker-compose.yml up organiclever-
 import { SomeScreen } from "@/contexts/<bc>/presentation";
 ```
 
-### Using ts-ui components
+### Using web-ui components
 
 ```typescript
 import {
@@ -433,7 +433,7 @@ import {
   StatCard,
   TabBar,
   SideNav,
-} from "@open-sharia-enterprise/ts-ui";
+} from "@open-sharia-enterprise/web-ui";
 
 <Button variant="teal">Primary action</Button>
 <Button variant="sage" size="xl">Hero CTA</Button>

@@ -420,9 +420,9 @@ Accessibility testing is compulsory for all UI-related projects. It operates at 
 **Static a11y linting** (enforced via the `lint` target at all three gates: pre-push hook, PR
 quality gate, and scheduled Test CI workflows):
 
-| Project                                                              | Static a11y tool           |
-| -------------------------------------------------------------------- | -------------------------- |
-| `organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui` | `oxlint --jsx-a11y-plugin` |
+| Project                                                               | Static a11y tool           |
+| --------------------------------------------------------------------- | -------------------------- |
+| `organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/web-ui` | `oxlint --jsx-a11y-plugin` |
 
 Static a11y linting catches common accessibility violations at compile time: missing alt text,
 missing ARIA labels, invalid ARIA attributes, missing form labels, and incorrect role usage.
@@ -441,7 +441,7 @@ covering WCAG AA compliance. These tests verify:
 **Gherkin accessibility specs**: UI projects must have an `accessibility.feature` file under a
 domain subdirectory in `specs/apps/<domain>/fe/gherkin/` (e.g., `accessibility/accessibility.feature`
 or `layout/accessibility.feature`). UI component library specs in
-`specs/libs/ts-ui/gherkin/<component>/` must include "Has no accessibility violations" scenarios for
+`specs/libs/web-ui/gherkin/<component>/` must include "Has no accessibility violations" scenarios for
 each component.
 
 ### Hugo Sites (Historical -- No Active Hugo Sites Remain)

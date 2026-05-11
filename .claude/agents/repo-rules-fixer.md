@@ -233,7 +233,7 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 
 1. Re-validate LICENSE file is truly missing
 2. Determine correct license type per [Licensing Convention](../../governance/conventions/structure/licensing.md)
-3. Copy from reference: `cp libs/ts-ui/LICENSE apps/[dir]/LICENSE` (MIT)
+3. Copy from reference: `cp libs/web-ui/LICENSE apps/[dir]/LICENSE` (MIT)
 4. Confidence: HIGH (mechanical check, no ambiguity)
 
 **Wrong License Type (HIGH)**:

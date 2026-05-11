@@ -233,7 +233,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### Commit Phase 2
 
-- [ ] Stage and commit lib-internal config changes:
+- [x] Stage and commit lib-internal config changes:
 
   ```bash
   rtk git add libs/web-ui/project.json libs/web-ui/package.json \
@@ -246,36 +246,41 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   rtk git commit -m "refactor(libs): update web-ui and web-ui-token internal config, storybook, step paths, vitest alias, and READMEs"
   ```
 
+  - Date: 2026-05-11 | Status: Done | Notes: 29 files changed, committed ✓
+
 ---
 
 ## Phase 3 — Update App Consumers
 
 ### 3a — apps/organiclever-web
 
-- [ ] Edit `apps/organiclever-web/package.json` — update dependency:
+- [x] Edit `apps/organiclever-web/package.json` — update dependency:
   - `"@open-sharia-enterprise/ts-ui": "*"` → `"@open-sharia-enterprise/web-ui": "*"`
 
   Acceptance criterion: `grep "ts-ui" apps/organiclever-web/package.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/organiclever-web/package.json ✓
 
-- [ ] Edit `apps/organiclever-web/project.json` — update `implicitDependencies`:
+- [x] Edit `apps/organiclever-web/project.json` — update `implicitDependencies`:
   - `"implicitDependencies": ["organiclever-contracts", "rhino-cli", "ts-ui"]` →
     `"implicitDependencies": ["organiclever-contracts", "rhino-cli", "web-ui"]`
 
   Acceptance criterion: `grep "ts-ui" apps/organiclever-web/project.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/organiclever-web/project.json ✓
 
-- [ ] Edit `apps/organiclever-web/next.config.ts` — update `transpilePackages`:
+- [x] Edit `apps/organiclever-web/next.config.ts` — update `transpilePackages`:
   - Replace `"@open-sharia-enterprise/ts-ui"` → `"@open-sharia-enterprise/web-ui"`
   - Replace `"@open-sharia-enterprise/ts-ui-tokens"` → `"@open-sharia-enterprise/web-ui-token"`
 
   Acceptance criterion: `grep "ts-ui" apps/organiclever-web/next.config.ts` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/organiclever-web/next.config.ts ✓
 
-- [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/organiclever-web/src/`
+- [x] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/organiclever-web/src/`
       (~28 TSX files) using a global find-and-replace:
 
   ```bash
@@ -289,8 +294,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" apps/organiclever-web/src/` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: all tsx/ts/css under apps/organiclever-web/src/ ✓
 
-- [ ] Update prose references in `apps/organiclever-web/README.md`:
+- [x] Update prose references in `apps/organiclever-web/README.md`:
 
   ```bash
   sed -i '' \
@@ -302,25 +308,28 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep "ts-ui" apps/organiclever-web/README.md` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/organiclever-web/README.md ✓
 
 ### 3b — apps/wahidyankf-web
 
-- [ ] Edit `apps/wahidyankf-web/package.json` — update dependency:
+- [x] Edit `apps/wahidyankf-web/package.json` — update dependency:
   - `"@open-sharia-enterprise/ts-ui": "*"` → `"@open-sharia-enterprise/web-ui": "*"`
 
   Acceptance criterion: `grep "ts-ui" apps/wahidyankf-web/package.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/wahidyankf-web/package.json ✓
 
-- [ ] Edit `apps/wahidyankf-web/next.config.ts` — update `transpilePackages`:
+- [x] Edit `apps/wahidyankf-web/next.config.ts` — update `transpilePackages`:
   - Replace `"@open-sharia-enterprise/ts-ui"` → `"@open-sharia-enterprise/web-ui"`
   - Replace `"@open-sharia-enterprise/ts-ui-tokens"` → `"@open-sharia-enterprise/web-ui-token"`
 
   Acceptance criterion: `grep "ts-ui" apps/wahidyankf-web/next.config.ts` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: apps/wahidyankf-web/next.config.ts ✓
 
-- [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/wahidyankf-web/src/`
+- [x] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/wahidyankf-web/src/`
       (~12 files: 7 source TSX/TS + 4 unit test files + 1 globals.css) using a global find-and-replace:
 
   ```bash
@@ -333,10 +342,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" apps/wahidyankf-web/src/` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: all tsx/ts/css under apps/wahidyankf-web/src/ (including globals.css comment) ✓
 
 ### 3c — apps/ayokoding-web
 
-- [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/ayokoding-web/src/`
+- [x] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/ayokoding-web/src/`
       (~15 files including `globals.css`) — component imports, CSS imports, and Tailwind `@source` path:
 
   ```bash
@@ -350,10 +360,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" apps/ayokoding-web/src/` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: all tsx/ts/css under apps/ayokoding-web/src/ ✓
 
 ### 3d — apps/oseplatform-web
 
-- [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths across
+- [x] Replace all `@open-sharia-enterprise/ts-ui` import paths across
       `apps/oseplatform-web/src/` and `apps/oseplatform-web/test/` (4 src TSX files +
       `globals.css` + 5 unit test step files) using a broad find-and-replace:
 
@@ -382,8 +393,9 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: 10 files under apps/oseplatform-web/src/ and test/ ✓
 
-- [ ] Update prose references in oseplatform-web content posts:
+- [x] Update prose references in oseplatform-web content posts:
 
   ```bash
   grep -rl "ts-ui" apps/oseplatform-web/content/ | xargs sed -i '' \
@@ -394,10 +406,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" apps/oseplatform-web/content/` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Notes: no ts-ui references found in content/ (already clean) ✓
 
 ### 3e — specs/apps markdown files
 
-- [ ] Update all `specs/apps/` markdown files that reference old library names:
+- [x] Update all `specs/apps/` markdown files that reference old library names:
 
   ```bash
   find specs/apps -name "*.md" \
@@ -416,10 +429,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `git grep "ts-ui" -- specs/apps/` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: specs/apps/ markdown files ✓
 
 ### 3e-ii — specs/libs/web-ui Gherkin feature file prose
 
-- [ ] Update prose references in the 6 Gherkin feature files under `specs/libs/web-ui/gherkin/`
+- [x] Update prose references in the 6 Gherkin feature files under `specs/libs/web-ui/gherkin/`
       that contain "ts-ui design system" wording. These files are moved by `git mv` in Phase 1 to
       their new location at `specs/libs/web-ui/`. Without this step, AC-8's grep
       `git grep -r "ts-ui" -- governance/ .claude/ specs/` will match them and fail. Run AFTER
@@ -433,19 +447,22 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `git grep "ts-ui" -- specs/libs/web-ui/` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: Gherkin feature files under specs/libs/web-ui/ ✓
 
 ### Commit Phase 3 specs
 
-- [ ] Stage and commit specs directory rename and markdown updates:
+- [x] Stage and commit specs directory rename and markdown updates:
 
   ```bash
   rtk git add specs/libs/web-ui specs/apps/
   rtk git commit -m "refactor(specs): rename specs/libs/ts-ui → web-ui and update specs/apps/ markdown references"
   ```
 
+  - Date: 2026-05-11 | Status: Done | Notes: 10 files changed, committed ✓
+
 ### 3f — Dockerfiles (all four apps)
 
-- [ ] Update all four app Dockerfiles to use new library paths:
+- [x] Update all four app Dockerfiles to use new library paths:
 
   ```bash
   find apps -name "Dockerfile" \
@@ -465,15 +482,18 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" apps/*/Dockerfile` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: 4 Dockerfiles ✓
 
 ### Commit Phase 3
 
-- [ ] Stage and commit all app consumer changes:
+- [x] Stage and commit all app consumer changes:
 
   ```bash
   rtk git add apps/organiclever-web apps/wahidyankf-web apps/ayokoding-web apps/oseplatform-web
   rtk git commit -m "refactor(apps): update all consumer imports from ts-ui to web-ui"
   ```
+
+  - Date: 2026-05-11 | Status: Done | Notes: 78 files changed; needed npm install first to resolve prettier-tailwindcss symlinks ✓
 
 ---
 
@@ -482,19 +502,21 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 > Update all 13 markdown files that reference `ts-ui` or `ts-ui-tokens`. Use precise replacements
 > to avoid corrupting surrounding prose.
 
-- [ ] Edit `.claude/agents/repo-rules-fixer.md` — replace `ts-ui` and `ts-ui-tokens` with new names.
+- [x] Edit `.claude/agents/repo-rules-fixer.md` — replace `ts-ui` and `ts-ui-tokens` with new names.
 
   Acceptance criterion: `grep "ts-ui" .claude/agents/repo-rules-fixer.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: .claude/agents/repo-rules-fixer.md ✓
 
-- [ ] Edit `.claude/agents/swe-ui-maker.md` — replace `ts-ui` and `ts-ui-tokens` with new names.
+- [x] Edit `.claude/agents/swe-ui-maker.md` — replace `ts-ui` and `ts-ui-tokens` with new names.
 
   Acceptance criterion: `grep "ts-ui" .claude/agents/swe-ui-maker.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: .claude/agents/swe-ui-maker.md ✓
 
-- [ ] Edit `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` — replace `ts-ui`
+- [x] Edit `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` — replace `ts-ui`
       references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/apps-organiclever-web-developing-content/SKILL.md`
@@ -502,7 +524,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `.claude/skills/swe-developing-frontend-ui/reference/component-patterns.md` — replace
+- [x] Edit `.claude/skills/swe-developing-frontend-ui/reference/component-patterns.md` — replace
       `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/swe-developing-frontend-ui/reference/component-patterns.md`
@@ -510,7 +532,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `.claude/skills/swe-developing-frontend-ui/reference/design-tokens.md` — replace
+- [x] Edit `.claude/skills/swe-developing-frontend-ui/reference/design-tokens.md` — replace
       `ts-ui-tokens` references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/swe-developing-frontend-ui/reference/design-tokens.md`
@@ -518,51 +540,51 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `.claude/skills/swe-developing-frontend-ui/SKILL.md` — replace `ts-ui` references.
+- [x] Edit `.claude/skills/swe-developing-frontend-ui/SKILL.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/swe-developing-frontend-ui/SKILL.md`
   returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/conventions/structure/licensing.md` — replace `ts-ui` references.
+- [x] Edit `governance/conventions/structure/licensing.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/conventions/structure/licensing.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/conventions/structure/ose-primer-sync.md` — replace `ts-ui` references.
+- [x] Edit `governance/conventions/structure/ose-primer-sync.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/conventions/structure/ose-primer-sync.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/development/frontend/design-tokens.md` — replace `ts-ui-tokens` references.
+- [x] Edit `governance/development/frontend/design-tokens.md` — replace `ts-ui-tokens` references.
 
   Acceptance criterion: `grep "ts-ui" governance/development/frontend/design-tokens.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/development/infra/docker-monorepo-builds.md` — replace `ts-ui` references.
+- [x] Edit `governance/development/infra/docker-monorepo-builds.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/development/infra/docker-monorepo-builds.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/development/infra/nx-targets.md` — replace `ts-ui` references.
+- [x] Edit `governance/development/infra/nx-targets.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/development/infra/nx-targets.md` returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/development/quality/three-level-testing-standard.md` — replace `ts-ui` references.
+- [x] Edit `governance/development/quality/three-level-testing-standard.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/development/quality/three-level-testing-standard.md`
   returns empty.
 
   _Suggested executor: `repo-rules-maker`_
 
-- [ ] Edit `governance/workflows/ui/ui-quality-gate.md` — replace `ts-ui` references.
+- [x] Edit `governance/workflows/ui/ui-quality-gate.md` — replace `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" governance/workflows/ui/ui-quality-gate.md` returns empty.
 
@@ -570,7 +592,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### Commit Phase 4
 
-- [ ] Sync updated agent files to OpenCode mirrors (required after any `.claude/agents/` edit):
+- [x] Sync updated agent files to OpenCode mirrors (required after any `.claude/agents/` edit):
 
   ```bash
   npm run sync:claude-to-opencode
@@ -580,6 +602,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   updated with new `web-ui` references.
 
   _Suggested executor: `repo-rules-maker`_
+  - Date: 2026-05-11 | Status: Done | Notes: 72 agents synced, SUCCESS ✓
 
 - [ ] Stage and commit all governance and doc changes including the OpenCode mirror sync:
 

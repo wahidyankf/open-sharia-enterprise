@@ -315,7 +315,7 @@ All UI projects must include static accessibility checks in their `lint` target.
 common accessibility violations at compile time and are enforced at all three gates: pre-push hook,
 PR quality gate, and scheduled Test CI workflows.
 
-- **TypeScript UI projects** (`organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/ts-ui`):
+- **TypeScript UI projects** (`organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/web-ui`):
   `oxlint --jsx-a11y-plugin`
 
 ### Runtime Accessibility E2E Tests (via `test:e2e`)
@@ -334,7 +334,7 @@ covering WCAG AA compliance:
 UI projects must have an `accessibility.feature` file under a domain subdirectory in
 `specs/apps/<domain>/fe/gherkin/` (e.g., `accessibility/accessibility.feature` or
 `layout/accessibility.feature`). UI component library specs in
-`specs/libs/ts-ui/gherkin/<component>/` must include "Has no accessibility violations" scenarios for
+`specs/libs/web-ui/gherkin/<component>/` must include "Has no accessibility violations" scenarios for
 each component.
 
 See [Nx Target Standards](../infra/nx-targets.md) for the full list of projects with static a11y

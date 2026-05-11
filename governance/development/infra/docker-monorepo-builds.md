@@ -20,17 +20,17 @@ canonical workaround.
 
 ## The Problem: Workspace Symlinks Break Inside Docker
 
-npm workspaces install shared packages (e.g., `@open-sharia-enterprise/ts-ui-tokens`) as symlinks
+npm workspaces install shared packages (e.g., `@open-sharia-enterprise/web-ui-token`) as symlinks
 in the root `node_modules/`. When `npm ci` runs inside a Docker build context that only contains
 an app directory — or even the full repo root without the `libs/` tree — npm creates those symlinks
 pointing to paths that do not exist inside the container. The build fails with errors such as:
 
 ```
-Module not found: Can't resolve '@open-sharia-enterprise/ts-ui-tokens/src/tokens.css'
+Module not found: Can't resolve '@open-sharia-enterprise/web-ui-token/src/tokens.css'
 ```
 
 The root cause: npm workspace symlinks resolve to sibling directories on the host filesystem (e.g.,
-`libs/ts-ui-tokens/`). Those directories are only present if they are explicitly copied into the
+`libs/web-ui-token/`). Those directories are only present if they are explicitly copied into the
 Docker build context. A naive `COPY . .` from the repo root is insufficient because the symlinks
 are created by `npm ci`, which runs after `COPY` — and `npm ci` in a standalone container does not
 know about the workspace siblings.
@@ -58,17 +58,17 @@ RUN npm ci --workspace=apps/organiclever-web --include-workspace-root
 COPY apps/organiclever-web/ ./apps/organiclever-web/
 
 # Inject shared library source directly into node_modules — bypasses symlinks
-COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
-COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
+COPY libs/web-ui/src/ ./node_modules/@open-sharia-enterprise/web-ui/src/
+COPY libs/web-ui/package.json ./node_modules/@open-sharia-enterprise/web-ui/
+COPY libs/web-ui-token/src/ ./node_modules/@open-sharia-enterprise/web-ui-token/src/
+COPY libs/web-ui-token/package.json ./node_modules/@open-sharia-enterprise/web-ui-token/
 
 RUN npm run build --workspace=apps/organiclever-web
 ```
 
 The key insight: Node.js module resolution searches `node_modules/@scope/package/` directly. Once
 the source files are in place, imports such as
-`@open-sharia-enterprise/ts-ui-tokens/src/tokens.css` resolve without any symlink involvement.
+`@open-sharia-enterprise/web-ui-token/src/tokens.css` resolve without any symlink involvement.
 
 ## Build Context Must Be Repo Root
 
@@ -168,8 +168,8 @@ change, check all CI overlays for that app.
 
 ### Pitfall 3: Injecting source but omitting `package.json`
 
-**Scenario**: The Dockerfile copies `libs/ts-ui-tokens/src/` but not
-`libs/ts-ui-tokens/package.json`. Node.js resolves files successfully, but tools that read
+**Scenario**: The Dockerfile copies `libs/web-ui-token/src/` but not
+`libs/web-ui-token/package.json`. Node.js resolves files successfully, but tools that read
 `package.json` (type declarations, `exports` field resolution) fail.
 
 **Fix**: Always copy both `src/` and `package.json` for each injected library.

@@ -83,8 +83,8 @@ all use the same MIT text.
 | `specs/`                 | MIT     |
 | `libs/golang-commons/`   | MIT     |
 | `libs/hugo-commons/`     | MIT     |
-| `libs/ts-ui/`            | MIT     |
-| `libs/ts-ui-tokens/`     | MIT     |
+| `libs/web-ui/`           | MIT     |
+| `libs/web-ui-token/`     | MIT     |
 
 Third-party code in `archived/` retains its original license (see LICENSING-NOTICE.md).
 
@@ -105,7 +105,7 @@ All MIT LICENSE files MUST use the standard MIT License text with the following 
 - **Copyright year**: `2025-2026`
 - **Licensor name**: `wahidyankf`
 
-Canonical source: `libs/ts-ui/LICENSE`.
+Canonical source: `libs/web-ui/LICENSE`.
 
 ### Copyright Notice Format
 

@@ -30,9 +30,9 @@ The `color-accessibility` convention remains the master reference for diagrams. 
 
 ## Token Categories
 
-### Structural Tokens (Shared via `ts-ui-tokens`)
+### Structural Tokens (Shared via `web-ui-token`)
 
-Structural tokens live in the `libs/ts-ui-tokens` library and are imported by every frontend app. They represent values that are layout- and brand-neutral — apps should not override them.
+Structural tokens live in the `libs/web-ui-token` library and are imported by every frontend app. They represent values that are layout- and brand-neutral — apps should not override them.
 
 **Border radius**
 
@@ -90,7 +90,7 @@ Structural tokens live in the `libs/ts-ui-tokens` library and are imported by ev
 
 ### Brand Tokens (Per-App Override)
 
-Brand tokens express each app's visual identity. Apps define these in their own `globals.css` by overriding the defaults from `ts-ui-tokens`.
+Brand tokens express each app's visual identity. Apps define these in their own `globals.css` by overriding the defaults from `web-ui-token`.
 
 **Core brand palette**
 
@@ -160,7 +160,7 @@ The bare variable holds only the HSL components (no `hsl()` wrapper), and the `@
 
 The `@theme` alias holds the complete value directly.
 
-**Recommended for `ts-ui-tokens`**: Use the direct value approach. It is simpler to read, easier to override via CSS cascade, and removes the indirection layer that double indirection introduces without measurable benefit. The shared library defines complete `hsl(...)` values; per-app overrides replace the `--color-*` alias in the app's own `@theme` block.
+**Recommended for `web-ui-token`**: Use the direct value approach. It is simpler to read, easier to override via CSS cascade, and removes the indirection layer that double indirection introduces without measurable benefit. The shared library defines complete `hsl(...)` values; per-app overrides replace the `--color-*` alias in the app's own `@theme` block.
 
 ## Dark Mode Requirements
 
@@ -199,7 +199,7 @@ An app imports the shared structural and semantic tokens, then declares its bran
 
 ```css
 /* apps/my-app/src/app/globals.css */
-@import "@open-sharia-enterprise/ts-ui-tokens/tokens.css";
+@import "@open-sharia-enterprise/web-ui-token/tokens.css";
 
 @theme {
   /* Brand override — replaces the shared default */
@@ -249,7 +249,7 @@ different perceived intensity across hues.
 
 ### OL Token Structure
 
-OL brand tokens live in `libs/ts-ui-tokens/src/organiclever.css` (opt-in per-app import).
+OL brand tokens live in `libs/web-ui-token/src/organiclever.css` (opt-in per-app import).
 
 **Six semantic hues × three tints**:
 
@@ -361,14 +361,14 @@ These bypass the token system and break dark mode. Use `bg-muted` and `text-fore
 **Duplicating structural tokens in app `globals.css`**
 
 ```css
-/* Wrong — do not copy-paste structural tokens from ts-ui-tokens */
+/* Wrong — do not copy-paste structural tokens from web-ui-token */
 :root {
   --radius: 0.5rem;
   --space-4: 1rem;
 }
 ```
 
-Import `ts-ui-tokens` and let the shared library own structural values. Duplicating them creates divergence risk when the shared library updates.
+Import `web-ui-token` and let the shared library own structural values. Duplicating them creates divergence risk when the shared library updates.
 
 **Defining dark-mode values for only some tokens**
 
@@ -381,7 +381,7 @@ This convention implements the following core principles:
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Every visual token requires a `.dark` counterpart and must meet WCAG AA contrast (4.5:1 text, 3:1 UI components) in both modes. Token-based theming makes contrast verification systematic rather than per-component.
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Naming tokens by semantic role (`--primary`, `--muted-foreground`, `--destructive`) makes visual intent explicit. Raw hex values in components hide their meaning.
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: The direct-value token format is preferred over double indirection. The per-app override pattern through CSS cascade avoids build-time configuration complexity.
-- **[Immutability Over Mutability](../../principles/software-engineering/immutability.md)**: Structural tokens in `ts-ui-tokens` are not overridden by apps. Only brand tokens vary per app, preserving the shared visual contract.
+- **[Immutability Over Mutability](../../principles/software-engineering/immutability.md)**: Structural tokens in `web-ui-token` are not overridden by apps. Only brand tokens vary per app, preserving the shared visual contract.
 
 ## Conventions Implemented/Respected
 

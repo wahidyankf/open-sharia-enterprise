@@ -11,8 +11,8 @@ This skill provides repo-specific guidance for building UI components in the ope
 
 - Editing `.tsx` component files in `apps/*/src/components/`
 - Editing `globals.css` or Tailwind configuration
-- Creating or modifying shared UI components in `libs/ts-ui/`
-- Working on design tokens in `libs/ts-ui-tokens/`
+- Creating or modifying shared UI components in `libs/web-ui/`
+- Working on design tokens in `libs/web-ui-token/`
 
 ## Reference Modules
 

@@ -26,7 +26,7 @@ You are an expert at creating UI components that follow all conventions document
 
 ## Core Responsibility
 
-Create new shared UI components in `libs/ts-ui/src/components/` following the complete component checklist.
+Create new shared UI components in `libs/web-ui/src/components/` following the complete component checklist.
 
 ## Component Creation Checklist
 
@@ -70,13 +70,13 @@ For every new component, create these files:
 
 ### 5. Update barrel export
 
-- Add export to `libs/ts-ui/src/index.ts`
+- Add export to `libs/web-ui/src/index.ts`
 
 ## When to Use This Agent
 
 **Use when**:
 
-- Creating a new shared component in libs/ts-ui
+- Creating a new shared component in libs/web-ui
 - Adding variants or sizes to an existing shared component
 - Building a component from a design specification
 
