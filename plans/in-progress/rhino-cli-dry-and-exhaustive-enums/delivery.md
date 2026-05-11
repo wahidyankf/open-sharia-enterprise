@@ -540,38 +540,94 @@ Notes: No rows passed gate (both 2D.1 and 2D.2 skipped). Nothing to implement. C
 
 ### 3A — `dddRunner`
 
-- [ ] **3A.1 RED** — `cmd/ddd_runner_test.go`: TestNewDddCommand asserts
+- [x] **3A.1 RED** — `cmd/ddd_runner_test.go`: TestNewDddCommand asserts
       a constructed command has expected Use/Short/Long/Args/Flag, and
       RunE error path delegates to a fake validator.
 
-- [ ] **3A.2 GREEN** — `cmd/ddd_runner.go`: introduce `dddCommandSpec` and
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_runner_test.go (created)
+Notes: TestNewDddCommand tests Use/Short/Long/Args/Flag and RunE delegation to fake validator. Confirmed RED before dddCommandSpec existed.
+-->
+
+- [x] **3A.2 GREEN** — `cmd/ddd_runner.go`: introduce `dddCommandSpec` and
       `newDddCommand(spec)`. Internal `runDdd` houses the finding-print +
       exit-code logic.
 
-- [ ] **3A.3 GREEN** — `cmd/ddd_bc.go` collapses to ~15 lines of
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_runner.go (created)
+Notes: dddCommandSpec struct + newDddCommand() + runDdd() housing finding-print/exit-code logic shared between bc and ul.
+-->
+
+- [x] **3A.3 GREEN** — `cmd/ddd_bc.go` collapses to ~15 lines of
       `dddCmd.AddCommand(newDddCommand(...))` only.
 
-- [ ] **3A.4 GREEN** — `cmd/ddd_ul.go` likewise.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_bc.go (collapsed)
+Notes: ddd_bc.go collapsed to ~15 lines. All shared logic moved to ddd_runner.go.
+-->
 
-- [ ] **3A.5 GOLDEN + LINT**.
+- [x] **3A.4 GREEN** — `cmd/ddd_ul.go` likewise.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_ul.go (collapsed)
+Notes: ddd_ul.go collapsed likewise. Committed: refactor(rhino-cli): share ddd runner between bc and ul subcommands (49663ed49)
+-->
+
+- [x] **3A.5 GOLDEN + LINT**.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass. nx run rhino-cli:lint: 0 issues. test:quick 90.17% pass.
+-->
 
 ### 3B — Agents validate cluster (conditional)
 
-- [ ] **3B.1 DECIDE** — measure: do `agents_validate_claude.go`,
+- [x] **3B.1 DECIDE** — measure: do `agents_validate_claude.go`,
       `agents_validate_naming.go`, `agents_validate_sync.go` share ≥80% of
       their structure? If yes, proceed; if no, skip and document.
 
-- [ ] **3B.2 ACT** — if proceeding: extract `agentsValidateRunner`, RED +
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: SKIP — claude.go (106 lines) ~28% shared; naming.go (217 lines) <15% shared (unique validation logic dominates); sync.go (85 lines) ~35% shared. Cluster-wide shared structure well below 80% gate.
+-->
+
+- [x] **3B.2 ACT** — if proceeding: extract `agentsValidateRunner`, RED +
       GREEN + GOLDEN + LINT.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: Not applicable — 3B.1 gate not met (SKIP).
+-->
 
 ### 3C — Specs validate cluster (conditional)
 
-- [ ] **3C.1 DECIDE + ACT** — same gate as 3B for the four
+- [x] **3C.1 DECIDE + ACT** — same gate as 3B for the four
       `cmd/specs_validate_*.go` files (`specs_validate_adoption.go`,
       `specs_validate_counts.go`, `specs_validate_links.go`,
       `specs_validate_tree.go`; note: `specs.go` parent dispatcher and
       `spec_coverage_validate.go` use different naming patterns and are
       separate concerns).
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: SKIP — all four files 13-14% shared structure (unique validators, walkers, resolvers dominate). Gate not met. No additional commit needed.
+-->
 
 **Commit**: `refactor(rhino-cli): share ddd runner between bc and ul subcommands`
 (plus additional commits if 3B/3C proceed)
