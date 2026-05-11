@@ -70,21 +70,23 @@ all use the same MIT text.
 
 #### Current Directory LICENSE Inventory
 
-| Directory                | License |
-| ------------------------ | ------- |
-| `LICENSE` (root)         | MIT     |
-| `apps/ayokoding-cli/`    | MIT     |
-| `apps/ayokoding-web/`    | MIT     |
-| `apps/organiclever-be/`  | MIT     |
-| `apps/organiclever-web/` | MIT     |
-| `apps/oseplatform-cli/`  | MIT     |
-| `apps/oseplatform-web/`  | MIT     |
-| `apps/wahidyankf-web/`   | MIT     |
-| `specs/`                 | MIT     |
-| `libs/golang-commons/`   | MIT     |
-| `libs/hugo-commons/`     | MIT     |
-| `libs/web-ui/`           | MIT     |
-| `libs/web-ui-token/`     | MIT     |
+| Directory                       | License |
+| ------------------------------- | ------- |
+| `LICENSE` (root)                | MIT     |
+| `apps/ayokoding-cli/`           | MIT     |
+| `apps/ayokoding-web/`           | MIT     |
+| `apps/organiclever-be/`         | MIT     |
+| `apps/organiclever-web/`        | MIT     |
+| `apps/oseplatform-cli/`         | MIT     |
+| `apps/oseplatform-web/`         | MIT     |
+| `apps/wahidyankf-web/`          | MIT     |
+| `specs/`                        | MIT     |
+| `libs/clojure-openapi-codegen/` | MIT     |
+| `libs/golang-commons/`          | MIT     |
+| `libs/hugo-commons/`            | MIT     |
+| `libs/ts-ui/`                   | MIT     |
+| `libs/web-ui/`                  | MIT     |
+| `libs/web-ui-token/`            | MIT     |
 
 Third-party code in `archived/` retains its original license (see LICENSING-NOTICE.md).
 

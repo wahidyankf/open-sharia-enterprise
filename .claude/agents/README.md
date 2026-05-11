@@ -39,6 +39,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **plan-checker** - Project plan validation
 - **plan-execution-checker** - Plan execution validation
 - **repo-rules-checker** - Governance compliance validation
+- **repo-parity-checker** - Cross-vendor behavioral-parity validation (rhino-cli vendor-audit, binding-sync drift)
 - **repo-workflow-checker** - Workflow documentation validation
 - **specs-checker** - Gherkin/BDD specs directory structural and content validation
 - **swe-code-checker** - Validates projects against platform coding standards (validates application code rather than documentation)
@@ -60,6 +61,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-oseplatform-web-content-fixer** - Fix OSE content issues
 - **plan-fixer** - Apply plan fixes
 - **repo-rules-fixer** - Fix governance compliance issues
+- **repo-parity-fixer** - Apply validated cross-vendor parity fixes (auto-remediates binding-sync drift; flags color-map/tier-map gaps)
 - **repo-workflow-fixer** - Fix workflow documentation
 - **specs-fixer** - Fix specs structural and accuracy issues
 - **swe-ui-fixer** - Apply validated UI component fixes

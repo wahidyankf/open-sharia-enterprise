@@ -165,9 +165,11 @@ Workflows for development environment and infrastructure:
 
 ### Repository Governance Workflows
 
-Workflows for repository rules:
+Workflows for repository rules and cross-vendor consistency:
 
 - **repo-rules**: Validate consistency across principles, conventions, development, agents, AGENTS.md
+- **repo-parity**: Validate cross-vendor behavioral-parity invariants (vendor-neutrality, sync no-op, count parity, color/tier-map coverage)
+- **ose-primer**: Sync content between `ose-public` and the downstream `ose-primer` template (adopt, propagate, parity-check)
 
 ## Step Execution Patterns
 

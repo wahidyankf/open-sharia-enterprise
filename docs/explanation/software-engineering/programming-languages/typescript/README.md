@@ -225,7 +225,7 @@ timeline
 
 **CLI Tools**:
 
-- ayokoding-cli for content automation and Hugo integration
+- ayokoding-cli for content link validation
 - rhino-cli for repository management and hygiene
 - Build tools and code generators
 - Database migration scripts
@@ -675,17 +675,17 @@ export class CampaignController {
 
 ```
 apps/
-├── oseplatform-web/         # Hugo static site (TypeScript for build scripts)
-├── ayokoding-web/            # Hugo static site (TypeScript for build scripts)
-├── ayokoding-cli/            # Go CLI tool
-└── rhino-cli/               # Go CLI tool
+├── oseplatform-web/         # Next.js 16 content platform (TypeScript, tRPC)
+├── ayokoding-web/            # Next.js 16 fullstack content platform (TypeScript, tRPC)
+├── organiclever-web/         # Next.js 16 landing website
+├── wahidyankf-web/           # Next.js 16 personal portfolio
+├── ayokoding-cli/            # Go CLI tool (content link validation)
+└── rhino-cli/               # Go CLI tool (repository management)
 
 libs/
-├── ts-logger/               # Shared logging library
-├── ts-config/               # Shared configuration management
-├── ts-zakat-calculator/     # Zakat calculation domain logic
-├── ts-murabaha-contracts/   # Murabaha contract domain logic
-└── ts-waqf-manager/         # Waqf property management
+├── ts-ui/                   # Shared TypeScript UI components
+├── web-ui/                  # Shared web UI components
+└── web-ui-token/            # Design tokens for web UI
 ```
 
 **Import Pattern**:
@@ -1449,7 +1449,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 ### Package Managers
 
-- **npm**: 11.8.0 (default)
+- **npm**: 11.10.1 (default)
 - **pnpm**: 10.28.1 (fast, disk-efficient)
 - **bun**: 1.3.6 (ultra-fast)
 
@@ -1478,7 +1478,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 ### Monorepo
 
-- **Nx**: 20.x (build system)
+- **Nx**: 22.5.2 (build system)
 - **pnpm workspaces**: Package management
 
 ## Resources and References

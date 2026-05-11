@@ -101,7 +101,7 @@ Current workflows, grouped by type, all conforming to the rule:
 
 - **`quality-gate`** — `plan-quality-gate` (scope `plan`, type `quality-gate`), `repo-rules-quality-gate` (scope `repo`, qualifier `rules`, type `quality-gate`), `specs-quality-gate` (scope `specs`, type `quality-gate`), `docs-quality-gate` (scope `docs`, type `quality-gate`), `ci-quality-gate` (scope `ci`, type `quality-gate`), `ui-quality-gate` (scope `ui`, type `quality-gate`), `ayokoding-web-by-example-quality-gate` (scope `ayokoding-web`, qualifier `by-example`, type `quality-gate`)
 - **`execution`** — `plan-execution` (scope `plan`, type `execution`)
-- **`setup`** — `development-environment-setup` (scope `infra`, qualifiers `development-environment`, type `setup`)
+- **`setup`** — `infra-development-environment-setup` would be the fully qualified form; the file is stored as `development-environment-setup.md` in the `infra/` directory, making the scope implicit from directory location. The enforcement command (type-suffix check) passes. New `setup` workflows SHOULD include the scope prefix explicitly (e.g., `infra-something-setup.md`).
 
 ## Related
 

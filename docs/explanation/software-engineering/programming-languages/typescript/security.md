@@ -156,11 +156,11 @@ graph LR
     L3 -->|Violation| REJECT
     L3 -->|Pass| SUCCESS
 
-    classDef blue fill:#0173B2,stroke:#023B5A,color:#FFF
-    classDef teal fill:#029E73,stroke:#01593F,color:#FFF
-    classDef purple fill:#CC78BC,stroke:#7A4871,color:#FFF
-    classDef brown fill:#CA9161,stroke:#7A5739,color:#FFF
-    classDef orange fill:#DE8F05,stroke:#8A5903,color:#FFF
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFF
+    classDef teal fill:#029E73,stroke:#000000,color:#FFF
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFF
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFF
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFF
 ```
 
 **Defense-in-Depth Layers**:

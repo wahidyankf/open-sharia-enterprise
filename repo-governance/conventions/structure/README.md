@@ -33,6 +33,7 @@ This directory contains standards for how documentation is organized, named, and
 - [No Manual Date Metadata Convention](./no-date-metadata.md) - Non-website markdown files must not contain manual date metadata: no `updated:` frontmatter, no `**Last Updated**` footer blocks, no inline body date annotations. Git history is authoritative.
 - [No Last Updated Convention](./no-last-updated.md) - Superseded stub — redirects to No Manual Date Metadata Convention
 - [Workflow Naming Convention](./workflow-naming.md) - Single exception-free filename rule for workflow files under `repo-governance/workflows/` (except `meta/` reference docs). Defines scope vocabulary, type vocabulary (quality-gate, execution, setup), and the audit command enforced by `repo-rules-checker` and `rhino-cli workflows validate-naming`
+- [Worktree Path Convention](./worktree-path.md) - Defines the worktree directory structure, naming convention, and gitignore requirements for `claude --worktree` routing in this repository
 
 ## Key Concepts
 

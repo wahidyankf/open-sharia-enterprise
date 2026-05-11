@@ -132,34 +132,9 @@ npm run doctor -- --fix --dry-run # Preview what would be installed
 npm run doctor -- --scope minimal # Check only core tools (git, volta, node, npm, go, docker, jq)
 ```
 
-**Note on `npm install` + doctor**: `postinstall` hook runs `npm run doctor || true` — trailing `|| true` swallows doctor failures silently. `npm install` can complete while polyglot toolchain broken. For **worktree setup** (after `git worktree add` or entering an existing worktree session), run BOTH `npm install` AND `npm run doctor -- --fix` explicitly in root worktree, that order. Explicit `doctor --fix` is the only action guaranteeing 18+ polyglot toolchains (Go, Java, Rust, Elixir, Python, .NET, Dart, Clojure, Kotlin, C#, Node) converge. See [Worktree Toolchain Initialization](./repo-governance/development/workflow/worktree-setup.md) for full rationale and procedure.
+**Worktree setup**: After `git worktree add`, run both `npm install` AND `npm run doctor -- --fix` explicitly. See [Worktree Toolchain Initialization](./repo-governance/development/workflow/worktree-setup.md).
 
-**See**: [repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
-
-**Coverage thresholds** (all enforced via `rhino-cli test-coverage validate` in `test:quick`):
-
-| Project(s)                                                                                                    | Threshold | Report format                 | Notes                                                                               |
-| ------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------- | ----------------------------------------------------------------------------------- |
-| Go CLI projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`, `libs/golang-commons`, `libs/hugo-commons`) | ≥90%      | `cover.out` (go test)         |                                                                                     |
-| `organiclever-be`                                                                                             | ≥90%      | AltCover LCOV (`altcov.info`) | Uses `--linecover` to avoid F# `task{}` BRDA inflation                              |
-| `ayokoding-web`, `oseplatform-web`, `wahidyankf-web`                                                          | ≥80%      | LCOV (Vitest)                 |                                                                                     |
-| `organiclever-web`                                                                                            | ≥75%      | LCOV                          | dormant BE integration code (services/, layers/) excluded from coverage measurement |
-
-**`test:integration` caching**: Default `cache: false` in `nx.json`. Projects using in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`: `organiclever-web` (no integration tests; cache: true with passWithNoTests prevents unnecessary re-runs), Go CLI apps (Godog at both unit and integration levels), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
-
-**Three-level testing standard** (Go CLI apps):
-
-1. **Unit (`test:unit`)**: All mocked deps; consumes Gherkin specs from `specs/apps/<cli-name>/` via godog (no build tag); mocks all I/O via package-level function variables; coverage measured here (>=90%)
-2. **Integration (`test:integration`)**: Real filesystem via `/tmp` fixtures; consumes same Gherkin specs via godog (`//go:build integration`); drives commands in-process via `cmd.RunE()`; cacheable
-3. **E2E**: Not applicable for CLI apps
-
-Both unit and integration levels consume same Gherkin specs — step implementations differ (mocked I/O vs real filesystem). `test:quick` includes `test:unit` (with godog BDD scenarios) + coverage validation.
-
-**OrganicLever contract enforcement**: `organiclever-be` and `organiclever-web` share OpenAPI 3.1 contract spec at `specs/apps/organiclever/containers/contracts/`. `organiclever-contracts` project lints and bundles spec. Both apps have `codegen` Nx target generating types into `generated-contracts/` (gitignored). `codegen` is a dependency of `typecheck` and `build` — contract violations caught by `nx affected -t typecheck` and `test:quick` in pre-push hook and PR quality gate.
-
-For the broader polyglot three-level testing examples (demo backends in Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure), see the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) repository.
-
-**See**: [repo-governance/development/quality/three-level-testing-standard.md](./repo-governance/development/quality/three-level-testing-standard.md)
+**See**: [repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md) for canonical target names, coverage thresholds, caching rules, and the three-level testing standard (unit/integration/e2e).
 
 ## Markdown Quality
 
@@ -364,15 +339,15 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker, swe-code-checker, swe-ui-checker, ci-checker, web-research-maker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer, repo-parity-fixer
 
 **Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (see [plan-execution workflow](./repo-governance/workflows/plan/plan-execution.md))
 
-**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev
+**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev, swe-hugo-dev (**DEPRECATED** — no active Hugo sites remain; formerly oseplatform-web)
 
 **Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer
 
-**Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
+**Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-parity-checker, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE).
 
