@@ -13,6 +13,42 @@
       },
       "outputs": ["{projectRoot}/dist"]
     },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/rhino-cli"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
+        "cwd": "apps/rhino-cli"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/rhino-cli"
+      }
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/behavior/cli/gherkin apps/rhino-cli --shared-steps",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./cmd/...",
+        "cwd": "apps/rhino-cli"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"],
+      "outputs": ["{projectRoot}/cover_spec.out"]
+    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
@@ -29,30 +65,6 @@
       },
       "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"]
     },
-    "run": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "go run main.go",
-        "cwd": "apps/rhino-cli"
-      }
-    },
-    "install": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "go mod tidy",
-        "cwd": "apps/rhino-cli"
-      }
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./cmd/...",
-        "cwd": "apps/rhino-cli"
-      },
-      "cache": true,
-      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/rhino/**/*.feature"],
-      "outputs": ["{projectRoot}/cover_spec.out"]
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
@@ -60,17 +72,111 @@
         "cwd": "apps/rhino-cli"
       }
     },
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
-        "cwd": "apps/rhino-cli"
-      }
-    },
-    "spec-coverage": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/rhino/behavior/cli/gherkin apps/rhino-cli --shared-steps",
+    "validate:agents-detect-duplication": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go agents detect-duplication",
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.claude/skills/**/SKILL.md"
+      ],
+      "outputs": []
+    },
+    "validate:agents-md-size": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance agents-md-size",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/AGENTS.md"],
+      "outputs": []
+    },
+    "validate:cross-vendor-parity": {
+      "command": "bash apps/rhino-cli/scripts/validate-cross-vendor-parity.sh",
+      "cache": false,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{projectRoot}/scripts/validate-cross-vendor-parity.sh",
+        "{workspaceRoot}/repo-governance/**/*.md",
+        "{workspaceRoot}/AGENTS.md",
+        "{workspaceRoot}/CLAUDE.md",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.opencode/agents/**/*.md"
+      ],
+      "outputs": []
+    },
+    "validate:docs-validate-frontmatter": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-frontmatter",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/docs/**/*.md", "{workspaceRoot}/repo-governance/**/*.md"],
+      "outputs": []
+    },
+    "validate:docs-validate-heading-hierarchy": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-heading-hierarchy",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/docs/**/*.md", "{workspaceRoot}/repo-governance/**/*.md"],
+      "outputs": []
+    },
+    "validate:docs-validate-naming": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-naming",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/docs/**/*.md", "{workspaceRoot}/repo-governance/**/*.md"],
+      "outputs": []
+    },
+    "validate:emoji-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance emoji-audit",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/apps/**/*.go",
+        "{workspaceRoot}/apps/**/*.ts",
+        "{workspaceRoot}/apps/**/*.tsx",
+        "{workspaceRoot}/apps/**/*.js",
+        "{workspaceRoot}/apps/**/*.json",
+        "{workspaceRoot}/apps/**/*.yaml",
+        "{workspaceRoot}/apps/**/*.yml",
+        "{workspaceRoot}/libs/**/*.go",
+        "{workspaceRoot}/libs/**/*.ts"
+      ],
+      "outputs": []
+    },
+    "validate:frontmatter-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance frontmatter-audit",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/repo-governance/**/*.md",
+        "{workspaceRoot}/docs/explanation/software-engineering/**/*.md",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.claude/skills/**/*.md",
+        "{workspaceRoot}/plans/**/*.md"
+      ],
+      "outputs": []
+    },
+    "validate:layer-coherence": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance layer-coherence",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/repo-governance/repository-governance-architecture.md",
+        "{workspaceRoot}/repo-governance/README.md"
+      ],
+      "outputs": []
+    },
+    "validate:license-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance license-audit",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/LICENSING-NOTICE.md",
+        "{workspaceRoot}/apps/*/LICENSE",
+        "{workspaceRoot}/libs/*/LICENSE",
+        "{workspaceRoot}/specs/LICENSE"
+      ],
+      "outputs": []
+    },
+    "validate:mermaid": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-mermaid --max-depth=4 repo-governance/ .claude/",
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/**/*.md", "{workspaceRoot}/.claude/**/*.md"],
+      "outputs": []
     },
     "validate:naming-agents": {
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go agents validate-naming",
@@ -88,30 +194,40 @@
       "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/workflows/**/*.md"],
       "outputs": []
     },
-    "validate:mermaid": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-mermaid --max-depth=4 repo-governance/ .claude/",
+    "validate:readme-index-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance readme-index-audit",
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/**/*.md", "{workspaceRoot}/.claude/**/*.md"],
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/repo-governance/**/*.md",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.claude/skills/**/*.md",
+        "{workspaceRoot}/docs/explanation/software-engineering/**/*.md"
+      ],
+      "outputs": []
+    },
+    "validate:repo-governance-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance audit -o json",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/AGENTS.md",
+        "{workspaceRoot}/CLAUDE.md",
+        "{workspaceRoot}/LICENSING-NOTICE.md",
+        "{workspaceRoot}/repo-governance/**/*.md",
+        "{workspaceRoot}/.claude/agents/**/*.md",
+        "{workspaceRoot}/.claude/skills/**/*.md",
+        "{workspaceRoot}/docs/explanation/software-engineering/**/*.md",
+        "{workspaceRoot}/apps/*/LICENSE",
+        "{workspaceRoot}/libs/*/LICENSE",
+        "{workspaceRoot}/specs/LICENSE"
+      ],
       "outputs": []
     },
     "validate:repo-governance-vendor-audit": {
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance vendor-audit repo-governance/",
       "cache": true,
       "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/repo-governance/**/*.md"],
-      "outputs": []
-    },
-    "validate:cross-vendor-parity": {
-      "command": "bash apps/rhino-cli/scripts/validate-cross-vendor-parity.sh",
-      "cache": false,
-      "inputs": [
-        "{projectRoot}/**/*.go",
-        "{projectRoot}/scripts/validate-cross-vendor-parity.sh",
-        "{workspaceRoot}/repo-governance/**/*.md",
-        "{workspaceRoot}/AGENTS.md",
-        "{workspaceRoot}/CLAUDE.md",
-        "{workspaceRoot}/.claude/agents/**/*.md",
-        "{workspaceRoot}/.opencode/agents/**/*.md"
-      ],
       "outputs": []
     },
     "validate:specs-adoption": {
@@ -121,16 +237,6 @@
         "{projectRoot}/**/*.go",
         "{workspaceRoot}/specs/apps/**/behavior/**/*.feature",
         "{workspaceRoot}/specs/apps/**/ddd/bounded-contexts.yaml"
-      ],
-      "outputs": []
-    },
-    "validate:specs-tree": {
-      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-tree",
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/**/*.go",
-        "{workspaceRoot}/specs/apps/**/README.md",
-        "{workspaceRoot}/specs/apps/**/{product,system-context,containers,components,behavior}/**"
       ],
       "outputs": []
     },
@@ -148,6 +254,26 @@
       "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-links",
       "cache": true,
       "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/apps/**/*.md"],
+      "outputs": []
+    },
+    "validate:specs-tree": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go specs validate-tree",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/specs/apps/**/README.md",
+        "{workspaceRoot}/specs/apps/**/{product,system-context,containers,components,behavior}/**"
+      ],
+      "outputs": []
+    },
+    "validate:traceability-audit": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go repo-governance traceability-audit",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/repo-governance/**/*.md",
+        "{workspaceRoot}/.claude/agents/**/*.md"
+      ],
       "outputs": []
     }
   }
