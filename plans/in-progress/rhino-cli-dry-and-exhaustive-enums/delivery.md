@@ -126,7 +126,7 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
 
 ### 1A — `internal/severity` package
 
-- [ ] **1A.1 RED** — `internal/severity/severity_test.go`:
+- [x] **1A.1 RED** — `internal/severity/severity_test.go`:
   - `TestParse_AcceptsWarnVariants` (`warn`, `warning`, `WARN`, `warn` → `SeverityWarn{}`)
   - `TestParse_DefaultsToError` (`error`, `fatal`, `""`, `garbage` → `SeverityError{}`)
   - `TestResolve_FlagBeatsEnv` (flag=`warn`, env=`error` → `SeverityWarn{}`; no stderr)
@@ -135,7 +135,14 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
   - `TestSeverity_GoChecksumType_SwitchExhaustive` — a deliberately non-exhaustive type switch in test file is expected to fail `gochecksumtype`. (Implementation: add `//nolint:gochecksumtype // intentional negative test` comment to verify the diagnostic.)
   - All tests fail (package doesn't exist).
 
-- [ ] **1A.2 GREEN** — `internal/severity/severity.go`:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/severity/severity_test.go (created, 13 tests)
+Notes: All 6 test functions written; confirmed RED before package creation.
+-->
+
+- [x] **1A.2 GREEN** — `internal/severity/severity.go`:
   - Define `Severity` sealed interface (`isSeverity()`, `Code()`, `String()`).
   - Define `SeverityError{}`, `SeverityWarn{}` with `//sumtype:decl`.
   - Implement `Parse(s string) Severity` matching existing `normaliseSeverity` semantics.
@@ -144,12 +151,26 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
     `WARN: severity downgraded ...` stderr line, end-of-line preserved).
   - Tests pass.
 
-- [ ] **1A.3 REFACTOR** — package-doc comment links to
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/severity/severity.go (created)
+Notes: Severity sealed interface + SeverityError{}/SeverityWarn{} with //sumtype:decl. Parse() matches normaliseSeverity semantics. Resolve() matches resolveBcSeverity byte-identically. All 13 tests pass.
+-->
+
+- [x] **1A.3 REFACTOR** — package-doc comment links to
       `internal/testcoverage/types.go` as canonical example.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/severity/severity.go (package-doc added)
+Notes: Package-doc comment added linking to internal/testcoverage/types.go as canonical sealed-enum example.
+-->
 
 ### 1B — `internal/cliout` package
 
-- [ ] **1B.1 RED** — `internal/cliout/format_test.go`:
+- [x] **1B.1 RED** — `internal/cliout/format_test.go`:
   - `TestParse_RecognisesThreeLiterals` (`text`/`json`/`markdown` → variants + true).
   - `TestParse_EmptyDefaultsToText`.
   - `TestParse_RejectsUnknown` (`yaml`, `xml` → nil + false).
@@ -157,7 +178,14 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
   - `TestDispatcher_Write_JSONErrorBubblesUp`.
   - All tests fail.
 
-- [ ] **1B.2 GREEN** — `internal/cliout/format.go` + `dispatcher.go`:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/cliout/format_test.go (created, 13 tests)
+Notes: All 5 test functions written; confirmed RED before package creation.
+-->
+
+- [x] **1B.2 GREEN** — `internal/cliout/format.go` + `dispatcher.go`:
   - `OutputFormat` sealed interface, `FormatText{}`, `FormatJSON{}`, `FormatMarkdown{}`.
   - `Parse(s string) (OutputFormat, bool)`.
   - `Dispatcher[T any]` struct with `Text`, `JSON`, `Markdown` callbacks and `Write` method.
@@ -169,18 +197,52 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
     JSON envelopes (compare against goldens from Phase 0).
   - Tests pass.
 
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/cliout/format.go (created), apps/rhino-cli/internal/cliout/dispatcher.go (created)
+Notes: OutputFormat sealed interface + FormatText{}/FormatJSON{}/FormatMarkdown{} with //sumtype:decl. Dispatcher[T any] generic. Parse(). All 13 tests pass.
+-->
+
+- [x] **1B.3 RED + GREEN** — `internal/cliout/envelope_test.go` and `envelope.go`:
+  - `Envelope[T]` generic helper with `Schema`, `Status`, `Result` fields.
+  - `MarshalJSON` produces canonical key ordering matching the **existing**
+    JSON envelopes (compare against goldens from Phase 0).
+  - Tests pass.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/cliout/envelope.go (created), apps/rhino-cli/internal/cliout/envelope_test.go (created)
+Notes: Envelope[T any] generic with canonical JSON key ordering. MarshalJSON verified byte-identical vs Phase 0 goldens. 2 tests pass.
+-->
+
 ### 1C — Cmd-side adoption of `cliout` (flag side only)
 
-- [ ] **1C.1 RED** — extend `cmd/root_test.go` to verify the parsed `--output`
+- [x] **1C.1 RED** — extend `cmd/root_test.go` to verify the parsed `--output`
       value is a `cliout.OutputFormat` in a package-level target var.
 
-- [ ] **1C.2 GREEN** — `cmd/output.go`: introduce package var
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/root_test.go (extended)
+Notes: Extended root_test.go to verify --output parsing produces cliout.OutputFormat in outputFormat package var.
+-->
+
+- [x] **1C.2 GREEN** — `cmd/output.go`: introduce package var
       `outputFormat cliout.OutputFormat`. Update `init()` in `cmd/root.go` to
       parse `output` string into `outputFormat` after Cobra flag binding.
       Existing `output` string var stays (Cobra reads it); new var is the
       sealed-enum mirror.
 
-- [ ] **1C.3 GREEN** — replace `writeFormatted(cmd, output, ...)` calls in
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/output.go (created), apps/rhino-cli/cmd/root.go (PersistentPreRunE added)
+Notes: outputFormat cliout.OutputFormat package var. PersistentPreRunE parses output string → outputFormat. writeFormattedV2 helper added.
+-->
+
+- [x] **1C.3 GREEN** — replace `writeFormatted(cmd, output, ...)` calls in
       all fifteen cmd files with `writeFormattedV2(cmd, outputFormat, ...)`
       using `cliout.Dispatcher`. Keep both helpers side-by-side until every
       caller migrates, then delete `writeFormatted` + `outputFuncs`.
@@ -200,10 +262,31 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
   - `cmd/test_coverage_validate.go`
   - `cmd/workflows_validate_naming.go`
 
-- [ ] **1C.4 GREEN** — delete old `writeFormatted` + `outputFuncs` from
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: all 15 cmd files listed above (writeFormatted → writeFormattedV2)
+Notes: All 15 cmd files migrated to writeFormattedV2 using cliout.Dispatcher. Both helpers kept side-by-side during transition.
+-->
+
+- [x] **1C.4 GREEN** — delete old `writeFormatted` + `outputFuncs` from
       `cmd/helpers.go`.
 
-- [ ] **1C.5 GOLDEN** — re-run `TestGolden`. All scenarios still pass.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/helpers.go (writeFormatted deleted; outputFuncs type retained as still used by writeFormattedV2 call sites)
+Notes: writeFormatted function deleted. outputFuncs struct retained (used by all writeFormattedV2 call sites).
+-->
+
+- [x] **1C.5 GOLDEN** — re-run `TestGolden`. All scenarios still pass.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: go test ./cmd -run TestGolden: 47/47 pass after cliout migration.
+-->
 
 ### 1D — Cmd-side adoption of `severity`
 
@@ -211,28 +294,77 @@ Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 is
       assert the resolved severity value comes from `severity.Resolve` (mock
       stderr write site).
 
-- [ ] **1D.2 GREEN** — delete `resolveBcSeverity`, `normaliseSeverity` from
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_bc_test.go (extended), apps/rhino-cli/cmd/ddd_ul_test.go (extended), apps/rhino-cli/cmd/ddd_severity_test.go (rewritten)
+Notes: Tests extended to assert resolved severity via severity.Resolve. Confirmed RED before migration.
+-->
+
+- [x] **1D.2 GREEN** — delete `resolveBcSeverity`, `normaliseSeverity` from
       `cmd/ddd_bc.go`; delete `resolveUlSeverity`, `normaliseUlSeverity` from
       `cmd/ddd_ul.go`. Both files call `severity.Resolve(flagVal, "OSE_RHINO_DDD_SEVERITY", os.Stderr)`.
 
-- [ ] **1D.3 GREEN** — migrate `internal/bcregistry/types.go`:
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_bc.go, apps/rhino-cli/cmd/ddd_ul.go
+Notes: Deleted resolveBcSeverity, normaliseSeverity from ddd_bc.go; deleted resolveUlSeverity, normaliseUlSeverity from ddd_ul.go. Both now call severity.Resolve().
+-->
+
+- [x] **1D.3 GREEN** — migrate `internal/bcregistry/types.go`:
   - `Finding.Severity` → `severity.Severity`.
   - `ValidateOptions.Severity` → `severity.Severity`.
   - Update `internal/bcregistry/validator.go` consumers: replace
     `if f.Severity == "error"` with `if _, ok := f.Severity.(severity.SeverityError); ok` or type-switch.
   - Update tests.
 
-- [ ] **1D.4 GREEN** — migrate `internal/glossary/types.go` + `validator.go`
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/types.go, apps/rhino-cli/internal/bcregistry/validator.go, apps/rhino-cli/internal/bcregistry/bcregistry_test.go
+Notes: Finding.Severity and ValidateOptions.Severity migrated to severity.Severity. validator.go type-switched. All tests use severity.SeverityError{}.
+-->
+
+- [x] **1D.4 GREEN** — migrate `internal/glossary/types.go` + `validator.go`
       analogously.
 
-- [ ] **1D.5 GREEN** — update `cmd/ddd_bc.go`, `cmd/ddd_ul.go` callers to
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/glossary/types.go, apps/rhino-cli/internal/glossary/validator.go, apps/rhino-cli/internal/glossary/glossary_test.go
+Notes: Analogous migration to bcregistry. All glossary tests updated to severity.SeverityError{}.
+-->
+
+- [x] **1D.5 GREEN** — update `cmd/ddd_bc.go`, `cmd/ddd_ul.go` callers to
       `Severity: severity.Parse(sev)` and finding-print loop to call
       `f.Severity.Code()`.
 
-- [ ] **1D.6 GOLDEN** — re-run `TestGolden`. All scenarios still pass.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/ddd_bc.go, apps/rhino-cli/cmd/ddd_ul.go
+Notes: Callers updated to Severity: severity.Parse(sev). Finding-print loops call f.Severity.Code().
+-->
 
-- [ ] **1D.7 LINT** — `nx run rhino-cli:lint`. `gochecksumtype` reports zero
+- [x] **1D.6 GOLDEN** — re-run `TestGolden`. All scenarios still pass.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass after full severity migration.
+-->
+
+- [x] **1D.7 LINT** — `nx run rhino-cli:lint`. `gochecksumtype` reports zero
       violations.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: npx nx run rhino-cli:lint: 0 issues. gochecksumtype clean. Committed: refactor(rhino-cli): extract cliout and severity packages with sealed-interface enums (d1880eb0c)
+-->
 
 **Commit**: `refactor(rhino-cli): extract cliout and severity packages with sealed-interface enums`
 
