@@ -5,7 +5,6 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [rhino-cli-dry-and-exhaustive-enums](./rhino-cli-dry-and-exhaustive-enums/README.md) — DRY refactor + sealed-interface enum adoption for rhino-cli (no behaviour change)
 
 ## Instructions
 
