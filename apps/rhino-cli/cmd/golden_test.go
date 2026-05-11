@@ -82,7 +82,6 @@ func TestGolden(t *testing.T) {
 	}
 
 	for _, fix := range manifest.Fixtures {
-		fix := fix // capture loop variable
 		t.Run(fix.Name, func(t *testing.T) {
 			runGoldenFixture(t, fix, update)
 		})

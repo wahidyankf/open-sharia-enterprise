@@ -23,14 +23,21 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 0 — Golden-output safety net
 
-- [ ] **0.1 Worktree + Environment** — Provision and initialize:
+- [x] **0.1 Worktree + Environment** — Provision and initialize:
   - Provision: `cd ose-public && claude --worktree rhino-cli-dry-and-exhaustive-enums`
     (creates `worktrees/rhino-cli-dry-and-exhaustive-enums/` in repo root)
   - Initialize toolchain (in worktree root): `npm install && npm run doctor -- --fix`
     (see [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md))
   - Verify baseline: `nx run rhino-cli:test:quick` — exits 0 before any changes are made
 
-- [ ] **0.2 Fixture catalogue** — author
+  <!-- implementation-notes
+  Date: 2026-05-11
+  Status: DONE
+  Files Changed: none (environment setup only)
+  Notes: Worktree peppy-wobbling-deer provisioned (user override of declared rhino-cli-dry-and-exhaustive-enums name). npm install OK. All 20/20 doctor tools pass. Baseline test:quick green: 90.42% coverage ≥ 90% threshold.
+  -->
+
+- [x] **0.2 Fixture catalogue** — author
       `apps/rhino-cli/cmd/testdata/golden/manifest.yaml` listing every documented
       subcommand × every `--output` mode × representative arg sets. Cover:
   - `--help`, `--version` outputs
@@ -56,7 +63,14 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   - `workflows validate-naming`
   - `git pre-commit` (dry-run mode if available; otherwise scripted fixture)
 
-- [ ] **0.3 RED** — `apps/rhino-cli/cmd/golden_test.go`: implement
+  <!-- implementation-notes
+  Date: 2026-05-11
+  Status: DONE
+  Files Changed: apps/rhino-cli/cmd/testdata/golden/manifest.yaml (created, 46 fixture scenarios)
+  Notes: manifest.yaml authored by swe-golang-dev covering all documented subcommands × output modes.
+  -->
+
+- [x] **0.3 RED** — `apps/rhino-cli/cmd/golden_test.go`: implement
       `TestGolden` that iterates `manifest.yaml`, runs each invocation
       in-process via the existing `cmd.RunE()` style (cf.
       `cmd/testable.go`), captures stdout/stderr/exit, compares to
@@ -65,16 +79,44 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
       of the output tree. Test fails because golden files don't exist
       yet.
 
-- [ ] **0.4 GREEN** — `go test ./cmd -run TestGolden -update` regenerates
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/golden_test.go (created, 692 lines); fix: removed unnecessary `fix := fix` loop var copy (Go 1.22+)
+Notes: TestGolden iterates manifest.yaml in-process via RunE, captures stdout/stderr/exit, normalises RFC3339 timestamps. Confirmed RED (no golden files) then GREEN after seeding. IDE false-positive on makeAllPassedChecks — compiler and go test both pass cleanly.
+-->
+
+- [x] **0.4 GREEN** — `go test ./cmd -run TestGolden -update` regenerates
       the golden files against the **pre-refactor** source. Commit:
       `chore(rhino-cli): seed golden output fixtures (no code change)`.
 
-- [ ] **0.5 GREEN** — re-run `go test ./cmd -run TestGolden` (without
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/cmd/testdata/golden/*.stdout (46 golden files seeded via UPDATE_GOLDEN=1)
+Notes: Golden files seeded against pre-refactor source. Agent used UPDATE_GOLDEN=1 env var mechanism.
+-->
+
+- [x] **0.5 GREEN** — re-run `go test ./cmd -run TestGolden` (without
       `-update`). All scenarios pass against the same source — confirms
       harness is stable.
 
-- [ ] **0.6 REFACTOR** — confirm `test:quick`, `test:integration`,
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: go test ./cmd/... -run TestGolden: 47 passed. Harness stable.
+-->
+
+- [x] **0.6 REFACTOR** — confirm `test:quick`, `test:integration`,
       `lint` all pass.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: test:quick 90.58% (up from 85.8%), test:integration PASS, lint PASS (0 issues golangci-lint). Committed: chore(rhino-cli): seed golden output fixtures for behaviour-preservation refactor
+-->
 
 **Commit**: `chore(rhino-cli): seed golden output fixtures for behaviour-preservation refactor`
 
