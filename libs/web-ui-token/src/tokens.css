@@ -2,7 +2,7 @@
  * Shared structural design tokens for the open-sharia-enterprise monorepo.
  *
  * Import this file in your app's globals.css:
- *   @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
+ *   @import "@open-sharia-enterprise/web-ui-token/src/tokens.css";
  *
  * Then override brand tokens in your app's @theme block:
  *   @theme { --color-primary: hsl(221.2 83.2% 53.3%); }

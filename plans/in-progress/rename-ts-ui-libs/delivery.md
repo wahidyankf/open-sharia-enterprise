@@ -18,16 +18,21 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ## Phase 0 — Environment Setup
 
-- [ ] Confirm working directory is the repo root inside the `worktrees/ui/` worktree:
-  `pwd` must end in `worktrees/ui`. All commands below are run from this root.
-- [ ] Confirm working tree is clean: `rtk git status` — no uncommitted changes.
-- [ ] Run `npm install` from `worktrees/ui/` to ensure dependencies are current.
-- [ ] Run `npm run doctor -- --fix` from `worktrees/ui/` to converge polyglot toolchain.
-  (Required — `postinstall` silently tolerates drift. See
-  [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md).)
-- [ ] Establish baseline: run `npx nx run-many -t typecheck lint test:quick -p ts-ui ts-ui-tokens`
-  from `worktrees/ui/` — all targets must pass before any rename begins. Note any pre-existing
-  failures.
+- [x] Confirm working directory is the repo root inside the `worktrees/ui/` worktree:
+      `pwd` must end in `worktrees/ui`. All commands below are run from this root.
+  - Date: 2026-05-11 | Status: Done | Notes: pwd=/Users/wkf/ose-projects/ose-public/worktrees/ui ✓
+- [x] Confirm working tree is clean: `rtk git status` — no uncommitted changes.
+  - Date: 2026-05-11 | Status: Done | Notes: clean — nothing to commit ✓
+- [x] Run `npm install` from `worktrees/ui/` to ensure dependencies are current.
+  - Date: 2026-05-11 | Status: Done | Notes: npm install completed successfully ✓
+- [x] Run `npm run doctor -- --fix` from `worktrees/ui/` to converge polyglot toolchain.
+      (Required — `postinstall` silently tolerates drift. See
+      [Worktree Toolchain Initialization](../../../governance/development/workflow/worktree-setup.md).)
+  - Date: 2026-05-11 | Status: Done | Notes: 20/20 tools OK, 0 missing ✓
+- [x] Establish baseline: run `npx nx run-many -t typecheck lint test:quick -p ts-ui ts-ui-tokens`
+      from `worktrees/ui/` — all targets must pass before any rename begins. Note any pre-existing
+      failures.
+  - Date: 2026-05-11 | Status: Done | Notes: ts-ui typecheck/lint/test:quick all pass (96.81% coverage); ts-ui-tokens typecheck/lint pass (no test:quick target — expected for tokens-only lib). No pre-existing failures.
 
 ---
 
@@ -35,38 +40,43 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 > All `git mv` commands run from the repo root inside `worktrees/ui/`.
 
-- [ ] Rename the component library directory:
+- [x] Rename the component library directory:
 
   ```bash
   git mv libs/ts-ui libs/web-ui
   ```
 
   Acceptance criterion: `test -d libs/web-ui` exits 0; `test -d libs/ts-ui` exits 1.
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/ (git mv from libs/ts-ui) ✓
 
-- [ ] Rename the design-token library directory:
+- [x] Rename the design-token library directory:
 
   ```bash
   git mv libs/ts-ui-tokens libs/web-ui-token
   ```
 
   Acceptance criterion: `test -d libs/web-ui-token` exits 0; `test -d libs/ts-ui-tokens` exits 1.
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui-token/ (git mv from libs/ts-ui-tokens) ✓
 
-- [ ] Rename the specs directory for the component library:
+- [x] Rename the specs directory for the component library:
 
   ```bash
   git mv specs/libs/ts-ui specs/libs/web-ui
   ```
 
   Acceptance criterion: `test -d specs/libs/web-ui` exits 0; `test -d specs/libs/ts-ui` exits 1.
+  - Date: 2026-05-11 | Status: Done | Files Changed: specs/libs/web-ui/ (git mv from specs/libs/ts-ui) ✓
 
 ### Commit Phase 1
 
-- [ ] Stage and commit the directory renames:
+- [x] Stage and commit the directory renames:
 
   ```bash
   rtk git add libs/web-ui libs/web-ui-token specs/libs/web-ui
-  rtk git commit -m "refactor(libs): rename ts-ui → web-ui, ts-ui-tokens → web-ui-token directories and specs/libs/ts-ui → web-ui"
+  rtk git commit -m "refactor(libs): rename ts-ui→web-ui and ts-ui-tokens→web-ui-token dirs"
   ```
+
+  - Date: 2026-05-11 | Status: Done | Notes: 147 files renamed, committed ✓
 
 ---
 
@@ -76,7 +86,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 
 ### 2a — `libs/web-ui/project.json`
 
-- [ ] Edit `libs/web-ui/project.json` — replace all occurrences of `ts-ui` with `web-ui`:
+- [x] Edit `libs/web-ui/project.json` — replace all occurrences of `ts-ui` with `web-ui`:
   - `"name": "ts-ui"` → `"name": "web-ui"`
   - `"sourceRoot": "libs/ts-ui/src"` → `"sourceRoot": "libs/web-ui/src"`
   - All `"cwd": "libs/ts-ui"` → `"cwd": "libs/web-ui"`
@@ -86,10 +96,11 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" libs/web-ui/project.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/project.json ✓
 
 ### 2b — `libs/web-ui/package.json`
 
-- [ ] Edit `libs/web-ui/package.json`:
+- [x] Edit `libs/web-ui/package.json`:
   - `"name": "@open-sharia-enterprise/ts-ui"` → `"name": "@open-sharia-enterprise/web-ui"`
   - In `dependencies`, `"@open-sharia-enterprise/ts-ui-tokens": "*"` →
     `"@open-sharia-enterprise/web-ui-token": "*"`
@@ -97,11 +108,12 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep "ts-ui" libs/web-ui/package.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/package.json ✓
 
 ### 2c — `libs/web-ui-token/project.json`
 
-- [ ] Edit `libs/web-ui-token/project.json` — replace all occurrences of `ts-ui-tokens` with
-  `web-ui-token` and `ts-ui` with `web-ui`:
+- [x] Edit `libs/web-ui-token/project.json` — replace all occurrences of `ts-ui-tokens` with
+      `web-ui-token` and `ts-ui` with `web-ui`:
   - `"name": "ts-ui-tokens"` → `"name": "web-ui-token"`
   - `"sourceRoot": "libs/ts-ui-tokens/src"` → `"sourceRoot": "libs/web-ui-token/src"`
   - All `"cwd": "libs/ts-ui-tokens"` → `"cwd": "libs/web-ui-token"`
@@ -109,20 +121,22 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "ts-ui" libs/web-ui-token/project.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui-token/project.json ✓
 
 ### 2d — `libs/web-ui-token/package.json`
 
-- [ ] Edit `libs/web-ui-token/package.json`:
+- [x] Edit `libs/web-ui-token/package.json`:
   - `"name": "@open-sharia-enterprise/ts-ui-tokens"` →
     `"name": "@open-sharia-enterprise/web-ui-token"`
 
   Acceptance criterion: `grep "ts-ui" libs/web-ui-token/package.json` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui-token/package.json ✓
 
 ### 2e — Storybook config inside `libs/web-ui/`
 
-- [ ] Edit `libs/web-ui/.storybook/preview.ts` — replace both import paths:
+- [x] Edit `libs/web-ui/.storybook/preview.ts` — replace both import paths:
   - `@open-sharia-enterprise/ts-ui-tokens/src/tokens.css` →
     `@open-sharia-enterprise/web-ui-token/src/tokens.css`
   - `@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css` →
@@ -131,21 +145,23 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep "ts-ui" libs/web-ui/.storybook/preview.ts` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/.storybook/preview.ts ✓
 
-- [ ] Edit `libs/web-ui/.storybook/storybook.css` — replace the import:
+- [x] Edit `libs/web-ui/.storybook/storybook.css` — replace the import:
   - `@open-sharia-enterprise/ts-ui-tokens/src/tokens.css` →
     `@open-sharia-enterprise/web-ui-token/src/tokens.css`
 
   Acceptance criterion: `grep "ts-ui" libs/web-ui/.storybook/storybook.css` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/.storybook/storybook.css ✓
 
 ### 2f — Component step files inside `libs/web-ui/src/components/`
 
-- [ ] Update all 18 component step files that contain hardcoded `specs/libs/ts-ui/gherkin/`
-  paths. After Phase 1 renames both `libs/ts-ui` → `libs/web-ui` and
-  `specs/libs/ts-ui` → `specs/libs/web-ui`, these paths resolve to a non-existent directory
-  and break `nx run web-ui:test:quick`. Run from the repo root inside `worktrees/ui/`:
+- [x] Update all 18 component step files that contain hardcoded `specs/libs/ts-ui/gherkin/`
+      paths. After Phase 1 renames both `libs/ts-ui` → `libs/web-ui` and
+      `specs/libs/ts-ui` → `specs/libs/web-ui`, these paths resolve to a non-existent directory
+      and break `nx run web-ui:test:quick`. Run from the repo root inside `worktrees/ui/`:
 
   ```bash
   find libs/web-ui/src/components -name "*.steps.tsx" \
@@ -155,12 +171,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep -r "specs/libs/ts-ui" libs/web-ui/src/` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: 18 \*.steps.tsx files in libs/web-ui/src/components/ ✓
 
 ### 2g — `libs/web-ui/vitest.config.ts` alias path
 
-- [ ] Edit `libs/web-ui/vitest.config.ts` — update the resolve alias that points to the
-  token library source. After the rename, `../ts-ui-tokens/src` no longer exists (it is
-  `../web-ui-token/src`), and the package name must also be updated:
+- [x] Edit `libs/web-ui/vitest.config.ts` — update the resolve alias that points to the
+      token library source. After the rename, `../ts-ui-tokens/src` no longer exists (it is
+      `../web-ui-token/src`), and the package name must also be updated:
 
   ```bash
   sed -i '' \
@@ -172,12 +189,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep "ts-ui" libs/web-ui/vitest.config.ts` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/vitest.config.ts ✓
 
 ### 2h — Lib README files
 
-- [ ] Update prose in `libs/web-ui/README.md` and `libs/web-ui-token/README.md`. Both files are
-  moved by `git mv` in Phase 1 but their content still references `ts-ui` and `ts-ui-tokens`.
-  AC-9's zero-reference grep will match them and fail unless updated:
+- [x] Update prose in `libs/web-ui/README.md` and `libs/web-ui-token/README.md`. Both files are
+      moved by `git mv` in Phase 1 but their content still references `ts-ui` and `ts-ui-tokens`.
+      AC-9's zero-reference grep will match them and fail unless updated:
 
   ```bash
   sed -i '' \
@@ -194,12 +212,13 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui/README.md, libs/web-ui-token/README.md ✓
 
 ### 2i — `libs/web-ui-token/src/tokens.css` doc comment
 
-- [ ] Edit `libs/web-ui-token/src/tokens.css` — update the doc comment self-reference on line 5.
-  After Phase 1 renames `libs/ts-ui-tokens` → `libs/web-ui-token`, this file lands at its new
-  path but the comment still references the old package name:
+- [x] Edit `libs/web-ui-token/src/tokens.css` — update the doc comment self-reference on line 5.
+      After Phase 1 renames `libs/ts-ui-tokens` → `libs/web-ui-token`, this file lands at its new
+      path but the comment still references the old package name:
 
   ```bash
   sed -i '' \
@@ -210,6 +229,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: `grep "ts-ui" libs/web-ui-token/src/tokens.css` returns empty.
 
   _Suggested executor: `swe-typescript-dev`_
+  - Date: 2026-05-11 | Status: Done | Files Changed: libs/web-ui-token/src/tokens.css ✓
 
 ### Commit Phase 2
 
@@ -256,7 +276,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `swe-typescript-dev`_
 
 - [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/organiclever-web/src/`
-  (~28 TSX files) using a global find-and-replace:
+      (~28 TSX files) using a global find-and-replace:
 
   ```bash
   find apps/organiclever-web/src -type f \( -name "*.tsx" -o -name "*.ts" -o -name "*.css" \) \
@@ -301,7 +321,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `swe-typescript-dev`_
 
 - [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/wahidyankf-web/src/`
-  (~12 files: 7 source TSX/TS + 4 unit test files + 1 globals.css) using a global find-and-replace:
+      (~12 files: 7 source TSX/TS + 4 unit test files + 1 globals.css) using a global find-and-replace:
 
   ```bash
   find apps/wahidyankf-web/src -type f \( -name "*.tsx" -o -name "*.ts" -o -name "*.css" \) \
@@ -317,7 +337,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ### 3c — apps/ayokoding-web
 
 - [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths in `apps/ayokoding-web/src/`
-  (~15 files including `globals.css`) — component imports, CSS imports, and Tailwind `@source` path:
+      (~15 files including `globals.css`) — component imports, CSS imports, and Tailwind `@source` path:
 
   ```bash
   find apps/ayokoding-web/src -type f \( -name "*.tsx" -o -name "*.ts" -o -name "*.css" \) \
@@ -334,8 +354,8 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ### 3d — apps/oseplatform-web
 
 - [ ] Replace all `@open-sharia-enterprise/ts-ui` import paths across
-  `apps/oseplatform-web/src/` and `apps/oseplatform-web/test/` (4 src TSX files +
-  `globals.css` + 5 unit test step files) using a broad find-and-replace:
+      `apps/oseplatform-web/src/` and `apps/oseplatform-web/test/` (4 src TSX files +
+      `globals.css` + 5 unit test step files) using a broad find-and-replace:
 
   ```bash
   find apps/oseplatform-web/src apps/oseplatform-web/test \
@@ -400,10 +420,10 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
 ### 3e-ii — specs/libs/web-ui Gherkin feature file prose
 
 - [ ] Update prose references in the 6 Gherkin feature files under `specs/libs/web-ui/gherkin/`
-  that contain "ts-ui design system" wording. These files are moved by `git mv` in Phase 1 to
-  their new location at `specs/libs/web-ui/`. Without this step, AC-8's grep
-  `git grep -r "ts-ui" -- governance/ .claude/ specs/` will match them and fail. Run AFTER
-  Phase 1 (the directory rename must complete before these paths exist):
+      that contain "ts-ui design system" wording. These files are moved by `git mv` in Phase 1 to
+      their new location at `specs/libs/web-ui/`. Without this step, AC-8's grep
+      `git grep -r "ts-ui" -- governance/ .claude/ specs/` will match them and fail. Run AFTER
+      Phase 1 (the directory rename must complete before these paths exist):
 
   ```bash
   find specs/libs/web-ui -name "*.feature" \
@@ -475,7 +495,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `repo-rules-maker`_
 
 - [ ] Edit `.claude/skills/apps-organiclever-web-developing-content/SKILL.md` — replace `ts-ui`
-  references.
+      references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/apps-organiclever-web-developing-content/SKILL.md`
   returns empty.
@@ -483,7 +503,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `repo-rules-maker`_
 
 - [ ] Edit `.claude/skills/swe-developing-frontend-ui/reference/component-patterns.md` — replace
-  `ts-ui` references.
+      `ts-ui` references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/swe-developing-frontend-ui/reference/component-patterns.md`
   returns empty.
@@ -491,7 +511,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   _Suggested executor: `repo-rules-maker`_
 
 - [ ] Edit `.claude/skills/swe-developing-frontend-ui/reference/design-tokens.md` — replace
-  `ts-ui-tokens` references.
+      `ts-ui-tokens` references.
 
   Acceptance criterion: `grep "ts-ui" .claude/skills/swe-developing-frontend-ui/reference/design-tokens.md`
   returns empty.
@@ -587,7 +607,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   `grep '"@open-sharia-enterprise/ts-ui"' package-lock.json` which must return empty).
 
 - [ ] Verify `grep '"@open-sharia-enterprise/web-ui"' package-lock.json` returns at least one match
-  and `grep '"@open-sharia-enterprise/web-ui-token"' package-lock.json` returns at least one match.
+      and `grep '"@open-sharia-enterprise/web-ui-token"' package-lock.json` returns at least one match.
 
 - [ ] Stage and commit the updated lockfile:
 
@@ -692,7 +712,7 @@ See [Worktree Path Convention](../../../governance/conventions/structure/worktre
   Acceptance criterion: all jobs show `conclusion: success`; zero failures.
 
 - [ ] If any CI check fails: fix immediately, push a follow-up commit, and repeat until all
-  GitHub Actions pass with zero failures.
+      GitHub Actions pass with zero failures.
 
 - [ ] Do NOT proceed to plan archival until CI is fully green.
 

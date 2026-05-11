@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@open-sharia-enterprise/ts-ui-tokens",
+  "name": "@open-sharia-enterprise/web-ui-token",
   "version": "0.1.0",
   "private": true,
   "main": "src/index.ts",

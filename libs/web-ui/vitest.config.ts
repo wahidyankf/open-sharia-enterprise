@@ -19,7 +19,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@open-sharia-enterprise/ts-ui-tokens": path.resolve(__dirname, "../ts-ui-tokens/src"),
+      "@open-sharia-enterprise/web-ui-token": path.resolve(__dirname, "../web-ui-token/src"),
     },
   },
 });

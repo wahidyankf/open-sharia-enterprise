@@ -1,41 +1,41 @@
 {
-  "name": "ts-ui",
-  "sourceRoot": "libs/ts-ui/src",
+  "name": "web-ui",
+  "sourceRoot": "libs/web-ui/src",
   "projectType": "library",
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsc --noEmit",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx oxlint@latest --jsx-a11y-plugin .",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx vitest run --coverage",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx vitest run --coverage && cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate libs/ts-ui/coverage/lcov.info 70",
-        "cwd": "libs/ts-ui"
+        "command": "npx vitest run --coverage && cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate libs/web-ui/coverage/lcov.info 70",
+        "cwd": "libs/web-ui"
       }
     },
     "storybook": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx storybook dev -p 6006 --no-open",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       }
     },
     "build-storybook": {
@@ -43,7 +43,7 @@
       "cache": true,
       "options": {
         "command": "npx storybook build -o storybook-static",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       },
       "outputs": ["{projectRoot}/storybook-static"]
     },
@@ -51,7 +51,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx playwright test --config e2e/playwright.config.ts",
-        "cwd": "libs/ts-ui"
+        "cwd": "libs/web-ui"
       }
     }
   },

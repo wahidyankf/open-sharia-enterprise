@@ -7,7 +7,7 @@ import { expect } from "vitest";
 import { Label } from "./label";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/label/label.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/label/label.feature"),
 );
 
 function renderLabelWithInput() {

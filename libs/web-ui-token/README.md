@@ -1,4 +1,4 @@
-# ts-ui-tokens
+# web-ui-token
 
 Shared structural design tokens for the open-sharia-enterprise monorepo.
 
@@ -22,7 +22,7 @@ Shared structural design tokens for the open-sharia-enterprise monorepo.
 
 ```css
 @import "tailwindcss";
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css";
 
 /* Override brand tokens for your app */
 @theme {
@@ -44,7 +44,7 @@ Shared structural design tokens for the open-sharia-enterprise monorepo.
 ### TypeScript token access
 
 ```typescript
-import { colorTokens, spacing, radius, typography } from "@open-sharia-enterprise/ts-ui-tokens";
+import { colorTokens, spacing, radius, typography } from "@open-sharia-enterprise/web-ui-token";
 ```
 
 ## Per-App Brand Token Files
@@ -65,8 +65,8 @@ Warm OKLCH design system for OrganicLever apps (`organiclever-web`):
 
 ```css
 /* apps/organiclever-web/src/app/globals.css */
-@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
-@import "@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css";
+@import "@open-sharia-enterprise/web-ui-token/src/tokens.css";
+@import "@open-sharia-enterprise/web-ui-token/src/organiclever.css";
 ```
 
 Other apps (`ayokoding-web`, `oseplatform-web`, `wahidyankf-web`) import only `tokens.css`.

@@ -14,7 +14,7 @@ const tabs: TabItem[] = [
 const brand = { name: "OrganicLever", icon: "dumbbell", hue: "teal" as const };
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/side-nav/side-nav.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/side-nav/side-nav.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

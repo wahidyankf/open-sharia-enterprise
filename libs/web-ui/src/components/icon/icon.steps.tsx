@@ -5,7 +5,9 @@ import { expect } from "vitest";
 
 import { Icon } from "./icon";
 
-const feature = await loadFeature(path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/icon/icon.feature"));
+const feature = await loadFeature(
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/icon/icon.feature"),
+);
 
 describeFeature(feature, ({ Scenario }) => {
   Scenario("Known icon renders SVG", ({ Given, Then }) => {

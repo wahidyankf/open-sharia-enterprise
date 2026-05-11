@@ -1,19 +1,19 @@
 {
-  "name": "ts-ui-tokens",
-  "sourceRoot": "libs/ts-ui-tokens/src",
+  "name": "web-ui-token",
+  "sourceRoot": "libs/web-ui-token/src",
   "projectType": "library",
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsc --noEmit",
-        "cwd": "libs/ts-ui-tokens"
+        "cwd": "libs/web-ui-token"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No lint configured for ts-ui-tokens (CSS + minimal TS)'"
+        "command": "echo 'No lint configured for web-ui-token (CSS + minimal TS)'"
       }
     }
   },

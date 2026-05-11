@@ -1,4 +1,4 @@
-# ts-ui
+# web-ui
 
 Shared React component library for the open-sharia-enterprise monorepo. Built on shadcn/ui patterns with Radix UI primitives and Tailwind CSS.
 
@@ -18,7 +18,7 @@ Shared React component library for the open-sharia-enterprise monorepo. Built on
 ### OrganicLever components
 
 Components specific to the OrganicLever warm design system. Import
-`@open-sharia-enterprise/ts-ui-tokens/src/organiclever.css` to activate the warm OKLCH palette.
+`@open-sharia-enterprise/web-ui-token/src/organiclever.css` to activate the warm OKLCH palette.
 
 | Component    | Props                                           | Description                               |
 | ------------ | ----------------------------------------------- | ----------------------------------------- |
@@ -36,22 +36,22 @@ Components specific to the OrganicLever warm design system. Import
 ## Usage
 
 ```tsx
-import { Button, Card, CardHeader, CardTitle, cn } from "@open-sharia-enterprise/ts-ui";
+import { Button, Card, CardHeader, CardTitle, cn } from "@open-sharia-enterprise/web-ui";
 ```
 
 ## Development
 
 ```bash
-nx run ts-ui:typecheck        # Type checking
-nx run ts-ui:test:unit        # Unit tests with vitest-axe
-nx run ts-ui:test:quick       # Tests + coverage validation (>=70%)
+nx run web-ui:typecheck        # Type checking
+nx run web-ui:test:unit        # Unit tests with vitest-axe
+nx run web-ui:test:quick       # Tests + coverage validation (>=70%)
 ```
 
 ## Storybook
 
 ```bash
-nx storybook ts-ui             # Dev server on http://localhost:6006
-nx build-storybook ts-ui       # Static build
+nx storybook web-ui             # Dev server on http://localhost:6006
+nx build-storybook web-ui       # Static build
 ```
 
 ## Visual Regression
@@ -59,14 +59,14 @@ nx build-storybook ts-ui       # Static build
 Playwright-based screenshot tests compare components against committed baselines.
 
 ```bash
-nx run ts-ui:test:visual                           # Run visual tests
-nx run ts-ui:test:visual -- --update-snapshots     # Update baselines after intentional changes
+nx run web-ui:test:visual                           # Run visual tests
+nx run web-ui:test:visual -- --update-snapshots     # Update baselines after intentional changes
 ```
 
 **When to update baselines**: After intentional visual changes to components (new variants, color
 changes, layout adjustments). Review the `git diff` on `.png` files before committing.
 
-**Baselines location**: `libs/ts-ui/e2e/screenshots/`
+**Baselines location**: `libs/web-ui/e2e/screenshots/`
 
 ## Conventions
 

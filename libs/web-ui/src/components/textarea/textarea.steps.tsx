@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { Textarea } from "./textarea";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/textarea/textarea.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/textarea/textarea.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

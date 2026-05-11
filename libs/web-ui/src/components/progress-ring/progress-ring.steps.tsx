@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { ProgressRing } from "./progress-ring";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/progress-ring/progress-ring.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/progress-ring/progress-ring.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {

@@ -6,7 +6,7 @@ import { expect } from "vitest";
 import { StatCard } from "./stat-card";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/libs/ts-ui/gherkin/stat-card/stat-card.feature"),
+  path.resolve(__dirname, "../../../../../specs/libs/web-ui/gherkin/stat-card/stat-card.feature"),
 );
 
 describeFeature(feature, ({ Scenario }) => {
