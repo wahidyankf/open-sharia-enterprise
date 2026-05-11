@@ -9,7 +9,6 @@ import (
 func TestParseStatus_AcceptsKnownStatuses(t *testing.T) {
 	known := []string{"passed", "warning", "failed"}
 	for _, s := range known {
-		s := s
 		t.Run(s, func(t *testing.T) {
 			got, err := ParseStatus(s)
 			if err != nil {
@@ -26,7 +25,6 @@ func TestParseStatus_AcceptsKnownStatuses(t *testing.T) {
 func TestParseStatus_RejectsUnknown(t *testing.T) {
 	unknown := []string{"ok", "error", "", "PASSED"}
 	for _, s := range unknown {
-		s := s
 		t.Run(s, func(t *testing.T) {
 			_, err := ParseStatus(s)
 			if err == nil {

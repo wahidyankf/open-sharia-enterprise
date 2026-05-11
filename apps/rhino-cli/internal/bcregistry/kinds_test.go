@@ -16,7 +16,6 @@ func TestParseRelationshipKind_AcceptsKnownKinds(t *testing.T) {
 		"open-host-service",
 	}
 	for _, k := range known {
-		k := k
 		t.Run(k, func(t *testing.T) {
 			got, err := ParseRelationshipKind(k)
 			if err != nil {
@@ -39,7 +38,6 @@ func TestParseRelationshipKind_RejectsUnknown(t *testing.T) {
 		"CUSTOMER-SUPPLIER",
 	}
 	for _, k := range unknown {
-		k := k
 		t.Run(k, func(t *testing.T) {
 			_, err := ParseRelationshipKind(k)
 			if err == nil {
@@ -63,7 +61,6 @@ func TestRelationshipKind_IsAsymmetric(t *testing.T) {
 		{"open-host-service", false},
 	}
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.kind, func(t *testing.T) {
 			k, err := ParseRelationshipKind(tc.kind)
 			if err != nil {

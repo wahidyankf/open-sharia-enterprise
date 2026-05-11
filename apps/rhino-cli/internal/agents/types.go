@@ -126,19 +126,19 @@ type ClaudeAgentFull struct {
 // UnmarshalYAML to normalize tools into []string before populating the
 // public struct.
 type claudeAgentFullRaw struct {
-	Name        string      `yaml:"name"`
-	Description string      `yaml:"description"`
-	Tools       interface{} `yaml:"tools"`
-	Model       string      `yaml:"model"`
-	Color       string      `yaml:"color"`
-	Skills      []string    `yaml:"skills,omitempty"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Tools       any      `yaml:"tools"`
+	Model       string   `yaml:"model"`
+	Color       string   `yaml:"color"`
+	Skills      []string `yaml:"skills,omitempty"`
 }
 
 // UnmarshalYAML implements custom YAML unmarshalling for ClaudeAgentFull
 // so that the `tools` field accepts either a comma-separated string or a
 // YAML sequence; both shapes are normalized to []string. Strings are split
 // on `,` and trimmed.
-func (a *ClaudeAgentFull) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (a *ClaudeAgentFull) UnmarshalYAML(unmarshal func(any) error) error {
 	var raw claudeAgentFullRaw
 	if err := unmarshal(&raw); err != nil {
 		return err

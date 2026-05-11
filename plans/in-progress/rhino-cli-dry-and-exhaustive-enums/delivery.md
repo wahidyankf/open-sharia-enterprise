@@ -374,31 +374,87 @@ Notes: npx nx run rhino-cli:lint: 0 issues. gochecksumtype clean. Committed: ref
 
 ### 2A — `bcregistry.RelationshipKind`
 
-- [ ] **2A.1 AUDIT** — `grep "kind:" specs/apps/*/ddd/bounded-contexts.yaml`
+- [x] **2A.1 AUDIT** — `grep "kind:" specs/apps/*/ddd/bounded-contexts.yaml`
       across the repo to enumerate the actual closed set. Record findings in
       a comment block at top of `internal/bcregistry/types.go`.
 
-- [ ] **2A.2 RED** — new test cases covering each enumerated kind.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/types.go (comment added)
+Notes: Observed kinds in specs: conformist, customer-supplier. Encoded 6 validator-permitted kinds: customer-supplier (asymmetric), conformist (asymmetric), partnership (asymmetric), shared-kernel (asymmetric), anticorruption-layer (not), open-host-service (not).
+-->
 
-- [ ] **2A.3 GREEN** — introduce `RelationshipKind` sealed interface +
+- [x] **2A.2 RED** — new test cases covering each enumerated kind.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/kinds_test.go (created)
+Notes: Tests for ParseRelationshipKind, KindValue(), IsAsymmetric(). Confirmed RED before implementation. Also removed unnecessary Go 1.22+ loop var copies.
+-->
+
+- [x] **2A.3 GREEN** — introduce `RelationshipKind` sealed interface +
       variants. Add `ParseRelationshipKind(s string) (RelationshipKind, error)`
       called from the post-unmarshal validator. `Relationship.Kind` field stays
       `string` in the YAML wire format; new method `Relationship.KindValue()
 RelationshipKind` returns the parsed enum.
 
-- [ ] **2A.4 GREEN** — migrate `checkRelationshipKinds` and `asymmetricKinds`
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/kinds.go (created), apps/rhino-cli/internal/bcregistry/types.go (KindValue() added)
+Notes: RelationshipKind sealed interface with //sumtype:decl. 6 variants. ParseRelationshipKind(). KindValue() method on Relationship. All tests pass.
+-->
+
+- [x] **2A.4 GREEN** — migrate `checkRelationshipKinds` and `asymmetricKinds`
       map to type-switch / `IsAsymmetric()` method on the sealed enum.
 
-- [ ] **2A.5 GOLDEN + LINT**.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/validator.go
+Notes: checkRelationshipSymmetry and checkRelationshipKinds migrated to ParseRelationshipKind/IsAsymmetric().
+-->
+
+- [x] **2A.5 GOLDEN + LINT**.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass. nx run rhino-cli:lint: 0 issues.
+-->
 
 ### 2B — `bcregistry.RelationshipRole`
 
-- [ ] **2B.1 AUDIT** — same approach as 2A. Likely closed set: `upstream`,
+- [x] **2B.1 AUDIT** — same approach as 2A. Likely closed set: `upstream`,
       `downstream`, plus possibly `peer`. Confirm against spec docs.
 
-- [ ] **2B.2 RED + GREEN** — mirror 2A pattern.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/types.go (comment added)
+Notes: Observed roles in specs: customer, downstream, supplier, upstream. 4 variants encoded.
+-->
 
-- [ ] **2B.3 GOLDEN + LINT**.
+- [x] **2B.2 RED + GREEN** — mirror 2A pattern.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/bcregistry/roles.go (created), apps/rhino-cli/internal/bcregistry/roles_test.go (created), apps/rhino-cli/internal/bcregistry/types.go (RoleValue() added); fixed unnecessary loop var copies (Go 1.22+)
+Notes: RelationshipRole sealed interface with //sumtype:decl. 4 variants: customer, downstream, supplier, upstream. ParseRelationshipRole(). RoleValue() on Relationship. All tests pass.
+-->
+
+- [x] **2B.3 GOLDEN + LINT**.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass. nx run rhino-cli:lint: 0 issues.
+-->
 
 ### 2C — `internal/agents` reporter `Status`
 
@@ -406,26 +462,75 @@ RelationshipKind` returns the parsed enum.
       non-exhaustive switch fails `gochecksumtype` (with `nolint` comment to
       verify diagnostic).
 
-- [ ] **2C.2 GREEN** — introduce `agents.Status` sealed enum, three variants
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/agents/status_test.go (created); removed unnecessary Go 1.22+ loop var copies
+Notes: Test with nolint:gochecksumtype comment to verify diagnostic. Confirmed RED before Status type existed.
+-->
+
+- [x] **2C.2 GREEN** — introduce `agents.Status` sealed enum, three variants
       (`StatusPassed`, `StatusWarning`, `StatusFailed`). `StatusPassed.Code()`
       must return `"passed"` (not `"ok"`) to preserve byte-identical output with
       the existing `case "passed":` branches in `internal/agents/reporter.go:262`
       and `:386`. [Repo-grounded]
 
-- [ ] **2C.3 GREEN** — migrate `internal/agents/reporter.go` switches.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/agents/status.go (created)
+Notes: Status sealed interface, StatusPassed.Code()="passed", StatusWarning.Code()="warning", StatusFailed.Code()="failed". //sumtype:decl. ParseStatus(). All tests pass.
+-->
 
-- [ ] **2C.4 GOLDEN + LINT**.
+- [x] **2C.3 GREEN** — migrate `internal/agents/reporter.go` switches.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: apps/rhino-cli/internal/agents/reporter.go, apps/rhino-cli/internal/agents/types.go (StatusValue() added; interface{} → any)
+Notes: 2 switch sites in reporter.go migrated to exhaustive type-switch on check.StatusValue(). interface{} replaced with any in types.go.
+-->
+
+- [x] **2C.4 GOLDEN + LINT**.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: TestGolden 47/47 pass. nx run rhino-cli:lint: 0 issues. 1926 tests total pass.
+-->
 
 ### 2D — Conditional sites
 
-- [ ] **2D.1 DECIDE** — `docs/links` link kind: only promote to sealed enum
+- [x] **2D.1 DECIDE** — `docs/links` link kind: only promote to sealed enum
       if Phase 2 discovery shows ≥3 switch consumers. Record decision in
       this checklist line.
 
-- [ ] **2D.2 DECIDE** — `doctor.ToolCheck.Source`: same gate. Record.
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: SKIP — 0 distinct switch consumers found in internal/docs/. Gate not met.
+-->
 
-- [ ] **2D.3 ACT** — implement only the rows that pass the gate. RED +
+- [x] **2D.2 DECIDE** — `doctor.ToolCheck.Source`: same gate. Record.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: SKIP — only 1 consumer (field copy, not a switch). Gate not met.
+-->
+
+- [x] **2D.3 ACT** — implement only the rows that pass the gate. RED +
       GREEN + GOLDEN + LINT for each.
+
+<!-- implementation-notes
+Date: 2026-05-11
+Status: DONE
+Files Changed: none
+Notes: No rows passed gate (both 2D.1 and 2D.2 skipped). Nothing to implement. Committed: refactor(rhino-cli): seal relationship kind/role and agents status enums (fd7039dbf)
+-->
 
 **Commit**: `refactor(rhino-cli): seal relationship kind/role and agents status enums`
 

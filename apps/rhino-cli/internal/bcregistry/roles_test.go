@@ -14,7 +14,6 @@ func TestParseRelationshipRole_AcceptsKnownRoles(t *testing.T) {
 		"downstream",
 	}
 	for _, r := range known {
-		r := r
 		t.Run(r, func(t *testing.T) {
 			got, err := ParseRelationshipRole(r)
 			if err != nil {
@@ -37,7 +36,6 @@ func TestParseRelationshipRole_RejectsUnknown(t *testing.T) {
 		"CUSTOMER",
 	}
 	for _, r := range unknown {
-		r := r
 		t.Run(r, func(t *testing.T) {
 			_, err := ParseRelationshipRole(r)
 			if err == nil {
