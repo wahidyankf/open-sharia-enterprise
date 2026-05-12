@@ -570,7 +570,7 @@ All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-gro
 
 ### Phase 5.2 — Skill design + golden capture
 
-- [ ] Pick 3 canonical agents for golden tests: `plan-maker`, `plan-checker`, `plan-fixer` [Repo-grounded — all three exist in `.claude/agents/`]. Capture pre-extraction full bodies:
+- [x] Pick 3 canonical agents for golden tests: `plan-maker`, `plan-checker`, `plan-fixer` [Repo-grounded — all three exist in `.claude/agents/`]. Capture pre-extraction full bodies:
 
   ```bash
   cp .claude/agents/plan-maker.md /tmp/golden__plan-maker__pre.md
@@ -584,7 +584,7 @@ All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-gro
 - [x] Author a new script `apps/rhino-cli/scripts/validate-golden-agents.sh`
   - **Date**: 2026-05-12 | **Status**: Done | Script created; exits 0 when no drift. (sibling to `validate-cross-vendor-parity.sh` [Repo-grounded — script path confirmed in `project.json`]) that diffs `.claude/agents/<name>.md` against `/tmp/golden__<name>__pre.md` modulo inlined skill content. Acceptance: script exits 0 when no drift; exits 1 + prints diff when drift present.
   - _Suggested executor: `swe-golang-dev` (or `agent-maker` if no Go logic required)_
-- [ ] For each cluster with ≥3 agents (and any 2-agent cluster where bodies are byte-identical), design the parameterized skill:
+- [x] For each cluster with ≥3 agents (and any 2-agent cluster where bodies are byte-identical), design the parameterized skill:
   - Create `.claude/skills/<gerund-named-skill>/SKILL.md` following the existing gerund pattern [Repo-grounded — pattern visible in existing skill list].
   - Variable portions become front-matter args or `{{placeholder}}` markers.
   - Document each parameter with an inline `<!-- args: -->` block at the top of the skill.
