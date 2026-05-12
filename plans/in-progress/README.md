@@ -4,7 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [complete-repo-rules-zero-findings](./complete-repo-rules-zero-findings/README.md) — Drive `repo-rules-quality-gate` strict-mode pass to double-zero (deterministic preflight + AI-only); calibrate rhino-cli audits to v0.16.1, harden both quality-gate workflow docs, apply governance findings, and run conservative parameter-rich agent-skill extraction
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
 - [ose-grc-bootstrap](./ose-grc-bootstrap/README.md) — Scaffold ose-grc-web (Next.js 16), ose-grc-be (F#/Giraffe), ose-grc-web-e2e, ose-grc-be-e2e with DDD specs, BDD smoke specs, OpenAPI contracts, docker-compose, CI workflows
 
