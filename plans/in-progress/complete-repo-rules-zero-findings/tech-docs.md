@@ -179,7 +179,7 @@ Phase 1 lands as one checkpoint commit. Rollback: `git revert <sha>`. The rhino-
 
 ### Design
 
-Eleven edits to the workflow file, each targeting an issue observed in production use. Issues catalogued from the user brief:
+Twenty-four edits to the workflow file, each targeting an issue observed in production use. The first 11 (2.1-2.11) catalogue the originally-named gaps; the additional 13 (2.12-2.24) catalogue gaps surfaced by a second-pass ultra-hard review of the workflow doc end-to-end:
 
 | ID   | Issue                                                                                                                | Edit                                                                                                                                |
 | ---- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -194,6 +194,19 @@ Eleven edits to the workflow file, each targeting an issue observed in productio
 | 2.9  | Step 0.5 numbering not explained                                                                                     | One-paragraph rationale citing the Workflow Identifier Convention                                                                   |
 | 2.10 | Operators may need to bypass legacy emoji scans transiently                                                          | Callout in Step 0.5 — `--skip emoji-audit` is an acceptable backup hatch                                                            |
 | 2.11 | Deterministic-vs-AI-Validation-Split Convention reference                                                            | Verify the `Conventions Implemented/Respected` entry added in commit `efe87aba2` is present; no-op if so                            |
+| 2.12 | "How to Execute" list omits preflight                                                                                | Prepend step 0 to the "The AI will:" list invoking preflight before the checker                                                     |
+| 2.13 | Iteration Example pre-preflight                                                                                      | Rewrite the code block to a 4-iteration post-preflight example with visibility findings + AI-only findings + double-zero            |
+| 2.14 | Step 5 stale arg `{step4.outputs.audit-report-N}`                                                                    | Rename to `{step4.checker.outputs.audit-report-N}` for parity with the Step 4 sub-step renaming in 2.4                              |
+| 2.15 | Scope section partial-coverage statement stale post-Phase 1.2                                                        | Update Scope to cover Diátaxis tree; AI checker focused on principle-alignment + README-index + version-docs                        |
+| 2.16 | Below-threshold rules ambiguous (apply to AI-only? deterministic? both?)                                             | Add lead-in clarifying the rules apply to AI-only; deterministic follows the Step 2 visibility-only rule                            |
+| 2.17 | Preflight-unavailable fallback not surfaced (workflow doc says "fail" but checker degrades gracefully)               | Add a clarifying note under Step 1 + Step 4 — preflight-missing is NOT a workflow failure                                           |
+| 2.18 | Termination Criteria doesn't cross-reference Step 2's visibility-only rule                                           | Add a "Note on deterministic findings" sentence                                                                                     |
+| 2.19 | Skip-list update loop unspecified                                                                                    | Extend Skip-list Curation Rules with the deterministic-findings → skip-list pipeline                                                |
+| 2.20 | Convergence Safeguards omits hash-reuse bullet                                                                       | Add a bullet describing SHA-256 hash reuse + RHINO_AUDIT_NOW pinning                                                                |
+| 2.21 | Orphan "Backlog" reference (line 56 cites a Backlog section that doesn't exist)                                      | Add a `## Backlog` section listing the docs/ tree consolidation candidate                                                           |
+| 2.22 | Idempotent note ignores RHINO_AUDIT_NOW caveat                                                                       | Append a clarifying clause about byte-determinism vs logical idempotency                                                            |
+| 2.23 | max-concurrency note stale w.r.t. preflight                                                                          | Note that preflight is intrinsically parallel-safe                                                                                  |
+| 2.24 | AI-only-to-deterministic ratio target missing                                                                        | Add an explicit ≥80%-deterministic target in Observability Metrics                                                                  |
 
 `workflow-identifier.md` cited above exists at `repo-governance/workflows/meta/workflow-identifier.md` [Repo-grounded — verified via `ls` of `repo-governance/workflows/meta/`].
 
@@ -201,7 +214,7 @@ Eleven edits to the workflow file, each targeting an issue observed in productio
 
 | File                                                        | Type | Change                                     |
 | ----------------------------------------------------------- | ---- | ------------------------------------------ |
-| `repo-governance/workflows/repo/repo-rules-quality-gate.md` | edit | All 11 hardening edits per the table above |
+| `repo-governance/workflows/repo/repo-rules-quality-gate.md` | edit | All 24 hardening edits per the table above |
 
 ### Rollback
 
