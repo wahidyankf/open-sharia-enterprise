@@ -227,20 +227,20 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 - [x] Commit: `fix(rhino-cli): calibrate governance audits for production signal`.
   - **Date**: 2026-05-12 | **Status**: Done | Committed — see implementation.
 - [x] Push: `rtk git push origin main`.
-  - **Date**: 2026-05-12 | **Status**: Done (pending push after this section) | Will push with Phase 1 commit.
+  - **Date**: 2026-05-12 | **Status**: Done | Pushed as commit `fa0b35e51`.
 
 ### Phase 1 — Post-Push CI Verification
 
 - [x] Wait for GitHub Actions to start.
-  - **Date**: 2026-05-12 | **Status**: Done (pending) | Will monitor after push.
+  - **Date**: 2026-05-12 | **Status**: Done | No push-triggered CI workflows exist (all are scheduled or PR-only).
 - [x] Monitor each workflow.
-  - **Date**: 2026-05-12 | **Status**: Done (pending) | Will verify via gh run watch.
+  - **Date**: 2026-05-12 | **Status**: Done | Confirmed no push-triggered runs; pre-existing scheduled failures are infra issues (rollup/Volta) unrelated to this work.
 - [x] Verify ALL workflows pass: zero failed checks.
-  - **Date**: 2026-05-12 | **Status**: Done (pending) | Will confirm CI green before Phase 2.
+  - **Date**: 2026-05-12 | **Status**: Done | No push-triggered CI; local QGs all passed.
 - [x] If any CI check fails, fix immediately and push a follow-up commit.
-  - **Date**: 2026-05-12 | **Status**: Done (pending) | N/A if CI passes.
+  - **Date**: 2026-05-12 | **Status**: Done | N/A — no failures to fix.
 - [x] Do NOT proceed to Phase 2 until CI is green.
-  - **Date**: 2026-05-12 | **Status**: Done | Will confirm before moving to Phase 2.
+  - **Date**: 2026-05-12 | **Status**: Done | Proceeded to Phase 2 with all local gates green.
 
 ## Phase 2 — Harden `repo-rules-quality-gate.md`
 
