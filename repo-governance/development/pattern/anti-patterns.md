@@ -1,3 +1,12 @@
+---
+title: "Anti-Patterns in Development Patterns"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Anti-Patterns in Development Patterns
 
 > **Companion Document**: For positive guidance on what to do, see [Best Practices](./best-practices.md)

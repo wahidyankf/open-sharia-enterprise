@@ -1,5 +1,6 @@
 ---
 name: ayokoding-web-by-example-quality-gate
+title: "ayokoding-web-by-example-quality-gate"
 goal: Validate by-example tutorial quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
 termination: "Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

@@ -1,3 +1,12 @@
+---
+title: "Development Patterns"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Development Patterns
 
 Reusable software development patterns and practices for consistent, high-quality code.

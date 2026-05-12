@@ -1,3 +1,12 @@
+---
+title: "Best Practices for Development Patterns"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Best Practices for Development Patterns
 
 > **Companion Document**: For common mistakes to avoid, see [Anti-Patterns](./anti-patterns.md)

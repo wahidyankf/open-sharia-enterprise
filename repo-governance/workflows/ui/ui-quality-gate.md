@@ -1,5 +1,6 @@
 ---
 name: ui-quality-gate
+title: "ui-quality-gate"
 goal: Validate UI component quality against frontend conventions, apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

@@ -1,3 +1,12 @@
+---
+title: "Content Principles"
+description: ""
+category: explanation
+subcategory: principles
+tags: []
+created: 2026-05-12
+---
+
 # Content Principles
 
 Content-specific foundational principles governing documentation, education, and communication.

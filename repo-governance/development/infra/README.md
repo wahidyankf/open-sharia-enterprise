@@ -1,3 +1,12 @@
+---
+title: "Infrastructure Development"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Infrastructure Development
 
 Development infrastructure standards covering temporary files, build artifacts, and acceptance criteria.

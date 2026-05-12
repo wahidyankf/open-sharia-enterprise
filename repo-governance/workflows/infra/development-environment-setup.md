@@ -1,5 +1,6 @@
 ---
 name: development-environment-setup
+title: "development-environment-setup"
 goal: "Set up a complete local development environment with all toolchains required for pre-commit, pre-push, integration tests, and E2E tests across all projects"
 termination: "npm run doctor reports all tools OK and nx affected -t test:quick passes for all projects"
 inputs:
@@ -617,3 +618,9 @@ This covers: pre-commit hooks, pre-push hooks, TypeScript/Go unit tests, and bas
 - [Reproducible Environments](../../development/workflow/reproducible-environments.md) — Volta,
   npm, Docker reproducibility practices
 - [Code Quality Convention](../../development/quality/code.md) — Git hooks and formatting
+
+## Agents
+
+This workflow uses manual orchestration (developer-guided). The
+[repo-rules-checker](../../../.claude/agents/repo-rules-checker.md) validates governance
+artifacts after the environment is set up and all toolchains are installed.

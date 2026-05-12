@@ -1,5 +1,6 @@
 ---
 name: plan-quality-gate
+title: "plan-quality-gate"
 goal: Validate plan completeness and technical accuracy, apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

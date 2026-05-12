@@ -1,3 +1,12 @@
+---
+title: "Development Practices"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Development Practices
 
 Operational practices that govern day-to-day development behavior and decision-making.

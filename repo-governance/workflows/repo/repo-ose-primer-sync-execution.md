@@ -1,5 +1,6 @@
 ---
 name: repo-ose-primer-sync-execution
+title: "repo-ose-primer-sync-execution"
 goal: Orchestrate a single ongoing sync invocation (adopt or propagate, dry-run or apply) between `ose-public` and `ose-primer`, surfacing findings and optionally opening a draft PR against the primer.
 termination: "Sync report written; in apply mode, additionally a draft PR opened against `wahidyankf/ose-primer:main`."
 inputs:

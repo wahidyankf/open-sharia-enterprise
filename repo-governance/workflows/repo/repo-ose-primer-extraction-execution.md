@@ -1,5 +1,6 @@
 ---
 name: repo-ose-primer-extraction-execution
+title: "repo-ose-primer-extraction-execution"
 goal: One-time orchestration for extracting the `a-demo-*` polyglot showcase from `ose-public` after verifying the primer carries equal-or-newer state. Gates Phase 8 of the 2026-04-18 ose-primer-separation plan on the Phase 7 parity check.
 termination: "All 10 extraction commits (A → J) land on `ose-public`'s `main` branch, each pushed to `origin/main`, and the post-extraction green run passes."
 inputs:
@@ -29,7 +30,7 @@ outputs:
   - name: final-status
     type: enum
     values: [pass, fail, blocked]
-    description: `pass` if all ten commits landed and the post-extraction green run passed; `blocked` if parity never converged within `max-catch-up-iterations`; `fail` if any mid-extraction CI failure was not fixable before the next commit.
+    description: "pass if all ten commits landed and the post-extraction green run passed; blocked if parity never converged within max-catch-up-iterations; fail if any mid-extraction CI failure was not fixable before the next commit."
 ---
 
 # `ose-primer` Extraction Execution Workflow

@@ -1,3 +1,12 @@
+---
+title: "Documentation Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # Documentation Workflows
 
 Orchestrated workflows for validating project documentation quality (docs/ directory).

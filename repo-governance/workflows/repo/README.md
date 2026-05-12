@@ -1,3 +1,12 @@
+---
+title: "Repository Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # Repository Workflows
 
 Orchestrated workflows for repository-level governance — validation, cross-vendor parity, and content synchronization with the `ose-primer` template.

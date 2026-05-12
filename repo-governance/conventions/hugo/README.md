@@ -1,3 +1,12 @@
+---
+title: "Hugo Content Conventions"
+description: ""
+category: explanation
+subcategory: conventions
+tags: []
+created: 2026-05-12
+---
+
 # Hugo Content Conventions
 
 Historical Hugo site-specific content conventions. **All Hugo sites have migrated to Next.js 16.** Preserved for reference only.

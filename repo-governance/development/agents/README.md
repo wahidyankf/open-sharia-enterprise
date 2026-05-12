@@ -1,3 +1,12 @@
+---
+title: "AI Agents Development"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # AI Agents Development
 
 Standards and conventions for creating and managing AI agents in the `.claude/agents/` directory (source of truth), synced to `.opencode/agents/`.

@@ -1,5 +1,6 @@
 ---
 name: specs-quality-gate
+title: "specs-quality-gate"
 goal: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings achieved"
 termination: "Zero findings at the configured mode threshold on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -445,3 +446,8 @@ is reserved for future enhancements where multiple listed folders could be valid
   heading hierarchy, single H1
 - **[Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md)**: Three-stage
   workflow with criticality and confidence assessment
+
+## Agents
+
+- [specs-checker](../../../.claude/agents/specs-checker.md) — validates specs directory for structural completeness, content accuracy, and C4 diagram correctness
+- [specs-fixer](../../../.claude/agents/specs-fixer.md) — fixes specs structural and accuracy issues

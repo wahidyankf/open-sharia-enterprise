@@ -1,5 +1,6 @@
 ---
 name: docs-software-engineering-separation-quality-gate
+title: "docs-software-engineering-separation-quality-gate"
 goal: Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -359,3 +360,8 @@ This workflow ensures documentation separation compliance through iterative vali
 - **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1
+
+## Agents
+
+- [docs-software-engineering-separation-checker](../../../.claude/agents/docs-software-engineering-separation-checker.md) — validates software engineering documentation separation
+- [docs-software-engineering-separation-fixer](../../../.claude/agents/docs-software-engineering-separation-fixer.md) — fixes separation violations

@@ -1,5 +1,6 @@
 ---
 name: repo-rules-quality-gate
+title: "repo-rules-quality-gate"
 goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

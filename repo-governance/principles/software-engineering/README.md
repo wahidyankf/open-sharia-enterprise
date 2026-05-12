@@ -1,3 +1,12 @@
+---
+title: "Software Engineering Principles"
+description: ""
+category: explanation
+subcategory: principles
+tags: []
+created: 2026-05-12
+---
+
 # Software Engineering Principles
 
 Software engineering-specific foundational principles governing development practices, configuration, automation, and code organization.

@@ -1,5 +1,6 @@
 ---
 name: ayokoding-web-in-the-field-quality-gate
+title: "ayokoding-web-in-the-field-quality-gate"
 goal: Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
 termination: "Tutorial achieves EXCELLENT status with 20-40 guides, production code quality, and zero mechanical issues on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

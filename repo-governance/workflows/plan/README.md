@@ -1,3 +1,12 @@
+---
+title: "Plan Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # Plan Workflows
 
 Orchestrated workflows for project planning quality validation and systematic execution.

@@ -47,7 +47,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Understanding Workflows
 
-1. Read [Workflow Pattern Convention](./meta/workflow-identifier.md) for structure and rules
+1. Read [Workflow Pattern Convention](meta/README.md) for structure and rules
 2. Create workflows as needed following the convention patterns
 3. Review workflow families below
 
@@ -59,7 +59,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 User: "Run [workflow-name] workflow for [scope] in [mode] mode"
 ```
 
-Workflows support two execution modes (see [Workflow Execution Mode Convention](./meta/execution-modes.md)):
+Workflows support two execution modes (see [Workflow Execution Mode Convention](meta/README.md)):
 
 **Agent Delegation (preferred)**: Invoke specialized agents via the Agent tool with `subagent_type`. Each agent runs in an isolated context, returns results to the orchestrating conversation, and file changes persist to the filesystem.
 
@@ -72,27 +72,39 @@ All workflows support standard input parameters:
 - **min-iterations**: Minimum check-fix cycles - optional
 - **max-iterations**: Maximum check-fix cycles - optional
 
+## Workflow Directories
+
+- [ayokoding-web/README.md](ayokoding-web/README.md) — AyoKoding web content quality workflows
+- [ci/README.md](ci/README.md) — CI/CD standards compliance workflows
+- [docs/README.md](docs/README.md) — Documentation quality workflows
+- [infra/README.md](infra/README.md) — Infrastructure and environment setup workflows
+- [meta/README.md](meta/README.md) — Workflow system reference documentation
+- [plan/README.md](plan/README.md) — Project planning workflows
+- [repo/README.md](repo/README.md) — Repository governance workflows
+- [specs/README.md](specs/README.md) — Specification quality workflows
+- [ui/README.md](ui/README.md) — UI component quality workflows
+
 ## Available Workflows
 
-| Workflow                                                                                                                  | Purpose                                                                                                                                                                         | Agents Used                                                                                                                                                             | Complexity |
-| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [Repository Rules Validation](./repo/repo-rules-quality-gate.md)                                                          | Run deterministic preflight (CLI orchestrator) then validate residual AI-only categories iteratively until ZERO findings                                                        | repo-rules-checker, repo-rules-fixer                                                                                                                                    | Medium     |
-| [Repository Cross-Vendor Parity Validation](./repo/repo-cross-vendor-parity-quality-gate.md)                              | Validate cross-vendor behavioral-parity invariants (repo-governance/AGENTS/CLAUDE vendor-neutrality, sync no-op, count parity, color/tier-map coverage), iterate to double-zero | repo-parity-checker, repo-parity-fixer                                                                                                                                  | Medium     |
-| [ose-primer Sync Execution](./repo/repo-ose-primer-sync-execution.md)                                                     | Single-pass sync between `ose-public` and `ose-primer` (adopt or propagate, dry-run or apply); in apply mode opens a draft PR against the primer                                | repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker                                                                                                       | Medium     |
-| [ose-primer Extraction Execution](./repo/repo-ose-primer-extraction-execution.md)                                         | One-time Phase 8 orchestration for the 2026-04-18 ose-primer-separation plan: parity gate, bounded catch-up loop, and ten ordered extraction commits with CI verification       | repo-ose-primer-propagation-maker (parity-check + apply modes)                                                                                                          | High       |
-| [Plan Quality Gate](./plan/plan-quality-gate.md)                                                                          | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                            | plan-checker, plan-fixer                                                                                                                                                | Medium     |
-| [Plan Execution](./plan/plan-execution.md)                                                                                | Execute plan tasks systematically with validation and completion tracking (calling context orchestrates, delegates per-item to specialized agents)                              | plan-execution-checker                                                                                                                                                  | Medium     |
-| [Documentation Quality Gate](./docs/docs-quality-gate.md)                                                                 | Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings                                        | docs-checker, docs-tutorial-checker, docs-link-checker, docs-fixer, docs-tutorial-fixer                                                                                 | High       |
-| [AyoKoding Web General Quality Gate](./ayokoding-web/ayokoding-web-general-quality-gate.md)                               | Validate all ayokoding-web content quality (factual accuracy, links), apply fixes iteratively until ZERO findings                                                               | apps-ayokoding-web-general-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-facts-fixer | High       |
-| [AyoKoding Web By-Example Quality Gate](./ayokoding-web/ayokoding-web-by-example-quality-gate.md)                         | Validate by-example tutorial quality (95% coverage through 75-85 examples) and apply fixes iteratively until EXCELLENT status achieved                                          | apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer                                                                                              | Medium     |
-| [AyoKoding Web In-the-Field Quality Gate](./ayokoding-web/ayokoding-web-in-the-field-quality-gate.md)                     | Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved                                                                      | apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer                                                                                          | Medium     |
-| [Documentation Software Engineering Separation Quality Gate](./docs/docs-software-engineering-separation-quality-gate.md) | Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until ZERO findings         | docs-software-engineering-separation-checker, docs-software-engineering-separation-fixer                                                                                | Medium     |
-| [Specs Validation](./specs/specs-quality-gate.md)                                                                         | Validate specs/ directory for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness, apply fixes iteratively until ZERO findings        | specs-checker, specs-fixer                                                                                                                                              | Medium     |
-| [UI Quality Gate](./ui/ui-quality-gate.md)                                                                                | Validate UI component quality (tokens, accessibility, patterns, dark mode, responsive), apply fixes iteratively until ZERO findings                                             | swe-ui-checker, swe-ui-fixer                                                                                                                                            | Medium     |
-| [CI Quality Gate](./ci/ci-quality-gate.md)                                                                                | Validate all projects conform to CI/CD standards (Nx targets, coverage, Docker, Gherkin, workflows), apply fixes iteratively until ZERO findings                                | ci-checker, ci-fixer                                                                                                                                                    | Medium     |
-| [Development Environment Setup](./infra/development-environment-setup.md)                                                 | Install and verify all 18+ polyglot toolchains required for development, testing, and git hooks across all projects                                                             | (manual orchestration — developer-guided)                                                                                                                               | High       |
+| Workflow                                                                     | Purpose                                                                                                                                                                         | Agents Used                                                                                                                                                             | Complexity |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Repository Rules Validation](repo/README.md)                                | Run deterministic preflight (CLI orchestrator) then validate residual AI-only categories iteratively until ZERO findings                                                        | repo-rules-checker, repo-rules-fixer                                                                                                                                    | Medium     |
+| [Repository Cross-Vendor Parity Validation](repo/README.md)                  | Validate cross-vendor behavioral-parity invariants (repo-governance/AGENTS/CLAUDE vendor-neutrality, sync no-op, count parity, color/tier-map coverage), iterate to double-zero | repo-parity-checker, repo-parity-fixer                                                                                                                                  | Medium     |
+| [ose-primer Sync Execution](repo/README.md)                                  | Single-pass sync between `ose-public` and `ose-primer` (adopt or propagate, dry-run or apply); in apply mode opens a draft PR against the primer                                | repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker                                                                                                       | Medium     |
+| [ose-primer Extraction Execution](repo/README.md)                            | One-time Phase 8 orchestration for the 2026-04-18 ose-primer-separation plan: parity gate, bounded catch-up loop, and ten ordered extraction commits with CI verification       | repo-ose-primer-propagation-maker (parity-check + apply modes)                                                                                                          | High       |
+| [Plan Quality Gate](plan/README.md)                                          | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                            | plan-checker, plan-fixer                                                                                                                                                | Medium     |
+| [Plan Execution](plan/README.md)                                             | Execute plan tasks systematically with validation and completion tracking (calling context orchestrates, delegates per-item to specialized agents)                              | plan-execution-checker                                                                                                                                                  | Medium     |
+| [Documentation Quality Gate](docs/README.md)                                 | Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings                                        | docs-checker, docs-tutorial-checker, docs-link-checker, docs-fixer, docs-tutorial-fixer                                                                                 | High       |
+| [AyoKoding Web General Quality Gate](ayokoding-web/README.md)                | Validate all ayokoding-web content quality (factual accuracy, links), apply fixes iteratively until ZERO findings                                                               | apps-ayokoding-web-general-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-facts-fixer | High       |
+| [AyoKoding Web By-Example Quality Gate](ayokoding-web/README.md)             | Validate by-example tutorial quality (95% coverage through 75-85 examples) and apply fixes iteratively until EXCELLENT status achieved                                          | apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer                                                                                              | Medium     |
+| [AyoKoding Web In-the-Field Quality Gate](ayokoding-web/README.md)           | Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved                                                                      | apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer                                                                                          | Medium     |
+| [Documentation Software Engineering Separation Quality Gate](docs/README.md) | Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until ZERO findings         | docs-software-engineering-separation-checker, docs-software-engineering-separation-fixer                                                                                | Medium     |
+| [Specs Validation](specs/README.md)                                          | Validate specs/ directory for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness, apply fixes iteratively until ZERO findings        | specs-checker, specs-fixer                                                                                                                                              | Medium     |
+| [UI Quality Gate](ui/README.md)                                              | Validate UI component quality (tokens, accessibility, patterns, dark mode, responsive), apply fixes iteratively until ZERO findings                                             | swe-ui-checker, swe-ui-fixer                                                                                                                                            | Medium     |
+| [CI Quality Gate](ci/README.md)                                              | Validate all projects conform to CI/CD standards (Nx targets, coverage, Docker, Gherkin, workflows), apply fixes iteratively until ZERO findings                                | ci-checker, ci-fixer                                                                                                                                                    | Medium     |
+| [Development Environment Setup](infra/README.md)                             | Install and verify all 18+ polyglot toolchains required for development, testing, and git hooks across all projects                                                             | (manual orchestration — developer-guided)                                                                                                                               | High       |
 
-All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/workflow-identifier.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
+All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](meta/README.md) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
 ## Naming Rule
 
@@ -259,7 +271,7 @@ To create a new workflow:
 6. **Test manually**: Run workflow steps to verify correctness
 7. **Add to index**: Update this README with workflow description
 
-See [Workflow Pattern Convention](./meta/workflow-identifier.md) for complete requirements.
+See [Workflow Pattern Convention](meta/README.md) for complete requirements.
 
 ## Validation
 
@@ -300,7 +312,7 @@ All workflows must respect core principles:
 
 ### Core Documentation
 
-- [Workflow Pattern Convention](./meta/workflow-identifier.md) - How workflows are structured
+- [Workflow Pattern Convention](meta/README.md) - How workflows are structured
 - [Maker-Checker-Fixer Pattern](../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [AI Agents Convention](../development/agents/ai-agents.md) - How agents work
 
@@ -341,4 +353,4 @@ Planned workflow features:
 - **Do workflows replace agents?** - No, workflows orchestrate agents
 - **Do workflows replace plans?** - No, plans are strategic, workflows are tactical
 
-See [Workflow Pattern Convention](./meta/workflow-identifier.md) and [Execution Modes Convention](./meta/execution-modes.md) for comprehensive answers.
+See [Workflow Pattern Convention](meta/README.md) and [Execution Modes Convention](meta/README.md) for comprehensive answers.

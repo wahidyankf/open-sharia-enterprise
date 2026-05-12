@@ -1,3 +1,12 @@
+---
+title: "General Principles"
+description: ""
+category: explanation
+subcategory: principles
+tags: []
+created: 2026-05-12
+---
+
 # General Principles
 
 Universal foundational principles that apply to all problem-solving contexts - beyond software, content, or any specific domain.

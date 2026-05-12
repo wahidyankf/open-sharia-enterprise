@@ -1,3 +1,12 @@
+---
+title: "Specs Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # Specs Workflows
 
 Orchestrated workflows for validating specification quality across the specs/ directory.

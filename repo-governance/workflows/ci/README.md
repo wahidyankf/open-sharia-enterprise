@@ -1,3 +1,12 @@
+---
+title: "CI Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # CI Workflows
 
 Orchestrated workflows for validating CI/CD compliance across all projects in the repository.

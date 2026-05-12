@@ -1,3 +1,12 @@
+---
+title: "Anti-Patterns in Quality Development"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Anti-Patterns in Quality Development
 
 > **Companion Document**: For positive guidance on what to do, see [Best Practices](./best-practices.md)

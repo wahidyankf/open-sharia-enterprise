@@ -1,5 +1,6 @@
 ---
 name: plan-execution
+title: "plan-execution"
 goal: Execute a project plan, validate its completion and quality, then iteratively continue until all requirements are met and archive to plans/done/
 termination: Zero findings remain after validation and plan moved to done/
 inputs:
@@ -768,3 +769,7 @@ acceptance criteria in `prd.md` are the natural source of the first failing test
 - **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1
+
+## Agents
+
+- [plan-execution-checker](../../../.claude/agents/plan-execution-checker.md) — validates plan execution completeness and quality

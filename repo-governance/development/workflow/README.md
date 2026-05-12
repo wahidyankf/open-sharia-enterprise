@@ -1,3 +1,12 @@
+---
+title: "Workflow Development"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Workflow Development
 
 Development workflow standards covering implementation methodology, git workflows, commit messages, and reproducible environments.

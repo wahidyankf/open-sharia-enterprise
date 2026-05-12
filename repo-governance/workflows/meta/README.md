@@ -1,3 +1,12 @@
+---
+title: "Workflow Meta Documentation"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # Workflow Meta Documentation
 
 Foundational workflow patterns and conventions defining how workflows are structured.

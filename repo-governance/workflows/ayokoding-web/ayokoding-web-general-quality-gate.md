@@ -1,5 +1,6 @@
 ---
 name: ayokoding-web-general-quality-gate
+title: "ayokoding-web-general-quality-gate"
 goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings
 termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

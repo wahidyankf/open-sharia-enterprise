@@ -1,3 +1,12 @@
+---
+title: "Formatting Conventions"
+description: ""
+category: explanation
+subcategory: conventions
+tags: []
+created: 2026-05-12
+---
+
 # Formatting Conventions
 
 Standards for markdown formatting, syntax, and visual elements in all documentation.

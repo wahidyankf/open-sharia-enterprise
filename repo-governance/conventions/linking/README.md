@@ -1,3 +1,12 @@
+---
+title: "Linking Conventions"
+description: ""
+category: explanation
+subcategory: conventions
+tags: []
+created: 2026-05-12
+---
+
 # Linking Conventions
 
 This category contains standards for cross-referencing and internal linking in markdown documentation.

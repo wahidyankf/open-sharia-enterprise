@@ -1,3 +1,12 @@
+---
+title: "AyoKoding Web Workflows"
+description: ""
+category: explanation
+subcategory: workflows
+tags: []
+created: 2026-05-12
+---
+
 # AyoKoding Web Workflows
 
 Orchestrated workflows for ayokoding-web content quality validation and management.

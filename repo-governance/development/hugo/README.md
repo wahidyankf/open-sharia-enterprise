@@ -1,3 +1,12 @@
+---
+title: "Hugo Development"
+description: ""
+category: explanation
+subcategory: development
+tags: []
+created: 2026-05-12
+---
+
 # Hugo Development
 
 Historical Hugo development standards. **No active Hugo sites remain in this repository.** Both ayokoding-web and oseplatform-web have migrated to Next.js 16. Preserved for reference only.

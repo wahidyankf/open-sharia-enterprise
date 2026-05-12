@@ -1,5 +1,6 @@
 ---
 name: repo-cross-vendor-parity-quality-gate
+title: "repo-cross-vendor-parity-quality-gate"
 goal: Validate cross-vendor behavioral-parity invariants and apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -294,3 +295,8 @@ Result: PARTIAL after 1 iteration; user must resolve before re-running.
   use GitHub-compatible markdown with `.md` extensions.
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: active voice,
   proper heading hierarchy, single H1.
+
+## Agents
+
+- [repo-parity-checker](../../../.claude/agents/repo-parity-checker.md) — validates cross-vendor behavioral-parity invariants
+- [repo-parity-fixer](../../../.claude/agents/repo-parity-fixer.md) — applies validated cross-vendor parity fixes

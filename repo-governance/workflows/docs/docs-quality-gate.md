@@ -1,5 +1,6 @@
 ---
 name: docs-quality-gate
+title: "docs-quality-gate"
 goal: Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until zero findings achieved
 termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:

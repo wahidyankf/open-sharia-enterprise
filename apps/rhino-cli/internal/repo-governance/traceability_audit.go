@@ -199,8 +199,19 @@ func auditDevelopment(root string) ([]TraceabilityFinding, error) {
 	return findings, nil
 }
 
+// traceabilityMetaExempt holds workflow paths (relative to the workflows root)
+// that are reference documentation about the workflow system rather than
+// executable orchestration workflows. They are exempt from the agent-reference
+// requirement because they describe how to write workflows, not workflows that
+// invoke agents.
+var traceabilityMetaExempt = map[string]bool{
+	"meta/execution-modes.md":     true,
+	"meta/workflow-identifier.md": true,
+}
+
 // auditWorkflows scans each non-README .md file in root for at least one
-// reference matching `.claude/agents/<name>.md`.
+// reference matching `.claude/agents/<name>.md`. Files listed in
+// traceabilityMetaExempt are skipped.
 func auditWorkflows(root string) ([]TraceabilityFinding, error) {
 	files, err := listGovernanceMarkdown(root)
 	if err != nil {
@@ -208,6 +219,11 @@ func auditWorkflows(root string) ([]TraceabilityFinding, error) {
 	}
 	var findings []TraceabilityFinding
 	for _, path := range files {
+		rel, _ := filepath.Rel(root, path)
+		rel = filepath.ToSlash(rel)
+		if traceabilityMetaExempt[rel] {
+			continue
+		}
 		data, err := os.ReadFile(path) //nolint:gosec // trusted repo path
 		if err != nil {
 			return nil, fmt.Errorf("read %s: %w", path, err)

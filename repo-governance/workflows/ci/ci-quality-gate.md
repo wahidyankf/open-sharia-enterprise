@@ -1,5 +1,6 @@
 ---
 name: ci-quality-gate
+title: "ci-quality-gate"
 goal: Validate all projects conform to CI/CD standards and fix non-compliance iteratively
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -139,3 +140,8 @@ Report final status.
 
 - **[CI/CD Conventions](../../development/infra/ci-conventions.md)**: The standards being validated
 - **[Workflow Identifier Convention](../meta/workflow-identifier.md)**: Follows standard workflow structure
+
+## Agents
+
+- [ci-checker](../../../.claude/agents/ci-checker.md) — validates all projects against CI/CD standards
+- [ci-fixer](../../../.claude/agents/ci-fixer.md) — applies validated CI/CD compliance fixes
