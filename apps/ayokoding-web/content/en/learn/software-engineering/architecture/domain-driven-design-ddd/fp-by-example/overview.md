@@ -4,10 +4,11 @@ date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000002
 description: "Overview of DDD using Functional Programming in F# — type-driven design, railway-oriented programming, and workflow pipelines following Domain Modeling Made Functional"
-tags: ["ddd", "f#", "functional-programming", "domain-modeling", "railway-oriented-programming", "wlaschin", "by-example"]
+tags:
+  ["ddd", "f#", "functional-programming", "domain-modeling", "railway-oriented-programming", "wlaschin", "by-example"]
 ---
 
-**Want to model complex business domains so that illegal states are literally unrepresentable at compile time?** This tutorial teaches Domain-Driven Design through a functional programming lens, using F# as the implementation language and Scott Wlaschin's *Domain Modeling Made Functional* (Pragmatic Bookshelf, 2018) as the conceptual backbone.
+**Want to model complex business domains so that illegal states are literally unrepresentable at compile time?** This tutorial teaches Domain-Driven Design through a functional programming lens, using F# as the implementation language and Scott Wlaschin's _Domain Modeling Made Functional_ (Pragmatic Bookshelf, 2018) as the conceptual backbone.
 
 ## What This Tutorial Covers
 
@@ -36,7 +37,7 @@ Using a single running domain across all examples lets you see how individual pi
 
 This tutorial closely follows the structure and examples of:
 
-> Scott Wlaschin, *Domain Modeling Made Functional: Tackle Software Complexity with Domain-Driven Design and F#*, Pragmatic Bookshelf, 2018.
+> Scott Wlaschin, _Domain Modeling Made Functional: Tackle Software Complexity with Domain-Driven Design and F#_, Pragmatic Bookshelf, 2018.
 
 Chapter references are included throughout (e.g., "Wlaschin Ch 5") so you can read the corresponding prose alongside each example. The book covers 13 chapters across three parts:
 

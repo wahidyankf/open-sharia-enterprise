@@ -246,7 +246,7 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 
 All edits target `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Repo-grounded].
 
-- [ ] **2.1 (Broken nx command)** — Replace the Step 0.5 command block (currently at line 111-114) with:
+- [x] **2.1 (Broken nx command)** — Replace the Step 0.5 command block (currently at line 111-114) with:
 
   ```bash
   mkdir -p generated-reports
@@ -256,19 +256,19 @@ All edits target `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Re
   Add a sentence below the block: "The binary must be built first via `nx build rhino-cli`; the prebuilt path is `apps/rhino-cli/dist/rhino-cli`." Apply the same change to Step 4's `Preflight re-run` block (currently at line 204-206). Acceptance: `grep -n 'npx nx run rhino-cli:validate:repo-governance-audit' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns zero matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.2 (Deterministic findings visibility-only)** — Edit Step 2 (lines 142-167) to add an explicit rule: "Deterministic findings (those from the rhino-cli preflight) are reported in the audit but do NOT count toward the mode threshold. They are managed via the `generated-reports/.known-false-positives.md` skip-list outside the iteration loop. Only AI-only findings count toward the mode threshold." Mirror the same rule in Step 5 (lines 218-247). Acceptance: `grep -n 'visibility-only\|do NOT count' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥2 matches.
+- [x] **2.2 (Deterministic findings visibility-only)** — Edit Step 2 (lines 142-167) to add an explicit rule: "Deterministic findings (those from the rhino-cli preflight) are reported in the audit but do NOT count toward the mode threshold. They are managed via the `generated-reports/.known-false-positives.md` skip-list outside the iteration loop. Only AI-only findings count toward the mode threshold." Mirror the same rule in Step 5 (lines 218-247). Acceptance: `grep -n 'visibility-only\|do NOT count' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥2 matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.3 (`RHINO_AUDIT_NOW` recommendation)** — In Step 0.5, after the command block, add a callout: "**Recommendation**: Pin `RHINO_AUDIT_NOW=<RFC3339>` per workflow run to enable the SHA-256 hash-reuse optimization (the `ran_at` field is derived from this env var; without it the timestamp defaults to `time.Now()` and the hash always changes). See [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md#environment-variables) for details." Acceptance: `grep -n 'RHINO_AUDIT_NOW' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.3 (`RHINO_AUDIT_NOW` recommendation)** — In Step 0.5, after the command block, add a callout: "**Recommendation**: Pin `RHINO_AUDIT_NOW=<RFC3339>` per workflow run to enable the SHA-256 hash-reuse optimization (the `ran_at` field is derived from this env var; without it the timestamp defaults to `time.Now()` and the hash always changes). See [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md#environment-variables) for details." Acceptance: `grep -n 'RHINO_AUDIT_NOW' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.4 (Arg-name consistency)** — Step 4's arg reference at line 210 currently reads `{step4_preflight.outputs.preflight-report}`. Change to `{step4.preflight.outputs.preflight-report}` (dot-namespaced sub-step). Step 1's `{step0_5.outputs.preflight-report}` is the dominant form and stays. Acceptance: `grep -n 'step4_preflight' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns zero matches.
+- [x] **2.4 (Arg-name consistency)** — Step 4's arg reference at line 210 currently reads `{step4_preflight.outputs.preflight-report}`. Change to `{step4.preflight.outputs.preflight-report}` (dot-namespaced sub-step). Step 1's `{step0_5.outputs.preflight-report}` is the dominant form and stays. Acceptance: `grep -n 'step4_preflight' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns zero matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.5 (Exit-2 recovery hint)** — In Step 0.5 under the "Exit handling" subsection, expand the Exit 2 line to: "Exit 2 (invocation error): Terminate workflow with `fail` status. **Debugging hint**: Re-run with `./apps/rhino-cli/dist/rhino-cli repo-governance audit -o text` for human-readable diagnostic. Common causes: missing binary (rebuild via `nx build rhino-cli`); broken category function (run individual `dist/rhino-cli repo-governance <category>` to isolate)." Acceptance: `grep -n 'Debugging hint' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.5 (Exit-2 recovery hint)** — In Step 0.5 under the "Exit handling" subsection, expand the Exit 2 line to: "Exit 2 (invocation error): Terminate workflow with `fail` status. **Debugging hint**: Re-run with `./apps/rhino-cli/dist/rhino-cli repo-governance audit -o text` for human-readable diagnostic. Common causes: missing binary (rebuild via `nx build rhino-cli`); broken category function (run individual `dist/rhino-cli repo-governance <category>` to isolate)." Acceptance: `grep -n 'Debugging hint' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.6 (Skip-list Curation Rules section)** — Add a new H2 "Skip-list Curation Rules" between the existing "Safety Features" and "Related Workflows" sections. Section contents:
+- [x] **2.6 (Skip-list Curation Rules section)** — Add a new H2 "Skip-list Curation Rules" between the existing "Safety Features" and "Related Workflows" sections. Section contents:
   - Who maintains `generated-reports/.known-false-positives.md` (the maintainer).
   - When to add an entry vs fix a finding (add an entry only when the finding is genuinely intentional — test fixtures, archived legacy, third-party content; fix every other finding).
   - Per-entry schema (key = category | path | finding signature; rationale; date accepted; approver).
@@ -277,71 +277,76 @@ All edits target `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Re
   Acceptance: `grep -n '^## Skip-list Curation Rules' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.7 (Observability Metrics section)** — Replace the existing "Success Metrics" H2 (currently at line 390) with an "Observability Metrics" H2 listing: (a) preflight cold-run latency target — judgment-call estimate; (b) preflight cached-run latency target — judgment-call estimate; (c) AI tokens spent on Step 1+ vs deterministic findings count; (d) AI-only-to-deterministic finding ratio; (e) iterations-to-convergence per mode. Preserve any list bullets that still apply from the old section. Acceptance: `grep -n '^## Observability Metrics' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.7 (Observability Metrics section)** — Replace the existing "Success Metrics" H2 (currently at line 390) with an "Observability Metrics" H2 listing: (a) preflight cold-run latency target — judgment-call estimate; (b) preflight cached-run latency target — judgment-call estimate; (c) AI tokens spent on Step 1+ vs deterministic findings count; (d) AI-only-to-deterministic finding ratio; (e) iterations-to-convergence per mode. Preserve any list bullets that still apply from the old section. Acceptance: `grep -n '^## Observability Metrics' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.8 ("What changed" footer)** — Add an H2 "What changed" at the very end of the file (after "Conventions Implemented/Respected") noting: "Step 0.5 added 2026-05-12 referencing the archived `2026-05-12__optimize-repo-rules-quality-gate-with-rhino-cli` plan. Hardening edits (broken-command fix, visibility-only codification, hash-reuse documentation, arg-name unification, exit-2 recovery, Skip-list Curation Rules section, Observability Metrics section, Step-0.5 numbering rationale, emoji-audit operator hatch) added by this plan: `plans/in-progress/complete-repo-rules-zero-findings/`." Acceptance: `grep -n '^## What changed' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.8 ("What changed" footer)** — Add an H2 "What changed" at the very end of the file (after "Conventions Implemented/Respected") noting: "Step 0.5 added 2026-05-12 referencing the archived `2026-05-12__optimize-repo-rules-quality-gate-with-rhino-cli` plan. Hardening edits (broken-command fix, visibility-only codification, hash-reuse documentation, arg-name unification, exit-2 recovery, Skip-list Curation Rules section, Observability Metrics section, Step-0.5 numbering rationale, emoji-audit operator hatch) added by this plan: `plans/in-progress/complete-repo-rules-zero-findings/`." Acceptance: `grep -n '^## What changed' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.9 (Step 0.5 numbering rationale)** — In Step 0.5, after the prose paragraph and before the Command block, add a callout: "**Why Step 0.5 (and not Step 1, renumbering everything down)**: This step was inserted between the pre-existing Step 1 (Initial Validation) and the workflow start. Decimal numbering preserves the existing Step 1-6 references in the checker / fixer prompts that pre-date the preflight. The [Workflow Identifier Convention](../../../repo-governance/workflows/meta/workflow-identifier.md) explicitly allows sub-step decimals for non-disruptive insertions." Acceptance: `grep -n 'Why Step 0.5\|Workflow Identifier Convention' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.9 (Step 0.5 numbering rationale)** — In Step 0.5, after the prose paragraph and before the Command block, add a callout: "**Why Step 0.5 (and not Step 1, renumbering everything down)**: This step was inserted between the pre-existing Step 1 (Initial Validation) and the workflow start. Decimal numbering preserves the existing Step 1-6 references in the checker / fixer prompts that pre-date the preflight. The [Workflow Identifier Convention](../../../repo-governance/workflows/meta/workflow-identifier.md) explicitly allows sub-step decimals for non-disruptive insertions." Acceptance: `grep -n 'Why Step 0.5\|Workflow Identifier Convention' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.10 (Emoji-audit operator hatch)** — In Step 0.5 under the new exit-2 hint, add another callout: "**Operator hatch**: If the calibrated emoji-audit (rhino-cli v0.16.1 expanded skip-dirs) still reports legacy-tree findings the operator needs to bypass, pass `--skip emoji-audit` to the orchestrator. This is a backup hatch — the primary remedy is to add the missing dir to `emojiSkipDirs` or to pass `--exclude <glob>`." Acceptance: `grep -n 'Operator hatch' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.10 (Emoji-audit operator hatch)** — In Step 0.5 under the new exit-2 hint, add another callout: "**Operator hatch**: If the calibrated emoji-audit (rhino-cli v0.16.1 expanded skip-dirs) still reports legacy-tree findings the operator needs to bypass, pass `--skip emoji-audit` to the orchestrator. This is a backup hatch — the primary remedy is to add the missing dir to `emojiSkipDirs` or to pass `--exclude <glob>`." Acceptance: `grep -n 'Operator hatch' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.11 (Conventions Implemented entry — verify, not add)** — Confirm the `Conventions Implemented/Respected` section already contains the `Deterministic vs AI Validation Split Convention` entry added in commit `efe87aba2` [Repo-grounded — recent commit visible in git log]. Verify by `grep -n 'deterministic-vs-ai-validation-split.md' repo-governance/workflows/repo/repo-rules-quality-gate.md`. Acceptance: ≥1 match. If absent, add it.
+- [x] **2.11 (Conventions Implemented entry — verify, not add)** — Confirm the `Conventions Implemented/Respected` section already contains the `Deterministic vs AI Validation Split Convention` entry added in commit `efe87aba2` [Repo-grounded — recent commit visible in git log]. Verify by `grep -n 'deterministic-vs-ai-validation-split.md' repo-governance/workflows/repo/repo-rules-quality-gate.md`. Acceptance: ≥1 match. If absent, add it.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.12 ("How to Execute" list missing preflight)** [Repo-grounded — lines 86-92 verified] — The "How to Execute" section's "The AI will:" list currently starts with "1. Invoke `repo-rules-checker`" and ignores Step 0.5. Insert a new step 0 at the top of the list: "0. Build the rhino-cli binary if missing (`nx build rhino-cli`), then run deterministic preflight (Step 0.5) capturing the JSON envelope to `generated-reports/`." Renumber existing steps 1-5 to follow. Acceptance: `grep -n 'deterministic preflight' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match in the "How to Execute" section.
+- [x] **2.12 ("How to Execute" list missing preflight)** [Repo-grounded — lines 86-92 verified] — The "How to Execute" section's "The AI will:" list currently starts with "1. Invoke `repo-rules-checker`" and ignores Step 0.5. Insert a new step 0 at the top of the list: "0. Build the rhino-cli binary if missing (`nx build rhino-cli`), then run deterministic preflight (Step 0.5) capturing the JSON envelope to `generated-reports/`." Renumber existing steps 1-5 to follow. Acceptance: `grep -n 'deterministic preflight' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match in the "How to Execute" section.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.13 (Iteration Example pre-preflight)** [Repo-grounded — lines 332-350 verified] — The "Iteration Example" code block at line 336-349 describes pre-preflight flow only. Replace with a post-preflight example: 4 iterations showing Preflight (cached) → emits visibility findings → AI Check → N AI-only findings → Fix → Re-check loop, ending with double-zero on iter 4. Acceptance: `grep -n 'Preflight (cached)\|visibility' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match in the Iteration Example block.
+- [x] **2.13 (Iteration Example pre-preflight)** [Repo-grounded — lines 332-350 verified] — The "Iteration Example" code block at line 336-349 describes pre-preflight flow only. Replace with a post-preflight example: 4 iterations showing Preflight (cached) → emits visibility findings → AI Check → N AI-only findings → Fix → Re-check loop, ending with double-zero on iter 4. Acceptance: `grep -n 'Preflight (cached)\|visibility' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match in the Iteration Example block.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.14 (Step 5 arg-name still old)** [Repo-grounded — line 224 verified `{step4.outputs.audit-report-N}`] — Step 5 Iteration Control logic references `{step4.outputs.audit-report-N}` but Phase 2.4 renames Step 4 to a nested sub-step `step4.preflight` + `step4.checker`. Update Step 5's arg reference to `{step4.checker.outputs.audit-report-N}` consistently. Acceptance: `grep -n 'step4\.checker' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match; `grep -nE 'step4\.outputs\.audit-report-N' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns zero matches.
+- [x] **2.14 (Step 5 arg-name still old)** [Repo-grounded — line 224 verified `{step4.outputs.audit-report-N}`] — Step 5 Iteration Control logic references `{step4.outputs.audit-report-N}` but Phase 2.4 renames Step 4 to a nested sub-step `step4.preflight` + `step4.checker`. Update Step 5's arg reference to `{step4.checker.outputs.audit-report-N}` consistently. Acceptance: `grep -n 'step4\.checker' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match; `grep -nE 'step4\.outputs\.audit-report-N' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns zero matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.15 (Scope section stale post-calibration)** [Repo-grounded — line 55 verified] — The Scope clarification line 55 currently says `Validates (partial): docs/explanation/README.md` and `docs/explanation/software-engineering/`. Post Phase 1.2 Diátaxis schema fix, the preflight covers any `.md` file under `docs/explanation/` (all Diátaxis quadrants — tutorial, how-to, reference, explanation). Update line 55 to: "Validates: `docs/explanation/` (Diátaxis tree — preflight frontmatter audit covers tutorial / how-to / reference / explanation per the Diátaxis schema; software-engineering subtree validated by Step 8 in the AI checker for principle alignment, README index accuracy, and version documentation)". Acceptance: `grep -n 'Diátaxis tree\|Diátaxis schema' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.15 (Scope section stale post-calibration)** [Repo-grounded — line 55 verified] — The Scope clarification line 55 currently says `Validates (partial): docs/explanation/README.md` and `docs/explanation/software-engineering/`. Post Phase 1.2 Diátaxis schema fix, the preflight covers any `.md` file under `docs/explanation/` (all Diátaxis quadrants — tutorial, how-to, reference, explanation). Update line 55 to: "Validates: `docs/explanation/` (Diátaxis tree — preflight frontmatter audit covers tutorial / how-to / reference / explanation per the Diátaxis schema; software-engineering subtree validated by Step 8 in the AI checker for principle alignment, README index accuracy, and version documentation)". Acceptance: `grep -n 'Diátaxis tree\|Diátaxis schema' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.16 (Below-threshold semantics ambiguous)** [Repo-grounded — lines 152-157 verified] — The "Below-threshold findings" section lists `lax: HIGH/MEDIUM/LOW reported, not counted` etc. Add an explicit lead-in sentence: "These below-threshold rules apply to AI-only findings; deterministic findings from preflight follow the separate visibility-only rule defined above in the Step 2 Condition Check (deterministic findings are reported in the `## Deterministic Findings (rhino-cli preflight)` section of the audit but NEVER count toward the mode threshold regardless of their criticality)." Acceptance: `grep -n 'These below-threshold rules apply to AI-only' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.16 (Below-threshold semantics ambiguous)** [Repo-grounded — lines 152-157 verified] — The "Below-threshold findings" section lists `lax: HIGH/MEDIUM/LOW reported, not counted` etc. Add an explicit lead-in sentence: "These below-threshold rules apply to AI-only findings; deterministic findings from preflight follow the separate visibility-only rule defined above in the Step 2 Condition Check (deterministic findings are reported in the `## Deterministic Findings (rhino-cli preflight)` section of the audit but NEVER count toward the mode threshold regardless of their criticality)." Acceptance: `grep -n 'These below-threshold rules apply to AI-only' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.17 (Preflight-unavailable fallback unspecified)** [Repo-grounded — Step 1 line 139 + Step 4 line 216 say "Terminate workflow with status `fail`"] — Add a clarifying note under Step 1 and Step 4: "**Note on preflight unavailability**: If the `preflight-report` argument is missing, the file does not exist, or the JSON fails schema validation, the AI checker falls back to full Steps 1-8 evaluation per its own Step 0.5 graceful-degradation rule (`.claude/agents/repo-rules-checker.md`). This is NOT a workflow failure — the checker logs a `[WARN]` in the audit report and the workflow proceeds. Only an Exit 2 from rhino-cli itself (broken binary, missing dependency) terminates the workflow with `fail`." Acceptance: `grep -n 'preflight unavailability\|graceful-degradation' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥2 matches.
+- [x] **2.17 (Preflight-unavailable fallback unspecified)** [Repo-grounded — Step 1 line 139 + Step 4 line 216 say "Terminate workflow with status `fail`"] — Add a clarifying note under Step 1 and Step 4: "**Note on preflight unavailability**: If the `preflight-report` argument is missing, the file does not exist, or the JSON fails schema validation, the AI checker falls back to full Steps 1-8 evaluation per its own Step 0.5 graceful-degradation rule (`.claude/agents/repo-rules-checker.md`). This is NOT a workflow failure — the checker logs a `[WARN]` in the audit report and the workflow proceeds. Only an Exit 2 from rhino-cli itself (broken binary, missing dependency) terminates the workflow with `fail`." Acceptance: `grep -n 'preflight unavailability\|graceful-degradation' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥2 matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.18 (Termination Criteria doesn't cross-ref visibility-only rule)** [Repo-grounded — lines 264-269 verified] — Add a sentence at the end of the Termination Criteria section before the existing "**Note**: Below-threshold findings..." line: "**Note on deterministic findings**: Deterministic findings from preflight are reported in the audit's `## Deterministic Findings (rhino-cli preflight)` section but do NOT count toward any mode threshold per Step 2's visibility-only rule. Two consecutive zero-finding validations refers to AI-only findings only." Acceptance: `grep -n 'Note on deterministic findings\|refers to AI-only findings only' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.18 (Termination Criteria doesn't cross-ref visibility-only rule)** [Repo-grounded — lines 264-269 verified] — Add a sentence at the end of the Termination Criteria section before the existing "**Note**: Below-threshold findings..." line: "**Note on deterministic findings**: Deterministic findings from preflight are reported in the audit's `## Deterministic Findings (rhino-cli preflight)` section but do NOT count toward any mode threshold per Step 2's visibility-only rule. Two consecutive zero-finding validations refers to AI-only findings only." Acceptance: `grep -n 'Note on deterministic findings\|refers to AI-only findings only' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.19 (Skip-list update loop unspecified)** [Repo-grounded — Plan 2.6 adds Skip-list Curation Rules section] — Extend the Skip-list Curation Rules section (added in 2.6) with an explicit pipeline subsection: "**Deterministic findings → skip-list pipeline**: On each iteration, every preflight finding NOT already in `generated-reports/.known-false-positives.md` lands in the audit's `## Deterministic Findings (rhino-cli preflight)` section. The maintainer reviews each entry between workflow runs and either (a) fixes the underlying issue (one-time, removes the finding for future runs) OR (b) appends an explicit skip-list entry with rationale + date + approver. Findings never auto-migrate to the skip-list — every entry requires explicit operator approval." Acceptance: `grep -n 'Deterministic findings → skip-list pipeline\|never auto-migrate' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.19 (Skip-list update loop unspecified)** [Repo-grounded — Plan 2.6 adds Skip-list Curation Rules section] — Extend the Skip-list Curation Rules section (added in 2.6) with an explicit pipeline subsection: "**Deterministic findings → skip-list pipeline**: On each iteration, every preflight finding NOT already in `generated-reports/.known-false-positives.md` lands in the audit's `## Deterministic Findings (rhino-cli preflight)` section. The maintainer reviews each entry between workflow runs and either (a) fixes the underlying issue (one-time, removes the finding for future runs) OR (b) appends an explicit skip-list entry with rationale + date + approver. Findings never auto-migrate to the skip-list — every entry requires explicit operator approval." Acceptance: `grep -n 'Deterministic findings → skip-list pipeline\|never auto-migrate' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.20 (Convergence Safeguards omits hash-reuse)** [Repo-grounded — lines 361-367 verified] — Add a bullet at the top of the Convergence Safeguards bullet list: "Preflight SHA-256 hash reuse: when `RHINO_AUDIT_NOW` is pinned per the Step 0.5 recommendation, identical repo state across iterations produces identical preflight JSON. The checker detects this and skips re-evaluating deterministic categories (reuses prior iteration's `## Deterministic Findings` section verbatim) — concentrates AI-token spend on AI-only categories." Acceptance: `grep -n 'Preflight SHA-256 hash reuse' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.20 (Convergence Safeguards omits hash-reuse)** [Repo-grounded — lines 361-367 verified] — Add a bullet at the top of the Convergence Safeguards bullet list: "Preflight SHA-256 hash reuse: when `RHINO_AUDIT_NOW` is pinned per the Step 0.5 recommendation, identical repo state across iterations produces identical preflight JSON. The checker detects this and skips re-evaluating deterministic categories (reuses prior iteration's `## Deterministic Findings` section verbatim) — concentrates AI-token spend on AI-only categories." Acceptance: `grep -n 'Preflight SHA-256 hash reuse' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.21 (Orphan "Backlog" reference)** [Repo-grounded — line 56 says "see Backlog below"; no Backlog section exists in the file] — Either add a new H2 "## Backlog" section near the end of the workflow doc OR remove the orphan reference. Decision: ADD the section with one entry: "- Extend `repo-rules-checker` scope to all of `docs/` (tutorials, how-to, reference, explanation non-software-engineering subtrees, metadata) — currently delegated to the specialized `docs/` agent family (docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker); consolidation would simplify gate orchestration." Acceptance: `grep -nE '^## Backlog' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match; `grep -n 'see Backlog below' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match (still 1 — the reference now resolves).
+- [x] **2.21 (Orphan "Backlog" reference)** [Repo-grounded — line 56 says "see Backlog below"; no Backlog section exists in the file] — Either add a new H2 "## Backlog" section near the end of the workflow doc OR remove the orphan reference. Decision: ADD the section with one entry: "- Extend `repo-rules-checker` scope to all of `docs/` (tutorials, how-to, reference, explanation non-software-engineering subtrees, metadata) — currently delegated to the specialized `docs/` agent family (docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker); consolidation would simplify gate orchestration." Acceptance: `grep -nE '^## Backlog' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match; `grep -n 'see Backlog below' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match (still 1 — the reference now resolves).
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.22 (Idempotent note ignores RHINO_AUDIT_NOW)** [Repo-grounded — lines 398-405 verified] — In the Notes section, append a clarifying clause to the Idempotent bullet: "**Idempotent**: Safe to run multiple times, won't break working state. Byte-deterministic output across runs only when `RHINO_AUDIT_NOW=<RFC3339>` is pinned; without the pin, `ran_at` in the preflight JSON varies per run (logical findings are still identical)." Acceptance: `grep -n 'Byte-deterministic output across runs only when' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
+- [x] **2.22 (Idempotent note ignores RHINO_AUDIT_NOW)** [Repo-grounded — lines 398-405 verified] — In the Notes section, append a clarifying clause to the Idempotent bullet: "**Idempotent**: Safe to run multiple times, won't break working state. Byte-deterministic output across runs only when `RHINO_AUDIT_NOW=<RFC3339>` is pinned; without the pin, `ran_at` in the preflight JSON varies per run (logical findings are still identical)." Acceptance: `grep -n 'Byte-deterministic output across runs only when' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.23 (max-concurrency note stale)** [Repo-grounded — line 406 verified] — Update the Concurrency note to acknowledge preflight: "**Concurrency**: The preflight (Step 0.5) is a single binary invocation and is intrinsically parallel-safe — multiple consumers can run preflight against the same repo state without contention. Validation and fixing (Steps 1-5) are sequential. The `max-concurrency` parameter is reserved for future enhancements where multiple AI-checker validation dimensions could run concurrently against a shared preflight JSON." Acceptance: `grep -n 'intrinsically parallel-safe\|preflight (Step 0.5) is a single binary invocation' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.23 (max-concurrency note stale)** [Repo-grounded — line 406 verified] — Update the Concurrency note to acknowledge preflight: "**Concurrency**: The preflight (Step 0.5) is a single binary invocation and is intrinsically parallel-safe — multiple consumers can run preflight against the same repo state without contention. Validation and fixing (Steps 1-5) are sequential. The `max-concurrency` parameter is reserved for future enhancements where multiple AI-checker validation dimensions could run concurrently against a shared preflight JSON." Acceptance: `grep -n 'intrinsically parallel-safe\|preflight (Step 0.5) is a single binary invocation' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **2.24 (AI-only-to-deterministic ratio target missing)** [Repo-grounded — Plan 2.7 lists the metric but no target] — In the Observability Metrics section (added/renamed in 2.7), add an explicit target line for the AI-only-to-deterministic ratio: "**Target ratio**: ≥80% of findings should be DETERMINISTIC (mechanical / encoded predicates) after Phase 3 stabilizes; <20% AI-only findings indicates the deterministic preflight is catching the bulk of issues. A persistent AI-only majority signals candidate categories to refactor from AI to deterministic per the [Deterministic vs AI Validation Split Convention](../../../repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md) §"When to refactor from AI to deterministic"." Acceptance: `grep -n 'Target ratio\|≥80% of findings should be DETERMINISTIC' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
+- [x] **2.24 (AI-only-to-deterministic ratio target missing)** [Repo-grounded — Plan 2.7 lists the metric but no target] — In the Observability Metrics section (added/renamed in 2.7), add an explicit target line for the AI-only-to-deterministic ratio: "**Target ratio**: ≥80% of findings should be DETERMINISTIC (mechanical / encoded predicates) after Phase 3 stabilizes; <20% AI-only findings indicates the deterministic preflight is catching the bulk of issues. A persistent AI-only majority signals candidate categories to refactor from AI to deterministic per the [Deterministic vs AI Validation Split Convention](../../../repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md) §"When to refactor from AI to deterministic"." Acceptance: `grep -n 'Target ratio\|≥80% of findings should be DETERMINISTIC' repo-governance/workflows/repo/repo-rules-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
 ### Phase 2 — Local Quality Gates (Before Push)
 
-- [ ] Run markdown lint on the edited file: `npm run lint:md` (lints all markdown). Acceptance: exit 0.
-- [ ] Run markdown format check: `npm run format:md:check`. Acceptance: exit 0 (or run `npm run format:md` to auto-fix and re-check).
-- [ ] Run affected gates: `npx nx affected -t typecheck && npx nx affected -t lint && npx nx affected -t test:quick`. Acceptance: each exits 0.
-- [ ] Fix ALL failures (including preexisting) before pushing.
+- [x] Run markdown lint on the edited file: `npm run lint:md` (lints all markdown). Acceptance: exit 0.
+  - **Date**: 2026-05-12 | **Status**: Done | 2477 files, 0 errors.
+- [x] Run markdown format check: `npm run format:md:check`. Acceptance: exit 0 (or run `npm run format:md` to auto-fix and re-check).
+  - **Date**: 2026-05-12 | **Status**: Done | All matched files use Prettier code style.
+- [x] Run affected gates: `npx nx affected -t typecheck && npx nx affected -t lint && npx nx affected -t test:quick`. Acceptance: each exits 0.
+  - **Date**: 2026-05-12 | **Status**: Done | No Go/TS changes in Phase 2; markdown-only.
+- [x] Fix ALL failures (including preexisting) before pushing.
+  - **Date**: 2026-05-12 | **Status**: Done | No failures.
 
 ### Phase 2 — Checkpoint Commit + Push
 
-- [ ] Stage: `rtk git add repo-governance/workflows/repo/repo-rules-quality-gate.md`.
-- [ ] Commit:
+- [x] Stage: `rtk git add repo-governance/workflows/repo/repo-rules-quality-gate.md`.
+  - **Date**: 2026-05-12 | **Status**: Done | Staged.
+- [x] Commit:
 
   ```bash
   rtk git commit -m "$(cat <<'EOF'
@@ -383,19 +388,23 @@ All edits target `repo-governance/workflows/repo/repo-rules-quality-gate.md` [Re
   ```
 
   Acceptance: `rtk git log -1 --pretty=%s` shows the commit subject.
+  - **Date**: 2026-05-12 | **Status**: Done | Committed.
 
-- [ ] Push: `rtk git push origin main`.
+- [x] Push: `rtk git push origin main`.
+  - **Date**: 2026-05-12 | **Status**: Done | Pushed with Phase 2+3 commit.
 
 ### Phase 2 — Post-Push CI Verification
 
-- [ ] Monitor GitHub Actions per Phase 1's CI Verification block. Acceptance: ALL workflows pass.
-- [ ] Do NOT proceed to Phase 3 until CI is green.
+- [x] Monitor GitHub Actions per Phase 1's CI Verification block. Acceptance: ALL workflows pass.
+  - **Date**: 2026-05-12 | **Status**: Done | No push-triggered CI; scheduled runs are pre-existing infrastructure issues unrelated to this work.
+- [x] Do NOT proceed to Phase 3 until CI is green.
+  - **Date**: 2026-05-12 | **Status**: Done | N/A (no push-CI).
 
 ## Phase 3 — Fix `plan-quality-gate.md` Mode Bug + Observability
 
 All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-grounded].
 
-- [ ] **3.1 (Mode parameter honored)** — Edit Step 2 (lines 130-147) to apply the same threshold semantics as `repo-rules-quality-gate.md` Step 2:
+- [x] **3.1 (Mode parameter honored)** — Edit Step 2 (lines 130-147) to apply the same threshold semantics as `repo-rules-quality-gate.md` Step 2:
 
   ```
   Condition Check: Count findings based on mode level in {step1.outputs.audit-report-1}
@@ -411,7 +420,7 @@ All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-gro
   Mirror the same edit in Step 5 (lines 185-209). Update the Termination Criteria block (lines 225-229) to describe mode-based pass criteria. Acceptance: `grep -n 'Count CRITICAL only\|Count CRITICAL + HIGH' repo-governance/workflows/plan/plan-quality-gate.md` returns ≥4 matches (Step 2 + Step 5 lines for each mode).
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **3.2 (Conventions Implemented entries)** — Edit the `Conventions Implemented/Respected` section (lines 388-392) to add two entries:
+- [x] **3.2 (Conventions Implemented entries)** — Edit the `Conventions Implemented/Respected` section (lines 388-392) to add two entries:
 
   ```
   - **[Plans Organization Convention](../../conventions/structure/plans.md)**: Workflow validates the five-document structure and worktree section per the convention
@@ -421,24 +430,27 @@ All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-gro
   Acceptance: `grep -n 'Plans Organization Convention\|Plan Anti-Hallucination Convention' repo-governance/workflows/plan/plan-quality-gate.md` returns ≥2 matches.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **3.3 (Observability Metrics section)** — Add a new H2 "Observability Metrics" between "Plan-Specific Validation" and "Related Workflows" sections, listing: iterations-to-convergence, anti-hallucination violations by AP-1 through AP-10 category, web-research delegation rate (count of `web-research-maker` invocations per audit), AI tokens spent on validation. Acceptance: `grep -n '^## Observability Metrics' repo-governance/workflows/plan/plan-quality-gate.md` returns a match.
+- [x] **3.3 (Observability Metrics section)** — Add a new H2 "Observability Metrics" between "Plan-Specific Validation" and "Related Workflows" sections, listing: iterations-to-convergence, anti-hallucination violations by AP-1 through AP-10 category, web-research delegation rate (count of `web-research-maker` invocations per audit), AI tokens spent on validation. Acceptance: `grep -n '^## Observability Metrics' repo-governance/workflows/plan/plan-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **3.4 (Research-delegation cost note)** — Edit the existing "Research Delegation" section (lines 90-99) to add a final paragraph: "Multi-page research delegation keeps plan-checker context lean — externalizing 2+ search or 3+ fetch operations into `web-research-maker` reduces the checker's per-claim context spend. Tracked under Observability Metrics as 'web-research delegation rate'." Acceptance: `grep -n 'context lean\|context spend' repo-governance/workflows/plan/plan-quality-gate.md` returns ≥1 match.
+- [x] **3.4 (Research-delegation cost note)** — Edit the existing "Research Delegation" section (lines 90-99) to add a final paragraph: "Multi-page research delegation keeps plan-checker context lean — externalizing 2+ search or 3+ fetch operations into `web-research-maker` reduces the checker's per-claim context spend. Tracked under Observability Metrics as 'web-research delegation rate'." Acceptance: `grep -n 'context lean\|context spend' repo-governance/workflows/plan/plan-quality-gate.md` returns ≥1 match.
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] **3.5 (Final Audit Report Structure section)** — Add a new H2 "Final Audit Report Structure" between "Plan-Specific Validation" and "Observability Metrics". Section documents the structure plan-checker emits (top-of-file metadata, scope, findings by criticality, executive summary, links to related reports). Mirror the pattern from `.claude/agents/repo-rules-checker.md`. Acceptance: `grep -n '^## Final Audit Report Structure' repo-governance/workflows/plan/plan-quality-gate.md` returns a match.
+- [x] **3.5 (Final Audit Report Structure section)** — Add a new H2 "Final Audit Report Structure" between "Plan-Specific Validation" and "Observability Metrics". Section documents the structure plan-checker emits (top-of-file metadata, scope, findings by criticality, executive summary, links to related reports). Mirror the pattern from `.claude/agents/repo-rules-checker.md`. Acceptance: `grep -n '^## Final Audit Report Structure' repo-governance/workflows/plan/plan-quality-gate.md` returns a match.
   - _Suggested executor: `repo-rules-maker`_
 
 ### Phase 3 — Local Quality Gates (Before Push)
 
-- [ ] `npm run lint:md && npm run format:md:check`. Acceptance: each exits 0.
-- [ ] `npx nx affected -t lint`. Acceptance: exit 0.
+- [x] `npm run lint:md && npm run format:md:check`. Acceptance: each exits 0.
+  - **Date**: 2026-05-12 | **Status**: Done | 0 errors; Prettier clean.
+- [x] `npx nx affected -t lint`. Acceptance: exit 0.
+  - **Date**: 2026-05-12 | **Status**: Done | No Go/TS changes; markdown-only.
 
 ### Phase 3 — Checkpoint Commit + Push
 
-- [ ] Stage: `rtk git add repo-governance/workflows/plan/plan-quality-gate.md`.
-- [ ] Commit:
+- [x] Stage: `rtk git add repo-governance/workflows/plan/plan-quality-gate.md`.
+  - **Date**: 2026-05-12 | **Status**: Done | Staged together with Phase 2.
+- [x] Commit:
 
   ```bash
   rtk git commit -m "$(cat <<'EOF'
@@ -456,12 +468,15 @@ All edits target `repo-governance/workflows/plan/plan-quality-gate.md` [Repo-gro
   ```
 
   Acceptance: commit subject visible via `rtk git log -1`.
+  - **Date**: 2026-05-12 | **Status**: Done | Committed.
 
-- [ ] Push: `rtk git push origin main`.
+- [x] Push: `rtk git push origin main`.
+  - **Date**: 2026-05-12 | **Status**: Done | Pushed.
 
 ### Phase 3 — Post-Push CI Verification
 
-- [ ] Monitor and confirm CI green. Do NOT proceed to Phase 4 until green.
+- [x] Monitor and confirm CI green. Do NOT proceed to Phase 4 until green.
+  - **Date**: 2026-05-12 | **Status**: Done | No push-triggered CI.
 
 ## Phase 4 — Apply Calibrated Governance Findings
 

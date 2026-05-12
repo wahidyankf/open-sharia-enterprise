@@ -1209,7 +1209,7 @@ spec:
 
 **Key Takeaway**: Ingress provides cost-effective HTTP/HTTPS routing compared to multiple LoadBalancer Services; install an Ingress Controller first, then create Ingress resources for routing rules.
 
-**Why It Matters**: Ingress Controllers consolidate HTTP/HTTPS traffic through a single load balancer entry point, dramatically reducing cloud infrastructure costs. Replacing many individual LoadBalancer Services with one Ingress Controller managing path-based routing eliminates the per-service load balancer expense that accumulates at scale. This consolidation also simplifies DNS management (one wildcard DNS entry vs. many separate records), TLS certificate management (one cert for *.example.com vs. individual certs per service), and firewall rules, making Ingress the de facto standard for exposing HTTP services in production Kubernetes clusters.
+**Why It Matters**: Ingress Controllers consolidate HTTP/HTTPS traffic through a single load balancer entry point, dramatically reducing cloud infrastructure costs. Replacing many individual LoadBalancer Services with one Ingress Controller managing path-based routing eliminates the per-service load balancer expense that accumulates at scale. This consolidation also simplifies DNS management (one wildcard DNS entry vs. many separate records), TLS certificate management (one cert for \*.example.com vs. individual certs per service), and firewall rules, making Ingress the de facto standard for exposing HTTP services in production Kubernetes clusters.
 
 ---
 

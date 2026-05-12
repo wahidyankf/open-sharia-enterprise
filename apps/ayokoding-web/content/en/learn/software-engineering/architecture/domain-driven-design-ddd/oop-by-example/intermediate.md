@@ -246,13 +246,13 @@ interface Specification<T> {                                          // => inte
     // Default methods provide composability without subclassing
     // => Default methods added to the interface; existing implementations unchanged
     default Specification<T> and(Specification<T> other) {            // => expression
-        return t -> this.isSatisfiedBy(t) && other.isSatisfiedBy(t);  // => returns t -> this.isSatisfiedBy(t) && 
+        return t -> this.isSatisfiedBy(t) && other.isSatisfiedBy(t);  // => returns t -> this.isSatisfiedBy(t) &&
         // => Returns new spec: both this AND other must be satisfied
         // => Lambda captures both specs; evaluated lazily per candidate
     }
 
     default Specification<T> or(Specification<T> other) {             // => expression
-        return t -> this.isSatisfiedBy(t) || other.isSatisfiedBy(t);  // => returns t -> this.isSatisfiedBy(t) || 
+        return t -> this.isSatisfiedBy(t) || other.isSatisfiedBy(t);  // => returns t -> this.isSatisfiedBy(t) ||
         // => Returns new spec: at least one must be satisfied (short-circuits)
     }
 
@@ -610,7 +610,7 @@ public class Order {                                                  // => Orde
             // => All validations in one place; no partial Order escapes
             if (customerId == null) throw new IllegalStateException("customerId required"); // => throws if guard fails
             if (total == null)      throw new IllegalStateException("total required"); // => throws if guard fails
-            return new Order(OrderId.generate(), customerId, total, priority, deliveryNote); // => returns new Order(OrderId.generate(), 
+            return new Order(OrderId.generate(), customerId, total, priority, deliveryNote); // => returns new Order(OrderId.generate(),
         }
     }
 
@@ -737,7 +737,7 @@ public class Order                                                    // => clas
         {
             if (_customerId is null) throw new InvalidOperationException("CustomerId required"); // => throws if guard fails
             if (_total      is null) throw new InvalidOperationException("Total required"); // => throws if guard fails
-            return new Order(OrderId.Generate(), _customerId, _total, _priority, _deliveryNote); // => returns new Order(OrderId.Generate(), 
+            return new Order(OrderId.Generate(), _customerId, _total, _priority, _deliveryNote); // => returns new Order(OrderId.Generate(),
         }
     }
 }
@@ -2884,7 +2884,7 @@ public final class Money {                                            // => Mone
     @Override public boolean equals(Object o) {                       // => expression
         if (!(o instanceof Money m)) return false;                    // => precondition check
         // => Pattern variable 'm': Java 16+ syntax; only reaches next line if cast succeeds
-        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency); // => returns amount.compareTo(m.amount) == 
+        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency); // => returns amount.compareTo(m.amount) ==
         // => Structural equality: same normalised amount AND same currency
         // => compareTo used for BigDecimal (not equals) to handle 10.00 == 10.0
     }

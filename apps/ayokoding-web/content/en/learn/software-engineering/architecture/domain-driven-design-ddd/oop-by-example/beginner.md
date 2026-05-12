@@ -148,7 +148,7 @@ public final class Money {  // => final: cannot be subclassed; value semantics p
     @Override public boolean equals(Object o) { // => override required for structural equality
         // => Structural equality: same amount+currency = interchangeable
         if (!(o instanceof Money m)) return false; // => pattern variable m; type-safe cast
-        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency); // => returns amount.compareTo(m.amount) == 
+        return amount.compareTo(m.amount) == 0 && currency.equals(m.currency); // => returns amount.compareTo(m.amount) ==
         // => compareTo not equals for BigDecimal: "10.00".equals("10") is false; compareTo == 0 is true
     }
     @Override public int hashCode() { // => must match equals; same fields, same hash
@@ -215,7 +215,7 @@ public sealed record Money                                            // => reco
     {
         // => Currency must match; no silent conversion allowed
         if (Currency != other.Currency) throw new InvalidOperationException("Currency mismatch"); // => throws if guard fails
-        return this with { Amount = Amount + other.Amount };          // => returns this with { Amount = Amount + 
+        return this with { Amount = Amount + other.Amount };          // => returns this with { Amount = Amount +
         // => with-expression produces a new record; this is unchanged
     }
 }

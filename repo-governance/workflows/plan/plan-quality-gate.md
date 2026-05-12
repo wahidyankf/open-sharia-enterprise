@@ -98,6 +98,8 @@ retain in-context `WebSearch` and `WebFetch` for single-shot verification agains
 authoritative URLs. No workflow-level configuration is required; the delegation is encoded in the
 `plan-checker` prompt.
 
+Multi-page research delegation keeps plan-checker context lean — externalizing 2+ search or 3+ fetch operations into `web-research-maker` reduces the checker's per-claim context spend. Tracked under Observability Metrics as 'web-research delegation rate'.
+
 ## Steps
 
 ### 1. Initial Validation (Sequential)
@@ -131,19 +133,26 @@ For external claims that are not already documented in the repo and require more
 
 Analyze audit report to determine if fixes are needed.
 
-**Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM, and LOW) in `{step1.outputs.audit-report-1}`
+**Condition Check**: Count findings based on mode level in `{step1.outputs.audit-report-1}`
 
-- If findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
-- If findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
+- **lax**: Count CRITICAL only
+- **normal**: Count CRITICAL + HIGH
+- **strict**: Count CRITICAL + HIGH + MEDIUM
+- **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+
+**Below-threshold findings**: Report but don't block success
+
+- If threshold-level findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
+- If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
   proceed to step 4 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 1 completion
 
 **Notes**:
 
-- Fixes ALL findings, not just CRITICAL/HIGH ones
-- Includes LOW-level issues like formatting, style improvements
-- Ensures plans achieve perfect quality state
+- Fix scope determined by mode level
+- Below-threshold findings remain visible in audit reports
+- Enables progressive quality improvement
 
 ### 3. Apply Fixes (Sequential, Conditional)
 
@@ -188,13 +197,17 @@ Determine whether to continue fixing or terminate.
 
 **Logic**:
 
-- Count ALL findings in `{step4.outputs.audit-report-N}` (CRITICAL, HIGH, MEDIUM, LOW)
-- Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
+- Count findings based on mode level in `{step4.outputs.audit-report-N}` (same as Step 2):
+  - **lax**: Count CRITICAL only
+  - **normal**: Count CRITICAL + HIGH
+  - **strict**: Count CRITICAL + HIGH + MEDIUM
+  - **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
 - If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success — double-zero confirmed)
 - If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 4 (re-validate)
-- If consecutive_zero_count < 2 AND findings = 0: Loop back to step 4 (confirmation check — no fix needed, just re-verify)
-- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
-- If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Loop back to step 4 (confirmation check — no fix needed, just re-verify)
+- If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
+- If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
 **Depends on**: Step 4 completion
 
@@ -224,9 +237,22 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY level (CRITICAL, HIGH, MEDIUM, LOW) on **two consecutive** validations (consecutive pass requirement)
-- **Partial** (`partial`): Any findings remain after max-iterations cycles
-- FAIL: **Failure** (`fail`): Checker or fixer encountered technical errors
+**Success** (`pass`):
+
+- **lax**: Zero CRITICAL findings on 2 consecutive checks (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks
+
+**Partial** (`partial`):
+
+- Threshold-level findings remain after max-iterations safety limit
+
+**Failure** (`fail`):
+
+- Checker or fixer encountered technical errors
+
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).
 
 ## Example Usage
 
@@ -348,6 +374,29 @@ The plan-checker validates:
   - **Thematic commit guidance**: Instruction to commit changes thematically with Conventional Commits format, splitting different domains/concerns into separate commits
   - **Manual behavioral assertions**: Steps to use Playwright MCP for web UI verification (navigate, snapshot, click, check console errors) and curl for API verification (hit endpoints, check responses, test error cases) — applicable when the plan touches UI or API code
 
+## Final Audit Report Structure
+
+The audit report emitted by `plan-checker` follows this structure:
+
+1. **Report metadata** — report ID (UUID chain), date, plan path, mode, iteration number
+2. **Scope** — which plan documents were checked (README, brd, prd, tech-docs, delivery)
+3. **Findings by criticality** — CRITICAL → HIGH → MEDIUM → LOW, each with:
+   - Finding ID
+   - Category (structure, requirements, anti-hallucination, acceptance-criteria, etc.)
+   - Confidence level (HIGH / MEDIUM / FALSE_POSITIVE)
+   - Description and suggested fix
+4. **Executive summary** — findings count by criticality, consecutive-zero count, pass/fail verdict
+5. **Links to related reports** — previous iteration report (if any), plan quality gate report
+
+## Observability Metrics
+
+Track across executions:
+
+- **Iterations-to-convergence per mode** — how many check-fix cycles needed per mode level
+- **Anti-hallucination violations by category** — AP-1 through AP-10 breakdown (from plan-checker Step 5f output)
+- **Web-research delegation rate** — count of `web-research-maker` invocations per audit; higher rate indicates more external fact-checking
+- **AI tokens spent on validation** — measure cost per plan audit
+
 ## Related Workflows
 
 This workflow can be composed with:
@@ -390,3 +439,5 @@ This workflow ensures plan quality and implementation readiness through iterativ
 - **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1
+- **[Plans Organization Convention](../../conventions/structure/plans.md)**: Workflow validates the five-document structure and worktree section per the convention
+- **[Plan Anti-Hallucination Convention](../../development/quality/plan-anti-hallucination.md)**: plan-checker's Step 5f enforces this convention's recipes, confidence labels, and Anti-Pattern Catalog

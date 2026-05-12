@@ -237,7 +237,7 @@ namespace SharedKernel {                                              // => expr
         public Money Add(Money other) {                               // => Add method
             if (Currency != other.Currency) throw new InvalidOperationException("Currency mismatch"); // => throws if guard fails
             // => Fail fast on currency mismatch; avoids silent data corruption
-            return this with { Amount = Amount + other.Amount };      // => returns this with { Amount = Amount + 
+            return this with { Amount = Amount + other.Amount };      // => returns this with { Amount = Amount +
             // => With-expression: returns new record with updated Amount — immutable
         }
     }
@@ -357,7 +357,7 @@ namespace Order {                                                     // => expr
     public class OrderService(InventoryService inventory) {           // => class OrderService
         public StockLevel GetStock(string sku) {                      // => GetStock method
             var dto = inventory.CheckAvailability(sku);  // => Calls Supplier
-            return new StockLevel(dto.ProductId, dto.Qty);            // => returns new StockLevel(dto.ProductId, 
+            return new StockLevel(dto.ProductId, dto.Qty);            // => returns new StockLevel(dto.ProductId,
             // => Translates Supplier model to Order model at the seam
         }
     }

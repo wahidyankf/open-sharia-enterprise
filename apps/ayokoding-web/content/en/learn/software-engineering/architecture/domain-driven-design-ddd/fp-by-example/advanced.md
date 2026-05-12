@@ -4,7 +4,20 @@ date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000005
 description: "Examples 56-80: Serialization, sagas, CQRS, event publishing, bounded-context integration, domain evolution, and testing strategies in F# DDD"
-tags: ["ddd", "f#", "functional-programming", "cqrs", "event-sourcing", "sagas", "persistence", "domain-evolution", "testing", "by-example", "advanced"]
+tags:
+  [
+    "ddd",
+    "f#",
+    "functional-programming",
+    "cqrs",
+    "event-sourcing",
+    "sagas",
+    "persistence",
+    "domain-evolution",
+    "testing",
+    "by-example",
+    "advanced",
+  ]
 ---
 
 This advanced section completes the order-taking system with production-grade concerns: serialization, event publishing, CQRS, long-running workflows, bounded-context integration, domain evolution, and testing strategies. All examples continue using the same order-taking domain established in the beginner and intermediate sections.

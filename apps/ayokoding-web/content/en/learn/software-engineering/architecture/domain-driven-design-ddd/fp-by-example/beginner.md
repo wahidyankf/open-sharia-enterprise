@@ -4,7 +4,18 @@ date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000003
 description: "Examples 1-25: Types as the design — ubiquitous language, bounded contexts, record and union types, smart constructors, and order-taking domain value types in F#"
-tags: ["ddd", "f#", "functional-programming", "domain-modeling", "types", "discriminated-unions", "smart-constructors", "by-example", "beginner"]
+tags:
+  [
+    "ddd",
+    "f#",
+    "functional-programming",
+    "domain-modeling",
+    "types",
+    "discriminated-unions",
+    "smart-constructors",
+    "by-example",
+    "beginner",
+  ]
 ---
 
 This beginner-level section introduces DDD through F# types. The central thesis of Wlaschin's book — that you should **encode business rules in the type system so illegal states are unrepresentable** — is established here through 25 progressive examples, all using the order-taking domain.

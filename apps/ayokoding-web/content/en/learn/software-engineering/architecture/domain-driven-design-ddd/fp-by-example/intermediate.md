@@ -4,7 +4,19 @@ date: 2026-05-09T00:00:00+07:00
 draft: false
 weight: 10000004
 description: "Examples 26-55: Function composition, pipelines, Railway-Oriented Programming, validation accumulation, workflow signatures, and the functional core / imperative shell boundary in F#"
-tags: ["ddd", "f#", "functional-programming", "railway-oriented-programming", "result", "async", "pipelines", "dependency-injection", "by-example", "intermediate"]
+tags:
+  [
+    "ddd",
+    "f#",
+    "functional-programming",
+    "railway-oriented-programming",
+    "result",
+    "async",
+    "pipelines",
+    "dependency-injection",
+    "by-example",
+    "intermediate",
+  ]
 ---
 
 This intermediate section builds on the type vocabulary from the beginner section and introduces the pipeline mechanics that make functional DDD compelling in practice: function composition, Railway-Oriented Programming, computation expressions, validation accumulation, and pushing effects to the edges.

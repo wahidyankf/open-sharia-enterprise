@@ -55,7 +55,7 @@ Reference materials (read-only):
 
 ### DD-2: PostgreSQL via EF Core + DbUp
 
-**Choice**: EF Core 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 for the query path; **DbUp 5.* + dbup-postgresql 5.*** for forward-only migrations applied at startup. Same package set as `ose-primer/apps/crud-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj`.
+**Choice**: EF Core 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 for the query path; **DbUp 5._ + dbup-postgresql 5._** for forward-only migrations applied at startup. Same package set as `ose-primer/apps/crud-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj`.
 
 **Rationale**: GRC needs document persistence (regulatory PDFs, internal SOPs, parsed text, gap reports). PGlite (organiclever-web's local-first choice) cannot host server-side documents shared across users; PostgreSQL is the only realistic choice. EF Core is well-supported in F# via record-type entities. DbUp is the lighter migration tool used in the F# template.
 
@@ -88,10 +88,10 @@ Reference materials (read-only):
 
 **Choice**: `specs/apps/ose-grc/containers/contracts/openapi.yaml` is the single contract source. `ose-grc-contracts` Nx project lints + bundles it via `@redocly/cli` and `@stoplight/spectral-cli` (same toolchain as `organiclever-contracts`). Downstream codegen:
 
-| Consumer       | Tool                                       | Generator flag                 | Output path                                                |
-| -------------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------- |
-| `ose-grc-be`   | `npx openapi-generator-cli`                | `-g fsharp-giraffe-server`     | `apps/ose-grc-be/generated-contracts/` (.fs files compiled in fsproj) |
-| `ose-grc-web`  | `npx @hey-api/openapi-ts`                  | n/a (TS-native)                | `apps/ose-grc-web/src/generated-contracts/`                |
+| Consumer      | Tool                        | Generator flag             | Output path                                                           |
+| ------------- | --------------------------- | -------------------------- | --------------------------------------------------------------------- |
+| `ose-grc-be`  | `npx openapi-generator-cli` | `-g fsharp-giraffe-server` | `apps/ose-grc-be/generated-contracts/` (.fs files compiled in fsproj) |
+| `ose-grc-web` | `npx @hey-api/openapi-ts`   | n/a (TS-native)            | `apps/ose-grc-web/src/generated-contracts/`                           |
 
 **Bootstrap scope**: just `GET /api/v1/health` returning `HealthResponse`. Both consumers must successfully generate types from this single endpoint. Additional endpoints (regulatory-source upload, policy upload, gap-report fetch) are added in feature plans.
 
@@ -99,12 +99,12 @@ Reference materials (read-only):
 
 **Choice**: Declare four contexts in `specs/apps/ose-grc/ddd/bounded-contexts.yaml` at bootstrap. Each gets a `specs/apps/ose-grc/ddd/ubiquitous-language/<context>.md` stub.
 
-| Context             | Responsibility (one sentence)                                                                                       | Layers (initial)                                       | Relationships (initial)                              |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| `regulatory-source` | Ingests and stores regulator-published rule documents (PDFs, circulars) with provenance metadata.                   | domain, application, infrastructure                    | Upstream supplier to `gap-analysis`.                 |
-| `internal-policy`   | Ingests and stores company-internal documents (SOPs, manuals, procedures) with version + scope metadata.            | domain, application, infrastructure                    | Upstream supplier to `gap-analysis`.                 |
-| `gap-analysis`      | Compares a regulatory-source corpus against an internal-policy corpus and emits structured `GapItem` records.       | domain, application, infrastructure, presentation     | Customer of `regulatory-source` and `internal-policy`; customer of `ai-orchestration`. |
-| `ai-orchestration`  | Wraps LLM calls (OpenRouter), prompt management, retry/backoff, token-budget accounting. Stateless from the BE side. | domain, application, infrastructure                    | Supplier to `gap-analysis`.                         |
+| Context             | Responsibility (one sentence)                                                                                        | Layers (initial)                                  | Relationships (initial)                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `regulatory-source` | Ingests and stores regulator-published rule documents (PDFs, circulars) with provenance metadata.                    | domain, application, infrastructure               | Upstream supplier to `gap-analysis`.                                                   |
+| `internal-policy`   | Ingests and stores company-internal documents (SOPs, manuals, procedures) with version + scope metadata.             | domain, application, infrastructure               | Upstream supplier to `gap-analysis`.                                                   |
+| `gap-analysis`      | Compares a regulatory-source corpus against an internal-policy corpus and emits structured `GapItem` records.        | domain, application, infrastructure, presentation | Customer of `regulatory-source` and `internal-policy`; customer of `ai-orchestration`. |
+| `ai-orchestration`  | Wraps LLM calls (OpenRouter), prompt management, retry/backoff, token-budget accounting. Stateless from the BE side. | domain, application, infrastructure               | Supplier to `gap-analysis`.                                                            |
 
 **Bootstrap scope**: YAML entries + `ubiquitous-language/<context>.md` stubs of ~10 lines each, listing canonical terms placeholders. F# folders `src/OseGrcBe/Domain/<Context>.fs` are stubbed empty.
 
@@ -127,13 +127,13 @@ Reference materials (read-only):
 
 **Choice**: Re-use existing `.github/workflows/pr-quality-gate.yml` detector. Tag each project:
 
-| Project           | Tags                                                                  |
-| ----------------- | --------------------------------------------------------------------- |
-| `ose-grc-web`     | `type:app`, `platform:nextjs`, `lang:ts`, `domain:ose-grc`            |
-| `ose-grc-be`      | `type:app`, `platform:giraffe`, `lang:fsharp`, `domain:ose-grc`       |
-| `ose-grc-web-e2e` | `type:e2e`, `platform:playwright`, `lang:ts`, `domain:ose-grc`        |
-| `ose-grc-be-e2e`  | `type:e2e`, `platform:playwright`, `lang:ts`, `domain:ose-grc`        |
-| `ose-grc-contracts` | `type:lib`, `platform:openapi`, `domain:ose-grc`                    |
+| Project             | Tags                                                            |
+| ------------------- | --------------------------------------------------------------- |
+| `ose-grc-web`       | `type:app`, `platform:nextjs`, `lang:ts`, `domain:ose-grc`      |
+| `ose-grc-be`        | `type:app`, `platform:giraffe`, `lang:fsharp`, `domain:ose-grc` |
+| `ose-grc-web-e2e`   | `type:e2e`, `platform:playwright`, `lang:ts`, `domain:ose-grc`  |
+| `ose-grc-be-e2e`    | `type:e2e`, `platform:playwright`, `lang:ts`, `domain:ose-grc`  |
+| `ose-grc-contracts` | `type:lib`, `platform:openapi`, `domain:ose-grc`                |
 
 The PR-quality-gate `detect` job already routes `lang:fsharp|lang:csharp` → `has-dotnet` → `dotnet` quality-gate job (verified at `.github/workflows/pr-quality-gate.yml`). No new workflow file or detector branch needed.
 
@@ -322,7 +322,7 @@ Mirror `organiclever-web-e2e/` and `organiclever-be-e2e/` exactly. Swap project 
 
 ## Dependencies
 
-- **External packages** (BE, all already present in ose-primer pattern): Giraffe 7, EFCore 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 + EFCore.NamingConventions 10, FSharp.SystemTextJson 1, dbup-core + dbup-postgresql 5, xunit + TickSpec, AltCover (via dotnet-tools.json), G-Research.FSharp.Analyzers 0.*
+- **External packages** (BE, all already present in ose-primer pattern): Giraffe 7, EFCore 10 + Npgsql.EntityFrameworkCore.PostgreSQL 10 + EFCore.NamingConventions 10, FSharp.SystemTextJson 1, dbup-core + dbup-postgresql 5, xunit + TickSpec, AltCover (via dotnet-tools.json), G-Research.FSharp.Analyzers 0.\*
 - **External packages** (FE): inherited from root `package.json` — Next.js 16, React 19, tRPC, Tailwind v4, Vitest, Storybook, `@open-sharia-enterprise/web-ui`, `@hey-api/openapi-ts`
 - **Nx implicit deps**: `ose-grc-web` → `ose-grc-contracts`, `rhino-cli`, `web-ui`, `web-ui-token`; `ose-grc-be` → `ose-grc-contracts`, `rhino-cli`; `ose-grc-web-e2e` → `ose-grc-web`, `ose-grc-be`; `ose-grc-be-e2e` → `ose-grc-be`
 

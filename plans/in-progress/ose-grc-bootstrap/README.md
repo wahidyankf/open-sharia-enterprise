@@ -12,12 +12,12 @@ This plan **bootstraps the four projects**, supporting CI/CD workflows, BDD/DDD 
 
 ## Four Projects
 
-| Project           | Type                    | Port | Tech                                       | Notes                                                            |
-| ----------------- | ----------------------- | ---- | ------------------------------------------ | ---------------------------------------------------------------- |
-| `ose-grc-web`     | Next.js 16 frontend     | 3300 | App Router, TS, tRPC, Tailwind v4                       | Mirrors `organiclever-web` minus PGlite (server-first data flow) |
-| `ose-grc-be`      | F#/Giraffe REST API     | 8302 | .NET 10, Giraffe, Npgsql, DbUp, xUnit + TickSpec (BDD)  | Mirrors ose-primer `crud-be-fsharp-giraffe` pattern              |
-| `ose-grc-web-e2e` | Playwright FE E2E       | —    | Playwright-BDD, oxlint, TS                              | Mirrors `organiclever-web-e2e`                                   |
-| `ose-grc-be-e2e`  | Playwright BE E2E       | —    | Playwright-BDD, oxlint, TS                              | Mirrors `organiclever-be-e2e`                                    |
+| Project           | Type                | Port | Tech                                                   | Notes                                                            |
+| ----------------- | ------------------- | ---- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `ose-grc-web`     | Next.js 16 frontend | 3300 | App Router, TS, tRPC, Tailwind v4                      | Mirrors `organiclever-web` minus PGlite (server-first data flow) |
+| `ose-grc-be`      | F#/Giraffe REST API | 8302 | .NET 10, Giraffe, Npgsql, DbUp, xUnit + TickSpec (BDD) | Mirrors ose-primer `crud-be-fsharp-giraffe` pattern              |
+| `ose-grc-web-e2e` | Playwright FE E2E   | —    | Playwright-BDD, oxlint, TS                             | Mirrors `organiclever-web-e2e`                                   |
+| `ose-grc-be-e2e`  | Playwright BE E2E   | —    | Playwright-BDD, oxlint, TS                             | Mirrors `organiclever-be-e2e`                                    |
 
 The user originally listed the BE e2e as `ose-grc-e2e`. This plan uses `ose-grc-be-e2e` for consistency with the `organiclever-be-e2e` naming pattern [Judgment call]. Renaming to `ose-grc-e2e` is mechanical if user prefers — see [prd.md §Naming Decision](./prd.md#naming-decision-be-e2e-project) for the cost of either choice.
 
@@ -51,7 +51,7 @@ The user originally listed the BE e2e as `ose-grc-e2e`. This plan uses `ose-grc-
 
 ## Quick Links
 
-- Reference BE pattern: [`ose-primer/apps/crud-be-fsharp-giraffe/`](../../../ose-primer/apps/crud-be-fsharp-giraffe/) (read-only template; copy patterns, not files)
+- Reference BE pattern: `ose-primer/apps/crud-be-fsharp-giraffe/` (read-only template; copy patterns, not files — see <https://github.com/wahidyankf/ose-primer>)
 - Reference FE pattern: [`apps/organiclever-web/`](../../../apps/organiclever-web/)
 - Reference E2E pattern: [`apps/organiclever-web-e2e/`](../../../apps/organiclever-web-e2e/), [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/)
 - Reference contracts: [`specs/apps/organiclever/containers/contracts/`](../../../specs/apps/organiclever/containers/contracts/)

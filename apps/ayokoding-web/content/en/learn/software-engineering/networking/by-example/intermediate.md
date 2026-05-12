@@ -4,7 +4,19 @@ weight: 10000002
 date: 2026-05-10T00:00:00+07:00
 draft: false
 description: "Examples 30-56: Production networking patterns covering socket options, multiplexing, TLS, HTTP/2, WebSockets, NAT, BGP, congestion control, and HTTP caching (40-75% coverage)"
-tags: ["networking", "python", "tutorial", "by-example", "intermediate", "tls", "select", "threading", "http2", "websockets"]
+tags:
+  [
+    "networking",
+    "python",
+    "tutorial",
+    "by-example",
+    "intermediate",
+    "tls",
+    "select",
+    "threading",
+    "http2",
+    "websockets",
+  ]
 ---
 
 ## Example 30: TCP Socket Options — SO_REUSEADDR and TCP_NODELAY

@@ -50,13 +50,13 @@ The running domain across all examples is **e-commerce order placement** — a s
 ## What This Tutorial Does NOT Cover
 
 - Language tutorials: Java, Kotlin, and C# each have their own by-example tutorials for language fundamentals
-- Deep DDD theory: read the [DDD Overview](/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview) for conceptual grounding; Evans's *Domain-Driven Design* (Addison-Wesley, 2003) for comprehensive theory
+- Deep DDD theory: read the [DDD Overview](/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview) for conceptual grounding; Evans's _Domain-Driven Design_ (Addison-Wesley, 2003) for comprehensive theory
 - Event sourcing internals beyond the introductory example in the Advanced section
 - CQRS infrastructure (projections, read-model persistence) beyond the pattern itself
 
 ## Sibling Tutorial: Functional Programming Approach
 
-If you prefer a functional programming treatment of DDD, see [DDD Using FP (F#) — By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, following Scott Wlaschin's *Domain Modeling Made Functional*.
+If you prefer a functional programming treatment of DDD, see [DDD Using FP (F#) — By Example](/en/learn/software-engineering/architecture/domain-driven-design-ddd/fp-by-example/overview). That tutorial covers the same strategic and tactical patterns through F# discriminated unions, Railway-Oriented Programming, and workflow pipelines, following Scott Wlaschin's _Domain Modeling Made Functional_.
 
 ## Structure of Each Example
 

@@ -125,9 +125,9 @@ You protect networked systems. This guide shows the attack surface and defenses:
 
 ## Relationship to Other Networking Content
 
-| Tutorial Type    | Coverage      | Best For                          |
-| ---------------- | ------------- | --------------------------------- |
-| **Introduction** | Conceptual    | Learning from scratch             |
-| **This: By Example** | Comprehensive | Rapid depth for experienced devs  |
+| Tutorial Type        | Coverage      | Best For                         |
+| -------------------- | ------------- | -------------------------------- |
+| **Introduction**     | Conceptual    | Learning from scratch            |
+| **This: By Example** | Comprehensive | Rapid depth for experienced devs |
 
 The Introduction provides narrative context. By-example provides working code. Use both for complete understanding.
