@@ -1442,6 +1442,8 @@ rhino-cli say
 - docs-validate-heading-hierarchy: N-fence support — correctly tracks 4-backtick and 5-backtick outer fences containing nested 3-backtick code blocks
 - repo-governance audit: new `--exclude <glob>` flag; `AuditOptions.ExcludeGlobs` propagated to all path-scanning categories
 - repo-governance audit: `RHINO_AUDIT_NOW=<RFC3339>` env var for byte-deterministic output
+- Added 3 more emoji-audit skip-dirs: `storybook-static`, `.playwright-mcp`, `raw`
+- **Post-plan final state** (2026-05-12): `total_findings=0` AI-only; deterministic total=751 (skip-listed: emoji=177, frontmatter-audit=30; threshold only: readme-index=203, agents-detect-dup=341); iterations-to-convergence=1; byte-determinism: SHA-256 identical across 2 runs with `RHINO_AUDIT_NOW=2026-05-12T15:00:00Z`
 
 ### v0.16.0 (2026-05-12)
 
