@@ -28,3 +28,9 @@ Feature: Governance Emoji Audit
     When the developer runs repo-governance emoji-audit on the file
     Then the command exits successfully
     And the output reports zero emoji findings
+
+  Scenario: emoji-audit skips archived directory
+    Given a source tree with an emoji-containing file inside the archived directory
+    When the developer runs repo-governance emoji-audit on the tree
+    Then the command exits successfully
+    And the output reports zero emoji findings

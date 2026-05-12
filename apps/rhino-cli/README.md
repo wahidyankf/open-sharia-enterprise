@@ -1052,7 +1052,7 @@ rhino-cli agents detect-duplication
 
 ### repo-governance audit
 
-Orchestrator. Invokes all 11 deterministic categories above in fixed order and emits a single JSON envelope (`schema: "rhino-cli/repo-governance-audit/v1"`) with canonical key order. Supports `--skip <category>` and `--include-category <name>` repeatable filters. Verified byte-deterministic given a fixed clock.
+Orchestrator. Invokes all 11 deterministic categories above in fixed order and emits a single JSON envelope (`schema: "rhino-cli/repo-governance-audit/v1"`) with canonical key order. Supports `--skip <category>`, `--include-category <name>`, and `--exclude <glob>` repeatable filters. Verified byte-deterministic given a fixed clock.
 
 ```bash
 # Full audit, JSON output captured for the AI checker
@@ -1063,6 +1063,19 @@ rhino-cli repo-governance audit --include-category agents-md-size
 
 # Skip a noisy category
 rhino-cli repo-governance audit --skip emoji-audit
+
+# Exclude paths matching a glob pattern
+rhino-cli repo-governance audit --exclude 'archived/**'
+```
+
+#### Environment Variables
+
+```
+RHINO_AUDIT_NOW=<RFC3339 timestamp>
+  When set, pins the ran_at field in the JSON output to the provided value.
+  Enables SHA-256 hash-reuse optimization: identical repo state + identical RHINO_AUDIT_NOW
+  produces identical JSON output across runs, allowing callers to skip re-evaluation.
+  Example: RHINO_AUDIT_NOW=2026-05-12T12:00:00Z ./dist/rhino-cli repo-governance audit -o json
 ```
 
 ## Help Commands
@@ -1421,6 +1434,14 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.16.1
+
+- emoji-audit: expand skip-dirs (`archived`, `test-results`, `playwright-report`, `coverage`, `.venv`, `.dart_tool`, `out`, `.cache`, `__pycache__`, `.pytest_cache`)
+- docs-validate-frontmatter: accept Diátaxis category values (`tutorial`, `how-to`, `reference`, `explanation`); emit warn (not fail) for deprecated `category=software`
+- docs-validate-heading-hierarchy: N-fence support — correctly tracks 4-backtick and 5-backtick outer fences containing nested 3-backtick code blocks
+- repo-governance audit: new `--exclude <glob>` flag; `AuditOptions.ExcludeGlobs` propagated to all path-scanning categories
+- repo-governance audit: `RHINO_AUDIT_NOW=<RFC3339>` env var for byte-deterministic output
 
 ### v0.16.0 (2026-05-12)
 

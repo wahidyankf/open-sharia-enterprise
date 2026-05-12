@@ -312,6 +312,66 @@ func (s *governanceAuditIntegSteps) parseEnvelope() map[string]any {
 	return env
 }
 
+// TestIntegration_GovernanceAudit_ExcludeFlag verifies that --exclude
+// suppresses findings from paths matching the glob pattern.
+func TestIntegration_GovernanceAudit_ExcludeFlag(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".git"), 0o755); err != nil {
+		t.Fatalf("mkdir .git: %v", err)
+	}
+	// Write a file that would normally trigger the emoji-audit (U+1F600 in Go).
+	emojiFile := filepath.Join(dir, "apps", "emoji.go")
+	if err := os.MkdirAll(filepath.Dir(emojiFile), 0o755); err != nil {
+		t.Fatalf("mkdir apps: %v", err)
+	}
+	if err := os.WriteFile(emojiFile, []byte("package emoji\nconst x = \"\U0001F600\"\n"), 0o600); err != nil {
+		t.Fatalf("write emoji.go: %v", err)
+	}
+
+	// First run without --exclude: should report a finding.
+	origWd, _ := os.Getwd()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("chdir: %v", err)
+	}
+	defer func() { _ = os.Chdir(origWd) }()
+
+	origFn := runAuditFn
+	defer func() { runAuditFn = origFn }()
+	runAuditFn = func(opts governance.AuditOptions) (governance.AuditEnvelope, error) {
+		opts.Now = func() time.Time { return time.Date(2026, time.May, 12, 0, 0, 0, 0, time.UTC) }
+		return governance.RunAudit(opts)
+	}
+
+	// Run with --exclude 'apps/**' so the emoji file is excluded.
+	governanceAuditExclude = []string{"apps/**"}
+	governanceAuditIncludeOnly = []string{"emoji-audit"}
+	output = "json"
+	_ = parseOutputFormat(nil, nil)
+
+	var buf bytes.Buffer
+	governanceAuditCmd.SetOut(&buf)
+	governanceAuditCmd.SetErr(&buf)
+	err := governanceAuditCmd.RunE(governanceAuditCmd, []string{})
+	// Reset
+	governanceAuditExclude = nil
+	governanceAuditIncludeOnly = nil
+	output = "text"
+	_ = parseOutputFormat(nil, nil)
+
+	if err != nil {
+		t.Fatalf("expected success when excluded path has finding, got: %v\nOutput: %s", err, buf.String())
+	}
+
+	var env map[string]any
+	if err := json.Unmarshal(buf.Bytes(), &env); err != nil {
+		t.Fatalf("invalid JSON: %v\n%s", err, buf.String())
+	}
+	tf := int(env["result"].(map[string]any)["total_findings"].(float64))
+	if tf != 0 {
+		t.Errorf("expected 0 findings after --exclude, got %d\nOutput: %s", tf, buf.String())
+	}
+}
+
 // InitializeGovernanceAuditScenario wires the integration steps into the
 // godog scenario context.
 func InitializeGovernanceAuditScenario(sc *godog.ScenarioContext) {

@@ -379,6 +379,41 @@ func TestAuditEmoji_SortByLineAndColumn(t *testing.T) {
 	}
 }
 
+// Test_AuditEmoji_SkipsNewDirs verifies that each of the newly added skip
+// directories produces zero findings even when emoji-containing files live
+// inside them.
+func Test_AuditEmoji_SkipsNewDirs(t *testing.T) {
+	t.Parallel()
+	newSkipDirs := []string{
+		"archived",
+		"test-results",
+		"playwright-report",
+		"coverage",
+		".venv",
+		".dart_tool",
+		"out",
+		".cache",
+		"__pycache__",
+		".pytest_cache",
+	}
+	// Smiling face U+1F600 in a Go file inside each candidate directory.
+	emoji := "package x\n// \U0001F600 hi\n"
+	dir := t.TempDir()
+	for _, skip := range newSkipDirs {
+		writeEmojiFile(t, filepath.Join(dir, skip, "bad.go"), emoji)
+	}
+	// One clean file outside all skip dirs to ensure the walker still runs.
+	writeEmojiFile(t, filepath.Join(dir, "clean.go"), "package x\n")
+
+	findings, err := AuditEmoji([]string{dir})
+	if err != nil {
+		t.Fatalf("AuditEmoji: %v", err)
+	}
+	if len(findings) != 0 {
+		t.Errorf("expected 0 findings for new skip-dirs, got %d: %+v", len(findings), findings)
+	}
+}
+
 // TestHasForbiddenEmojiExtension verifies extension matching is
 // case-insensitive and covers all declared extensions.
 func TestHasForbiddenEmojiExtension(t *testing.T) {

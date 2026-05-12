@@ -338,6 +338,50 @@ func TestAnalyzeHeadings_FirstHeadingNotH1StillFlagsMissing(t *testing.T) {
 	}
 }
 
+// Test_ValidateDocsHeadingHierarchy_NFence verifies that 4-backtick and
+// 5-backtick outer fences containing 3-backtick inner code blocks are handled
+// correctly — the inner ``` must NOT close the outer fence.
+func Test_ValidateDocsHeadingHierarchy_NFence(t *testing.T) {
+	tests := []struct {
+		name    string
+		content string
+		wantOK  bool // true = zero findings expected
+	}{
+		{
+			name: "4-backtick outer contains 3-backtick inner",
+			// The ```` ``` ```` opens a 4-tick fence; the inner ``` should NOT close it.
+			content: "# Title\n\n## Section\n\n```` markdown\n```go\n# not a heading\n```\n````\n\n### Subsection\n",
+			wantOK:  true,
+		},
+		{
+			name:    "5-backtick outer fence",
+			content: "# Title\n\n````` markdown\n```go\n# not a heading\n```\n`````\n\n## Section\n",
+			wantOK:  true,
+		},
+		{
+			name:    "4-tilde outer with 3-backtick inner",
+			content: "# Title\n\n~~~~ text\n```\n# not a heading\n```\n~~~~\n\n## Section\n",
+			wantOK:  true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmp := t.TempDir()
+			writeFile(t, tmp, "test.md", tt.content)
+			findings, err := ValidateDocsHeadingHierarchy([]string{tmp})
+			if err != nil {
+				t.Fatalf("ValidateDocsHeadingHierarchy: %v", err)
+			}
+			if tt.wantOK && len(findings) != 0 {
+				t.Errorf("expected 0 findings, got %d: %+v", len(findings), findings)
+			}
+			if !tt.wantOK && len(findings) == 0 {
+				t.Errorf("expected findings, got none")
+			}
+		})
+	}
+}
+
 func TestAnalyzeHeadings_ThreeH1sReportedOnce(t *testing.T) {
 	// Three H1s should produce one duplicate-h1 finding (we only report the
 	// fact of >1, not one finding per extra H1). The reported line is the

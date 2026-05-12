@@ -21,6 +21,7 @@ const (
 	stepEmojiJSONFileWithEmoji              = `^a JSON file containing an emoji codepoint$`
 	stepEmojiGoFileWithEmoji                = `^a Go source file containing an emoji codepoint$`
 	stepEmojiForbiddenFileWithNonEmojiMulti = `^a forbidden file containing multibyte non-emoji unicode such as Arabic$`
+	stepEmojiTreeWithArchivedEmojiFile      = `^a source tree with an emoji-containing file inside the archived directory$`
 	stepDeveloperRunsEmojiAuditOnTree       = `^the developer runs repo-governance emoji-audit on the tree$`
 	stepDeveloperRunsEmojiAuditOnFile       = `^the developer runs repo-governance emoji-audit on the file$`
 	stepOutputZeroEmojiFindings             = `^the output reports zero emoji findings$`
@@ -105,6 +106,12 @@ func (s *governanceEmojiAuditUnitSteps) forbiddenFileWithArabic() error {
 	return nil
 }
 
+func (s *governanceEmojiAuditUnitSteps) treeWithArchivedEmojiFile() error {
+	// The archived directory is skipped; the audit returns zero findings.
+	emojiAuditFn = func(_ []string) ([]governance.EmojiFinding, error) { return nil, nil }
+	return nil
+}
+
 func (s *governanceEmojiAuditUnitSteps) runOnTree() error {
 	return s.runWithArgs([]string{"."})
 }
@@ -163,6 +170,7 @@ func TestUnitGovernanceEmojiAudit(t *testing.T) {
 			sc.Step(stepEmojiJSONFileWithEmoji, s.jsonFileWithEmoji)
 			sc.Step(stepEmojiGoFileWithEmoji, s.goFileWithEmoji)
 			sc.Step(stepEmojiForbiddenFileWithNonEmojiMulti, s.forbiddenFileWithArabic)
+			sc.Step(stepEmojiTreeWithArchivedEmojiFile, s.treeWithArchivedEmojiFile)
 			sc.Step(stepDeveloperRunsEmojiAuditOnTree, s.runOnTree)
 			sc.Step(stepDeveloperRunsEmojiAuditOnFile, s.runOnFile)
 			sc.Step(stepOutputZeroEmojiFindings, s.zeroFindings)

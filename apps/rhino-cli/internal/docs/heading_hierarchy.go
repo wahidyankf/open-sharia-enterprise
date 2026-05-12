@@ -137,6 +137,10 @@ func scanFileHeadingHierarchy(path string) ([]DocsHeadingFinding, error) {
 // collectHeadings reads a markdown source line-by-line and returns the
 // ordered list of headings, skipping anything inside a fenced code block.
 // Empty input returns an empty slice with no error.
+//
+// N-fence aware: a 4-backtick (or longer) opening fence is only closed by a
+// closing fence of the same character and the same length or longer. An inner
+// 3-backtick fence does NOT close a 4-backtick outer fence.
 func collectHeadings(r io.Reader) ([]heading, error) {
 	scanner := bufio.NewScanner(r)
 	// Allow long lines (default 64 KiB token limit is fine for prose but
@@ -145,21 +149,24 @@ func collectHeadings(r io.Reader) ([]heading, error) {
 
 	var headings []heading
 	inFence := false
-	fenceMarker := "" // tracks "```" or "~~~" so a mismatched closer is ignored.
+	var fenceChar rune // the opening fence character (` or ~)
+	fenceLen := 0      // the opening fence length (≥3)
 	lineNum := 0
 	for scanner.Scan() {
 		lineNum++
 		line := scanner.Text()
 		trimmed := strings.TrimLeft(line, " \t")
-		if isFenceLine(trimmed) {
-			marker := fenceMarkerOf(trimmed)
+		if ch, length, ok := parseFenceOpen(trimmed); ok {
 			switch {
 			case !inFence:
 				inFence = true
-				fenceMarker = marker
-			case marker == fenceMarker:
+				fenceChar = ch
+				fenceLen = length
+			case ch == fenceChar && length >= fenceLen:
+				// Closing fence: same char, length at least as long as opener.
 				inFence = false
-				fenceMarker = ""
+				fenceChar = 0
+				fenceLen = 0
 			}
 			continue
 		}
@@ -176,26 +183,26 @@ func collectHeadings(r io.Reader) ([]heading, error) {
 	return headings, nil
 }
 
-// isFenceLine reports whether the given trimmed-leading-whitespace line
-// opens or closes a fenced code block. A fence is at least three consecutive
-// backticks or tildes at the start of the line (info-string optional).
-func isFenceLine(s string) bool {
-	if strings.HasPrefix(s, "```") {
-		return true
+// parseFenceOpen parses an opening or closing fence line and returns the fence
+// character (` or ~), the run length, and true when the line is a fence.
+// A fence must start with at least three consecutive identical characters
+// (backtick or tilde) at the beginning of the trimmed line.
+func parseFenceOpen(s string) (char rune, length int, ok bool) {
+	if len(s) == 0 {
+		return 0, 0, false
 	}
-	if strings.HasPrefix(s, "~~~") {
-		return true
+	first := rune(s[0])
+	if first != '`' && first != '~' {
+		return 0, 0, false
 	}
-	return false
-}
-
-// fenceMarkerOf returns the canonical marker token for a fence line ("```"
-// or "~~~"). Pre-condition: isFenceLine(s) == true.
-func fenceMarkerOf(s string) string {
-	if strings.HasPrefix(s, "```") {
-		return "```"
+	n := 0
+	for n < len(s) && rune(s[n]) == first {
+		n++
 	}
-	return "~~~"
+	if n < 3 {
+		return 0, 0, false
+	}
+	return first, n, true
 }
 
 // parseHeadingLevel returns the heading level (1-6) for a markdown ATX

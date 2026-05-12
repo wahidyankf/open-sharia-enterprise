@@ -36,3 +36,33 @@ Feature: Docs Frontmatter Validation
     When the developer runs docs validate-frontmatter
     Then the command exits successfully
     And the frontmatter output reports zero fail-level findings
+
+  Scenario: Software-engineering doc with Diataxis tutorial category passes
+    Given a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings
+
+  Scenario: Software-engineering doc with Diataxis how-to category passes
+    Given a software-engineering doc with title, description, category how-to, subcategory, and tags frontmatter
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings
+
+  Scenario: Software-engineering doc with Diataxis reference category passes
+    Given a software-engineering doc with title, description, category reference, subcategory, and tags frontmatter
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings
+
+  Scenario: Software-engineering doc with Diataxis explanation category passes
+    Given a software-engineering doc with title, description, category explanation, subcategory, and tags frontmatter
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings
+
+  Scenario: Software-engineering doc with deprecated software category emits warn not fail
+    Given a software-engineering doc with all required frontmatter fields
+    When the developer runs docs validate-frontmatter
+    Then the command exits successfully
+    And the frontmatter output reports zero fail-level findings

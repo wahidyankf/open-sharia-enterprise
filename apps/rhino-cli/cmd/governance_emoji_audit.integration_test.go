@@ -93,6 +93,12 @@ func (s *governanceEmojiAuditIntegSteps) forbiddenFileWithArabic() error {
 	return s.writeFile("lang.go", "package main\n// العربية 中文 Привет שלום\nfunc main() {}\n")
 }
 
+func (s *governanceEmojiAuditIntegSteps) treeWithArchivedEmojiFile() error {
+	s.scanArgs = []string{"."}
+	// Smiling face U+1F600 inside a Python file under archived/; should be skipped.
+	return s.writeFile("archived/test.py", "x = \"\U0001F600\"\n")
+}
+
 func (s *governanceEmojiAuditIntegSteps) runOnTree() error {
 	return s.run()
 }
@@ -152,6 +158,7 @@ func InitializeGovernanceEmojiAuditScenario(sc *godog.ScenarioContext) {
 	sc.Step(stepEmojiJSONFileWithEmoji, s.jsonFileWithEmoji)
 	sc.Step(stepEmojiGoFileWithEmoji, s.goFileWithEmoji)
 	sc.Step(stepEmojiForbiddenFileWithNonEmojiMulti, s.forbiddenFileWithArabic)
+	sc.Step(stepEmojiTreeWithArchivedEmojiFile, s.treeWithArchivedEmojiFile)
 	sc.Step(stepDeveloperRunsEmojiAuditOnTree, s.runOnTree)
 	sc.Step(stepDeveloperRunsEmojiAuditOnFile, s.runOnFile)
 	sc.Step(stepOutputZeroEmojiFindings, s.zeroFindings)
@@ -172,5 +179,44 @@ func TestIntegrationGovernanceEmojiAudit(t *testing.T) {
 	}
 	if suite.Run() != 0 {
 		t.Fatal("non-zero status returned, failed to run integration feature tests")
+	}
+}
+
+// TestIntegration_EmojiAudit_SkipsArchived is a direct integration test that
+// verifies emoji-audit produces zero findings when the only emoji-containing
+// file lives inside an `archived` directory.
+func TestIntegration_EmojiAudit_SkipsArchived(t *testing.T) {
+	dir := t.TempDir()
+	// Smiling face U+1F600 in a Python file inside `archived/`.
+	archivedFile := filepath.Join(dir, "archived", "test.py")
+	if err := os.MkdirAll(filepath.Dir(archivedFile), 0o755); err != nil {
+		t.Fatalf("mkdir archived: %v", err)
+	}
+	if err := os.WriteFile(archivedFile, []byte("x = \"\U0001F600\"\n"), 0o600); err != nil {
+		t.Fatalf("write archived/test.py: %v", err)
+	}
+	// Run the emoji-audit cobra command against the temp dir.
+	origWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(origWd) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("chdir: %v", err)
+	}
+	// Seed .git so findGitRoot works.
+	if err := os.MkdirAll(filepath.Join(dir, ".git"), 0o755); err != nil {
+		t.Fatalf("mkdir .git: %v", err)
+	}
+
+	var buf bytes.Buffer
+	governanceEmojiAuditCmd.SetOut(&buf)
+	governanceEmojiAuditCmd.SetErr(&buf)
+	emojiAuditPaths = []string{"."}
+	err := governanceEmojiAuditCmd.RunE(governanceEmojiAuditCmd, []string{"."})
+	emojiAuditPaths = nil
+
+	if err != nil {
+		t.Fatalf("expected success (archived skipped), got: %v\nOutput: %s", err, buf.String())
+	}
+	if !strings.Contains(buf.String(), "PASSED") {
+		t.Errorf("expected PASSED in output, got: %s", buf.String())
 	}
 }

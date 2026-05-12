@@ -19,6 +19,10 @@ import (
 // locally because no other command shares these step phrasings.
 const (
 	stepSoftwareDocAllFields                 = `^a software-engineering doc with title, description, category, subcategory, and tags frontmatter$`
+	stepSoftwareDocAllFieldsTutorial         = `^a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter$`
+	stepSoftwareDocAllFieldsHowTo            = `^a software-engineering doc with title, description, category how-to, subcategory, and tags frontmatter$`
+	stepSoftwareDocAllFieldsReference        = `^a software-engineering doc with title, description, category reference, subcategory, and tags frontmatter$`
+	stepSoftwareDocAllFieldsExplanation      = `^a software-engineering doc with title, description, category explanation, subcategory, and tags frontmatter$`
 	stepSoftwareDocMissingTitle              = `^a software-engineering doc whose frontmatter omits the title field$`
 	stepSoftwareDocMissingCategory           = `^a software-engineering doc whose frontmatter omits the category field$`
 	stepSoftwareDocWrongCategoryValue        = `^a software-engineering doc whose frontmatter declares category as something other than software$`
@@ -105,6 +109,15 @@ func (s *docsValidateFrontmatterUnitSteps) softwareDocWrongCategoryValue() error
 			Kind:     "wrong-category-value",
 			Message:  `field "category" must equal "software"; found "hardware"`,
 		}}, nil
+	}
+	return nil
+}
+
+// diataxisDocClean returns a stub that yields zero findings (for valid Diátaxis
+// category values).
+func (s *docsValidateFrontmatterUnitSteps) diataxisDocClean() error {
+	docsValidateFrontmatterFn = func(_ []string) ([]docs.DocsFrontmatterFinding, error) {
+		return nil, nil
 	}
 	return nil
 }
@@ -196,6 +209,10 @@ func TestUnitDocsValidateFrontmatter(t *testing.T) {
 			sc.Before(s.before)
 			sc.After(s.after)
 			sc.Step(stepSoftwareDocAllFields, s.softwareDocClean)
+			sc.Step(stepSoftwareDocAllFieldsTutorial, s.diataxisDocClean)
+			sc.Step(stepSoftwareDocAllFieldsHowTo, s.diataxisDocClean)
+			sc.Step(stepSoftwareDocAllFieldsReference, s.diataxisDocClean)
+			sc.Step(stepSoftwareDocAllFieldsExplanation, s.diataxisDocClean)
 			sc.Step(stepSoftwareDocMissingTitle, s.softwareDocMissingTitle)
 			sc.Step(stepSoftwareDocMissingCategory, s.softwareDocMissingCategory)
 			sc.Step(stepSoftwareDocWrongCategoryValue, s.softwareDocWrongCategoryValue)

@@ -403,6 +403,50 @@ func TestUnitGovernanceAudit(t *testing.T) {
 	}
 }
 
+// TestGovernanceAudit_ExcludeFlag verifies that the --exclude flag is wired
+// to AuditOptions.ExcludeGlobs before calling the orchestrator.
+func TestGovernanceAudit_ExcludeFlag(t *testing.T) {
+	origGetwd := osGetwd
+	origStat := osStat
+	origFn := runAuditFn
+	defer func() {
+		osGetwd = origGetwd
+		osStat = origStat
+		runAuditFn = origFn
+		governanceAuditExclude = nil
+	}()
+
+	osGetwd = func() (string, error) { return "/mock-repo", nil }
+	osStat = func(name string) (os.FileInfo, error) {
+		if name == "/mock-repo/.git" {
+			return &mockFileInfo{name: ".git", isDir: true}, nil
+		}
+		return nil, os.ErrNotExist
+	}
+
+	var capturedExclude []string
+	runAuditFn = func(opts governance.AuditOptions) (governance.AuditEnvelope, error) {
+		capturedExclude = opts.ExcludeGlobs
+		return governance.AuditEnvelope{Schema: governance.AuditEnvelopeSchema, Status: "ok"}, nil
+	}
+
+	// Simulate --exclude flag being set.
+	governanceAuditExclude = []string{"archived/**", "coverage/**"}
+	buf := new(bytes.Buffer)
+	governanceAuditCmd.SetOut(buf)
+	governanceAuditCmd.SetErr(buf)
+	if err := governanceAuditCmd.RunE(governanceAuditCmd, []string{}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(capturedExclude) != 2 {
+		t.Fatalf("expected ExcludeGlobs length 2, got %d: %v", len(capturedExclude), capturedExclude)
+	}
+	if capturedExclude[0] != "archived/**" || capturedExclude[1] != "coverage/**" {
+		t.Errorf("unexpected ExcludeGlobs values: %v", capturedExclude)
+	}
+}
+
 // TestGovernanceAudit_MissingGitRoot verifies the command fails gracefully
 // when not inside a git repository.
 func TestGovernanceAudit_MissingGitRoot(t *testing.T) {

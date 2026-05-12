@@ -87,6 +87,9 @@ type AuditOptions struct {
 	// KnownFalsePositivesPath, when non-empty, overrides the default skip-list
 	// file path (generated-reports/.known-false-positives.md under RepoRoot).
 	KnownFalsePositivesPath string
+	// ExcludeGlobs is a list of glob patterns; paths matching any pattern are
+	// excluded from all path-scanning categories.
+	ExcludeGlobs []string
 }
 
 // auditDefaultFrontmatterPaths lists the same defaults as the standalone
@@ -182,6 +185,7 @@ func RunAudit(opts AuditOptions) (AuditEnvelope, error) {
 		if err != nil {
 			return AuditEnvelope{}, fmt.Errorf("category %q: %w", name, err)
 		}
+		findings = filterExcluded(findings, opts.ExcludeGlobs)
 		sortAuditFindings(findings)
 		categories = append(categories, AuditCategoryResult{
 			Name:     name,
@@ -453,6 +457,69 @@ func resolveAuditPaths(repoRoot string, override, defaults []string) []string {
 			out = append(out, p)
 		} else {
 			out = append(out, filepath.Join(repoRoot, p))
+		}
+	}
+	return out
+}
+
+// pathMatchesAnyGlob reports whether path matches at least one of the provided
+// glob patterns. Both `**`-style patterns (prefix match on directory) and
+// filepath.Match-compatible single-level patterns are supported.
+//
+// For patterns ending in `/**`, the rule is: the path matches if it contains
+// the prefix directory segment anywhere in its components. For other patterns,
+// filepath.Match is tried against the full path and against each path segment.
+func pathMatchesAnyGlob(path string, globs []string) bool {
+	slashedPath := filepath.ToSlash(path)
+	for _, g := range globs {
+		slashedGlob := filepath.ToSlash(g)
+		// Handle "dir/**" style: strip the /** suffix and check if the
+		// path contains that directory name as a component.
+		if strings.HasSuffix(slashedGlob, "/**") {
+			prefix := strings.TrimSuffix(slashedGlob, "/**")
+			// Match if any path component equals the prefix OR the path
+			// starts with the prefix followed by a slash.
+			if strings.Contains(slashedPath, "/"+prefix+"/") ||
+				strings.HasPrefix(slashedPath, prefix+"/") ||
+				strings.HasSuffix(slashedPath, "/"+prefix) ||
+				filepath.Base(filepath.Dir(path)) == prefix {
+				return true
+			}
+			// Try each path segment.
+			parts := strings.Split(slashedPath, "/")
+			for _, part := range parts {
+				if part == prefix {
+					return true
+				}
+			}
+			continue
+		}
+		// Standard filepath.Match against the full path.
+		if matched, err := filepath.Match(g, path); err == nil && matched {
+			return true
+		}
+		// Also try against the slash-normalized path.
+		if matched, err := filepath.Match(slashedGlob, slashedPath); err == nil && matched {
+			return true
+		}
+		// Also try matching just the base component for simple patterns.
+		if matched, err := filepath.Match(g, filepath.Base(path)); err == nil && matched {
+			return true
+		}
+	}
+	return false
+}
+
+// filterExcluded removes findings whose File matches any of the ExcludeGlobs
+// patterns, returning only the non-excluded findings.
+func filterExcluded(findings []AuditFinding, excludeGlobs []string) []AuditFinding {
+	if len(excludeGlobs) == 0 {
+		return findings
+	}
+	out := findings[:0:len(findings)]
+	for _, f := range findings {
+		if !pathMatchesAnyGlob(f.File, excludeGlobs) {
+			out = append(out, f)
 		}
 	}
 	return out

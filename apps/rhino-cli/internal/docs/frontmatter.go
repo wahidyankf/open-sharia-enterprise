@@ -5,9 +5,12 @@
 // two area-specific schemas:
 //
 //   - Software-engineering docs (under `docs/explanation/software-engineering/`)
-//     require `title`, `description`, `category` (must equal "software"),
-//     `subcategory`, and a non-empty `tags` list. Each violation is a
-//     fail-level finding.
+//     require `title`, `description`, `category`, `subcategory`, and a
+//     non-empty `tags` list. Each violation is a fail-level finding.
+//     Valid category values follow the Diátaxis framework:
+//     `tutorial`, `how-to`, `reference`, `explanation`.
+//     The legacy value `software` is deprecated and emits a warn-level finding
+//     rather than a fail; it will be removed in a future version.
 //   - Governance docs (under `repo-governance/conventions/`,
 //     `repo-governance/principles/`, `repo-governance/development/`,
 //     `repo-governance/workflows/`) require only `title`. `description` is
@@ -61,7 +64,20 @@ const (
 	kindMissingSubcategory = "missing-subcategory"
 	kindMissingTags        = "missing-tags"
 	kindWrongCategoryValue = "wrong-category-value"
+	// kindCategoryDeprecated is emitted at warn severity when the category field
+	// carries the legacy "software" value. It does not flip the exit code.
+	kindCategoryDeprecated = "category-deprecated"
 )
+
+// validCategories is the set of accepted Diátaxis category values for
+// software-engineering docs. The legacy value "software" is absent — it is
+// handled separately as a deprecated warn-level finding.
+var validCategories = map[string]bool{
+	"tutorial":    true,
+	"how-to":      true,
+	"reference":   true,
+	"explanation": true,
+}
 
 // softwareDocPrefix is the path segment that identifies a software-engineering
 // doc subject to the strict required-field schema.
@@ -262,13 +278,27 @@ func validateSoftwareSchema(path string, fm map[string]any) []DocsFrontmatterFin
 			Kind:     kindMissingCategory,
 			Message:  `required field "category" is missing or empty`,
 		})
-	} else if v := stringValue(fm["category"]); v != "software" {
-		findings = append(findings, DocsFrontmatterFinding{
-			File:     path,
-			Severity: severityFail,
-			Kind:     kindWrongCategoryValue,
-			Message:  fmt.Sprintf(`field "category" must equal "software"; found %q`, v),
-		})
+	} else {
+		v := stringValue(fm["category"])
+		switch {
+		case validCategories[v]:
+			// Valid Diátaxis value — no finding.
+		case v == "software":
+			// Deprecated legacy value — warn but do not fail.
+			findings = append(findings, DocsFrontmatterFinding{
+				File:     path,
+				Severity: severityWarn,
+				Kind:     kindCategoryDeprecated,
+				Message:  `field "category" value "software" is deprecated; use one of: tutorial, how-to, reference, explanation`,
+			})
+		default:
+			findings = append(findings, DocsFrontmatterFinding{
+				File:     path,
+				Severity: severityFail,
+				Kind:     kindWrongCategoryValue,
+				Message:  fmt.Sprintf(`field "category" must be one of: tutorial, how-to, reference, explanation; found %q`, v),
+			})
+		}
 	}
 	if !hasNonEmptyString(fm, "subcategory") {
 		findings = append(findings, DocsFrontmatterFinding{

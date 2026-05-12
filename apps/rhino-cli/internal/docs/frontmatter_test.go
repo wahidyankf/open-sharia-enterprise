@@ -20,11 +20,12 @@ func writeTestFile(t *testing.T, root, rel, content string) {
 	}
 }
 
-// softwareDocClean is a fully populated software-engineering doc.
+// softwareDocClean is a fully populated software-engineering doc using the
+// canonical Diátaxis category value "tutorial".
 const softwareDocClean = `---
 title: Test Doc
 description: A test doc with all fields.
-category: software
+category: tutorial
 subcategory: testing
 tags:
   - go
@@ -52,7 +53,7 @@ func TestValidateDocsFrontmatter_SoftwareDocClean(t *testing.T) {
 func TestValidateDocsFrontmatter_SoftwareDocMissingTitle(t *testing.T) {
 	const content = `---
 description: A test doc.
-category: software
+category: tutorial
 subcategory: testing
 tags: [go]
 ---
@@ -164,7 +165,7 @@ func TestValidateDocsFrontmatter_SoftwareDocEmptyTags(t *testing.T) {
 	const content = `---
 title: Test
 description: A test doc.
-category: software
+category: tutorial
 subcategory: testing
 tags: []
 ---
@@ -187,7 +188,7 @@ func TestValidateDocsFrontmatter_SoftwareDocWrongTagsType(t *testing.T) {
 	const content = `---
 title: Test
 description: A test doc.
-category: software
+category: tutorial
 subcategory: testing
 tags: go
 ---
@@ -404,7 +405,7 @@ Body.
 	writeTestFile(t, tmp, "docs/explanation/software-engineering/a-doc.md", `---
 title: A
 description: A description.
-category: software
+category: tutorial
 subcategory: testing
 tags: [go]
 ---
@@ -431,6 +432,77 @@ Body.
 		if findings[i].File == findings[i-1].File && findings[i].Kind < findings[i-1].Kind {
 			t.Errorf("findings not sorted by Kind: %q < %q", findings[i].Kind, findings[i-1].Kind)
 		}
+	}
+}
+
+// Test_ValidateDocsFrontmatter_Diataxis verifies the four Diátaxis category
+// values pass without findings, the deprecated "software" value emits a warn
+// finding, and an entirely unknown value emits a fail finding.
+func Test_ValidateDocsFrontmatter_Diataxis(t *testing.T) {
+	tests := []struct {
+		name         string
+		category     string
+		wantFindings int
+		wantSeverity string // "" means no finding
+		wantKind     string
+	}{
+		{
+			name:         "tutorial passes",
+			category:     "tutorial",
+			wantFindings: 0,
+		},
+		{
+			name:         "how-to passes",
+			category:     "how-to",
+			wantFindings: 0,
+		},
+		{
+			name:         "reference passes",
+			category:     "reference",
+			wantFindings: 0,
+		},
+		{
+			name:         "explanation passes",
+			category:     "explanation",
+			wantFindings: 0,
+		},
+		{
+			name:         "deprecated software emits warn not fail",
+			category:     "software",
+			wantFindings: 1,
+			wantSeverity: severityWarn,
+			wantKind:     kindCategoryDeprecated,
+		},
+		{
+			name:         "unknown value emits fail",
+			category:     "foobar",
+			wantFindings: 1,
+			wantSeverity: severityFail,
+			wantKind:     kindWrongCategoryValue,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content := "---\ntitle: Test Doc\ndescription: A test.\ncategory: " + tt.category + "\nsubcategory: testing\ntags:\n  - go\n---\n\n# Test\n\nBody.\n"
+			tmp := t.TempDir()
+			writeTestFile(t, tmp, "docs/explanation/software-engineering/diataxis-test.md", content)
+
+			findings, err := ValidateDocsFrontmatter([]string{tmp})
+			if err != nil {
+				t.Fatalf("ValidateDocsFrontmatter: %v", err)
+			}
+			if len(findings) != tt.wantFindings {
+				t.Fatalf("expected %d findings, got %d: %+v", tt.wantFindings, len(findings), findings)
+			}
+			if tt.wantFindings > 0 {
+				if findings[0].Severity != tt.wantSeverity {
+					t.Errorf("expected severity %q, got %q", tt.wantSeverity, findings[0].Severity)
+				}
+				if findings[0].Kind != tt.wantKind {
+					t.Errorf("expected kind %q, got %q", tt.wantKind, findings[0].Kind)
+				}
+			}
+		})
 	}
 }
 

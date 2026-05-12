@@ -19,6 +19,9 @@ var governanceAuditSkip []string
 // governanceAuditIncludeOnly holds the --include-category <name> repeatable flag values.
 var governanceAuditIncludeOnly []string
 
+// governanceAuditExclude holds the --exclude <glob> repeatable flag values.
+var governanceAuditExclude []string
+
 // runAuditFn is the test-mockable entrypoint for the orchestrator. Tests
 // assign a stub to short-circuit the per-category filesystem walks;
 // production code delegates to the internal package.
@@ -61,7 +64,10 @@ Exit codes:
   rhino-cli repo-governance audit --include-category agents-md-size
 
   # Skip two categories
-  rhino-cli repo-governance audit --skip agents-detect-duplication --skip emoji-audit`,
+  rhino-cli repo-governance audit --skip agents-detect-duplication --skip emoji-audit
+
+  # Exclude paths matching a glob pattern
+  rhino-cli repo-governance audit --exclude 'archived/**'`,
 	SilenceErrors: true,
 	SilenceUsage:  true,
 	RunE:          runGovernanceAudit,
@@ -80,6 +86,12 @@ func init() {
 		nil,
 		"category to include (repeatable); when set, only listed categories run",
 	)
+	governanceAuditCmd.Flags().StringArrayVar(
+		&governanceAuditExclude,
+		"exclude",
+		nil,
+		"exclude paths matching this glob pattern (repeatable)",
+	)
 	repoGovernanceCmd.AddCommand(governanceAuditCmd)
 }
 
@@ -95,9 +107,10 @@ func runGovernanceAudit(cmd *cobra.Command, _ []string) error {
 	}
 
 	opts := governance.AuditOptions{
-		RepoRoot:    repoRoot,
-		Skip:        governanceAuditSkip,
-		IncludeOnly: governanceAuditIncludeOnly,
+		RepoRoot:     repoRoot,
+		Skip:         governanceAuditSkip,
+		IncludeOnly:  governanceAuditIncludeOnly,
+		ExcludeGlobs: governanceAuditExclude,
 	}
 	// RHINO_AUDIT_NOW (RFC3339) pins ran_at for byte-deterministic regression
 	// testing. Empty/unset → default to time.Now in the orchestrator.
@@ -121,11 +134,13 @@ func runGovernanceAudit(cmd *cobra.Command, _ []string) error {
 		// tests start with a clean slate.
 		governanceAuditSkip = nil
 		governanceAuditIncludeOnly = nil
+		governanceAuditExclude = nil
 		return fmt.Errorf("write output: %w", err)
 	}
 
 	governanceAuditSkip = nil
 	governanceAuditIncludeOnly = nil
+	governanceAuditExclude = nil
 
 	if envelope.Result.TotalFindings > 0 {
 		return fmt.Errorf("%d governance finding(s) reported across %d categor(ies)",

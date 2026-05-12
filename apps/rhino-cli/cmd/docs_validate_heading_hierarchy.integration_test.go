@@ -142,6 +142,59 @@ func (s *docsValidateHeadingHierarchyIntegSteps) outputIdentifiesViolation() err
 	return nil
 }
 
+// TestIntegration_DocsValidateHeadingHierarchy_NFence directly tests that
+// N-fence outer blocks containing shorter inner fences are handled correctly.
+func TestIntegration_DocsValidateHeadingHierarchy_NFence(t *testing.T) {
+	cases := []struct {
+		name    string
+		content string
+	}{
+		{
+			name:    "4-backtick outer with 3-backtick inner",
+			content: "# Title\n\n## Section\n\n```` markdown\n```go\n# not a heading\n```\n````\n\n### Subsection\n",
+		},
+		{
+			name:    "5-backtick outer fence",
+			content: "# Title\n\n````` markdown\n```go\n# not a heading\n```\n`````\n\n## Section\n",
+		},
+		{
+			name:    "4-tilde outer with 3-backtick inner",
+			content: "# Title\n\n~~~~ text\n```\n# not a heading\n```\n~~~~\n\n## Section\n",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			full := filepath.Join(dir, "docs", "test.md")
+			if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
+				t.Fatalf("mkdir: %v", err)
+			}
+			if err := os.WriteFile(full, []byte(tc.content), 0o644); err != nil {
+				t.Fatalf("write: %v", err)
+			}
+			origWd, _ := os.Getwd()
+			if err := os.MkdirAll(filepath.Join(dir, ".git"), 0o755); err != nil {
+				t.Fatalf("mkdir .git: %v", err)
+			}
+			if err := os.Chdir(dir); err != nil {
+				t.Fatalf("chdir: %v", err)
+			}
+			defer func() { _ = os.Chdir(origWd) }()
+
+			var buf bytes.Buffer
+			docsValidateHeadingHierarchyCmd.SetOut(&buf)
+			docsValidateHeadingHierarchyCmd.SetErr(&buf)
+			err := docsValidateHeadingHierarchyCmd.RunE(docsValidateHeadingHierarchyCmd, []string{"docs/"})
+			if err != nil {
+				t.Errorf("expected success, got: %v\nOutput: %s", err, buf.String())
+			}
+			if !strings.Contains(buf.String(), "PASSED") {
+				t.Errorf("expected PASSED in output, got: %s", buf.String())
+			}
+		})
+	}
+}
+
 // InitializeDocsValidateHeadingHierarchyScenario binds the step handlers
 // for the integration suite.
 func InitializeDocsValidateHeadingHierarchyScenario(sc *godog.ScenarioContext) {
