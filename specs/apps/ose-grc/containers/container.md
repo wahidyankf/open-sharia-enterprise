@@ -5,14 +5,11 @@
 %% All colors meet WCAG AA contrast standards and are color-blind friendly.
 
 graph TD
-    User["User<br/>(Compliance Officer / Auditor)"]
-
     WEB["ose-grc-web<br/>Next.js 16<br/>port 3300"]:::app
     BE["ose-grc-be<br/>F#/Giraffe on .NET 10<br/>port 8302"]:::app
     PG["PostgreSQL 17<br/>Documents + Gap Reports"]:::data
     OR["OpenRouter API<br/>LLM gateway"]:::external
 
-    User -->|HTTPS| WEB
     WEB -->|HTTP /api/v1/*| BE
     BE -->|Npgsql / EF Core| PG
     BE -->|System.Net.Http.HttpClient| OR
