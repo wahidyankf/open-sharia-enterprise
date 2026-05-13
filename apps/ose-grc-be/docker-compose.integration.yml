@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ose_grc_test
+      POSTGRES_USER: ose_grc
+      POSTGRES_PASSWORD: ose_grc
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ose_grc -d ose_grc_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  test-runner:
+    build:
+      context: ../..
+      dockerfile: apps/ose-grc-be/Dockerfile.integration
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "Host=postgres;Port=5432;Database=ose_grc_test;Username=ose_grc;Password=ose_grc"
+    volumes:
+      - ../../specs:/specs:ro

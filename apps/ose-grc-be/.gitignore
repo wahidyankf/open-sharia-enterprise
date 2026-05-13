@@ -1,0 +1,6 @@
+bin/
+obj/
+generated-contracts/
+coverage/
+.env
+appsettings.Development.local.json

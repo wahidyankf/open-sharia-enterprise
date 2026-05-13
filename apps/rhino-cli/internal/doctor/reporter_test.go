@@ -39,7 +39,7 @@ var allOKChecks = []ToolCheck{
 	{Name: "cargo-llvm-cov", Binary: "cargo", Status: StatusOK{}, InstalledVersion: "0.8.5", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "elixir", Binary: "elixir", Status: StatusOK{}, InstalledVersion: "1.19.5", RequiredVersion: "1.19.5", Source: ".tool-versions → elixir", Note: "required: \u22651.19.5"},
 	{Name: "erlang", Binary: "erl", Status: StatusOK{}, InstalledVersion: "27", RequiredVersion: "27.3", Source: ".tool-versions → erlang", Note: "required: \u226527.3 (major)"},
-	{Name: "dotnet", Binary: "dotnet", Status: StatusOK{}, InstalledVersion: "10.0.103", RequiredVersion: "10.0.103", Source: "apps/a-demo-be-fsharp-giraffe/global.json → sdk.version", Note: "required: \u226510.0.103 (major)"},
+	{Name: "dotnet", Binary: "dotnet", Status: StatusOK{}, InstalledVersion: "10.0.103", RequiredVersion: "10.0.103", Source: "apps/ose-grc-be/global.json → sdk.version", Note: "required: \u226510.0.103 (major)"},
 	{Name: "clojure", Binary: "clj", Status: StatusOK{}, InstalledVersion: "1.12.4.1582", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "dart", Binary: "dart", Status: StatusOK{}, InstalledVersion: "3.11.3", RequiredVersion: "3.11.1", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk", Note: "required: \u22653.11.1"},
 	{Name: "flutter", Binary: "flutter", Status: StatusOK{}, InstalledVersion: "3.41.5", RequiredVersion: "3.41.0", Source: "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter", Note: "required: ≥3.41.0"},
@@ -195,7 +195,6 @@ func TestFormatJSON_Mixed(t *testing.T) {
 // TestSymbolFor_Default intentionally removed: with //sumtype:decl sealing,
 // the "unknownStatus" pattern would break gochecksumtype exhaustiveness.
 // The default branch in symbolFor is a dead-code safety net.
-
 
 func TestDisplayVersion_EmptyInstalled(t *testing.T) {
 	check := ToolCheck{

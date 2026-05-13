@@ -34,7 +34,7 @@ Tools checked:
   cargo-llvm-cov — any version (cargo subcommand)
   elixir         — from .tool-versions → elixir
   erlang         — from .tool-versions → erlang
-  dotnet         — from apps/a-demo-be-fsharp-giraffe/global.json → sdk.version
+  dotnet         — from apps/ose-grc-be/global.json → sdk.version
   clojure        — any version (no config file)
   dart           — from apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk
   flutter        — from apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.flutter

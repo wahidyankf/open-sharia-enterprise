@@ -34,7 +34,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 	goModPath := filepath.Join(repoRoot, "apps", "rhino-cli", "go.mod")
 	pythonVersionPath := filepath.Join(repoRoot, "apps", "a-demo-be-python-fastapi", ".python-version")
 	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
-	globalJSONPath := filepath.Join(repoRoot, "apps", "a-demo-be-fsharp-giraffe", "global.json")
+	globalJSONPath := filepath.Join(repoRoot, "apps", "ose-grc-be", "global.json")
 	pubspecPath := filepath.Join(repoRoot, "apps", "a-demo-fe-dart-flutterweb", "pubspec.yaml")
 	cargoTomlPath := filepath.Join(repoRoot, "apps", "a-demo-be-rust-axum", "Cargo.toml")
 
@@ -219,7 +219,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "dotnet",
 			binary:   "dotnet",
-			source:   "apps/a-demo-be-fsharp-giraffe/global.json → sdk.version",
+			source:   "apps/ose-grc-be/global.json → sdk.version",
 			args:     []string{"--version"},
 			parseVer: parseDotnetVersion,
 			compare:  compareMajorGTE,

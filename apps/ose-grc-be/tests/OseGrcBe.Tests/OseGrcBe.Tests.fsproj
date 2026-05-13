@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>OseGrcBe.Tests</AssemblyName>
+    <RootNamespace>OseGrcBe.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OtherFlags>--nowarn:3261 --nowarn:3264</OtherFlags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageReference Include="TickSpec" Version="2.*" />
+    <PackageReference Include="xunit" Version="2.*" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.*" />
+    <PackageReference Include="coverlet.collector" Version="6.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OseGrcBe\OseGrcBe.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="State.fs" />
+    <Compile Include="TestFixture.fs" />
+    <Compile Include="Unit/HealthSteps.fs" />
+    <Compile Include="Unit/HealthTests.fs" />
+  </ItemGroup>
+
+  <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
+    <ItemGroup>
+      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\apps\ose-grc\behavior\be\gherkin\**\*.feature" />
+    </ItemGroup>
+    <Copy SourceFiles="@(GherkinFiles)" DestinationFolder="$(OutputPath)specs\%(RecursiveDir)" />
+  </Target>
+
+</Project>
