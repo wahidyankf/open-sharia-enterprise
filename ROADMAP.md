@@ -14,28 +14,17 @@ graph TB
     Phase1["<b>Phase 1</b><br/>OrganicLever<br/><i>Productivity Tracker</i><br/>(Individual Users)<br/><i>(Current Phase)</i>"]
     Phase1 --> P1Output["✅ organiclever.com Launch<br/>✅ Android & iOS Apps<br/>✅ Deployment Mastery<br/>✅ Security Practice Ground"]
     P1Output --> Decision1{Learnings<br/>Applied?}
-    Decision1 -->|Yes| Phase2
-    Decision1 -->|Iterate| Phase1
+    Decision1 -- Yes --> Phase2
 
     Phase2["<b>Phase 2</b><br/>SMB Application<br/><i>Small & Medium Business</i><br/>(Team Users)"]
     Phase2 --> P2Output["✅ Business Operations<br/>✅ Multi-user Validated<br/>✅ Moderate Complexity<br/>✅ SMB Patterns"]
     P2Output --> Decision2{Learnings<br/>Applied?}
-    Decision2 -->|Yes| Phase3
-    Decision2 -->|Iterate| Phase2
+    Decision2 -- Yes --> Phase3
 
     Phase3["<b>Phase 3</b><br/>Enterprise Application<br/><i>Large Organizations</i><br/>(Enterprise Scale)"]
     Phase3 --> P3Output["✅ Full ERP Capabilities<br/>✅ Multi-jurisdiction<br/>✅ Enterprise Security<br/>✅ Complete Platform"]
 
     P3Output --> End([Platform Complete])
-
-    Phase1 -.->|As Needed| Sharia1["Sharia Compliance<br/>Individual Use Cases"]
-    Phase1 -.->|As Needed| Security1["Security<br/>Retail Scale"]
-
-    Phase2 -.->|As Needed| Sharia2["Sharia Compliance<br/>Business Operations"]
-    Phase2 -.->|As Needed| Security2["Security<br/>SMB Scale"]
-
-    Phase3 -.->|As Needed| Sharia3["Sharia Compliance<br/>Enterprise Scenarios"]
-    Phase3 -.->|As Needed| Security3["Security<br/>Enterprise Grade"]
 
     style Phase0 fill:#0173B2,stroke:#000,stroke-width:2px,color:#fff
     style Phase1 fill:#029E73,stroke:#000,stroke-width:2px,color:#fff

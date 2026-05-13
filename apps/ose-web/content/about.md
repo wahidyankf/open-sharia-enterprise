@@ -76,10 +76,10 @@ Our progressive complexity approach - start simple, test thoroughly, scale syste
 %% Color Palette: Gray #808080 (done), Orange #DE8F05 (current), Teal #029E73, Purple #CC78BC
 %% Phase 0: Done | Phase 1: Current | Phase 2-3: Future
 graph TD
-    P0["Phase 0: Setup & Knowledge Base"]:::done
+    P0["Phase 0: Setup & KB"]:::done
     P1["Phase 1: OrganicLever"]:::current
     P2["Phase 2: SMB Application"]:::future1
-    P3["Phase 3: Enterprise Application"]:::future2
+    P3["Phase 3: Enterprise App"]:::future2
 
     P0 -->|"Foundation"| P1
     P1 -->|"Revenue & Learnings"| P2

@@ -38,36 +38,27 @@ graph TD
     AUTHOR("Content Author"):::actor_author
 
     subgraph SYSTEM["OSE Platform Web"]
-        WEB["web container<br/>──────────────────<br/>Next.js (server + client)<br/><br/>Server: App Router + tRPC<br/>Server Components, SSG<br/>Markdown pipeline, RSS, sitemap<br/>Client: browser SPA<br/>Search dialog, theme, mobile nav"]:::container
+        WEB["web container<br/>──────────────────<br/>Next.js (server + client)<br/><br/>Server: App Router + tRPC<br/>Server Components, SSG<br/>MD pipeline, RSS, sitemap<br/>Client: browser SPA<br/>Search, theme, mobile nav"]:::container
 
         CONTENT[("Content Directory<br/>──────────────────<br/>Markdown + YAML<br/><br/>content/**/*.md<br/>~10 files (about + updates)")]:::datastore
 
         SEARCH["Search Index<br/>──────────────────<br/>FlexSearch<br/><br/>In-memory index<br/>Title + body"]:::search
     end
 
-    subgraph CICD["CI Pipelines"]
-        MAIN_CI["Main CI<br/>──────────────────<br/>typecheck, lint, test:quick<br/>On schedule"]:::ci
-
-        BE_E2E["api perspective E2E<br/>──────────────────<br/>Playwright<br/>tRPC HTTP tests<br/>Scheduled"]:::ci
-
-        FE_E2E["web perspective E2E<br/>──────────────────<br/>Playwright<br/>Browser UI tests<br/>Scheduled"]:::ci
-    end
+    CICD["CI Pipelines<br/>──────────────────<br/>Main CI · BE E2E<br/>FE E2E (Playwright)"]:::ci
 
     VERCEL["Vercel CDN<br/>──────────────────<br/>Edge Network<br/>Static pages<br/>Standalone output"]:::infra
 
-    VISITOR -->|"browser"| WEB
-    AUTHOR -->|"write markdown"| CONTENT
+    VISITOR -- browser --> WEB
+    AUTHOR -- write markdown --> CONTENT
 
-    WEB -->|"read markdown"| CONTENT
-    WEB -->|"query"| SEARCH
-    WEB -->|"build index from"| CONTENT
+    WEB -- read markdown --> CONTENT
+    WEB -- query --> SEARCH
+    WEB -- build index from --> CONTENT
 
-    WEB -->|"standalone deploy"| VERCEL
-    VERCEL -->|"serve static pages"| VISITOR
+    WEB -- standalone deploy --> VERCEL
 
-    MAIN_CI -->|"test"| WEB
-    BE_E2E -->|"tRPC tests"| WEB
-    FE_E2E -->|"browser tests"| WEB
+    CICD -- test --> WEB
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef actor_author fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px

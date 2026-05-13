@@ -22,12 +22,12 @@ Layer 0 is Vision—the foundational WHY we exist (democratize Shariah-compliant
 %% Color Palette: Gray #808080 (vision/skills), Blue #0173B2 (principles), Orange #DE8F05 (conventions), Teal #029E73 (development), Purple #CC78BC (agents), Brown #CA9161 (workflows)
 graph TD
     L0["Layer 0: Vision - WHY we exist"]:::vision
-    L1["Layer 1: Principles - WHY we value approaches"]:::principles
-    L2["Layer 2: Conventions - WHAT rules apply"]:::conventions
-    L3["Layer 3: Development - HOW we build"]:::development
-    L4["Layer 4: AI Agents - WHO enforces"]:::agents
-    L5["Layer 5: Workflows - WHEN we execute"]:::workflows
-    SK["Skills: Delivery Infrastructure"]:::skills
+    L1["Layer 1: Principles"]:::principles
+    L2["Layer 2: Conventions"]:::conventions
+    L3["Layer 3: Development"]:::development
+    L4["Layer 4: AI Agents"]:::agents
+    L5["Layer 5: Workflows"]:::workflows
+    SK["Skills: Delivery Infra"]:::skills
 
     L0 --> L1
     L1 --> L2

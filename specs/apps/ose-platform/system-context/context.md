@@ -21,12 +21,12 @@ graph TD
 
     GA4("Google Analytics<br/>──────────────────<br/>GA4 via @next/third-parties<br/>Page views + events"):::external
 
-    VISITOR -->|"browse and search"| SYSTEM
-    AUTHOR -->|"write markdown content"| SYSTEM
-    CLI -->|"validate links"| SYSTEM
-    CI -->|"typecheck, lint, test"| SYSTEM
-    SYSTEM -->|"deploy + serve"| VERCEL
-    SYSTEM -->|"send analytics events"| GA4
+    VISITOR -- browse and search --> SYSTEM
+    AUTHOR -- write markdown content --> SYSTEM
+    CLI -- validate links --> SYSTEM
+    CI -- typecheck, lint, test --> SYSTEM
+    SYSTEM -- deploy + serve --> VERCEL
+    SYSTEM -- send analytics events --> GA4
 
     classDef actor fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
     classDef actor_author fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px

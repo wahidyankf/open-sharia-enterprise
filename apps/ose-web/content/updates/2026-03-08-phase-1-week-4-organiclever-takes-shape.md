@@ -64,8 +64,8 @@ The key insight: shared Gherkin specs ensure integration and E2E tiers test the 
 graph TD
     GK["Gherkin Specs<br/>26 features, 99 scenarios"]:::specs
     UT["Unit Tests<br/>Vitest · JUnit · Go test"]:::unit
-    IT["Integration Tests<br/>Vitest-Cucumber · MockMvc · Godog"]:::integration
-    E2E["E2E Tests<br/>Playwright (scheduled 2x daily)"]:::e2e
+    IT["Integration Tests<br/>Cucumber · MockMvc · Godog"]:::integration
+    E2E["E2E Tests<br/>Playwright (2x daily)"]:::e2e
 
     GK -->|"drives"| IT
     GK -->|"drives"| E2E
