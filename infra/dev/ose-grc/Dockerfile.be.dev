@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
+
+# Install curl for healthcheck, Node.js for nx commands
+RUN apk add --no-cache curl nodejs npm
+
+WORKDIR /workspace
+
+EXPOSE 8302
+
+CMD ["dotnet", "watch", "run", "--project", "src/OseGrcBe/OseGrcBe.fsproj", "--urls", "http://+:8302"]
