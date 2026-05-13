@@ -1,0 +1,46 @@
+name: Deploy - OSE GRC Web to Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  e2e-staging:
+    name: FE E2E tests against staging (pre-deploy gate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ose-grc-web-staging
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-playwright
+
+      - name: Run FE E2E tests against staging
+        run: npx nx run ose-grc-web-e2e:test:e2e
+        env:
+          WEB_BASE_URL: ${{ vars.WEB_BASE_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          PLAYWRIGHT_GREP_INVERT: "@local-fullstack"
+
+      - name: Upload FE E2E report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-ose-grc-web-staging-predeploy
+          path: apps/ose-grc-web-e2e/playwright-report/
+          retention-days: 7
+
+  promote-to-production:
+    name: Promote staging to production
+    needs: [e2e-staging]
+    runs-on: ubuntu-latest
+    environment: ose-grc-web-production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stag-ose-grc-web
+          fetch-depth: 0
+      - run: git push origin HEAD:prod-ose-grc-web --force

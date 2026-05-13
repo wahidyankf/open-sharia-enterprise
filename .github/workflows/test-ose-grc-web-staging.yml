@@ -1,0 +1,40 @@
+name: Test - OSE GRC Web Staging
+
+# Runs FE E2E tests against the deployed staging URL. When chaining after
+# `test-and-deploy-ose-grc-web-development.yml`, wait ~5 minutes after
+# that workflow's deploy job before dispatching this one — Vercel needs that
+# long to build and route the new commit on `stag-ose-grc-web` to the
+# staging URL. Dispatching earlier hits the previous build.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-staging:
+    name: FE E2E tests against staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ose-grc-web-staging
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-playwright
+
+      - name: Run FE E2E tests against staging
+        run: npx nx run ose-grc-web-e2e:test:e2e
+        env:
+          WEB_BASE_URL: ${{ vars.WEB_BASE_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          PLAYWRIGHT_GREP_INVERT: "@local-fullstack"
+
+      - name: Upload FE E2E report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-ose-grc-web-staging
+          path: apps/ose-grc-web-e2e/playwright-report/
+          retention-days: 7
