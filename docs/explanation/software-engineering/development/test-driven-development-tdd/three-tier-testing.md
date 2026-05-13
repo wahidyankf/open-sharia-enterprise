@@ -53,7 +53,7 @@ HTTP clients stubbed. File system mocked. Clock frozen. No real network. No real
 
 **What they prove**: The logic of a unit is correct given controlled inputs.
 
-**Java tools**: JUnit 6 Jupiter + Mockito + AssertJ
+**Java tools**: JUnit 5 (Jupiter) + Mockito + AssertJ
 
 **TypeScript tools**: Vitest + `vi.fn()` / `vi.mock()` + Testing Library
 
@@ -85,7 +85,7 @@ realistically. HTTP calls to external services are intercepted by MSW (TypeScrip
 **What they prove**: The internal layers are correctly wired and behave as specified — without
 depending on external infrastructure.
 
-**Java tools**: JUnit 6 + Cucumber JVM + MockMvc (in-process HTTP) + WireMock + in-memory
+**Java tools**: JUnit 5 + Cucumber JVM + MockMvc (in-process HTTP) + WireMock + in-memory
 repository implementations
 
 **TypeScript tools**: Vitest + `@amiceli/vitest-cucumber` + MSW (Mock Service Worker) + in-memory
@@ -133,7 +133,7 @@ E2E testing
 | Browser         | N/A                     | N/A                                         | Real (Playwright)           |
 | Speed           | ms                      | seconds                                     | minutes                     |
 | Run frequency   | Every commit            | Pre-push                                    | Scheduled CI                |
-| Java tools      | JUnit 6 + Mockito       | JUnit 6 + Cucumber JVM + MockMvc + WireMock | Playwright + Testcontainers |
+| Java tools      | JUnit 5 + Mockito       | JUnit 5 + Cucumber JVM + MockMvc + WireMock | Playwright + Testcontainers |
 | TS tools        | Vitest + vi.fn          | Vitest + vitest-cucumber + MSW              | Playwright + playwright-bdd |
 
 ## Test Pyramid

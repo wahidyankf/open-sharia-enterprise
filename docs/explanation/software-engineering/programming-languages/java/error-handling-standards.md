@@ -413,7 +413,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ### Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Result/Either types make errors explicit in method signatures (`Result<T, E>` forces callers to handle errors)
@@ -463,6 +463,6 @@ Before deploying financial services, verify:
 
 **Testing**:
 
-- [Testing Standards](./testing-standards.md) - Exception testing patterns with AssertJ and JUnit 6
+- [Testing Standards](./testing-standards.md) - Exception testing patterns with AssertJ and JUnit 5
 
 **Status**: Active (mandatory for all OSE Platform Java services)

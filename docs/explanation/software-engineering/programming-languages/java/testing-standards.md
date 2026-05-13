@@ -1,12 +1,12 @@
 ---
 title: "Java Testing Standards"
-description: Authoritative OSE Platform testing standards (JUnit 6, AssertJ, Mockito, TestContainers, Cucumber BDD)
+description: Authoritative OSE Platform testing standards (JUnit 5, AssertJ, Mockito, TestContainers, Cucumber BDD)
 category: explanation
 subcategory: prog-lang
 tags:
   - java
   - testing
-  - junit6
+  - junit5
   - assertj
   - mockito
   - testcontainers
@@ -36,11 +36,11 @@ This document defines **authoritative testing standards** for Java development i
 
 **Target Audience**: OSE Platform Java developers, QA engineers, technical reviewers
 
-**Scope**: JUnit 6 setup, assertion libraries, mocking patterns, integration testing, BDD acceptance tests
+**Scope**: JUnit 5 (Jupiter) setup, assertion libraries, mocking patterns, integration testing, BDD acceptance tests
 
-## JUnit 6 Setup
+## JUnit 5 Setup
 
-**MUST** use JUnit 6 Jupiter (not JUnit 4) for all unit and integration tests.
+**MUST** use JUnit 5 Jupiter (not JUnit 4) for all unit and integration tests.
 
 ### Test Class Naming
 
@@ -159,7 +159,7 @@ void shouldCalculateTaxCorrectly() {
 
 ## Mockito Patterns
 
-**MUST** use Mockito for test doubles with JUnit 6 extension.
+**MUST** use Mockito for test doubles with JUnit 5 extension.
 
 ### Mockito Setup
 
@@ -544,7 +544,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Maven Surefire/Failsafe automatically run tests on every build

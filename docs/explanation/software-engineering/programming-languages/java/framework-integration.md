@@ -1,6 +1,6 @@
 ---
 title: "Java Framework Integration"
-description: Authoritative standards for Spring Boot 4 and Jakarta EE 11 integration in OSE Platform
+description: Authoritative standards for Spring Boot 3.3+ and Jakarta EE 11 integration in OSE Platform
 category: explanation
 subcategory: prog-lang
 tags:
@@ -28,15 +28,17 @@ created: 2026-02-03
 
 ## Purpose
 
-This document defines **authoritative framework integration standards** for Java development in the OSE Platform. These prescriptive rules govern how Spring Boot 4 and Jakarta EE 11 are used across all Java applications.
+This document defines **authoritative framework integration standards** for Java development in the OSE Platform. These prescriptive rules govern how Spring Boot 3.3+ and Jakarta EE 11 are used across all Java applications.
 
 **Target Audience**: OSE Platform Java developers, framework architects, technical reviewers
 
 **Scope**: Spring Boot configuration, Jakarta EE integration, dependency injection patterns, transaction management
 
-## Spring Boot 4 Integration
+## Spring Boot 3.3+ Integration
 
-**MUST** use Spring Boot 4 for all web applications and microservices.
+**MUST** use Spring Boot 3.3+ for all web applications and microservices. Spring Boot 4.0 is
+planned (2026+, Java 21+ minimum); see [Spring Boot migration
+strategy](../../../platform-web/tools/jvm-spring-boot/README.md) for the upgrade path.
 
 ### Configuration Classes
 
@@ -346,7 +348,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spring Boot auto-configuration for common patterns (no boilerplate setup)

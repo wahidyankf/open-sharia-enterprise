@@ -32,7 +32,9 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **Primary Framework:**
 
-- **Spring Boot 4** (Spring Framework 6.1+, Spring Security 6.1+, Spring Data JPA)
+- **Spring Boot 3.3+** (Spring Framework 6.1+, Spring Security 6.1+, Spring Data JPA)
+  - Spring Boot 4.0 is planned (2026+, Java 21+ minimum); see [Spring Boot migration
+    strategy](../../../platform-web/tools/jvm-spring-boot/README.md) for the upgrade path.
 
 **Enterprise Features:**
 
@@ -40,7 +42,7 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **Testing Stack:**
 
-- **JUnit 6** (Jupiter) for unit testing
+- **JUnit 5** (Jupiter) for unit testing
 - **Mockito** for test doubles and mocking
 - **AssertJ** for fluent assertions
 - **TestContainers** for database/infrastructure integration testing
@@ -121,8 +123,8 @@ OSE Platform follows a three-tier Java versioning strategy:
 **MUST follow these mandatory standards for all Java code in OSE Platform:**
 
 1. **[Coding Standards](./coding-standards.md)** - Naming conventions, package organization, Maven structure
-2. **[Framework Integration](./framework-integration.md)** - Spring Boot 4, Jakarta EE 11 configuration
-3. **[Testing Standards](./testing-standards.md)** - JUnit 6, AssertJ, Mockito, TestContainers, Cucumber
+2. **[Framework Integration](./framework-integration.md)** - Spring Boot 3.3+, Jakarta EE 11 configuration
+3. **[Testing Standards](./testing-standards.md)** - JUnit 5, AssertJ, Mockito, TestContainers, Cucumber
 4. **[Build Configuration](./build-configuration.md)** - Maven POM structure, dependency management
 5. **[Code Quality](./code-quality.md)** - Spotless, Error Prone, NullAway, Checkstyle
 6. **[Error Handling Standards](./error-handling-standards.md)** - OSE exception hierarchy, transaction atomicity
@@ -139,8 +141,8 @@ OSE Platform follows a three-tier Java versioning strategy:
 **Mandatory Standards (All Java Developers MUST follow)**:
 
 1. [Coding Standards](./coding-standards.md) - Naming, package structure, Maven organization
-2. [Framework Integration](./framework-integration.md) - Spring Boot 4, Jakarta EE 11 setup
-3. [Testing Standards](./testing-standards.md) - JUnit 6, AssertJ, TestContainers, Cucumber
+2. [Framework Integration](./framework-integration.md) - Spring Boot 3.3+, Jakarta EE 11 setup
+3. [Testing Standards](./testing-standards.md) - JUnit 5, AssertJ, TestContainers, Cucumber
 
 **Context-Specific Standards (Apply when relevant)**:
 
@@ -193,7 +195,7 @@ graph LR
 
 **Backend Services**:
 
-- RESTful APIs for business operations MUST use Spring Boot 4 with `@RestController`
+- RESTful APIs for business operations MUST use Spring Boot 3.3+ with `@RestController`
 - GraphQL endpoints for complex queries SHOULD use Spring for GraphQL
 - gRPC services for internal communication MAY use gRPC-Java with Protocol Buffers
 - Event-driven microservices MUST use Spring Kafka or Spring AMQP
@@ -237,7 +239,7 @@ graph LR
 
 **Testing Automation (REQUIRED)**:
 
-- MUST write unit tests with JUnit 6 (target: >85% coverage for domain logic)
+- MUST write unit tests with JUnit 5 (target: >85% coverage for domain logic)
 - MUST use TestContainers for database integration tests (no mocked repositories)
 - SHOULD use Mockito sparingly (prefer real objects, use mocks for external dependencies)
 - SHOULD use property-based testing (jqwik) for complex domain logic
@@ -284,5 +286,5 @@ graph LR
 **Status**: Authoritative Standard (Mandatory Compliance)
 
 **Java Version**: 17+ (baseline), 21+ (recommended), 25 LTS (recommended for new projects)
-**Framework Stack**: Spring Boot 4, Jakarta EE 11, JUnit 6, Mockito, TestContainers
+**Framework Stack**: Spring Boot 3.3+, Jakarta EE 11, JUnit 5 (Jupiter), Mockito, TestContainers
 **Maintainers**: Platform Architecture Team

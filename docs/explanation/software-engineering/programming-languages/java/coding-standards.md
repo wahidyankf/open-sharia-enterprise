@@ -219,13 +219,13 @@ See [Java Code Quality](./code-quality.md) for enforcement configuration.
 ## Related Standards
 
 - [Java Framework Integration](./framework-integration.md) - Spring Boot and Jakarta EE standards
-- [Java Testing Standards](./testing-standards.md) - JUnit 6 and test naming conventions
+- [Java Testing Standards](./testing-standards.md) - JUnit 5 and test naming conventions
 - [Java Build Configuration](./build-configuration.md) - Maven POM structure
 - [Java Code Quality](./code-quality.md) - Automated quality tools
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)**
    - Spotless auto-formats code on every compile (no manual formatting needed)
