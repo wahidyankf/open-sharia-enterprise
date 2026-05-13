@@ -181,4 +181,5 @@ git grep "oseplatform" \
 - [x] Stage the README edits: `git add plans/in-progress/README.md plans/done/README.md` —
       run `git status` and confirm both files appear under "Changes to be committed".
   - Date: 2026-05-13 | Status: done | Files: plans/done/README.md staged (in-progress README unchanged — entry never existed)
-- [ ] Commit: `git commit -m "chore(plans): archive oseplatform-rename to done"`
+- [x] Commit: `git commit -m "chore(plans): archive oseplatform-rename to done"`
+  - Date: 2026-05-13 | Status: done | SHA: committed successfully
