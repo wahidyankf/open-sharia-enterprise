@@ -810,7 +810,7 @@ class SelfMonitoringAspect {
 
 ## Software Engineering Principles
 
-These AOP standards enforce the the software engineering principles:
+These AOP standards enforce the software engineering principles:
 
 1. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Custom annotations (`@Auditable`, `@RateLimited`) make cross-cutting concerns explicit

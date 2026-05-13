@@ -472,7 +472,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ### Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Immutability](../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - Record types for domain models guarantee thread safety by default

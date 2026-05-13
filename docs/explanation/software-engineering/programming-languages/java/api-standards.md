@@ -569,7 +569,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ### Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - URL versioning makes API version explicit (`/api/v1/accounts`)

@@ -626,7 +626,7 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 ### Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Immutability](../../../../../../repo-governance/principles/software-engineering/immutability.md)**
    - Singleton beans use only immutable dependencies (final fields)

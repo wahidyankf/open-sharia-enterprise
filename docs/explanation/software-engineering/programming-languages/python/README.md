@@ -94,7 +94,7 @@ All Python code MUST follow the standards documented here:
 
 ## Software Engineering Principles
 
-Python development in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
+Python development in this platform follows the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Python automates through pytest testing, black/ruff formatting, mypy type checking, and CI/CD pipelines
 2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Python enforces through explicit imports, type hints, explicit error handling, clear function signatures

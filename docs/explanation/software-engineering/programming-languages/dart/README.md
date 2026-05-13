@@ -112,7 +112,7 @@ Dart's design principles guide development:
 
 ## Software Engineering Principles
 
-Dart development in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
+Dart development in this platform follows the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../repo-governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Dart automates through dart test, dart format, dart analyze, and CI/CD pipelines
 2. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Dart enforces through explicit imports, null safety annotations, clear type declarations, explicit async markers

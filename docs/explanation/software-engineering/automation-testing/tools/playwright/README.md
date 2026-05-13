@@ -84,7 +84,7 @@ All Playwright tests MUST follow the patterns and practices documented here:
 
 ## Software Engineering Principles
 
-Playwright usage in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
+Playwright usage in this platform follows the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Playwright automates through codegen, trace viewer, auto-waiting, visual regression testing
 2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Playwright enforces through explicit locators, test.describe blocks, clear assertions, typed page objects

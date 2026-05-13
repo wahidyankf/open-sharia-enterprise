@@ -393,7 +393,7 @@ For learning Java fundamentals and concepts referenced in these standards, see:
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Reproducibility](../../../../../repo-governance/principles/software-engineering/reproducibility.md)**
    - `.sdkmanrc` pins exact Java version (every developer uses same JDK)

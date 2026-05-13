@@ -1002,7 +1002,7 @@ mix hex.outdated
 
 ### Software Engineering Principles
 
-These standards enforce the the software engineering principles:
+These standards enforce the software engineering principles:
 
 1. **[Explicit Over Implicit](../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)**
    - Explicit changeset validations make requirements clear

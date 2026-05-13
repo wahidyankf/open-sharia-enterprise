@@ -57,7 +57,7 @@ All Next.js applications MUST follow the patterns and practices documented here:
 
 ## Software Engineering Principles
 
-Next.js usage in this platform follows the the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
+Next.js usage in this platform follows the software engineering principles from [repo-governance/principles/software-engineering/](../../../../../../repo-governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../../repo-governance/principles/software-engineering/automation-over-manual.md)** - Next.js automates through Fast Refresh, automatic code splitting, image optimization, font optimization
 2. **[Explicit Over Implicit](../../../../../../repo-governance/principles/software-engineering/explicit-over-implicit.md)** - Next.js enforces through file-system routing, explicit data fetching, clear rendering strategies

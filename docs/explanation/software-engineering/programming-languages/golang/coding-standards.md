@@ -85,7 +85,7 @@ This document covers Go 1.18-1.26 with emphasis on:
 
 ## Software Engineering Principles
 
-These standards enforce the the software engineering principles from `repo-governance/principles/software-engineering/`:
+These standards enforce the software engineering principles from `repo-governance/principles/software-engineering/`:
 
 ### 1. Automation Over Manual
 
