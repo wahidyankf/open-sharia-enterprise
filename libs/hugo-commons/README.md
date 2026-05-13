@@ -5,7 +5,7 @@ Shared Go utilities for Hugo site CLIs in the Open Sharia Enterprise platform.
 ## Overview
 
 This library provides packages shared between CLI tools that operate on Hugo sites
-(`ayokoding-cli` and `oseplatform-cli`). It understands Hugo-specific conventions
+(`ayokoding-cli` and `ose-cli`). It understands Hugo-specific conventions
 such as `_index.md` section pages and Hugo absolute URL paths.
 
 ## Packages

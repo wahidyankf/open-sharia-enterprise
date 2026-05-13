@@ -62,10 +62,10 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 **Scope**: Applies to **all tutorial content in the repository**, including:
 
 - **apps/ayokoding-web/content/** - Canonical location for programming language and educational tutorials (Java, Golang, Python, etc.)
-- **apps/oseplatform-web/content/** - Platform tutorials and guides
+- **apps/ose-web/content/** - Platform tutorials and guides
 - **Any other location** - Tutorial content regardless of directory
 
-**Implementation Notes**: While these standards apply universally, implementation details (Hugo frontmatter, weight values, navigation structure) vary by platform and are covered in site-specific conventions ([ayokoding-web](../hugo/ayokoding.md), [oseplatform-web](../hugo/ose-platform.md))
+**Implementation Notes**: While these standards apply universally, implementation details (Hugo frontmatter, weight values, navigation structure) vary by platform and are covered in site-specific conventions ([ayokoding-web](../hugo/ayokoding.md), [ose-web](../hugo/ose-platform.md))
 
 ## Diátaxis Principles for Tutorials
 

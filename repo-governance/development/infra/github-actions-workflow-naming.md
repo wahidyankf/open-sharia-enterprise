@@ -85,7 +85,7 @@ Every workflow currently in the repository follows this rule:
 | `PR - Quality Gate`                              | `pr-quality-gate.yml`                              |
 | `PR - Validate Links`                            | `pr-validate-links.yml`                            |
 | `Test and Deploy - AyoKoding Web`                | `test-and-deploy-ayokoding-web.yml`                |
-| `Test and Deploy - OSE Platform Web`             | `test-and-deploy-oseplatform-web.yml`              |
+| `Test and Deploy - OSE Platform Web`             | `test-and-deploy-ose-web.yml`                      |
 | `Test and Deploy - OrganicLever Web Development` | `test-and-deploy-organiclever-web-development.yml` |
 | `Test - OrganicLever Web Staging`                | `test-organiclever-web-staging.yml`                |
 | `Deploy - OrganicLever Web to Production`        | `deploy-organiclever-web-to-production.yml`        |

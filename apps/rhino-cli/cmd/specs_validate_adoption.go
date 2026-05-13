@@ -25,7 +25,7 @@ Reports HIGH findings for missing adoption. Exits non-zero if any findings are f
 App selection precedence (first non-empty wins):
   1. positional arg (single app, today's behavior)
   2. --apps flag (StringSlice, comma-separated or repeated)
-  3. allowlist default (organiclever, wahidyankf, oseplatform, ayokoding)`,
+  3. allowlist default (organiclever, wahidyankf, ose-platform, ayokoding)`,
 	Example: `  # Validate organiclever has adopted BDD and DDD (positional)
   rhino-cli specs validate-adoption organiclever
 

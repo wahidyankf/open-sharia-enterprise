@@ -759,7 +759,7 @@ This convention implements and respects:
 **Universal Application**: This convention applies to **all by-concept tutorial content** across the repository:
 
 - **apps/ayokoding-web/content/** - Canonical location for programming language tutorials (Java, Golang, Python, etc.)
-- **apps/oseplatform-web/content/** - Platform tutorials using by-concept approach
+- **apps/ose-web/content/** - Platform tutorials using by-concept approach
 - **Any other location** - By-concept tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/README.md)

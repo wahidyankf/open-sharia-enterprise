@@ -420,16 +420,16 @@ After validating the worktree specification (Step 5d), audit every delivery chec
 Every checkbox in `delivery.md` (or the Delivery Checklist section of a single-file plan's `README.md`) MUST satisfy ALL of the following that apply to the action:
 
 1. **Explicit file path(s)** when the action touches a known file
-   - Acceptable: `apps/oseplatform-web/src/server/trpc.ts`, `repo-governance/conventions/structure/plans.md`, etc.
+   - Acceptable: `apps/ose-web/src/server/trpc.ts`, `repo-governance/conventions/structure/plans.md`, etc.
    - When the path cannot be determined at authoring time, the checkbox MUST give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
    - Bare "the auth file", "the relevant config", "wherever needed": **HIGH** finding.
 
 2. **Explicit shell command(s)** when the action involves a command
-   - Acceptable: `npx nx run oseplatform-web:test:quick`, `git mv plans/in-progress/foo plans/done/YYYY-MM-DD__foo`, etc.
+   - Acceptable: `npx nx run ose-web:test:quick`, `git mv plans/in-progress/foo plans/done/YYYY-MM-DD__foo`, etc.
    - Bare "run the lint", "run tests", "validate": **HIGH** finding.
 
 3. **Concrete acceptance criterion** stating the observable change that proves done
-   - Acceptable: "all assertions in `trpc.test.ts` pass", "`nx run oseplatform-web:typecheck` exits 0", "`grep -c 'old-string' file.md` returns `0`".
+   - Acceptable: "all assertions in `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0", "`grep -c 'old-string' file.md` returns `0`".
    - Bare "implement X", "set up Y", "configure Z", "add caching", "fix the bug": **HIGH** finding.
 
 #### How to Audit

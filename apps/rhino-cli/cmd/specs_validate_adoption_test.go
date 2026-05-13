@@ -329,7 +329,7 @@ func TestResolveAdoptionApps(t *testing.T) {
 			name:       "no positional, no flag → defaults to allowlist",
 			positional: nil,
 			appsFlag:   nil,
-			want:       []string{"organiclever", "wahidyankf", "oseplatform", "ayokoding"},
+			want:       []string{"organiclever", "wahidyankf", "ose-platform", "ayokoding"},
 		},
 		{
 			name:       "explicit positional preserved as single-app list",
@@ -351,9 +351,9 @@ func TestResolveAdoptionApps(t *testing.T) {
 		},
 		{
 			name:       "positional wins over --apps flag (back-compat priority)",
-			positional: []string{"oseplatform"},
+			positional: []string{"ose-platform"},
 			appsFlag:   []string{"organiclever", "wahidyankf"},
-			want:       []string{"oseplatform"},
+			want:       []string{"ose-platform"},
 		},
 	}
 

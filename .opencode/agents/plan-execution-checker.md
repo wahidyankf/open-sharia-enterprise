@@ -351,7 +351,7 @@ For every file path mentioned in delivery.md (in checkbox prose and implementati
 
 **B. Nx-target claims**
 
-For every Nx target invoked in delivery.md commands (e.g., `nx run oseplatform-web:test:quick`):
+For every Nx target invoked in delivery.md commands (e.g., `nx run ose-web:test:quick`):
 
 - Read `apps/<project>/project.json`. Confirm the target appears under `targets`. Missing: **HIGH** per occurrence.
 

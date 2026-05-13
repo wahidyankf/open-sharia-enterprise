@@ -35,7 +35,7 @@ These conventions defined **WHAT Hugo content rules applied** to our former Hugo
 ## Conventions
 
 - [Hugo Content - ayokoding](./ayokoding.md) - **DEPRECATED** — Historical Hugo conventions for ayokoding-web (Hextra theme). ayokoding-web has migrated to Next.js 16
-- [Hugo Content - OSE Platform](./ose-platform.md) - **DEPRECATED** — Historical Hugo conventions for oseplatform-web (PaperMod theme). oseplatform-web has migrated to Next.js 16
+- [Hugo Content - OSE Platform](./ose-platform.md) - **DEPRECATED** — Historical Hugo conventions for ose-web (PaperMod theme). ose-web has migrated to Next.js 16
 - [Hugo Content - Shared](./shared.md) - **DEPRECATED** — Historical shared Hugo content conventions. No active Hugo sites remain
 - [Indonesian Content Policy - ayokoding-web](../writing/indonesian-content-policy.md) - **MOVED** to `conventions/writing/` — Policy defining when and how to create Indonesian content in ayokoding-web
 

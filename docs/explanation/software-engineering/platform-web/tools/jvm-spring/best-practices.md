@@ -50,7 +50,7 @@ Organize Spring projects following clean architecture principles with clear laye
 **Standard Package Structure**:
 
 ```
-src/main/java/com/oseplatform/[bounded-context]/
+src/main/java/com/ose_platform/[bounded-context]/
 ├── domain/                    # Domain layer (pure business logic)
 │   ├── model/                # Aggregates, entities, value objects
 │   │   ├── ZakatCalculation.java

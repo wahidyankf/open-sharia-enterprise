@@ -73,7 +73,7 @@ This document provides proven best practices for building production-ready Sprin
 **Recommended: Package by Feature (Bounded Context)**
 
 ```
-src/main/java/com/oseplatform/[domain]/
+src/main/java/com/ose_platform/[domain]/
 ├── zakat/                              # Zakat bounded context
 │   ├── ZakatCalculation.java          # Aggregate root
 │   ├── ZakatCalculationService.java   # Application service
@@ -102,7 +102,7 @@ src/main/java/com/oseplatform/[domain]/
 **Alternative: Layered Architecture**
 
 ```
-src/main/java/com/oseplatform/[domain]/
+src/main/java/com/ose_platform/[domain]/
 ├── domain/                    # Domain layer
 │   ├── model/                # Entities, value objects
 │   ├── repository/           # Repository interfaces

@@ -124,7 +124,7 @@ Mistakes).
 - **All checkers** -- validate content against conventions using defined rulesets and produce structured audit reports (docs-checker, docs-tutorial-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, repo-rules-checker, repo-workflow-checker, plan-checker, plan-execution-checker, swe-code-checker, swe-ui-checker, ci-checker, apps-\*-checker)
 - **Most fixers** -- apply corrections from checker audit reports following documented fix procedures (docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, repo-rules-fixer, repo-workflow-fixer, plan-fixer, swe-ui-fixer, ci-fixer, apps-\*-fixer)
 - **social-linkedin-post-maker** -- generates social media posts following a defined template and tone guidelines
-- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker)
+- **Structured makers** -- makers with tight, well-defined skills that pin down most decisions, making them rule-following rather than open-ended creation (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-ose-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker)
 - **swe-e2e-dev** -- writes Playwright E2E tests following a dedicated skill with defined patterns (locators, fixtures, waits); lower stakes than production code written by language developer agents
 
 **Frontmatter**: Specify `model: sonnet` explicitly.
@@ -155,7 +155,7 @@ color: green
 
 **Agent examples**:
 
-- **Deployers** (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
+- **Deployers** (apps-ayokoding-web-deployer, apps-ose-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer) -- execute git branch operations and deployment commands following a fixed procedure
 - **Link checkers** (docs-link-checker, apps-ayokoding-web-link-checker) -- validate URLs by checking HTTP status codes and managing cache files
 - **apps-ayokoding-web-link-fixer** -- applies checker-identified broken links via deterministic URL replacement; no independent analysis required
 - **docs-file-manager** -- performs deterministic file operations (move, rename, delete) with `git mv`, kebab-case pattern matching, and mechanical link updates; no judgment calls required
@@ -323,7 +323,7 @@ The social-linkedin-post-maker uses execution-grade despite being a "maker" agen
 
 ### Structured Makers as Execution-Grade
 
-Several maker agents use execution-grade because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-oseplatform-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker). Each has an execution-grade checker and execution-grade fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with planning-grade makers (plan-maker, docs-tutorial-maker, swe-ui-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
+Several maker agents use execution-grade because their output is structured by tight skills with well-defined rubrics (docs-maker, readme-maker, agent-maker, specs-maker, repo-workflow-maker, apps-ose-web-content-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-in-the-field-maker, repo-rules-maker, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker). Each has an execution-grade checker and execution-grade fixer in its maker-checker-fixer trio, and the skill pins down most decisions. Contrast with planning-grade makers (plan-maker, docs-tutorial-maker, swe-ui-maker) where the creative work is open-ended, pedagogically demanding, or multi-concern.
 
 ### E2E Test Developer as Execution-Grade
 

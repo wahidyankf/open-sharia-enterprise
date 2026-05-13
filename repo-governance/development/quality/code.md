@@ -59,7 +59,7 @@ These tools work together to ensure code consistency and quality without manual 
 - YAML: `*.{yml,yaml}`
 - CSS/SCSS: `*.{css,scss}`
 
-**Note**: Hugo archetype template files (`apps/oseplatform-web/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
+**Note**: Hugo archetype template files (`apps/ose-web/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
 
 **When It Runs**: Automatically on staged files before each commit via the pre-commit hook.
 
@@ -94,7 +94,7 @@ npx prettier --write [file-path]
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
-    "apps/oseplatform-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
+    "apps/ose-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"

@@ -215,7 +215,7 @@ Note: Adoption gap findings are always `[Adoption Gap]` tagged in the report and
 Before completing validation of any listed `specs/apps/<app-family>/` folder, run the four
 allowlist-driven `rhino-cli specs validate-*` Nx targets via `nx run rhino-cli:validate:specs-{adoption,tree,counts,links}`.
 Each target accepts a `--apps <csv>` flag for explicit scoping; absent any flag, it defaults to the
-`AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`).
+`AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `ose-platform`, `ayokoding`).
 
 | Target                    | What it checks                                                        | Finding level |
 | ------------------------- | --------------------------------------------------------------------- | ------------- |

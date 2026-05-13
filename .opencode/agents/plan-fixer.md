@@ -471,9 +471,9 @@ For each offending checkbox, derive the missing elements:
 **Good** (rewrite):
 
 ```markdown
-- [ ] Edit `apps/oseplatform-web/src/server/trpc.ts`: wrap the public router with
+- [ ] Edit `apps/ose-web/src/server/trpc.ts`: wrap the public router with
       `unstable_cache(..., { revalidate: 300 })`. Verify by running
-      `npx nx run oseplatform-web:test:quick` — all tests pass.
+      `npx nx run ose-web:test:quick` — all tests pass.
 ```
 
 **Bad**:

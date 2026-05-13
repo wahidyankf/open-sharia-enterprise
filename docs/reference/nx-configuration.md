@@ -264,22 +264,22 @@ Per-project:
 
 ```json
 {
-  "name": "oseplatform-web",
-  "sourceRoot": "apps/oseplatform-web",
+  "name": "ose-web",
+  "sourceRoot": "apps/ose-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/ose-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/ose-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -287,11 +287,11 @@ Per-project:
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/ose-web"
       }
     }
   },
-  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ose-platform"]
 }
 ```
 
@@ -354,7 +354,7 @@ All projects use a standard four-dimension tag scheme:
 | `type:`     | `app`, `lib`, `e2e`                                             | Yes                      | Project kind            |
 | `platform:` | `hugo`, `cli`, `nextjs`, `flutter`, `spring-boot`, `playwright` | For apps/e2e             | Framework/runtime       |
 | `lang:`     | `golang`, `ts`, `java`, `dart`                                  | Where source code exists | Primary language        |
-| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling`           | Yes                      | Business/product domain |
+| `domain:`   | `ayokoding`, `ose-platform`, `organiclever`, `tooling`          | Yes                      | Business/product domain |
 
 **Notes**:
 
@@ -374,7 +374,7 @@ Project name used by Nx CLI.
 
 **Examples**:
 
-- `"oseplatform-web"` (app)
+- `"ose-web"` (app)
 - `"ts-utils"` (lib)
 
 #### `sourceRoot`
@@ -387,7 +387,7 @@ Location of source code.
 
 **Examples**:
 
-- `"apps/oseplatform-web"` (app root)
+- `"apps/ose-web"` (app root)
 - `"libs/ts-utils/src"` (lib source)
 
 #### `projectType`
@@ -441,7 +441,7 @@ Executor options.
   - Examples: `"next build"`, `"tsc -p tsconfig.json"`
 - `cwd` (string): Working directory
   - Optional (defaults to workspace root)
-  - Examples: `"apps/oseplatform-web"`, `"."`
+  - Examples: `"apps/ose-web"`, `"."`
 
 **Example**:
 
@@ -449,7 +449,7 @@ Executor options.
 {
   "options": {
     "command": "next build",
-    "cwd": "apps/oseplatform-web"
+    "cwd": "apps/ose-web"
   }
 }
 ```
@@ -699,7 +699,7 @@ Skip Nx cache.
 **Usage**:
 
 ```bash
-NX_SKIP_NX_CACHE=true nx build oseplatform-web
+NX_SKIP_NX_CACHE=true nx build ose-web
 ```
 
 #### `NX_DAEMON`
@@ -709,7 +709,7 @@ Enable/disable Nx daemon.
 **Usage**:
 
 ```bash
-NX_DAEMON=false nx build oseplatform-web
+NX_DAEMON=false nx build ose-web
 ```
 
 ## Related Documentation

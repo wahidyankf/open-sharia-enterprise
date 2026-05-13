@@ -125,7 +125,7 @@ defmodule FinancialDomain.MixProject do
 
       # SHOULD: Documentation configuration
       name: "Financial Domain",
-      source_url: "https://github.com/oseplatform/financial_domain",
+      source_url: "https://github.com/ose-platform/financial_domain",
       docs: docs(),
 
       # SHOULD: Test coverage configuration
@@ -424,7 +424,7 @@ end
 
 ```bash
 # Authenticate with organization
-mix hex.organization auth oseplatform
+mix hex.organization auth ose-platform
 
 # Or set environment variable
 export HEX_ORGANIZATION_KEY=your-key-here
@@ -439,7 +439,7 @@ defp deps do
     {:phoenix, "~> 1.7.0"},
 
     # Private organization package
-    {:financial_core, "~> 1.0", organization: "oseplatform"}
+    {:financial_core, "~> 1.0", organization: "ose-platform"}
   ]
 end
 ```

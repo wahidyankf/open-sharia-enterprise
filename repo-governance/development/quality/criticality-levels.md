@@ -94,7 +94,7 @@ See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for compl
 - Agent `name` field doesn't match filename (breaks agent discovery)
 - Broken internal link to non-existent file in documentation
 
-**Next.js Content (ayokoding-web/oseplatform-web)**:
+**Next.js Content (ayokoding-web/ose-web)**:
 
 - Missing required `title` field (content validation fails)
 - Invalid frontmatter syntax (YAML parsing error)
@@ -683,7 +683,7 @@ Update link to current documentation URL or find alternative resource
 - Potential cross-linking opportunity
 - Suggest mentioning alternative approach
 
-### Next.js Content - oseplatform-web (content-checker)
+### Next.js Content - ose-web (content-checker)
 
 **CRITICAL**:
 
@@ -1377,7 +1377,7 @@ Existing agents using different terminology should migrate to this convention.
 - apps-ayokoding-web-general-checker
 - apps-ayokoding-web-by-example-checker
 - apps-ayokoding-web-in-the-field-checker
-- apps-oseplatform-web-content-checker
+- apps-ose-web-content-checker
 - repo-workflow-checker
 
 **Dual-Label Family** (preserve existing labels + add criticality):
@@ -1408,7 +1408,7 @@ Update all fixer agents to use priority-based execution:
 - apps-ayokoding-web-link-fixer
 - docs-tutorial-fixer
 - docs-software-engineering-separation-fixer
-- apps-oseplatform-web-content-fixer
+- apps-ose-web-content-fixer
 - readme-fixer
 - docs-fixer
 - plan-fixer

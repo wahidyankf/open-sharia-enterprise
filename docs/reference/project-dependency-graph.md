@@ -58,12 +58,12 @@ invalidated and `nx affected` flags the project.
 graph TD
   %% Content sites (top level)
   AKW[ayokoding-web]
-  OPW[oseplatform-web]
+  OPW[ose-web]
   WKF[wahidyankf-web]
 
   %% CLI tools
   AKC[ayokoding-cli]
-  OPC[oseplatform-cli]
+  OPC[ose-cli]
   RC[rhino-cli]
 
   %% Go libs (leaf / near-leaf)
@@ -158,18 +158,18 @@ Repository management CLI used by most projects for coverage validation
 
 Shared Go utilities (time formatting, test helpers, output capture).
 
-- **Dependents**: `rhino-cli`, `hugo-commons`, `ayokoding-cli`, `oseplatform-cli`
+- **Dependents**: `rhino-cli`, `hugo-commons`, `ayokoding-cli`, `ose-cli`
 - **Mechanism**: Go module `replace` directives + `implicitDependencies`
 
 ## Project Dependency Table
 
 ### Content Platforms
 
-| Project         | Dependencies    | Spec Inputs |
-| --------------- | --------------- | ----------- |
-| ayokoding-web   | ayokoding-cli   | (none)      |
-| oseplatform-web | oseplatform-cli | (none)      |
-| wahidyankf-web  | (none)          | (none)      |
+| Project        | Dependencies  | Spec Inputs |
+| -------------- | ------------- | ----------- |
+| ayokoding-web  | ayokoding-cli | (none)      |
+| ose-web        | ose-cli       | (none)      |
+| wahidyankf-web | (none)        | (none)      |
 
 ### OrganicLever
 
@@ -183,11 +183,11 @@ Shared Go utilities (time formatting, test helpers, output capture).
 
 ### CLI Tools
 
-| Project         | Dependencies                            | Spec Inputs                           |
-| --------------- | --------------------------------------- | ------------------------------------- |
-| ayokoding-cli   | golang-commons, hugo-commons, rhino-cli | ayokoding-cli/\* (test:integration)   |
-| oseplatform-cli | golang-commons, hugo-commons, rhino-cli | oseplatform-cli/\* (test:integration) |
-| rhino-cli       | golang-commons                          | rhino-cli/\* (test:integration)       |
+| Project       | Dependencies                            | Spec Inputs                         |
+| ------------- | --------------------------------------- | ----------------------------------- |
+| ayokoding-cli | golang-commons, hugo-commons, rhino-cli | ayokoding-cli/\* (test:integration) |
+| ose-cli       | golang-commons, hugo-commons, rhino-cli | ose-cli/\* (test:integration)       |
+| rhino-cli     | golang-commons                          | rhino-cli/\* (test:integration)     |
 
 ### Libraries
 
@@ -207,7 +207,7 @@ All Gherkin specs and API contracts live under `specs/` and are consumed via
 | `specs/apps/organiclever-web/`                  | organiclever-web, organiclever-web-e2e | test:integration, typecheck, test:quick |
 | `specs/apps/rhino/`                             | rhino-cli                              | test:integration                        |
 | `specs/apps/ayokoding/`                         | ayokoding-cli, ayokoding-web           | test:integration                        |
-| `specs/apps/oseplatform/`                       | oseplatform-cli, oseplatform-web       | test:integration                        |
+| `specs/apps/ose-platform/`                      | ose-cli, ose-web                       | test:integration                        |
 | `specs/libs/golang-commons/`                    | golang-commons                         | test:integration                        |
 | `specs/libs/hugo-commons/`                      | hugo-commons                           | test:integration                        |
 

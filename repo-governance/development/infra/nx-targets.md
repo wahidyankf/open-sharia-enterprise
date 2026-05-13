@@ -138,7 +138,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                   | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
 | Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright` | Apps and e2e projects          | Framework or runtime environment                              |
 | Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`, `dart`                                        | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `wahidyankf`, `demo-be`, `demo-fe`, `tooling`                             | Always                         | Business or product domain                                    |
+| Domain    | `domain:`   | `ayokoding`, `ose-platform`, `organiclever`, `wahidyankf`, `demo-be`, `demo-fe`, `tooling`                            | Always                         | Business or product domain                                    |
 
 ### Special Rules
 
@@ -159,8 +159,8 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `organiclever-be`       | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |
 | `organiclever-web-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `organiclever-be-e2e`   | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
-| `oseplatform-cli`       | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
-| `oseplatform-web`       | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
+| `ose-cli`               | `["type:app", "platform:cli", "lang:golang", "domain:ose-platform"]`     |
+| `ose-web`               | `["type:app", "platform:nextjs", "lang:ts", "domain:ose-platform"]`      |
 | `wahidyankf-web`        | `["type:app", "platform:nextjs", "lang:ts", "domain:wahidyankf"]`        |
 | `wahidyankf-web-fe-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`    |
 | `hugo-commons`          | `["type:lib", "lang:golang"]`                                            |
@@ -380,15 +380,15 @@ the project's feature files has a matching step definition in the implementation
 
 **Project coverage status**:
 
-| Project group                                                 | Status   | Notes                                                                                       |
-| ------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
-| Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                    |
-| API backends (`organiclever-be`)                              | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
-| E2E runners (`organiclever-be-e2e`, `organiclever-web-e2e`)   | Enforced | `--shared-steps` only; test-support steps are implemented here                              |
-| Content platforms (`ayokoding-web`, `oseplatform-web`)        | Enforced | `--shared-steps`                                                                            |
-| Web UI apps (`organiclever-web`)                              | Enforced | `--shared-steps`                                                                            |
-| Libraries (`golang-commons`, `hugo-commons`)                  | Enforced | `--shared-steps`                                                                            |
-| Projects with genuine step gaps                               | Deferred | `spec-coverage` target exists but validation deferred until step implementation is complete |
+| Project group                                               | Status   | Notes                                                                                       |
+| ----------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| Go CLI apps (`rhino-cli`, `ayokoding-cli`, `ose-cli`)       | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                    |
+| API backends (`organiclever-be`)                            | Enforced | `--shared-steps --exclude-dir test-support`                                                 |
+| E2E runners (`organiclever-be-e2e`, `organiclever-web-e2e`) | Enforced | `--shared-steps` only; test-support steps are implemented here                              |
+| Content platforms (`ayokoding-web`, `ose-web`)              | Enforced | `--shared-steps`                                                                            |
+| Web UI apps (`organiclever-web`)                            | Enforced | `--shared-steps`                                                                            |
+| Libraries (`golang-commons`, `hugo-commons`)                | Enforced | `--shared-steps`                                                                            |
+| Projects with genuine step gaps                             | Deferred | `spec-coverage` target exists but validation deferred until step implementation is complete |
 
 All apps and E2E runners are required to have a `spec-coverage` target. Projects with genuine step
 gaps have the target deferred temporarily until step implementations are complete.
@@ -420,9 +420,9 @@ Accessibility testing is compulsory for all UI-related projects. It operates at 
 **Static a11y linting** (enforced via the `lint` target at all three gates: pre-push hook, PR
 quality gate, and scheduled Test CI workflows):
 
-| Project                                                               | Static a11y tool           |
-| --------------------------------------------------------------------- | -------------------------- |
-| `organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/web-ui` | `oxlint --jsx-a11y-plugin` |
+| Project                                                       | Static a11y tool           |
+| ------------------------------------------------------------- | -------------------------- |
+| `organiclever-web`, `ayokoding-web`, `ose-web`, `libs/web-ui` | `oxlint --jsx-a11y-plugin` |
 
 Static a11y linting catches common accessibility violations at compile time: missing alt text,
 missing ARIA labels, invalid ARIA attributes, missing form labels, and incorrect role usage.
@@ -551,13 +551,13 @@ language:
 
 > For canonical inputs patterns across Go, Java, Kotlin, Rust, TypeScript, Python, Elixir, C#, Clojure, and Dart, see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
 
-**Go CLI apps** (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) also consume Gherkin specs in `test:unit` (godog unit step definitions run without a build tag). Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
+**Go CLI apps** (`rhino-cli`, `ayokoding-cli`, `ose-cli`) also consume Gherkin specs in `test:unit` (godog unit step definitions run without a build tag). Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
 
-| CLI App           | Gherkin specs input                                   |
-| ----------------- | ----------------------------------------------------- |
-| `rhino-cli`       | `{workspaceRoot}/specs/apps/rhino/**/*.feature`       |
-| `ayokoding-cli`   | `{workspaceRoot}/specs/apps/ayokoding/**/*.feature`   |
-| `oseplatform-cli` | `{workspaceRoot}/specs/apps/oseplatform/**/*.feature` |
+| CLI App         | Gherkin specs input                                    |
+| --------------- | ------------------------------------------------------ |
+| `rhino-cli`     | `{workspaceRoot}/specs/apps/rhino/**/*.feature`        |
+| `ayokoding-cli` | `{workspaceRoot}/specs/apps/ayokoding/**/*.feature`    |
+| `ose-cli`       | `{workspaceRoot}/specs/apps/ose-platform/**/*.feature` |
 
 Example for `rhino-cli` `test:unit` inputs:
 

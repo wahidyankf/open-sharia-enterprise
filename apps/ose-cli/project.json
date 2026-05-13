@@ -1,0 +1,76 @@
+{
+  "name": "ose-cli",
+  "sourceRoot": "apps/ose-cli",
+  "projectType": "application",
+  "implicitDependencies": ["golang-commons", "hugo-commons", "rhino-cli"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go build -buildvcs=false -o dist/ose-cli",
+        "cwd": "apps/ose-cli"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-cli/cover.out 90)",
+        "cwd": "apps/ose-cli"
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ose-platform/**/*.feature"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./... -count=1",
+        "cwd": "apps/ose-cli"
+      },
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ose-platform/**/*.feature"]
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/ose-cli"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/ose-cli"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./cmd/...",
+        "cwd": "apps/ose-cli"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/apps/ose-platform/**/*.feature"],
+      "outputs": ["{projectRoot}/cover_spec.out"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go vet ./...",
+        "cwd": "apps/ose-cli"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
+        "cwd": "apps/ose-cli"
+      }
+    },
+    "spec-coverage": {
+      "command": "CGO_ENABLED=0 go run -C apps/rhino-cli main.go spec-coverage validate specs/apps/ose-platform/behavior/cli/gherkin apps/ose-cli --shared-steps",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/ose-platform/behavior/cli/gherkin/**/*.feature", "{projectRoot}/**/*.go"]
+    }
+  },
+  "tags": ["type:app", "platform:cli", "lang:golang", "domain:ose-platform"]
+}

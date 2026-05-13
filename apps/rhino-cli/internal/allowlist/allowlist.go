@@ -14,6 +14,6 @@ package allowlist
 var AppsWithDDD = []string{
 	"organiclever",
 	"wahidyankf",
-	"oseplatform",
+	"ose-platform",
 	"ayokoding",
 }

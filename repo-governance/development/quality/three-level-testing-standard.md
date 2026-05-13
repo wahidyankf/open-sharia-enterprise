@@ -181,7 +181,7 @@ Different project types carry different coverage thresholds, reflecting the prac
 | Threshold | Projects                                                 | Rationale                                                                                           |
 | --------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | 90%       | API backends (`organiclever-be`), CLI apps (Go), Go libs | Core business logic with high mock isolation; all execution paths reachable in unit tests           |
-| 80%       | Content platforms (`ayokoding-web`, `oseplatform-web`)   | Significant UI rendering code; some React rendering paths are hard to unit-test                     |
+| 80%       | Content platforms (`ayokoding-web`, `ose-web`)           | Significant UI rendering code; some React rendering paths are hard to unit-test                     |
 | 70%       | FE apps (`organiclever-web`)                             | API/auth/query layers are fully mocked by design; threshold reflects intentional mocking boundaries |
 
 ## Mandatory Test Levels Matrix
@@ -315,7 +315,7 @@ All UI projects must include static accessibility checks in their `lint` target.
 common accessibility violations at compile time and are enforced at all three gates: pre-push hook,
 PR quality gate, and scheduled Test CI workflows.
 
-- **TypeScript UI projects** (`organiclever-web`, `ayokoding-web`, `oseplatform-web`, `libs/web-ui`):
+- **TypeScript UI projects** (`organiclever-web`, `ayokoding-web`, `ose-web`, `libs/web-ui`):
   `oxlint --jsx-a11y-plugin`
 
 ### Runtime Accessibility E2E Tests (via `test:e2e`)
@@ -345,7 +345,7 @@ linting and the enforcement gates.
 The following gaps are known and tracked for future resolution:
 
 - **FE unit tests lack Gherkin**: `organiclever-web` does not yet consume Gherkin specs at the unit level. A BDD runner compatible with Vitest-based unit tests needs to be selected.
-- **Content platform Gherkin pending**: `ayokoding-web` and `oseplatform-web` do not yet consume Gherkin specs at any test level. Gherkin consumption for content platforms is planned as part of the same standardization effort.
+- **Content platform Gherkin pending**: `ayokoding-web` and `ose-web` do not yet consume Gherkin specs at any test level. Gherkin consumption for content platforms is planned as part of the same standardization effort.
 - **Spec-coverage deferred for some projects**: Some projects have `spec-coverage` temporarily deferred until step implementations are complete. See "Spec-Coverage Validation" above and [Nx Target Standards](../infra/nx-targets.md) for the deferred project list.
 
 ## Per-Backend Implementation Pattern
@@ -366,7 +366,7 @@ The exact directory structure varies by language convention (e.g., Go uses `_tes
 
 ## CLI App Implementation Pattern
 
-Go CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) consume the same Gherkin specs from `specs/apps/<cli-name>/` at both the unit and integration levels. The difference is what the step definitions use as their I/O substrate:
+Go CLI apps (`rhino-cli`, `ayokoding-cli`, `ose-cli`) consume the same Gherkin specs from `specs/apps/<cli-name>/` at both the unit and integration levels. The difference is what the step definitions use as their I/O substrate:
 
 | Level       | Test File Pattern                       | Step Implementation                                                 | What's Real                   |
 | ----------- | --------------------------------------- | ------------------------------------------------------------------- | ----------------------------- |

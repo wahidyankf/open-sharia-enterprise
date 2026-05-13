@@ -24,7 +24,7 @@ Remove content that mentions `ose-public`-specific product apps while preserving
 The transform flags a heading or body paragraph as product-specific when any of the following tokens appear (case-insensitive, word-boundary):
 
 - Product names: `OrganicLever`, `AyoKoding`, `OSE Platform`, `Open Sharia Enterprise` (when used as a product name rather than the repo name).
-- Product paths: `apps/organiclever-*`, `apps/ayokoding-*`, `apps/oseplatform-*`, `specs/apps/organiclever/`, `specs/apps/ayokoding/`, `specs/apps/oseplatform/`.
+- Product paths: `apps/organiclever-*`, `apps/ayokoding-*`, `apps/ose-web`, `apps/ose-web-be-e2e`, `apps/ose-web-fe-e2e`, `apps/ose-cli`, `specs/apps/organiclever/`, `specs/apps/ayokoding/`, `specs/apps/ose-platform/`.
 - Product domain strings: `organiclever.com`, `ayokoding.com`, `oseplatform.com`.
 
 ### Rewrite rules
@@ -48,9 +48,10 @@ PRODUCT_MARKERS = [
     r"\bAyoKoding\b",
     r"\bOSE Platform\b",
     r"\bOpen Sharia Enterprise\b",
-    r"apps/(organiclever|ayokoding|oseplatform)-",
-    r"specs/apps/(organiclever|ayokoding|oseplatform)/",
-    r"(organiclever|ayokoding|oseplatform)\.com",
+    r"apps/(organiclever|ayokoding)-",
+    r"apps/(ose-web|ose-web-be-e2e|ose-web-fe-e2e|ose-cli)\b",
+    r"specs/apps/(organiclever|ayokoding|ose-platform)/",
+    r"(organiclever|ayokoding)\.com|oseplatform\.com",
 ]
 
 def strip_product_sections(source: str) -> str:

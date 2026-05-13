@@ -27,7 +27,7 @@ These workflows define **WHEN and HOW to validate ayokoding-web content**, orche
 **❌ Not Included:**
 
 - Single-agent operations (use agents directly)
-- Other Hugo sites (oseplatform-web has separate workflows)
+- Other Hugo sites (ose-web has separate workflows)
 - Non-workflow documentation (that's conventions/)
 
 ## Workflows

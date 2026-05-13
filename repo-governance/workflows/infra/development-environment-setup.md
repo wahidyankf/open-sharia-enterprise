@@ -221,7 +221,7 @@ volta install npm@11.10.1
 
 ### Phase 4: Go Ecosystem (Sequential)
 
-Required for: `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `libs/golang-commons`
+Required for: `rhino-cli`, `ayokoding-cli`, `ose-cli`, `libs/golang-commons`
 
 #### 5.1 Install Go
 

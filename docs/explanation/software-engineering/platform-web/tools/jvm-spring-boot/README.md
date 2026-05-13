@@ -675,7 +675,7 @@ public record Money(BigDecimal amount, String currency) {
 Typical Spring Boot project structure aligned with clean architecture:
 
 ```
-src/main/java/com/oseplatform/[bounded-context]/
+src/main/java/com/ose_platform/[bounded-context]/
 ├── domain/                    # Domain layer (pure business logic)
 │   ├── model/                # Aggregates, entities, value objects
 │   ├── repository/           # Repository interfaces (ports)
@@ -697,7 +697,7 @@ src/main/java/com/oseplatform/[bounded-context]/
 **Package by Feature** (Alternative):
 
 ```
-src/main/java/com/oseplatform/[bounded-context]/
+src/main/java/com/ose_platform/[bounded-context]/
 ├── murabaha/
 │   ├── MurabahaContract.java       # Aggregate
 │   ├── MurabahaContractRepository.java

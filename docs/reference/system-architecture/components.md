@@ -17,7 +17,7 @@ C4 Level 3 component diagrams and Level 4 code architecture for the Open Sharia 
 
 Shows the internal components within each container. Components are groupings of related functionality behind a well-defined interface.
 
-### oseplatform-web Components (Hugo Static Site)
+### ose-web Components (Hugo Static Site)
 
 ```mermaid
 graph LR

@@ -235,7 +235,7 @@ Release Highlights (Go 1.18–1.26)
 
 - ayokoding-cli MUST use Go for content automation (Hugo navigation generation, title updates)
 - rhino-cli MUST use Go for repository management (RHINO = Repository Hygiene & INtegration Orchestrator)
-- oseplatform-cli MUST use Go for OSE Platform site validation (link checking)
+- ose-cli MUST use Go for OSE Platform site validation (link checking)
 - Administrative tools SHOULD use Go for fast startup and easy distribution (single binary)
 - Code generation and scaffolding MAY use Go with `text/template` or `html/template`
 - All OSE Platform CLI apps MUST use domain-prefixed Cobra subcommands (`{cli-name} {domain} {action}`) — see [BDD Spec-to-Test Mapping Convention](../../../../../repo-governance/development/infra/bdd-spec-test-mapping.md) for source file and Gherkin tag naming rules

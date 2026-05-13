@@ -304,7 +304,7 @@ Final path: ../../../docs/tutorials/README.md
 
 ## Historical: Hugo Content Linking (DEPRECATED)
 
-**Note**: Both `apps/ayokoding-web/` and `apps/oseplatform-web/` have migrated to Next.js 16. The Hugo-specific linking rules below no longer apply to active sites. This section is preserved for historical reference only.
+**Note**: Both `apps/ayokoding-web/` and `apps/ose-web/` have migrated to Next.js 16. The Hugo-specific linking rules below no longer apply to active sites. This section is preserved for historical reference only.
 
 **Previous Hugo rules** (no longer applicable):
 

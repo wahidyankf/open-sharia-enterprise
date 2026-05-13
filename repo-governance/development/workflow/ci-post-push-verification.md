@@ -49,7 +49,7 @@ After pushing app or library code to `origin main`, you MUST:
 | App(s) Changed                                              | Workflow to Trigger                                |
 | ----------------------------------------------------------- | -------------------------------------------------- |
 | `apps/ayokoding-web/`                                       | `test-and-deploy-ayokoding-web.yml`                |
-| `apps/oseplatform-web/`                                     | `test-and-deploy-oseplatform-web.yml`              |
+| `apps/ose-web/`                                             | `test-and-deploy-ose-web.yml`                      |
 | `apps/organiclever-web/`, `apps/organiclever-be/`           | `test-and-deploy-organiclever-web-development.yml` |
 | `apps/wahidyankf-web/`                                      | `test-and-deploy-wahidyankf-web.yml`               |
 | `libs/`, shared infrastructure, or cross-cutting governance | All workflows for apps in blast radius             |

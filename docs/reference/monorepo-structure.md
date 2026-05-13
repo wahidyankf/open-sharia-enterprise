@@ -82,11 +82,11 @@ Flat structure - all apps at the same level, no subdirectories.
 
 **Current Apps**:
 
-- `oseplatform-web` - OSE Platform website (Next.js 16 content platform)
+- `ose-web` - OSE Platform website (Next.js 16 content platform)
 - `ayokoding-web` - AyoKoding educational platform (Next.js 16 fullstack content platform)
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 - `rhino-cli` - Repository management CLI (Go application)
-- `oseplatform-cli` - OSE Platform site maintenance CLI (Go application)
+- `ose-cli` - OSE Platform site maintenance CLI (Go application)
 - `organiclever-web` - OrganicLever landing website (Next.js application)
 - `organiclever-be` - OrganicLever REST API backend (F#/Giraffe application)
 - `organiclever-web-e2e` - Playwright FE E2E tests for organiclever-web
@@ -94,10 +94,10 @@ Flat structure - all apps at the same level, no subdirectories.
 - `wahidyankf-web` - Personal portfolio website (Next.js 16 application, port 3201)
 - `wahidyankf-web-fe-e2e` - Playwright FE E2E tests for wahidyankf-web
 
-### App Structure (Next.js Application — oseplatform-web)
+### App Structure (Next.js Application — ose-web)
 
 ```
-apps/oseplatform-web/
+apps/ose-web/
 ├── src/                       # Source code (App Router)
 ├── public/                    # Static assets
 ├── next.config.mjs            # Next.js configuration
@@ -317,31 +317,31 @@ The repository contains two distinct project structures with different purposes 
 
 Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
-**Next.js App Example** (`oseplatform-web`):
+**Next.js App Example** (`ose-web`):
 
 ```json
 {
-  "name": "oseplatform-web",
-  "sourceRoot": "apps/oseplatform-web",
+  "name": "ose-web",
+  "sourceRoot": "apps/ose-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "next dev --port 3100",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/ose-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "next build",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/ose-web"
       },
       "outputs": ["{projectRoot}/.next"]
     }
   },
-  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ose-platform"]
 }
 ```
 
@@ -412,12 +412,12 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
 All projects use a standard four-dimension tag scheme:
 
-| Dimension   | Values                                                              | Required                 | Purpose                 |
-| ----------- | ------------------------------------------------------------------- | ------------------------ | ----------------------- |
-| `type:`     | `app`, `lib`, `e2e`                                                 | Yes                      | Project kind            |
-| `platform:` | `cli`, `nextjs`, `spring-boot`, `playwright`                        | For apps/e2e             | Framework/runtime       |
-| `lang:`     | `golang`, `ts`, `java`                                              | Where source code exists | Primary language        |
-| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `wahidyankf`, `tooling` | Yes                      | Business/product domain |
+| Dimension   | Values                                                               | Required                 | Purpose                 |
+| ----------- | -------------------------------------------------------------------- | ------------------------ | ----------------------- |
+| `type:`     | `app`, `lib`, `e2e`                                                  | Yes                      | Project kind            |
+| `platform:` | `cli`, `nextjs`, `spring-boot`, `playwright`                         | For apps/e2e             | Framework/runtime       |
+| `lang:`     | `golang`, `ts`, `java`                                               | Where source code exists | Primary language        |
+| `domain:`   | `ayokoding`, `ose-platform`, `organiclever`, `wahidyankf`, `tooling` | Yes                      | Business/product domain |
 
 **Notes**:
 
@@ -558,7 +558,7 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 nx graph
 
 # View specific project dependencies
-nx graph --focus=oseplatform-web
+nx graph --focus=ose-web
 
 # View affected projects
 nx affected:graph

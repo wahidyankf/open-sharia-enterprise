@@ -243,13 +243,13 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR /app
 
 # Create non-root user
-RUN groupadd -r oseplatform && useradd -r -g oseplatform oseplatform
-RUN chown -R oseplatform:oseplatform /app
+RUN groupadd -r ose_platform && useradd -r -g ose_platform ose_platform
+RUN chown -R ose_platform:ose_platform /app
 
-USER oseplatform
+USER ose_platform
 
 # Copy release from builder
-COPY --from=builder --chown=oseplatform:oseplatform /app/_build/prod/rel/ose_platform ./
+COPY --from=builder --chown=ose_platform:ose_platform /app/_build/prod/rel/ose_platform ./
 
 ENV HOME=/app
 
@@ -273,15 +273,15 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: oseplatform
+      POSTGRES_USER: ose_platform
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: oseplatform_prod
+      POSTGRES_DB: ose_platform_prod
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U oseplatform"]
+      test: ["CMD-SHELL", "pg_isready -U ose_platform"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -305,7 +305,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      DATABASE_URL: ecto://oseplatform:postgres@postgres/oseplatform_prod
+      DATABASE_URL: ecto://ose_platform:postgres@postgres/ose_platform_prod
       REDIS_URL: redis://redis:6379
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       PORT: 4000
@@ -594,7 +594,7 @@ metadata:
   name: ose-platform-secrets
 type: Opaque
 stringData:
-  database-url: "ecto://user:pass@postgres:5432/oseplatform_prod"
+  database-url: "ecto://user:pass@postgres:5432/ose_platform_prod"
   secret-key-base: "your-secret-key-base-here"
   erlang-cookie: "your-erlang-cookie-here"
 ```

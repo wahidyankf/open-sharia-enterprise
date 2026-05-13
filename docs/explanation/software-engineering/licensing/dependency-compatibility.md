@@ -34,12 +34,12 @@ scoped to FSL-1.1-MIT; now MIT throughout.
 | App                | Ecosystem | Result                                        |
 | ------------------ | --------- | --------------------------------------------- |
 | `ayokoding-web`    | npm       | All permissive after LGPL removal (see below) |
-| `oseplatform-web`  | npm       | All permissive after LGPL removal (see below) |
+| `ose-web`          | npm       | All permissive after LGPL removal (see below) |
 | `organiclever-web` | npm       | All permissive after LGPL removal (see below) |
 | `organiclever-be`  | .NET/F#   | All permissive (MIT, Apache-2.0, PostgreSQL)  |
 | `rhino-cli`        | Go        | MPL-2.0 indirect (see below)                  |
 | `ayokoding-cli`    | Go        | MPL-2.0 indirect (see below)                  |
-| `oseplatform-cli`  | Go        | MPL-2.0 indirect (see below)                  |
+| `ose-cli`          | Go        | MPL-2.0 indirect (see below)                  |
 | `golang-commons`   | Go        | MPL-2.0 indirect (see below)                  |
 | `elixir-cabbage`   | Elixir    | All permissive (MIT, Apache-2.0)              |
 | `elixir-gherkin`   | Elixir    | All permissive (MIT, Apache-2.0)              |

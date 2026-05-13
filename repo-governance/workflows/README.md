@@ -149,7 +149,7 @@ Workflows for web application content (Next.js sites, formerly Hugo):
 - **ayokoding-web**: ayokoding-web content creation and validation
 - **ayokoding-facts**: Factual accuracy validation for ayokoding-web (planned - no workflow file yet)
 - **ayokoding-structure**: Navigation structure and weight management (planned - no workflow file yet)
-- **oseplatform-web-content**: oseplatform-web content (planned - no workflow file yet)
+- **ose-web-content**: ose-web content (planned - no workflow file yet)
 
 ### Specification Workflows
 

@@ -176,7 +176,7 @@ Phoenix provides a productive framework for web development while leveraging the
 Phoenix uses Contexts to organize code into clear API boundaries:
 
 ```
-lib/oseplatform/
+lib/ose_platform/
 ├── accounts/          # Accounts context
 │   ├── user.ex        # Schema
 │   ├── queries.ex     # Queries
@@ -210,8 +210,8 @@ Phoenix contexts align well with DDD bounded contexts:
 
 ```bash
 # Create new Phoenix app
-mix phx.new oseplatform_api --no-html --no-assets  # API only
-mix phx.new oseplatform_web                         # Full-stack
+mix phx.new ose_platform_api --no-html --no-assets  # API only
+mix phx.new ose_platform_web                         # Full-stack
 
 # Install dependencies
 mix deps.get

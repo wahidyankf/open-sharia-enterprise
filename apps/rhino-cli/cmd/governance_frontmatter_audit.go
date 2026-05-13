@@ -43,7 +43,7 @@ No Manual Date Metadata Convention:
     '- **Created**: YYYY-MM-DD' or '- **Last Updated**: YYYY-MM-DD' in the body
 
 Files whose path falls under any website app directory
-(apps/ayokoding-web/, apps/oseplatform-web/, apps/organiclever-web/,
+(apps/ayokoding-web/, apps/ose-web/, apps/organiclever-web/,
 apps/wahidyankf-web/) are exempt from the rules and silently skipped.
 
 When neither positional arguments nor --path flags are supplied, the command

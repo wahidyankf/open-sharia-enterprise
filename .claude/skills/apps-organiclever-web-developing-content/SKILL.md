@@ -341,7 +341,7 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-web                      | ayokoding-web                  | oseplatform-web         |
+| Aspect              | organiclever-web                      | ayokoding-web                  | ose-web                 |
 | ------------------- | ------------------------------------- | ------------------------------ | ----------------------- |
 | **Framework**       | Next.js 16 (App Router)               | Next.js 16 (App Router)        | Next.js 16 (App Router) |
 | **Architecture**    | DDD bounded contexts                  | Feature folders                | Feature folders         |
@@ -349,7 +349,7 @@ Vercel automatically:
 | **Auth**            | None (local-first)                    | None                           | None                    |
 | **State**           | XState + Effect TS                    | React state                    | React state             |
 | **Build**           | Next.js (Vercel)                      | Next.js (Vercel)               | Next.js (Vercel)        |
-| **Prod Branch**     | prod-organiclever-web                 | prod-ayokoding-web             | prod-oseplatform-web    |
+| **Prod Branch**     | prod-organiclever-web                 | prod-ayokoding-web             | prod-ose-web            |
 | **Languages**       | English                               | Bilingual (Indonesian/English) | English only            |
 | **Complexity**      | Full DDD life journal + local storage | Fullstack bilingual platform   | Simple landing page     |
 | **Prod URL**        | www.organiclever.com                  | ayokoding.com                  | oseplatform.com         |

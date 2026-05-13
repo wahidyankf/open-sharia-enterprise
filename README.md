@@ -48,7 +48,7 @@ npm install
 **Phase 0 (Complete):**
 
 - Node.js & npm (via Volta) - Tooling and development infrastructure
-- Hugo (Extended) - Static sites (oseplatform-web)
+- Hugo (Extended) - Static sites (ose-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
 **Current Phase 1 (OrganicLever):**
@@ -85,8 +85,8 @@ open-sharia-enterprise/
 
 **Applications** (`apps/`):
 
-- **Sites**: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`wahidyankf-web`](./apps/wahidyankf-web/), [`wahidyankf-web-fe-e2e`](./apps/wahidyankf-web-fe-e2e/)
-- **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/)
+- **Sites**: [`ose-web`](./apps/ose-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`wahidyankf-web`](./apps/wahidyankf-web/), [`wahidyankf-web-fe-e2e`](./apps/wahidyankf-web-fe-e2e/)
+- **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`ose-cli`](./apps/ose-cli/)
 - **Polyglot demo apps**: extracted 2026-04-18 to the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) template repository, which is now authoritative for the polyglot showcase (Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure backends + Next.js, TanStack Start, Flutter Web frontends).
 
 **Libraries** (`libs/`): Reusable shared code
@@ -121,7 +121,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`.
 **Quality gates**: pre-commit hooks (formatting, linting), pre-push hooks (`typecheck`, `lint`, `test:quick` for affected projects), and [PR Quality Gate](./.github/workflows/pr-quality-gate.yml).
 
 - OSE Platform
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-oseplatform-web.yml)
+  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ose-web.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ose-web.yml)
 - AyoKoding
   - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/test-and-deploy-ayokoding-web.yml)
 - OrganicLever

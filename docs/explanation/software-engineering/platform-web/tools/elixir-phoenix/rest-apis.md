@@ -477,8 +477,8 @@ defmodule OsePlatformWeb.Plugs.APIVersion do
     assign(conn, :api_version, version)
   end
 
-  defp parse_version("application/vnd.oseplatform.v1+json"), do: :v1
-  defp parse_version("application/vnd.oseplatform.v2+json"), do: :v2
+  defp parse_version("application/vnd.ose_platform.v1+json"), do: :v1
+  defp parse_version("application/vnd.ose_platform.v2+json"), do: :v2
   defp parse_version(_), do: :v1  # Default to v1
 end
 

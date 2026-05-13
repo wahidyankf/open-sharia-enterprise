@@ -17,15 +17,15 @@
 - **npm**: 11.10.1
 - **Monorepo**: Nx workspace
 - **Current Apps**:
-  - `oseplatform-web` — Next.js 16 content platform (TypeScript, tRPC)
-  - `oseplatform-web-be-e2e` — Playwright BE E2E tests for oseplatform-web tRPC API
-  - `oseplatform-web-fe-e2e` — Playwright FE E2E tests for oseplatform-web UI
+  - `ose-web` — Next.js 16 content platform (TypeScript, tRPC)
+  - `ose-web-be-e2e` — Playwright BE E2E tests for ose-web tRPC API
+  - `ose-web-fe-e2e` — Playwright FE E2E tests for ose-web UI
   - `ayokoding-web` — Next.js 16 fullstack content platform (TypeScript, tRPC)
   - `ayokoding-web-be-e2e` — Playwright BE E2E tests for ayokoding-web tRPC API
   - `ayokoding-web-fe-e2e` — Playwright FE E2E tests for ayokoding-web UI
   - `ayokoding-cli` — Go CLI tool for content link validation
   - `rhino-cli` — Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
-  - `oseplatform-cli` — Go CLI tool for OSE Platform site maintenance (link validation)
+  - `ose-cli` — Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` — Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-be` — F#/Giraffe REST API backend for OrganicLever
   - `organiclever-web-e2e` — Playwright FE E2E tests for organiclever-web
@@ -45,15 +45,15 @@ Polyglot demo apps (11 backend implementations + 3 frontends + 1 fullstack) were
 ```
 ose-public/
 ├── apps/                     # Deployable applications (Nx)
-│   ├── oseplatform-web/      # OSE Platform website
-│   ├── oseplatform-web-be-e2e/ # Playwright BE E2E tests for oseplatform-web
-│   ├── oseplatform-web-fe-e2e/ # Playwright FE E2E tests for oseplatform-web
+│   ├── ose-web/      # OSE Platform website
+│   ├── ose-web-be-e2e/ # Playwright BE E2E tests for ose-web
+│   ├── ose-web-fe-e2e/ # Playwright FE E2E tests for ose-web
 │   ├── ayokoding-web/        # AyoKoding website (Next.js 16)
 │   ├── ayokoding-web-be-e2e/ # Playwright BE E2E tests for ayokoding-web
 │   ├── ayokoding-web-fe-e2e/ # Playwright FE E2E tests for ayokoding-web
 │   ├── ayokoding-cli/        # Content link validation CLI
 │   ├── rhino-cli/            # Repository management CLI
-│   ├── oseplatform-cli/      # OSE Platform site CLI
+│   ├── ose-cli/      # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-be/      # OrganicLever F#/Giraffe REST API backend
 │   ├── organiclever-web-e2e/ # Playwright FE E2E tests for organiclever-web
@@ -192,7 +192,7 @@ nx graph                     # Visualize dependencies
 - **Default branch**: `main`
 - **Environment branches** (Vercel deployment only — never commit directly):
   - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
-  - `prod-oseplatform-web` → [oseplatform.com](https://oseplatform.com)
+  - `prod-ose-web` → [oseplatform.com](https://oseplatform.com)
   - `prod-organiclever-web` → [www.organiclever.com](https://www.organiclever.com/)
   - `prod-wahidyankf-web` → [www.wahidyankf.com](https://www.wahidyankf.com/)
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
@@ -267,7 +267,7 @@ Exception: `README.md` for index files, `docs/metadata/` files.
 ### Linking
 
 GitHub-compatible markdown: `Text` with `.md` extension.
-Next.js sites (ayokoding-web, oseplatform-web) use standard GitHub-compatible markdown links with `.md` extension.
+Next.js sites (ayokoding-web, ose-web) use standard GitHub-compatible markdown links with `.md` extension.
 
 **See**: [repo-governance/conventions/formatting/linking.md](./repo-governance/conventions/formatting/linking.md)
 
@@ -343,17 +343,17 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 ## AI Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-oseplatform-web-content-maker, swe-ui-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ose-web-content-maker, swe-ui-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker, swe-code-checker, swe-ui-checker, ci-checker, web-research-maker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ose-web-content-checker, swe-code-checker, swe-ui-checker, ci-checker, web-research-maker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer, repo-parity-fixer
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ose-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer, repo-parity-fixer
 
 **Planning**: plan-maker, plan-checker, plan-execution-checker, plan-fixer (see [plan-execution workflow](./repo-governance/workflows/plan/plan-execution.md))
 
-**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev, swe-hugo-dev (**DEPRECATED** — no active Hugo sites remain; formerly oseplatform-web)
+**Development**: swe-elixir-dev, swe-golang-dev, swe-java-dev, swe-python-dev, swe-typescript-dev, swe-e2e-dev, swe-dart-dev, swe-kotlin-dev, swe-csharp-dev, swe-fsharp-dev, swe-clojure-dev, swe-rust-dev, swe-hugo-dev (**DEPRECATED** — no active Hugo sites remain; formerly ose-web)
 
-**Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer
+**Operations**: apps-ayokoding-web-deployer, apps-ose-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer
 
 **Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-parity-checker, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
 
@@ -395,28 +395,28 @@ Six-layer governance hierarchy:
 
 ## Web Sites
 
-### oseplatform-web
+### ose-web
 
 - **URL**: <https://oseplatform.com>
-- **Production branch**: `prod-oseplatform-web` → oseplatform.com
+- **Production branch**: `prod-ose-web` → oseplatform.com
 - **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
 - **Deployment**: Vercel
 - **Content**: Marketing site for platform
 - **Dev port**: 3100
-- **E2E tests**: `oseplatform-web-be-e2e`, `oseplatform-web-fe-e2e`
+- **E2E tests**: `ose-web-be-e2e`, `ose-web-fe-e2e`
 
 **Commands**:
 
 ```bash
-nx dev oseplatform-web                           # Development server (localhost:3100)
-nx build oseplatform-web                         # Production build
-nx run oseplatform-web:test:quick                # Unit tests + coverage + link validation
-nx run oseplatform-web:test:integration          # Integration tests
-nx run oseplatform-web-be-e2e:test:e2e           # Backend E2E tests
-nx run oseplatform-web-fe-e2e:test:e2e           # Frontend E2E tests
+nx dev ose-web                           # Development server (localhost:3100)
+nx build ose-web                         # Production build
+nx run ose-web:test:quick                # Unit tests + coverage + link validation
+nx run ose-web:test:integration          # Integration tests
+nx run ose-web-be-e2e:test:e2e           # Backend E2E tests
+nx run ose-web-fe-e2e:test:e2e           # Frontend E2E tests
 ```
 
-**See**: [apps/oseplatform-web/README.md](./apps/oseplatform-web/README.md)
+**See**: [apps/ose-web/README.md](./apps/ose-web/README.md)
 
 ### ayokoding-web
 
@@ -577,7 +577,7 @@ Content flows in both directions under classifier-driven rules:
 - **Propagation** (`ose-public` → `ose-primer`): scaffolding improvements authored upstream flow to the template via `repo-ose-primer-propagation-maker`. Always via pull request against the primer's `main` branch; never direct commits.
 - **Adoption** (`ose-primer` → `ose-public`): generic improvements contributed downstream can flow back via `repo-ose-primer-adoption-maker`. Applied to `ose-public` as direct commits to `main` per Trunk-Based Development.
 
-Product-specific paths (`apps/organiclever-*`, `apps/ayokoding-*`, `apps/oseplatform-*`, product specs, product roadmap, product plans) are classified `neither` and never sync.
+Product-specific paths (`apps/organiclever-*`, `apps/ayokoding-*`, `apps/ose-web`, `apps/ose-web-be-e2e`, `apps/ose-web-fe-e2e`, `apps/ose-cli`, product specs, product roadmap, product plans) are classified `neither` and never sync.
 
 See: [Related Repositories reference](./docs/reference/related-repositories.md), [ose-primer sync convention](./repo-governance/conventions/structure/ose-primer-sync.md).
 

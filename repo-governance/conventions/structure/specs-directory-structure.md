@@ -325,7 +325,7 @@ These commands run as part of the `specs-quality-gate` workflow deterministic-of
 
 - Positional `<folder>` or `<app>` — single-target legacy behavior preserved.
 - `--apps <csv>` — multi-app validation across an explicit list.
-- No positional, no flag — defaults to the `AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `oseplatform`, `ayokoding`).
+- No positional, no flag — defaults to the `AppsWithDDD` allowlist (`organiclever`, `wahidyankf`, `ose-platform`, `ayokoding`).
 
 The single source of truth for the allowlist is `apps/rhino-cli/internal/allowlist/allowlist.go`. Pre-push and CI surfaces invoke the four targets without arguments so adding a new app is a one-line edit there.
 
@@ -369,7 +369,7 @@ The validator handles Scenario Outline forms in both directions: outline steps a
 
 #### Combined gherkin scopes per app
 
-`spec-coverage validate` accepts a variadic specs-dirs list (`validate <specs-dir> [<specs-dir>...] <app-dir>`). Apps with multiple gherkin perspectives (oseplatform-web has web + api; ayokoding-web has web + api + build-tools) declare a single combined run in `project.json` so impls shared across scopes don't false-positive on per-scope orphan checks.
+`spec-coverage validate` accepts a variadic specs-dirs list (`validate <specs-dir> [<specs-dir>...] <app-dir>`). Apps with multiple gherkin perspectives (ose-web has web + api; ayokoding-web has web + api + build-tools) declare a single combined run in `project.json` so impls shared across scopes don't false-positive on per-scope orphan checks.
 
 #### Expanded relationship symmetry (DDD validators)
 

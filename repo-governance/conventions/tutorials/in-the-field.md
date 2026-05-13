@@ -2384,7 +2384,7 @@ This convention implements and respects:
 **Universal Application**: This convention applies to **all in-the-field tutorial content** across the repository:
 
 - **apps/ayokoding-web/content/** - Canonical location for programming language in-the-field guides (Java, Golang, Python, etc.)
-- **apps/oseplatform-web/content/** - Platform in-the-field guides
+- **apps/ose-web/content/** - Platform in-the-field guides
 - **Any other location** - In-the-field tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/README.md)

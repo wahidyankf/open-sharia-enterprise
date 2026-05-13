@@ -35,7 +35,7 @@ Reports one JSON finding per violation. Exits non-zero if any findings are found
 App selection precedence (first non-empty wins):
   1. positional arg (single app, today's behavior)
   2. --apps flag (StringSlice, comma-separated or repeated)
-  3. allowlist default (organiclever, wahidyankf, oseplatform, ayokoding)`,
+  3. allowlist default (organiclever, wahidyankf, ose-platform, ayokoding)`,
 	Example: `  # Validate organiclever spec tree (positional)
   rhino-cli specs validate-tree organiclever
 

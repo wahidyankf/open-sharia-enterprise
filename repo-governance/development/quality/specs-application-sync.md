@@ -171,7 +171,7 @@ When a new tRPC router is added to `apps/ayokoding-web/`, a new component entry 
 
 ### CLI apps
 
-CLI apps (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`) use the automated enforcement path:
+CLI apps (`rhino-cli`, `ayokoding-cli`, `ose-cli`) use the automated enforcement path:
 
 - Each Cobra command file maps to a `@tag` in a Gherkin feature file
 - `rhino-cli spec-coverage validate` enforces the 1:1 mapping automatically

@@ -652,7 +652,7 @@ Multiple agent families implement this pattern. See [AI Agents Index](../../../.
 1. **repo-rules-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Content (ayokoding-web, Next.js)
 3. **docs-tutorial-\*** - Tutorial quality
-4. **apps-oseplatform-web-content-\*** - Next.js 16 content (oseplatform-web)
+4. **apps-ose-web-content-\*** - Next.js 16 content (ose-web)
 5. **readme-\*** - README quality
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure

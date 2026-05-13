@@ -37,7 +37,7 @@ type FrontmatterFinding struct {
 // path contains one of these segments is skipped entirely by AuditFrontmatter.
 var websiteAppPrefixes = []string{
 	"apps/ayokoding-web/",
-	"apps/oseplatform-web/",
+	"apps/ose-web/",
 	"apps/organiclever-web/",
 	"apps/wahidyankf-web/",
 }

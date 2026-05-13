@@ -484,14 +484,14 @@ deploy-production:
 npm run build
 
 # Upload to S3
-aws s3 sync dist/ s3://oseplatform-web \
+aws s3 sync dist/ s3://ose-web \
   --delete \
   --cache-control "public, max-age=31536000" \
   --exclude "index.html" \
   --exclude "*.map"
 
 # Upload index.html without cache
-aws s3 cp dist/index.html s3://oseplatform-web/index.html \
+aws s3 cp dist/index.html s3://ose-web/index.html \
   --cache-control "no-cache, no-store, must-revalidate" \
   --metadata-directive REPLACE
 
@@ -509,7 +509,7 @@ aws cloudfront create-invalidation \
     "WebsiteBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "oseplatform-web",
+        "BucketName": "ose-web",
         "WebsiteConfiguration": {
           "IndexDocument": "index.html",
           "ErrorDocument": "index.html"
@@ -522,7 +522,7 @@ aws cloudfront create-invalidation \
         "DistributionConfig": {
           "Origins": [
             {
-              "DomainName": "oseplatform-web.s3-website-us-east-1.amazonaws.com",
+              "DomainName": "ose-web.s3-website-us-east-1.amazonaws.com",
               "Id": "S3Origin",
               "CustomOriginConfig": {
                 "HTTPPort": 80,
@@ -571,7 +571,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/oseplatform
+      - DATABASE_URL=postgresql://postgres:password@db:5432/ose_platform
     depends_on:
       - db
     networks:
@@ -582,7 +582,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=oseplatform
+      - POSTGRES_DB=ose_platform
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -603,21 +603,21 @@ volumes:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oseplatform-web
+  name: ose-web
   namespace: production
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: oseplatform-web
+      app: ose-web
   template:
     metadata:
       labels:
-        app: oseplatform-web
+        app: ose-web
     spec:
       containers:
         - name: web
-          image: oseplatform-web:latest
+          image: ose-web:latest
           ports:
             - containerPort: 80
           env:
@@ -650,12 +650,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: oseplatform-web
+  name: ose-web
   namespace: production
 spec:
   type: LoadBalancer
   selector:
-    app: oseplatform-web
+    app: ose-web
   ports:
     - protocol: TCP
       port: 80
@@ -678,7 +678,7 @@ data:
 replicaCount: 3
 
 image:
-  repository: oseplatform-web
+  repository: ose-web
   tag: latest
   pullPolicy: Always
 

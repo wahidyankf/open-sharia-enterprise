@@ -1,0 +1,133 @@
+# ose-cli
+
+Go CLI tool for ose-web Hugo site maintenance. Validates internal links
+across all markdown content files.
+
+## Usage
+
+```sh
+ose-cli <command> [flags]
+```
+
+### Commands
+
+| Command       | Description                                |
+| ------------- | ------------------------------------------ |
+| `links check` | Validate internal links in ose-web content |
+
+### Global Flags
+
+| Flag         | Short | Default | Description                               |
+| ------------ | ----- | ------- | ----------------------------------------- |
+| `--verbose`  | `-v`  | `false` | Verbose output with timestamps            |
+| `--quiet`    | `-q`  | `false` | Quiet mode (errors only)                  |
+| `--output`   | `-o`  | `text`  | Output format: `text`, `json`, `markdown` |
+| `--no-color` |       | `false` | Disable colored output                    |
+
+### `links check` Flags
+
+| Flag        | Default                | Description            |
+| ----------- | ---------------------- | ---------------------- |
+| `--content` | `apps/ose-web/content` | Content directory path |
+
+### Exit codes
+
+| Code | Meaning                        |
+| ---- | ------------------------------ |
+| 0    | All links valid                |
+| 1    | One or more broken links found |
+| 2    | Usage error or I/O failure     |
+
+## Examples
+
+```sh
+# Check links (default content path, run from workspace root)
+./apps/ose-cli/dist/ose-cli links check
+
+# Check links with explicit content path
+ose-cli links check --content apps/ose-web/content
+
+# Output as JSON
+ose-cli links check -o json
+
+# Output as markdown report
+ose-cli links check -o markdown
+
+# Verbose output with timestamp
+ose-cli links check -v
+```
+
+## Testing
+
+Two test tiers consume the same Gherkin specs from `specs/apps/ose-platform/cli/` via
+[godog](https://github.com/cucumber/godog) — only the step implementations differ:
+
+| Level       | Test File Pattern                   | Step Implementation                             | Nx Target          |
+| ----------- | ----------------------------------- | ----------------------------------------------- | ------------------ |
+| Unit        | `cmd/{command}_test.go`             | Mocked I/O via package-level function variables | `test:unit`        |
+| Integration | `cmd/{command}.integration_test.go` | Real filesystem via `/tmp` fixtures             | `test:integration` |
+
+This pattern will be implemented as part of the CLI testing alignment plan.
+
+### Unit Tests
+
+```sh
+# Run unit tests (includes godog BDD scenarios with mocked I/O)
+nx run ose-cli:test:quick
+
+# Run unit tests directly
+cd apps/ose-cli
+go test -v -run TestUnit ./cmd/...
+```
+
+Unit tests run godog BDD scenarios with all I/O mocked via package-level function variables.
+Coverage threshold: ≥95% line coverage.
+
+### Integration Tests
+
+```sh
+# Run all BDD integration tests
+nx run ose-cli:test:integration
+
+# Run the suite directly during development
+cd apps/ose-cli
+go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
+```
+
+Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
+`/tmp` filesystem fixtures.
+
+| Test function               | Feature file                                                       | Scenarios |
+| --------------------------- | ------------------------------------------------------------------ | --------- |
+| `TestIntegrationLinksCheck` | `specs/apps/ose-platform/behavior/cli/gherkin/links-check.feature` | 4         |
+
+The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
+`specs/apps/ose-platform/**/*.feature` files change.
+
+## Development
+
+```sh
+# Build
+nx build ose-cli
+
+# Test
+nx run ose-cli:test:quick
+
+# Integration tests
+nx run ose-cli:test:integration
+
+# Lint
+nx lint ose-cli
+
+# Run directly
+nx run ose-cli:run -- links check
+```
+
+## Why this exists
+
+`ose-web` needs internal link validation as a quality gate before build.
+This CLI runs as a `dependsOn` step in `ose-web`'s `test:quick` target,
+ensuring broken links are caught before the Hugo build runs.
+
+Keeping it as a standalone binary prevents unrelated changes from triggering
+unnecessary rebuild cascades across other projects.

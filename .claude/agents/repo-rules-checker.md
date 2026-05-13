@@ -88,7 +88,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 - Verify agent names match actual agent files
 - Validate skill names match actual skill files
 - Check frontmatter field requirements match actual agent frontmatter
-- **No-Date-Metadata violation**: Flag any of the following in non-website files (per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md)): (a) `updated:` frontmatter field, (b) `**Last Updated**` footer block, (c) standalone inline body date annotation lines such as `- **Created**: YYYY-MM-DD` or `- **Last Updated**: YYYY-MM-DD` in document body sections (not frontmatter). Website content under `apps/ayokoding-web/`, `apps/oseplatform-web/`, `apps/organiclever-web/`, `apps/wahidyankf-web/` is exempt. Dates inside actual document content (changelog entries, examples, plan steps, commit references) are also exempt. Criticality: HIGH
+- **No-Date-Metadata violation**: Flag any of the following in non-website files (per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md)): (a) `updated:` frontmatter field, (b) `**Last Updated**` footer block, (c) standalone inline body date annotation lines such as `- **Created**: YYYY-MM-DD` or `- **Last Updated**: YYYY-MM-DD` in document body sections (not frontmatter). Website content under `apps/ayokoding-web/`, `apps/ose-web/`, `apps/organiclever-web/`, `apps/wahidyankf-web/` is exempt. Dates inside actual document content (changelog entries, examples, plan steps, commit references) are also exempt. Criticality: HIGH
 
 **Inconsistencies**:
 
@@ -639,7 +639,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 **Domain-Specific Exemptions** (DO NOT flag these):
 
-- `apps-ayokoding-web-developing-content` vs `apps-oseplatform-web-developing-content`
+- `apps-ayokoding-web-developing-content` vs `apps-ose-web-developing-content`
   - **Reason**: Different audiences and content types (educational platform vs project landing page), despite both using Next.js 16
   - **Keep Separate**: Platform-specific skills serve different apps
 
@@ -730,7 +730,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - Verify all `libs/*` directories have MIT LICENSE
    - Verify `specs/` root has MIT LICENSE
    - Verify LICENSING-NOTICE.md table matches actual LICENSE files on disk
-   - Verify CLAUDE.md, README.md, and oseplatform-web about.md license descriptions are consistent with LICENSING-NOTICE.md
+   - Verify CLAUDE.md, README.md, and ose-web about.md license descriptions are consistent with LICENSING-NOTICE.md
    - **Criticality**: Missing LICENSE = CRITICAL; wrong license type = HIGH; cross-doc inconsistency = MEDIUM
 
 8. **Write findings progressively** using report format above

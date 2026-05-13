@@ -19,7 +19,7 @@ Deployment architecture, environment branches, and Vercel configuration for the 
 graph LR
     subgraph "Source Control"
         MAIN[main branch<br/>Trunk-Based Dev]
-        PROD_OSE[prod-oseplatform-web<br/>Deploy Only]
+        PROD_OSE[prod-ose-web<br/>Deploy Only]
         PROD_AYO[prod-ayokoding-web<br/>Deploy Only - Next.js]
         PROD_OL[prod-organiclever-web<br/>Deploy Only]
     end
@@ -78,7 +78,7 @@ graph LR
 
 ### Vercel Deployment
 
-**Hugo Static Sites** (oseplatform-web):
+**Hugo Static Sites** (ose-web):
 
 - **Build Framework**: `@vercel/static-build`
 - **Build Script**: `build.sh` in each app directory
@@ -100,11 +100,11 @@ graph LR
 ### Environment Branches
 
 - **Purpose**: Deployment triggers only
-- **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`, `stag-organiclever-web`, `prod-organiclever-web`
+- **Branches**: `prod-ose-web`, `prod-ayokoding-web`, `stag-organiclever-web`, `prod-organiclever-web`
 - **Policy**: NEVER commit directly to these branches outside CI automation
 - **Workflows**:
   - `test-and-deploy-ayokoding-web.yml` (6 AM / 6 PM WIB) → `prod-ayokoding-web`
-  - `test-and-deploy-oseplatform-web.yml` (6 AM / 6 PM WIB) → `prod-oseplatform-web`
+  - `test-and-deploy-ose-web.yml` (6 AM / 6 PM WIB) → `prod-ose-web`
   - `test-and-deploy-organiclever-web-development.yml` (3 AM / 3 PM WIB) → `stag-organiclever-web`
     (deploys to **staging**, not production)
   - `deploy-organiclever-web-to-production.yml` (`workflow_dispatch` only) →

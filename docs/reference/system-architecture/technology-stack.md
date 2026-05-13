@@ -20,9 +20,9 @@ Technology stack summary, quality tools, and future architecture considerations 
 **Static Sites** (Hugo):
 
 - **Hugo**: 0.156.0 Extended
-- **Themes**: PaperMod (oseplatform-web)
+- **Themes**: PaperMod (ose-web)
 - **Deployment**: Vercel
-- **Applications**: oseplatform-web
+- **Applications**: ose-web
 
 **Web Applications** (Next.js):
 
@@ -47,7 +47,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **Language**: Go 1.26
 - **Build**: Native Go toolchain via Nx
 - **Distribution**: Local binaries
-- **Applications**: ayokoding-cli, rhino-cli, oseplatform-cli
+- **Applications**: ayokoding-cli, rhino-cli, ose-cli
 
 ### Infrastructure
 

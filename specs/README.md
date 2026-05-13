@@ -31,7 +31,7 @@ Acceptance specs belong at the monorepo root rather than inside app directories 
 
 - **[rhino/](./apps/rhino/README.md)** — Repository management CLI specifications (Go, godog)
 - **[ayokoding/](./apps/ayokoding/README.md)** — Content automation CLI specifications (Go, godog)
-- **[oseplatform/](./apps/oseplatform/README.md)** — OSE Platform site CLI specifications (Go, godog)
+- **[ose-platform/](./apps/ose-platform/README.md)** — OSE Platform site CLI specifications (Go, godog)
 
 ## Experimental App Specs
 

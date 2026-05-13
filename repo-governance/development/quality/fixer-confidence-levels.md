@@ -14,7 +14,7 @@ created: 2025-12-14
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-rules-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, docs-tutorial-fixer, apps-ose-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Implemented/Respected
 
@@ -116,7 +116,7 @@ All fixer agents implement this confidence level system:
 - **apps-ayokoding-web-in-the-field-fixer** - ayokoding-web in-the-field tutorial fixes
 - **apps-ayokoding-web-link-fixer** - ayokoding-web link validation fixes
 - **docs-tutorial-fixer** - Tutorial quality fixes
-- **apps-oseplatform-web-content-fixer** - oseplatform-web Next.js content fixes
+- **apps-ose-web-content-fixer** - ose-web Next.js content fixes
 - **readme-fixer** - README quality fixes
 - **docs-fixer** - Documentation factual accuracy fixes
 - **plan-fixer** - Plan structural and format fixes
@@ -172,7 +172,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Wrong tutorial type naming verified against convention patterns
 - Time estimate violation verified by keyword search (forbidden in tutorials)
 
-**apps-oseplatform-web-content-fixer:**
+**apps-ose-web-content-fixer:**
 
 - Missing required frontmatter field verified (title, date, draft)
 - Wrong date format verified by regex (missing timezone)
@@ -240,7 +240,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Content balance assessments (theory vs practice ratio)
 - Example quality assessments (examples work but could be better)
 
-**apps-oseplatform-web-content-fixer:**
+**apps-ose-web-content-fixer:**
 
 - Summary length is short but functional (85 chars vs 150-160 optimal)
 - Image alt text vague but not missing ("screenshot" - need image context to improve)
@@ -305,7 +305,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker reported missing diagram but diagram exists (different Mermaid syntax or placement)
 - Checker misinterpreted tutorial type (tutorial follows convention correctly)
 
-**apps-oseplatform-web-content-fixer:**
+**apps-ose-web-content-fixer:**
 
 - Checker flagged Next.js MDX link as broken (doesn't recognize component-style link syntax)
 - Checker applied post validation rules to static page (about.md doesn't need date field)
@@ -489,9 +489,9 @@ Each fixer agent has domain-specific validation checks:
 - Tutorial naming patterns by type
 - No time estimates rule
 
-**apps-oseplatform-web-content-fixer:**
+**apps-ose-web-content-fixer:**
 
-- Next.js/MDX frontmatter for oseplatform-web
+- Next.js/MDX frontmatter for ose-web
 - English-only content validation
 - Cover image alt text requirements
 - Heading hierarchy (single H1 rule)
@@ -888,7 +888,7 @@ FAIL: All agent files - Frontmatter comment detection
 - [apps-ayokoding-web-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
 - [apps-ayokoding-web-facts-fixer.md](../../../.claude/agents/apps-ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
 - [docs-tutorial-fixer.md](../../../.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
-- [apps-oseplatform-web-content-fixer.md](../../../.claude/agents/apps-oseplatform-web-content-fixer.md) - oseplatform-web Next.js content fixer
+- [apps-ose-web-content-fixer.md](../../../.claude/agents/apps-ose-web-content-fixer.md) - ose-web Next.js content fixer
 - [readme-fixer.md](../../../.claude/agents/readme-fixer.md) - README quality fixer
 - [plan-fixer.md](../../../.claude/agents/plan-fixer.md) - Plan structural and format fixer
 - [docs-fixer.md](../../../.claude/agents/docs-fixer.md) - Documentation factual accuracy fixer
@@ -938,7 +938,7 @@ When this convention is updated:
 
 ### Version History
 
-- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, oseplatform-web-content, readme)
+- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, ose-web-content, readme)
 
 ---
 

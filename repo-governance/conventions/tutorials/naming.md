@@ -34,7 +34,7 @@ This convention implements the following core principles:
 - **Coverage percentages** - What each tutorial level covers (0-5%, 5-30%, 0-95%)
 - **Component relationships** - How foundational, learning tracks, and cookbook interact
 - **Decision tree** - How to choose the right tutorial type
-- **Universal applicability** - Applies to **all tutorial content** (docs/, ayokoding-web, oseplatform-web, anywhere)
+- **Universal applicability** - Applies to **all tutorial content** (docs/, ayokoding-web, ose-web, anywhere)
 
 ### What This Convention Does NOT Cover
 

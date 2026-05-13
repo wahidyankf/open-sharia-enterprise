@@ -29,11 +29,11 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 
 ## Coverage Thresholds
 
-| Threshold | Projects                                           |
-| --------- | -------------------------------------------------- |
-| 90%       | organiclever-be, CLI apps, Go libs                 |
-| 80%       | Content platforms (ayokoding-web, oseplatform-web) |
-| 70%       | organiclever-web                                   |
+| Threshold | Projects                                   |
+| --------- | ------------------------------------------ |
+| 90%       | organiclever-be, CLI apps, Go libs         |
+| 80%       | Content platforms (ayokoding-web, ose-web) |
+| 70%       | organiclever-web                           |
 
 ## Docker Setup Requirements
 

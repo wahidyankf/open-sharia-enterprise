@@ -28,7 +28,7 @@ Per-app brand guidance for UI development decisions.
 - **UI character**: Content-focused, long-form reading, code blocks with syntax highlighting
 - **Framework**: Next.js 16, Tailwind v4 + @tailwindcss/typography, shadcn/ui, rehype-pretty-code
 
-## oseplatform-web
+## ose-web
 
 - **Product**: OSE Platform marketing site
 - **URL**: oseplatform.com

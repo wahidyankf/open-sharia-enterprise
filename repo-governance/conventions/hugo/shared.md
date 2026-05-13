@@ -1,6 +1,6 @@
 ---
 title: "Hugo Content Convention - Shared"
-description: Common Hugo conventions shared between ayokoding-web and oseplatform-web
+description: Common Hugo conventions shared between ayokoding-web and ose-web
 category: explanation
 subcategory: conventions
 tags:
@@ -15,11 +15,11 @@ created: 2025-12-13
 
 # Hugo Content Convention - Shared
 
-> **DEPRECATED**: No active Hugo sites remain in this repository. Both ayokoding-web and oseplatform-web have migrated to Next.js 16. This document is preserved for historical reference only.
+> **DEPRECATED**: No active Hugo sites remain in this repository. Both ayokoding-web and ose-web have migrated to Next.js 16. This document is preserved for historical reference only.
 
 This document defines **common Hugo conventions** that formerly applied to Hugo sites in this repository:
 
-- **oseplatform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
+- **ose-web** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
 
 > **Note**: ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site. Historical Hugo conventions for ayokoding-web are preserved in [ayokoding.md](./ayokoding.md) for reference only.
 
@@ -35,7 +35,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes shared standards that apply to **all Hugo sites** in the repository (ayokoding-web and oseplatform-web). It defines universal frontmatter requirements, markdown formatting, and content quality rules that every Hugo site must follow, providing a common foundation before site-specific conventions apply.
+This convention establishes shared standards that apply to **all Hugo sites** in the repository (ayokoding-web and ose-web). It defines universal frontmatter requirements, markdown formatting, and content quality rules that every Hugo site must follow, providing a common foundation before site-specific conventions apply.
 
 ## Scope
 
@@ -49,7 +49,7 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 
 ### What This Convention Does NOT Cover
 
-- **Site-specific conventions** - See [ayokoding-web convention](./ayokoding.md) and [oseplatform-web convention](./ose-platform.md)
+- **Site-specific conventions** - See [ayokoding-web convention](./ayokoding.md) and [ose-web convention](./ose-platform.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Content strategy** - What content to create (covered in domain conventions)
 - **Deployment** - Covered by site-specific deployer agents
@@ -65,7 +65,7 @@ This shared document contains conventions that apply to **both sites**:
 **Site-specific patterns** (themes, configurations, workflows) are documented in separate files:
 
 - [ayokoding-web specific conventions](./ayokoding.md)
-- [oseplatform-web specific conventions](./ose-platform.md)
+- [ose-web specific conventions](./ose-platform.md)
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -73,7 +73,7 @@ This shared document contains conventions that apply to **both sites**:
 graph TD
     A[Hugo Content] --> B[Shared Conventions<br/>This Document]
     A --> C[ayokoding-web<br/>Site-Specific]
-    A --> D[oseplatform-web<br/>Site-Specific]
+    A --> D[ose-web<br/>Site-Specific]
 
     B --> B1[Inherited<br/>Standards]
     B1 --> B2[Adapted<br/>Standards]
@@ -134,7 +134,7 @@ where $\pi$ represents the expected inflation rate.
 - Purple: `#CC78BC`
 - Brown: `#CA9161`
 
-**Applies to**: All diagrams in both sites (ayokoding-web and oseplatform-web)
+**Applies to**: All diagrams in both sites (ayokoding-web and ose-web)
 
 **Example**:
 
@@ -227,7 +227,7 @@ flowchart LR
 
 **Application to Hugo**: Selective use of semantic emojis to enhance document scannability.
 
-**Applies to**: Both ayokoding-web and oseplatform-web content
+**Applies to**: Both ayokoding-web and ose-web content
 
 **Allowed Usage**:
 
@@ -235,7 +235,7 @@ flowchart LR
 - Status indicators (Launch, Maintenance, Analytics)
 - Category icons ( Tutorial, Goal, Tip)
 
-**Example (oseplatform-web update)**:
+**Example (ose-web update)**:
 
 ```markdown
 ## Release Update
@@ -330,7 +330,7 @@ Let's start by creating a new project...
 
 **Application to Hugo**: Use standardized tutorial types in **ayokoding-web learning content only**.
 
-**Scope**: ayokoding-web only (oseplatform-web does not use tutorials)
+**Scope**: ayokoding-web only (ose-web does not use tutorials)
 
 **Tutorial Types**:
 
@@ -512,7 +512,7 @@ FAIL: **Incorrect (relative paths or .md extension)**:
 
 The approach depends on your Hugo configuration:
 
-**For sites with `defaultContentLanguageInSubdir: true`** (like ayokoding-web and oseplatform-web):
+**For sites with `defaultContentLanguageInSubdir: true`** (like ayokoding-web and ose-web):
 
 - **INCLUDE language prefix** explicitly in internal links
 - Both languages are served from subdirectories (`/en/`, `/id/`, etc.)
@@ -588,7 +588,7 @@ content/
             └── getting-started.md     # English version
 ```
 
-**Example (oseplatform-web structure)**:
+**Example (ose-web structure)**:
 
 ```
 content/
@@ -673,11 +673,11 @@ These conventions are unique to Hugo static site generation and apply to both si
 
 **CRITICAL**: Hugo content markdown files MUST NOT include H1 headings (`# ...`) that duplicate the frontmatter `title` field.
 
-**Why this matters**: Hugo themes (Hextra for ayokoding-web, PaperMod for oseplatform-web) automatically render the `title` field from frontmatter as the page heading (H1). When markdown content also includes an H1 heading, it creates duplicate heading display on the rendered page.
+**Why this matters**: Hugo themes (Hextra for ayokoding-web, PaperMod for ose-web) automatically render the `title` field from frontmatter as the page heading (H1). When markdown content also includes an H1 heading, it creates duplicate heading display on the rendered page.
 
 **Rule**: Content should start with introduction text or H2 headings (`## ...`). If an H1 is needed for structural reasons, it must be semantically different from the title.
 
-**Applies to**: ALL Hugo content files in both ayokoding-web and oseplatform-web.
+**Applies to**: ALL Hugo content files in both ayokoding-web and ose-web.
 
 PASS: **Good (no duplicate H1)**:
 
@@ -748,7 +748,7 @@ This section covers common patterns...
 **Site-Specific Archetypes**: Each site defines its own archetypes - see site-specific convention documents:
 
 - [ayokoding-web archetypes](./ayokoding.md#archetypes)
-- [oseplatform-web archetypes](./ose-platform.md#archetypes)
+- [ose-web archetypes](./ose-platform.md#archetypes)
 
 ### 3. Shortcodes
 
@@ -766,7 +766,7 @@ This section covers common patterns...
 **Theme-Specific Shortcodes**: Each theme provides additional shortcodes - see site-specific convention documents:
 
 - [Hextra shortcodes (ayokoding-web)](./ayokoding.md#hextra-shortcodes)
-- [PaperMod shortcodes (oseplatform-web)](./ose-platform.md#papermod-shortcodes)
+- [PaperMod shortcodes (ose-web)](./ose-platform.md#papermod-shortcodes)
 
 **Example (using Hugo built-in shortcodes)**:
 
@@ -840,7 +840,7 @@ Run `npm install`
 **Site-Specific Taxonomy**: Each site defines specific category values - see site-specific convention documents:
 
 - [ayokoding-web taxonomy](./ayokoding.md#taxonomy)
-- [oseplatform-web taxonomy](./ose-platform.md#taxonomy)
+- [ose-web taxonomy](./ose-platform.md#taxonomy)
 
 **Example (generic usage)**:
 
@@ -954,7 +954,7 @@ content/id/belajar/nodejs/getting-started.md
 content/en/learn/typescript/basics.md
 → URL: https://ayokoding.com/en/learn/typescript/basics
 
-# oseplatform-web
+# ose-web
 content/updates/2025-12-07-initial-release.md
 → URL: https://oseplatform.com/updates/2025-12-07-initial-release
 
@@ -1017,7 +1017,7 @@ Before publishing Hugo content, verify:
 **Site-Specific Conventions**:
 
 - [ayokoding-web Hugo Content Convention](./ayokoding.md)
-- [oseplatform-web Hugo Content Convention](./ose-platform.md)
+- [ose-web Hugo Content Convention](./ose-platform.md)
 
 **External Resources**:
 

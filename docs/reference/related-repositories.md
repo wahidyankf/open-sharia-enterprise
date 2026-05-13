@@ -27,7 +27,7 @@ As of 2026-04-18, one related repository is actively tracked: [`ose-primer`](htt
 
 `ose-primer` is **downstream**: it receives scaffolding updates, but its product layer (anything a consumer builds on top) is never pulled back into `ose-public`. Generic improvements that consumers contribute to `ose-primer` (for example, new governance patterns, Skill definitions, or demo-app implementations) can flow back to `ose-public` through the adoption flow documented in the same convention.
 
-The two flows are directional — propagation (upstream → downstream) and adoption (downstream → upstream) — and classified per path in the convention's classifier table. Paths that are product-specific (for example, `apps/organiclever-*` or `apps/oseplatform-web`) are tagged `neither` and never flow in either direction.
+The two flows are directional — propagation (upstream → downstream) and adoption (downstream → upstream) — and classified per path in the convention's classifier table. Paths that are product-specific (for example, `apps/organiclever-*` or `apps/ose-web`) are tagged `neither` and never flow in either direction.
 
 ### Licensing difference
 

@@ -9,7 +9,7 @@ import (
 // the four expected apps (no CLIs, no extras). Adding or removing an app
 // here is a deliberate governance decision and must update this test.
 func TestAppsWithDDD_ExactMembership(t *testing.T) {
-	want := []string{"ayokoding", "organiclever", "oseplatform", "wahidyankf"}
+	want := []string{"ayokoding", "organiclever", "ose-platform", "wahidyankf"}
 
 	got := append([]string(nil), AppsWithDDD...)
 	sort.Strings(got)
@@ -29,7 +29,7 @@ func TestAppsWithDDD_ExactMembership(t *testing.T) {
 func TestAppsWithDDD_ExcludesCLIs(t *testing.T) {
 	cliApps := []string{
 		"ayokoding-cli",
-		"oseplatform-cli",
+		"ose-cli",
 		"rhino-cli",
 	}
 	for _, cli := range cliApps {
@@ -47,7 +47,7 @@ func TestAppsWithDDD_NoExtras(t *testing.T) {
 	expected := map[string]bool{
 		"organiclever": true,
 		"wahidyankf":   true,
-		"oseplatform":  true,
+		"ose-platform": true,
 		"ayokoding":    true,
 	}
 	for _, app := range AppsWithDDD {

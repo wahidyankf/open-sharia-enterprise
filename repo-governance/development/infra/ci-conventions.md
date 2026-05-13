@@ -175,7 +175,7 @@ app type realises each level.
 | **BE API** (`organiclever-be`)                            | BDD, mocked repos, calls service fns directly      | Real PostgreSQL via docker-compose, calls service fns directly (no HTTP)                           | Playwright, real HTTP + real PostgreSQL              |
 | **FE** (`organiclever-web`)                               | Vitest, all API calls mocked (MSW / mock services) | MSW with real DOM; in-process mocking only                                                         | Playwright against running FE + BE                   |
 | **CLI** (`*-cli`)                                         | Godog, all I/O mocked via function variables       | Godog (`//go:build integration`), real filesystem via `/tmp` fixtures, in-process via `cmd.RunE()` | Not applicable                                       |
-| **Content platform** (`ayokoding-web`, `oseplatform-web`) | Vitest, components and tRPC routes mocked          | MSW, in-process mocking                                                                            | Playwright BE E2E (`*-be-e2e`) + FE E2E (`*-fe-e2e`) |
+| **Content platform** (`ayokoding-web`, `ose-web`)         | Vitest, components and tRPC routes mocked          | MSW, in-process mocking                                                                            | Playwright BE E2E (`*-be-e2e`) + FE E2E (`*-fe-e2e`) |
 | **Library** (`golang-commons`)                            | Unit tests + Godog, mock closures                  | Godog, tmpdir mocks, cacheable                                                                     | Not applicable                                       |
 | **Hugo site** (historical -- no active Hugo sites remain) | Not applicable                                     | Not applicable                                                                                     | Not applicable                                       |
 | **E2E runner** (`*-e2e`)                                  | Not applicable                                     | Not applicable                                                                                     | Playwright — this project IS the E2E suite           |
@@ -205,7 +205,7 @@ unit tests.
 | Threshold | App Types                                              | Rationale                                                                                                                                                                       |
 | --------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **90%**   | BE API backends (`organiclever-be`), CLI apps, Go libs | Core business logic with high mock isolation. Service functions operate on pure data structures; 90% is achievable without heroic effort.                                       |
-| **80%**   | Content platforms (`ayokoding-web`, `oseplatform-web`) | Significant UI rendering code and Next.js route handlers that are harder to unit-test. Some RSC rendering paths are excluded by design.                                         |
+| **80%**   | Content platforms (`ayokoding-web`, `ose-web`)         | Significant UI rendering code and Next.js route handlers that are harder to unit-test. Some RSC rendering paths are excluded by design.                                         |
 | **70%**   | FE apps (`organiclever-web`)                           | API, auth, and query layers are mocked by design; the mock boundaries limit what can be covered by unit tests. Lower threshold reflects this intentional architecture decision. |
 
 Coverage is measured via the appropriate reporter for each language and converted to LCOV or
@@ -352,7 +352,7 @@ variant-specific inputs.
 ### CRON Schedule
 
 Scheduled workflows (the production `test-and-deploy-*.yml` quartet for ayokoding-web,
-oseplatform-web, organiclever, and wahidyankf-web) run twice daily aligned to WIB (UTC+7) business hours:
+ose-web, organiclever, and wahidyankf-web) run twice daily aligned to WIB (UTC+7) business hours:
 
 | WIB Time | UTC Time             | Purpose                                     |
 | -------- | -------------------- | ------------------------------------------- |

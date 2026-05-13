@@ -134,8 +134,8 @@ Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-gra
 **Every checkbox MUST contain all of the following that apply**:
 
 - **Explicit file path(s)** when the action touches a known file. When the path cannot be determined at authoring time, give the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
-- **Explicit shell command(s)** verbatim when applicable (e.g., `npx nx run oseplatform-web:test:quick`), not "run the lint".
-- **Concrete acceptance criterion** stating the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass", "`nx run oseplatform-web:typecheck` exits 0"). No bare "implement X", "set up Y", "configure Z".
+- **Explicit shell command(s)** verbatim when applicable (e.g., `npx nx run ose-web:test:quick`), not "run the lint".
+- **Concrete acceptance criterion** stating the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass", "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y", "configure Z".
 
 **`plan-checker` flags violations as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.**
 
@@ -150,9 +150,9 @@ Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-gra
 **Good** (explicit path, explicit command, explicit criterion):
 
 ```markdown
-- [ ] Edit `apps/oseplatform-web/src/server/trpc.ts`: wrap the public router with
+- [ ] Edit `apps/ose-web/src/server/trpc.ts`: wrap the public router with
       `unstable_cache(..., { revalidate: 300 })`. Verify by running
-      `npx nx run oseplatform-web:test:quick` — all tests pass.
+      `npx nx run ose-web:test:quick` — all tests pass.
 ```
 
 **Bad**:
@@ -268,7 +268,7 @@ Domain-specialized agents hallucinate less than generic orchestration. When a de
 **When to annotate**:
 
 - Action touches a specific language file (`.fs`, `.go`, `.kt`, `.cs`, `.fsproj`, `.csproj`, etc.)
-- Action touches a specific app context (`apps/oseplatform-web/...` → `apps-oseplatform-web-content-maker` for content)
+- Action touches a specific app context (`apps/ose-web/...` → `apps-ose-web-content-maker` for content)
 - Action is content/documentation (`docs-maker`, `readme-maker`, `specs-maker`)
 - Action is governance / repo rules (`repo-rules-maker`)
 - Action is content-platform skill domain (`apps-ayokoding-web-by-example-maker`, `apps-ayokoding-web-in-the-field-maker`, etc.)

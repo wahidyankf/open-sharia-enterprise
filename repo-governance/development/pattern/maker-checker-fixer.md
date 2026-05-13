@@ -79,7 +79,7 @@ This pattern is used across multiple agent families. See [AI Agents Index](../..
 1. **repo-rules-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Next.js 16 content for ayokoding-web
 3. **docs-tutorial-\*** - Tutorial quality validation
-4. **apps-oseplatform-web-content-\*** - Next.js 16 content for oseplatform-web
+4. **apps-ose-web-content-\*** - Next.js 16 content for ose-web
 5. **readme-\*** - README quality standards
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure
@@ -111,7 +111,7 @@ This pattern is used across multiple agent families. See [AI Agents Index](../..
 | apps-ayokoding-web-general-maker    | General Next.js learning content, blog posts       | Navigation files, overview pages, indices         | Write, Edit           |
 | apps-ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
 | docs-tutorial-maker                 | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
-| apps-oseplatform-web-content-maker  | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
+| apps-ose-web-content-maker          | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
 | readme-maker                        | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
 
 **Note**: `repo-rules-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
@@ -170,7 +170,7 @@ Maker Agent (apps-ayokoding-web-general-maker):
 | apps-ayokoding-web-general-checker    | General Next.js content (frontmatter, links)                                                                                                     | `ayokoding-web__{uuid-chain}__{timestamp}__audit.md`            |
 | apps-ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)                                                                                                     | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
 | docs-tutorial-checker                 | Tutorial pedagogy, narrative flow, visual aids                                                                                                   | `docs-tutorial__{uuid-chain}__{timestamp}__audit.md`            |
-| apps-oseplatform-web-content-checker  | Platform content (structure, formatting, links)                                                                                                  | `oseplatform-web__{uuid-chain}__{timestamp}__audit.md`          |
+| apps-ose-web-content-checker          | Platform content (structure, formatting, links)                                                                                                  | `ose-web__{uuid-chain}__{timestamp}__audit.md`                  |
 | readme-checker                        | README engagement, accessibility, jargon                                                                                                         | `readme__{uuid-chain}__{timestamp}__audit.md`                   |
 
 **Note on Report File Naming**: The `__` (double underscore) in report filenames (e.g., `readme__{timestamp}__audit.md`) is the **report file naming separator** defined in the [Temporary Files Convention](../infra/temporary-files.md), separating agent-family prefix, UUID chain, and timestamp. This is NOT an old agent name - it is the standard 4-part pattern: `{agent-family}__{uuid-chain}__{timestamp}__{type}.md`.
@@ -466,24 +466,24 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 **Note**: docs-tutorial-fixer applies objective/mechanical fixes (missing sections, format violations) automatically. Subjective narrative quality improvements (flow, engagement, tone) require human judgment and manual review.
 
-### 4. apps-oseplatform-web-content-\* (Next.js 16 Content for oseplatform-web)
+### 4. apps-ose-web-content-\* (Next.js 16 Content for ose-web)
 
-**Domain**: Next.js 16 content for oseplatform-web (App Router, TypeScript, tRPC) - platform updates, about pages
+**Domain**: Next.js 16 content for ose-web (App Router, TypeScript, tRPC) - platform updates, about pages
 
 **Agents**:
 
-- **apps-oseplatform-web-content-maker** (🟦 Maker) - Creates platform content (updates, about)
-- **apps-oseplatform-web-content-checker** (🟩 Checker) - Validates content structure, formatting
-- **apps-oseplatform-web-content-fixer** (🟨 Fixer) - Applies validated fixes from apps-oseplatform-web-content-checker audit reports
+- **apps-ose-web-content-maker** (🟦 Maker) - Creates platform content (updates, about)
+- **apps-ose-web-content-checker** (🟩 Checker) - Validates content structure, formatting
+- **apps-ose-web-content-fixer** (🟨 Fixer) - Applies validated fixes from apps-ose-web-content-checker audit reports
 
 **Use Case**: Creating and validating professional English content for platform landing page
 
 **Example**:
 
 ```
-1. apps-oseplatform-web-content-maker: Create beta release announcement post
-2. apps-oseplatform-web-content-checker: Validate frontmatter, links, cover images
-3. apps-oseplatform-web-content-fixer: Apply validated fixes from audit
+1. apps-ose-web-content-maker: Create beta release announcement post
+2. apps-ose-web-content-checker: Validate frontmatter, links, cover images
+3. apps-ose-web-content-fixer: Apply validated fixes from audit
 ```
 
 ### 5. readme-\* (README Quality)
@@ -808,7 +808,7 @@ If verification fails, log the fix as FAILED (not applied). Do NOT log as "fixed
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal content standards
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Historical Hugo standards (DEPRECATED — both sites migrated to Next.js 16)
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - Historical ayokoding-web Hugo specifics (DEPRECATED)
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - Historical oseplatform-web Hugo specifics (DEPRECATED)
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - Historical ose-web Hugo specifics (DEPRECATED)
 - [Tutorial Convention](../../conventions/tutorials/general.md) - Tutorial quality standards
 - [README Quality Convention](../../conventions/writing/readme-quality.md) - README standards
 

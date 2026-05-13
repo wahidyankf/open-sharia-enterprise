@@ -327,9 +327,9 @@ Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade a
 
 **Each checkbox MUST contain all of the following that apply:**
 
-- **Explicit file path(s)**: Name the exact file path(s) when known (e.g., `apps/oseplatform-web/src/server/trpc.ts`). When the path cannot be determined at authoring time (e.g., a new file whose location is implementation-dependent), provide the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
-- **Explicit shell command(s)**: State the verbatim invocation when a command is involved (e.g., `npx nx run oseplatform-web:test:quick`), not a vague instruction like "run the lint".
-- **Concrete acceptance criterion**: State the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass" or "`nx run oseplatform-web:typecheck` exits 0"). No bare "implement X", "set up Y", or "configure Z" without a concrete verifiable outcome.
+- **Explicit file path(s)**: Name the exact file path(s) when known (e.g., `apps/ose-web/src/server/trpc.ts`). When the path cannot be determined at authoring time (e.g., a new file whose location is implementation-dependent), provide the maximum-possible-detail target: parent directory + naming pattern + sibling reference (e.g., "new file under `apps/organiclever-web/src/lib/` following the pattern of sibling `auth.ts`").
+- **Explicit shell command(s)**: State the verbatim invocation when a command is involved (e.g., `npx nx run ose-web:test:quick`), not a vague instruction like "run the lint".
+- **Concrete acceptance criterion**: State the observable change that proves done (e.g., "all assertions in `trpc.test.ts` pass" or "`nx run ose-web:typecheck` exits 0"). No bare "implement X", "set up Y", or "configure Z" without a concrete verifiable outcome.
 
 **HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
 
@@ -342,9 +342,9 @@ Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade a
 **Good** (explicit path, explicit command, explicit criterion):
 
 ```markdown
-- [ ] Edit `apps/oseplatform-web/src/server/trpc.ts`: wrap the public router with
+- [ ] Edit `apps/ose-web/src/server/trpc.ts`: wrap the public router with
       `unstable_cache(..., { revalidate: 300 })`. Verify by running
-      `npx nx run oseplatform-web:test:quick` — all tests pass.
+      `npx nx run ose-web:test:quick` — all tests pass.
 ```
 
 **Acceptance Criteria**: All user stories in `prd.md` (or the condensed PRD section of a single-file plan's `README.md`) must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) for complete details.

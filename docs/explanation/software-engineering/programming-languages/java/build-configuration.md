@@ -273,18 +273,18 @@ java -version
 <repositories>
   <repository>
     <id>ose-nexus</id>
-    <url>https://nexus.oseplatform.internal/repository/maven-public/</url>
+    <url>https://nexus.ose-platform.internal/repository/maven-public/</url>
   </repository>
 </repositories>
 
 <distributionManagement>
   <repository>
     <id>ose-nexus-releases</id>
-    <url>https://nexus.oseplatform.internal/repository/maven-releases/</url>
+    <url>https://nexus.ose-platform.internal/repository/maven-releases/</url>
   </repository>
   <snapshotRepository>
     <id>ose-nexus-snapshots</id>
-    <url>https://nexus.oseplatform.internal/repository/maven-snapshots/</url>
+    <url>https://nexus.ose-platform.internal/repository/maven-snapshots/</url>
   </snapshotRepository>
 </distributionManagement>
 ```

@@ -51,7 +51,7 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ## Current Implementation
 
-**`golang-commons`** - Shared Go utilities used by `ayokoding-cli` and `oseplatform-cli` (links
+**`golang-commons`** - Shared Go utilities used by `ayokoding-cli` and `ose-cli` (links
 checker, output formatting).
 
 **`hugo-commons`** - Shared Hugo utilities used by Hugo-based sites.

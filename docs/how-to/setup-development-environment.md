@@ -150,7 +150,7 @@ volta install npm@11.10.1
 
 ### Step 4: Go
 
-Required for `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`,
+Required for `rhino-cli`, `ayokoding-cli`, `ose-cli`,
 and `libs/golang-commons`.
 
 ```bash

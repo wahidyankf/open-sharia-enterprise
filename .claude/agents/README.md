@@ -12,7 +12,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-general-maker](apps-ayokoding-web-general-maker.md)** - General content for AyoKoding
 - **[apps-ayokoding-web-by-example-maker](apps-ayokoding-web-by-example-maker.md)** - By-example tutorials
 - **[apps-ayokoding-web-in-the-field-maker](apps-ayokoding-web-in-the-field-maker.md)** - In-the-field tutorials for AyoKoding
-- **[apps-oseplatform-web-content-maker](apps-oseplatform-web-content-maker.md)** - OSE Platform content
+- **[apps-ose-web-content-maker](apps-ose-web-content-maker.md)** - OSE Platform content
 - **[plan-maker](plan-maker.md)** - Project plan creation
 - **[repo-rules-maker](repo-rules-maker.md)** - Governance document creation
 - **[repo-workflow-maker](repo-workflow-maker.md)** - Workflow documentation
@@ -35,7 +35,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-in-the-field-checker](apps-ayokoding-web-in-the-field-checker.md)** - In-the-field content validation
 - **[apps-ayokoding-web-facts-checker](apps-ayokoding-web-facts-checker.md)** - Factual accuracy for AyoKoding
 - **[apps-ayokoding-web-link-checker](apps-ayokoding-web-link-checker.md)** - Link validation for AyoKoding
-- **[apps-oseplatform-web-content-checker](apps-oseplatform-web-content-checker.md)** - OSE content validation
+- **[apps-ose-web-content-checker](apps-ose-web-content-checker.md)** - OSE content validation
 - **[plan-checker](plan-checker.md)** - Project plan validation
 - **[plan-execution-checker](plan-execution-checker.md)** - Plan execution validation
 - **[repo-rules-checker](repo-rules-checker.md)** - Governance compliance validation
@@ -58,7 +58,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-in-the-field-fixer](apps-ayokoding-web-in-the-field-fixer.md)** - Fix in-the-field content issues
 - **[apps-ayokoding-web-facts-fixer](apps-ayokoding-web-facts-fixer.md)** - Apply factual corrections
 - **[apps-ayokoding-web-link-fixer](apps-ayokoding-web-link-fixer.md)** - Fix broken links
-- **[apps-oseplatform-web-content-fixer](apps-oseplatform-web-content-fixer.md)** - Fix OSE content issues
+- **[apps-ose-web-content-fixer](apps-ose-web-content-fixer.md)** - Fix OSE content issues
 - **[plan-fixer](plan-fixer.md)** - Apply plan fixes
 - **[repo-rules-fixer](repo-rules-fixer.md)** - Fix governance compliance issues
 - **[repo-parity-fixer](repo-parity-fixer.md)** - Apply validated cross-vendor parity fixes (auto-remediates binding-sync drift; flags color-map/tier-map gaps)
@@ -74,7 +74,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 ### 🟪 Operations
 
 - **[apps-ayokoding-web-deployer](apps-ayokoding-web-deployer.md)** - AyoKoding deployment (Next.js via Vercel)
-- **[apps-oseplatform-web-deployer](apps-oseplatform-web-deployer.md)** - OSE Platform deployment
+- **[apps-ose-web-deployer](apps-ose-web-deployer.md)** - OSE Platform deployment
 - **[apps-organiclever-web-deployer](apps-organiclever-web-deployer.md)** - organiclever-web deployment
 - **[apps-wahidyankf-web-deployer](apps-wahidyankf-web-deployer.md)** - wahidyankf-web deployment (Next.js via Vercel)
 
@@ -87,7 +87,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[swe-elixir-dev](swe-elixir-dev.md)** - Elixir application development
 - **[swe-fsharp-dev](swe-fsharp-dev.md)** - F# application development
 - **[swe-golang-dev](swe-golang-dev.md)** - Go application development
-- **[swe-hugo-dev](swe-hugo-dev.md)** - **DEPRECATED** -- No active Hugo sites remain (formerly oseplatform-web)
+- **[swe-hugo-dev](swe-hugo-dev.md)** - **DEPRECATED** -- No active Hugo sites remain (formerly ose-web)
 - **[swe-java-dev](swe-java-dev.md)** - Java application development
 - **[swe-kotlin-dev](swe-kotlin-dev.md)** - Kotlin application development
 - **[swe-python-dev](swe-python-dev.md)** - Python application development

@@ -1311,7 +1311,7 @@ HikariCP is the default connection pool in Spring Boot, providing high performan
 # application.yml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/oseplatform
+    url: jdbc:postgresql://localhost:5432/ose_platform
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver

@@ -562,7 +562,7 @@ class DonationEventHandler {
   ),
   excludeFilters = @ComponentScan.Filter(
     type = FilterType.REGEX,
-    pattern = "com\\.oseplatform\\..*\\.test\\..*"
+    pattern = "com\\.ose_platform\\..*\\.test\\..*"
   )
 )
 public class ApplicationConfig {
@@ -589,7 +589,7 @@ public class ApplicationConfig {
   excludeFilters = [
     ComponentScan.Filter(
       type = FilterType.REGEX,
-      pattern = ["com\\.oseplatform\\..*\\.test\\..*"]
+      pattern = ["com\\.ose_platform\\..*\\.test\\..*"]
     )
   ]
 )

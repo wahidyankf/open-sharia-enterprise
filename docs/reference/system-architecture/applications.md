@@ -19,15 +19,15 @@ The platform consists of the following applications across its technology stacks
 
 ### Web Applications (Next.js)
 
-#### oseplatform-web
+#### ose-web
 
 - **Purpose**: Marketing and documentation website for OSE Platform
 - **URL**: <https://oseplatform.com>
 - **Technology**: Next.js 16 (App Router) + TypeScript + tRPC
-- **Deployment**: Vercel (via `prod-oseplatform-web` branch)
-- **Build Command**: `nx build oseplatform-web`
-- **Dev Command**: `nx dev oseplatform-web`
-- **Location**: `apps/oseplatform-web/`
+- **Deployment**: Vercel (via `prod-ose-web` branch)
+- **Build Command**: `nx build ose-web`
+- **Dev Command**: `nx dev ose-web`
+- **Location**: `apps/ose-web/`
 
 #### ayokoding-web
 
@@ -72,16 +72,16 @@ The platform consists of the following applications across its technology stacks
 - **Location**: `apps/rhino-cli/`
 - **Status**: Active development
 
-#### oseplatform-cli
+#### ose-cli
 
 - **Purpose**: OSE Platform site link validation
 - **Language**: Go 1.26
-- **Build Command**: `nx build oseplatform-cli`
-- **Location**: `apps/oseplatform-cli/`
+- **Build Command**: `nx build ose-cli`
+- **Location**: `apps/ose-cli/`
 - **Features**:
-  - Validates all internal links in oseplatform-web content
+  - Validates all internal links in ose-web content
   - Text, JSON, and markdown output formats
-- **Usage**: Runs as first step of `oseplatform-web`'s `test:quick` target
+- **Usage**: Runs as first step of `ose-web`'s `test:quick` target
 
 ### OrganicLever Applications
 
@@ -120,19 +120,19 @@ The platform consists of the following applications across its technology stacks
 
 ### E2E Test Suites (Playwright)
 
-#### oseplatform-web-fe-e2e
+#### ose-web-fe-e2e
 
-- **Purpose**: Frontend E2E tests for oseplatform-web UI
+- **Purpose**: Frontend E2E tests for ose-web UI
 - **Technology**: Playwright
-- **Run Command**: `nx run oseplatform-web-fe-e2e:test:e2e`
-- **Location**: `apps/oseplatform-web-fe-e2e/`
+- **Run Command**: `nx run ose-web-fe-e2e:test:e2e`
+- **Location**: `apps/ose-web-fe-e2e/`
 
-#### oseplatform-web-be-e2e
+#### ose-web-be-e2e
 
-- **Purpose**: Backend E2E tests for oseplatform-web tRPC API
+- **Purpose**: Backend E2E tests for ose-web tRPC API
 - **Technology**: Playwright
-- **Run Command**: `nx run oseplatform-web-be-e2e:test:e2e`
-- **Location**: `apps/oseplatform-web-be-e2e/`
+- **Run Command**: `nx run ose-web-be-e2e:test:e2e`
+- **Location**: `apps/ose-web-be-e2e/`
 
 #### ayokoding-web-fe-e2e
 
@@ -178,7 +178,7 @@ Shows the high-level technical building blocks (containers) of the system. In C4
 ```mermaid
 graph LR
     subgraph "Marketing & Education"
-        OSE[oseplatform-web<br/>Next.js App]
+        OSE[ose-web<br/>Next.js App]
         AYO[ayokoding-web<br/>Next.js App]
         WKF[wahidyankf-web<br/>Next.js App]
     end
@@ -186,7 +186,7 @@ graph LR
     subgraph "CLI Tools"
         AYOCLI[ayokoding-cli<br/>Go CLI]
         RHINO[rhino-cli<br/>Go CLI]
-        OSECLI[oseplatform-cli<br/>Go CLI]
+        OSECLI[ose-cli<br/>Go CLI]
     end
 
     subgraph "Shared Infrastructure"
@@ -249,7 +249,7 @@ graph LR
 
 Marketing & Education Sites:
 
-- oseplatform-web: Next.js 16 content platform
+- ose-web: Next.js 16 content platform
 - ayokoding-web: Next.js fullstack content platform (with CLI link validation)
 - wahidyankf-web: Next.js 16 personal portfolio
 

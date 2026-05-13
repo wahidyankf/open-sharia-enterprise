@@ -675,7 +675,7 @@ export class CampaignController {
 
 ```
 apps/
-├── oseplatform-web/         # Next.js 16 content platform (TypeScript, tRPC)
+├── ose-web/         # Next.js 16 content platform (TypeScript, tRPC)
 ├── ayokoding-web/            # Next.js 16 fullstack content platform (TypeScript, tRPC)
 ├── organiclever-web/         # Next.js 16 landing website
 ├── wahidyankf-web/           # Next.js 16 personal portfolio

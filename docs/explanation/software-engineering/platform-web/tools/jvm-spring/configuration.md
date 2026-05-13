@@ -229,7 +229,7 @@ fun main() {
   ),
   excludeFilters = @ComponentScan.Filter(
     type = FilterType.REGEX,
-    pattern = "com\\.oseplatform\\.murabaha\\..*\\.test\\..*"
+    pattern = "com\\.ose_platform\\.murabaha\\..*\\.test\\..*"
   )
 )
 public class MurabahaApplicationConfig {
@@ -256,7 +256,7 @@ public class MurabahaApplicationConfig {
   excludeFilters = [
     ComponentScan.Filter(
       type = FilterType.REGEX,
-      pattern = ["com\\.oseplatform\\.murabaha\\..*\\.test\\..*"]
+      pattern = ["com\\.ose_platform\\.murabaha\\..*\\.test\\..*"]
     )
   ]
 )

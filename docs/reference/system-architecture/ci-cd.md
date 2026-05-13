@@ -166,16 +166,16 @@ graph LR
 
 ### Test and Deploy OSE Platform Web Workflow
 
-**File**: `.github/workflows/test-and-deploy-oseplatform-web.yml`
+**File**: `.github/workflows/test-and-deploy-ose-web.yml`
 
 **Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
 
 **Steps:**
 
-1. Detect changes in `apps/oseplatform-web/` vs `prod-oseplatform-web` branch
+1. Detect changes in `apps/ose-web/` vs `prod-ose-web` branch
 2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0
-3. Install dependencies and run `nx build oseplatform-web`
-4. Force-push `main` to `prod-oseplatform-web`; Vercel auto-builds
+3. Install dependencies and run `nx build ose-web`
+4. Force-push `main` to `prod-ose-web`; Vercel auto-builds
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 

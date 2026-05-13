@@ -52,7 +52,7 @@ Partial lines count as NOT covered.
 | organiclever-be  | >= 90%    | F#/Giraffe backend API                  |
 | organiclever-web | >= 70%    | Frontend app with MSW integration tests |
 | ayokoding-web    | >= 80%    | Content platform with UI rendering code |
-| oseplatform-web  | >= 80%    | Content platform with UI rendering code |
+| ose-web          | >= 80%    | Content platform with UI rendering code |
 | wahidyankf-web   | >= 80%    | Personal portfolio (Next.js)            |
 
 ## Per-Project Coverage Details
@@ -62,13 +62,13 @@ Partial lines count as NOT covered.
 **Tool**: `go test -coverprofile=cover.out`
 **Format**: Go cover.out (statement-based, mode: set)
 
-| Project         | Coverage File | Threshold | Exclusions |
-| --------------- | ------------- | --------- | ---------- |
-| rhino-cli       | `cover.out`   | 90%       | None       |
-| ayokoding-cli   | `cover.out`   | 90%       | None       |
-| oseplatform-cli | `cover.out`   | 90%       | None       |
-| golang-commons  | `cover.out`   | 90%       | None       |
-| hugo-commons    | `cover.out`   | 90%       | None       |
+| Project        | Coverage File | Threshold | Exclusions |
+| -------------- | ------------- | --------- | ---------- |
+| rhino-cli      | `cover.out`   | 90%       | None       |
+| ayokoding-cli  | `cover.out`   | 90%       | None       |
+| ose-cli        | `cover.out`   | 90%       | None       |
+| golang-commons | `cover.out`   | 90%       | None       |
+| hugo-commons   | `cover.out`   | 90%       | None       |
 
 ### TypeScript Projects
 
@@ -79,7 +79,7 @@ Partial lines count as NOT covered.
 | ---------------- | --------- | ---------- |
 | organiclever-web | 70%       | None       |
 | ayokoding-web    | 80%       | None       |
-| oseplatform-web  | 80%       | None       |
+| ose-web          | 80%       | None       |
 | wahidyankf-web   | 80%       | None       |
 
 ### F# Projects

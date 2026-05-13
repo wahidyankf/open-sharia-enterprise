@@ -17,7 +17,7 @@ least one matching test file anywhere under the final positional <app-dir>.
 When multiple <specs-dir> arguments are provided, every gherkin tree is walked
 in a single pass and ALL extracted impl matchers under <app-dir> are validated
 against the union of gherkin steps. This is the correct shape when an app has
-both web and api gherkin scopes that share step impls (e.g., oseplatform-web).
+both web and api gherkin scopes that share step impls (e.g., ose-web).
 
 A matching test file is one whose base name starts with the feature file stem
 followed by a dot (e.g. "user-login.feature" matches "user-login.integration.test.tsx").
@@ -32,9 +32,9 @@ is checked here.`,
 
   # Multiple gherkin scopes (web + api) against one app
   rhino-cli spec-coverage validate --shared-steps \
-    specs/apps/oseplatform/behavior/web/gherkin \
-    specs/apps/oseplatform/behavior/api/gherkin \
-    apps/oseplatform-web
+    specs/apps/ose-platform/behavior/web/gherkin \
+    specs/apps/ose-platform/behavior/api/gherkin \
+    apps/ose-web
 
   # Output as JSON
   rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -o json

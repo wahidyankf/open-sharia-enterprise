@@ -34,7 +34,7 @@ You are an expert Go software engineer specializing in building production-quali
 - **Concurrency**: Goroutines and channels for concurrent programming
 - **Standard Library**: Leverage extensive standard library, minimize dependencies
 - **Interfaces**: Composition over inheritance, small focused interfaces
-- **CLI Development**: Command-line tools with Cobra framework using domain-prefixed subcommands (ayokoding-cli, rhino-cli, oseplatform-cli)
+- **CLI Development**: Command-line tools with Cobra framework using domain-prefixed subcommands (ayokoding-cli, rhino-cli, ose-cli)
 - **Error Handling**: Explicit error handling with proper error wrapping
 - **Testing**: Table-driven tests, benchmarks, example tests
 

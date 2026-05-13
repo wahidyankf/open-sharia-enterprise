@@ -125,7 +125,7 @@ After Commit J:
 - `ls specs/apps/a-demo 2>/dev/null` returns empty.
 - `nx graph` shows no `a-demo-*` project nodes.
 - `npx nx affected -t typecheck lint test:quick spec-coverage` passes.
-- Product E2E suites (`ayokoding-web-*-e2e`, `organiclever-*-e2e`, `oseplatform-web-*-e2e`) pass.
+- Product E2E suites (`ayokoding-web-*-e2e`, `organiclever-*-e2e`, `ose-web-*-e2e`) pass.
 
 ### 6. Close-out (Sequential)
 

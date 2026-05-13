@@ -71,7 +71,7 @@ the previous:
 }
 ```
 
-`organiclever.css` is opt-in — sibling apps (`ayokoding-web`, `oseplatform-web`,
+`organiclever.css` is opt-in — sibling apps (`ayokoding-web`, `ose-web`,
 `wahidyankf-web`) do **not** import it and are unaffected.
 
 ## Key components

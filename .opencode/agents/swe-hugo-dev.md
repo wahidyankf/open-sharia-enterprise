@@ -1,5 +1,5 @@
 ---
-description: DEPRECATED - No active Hugo sites remain. Formerly developed Hugo sites (oseplatform-web). oseplatform-web migrated to Next.js 16.
+description: DEPRECATED - No active Hugo sites remain. Formerly developed Hugo sites (ose-web). ose-web migrated to Next.js 16.
 model: opencode-go/minimax-m2.7
 tools:
   glob: true
@@ -18,7 +18,7 @@ color: secondary
 **Deprecation Notice**: This agent is deprecated because all Hugo sites have been migrated:
 
 - **ayokoding-web**: Migrated to Next.js 16 (completed)
-- **oseplatform-web**: Migrated to Next.js 16 (completed)
+- **ose-web**: Migrated to Next.js 16 (completed)
 
 No Hugo applications exist in the `apps/` directory. This agent is preserved for historical reference only. If Hugo sites are reintroduced in the future, this agent can be reactivated.
 
@@ -39,5 +39,5 @@ Theme customization, template development, build optimization, deployment config
 
 **Related Agents**:
 
-- `apps-oseplatform-web-content-maker` - Creates oseplatform-web content (now Next.js)
+- `apps-ose-web-content-maker` - Creates ose-web content (now Next.js)
 - `swe-typescript-dev` - Develops Next.js applications (current framework for former Hugo sites)

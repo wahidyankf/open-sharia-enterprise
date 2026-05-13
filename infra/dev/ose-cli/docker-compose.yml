@@ -1,0 +1,15 @@
+# Local Development Environment for ose-cli (Go CLI)
+# OSE Platform site maintenance CLI (link validation)
+
+services:
+  ose-cli:
+    build:
+      context: ../../../
+      dockerfile: infra/dev/ose-cli/Dockerfile.cli.dev
+    volumes:
+      - ../../../apps/ose-cli:/app/apps/ose-cli
+      - ../../../libs/golang-commons:/app/libs/golang-commons
+      - ../../../libs/hugo-commons:/app/libs/hugo-commons
+      - ../../../specs:/app/specs:ro
+    working_dir: /app/apps/ose-cli
+    command: go test ./... -v

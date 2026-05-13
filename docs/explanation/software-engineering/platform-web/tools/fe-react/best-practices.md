@@ -78,7 +78,7 @@ Organize code by feature/domain, not by technical layer.
 **Recommended Structure**:
 
 ```
-apps/oseplatform-web-app/
+apps/ose-web-app/
 ├── src/
 │   ├── features/              # Feature modules (domains)
 │   │   ├── zakat/

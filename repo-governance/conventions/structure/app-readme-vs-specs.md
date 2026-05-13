@@ -44,7 +44,7 @@ This convention governs THREE interrelated decisions:
 
 A fourth rule covers adoption expectations for BDD, DDD, and API contracts.
 
-The convention applies to all apps and infra directories in the monorepo. Its OrganicLever application is the reference pilot. Rollout to `ayokoding`, `oseplatform`, `wahidyankf`, and `rhino` follows the same rules.
+The convention applies to all apps and infra directories in the monorepo. Its OrganicLever application is the reference pilot. Rollout to `ayokoding`, `ose-platform`, `wahidyankf`, and `rhino` follows the same rules.
 
 ## Scope
 
@@ -331,7 +331,7 @@ This standard defines adoption expectations per app type and rollout timeline. "
 | -------------- | ---------------- | ---------------------------- | --------------- |
 | `organiclever` | Adopted (pilot)  | Adopted (pilot)              | Adopted (pilot) |
 | `ayokoding`    | Adopted          | Deferred (multi-CLI profile) | NOT APPLICABLE  |
-| `oseplatform`  | Adopted          | SHOULD — backlog             | NOT APPLICABLE  |
+| `ose-platform` | Adopted          | SHOULD — backlog             | NOT APPLICABLE  |
 | `wahidyankf`   | SHOULD — backlog | SHOULD — backlog             | NOT APPLICABLE  |
 | `rhino`        | Adopted          | Deferred (CLI)               | NOT APPLICABLE  |
 

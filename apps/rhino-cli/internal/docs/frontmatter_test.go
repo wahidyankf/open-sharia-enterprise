@@ -295,7 +295,7 @@ func TestValidateDocsFrontmatter_UnknownAreaPasses(t *testing.T) {
 	// A file outside both areas has no required fields and must pass even with
 	// no frontmatter at all.
 	tmp := t.TempDir()
-	writeTestFile(t, tmp, "apps/oseplatform-web/content/foo.md", "# foo body only\n")
+	writeTestFile(t, tmp, "apps/ose-web/content/foo.md", "# foo body only\n")
 	writeTestFile(t, tmp, "docs/tutorials/getting-started.md", "# tutorial body only\n")
 
 	findings, err := ValidateDocsFrontmatter([]string{tmp})
@@ -540,7 +540,7 @@ func TestClassifyDocArea(t *testing.T) {
 		{"repo-governance/development/foo.md", areaGovernance},
 		{"repo-governance/workflows/foo.md", areaGovernance},
 		{"docs/tutorials/foo.md", areaUnknown},
-		{"apps/oseplatform-web/content/foo.md", areaUnknown},
+		{"apps/ose-web/content/foo.md", areaUnknown},
 	}
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {

@@ -77,8 +77,8 @@ all use the same MIT text.
 | `apps/ayokoding-web/`           | MIT     |
 | `apps/organiclever-be/`         | MIT     |
 | `apps/organiclever-web/`        | MIT     |
-| `apps/oseplatform-cli/`         | MIT     |
-| `apps/oseplatform-web/`         | MIT     |
+| `apps/ose-cli/`                 | MIT     |
+| `apps/ose-web/`                 | MIT     |
 | `apps/wahidyankf-web/`          | MIT     |
 | `specs/`                        | MIT     |
 | `libs/clojure-openapi-codegen/` | MIT     |

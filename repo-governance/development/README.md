@@ -165,7 +165,7 @@ Development practices in this directory fall into several categories:
 
 ### Hugo Development Documentation
 
-- [Hugo Development Convention](./hugo/development.md) - **DEPRECATED** -- Historical standards for developing Hugo sites. Both ayokoding-web and oseplatform-web have migrated to Next.js 16. Preserved for reference only
+- [Hugo Development Convention](./hugo/development.md) - **DEPRECATED** -- Historical standards for developing Hugo sites. Both ayokoding-web and ose-web have migrated to Next.js 16. Preserved for reference only
 
 ## 📚 Companion Documents
 

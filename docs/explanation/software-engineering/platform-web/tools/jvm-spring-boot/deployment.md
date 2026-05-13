@@ -268,7 +268,7 @@ Spring Boot executable JAR uses custom layout with nested JARs.
 zakat-service.jar
 ├── BOOT-INF/
 │   ├── classes/             # Application classes
-│   │   ├── com/oseplatform/zakat/
+│   │   ├── com/ose_platform/zakat/
 │   │   ├── application.yml
 │   │   └── db/migration/
 │   └── lib/                 # Dependencies (nested JARs)
@@ -578,7 +578,7 @@ spec:
 
       containers:
         - name: zakat-service
-          image: oseplatform/zakat-service:1.0.0
+          image: ose-platform/zakat-service:1.0.0
           imagePullPolicy: IfNotPresent
 
           ports:

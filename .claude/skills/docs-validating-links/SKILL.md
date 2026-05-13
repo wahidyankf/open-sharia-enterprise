@@ -42,7 +42,7 @@ Use this Skill when:
 **What to validate**:
 
 - Internal markdown links (docs/, repo-governance/, plans/)
-- Content links (apps/ayokoding-web/, apps/oseplatform-web/)
+- Content links (apps/ayokoding-web/, apps/ose-web/)
 - External URLs (HTTP/HTTPS)
 - Image links (relative paths)
 - Anchor links (same-page headings)
@@ -66,7 +66,7 @@ Use this Skill when:
 ❌ FAIL: [[file-naming]] ← Wiki-link syntax (GitHub does not render these)
 ❌ FAIL: [file-naming.md](../meta/file-naming.md) ← Using filename as link text
 
-**Note**: Both `apps/ayokoding-web/` and `apps/oseplatform-web/` have migrated to Next.js 16. Their content links are validated by their respective CLI tools (`ayokoding-cli links check`, `oseplatform-cli links check`), not by this Skill's Hugo link rules.
+**Note**: Both `apps/ayokoding-web/` and `apps/ose-web/` have migrated to Next.js 16. Their content links are validated by their respective CLI tools (`ayokoding-cli links check`, `ose-cli links check`), not by this Skill's Hugo link rules.
 
 ### Validation Methodology
 
@@ -128,7 +128,7 @@ From: repo-governance/conventions/formatting/linking.md (3 levels deep)
 **Criticality**: MEDIUM - Poor accessibility and readability
 **Detection**: Check if link text matches filename pattern or contains file extension
 
-_(Note: Hugo-specific error examples (Error 5, Error 6) removed — both oseplatform-web and ayokoding-web have migrated to Next.js 16. See Historical section below.)_
+_(Note: Hugo-specific error examples (Error 5, Error 6) removed — both ose-web and ayokoding-web have migrated to Next.js 16. See Historical section below.)_
 
 ## External Link Validation
 
@@ -196,12 +196,12 @@ _(Note: Hugo-specific error examples (Error 5, Error 6) removed — both oseplat
 
 ## Historical: Hugo-Specific Link Validation (DEPRECATED)
 
-**Note**: Both `oseplatform-web` and `ayokoding-web` have migrated to Next.js 16. Hugo-specific link rules no longer apply to either site. This section is preserved for historical reference only.
+**Note**: Both `ose-web` and `ayokoding-web` have migrated to Next.js 16. Hugo-specific link rules no longer apply to either site. This section is preserved for historical reference only.
 
 Both sites' content links are validated by their respective CLI tools, not by Hugo link rules:
 
 - `ayokoding-cli links check` — validates ayokoding-web content links
-- `oseplatform-cli links check` — validates oseplatform-web content links
+- `ose-cli links check` — validates ose-web content links
 
 For active sites, apply standard docs/ linking rules: relative paths with `.md` extension.
 

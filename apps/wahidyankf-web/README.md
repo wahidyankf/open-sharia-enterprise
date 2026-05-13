@@ -53,7 +53,7 @@ nx run wahidyankf-web:spec-coverage
 - **`@testing-library/react`** + **`@testing-library/jest-dom`** for
   component interaction
 - Coverage enforced at ≥80% via `rhino-cli test-coverage validate` —
-  aligned to `apps/ayokoding-web` and `apps/oseplatform-web`
+  aligned to `apps/ayokoding-web` and `apps/ose-web`
 
 End-to-end tests live in the sibling project `apps/wahidyankf-web-fe-e2e/`
 using Playwright-BDD and `@axe-core/playwright` for WCAG 2.1 AA smoke.
