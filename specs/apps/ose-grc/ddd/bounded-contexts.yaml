@@ -1,0 +1,89 @@
+version: 2
+app: ose-grc
+contexts:
+  - name: regulatory-source
+    summary: >-
+      Ingests and stores regulator-published rule documents (PDFs, circulars)
+      with provenance metadata. Acts as the authoritative source for all
+      regulatory text consumed by gap-analysis.
+    layers:
+      - domain
+      - application
+      - infrastructure
+    code:
+      - apps/ose-grc-be/src/OseGrcBe/contexts/regulatory-source
+    code_lang:
+      - fs
+    glossary: specs/apps/ose-grc/ddd/ubiquitous-language/regulatory-source.md
+    gherkin: specs/apps/ose-grc/behavior/be/gherkin/regulatory-source
+    relationships:
+      - to: gap-analysis
+        kind: customer-supplier
+        role: supplier
+
+  - name: internal-policy
+    summary: >-
+      Ingests and stores company-internal documents (SOPs, manuals, procedures)
+      with version and scope metadata. Acts as the authoritative source for all
+      internal policy text consumed by gap-analysis.
+    layers:
+      - domain
+      - application
+      - infrastructure
+    code:
+      - apps/ose-grc-be/src/OseGrcBe/contexts/internal-policy
+    code_lang:
+      - fs
+    glossary: specs/apps/ose-grc/ddd/ubiquitous-language/internal-policy.md
+    gherkin: specs/apps/ose-grc/behavior/be/gherkin/internal-policy
+    relationships:
+      - to: gap-analysis
+        kind: customer-supplier
+        role: supplier
+
+  - name: gap-analysis
+    summary: >-
+      Compares a regulatory-source corpus against an internal-policy corpus and
+      emits structured GapItem records. Orchestrates calls to ai-orchestration
+      for LLM-assisted comparison. Owns the gap report lifecycle.
+    layers:
+      - domain
+      - application
+      - infrastructure
+      - presentation
+    code:
+      - apps/ose-grc-be/src/OseGrcBe/contexts/gap-analysis
+    code_lang:
+      - fs
+    glossary: specs/apps/ose-grc/ddd/ubiquitous-language/gap-analysis.md
+    gherkin: specs/apps/ose-grc/behavior/be/gherkin/gap-analysis
+    relationships:
+      - to: regulatory-source
+        kind: customer-supplier
+        role: customer
+      - to: internal-policy
+        kind: customer-supplier
+        role: customer
+      - to: ai-orchestration
+        kind: customer-supplier
+        role: customer
+
+  - name: ai-orchestration
+    summary: >-
+      Wraps LLM calls (OpenRouter), prompt management, retry/backoff, and
+      token-budget accounting. Stateless from the BE side — does not persist
+      LLM outputs.
+    layers:
+      - domain
+      - application
+      - infrastructure
+    code:
+      - apps/ose-grc-be/src/OseGrcBe/contexts/ai-orchestration
+    code_lang:
+      - fs
+    glossary: specs/apps/ose-grc/ddd/ubiquitous-language/ai-orchestration.md
+    gherkin: specs/apps/ose-grc/behavior/be/gherkin/ai-orchestration
+    relationships:
+      - to: gap-analysis
+        kind: customer-supplier
+        role: supplier
