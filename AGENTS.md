@@ -31,6 +31,10 @@
   - `organiclever-web-e2e` — Playwright FE E2E tests for organiclever-web
   - `organiclever-be-e2e` — Playwright BE E2E tests for organiclever-be
   - `organiclever-contracts` — OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/containers/contracts/`); generates types + encoders/decoders for organiclever apps via `codegen` Nx target
+  - `ose-grc-be` — F#/Giraffe REST API backend for OSE GRC governance, risk, and compliance platform
+  - `ose-grc-be-e2e` — Playwright BE E2E tests for ose-grc-be
+  - `ose-grc-web` — Next.js 16 GRC frontend (TBD URL — no Vercel project yet)
+  - `ose-grc-web-e2e` — Playwright FE E2E tests for ose-grc-web
   - `wahidyankf-web` — Next.js 16 personal portfolio site (www.wahidyankf.com)
   - `wahidyankf-web-fe-e2e` — Playwright-BDD E2E tests for wahidyankf-web UI
 
@@ -54,6 +58,10 @@ ose-public/
 │   ├── organiclever-be/      # OrganicLever F#/Giraffe REST API backend
 │   ├── organiclever-web-e2e/ # Playwright FE E2E tests for organiclever-web
 │   ├── organiclever-be-e2e/  # Playwright BE E2E tests for organiclever-be
+│   ├── ose-grc-be/               # OSE GRC F#/Giraffe REST API backend
+│   ├── ose-grc-be-e2e/           # Playwright BE E2E tests for ose-grc-be
+│   ├── ose-grc-web/              # OSE GRC Next.js 16 frontend (port 3300)
+│   ├── ose-grc-web-e2e/          # Playwright FE E2E tests for ose-grc-web
 │   ├── wahidyankf-web/       # Wahidyan Kresna Fridayoka portfolio (Next.js 16)
 │   ├── wahidyankf-web-fe-e2e/   # Playwright-BDD E2E tests for wahidyankf-web
 ├── archived/                 # Archived applications (no longer active)
@@ -474,6 +482,27 @@ nx run wahidyankf-web-fe-e2e:test:e2e:ui       # Run FE E2E tests with Playwrigh
 ```
 
 **See**: [apps/wahidyankf-web/README.md](./apps/wahidyankf-web/README.md)
+
+### ose-grc-web
+
+- **URL**: TBD (no Vercel project yet)
+- **Production branch**: `prod-ose-grc-web` (TBD)
+- **Framework**: Next.js 16 (App Router)
+- **Deployment**: Vercel (TBD)
+- **Content**: GRC platform frontend — regulatory document upload, gap analysis, policy management
+- **E2E tests**: `ose-grc-web-e2e`
+- **Dev port**: 3300
+
+**Commands**:
+
+```bash
+nx dev ose-grc-web                          # Development server (localhost:3300)
+nx build ose-grc-web                        # Production build
+nx run ose-grc-web:test:quick               # Unit tests + coverage
+nx run ose-grc-web-e2e:test:e2e             # Frontend E2E tests
+```
+
+**See**: [apps/ose-grc-web/README.md](./apps/ose-grc-web/README.md)
 
 ### organiclever-be
 
