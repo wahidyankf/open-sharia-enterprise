@@ -17,6 +17,8 @@ contents. Order matters — move files first so sed runs on final paths.
 - **`package-lock.json`** — exclude from sed; regenerate via `npm install` after.
 - **`plans/in-progress/oseplatform-rename/`** — the plan files themselves describe
   the migration; sed would corrupt the delivery checklist commands. Exclude.
+- **`plans/done/`** — completed plan archives are historical records. Rewriting them
+  corrupts the project's history. Exclude from sed (same rationale as `generated-reports/`).
 
 ## sed Substitution Command
 
@@ -27,6 +29,7 @@ to avoid partial replacements. On macOS, `sed -i ''` (empty string required).
 git ls-files \
   | grep -v -E '(archived/|generated-reports/|\.playwright-mcp/|package-lock\.json)' \
   | grep -v -E 'plans/in-progress/oseplatform-rename/' \
+  | grep -v -E '^plans/done/' \
   | grep -v -E '\.(png|jpg|gif|ico|woff|woff2|ttf|eot|bin)$' \
   | xargs sed -i '' \
       -e 's/oseplatform-web-be-e2e/ose-web-be-e2e/g' \
@@ -38,6 +41,7 @@ git ls-files \
       -e 's/apps-oseplatform-web/apps-ose-web/g' \
       -e 's/oseplatformWeb/oseWeb/g' \
       -e 's/oseplatformCli/oseCli/g' \
+      -e 's/theOseplatformLinks/theOseLinks/g' \
       -e 's/linksCheckOseplatformSteps/linksCheckOseSteps/g' \
       -e 's/linksCheckOseplatform/linksCheckOse/g' \
       -e 's/links-check-oseplatform/links-check-ose/g'
@@ -63,23 +67,23 @@ Any output from above command = stale reference requiring manual fix.
 
 ## Affected Artifact Categories
 
-| Category                          | Count (approx) | Method             |
-| --------------------------------- | -------------- | ------------------ |
-| App dirs                          | 4              | `git mv`           |
-| Infra dirs                        | 2              | `git mv`           |
-| Specs dir                         | 1              | `git mv`           |
-| Claude agent files                | 4              | `git mv`           |
-| OpenCode agent files              | 4              | `git mv`           |
-| Skill dir                         | 1              | `git mv`           |
-| CI workflow file                  | 1              | `git mv`           |
-| File content refs (~240+ files)   | many           | `sed -i`           |
-| package.json `name` fields        | 3              | `sed -i` (covered) |
-| Root package.json script keys     | 2              | `sed -i` (covered) |
-| Go source identifiers (camelCase) | ~8             | `sed -i` (covered) |
-| Gherkin `.feature` files          | ~10            | `sed -i` (covered) |
-| TypeScript source files           | ~10            | `sed -i` (covered) |
-| `wahidyankf-web` test file        | 1              | `sed -i` (covered) |
-| `package-lock.json`               | 1              | `npm install`      |
+| Category                                              | Count (approx) | Method             |
+| ----------------------------------------------------- | -------------- | ------------------ |
+| App dirs                                              | 4              | `git mv`           |
+| Infra dirs                                            | 2              | `git mv`           |
+| Specs dir                                             | 1              | `git mv`           |
+| Claude agent files                                    | 4              | `git mv`           |
+| OpenCode agent files                                  | 4              | `git mv`           |
+| Skill dir                                             | 1              | `git mv`           |
+| CI workflow file                                      | 1              | `git mv`           |
+| File content refs (~240+ files, excludes plans/done/) | many           | `sed -i`           |
+| package.json `name` fields                            | 3              | `sed -i` (covered) |
+| Root package.json script keys                         | 2              | `sed -i` (covered) |
+| Go source identifiers (camelCase)                     | ~8             | `sed -i` (covered) |
+| Gherkin `.feature` files                              | ~10            | `sed -i` (covered) |
+| TypeScript source files                               | ~10            | `sed -i` (covered) |
+| `wahidyankf-web` test file                            | 1              | `sed -i` (covered) |
+| `package-lock.json`                                   | 1              | `npm install`      |
 
 ## Go Identifier Details
 
@@ -87,11 +91,14 @@ Any output from above command = stale reference requiring manual fix.
 identifiers that the hyphenated sed rules cannot match. The explicit camelCase
 rules handle them:
 
-| Old                                             | New                   | sed rule                                            |
-| ----------------------------------------------- | --------------------- | --------------------------------------------------- |
-| `linksCheckOseplatformSteps`                    | `linksCheckOseSteps`  | `s/linksCheckOseplatformSteps/linksCheckOseSteps/g` |
-| `oseplatformWebContent...`                      | `oseWebContent...`    | `s/oseplatformWeb/oseWeb/g`                         |
-| `"links-check-oseplatform-*"` (temp dir string) | `"links-check-ose-*"` | `s/links-check-oseplatform/links-check-ose/g`       |
+| Old                                               | New                            | sed rule                                                   |
+| ------------------------------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| `linksCheckOseplatformSteps`                      | `linksCheckOseSteps`           | `s/linksCheckOseplatformSteps/linksCheckOseSteps/g`        |
+| `oseplatformWebContent...`                        | `oseWebContent...`             | `s/oseplatformWeb/oseWeb/g`                                |
+| `"links-check-oseplatform-*"` (temp dir string)   | `"links-check-ose-*"`          | `s/links-check-oseplatform/links-check-ose/g`              |
+| `theOseplatformLinksCommandExitsSuccessfully`     | `theOseLinksCommandExits...`   | `s/theOseplatformLinks/theOseLinks/g` [Repo-grounded]      |
+| `theOseplatformLinksCommandExitsWithAFailureCode` | `theOseLinksCommandExits...`   | covered by same `s/theOseplatformLinks/theOseLinks/g` rule |
+| `theOseplatformLinksOutputIsValidJSON`            | `theOseLinksOutputIsValidJSON` | covered by same `s/theOseplatformLinks/theOseLinks/g` rule |
 
 ## Nx Project Name Impact
 
@@ -145,3 +152,56 @@ auto-deploys from the new branch name.
 branch name in the repo's workflow file no longer matches Vercel's config —
 oseplatform.com stays live on the old branch until the rename is done in
 Vercel. Do the dashboard rename immediately after pushing.
+
+## Design Decisions
+
+- **`ose-*` not `osep-*`** [Judgment call]: `ose-grc-*` already establishes the
+  `ose-<product>-*` pattern. Using `ose-web`, `ose-cli` keeps OSE Platform consistent
+  with that pattern. `osep-*` would introduce a third abbreviation style.
+- **Single atomic commit** [Judgment call]: the rename touches 240+ files. A partial
+  rename leaves the repo in a broken state (imports reference moved paths). Committing
+  atomically after all `git mv` + sed + build/test passes means the repo is never broken
+  at any committed SHA.
+- **Longest-match-first ordering in sed** [Repo-grounded]: `oseplatform-web-be-e2e` must
+  be replaced before `oseplatform-web` (which is a prefix of the longer string). Processing
+  shorter patterns first would produce `ose-web-be-e2e` for the first pattern, then the
+  `oseplatform-web` rule would not match the already-replaced string — correct outcome but
+  fragile. Explicit longest-match ordering makes the intent clear.
+- **No catch-all `s/oseplatform/ose/g`** [Repo-grounded]: `oseplatform.com` is a live
+  domain referenced in source. A catch-all would rewrite it to `ose.com`, corrupting external
+  links. All patterns are enumerated explicitly.
+
+## Dependencies
+
+- **Vercel dashboard access** [Judgment call]: Phase 5 requires manual access to the Vercel
+  project settings. If access is unavailable, Phase 5 must be deferred; the production deploy
+  gap persists until it is completed.
+- **`npm install` runnable post-rename** [Judgment call]: Phase 2 runs `npm install` to
+  regenerate `package-lock.json` after the `name` field changes. Node/npm must be available
+  in the worktree environment (managed by Volta; see `package.json` volta config).
+- **Dev server available for E2E tests** [Judgment call]: Phase 3 E2E tests require a running
+  dev server (`npx nx dev ose-web` on port 3100). The worktree environment must have the port
+  available (not occupied by another server instance).
+
+## Rollback
+
+If the rename commit has already been pushed to `origin main`, rollback requires:
+
+```bash
+git revert <sha>   # creates a new commit that undoes the rename
+git push origin main
+```
+
+Then manually rename the Vercel branch back to `prod-oseplatform-web` if Phase 5
+was already completed.
+
+If the rename has NOT been pushed (failure caught in Phase 3 or 4), discard all
+uncommitted changes:
+
+```bash
+git checkout -- .
+git clean -fd     # removes untracked files from git mv
+```
+
+The `plans/done/` archives and `archived/` directory are unaffected by either
+rollback path because they are excluded from the sed pass.
