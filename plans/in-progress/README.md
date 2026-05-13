@@ -5,7 +5,6 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [organiclever-web-responsive-breakpoints](./organiclever-web-responsive-breakpoints/README.md) — Distinct mobile/tablet/desktop layouts for organiclever-web
-- [ose-grc-bootstrap](./ose-grc-bootstrap/README.md) — Scaffold ose-grc-web (Next.js 16), ose-grc-be (F#/Giraffe), ose-grc-web-e2e, ose-grc-be-e2e with DDD specs, BDD smoke specs, OpenAPI contracts, docker-compose, CI workflows
 
 ## Instructions
 

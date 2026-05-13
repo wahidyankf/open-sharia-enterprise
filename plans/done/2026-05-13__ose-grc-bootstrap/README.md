@@ -1,6 +1,6 @@
 # ose-grc Bootstrap — Scaffold ose-grc-web, ose-grc-web-e2e, ose-grc-be, ose-grc-be-e2e
 
-**Status**: In Progress
+**Status**: Completed — 2026-05-13
 **Scope**: `ose-public` — new product line `ose-grc`
 **Worktree**: `worktrees/ose-grc-bootstrap/` (see [delivery.md §Worktree](./delivery.md#worktree))
 
