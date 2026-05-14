@@ -1911,17 +1911,10 @@ This publication is available free of charge from: https://doi.org/10.6028/NIST.
 This publication defines controls to satisfy a diverse set of security and privacy requirements
 that have been levied on information systems and organizations and that are consistent with
 and complementary to other recognized national and international information security and
-privacy standards. To develop a broadly applicable and technically sound set of controls for
-information systems and organizations, many sources were considered during the development
-of this publication. These sources included requirements and controls from the manufacturing,
-defense, financial, healthcare, transportation, energy, intelligence, industrial control, and audit
-communities as well as national and international standards organizations. In addition, the
-controls in this publication are used by the national security community in publications such as
-Committee on National Security Systems (CNSS) Instruction No. 1253 [CNSSI 1253] to provide
-guidance specific to systems designated as national security systems. Whenever possible, the
-controls have been mapped to international standards to help ensure maximum usability and
-applicability. 22 The relationship of this publication to other risk management, security, privacy,
-and publications can be found at [FISMA IMP].
+privacy standards.
+
+This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+To develop a broadly applicable and technically sound set of controls for information systems and organizations, many sources were considered during the development of this publication. These sources included requirements and controls from the manufacturing, defense, financial, healthcare, transportation, energy, intelligence, industrial control, and audit communities as well as national and international standards organizations. In addition, the controls in this publication are used by the national security community in publications such as Committee on National Security Systems (CNSS) Instruction No. 1253 [CNSSI 1253] to provide guidance specific to systems designated as national security systems. Whenever possible, the controls have been mapped to international standards to help ensure maximum usability and applicability. 22 The relationship of this publication to other risk management, security, privacy, and publications can be found at [FISMA IMP].
 1.5 REVISIONS AND EXTENSIONS
 The security and privacy controls described in this publication represent the state-of-thepractice protection measures for individuals, information systems, and organizations. The
 controls are reviewed and revised periodically to reflect the experience gained from using the
@@ -22012,6 +22005,7 @@ roles]:
      [SP 800-154]
      This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      threat source
+     The intent and method targeted at the intentional exploitation of a vulnerability or a situation and method that may accidentally trigger a vulnerability. See threat agent.
      [FIPS 200]
      transmission
      The state that exists when information is being electronically
@@ -23455,11 +23449,175 @@ roles]:
      O
      UNAUTHORIZED SOFTWARE — DENY-BY-EXCEPTION
      O /S
-     AUTHORIZED SOFTWARE — ALLOW-BY-EXCEPTION
+     Supply Chain Controls and Processes
      O /S
-     CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES
+     DIVERSE SUPPLY BASE
      O
      √
+     LIMITATION OF HARM
+     O
+     √
+     SUB-TIER FLOW DOWN
+     O
+     √
+     Provenance
+     O
+     √
+     IDENTITY
+     O
+     √
+     TRACK AND TRACE
+     O
+     √
+     VALIDATE AS GENUINE AND NOT ALTERED
+     O
+     √
+     SUPPLY CHAIN INTEGRITY — PEDIGREE
+     O
+     √
+     Acquisition Strategies, Tools, and Methods
+     O
+     √
+     ADEQUATE SUPPLY
+     O
+     √
+     ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
+     UPDATE
+     O
+     √
+     Supplier Assessments and Reviews
+     O
+     √
+     TESTING AND ANALYSIS
+     O
+     √
+     Supply Chain Operations Security
+     O
+     √
+     Notification Agreements
+     O
+     √
+     Tamper Resistance and Detection
+     O
+     √
+     MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+     O
+     √
+     Inspection of Systems or Components
+     O
+     √
+     Component Authenticity
+     O
+     √
+     ANTI-COUNTERFEIT TRAINING
+     O
+     √
+     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+     O
+     √
+     ANTI-COUNTERFEIT SCANNING
+     O
+     √
+     Component Disposal
+     O
+     √
+     SR-3(1)
+     DIVERSE SUPPLY BASE
+     O
+     √
+     SR-3(2)
+     LIMITATION OF HARM
+     O
+     √
+     SR-3(3)
+     SUB-TIER FLOW DOWN
+     O
+     √
+     SR-4
+     Provenance
+     O
+     √
+     SR-4(1)
+     IDENTITY
+     O
+     √
+     SR-4(2)
+     TRACK AND TRACE
+     O
+     √
+     SR-4(3)
+     VALIDATE AS GENUINE AND NOT ALTERED
+     O
+     √
+     SR-4(4)
+     SUPPLY CHAIN INTEGRITY — PEDIGREE
+     O
+     √
+     SR-5
+     Acquisition Strategies, Tools, and Methods
+     O
+     √
+     SR-5(1)
+     ADEQUATE SUPPLY
+     O
+     √
+     SR-5(2)
+     ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
+     UPDATE
+     O
+     √
+     SR-6
+     Supplier Assessments and Reviews
+     O
+     √
+     SR-6(1)
+     TESTING AND ANALYSIS
+     O
+     √
+     SR-7
+     Supply Chain Operations Security
+     O
+     √
+     SR-8
+     Notification Agreements
+     O
+     √
+     SR-9
+     Tamper Resistance and Detection
+     O
+     √
+     SR-9(1)
+     MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+     O
+     √
+     SR-10
+     Inspection of Systems or Components
+     O
+     √
+     SR-11
+     Component Authenticity
+     O
+     √
+     SR-11(1)
+     ANTI-COUNTERFEIT TRAINING
+     O
+     √
+     SR-11(2)
+     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+     O
+     √
+     SR-11(3)
+     ANTI-COUNTERFEIT SCANNING
+     O
+     √
+     SR-12
+     Component Disposal
+     O
+     √
+     APPENDIX C
+     PAGE 465
+     APPENDIX C
+     PAGE 465
      NIST SP 800-53, REV. 5
      CONTROL
      NUMBER
@@ -26603,165 +26761,261 @@ roles]:
      O /S
      REMOVAL, MASKING, ENCRYPTION, HASHING, OR REPLACEMENT OF
      S
-     S
-     S
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     DIRECT IDENTIFIERS
-     SI-19(5)
-     SI-19(6)
-     SI-19(7)
-     SI-19(8)
-     SI-20
-     SI-21
-     SI-22
-     SI-23
-     APPENDIX C
-     STATISTICAL DISCLOSURE CONTROL
-     O /S
-     DIFFERENTIAL PRIVACY
-     O /S
-     VALIDATED ALGORITHMS AND SOFTWARE
-     O
-     MOTIVATED INTRUDER
-     O /S
-     Tainting
-     Information Refresh
-     Information Diversity
-     Information Fragmentation
-     O /S
-     O /S
-     O /S
-     O /S
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-20: SUPPLY CHAIN RISK MANAGEMENT FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SR-1
-     SR-2
-     SR-2(1)
-     SR-3
-     SR-3(1)
-     SR-3(2)
-     SR-3(3)
-     SR-4
-     SR-4(1)
-     SR-4(2)
-     SR-4(3)
-     SR-4(4)
-     SR-5
-     SR-5(1)
-     SR-5(2)
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Supply Chain Risk Management Plan
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     O
-     ESTABLISH SCRM TEAM
-     O
-     Supply Chain Controls and Processes
-     O /S
-     DIVERSE SUPPLY BASE
-     O
-     LIMITATION OF HARM
-     O
-     SUB-TIER FLOW DOWN
-     O
-     Provenance
-     O
-     IDENTITY
-     O
-     TRACK AND TRACE
-     O
-     VALIDATE AS GENUINE AND NOT ALTERED
-     O
-     SUPPLY CHAIN INTEGRITY — PEDIGREE
-     O
-     Acquisition Strategies, Tools, and Methods
-     O
-     ADEQUATE SUPPLY
-     O
-     ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
-     O
-     UPDATE
-     SR-6
-     SR-6(1)
-     SR-7
-     SR-8
-     SR-9
-     SR-9(1)
-     SR-10
-     SR-11
-     SR-11(1)
-     SR-11(2)
-     SR-11(3)
-     SR-12
-     APPENDIX C
-     Supplier Assessments and Reviews
-     O
-     TESTING AND ANALYSIS
-     O
-     Supply Chain Operations Security
-     Notification Agreements
-     Tamper Resistance and Detection
-     O
-     MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
-     O
-     Inspection of Systems or Components
-     Component Authenticity
-     ANTI-COUNTERFEIT TRAINING
-     O
-     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-     O
-     ANTI-COUNTERFEIT SCANNING
-     O
-     Component Disposal
-     O
-     O
-     O
-     O
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
+     SR-3(1) DIVERSE SUPPLY BASE O √
+     SR-3(2) LIMITATION OF HARM O √
+
+This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+SR-3(3) SUB-TIER FLOW DOWN O √
+SR-4 Provenance O √
+SR-4(1) IDENTITY O √
+SR-4(2) TRACK AND TRACE O √
+SR-4(3) VALIDATE AS GENUINE AND NOT ALTERED O √
+SR-4(4) SUPPLY CHAIN INTEGRITY — PEDIGREE O √
+SR-5 Acquisition Strategies, Tools, and Methods O √
+SR-5(1) ADEQUATE SUPPLY O √
+SR-5(2) ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR O √
+UPDATE
+SR-6 Supplier Assessments and Reviews O √
+SR-6(1) TESTING AND ANALYSIS O √
+SR-7 Supply Chain Operations Security O √
+SR-8 Notification Agreements O √
+SR-9 Tamper Resistance and Detection O √
+SR-9(1) MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE O √
+SR-10 Inspection of Systems or Components O √
+SR-11 Component Authenticity O √
+SR-11(1) ANTI-COUNTERFEIT TRAINING O √
+SR-11(2) CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR O √
+SR-11(3) ANTI-COUNTERFEIT SCANNING O √
+SR-12 Component Disposal O √
+APPENDIX C PAGE 465
+√
+√
+√
+√
+√
+√
+√
+√
+√
+DIRECT IDENTIFIERS
+SI-19(5)
+SI-19(6)
+SI-19(7)
+SI-19(8)
+SI-20
+SI-21
+SI-22
+SI-23
+APPENDIX C
+STATISTICAL DISCLOSURE CONTROL
+O /S
+DIFFERENTIAL PRIVACY
+O /S
+VALIDATED ALGORITHMS AND SOFTWARE
+O
+MOTIVATED INTRUDER
+O /S
+Tainting
+Information Refresh
+Information Diversity
+Information Fragmentation
+O /S
+O /S
+O /S
+O /S
+√
+√
+√
+√
+NIST SP 800-53, REV. 5
+TABLE C-20: SUPPLY CHAIN RISK MANAGEMENT FAMILY
+CONTROL
+NUMBER
+This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+SR-1
+SR-2
+SR-2(1)
+SR-3
+SR-3(1)
+SR-3(2)
+SR-3(3)
+SR-4
+SR-4(1)
+SR-4(2)
+SR-4(3)
+SR-4(4)
+SR-5
+SR-5(1)
+SR-5(2)
+CONTROL NAME
+CONTROL ENHANCEMENT NAME
+Policy and Procedures
+Supply Chain Risk Management Plan
+IMPLEMENTED
+BY
+ASSURANCE
+O
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+√
+O
+ESTABLISH SCRM TEAM
+O
+Supply Chain Controls and Processes
+O /S
+DIVERSE SUPPLY BASE
+O
+LIMITATION OF HARM
+O
+SUB-TIER FLOW DOWN
+O
+Provenance
+O
+IDENTITY
+O
+TRACK AND TRACE
+O
+VALIDATE AS GENUINE AND NOT ALTERED
+O
+SUPPLY CHAIN INTEGRITY — PEDIGREE
+O
+Acquisition Strategies, Tools, and Methods
+O
+ADEQUATE SUPPLY
+O
+ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
+O
+UPDATE
+SR-6
+SR-6(1)
+SR-7
+SR-8
+SR-9
+SR-9(1)
+SR-10
+SR-11
+SR-11(1)
+SR-11(2)
+SR-11(3)
+SR-12
+APPENDIX C
+Supplier Assessments and Reviews
+O
+TESTING AND ANALYSIS
+O
+Supply Chain Operations Security
+Notification Agreements
+Tamper Resistance and Detection
+O
+MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+O
+Inspection of Systems or Components
+Component Authenticity
+ANTI-COUNTERFEIT TRAINING
+O
+CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+O
+ANTI-COUNTERFEIT SCANNING
+O
+Component Disposal
+O
+√
+SR-3(3)
+SUB-TIER FLOW DOWN
+O
+√
+SR-4
+Provenance
+O
+√
+SR-4(1)
+IDENTITY
+O
+√
+SR-4(2)
+TRACK AND TRACE
+O
+√
+SR-4(3)
+VALIDATE AS GENUINE AND NOT ALTERED
+O
+√
+SR-4(4)
+SUPPLY CHAIN INTEGRITY — PEDIGREE
+O
+√
+SR-5
+Acquisition Strategies, Tools, and Methods
+O
+√
+SR-5(1)
+ADEQUATE SUPPLY
+O
+√
+SR-5(2)
+ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
+UPDATE
+O
+√
+SR-6
+Supplier Assessments and Reviews
+O
+√
+SR-6(1)
+TESTING AND ANALYSIS
+O
+√
+SR-7
+Supply Chain Operations Security
+O
+√
+SR-8
+Notification Agreements
+O
+√
+SR-9
+Tamper Resistance and Detection
+O
+√
+SR-9(1)
+MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
+O
+√
+SR-10
+Inspection of Systems or Components
+O
+√
+SR-11
+Component Authenticity
+O
+√
+SR-11(1)
+ANTI-COUNTERFEIT TRAINING
+O
+√
+SR-11(2)
+CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
+O
+√
+SR-11(3)
+ANTI-COUNTERFEIT SCANNING
+O
+√
+SR-12
+Component Disposal
+O
+√
+APPENDIX C
+PAGE 465
