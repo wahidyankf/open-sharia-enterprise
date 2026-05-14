@@ -105,6 +105,54 @@ pdftotext -layout -f $PAGE -l $PAGE "$PDF_FILE" /tmp/correct_page.txt
 
 Replace incorrect text with PDF-sourced text. Preserve surrounding Markdown formatting.
 
+### Fix: Heading Level Accuracy (HIGH/MEDIUM — re-derive from PDF layout)
+
+```bash
+# Re-validate: confirm heading exists at wrong depth
+grep -n '^#\+\s' "$MD_FILE" | grep -F "$HEADING_TEXT"
+
+# Extract affected page range from PDF for depth re-derivation
+pdftotext -layout -f $START_PAGE -l $END_PAGE "$PDF_FILE" /tmp/heading_page.txt
+```
+
+For each heading depth finding from audit:
+
+1. Run `pdftotext -layout -f <first_page> -l <last_page> <pdf> -` for the affected section's page range.
+2. Identify the heading in the layout output. Determine correct depth via section numbering (count dots in `1.2.3` → depth 3 = H3) or, if unnumbered, via relative font-size compared to surrounding headings.
+3. Replace the existing `##...#` prefix on the heading line with the correct number of `#` characters.
+4. Verify surrounding headings are not broken by the change (no H4 before H3, etc.).
+
+**Confidence**:
+
+- HIGH_CONFIDENCE: section numbering gives unambiguous depth (e.g., `2.3.1` → H4)
+- MEDIUM_CONFIDENCE: only font-size heuristic available (no section number to anchor depth)
+
+**Auto-apply**: HIGH_CONFIDENCE only. Flag MEDIUM_CONFIDENCE for manual review.
+
+### Fix: Content Nesting Accuracy (HIGH/MEDIUM — re-extract with layout indentation)
+
+```bash
+# Re-validate: locate the incorrectly nested block
+grep -n '^\s*[-*]\|^\s*[0-9]\+\.' "$MD_FILE" | head -20
+
+# Extract relevant page range for indentation re-derivation
+pdftotext -layout -f $START_PAGE -l $END_PAGE "$PDF_FILE" /tmp/nesting_page.txt
+```
+
+For each nesting depth finding from audit:
+
+1. Run `pdftotext -layout` on the relevant page range.
+2. Parse indentation column offsets to reconstruct the nesting hierarchy (e.g., indent 4 = level 1, indent 8 = level 2).
+3. Rewrite the Markdown list with correct nesting (`  ` per level for bullets, `   ` for numbered).
+4. Replace the flat or incorrectly nested block in the MD file with the reconstructed version.
+
+**Confidence**:
+
+- HIGH_CONFIDENCE: PDF shows clear stepped indentation (distinct column offsets between levels)
+- MEDIUM_CONFIDENCE: indentation is subtle or ambiguous (offsets less than 3 columns apart)
+
+**Auto-apply**: HIGH_CONFIDENCE only.
+
 ### Fix: Missing Table (CRITICAL — reconstruct from PDF)
 
 ```bash
@@ -164,7 +212,7 @@ echo "- [text-completeness] | $MD_FILE | $BRIEF_DESCRIPTION" >> "generated-repor
 
 Format: `[category] | [file] | [brief-description]`
 
-Categories: `text-completeness`, `table-integrity`, `figure-coverage`, `mermaid-syntax`, `ocr-quality`, `structure`
+Categories: `text-completeness`, `text-accuracy`, `heading-level-accuracy`, `content-nesting-accuracy`, `table-integrity`, `figure-coverage`, `mermaid-syntax`, `ocr-quality`, `structure`
 
 ## Changed Sections Tracking
 

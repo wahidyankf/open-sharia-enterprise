@@ -106,7 +106,16 @@ Tag each OCR-extracted page with a comment: `<!-- OCR: page N -->`
 
 For each chunk of extracted text:
 
-**Headings**: Infer from ALL-CAPS lines, numbered sections (`1.`, `1.1`, `1.1.1`), and font-size indicators in pdftotext layout output. Map to `#`, `##`, `###` etc.
+**Headings**: Infer the correct `#` depth using the following rules:
+
+- **Primary method — section numbering depth**: count the dot-separated components of the section number preceding the heading text:
+  - No number / document title → H1 (`#`)
+  - `1.`, `2.`, `A.` (single component) → H2 (`##`)
+  - `1.1`, `2.3`, `A.1` (two components) → H3 (`###`)
+  - `1.1.1`, `2.3.4` (three components) → H4 (`####`)
+  - `1.1.1.1` (four or more components) → H5 (`#####`)
+- **Fallback method — font-size heuristic** (when `pdftotext -layout` shows relative line heights or when numbering is absent): compare the visual prominence of the heading line against surrounding content; larger/bolder lines get shallower heading depths.
+- **Rule**: Never assign the same `#` depth to two heading levels that are visually/structurally distinct in the PDF.
 
 **Tables**: Detect grid structures (rows of aligned whitespace-separated columns). Convert to Markdown table:
 
@@ -143,7 +152,7 @@ graph TD
 [FIGURE N: description from caption — diagram type could not be determined]
 ````
 
-**Lists**: Detect bulleted (`•`, `-`, `*`) and numbered items. Convert to Markdown lists.
+**Lists**: Detect bulleted (`•`, `-`, `*`) and numbered items. Use column offset from `pdftotext -layout` output to determine nesting level. Map indentation increments to Markdown nesting: each additional indent level = 2 spaces before `-` (bullets) or 3 spaces before `1.` (numbered). Preserve multi-level lists as genuinely nested Markdown, not flattened to a single level.
 
 **Footnotes**: Preserve as numbered references at bottom of section: `[^N]: footnote text`
 
@@ -165,7 +174,10 @@ Do NOT add any content not present in the source PDF.
 
 ```bash
 MD_FILE="${PDF_FILE%.pdf}.md"  # default: same dir, same name, .md extension
+mkdir -p "$(dirname "$MD_FILE")"  # ensure parent directory exists before writing
 ```
+
+The `mkdir -p` call is a no-op for the default path (same directory as the PDF, which always exists). For custom `md-file` paths pointing to non-existent directories, it creates the full directory path.
 
 Write the assembled Markdown to `md-file`. If file exists, overwrite.
 

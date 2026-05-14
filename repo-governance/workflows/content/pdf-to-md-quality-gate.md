@@ -160,6 +160,14 @@ Convert the PDF to Markdown. Skipped if MD file already exists AND `force-remake
 - Image-only PDFs: uses `pdfimages` + `tesseract` OCR per page; OCR pages tagged `<!-- OCR: page N -->`
 - Diagrams/figures: converted to Mermaid stubs or `[FIGURE N: ...]` placeholders
 - Default output path: same directory and filename as PDF, `.md` extension
+- **Directory creation**: if `md-file` parent directory does not exist, maker runs `mkdir -p`
+  before writing — applies to custom output paths; the default path (same dir as PDF) always
+  exists and is a no-op
+- **Heading level inference**: maker uses `pdftotext -layout` font-size heuristics and section
+  numbering depth (e.g. `1.2.3` = H3) to assign the correct `#` depth — title = H1, top-level
+  chapters/parts = H2, sections = H3, subsections = H4, sub-subsections = H5
+- **Content nesting inference**: list indentation depth from PDF layout output is preserved;
+  nested bullets and numbered lists carry the correct nesting level into Markdown
 
 ### 2. Validate Fidelity (Sequential)
 
@@ -178,6 +186,11 @@ Validate the Markdown file against the source PDF across all dimensions.
 
 - **Text completeness** — no PDF passages missing from Markdown
 - **Text accuracy** — no words changed or incorrectly transcribed
+- **Heading level accuracy** — `#` depth of every heading matches the PDF visual hierarchy
+  (title = H1, chapter/part = H2, section = H3, subsection = H4, sub-subsection = H5); derived
+  from font-size heuristics and section-numbering depth in `pdftotext -layout` output
+- **Content nesting accuracy** — list nesting depth and indented block elements match PDF
+  structure; nested bullets and numbered lists carry the correct level into Markdown
 - **Table integrity** — all tables present with correct data
 - **Figure coverage** — every figure has Mermaid or placeholder
 - **Mermaid validity** — all Mermaid blocks have valid syntax
@@ -449,15 +462,17 @@ mmdc --version
 
 ## Validation Dimensions Summary
 
-| Dimension                                       | Agent   | Auto-Fixable                |
-| ----------------------------------------------- | ------- | --------------------------- |
-| Text completeness (missing sections/paragraphs) | checker | Yes (re-extract from PDF)   |
-| Text accuracy (wrong words)                     | checker | Yes (re-extract from PDF)   |
-| Table integrity (missing/wrong data)            | checker | Yes (re-extract from PDF)   |
-| Figure coverage (Mermaid or placeholder)        | checker | Yes (add placeholder)       |
-| Mermaid syntax validity                         | checker | Yes (fix syntax)            |
-| OCR quality (gibberish rate)                    | checker | No (manual review)          |
-| Structural order (section sequence)             | checker | Partial (re-ordering risky) |
+| Dimension                                       | Agent   | Auto-Fixable                          |
+| ----------------------------------------------- | ------- | ------------------------------------- |
+| Text completeness (missing sections/paragraphs) | checker | Yes (re-extract from PDF)             |
+| Text accuracy (wrong words)                     | checker | Yes (re-extract from PDF)             |
+| Heading level accuracy (`#` depth vs PDF)       | checker | Yes (re-derive from layout heuristic) |
+| Content nesting accuracy (list/block depth)     | checker | Yes (re-extract with layout output)   |
+| Table integrity (missing/wrong data)            | checker | Yes (re-extract from PDF)             |
+| Figure coverage (Mermaid or placeholder)        | checker | Yes (add placeholder)                 |
+| Mermaid syntax validity                         | checker | Yes (fix syntax)                      |
+| OCR quality (gibberish rate)                    | checker | No (manual review)                    |
+| Structural order (section sequence)             | checker | Partial (re-ordering risky)           |
 
 ## Principles Implemented/Respected
 
