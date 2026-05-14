@@ -307,22 +307,9 @@ Forbidden: writing the claim without a label and hoping it is correct.
 
 ### Anti-Pattern Catalog (MUST NOT)
 
-Reject these patterns at authoring time. `plan-checker` flags occurrences as HIGH:
-
-- **AP-1**: citing a version without `Grep`'ing the manifest
-- **AP-2**: inventing a file path that "should exist"
-- **AP-3**: citing an Nx target that may not exist (read `project.json` first)
-- **AP-4**: inventing a function or method name (delegate to `web-research-maker`)
-- **AP-5**: fabricating a numeric KPI presented as already-measured
-- **AP-6**: inventing a test name (mark `_New test_` when applicable)
-- **AP-7**: citing an agent or skill that does not exist
-- **AP-8**: citing a CLI flag without `--help` or repo-doc reference
-- **AP-9**: citing a behavior claim without a source
-- **AP-10**: cross-linking to a file that does not exist
-
-See
-[Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../repo-governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog)
-for full descriptions and example rewrites.
+Reject AP-1 through AP-10 at authoring time — `plan-checker` flags occurrences as HIGH. Full
+catalog in the `plan-creating-project-plans` skill and
+[Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../repo-governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog).
 
 ## Mandatory Worktree Specification (Top-Level Section)
 

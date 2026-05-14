@@ -35,6 +35,10 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 - [Security Reference](./security/README.md) - Security framework documentation and compliance references
   - [NIST SP 800-53 Rev 5](./security/frameworks/nist-sp-800-53-rev5.md) - NIST Special Publication 800-53 Revision 5: Security and Privacy Controls for Information Systems and Organizations (verbatim Markdown conversion)
 
+### Platform Bindings
+
+- [Platform Bindings](./platform-bindings.md) - Catalog of AI coding agent platform bindings (.claude/, .opencode/, AGENTS.md), binding directories, root instruction files, and mechanical translation artifacts
+
 ### Ecosystem
 
 - [Related Repositories](./related-repositories.md) - Sibling repositories derived from or related to `ose-public` (notably `ose-primer`), upstream/downstream relationships, and license differences

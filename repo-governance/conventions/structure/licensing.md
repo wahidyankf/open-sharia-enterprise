@@ -78,6 +78,8 @@ all use the same MIT text.
 | `apps/organiclever-be/`         | MIT     |
 | `apps/organiclever-web/`        | MIT     |
 | `apps/ose-cli/`                 | MIT     |
+| `apps/ose-grc-be/`              | MIT     |
+| `apps/ose-grc-web/`             | MIT     |
 | `apps/ose-web/`                 | MIT     |
 | `apps/wahidyankf-web/`          | MIT     |
 | `specs/`                        | MIT     |
