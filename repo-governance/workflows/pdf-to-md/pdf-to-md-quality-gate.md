@@ -143,11 +143,13 @@ Convert the PDF to Markdown. Skipped if MD file already exists AND `force-remake
 **Success criteria**: Maker completes without error; MD file exists and is non-empty.
 
 **On failure**: Terminate workflow with status `fail`. Common failure causes:
+
 - `pdftotext` (poppler-utils) not installed
 - `tesseract` not installed for image-only PDFs
 - Source PDF is corrupt or unreadable
 
 **Notes**:
+
 - Text-based PDFs: uses `pdftotext -layout` in 50-page chunks
 - Image-only PDFs: uses `pdfimages` + `tesseract` OCR per page; OCR pages tagged `<!-- OCR: page N -->`
 - Diagrams/figures: converted to Mermaid stubs or `[FIGURE N: ...]` placeholders
@@ -177,6 +179,7 @@ Validate the Markdown file against the source PDF across all dimensions.
 - **Structural order** — sections appear in PDF reading order
 
 **Notes**:
+
 - Processes PDF in 50-page chunks for large documents
 - Loads `.known-false-positives.md` skip list before validating
 - On iteration 2+: scoped re-validation (changed sections only)
@@ -225,6 +228,7 @@ Apply validated fixes from the checker audit report.
 **On failure**: Log errors; proceed to step 5.
 
 **Notes**:
+
 - Fixer re-validates each finding before applying (prevents false positives)
 - HIGH_CONFIDENCE fixes applied automatically
 - MEDIUM_CONFIDENCE fixes skipped (flagged for manual review)
@@ -247,6 +251,7 @@ Determine whether to continue or finalize.
 **Below-threshold findings**: Reported in audit but don't affect iteration logic.
 
 **Notes**:
+
 - Consecutive pass requirement: zero findings must be confirmed by a second independent check
 - Escalation warning logged at iteration 5 if not converging
 - Default max-iterations: 7
@@ -264,6 +269,7 @@ Report final status and summary.
 - **fail**: Technical errors (missing tools, corrupt PDF, empty output)
 
 **Notes**:
+
 - Below-threshold findings reported in final audit but don't prevent success
 - Manual intervention cases (e.g., true OCR quality issues) always result in `partial` — re-run after manual correction
 - Final report includes page coverage, table count, figure count, Mermaid block count
@@ -298,6 +304,7 @@ User: "Run pdf-to-md quality gate for docs/reference/nist-sp-800-53-rev5.pdf"
 ```
 
 AI will:
+
 - Check if MD exists; skip maker if it does
 - Validate fidelity in strict mode (default)
 - Fix CRITICAL/HIGH/MEDIUM findings
@@ -310,6 +317,7 @@ User: "Run pdf-to-md quality gate for nist.pdf with force-remake=true"
 ```
 
 AI will:
+
 - Re-run maker even if MD already exists (full re-conversion)
 - Validate and fix as normal
 
@@ -320,6 +328,7 @@ User: "Run pdf-to-md quality gate for nist.pdf in lax mode"
 ```
 
 AI will:
+
 - Fix CRITICAL findings only
 - Report HIGH/MEDIUM/LOW without fixing them
 - Success when zero CRITICAL findings remain
@@ -331,6 +340,7 @@ User: "Run pdf-to-md quality gate for /data/source.pdf with md-file=/docs/refere
 ```
 
 AI will:
+
 - Generate Markdown at specified output path
 - Validate against PDF source
 
@@ -373,25 +383,30 @@ Result: PASS (4 iterations)
 ## Safety Features
 
 **Infinite Loop Prevention**:
+
 - max-iterations defaults to 7
 - Escalation warning at iteration 5
 
 **Convergence Safeguards**:
+
 - Checker loads `.known-false-positives.md` at each iteration start
 - Fixer persists new FALSE_POSITIVEs to skip list
 - Re-validation uses changed-sections-only scan (iteration 2+)
 
 **False Positive Protection**:
+
 - Fixer re-validates each finding before applying
 - FALSE_POSITIVE findings skipped and logged
 - Stable key format prevents duplicate skip list entries
 
 **Graceful Degradation**:
+
 - Missing `tesseract` → fail early with install instructions (image-only PDFs)
 - Missing `pdftotext` → fail early with install instructions (all PDFs)
 - Missing `mmdc` → Mermaid validation falls back to syntax-only inspection
 
 **Manual Intervention Flags**:
+
 - OCR quality disputes: flagged in fix report, not auto-applied
 - Ambiguous diagram types: kept as `[FIGURE N: ...]` placeholder
 
@@ -415,15 +430,15 @@ mmdc --version
 
 ## Validation Dimensions Summary
 
-| Dimension | Agent | Auto-Fixable |
-|---|---|---|
-| Text completeness (missing sections/paragraphs) | checker | Yes (re-extract from PDF) |
-| Text accuracy (wrong words) | checker | Yes (re-extract from PDF) |
-| Table integrity (missing/wrong data) | checker | Yes (re-extract from PDF) |
-| Figure coverage (Mermaid or placeholder) | checker | Yes (add placeholder) |
-| Mermaid syntax validity | checker | Yes (fix syntax) |
-| OCR quality (gibberish rate) | checker | No (manual review) |
-| Structural order (section sequence) | checker | Partial (re-ordering risky) |
+| Dimension                                       | Agent   | Auto-Fixable                |
+| ----------------------------------------------- | ------- | --------------------------- |
+| Text completeness (missing sections/paragraphs) | checker | Yes (re-extract from PDF)   |
+| Text accuracy (wrong words)                     | checker | Yes (re-extract from PDF)   |
+| Table integrity (missing/wrong data)            | checker | Yes (re-extract from PDF)   |
+| Figure coverage (Mermaid or placeholder)        | checker | Yes (add placeholder)       |
+| Mermaid syntax validity                         | checker | Yes (fix syntax)            |
+| OCR quality (gibberish rate)                    | checker | No (manual review)          |
+| Structural order (section sequence)             | checker | Partial (re-ordering risky) |
 
 ## Principles Implemented/Respected
 

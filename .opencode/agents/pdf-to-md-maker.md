@@ -125,20 +125,23 @@ For each chunk of extracted text:
    - State diagrams → `stateDiagram-v2`
    - Class/entity diagrams → `classDiagram`
 
-```markdown
+````markdown
 ```mermaid
 graph TD
     A[Start] --> B[Step 1]
     B --> C[End]
 ```
+````
+
 > Figure N: [Caption text from PDF]
-```
+
+````
 
 3. If diagram type cannot be determined, use placeholder:
 
 ```markdown
 [FIGURE N: description from caption — diagram type could not be determined]
-```
+````
 
 **Lists**: Detect bulleted (`•`, `-`, `*`) and numbered items. Convert to Markdown lists.
 
@@ -177,12 +180,12 @@ Write the assembled Markdown to `md-file`. If file exists, overwrite.
 
 ## Graceful Degradation
 
-| Tool Missing | Behavior |
-|---|---|
-| `pdftotext` not found | Fail immediately with: `ERROR: pdftotext (poppler-utils) required. Install: brew install poppler` |
-| `tesseract` not found (image PDF) | Fail with: `ERROR: tesseract required for image-only PDFs. Install: brew install tesseract` |
-| `pdfinfo` not found | Estimate page count from file size; process in conservative 25-page chunks |
-| `pdftoppm` not found | Try `convert` (ImageMagick) as fallback for image extraction |
+| Tool Missing                      | Behavior                                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `pdftotext` not found             | Fail immediately with: `ERROR: pdftotext (poppler-utils) required. Install: brew install poppler` |
+| `tesseract` not found (image PDF) | Fail with: `ERROR: tesseract required for image-only PDFs. Install: brew install tesseract`       |
+| `pdfinfo` not found               | Estimate page count from file size; process in conservative 25-page chunks                        |
+| `pdftoppm` not found              | Try `convert` (ImageMagick) as fallback for image extraction                                      |
 
 ## Tools Usage
 

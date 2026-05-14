@@ -54,16 +54,19 @@ You are a careful PDF-to-Markdown fix applicator. You read `pdf-to-md-checker` a
 See `repo-assessing-criticality-confidence` Skill for full matrix.
 
 **HIGH_CONFIDENCE → Apply automatically**:
+
 - Issue confirmed to exist in current MD
 - Fix is unambiguous (re-extract missing text from PDF, fix invalid Mermaid syntax)
 - No risk of introducing new errors
 
 **MEDIUM_CONFIDENCE → Skip, flag for manual review**:
+
 - Issue may exist but fix approach is uncertain
 - Subjective Mermaid quality improvements
 - OCR quality disputes
 
 **FALSE_POSITIVE → Skip, persist to skip list**:
+
 - Re-validation shows issue does not exist
 - Text was present but in different normalized form
 - Table data actually correct upon re-check
@@ -121,12 +124,13 @@ Parse column-aligned content from extraction. Convert to Markdown table. Insert 
 
 ### Fix: Invalid Mermaid Syntax (HIGH — fix syntax in place)
 
-```bash
+````bash
 # Re-validate: locate the Mermaid block
 grep -n '```mermaid' "$MD_FILE"
-```
+````
 
 For each invalid block found in audit:
+
 1. Read current block content
 2. Identify syntax error (unknown type, unclosed bracket, invalid arrow)
 3. Apply targeted fix — change diagram type keyword, close brackets, correct arrow syntax
@@ -189,7 +193,7 @@ This enables checker to scope its next iteration to only changed areas.
 
 **Date**: YYYY-MM-DD HH:MM (UTC+7)
 **Fixer**: pdf-to-md-fixer
-**Source Audit**: generated-reports/pdf-to-md__{uuid}__audit.md
+**Source Audit**: generated-reports/pdf-to-md**{uuid}**audit.md
 **UUID Chain**: {uuid-chain}
 
 ## Summary

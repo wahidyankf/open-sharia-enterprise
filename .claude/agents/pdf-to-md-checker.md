@@ -44,22 +44,22 @@ Validate a Markdown file against its source PDF across five dimensions:
 
 ## Criticality Levels
 
-| Finding | Criticality |
-|---|---|
-| Missing entire section or page | CRITICAL |
-| Text altered to change meaning | CRITICAL |
-| Missing table (entirely absent) | CRITICAL |
-| OCR text gibberish (>10% error rate) | CRITICAL |
-| Missing paragraph within section | HIGH |
-| Wrong table data (cell values incorrect) | HIGH |
-| Missing footnote or reference | HIGH |
-| Invalid Mermaid syntax (unparseable) | HIGH |
-| Figure with no representation (no Mermaid, no placeholder) | HIGH |
-| Minor heading hierarchy drift | MEDIUM |
-| Missing page header/footer content | MEDIUM |
-| Sub-optimal Mermaid (valid but imprecise) | MEDIUM |
-| Whitespace or minor punctuation difference | LOW |
-| OCR confidence tags missing | LOW |
+| Finding                                                    | Criticality |
+| ---------------------------------------------------------- | ----------- |
+| Missing entire section or page                             | CRITICAL    |
+| Text altered to change meaning                             | CRITICAL    |
+| Missing table (entirely absent)                            | CRITICAL    |
+| OCR text gibberish (>10% error rate)                       | CRITICAL    |
+| Missing paragraph within section                           | HIGH        |
+| Wrong table data (cell values incorrect)                   | HIGH        |
+| Missing footnote or reference                              | HIGH        |
+| Invalid Mermaid syntax (unparseable)                       | HIGH        |
+| Figure with no representation (no Mermaid, no placeholder) | HIGH        |
+| Minor heading hierarchy drift                              | MEDIUM      |
+| Missing page header/footer content                         | MEDIUM      |
+| Sub-optimal Mermaid (valid but imprecise)                  | MEDIUM      |
+| Whitespace or minor punctuation difference                 | LOW         |
+| OCR confidence tags missing                                | LOW         |
 
 ## Validation Workflow
 
@@ -105,6 +105,7 @@ grep -F "$NORMALIZED" "$MD_FILE" >/dev/null 2>&1
 ```
 
 If segment NOT found in MD:
+
 - If segment is a heading or section start → CRITICAL
 - If segment is a paragraph → HIGH
 - If segment is a footnote/reference → HIGH
@@ -120,6 +121,7 @@ grep -n "^\s\+[A-Za-z].*\s\{2,\}.*\s\{2,\}" /tmp/pdf_full.txt | head -100
 ```
 
 For each detected table:
+
 1. Count rows and columns in PDF source
 2. Find corresponding Markdown table (search by header row keywords)
 3. Verify row/column count matches
@@ -137,6 +139,7 @@ grep -c "^Figure\|^Fig\.\|^\[Figure\|Exhibit\|Diagram\|Chart" /tmp/pdf_full.txt
 ```
 
 For each figure reference found in PDF, check MD has either:
+
 - A Mermaid code block near the corresponding location
 - A `[FIGURE N: ...]` placeholder
 
@@ -147,11 +150,12 @@ Figure with placeholder but no Mermaid when type was determinable → MEDIUM
 
 Find all Mermaid blocks in MD:
 
-```bash
+````bash
 grep -n '```mermaid' "$MD_FILE"
-```
+````
 
 For each Mermaid block, validate syntax by checking:
+
 - Block starts with a valid diagram type keyword (`graph`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `flowchart`, `gantt`, `pie`, `erDiagram`, `journey`, `gitGraph`)
 - All nodes referenced in edges are defined
 - No unclosed brackets or quotes
@@ -168,6 +172,7 @@ grep -c "<!-- OCR: page" "$MD_FILE"
 ```
 
 For each OCR-tagged page section:
+
 1. Extract the text segment
 2. Count character patterns that indicate OCR errors: sequences of random consonants, `l` substituted for `1`, `0` for `O`, etc.
 3. Estimate error rate: `(error_char_count / total_char_count) * 100`
@@ -179,6 +184,7 @@ Error rate 2-5% → MEDIUM
 ### Step 7: Structural Integrity Check
 
 Verify overall structure is preserved:
+
 - MD starts with an H1 heading (`# ...`)
 - Major sections from PDF are present as headings
 - Section ordering matches PDF reading order
@@ -192,6 +198,7 @@ Missing H1 → MEDIUM
 Update report status: "In Progress" → "Complete"
 
 Add summary:
+
 - Pages checked
 - Total findings by criticality
 - Dimensions checked (text, tables, figures, Mermaid, OCR, structure)
@@ -202,6 +209,7 @@ Add summary:
 ### Known False Positive Skip List
 
 Before beginning validation, load the skip list:
+
 - **File**: `generated-reports/.known-false-positives.md`
 - Check each finding against stable key: `[category] | [file] | [brief-description]`
 - If matched: log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`
@@ -209,6 +217,7 @@ Before beginning validation, load the skip list:
 ### Re-validation Mode (Scoped Scan)
 
 When UUID chain is multi-part (iteration 2+):
+
 1. Check latest fix report for `## Changed Sections (for Scoped Re-validation)`
 2. If found: validate only changed sections, not entire document
 3. If not found: run full scan
@@ -216,6 +225,7 @@ When UUID chain is multi-part (iteration 2+):
 ### Cached Comparison Results (Iterations 2+)
 
 On re-validation:
+
 - Carry forward `[Verified — match confirmed]` segments from iteration 1
 - Only re-check segments that were flagged or that the fixer touched
 

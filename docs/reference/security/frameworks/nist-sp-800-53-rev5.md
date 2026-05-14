@@ -1,24 +1,22 @@
-NIST Special Publication 800-53
+# NIST Special Publication 800-53
+
 Revision 5
 Security and Privacy Controls for
 Information Systems and Organizations
 JOINT TASK FORCE
 This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-53r5
 NIST Special Publication 800-53
 Revision 5
 Security and Privacy Controls for
 Information Systems and Organizations
 JOINT TASK FORCE
 This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-53r5
 September 2020
 INCLUDES UPDATES AS OF 12-10-2020; SEE PAGE XVII
 U.S. Department of Commerce
 Wilbur L. Ross, Jr., Secretary
 National Institute of Standards and Technology
 Walter Copan, NIST Director and Under Secretary of Commerce for Standards and Technology
-NIST SP 800-53, REV. 5
 Authority
 This publication has been developed by NIST to further its statutory responsibilities under the
 Federal Information Security Modernization Act (FISMA), 44 U.S.C. § 3551 et seq., Public Law
@@ -28,7 +26,6 @@ standards and guidelines shall not apply to national security systems without th
 approval of the appropriate federal officials exercising policy authority over such systems. This
 guideline is consistent with the requirements of the Office of Management and Budget (OMB)
 Circular A-130.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Nothing in this publication should be taken to contradict the standards and guidelines made
 mandatory and binding on federal agencies by the Secretary of Commerce under statutory
 authority. Nor should these guidelines be interpreted as altering or superseding the existing
@@ -39,7 +36,6 @@ National Institute of Standards and Technology Special Publication 800-53, Revis
 Natl. Inst. Stand. Technol. Spec. Publ. 800-53, Rev. 5, 492 pages (September 2020)
 CODEN: NSPUE2
 This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-53r5
 Certain commercial entities, equipment, or materials may be identified in this document to describe
 an experimental procedure or concept adequately. Such identification is not intended to imply
 recommendation or endorsement by NIST, nor is it intended to imply that the entities, materials, or
@@ -61,9 +57,7 @@ Attn: Computer Security Division, Information Technology Laboratory
 Email: sec-cert@nist.gov
 All comments are subject to release under the Freedom of Information Act (FOIA) [FOIA96].
 i
-NIST SP 800-53, REV. 5
 Reports on Computer Systems Technology
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 The National Institute of Standards and Technology (NIST) Information Technology Laboratory
 (ITL) promotes the U.S. economy and public welfare by providing technical leadership for the
 Nation’s measurement and standards infrastructure. ITL develops tests, test methods, reference
@@ -92,7 +86,6 @@ information security; information system; integrity; personally identifiable inf
 Act; privacy controls; privacy functions; privacy requirements; Risk Management Framework;
 security controls; security functions; security requirements; system; system security.
 ii
-NIST SP 800-53, REV. 5
 Acknowledgements
 This publication was developed by the Joint Task Force Interagency Working Group. The group
 includes representatives from the civil, defense, and intelligence communities. The National
@@ -100,7 +93,6 @@ Institute of Standards and Technology wishes to acknowledge and thank the senior
 the Department of Commerce, Department of Defense, the Office of the Director of National
 Intelligence, the Committee on National Security Systems, and the members of the interagency
 working group whose dedicated efforts contributed significantly to this publication.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Department of Defense
 Office of the Director of National
 Intelligence
@@ -186,8 +178,6 @@ NIST
 Jon Boyens
 NIST
 iii
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 In addition to the above acknowledgments, a special note of thanks goes to Jeff Brewer, Jim
 Foti, and the NIST web team for their outstanding administrative support. The authors also wish
 to recognize Kristen Baldwin, Carol Bales, John Bazile, Jennifer Besceglie, Sean Brooks, Ruth
@@ -224,7 +214,6 @@ Roger Schell, Jackie Snouffer, Ray Snouffer, Murugiah Souppaya, Gary Stoneburner
 Stouffer, Marianne Swanson, Pat Toth, Glenda Turner, Patrick Viscuso, Joe Weiss, Richard
 Wilsher, Mark Wilson, John Woodward, and Carol Woody.
 iv
-NIST SP 800-53, REV. 5
 Patent Disclosure Notice
 NOTICE: The Information Technology Laboratory (ITL) has requested that holders of patent
 claims whose use may be required for compliance with the guidance or requirements of this
@@ -234,13 +223,10 @@ which, if any, patents may apply to this publication.
 As of the date of publication and following call(s) for the identification of patent claims whose
 use may be required for compliance with the guidance or requirements of this publication, no
 such patent claims have been identified to ITL.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 No representation is made or implied by ITL that licenses are not required to avoid patent
 infringement in the use of this publication.
 v
-NIST SP 800-53, REV. 5
 RISK MANAGEMENT
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Organizations must exercise due diligence in managing information security and privacy risk. This
 is accomplished, in part, by establishing a comprehensive risk management program that uses
 the flexibility inherent in NIST publications to categorize systems, select and implement security
@@ -256,9 +242,7 @@ processes, procedures, methods, and technologies ensures that information system
 organizations have the necessary trustworthiness and resiliency to support essential mission and
 business functions, the U.S. critical infrastructure, and continuity of government.
 vi
-NIST SP 800-53, REV. 5
 COMMON SECURITY AND PRIVACY FOUNDATIONS
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 In working with the Office of Management and Budget to develop standards and guidelines
 required by FISMA, NIST consults with federal agencies, state, local, and tribal governments, and
 private sector organizations to improve information security and privacy, avoid unnecessary and
@@ -278,9 +262,7 @@ entities to establish mappings and relationships between the standards and guide
 developed by NIST and those developed by other organizations. NIST anticipates using these
 mappings and the gaps they identify to improve the control catalog.
 vii
-NIST SP 800-53, REV. 5
 DEVELOPMENT OF INFORMATION SYSTEMS, COMPONENTS, AND SERVICES
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 With a renewed emphasis on the use of trustworthy, secure information systems and supply
 chain security, it is essential that organizations express their security and privacy requirements
 with clarity and specificity in order to obtain the systems, components, and services necessary
@@ -292,9 +274,7 @@ development is conducted internally by organizations or externally through the c
 acquisition processes. The affected controls in the control catalog include SA-8, SA-10, SA-11,
 SA-15, SA-16, SA-17, SA-20, SA-21, SR-3, SR-4, SR-5, SR-6, SR-7, SR-8, SR-9, and SR-11.
 viii
-NIST SP 800-53, REV. 5
 INFORMATION SYSTEMS — A BROAD-BASED PERSPECTIVE
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 As we push computers to “the edge,” building an increasingly complex world of interconnected
 systems and devices, security and privacy continue to dominate the national dialogue. There is
 an urgent need to further strengthen the underlying systems, products, and services that we
@@ -311,7 +291,6 @@ organizations and the privacy of individuals. The objective is to make the syste
 more penetration resistant to attacks, limit the damage from those attacks when they occur,
 and make the systems resilient, survivable, and protective of individuals’ privacy.
 ix
-NIST SP 800-53, REV. 5
 CONTROL BASELINES
 The control baselines that have previously been included in NIST Special Publication 800-53 have
 been relocated to NIST Special Publication 800-53B. SP 800-53B contains security and privacy
@@ -320,17 +299,13 @@ tailoring control baselines and for developing overlays to support the security 
 requirements of stakeholders and their organizations. CNSS Instruction 1253 provides control
 baselines and guidance for security categorization and security control selection for national
 security systems.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 x
-NIST SP 800-53, REV. 5
 USE OF EXAMPLES IN THIS PUBLICATION
 Throughout this publication, examples are used to illustrate, clarify, or explain certain items in
 chapter sections, controls, and control enhancements. These examples are illustrative in nature
 and are not intended to limit or constrain the application of controls or control enhancements
 by organizations.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 xi
-NIST SP 800-53, REV. 5
 FEDERAL RECORDS MANAGEMENT COLLABORATION
 Federal records management processes have a nexus with certain information security and
 privacy requirements and controls. For example, records officers may be managing records
@@ -338,9 +313,7 @@ retention, including when records will be deleted. Collaborating with records of
 selection and implementation of security and privacy controls related to records management
 can support consistency and efficiency and ultimately strengthen the organization’s security and
 privacy posture.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 xii
-NIST SP 800-53, REV. 5
 Table of Contents
 CHAPTER ONE INTRODUCTION ...................................................................................................... 1
 1.1 PURPOSE AND APPLICABILITY ................................................................................................... 2
@@ -350,7 +323,6 @@ CHAPTER ONE INTRODUCTION .......................................................
 1.5 REVISIONS AND EXTENSIONS .................................................................................................... 5
 1.6 PUBLICATION ORGANIZATION .................................................................................................. 5
 CHAPTER TWO THE FUNDAMENTALS ............................................................................................ 7
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 2.1 REQUIREMENTS AND CONTROLS .............................................................................................. 7
 2.2 CONTROL STRUCTURE AND ORGANIZATION .............................................................................. 8
 2.3 CONTROL IMPLEMENTATION APPROACHES ............................................................................. 11
@@ -382,15 +354,15 @@ APPENDIX A GLOSSARY ............................................................
 APPENDIX B ACRONYMS ............................................................................................................ 424
 APPENDIX C CONTROL SUMMARIES .......................................................................................... 428
 xiii
-NIST SP 800-53, REV. 5
-Executive Summary
+
+## Executive Summary
+
 As we push computers to “the edge,” building an increasingly complex world of connected
 information systems and devices, security and privacy will continue to dominate the national
 dialogue. In its 2017 report, Task Force on Cyber Deterrence [DSB 2017], the Defense Science
 Board (DSB) provides a sobering assessment of the current vulnerabilities in the U.S. critical
 infrastructure and the information systems that support mission-essential operations and assets
 in the public and private sectors.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 “…The Task Force notes that the cyber threat to U.S. critical infrastructure is outpacing
 efforts to reduce pervasive vulnerabilities, so that for the next decade at least the United States
 must lean significantly on deterrence to address the cyber threat posed by the most capable
@@ -428,7 +400,6 @@ used by different communities of interest, including systems engineers, security
 software developers, enterprise architects, systems security and privacy engineers, and
 mission or business owners;
 xiv
-NIST SP 800-53, REV. 5
 • Removing control baselines and tailoring guidance from the publication and transferring the
 content to NIST SP 800-53B, Control Baselines for Information Systems and Organizations;
 • Clarifying the relationship between requirements and controls and the relationship between
@@ -436,7 +407,6 @@ security and privacy controls; and
 • Incorporating new, state-of-the-practice controls (e.g., controls to support cyber resiliency,
 support secure systems design, and strengthen security and privacy governance and
 accountability) based on the latest threat intelligence and cyber-attack data.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 In separating the process of control selection from the controls and removing the control
 baselines, a significant amount of guidance and other informative material previously contained
 in SP 800-53 was eliminated. That content will be moved to other NIST publications such as SP
@@ -444,7 +414,6 @@ in SP 800-53 was eliminated. That content will be moved to other NIST publicatio
 future, NIST also plans to offer the content of SP 800-53, SP 800-53A, and SP 800-53B to a webbased portal to provide its customers interactive, online access to all control, control baseline,
 overlay, and assessment information.
 xv
-NIST SP 800-53, REV. 5
 Prologue
 “…Through the process of risk management, leaders must consider risk to US interests from
 adversaries using cyberspace to their advantage and from our own efforts to employ the global
@@ -453,7 +422,6 @@ nature of cyberspace to achieve objectives in military, intelligence, and busine
 must be evaluated in order to identify important trends and decide where effort should be
 applied to eliminate or reduce threat capabilities; eliminate or reduce vulnerabilities; and assess,
 coordinate, and deconflict all cyberspace operations…”
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 “…Leaders at all levels are accountable for ensuring readiness and security to the same degree as
 in any other domain…"
 THE NATIONAL STRATEGY FOR CYBERSPACE OPERATIONS
@@ -481,7 +449,6 @@ requirements and controls in a way that effectively bridges the aspirations with
 THE NATIONAL PRIVACY RESEARCH STRATEGY
 NATIONAL SCIENCE AND TECHNOLOGY COUNCIL, NETWORKING AND INFORMATION TECHNOLOGY RESEARCH AND DEVELOPMENT PROGRAM
 xvi
-NIST SP 800-53, REV. 5
 Errata
 This table contains changes that have been incorporated into SP 800-53, Revision 5. Errata
 updates can include corrections, clarifications, or other minor changes in the publication that
@@ -489,7 +456,6 @@ are either editorial or substantive in nature. Any potential updates for this do
 not yet published in an errata update or revision—including additional issues and potential
 corrections—will be posted as they are identified; see the SP 800-53, Revision 5 publication
 details.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -587,10 +553,8 @@ x
 43
 44
 52
-NIST SP 800-53, REV. 5
 DATE
 TYPE
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 12-10-2020
 Editorial
 12-10-2020
@@ -724,8 +688,6 @@ PAGE
 96
 97
 106
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -862,8 +824,6 @@ PAGE
 171
 171
 172
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -1023,8 +983,6 @@ PAGE
 224
 229
 229
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -1165,8 +1123,6 @@ PAGE
 292
 292
 297
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -1311,8 +1267,6 @@ PAGE
 358
 360
 361
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 12-10-2020
@@ -1417,10 +1371,8 @@ PAGE
 382
 387
 387
-NIST SP 800-53, REV. 5
 DATE
 TYPE
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 12-10-2020
 Editorial
 12-10-2020
@@ -1565,8 +1517,6 @@ PAGE
 427
 427
 427
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 DATE
 TYPE
 REVISION
@@ -1705,11 +1655,11 @@ xxv
 460
 463
 464
-NIST SP 800-53, REV. 5
-CHAPTER ONE
+
+## CHAPTER ONE
+
 INTRODUCTION
 THE NEED TO PROTECT INFORMATION, SYSTEMS, ORGANIZATIONS, AND INDIVIDUALS
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Modern information systems 1 can include a variety of computing platforms (e.g., industrial
 control systems, general purpose computing systems, cyber-physical systems, super computers,
 weapons systems, communications systems, environmental control systems, medical devices,
@@ -1751,8 +1701,6 @@ risk during the system development life cycle.
 7 Security and privacy control effectiveness addresses the extent to which the controls are implemented correctly,
 operating as intended, and producing the desired outcome with respect to meeting the designated security and
 privacy requirements [SP 800-53A].
-CHAPTER ONE
-NIST SP 800-53, REV. 5
 The answers to these questions are not given in isolation but rather in the context of a risk
 management process for the organization that identifies, assesses, responds to, and monitors
 security and privacy risks arising from its information and systems on an ongoing basis. 8 The
@@ -1763,7 +1711,6 @@ to respond to security and privacy risks. The controls are employed as part of a
 management process that supports organizational information security and privacy programs. In
 turn, those information security and privacy programs lay the foundation for the success of the
 mission and business functions of the organization.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 It is important that responsible officials understand the security and privacy risks that could
 adversely affect organizational operations and assets, individuals, other organizations, and the
 Nation. 9 These officials must also understand the current status of their security and privacy
@@ -1771,7 +1718,9 @@ programs and the controls planned or in place to protect information, informatio
 organizations in order to make informed judgments and investments that respond to identified
 risks in an acceptable manner. The objective is to manage these risks through the selection and
 implementation of security and privacy controls.
-1.1 PURPOSE AND APPLICABILITY
+
+### 1.1 PURPOSE AND APPLICABILITY
+
 This publication establishes controls for systems and organizations. The controls can be
 implemented within any organization or system that processes, stores, or transmits information.
 The use of these controls is mandatory for federal information systems 10 in accordance with
@@ -1799,8 +1748,6 @@ security systems. [DODI 8510.01] provides guidance for the Department of Defense
 12 While the controls established in this publication are mandatory for federal information systems and organizations,
 other organizations such as state, local, and tribal governments as well as private sector organizations are encouraged
 to consider using these guidelines, as appropriate. See [SP 800-53B] for federal control baselines.
-CHAPTER ONE
-NIST SP 800-53, REV. 5
 Finally, the controls are independent of the process employed to select those controls. The
 control selection process can be part of an organization-wide risk management process, a
 systems engineering process [SP 800-160-1], 13 the Risk Management Framework [SP 800-37],
@@ -1811,8 +1758,9 @@ federal laws, executive orders, directives, regulations, policies, standards, an
 combination of a catalog of security and privacy controls and a risk-based control selection
 process can help organizations comply with stated security and privacy requirements, obtain
 adequate security for their information systems, and protect the privacy of individuals.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-1.2 TARGET AUDIENCE
+
+### 1.2 TARGET AUDIENCE
+
 This publication is intended to serve a diverse audience, including:
 •
 Individuals with system, information security, privacy, or risk management and oversight
@@ -1837,7 +1785,9 @@ and validators, and analysts; and
 Commercial entities, including industry partners, producing component products and
 systems, creating security and privacy technologies, or providing services or capabilities that
 support information security or privacy.
-1.3 ORGANIZATIONAL RESPONSIBILITIES
+
+### 1.3 ORGANIZATIONAL RESPONSIBILITIES
+
 Managing security and privacy risks is a complex, multifaceted undertaking that requires:
 •
 Well-defined security and privacy requirements for systems and organizations;
@@ -1849,8 +1799,6 @@ hardware, firmware, and software development and acquisition processes;
 controls for federal information systems. [EO 13800] requires federal agencies to implement the NIST Framework for
 Improving Critical Infrastructure Cybersecurity to manage cybersecurity risk. The NIST frameworks are also available
 to nonfederal organizations as optional resources.
-CHAPTER ONE
-NIST SP 800-53, REV. 5
 •
 Rigorous security and privacy planning and system development life cycle management;
 •
@@ -1864,7 +1812,6 @@ organizations; and
 Continuous monitoring of information systems and organizations to determine the ongoing
 effectiveness of controls, changes in information systems and environments of operation,
 and the state of security and privacy organization-wide.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Organizations continuously assess the security and privacy risks to organizational operations and
 assets, individuals, other organizations, and the Nation. Security and privacy risks arise from the
 planning and execution of organizational mission and business functions, placing information
@@ -1897,8 +1844,6 @@ technologies, or communities of interest. 20
 19 [SP 800-53A] provides guidance on assessing the effectiveness of controls.
 20 [SP 800-53B] provides guidance for tailoring security and privacy control baselines and for developing overlays to
 support the specific protection needs and requirements of stakeholders and their organizations.
-CHAPTER ONE
-NIST SP 800-53, REV. 5
 Organizational risk assessments are used, in part, to inform the security and privacy control
 selection process. The selection process results in an agreed-upon set of security and privacy
 controls addressing specific mission or business needs consistent with organizational risk
@@ -1906,16 +1851,18 @@ tolerance. 21 The process preserves, to the greatest extent possible, the agilit
 organizations need to address an increasingly sophisticated and hostile threat space, mission
 and business requirements, rapidly changing technologies, complex supply chains, and many
 types of operational environments.
-1.4 RELATIONSHIP TO OTHER PUBLICATIONS
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+### 1.4 RELATIONSHIP TO OTHER PUBLICATIONS
+
 This publication defines controls to satisfy a diverse set of security and privacy requirements
 that have been levied on information systems and organizations and that are consistent with
 and complementary to other recognized national and international information security and
 privacy standards.
 
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 To develop a broadly applicable and technically sound set of controls for information systems and organizations, many sources were considered during the development of this publication. These sources included requirements and controls from the manufacturing, defense, financial, healthcare, transportation, energy, intelligence, industrial control, and audit communities as well as national and international standards organizations. In addition, the controls in this publication are used by the national security community in publications such as Committee on National Security Systems (CNSS) Instruction No. 1253 [CNSSI 1253] to provide guidance specific to systems designated as national security systems. Whenever possible, the controls have been mapped to international standards to help ensure maximum usability and applicability. 22 The relationship of this publication to other risk management, security, privacy, and publications can be found at [FISMA IMP].
-1.5 REVISIONS AND EXTENSIONS
+
+### 1.5 REVISIONS AND EXTENSIONS
+
 The security and privacy controls described in this publication represent the state-of-thepractice protection measures for individuals, information systems, and organizations. The
 controls are reviewed and revised periodically to reflect the experience gained from using the
 controls; new or revised laws, executive orders, directives, regulations, policies, and standards;
@@ -1928,14 +1875,13 @@ go through a rigorous and transparent public review process to obtain public and
 feedback and to build a consensus for such change. The review process provides a technically
 sound, flexible, and stable set of security and privacy controls for the organizations that use the
 control catalog.
-1.6 PUBLICATION ORGANIZATION
+
+### 1.6 PUBLICATION ORGANIZATION
+
 The remainder of this special publication is organized as follows:
 21 Authorizing officials or their designated representatives, by accepting the security and privacy plans, agree to the
 security and privacy controls proposed to meet the security and privacy requirements for organizations and systems.
 22 Mapping tables are available at [SP 800-53 RES].
-CHAPTER ONE
-NIST SP 800-53, REV. 5
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 •
 Chapter Two describes the fundamental concepts associated with security and privacy
 controls, including the structure of the controls, how the controls are organized in the
@@ -1951,12 +1897,11 @@ publications that may be helpful to organizations.
 References, Glossary, Acronyms, and Control Summaries provide additional information on
 the use of security and privacy controls. 23
 23 Unless otherwise stated, all references to NIST publications refer to the most recent version of those publications.
-CHAPTER ONE
-NIST SP 800-53, REV. 5
-CHAPTER TWO
+
+## CHAPTER TWO
+
 THE FUNDAMENTALS
 STRUCTURE, TYPE, AND ORGANIZATION OF SECURITY AND PRIVACY CONTROLS
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 This chapter presents the fundamental concepts associated with security and privacy controls,
 including the relationship between requirements and controls, the structure of controls, how
 controls are organized in the consolidated control catalog, the different control implementation
@@ -1964,7 +1909,9 @@ approaches for information systems and organizations, the relationship between s
 privacy controls, the importance of the concepts of trustworthiness and assurance for security
 and privacy controls, and the effects of the controls on achieving trustworthy, secure, and
 resilient systems.
-2.1 REQUIREMENTS AND CONTROLS
+
+### 2.1 REQUIREMENTS AND CONTROLS
+
 It is important to understand the relationship between requirements and controls. For federal
 information security and privacy policies, the term requirement is generally used to refer to
 information security and privacy obligations imposed on organizations. For example, [OMB A130] imposes information security and privacy requirements with which federal agencies must
@@ -1993,8 +1940,6 @@ the modes and states within which the system delivers its functions and services
 system and its constituent functions and services; the sensitivity of the data or information processed, stored, or
 transmitted; the consequence of loss, failure, or degradation relative to the ability of the system to execute correctly
 and to provide for its own protection (i.e., self-protection); and monetary or other value [SP 800-160-1].
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 Controls can be viewed as descriptions of the safeguards and protection capabilities appropriate
 for achieving the particular security and privacy objectives of the organization and reflecting the
 protection needs of organizational stakeholders. Controls are selected and implemented by the
@@ -2004,8 +1949,9 @@ may necessitate additional specification by the organization in the form of deri
 or instantiated control parameter values. The derived requirements and control parameter
 values may be necessary to provide the appropriate level of implementation detail for particular
 controls within the SDLC.
-2.2 CONTROL STRUCTURE AND ORGANIZATION
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+### 2.2 CONTROL STRUCTURE AND ORGANIZATION
+
 Security and privacy controls described in this publication have a well-defined organization and
 structure. For ease of use in the security and privacy control selection and specification process,
 controls are organized into 20 families. 25 Each family contains controls that are related to the
@@ -2014,51 +1960,21 @@ specific topic of the family. A two-character identifier uniquely identifies eac
 oversight, supervision, manual processes, and automated mechanisms that are implemented by
 systems or actions by individuals. Table 1 lists the security and privacy control families and their
 associated family identifiers.
-TABLE 1: SECURITY AND PRIVACY CONTROL FAMILIES
-ID
-FAMILY
-ID
-AC
-AT
-AU
-CA
-CM
-CP
-IA
-IR
-MA
-MP
-Access Control
-Awareness and Training
-Audit and Accountability
-Assessment, Authorization, and Monitoring
-Configuration Management
-Contingency Planning
-Identification and Authentication
-Incident Response
-Maintenance
-Media Protection
-PE
-PL
-PM
-PS
-PT
-RA
-SA
-SC
-SI
-SR
-FAMILY
-Physical and Environmental Protection
-Planning
-Program Management
-Personnel Security
-PII Processing and Transparency
-Risk Assessment
-System and Services Acquisition
-System and Communications Protection
-System and Information Integrity
-Supply Chain Risk Management
+**TABLE 1: SECURITY AND PRIVACY CONTROL FAMILIES**
+
+| ID  | Family                                    | ID  | Family                                |
+| --- | ----------------------------------------- | --- | ------------------------------------- |
+| AC  | Access Control                            | PE  | Physical and Environmental Protection |
+| AT  | Awareness and Training                    | PL  | Planning                              |
+| AU  | Audit and Accountability                  | PM  | Program Management                    |
+| CA  | Assessment, Authorization, and Monitoring | PS  | Personnel Security                    |
+| CM  | Configuration Management                  | PT  | PII Processing and Transparency       |
+| CP  | Contingency Planning                      | RA  | Risk Assessment                       |
+| IA  | Identification and Authentication         | SA  | System and Services Acquisition       |
+| IR  | Incident Response                         | SC  | System and Communications Protection  |
+| MA  | Maintenance                               | SI  | System and Information Integrity      |
+| MP  | Media Protection                          | SR  | Supply Chain Risk Management          |
+
 Families of controls contain base controls and control enhancements, which are directly related
 to their base controls. Control enhancements either add functionality or specificity to a base
 control or increase the strength of a base control. Control enhancements are used in systems
@@ -2070,8 +1986,6 @@ additions to the base control functionality or assurance based on assessments of
 The Program Management (PM), PII Processing and Transparency (PT), and Supply Chain Risk Management (SR)
 families address enterprise-level program management, privacy, and supply chain risk considerations pertaining to
 federal mandates emergent since [FIPS 200].
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 selection and implementation of control enhancements always requires the selection and
 implementation of the base control.
 The families are arranged in alphabetical order, while the controls and control enhancements
@@ -2080,7 +1994,6 @@ enhancements does not imply any logical progression, level of prioritization or 
 order in which the controls or control enhancements are to be implemented. Rather, it reflects
 the order in which they were included in the catalog. Control designations are not re-used when
 a control is withdrawn.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Security and privacy controls have the following structure: a base control section, a discussion
 section, a related controls section, a control enhancements section, and a references section.
 Figure 1 illustrates the structure of a typical control.
@@ -2113,13 +2026,14 @@ records, at which point the information is transferred.
 Related Controls: None.
 References: None.
 Sources for additional information related to the control
-FIGURE 1: CONTROL STRUCTURE
+
+FIGURE 1
+
+[FIGURE 1: Control Structure — Box diagram showing the structure of a security/privacy control, including Control Identifier, Control Name, Organization-defined Parameters, Base Control section (Control text), Discussion section, Related Controls, Control Enhancements section (with Enhancement Identifier, Enhancement Name, Organization-defined Parameters, Control Enhancement text, Discussion), and References. The diagram uses AU-4 AUDIT STORAGE CAPACITY as an example control. Mermaid conversion requires manual review due to complex box-and-annotation layout.]
 The control section prescribes a security or privacy capability to be implemented. Security and
 privacy capabilities are achieved by the activities or actions, automated or nonautomated,
 carried out by information systems and organizations. Organizations designate the responsibility
 for control development, implementation, assessment, and monitoring. Organizations have the
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 flexibility to implement the controls selected in whatever manner that satisfies organizational
 mission or business needs consistent with law, regulation, and policy.
 The discussion section provides additional information about a control. Organizations can use
@@ -2129,7 +2043,6 @@ on mission or business requirements, operational environments, or assessments of
 additional information can also explain the purpose of controls and often includes examples.
 Control enhancements may also include a separate discussion section when the discussion
 information is applicable only to a specific control enhancement.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 The related controls section provides a list of controls from the control catalog that impact or
 support the implementation of a particular control or control enhancement, address a related
 security or privacy capability, or are referenced in the discussion section. Control enhancements
@@ -2163,14 +2076,11 @@ values for designated parameters associated with the controls. Flexibility is ac
 tailoring process using assignment and selection operations embedded within the controls and
 26 References are provided to assist organizations in understanding and implementing the security and privacy
 controls and are not intended to be inclusive or complete.
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 enclosed by brackets. The assignment and selection operations give organizations the capability
 to customize controls based on organizational security and privacy requirements. In contrast to
 assignment operations which allow complete flexibility in the designation of parameter values,
 selection operations narrow the range of potential values by providing a specific list of items
 from which organizations choose.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Determination of the organization-defined parameters can evolve from many sources, including
 laws, executive orders, directives, regulations, policies, standards, guidance, and mission or
 business needs. Organizational risk assessments and risk tolerance are also important factors in
@@ -2198,20 +2108,19 @@ combination of hardware, software, communications, physical, personnel and admin
 not sufficient.”
 -- The Ware Report
 Defense Science Board Task Force on Computer Security, 1970
-2.3 CONTROL IMPLEMENTATION APPROACHES
+
+### 2.3 CONTROL IMPLEMENTATION APPROACHES
+
 There are three approaches to implementing the controls in Chapter Three: (1) a common
 (inheritable) control implementation approach, (2) a system-specific control implementation
 approach, and (3) a hybrid control implementation approach. The control implementation
 approaches define the scope of applicability for the control, the shared nature or inheritability
 of the control, and the responsibility for control development, implementation, assessment, and
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 authorization. Each control implementation approach has a specific objective and focus that
 helps organizations select the appropriate controls, implement the controls in an effective
 manner, and satisfy security and privacy requirements. A specific control implementation
 approach may achieve cost benefits by leveraging security and privacy capabilities across
 multiple systems and environments of operation. 27
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Common controls are controls whose implementation results in a capability that is inheritable
 by multiple systems or programs. A control is deemed inheritable when the system or program
 receives protection from the implemented control, but the control is developed, implemented,
@@ -2250,13 +2159,10 @@ hybrid, or system-specific) is context-dependent. The control implementation app
 be determined to be common, hybrid, or system-specific simply based on the language of the
 27 [SP 800-37] provides additional guidance on control implementation approaches (formerly referred to as control
 designations) and how the different approaches are used in the Risk Management Framework.
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 control. Identifying the control implementation approach can result in significant savings to
 organizations in implementation and assessment costs and a more consistent application of the
 controls organization-wide. Typically, the identification of the control implementation approach
 is straightforward. However, the implementation takes significant planning and coordination.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Planning for the implementation approach of a control (i.e., common, hybrid, or system-specific)
 is best carried out early in the system development life cycle and coordinated with the entities
 providing the control [SP 800-37]. Similarly, if a control is to be inheritable, coordination is
@@ -2266,7 +2172,9 @@ controls are the same and mitigate the appropriate risk to the system just becau
 identifiers (e.g., AC-1) are the same. It is essential to examine the control parameters (e.g.,
 assignment or selection operations) when determining if a common control is adequate to
 mitigate system-specific risks.
-2.4 SECURITY AND PRIVACY CONTROLS
+
+### 2.4 SECURITY AND PRIVACY CONTROLS
+
 The selection and implementation of security and privacy controls reflect the objectives of
 information security and privacy programs and how those programs manage their respective
 risks. Depending on the circumstances, these objectives and risks can be independent or
@@ -2296,8 +2204,6 @@ information systems, where the processing of personally identifiable information
 effect that the system has on individuals’ behavior or activities. Such effects would constitute risks to individual
 autonomy, and organizations may need to take steps to manage those risks in addition to information security and
 privacy risks.
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 potential loss of confidentiality of the information asset does not affect privacy, security
 objectives are the primary driver for the selection of the control. However, the implementation
 of the control with respect to monitoring for unauthorized access could involve the processing
@@ -2306,14 +2212,15 @@ section in AU-3 includes privacy risk considerations so that organizations can t
 considerations into account as they determine the best way to implement the control.
 Additionally, the control enhancement AU-3(3) (Limit Personally Identifiable Information
 Elements) could be selected to support managing these privacy risks.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 Due to permutations in the relationship between information security and privacy program
 objectives and risk management, there is a need for close collaboration between programs to
 select and implement the appropriate controls for information systems processing PII.
 Organizations consider how to promote and institutionalize collaboration between the two
 programs to ensure that the objectives of both disciplines are met and risks are appropriately
 managed. 29
-2.5 TRUSTWORTHINESS AND ASSURANCE
+
+### 2.5 TRUSTWORTHINESS AND ASSURANCE
+
 The trustworthiness of systems, system components, and system services is an important part
 of the risk management strategies developed by organizations. 30 Trustworthiness, in this
 context, means worthy of being trusted to fulfill whatever requirements may be needed for a
@@ -2340,26 +2247,22 @@ controls focus primarily on assurance. Some controls can support functionality a
 30 [SP 800-160-1] provides guidance on systems security engineering and the application of security design principles
 to achieve trustworthy systems.
 31 See [NEUM04].
-CHAPTER TWO
-NIST SP 800-53, REV. 5
 Organizations can select assurance-related controls to define system development activities,
 generate evidence about the functionality and behavior of the system, and trace the evidence to
 the system elements that provide such functionality or exhibit such behavior. The evidence is
 used to obtain a degree of confidence that the system satisfies the stated security and privacy
 requirements while supporting the organization’s mission and business functions. Assurancerelated controls are identified in the control summary tables in Appendix C.
 EVIDENCE OF CONTROL IMPLEMENTATION
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 During control selection and implementation, it is important for organizations to consider the
 evidence (e.g., artifacts, documentation) that will be needed to support current and future
 control assessments. Such assessments help determine whether the controls are implemented
 correctly, operating as intended, and satisfying security and privacy policies—thus, providing
 essential information for senior leaders to make informed risk-based decisions.
-CHAPTER TWO
-NIST SP 800-53, REV. 5
-CHAPTER THREE
+
+## CHAPTER THREE
+
 THE CONTROLS
 SECURITY AND PRIVACY CONTROLS AND CONTROL ENHANCEMENTS
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 This catalog of security and privacy controls provides protective measures for systems,
 organizations, and individuals. 32 The controls are designed to facilitate risk management and
 compliance with applicable federal laws, executive orders, directives, regulations, policies, and
@@ -2401,8 +2304,6 @@ control, or the control is deemed to be no longer necessary or effective.
 32 The controls in this publication are available online and can be obtained in various formats. See [NVD 800-53].
 33 For example, [SP 800-82] provides guidance on risk management and control selection for industrial control
 systems.
-CHAPTER THREE
-NIST SP 800-53, REV. 5
 New controls are developed on a regular basis using threat and vulnerability information and
 information on the tactics, techniques, and procedures used by adversaries. In addition, new
 controls are developed based on a better understanding of how to mitigate information security
@@ -2413,12 +2314,13 @@ controls are carefully analyzed during each revision cycle, considering the need
 controls and the need to be responsive to changing technologies, threats, vulnerabilities, types
 of attack, and processing methods. The objective is to adjust the level of information security
 and privacy over time to meet the needs of organizations and individuals.
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-CHAPTER THREE
-NIST SP 800-53, REV. 5
-3.1 ACCESS CONTROL
+
+### 3.1 ACCESS CONTROL
+
 Quick link to Access Control Summary Table
-AC-1
+
+#### AC-1
+
 POLICY AND PROCEDURES
 Control:
 a.
@@ -2426,7 +2328,6 @@ Develop, document, and disseminate to [Assignment: organization-defined personne
 roles]:
 
 1. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] access control policy that:
-   This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
    (a) Addresses purpose, scope, roles, responsibilities, management commitment,
    coordination among organizational entities, and compliance; and
    (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -2461,229 +2362,209 @@ roles]:
    Related Controls: IA-1, PM-9, PM-24, PS-8, SI-12.
    Control Enhancements: None.
    References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100], [IR 7874].
-   CHAPTER THREE
-   NIST SP 800-53, REV. 5
-   AC-2
-   ACCOUNT MANAGEMENT
-   Control:
-   a.
-   Define and document the types of accounts allowed and specifically prohibited for use
-   within the system;
-   b.
-   Assign account managers;
-   c.
-   Require [Assignment: organization-defined prerequisites and criteria] for group and role
-   membership;
-   d.
-   Specify:
-   This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-5. Authorized users of the system;
-6. Group and role membership; and
-7. Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes
-   (as required)] for each account;
-   e.
-   Require approvals by [Assignment: organization-defined personnel or roles] for requests to
-   create accounts;
-   f.
-   Create, enable, modify, disable, and remove accounts in accordance with [Assignment:
-   organization-defined policy, procedures, prerequisites, and criteria];
-   g.
-   Monitor the use of accounts;
-   h.
-   Notify account managers and [Assignment: organization-defined personnel or roles] within:
-   i.
-8. [Assignment: organization-defined time period] when accounts are no longer required;
-9. [Assignment: organization-defined time period] when users are terminated or
-   transferred; and
-10. [Assignment: organization-defined time period] when system usage or need-to-know
-    changes for an individual;
-    Authorize access to the system based on:
-11. A valid access authorization;
-12. Intended system usage; and
-13. [Assignment: organization-defined attributes (as required)];
-    j.
-    Review accounts for compliance with account management requirements [Assignment:
-    organization-defined frequency];
-    k.
-    Establish and implement a process for changing shared or group account authenticators (if
-    deployed) when individuals are removed from the group; and
-    l.
-    Align account management processes with personnel termination and transfer processes.
-    Discussion: Examples of system account types include individual, shared, group, system, guest,
-    anonymous, emergency, developer, temporary, and service. Identification of authorized system
-    users and the specification of access privileges reflect the requirements in other controls in the
-    security plan. Users requiring administrative privileges on system accounts receive additional
-    scrutiny by organizational personnel responsible for approving such accounts and privileged
-    access, including system owner, mission or business owner, senior agency information security
-    officer, or senior agency official for privacy. Types of accounts that organizations may wish to
-    prohibit due to increased risk include shared, group, emergency, anonymous, temporary, and
-    guest accounts.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    Where access involves personally identifiable information, security programs collaborate with
-    the senior agency official for privacy to establish the specific conditions for group and role
-    membership; specify authorized users, group and role membership, and access authorizations for
-    each account; and create, adjust, or remove system accounts in accordance with organizational
-    policies. Policies can include such information as account expiration dates or other factors that
-    trigger the disabling of accounts. Organizations may choose to define access privileges or other
-    attributes by account, type of account, or a combination of the two. Examples of other attributes
-    required for authorizing access include restrictions on time of day, day of week, and point of
-    origin. In defining other system account attributes, organizations consider system-related
-    requirements and mission/business requirements. Failure to consider these factors could affect
-    system availability.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    Temporary and emergency accounts are intended for short-term use. Organizations establish
-    temporary accounts as part of normal account activation procedures when there is a need for
-    short-term accounts without the demand for immediacy in account activation. Organizations
-    establish emergency accounts in response to crisis situations and with the need for rapid account
-    activation. Therefore, emergency account activation may bypass normal account authorization
-    processes. Emergency and temporary accounts are not to be confused with infrequently used
-    accounts, including local logon accounts used for special tasks or when network resources are
-    unavailable (may also be known as accounts of last resort). Such accounts remain available and
-    are not subject to automatic disabling or removal dates. Conditions for disabling or deactivating
-    accounts include when shared/group, emergency, or temporary accounts are no longer required
-    and when individuals are transferred or terminated. Changing shared/group authenticators when
-    members leave the group is intended to ensure that former group members do not retain access
-    to the shared or group account. Some types of system accounts may require specialized training.
-    Related Controls: AC-3, AC-5, AC-6, AC-17, AC-18, AC-20, AC-24, AU-2, AU-12, CM-5, IA-2, IA-4,
-    IA-5, IA-8, MA-3, MA-5, PE-2, PL-4, PS-2, PS-4, PS-5, PS-7, PT-2, PT-3, SC-7, SC-12, SC-13, SC-37.
-    Control Enhancements:
-    (1) ACCOUNT MANAGEMENT | AUTOMATED SYSTEM ACCOUNT MANAGEMENT
-    Support the management of system accounts using [Assignment: organization-defined
-    automated mechanisms].
-    Discussion: Automated system account management includes using automated mechanisms
-    to create, enable, modify, disable, and remove accounts; notify account managers when an
-    account is created, enabled, modified, disabled, or removed, or when users are terminated
-    or transferred; monitor system account usage; and report atypical system account usage.
-    Automated mechanisms can include internal system functions and email, telephonic, and
-    text messaging notifications.
-    Related Controls: None.
-    (2) ACCOUNT MANAGEMENT | AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT
-    Automatically [Selection: remove; disable] temporary and emergency accounts after
-    [Assignment: organization-defined time period for each type of account].
-    Discussion: Management of temporary and emergency accounts includes the removal or
-    disabling of such accounts automatically after a predefined time period rather than at the
-    convenience of the system administrator. Automatic removal or disabling of accounts
-    provides a more consistent implementation.
-    Related Controls: None.
-    (3) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS
-    Disable accounts within [Assignment: organization-defined time period] when the
-    accounts:
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    (a) Have expired;
-    (b) Are no longer associated with a user or individual;
-    (c) Are in violation of organizational policy; or
-    (d) Have been inactive for [Assignment: organization-defined time period].
-    Discussion: Disabling expired, inactive, or otherwise anomalous accounts supports the
-    concepts of least privilege and least functionality which reduce the attack surface of the
-    system.
-    Related Controls: None.
-    (4) ACCOUNT MANAGEMENT | AUTOMATED AUDIT ACTIONS
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    Automatically audit account creation, modification, enabling, disabling, and removal
-    actions.
-    Discussion: Account management audit records are defined in accordance with AU-2 and
-    reviewed, analyzed, and reported in accordance with AU-6.
-    Related Controls: AU-2, AU-6.
-    (5) ACCOUNT MANAGEMENT | INACTIVITY LOGOUT
-    Require that users log out when [Assignment: organization-defined time period of
-    expected inactivity or description of when to log out].
-    Discussion: Inactivity logout is behavior- or policy-based and requires users to take physical
-    action to log out when they are expecting inactivity longer than the defined period.
-    Automatic enforcement of inactivity logout is addressed by AC-11.
-    Related Controls: AC-11.
-    (6) ACCOUNT MANAGEMENT | DYNAMIC PRIVILEGE MANAGEMENT
-    Implement [Assignment: organization-defined dynamic privilege management
-    capabilities].
-    Discussion: In contrast to access control approaches that employ static accounts and
-    predefined user privileges, dynamic access control approaches rely on runtime access
-    control decisions facilitated by dynamic privilege management, such as attribute-based
-    access control. While user identities remain relatively constant over time, user privileges
-    typically change more frequently based on ongoing mission or business requirements and
-    the operational needs of organizations. An example of dynamic privilege management is the
-    immediate revocation of privileges from users as opposed to requiring that users terminate
-    and restart their sessions to reflect changes in privileges. Dynamic privilege management can
-    also include mechanisms that change user privileges based on dynamic rules as opposed to
-    editing specific user profiles. Examples include automatic adjustments of user privileges if
-    they are operating out of their normal work times, if their job function or assignment
-    changes, or if systems are under duress or in emergency situations. Dynamic privilege
-    management includes the effects of privilege changes, for example, when there are changes
-    to encryption keys used for communications.
-    Related Controls: AC-16.
-    (7) ACCOUNT MANAGEMENT | PRIVILEGED USER ACCOUNTS
-    (a) Establish and administer privileged user accounts in accordance with [Selection: a rolebased access scheme; an attribute-based access scheme];
-    (b) Monitor privileged role or attribute assignments;
-    (c) Monitor changes to roles or attributes; and
-    (d) Revoke access when privileged role or attribute assignments are no longer
-    appropriate.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    Discussion: Privileged roles are organization-defined roles assigned to individuals that allow
-    those individuals to perform certain security-relevant functions that ordinary users are not
-    authorized to perform. Privileged roles include key management, account management,
-    database administration, system and network administration, and web administration. A
-    role-based access scheme organizes permitted system access and privileges into roles. In
-    contrast, an attribute-based access scheme specifies allowed system access and privileges
-    based on attributes.
-    Related Controls: None.
-    (8) ACCOUNT MANAGEMENT | DYNAMIC ACCOUNT MANAGEMENT
-    Create, activate, manage, and deactivate [Assignment: organization-defined system
-    accounts] dynamically.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    Discussion: Approaches for dynamically creating, activating, managing, and deactivating
-    system accounts rely on automatically provisioning the accounts at runtime for entities that
-    were previously unknown. Organizations plan for the dynamic management, creation,
-    activation, and deactivation of system accounts by establishing trust relationships, business
-    rules, and mechanisms with appropriate authorities to validate related authorizations and
-    privileges.
-    Related Controls: AC-16.
-    (9) ACCOUNT MANAGEMENT | RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS
-    Only permit the use of shared and group accounts that meet [Assignment: organizationdefined conditions for establishing shared and group accounts].
-    Discussion: Before permitting the use of shared or group accounts, organizations consider
-    the increased risk due to the lack of accountability with such accounts.
-    Related Controls: None.
-    (10) ACCOUNT MANAGEMENT | SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE
-    [Withdrawn: Incorporated into AC-2k.]
-    (11) ACCOUNT MANAGEMENT | USAGE CONDITIONS
-    Enforce [Assignment: organization-defined circumstances and/or usage conditions] for
-    [Assignment: organization-defined system accounts].
-    Discussion: Specifying and enforcing usage conditions helps to enforce the principle of least
-    privilege, increase user accountability, and enable effective account monitoring. Account
-    monitoring includes alerts generated if the account is used in violation of organizational
-    parameters. Organizations can describe specific conditions or circumstances under which
-    system accounts can be used, such as by restricting usage to certain days of the week, time
-    of day, or specific durations of time.
-    Related Controls: None.
-    (12) ACCOUNT MANAGEMENT | ACCOUNT MONITORING FOR ATYPICAL USAGE
-    (a) Monitor system accounts for [Assignment: organization-defined atypical usage]; and
-    (b) Report atypical usage of system accounts to [Assignment: organization-defined
-    personnel or roles].
-    Discussion: Atypical usage includes accessing systems at certain times of the day or from
-    locations that are not consistent with the normal usage patterns of individuals. Monitoring
-    for atypical usage may reveal rogue behavior by individuals or an attack in progress. Account
-    monitoring may inadvertently create privacy risks since data collected to identify atypical
-    usage may reveal previously unknown information about the behavior of individuals.
-    Organizations assess and document privacy risks from monitoring accounts for atypical
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    usage in their privacy impact assessment and make determinations that are in alignment
-    with their privacy program plan.
-    Related Controls: AU-6, AU-7, CA-7, IR-8, SI-4.
-    (13) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS
-    Disable accounts of individuals within [Assignment: organization-defined time period] of
-    discovery of [Assignment: organization-defined significant risks].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    Discussion: Users who pose a significant security and/or privacy risk include individuals for
-    whom reliable evidence indicates either the intention to use authorized access to systems to
-    cause harm or through whom adversaries will cause harm. Such harm includes adverse
-    impacts to organizational operations, organizational assets, individuals, other organizations,
-    or the Nation. Close coordination among system administrators, legal staff, human resource
-    managers, and authorizing officials is essential when disabling system accounts for high-risk
-    individuals.
-    Related Controls: AU-6, SI-4.
-    References: [SP 800-162], [SP 800-178], [SP 800-192].
-    AC-3
+
+#### AC-2
+
+ACCOUNT MANAGEMENT
+Control:
+a.
+Define and document the types of accounts allowed and specifically prohibited for use
+within the system;
+b.
+Assign account managers;
+c.
+Require [Assignment: organization-defined prerequisites and criteria] for group and role
+membership;
+d.
+Specify: 5. Authorized users of the system; 6. Group and role membership; and 7. Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes
+(as required)] for each account;
+e.
+Require approvals by [Assignment: organization-defined personnel or roles] for requests to
+create accounts;
+f.
+Create, enable, modify, disable, and remove accounts in accordance with [Assignment:
+organization-defined policy, procedures, prerequisites, and criteria];
+g.
+Monitor the use of accounts;
+h.
+Notify account managers and [Assignment: organization-defined personnel or roles] within:
+i. 8. [Assignment: organization-defined time period] when accounts are no longer required; 9. [Assignment: organization-defined time period] when users are terminated or
+transferred; and 10. [Assignment: organization-defined time period] when system usage or need-to-know
+changes for an individual;
+Authorize access to the system based on: 11. A valid access authorization; 12. Intended system usage; and 13. [Assignment: organization-defined attributes (as required)];
+j.
+Review accounts for compliance with account management requirements [Assignment:
+organization-defined frequency];
+k.
+Establish and implement a process for changing shared or group account authenticators (if
+deployed) when individuals are removed from the group; and
+l.
+Align account management processes with personnel termination and transfer processes.
+Discussion: Examples of system account types include individual, shared, group, system, guest,
+anonymous, emergency, developer, temporary, and service. Identification of authorized system
+users and the specification of access privileges reflect the requirements in other controls in the
+security plan. Users requiring administrative privileges on system accounts receive additional
+scrutiny by organizational personnel responsible for approving such accounts and privileged
+access, including system owner, mission or business owner, senior agency information security
+officer, or senior agency official for privacy. Types of accounts that organizations may wish to
+prohibit due to increased risk include shared, group, emergency, anonymous, temporary, and
+guest accounts.
+Where access involves personally identifiable information, security programs collaborate with
+the senior agency official for privacy to establish the specific conditions for group and role
+membership; specify authorized users, group and role membership, and access authorizations for
+each account; and create, adjust, or remove system accounts in accordance with organizational
+policies. Policies can include such information as account expiration dates or other factors that
+trigger the disabling of accounts. Organizations may choose to define access privileges or other
+attributes by account, type of account, or a combination of the two. Examples of other attributes
+required for authorizing access include restrictions on time of day, day of week, and point of
+origin. In defining other system account attributes, organizations consider system-related
+requirements and mission/business requirements. Failure to consider these factors could affect
+system availability.
+Temporary and emergency accounts are intended for short-term use. Organizations establish
+temporary accounts as part of normal account activation procedures when there is a need for
+short-term accounts without the demand for immediacy in account activation. Organizations
+establish emergency accounts in response to crisis situations and with the need for rapid account
+activation. Therefore, emergency account activation may bypass normal account authorization
+processes. Emergency and temporary accounts are not to be confused with infrequently used
+accounts, including local logon accounts used for special tasks or when network resources are
+unavailable (may also be known as accounts of last resort). Such accounts remain available and
+are not subject to automatic disabling or removal dates. Conditions for disabling or deactivating
+accounts include when shared/group, emergency, or temporary accounts are no longer required
+and when individuals are transferred or terminated. Changing shared/group authenticators when
+members leave the group is intended to ensure that former group members do not retain access
+to the shared or group account. Some types of system accounts may require specialized training.
+Related Controls: AC-3, AC-5, AC-6, AC-17, AC-18, AC-20, AC-24, AU-2, AU-12, CM-5, IA-2, IA-4,
+IA-5, IA-8, MA-3, MA-5, PE-2, PL-4, PS-2, PS-4, PS-5, PS-7, PT-2, PT-3, SC-7, SC-12, SC-13, SC-37.
+Control Enhancements:
+(1) ACCOUNT MANAGEMENT | AUTOMATED SYSTEM ACCOUNT MANAGEMENT
+Support the management of system accounts using [Assignment: organization-defined
+automated mechanisms].
+Discussion: Automated system account management includes using automated mechanisms
+to create, enable, modify, disable, and remove accounts; notify account managers when an
+account is created, enabled, modified, disabled, or removed, or when users are terminated
+or transferred; monitor system account usage; and report atypical system account usage.
+Automated mechanisms can include internal system functions and email, telephonic, and
+text messaging notifications.
+Related Controls: None.
+(2) ACCOUNT MANAGEMENT | AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT
+Automatically [Selection: remove; disable] temporary and emergency accounts after
+[Assignment: organization-defined time period for each type of account].
+Discussion: Management of temporary and emergency accounts includes the removal or
+disabling of such accounts automatically after a predefined time period rather than at the
+convenience of the system administrator. Automatic removal or disabling of accounts
+provides a more consistent implementation.
+Related Controls: None.
+(3) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS
+Disable accounts within [Assignment: organization-defined time period] when the
+accounts:
+(a) Have expired;
+(b) Are no longer associated with a user or individual;
+(c) Are in violation of organizational policy; or
+(d) Have been inactive for [Assignment: organization-defined time period].
+Discussion: Disabling expired, inactive, or otherwise anomalous accounts supports the
+concepts of least privilege and least functionality which reduce the attack surface of the
+system.
+Related Controls: None.
+(4) ACCOUNT MANAGEMENT | AUTOMATED AUDIT ACTIONS
+Automatically audit account creation, modification, enabling, disabling, and removal
+actions.
+Discussion: Account management audit records are defined in accordance with AU-2 and
+reviewed, analyzed, and reported in accordance with AU-6.
+Related Controls: AU-2, AU-6.
+(5) ACCOUNT MANAGEMENT | INACTIVITY LOGOUT
+Require that users log out when [Assignment: organization-defined time period of
+expected inactivity or description of when to log out].
+Discussion: Inactivity logout is behavior- or policy-based and requires users to take physical
+action to log out when they are expecting inactivity longer than the defined period.
+Automatic enforcement of inactivity logout is addressed by AC-11.
+Related Controls: AC-11.
+(6) ACCOUNT MANAGEMENT | DYNAMIC PRIVILEGE MANAGEMENT
+Implement [Assignment: organization-defined dynamic privilege management
+capabilities].
+Discussion: In contrast to access control approaches that employ static accounts and
+predefined user privileges, dynamic access control approaches rely on runtime access
+control decisions facilitated by dynamic privilege management, such as attribute-based
+access control. While user identities remain relatively constant over time, user privileges
+typically change more frequently based on ongoing mission or business requirements and
+the operational needs of organizations. An example of dynamic privilege management is the
+immediate revocation of privileges from users as opposed to requiring that users terminate
+and restart their sessions to reflect changes in privileges. Dynamic privilege management can
+also include mechanisms that change user privileges based on dynamic rules as opposed to
+editing specific user profiles. Examples include automatic adjustments of user privileges if
+they are operating out of their normal work times, if their job function or assignment
+changes, or if systems are under duress or in emergency situations. Dynamic privilege
+management includes the effects of privilege changes, for example, when there are changes
+to encryption keys used for communications.
+Related Controls: AC-16.
+(7) ACCOUNT MANAGEMENT | PRIVILEGED USER ACCOUNTS
+(a) Establish and administer privileged user accounts in accordance with [Selection: a rolebased access scheme; an attribute-based access scheme];
+(b) Monitor privileged role or attribute assignments;
+(c) Monitor changes to roles or attributes; and
+(d) Revoke access when privileged role or attribute assignments are no longer
+appropriate.
+Discussion: Privileged roles are organization-defined roles assigned to individuals that allow
+those individuals to perform certain security-relevant functions that ordinary users are not
+authorized to perform. Privileged roles include key management, account management,
+database administration, system and network administration, and web administration. A
+role-based access scheme organizes permitted system access and privileges into roles. In
+contrast, an attribute-based access scheme specifies allowed system access and privileges
+based on attributes.
+Related Controls: None.
+(8) ACCOUNT MANAGEMENT | DYNAMIC ACCOUNT MANAGEMENT
+Create, activate, manage, and deactivate [Assignment: organization-defined system
+accounts] dynamically.
+Discussion: Approaches for dynamically creating, activating, managing, and deactivating
+system accounts rely on automatically provisioning the accounts at runtime for entities that
+were previously unknown. Organizations plan for the dynamic management, creation,
+activation, and deactivation of system accounts by establishing trust relationships, business
+rules, and mechanisms with appropriate authorities to validate related authorizations and
+privileges.
+Related Controls: AC-16.
+(9) ACCOUNT MANAGEMENT | RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS
+Only permit the use of shared and group accounts that meet [Assignment: organizationdefined conditions for establishing shared and group accounts].
+Discussion: Before permitting the use of shared or group accounts, organizations consider
+the increased risk due to the lack of accountability with such accounts.
+Related Controls: None.
+(10) ACCOUNT MANAGEMENT | SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE
+[Withdrawn: Incorporated into AC-2k.]
+(11) ACCOUNT MANAGEMENT | USAGE CONDITIONS
+Enforce [Assignment: organization-defined circumstances and/or usage conditions] for
+[Assignment: organization-defined system accounts].
+Discussion: Specifying and enforcing usage conditions helps to enforce the principle of least
+privilege, increase user accountability, and enable effective account monitoring. Account
+monitoring includes alerts generated if the account is used in violation of organizational
+parameters. Organizations can describe specific conditions or circumstances under which
+system accounts can be used, such as by restricting usage to certain days of the week, time
+of day, or specific durations of time.
+Related Controls: None.
+(12) ACCOUNT MANAGEMENT | ACCOUNT MONITORING FOR ATYPICAL USAGE
+(a) Monitor system accounts for [Assignment: organization-defined atypical usage]; and
+(b) Report atypical usage of system accounts to [Assignment: organization-defined
+personnel or roles].
+Discussion: Atypical usage includes accessing systems at certain times of the day or from
+locations that are not consistent with the normal usage patterns of individuals. Monitoring
+for atypical usage may reveal rogue behavior by individuals or an attack in progress. Account
+monitoring may inadvertently create privacy risks since data collected to identify atypical
+usage may reveal previously unknown information about the behavior of individuals.
+Organizations assess and document privacy risks from monitoring accounts for atypical
+usage in their privacy impact assessment and make determinations that are in alignment
+with their privacy program plan.
+Related Controls: AU-6, AU-7, CA-7, IR-8, SI-4.
+(13) ACCOUNT MANAGEMENT | DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS
+Disable accounts of individuals within [Assignment: organization-defined time period] of
+discovery of [Assignment: organization-defined significant risks].
+Discussion: Users who pose a significant security and/or privacy risk include individuals for
+whom reliable evidence indicates either the intention to use authorized access to systems to
+cause harm or through whom adversaries will cause harm. Such harm includes adverse
+impacts to organizational operations, organizational assets, individuals, other organizations,
+or the Nation. Close coordination among system administrators, legal staff, human resource
+managers, and authorizing officials is essential when disabling system accounts for high-risk
+individuals.
+Related Controls: AU-6, SI-4.
+References: [SP 800-162], [SP 800-178], [SP 800-192].
+
+#### AC-3
+
     ACCESS ENFORCEMENT
     Control: Enforce approved authorizations for logical access to information and system resources
     in accordance with applicable access control policies.
@@ -2711,8 +2592,6 @@ roles]:
     environmental safety.
     Related Controls: CP-9, MP-6.
     (3) ACCESS ENFORCEMENT | MANDATORY ACCESS CONTROL
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Enforce [Assignment: organization-defined mandatory access control policy] over the set
     of covered subjects and objects specified in the policy, and where the policy:
     (a) Is uniformly enforced across the covered subjects and objects within the system;
@@ -2724,7 +2603,6 @@ roles]:
     objects, the system, or system components;
     (4) Choosing the security attributes and attribute values (specified by the policy) to
     be associated with newly created or modified objects; and
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (5) Changing the rules governing access control; and
     (c) Specifies that [Assignment: organization-defined subjects] may explicitly be granted
     [Assignment: organization-defined privileges] such that they are not limited by any
@@ -2763,15 +2641,12 @@ roles]:
     of covered subjects and objects specified in the policy, and where the policy specifies that
     a subject that has been granted access to information can do one or more of the following:
     (a) Pass the information to any other subjects or objects;
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (b) Grant its privileges to other subjects;
     (c) Change security attributes on subjects, objects, the system, or the system’s
     components;
     (d) Choose the security attributes to be associated with newly created or revised objects;
     or
     (e) Change the rules governing access control.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: When discretionary access control policies are implemented, subjects are not
     constrained with regard to what actions they can take with information for which they have
     already been granted access. Thus, subjects that have been granted access to information
@@ -2813,8 +2688,6 @@ roles]:
     privileges defined for those roles. RBAC simplifies privilege administration for organizations
     because privileges are not assigned directly to every user (which can be a large number of
     individuals) but are instead acquired through role assignments. RBAC can also increase
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     privacy and security risk if individuals assigned to a role are given access to information
     beyond what they need to support organizational missions or business functions. RBAC can
     be implemented as a mandatory or discretionary form of access control. For organizations
@@ -2825,7 +2698,6 @@ roles]:
     Enforce the revocation of access authorizations resulting from changes to the security
     attributes of subjects and objects based on [Assignment: organization-defined rules
     governing the timing of revocations of access authorizations].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Revocation of access rules may differ based on the types of access revoked. For
     example, if a subject (i.e., user or process acting on behalf of a user) is removed from a
     group, access may not be revoked until the next time the object is opened or the next time
@@ -2863,8 +2735,6 @@ roles]:
     (10) ACCESS ENFORCEMENT | AUDITED OVERRIDE OF ACCESS CONTROL MECHANISMS
     Employ an audited override of automated access control mechanisms under [Assignment:
     organization-defined conditions] by [Assignment: organization-defined roles].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: In certain situations, such as when there is a threat to human life or an event
     that threatens the organization’s ability to carry out critical missions or business functions,
     an override capability for access control mechanisms may be needed. Override conditions
@@ -2874,7 +2744,6 @@ roles]:
     (11) ACCESS ENFORCEMENT | RESTRICT ACCESS TO SPECIFIC INFORMATION TYPES
     Restrict access to data repositories containing [Assignment: organization-defined
     information types].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Restricting access to specific information is intended to provide flexibility
     regarding access control of specific information types within a system. For example, rolebased access could be employed to allow access to only a specific type of personally
     identifiable information within a database rather than allowing access to the database in its
@@ -2910,12 +2779,9 @@ roles]:
     covered by the policy.
     Related Controls: None.
     (14) ACCESS ENFORCEMENT | INDIVIDUAL ACCESS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Provide [Assignment: organization-defined mechanisms] to enable individuals to have
     access to the following elements of their personally identifiable information: [Assignment:
     organization-defined elements].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Individual access affords individuals the ability to review personally identifiable
     information about them held within organizational records, regardless of format. Access
     helps individuals to develop an understanding about how their personally identifiable
@@ -2940,7 +2806,9 @@ roles]:
     Related Controls: SC-2, SC-3, AC-4.
     References: [PRIVACT], [OMB A-130], [SP 800-57-1], [SP 800-57-2], [SP 800-57-3], [SP 800-162],
     [SP 800-178], [IR 7874].
-    AC-4
+
+#### AC-4
+
     INFORMATION FLOW ENFORCEMENT
     Control: Enforce approved authorizations for controlling the flow of information within the
     system and between connected systems based on [Assignment: organization-defined
@@ -2961,11 +2829,8 @@ roles]:
     prohibiting information transfers between connected systems (i.e., allowing access only),
     verifying write permissions before accepting information from another security or privacy
     domain or connected system, employing hardware mechanisms to enforce one-way information
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     flows, and implementing trustworthy regrading mechanisms to reassign security or privacy
     attributes and labels.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Organizations commonly employ information flow control policies and enforcement mechanisms
     to control the flow of information between designated sources and destinations within systems
     and between connected systems. Flow control is based on the characteristics of the information
@@ -3010,8 +2875,6 @@ roles]:
     types, and information flows are controlled based on allowed information accesses (i.e.,
     determined by domain and type), allowed signaling among domains, and allowed process
     transitions to other domains.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: SC-39.
     (3) INFORMATION FLOW ENFORCEMENT | DYNAMIC INFORMATION FLOW CONTROL
     Enforce [Assignment: organization-defined information flow control policies].
@@ -3022,7 +2885,6 @@ roles]:
     and detection of potentially harmful or adverse events.
     Related Controls: SI-4.
     (4) INFORMATION FLOW ENFORCEMENT | FLOW CONTROL OF ENCRYPTED INFORMATION
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Prevent encrypted information from bypassing [Assignment: organization-defined
     information flow control mechanisms] by [Selection (one or more): decrypting the
     information; blocking the flow of the encrypted information; terminating communications
@@ -3059,8 +2921,6 @@ roles]:
     prevent data from being exported from a higher impact or classified domain or system while
     permitting data from a lower impact or unclassified domain or system to be imported.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (8) INFORMATION FLOW ENFORCEMENT | SECURITY AND PRIVACY POLICY FILTERS
     (a) Enforce information flow control using [Assignment: organization-defined security or
     privacy policy filters] as a basis for flow control decisions for [Assignment:
@@ -3068,7 +2928,6 @@ roles]:
     (b) [Selection (one or more): Block; Strip; Modify; Quarantine] data after a filter
     processing failure in accordance with [Assignment: organization-defined security or
     privacy policy].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Organization-defined security or privacy policy filters can address data
     structures and content. For example, security or privacy policy filters for data structures can
     check for maximum file lengths, maximum field sizes, and data/file types (for structured and
@@ -3110,8 +2969,6 @@ roles]:
     include the list of inappropriate words that security or privacy policy mechanisms check in
     accordance with the definitions provided by organizations.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (12) INFORMATION FLOW ENFORCEMENT | DATA TYPE IDENTIFIERS
     When transferring information between different security domains, use [Assignment:
     organization-defined data type identifiers] to validate data essential for information flow
@@ -3123,7 +2980,6 @@ roles]:
     number alone are not used for data type identification. Content is validated syntactically and
     semantically against its specification to ensure that it is the proper data type.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (13) INFORMATION FLOW ENFORCEMENT | DECOMPOSITION INTO POLICY-RELEVANT SUBCOMPONENTS
     When transferring information between different security domains, decompose
     information into [Assignment: organization-defined policy-relevant subcomponents] for
@@ -3158,8 +3014,6 @@ roles]:
     (16) INFORMATION FLOW ENFORCEMENT | INFORMATION TRANSFERS ON INTERCONNECTED SYSTEMS
     [Withdrawn: Incorporated into AC-4.]
     (17) INFORMATION FLOW ENFORCEMENT | DOMAIN AUTHENTICATION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Uniquely identify and authenticate source and destination points by [Selection (one or
     more): organization; system; application; service; individual] for information transfer.
     Discussion: Attribution is a critical component of a security and privacy concept of
@@ -3172,7 +3026,6 @@ roles]:
     information processing as it flows through systems and can facilitate consent tracking, as
     well as correction, deletion, or access requests from individuals.
     Related Controls: IA-2, IA-3, IA-9.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (18) INFORMATION FLOW ENFORCEMENT | SECURITY ATTRIBUTE BINDING
     [Withdrawn: Incorporated into AC-16.]
     (19) INFORMATION FLOW ENFORCEMENT | VALIDATION OF METADATA
@@ -3207,8 +3060,6 @@ roles]:
     Provide access from a single device to computing platforms, applications, or data residing
     in multiple different security domains, while preventing information flow between the
     different security domains.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: The system provides a capability for users to access each connected security
     domain without providing any mechanisms to allow users to transfer data or information
     between the different security domains. An example of an access-only solution is a terminal
@@ -3218,7 +3069,6 @@ roles]:
     (23) INFORMATION FLOW ENFORCEMENT | MODIFY NON-RELEASABLE INFORMATION
     When transferring information between different security domains, modify non-releasable
     information by implementing [Assignment: organization-defined modification action].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Modifying non-releasable information can help prevent a data spill or attack
     when information is transferred across security domains. Modification actions include
     masking, permutation, alteration, removal, or redaction.
@@ -3254,8 +3104,6 @@ roles]:
     filtering solutions that provide redundant and independent filtering mechanisms for each
     data type.
     Discussion: Content filtering is the process of inspecting information as it traverses a crossdomain solution and determines if the information meets a predefined policy. Redundant
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     and independent content filtering eliminates a single point of failure filtering system.
     Independence is defined as the implementation of a content filter that uses a different code
     base and supporting libraries (e.g., two JPEG filters using different vendors’ JPEG libraries)
@@ -3264,7 +3112,6 @@ roles]:
     (28) INFORMATION FLOW ENFORCEMENT | LINEAR FILTER PIPELINES
     When transferring information between different security domains, implement a linear
     content filter pipeline that is enforced with discretionary and mandatory access controls.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Content filtering is the process of inspecting information as it traverses a crossdomain solution and determines if the information meets a predefined policy. The use of
     linear content filter pipelines ensures that filter processes are non-bypassable and always
     invoked. In general, the use of parallel filtering architectures for content filtering of a single
@@ -3300,8 +3147,6 @@ roles]:
     transfers information between filter pipelines:
     (a) Does not filter message content;
     (b) Validates filtering metadata;
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (c) Ensures the content associated with the filtering metadata has successfully completed
     filtering; and
     (d) Transfers the content to the destination filter pipeline.
@@ -3309,10 +3154,11 @@ roles]:
     complexity and functionality to provide assurance that the processes operate correctly.
     Related Controls: None.
     References: [SP-800-160-1], [SP 800-162], [SP 800-178], [IR 8112].
-    AC-5
+
+#### AC-5
+
     SEPARATION OF DUTIES
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Identify and document [Assignment: organization-defined duties of individuals requiring
     separation]; and
@@ -3331,7 +3177,9 @@ roles]:
     PS-2, SA-8, SA-17.
     Control Enhancements: None.
     References: None.
-    AC-6
+
+#### AC-6
+
     LEAST PRIVILEGE
     Control: Employ the principle of least privilege, allowing only authorized accesses for users (or
     processes acting on behalf of users) that are necessary to accomplish assigned organizational
@@ -3349,8 +3197,6 @@ roles]:
     (a) [Assignment: organization-defined security functions (deployed in hardware, software,
     and firmware)]; and
     (b) [Assignment: organization-defined security-relevant information].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Security functions include establishing system accounts, configuring access
     authorizations (i.e., permissions, privileges), configuring settings for events to be audited,
     and establishing intrusion detection parameters. Security-relevant information includes
@@ -3360,7 +3206,6 @@ roles]:
     programmers, and other privileged users.
     Related Controls: AC-17, AC-18, AC-19, AU-9, PE-2.
     (2) LEAST PRIVILEGE | NON-PRIVILEGED ACCESS FOR NONSECURITY FUNCTIONS
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Require that users of system accounts (or roles) with access to [Assignment: organizationdefined security functions or security-relevant information] use non-privileged accounts or
     roles, when accessing nonsecurity functions.
     Discussion: Requiring the use of non-privileged accounts when accessing nonsecurity
@@ -3396,8 +3241,6 @@ roles]:
     accounts and for domain accounts provided that they retain the ability to control system
     configurations for key parameters and as otherwise necessary to sufficiently mitigate risk.
     Related Controls: IA-2, MA-3, MA-4.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (6) LEAST PRIVILEGE | PRIVILEGED ACCESS BY NON-ORGANIZATIONAL USERS
     Prohibit privileged access to the system by non-organizational users.
     Discussion: An organizational user is an employee or an individual considered by the
@@ -3407,7 +3250,6 @@ roles]:
     and the relationship to the organization.
     Related Controls: AC-18, AC-19, IA-2, IA-8.
     (7) LEAST PRIVILEGE | REVIEW OF USER PRIVILEGES
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Review [Assignment: organization-defined frequency] the privileges assigned to
     [Assignment: organization-defined roles or classes of users] to validate the need for
     such privileges; and
@@ -3444,15 +3286,14 @@ roles]:
     checks, and administering cryptographic key management activities. Non-privileged users
     are individuals who do not possess appropriate authorizations. Privileged functions that
     require protection from non-privileged users include circumventing intrusion detection and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     prevention mechanisms or malicious code protection mechanisms. Preventing nonprivileged users from executing privileged functions is enforced by AC-3.
     Related Controls: None.
     References: None.
-    AC-7
+
+#### AC-7
+
     UNSUCCESSFUL LOGON ATTEMPTS
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Enforce a limit of [Assignment: organization-defined number] consecutive invalid logon
     attempts by a user during a [Assignment: organization-defined time period]; and
@@ -3495,8 +3336,6 @@ roles]:
     possesses local, non-removable or removable data storage; and includes a self-contained
     power source. Purging or wiping the device applies only to mobile devices for which the
     organization-defined number of unsuccessful logons occurs. The logon is to the mobile
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     device, not to any one account on the device. Successful logons to accounts on mobile
     devices reset the unsuccessful logon count to zero. Purging or wiping may be unnecessary if
     the information on the device is protected with sufficiently strong encryption mechanisms.
@@ -3507,7 +3346,6 @@ roles]:
     can be impacted by many factors, including matching performance and presentation attack
     detection mechanisms. Organizations select the appropriate number of attempts for users
     based on organizationally-defined factors.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: IA-3.
     (4) UNSUCCESSFUL LOGON ATTEMPTS | USE OF ALTERNATE AUTHENTICATION FACTOR
     (a) Allow the use of [Assignment: organization-defined authentication factors] that are
@@ -3520,7 +3358,9 @@ roles]:
     factors to bypass the lockout.
     Related Controls: IA-3.
     References: [SP 800-63-3], [SP 800-124].
-    AC-8
+
+#### AC-8
+
     SYSTEM USE NOTIFICATION
     Control:
     a.
@@ -3528,6 +3368,7 @@ roles]:
     users before granting access to the system that provides privacy and security notices
     consistent with applicable laws, executive orders, directives, regulations, policies, standards,
     and guidelines and state that:
+
 14. Users are accessing a U.S. Government system;
 15. System usage may be monitored, recorded, and subject to audit;
 16. Unauthorized use of the system is prohibited and subject to criminal and civil penalties;
@@ -3538,12 +3379,10 @@ roles]:
     conditions and take explicit actions to log on to or further access the system; and
     c.
     For publicly accessible systems:
-    CHAPTER THREE
 18. Display system use information [Assignment: organization-defined conditions], before
     granting further access to the publicly accessible system;
 19. Display references, if any, to monitoring, recording, or auditing that are consistent with
     privacy accommodations for such systems that generally prohibit those activities; and
-    NIST SP 800-53, REV. 5
 20. Include a description of the authorized uses of the system.
     Discussion: System use notifications can be implemented using messages or warning banners
     displayed before individuals log in to systems. System use notifications are used only for access
@@ -3555,11 +3394,12 @@ roles]:
     users. Organizations consult with the privacy office for input regarding privacy messaging and the
     Office of the General Counsel or organizational equivalent for legal review and approval of
     warning banner content.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-14, PL-4, SI-4.
     Control Enhancements: None.
     References: None.
-    AC-9
+
+#### AC-9
+
     PREVIOUS LOGON NOTIFICATION
     Control: Notify the user, upon successful logon to the system, of the date and time of the last
     logon.
@@ -3590,8 +3430,6 @@ roles]:
     Discussion: Information about changes to security-related account characteristics within a
     specified time period allows users to recognize if changes were made without their
     knowledge.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     (4) PREVIOUS LOGON NOTIFICATION | ADDITIONAL LOGON INFORMATION
     Notify the user, upon successful logon, of the following additional information:
@@ -3602,8 +3440,9 @@ roles]:
     logons occurred, notifications of local logons, or device identifiers.
     Related Controls: None.
     References: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    AC-10 CONCURRENT SESSION CONTROL
+
+#### AC-10 CONCURRENT SESSION CONTROL
+
     Control: Limit the number of concurrent sessions for each [Assignment: organization-defined
     account and/or account type] to [Assignment: organization-defined number].
     Discussion: Organizations may define the maximum number of concurrent sessions for system
@@ -3615,7 +3454,9 @@ roles]:
     Related Controls: SC-23.
     Control Enhancements: None.
     References: None.
-    AC-11 DEVICE LOCK
+
+#### AC-11 DEVICE LOCK
+
     Control:
     a.
     Prevent further access to the system by [Selection (one or more): initiating a device lock after
@@ -3637,18 +3478,17 @@ roles]:
     (1) DEVICE LOCK | PATTERN-HIDING DISPLAYS
     Conceal, via the device lock, information previously visible on the display with a publicly
     viewable image.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: The pattern-hiding display can include static or dynamic images, such as
     patterns used with screen savers, photographic images, solid colors, clock, battery life
     indicator, or a blank screen with the caveat that controlled unclassified information is not
     displayed.
     Related Controls: None.
     References: None.
-    AC-12 SESSION TERMINATION
+
+#### AC-12 SESSION TERMINATION
+
     Control: Automatically terminate a user session after [Assignment: organization-defined
     conditions or trigger events requiring session disconnect].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Session termination addresses the termination of user-initiated logical sessions (in
     contrast to SC-10, which addresses the termination of network connections associated with
     communications sessions (i.e., network disconnect)). A logical session (for local, network, and
@@ -3684,11 +3524,13 @@ roles]:
     parameters defined in the AC-12 base control.
     Related Controls: None.
     References: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    AC-13 SUPERVISION AND REVIEW — ACCESS CONTROL
+
+#### AC-13 SUPERVISION AND REVIEW — ACCESS CONTROL
+
     [Withdrawn: Incorporated into AC-2 and AU-6.]
-    AC-14 PERMITTED ACTIONS WITHOUT IDENTIFICATION OR AUTHENTICATION
+
+#### AC-14 PERMITTED ACTIONS WITHOUT IDENTIFICATION OR AUTHENTICATION
+
     Control:
     a.
     Identify [Assignment: organization-defined user actions] that can be performed on the
@@ -3697,7 +3539,6 @@ roles]:
     b.
     Document and provide supporting rationale in the security plan for the system, user actions
     not requiring identification or authentication.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Specific user actions may be permitted without identification or authentication if
     organizations determine that identification and authentication are not required for the specified
     user actions. Organizations may allow a limited number of user actions without identification or
@@ -3718,9 +3559,13 @@ roles]:
     (1) PERMITTED ACTIONS WITHOUT IDENTIFICATION OR AUTHENTICATION | NECESSARY USES
     [Withdrawn: Incorporated into AC-14.]
     References: None.
-    AC-15 AUTOMATED MARKING
+
+#### AC-15 AUTOMATED MARKING
+
     [Withdrawn: Incorporated into MP-3.]
-    AC-16 SECURITY AND PRIVACY ATTRIBUTES
+
+#### AC-16 SECURITY AND PRIVACY ATTRIBUTES
+
     Control:
     a.
     Provide the means to associate [Assignment: organization-defined types of security and
@@ -3732,8 +3577,6 @@ roles]:
     Establish the following permitted security and privacy attributes from the attributes defined
     in AC-16a for [Assignment: organization-defined systems]: [Assignment: organization-defined
     security and privacy attributes];
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     d.
     Determine the following permitted attribute values or ranges for each of the established
     attributes: [Assignment: organization-defined attribute values or ranges for established
@@ -3743,7 +3586,6 @@ roles]:
     f.
     Review [Assignment: organization-defined security and privacy attributes] for applicability
     [Assignment: organization-defined frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Information is represented internally within systems using abstractions known as
     data structures. Internal data structures can represent different types of entities, both active and
     passive. Active entities, also known as subjects, are typically associated with individuals, devices,
@@ -3784,8 +3626,6 @@ roles]:
     labeling is marking. Marking refers to the association of attributes with objects in a humanreadable form and displayed on system media. Marking enables manual, procedural, or processbased enforcement of information security and privacy policies. Security and privacy labels may
     have the same value as media markings (e.g., top secret, secret, confidential). See MP-3 (Media
     Marking).
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: AC-3, AC-4, AC-6, AC-21, AC-25, AU-2, AU-10, MP-3, PE-22, PT-2, PT-3, PT-4,
     SC-11, SC-16, SI-12, SI-18.
     Control Enhancements:
@@ -3793,7 +3633,6 @@ roles]:
     Dynamically associate security and privacy attributes with [Assignment: organizationdefined subjects and objects] in accordance with the following security and privacy policies
     as information is created and combined: [Assignment: organization-defined security and
     privacy policies].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Dynamic association of attributes is appropriate whenever the security or
     privacy characteristics of information change over time. Attributes may change due to
     information aggregation issues (i.e., characteristics of individual data elements are different
@@ -3833,8 +3672,6 @@ roles]:
     information with attributes based on defined policies, or ensuring that the combination of
     the security or privacy attributes selected is valid. Organizations consider the creation,
     deletion, or modification of attributes when defining auditable events.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     (5) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE DISPLAYS ON OBJECTS TO BE OUTPUT
     Display security and privacy attributes in human-readable form on each object that the
@@ -3845,7 +3682,6 @@ roles]:
     tablets. To mitigate the risk of unauthorized exposure of information (e.g., shoulder surfing),
     the outputs display full attribute values when unmasked by the subscriber.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (6) SECURITY AND PRIVACY ATTRIBUTES | MAINTENANCE OF ATTRIBUTE ASSOCIATION
     Require personnel to associate and maintain the association of [Assignment: organizationdefined security and privacy attributes] with [Assignment: organization-defined subjects
     and objects] in accordance with [Assignment: organization-defined security and privacy
@@ -3880,8 +3716,6 @@ roles]:
     mechanisms validated using [Assignment: organization-defined techniques or procedures].
     Discussion: A regrading mechanism is a trusted process authorized to re-classify and re-label
     data in accordance with a defined policy exception. Validated regrading mechanisms are
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     used by organizations to provide the requisite levels of assurance for attribute reassignment
     activities. The validation is facilitated by ensuring that regrading mechanisms are single
     purpose and of limited function. Since security and privacy attribute changes can directly
@@ -3892,14 +3726,15 @@ roles]:
     (10) SECURITY AND PRIVACY ATTRIBUTES | ATTRIBUTE CONFIGURATION BY AUTHORIZED INDIVIDUALS
     Provide authorized individuals the capability to define or change the type and value of
     security and privacy attributes available for association with subjects and objects.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: The content or assigned values of security and privacy attributes can directly
     affect the ability of individuals to access organizational information. Thus, it is important for
     systems to be able to limit the ability to create or modify the type and value of attributes
     available for association with subjects and objects to authorized individuals only.
     Related Controls: None.
     References: [OMB A-130], [FIPS 140-3], [FIPS 186-4], [SP 800-162], [SP 800-178].
-    AC-17 REMOTE ACCESS
+
+#### AC-17 REMOTE ACCESS
+
     Control:
     a.
     Establish and document usage restrictions, configuration/connection requirements, and
@@ -3929,8 +3764,6 @@ roles]:
     Discussion: Monitoring and control of remote access methods allows organizations to
     detect attacks and help ensure compliance with remote access policies by auditing the
     connection activities of remote users on a variety of system components, including servers,
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     notebook computers, workstations, smart phones, and tablets. Audit logging for remote
     access is enforced by AU-2. Audit events are defined in AU-2a.
     Related Controls: AU-2, AU-6, AU-12, AU-14.
@@ -3942,7 +3775,6 @@ roles]:
     protocol that provides end-to-end communications security over networks and is used for
     Internet communications and online transactions.
     Related Controls: SC-8, SC-12, SC-13.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (3) REMOTE ACCESS | MANAGED ACCESS CONTROL POINTS
     Route remote accesses through authorized and managed network access control points.
     Discussion: Organizations consider the Trusted Internet Connections (TIC) initiative [DHS
@@ -3975,8 +3807,6 @@ roles]:
     (8) REMOTE ACCESS | DISABLE NONSECURE NETWORK PROTOCOLS
     [Withdrawn: Incorporated into CM-7.]
     (9) REMOTE ACCESS | DISCONNECT OR DISABLE ACCESS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Provide the capability to disconnect or disable remote access to the system within
     [Assignment: organization-defined time period].
     Discussion: The speed of system disconnect or disablement varies based on the criticality of
@@ -3986,7 +3816,6 @@ roles]:
     (10) REMOTE ACCESS | AUTHENTICATE REMOTE COMMANDS
     Implement [Assignment: organization-defined mechanisms] to authenticate [Assignment:
     organization-defined remote commands].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Authenticating remote commands protects against unauthorized commands and
     the replay of authorized commands. The ability to authenticate remote commands is
     important for remote systems for which loss, malfunction, misdirection, or exploitation
@@ -3998,7 +3827,9 @@ roles]:
     be used, for example, to authenticate remote commands.
     Related Controls: SC-12, SC-13, SC-23.
     References: [SP 800-46], [SP 800-77], [SP 800-113], [SP 800-114], [SP 800-121], [IR 7966].
-    AC-18 WIRELESS ACCESS
+
+#### AC-18 WIRELESS ACCESS
+
     Control:
     a.
     Establish configuration requirements, connection requirements, and implementation
@@ -4023,8 +3854,6 @@ roles]:
     (3) WIRELESS ACCESS | DISABLE WIRELESS NETWORKING
     Disable, when not intended for use, wireless networking capabilities embedded within
     system components prior to issuance and deployment.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Wireless networking capabilities that are embedded within system components
     represent a significant potential vulnerability that can be exploited by adversaries. Disabling
     wireless capabilities when not needed for essential organizational missions or functions can
@@ -4036,7 +3865,6 @@ roles]:
     Discussion: Organizational authorizations to allow selected users to configure wireless
     networking capabilities are enforced, in part, by the access enforcement mechanisms
     employed within organizational systems.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: SC-7, SC-15.
     (5) WIRELESS ACCESS | ANTENNAS AND TRANSMISSION POWER LEVELS
     Select radio antennas and calibrate transmission power levels to reduce the probability
@@ -4053,7 +3881,9 @@ roles]:
     systems that may be operating in the area.
     Related Controls: PE-19.
     References: [SP 800-94], [SP 800-97].
-    AC-19 ACCESS CONTROL FOR MOBILE DEVICES
+
+#### AC-19 ACCESS CONTROL FOR MOBILE DEVICES
+
     Control:
     a.
     Establish configuration requirements, connection requirements, and implementation
@@ -4074,8 +3904,6 @@ roles]:
     control such devices when outside of controlled areas. Controlled areas are spaces for which
     organizations provide physical or procedural controls to meet the requirements established for
     protecting information and systems.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Due to the large variety of mobile devices with different characteristics and capabilities,
     organizational restrictions may vary for the different classes or types of such devices. Usage
     restrictions and specific implementation guidance for mobile devices include configuration
@@ -4083,7 +3911,6 @@ roles]:
     software, scanning devices for malicious code, updating virus protection software, scanning for
     critical software updates and patches, conducting primary operating system (and possibly other
     resident software) integrity checks, and disabling unnecessary hardware.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Usage restrictions and authorization to connect may vary among organizational systems. For
     example, the organization may authorize the connection of mobile devices to its network and
     impose a set of usage restrictions, while a system owner may withhold authorization for mobile
@@ -4122,8 +3949,6 @@ roles]:
     Discussion: None.
     Related Controls: CM-8, IR-4.
     (5) ACCESS CONTROL FOR MOBILE DEVICES | FULL DEVICE OR CONTAINER-BASED ENCRYPTION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Employ [Selection: full-device encryption; container-based encryption] to protect the
     confidentiality and integrity of information on [Assignment: organization-defined mobile
     devices].
@@ -4132,15 +3957,17 @@ roles]:
     such as files, records, or fields.
     Related Controls: SC-12, SC-13, SC-28.
     References: [SP 800-114], [SP 800-124].
-    AC-20 USE OF EXTERNAL SYSTEMS
+
+#### AC-20 USE OF EXTERNAL SYSTEMS
+
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     b.
     [Selection (one or more): Establish [Assignment: organization-defined terms and conditions];
     Identify [Assignment: organization-defined controls asserted to be implemented on external
     systems]], consistent with the trust relationships established with other organizations
     owning, operating, and/or maintaining external systems, allowing authorized individuals to:
+
 21. Access the system from external systems; and
 22. Process, store, or transmit organization-controlled information using external systems;
     or
@@ -4174,8 +4001,6 @@ roles]:
     of AC-20. Organizations establish specific terms and conditions for the use of external systems in
     accordance with organizational security policies and procedures. At a minimum, terms and
     conditions address the specific types of applications that can be accessed on organizational
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     systems from external systems and the highest security category of information that can be
     processed, stored, or transmitted on external systems. If the terms and conditions with the
     owners of the external systems cannot be established, organizations may impose restrictions on
@@ -4185,7 +4010,6 @@ roles]:
     (1) USE OF EXTERNAL SYSTEMS | LIMITS ON AUTHORIZED USE
     Permit authorized individuals to use an external system to access the system or to process,
     store, or transmit organization-controlled information only after:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Verification of the implementation of controls on the external system as specified in
     the organization’s security and privacy policies and security and privacy plans; or
     (b) Retention of approved system connection or processing agreements with the
@@ -4223,8 +4047,6 @@ roles]:
     investigations after an incident.
     Related Controls: None.
     (4) USE OF EXTERNAL SYSTEMS | NETWORK ACCESSIBLE STORAGE DEVICES — PROHIBITED USE
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Prohibit the use of [Assignment: organization-defined network accessible storage devices]
     in external systems.
     Discussion: Network-accessible storage devices in external systems include online storage
@@ -4236,10 +4058,11 @@ roles]:
     Discussion: Limits on the use of organization-controlled portable storage devices in external
     systems include a complete prohibition of the use of such devices. Prohibiting such use is
     enforced using technical methods and/or nontechnical (i.e., process-based) methods.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: MP-7, PL-4, PS-6, SC-41.
     References: [FIPS 199], [SP 800-171], [SP 800-172].
-    AC-21 INFORMATION SHARING
+
+#### AC-21 INFORMATION SHARING
+
     Control:
     a.
     Enable authorized users to determine whether access authorizations assigned to a sharing
@@ -4271,13 +4094,12 @@ roles]:
     organization-defined information sharing restrictions].
     Discussion: Information search and retrieval services identify information system resources
     relevant to an information need.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     References: [OMB A-130], [SP 800-150], [IR 8062].
-    AC-22 PUBLICLY ACCESSIBLE CONTENT
+
+#### AC-22 PUBLICLY ACCESSIBLE CONTENT
+
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Designate individuals authorized to make information publicly accessible;
     b.
@@ -4301,7 +4123,9 @@ roles]:
     Related Controls: AC-3, AT-2, AT-3, AU-13.
     Control Enhancements: None.
     References: [PRIVACT].
-    AC-23 DATA MINING PROTECTION
+
+#### AC-23 DATA MINING PROTECTION
+
     Control: Employ [Assignment: organization-defined data mining prevention and detection
     techniques] for [Assignment: organization-defined data storage objects] to detect and protect
     against unauthorized data mining.
@@ -4321,8 +4145,6 @@ roles]:
     occur. Data mining protection focuses on protecting information from data mining while such
     information resides in organizational data stores. In contrast, AU-13 focuses on monitoring for
     organizational information that may have been mined or otherwise obtained from data stores
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     and is available as open-source information residing on external sites, such as social networking
     or social media websites.
     [EO 13587] requires the establishment of an insider threat program for deterring, detecting, and
@@ -4333,9 +4155,10 @@ roles]:
     exfiltration.
     Related Controls: PM-12, PT-2.
     Control Enhancements: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     References: [EO 13587].
-    AC-24 ACCESS CONTROL DECISIONS
+
+#### AC-24 ACCESS CONTROL DECISIONS
+
     Control: [Selection: Establish procedures; Implement mechanisms] to ensure [Assignment:
     organization-defined access control decisions] are applied to each access request prior to access
     enforcement.
@@ -4369,8 +4192,6 @@ roles]:
     Discussion: In certain situations, it is important that access control decisions can be made
     without information regarding the identity of the users issuing the requests. These are
     generally instances where preserving individual privacy is of paramount importance. In other
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     situations, user identification information is simply not needed for access control decisions,
     and especially in the case of distributed systems, transmitting such information with the
     needed degree of assurance may be very expensive or difficult to accomplish. MAC, RBAC,
@@ -4378,8 +4199,9 @@ roles]:
     attribute.
     Related Controls: None.
     References: [SP 800-162], [SP 800-178].
-    AC-25 REFERENCE MONITOR
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### AC-25 REFERENCE MONITOR
+
     Control: Implement a reference monitor for [Assignment: organization-defined access control
     policies] that is tamperproof, always invoked, and small enough to be subject to analysis and
     testing, the completeness of which can be assured.
@@ -4403,18 +4225,20 @@ roles]:
     Related Controls: AC-3, AC-16, SA-8, SA-17, SC-3, SC-11, SC-39, SI-13.
     Control Enhancements: None.
     References: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.2 AWARENESS AND TRAINING
+
+### 3.2 AWARENESS AND TRAINING
+
     Quick link to Awareness and Training Summary Table
-    AT-1
+
+#### AT-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 23. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] awareness and training policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -4450,19 +4274,19 @@ roles]:
     Related Controls: PM-9, PS-8, SI-12.
     Control Enhancements: None.
     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    AT-2
+
+#### AT-2
+
     LITERACY TRAINING AND AWARENESS
     Control:
     a.
     Provide security and privacy literacy training to system users (including managers, senior
     executives, and contractors):
+
 27. As part of initial training for new users and [Assignment: organization-defined
     frequency] thereafter; and
 28. When required by system changes or following [Assignment: organization-defined
     events];
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     b.
     Employ the following techniques to increase the security and privacy awareness of system
     users [Assignment: organization-defined awareness techniques];
@@ -4503,8 +4327,6 @@ roles]:
     Related Controls: CA-2, CA-7, CP-4, IR-3.
     (2) LITERACY TRAINING AND AWARENESS | INSIDER THREAT
     Provide literacy training on recognizing and reporting potential indicators of insider threat.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Potential indicators and possible precursors of insider threat can include
     behaviors such as inordinate, long-term job dissatisfaction; attempts to gain access to
     information not required for job performance; unexplained access to financial resources;
@@ -4517,7 +4339,6 @@ roles]:
     focused on changes in the behavior of team members, while training for employees may be
     focused on more general observations.
     Related Controls: PM-12.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (3) LITERACY TRAINING AND AWARENESS | SOCIAL ENGINEERING AND MINING
     Provide literacy training on recognizing and reporting potential and actual instances of
     social engineering and social mining.
@@ -4554,8 +4375,6 @@ roles]:
     successful attacks is to provide specific literacy training for individuals. Threat literacy
     training includes educating individuals on the various ways that APTs can infiltrate the
     organization (e.g., through websites, emails, advertisement pop-ups, articles, and social
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     engineering). Effective training includes techniques for recognizing suspicious emails, use of
     removable systems in non-secure settings, and the potential targeting of individuals at
     home.
@@ -4566,15 +4385,17 @@ roles]:
     Discussion: Since threats continue to change over time, threat literacy training by the
     organization is dynamic. Moreover, threat literacy training is not performed in isolation from
     the system operations that support organizational mission and business functions.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: RA-3.
     References: [OMB A-130], [SP 800-50], [SP 800-160-2], [SP 800-181], [ODNI CTF].
-    AT-3
+
+#### AT-3
+
     ROLE-BASED TRAINING
     Control:
     a.
     Provide role-based security and privacy training to personnel with the following roles and
     responsibilities: [Assignment: organization-defined roles and responsibilities]:
+
 29. Before authorizing access to the system, information, or performing assigned duties,
     and [Assignment: organization-defined frequency] thereafter; and
 30. When required by system changes;
@@ -4606,8 +4427,6 @@ roles]:
     security and privacy programs. Role-based training also applies to contractors who provide
     services to federal agencies. Types of training include web-based and computer-based training,
     classroom-style training, and hands-on training (including micro-training). Updating role-based
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     training on a regular basis helps to ensure that the content remains relevant and effective.
     Events that may precipitate an update to role-based training content include, but are not limited
     to, assessment or audit findings, security incidents or breaches, or changes in applicable laws,
@@ -4616,7 +4435,6 @@ roles]:
     PS-7, PS-9, SA-3, SA-8, SA-11, SA-16, SR-5, SR-6, SR-11.
     Control Enhancements:
     (1) ROLE-BASED TRAINING | ENVIRONMENTAL CONTROLS
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Provide [Assignment: organization-defined personnel or roles] with initial and
     [Assignment: organization-defined frequency] training in the employment and operation
     of environmental controls.
@@ -4654,13 +4472,13 @@ roles]:
     and the risks, considerations, and obligations associated with its processing. Such training
     also considers the authority to process personally identifiable information documented in
     privacy policies and notices, system of records notices, computer matching agreements and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     notices, privacy impact assessments, [PRIVACT] statements, contracts, information sharing
     agreements, memoranda of understanding, and/or other documentation.
     Related Controls: PT-2, PT-3, PT-5, PT-6.
     References: [OMB A-130], [SP 800-50], [SP 800-181].
-    AT-4
+
+#### AT-4
+
     TRAINING RECORDS
     Control:
     a.
@@ -4668,17 +4486,20 @@ roles]:
     and privacy awareness training and specific role-based security and privacy training; and
     b.
     Retain individual training records for [Assignment: organization-defined time period].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Documentation for specialized training may be maintained by individual supervisors
     at the discretion of the organization. The National Archives and Records Administration provides
     guidance on records retention for federal agencies.
     Related Controls: AT-2, AT-3, CP-3, IR-2, PM-14, SI-12.
     Control Enhancements: None.
     References: [OMB A-130].
-    AT-5
+
+#### AT-5
+
     CONTACTS WITH SECURITY GROUPS AND ASSOCIATIONS
     [Withdrawn: Incorporated into PM-15.]
-    AT-6
+
+#### AT-6
+
     TRAINING FEEDBACK
     Control: Provide feedback on organizational training results to the following personnel
     [Assignment: organization-defined frequency]: [Assignment: organization-defined personnel].
@@ -4690,18 +4511,20 @@ roles]:
     Related Controls: None.
     Control Enhancements: None.
     References: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.3 AUDIT AND ACCOUNTABILITY
+
+### 3.3 AUDIT AND ACCOUNTABILITY
+
     Quick link to Audit and Accountability Summary Table
-    AU-1
+
+#### AU-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 31. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] audit and accountability policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -4738,12 +4561,11 @@ roles]:
     Related Controls: PM-9, PS-8, SI-12.
     Control Enhancements: None.
     References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    AU-2
+
+#### AU-2
+
     EVENT LOGGING
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Identify the types of events that the system is capable of logging in support of the audit
     function: [Assignment: organization-defined event types that the system is capable of
@@ -4791,8 +4613,6 @@ roles]:
     distributed, transaction-based processes and the actions that occur in service-oriented
     architectures.
     Related Controls: AC-2, AC-3, AC-6, AC-7, AC-8, AC-16, AC-17, AU-3, AU-4, AU-5, AU-6, AU-7, AU11, AU-12, CM-3, CM-5, CM-6, CM-13, IA-3, MA-4, MP-4, PE-3, PM-21, PT-2, PT-7, RA-8, SA-8, SC7, SC-18, SI-3, SI-4, SI-7, SI-10, SI-11.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Control Enhancements:
     (1) EVENT LOGGING | COMPILATION OF AUDIT RECORDS FROM MULTIPLE SOURCES
     [Withdrawn: Incorporated into AU-12.]
@@ -4802,9 +4622,10 @@ roles]:
     [Withdrawn: Incorporated into AU-2.]
     (4) EVENT LOGGING | PRIVILEGED FUNCTIONS
     [Withdrawn: Incorporated into AC-6(9).]
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     References: [OMB A-130], [SP 800-92].
-    AU-3
+
+#### AU-3
+
     CONTENT OF AUDIT RECORDS
     Control: Ensure that audit records contain information that establishes the following:
     a.
@@ -4842,8 +4663,6 @@ roles]:
     by not including information in audit records that could potentially be misleading, make it
     more difficult to locate information of interest, or increase the risk to individuals' privacy.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (2) CONTENT OF AUDIT RECORDS | CENTRALIZED MANAGEMENT OF PLANNED AUDIT RECORD CONTENT
     [Withdrawn: Incorporated into PL-9.]
     (3) CONTENT OF AUDIT RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
@@ -4854,9 +4673,10 @@ roles]:
     information is not needed for operational purposes helps reduce the level of privacy risk
     created by a system.
     Related Controls: RA-3.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     References: [OMB A-130], [IR 8062].
-    AU-4
+
+#### AU-4
+
     AUDIT LOG STORAGE CAPACITY
     Control: Allocate audit log storage capacity to accommodate [Assignment: organization-defined
     audit log retention requirements].
@@ -4880,7 +4700,9 @@ roles]:
     preserving the confidentiality, integrity, and availability of audit records and logs.
     Related Controls: None.
     References: None.
-    AU-5
+
+#### AU-5
+
     RESPONSE TO AUDIT LOGGING PROCESS FAILURES
     Control:
     a.
@@ -4890,8 +4712,6 @@ roles]:
     Take the following additional actions: [Assignment: organization-defined additional actions].
     Discussion: Audit logging process failures include software and hardware errors, failures in audit
     log capturing mechanisms, and reaching or exceeding audit log storage capacity. Organizationdefined actions include overwriting oldest audit records, shutting down the system, and stopping
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     the generation of audit records. Organizations may choose to define additional actions for audit
     logging process failures based on the type of failure, the location of the failure, the severity of
     the failure, or a combination of such factors. When the audit logging process failure is related to
@@ -4903,7 +4723,6 @@ roles]:
     Related Controls: AU-2, AU-4, AU-7, AU-9, AU-11, AU-12, AU-14, SI-4, SI-12.
     Control Enhancements:
     (1) RESPONSE TO AUDIT LOGGING PROCESS FAILURES | STORAGE CAPACITY WARNING
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Provide a warning to [Assignment: organization-defined personnel, roles, and/or locations]
     within [Assignment: organization-defined time period] when allocated audit log storage
     volume reaches [Assignment: organization-defined percentage] of repository maximum
@@ -4940,8 +4759,6 @@ roles]:
     automatic system shutdowns or degraded operations. Because of the importance of
     ensuring mission and business continuity, organizations may determine that the nature of
     the audit logging failure is not so severe that it warrants a complete shutdown of the system
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     supporting the core organizational mission and business functions. In those instances, partial
     system shutdowns or operating in a degraded mode with reduced capability may be viable
     alternatives.
@@ -4950,14 +4767,15 @@ roles]:
     Provide an alternate audit logging capability in the event of a failure in primary audit
     logging capability that implements [Assignment: organization-defined alternate audit
     logging functionality].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Since an alternate audit logging capability may be a short-term protection
     solution employed until the failure in the primary audit logging capability is corrected,
     organizations may determine that the alternate audit logging capability need only provide a
     subset of the primary audit logging functionality that is impacted by the failure.
     Related Controls: AU-9.
     References: None.
-    AU-6
+
+#### AU-6
+
     AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING
     Control:
     a.
@@ -4991,8 +4809,6 @@ roles]:
     Discussion: Organizational processes that benefit from integrated audit record review,
     analysis, and reporting include incident response, continuous monitoring, contingency
     planning, investigation and response to suspicious activities, and Inspector General audits.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: PM-7.
     (2) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUTOMATED SECURITY ALERTS
     [Withdrawn: Incorporated into SI-4.]
@@ -5003,7 +4819,6 @@ roles]:
     levels of risk management (i.e., organizational level, mission/business process level, and
     information system level) and supports cross-organization awareness.
     Related Controls: AU-12, IR-4.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (4) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | CENTRAL REVIEW AND ANALYSIS
     Provide and implement the capability to centrally review and analyze audit records from
     multiple components within the system.
@@ -5040,8 +4855,6 @@ roles]:
     certain systems with the additional physical security information that the individual was
     present at the facility when the logical access occurred may be useful in investigations.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (7) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | PERMITTED ACTIONS
     Specify the permitted actions for each [Selection (one or more): system process; role; user]
     associated with the review, analysis, and reporting of audit record information.
@@ -5053,7 +4866,6 @@ roles]:
     Related Controls: None.
     (8) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | FULL TEXT ANALYSIS OF PRIVILEGED
     COMMANDS
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Perform a full text analysis of logged privileged commands in a physically distinct
     component or subsystem of the system, or other system that is dedicated to that analysis.
     Discussion: Full text analysis of privileged commands requires a distinct environment for the
@@ -5081,7 +4893,9 @@ roles]:
     (10) AUDIT RECORD REVIEW, ANALYSIS, AND REPORTING | AUDIT LEVEL ADJUSTMENT
     [Withdrawn: Incorporated into AU-6.]
     References: [SP 800-86], [SP 800-101].
-    AU-7
+
+#### AU-7
+
     AUDIT RECORD REDUCTION AND REPORT GENERATION
     Control: Provide and implement an audit record reduction and report generation capability that:
     a.
@@ -5090,8 +4904,6 @@ roles]:
     Does not alter the original content or time ordering of audit records.
     Discussion: Audit record reduction is a process that manipulates collected audit log information
     and organizes it into a summary format that is more meaningful to analysts. Audit record
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     reduction and report generation capabilities do not always emanate from the same system or
     from the same organizational entities that conduct audit logging activities. The audit record
     reduction capability includes modern data mining techniques with advanced data filters to
@@ -5101,7 +4913,6 @@ roles]:
     Related Controls: AC-2, AU-2, AU-3, AU-4, AU-5, AU-6, AU-12, AU-16, CM-5, IA-5, IR-4, PM-12, SI4.
     Control Enhancements:
     (1) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC PROCESSING
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Provide and implement the capability to process, sort, and search audit records for events
     of interest based on the following content: [Assignment: organization-defined fields within
     audit records].
@@ -5115,7 +4926,9 @@ roles]:
     (2) AUDIT RECORD REDUCTION AND REPORT GENERATION | AUTOMATIC SORT AND SEARCH
     [Withdrawn: Incorporated into AU-7(1).]
     References: None.
-    AU-8
+
+#### AU-8
+
     TIME STAMPS
     Control:
     a.
@@ -5138,11 +4951,11 @@ roles]:
     (1) TIME STAMPS | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
     [Withdrawn: Moved to SC-45(1).]
     (2) TIME STAMPS | SECONDARY AUTHORITATIVE TIME SOURCE
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     [Withdrawn: Moved to SC-45(2).]
     References: None.
-    AU-9
+
+#### AU-9
+
     PROTECTION OF AUDIT INFORMATION
     Control:
     a.
@@ -5151,7 +4964,6 @@ roles]:
     b.
     Alert [Assignment: organization-defined personnel or roles] upon detection of unauthorized
     access, modification, or deletion of audit information.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Audit information includes all information needed to successfully audit system
     activity, such as audit records, audit log settings, audit reports, and personally identifiable
     information. Audit logging tools are those programs and devices used to conduct system audit
@@ -5186,8 +4998,6 @@ roles]:
     long-term storage of audit records.
     Related Controls: AU-4, AU-5.
     (3) PROTECTION OF AUDIT INFORMATION | CRYPTOGRAPHIC PROTECTION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Implement cryptographic mechanisms to protect the integrity of audit information and
     audit tools.
     Discussion: Cryptographic mechanisms used for protecting the integrity of audit information
@@ -5198,7 +5008,6 @@ roles]:
     (4) PROTECTION OF AUDIT INFORMATION | ACCESS BY SUBSET OF PRIVILEGED USERS
     Authorize access to management of audit logging functionality to only [Assignment:
     organization-defined subset of privileged users or roles].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Individuals or roles with privileged access to a system and who are also the
     subject of an audit by that system may affect the reliability of the audit information by
     inhibiting audit activities or modifying audit records. Requiring privileged access to be
@@ -5231,12 +5040,11 @@ roles]:
     compromise of the audit records.
     Related controls: AU-4, AU-5, AU-11, SC-29.
     References: [FIPS 140-3], [FIPS 180-4], [FIPS 202].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    AU-10 NON-REPUDIATION
+
+#### AU-10 NON-REPUDIATION
+
     Control: Provide irrefutable evidence that an individual (or process acting on behalf of an
     individual) has performed [Assignment: organization-defined actions to be covered by nonrepudiation].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Types of individual actions covered by non-repudiation include creating information,
     sending and receiving messages, and approving information. Non-repudiation protects against
     claims by authors of not having authored certain documents, senders of not having transmitted
@@ -5277,8 +5085,6 @@ roles]:
     separate from the release or transfer function, the system associates the identity of the
     reviewer of the information to be released with the information and the information label.
     In the case of human reviews, maintaining the credentials of reviewers or releasers provides
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     the organization with the means to identify who reviewed and released the information. In
     the case of automated reviews, it ensures that only approved review functions are used.
     Related Controls: AC-4, AC-16.
@@ -5287,7 +5093,6 @@ roles]:
     transfer or release points prior to release or transfer between [Assignment:
     organization-defined security domains]; and
     (b) Perform [Assignment: organization-defined actions] in the event of a validation error.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Validating the binding of the information reviewer identity to the information at
     transfer or release points prevents the unauthorized modification of information between
     review and the transfer or release. The validation of bindings can be achieved by using
@@ -5297,7 +5102,9 @@ roles]:
     (5) NON-REPUDIATION | DIGITAL SIGNATURES
     [Withdrawn: Incorporated into SI-7.]
     References: [FIPS 140-3], [FIPS 180-4], [FIPS 186-4], [FIPS 202], [SP 800-177].
-    AU-11 AUDIT RECORD RETENTION
+
+#### AU-11 AUDIT RECORD RETENTION
+
     Control: Retain audit records for [Assignment: organization-defined time period consistent with
     records retention policy] to provide support for after-the-fact investigations of incidents and to
     meet regulatory and organizational information retention requirements.
@@ -5320,10 +5127,10 @@ roles]:
     interpret the records.
     Related Controls: None.
     References: [OMB A-130].
-    AU-12 AUDIT RECORD GENERATION
+
+#### AU-12 AUDIT RECORD GENERATION
+
     Control:
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     a.
     Provide audit record generation capability for the event types the system is capable of
     auditing as defined in AU-2a on [Assignment: organization-defined system components];
@@ -5336,7 +5143,6 @@ roles]:
     Discussion: Audit records can be generated from many different system components. The event
     types specified in AU-2d are the event types for which audit logs are to be generated and are a
     subset of all event types for which the system can generate audit records.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-6, AC-17, AU-2, AU-3, AU-4, AU-5, AU-6, AU-7, AU-14, CM-5, MA-4, MP-4,
     PM-12, SA-8, SC-18, SI-3, SI-4, SI-7, SI-10.
     Control Enhancements:
@@ -5372,8 +5178,6 @@ roles]:
     can establish time thresholds in which logging actions are changed (e.g., near real-time,
     within minutes, or within hours).
     Related Controls: AC-3.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (4) AUDIT RECORD GENERATION | QUERY PARAMETER AUDITS OF PERSONALLY IDENTIFIABLE
     INFORMATION
     Provide and implement the capability for auditing the parameters of user query events for
@@ -5385,8 +5189,9 @@ roles]:
     personnel.
     Related Controls: None.
     References: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    AU-13 MONITORING FOR INFORMATION DISCLOSURE
+
+#### AU-13 MONITORING FOR INFORMATION DISCLOSURE
+
     Control:
     a.
     Monitor [Assignment: organization-defined open-source information and/or information
@@ -5394,6 +5199,7 @@ roles]:
     of organizational information; and
     b.
     If an information disclosure is discovered:
+
 35. Notify [Assignment: organization-defined personnel or roles]; and
 36. Take the following additional actions: [Assignment: organization-defined additional
     actions].
@@ -5419,8 +5225,6 @@ roles]:
     information.
     Related Controls: None.
     (3) MONITORING FOR INFORMATION DISCLOSURE | UNAUTHORIZED REPLICATION OF INFORMATION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Employ discovery techniques, processes, and tools to determine if external entities are
     replicating organizational information in an unauthorized manner.
     Discussion: The unauthorized use or replication of organizational information by external
@@ -5432,9 +5236,10 @@ roles]:
     include scanning external websites, monitoring social media, and training staff to recognize
     the unauthorized use of organizational information.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     References: None.
-    AU-14 SESSION AUDIT
+
+#### AU-14 SESSION AUDIT
+
     Control:
     a.
     Provide and implement the capability for [Assignment: organization-defined users or roles]
@@ -5467,17 +5272,18 @@ roles]:
     Provide and implement the capability for authorized users to remotely view and hear
     content related to an established user session in real time.
     Discussion: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: AC-17.
     References: None.
-    AU-15 ALTERNATE AUDIT LOGGING CAPABILITY
+
+#### AU-15 ALTERNATE AUDIT LOGGING CAPABILITY
+
     [Withdrawn: Moved to AU-5(5).]
-    AU-16 CROSS-ORGANIZATIONAL AUDIT LOGGING
+
+#### AU-16 CROSS-ORGANIZATIONAL AUDIT LOGGING
+
     Control: Employ [Assignment: organization-defined methods] for coordinating [Assignment:
     organization-defined audit information] among external organizations when audit information is
     transmitted across organizational boundaries.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: When organizations use systems or services of external organizations, the audit
     logging capability necessitates a coordinated, cross-organization approach. For example,
     maintaining the identity of individuals who request specific services across organizational
@@ -5514,23 +5320,22 @@ roles]:
     These risks could be further amplified when transmitting information across organizational
     boundaries. Implementing privacy-enhancing cryptographic techniques can disassociate
     individuals from audit information and reduce privacy risk while maintaining accountability.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     References: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.4 ASSESSMENT, AUTHORIZATION, AND MONITORING
+
+### 3.4 ASSESSMENT, AUTHORIZATION, AND MONITORING
+
     Quick link to Assessment, Authorization, and Monitoring Summary Table
-    CA-1
+
+#### CA-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 37. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] assessment, authorization, and monitoring policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -5566,11 +5371,11 @@ roles]:
     guidelines. Simply restating controls does not constitute an organizational policy or procedure.
     Related Controls: PM-9, PS-8, SI-12.
     Control Enhancements: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-53A], [SP
     800-100], [SP 800-137], [SP 800-137A], [IR 8062].
-    CA-2
+
+#### CA-2
+
     CONTROL ASSESSMENTS
     Control:
     a.
@@ -5578,7 +5383,7 @@ roles]:
     conducted;
     b.
     Develop a control assessment plan that describes the scope of the assessment including:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
 41. Controls and control enhancements under assessment;
 42. Assessment procedures to be used to determine control effectiveness; and
 43. Assessment environment, assessment team, and assessment roles and responsibilities;
@@ -5621,8 +5426,6 @@ roles]:
     system, a coordinated approach can reduce redundancies and associated costs.
     Organizations can use other types of assessment activities, such as vulnerability scanning and
     system monitoring, to maintain the security and privacy posture of systems during the system
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     life cycle. Assessment reports document assessment results in sufficient detail, as deemed
     necessary by organizations, to determine the accuracy and completeness of the reports and
     whether the controls are implemented correctly, operating as intended, and producing the
@@ -5631,7 +5434,6 @@ roles]:
     assessments conducted in support of authorization decisions are provided to authorizing
     officials, senior agency officials for privacy, senior agency information security officers, and
     authorizing official designated representatives.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     To satisfy annual assessment requirements, organizations can use assessment results from the
     following sources: initial or ongoing system authorizations, continuous monitoring, systems
     engineering processes, or system development life cycle activities. Organizations ensure that
@@ -5671,8 +5473,6 @@ roles]:
     processes can be achieved by ensuring that assessment results are carefully reviewed and
     analyzed by independent teams of experts to validate the completeness, accuracy, integrity,
     and reliability of the results. Assessments performed for purposes other than to support
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     authorization decisions are more likely to be useable for such decisions when performed by
     assessors with sufficient independence, thereby reducing the need to repeat assessments.
     Related Controls: None.
@@ -5682,7 +5482,6 @@ roles]:
     security instrumentation; automated security test cases; vulnerability scanning; malicious
     user testing; insider threat assessment; performance and load testing; data leakage or
     data loss assessment; [Assignment: organization-defined other forms of assessment]].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Organizations can conduct specialized assessments, including verification and
     validation, system monitoring, insider threat assessments, malicious user testing, and other
     forms of testing. These assessments can improve readiness by exercising organizational
@@ -5714,15 +5513,15 @@ roles]:
     Related Controls: SA-4.
     References: [OMB A-130], [FIPS 199], [SP 800-18], [SP 800-37], [SP 800-39], [SP 800-53A], [SP
     800-115], [SP 800-137], [IR 8011-1], [IR 8062].
-    CA-3
+
+#### CA-3
+
     INFORMATION EXCHANGE
     Control:
     a.
-    CHAPTER THREE
     Approve and manage the exchange of information between the system and other systems
     using [Selection (one or more): interconnection security agreements; information exchange
     security agreements; memoranda of understanding or agreement; service level agreements;
-    NIST SP 800-53, REV. 5
     user agreements; nondisclosure agreements; [Assignment: organization-defined type of
     agreement]];
     b.
@@ -5731,7 +5530,6 @@ roles]:
     the information communicated; and
     c.
     Review and update the agreements [Assignment: organization-defined frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: System information exchange requirements apply to information exchanges
     between two or more systems. System information exchanges include connections via leased
     lines or virtual private networks, connections to internet service providers, database sharing or
@@ -5771,8 +5569,6 @@ roles]:
     (4) SYSTEM CONNECTIONS | CONNECTIONS TO PUBLIC NETWORKS
     [Withdrawn: Moved to SC-7(28).]
     (5) SYSTEM CONNECTIONS | RESTRICTIONS ON EXTERNAL SYSTEM CONNECTIONS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     [Withdrawn: Moved to SC-7(5).]
     (6) INFORMATION EXCHANGE | TRANSFER AUTHORIZATIONS
     Verify that individuals or systems transferring data between interconnecting systems have
@@ -5784,7 +5580,6 @@ roles]:
     Verification of the authorization to transfer information also applies to control plane traffic
     (e.g., routing and DNS) and services (e.g., authenticated SMTP relays).
     Related Controls: AC-2, AC-3, AC-4.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (7) INFORMATION EXCHANGE |TRANSITIVE INFORMATION EXCHANGES
     (a) Identify transitive (downstream) information exchanges with other systems through
     the systems identified in CA-3a; and
@@ -5803,10 +5598,14 @@ roles]:
     impacts.
     Related Controls: SC-7.
     References: [OMB A-130], [FIPS 199], [SP 800-47].
-    CA-4
+
+#### CA-4
+
     SECURITY CERTIFICATION
     [Withdrawn: Incorporated into CA-2.]
-    CA-5
+
+#### CA-5
+
     PLAN OF ACTION AND MILESTONES
     Control:
     a.
@@ -5822,8 +5621,6 @@ roles]:
     planned remedial actions. Plans of action and milestones are required in authorization packages
     and subject to federal reporting requirements established by OMB.
     Related Controls: CA-2, CA-7, PM-4, PM-9, RA-7, SI-2, SI-12.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Control Enhancements:
     (1) PLAN OF ACTION AND MILESTONES | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
     Ensure the accuracy, currency, and availability of the plan of action and milestones for the
@@ -5835,9 +5632,10 @@ roles]:
     that appropriate resources are directed at the most critical system vulnerabilities in a timely
     manner.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     References: [OMB A-130], [SP 800-37].
-    CA-6
+
+#### CA-6
+
     AUTHORIZATION
     Control:
     a.
@@ -5847,6 +5645,7 @@ roles]:
     inheritance by organizational systems;
     c.
     Ensure that the authorizing official for the system, before commencing operations:
+
 44. Accepts the use of common controls inherited by the system; and
 45. Authorizes the system to operate;
     d.
@@ -5875,8 +5674,6 @@ roles]:
     and operating environments. To reduce the cost of reauthorization, authorizing officials can
     leverage the results of continuous monitoring processes to the maximum extent possible as the
     basis for rendering reauthorization decisions.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: CA-2, CA-3, CA-7, PM-9, PM-10, RA-3, SA-10, SI-12.
     Control Enhancements:
     (1) AUTHORIZATION | JOINT AUTHORIZATION — INTRA-ORGANIZATION
@@ -5888,7 +5685,6 @@ roles]:
     authorization as applied to the system authorization process. The intra-organization joint
     authorization process is most relevant for connected systems, shared systems, and systems
     with multiple information owners.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-6.
     (2) AUTHORIZATION | JOINT AUTHORIZATION — INTER-ORGANIZATION
     Employ a joint authorization process for the system that includes multiple authorizing
@@ -5907,7 +5703,9 @@ roles]:
     system undergoing authorization.
     Related Controls: AC-6.
     References: [OMB A-130], [SP 800-37], [SP 800-137].
-    CA-7
+
+#### CA-7
+
     CONTINUOUS MONITORING
     Control: Develop a system-level continuous monitoring strategy and implement continuous
     monitoring in accordance with the organization-level continuous monitoring strategy that
@@ -5927,11 +5725,8 @@ roles]:
     f.
     Response actions to address results of the analysis of control assessment and monitoring
     information; and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     g.
     Reporting the security and privacy status of the system to [Assignment: organizationdefined personnel or roles] [Assignment: organization-defined frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Continuous monitoring at the system level facilitates ongoing awareness of the
     system security and privacy posture to support organizational risk management decisions. The
     terms “continuous” and “ongoing” imply that organizations assess and monitor their controls
@@ -5974,8 +5769,6 @@ roles]:
     Employ trend analyses to determine if control implementations, the frequency of
     continuous monitoring activities, and the types of activities used in the continuous
     monitoring process need to be modified based on empirical data.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Trend analyses include examining recent threat information that addresses the
     types of threat events that have occurred in the organization or the Federal Government,
     success rates of certain types of attacks, emerging vulnerabilities in technologies, evolving
@@ -5985,7 +5778,6 @@ roles]:
     (4) CONTINUOUS MONITORING | RISK MONITORING
     Ensure risk monitoring is an integral part of the continuous monitoring strategy that
     includes the following:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a)
     Effectiveness monitoring;
     (b)
@@ -6024,13 +5816,12 @@ roles]:
     Related Controls: None.
     References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-53A], [SP 800-115],[SP 800-137], [IR
     8011-1], [IR 8062].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    CA-8
+
+#### CA-8
+
     PENETRATION TESTING
     Control: Conduct penetration testing [Assignment: organization-defined frequency] on
     [Assignment: organization-defined systems or system components].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Penetration testing is a specialized type of assessment conducted on systems or
     individual system components to identify vulnerabilities that could be exploited by adversaries.
     Penetration testing goes beyond automated vulnerability scanning and is conducted by agents
@@ -6076,8 +5867,6 @@ roles]:
     the security and privacy posture of organizations and the capability to implement effective
     cyber defenses. Red team exercises simulate attempts by adversaries to compromise
     mission and business functions and provide a comprehensive assessment of the security and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     privacy posture of systems and organizations. Such attempts may include technology-based
     attacks and social engineering-based attacks. Technology-based attacks include interactions
     with hardware, software, or firmware components and/or mission and business processes.
@@ -6090,7 +5879,6 @@ roles]:
     exercises can be used by organizations to improve security and privacy awareness and
     training and to assess control effectiveness.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (3) PENETRATION TESTING | FACILITY PENETRATION TESTING
     Employ a penetration testing process that includes [Assignment: organization-defined
     frequency] [Selection: announced; unannounced] attempts to bypass or circumvent
@@ -6101,7 +5889,9 @@ roles]:
     protect organizational systems.
     Related Controls: CA-2, PE-3.
     References: None.
-    CA-9
+
+#### CA-9
+
     INTERNAL SYSTEM CONNECTIONS
     Control:
     a.
@@ -6129,27 +5919,26 @@ roles]:
     organizational missions or business functions.
     Related Controls: AC-3, AC-4, AC-18, AC-19, CM-2, IA-3, SC-7, SI-12.
     Control Enhancements:
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (1) INTERNAL SYSTEM CONNECTIONS | COMPLIANCE CHECKS
     Perform security and privacy compliance checks on constituent system components prior
     to the establishment of the internal connection.
     Discussion: Compliance checks include verification of the relevant baseline configuration.
     Related Controls: CM-6.
     References: [SP 800-124], [IR 8023].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.5 CONFIGURATION MANAGEMENT
+
+### 3.5 CONFIGURATION MANAGEMENT
+
     Quick link to Configuration Management Summary Table
-    CM-1
+
+#### CM-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 46. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] configuration management policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -6186,9 +5975,9 @@ roles]:
     Related Controls: PM-9, PS-8, SA-8, SI-12.
     Control Enhancements: None.
     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    CM-2
+
+#### CM-2
+
     BASELINE CONFIGURATION
     Control:
     a.
@@ -6196,10 +5985,10 @@ roles]:
     configuration of the system; and
     b.
     Review and update the baseline configuration of the system:
+
 50. [Assignment: organization-defined frequency];
 51. When required due to [Assignment: organization-defined circumstances]; and
 52. When system components are installed or upgraded.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Baseline configurations for systems and system components include connectivity,
     operational, and communications aspects of systems. Baseline configurations are documented,
     formally reviewed, and agreed-upon specifications for systems or configuration items within
@@ -6236,15 +6025,12 @@ roles]:
     associated documentation.
     Related Controls: None.
     (4) BASELINE CONFIGURATION | UNAUTHORIZED SOFTWARE
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     [Withdrawn: Incorporated into CM-7(4).]
     (5) BASELINE CONFIGURATION | AUTHORIZED SOFTWARE
     [Withdrawn: Incorporated into CM-7(5).]
     (6) BASELINE CONFIGURATION | DEVELOPMENT AND TEST ENVIRONMENTS
     Maintain a baseline configuration for system development and test environments that is
     managed separately from the operational baseline configuration.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Establishing separate baseline configurations for development, testing, and
     operational environments protects systems from unplanned or unexpected events related to
     development and testing activities. Separate baseline configurations allow organizations to
@@ -6276,7 +6062,9 @@ roles]:
     the MP (Media Protection) family.
     Related Controls: MP-4, MP-5.
     References: [SP 800-124], [SP 800-128].
-    CM-3
+
+#### CM-3
+
     CONFIGURATION CHANGE CONTROL
     Control:
     a.
@@ -6288,8 +6076,6 @@ roles]:
     Document configuration change decisions associated with the system;
     d.
     Implement approved configuration-controlled changes to the system;
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     e.
     Retain records of configuration-controlled changes to the system for [Assignment:
     organization-defined time period];
@@ -6301,7 +6087,6 @@ roles]:
     [Assignment: organization-defined configuration change control element] that convenes
     [Selection (one or more): [Assignment: organization-defined frequency]; when [Assignment:
     organization-defined configuration change conditions]].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Configuration change control for organizational systems involves the systematic
     proposal, justification, implementation, testing, review, and disposition of system changes,
     including system upgrades and modifications. Configuration change control includes changes to
@@ -6340,8 +6125,6 @@ roles]:
     functions. Individuals or groups conducting tests understand security and privacy policies
     and procedures, system security and privacy policies and procedures, and the health, safety,
     and environmental risks associated with specific facilities or processes. Operational systems
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     may need to be taken offline, or replicated to the extent feasible, before testing can be
     conducted. If systems must be taken offline for testing, the tests are scheduled to occur
     during planned system outages whenever possible. If the testing cannot be conducted on
@@ -6350,7 +6133,6 @@ roles]:
     (3) CONFIGURATION CHANGE CONTROL | AUTOMATED CHANGE IMPLEMENTATION
     Implement changes to the current system baseline and deploy the updated baseline across
     the installed base using [Assignment: organization-defined automated mechanisms].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Automated tools can improve the accuracy, consistency, and availability of
     configuration baseline information. Automation can also provide data aggregation and data
     correlation capabilities, alerting mechanisms, and dashboards to support risk-based
@@ -6387,8 +6169,6 @@ roles]:
     process is implemented to address the expiration of those certificates.
     Related Controls: SC-12.
     (7) CONFIGURATION CHANGE CONTROL | REVIEW SYSTEM CHANGES
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Review changes to the system [Assignment: organization-defined frequency] or when
     [Assignment: organization-defined circumstances] to determine whether unauthorized
     changes have occurred.
@@ -6399,12 +6179,13 @@ roles]:
     (8) CONFIGURATION CHANGE CONTROL | PREVENT OR RESTRICT CONFIGURATION CHANGES
     Prevent or restrict changes to the configuration of the system under the following
     circumstances: [Assignment: organization-defined circumstances].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: System configuration changes can adversely affect critical system security and
     privacy functionality. Change restrictions can be enforced through automated mechanisms.
     Related Controls: None.
     References: [SP 800-124], [SP 800-128], [IR 8062].
-    CM-4
+
+#### CM-4
+
     IMPACT ANALYSES
     Control: Analyze changes to the system to determine potential security and privacy impacts
     prior to change implementation.
@@ -6434,8 +6215,6 @@ roles]:
     determine the strength of mechanism required when implementing logical separation.
     Related Controls: SA-11, SC-7.
     (2) IMPACT ANALYSES | VERIFICATION OF CONTROLS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     After system changes, verify that the impacted controls are implemented correctly,
     operating as intended, and producing the desired outcome with regard to meeting the
     security and privacy requirements for the system.
@@ -6443,11 +6222,12 @@ roles]:
     operational system that may have an impact on security or privacy controls.
     Related Controls: SA-11, SC-3, SI-6.
     References: [SP 800-128].
-    CM-5
+
+#### CM-5
+
     ACCESS RESTRICTIONS FOR CHANGE
     Control: Define, document, approve, and enforce physical and logical access restrictions
     associated with changes to the system.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Changes to the hardware, software, or firmware components of systems or the
     operational procedures related to the system can potentially have significant effects on the
     security of the systems or individuals’ privacy. Therefore, organizations permit only qualified and
@@ -6480,8 +6260,6 @@ roles]:
     authorization duties to other individuals. System-level information includes operational
     procedures.
     Related Controls: AC-2, AC-5, CM-3.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (5) ACCESS RESTRICTIONS FOR CHANGE | PRIVILEGE LIMITATION FOR PRODUCTION AND OPERATION
     (a) Limit privileges to change system components and system-related information within
     a production or operational environment; and
@@ -6493,7 +6271,6 @@ roles]:
     mission/business processes are, in some cases, unknown to developers. System-related
     information includes operational procedures.
     Related Controls: AC-2.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (6) ACCESS RESTRICTIONS FOR CHANGE | LIMIT LIBRARY PRIVILEGES
     Limit privileges to change software resident within software libraries.
     Discussion: Software libraries include privileged programs.
@@ -6501,7 +6278,9 @@ roles]:
     (7) ACCESS RESTRICTIONS FOR CHANGE | AUTOMATIC IMPLEMENTATION OF SECURITY SAFEGUARDS
     [Withdrawn: Incorporated into SI-7.]
     References: [FIPS 140-3]; [FIPS 186-4].
-    CM-6
+
+#### CM-6
+
     CONFIGURATION SETTINGS
     Control:
     a.
@@ -6531,8 +6310,6 @@ roles]:
     Common secure configurations (also known as security configuration checklists, lockdown and
     hardening guides, and security reference guides) provide recognized, standardized, and
     established benchmarks that stipulate secure configuration settings for information technology
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     products and platforms as well as instructions for configuring those products or platforms to
     meet operational requirements. Common secure configurations can be developed by a variety of
     organizations, including information technology product developers, manufacturers, vendors,
@@ -6545,7 +6322,6 @@ roles]:
     implementation of CM-6 and other controls such as AC-19 and CM-7. The Security Content
     Automation Protocol (SCAP) and the defined standards within the protocol provide an effective
     method to uniquely identify, track, and control configuration settings.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-3, AC-19, AU-2, AU-6, CA-9, CM-2, CM-3, CM-5, CM-7, CM-11, CP-7, CP-9,
     CP-10, IA-3, IA-5, PL-8, PL-9, RA-5, SA-4, SA-5, SA-8, SA-9, SC-18, SC-28, SC-43, SI-2, SI-4, SI-6.
     Control Enhancements:
@@ -6569,7 +6345,9 @@ roles]:
     (4) CONFIGURATION SETTINGS | CONFORMANCE DEMONSTRATION
     [Withdrawn: Incorporated into CM-4.]
     References: [SP 800-70], [SP 800-126], [SP 800-128], [USGCB], [NCPR], [DOD STIG].
-    CM-7
+
+#### CM-7
+
     LEAST FUNCTIONALITY
     Control:
     a.
@@ -6579,9 +6357,6 @@ roles]:
     Prohibit or restrict the use of the following functions, ports, protocols, software, and/or
     services: [Assignment: organization-defined prohibited or restricted functions, system ports,
     protocols, software, and/or services].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Systems provide a wide variety of functions and services. Some of the functions and
     services routinely provided by default may not be necessary to support essential organizational
     missions, functions, or operations. Additionally, it is sometimes convenient to provide multiple
@@ -6628,8 +6403,6 @@ roles]:
     (3) LEAST FUNCTIONALITY | REGISTRATION COMPLIANCE
     Ensure compliance with [Assignment: organization-defined registration requirements for
     functions, ports, protocols, and services].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Organizations use the registration process to manage, track, and provide
     oversight for systems and implemented functions, ports, protocols, and services.
     Related Controls: None.
@@ -6640,7 +6413,6 @@ roles]:
     unauthorized software programs on the system; and
     (c) Review and update the list of unauthorized software programs [Assignment:
     organization-defined frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Unauthorized software programs can be limited to specific versions or from a
     specific source. The concept of prohibiting the execution of unauthorized software may also
     be applied to user actions, system ports and protocols, IP addresses/ranges, websites, and
@@ -6675,8 +6447,6 @@ roles]:
     may be executed.
     Related Controls: CM-11, SC-44.
     (7) LEAST FUNCTIONALITY | CODE EXECUTION IN PROTECTED ENVIRONMENTS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Allow execution of binary or machine-executable code only in confined physical or virtual
     machine environments and with the explicit approval of [Assignment: organizationdefined personnel or roles] when such code is:
     (a) Obtained from sources with limited or no warranty; and/or
@@ -6686,7 +6456,6 @@ roles]:
     software.
     Related Controls: CM-10, SC-44.
     (8) LEAST FUNCTIONALITY | BINARY OR MACHINE EXECUTABLE CODE
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Prohibit the use of binary or machine-executable code from sources with limited or no
     warranty or without the provision of source code; and
     (b) Allow exceptions only for compelling mission or operational requirements and with
@@ -6713,17 +6482,18 @@ roles]:
     security.
     Related Controls: None.
     References: [FIPS 140-3], [FIPS 180-4], [FIPS 186-4], [FIPS 202], [SP 800-167].
-    CM-8
+
+#### CM-8
+
     SYSTEM COMPONENT INVENTORY
     Control:
     a.
-    CHAPTER THREE
     Develop and document an inventory of system components that:
+
 53. Accurately reflects the system;
 54. Includes all components within the system;
 55. Does not include duplicate accounting of components or components assigned to any
     other system;
-    NIST SP 800-53, REV. 5
     b.
 56. Is at the level of granularity deemed necessary for tracking and reporting; and
 57. Includes the following information to achieve system component accountability:
@@ -6731,7 +6501,6 @@ roles]:
     system component accountability]; and
     Review and update the system component inventory [Assignment: organization-defined
     frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: System components are discrete, identifiable information technology assets that
     include hardware, software, and firmware. Organizations may choose to implement centralized
     system component inventories that include components from all organizational systems. In such
@@ -6772,8 +6541,6 @@ roles]:
     Discussion: Organizations maintain system inventories to the extent feasible. For example,
     virtual machines can be difficult to monitor because such machines are not visible to the
     network when not in use. In such cases, organizations maintain as up-to-date, complete, and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     accurate an inventory as is deemed reasonable. Automated maintenance can be achieved by
     the implementation of CM-2(2) for organizations that combine system component inventory
     and baseline configuration activities.
@@ -6785,7 +6552,6 @@ roles]:
     (b) Take the following actions when unauthorized components are detected: [Selection
     (one or more): disable network access by such components; isolate the components;
     notify [Assignment: organization-defined personnel or roles]].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Automated unauthorized component detection is applied in addition to the
     monitoring for unauthorized remote connections and mobile devices. Monitoring for
     unauthorized system components may be accomplished on an ongoing basis or by the
@@ -6821,8 +6587,6 @@ roles]:
     Related Controls: None.
     (7) SYSTEM COMPONENT INVENTORY | CENTRALIZED REPOSITORY
     Provide a centralized repository for the inventory of system components.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Organizations may implement centralized system component inventories that
     include components from all organizational systems. Centralized repositories of component
     inventories provide opportunities for efficiencies in accounting for organizational hardware,
@@ -6833,7 +6597,6 @@ roles]:
     component accountability.
     Related Controls: None.
     (8) SYSTEM COMPONENT INVENTORY | AUTOMATED LOCATION TRACKING
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Support the tracking of system components by geographic location using [Assignment:
     organization-defined automated mechanisms].
     Discussion: The use of automated mechanisms to track the location of system components
@@ -6852,7 +6615,9 @@ roles]:
     Related Controls: None.
     References: [OMB A-130], [SP 800-57-1], [SP 800-57-2], [SP 800-57-3], [SP 800-128], [IR 8011-2],
     [IR 8011-3].
-    CM-9
+
+#### CM-9
+
     CONFIGURATION MANAGEMENT PLAN
     Control: Develop, document, and implement a configuration management plan for the system
     that:
@@ -6874,8 +6639,6 @@ roles]:
     code and software libraries) and operational configuration management activities (e.g., control
     of installed components and how the components are configured). Configuration management
     plans satisfy the requirements in configuration management policies while being tailored to
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     individual systems. Configuration management plans define processes and procedures for how
     configuration management is used to support system development life cycle activities.
     Configuration management plans are generated during the development and acquisition stage of
@@ -6883,7 +6646,6 @@ roles]:
     management processes; update configuration settings and baselines; maintain component
     inventories; control development, test, and operational environments; and develop, release, and
     update key documents.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Organizations can employ templates to help ensure the consistent and timely development and
     implementation of configuration management plans. Templates can represent a configuration
     management plan for the organization with subsets of the plan implemented on a system by
@@ -6908,7 +6670,9 @@ roles]:
     effective oversight.
     Related Controls: None.
     References: [SP 800-128].
-    CM-10 SOFTWARE USAGE RESTRICTIONS
+
+#### CM-10 SOFTWARE USAGE RESTRICTIONS
+
     Control:
     a.
     Use software and associated documentation in accordance with contract agreements and
@@ -6924,13 +6688,10 @@ roles]:
     depending on organizational needs. Examples of contract agreements include software license
     agreements and non-disclosure agreements.
     Related Controls: AC-17, AU-6, CM-7, CM-8, PM-30, SC-7.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Control Enhancements:
     (1) SOFTWARE USAGE RESTRICTIONS | OPEN-SOURCE SOFTWARE
     Establish the following restrictions on the use of open-source software: [Assignment:
     organization-defined restrictions].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Open-source software refers to software that is available in source code form.
     Certain software rights normally reserved for copyright holders are routinely provided under
     software license agreements that permit individuals to study, change, and improve the
@@ -6944,7 +6705,9 @@ roles]:
     using such software.
     Related Controls: SI-7.
     References: None.
-    CM-11 USER-INSTALLED SOFTWARE
+
+#### CM-11 USER-INSTALLED SOFTWARE
+
     Control:
     a.
     Establish [Assignment: organization-defined policies] governing the installation of software
@@ -6973,8 +6736,6 @@ roles]:
     administrator.
     Related Controls: AC-5, AC-6.
     (3) USER-INSTALLED SOFTWARE | AUTOMATED ENFORCEMENT AND MONITORING
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Enforce and monitor compliance with software installation policies using [Assignment:
     organization-defined automated mechanisms].
     Discussion: Organizations enforce and monitor compliance with software installation
@@ -6982,9 +6743,10 @@ roles]:
     software installation which can be an indicator of an internal or external hostile attack.
     Related Controls: None.
     References: None.
-    CM-12 INFORMATION LOCATION
+
+#### CM-12 INFORMATION LOCATION
+
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Identify and document the location of [Assignment: organization-defined information] and
     the specific system components on which the information is processed and stored;
@@ -7016,14 +6778,13 @@ roles]:
     tools can be used to guide and inform system architecture and design decisions.
     Related Controls: None.
     References: [FIPS 199], [SP 800-60-1], [SP 800-60-2].
-    CM-13 DATA ACTION MAPPING
+
+#### CM-13 DATA ACTION MAPPING
+
     Control: Develop and document a map of system data actions.
     Discussion: Data actions are system operations that process personally identifiable information.
     The processing of such information encompasses the full information life cycle, which includes
     collection, generation, transformation, use, disclosure, retention, and disposal. A map of system
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     data actions includes discrete data actions, elements of personally identifiable information being
     processed in the data actions, system components involved in the data actions, and the owners
     or operators of the system components. Understanding what personally identifiable information
@@ -7038,7 +6799,9 @@ roles]:
     may necessitate coordination between the privacy and security programs regarding the covered
     data actions and the components that are identified as part of the system.
     Related Controls: AC-3, CM-4, CM-12, PM-5, PM-27, PT-2, PT-3, RA-3, RA-8.
-    CM-14 SIGNED COMPONENTS
+
+#### CM-14 SIGNED COMPONENTS
+
     Control: Prevent the installation of [Assignment: organization-defined software and firmware
     components] without verification that the component has been digitally signed using a certificate
     that is recognized and approved by the organization.
@@ -7050,18 +6813,20 @@ roles]:
     authentication.
     Related Controls: CM-7, SC-12, SC-13, SI-7.
     References: [IR 8062].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.6 CONTINGENCY PLANNING
+
+### 3.6 CONTINGENCY PLANNING
+
     Quick link to Contingency Planning Summary Table
-    CP-1
+
+#### CP-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 58. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] contingency planning policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -7097,14 +6862,14 @@ roles]:
     Related Controls: PM-9, PS-8, SI-12.
     Control Enhancements: None.
     References: [SP 800-12], [SP 800-30], [SP 800-34], [SP 800-39], [SP 800-50], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    CP-2
+
+#### CP-2
+
     CONTINGENCY PLAN
     Control:
     a.
     Develop a contingency plan for the system that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
 62. Identifies essential mission and business functions and associated contingency
     requirements;
 63. Provides recovery objectives, restoration priorities, and metrics;
@@ -7153,8 +6918,6 @@ roles]:
     incident conflicts with the capability to automatically disable the system, as specified in IR-4(5).
     Incident response planning is part of contingency planning for organizations and is addressed in
     the IR (Incident Response) family.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: CP-3, CP-4, CP-6, CP-7, CP-8, CP-9, CP-10, CP-11, CP-13, IR-4, IR-6, IR-8, IR-9,
     MA-6, MP-2, MP-4, MP-5, PL-2, PM-8, PM-11, SA-15, SA-20, SC-7, SC-23, SI-12.
     Control Enhancements:
@@ -7165,7 +6928,6 @@ roles]:
     Disaster Recovery Plans, Critical Infrastructure Plans, Continuity of Operations Plans, Crisis
     Communications Plans, Insider Threat Implementation Plans, Data Breach Response Plans,
     Cyber Incident Response Plans, Breach Response Plans, and Occupant Emergency Plans.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: None.
     (2) CONTINGENCY PLAN | CAPACITY PLANNING
     Conduct capacity planning so that necessary capacity for information processing,
@@ -7201,8 +6963,6 @@ roles]:
     contingency.
     Related Controls: None.
     (6) CONTINGENCY PLAN | ALTERNATE PROCESSING AND STORAGE SITES
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Plan for the transfer of [Selection: all; essential] mission and business functions to
     alternate processing and/or storage sites with minimal or no loss of operational continuity
     and sustain that continuity through system restoration to primary processing and/or
@@ -7214,7 +6974,6 @@ roles]:
     contingency.
     Related Controls: None.
     (7) CONTINGENCY PLAN | COORDINATE WITH EXTERNAL SERVICE PROVIDERS
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Coordinate the contingency plan with the contingency plans of external service providers
     to ensure that contingency requirements can be satisfied.
     Discussion: When the capability of an organization to carry out its mission and business
@@ -7242,22 +7001,22 @@ roles]:
     consider implementing CP-2(7) as a control enhancement.
     Related Controls: CM-8, RA-9.
     References: [SP 800-34], [IR 8179].
-    CP-3
+
+#### CP-3
+
     CONTINGENCY TRAINING
     Control:
     a.
-    CHAPTER THREE
     Provide contingency training to system users consistent with assigned roles and
     responsibilities:
+
 69. Within [Assignment: organization-defined time period] of assuming a contingency role
     or responsibility;
 70. When required by system changes; and
-    NIST SP 800-53, REV. 5
 71. b.
     [Assignment: organization-defined frequency] thereafter; and
     Review and update contingency training content [Assignment: organization-defined
     frequency] and following [Assignment: organization-defined events].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Contingency training provided by organizations is linked to the assigned roles and
     responsibilities of organizational personnel to ensure that the appropriate content and level of
     detail is included in such training. For example, some individuals may only need to know when
@@ -7293,7 +7052,9 @@ roles]:
     events during contingency training.
     Related Controls: None.
     References: [SP 800-50].
-    CP-4
+
+#### CP-4
+
     CONTINGENCY PLAN TESTING
     Control:
     a.
@@ -7302,8 +7063,6 @@ roles]:
     the plan: [Assignment: organization-defined tests].
     b.
     Review the contingency plan test results; and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     c.
     Initiate corrective actions, if needed.
     Discussion: Methods for testing contingency plans to determine the effectiveness of the plans
@@ -7315,7 +7074,6 @@ roles]:
     actions.
     Related Controls: AT-3, CP-2, CP-3, CP-8, CP-9, IR-3, IR-4, PL-2, PM-14, SR-2.
     Control Enhancements:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (1) CONTINGENCY PLAN TESTING | COORDINATE WITH RELATED PLANS
     Coordinate contingency plan testing with organizational elements responsible for related
     plans.
@@ -7352,8 +7110,6 @@ roles]:
     contingency plan testing.
     Discussion: Recovery is executing contingency plan activities to restore organizational
     mission and business functions. Reconstitution takes place following recovery and includes
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     activities for returning systems to fully operational states. Organizations establish a known
     state for systems that includes system state information for hardware, software programs,
     and data. Preserving system state information facilitates system restart and return to the
@@ -7362,7 +7118,6 @@ roles]:
     (5) CONTINGENCY PLAN TESTING | SELF-CHALLENGE
     Employ [Assignment: organization-defined mechanisms] to [Assignment: organizationdefined system or system component] to disrupt and adversely affect the system or system
     component.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Often, the best method of assessing system resilience is to disrupt the system in
     some manner. The mechanisms used by the organization could disrupt system functions or
     system services in many ways, including terminating or disabling critical system components,
@@ -7372,10 +7127,14 @@ roles]:
     help the organization determine its ability to ensure resilience in the face of an actual cyberattack.
     Related Controls: None.
     References: [FIPS 199], [SP 800-34], [SP 800-84], [SP 800-160-2].
-    CP-5
+
+#### CP-5
+
     CONTINGENCY PLAN UPDATE
     [Withdrawn: Incorporated into CP-2.]
-    CP-6
+
+#### CP-6
+
     ALTERNATE STORAGE SITE
     Control:
     a.
@@ -7401,8 +7160,6 @@ roles]:
     site to reduce susceptibility to the same threats.
     Discussion: Threats that affect alternate storage sites are defined in organizational risk
     assessments and include natural disasters, structural failures, hostile attacks, and errors of
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     omission or commission. Organizations determine what is considered a sufficient degree of
     separation between primary and alternate storage sites based on the types of threats that
     are of concern. For threats such as hostile attacks, the degree of separation between sites is
@@ -7411,7 +7168,6 @@ roles]:
     (2) ALTERNATE STORAGE SITE | RECOVERY TIME AND RECOVERY POINT OBJECTIVES
     Configure the alternate storage site to facilitate recovery operations in accordance with
     recovery time and recovery point objectives.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Organizations establish recovery time and recovery point objectives as part of
     contingency planning. Configuration of the alternate storage site includes physical facilities
     and the systems supporting recovery operations that ensure accessibility and correct
@@ -7428,7 +7184,9 @@ roles]:
     the alternate site is disrupted.
     Related Controls: RA-3.
     References: [SP 800-34].
-    CP-7
+
+#### CP-7
+
     ALTERNATE PROCESSING SITE
     Control:
     a.
@@ -7453,8 +7211,6 @@ roles]:
     alternate processing site agreements include the environmental conditions at alternate sites,
     access rules, physical and environmental protection requirements, and the coordination for the
     transfer and assignment of personnel. Requirements are allocated to alternate processing sites
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     that reflect the requirements in contingency plans to maintain essential mission and business
     functions despite disruption, compromise, or failure in organizational systems.
     Related Controls: CP-2, CP-6, CP-8, CP-9, CP-10, MA-6, PE-3, PE-11, PE-12, PE-17, SC-36, SI-13.
@@ -7462,7 +7218,6 @@ roles]:
     (1) ALTERNATE PROCESSING SITE | SEPARATION FROM PRIMARY SITE
     Identify an alternate processing site that is sufficiently separated from the primary
     processing site to reduce susceptibility to the same threats.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Threats that affect alternate processing sites are defined in organizational
     assessments of risk and include natural disasters, structural failures, hostile attacks, and
     errors of omission or commission. Organizations determine what is considered a sufficient
@@ -7499,20 +7254,19 @@ roles]:
     Plan and prepare for circumstances that preclude returning to the primary processing site.
     Discussion: There may be situations that preclude an organization from returning to the
     primary processing site such as if a natural disaster (e.g., flood or a hurricane) damaged or
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     destroyed a facility and it was determined that rebuilding in the same location was not
     prudent.
     Related Controls: None.
     References: [SP 800-34].
-    CP-8
+
+#### CP-8
+
     TELECOMMUNICATIONS SERVICES
     Control: Establish alternate telecommunications services, including necessary agreements to
     permit the resumption of [Assignment: organization-defined system operations] for essential
     mission and business functions within [Assignment: organization-defined time period] when the
     primary telecommunications capabilities are unavailable at either the primary or alternate
     processing or storage sites.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Telecommunications services (for data and voice) for primary and alternate
     processing and storage sites are in scope for CP-8. Alternate telecommunications services reflect
     the continuity requirements in contingency plans to maintain essential mission and business
@@ -7549,13 +7303,10 @@ roles]:
     share the same physical lines, which increases the vulnerability of a single failure point. It is
     important to have provider transparency for the actual physical transmission capability for
     telecommunication services.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     (3) TELECOMMUNICATIONS SERVICES | SEPARATION OF PRIMARY AND ALTERNATE PROVIDERS
     Obtain alternate telecommunications services from providers that are separated from
     primary service providers to reduce susceptibility to the same threats.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Threats that affect telecommunications services are defined in organizational
     assessments of risk and include natural disasters, structural failures, cyber or physical
     attacks, and errors of omission or commission. Organizations can reduce common
@@ -7587,7 +7338,9 @@ roles]:
     to ensure that there is no degradation in organizational missions or functions.
     Related Controls: CP-3.
     References: [SP 800-34].
-    CP-9
+
+#### CP-9
+
     SYSTEM BACKUP
     Control:
     a.
@@ -7597,15 +7350,12 @@ roles]:
     b.
     Conduct backups of system-level information contained in the system [Assignment:
     organization-defined frequency consistent with recovery time and recovery point objectives];
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     c.
     Conduct backups of system documentation, including security- and privacy-related
     documentation [Assignment: organization-defined frequency consistent with recovery time
     and recovery point objectives]; and
     d.
     Protect the confidentiality, integrity, and availability of backup information.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: System-level information includes system state information, operating system
     software, middleware, application software, and licenses. User-level information includes
     information other than system-level information. Mechanisms employed to protect the integrity
@@ -7649,8 +7399,6 @@ roles]:
     systems. Security-related information includes inventories of system hardware, software,
     and firmware components. Alternate storage sites, including geographically distributed
     architectures, serve as separate storage facilities for organizations. Organizations may
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     provide separate storage by implementing automated backup processes at alternative
     storage sites (e.g., data centers). The General Services Administration (GSA) establishes
     standards and specifications for security and fire rated containers.
@@ -7661,7 +7409,6 @@ roles]:
     Transfer system backup information to the alternate storage site [Assignment:
     organization-defined time period and transfer rate consistent with the recovery time and
     recovery point objectives].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: System backup information can be transferred to alternate storage sites either
     electronically or by the physical shipment of storage media.
     Related Controls: CP-7, MP-3, MP-4, MP-5.
@@ -7694,13 +7441,12 @@ roles]:
     at rest also consider cryptographic key management solutions.
     Related Controls: SC-12, SC-13, SC-28.
     References: [FIPS 140-3], [FIPS 186-4], [SP 800-34], [SP 800-130], [SP 800-152].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    CP-10 SYSTEM RECOVERY AND RECONSTITUTION
+
+#### CP-10 SYSTEM RECOVERY AND RECONSTITUTION
+
     Control: Provide for the recovery and reconstitution of the system to a known state within
     [Assignment: organization-defined time period consistent with recovery time and recovery point
     objectives] after a disruption, compromise, or failure.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Recovery is executing contingency plan activities to restore organizational mission
     and business functions. Reconstitution takes place following recovery and includes activities for
     returning systems to fully operational states. Recovery and reconstitution operations reflect
@@ -7740,10 +7486,10 @@ roles]:
     components used for recovery and reconstitution include router tables, compilers, and other
     system software.
     Related Controls: AC-3, AC-6, MP-2, MP-4, PE-3, PE-6.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     References: [SP 800-34].
-    CP-11 ALTERNATE COMMUNICATIONS PROTOCOLS
+
+#### CP-11 ALTERNATE COMMUNICATIONS PROTOCOLS
+
     Control: Provide the capability to employ [Assignment: organization-defined alternative
     communications protocols] in support of maintaining continuity of operations.
     Discussion: Contingency plans and the contingency training or testing associated with those
@@ -7752,10 +7498,11 @@ roles]:
     applications and operational aspects of systems. Organizations assess the potential side effects
     of introducing alternate communications protocols prior to implementation.
     Related Controls: CP-2, CP-8, CP-13.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Control Enhancements: None.
     References: None.
-    CP-12 SAFE MODE
+
+#### CP-12 SAFE MODE
+
     Control: When [Assignment: organization-defined conditions] are detected, enter a safe mode of
     operation with [Assignment: organization-defined restrictions of safe mode of operation].
     Discussion: For systems that support critical mission and business functions—including military
@@ -7769,7 +7516,9 @@ roles]:
     Related Controls: CM-2, SA-8, SC-24, SI-13, SI-17.
     Control Enhancements: None.
     References: None.
-    CP-13 ALTERNATIVE SECURITY MECHANISMS
+
+#### CP-13 ALTERNATIVE SECURITY MECHANISMS
+
     Control: Employ [Assignment: organization-defined alternative or supplemental security
     mechanisms] for satisfying [Assignment: organization-defined security functions] when the
     primary means of implementing the security function is unavailable or compromised.
@@ -7786,23 +7535,22 @@ roles]:
     administrators if multi-factor tokens—the standard means for achieving secure authentication—
     are compromised.
     Related Controls: CP-2, CP-11, SI-13.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Control Enhancements: None
     References: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.7 IDENTIFICATION AND AUTHENTICATION
+
+### 3.7 IDENTIFICATION AND AUTHENTICATION
+
     Quick link to Identification and Authentication Summary Table
-    IA-1
+
+#### IA-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 72. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] identification and authentication policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -7840,9 +7588,9 @@ roles]:
     Control Enhancements: None.
     References: [OMB A-130], [FIPS 201-2], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-63-3], [SP
     800-73-4], [SP 800-76-2], [SP 800-78-4], [SP 800-100], [IR 7874].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    IA-2
+
+#### IA-2
+
     IDENTIFICATION AND AUTHENTICATION (ORGANIZATIONAL USERS)
     Control: Uniquely identify and authenticate organizational users and associate that unique
     identification with processes acting on behalf of those users.
@@ -7854,7 +7602,6 @@ roles]:
     authorized use of group authenticators without individual authentication. Since processes
     execute on behalf of groups and roles, organizations may require unique identification of
     individuals in group accounts or for detailed accountability of individual activity.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Organizations employ passwords, physical authenticators, or biometrics to authenticate user
     identities or, in the case of multi-factor authentication, some combination thereof. Access to
     organizational systems is defined as either local access or network access. Local access is any
@@ -7889,10 +7636,7 @@ roles]:
     Related Controls: AC-5, AC-6.
     (2) IDENTIFICATION AND AUTHENTICATION (ORGANIZATIONAL USERS) | MULTI-FACTOR
     AUTHENTICATION TO NON-PRIVILEGED ACCOUNTS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Implement multi-factor authentication for access to non-privileged accounts.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Multi-factor authentication requires the use of two or more different factors to
     achieve authentication. The authentication factors are defined as follows: something you
     know (e.g., a personal identification number [PIN]), something you have (e.g., a physical
@@ -7935,8 +7679,6 @@ roles]:
     device (e.g., a hardware token), provides a greater strength of mechanism and an increased
     level of assurance in the authentication process.
     Related Controls: AC-6.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (7) IDENTIFICATION AND AUTHENTICATION (ORGANIZATIONAL USERS) | NETWORK ACCESS TO NONPRIVILEGED ACCOUNTS — SEPARATE DEVICE
     [Withdrawn: Incorporated into IA-2(6).]
     (8) IDENTIFICATION AND AUTHENTICATION (ORGANIZATIONAL USERS) | ACCESS TO ACCOUNTS —
@@ -7947,7 +7689,6 @@ roles]:
     successful authentications by replaying previous authentication messages. Replay-resistant
     techniques include protocols that use nonces or challenges such as time synchronous or
     cryptographic authenticators.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: None.
     (9) IDENTIFICATION AND AUTHENTICATION (ORGANIZATIONAL USERS) | NETWORK ACCESS TO NONPRIVILEGED ACCOUNTS — REPLAY RESISTANT
     [Withdrawn: Incorporated into IA-2(8).]
@@ -7981,9 +7722,6 @@ roles]:
     Implement the following out-of-band authentication mechanisms under [Assignment:
     organization-defined conditions]: [Assignment: organization-defined out-of-band
     authentication].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Out-of-band authentication refers to the use of two separate communication
     paths to identify and authenticate users or devices to an information system. The first path
     (i.e., the in-band path) is used to identify and authenticate users or devices and is generally
@@ -8001,7 +7739,9 @@ roles]:
     References: [FIPS 140-3], [FIPS 201-2], [FIPS 202], [SP 800-63-3], [SP 800-73-4], [SP 800-76-2], [SP
     800-78-4], [SP 800-79-2], [SP 800-156], [SP 800-166], [IR 7539], [IR 7676], [IR 7817], [IR 7849], [IR
     7870], [IR 7874], [IR 7966].
-    IA-3
+
+#### IA-3
+
     DEVICE IDENTIFICATION AND AUTHENTICATION
     Control: Uniquely identify and authenticate [Assignment: organization-defined devices and/or
     types of devices] before establishing a [Selection (one or more): local; remote; network]
@@ -8032,8 +7772,6 @@ roles]:
     Related Controls: SC-8, SC-12, SC-13.
     (2) DEVICE IDENTIFICATION AND AUTHENTICATION | CRYPTOGRAPHIC BIDIRECTIONAL NETWORK
     AUTHENTICATION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     [Withdrawn: Incorporated into IA-3(1).]
     (3) DEVICE IDENTIFICATION AND AUTHENTICATION | DYNAMIC ADDRESS ALLOCATION
     (a) Where addresses are allocated dynamically, standardize dynamic address allocation
@@ -8044,7 +7782,6 @@ roles]:
     which clients can dynamically receive network address assignments.
     Related Controls: AU-2.
     (4) DEVICE IDENTIFICATION AND AUTHENTICATION | DEVICE ATTESTATION
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Handle device identification and authentication based on attestation by [Assignment:
     organization-defined configuration management process].
     Discussion: Device attestation refers to the identification and authentication of a device
@@ -8055,7 +7792,9 @@ roles]:
     and do not disrupt identification and authentication to other devices.
     Related Controls: CM-2, CM-3, CM-6.
     References: None.
-    IA-4
+
+#### IA-4
+
     IDENTIFIER MANAGEMENT
     Control: Manage system identifiers by:
     a.
@@ -8082,8 +7821,6 @@ roles]:
     individual accounts.
     Discussion: Prohibiting account identifiers as public identifiers applies to any publicly
     disclosed account identifier used for communication such as, electronic mail and instant
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     messaging. Prohibiting the use of systems account identifiers that are the same as some
     public identifier, such as the individual identifier section of an electronic mail address, makes
     it more difficult for adversaries to guess user identifiers. Prohibiting account identifiers as
@@ -8094,7 +7831,6 @@ roles]:
     (2) IDENTIFIER MANAGEMENT | SUPERVISOR AUTHORIZATION
     [Withdrawn: Incorporated into IA-12(1).]
     (3) IDENTIFIER MANAGEMENT | MULTIPLE FORMS OF CERTIFICATION
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     [Withdrawn: Incorporated into IA-12(2).]
     (4) IDENTIFIER MANAGEMENT | IDENTIFY USER STATUS
     Manage individual identifiers by uniquely identifying each individual as [Assignment:
@@ -8129,8 +7865,6 @@ roles]:
     identifier generated by an identity provider for use at a specific individual relying party.
     Generating distinct pairwise pseudonymous identifiers with no identifying information about
     a subscriber discourages subscriber activity tracking and profiling beyond the operational
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     requirements established by an organization. The pairwise pseudonymous identifiers are
     unique to each relying party except in situations where relying parties can show a
     demonstrable relationship justifying an operational need for correlation, or all parties
@@ -8142,10 +7876,11 @@ roles]:
     Discussion: For each of the entities covered in IA-2, IA-3, IA-8, and IA-9, it is important to
     maintain the attributes for each authenticated entity on an ongoing basis in a central
     (protected) store.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: None.
     References: [FIPS 201-2], [SP 800-63-3], [SP 800-73-4], [SP 800-76-2], [SP 800-78-4].
-    IA-5
+
+#### IA-5
+
     AUTHENTICATOR MANAGEMENT
     Control: Manage system authenticators by:
     a.
@@ -8186,8 +7921,6 @@ roles]:
     passwords accessible with administrator privileges.
     Systems support authenticator management by organization-defined settings and restrictions for
     various authenticator characteristics (e.g., minimum password length, validation time window for
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     time synchronous one-time tokens, and number of allowed rejections during the verification
     stage of biometric authentication). Actions can be taken to safeguard individual authenticators,
     including maintaining possession of authenticators, not sharing authenticators with others, and
@@ -8197,7 +7930,6 @@ roles]:
     Control Enhancements:
     (1) AUTHENTICATOR MANAGEMENT | PASSWORD-BASED AUTHENTICATION
     For password-based authentication:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Maintain a list of commonly-used, expected, or compromised passwords and update
     the list [Assignment: organization-defined frequency] and when organizational
     passwords are suspected to have been compromised directly or indirectly;
@@ -8233,8 +7965,6 @@ roles]:
     accepted trust anchor, including checking certificate status information; and
     (2) Implement a local cache of revocation data to support path discovery and
     validation.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Public key cryptography is a valid authentication mechanism for individuals,
     machines, and devices. For PKI solutions, status information for certification paths includes
     certificate revocation lists or certificate status protocol responses. For PIV cards, certificate
@@ -8246,7 +7976,6 @@ roles]:
     Related Controls: IA-3, SC-17.
     (3) AUTHENTICATOR MANAGEMENT | IN-PERSON OR TRUSTED EXTERNAL PARTY REGISTRATION
     [Withdrawn: Incorporated into IA-12(4).]
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (4) AUTHENTICATOR MANAGEMENT | AUTOMATED SUPPORT FOR PASSWORD STRENGTH
     DETERMINATION
     [Withdrawn: Incorporated into IA-5(1).]
@@ -8281,8 +8010,6 @@ roles]:
     (8) AUTHENTICATOR MANAGEMENT | MULTIPLE SYSTEM ACCOUNTS
     Implement [Assignment: organization-defined security controls] to manage the risk of
     compromise due to individuals having accounts on multiple systems.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: When individuals have accounts on multiple systems and use the same
     authenticators such as passwords, there is the risk that a compromise of one account may
     lead to the compromise of other accounts. Alternative approaches include having different
@@ -8294,7 +8021,6 @@ roles]:
     (9) AUTHENTICATOR MANAGEMENT | FEDERATED CREDENTIAL MANAGEMENT
     Use the following external organizations to federate credentials: [Assignment:
     organization-defined external organizations].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Federation provides organizations with the capability to authenticate individuals
     and devices when conducting cross-organization activities involving the processing, storage,
     or transmission of information. Using a specific list of approved external organizations for
@@ -8330,8 +8056,6 @@ roles]:
     performance requirements include the match rate, which reflects the accuracy of the
     biometric matching algorithm used by a system.
     Related Controls: AC-7.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (13) AUTHENTICATOR MANAGEMENT | EXPIRATION OF CACHED AUTHENTICATORS
     Prohibit the use of cached authenticators after [Assignment: organization-defined time
     period].
@@ -8343,7 +8067,6 @@ roles]:
     For PKI-based authentication, employ an organization-wide methodology for managing the
     content of PKI trust stores installed across all platforms, including networks, operating
     systems, browsers, and applications.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: An organization-wide methodology for managing the content of PKI trust stores
     helps improve the accuracy and currency of PKI-based authentication credentials across the
     organization.
@@ -8379,8 +8102,6 @@ roles]:
     to defeat the biometric sensor.
     Related Controls: AC-7.
     (18) AUTHENTICATOR MANAGEMENT | PASSWORD MANAGERS
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (a) Employ [Assignment: organization-defined password managers] to generate and
     manage passwords; and
     (b) Protect the passwords using [Assignment: organization-defined controls].
@@ -8392,11 +8113,12 @@ roles]:
     passwords generated by the password manager. Therefore, the collection of passwords
     requires protection including encrypting the passwords (see IA-5(1)(d)) and storing the
     collection offline in a token.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: None.
     References: [FIPS 140-3], [FIPS 180-4], [FIPS 201-2], [FIPS 202], [SP 800-63-3], [SP 800-73-4], [SP
     800-76-2], [SP 800-78-4], [IR 7539], [IR 7817], [IR 7849], [IR 7870], [IR 8040].
-    IA-6
+
+#### IA-6
+
     AUTHENTICATION FEEDBACK
     Control: Obscure feedback of authentication information during the authentication process to
     protect the information from possible exploitation and use by unauthorized individuals.
@@ -8412,7 +8134,9 @@ roles]:
     Related Controls: AC-3.
     Control Enhancements: None.
     References: None.
-    IA-7
+
+#### IA-7
+
     CRYPTOGRAPHIC MODULE AUTHENTICATION
     Control: Implement mechanisms for authentication to a cryptographic module that meet the
     requirements of applicable laws, executive orders, directives, policies, regulations, standards,
@@ -8423,12 +8147,12 @@ roles]:
     Related Controls: AC-3, IA-5, SA-4, SC-12, SC-13.
     Control Enhancements: None.
     References: [FIPS 140-3].
-    IA-8
+
+#### IA-8
+
     IDENTIFICATION AND AUTHENTICATION (NON-ORGANIZATIONAL USERS)
     Control: Uniquely identify and authenticate non-organizational users or processes acting on
     behalf of non-organizational users.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: Non-organizational users include system users other than organizational users
     explicitly covered by IA-2. Non-organizational users are uniquely identified and authenticated for
     accesses other than those explicitly identified and documented in AC-14. Identification and
@@ -8439,7 +8163,6 @@ roles]:
     and systems with the need to protect and adequately mitigate risk.
     Related Controls: AC-2, AC-6, AC-14, AC-17, AC-18, AU-6, IA-2, IA-4, IA-5, IA-10, IA-11, MA-4, RA3, SA-4, SC-8.
     Control Enhancements:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (1) IDENTIFICATION AND AUTHENTICATION (NON-ORGANIZATIONAL USERS) | ACCEPTANCE OF PIV
     CREDENTIALS FROM OTHER AGENCIES
     Accept and electronically verify Personal Identity Verification-compliant credentials from
@@ -8474,12 +8197,9 @@ roles]:
     assesses and scopes the standards and technology implementations against applicable laws,
     executive orders, directives, policies, regulations, standards, and guidelines.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (5) IDENTIFICATION AND AUTHENTICATION (NON-ORGANIZATIONAL USERS) | ACCEPTANCE OF PIV-I
     CREDENTIALS
     Accept and verify federated or PKI credentials that meet [Assignment: organizationdefined policy].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Acceptance of PIV-I credentials can be implemented by PIV, PIV-I, and other
     commercial or external identity providers. The acceptance and verification of PIV-I-compliant
     credentials apply to both logical and physical access control systems. The acceptance and
@@ -8504,7 +8224,9 @@ roles]:
     Related Controls: None.
     References: [OMB A-130], [FED PKI], [FIPS 201-2], [SP 800-63-3], [SP 800-79-2], [SP 800-116], [IR
     8062].
-    IA-9
+
+#### IA-9
+
     SERVICE IDENTIFICATION AND AUTHENTICATION
     Control: Uniquely identify and authenticate [Assignment: organization-defined system services
     and applications] before establishing communications with devices, users, or other services or
@@ -8522,17 +8244,16 @@ roles]:
     Control Enhancements:
     (1) SERVICE IDENTIFICATION AND AUTHENTICATION | INFORMATION EXCHANGE
     [Withdrawn: Incorporated into IA-9.]
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (2) SERVICE IDENTIFICATION AND AUTHENTICATION | TRANSMISSION OF DECISIONS
     [Withdrawn: Incorporated into IA-9.]
     References: None.
-    IA-10
+
+#### IA-10
+
     ADAPTIVE AUTHENTICATION
     Control: Require individuals accessing the system to employ [Assignment: organization-defined
     supplemental authentication techniques or mechanisms] under specific [Assignment:
     organization-defined circumstances or situations].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Adversaries may compromise individual authentication mechanisms employed by
     organizations and subsequently attempt to impersonate legitimate users. To address this threat,
     organizations may employ specific techniques or mechanisms and establish protocols to assess
@@ -8548,7 +8269,9 @@ roles]:
     Related Controls: IA-2, IA-8.
     Control Enhancements: None.
     References: [SP 800-63-3].
-    IA-11
+
+#### IA-11
+
     RE-AUTHENTICATION
     Control: Require users to re-authenticate when [Assignment: organization-defined
     circumstances or situations requiring re-authentication].
@@ -8559,7 +8282,9 @@ roles]:
     Related Controls: AC-3, AC-11, IA-2, IA-3, IA-4, IA-8.
     Control Enhancements: None.
     References: None.
-    IA-12
+
+#### IA-12
+
     IDENTITY PROOFING
     Control:
     a.
@@ -8572,8 +8297,6 @@ roles]:
     Discussion: Identity proofing is the process of collecting, validating, and verifying a user’s
     identity information for the purposes of establishing credentials for accessing a system. Identity
     proofing is intended to mitigate threats to the registration of users and the establishment of
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     their accounts. Standards and guidelines specifying identity assurance levels for identity proofing
     include [SP 800-63-3] and [SP 800-63A]. Organizations may be subject to laws, executive orders,
     directives, regulations, or policies that address the collection of identity evidence. Organizational
@@ -8584,7 +8307,6 @@ roles]:
     (1) IDENTITY PROOFING | SUPERVISOR AUTHORIZATION
     Require that the registration process to receive an account for logical access includes
     supervisor or sponsor authorization.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Including supervisor or sponsor authorization as part of the registration process
     provides an additional level of scrutiny to ensure that the user’s management chain is aware
     of the account, the account is essential to carry out organizational missions and functions,
@@ -8619,8 +8341,6 @@ roles]:
     documents, and actual face-to-face interactions with designated registration authorities.
     Related Controls: None.
     (5) IDENTITY PROOFING | ADDRESS CONFIRMATION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Require that a [Selection: registration code; notice of proofing] be delivered through an
     out-of-band channel to verify the users address (physical or digital) of record.
     Discussion: To make it more difficult for adversaries to pose as legitimate users during the
@@ -8631,7 +8351,6 @@ roles]:
     an example of a physical address. Email addresses and telephone numbers are examples of
     digital addresses.
     Related Controls: IA-12.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (6) IDENTITY PROOFING | ACCEPT EXTERNALLY-PROOFED IDENTITIES
     Accept externally-proofed identities at [Assignment: organization-defined identity
     assurance level].
@@ -8643,18 +8362,20 @@ roles]:
     identities across agencies and organizations.
     Related Controls: IA-3, IA-4, IA-5, IA-8.
     References: [FIPS 201-2], [SP 800-63-3], [SP 800-63A], [SP 800-79-2].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.8 INCIDENT RESPONSE
+
+### 3.8 INCIDENT RESPONSE
+
     Quick link to Incident Response Summary Table
-    IR-1
+
+#### IR-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 76. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] incident response policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -8690,20 +8411,20 @@ roles]:
     Control Enhancements: None.
     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-50], [SP 800-61], [SP
     800-83], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    IR-2
+
+#### IR-2
+
     INCIDENT RESPONSE TRAINING
     Control:
     a.
     b.
     Provide incident response training to system users consistent with assigned roles and
     responsibilities:
+
 80. Within [Assignment: organization-defined time period] of assuming an incident response
     role or responsibility or acquiring system access;
 81. When required by system changes; and
 82. [Assignment: organization-defined frequency] thereafter; and
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Review and update incident response training content [Assignment: organization-defined
     frequency] and following [Assignment: organization-defined events].
     Discussion: Incident response training is associated with the assigned roles and responsibilities
@@ -8738,8 +8459,6 @@ roles]:
     (3) INCIDENT RESPONSE TRAINING | BREACH
     Provide incident response training on how to identify and respond to a breach, including
     the organization’s process for reporting a breach.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: For federal agencies, an incident that involves personally identifiable
     information is considered a breach. A breach results in the loss of control, compromise,
     unauthorized disclosure, unauthorized acquisition, or a similar occurrence where a person
@@ -8751,8 +8470,9 @@ roles]:
     tabletop exercises that simulate a breach. See IR-2(1).
     Related Controls: None.
     References: [OMB M-17-12], [SP 800-50].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    IR-3
+
+#### IR-3
+
     INCIDENT RESPONSE TESTING
     Control: Test the effectiveness of the incident response capability for the system [Assignment:
     organization-defined frequency] using the following tests: [Assignment: organization-defined
@@ -8786,18 +8506,17 @@ roles]:
     (b) Continuously improve incident response processes; and
     (c) Provide incident response measures and metrics that are accurate, consistent, and in a
     reproducible format.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: To help incident response activities function as intended, organizations may use
     metrics and evaluation criteria to assess incident response programs as part of an effort to
     continually improve response performance. These efforts facilitate improvement in incident
     response efficacy and lessen the impact of incidents.
     Related Controls: None.
     References: [OMB A-130], [SP 800-84], [SP 800-115].
-    IR-4
+
+#### IR-4
+
     INCIDENT HANDLING
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Implement an incident handling capability for incidents that is consistent with the incident
     response plan and includes preparation, detection and analysis, containment, eradication,
@@ -8838,8 +8557,6 @@ roles]:
     full network packet capture, and forensic analysis.
     Related Controls: None.
     (2) INCIDENT HANDLING | DYNAMIC RECONFIGURATION
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Include the following types of dynamic reconfiguration for [Assignment: organizationdefined system components] as part of the incident response capability: [Assignment:
     organization-defined types of dynamic reconfiguration].
     Discussion: Dynamic reconfiguration includes changes to router rules, access control lists,
@@ -8850,7 +8567,6 @@ roles]:
     reconfiguration of systems in the definition of the reconfiguration capability, considering the
     potential need for rapid response to effectively address cyber threats.
     Related Controls: AC-2, AC-4, CM-2.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (3) INCIDENT HANDLING | CONTINUITY OF OPERATIONS
     Identify [Assignment: organization-defined classes of incidents] and take the following
     actions in response to those incidents to ensure continuation of organizational mission and
@@ -8886,8 +8602,6 @@ roles]:
     Discussion: Explicit focus on handling incidents involving insider threats provides additional
     emphasis on this type of threat and the need for specific incident handling capabilities to
     provide appropriate and timely responses.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Related Controls: None.
     (7) INCIDENT HANDLING | INSIDER THREATS — INTRA-ORGANIZATION COORDINATION
     Coordinate an incident handling capability for insider threats that includes the following
@@ -8899,7 +8613,6 @@ roles]:
     agency information security officer, operations personnel, risk executive (function), senior
     agency official for privacy, and legal counsel. In addition, organizations may require external
     support from federal, state, and local law enforcement agencies.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: None.
     (8) INCIDENT HANDLING | CORRELATION WITH EXTERNAL ORGANIZATIONS
     Coordinate with [Assignment: organization-defined external organizations] to correlate
@@ -8934,8 +8647,6 @@ roles]:
     (11) INCIDENT HANDLING | INTEGRATED INCIDENT RESPONSE TEAM
     Establish and maintain an integrated incident response team that can be deployed to any
     location identified by the organization in [Assignment: organization-defined time period].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Discussion: An integrated incident response team is a team of experts that assesses,
     documents, and responds to incidents so that organizational systems and networks can
     recover quickly and implement the necessary controls to avoid future incidents. Incident
@@ -8944,7 +8655,6 @@ roles]:
     handling capability includes performing rapid forensic preservation of evidence and analysis
     of and response to intrusions. For some organizations, the incident response team can be a
     cross-organizational entity.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     An integrated incident response team facilitates information sharing and allows
     organizational personnel (e.g., developers, implementers, and operators) to leverage team
     knowledge of the threat and implement defensive measures that enable organizations to
@@ -8985,8 +8695,6 @@ roles]:
     monitor an organization’s systems and networks (i.e., cyber infrastructure) on an ongoing
     basis. The SOC is also responsible for detecting, analyzing, and responding to cybersecurity
     incidents in a timely manner. The organization staffs the SOC with skilled technical and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     operational personnel (e.g., security analysts, incident response personnel, systems security
     engineers) and implements a combination of technical, management, and operational
     controls (including monitoring, scanning, and forensics tools) to monitor, fuse, correlate,
@@ -8998,7 +8706,6 @@ roles]:
     dedicated SOC while smaller organizations may employ third-party organizations to provide
     such a capability.
     Related Controls: None.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (15) INCIDENT HANDLING | PUBLIC RELATIONS AND REPUTATION REPAIR
     (a) Manage public relations associated with an incident; and
     (b) Employ measures to repair the reputation of the organization.
@@ -9012,7 +8719,9 @@ roles]:
     Related Controls: None.
     References: [FASC18], [41 CFR 201], [OMB M-17-12], [SP 800-61], [SP 800-86], [SP 800-101], [SP
     800-150], [SP 800-160-2], [SP 800-184], [IR 7559].
-    IR-5
+
+#### IR-5
+
     INCIDENT MONITORING
     Control: Track and document incidents.
     Discussion: Documenting incidents includes maintaining records about each incident, the status
@@ -9032,9 +8741,9 @@ roles]:
     databases of incidents and network monitoring devices.
     Related Controls: None.
     References: [SP 800-61].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    IR-6
+
+#### IR-6
+
     INCIDENT REPORTING
     Control:
     a.
@@ -9047,7 +8756,6 @@ roles]:
     policies, standards, and guidelines. Incident information can inform risk assessments, control
     effectiveness assessments, security requirements for acquisitions, and selection criteria for
     technology products.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: CM-6, CP-2, IR-4, IR-5, IR-8, IR-9.
     Control Enhancements:
     (1) INCIDENT REPORTING | AUTOMATED REPORTING
@@ -9080,9 +8788,9 @@ roles]:
     root cause of an incident.
     Related Controls: SR-8.
     References: [FASC18], [41 CFR 201], [USCERT IR], [SP 800-61].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    IR-7
+
+#### IR-7
+
     INCIDENT RESPONSE ASSISTANCE
     Control: Provide an incident response support resource, integral to the organizational incident
     response capability, that offers advice and assistance to users of the system for the handling and
@@ -9093,7 +8801,6 @@ roles]:
     Related Controls: AT-2, AT-3, IR-4, IR-6, IR-8, PM-22, PM-26, SA-9, SI-18.
     Control Enhancements:
     (1) INCIDENT RESPONSE ASSISTANCE | AUTOMATION SUPPORT FOR AVAILABILITY OF INFORMATION AND
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     SUPPORT
     Increase the availability of incident response information and support using [Assignment:
     organization-defined automated mechanisms].
@@ -9115,12 +8822,14 @@ roles]:
     occurs.
     Related Controls: None.
     References: [OMB A-130], [IR 7559].
-    IR-8
+
+#### IR-8
+
     INCIDENT RESPONSE PLAN
     Control:
     a.
-    CHAPTER THREE
     Develop an incident response plan that:
+
 83. Provides the organization with a roadmap for implementing its incident response
     capability;
 84. Describes the structure and organization of the incident response capability;
@@ -9129,7 +8838,6 @@ roles]:
 86. Meets the unique requirements of the organization, which relate to mission, size,
     structure, and functions;
 87. Defines reportable incidents;
-    NIST SP 800-53, REV. 5
 88. Provides metrics for measuring the incident response capability within the organization;
 89. Defines the resources and management support needed to effectively maintain and
     mature an incident response capability;
@@ -9137,7 +8845,6 @@ roles]:
 91. Is reviewed and approved by [Assignment: organization-defined personnel or roles]
     [Assignment: organization-defined frequency]; and
 92. Explicitly designates responsibility for incident response to [Assignment: organizationdefined entities, personnel, or roles].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     b.
     Distribute copies of the incident response plan to [Assignment: organization-defined incident
     response personnel (identified by name and/or by role) and organizational elements];
@@ -9173,14 +8880,14 @@ roles]:
     oversight bodies; standards of harm; and mitigation or other specific requirements.
     Related Controls: PT-1, PT-2, PT-3, PT-4, PT-5, PT-7.
     References: [OMB A-130], [SP 800-61], [OMB M-17-12].
-    IR-9
+
+#### IR-9
+
     INFORMATION SPILLAGE RESPONSE
     Control: Respond to information spills by:
     a.
-    CHAPTER THREE
     Assigning [Assignment: organization-defined personnel or roles] with responsibility for
     responding to information spills;
-    NIST SP 800-53, REV. 5
     b.
     Identifying the specific information involved in the system contamination;
     c.
@@ -9195,7 +8902,6 @@ roles]:
     contaminated; and
     g.
     Performing the following additional actions: [Assignment: organization-defined actions].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Information spillage refers to instances where information is placed on systems that
     are not authorized to process such information. Information spills occur when information that is
     thought to be a certain classification or impact level is transmitted to a system and subsequently
@@ -9232,27 +8938,28 @@ roles]:
     access authorizations: [Assignment: organization-defined controls].
     Discussion: Controls include ensuring that personnel who are exposed to spilled information
     are made aware of the laws, executive orders, directives, regulations, policies, standards,
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     and guidelines regarding the information and the restrictions imposed based on exposure to
     such information.
     Related Controls: None.
     References: None.
-    IR-10
+
+#### IR-10
+
     INTEGRATED INFORMATION SECURITY ANALYSIS TEAM
     [Withdrawn: Moved to IR-4(11).]
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.9 MAINTENANCE
+
+### 3.9 MAINTENANCE
+
     Quick link to Maintenance Summary Table
-    MA-1 POLICY AND PROCEDURES
+
+#### MA-1 POLICY AND PROCEDURES
+
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 93. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] maintenance policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -9287,11 +8994,10 @@ roles]:
     Related Controls: PM-9, PS-8, SI-12.
     Control Enhancements: None.
     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    MA-2 CONTROLLED MAINTENANCE
+
+#### MA-2 CONTROLLED MAINTENANCE
+
     Control:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     a.
     Schedule, document, and review records of maintenance, repair, and replacement on
     system components in accordance with manufacturer or vendor specifications and/or
@@ -9336,16 +9042,15 @@ roles]:
     consistent maintenance records.
     Related Controls: MA-3.
     References: [OMB A-130], [IR 8023].
-    MA-3 MAINTENANCE TOOLS
+
+#### MA-3 MAINTENANCE TOOLS
+
     Control:
     a.
-    CHAPTER THREE
     Approve, control, and monitor the use of system maintenance tools; and
-    NIST SP 800-53, REV. 5
     b.
     Review previously approved system maintenance tools [Assignment: organization-defined
     frequency].
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Approving, controlling, monitoring, and reviewing maintenance tools address
     security-related issues associated with maintenance tools that are not within system
     authorization boundaries and are used specifically for diagnostic and repair actions on
@@ -9389,8 +9094,6 @@ roles]:
     any information provided to organizations for which the organizations serve as information
     stewards.
     Related Controls: MP-6.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (4) MAINTENANCE TOOLS | RESTRICTED TOOL USE
     Restrict the use of maintenance tools to authorized personnel only.
     Discussion: Restricting the use of maintenance tools to only authorized personnel applies to
@@ -9401,7 +9104,6 @@ roles]:
     Discussion: Maintenance tools that execute with increased system privilege can result in
     unauthorized access to organizational information and assets that would otherwise be
     inaccessible.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-3, AC-6.
     (6) MAINTENANCE TOOLS | SOFTWARE UPDATES AND PATCHES
     Inspect maintenance tools to ensure the latest software updates and patches are installed.
@@ -9409,7 +9111,9 @@ roles]:
     threat vector for adversaries and result in a significant vulnerability for organizations.
     Related Controls: AC-3, AC-6.
     References: [SP 800-88].
-    MA-4 NONLOCAL MAINTENANCE
+
+#### MA-4 NONLOCAL MAINTENANCE
+
     Control:
     a.
     Approve and monitor nonlocal maintenance and diagnostic activities;
@@ -9439,8 +9143,6 @@ roles]:
     (1) NONLOCAL MAINTENANCE | LOGGING AND REVIEW
     (a) Log [Assignment: organization-defined audit events] for nonlocal maintenance and
     diagnostic sessions; and
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (b) Review the audit records of the maintenance and diagnostic sessions to detect
     anomalous behavior.
     Discussion: Audit logging for nonlocal maintenance is enforced by AU-2. Audit events are
@@ -9449,7 +9151,6 @@ roles]:
     (2) NONLOCAL MAINTENANCE | DOCUMENT NONLOCAL MAINTENANCE
     [Withdrawn: Incorporated into MA-1 and MA-4.]
     (3) NONLOCAL MAINTENANCE | COMPARABLE SECURITY AND SANITIZATION
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Require that nonlocal maintenance and diagnostic services be performed from a
     system that implements a security capability comparable to the capability
     implemented on the system being serviced; or
@@ -9487,8 +9188,6 @@ roles]:
     organization-defined cryptographic mechanisms].
     Discussion: Failure to protect nonlocal maintenance and diagnostic communications can
     result in unauthorized individuals gaining access to organizational information. Unauthorized
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     access during remote maintenance sessions can result in a variety of hostile actions,
     including malicious code insertion, unauthorized changes to system parameters, and
     exfiltration of organizational information. Such actions can result in the loss or degradation
@@ -9500,10 +9199,11 @@ roles]:
     Discussion: Verifying the termination of a connection once maintenance is completed
     ensures that connections established during nonlocal maintenance and diagnostic sessions
     have been terminated and are no longer available for use.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Related Controls: AC-12.
     References: [FIPS 140-3], [FIPS 197], [FIPS 201-2], [SP 800-63-3], [SP 800-88].
-    MA-5 MAINTENANCE PERSONNEL
+
+#### MA-5 MAINTENANCE PERSONNEL
+
     Control:
     a.
     Establish a process for maintenance personnel authorization and maintain a list of
@@ -9538,8 +9238,6 @@ roles]:
     authorizations, and are technically qualified; and
     (2) Prior to initiating maintenance or diagnostic activities by personnel who do not
     have needed access authorizations, clearances or formal access approvals, all
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     volatile information storage components within the system are sanitized and all
     nonvolatile storage media are removed or physically disconnected from the
     system and secured; and
@@ -9551,7 +9249,6 @@ roles]:
     unclassified information contained on organizational systems. Procedures for the use of
     maintenance personnel can be documented in security plans for the systems.
     Related Controls: MP-6, PL-2.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (2) MAINTENANCE PERSONNEL | SECURITY CLEARANCES FOR CLASSIFIED SYSTEMS
     Verify that personnel performing maintenance and diagnostic activities on a system
     processing, storing, or transmitting classified information possess security clearances and
@@ -9586,8 +9283,6 @@ roles]:
     is required to ensure agreements and restrictions are not being violated.
     Related Controls: PS-3.
     (5) MAINTENANCE PERSONNEL | NON-SYSTEM MAINTENANCE
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     Ensure that non-escorted personnel performing maintenance activities not directly
     associated with the system but in the physical proximity of the system, have required
     access authorizations.
@@ -9595,10 +9290,11 @@ roles]:
     related to the system include physical plant personnel and custodial personnel.
     Related Controls: None.
     References: None.
-    MA-6 TIMELY MAINTENANCE
+
+#### MA-6 TIMELY MAINTENANCE
+
     Control: Obtain maintenance support and/or spare parts for [Assignment: organization-defined
     system components] within [Assignment: organization-defined time period] of failure.
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     Discussion: Organizations specify the system components that result in increased risk to
     organizational operations and assets, individuals, other organizations, or the Nation when the
     functionality provided by those components is not operational. Organizational actions to obtain
@@ -9635,8 +9331,6 @@ roles]:
     equipment is in service, thus minimizing disruption of normal system operations. Predictive
     maintenance can result in substantial cost savings and higher system reliability.
     Related Controls: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
     (3) TIMELY MAINTENANCE | AUTOMATED SUPPORT FOR PREDICTIVE MAINTENANCE
     Transfer predictive maintenance data to a maintenance management system using
     [Assignment: organization-defined automated mechanisms].
@@ -9646,8 +9340,9 @@ roles]:
     reporting.
     Related Controls: None.
     References: None.
-    MA-7 FIELD MAINTENANCE
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### MA-7 FIELD MAINTENANCE
+
     Control: Restrict or prohibit field maintenance on [Assignment: organization-defined systems or
     system components] to [Assignment: organization-defined trusted maintenance facilities].
     Discussion: Field maintenance is the type of maintenance conducted on a system or system
@@ -9660,18 +9355,20 @@ roles]:
     Related Controls: MA-2, MA-4, MA-5.
     Control Enhancements: None.
     References: None.
-    CHAPTER THREE
-    NIST SP 800-53, REV. 5
-    3.10 MEDIA PROTECTION
+
+### 3.10 MEDIA PROTECTION
+
     Quick link to Media Protection Summary Table
-    MP-1
+
+#### MP-1
+
     POLICY AND PROCEDURES
     Control:
     a.
     Develop, document, and disseminate to [Assignment: organization-defined personnel or
     roles]:
+
 97. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] media protection policy that:
-    This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
     (a) Addresses purpose, scope, roles, responsibilities, management commitment,
     coordination among organizational entities, and compliance; and
     (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -9685,31 +9382,31 @@ roles]:
     Review and update the current media protection:
 99. Policy [Assignment: organization-defined frequency] and following [Assignment:
     organization-defined events]; and
-100. Procedures [Assignment: organization-defined frequency] and following [Assignment:
-     organization-defined events].
-     Discussion: Media protection policy and procedures address the controls in the MP family that
-     are implemented within systems and organizations. The risk management strategy is an
-     important factor in establishing such policies and procedures. Policies and procedures contribute
-     to security and privacy assurance. Therefore, it is important that security and privacy programs
-     collaborate on the development of media protection policy and procedures. Security and privacy
-     program policies and procedures at the organization level are preferable, in general, and may
-     obviate the need for mission- or system-specific policies and procedures. The policy can be
-     included as part of the general security and privacy policy or be represented by multiple policies
-     that reflect the complex nature of organizations. Procedures can be established for security and
-     privacy programs, for mission or business processes, and for systems, if needed. Procedures
-     describe how the policies or controls are implemented and can be directed at the individual or
-     role that is the object of the procedure. Procedures can be documented in system security and
-     privacy plans or in one or more separate documents. Events that may precipitate an update to
-     media protection policy and procedures include assessment or audit findings, security incidents
-     or breaches, or changes in applicable laws, executive orders, directives, regulations, policies,
-     standards, and guidelines. Simply restating controls does not constitute an organizational policy
-     or procedure.
-     Related Controls: PM-9, PS-8, SI-12.
-     Control Enhancements: None.
-     References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     MP-2
+100.  Procedures [Assignment: organization-defined frequency] and following [Assignment:
+      organization-defined events].
+      Discussion: Media protection policy and procedures address the controls in the MP family that
+      are implemented within systems and organizations. The risk management strategy is an
+      important factor in establishing such policies and procedures. Policies and procedures contribute
+      to security and privacy assurance. Therefore, it is important that security and privacy programs
+      collaborate on the development of media protection policy and procedures. Security and privacy
+      program policies and procedures at the organization level are preferable, in general, and may
+      obviate the need for mission- or system-specific policies and procedures. The policy can be
+      included as part of the general security and privacy policy or be represented by multiple policies
+      that reflect the complex nature of organizations. Procedures can be established for security and
+      privacy programs, for mission or business processes, and for systems, if needed. Procedures
+      describe how the policies or controls are implemented and can be directed at the individual or
+      role that is the object of the procedure. Procedures can be documented in system security and
+      privacy plans or in one or more separate documents. Events that may precipitate an update to
+      media protection policy and procedures include assessment or audit findings, security incidents
+      or breaches, or changes in applicable laws, executive orders, directives, regulations, policies,
+      standards, and guidelines. Simply restating controls does not constitute an organizational policy
+      or procedure.
+      Related Controls: PM-9, PS-8, SI-12.
+      Control Enhancements: None.
+      References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
+
+#### MP-2
+
      MEDIA ACCESS
      Control: Restrict access to [Assignment: organization-defined types of digital and/or non-digital
      media] to [Assignment: organization-defined personnel or roles].
@@ -9721,7 +9418,6 @@ roles]:
      restricting access to non-digital media. Limiting access to the design specifications stored on
      compact discs in the media library to individuals on the system development team is an example
      of restricting access to digital media.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: AC-19, AU-9, CP-2, CP-9, CP-10, MA-5, MP-4, MP-6, PE-2, PE-3, SC-12, SC-13,
      SC-34, SI-12.
      Control Enhancements:
@@ -9730,7 +9426,9 @@ roles]:
      (2) MEDIA ACCESS | CRYPTOGRAPHIC PROTECTION
      [Withdrawn: Incorporated into SC-28(1).]
      References: [OMB A-130], [FIPS 199], [SP 800-111].
-     MP-3
+
+#### MP-3
+
      MEDIA MARKING
      Control:
      a.
@@ -9752,18 +9450,17 @@ roles]:
      Related Controls: AC-16, CP-9, MP-5, PE-22, SI-12.
      Control Enhancements: None.
      References: [EO 13556], [32 CFR 2002], [FIPS 199].
-     MP-4
+
+#### MP-4
+
      MEDIA STORAGE
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Physically control and securely store [Assignment: organization-defined types of digital
      and/or non-digital media] within [Assignment: organization-defined controlled areas]; and
      b.
      Protect system media types defined in MP-4a until the media are destroyed or sanitized
      using approved equipment, techniques, and procedures.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: System media includes digital and non-digital media. Digital media includes flash
      drives, diskettes, magnetic tapes, external or removable hard disk drives (e.g., solid state,
      magnetic), compact discs, and digital versatile discs. Non-digital media includes paper and
@@ -9790,7 +9487,9 @@ roles]:
      Related Controls: AC-3, AU-2, AU-6, AU-9, AU-12, PE-3.
      References: [FIPS 199], [SP 800-56A], [SP 800-56B], [SP 800-56C], [SP 800-57-1], [SP 800-57-2],
      [SP 800-57-3], [SP 800-111].
-     MP-5
+
+#### MP-5
+
      MEDIA TRANSPORT
      Control:
      a.
@@ -9809,8 +9508,6 @@ roles]:
      paper. Controlled areas are spaces for which organizations provide physical or procedural
      controls to meet requirements established for protecting information and systems. Controls to
      protect media during transport include cryptography and locked containers. Cryptographic
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      mechanisms can provide confidentiality and integrity protections depending on the mechanisms
      implemented. Activities associated with media transport include releasing media for transport,
      ensuring that media enters the appropriate transport processes, and the actual transport.
@@ -9823,7 +9520,6 @@ roles]:
      the flexibility to define record-keeping methods for the different types of media transport as part
      of a system of transport-related records.
      Related Controls: AC-7, AC-19, CP-2, CP-9, MP-3, MP-4, PE-16, PL-2, SC-12, SC-13, SC-28, SC-34.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) MEDIA TRANSPORT | PROTECTION OUTSIDE OF CONTROLLED AREAS
      [Withdrawn: Incorporated into MP-5.]
@@ -9839,7 +9535,9 @@ roles]:
      (4) MEDIA TRANSPORT | CRYPTOGRAPHIC PROTECTION
      [Withdrawn: Incorporated into SC-28(1).]
      References: [FIPS 199], [SP 800-60-1], [SP 800-60-2].
-     MP-6
+
+#### MP-6
+
      MEDIA SANITIZATION
      Control:
      a.
@@ -9858,8 +9556,6 @@ roles]:
      information to unauthorized individuals when such media is reused or released for disposal.
      Organizations determine the appropriate sanitization methods, recognizing that destruction is
      sometimes necessary when other methods cannot be applied to media requiring sanitization.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Organizations use discretion on the employment of approved sanitization techniques and
      procedures for media that contains information deemed to be in the public domain or publicly
      releasable or information deemed to have no adverse impact on organizations or individuals if
@@ -9871,7 +9567,6 @@ roles]:
      sanitization process for controlled unclassified information.
      Related Controls: AC-3, AC-7, AU-11, MA-2, MA-3, MA-4, MA-5, PM-22, SI-12, SI-18, SI-19, SR-11.
      Control Enhancements:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (1) MEDIA SANITIZATION | REVIEW, APPROVE, TRACK, DOCUMENT, AND VERIFY
      Review, approve, track, document, and verify media sanitization and disposal actions.
      Discussion: Organizations review and approve media to be sanitized to ensure compliance
@@ -9907,15 +9602,12 @@ roles]:
      (4) MEDIA SANITIZATION | CONTROLLED UNCLASSIFIED INFORMATION
      [Withdrawn: Incorporated into MP-6.]
      (5) MEDIA SANITIZATION | CLASSIFIED INFORMATION
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      [Withdrawn: Incorporated into MP-6.]
      (6) MEDIA SANITIZATION | MEDIA DESTRUCTION
      [Withdrawn: Incorporated into MP-6.]
      (7) MEDIA SANITIZATION | DUAL AUTHORIZATION
      Enforce dual authorization for the sanitization of [Assignment: organization-defined
      system media].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations employ dual authorization to help ensure that system media
      sanitization cannot occur unless two technically qualified individuals conduct the designated
      task. Individuals who sanitize system media possess sufficient skills and expertise to
@@ -9939,7 +9631,9 @@ roles]:
      Related Controls: None.
      References: [32 CFR 2002], [OMB A-130], [NARA CUI], [FIPS 199], [SP 800-60-1], [SP 800-60-2],
      [SP 800-88], [SP 800-124], [IR 8023], [NSA MEDIA].
-     MP-7
+
+#### MP-7
+
      MEDIA USE
      Control:
      a.
@@ -9958,8 +9652,6 @@ roles]:
      technical and nontechnical controls to restrict the use of system media. Organizations may
      restrict the use of portable storage devices, for example, by using physical cages on workstations
      to prohibit access to certain external ports or disabling or removing the ability to insert, read, or
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      write to such devices. Organizations may also limit the use of portable storage devices to only
      approved devices, including devices provided by the organization, devices provided by other
      approved organizations, and devices that are not personally owned. Finally, organizations may
@@ -9971,7 +9663,6 @@ roles]:
      Related Controls: AC-19, AC-20, PL-4, PM-12, SC-34, SC-41.
      Control Enhancements:
      (1) MEDIA USE | PROHIBIT USE WITHOUT OWNER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [Withdrawn: Incorporated into MP-7.]
      (2) MEDIA USE | PROHIBIT USE OF SANITIZATION-RESISTANT MEDIA
      Prohibit the use of sanitization-resistant media in organizational systems.
@@ -9983,7 +9674,9 @@ roles]:
      removable media.
      Related Controls: MP-6.
      References: [FIPS 199], [SP 800-111].
-     MP-8
+
+#### MP-8
+
      MEDIA DOWNGRADING
      Control:
      a.
@@ -10008,8 +9701,6 @@ roles]:
      Control Enhancements:
      (1) MEDIA DOWNGRADING | DOCUMENTATION OF PROCESS
      Document system media downgrading actions.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Organizations can document the media downgrading process by providing
      information, such as the downgrading technique employed, the identification number of the
      downgraded media, and the identity of the individual that authorized and/or performed the
@@ -10020,7 +9711,6 @@ roles]:
      frequency] to ensure that downgrading actions are being achieved.
      Discussion: None.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (3) MEDIA DOWNGRADING | CONTROLLED UNCLASSIFIED INFORMATION
      Downgrade system media containing controlled unclassified information prior to public
      release.
@@ -10035,18 +9725,20 @@ roles]:
      classified systems to unclassified media.
      Related Controls: None.
      References: [32 CFR 2002], [NSA MEDIA].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.11 PHYSICAL AND ENVIRONMENTAL PROTECTION
+
+### 3.11 PHYSICAL AND ENVIRONMENTAL PROTECTION
+
      Quick link to Physical and Environmental Protection Summary Table
-     PE-1
+
+#### PE-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 101. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] physical and environmental protection policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -10083,9 +9775,9 @@ roles]:
      Related Controls: AT-3, PM-9, PS-8, SI-12.
      Control Enhancements: None.
      References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PE-2
+
+#### PE-2
+
      PHYSICAL ACCESS AUTHORIZATIONS
      Control:
      a.
@@ -10098,7 +9790,6 @@ roles]:
      organization-defined frequency]; and
      d.
      Remove individuals from the facility access list when access is no longer required.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Physical access authorizations apply to employees and visitors. Individuals with
      permanent physical access authorization credentials are not considered visitors. Authorization
      credentials include ID badges, identification cards, and smart cards. Organizations determine the
@@ -10132,18 +9823,18 @@ roles]:
      that information is not exposed or otherwise compromised.
      Related Controls: PS-2, PS-6.
      References: [FIPS 201-2], [SP 800-73-4], [SP 800-76-2], [SP 800-78-4].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PE-3
+
+#### PE-3
+
      PHYSICAL ACCESS CONTROL
      Control:
      a.
      Enforce physical access authorizations at [Assignment: organization-defined entry and exit
      points to the facility where the system resides] by:
+
 105. Verifying individual access authorizations before granting access to the facility; and
 106. Controlling ingress and egress to the facility using [Selection (one or more): [Assignment:
      organization-defined physical access control systems or devices]; guards];
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      b.
      Maintain physical access audit logs for [Assignment: organization-defined entry or exit
      points];
@@ -10184,8 +9875,6 @@ roles]:
      those areas within facilities where there is a concentration of system components.
      Related Controls: None.
      (2) PHYSICAL ACCESS CONTROL | FACILITY AND SYSTEMS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Perform security checks [Assignment: organization-defined frequency] at the physical
      perimeter of the facility or system for exfiltration of information or removal of system
      components.
@@ -10195,7 +9884,6 @@ roles]:
      (3) PHYSICAL ACCESS CONTROL | CONTINUOUS GUARDS
      Employ guards to control [Assignment: organization-defined physical access points] to the
      facility where the system resides 24 hours per day, 7 days per week.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Employing guards at selected physical access points to the facility provides a
      more rapid response capability for organizations. Guards also provide the opportunity for
      human surveillance in areas of the facility not covered by video surveillance.
@@ -10231,8 +9919,6 @@ roles]:
      (8) PHYSICAL ACCESS CONTROL | ACCESS CONTROL VESTIBULES
      Employ access control vestibules at [Assignment: organization-defined locations within the
      facility].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: An access control vestibule is part of a physical access control system that
      typically provides a space between two sets of interlocking doors. Vestibules are designed to
      prevent unauthorized individuals from following authorized individuals into facilities with
@@ -10244,9 +9930,10 @@ roles]:
      (i.e., using security guards to control the number of individuals entering the containment
      area).
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      References: [FIPS 201-2], [SP 800-73-4], [SP 800-76-2], [SP 800-78-4], [SP 800-116].
-     PE-4
+
+#### PE-4
+
      ACCESS CONTROL FOR TRANSMISSION
      Control: Control physical access to [Assignment: organization-defined system distribution and
      transmission lines] within organizational facilities using [Assignment: organization-defined
@@ -10260,7 +9947,9 @@ roles]:
      Related Controls: AT-3, IA-4, MP-2, MP-4, PE-2, PE-3, PE-5, PE-9, SC-7, SC-8.
      Control Enhancements: None.
      References: None.
-     PE-5
+
+#### PE-5
+
      ACCESS CONTROL FOR OUTPUT DEVICES
      Control: Control physical access to output from [Assignment: organization-defined output
      devices] to prevent unauthorized individuals from obtaining the output.
@@ -10279,16 +9968,15 @@ roles]:
      devices include installing security functionality on facsimile machines, copiers, and printers.
      Such functionality allows organizations to implement authentication on output devices prior
      to the release of output to individuals.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: None.
      (3) ACCESS CONTROL FOR OUTPUT DEVICES | MARKING OUTPUT DEVICES
      [Withdrawn: Incorporated into PE-22.]
      References: [IR 8023].
-     PE-6
+
+#### PE-6
+
      MONITORING PHYSICAL ACCESS
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Monitor physical access to the facility where the system resides to detect and respond to
      physical security incidents;
@@ -10329,8 +10017,6 @@ roles]:
      enforcement personnel. Automated mechanisms implemented to initiate response actions
      include system alert notifications, email and text messages, and activating door locking
      mechanisms. Physical access monitoring can be coordinated with intrusion detection
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      systems and system monitoring capabilities to provide integrated threat coverage for the
      organization.
      Related Controls: SI-4.
@@ -10338,7 +10024,6 @@ roles]:
      (a) Employ video surveillance of [Assignment: organization-defined operational areas];
      (b) Review video recordings [Assignment: organization-defined frequency]; and
      (c) Retain video recordings for [Assignment: organization-defined time period].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Video surveillance focuses on recording activity in specified areas for the
      purposes of subsequent review, if circumstances so warrant. Video recordings are typically
      reviewed to detect anomalous events or incidents. Monitoring the surveillance video is not
@@ -10357,10 +10042,14 @@ roles]:
      comprehensive and integrated threat coverage for the organization.
      Related Controls: None.
      References: None.
-     PE-7
+
+#### PE-7
+
      VISITOR CONTROL
      [Withdrawn: Incorporated into PE-2 and PE-3.]
-     PE-8
+
+#### PE-8
+
      VISITOR ACCESS RECORDS
      Control:
      a.
@@ -10378,8 +10067,6 @@ roles]:
      Related Controls: PE-2, PE-3, PE-6.
      Control Enhancements:
      (1) VISITOR ACCESS RECORDS | AUTOMATED RECORDS MAINTENANCE AND REVIEW
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Maintain and review visitor access records using [Assignment: organization-defined
      automated mechanisms].
      Discussion: Visitor access records may be stored and maintained in a database management
@@ -10390,7 +10077,6 @@ roles]:
      (2) VISITOR ACCESS RECORDS | PHYSICAL ACCESS RECORDS
      [Withdrawn: Incorporated into PE-2.]
      (3) VISITOR ACCESS RECORDS | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Limit personally identifiable information contained in visitor access records to the
      following elements identified in the privacy risk assessment: [Assignment: organizationdefined elements].
      Discussion: Organizations may have requirements that specify the contents of visitor access
@@ -10399,7 +10085,9 @@ roles]:
      created by a system.
      Related Controls: RA-3, SA-8.
      References: None.
-     PE-9
+
+#### PE-9
+
      POWER EQUIPMENT AND CABLING
      Control: Protect power equipment and power cabling for the system from damage and
      destruction.
@@ -10424,9 +10112,9 @@ roles]:
      include voltage regulators, voltage conditioners, and voltage stabilizers.
      Related Controls: None.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PE-10 EMERGENCY SHUTOFF
+
+#### PE-10 EMERGENCY SHUTOFF
+
      Control:
      a.
      Provide the capability of shutting off power to [Assignment: organization-defined system or
@@ -10439,13 +10127,14 @@ roles]:
      Discussion: Emergency power shutoff primarily applies to organizational facilities that contain
      concentrations of system resources, including data centers, mainframe computer rooms, server
      rooms, and areas with computer-controlled machinery.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: PE-15.
      Control Enhancements:
      (1) EMERGENCY SHUTOFF | ACCIDENTAL AND UNAUTHORIZED ACTIVATION
      [Withdrawn: Incorporated into PE-10.]
      References: None.
-     PE-11 EMERGENCY POWER
+
+#### PE-11 EMERGENCY POWER
+
      Control: Provide an uninterruptible power supply to facilitate [Selection (one or more): an
      orderly shutdown of the system; transition of the system to long-term alternate power] in the
      event of a primary power source loss.
@@ -10472,8 +10161,6 @@ roles]:
      Provide an alternate power supply for the system that is activated [Selection: manually;
      automatically] and that is:
      (a) Self-contained;
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (b) Not reliant on external power generation; and
      (c) Capable of maintaining [Selection: minimally required operational capability; full
      operational capability] in the event of an extended loss of the primary power source.
@@ -10481,8 +10168,9 @@ roles]:
      using one or more generators with sufficient capacity to meet the needs of the organization.
      Related Controls: None.
      References: None.
-     PE-12 EMERGENCY LIGHTING
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### PE-12 EMERGENCY LIGHTING
+
      Control: Employ and maintain automatic emergency lighting for the system that activates in the
      event of a power outage or disruption and that covers emergency exits and evacuation routes
      within the facility.
@@ -10499,7 +10187,9 @@ roles]:
      Discussion: Organizations define their essential missions and functions.
      Related Controls: None.
      References: None.
-     PE-13 FIRE PROTECTION
+
+#### PE-13 FIRE PROTECTION
+
      Control: Employ and maintain fire detection and suppression systems that are supported by an
      independent energy source.
      Discussion: The provision of fire detection and suppression systems applies primarily to
@@ -10517,8 +10207,6 @@ roles]:
      Discussion: Organizations can identify personnel, roles, and emergency responders if
      individuals on the notification list need to have access authorizations or clearances (e.g., to
      enter to facilities where access is restricted due to the classification or impact level of
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      information within the facility). Notification mechanisms may require independent energy
      sources to ensure that the notification capability is not adversely affected by the fire.
      Related Controls: None.
@@ -10528,7 +10216,6 @@ roles]:
      emergency responders]; and
      (b) Employ an automatic fire suppression capability when the facility is not staffed on a
      continuous basis.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations can identify specific personnel, roles, and emergency responders
      if individuals on the notification list need to have appropriate access authorizations and/or
      clearances (e.g., to enter to facilities where access is restricted due to the impact level or
@@ -10548,7 +10235,9 @@ roles]:
      contain sensitive information.
      Related Controls: None.
      References: None.
-     PE-14 ENVIRONMENTAL CONTROLS
+
+#### PE-14 ENVIRONMENTAL CONTROLS
+
      Control:
      a.
      Maintain [Selection (one or more): temperature; humidity; pressure; radiation; [Assignment:
@@ -10564,8 +10253,6 @@ roles]:
      Related Controls: AT-3, CP-2.
      Control Enhancements:
      (1) ENVIRONMENTAL CONTROLS | AUTOMATIC CONTROLS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Employ the following automatic environmental controls in the facility to prevent
      fluctuations potentially harmful to the system: [Assignment: organization-defined
      automatic environmental controls].
@@ -10576,14 +10263,15 @@ roles]:
      (2) ENVIRONMENTAL CONTROLS | MONITORING WITH ALARMS AND NOTIFICATIONS
      Employ environmental control monitoring that provides an alarm or notification of
      changes potentially harmful to personnel or equipment to [Assignment: organizationdefined personnel or roles].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The alarm or notification may be an audible alarm or a visual message in real
      time to personnel or roles defined by the organization. Such alarms and notifications can
      help minimize harm to individuals and damage to organizational assets by facilitating a
      timely incident response.
      Related Controls: None.
      References: None.
-     PE-15 WATER DAMAGE PROTECTION
+
+#### PE-15 WATER DAMAGE PROTECTION
+
      Control: Protect the system from damage resulting from water leakage by providing master
      shutoff or isolation valves that are accessible, working properly, and known to key personnel.
      Discussion: The provision of water damage protection primarily applies to organizational
@@ -10600,7 +10288,9 @@ roles]:
      and alarms.
      Related Controls: None.
      References: None.
-     PE-16 DELIVERY AND REMOVAL
+
+#### PE-16 DELIVERY AND REMOVAL
+
      Control:
      a.
      Authorize and control [Assignment: organization-defined types of system components]
@@ -10610,13 +10300,12 @@ roles]:
      Discussion: Enforcing authorizations for entry and exit of system components may require
      restricting access to delivery areas and isolating the areas from the system and media libraries.
      Related Controls: CM-3, CM-8, MA-2, MA-3, MP-5, PE-20, SR-2, SR-3, SR-4, SR-6.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements: None.
      References: None.
-     PE-17 ALTERNATE WORK SITE
+
+#### PE-17 ALTERNATE WORK SITE
+
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Determine and document the [Assignment: organization-defined alternate work sites]
      allowed for use by employees;
@@ -10638,7 +10327,9 @@ roles]:
      Related Controls: AC-17, AC-18, CP-7.
      Control Enhancements: None.
      References: [SP 800-46].
-     PE-18 LOCATION OF SYSTEM COMPONENTS
+
+#### PE-18 LOCATION OF SYSTEM COMPONENTS
+
      Control: Position system components within the facility to minimize potential damage from
      [Assignment: organization-defined physical and environmental hazards] and to minimize the
      opportunity for unauthorized access.
@@ -10653,13 +10344,13 @@ roles]:
      (1) LOCATION OF SYSTEM COMPONENTS | FACILITY SITE
      [Withdrawn: Moved to PE-23.]
      References: None.
-     PE-19 INFORMATION LEAKAGE
+
+#### PE-19 INFORMATION LEAKAGE
+
      Control: Protect the system from information leakage due to electromagnetic signals
      emanations.
      Discussion: Information leakage is the intentional or unintentional release of data or information
      to an untrusted environment from electromagnetic signals emanations. The security categories
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      or classifications of systems (with respect to confidentiality), organizational security policies, and
      risk tolerance guide the selection of controls employed to protect systems against information
      leakage due to electromagnetic signals emanations.
@@ -10670,10 +10361,11 @@ roles]:
      with national Emissions Security policies and procedures based on the security category or
      classification of the information.
      Discussion: Emissions Security (EMSEC) policies include the former TEMPEST policies.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: None.
      References: [FIPS 199].
-     PE-20 ASSET MONITORING AND TRACKING
+
+#### PE-20 ASSET MONITORING AND TRACKING
+
      Control: Employ [Assignment: organization-defined asset location technologies] to track and
      monitor the location and movement of [Assignment: organization-defined assets] within
      [Assignment: organization-defined controlled areas].
@@ -10684,7 +10376,9 @@ roles]:
      Related Controls: CM-8, PE-16, PM-8.
      Control Enhancements: None.
      References: None.
-     PE-21 ELECTROMAGNETIC PULSE PROTECTION
+
+#### PE-21 ELECTROMAGNETIC PULSE PROTECTION
+
      Control: Employ [Assignment: organization-defined protective measures] against
      electromagnetic pulse damage for [Assignment: organization-defined systems and system
      components].
@@ -10697,13 +10391,12 @@ roles]:
      Related Controls: PE-18, PE-19.
      Control Enhancements: None.
      References: None.
-     PE-22 COMPONENT MARKING
+
+#### PE-22 COMPONENT MARKING
+
      Control: Mark [Assignment: organization-defined system hardware components] indicating the
      impact level or classification level of the information permitted to be processed, stored, or
      transmitted by the hardware component.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Hardware components that may require marking include input and output devices.
      Input devices include desktop and notebook computers, keyboards, tablets, and smart phones.
      Output devices include printers, monitors/video displays, facsimile machines, scanners, copiers,
@@ -10721,7 +10414,9 @@ roles]:
      Related Controls: AC-3, AC-4, AC-16, MP-3.
      Control Enhancements: None.
      References: [IR 8023].
-     PE-23 FACILITY LOCATION
+
+#### PE-23 FACILITY LOCATION
+
      Control:
      a.
      Plan the location or site of the facility where the system resides considering physical and
@@ -10735,18 +10430,20 @@ roles]:
      facility is addressed in PE-18.
      Related Controls: CP-2, PE-18, PE-19, PM-8, PM-9, RA-3.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.12 PLANNING
+
+### 3.12 PLANNING
+
      Quick link to Planning Summary Table
-     PL-1
+
+#### PL-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 107. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] planning policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -10781,14 +10478,14 @@ roles]:
      Related Controls: PM-9, PS-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-12], [SP 800-18], [SP 800-30], [SP 800-39], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PL-2
+
+#### PL-2
+
      SYSTEM SECURITY AND PRIVACY PLANS
      Control:
      a.
      Develop security and privacy plans for the system that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
 111. Are consistent with the organization’s enterprise architecture;
 112. Explicitly define the constituent system components;
 113. Describe the operational context of the system in terms of mission and business
@@ -10832,8 +10529,6 @@ roles]:
      and privacy plans are living documents that are updated and adapted throughout the system
      development life cycle (e.g., during capability determination, analysis of alternatives, requests for
      proposal, and design reviews). Section 2.1 describes the different types of requirements that are
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      relevant to organizations during the system development life cycle and the relationship between
      requirements and controls.
      Organizations may develop a single, integrated security and privacy plan or maintain separate
@@ -10846,7 +10541,6 @@ roles]:
      that is unambiguously compliant with the intent of the plans and subsequent determinations of
      risk to organizational operations and assets, individuals, other organizations, and the Nation if
      the plan is implemented.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Security and privacy plans need not be single documents. The plans can be a collection of various
      documents, including documents that already exist. Effective security and privacy plans make
      extensive use of references to policies, procedures, and additional documents, including design
@@ -10876,15 +10570,16 @@ roles]:
      ENTITIES
      [Withdrawn: Incorporated into PL-2.]
      References: [OMB A-130], [SP 800-18], [SP 800-37], [SP 800-160-1], [SP 800-160-2].
-     PL-3
+
+#### PL-3
+
      SYSTEM SECURITY PLAN UPDATE
      [Withdrawn: Incorporated into PL-2.]
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PL-4
+
+#### PL-4
+
      RULES OF BEHAVIOR
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Establish and provide to individuals requiring access to the system, the rules that describe
      their responsibilities and expected behavior for information and system usage, security, and
@@ -10933,18 +10628,21 @@ roles]:
      personally identifiable information and system account information.
      Related Controls: AC-22, AU-13.
      References: [OMB A-130], [SP 800-18].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PL-5
+
+#### PL-5
+
      PRIVACY IMPACT ASSESSMENT
      [Withdrawn: Incorporated into RA-8.]
-     PL-6
+
+#### PL-6
+
      SECURITY-RELATED ACTIVITY PLANNING
      [Withdrawn: Incorporated into PL-2.]
-     PL-7
+
+#### PL-7
+
      CONCEPT OF OPERATIONS
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Develop a Concept of Operations (CONOPS) for the system describing how the organization
      intends to operate the system from the perspective of information security and privacy; and
@@ -10961,11 +10659,14 @@ roles]:
      Related Controls: PL-2, SA-2, SI-12.
      Control Enhancements: None.
      References: [OMB A-130].
-     PL-8
+
+#### PL-8
+
      SECURITY AND PRIVACY ARCHITECTURES
      Control:
      a.
      Develop security and privacy architectures for the system that:
+
 126. Describe the requirements and approach to be taken for protecting the confidentiality,
      integrity, and availability of organizational information;
 127. Describe the requirements and approach to be taken for processing personally
@@ -10985,8 +10686,6 @@ roles]:
      description, the allocation of security and privacy functionality (including controls), security- and
      privacy-related information for external interfaces, information being exchanged across the
      interfaces, and the protection mechanisms associated with each interface. The architectures can
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      also include other information, such as user roles and the access privileges assigned to each role;
      security and privacy requirements; types of information processed, stored, and transmitted by
      the system; supply chain risk management requirements; restoration priorities of information
@@ -10998,7 +10697,6 @@ roles]:
      analysis of alternatives through review of the proposed architecture in the RFP responses to the
      design reviews before and during implementation (e.g., during preliminary design reviews and
      critical design reviews).
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      In today’s modern computing architectures, it is becoming less common for organizations to
      control all information resources. There may be key dependencies on external information
      services and service providers. Describing such dependencies in the security and privacy
@@ -11014,7 +10712,9 @@ roles]:
      these cases, consideration of the privacy requirements needed to achieve satisfaction will result
      in a distinct privacy architecture. The documentation, however, may simply reflect the combined
      architectures.
-     PL-8 is primarily directed at organizations to ensure that architectures are developed for the
+
+#### PL-8 is primarily directed at organizations to ensure that architectures are developed for the
+
      system and, moreover, that the architectures are integrated with or tightly coupled to the
      enterprise architecture. In contrast, SA-17 is primarily directed at the external information
      technology product and system developers and integrators. SA-17, which is complementary to
@@ -11036,8 +10736,6 @@ roles]:
      the likelihood of detection. The coordination of allocated controls is essential to ensure that
      an attack that involves one control does not create adverse, unintended consequences by
      interfering with other controls. Unintended consequences can include system lockout and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      cascading alarms. The placement of controls in systems and organizations is an important
      activity that requires thoughtful analysis. The value of organizational assets is an important
      consideration in providing additional layering. Defense-in-depth architectural approaches
@@ -11048,7 +10746,6 @@ roles]:
      Require that [Assignment: organization-defined controls] allocated to [Assignment:
      organization-defined locations and architectural layers] are obtained from different
      suppliers.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Information technology products have different strengths and weaknesses.
      Providing a broad spectrum of products complements the individual offerings. For example,
      vendors offering malicious code protection typically update their products at different times,
@@ -11060,7 +10757,9 @@ roles]:
      in more assurance that personally identifiable information is inventoried.
      Related Controls: SC-29, SR-3.
      References: [OMB A-130], [SP 800-160-1], [SP 800-160-2].
-     PL-9
+
+#### PL-9
+
      CENTRAL MANAGEMENT
      Control: Centrally manage [Assignment: organization-defined controls and related processes].
      Discussion: Central management refers to organization-wide management and implementation
@@ -11085,15 +10784,14 @@ roles]:
      AT-3(2), AT-3(3), AT-4, AU-3, AU-6(1), AU-6(3), AU-6(5), AU-6(6), AU-6(9), AU-7(1), AU-7(2), AU11, AU-13, AU-16, CA-2(1), CA-2(2), CA-2(3), CA-3(1), CA-3(2), CA-3(3), CA-7(1), CA-9, CM-2(2),
      CM-3(1), CM-3(4), CM-4, CM-6, CM-6(1), CM-7(2), CM-7(4), CM-7(5), CM-8(all), CM-9(1), CM-10,
      CM-11, CP-7(all), CP-8(all), SC-43, SI-2, SI-3, SI-4(all), SI-7, SI-8.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: PL-8, PM-9.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-37].
-     PL-10
+
+#### PL-10
+
      BASELINE SELECTION
      Control: Select a control baseline for the system.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Control baselines are predefined sets of controls specifically assembled to address
      the protection needs of a group, organization, or community of interest. Controls are chosen for
      baselines to either satisfy mandates imposed by laws, executive orders, directives, regulations,
@@ -11116,7 +10814,9 @@ roles]:
      Related Controls: PL-2, PL-11, RA-2, RA-3, SA-8.
      Control Enhancements: None.
      References: [FIPS 199], [FIPS 200], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-53B], [SP 80060-1], [SP 800-60-2], [SP 800-160-1], [CNSSI 1253].
-     PL-11
+
+#### PL-11
+
      BASELINE TAILORING
      Control: Tailor the selected control baseline by applying specified tailoring actions.
      Discussion: The concept of tailoring allows organizations to specialize or customize a set of
@@ -11135,17 +10835,13 @@ roles]:
      communities of interest adopting different control baselines can apply the tailoring actions in [SP
      800-53B] to specialize or customize the controls that represent the specific needs and concerns
      of those entities.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: PL-10, RA-2, RA-3, RA-9, SA-8.
      Control Enhancements: None.
      References: [FIPS 199], [FIPS 200], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-53B], [SP 80060-1], [SP 800-60-2], [SP 800-160-1], [CNSSI 1253].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.13 PROGRAM MANAGEMENT
+
+### 3.13 PROGRAM MANAGEMENT
+
      PROGRAM MANAGEMENT CONTROLS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [FISMA], [PRIVACT], and [OMB A-130] require federal agencies to develop, implement, and
      provide oversight for organization-wide information security and privacy programs to help
      ensure the confidentiality, integrity, and availability of federal information processed, stored,
@@ -11162,11 +10858,14 @@ roles]:
      individual information systems and the information security and privacy program plans cover
      the totality of security and privacy controls employed by the organization.
      Quick link to Program Management Summary Table
-     PM-1
+
+#### PM-1
+
      INFORMATION SECURITY PROGRAM PLAN
      Control:
      a.
      Develop and disseminate an organization-wide information security program plan that:
+
 130. Provides an overview of the requirements for the security program and a description of
      the security program management controls and common controls in place or planned
      for meeting those requirements;
@@ -11186,8 +10885,6 @@ roles]:
      modification.
      Discussion: An information security program plan is a formal document that provides an
      overview of the security requirements for an organization-wide information security program
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      and describes the program management controls and common controls in place or planned for
      meeting those requirements. An information security program plan can be represented in a
      single document or compilations of documents. Privacy program plans and supply chain risk
@@ -11199,7 +10896,6 @@ roles]:
      plan and a determination of the risk to be incurred if the plan is implemented as intended.
      Updates to information security program plans include organizational changes and problems
      identified during plan implementation or control assessments.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Program management controls may be implemented at the organization level or the mission or
      business process level, and are essential for managing the organization’s information security
      program. Program management controls are distinct from common, system-specific, and hybrid
@@ -11217,7 +10913,9 @@ roles]:
      Related Controls: PL-2, PM-18, PM-30, RA-9, SI-12, SR-2.
      Control Enhancements: None.
      References: [FISMA], [OMB A-130], [SP 800-37], [SP 800-39].
-     PM-2
+
+#### PM-2
+
      INFORMATION SECURITY PROGRAM LEADERSHIP ROLE
      Control: Appoint a senior agency information security officer with the mission and resources to
      coordinate, develop, implement, and maintain an organization-wide information security
@@ -11230,11 +10928,11 @@ roles]:
      Related Controls: None.
      Control Enhancements: None.
      References: [OMB M-17-25], [SP 800-37], [SP 800-39], [SP 800-181].
-     PM-3
+
+#### PM-3
+
      INFORMATION SECURITY AND PRIVACY RESOURCES
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Include the resources needed to implement the information security and privacy programs
      in capital planning and investment requests and document all exceptions to this
@@ -11245,7 +10943,6 @@ roles]:
      orders, directives, policies, regulations, standards; and
      c.
      Make available for expenditure, the planned information security and privacy resources.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations consider establishing champions for information security and privacy
      and, as part of including the necessary resources, assign specialized expertise and resources as
      needed. Organizations may designate and empower an Investment Review Board or similar
@@ -11254,7 +10951,9 @@ roles]:
      Related Controls: PM-4, SA-2.
      Control Enhancements: None.
      References: [OMB A-130].
-     PM-4
+
+#### PM-4
+
      PLAN OF ACTION AND MILESTONES PROCESS
      Control:
      a.
@@ -11262,6 +10961,7 @@ roles]:
      Implement a process to ensure that plans of action and milestones for the information
      security, privacy, and supply chain risk management programs and associated organizational
      systems:
+
 134. Are developed and maintained;
 135. Document the remedial information security, privacy, and supply chain risk
      management actions to adequately respond to risk to organizational operations and
@@ -11282,9 +10982,9 @@ roles]:
      Related Controls: CA-5, CA-7, PM-3, RA-7, SI-12.
      Control Enhancements: None.
      References: [PRIVACT], [OMB A-130], [SP 800-37].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PM-5
+
+#### PM-5
+
      SYSTEM INVENTORY
      Control: Develop and update [Assignment: organization-defined frequency] an inventory of
      organizational systems.
@@ -11294,7 +10994,6 @@ roles]:
      Related Controls: None.
      Control Enhancements:
      (1) SYSTEM INVENTORY | INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Establish, maintain, and update [Assignment: organization-defined frequency] an
      inventory of all systems, applications, and projects that process personally identifiable
      information.
@@ -11307,7 +11006,9 @@ roles]:
      processing is still relevant and necessary for the purpose specified therein.
      Related Controls: AC-3, CM-8, CM-12, CM-13, PL-8, PM-22, PT-3, PT-5, SI-12, SI-18.
      References: [OMB A-130], [IR 8062].
-     PM-6
+
+#### PM-6
+
      MEASURES OF PERFORMANCE
      Control: Develop, monitor, and report on the results of information security and privacy
      measures of performance.
@@ -11319,7 +11020,9 @@ roles]:
      Related Controls: CA-7, PM-9.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-55], [SP 800-137].
-     PM-7
+
+#### PM-7
+
      ENTERPRISE ARCHITECTURE
      Control: Develop and maintain an enterprise architecture with consideration for information
      security, privacy, and the resulting risk to organizational operations and assets, individuals, other
@@ -11331,8 +11034,6 @@ roles]:
      into the enterprise architecture and the organization’s security and privacy architectures
      consistent with the organizational risk management strategy. For PM-7, security and privacy
      architectures are developed at a system-of-systems level, representing all organizational
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      systems. For PL-8, the security and privacy architectures are developed at a level that represents
      an individual system. The system-level architectures are consistent with the security and privacy
      architectures defined for the organization. Security and privacy requirements and control
@@ -11343,7 +11044,6 @@ roles]:
      (1) ENTERPRISE ARCHITECTURE | OFFLOADING
      Offload [Assignment: organization-defined non-essential functions or services] to other
      systems, system components, or an external provider.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Not every function or service that a system provides is essential to
      organizational mission or business functions. Printing or copying is an example of a nonessential but supporting service for an organization. Whenever feasible, such supportive but
      non-essential functions or services are not co-located with the functions or services that
@@ -11353,7 +11053,9 @@ roles]:
      subject matter experts in the functions or services.
      Related Controls: SA-8.
      References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-160-1], [SP 800-160-2].
-     PM-8
+
+#### PM-8
+
      CRITICAL INFRASTRUCTURE PLAN
      Control: Address information security and privacy issues in the development, documentation,
      and updating of a critical infrastructure and key resources protection plan.
@@ -11364,11 +11066,14 @@ roles]:
      Related Controls: CP-2, CP-4, PE-18, PL-2, PM-9, PM-11, PM-18, RA-3, SI-12.
      Control Enhancements: None.
      References: [EO 13636], [OMB A-130], [HSPD 7], [DHS NIPP].
-     PM-9
+
+#### PM-9
+
      RISK MANAGEMENT STRATEGY
      Control:
      a.
      Develops a comprehensive strategy to manage:
+
 137. Security risk to organizational operations and assets, individuals, other organizations,
      and the Nation associated with the operation and use of organizational systems; and
 138. Privacy risk to individuals resulting from the authorized processing of personally
@@ -11378,9 +11083,6 @@ roles]:
      c.
      Review and update the risk management strategy [Assignment: organization-defined
      frequency] or as required, to address organizational changes.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: An organization-wide risk management strategy includes an expression of the
      security and privacy risk tolerance for the organization, security and privacy risk mitigation
      strategies, acceptable risk assessment methodologies, a process for evaluating security and
@@ -11398,7 +11100,9 @@ roles]:
      RA-9, SA-1, SA-4, SC-1, SC-38, SI-1, SI-12, SR-1, SR-2.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-161], [IR 8023].
-     PM-10 AUTHORIZATION PROCESS
+
+#### PM-10 AUTHORIZATION PROCESS
+
      Control:
      a.
      Manage the security and privacy state of organizational systems and the environments in
@@ -11419,7 +11123,9 @@ roles]:
      Related Controls: CA-6, CA-7, PL-2.
      Control Enhancements: None.
      References: [SP 800-37], [SP 800-39], [SP 800-181].
-     PM-11 MISSION AND BUSINESS PROCESS DEFINITION
+
+#### PM-11 MISSION AND BUSINESS PROCESS DEFINITION
+
      Control:
      a.
      Define organizational mission and business processes with consideration for information
@@ -11428,12 +11134,9 @@ roles]:
      b.
      Determine information protection and personally identifiable information processing needs
      arising from the defined mission and business processes; and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      c.
      Review and revise the mission and business processes [Assignment: organization-defined
      frequency].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Protection needs are technology-independent capabilities that are required to
      counter threats to organizations, individuals, systems, and the Nation through the compromise
      of information (i.e., loss of confidentiality, integrity, availability, or privacy). Information
@@ -11455,7 +11158,9 @@ roles]:
      Related Controls: CP-2, PL-2, PM-7, PM-8, RA-2, RA-3, RA-9, SA-2.
      Control Enhancements: None.
      References: [OMB A-130], [FIPS 199],[SP 800-39], [SP 800-60-1], [SP 800-60-2], [SP 800-160-1].
-     PM-12 INSIDER THREAT PROGRAM
+
+#### PM-12 INSIDER THREAT PROGRAM
+
      Control: Implement an insider threat program that includes a cross-discipline insider threat
      incident handling team.
      Discussion: Organizations that handle classified information are required, under Executive Order
@@ -11480,17 +11185,16 @@ roles]:
      ongoing patterns of disgruntled behavior and conflicts with coworkers and other colleagues.
      These precursors can guide organizational officials in more focused, targeted monitoring efforts.
      However, the use of human resource records could raise significant concerns for privacy. The
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      participation of a legal team, including consultation with the senior agency official for privacy,
      ensures that monitoring activities are performed in accordance with applicable laws, executive
      orders, directives, regulations, policies, standards, and guidelines.
      Related Controls: AC-6, AT-2, AU-6, AU-7, AU-10, AU-12, AU-13, CA-7, IA-4, IR-4, MP-7, PE-2, PM16, PS-3, PS-4, PS-5, PS-7, PS-8, SC-7, SC-38, SI-4, PM-14.
      Control Enhancements: None.
      References: [EO 13587], [NITP12], [ODNI NITP].
-     PM-13 SECURITY AND PRIVACY WORKFORCE
+
+#### PM-13 SECURITY AND PRIVACY WORKFORCE
+
      Control: Establish a security and privacy workforce development and improvement program.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Security and privacy workforce development and improvement programs include
      defining the knowledge, skills, and abilities needed to perform security and privacy duties and
      tasks; developing role-based training programs for individuals assigned security and privacy roles
@@ -11505,12 +11209,15 @@ roles]:
      Related Controls: AT-2, AT-3.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-181].
-     PM-14 TESTING, TRAINING, AND MONITORING
+
+#### PM-14 TESTING, TRAINING, AND MONITORING
+
      Control:
      a.
      b.
      Implement a process for ensuring that organizational plans for conducting security and
      privacy testing, training, and monitoring activities associated with organizational systems:
+
 139. Are developed and maintained; and
 140. Continue to be executed; and
      Review testing, training, and monitoring plans for consistency with the organizational risk
@@ -11526,14 +11233,13 @@ roles]:
      organizational elements. Testing, training, and monitoring plans and activities are informed by
      current threat and vulnerability assessments.
      Related Controls: AT-2, AT-3, CA-7, CP-4, IR-3, PM-12, SI-4.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-37], [SP 800-39], [SP 800-53A], [SP 800-115], [SP 800-137].
-     PM-15 SECURITY AND PRIVACY GROUPS AND ASSOCIATIONS
+
+#### PM-15 SECURITY AND PRIVACY GROUPS AND ASSOCIATIONS
+
      Control: Establish and institutionalize contact with selected groups and associations within the
      security and privacy communities:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      To facilitate ongoing security and privacy education and training for organizational
      personnel;
@@ -11554,7 +11260,9 @@ roles]:
      Related Controls: SA-11, SI-5.
      Control Enhancements: None.
      References: [OMB A-130].
-     PM-16 THREAT AWARENESS PROGRAM
+
+#### PM-16 THREAT AWARENESS PROGRAM
+
      Control: Implement a threat awareness program that includes a cross-organization informationsharing capability for threat intelligence.
      Discussion: Because of the constantly changing and increasing sophistication of adversaries,
      especially the advanced persistent threat (APT), it may be more likely that adversaries can
@@ -11572,15 +11280,14 @@ roles]:
      intelligence information.
      Discussion: To maximize the effectiveness of monitoring, it is important to know what
      threat observables and indicators the sensors need to be searching for. By using well-
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      established frameworks, services, and automated tools, organizations improve their ability
      to rapidly share and feed the relevant threat detection signatures into monitoring tools.
      Related Controls: None.
      References: None.
-     PM-17 PROTECTING CONTROLLED UNCLASSIFIED INFORMATION ON EXTERNAL SYSTEMS
+
+#### PM-17 PROTECTING CONTROLLED UNCLASSIFIED INFORMATION ON EXTERNAL SYSTEMS
+
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Establish policy and procedures to ensure that requirements for the protection of controlled
      unclassified information that is processed, stored or transmitted on external systems, are
@@ -11596,13 +11303,15 @@ roles]:
      Related Controls: CA-6, PM-10.
      Control Enhancements: None.
      References: [32 CFR 2002], [SP 800-171], [SP 800-172], [NARA CUI].
-     PM-18 PRIVACY PROGRAM PLAN
+
+#### PM-18 PRIVACY PROGRAM PLAN
+
      Control:
      a.
      b.
-     CHAPTER THREE
      Develop and disseminate an organization-wide privacy program plan that provides an
      overview of the agency’s privacy program, and:
+
 141. Includes a description of the structure of the privacy program and the resources
      dedicated to the privacy program;
 142. Provides an overview of the requirements for the privacy program and a description of
@@ -11620,7 +11329,6 @@ roles]:
      Update the plan [Assignment: organization-defined frequency] and to address changes in
      federal privacy laws and policy and organizational changes and problems identified during
      plan implementation or privacy control assessments.
-     NIST SP 800-53, REV. 5
      Discussion: A privacy program plan is a formal document that provides an overview of an
      organization’s privacy program, including a description of the structure of the privacy program,
      the resources dedicated to the privacy program, the role of the senior agency official for privacy
@@ -11628,7 +11336,6 @@ roles]:
      and the program management controls and common controls in place or planned for meeting
      applicable privacy requirements and managing privacy risks. Privacy program plans can be
      represented in single documents or compilations of documents.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      The senior agency official for privacy is responsible for designating which privacy controls the
      organization will treat as program management, common, system-specific, and hybrid controls.
      Privacy program plans provide sufficient information about the privacy program management
@@ -11649,7 +11356,9 @@ roles]:
      Related Controls: PM-8, PM-9, PM-19.
      Control Enhancements: None.
      References: [PRIVACT], [OMB A-130].
-     PM-19 PRIVACY PROGRAM LEADERSHIP ROLE
+
+#### PM-19 PRIVACY PROGRAM LEADERSHIP ROLE
+
      Control: Appoint a senior agency official for privacy with the authority, mission, accountability,
      and resources to coordinate, develop, and implement, applicable privacy requirements and
      manage privacy risks through the organization-wide privacy program.
@@ -11661,14 +11370,14 @@ roles]:
      Related Controls: PM-18, PM-20, PM-23, PM-24, PM-27.
      Control Enhancements: None.
      References: [OMB A-130].
-     PM-20 DISSEMINATION OF PRIVACY PROGRAM INFORMATION
+
+#### PM-20 DISSEMINATION OF PRIVACY PROGRAM INFORMATION
+
      Control: Maintain a central resource webpage on the organization’s principal public website that
      serves as a central source of information about the organization’s privacy program and that:
      a.
-     CHAPTER THREE
      Ensures that the public has access to information about organizational privacy activities and
      can communicate with its senior agency official for privacy;
-     NIST SP 800-53, REV. 5
      b.
      Ensures that organizational privacy practices and reports are publicly available; and
      c.
@@ -11681,7 +11390,6 @@ roles]:
      email addresses for questions/complaints, blogs, and periodic publications.
      Related Controls: AC-3, PM-19, PT-5, PT-6, PT-7, RA-8.
      Control Enhancements:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (1) DISSEMINATION OF PRIVACY PROGRAM INFORMATION | PRIVACY POLICIES ON WEBSITES,
      APPLICATIONS, AND DIGITAL SERVICES
      Develop and post privacy policies on all external-facing websites, mobile applications, and
@@ -11703,11 +11411,14 @@ roles]:
      for privacy and legal counsel regarding such requirements.
      Related Controls: None.
      References: [PRIVACT], [OMB A-130], [OMB M-17-06].
-     PM-21 ACCOUNTING OF DISCLOSURES
+
+#### PM-21 ACCOUNTING OF DISCLOSURES
+
      Control:
      a.
      Develop and maintain an accurate accounting of disclosures of personally identifiable
      information, including:
+
 147. Date, nature, and purpose of each disclosure; and
 148. Name and address, or other contact information of the individual or organization to
      which the disclosure was made;
@@ -11717,8 +11428,6 @@ roles]:
      c.
      Make the accounting of disclosures available to the individual to whom the personally
      identifiable information relates upon request.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: The purpose of accounting of disclosures is to allow individuals to learn to whom
      their personally identifiable information has been disclosed, to provide a basis for subsequently
      advising recipients of any corrected or disputed personally identifiable information, and to
@@ -11727,7 +11436,6 @@ roles]:
      [PRIVACT]; agencies should consult with their senior agency official for privacy and legal counsel
      on this requirement and be aware of the statutory exceptions and OMB guidance relating to the
      provision.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Organizations can use any system for keeping notations of disclosures, if it can construct from
      such a system, a document listing of all disclosures along with the required information.
      Automated mechanisms can be used by organizations to determine when personally identifiable
@@ -11738,7 +11446,9 @@ roles]:
      Related Controls: AC-3, AU-2, PT-2.
      Control Enhancements: None.
      References: [PRIVACT], [OMB A-130].
-     PM-22 PERSONALLY IDENTIFIABLE INFORMATION QUALITY MANAGEMENT
+
+#### PM-22 PERSONALLY IDENTIFIABLE INFORMATION QUALITY MANAGEMENT
+
      Control: Develop and document organization-wide policies and procedures for:
      a.
      Reviewing for the accuracy, relevance, timeliness, and completeness of personally
@@ -11770,8 +11480,6 @@ roles]:
      or corrected based on the scope of requests, the changes sought, and the impact of the changes.
      Additionally, processes include the provision of responses to individuals of decisions to deny
      requests for correction or deletion. The responses include the reasons for the decisions, a means
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      to record individual objections to the decisions, and a means of requesting reviews of the initial
      determinations.
      Organizations notify individuals or their designated representatives when their personally
@@ -11782,8 +11490,9 @@ roles]:
      Related Controls: PM-23, SI-18.
      Control Enhancements: None.
      References: [OMB A-130], [OMB M-19-15], [SP 800-188].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PM-23 DATA GOVERNANCE BODY
+
+#### PM-23 DATA GOVERNANCE BODY
+
      Control: Establish a Data Governance Body consisting of [Assignment: organization-defined
      roles] with [Assignment: organization-defined responsibilities].
      Discussion: A Data Governance Body can help ensure that the organization has coherent policies
@@ -11803,7 +11512,9 @@ roles]:
      Related Controls: AT-2, AT-3, PM-19, PM-22, PM-24, PT-7, SI-4, SI-19.
      Control Enhancements: None.
      References: [EVIDACT], [OMB A-130], [OMB M-19-23], [SP 800-188].
-     PM-24 DATA INTEGRITY BOARD
+
+#### PM-24 DATA INTEGRITY BOARD
+
      Control: Establish a Data Integrity Board to:
      a.
      Review proposals to conduct or participate in a matching program; and
@@ -11819,14 +11530,13 @@ roles]:
      personnel or payroll records. At a minimum, the Data Integrity Board includes the Inspector
      General of the agency, if any, and the senior agency official for privacy.
      Related Controls: AC-4, PM-19, PM-23, PT-2, PT-8.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements: None.
      References: [PRIVACT], [OMB A-130], [OMB A-108].
-     PM-25 MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION USED IN TESTING,
+
+#### PM-25 MINIMIZATION OF PERSONALLY IDENTIFIABLE INFORMATION USED IN TESTING
+
      TRAINING, AND RESEARCH
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Develop, document, and implement policies and procedures that address the use of
      personally identifiable information for internal testing, training, and research;
@@ -11848,7 +11558,9 @@ roles]:
      Related Controls: PM-23, PT-3, SA-3, SA-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130].
-     PM-26 COMPLAINT MANAGEMENT
+
+#### PM-26 COMPLAINT MANAGEMENT
+
      Control: Implement a process for receiving and responding to complaints, concerns, or questions
      from individuals about the organizational security and privacy practices that includes:
      a.
@@ -11872,16 +11584,16 @@ roles]:
      to receive complaints. Privacy complaints may also include personally identifiable information
      which is handled in accordance with relevant policies and processes.
      Related Controls: IR-7, IR-9, PM-22, SI-18.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements: None.
      References: [OMB A-130].
-     PM-27 PRIVACY REPORTING
+
+#### PM-27 PRIVACY REPORTING
+
      Control:
      a.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      b.
      Develop [Assignment: organization-defined privacy reports] and disseminate to:
+
 149. [Assignment: organization-defined oversight bodies] to demonstrate accountability with
      statutory, regulatory, and policy privacy mandates; and
 150. [Assignment: organization-defined officials] and other personnel with responsibility for
@@ -11900,10 +11612,13 @@ roles]:
      Related Controls: IR-9, PM-19.
      Control Enhancements: None.
      References: [FISMA], [OMB A-130], [OMB A-108].
-     PM-28 RISK FRAMING
+
+#### PM-28 RISK FRAMING
+
      Control:
      a.
      Identify and document:
+
 151. Assumptions affecting risk assessments, risk responses, and risk monitoring;
 152. Constraints affecting risk assessments, risk responses, and risk monitoring;
 153. Priorities and trade-offs considered by the organization for managing risk; and
@@ -11920,16 +11635,15 @@ roles]:
      as part of the risk framing process inform the risk management strategy, which in turn informs
      the conduct of risk assessment, risk response, and risk monitoring activities. Risk framing results
      are shared with organizational personnel, including mission and business owners, information
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      owners or stewards, system owners, authorizing officials, senior agency information security
      officer, senior agency official for privacy, and senior accountable official for risk management.
      Related Controls: CA-7, PM-9, RA-3, RA-7.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-39].
-     PM-29 RISK MANAGEMENT PROGRAM LEADERSHIP ROLES
+
+#### PM-29 RISK MANAGEMENT PROGRAM LEADERSHIP ROLES
+
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Appoint a Senior Accountable Official for Risk Management to align organizational
      information security and privacy management processes with strategic, operational, and
@@ -11942,7 +11656,9 @@ roles]:
      Related Controls: PM-2, PM-19.
      Control Enhancements: None.
      References: [SP 800-37], [SP 800-181].
-     PM-30 SUPPLY CHAIN RISK MANAGEMENT STRATEGY
+
+#### PM-30 SUPPLY CHAIN RISK MANAGEMENT STRATEGY
+
      Control:
      a.
      Develop an organization-wide strategy for managing supply chain risks associated with the
@@ -11970,8 +11686,6 @@ roles]:
      SR-2) is implemented at the system level.
      Related Controls: CM-10, PM-9, SR-1, SR-2, SR-3, SR-4, SR-5, SR-6, SR-7, SR-8, SR-9, SR-11.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) SUPPLY CHAIN RISK MANAGEMENT STRATEGY | SUPPLIERS OF CRITICAL OR MISSION-ESSENTIAL ITEMS
      Identify, prioritize, and assess suppliers of critical or mission-essential technologies,
      products, and services.
@@ -11982,10 +11696,11 @@ roles]:
      can help an organization identify systems or components for which additional supply chain
      risk mitigations are required.
      Related Controls: RA-3, SR-6.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      References: [PRIVACT], [FASC18], [EO 13873], [41 CFR 201], [OMB A-130], [OMB M-17-06]
      [CNSSD 505], [ISO 27036], [ISO 20243], [SP 800-161], [IR 8272].
-     PM-31 CONTINUOUS MONITORING STRATEGY
+
+#### PM-31 CONTINUOUS MONITORING STRATEGY
+
      Control: Develop an organization-wide continuous monitoring strategy and implement
      continuous monitoring programs that include:
      a.
@@ -12024,15 +11739,14 @@ roles]:
      IR-5, MA-2b, MA-3a, MA-4a, PE-3d, PE-6, PE-14b, PE-16, PE-20, PM-6, PM-23, PS-7e, SA-9c, SC5(3)(b), SC-7a, SC-7(24)(b), SC-18b, SC-43b, SI-4.
      Related Controls: AC-2, AC-6, AC-17, AT-4, AU-6, AU-13, CA-2, CA-5, CA-6, CA-7, CM-3, CM-4,
      CM-6, CM-11, IA-5, IR-5, MA-2, MA-3, MA-4, PE-3, PE-6, PE-14, PE-16, PE-20, PL-2, PM-4, PM-6,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      PM-9, PM-10, PM-12, PM-14, PM-23, PM-28, PS-7, PT-7, RA-3, RA-5, RA-7, SA-9, SA-11, SC-5, SC7, SC-18, SC-38, SC-43, SI-3, SI-4, SI-12, SR-2, SR-4.
      References: [SP 800-37], [SP 800-39], [SP 800-137], [SP 800-137A].
-     PM-32 PURPOSING
+
+#### PM-32 PURPOSING
+
      Control: Analyze [Assignment: organization-defined systems or systems components] supporting
      mission essential services or functions to ensure that the information resources are being used
      consistent with their intended purpose.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Systems are designed to support a specific mission or business function. However,
      over time, systems and system components may be used to support services and functions that
      are outside of the scope of the intended mission or business functions. This can result in
@@ -12044,18 +11758,20 @@ roles]:
      Related Controls: CA-7, PL-2, RA-3, RA-9.
      Control Enhancements: None.
      References: [SP 800-160-1], [SP 800-160-2].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.14 PERSONNEL SECURITY
+
+### 3.14 PERSONNEL SECURITY
+
      Quick link to Personnel Security Summary Table
-     PS-1
+
+#### PS-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 155. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personnel security policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -12090,9 +11806,9 @@ roles]:
      Related Controls: PM-9, PS-8, SI-12.
      Control Enhancements: None.
      References: [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PS-2
+
+#### PS-2
+
      POSITION RISK DESIGNATION
      Control:
      a.
@@ -12101,7 +11817,6 @@ roles]:
      Establish screening criteria for individuals filling those positions; and
      c.
      Review and update position risk designations [Assignment: organization-defined frequency].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Position risk designations reflect Office of Personnel Management (OPM) policy and
      guidance. Proper position designation is the foundation of an effective and consistent suitability
      and personnel security program. The Position Designation System (PDS) assesses the duties and
@@ -12120,7 +11835,9 @@ roles]:
      Related Controls: AC-5, AT-3, PE-2, PE-3, PL-2, PS-3, PS-6, SA-5, SA-21, SI-12.
      Control Enhancements: None.
      References: [5 CFR 731], [SP 800-181].
-     PS-3
+
+#### PS-3
+
      PERSONNEL SCREENING
      Control:
      a.
@@ -12143,8 +11860,6 @@ roles]:
      Discussion: Classified information is the most sensitive information that the Federal
      Government processes, stores, or transmits. It is imperative that individuals have the
      requisite security clearances and system access authorizations prior to gaining access to such
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      information. Access authorizations are enforced by system access controls (see AC-3) and
      flow controls (see AC-4).
      Related Controls: AC-3, AC-4.
@@ -12155,7 +11870,6 @@ roles]:
      Discussion: Types of classified information that require formal indoctrination include Special
      Access Program (SAP), Restricted Data (RD), and Sensitive Compartmented Information (SCI).
      Related Controls: AC-3, AC-4.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (3) PERSONNEL SCREENING | INFORMATION REQUIRING SPECIAL PROTECTIVE MEASURES
      Verify that individuals accessing a system processing, storing, or transmitting information
      requiring special protection:
@@ -12174,7 +11888,9 @@ roles]:
      Related Controls: None.
      References: [EO 13526], [EO 13587], [FIPS 199], [FIPS 201-2], [SP 800-60-1], [SP 800-60-2], [SP
      800-73-4], [SP 800-76-2], [SP 800-78-4].
-     PS-4
+
+#### PS-4
+
      PERSONNEL TERMINATION
      Control: Upon termination of individual employment:
      a.
@@ -12195,8 +11911,6 @@ roles]:
      and that proper accountability is achieved for system-related property. Security topics at exit
      interviews include reminding individuals of nondisclosure agreements and potential limitations
      on future employment. Exit interviews may not always be possible for some individuals, including
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      in cases related to the unavailability of supervisors, illnesses, or job abandonment. Exit
      interviews are important for individuals with security clearances. The timely execution of
      termination actions is essential for individuals who have been terminated for cause. In certain
@@ -12207,7 +11921,6 @@ roles]:
      (1) PERSONNEL TERMINATION | POST-EMPLOYMENT REQUIREMENTS
      (a) Notify terminated individuals of applicable, legally binding post-employment
      requirements for the protection of organizational information; and
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (b) Require terminated individuals to sign an acknowledgment of post-employment
      requirements as part of the organizational termination process.
      Discussion: Organizations consult with the Office of the General Counsel regarding matters
@@ -12227,7 +11940,9 @@ roles]:
      employee is terminated.
      Related Controls: None.
      References: None.
-     PS-5
+
+#### PS-5
+
      PERSONNEL TRANSFER
      Control:
      a.
@@ -12247,8 +11962,6 @@ roles]:
      permanent or of such extended duration as to make the actions warranted. Organizations define
      actions appropriate for the types of reassignments or transfers, whether permanent or extended.
      Actions that may be required for personnel transfers or reassignments to other positions within
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      organizations include returning old and issuing new keys, identification cards, and building
      passes; closing system accounts and establishing new accounts; changing system access
      authorizations (i.e., privileges); and providing for access to official records to which individuals
@@ -12256,10 +11969,11 @@ roles]:
      Related Controls: AC-2, IA-4, PE-2, PM-12, PS-4, PS-7.
      Control Enhancements: None.
      References: None.
-     PS-6
+
+#### PS-6
+
      ACCESS AGREEMENTS
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Develop and document access agreements for organizational systems;
      b.
@@ -12267,6 +11981,7 @@ roles]:
      and
      c.
      Verify that individuals requiring access to organizational information and systems:
+
 159. Sign appropriate access agreements prior to being granted access; and
 160. Re-sign access agreements to maintain access to organizational systems when access
      agreements have been updated or [Assignment: organization-defined frequency].
@@ -12295,18 +12010,17 @@ roles]:
      (3) ACCESS AGREEMENTS | POST-EMPLOYMENT REQUIREMENTS
      (a) Notify individuals of applicable, legally binding post-employment requirements for
      protection of organizational information; and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (b) Require individuals to sign an acknowledgment of these requirements, if applicable, as
      part of granting initial access to covered information.
      Discussion: Organizations consult with the Office of the General Counsel regarding matters
      of post-employment requirements on terminated individuals.
      Related Controls: PS-4.
      References: None.
-     PS-7
+
+#### PS-7
+
      EXTERNAL PERSONNEL SECURITY
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Establish personnel security requirements, including security roles and responsibilities for
      external providers;
@@ -12334,7 +12048,9 @@ roles]:
      Related Controls: AT-2, AT-3, MA-5, PE-3, PS-2, PS-3, PS-4, PS-5, PS-6, SA-5, SA-9, SA-21.
      Control Enhancements: None.
      References: [SP 800-35], [SP 800-63-3].
-     PS-8
+
+#### PS-8
+
      PERSONNEL SANCTIONS
      Control:
      a.
@@ -12349,34 +12065,35 @@ roles]:
      agreements and can be included as part of general personnel policies for organizations and/or
      specified in security and privacy policies. Organizations consult with the Office of the General
      Counsel regarding matters of employee sanctions.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: All XX-1 Controls, PL-4, PM-12, PS-6, PT-1.
      Control Enhancements: None.
      References: None.
-     PS-9
+
+#### PS-9
+
      POSITION DESCRIPTIONS
      Control: Incorporate security and privacy roles and responsibilities into organizational position
      descriptions.
      Discussion: Specification of security and privacy roles in individual organizational position
      descriptions facilitates clarity in understanding the security or privacy responsibilities associated
      with the roles and the role-based security and privacy training requirements for the roles.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: None.
      Control Enhancements: None.
      References: [SP 800-181].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.15 PERSONALLY IDENTIFIABLE INFORMATION PROCESSING AND
+
+### 3.15 PERSONALLY IDENTIFIABLE INFORMATION PROCESSING AND TRANSPARENCY
+
      TRANSPARENCY
      Quick link to Personally Identifiable Information Processing and Transparency table
-     PT-1
+
+#### PT-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
 161. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] personally identifiable information processing and transparency policy that:
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
@@ -12414,12 +12131,12 @@ roles]:
      assessment or audit findings, breaches, or changes in applicable laws, executive orders,
      directives, regulations, policies, standards, and guidelines. Simply restating controls does not
      constitute an organizational policy or procedure.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: None.
      Control Enhancements: None.
      References: [OMB A-130].
-     PT-2
+
+#### PT-2
+
      AUTHORITY TO PROCESS PERSONALLY IDENTIFIABLE INFORMATION
      Control:
      a.
@@ -12428,7 +12145,6 @@ roles]:
      b.
      Restrict the [Assignment: organization-defined processing] of personally identifiable
      information to only that which is authorized.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The processing of personally identifiable information is an operation or set of
      operations that the information system or organization performs with respect to personally
      identifiable information across the information life cycle. Processing includes but is not limited to
@@ -12463,8 +12179,6 @@ roles]:
      [Assignment: organization-defined elements of personally identifiable information].
      Discussion: Data tags support the tracking and enforcement of authorized processing by
      conveying the types of processing that are authorized along with the relevant elements of
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      personally identifiable information throughout the system. Data tags may also support the
      use of automated tools.
      Related Controls: AC-16, CA-6, CM-12, PM-5, PM-22, PT-4, SC-16, SC-43, SI-10, SI-15, SI-19.
@@ -12475,8 +12189,9 @@ roles]:
      occurring.
      Related Controls: CA-6, CM-12, PM-5, PM-22, PT-4, SC-16, SC-43, SI-10, SI-15, SI-19.
      References: [PRIVACT], [OMB A-130], [IR 8112].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PT-3
+
+#### PT-3
+
      PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES
      Control:
      a.
@@ -12515,8 +12230,6 @@ roles]:
      privacy policies, or other measures to manage privacy risks that arise from changes in personally
      identifiable information processing purposes.
      Related Controls: AC-2, AC-3, AT-3, CM-13, IR-9, PM-9, PM-25, PT-2, PT-5, PT-6, PT-7, RA-8, SC43, SI-12, SI-18.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements:
      (1) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | DATA TAGGING
      Attach data tags containing the following purposes to [Assignment: organization-defined
@@ -12528,7 +12241,6 @@ roles]:
      identifiable information as the information transits a system, a system owner or operator
      can identify whether a change in processing would be compatible with the identified and
      documented purposes. Data tags may also support the use of automated tools.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: CA-6, CM-12, PM-5, PM-22, SC-16, SC-43, SI-10, SI-15, SI-19.
      (2) PERSONALLY IDENTIFIABLE INFORMATION PROCESSING PURPOSES | AUTOMATION
      Track processing purposes of personally identifiable information using [Assignment:
@@ -12536,7 +12248,9 @@ roles]:
      Discussion: Automated mechanisms augment tracking of the processing purposes.
      Related Controls: CA-6, CM-12, PM-5, PM-22, SC-16, SC-43, SI-10, SI-15, SI-19.
      References: [PRIVACT], [OMB A-130], [IR 8112].
-     PT-4
+
+#### PT-4
+
      CONSENT
      Control: Implement [Assignment: organization-defined tools or mechanisms] for individuals to
      consent to the processing of their personally identifiable information prior to its collection that
@@ -12563,8 +12277,6 @@ roles]:
      (1) CONSENT | TAILORED CONSENT
      Provide [Assignment: organization-defined mechanisms] to allow individuals to tailor
      processing permissions to selected elements of personally identifiable information.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: While some processing may be necessary for the basic functionality of the
      product or service, other processing may not. In these circumstances, organizations allow
      individuals to select how specific personally identifiable information elements may be
@@ -12575,7 +12287,6 @@ roles]:
      Present [Assignment: organization-defined consent mechanisms] to individuals at
      [Assignment: organization-defined frequency] and in conjunction with [Assignment:
      organization-defined personally identifiable information processing].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Just-in-time consent enables individuals to participate in how their personally
      identifiable information is being processed at the time or in conjunction with specific types
      of data processing when such participation may be most useful to the individual. Individual
@@ -12593,7 +12304,9 @@ roles]:
      enabling easy-to-use revocation capabilities.
      Related Controls: PT-2.
      References: [PRIVACT], [OMB A-130], [SP 800-63-3].
-     PT-5
+
+#### PT-5
+
      PRIVACY NOTICE
      Control: Provide notice to individuals about the processing of personally identifiable information
      that:
@@ -12617,8 +12330,6 @@ roles]:
      Laws, executive orders, directives, regulations, or policies may require that privacy notices
      include specific elements or be provided in specific formats. Federal agency personnel consult
      with the senior agency official for privacy and legal counsel regarding when and where to provide
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      privacy notices, as well as elements to include in privacy notices and required formats. In
      circumstances where laws or government-wide policies do not require privacy notices,
      organizational policies and determinations may require privacy notices and may serve as a source
@@ -12629,7 +12340,6 @@ roles]:
      being processed, organizations write materials in plain language and avoid technical jargon.
      Related Controls: PM-20, PM-22, PT-2, PT-3, PT-4, PT-7, RA-3, SC-42, SI-18.
      Control Enhancements:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (1) PRIVACY NOTICE | JUST-IN-TIME NOTICE
      Present notice of personally identifiable information processing to individuals at a time
      and location where the individual provides personally identifiable information or in
@@ -12668,15 +12378,14 @@ roles]:
      to the relevant system of records notice. Federal agency personnel consult with the senior
      agency official for privacy and legal counsel regarding the notice provisions of the [PRIVACT].
      Related Controls: PT-6.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements: None.
      References: [PRIVACT], [OMB A-130], [OMB A-108].
-     PT-6
+
+#### PT-6
+
      SYSTEM OF RECORDS NOTICE
      Control: For systems that process information that will be maintained in a Privacy Act system of
      records:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Draft system of records notices in accordance with OMB guidance and submit new and
      significantly modified system of records notices to the OMB and appropriate congressional
@@ -12720,19 +12429,18 @@ roles]:
      claim exemptions from certain requirements in the statute. In certain circumstances, these
      provisions allow agencies to promulgate regulations to exempt a system of records from
      select provisions of the [PRIVACT]. At a minimum, organizations’ [PRIVACT] exemption
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      regulations include the specific name(s) of any system(s) of records that will be exempt, the
      specific provisions of the [PRIVACT] from which the system(s) of records is to be exempted,
      the reasons for the exemption, and an explanation for why the exemption is both necessary
      and appropriate.
      Related Controls: None.
      References: [PRIVACT], [OMB A-108].
-     PT-7
+
+#### PT-7
+
      SPECIFIC CATEGORIES OF PERSONALLY IDENTIFIABLE INFORMATION
      Control: Apply [Assignment: organization-defined processing conditions] for specific categories of
      personally identifiable information.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations apply any conditions or protections that may be necessary for specific
      categories of personally identifiable information. These conditions may be required by laws,
      executive orders, directives, regulations, policies, standards, or guidelines. The requirements may
@@ -12768,13 +12476,12 @@ roles]:
      the senior agency official for privacy and legal counsel regarding these requirements.
      Related Controls: None.
      References: [PRIVACT], [OMB A-130], [OMB A-108], [NARA CUI].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     PT-8
+
+#### PT-8
+
      COMPUTER MATCHING REQUIREMENTS
      Control: When a system or organization processes information for the purpose of conducting a
      matching program:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Obtain approval from the Data Integrity Board to conduct the matching program;
      b.
@@ -12799,18 +12506,20 @@ roles]:
      Related Controls: PM-24.
      Control Enhancements: None.
      References: [PRIVACT], [CMPPA], [OMB A-130], [OMB A-108].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.16 RISK ASSESSMENT
+
+### 3.16 RISK ASSESSMENT
+
      Quick link to Risk Assessment Summary Table
-     RA-1
+
+#### RA-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 165. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] risk assessment policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -12845,9 +12554,9 @@ roles]:
      Related Controls: PM-9, PS-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     RA-2
+
+#### RA-2
+
      SECURITY CATEGORIZATION
      Control:
      a.
@@ -12858,7 +12567,6 @@ roles]:
      c.
      Verify that the authorizing official or authorizing official designated representative reviews
      and approves the security categorization decision.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Security categories describe the potential adverse impacts or negative consequences
      to organizational operations, organizational assets, and individuals if organizational information
      and systems are compromised through a loss of confidentiality, integrity, or availability. Security
@@ -12896,17 +12604,17 @@ roles]:
      high value assets, organizations may be more focused on complexity, aggregation, and
      information exchanges. Systems with high value assets can be prioritized by partitioning
      high-impact systems into low-high systems, moderate-high systems, and high-high systems.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Alternatively, organizations can apply the guidance in [CNSSI 1253] for security objectiverelated categorization.
      Related Controls: None.
      References: [FIPS 199], [FIPS 200], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-60-1], [SP 80060-2], [SP 800-160-1], [CNSSI 1253], [NARA CUI].
-     RA-3
+
+#### RA-3
+
      RISK ASSESSMENT
      Control:
      a.
      Conduct a risk assessment, including:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
 169. Identifying threats to and vulnerabilities in the system;
 170. Determining the likelihood and magnitude of harm from unauthorized access, use,
      disclosure, disruption, modification, or destruction of the system, the information it
@@ -12946,15 +12654,12 @@ roles]:
      Related Controls: CA-3, CA-6, CM-4, CM-13, CP-6, CP-7, IA-8, MA-5, PE-3, PE-8, PE-18, PL-2, PL10, PL-11, PM-8, PM-9, PM-28, PT-2, PT-7, RA-2, RA-5, RA-7, SA-8, SA-9, SC-38, SI-12.
      Control Enhancements:
      (1) RISK ASSESSMENT | SUPPLY CHAIN RISK ASSESSMENT
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (a) Assess supply chain risks associated with [Assignment: organization-defined systems,
      system components, and system services]; and
      (b) Update the supply chain risk assessment [Assignment: organization-defined
      frequency], when there are significant changes to the relevant supply chain, or when
      changes to the system, environments of operation, or other conditions may
      necessitate a change in the supply chain.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Supply chain-related events include disruption, use of defective components,
      insertion of counterfeits, theft, malicious development practices, improper delivery
      practices, and insertion of malicious code. These events can have a significant impact on the
@@ -12996,19 +12701,20 @@ roles]:
      supported by artificial intelligence concepts, including machine learning. Examples include
      Automated Threat Discovery and Response (which includes broad-based collection, contextbased analysis, and adaptive response capabilities), automated workflow operations, and
      machine assisted decision tools. Note, however, that sophisticated adversaries may be able
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      to extract information related to analytic parameters and retrain the machine learning to
      classify malicious activity as benign. Accordingly, machine learning is augmented by human
      monitoring to ensure that sophisticated adversaries are not able to conceal their activities.
      Related Controls: None.
      References: [OMB A-130], [SP 800-30], [SP 800-39], [SP 800-161], [IR 8023], [IR 8062], [IR 8272].
-     RA-4
+
+#### RA-4
+
      RISK ASSESSMENT UPDATE
      [Withdrawn: Incorporated into RA-3.]
-     RA-5
+
+#### RA-5
+
      VULNERABILITY MONITORING AND SCANNING
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control:
      a.
      Monitor and scan for vulnerabilities in the system and hosted applications [Assignment:
@@ -13018,6 +12724,7 @@ roles]:
      b.
      Employ vulnerability monitoring tools and techniques that facilitate interoperability among
      tools and automate parts of the vulnerability management process by using standards for:
+
 172. Enumerating platforms, software flaws, and improper configurations;
 173. Formatting checklists and test procedures; and
 174. Measuring vulnerability impact;
@@ -13050,8 +12757,6 @@ roles]:
      Vulnerability monitoring includes scanning for patch levels; scanning for functions, ports,
      protocols, and services that should not be accessible to users or devices; and scanning for flow
      control mechanisms that are improperly configured or operating incorrectly. Vulnerability
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      monitoring may also include continuous vulnerability monitoring tools that use instrumentation
      to continuously analyze components. Instrumentation-based tools may improve accuracy and
      may be run throughout an organization without scanning. Vulnerability monitoring tools that
@@ -13063,7 +12768,6 @@ roles]:
      additional sources of potential vulnerabilities for which to scan. Organizations also consider using
      scanning tools that express vulnerability impact by the Common Vulnerability Scoring System
      (CVSS).
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Vulnerability monitoring includes a channel and process for receiving reports of security
      vulnerabilities from the public at-large. Vulnerability disclosure programs can be as simple as
      publishing a monitored email address or web form that can receive reports, including notification
@@ -13099,8 +12803,6 @@ roles]:
      criticality of systems, or by the number of vulnerabilities to be checked. Conversely, the
      depth of vulnerability scanning coverage can be expressed as the level of the system design
      that the organization intends to monitor (e.g., component, module, subsystem, element).
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Organizations can determine the sufficiency of vulnerability scanning coverage with regard
      to its risk tolerance and other factors. Scanning tools and how the tools are configured may
      affect the depth and coverage. Multiple scanning tools may be needed to achieve the
@@ -13110,7 +12812,6 @@ roles]:
      (4) VULNERABILITY MONITORING AND SCANNING | DISCOVERABLE INFORMATION
      Determine information about the system that is discoverable and take [Assignment:
      organization-defined corrective actions].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Discoverable information includes information that adversaries could obtain
      without compromising or breaching the system, such as by collecting information that the
      system is exposing or by conducting extensive web searches. Corrective actions include
@@ -13147,13 +12848,10 @@ roles]:
      intrusion, the trade craft employed during the attack, organizational information exfiltrated
      or modified, mission or business capabilities affected, and the duration of the attack.
      Related Controls: AU-6, AU-11.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (9) VULNERABILITY MONITORING AND SCANNING | PENETRATION TESTING AND ANALYSES
      [Withdrawn: Incorporated into CA-8.]
      (10) VULNERABILITY MONITORING AND SCANNING | CORRELATE SCANNING INFORMATION
      Correlate the output from vulnerability scanning tools to determine the presence of multivulnerability and multi-hop attack vectors.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: An attack vector is a path or means by which an adversary can gain access to a
      system in order to deliver malicious code or exfiltrate information. Organizations can use
      attack trees to show how hostile activities by adversaries interact and combine to produce
@@ -13175,7 +12873,9 @@ roles]:
      Related Controls: None.
      References: [ISO 29147], [SP 800-40], [SP 800-53A], [SP 800-70], [SP 800-115], [SP 800-126], [IR
      7788], [IR 8011-4], [IR 8023].
-     RA-6
+
+#### RA-6
+
      TECHNICAL SURVEILLANCE COUNTERMEASURES SURVEY
      Control: Employ a technical surveillance countermeasures survey at [Assignment: organizationdefined locations] [Selection (one or more): [Assignment: organization-defined frequency]; when
      the following events or indicators occur: [Assignment: organization-defined events or
@@ -13191,13 +12891,12 @@ roles]:
      Related Controls: None.
      Control Enhancements: None.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     RA-7
+
+#### RA-7
+
      RISK RESPONSE
      Control: Respond to findings from security and privacy assessments, monitoring, and audits in
      accordance with organizational risk tolerance.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations have many options for responding to risk including mitigating risk by
      implementing new controls or strengthening existing controls, accepting risk with appropriate
      justification or rationale, sharing or transferring risk, or avoiding risk. The risk tolerance of the
@@ -13210,7 +12909,9 @@ roles]:
      Related Controls: CA-5, IR-9, PM-4, PM-28, RA-2, RA-3, SR-2.
      Control Enhancements: None.
      References: [FIPS 199], [FIPS 200], [SP 800-30], [SP 800-37], [SP 800-39], [SP 800-160-1].
-     RA-8
+
+#### RA-8
+
      PRIVACY IMPACT ASSESSMENTS
      Control: Conduct privacy impact assessments for systems, programs, or other activities before:
      a.
@@ -13218,6 +12919,7 @@ roles]:
      information; and
      b.
      Initiating a new collection of personally identifiable information that:
+
 175. Will be processed using information technology; and
 176. Includes personally identifiable information permitting the physical or virtual (online)
      contacting of a specific individual, if identical questions have been posed to, or identical
@@ -13243,8 +12945,6 @@ roles]:
      the use of such information technology.
      To conduct the privacy impact assessment, organizations can use security and privacy risk
      assessments. Organizations may also use other related processes that may have different names,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      including privacy threshold analyses. A privacy impact assessment can also serve as notice to the
      public regarding the organization’s practices with respect to privacy. Although conducting and
      publishing privacy impact assessments may be required by law, organizations may develop such
@@ -13255,8 +12955,9 @@ roles]:
      Related Controls: CM-4, CM-9, CM-13, PT-2, PT-3, PT-5, RA-1, RA-2, RA-3, RA-7.
      Control Enhancements: None.
      References: [EGOV], [OMB A-130], [OMB M-03-22].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     RA-9
+
+#### RA-9
+
      CRITICALITY ANALYSIS
      Control: Identify critical system components and functions by performing a criticality analysis for
      [Assignment: organization-defined systems, system components, or system services] at
@@ -13289,17 +12990,17 @@ roles]:
      Related Controls: CP-2, PL-2, PL-8, PL-11, PM-1, PM-11, RA-2, SA-8, SA-15, SA-20, SR-5.
      Control Enhancements: None.
      References: [IR 8179].
-     RA-10 THREAT HUNTING
+
+#### RA-10 THREAT HUNTING
+
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      b.
      Establish and maintain a cyber threat hunting capability to:
+
 177. Search for indicators of compromise in organizational systems; and
 178. Detect, track, and disrupt threats that evade existing controls; and
      Employ the threat hunting capability [Assignment: organization-defined frequency].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Threat hunting is an active means of cyber defense in contrast to traditional
      protection measures, such as firewalls, intrusion detection and prevention systems, quarantining
      malicious code in sandboxes, and Security Information and Event Management technologies and
@@ -13314,18 +13015,20 @@ roles]:
      Related Controls: CA-2, CA-7, CA-8, RA-3, RA-5, RA-6, SI-4.
      Control Enhancements: None.
      References: [SP 800-30].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.17 SYSTEM AND SERVICES ACQUISITION
+
+### 3.17 SYSTEM AND SERVICES ACQUISITION
+
      Quick link to System and Services Acquisition Summary Table
-     SA-1
+
+#### SA-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 179. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and services acquisition policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -13362,9 +13065,9 @@ roles]:
      Related Controls: PM-9, PS-8, SA-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-12], [SP 800-30], [SP 800-39], [SP 800-100], [SP 800-160-1].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-2
+
+#### SA-2
+
      ALLOCATION OF RESOURCES
      Control:
      a.
@@ -13376,14 +13079,15 @@ roles]:
      c.
      Establish a discrete line item for information security and privacy in organizational
      programming and budgeting documentation.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Resource allocation for information security and privacy includes funding for system
      and services acquisition, sustainment, and supply chain-related risks throughout the system
      development life cycle.
      Related Controls: PL-7, PM-3, PM-11, SA-9, SR-3, SR-5.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-37], [SP 800-160-1].
-     SA-3
+
+#### SA-3
+
      SYSTEM DEVELOPMENT LIFE CYCLE
      Control:
      a.
@@ -13418,8 +13122,6 @@ roles]:
      privacy architectures into the enterprise architecture, consistent with the risk management
      strategy of the organization. Because the system development life cycle involves multiple
      organizations, (e.g., external suppliers, developers, integrators, service providers), acquisition
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      and supply chain risk management functions and controls play significant roles in the effective
      management of the system during the life cycle.
      Related Controls: AT-3, PL-8, PM-7, SA-4, SA-5, SA-8, SA-11, SA-15, SA-17, SA-22, SR-3, SR-4, SR5, SR-9.
@@ -13427,7 +13129,6 @@ roles]:
      (1) SYSTEM DEVELOPMENT LIFE CYCLE | MANAGE PREPRODUCTION ENVIRONMENT
      Protect system preproduction environments commensurate with risk throughout the
      system development life cycle for the system, system component, or system service.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The preproduction environment includes development, test, and integration
      environments. The program protection planning processes established by the Department of
      Defense are examples of managing the preproduction environment for defense contractors.
@@ -13463,14 +13164,13 @@ roles]:
      development life cycle.
      Related Controls: MA-6.
      References: [OMB A-130], [SP 800-30], [SP 800-37], [SP 800-160-1], [SP 800-171], [SP 800-172].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-4
+
+#### SA-4
+
      ACQUISITION PROCESS
      Control: Include the following requirements, descriptions, and criteria, explicitly or by reference,
      using [Selection (one or more): standardized contract language; [Assignment: organizationdefined contract language]] in the acquisition contract for the system, system component, or
      system service:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Security and privacy functional requirements;
      b.
@@ -13519,8 +13219,6 @@ roles]:
      Related Controls: CM-6, CM-8, PS-7, SA-3, SA-5, SA-8, SA-11, SA-15, SA-16, SA-17, SA-21, SR-3,
      SR-5.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) ACQUISITION PROCESS | FUNCTIONAL PROPERTIES OF CONTROLS
      Require the developer of the system, system component, or system service to provide a
      description of the functional properties of the controls to be implemented.
@@ -13530,7 +13228,6 @@ roles]:
      of the controls.
      Related Controls: None.
      (2) ACQUISITION PROCESS | DESIGN AND IMPLEMENTATION INFORMATION FOR CONTROLS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Require the developer of the system, system component, or system service to provide
      design and implementation information for the controls that includes: [Selection (one or
      more): security-relevant external system interfaces; high-level design; low-level design;
@@ -13570,8 +13267,6 @@ roles]:
      component, or system service being acquired.
      Related Controls: None.
      (4) ACQUISITION PROCESS | ASSIGNMENT OF COMPONENTS TO SYSTEMS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      [Withdrawn: Incorporated into CM-8(9).]
      (5) ACQUISITION PROCESS | SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS
      Require the developer of the system, system component, or system service to:
@@ -13583,7 +13278,6 @@ roles]:
      Baseline (USGCB), Security Technical Implementation Guides (STIGs), and any limitations on
      functions, ports, protocols, and services. Security characteristics can include requiring that
      default passwords have been changed.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: None.
      (6) ACQUISITION PROCESS | USE OF INFORMATION ASSURANCE PRODUCTS
      (a) Employ only government off-the-shelf or commercial off-the-shelf information
@@ -13616,15 +13310,12 @@ roles]:
      continuous monitoring plans include a sufficient level of detail such that the information can
      be incorporated into continuous monitoring programs implemented by organizations.
      Continuous monitoring plans can include the types of control assessment and monitoring
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      activities planned, frequency of control monitoring, and actions to be taken when controls
      fail or become ineffective.
      Related Controls: CA-7.
      (9) ACQUISITION PROCESS | FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE
      Require the developer of the system, system component, or system service to identify the
      functions, ports, protocols, and services intended for organizational use.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The identification of functions, ports, protocols, and services early in the system
      development life cycle (e.g., during the initial requirements definition and design stages)
      allows organizations to influence the design of the system, system component, or system
@@ -13665,20 +13356,20 @@ roles]:
      [FIPS 140-3], [FIPS 201-2], [SP 800-35], [SP 800-37], [SP 800-70], [SP 800-73-4], [SP 800-137], [SP
      800-160-1], [SP 800-161], [IR 7539], [IR 7622], [IR 7676], [IR 7870], [IR 8062], [NIAP CCEVS], [NSA
      CSFC].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-5
+
+#### SA-5
+
      SYSTEM DOCUMENTATION
      Control:
      a.
      b.
      Obtain or develop administrator documentation for the system, system component, or
      system service that describes:
+
 183. Secure configuration, installation, and operation of the system, component, or service;
 184. Effective use and maintenance of security and privacy functions and mechanisms; and
 185. Known vulnerabilities regarding configuration and use of administrative or privileged
      functions;
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Obtain or develop user documentation for the system, system component, or system service
      that describes:
 186. User-accessible security and privacy functions and mechanisms and how to effectively
@@ -13716,21 +13407,24 @@ roles]:
      [Withdrawn: Incorporated into SA-4(2).]
      (3) SYSTEM DOCUMENTATION | HIGH-LEVEL DESIGN
      [Withdrawn: Incorporated into SA-4(2).]
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (4) SYSTEM DOCUMENTATION | LOW-LEVEL DESIGN
      [Withdrawn: Incorporated into SA-4(2).]
      (5) SYSTEM DOCUMENTATION | SOURCE CODE
      [Withdrawn: Incorporated into SA-4(2).]
      References: [SP 800-160-1].
-     SA-6
+
+#### SA-6
+
      SOFTWARE USAGE RESTRICTIONS
      [Withdrawn: Incorporated into CM-10 and SI-7.]
-     SA-7
+
+#### SA-7
+
      USER-INSTALLED SOFTWARE
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [Withdrawn: Incorporated into CM-11 and SI-7.]
-     SA-8
+
+#### SA-8
+
      SECURITY AND PRIVACY ENGINEERING PRINCIPLES
      Control: Apply the following systems security and privacy engineering principles in the
      specification, design, development, implementation, and modification of the system and system
@@ -13764,8 +13458,6 @@ roles]:
      Discussion: The principle of clear abstractions states that a system has simple, well-defined
      interfaces and functions that provide a consistent and intuitive view of the data and how the
      data is managed. The clarity, simplicity, necessity, and sufficiency of the system interfaces—
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      combined with a precise definition of their functional behavior—promotes ease of analysis,
      inspection, and testing as well as the correct and secure use of the system. The clarity of an
      abstraction is subjective. Examples that reflect the application of this principle include
@@ -13776,7 +13468,6 @@ roles]:
      not influenced by how the data may be managed internally.
      Related Controls: None.
      (2) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | LEAST COMMON MECHANISM
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement the security design principle of least common mechanism in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of least common mechanism states that the amount of mechanism
@@ -13815,8 +13506,6 @@ roles]:
      Discussion: The principle of partially ordered dependencies states that the synchronization,
      calling, and other dependencies in the system are partially ordered. A fundamental concept
      in system design is layering, whereby the system is organized into well-defined, functionally
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      related modules or components. The layers are linearly ordered with respect to inter-layer
      dependencies, such that higher layers are dependent on lower layers. While providing
      functionality to higher layers, some layers can be self-contained and not dependent on lower
@@ -13827,7 +13516,6 @@ roles]:
      ordered dependencies also facilitate system testing and analysis.
      Related Controls: None.
      (5) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | EFFICIENTLY MEDIATED ACCESS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement the security design principle of efficiently mediated access in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of efficiently mediated access states that policy enforcement
@@ -13867,9 +13555,6 @@ roles]:
      and less prone to error. The reduced complexity principle applies to any aspect of a system,
      but it has particular importance for security due to the various analyses performed to obtain
      evidence about the emergent security property of the system. For such analyses to be
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      successful, a small and simple design is essential. Application of the principle of reduced
      complexity contributes to the ability of system developers to understand the correctness
      and completeness of system security functions. It also facilitates the identification of
@@ -13919,8 +13604,6 @@ roles]:
      when considering systems and components in which there are complex chains of trust
      dependencies. A trust dependency is also referred to as a trust relationship and there may
      be chains of trust relationships.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      The principle of trusted components also applies to a compound component that consists of
      subcomponents (e.g., a subsystem), which may have varying levels of trustworthiness. The
      conservative assumption is that the trustworthiness of a compound component is that of its
@@ -13932,7 +13615,6 @@ roles]:
      defense-in-depth layering within the component or a replication of components. Defense-indepth techniques do not increase the trustworthiness of the whole above that of the least
      trustworthy component.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (10) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL TRUST
      Implement the security design principle of hierarchical trust in [Assignment: organizationdefined systems or system components].
      Discussion: The principle of hierarchical trust for components builds on the principle of
@@ -13969,12 +13651,9 @@ roles]:
      from the protections afforded to the component from other elements or attributes of the
      security architecture (to include protections in the environment of operation).
      Related Controls: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (12) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | HIERARCHICAL PROTECTION
      Implement the security design principle of hierarchical protection in [Assignment:
      organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of hierarchical protection states that a component need not be
      protected from more trustworthy components. In the degenerate case of the most trusted
      component, it protects itself from all other components. For example, if an operating system
@@ -14020,8 +13699,6 @@ roles]:
      In addition to its manifestations at the system interface, least privilege can be used as a
      guiding principle for the internal structure of the system itself. One aspect of internal least
      privilege is to construct modules so that only the elements encapsulated by the module are
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      directly operated on by the functions within the module. Elements external to a module that
      may be affected by the module’s operation are indirectly accessed through interaction (e.g.,
      via a function call) with the module that contains those elements. Another aspect of internal
@@ -14032,7 +13709,6 @@ roles]:
      (15) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PREDICATE PERMISSION
      Implement the security design principle of predicate permission in [Assignment:
      organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of predicate permission states that system designers consider
      requiring multiple authorized entities to provide consent before a highly critical operation or
      access to highly sensitive data, information, or resources is allowed to proceed. [SALTZER75]
@@ -14072,15 +13748,12 @@ roles]:
      stand-alone to a distributed system or a system-of-systems can have unexpected or
      emergent results. Communication protocols and distributed data consistency mechanisms
      help to ensure consistent policy enforcement across a distributed system. To ensure a
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      system-wide level of assurance of correct policy enforcement, the security architecture of a
      distributed composite system is thoroughly analyzed.
      Related Controls: None.
      (18) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | TRUSTED COMMUNICATIONS CHANNELS
      Implement the security design principle of trusted communications channels in
      [Assignment: organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of trusted communication channels states that when composing a
      system where there is a potential threat to communications between components (i.e., the
      interconnections between components), each communication channel is trustworthy to a
@@ -14124,12 +13797,9 @@ roles]:
      the new policy. The ability to demonstrate continuous protection is rooted in the clear
      articulation of life cycle protection needs as stakeholder security requirements.
      Related Controls: AC-25.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (20) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE METADATA MANAGEMENT
      Implement the security design principle of secure metadata management in [Assignment:
      organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of secure metadata management states that metadata are “first
      class” objects with respect to security policy when the policy requires either complete
      protection of information or that the security subsystem be self-protecting. The principle of
@@ -14173,11 +13843,8 @@ roles]:
      expected configuration.
      Related Controls: CA-7.
      (22) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCOUNTABILITY AND TRACEABILITY
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Implement the security design principle of accountability and traceability in [Assignment:
      organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of accountability and traceability states that it is possible to trace
      security-relevant actions (i.e., subject-object interactions) to the entity on whose behalf the
      action is being taken. The principle of accountability and traceability requires a trustworthy
@@ -14223,8 +13890,6 @@ roles]:
      denied by default are often far more compact and complete than those that would need to
      be checked in order to deny a request that is granted by default.
      Related Controls: CM-2, CM-6, SA-4.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (24) SECURITY AND PRIVACY ENGINEERING PRINCIPLES |SECURE FAILURE AND RECOVERY
      Implement the security design principle of secure failure and recovery in [Assignment:
      organization-defined systems or system components].
@@ -14237,7 +13902,6 @@ roles]:
      are not violated. In addition, when specified, the system is capable of recovering from
      impending or actual failure to resume normal, degraded, or alternative secure operations
      while ensuring that a secure state is maintained such that security policies are not violated.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Failure is a condition in which the behavior of a component deviates from its specified or
      expected behavior for an explicitly documented input. Once a failed security function is
      detected, the system may reconfigure itself to circumvent the failed component while
@@ -14274,8 +13938,6 @@ roles]:
      Related Controls: CP-10, CP-12, SC-7, SC-8, SC-24, SI-13.
      (25) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ECONOMIC SECURITY
      Implement the security design principle of economic security in [Assignment: organizationdefined systems or system components].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: The principle of economic security states that security mechanisms are not
      costlier than the potential damage that could occur from a security breach. This is the
      security-relevant form of the cost-benefit analyses used in risk management. The cost
@@ -14287,7 +13949,6 @@ roles]:
      trustworthiness and risk conclusions from the evidence.
      Related Controls: RA-3.
      (26) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | PERFORMANCE SECURITY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement the security design principle of performance security in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of performance security states that security mechanisms are
@@ -14326,8 +13987,6 @@ roles]:
      relevant feedback and warnings when insecure choices are being made. Particular attention
      is given to interfaces through which personnel responsible for system administration and
      operation configure and set up the security policies. Ideally, these personnel are able to
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      understand the impact of their choices. Personnel with system administrative and
      operational responsibilities are able to configure systems before start-up and administer
      them during runtime with confidence that their intent is correctly mapped to the system’s
@@ -14339,7 +13998,6 @@ roles]:
      designed to satisfy.
      Related Controls: None.
      (28) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | ACCEPTABLE SECURITY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement the security design principle of acceptable security in [Assignment:
      organization-defined systems or system components].
      Discussion: The principle of acceptable security requires that the level of privacy and
@@ -14375,8 +14033,6 @@ roles]:
      cycle process such that the introduction of unspecified functionality is prevented.
      Second, rigorous procedures applied to systems security engineering activities that produce
      specifications and other system design documents contribute to the ability to understand
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      the system as it has been built rather than trusting that the component, as implemented, is
      the authoritative (and potentially misleading) specification.
      Finally, modifications to an existing system component are easier when there are detailed
@@ -14388,7 +14044,6 @@ roles]:
      system is low, a high level of procedural rigor may add unnecessary cost, whereas when high
      trustworthiness is critical, the cost of high procedural rigor is merited.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (31) SECURITY AND PRIVACY ENGINEERING PRINCIPLES | SECURE SYSTEM MODIFICATION
      Implement the security design principle of secure system modification in [Assignment:
      organization-defined systems or system components].
@@ -14426,14 +14081,13 @@ roles]:
      authorized purpose and should only maintain personally identifiable information for as long
      as is necessary to accomplish the purpose. Organizations have processes in place, consistent
      with applicable laws and policies, to implement the principle of minimization.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: PE-8, PM-25, SC-42, SI-12.
      References: [PRIVACT], [OMB A-130], [FIPS 199], [FIPS 200], [SP 800-37], [SP 800-53A], [SP 80060-1], [SP 800-60-2], [SP 800-160-1], [IR 8062].
-     SA-9
+
+#### SA-9
+
      EXTERNAL SYSTEM SERVICES
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Require that providers of external system services comply with organizational security and
      privacy requirements and employ the following controls: [Assignment: organization-defined
@@ -14477,8 +14131,6 @@ roles]:
      Require providers of the following external system services to identify the functions, ports,
      protocols, and other services required for the use of such services: [Assignment:
      organization-defined external system services].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Information from external service providers regarding the specific functions,
      ports, protocols, and services used in the provision of such services can be useful when the
      need arises to understand the trade-offs involved in restricting certain functions and services
@@ -14489,7 +14141,6 @@ roles]:
      based on the following requirements, properties, factors, or conditions: [Assignment:
      organization-defined security and privacy requirements, properties, factors, or conditions
      defining acceptable trust relationships].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Trust relationships between organizations and external service providers reflect
      the degree of confidence that the risk from using external services is at an acceptable level.
      Trust relationships can help organizations gain increased levels of confidence that service
@@ -14528,8 +14179,6 @@ roles]:
      location of processing, storage, or services. The criteria that external providers use for the
      selection of processing, storage, or service locations may be different from the criteria that
      organizations use. For example, organizations may desire that data or information storage
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      locations be restricted to certain locations to help facilitate incident response activities in
      case of information security incidents or breaches. Incident response activities, including
      forensic analyses and after-the-fact investigations, may be adversely affected by the
@@ -14539,7 +14188,6 @@ roles]:
      (6) EXTERNAL SYSTEM SERVICES | ORGANIZATION-CONTROLLED CRYPTOGRAPHIC KEYS
      Maintain exclusive control of cryptographic keys for encrypted material stored or
      transmitted through an external system.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Maintaining exclusive control of cryptographic keys in an external system
      prevents decryption of organizational data by external system staff. Organizational control
      of cryptographic keys can be implemented by encrypting and decrypting data inside the
@@ -14567,7 +14215,9 @@ roles]:
      States provides greater control over such processing and storage.
      Related Controls: SA-5, SR-4.
      References: [OMB A-130], [SP 800-35], [SP 800-160-1], [SP 800-161], [SP 800-171].
-     SA-10 DEVELOPER CONFIGURATION MANAGEMENT
+
+#### SA-10 DEVELOPER CONFIGURATION MANAGEMENT
+
      Control: Require the developer of the system, system component, or system service to:
      a.
      Perform configuration management during system, component, or service [Selection (one or
@@ -14576,8 +14226,6 @@ roles]:
      Document, manage, and control the integrity of changes to [Assignment: organizationdefined configuration items under configuration management];
      c.
      Implement only organization-approved changes to the system, component, or service;
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      d.
      Document approved changes to the system, component, or service and the potential
      security and privacy impacts of such changes; and
@@ -14591,7 +14239,6 @@ roles]:
      destruction. Maintaining the integrity of changes to the system, system component, or system
      service requires strict configuration control throughout the system development life cycle to
      track authorized changes and prevent unauthorized changes.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      The configuration items that are placed under configuration management include the formal
      model; the functional, high-level, and low-level design specifications; other design data;
      implementation documentation; source code and hardware schematics; the current running
@@ -14628,8 +14275,6 @@ roles]:
      (3) DEVELOPER CONFIGURATION MANAGEMENT | HARDWARE INTEGRITY VERIFICATION
      Require the developer of the system, system component, or system service to enable
      integrity verification of hardware components.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Hardware integrity verification allows organizations to detect unauthorized
      changes to hardware components using developer-provided tools, techniques, methods, and
      mechanisms. Organizations may verify the integrity of hardware components with hard-tocopy labels, verifiable serial numbers provided by developers, and by requiring the use of
@@ -14640,7 +14285,6 @@ roles]:
      Require the developer of the system, system component, or system service to employ
      tools for comparing newly generated versions of security-relevant hardware descriptions,
      source code, and object code with previous versions.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The trusted generation of descriptions, source code, and object code addresses
      authorized changes to hardware, software, and firmware components between versions
      during development. The focus is on the efficacy of the configuration management process
@@ -14677,8 +14321,6 @@ roles]:
      Discussion: Information security and privacy representatives can include system security
      officers, senior agency information security officers, senior agency officials for privacy, and
      system privacy officers. Representation by personnel with information security and privacy
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      expertise is important because changes to system configurations can have unintended side
      effects, some of which may be security- or privacy-relevant. Detecting such changes early in
      the process can help avoid unintended, negative consequences that could ultimately affect
@@ -14687,8 +14329,9 @@ roles]:
      process defined by organizations in SA-10b.
      Related Controls: None.
      References: [FIPS 140-3], [FIPS 180-4], [FIPS 202], [SP 800-128], [SP 800-160-1].
-     SA-11 DEVELOPER TESTING AND EVALUATION
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### SA-11 DEVELOPER TESTING AND EVALUATION
+
      Control: Require the developer of the system, system component, or system service, at all postdesign stages of the system development life cycle, to:
      a.
      Develop and implement a plan for ongoing security and privacy control assessments;
@@ -14729,13 +14372,10 @@ roles]:
      requirements for documentation.
      Related Controls: CA-2, CA-7, CM-4, SA-3, SA-4, SA-5, SA-8, SA-15, SA-17, SI-2, SR-5, SR-6, SR-7.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) DEVELOPER TESTING AND EVALUATION | STATIC CODE ANALYSIS
      Require the developer of the system, system component, or system service to employ
      static code analysis tools to identify common flaws and document the results of the
      analysis.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Static code analysis provides a technology and methodology for security reviews
      and includes checking for weaknesses in the code as well as for the incorporation of libraries
      or other included code with known vulnerabilities or that are out-of-date and not supported.
@@ -14779,8 +14419,6 @@ roles]:
      independence criteria] to verify the correct implementation of the developer security
      and privacy assessment plans and the evidence produced during testing and
      evaluation; and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (b) Verify that the independent agent is provided with sufficient information to complete
      the verification process or granted the authority to obtain such information.
      Discussion: Independent agents have the qualifications—including the expertise, skills,
@@ -14792,7 +14430,6 @@ roles]:
      manual code review of [Assignment: organization-defined specific code] using the
      following processes, procedures, and/or techniques: [Assignment: organization-defined
      processes, procedures, and/or techniques].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Manual code reviews are usually reserved for the critical software and firmware
      components of systems. Manual code reviews are effective at identifying weaknesses that
      require knowledge of the application’s requirements or context that, in most cases, is
@@ -14830,8 +14467,6 @@ roles]:
      where weaknesses or deficiencies in the hardware, software, and firmware components
      provide opportunities for adversaries to exploit vulnerabilities. Attack surface reviews
      ensure that developers analyze the design and implementation changes to systems and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      mitigate attack vectors generated as a result of the changes. The correction of identified
      flaws includes deprecation of unsafe functions.
      Related Controls: SA-15.
@@ -14840,7 +14475,6 @@ roles]:
      the scope of testing and evaluation provides complete coverage of the required controls at
      the following level of rigor: [Assignment: organization-defined breadth and depth of
      testing and evaluation].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Verifying that testing and evaluation provides complete coverage of required
      controls can be accomplished by a variety of analytic techniques ranging from informal to
      formal. Each of these techniques provides an increasing level of assurance that corresponds
@@ -14879,9 +14513,9 @@ roles]:
      real time and can be used continuously throughout the system development life cycle.
      Related Controls: None.
      References: [ISO 15408-3], [SP 800-30], [SP 800-53A], [SP 800-154], [SP 800-160-1].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-12 SUPPLY CHAIN PROTECTION
+
+#### SA-12 SUPPLY CHAIN PROTECTION
+
      [Withdrawn: Incorporated into SR Family.]
      Control Enhancements:
      (1) SUPPLY CHAIN PROTECTION | ACQUISITION STRATEGIES / TOOLS / METHODS
@@ -14890,7 +14524,6 @@ roles]:
      [Withdrawn: Moved to SR-6.]
      (3) SUPPLY CHAIN PROTECTION | TRUSTED SHIPPING AND WAREHOUSING
      [Withdrawn: Incorporated into SR-3.]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (4) SUPPLY CHAIN PROTECTION | DIVERSITY OF SUPPLIERS
      [Withdrawn: Moved to SR-3(1).]
      (5) SUPPLY CHAIN PROTECTION | LIMITATION OF HARM
@@ -14916,22 +14549,26 @@ roles]:
      [Withdrawn: Moved to SR-4(1) and SR-4(2).]
      (15) SUPPLY CHAIN PROTECTION | PROCESSES TO ADDRESS WEAKNESSES OR DEFICIENCIES
      [Withdrawn: Incorporated into SR-3.]
-     SA-13 TRUSTWORTHINESS
+
+#### SA-13 TRUSTWORTHINESS
+
      [Withdrawn: Incorporated into SA-8.]
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-14 CRITICALITY ANALYSIS
+
+#### SA-14 CRITICALITY ANALYSIS
+
      [Withdrawn: Incorporated into RA-9.]
      Control Enhancements:
      (1) CRITICALITY ANALYSIS | CRITICAL COMPONENTS WITH NO VIABLE ALTERNATIVE SOURCING
      [Withdrawn: Incorporated into SA-20.]
-     SA-15 DEVELOPMENT PROCESS, STANDARDS, AND TOOLS
+
+#### SA-15 DEVELOPMENT PROCESS, STANDARDS, AND TOOLS
+
      Control:
      a.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      b.
      Require the developer of the system, system component, or system service to follow a
      documented development process that:
+
 189. Explicitly addresses security and privacy requirements;
 190. Identifies the standards and tools used in the development process;
 191. Documents the specific tool options and tool configurations used in the development
@@ -14966,8 +14603,6 @@ roles]:
      development projects, quality gates provide clear, unambiguous indications of progress.
      Other metrics apply to the entire development project. Metrics can include defining the
      severity thresholds of vulnerabilities in accordance with organizational risk tolerance, such
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      as requiring no known vulnerabilities in the delivered system with a Common Vulnerability
      Scoring System (CVSS) severity of medium or high.
      Related Controls: None.
@@ -14979,7 +14614,6 @@ roles]:
      sorting, filtering, and tracking of completed work items or tasks associated with
      development processes.
      Related Controls: SA-11.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (3) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CRITICALITY ANALYSIS
      Require the developer of the system, system component, or system service to perform a
      criticality analysis:
@@ -15015,8 +14649,6 @@ roles]:
      interfaces (APIs) that are vulnerable to attacks.
      Related Controls: AC-6, CM-7, RA-3, SA-11.
      (6) DEVELOPMENT PROCESS, STANDARDS, AND TOOLS | CONTINUOUS IMPROVEMENT
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Require the developer of the system, system component, or system service to implement
      an explicit process to continuously improve the development process.
      Discussion: Developers of systems, system components, and system services consider the
@@ -15028,7 +14660,6 @@ roles]:
      organization-defined frequency] to:
      (a) Perform an automated vulnerability analysis using [Assignment: organization-defined
      tools];
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (b) Determine the exploitation potential for discovered vulnerabilities;
      (c) Determine potential risk mitigations for delivered vulnerabilities; and
      (d) Deliver the outputs of the tools and results of the analysis to [Assignment:
@@ -15062,8 +14693,6 @@ roles]:
      Require the developer of the system or system component to archive the system or
      component to be released or delivered together with the corresponding evidence
      supporting the final security and privacy review.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Archiving system or system components requires the developer to retain key
      development artifacts, including hardware specifications, source code, object code, and
      relevant documentation from the development process that can provide a readily available
@@ -15073,14 +14702,15 @@ roles]:
      INFORMATION
      Require the developer of the system or system component to minimize the use of
      personally identifiable information in development and test environments.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Organizations can minimize the risk to an individual’s privacy by using
      techniques such as de-identification or synthetic data. Limiting the use of personally
      identifiable information in development and test environments helps reduce the level of
      privacy risk created by a system.
      Related Controls: PM-25, SA-3, SA-8.
      References: [SP 800-160-1], [IR 8179].
-     SA-16 DEVELOPER-PROVIDED TRAINING
+
+#### SA-16 DEVELOPER-PROVIDED TRAINING
+
      Control: Require the developer of the system, system component, or system service to provide
      the following training on the correct use and operation of the implemented security and privacy
      functions, controls, and/or mechanisms: [Assignment: organization-defined training].
@@ -15095,7 +14725,9 @@ roles]:
      Related Controls: AT-2, AT-3, PE-3, SA-4, SA-5.
      Control Enhancements: None.
      References: None.
-     SA-17 DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN
+
+#### SA-17 DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN
+
      Control: Require the developer of the system, system component, or system service to produce
      a design specification and security and privacy architecture that:
      a.
@@ -15110,9 +14742,9 @@ roles]:
      protection.
      Discussion: Developer security and privacy architecture and design are directed at external
      developers, although they could also be applied to internal (in-house) development. In contrast,
-     PL-8 is directed at internal developers to ensure that organizations develop a security and privacy
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
+
+#### PL-8 is directed at internal developers to ensure that organizations develop a security and privacy
+
      architecture that is integrated with the enterprise architecture. The distinction between SA-17
      and PL-8 is especially important when organizations outsource the development of systems,
      system components, or system services and when there is a requirement to demonstrate
@@ -15124,7 +14756,6 @@ roles]:
      Related Controls: PL-2, PL-8, PM-7, SA-3, SA-4, SA-8, SC-7.
      Control Enhancements:
      (1) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | FORMAL POLICY MODEL
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Require the developer of the system, system component, or system service to:
      (a) Produce, as an integral part of the development process, a formal policy model
      describing the [Assignment: organization-defined elements of organizational security
@@ -15159,13 +14790,10 @@ roles]:
      model;
      (c) Show via informal demonstration, that the formal top-level specification completely
      covers the interfaces to security-relevant hardware, software, and firmware;
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (d) Show that the formal top-level specification is an accurate description of the
      implemented security-relevant hardware, software, and firmware; and
      (e) Describe the security-relevant hardware, software, and firmware mechanisms not
      addressed in the formal top-level specification but strictly internal to the securityrelevant hardware, software, and firmware.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Correspondence is an important part of the assurance gained through modeling.
      It demonstrates that the implementation is an accurate transformation of the model, and
      that any additional code or implementation details that are present have no impact on the
@@ -15205,14 +14833,11 @@ roles]:
      Related Controls: AC-3, AC-4, AC-25, SA-4, SA-5.
      (5) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | CONCEPTUALLY SIMPLE DESIGN
      Require the developer of the system, system component, or system service to:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (a) Design and structure the security-relevant hardware, software, and firmware to use a
      complete, conceptually simple protection mechanism with precisely defined
      semantics; and
      (b) Internally structure the security-relevant hardware, software, and firmware with
      specific regard for this mechanism.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The principle of reduced complexity states that the system design is as simple
      and small as possible (see SA-8(7)). A small and simple design is easier to understand and
      analyze and is also less prone to error (see AC-25, SA-8(13)). The principle of reduced
@@ -15257,8 +14882,6 @@ roles]:
      interface for the audit operator, who ensures that audit data is safely collected and stored;
      and, finally, yet another interface for the audit reviewer, who only has a need to view the
      audit data that has been collected but no need to perform operations on that data.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      In addition to its manifestations at the system interface, least privilege can be used as a
      guiding principle for the internal structure of the system itself. One aspect of internal least
      privilege is to construct modules so that only the elements encapsulated by the module are
@@ -15270,7 +14893,6 @@ roles]:
      elements (e.g., read, write) are minimal.
      Related Controls: AC-5, AC-6, SA-8.
      (8) DEVELOPER SECURITY AND PRIVACY ARCHITECTURE AND DESIGN | ORCHESTRATION
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Design [Assignment: organization-defined critical systems or system components] with
      coordinated behavior to implement the following capabilities: [Assignment: organizationdefined capabilities, by system or component].
      Discussion: Security resources that are distributed, located at different layers or in different
@@ -15300,28 +14922,31 @@ roles]:
      to support fault tolerance.
      Related Controls: None.
      References: [ISO 15408-2], [ISO 15408-3], [SP 800-160-1].
-     SA-18 TAMPER RESISTANCE AND DETECTION
+
+#### SA-18 TAMPER RESISTANCE AND DETECTION
+
      [Withdrawn: Moved to SR-9.]
      Control Enhancements:
      (1) TAMPER RESISTANCE AND DETECTION | MULTIPLE PHASES OF SYSTEM DEVELOPMENT LIFE CYCLE
      [Withdrawn: Moved to SR-9(1).]
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (2) TAMPER RESISTANCE AND DETECTION | INSPECTION OF SYSTEMS OR COMPONENTS
      [Withdrawn: Moved to SR-10.]
-     SA-19 COMPONENT AUTHENTICITY
+
+#### SA-19 COMPONENT AUTHENTICITY
+
      [Withdrawn: Moved to SR-11.]
      Control Enhancements:
      (1) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT TRAINING
      [Withdrawn: Moved to SR-11(1).]
      (2) COMPONENT AUTHENTICITY | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [Withdrawn: Moved to SR-11(2).]
      (3) COMPONENT AUTHENTICITY | COMPONENT DISPOSAL
      [Withdrawn: Moved to SR-12.]
      (4) COMPONENT AUTHENTICITY | ANTI-COUNTERFEIT SCANNING
      [Withdrawn: Moved to SR-11(3).]
-     SA-20 CUSTOMIZED DEVELOPMENT OF CRITICAL COMPONENTS
+
+#### SA-20 CUSTOMIZED DEVELOPMENT OF CRITICAL COMPONENTS
+
      Control: Reimplement or custom develop the following critical system components:
      [Assignment: organization-defined critical system components].
      Discussion: Organizations determine that certain system components likely cannot be trusted
@@ -15337,7 +14962,9 @@ roles]:
      Related Controls: CP-2, RA-9, SA-8.
      Control Enhancements: None.
      References: [SP 800-160-1].
-     SA-21 DEVELOPER SCREENING
+
+#### SA-21 DEVELOPER SCREENING
+
      Control: Require that the developer of [Assignment: organization-defined system, system
      component, or system service]:
      a.
@@ -15348,8 +14975,6 @@ roles]:
      is addressed by PS-3. Because the system, system component, or system service may be used in
      critical activities essential to the national or economic security interests of the United States,
      organizations have a strong interest in ensuring that developers are trustworthy. The degree of
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      trust required of developers may need to be consistent with that of the individuals who access
      the systems, system components, or system services once deployed. Authorization and
      personnel screening criteria include clearances, background checks, citizenship, and nationality.
@@ -15361,12 +14986,13 @@ roles]:
      component, or system service so that organizations can validate that the developer has satisfied
      the authorization and screening requirements.
      Related Controls: PS-2, PS-3, PS-6, PS-7, SA-4, SR-6.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) DEVELOPER SCREENING | VALIDATION OF SCREENING
      [Withdrawn: Incorporated into SA-21.]
      References: None.
-     SA-22 UNSUPPORTED SYSTEM COMPONENTS
+
+#### SA-22 UNSUPPORTED SYSTEM COMPONENTS
+
      Control:
      a.
      Replace system components when support for the components is no longer available from
@@ -15397,9 +15023,9 @@ roles]:
      (1) UNSUPPORTED SYSTEM COMPONENTS | ALTERNATIVE SOURCES FOR CONTINUED SUPPORT
      [Withdrawn: Incorporated into SA-22.]
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SA-23 SPECIALIZATION
+
+#### SA-23 SPECIALIZATION
+
      Control: Employ [Selection (one or more): design; modification; augmentation; reconfiguration]
      on [Assignment: organization-defined systems or system components] supporting mission
      essential services or functions to increase the trustworthiness in those systems or components.
@@ -15408,22 +15034,23 @@ roles]:
      additional components. For example, supplemental authentication or non-repudiation functions
      may be added to the system to enhance the identity of critical resources to other resources that
      depend on the organization-defined resources.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: RA-9, SA-8.
      Control Enhancements: None.
      References: [SP 800-160-1], [SP 800-160-2].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.18 SYSTEM AND COMMUNICATIONS PROTECTION
+
+### 3.18 SYSTEM AND COMMUNICATIONS PROTECTION
+
      Quick link to System and Communications Protection Summary Table
-     SC-1
+
+#### SC-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 193. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and communications protection policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -15460,13 +15087,12 @@ roles]:
      Related Controls: PM-9, PS-8, SA-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-12], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SC-2
+
+#### SC-2
+
      SEPARATION OF SYSTEM AND USER FUNCTIONALITY
      Control: Separate user functionality, including user interface services, from system management
      functionality.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: System management functionality includes functions that are necessary to
      administer databases, network components, workstations, or servers. These functions typically
      require privileged user access. The separation of user functions from system management
@@ -15497,7 +15123,9 @@ roles]:
      individuals’ privacy.
      Related Controls: None.
      References: None.
-     SC-3
+
+#### SC-3
+
      SECURITY FUNCTION ISOLATION
      Control: Isolate security functions from nonsecurity functions.
      Discussion: Security functions are isolated from nonsecurity functions by means of an isolation
@@ -15508,8 +15136,6 @@ roles]:
      code, security function isolation is often achieved through file system protections that protect
      the code on disk and address space protections that protect executing code. Systems can restrict
      access to security functions using access control mechanisms and by implementing least privilege
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      capabilities. While the ideal is for all code within the defined security function isolation boundary
      to only contain security-relevant code, it is sometimes necessary to include nonsecurity functions
      as an exception. The isolation of security functions from nonsecurity functions can be achieved
@@ -15519,7 +15145,6 @@ roles]:
      Control Enhancements:
      (1) SECURITY FUNCTION ISOLATION | HARDWARE SEPARATION
      Employ hardware separation mechanisms to implement security function isolation.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Hardware separation mechanisms include hardware ring architectures that are
      implemented within microprocessors and hardware-enforced address segmentation used to
      support logically distinct storage objects with separate attributes (i.e., readable, writeable).
@@ -15556,8 +15181,6 @@ roles]:
      to modularity in software design. Coupling refers to the dependencies that one module has
      on other modules. Cohesion refers to the relationship between functions within a module.
      Best practices in software engineering and systems security engineering rely on layering,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      minimization, and modular decomposition to reduce and manage complexity. This produces
      software modules that are highly cohesive and loosely coupled.
      Related Controls: None.
@@ -15569,10 +15192,11 @@ roles]:
      security functions and non-looping layers (i.e., lower-layer functions do not depend on
      higher-layer functions) enables the isolation of security functions and the management of
      complexity.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: None.
      References: None.
-     SC-4
+
+#### SC-4
+
      INFORMATION IN SHARED SYSTEM RESOURCES
      Control: Prevent unauthorized and unintended information transfer via shared system
      resources.
@@ -15602,9 +15226,9 @@ roles]:
      information.
      Related Controls: None.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SC-5
+
+#### SC-5
+
      DENIAL-OF-SERVICE PROTECTION
      Control:
      a.
@@ -15613,7 +15237,6 @@ roles]:
      b.
      Employ the following controls to achieve the denial-of-service objective: [Assignment:
      organization-defined controls by type of denial-of-service event].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Denial-of-service events may occur due to a variety of internal and external causes,
      such as an attack by an adversary or a lack of planning to support organizational needs with
      respect to capacity and bandwidth. Such attacks can occur across a wide range of network
@@ -15652,8 +15275,6 @@ roles]:
      (b) Monitor the following system resources to determine if sufficient resources exist to
      prevent effective denial-of-service attacks: [Assignment: organization-defined system
      resources].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Organizations consider the utilization and capacity of system resources when
      managing risk associated with a denial of service due to malicious attacks. Denial-of-service
      attacks can originate from external or internal sources. System resources that are sensitive
@@ -15665,8 +15286,9 @@ roles]:
      data.
      Related Controls: CA-7, SI-4.
      References: [SP 800-189].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-6
+
+#### SC-6
+
      RESOURCE AVAILABILITY
      Control: Protect the availability of resources by allocating [Assignment: organization-defined
      resources] by [Selection (one or more): priority; quota; [Assignment: organization-defined
@@ -15677,7 +15299,9 @@ roles]:
      Related Controls: SC-5.
      Control Enhancements: None.
      References: [OMB M-08-05], [DHS TIC].
-     SC-7
+
+#### SC-7
+
      BOUNDARY PROTECTION
      Control:
      a.
@@ -15705,8 +15329,6 @@ roles]:
      provisions. Boundary protection may be implemented as a common control for all or part of an
      organizational network such that the boundary to be protected is greater than a system-specific
      boundary (i.e., an authorization boundary).
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: AC-4, AC-17, AC-18, AC-19, AC-20, AU-13, CA-3, CM-2, CM-4, CM-7, CM-10, CP8, CP-10, IR-4, MA-4, PE-3, PL-8, PM-12, SA-8, SA-17, SC-5, SC-26, SC-32, SC-35, SC-43.
      Control Enhancements:
      (1) BOUNDARY PROTECTION | PHYSICALLY SEPARATED SUBNETWORKS
@@ -15715,7 +15337,6 @@ roles]:
      [Withdrawn: Incorporated into SC-7.]
      (3) BOUNDARY PROTECTION | ACCESS POINTS
      Limit the number of external network connections to the system.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Limiting the number of external network connections facilitates monitoring of
      inbound and outbound communications traffic. The Trusted Internet Connection [DHS TIC]
      initiative is an example of a federal guideline that requires limits on the number of external
@@ -15752,8 +15373,6 @@ roles]:
      Discussion: Denying by default and allowing by exception applies to inbound and outbound
      network communications traffic. A deny-all, permit-by-exception network communications
      traffic policy ensures that only those system connections that are essential and approved are
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      allowed. Deny by default, allow by exception also applies to a system that is connected to an
      external system.
      Related Controls: None.
@@ -15762,7 +15381,6 @@ roles]:
      (7) BOUNDARY PROTECTION | SPLIT TUNNELING FOR REMOTE DEVICES
      Prevent split tunneling for remote devices connecting to organizational systems unless the
      split tunnel is securely provisioned using [Assignment: organization-defined safeguards].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Split tunneling is the process of allowing a remote user or device to establish a
      non-remote connection with a system and simultaneously communicate via some other
      connection to a resource in an external network. This method of network access enables a
@@ -15802,8 +15420,6 @@ roles]:
      Discussion: Detecting outgoing communications traffic from internal actions that may pose
      threats to external systems is known as extrusion detection. Extrusion detection is carried
      out within the system at managed interfaces. Extrusion detection includes the analysis of
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      incoming and outgoing communications traffic while searching for indications of internal
      threats to the security of external systems. Internal threats to external systems include
      traffic indicative of denial-of-service attacks, traffic with spoofed source addresses, and
@@ -15813,7 +15429,6 @@ roles]:
      (10) BOUNDARY PROTECTION | PREVENT EXFILTRATION
      (a) Prevent the exfiltration of information; and
      (b) Conduct exfiltration tests [Assignment: organization-defined frequency].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Prevention of exfiltration applies to both the intentional and unintentional
      exfiltration of information. Techniques used to prevent the exfiltration of information from
      systems may be implemented at internal endpoints, external boundaries, and across
@@ -15852,8 +15467,6 @@ roles]:
      System components that employ host-based boundary protection mechanisms include
      servers, workstations, notebook computers, and mobile devices.
      Related Controls: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (13) BOUNDARY PROTECTION | ISOLATION OF SECURITY TOOLS, MECHANISMS, AND SUPPORT
      COMPONENTS
      Isolate [Assignment: organization-defined information security tools, mechanisms, and
@@ -15865,7 +15478,6 @@ roles]:
      organizations.
      Related Controls: SC-2, SC-3.
      (14) BOUNDARY PROTECTION | PROTECT AGAINST UNAUTHORIZED PHYSICAL CONNECTIONS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Protect against unauthorized physical connections at [Assignment: organization-defined
      managed interfaces].
      Discussion: Systems that operate at different security categories or classification levels may
@@ -15901,15 +15513,12 @@ roles]:
      Enforce adherence to protocol formats.
      Discussion: System components that enforce protocol formats include deep packet
      inspection firewalls and XML gateways. The components verify adherence to protocol
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      formats and specifications at the application layer and identify vulnerabilities that cannot be
      detected by devices operating at the network or transport layers.
      Related Controls: SC-4.
      (18) BOUNDARY PROTECTION | FAIL SECURE
      Prevent systems from entering unsecure states in the event of an operational failure of a
      boundary protection device.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Fail secure is a condition achieved by employing mechanisms to ensure that in
      the event of operational failures of boundary protection devices at managed interfaces,
      systems do not enter into unsecure states where intended security properties no longer
@@ -15949,8 +15558,6 @@ roles]:
      components provides enhanced protection that limits the potential harm from hostile cyberattacks and errors. The degree of isolation varies depending upon the mechanisms chosen.
      Boundary protection mechanisms include routers, gateways, and firewalls that separate
      system components into physically separate networks or subnetworks; cross-domain devices
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      that separate subnetworks; virtualization techniques; and the encryption of information
      flows among system components using distinct encryption keys.
      Related Controls: CA-9.
@@ -15961,7 +15568,6 @@ roles]:
      the appropriate level of protection for network connections to different security domains
      that contain information with different security categories or classification levels.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (23) BOUNDARY PROTECTION | DISABLE SENDER FEEDBACK ON PROTOCOL VALIDATION FAILURE
      Disable feedback to senders on protocol format validation failure.
      Discussion: Disabling feedback to senders when there is a failure in protocol validation
@@ -15996,8 +15602,6 @@ roles]:
      device].
      Discussion: A direct connection is a dedicated physical or virtual connection between two or
      more systems. Organizations typically do not have complete control over external networks,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      including the Internet. Boundary protection devices (e.g., firewalls, gateways, and routers)
      mediate communications and information flows between classified national security systems
      and external networks. In addition, approved boundary protection devices (typically
@@ -16007,7 +15611,6 @@ roles]:
      (27) BOUNDARY PROTECTION | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
      Prohibit the direct connection of [Assignment: organization-defined unclassified nonnational security system] to an external network without the use of [Assignment:
      organization-defined boundary protection device].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: A direct connection is a dedicated physical or virtual connection between two or
      more systems. Organizations typically do not have complete control over external networks,
      including the Internet. Boundary protection devices (e.g., firewalls, gateways, and routers)
@@ -16033,7 +15636,9 @@ roles]:
      provides an increased level of assurance in the trustworthiness of critical system functions.
      Related Controls: None.
      References: [OMB A-130], [FIPS 199], [SP 800-37], [SP 800-41], [SP 800-77], [SP 800-189].
-     SC-8
+
+#### SC-8
+
      TRANSMISSION CONFIDENTIALITY AND INTEGRITY
      Control: Protect the [Selection (one or more): confidentiality; integrity] of transmitted
      information.
@@ -16045,8 +15650,6 @@ roles]:
      information can be accomplished by physical or logical means. Physical protection can be
      achieved by using protected distribution systems. A protected distribution system is a wireline or
      fiber-optics telecommunications system that includes terminals and adequate electromagnetic,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      acoustical, electrical, and physical controls to permit its use for the unencrypted transmission of
      classified information. Logical protection can be achieved by employing encryption techniques.
      Organizations that rely on commercial providers who offer transmission services as commodity
@@ -16057,7 +15660,6 @@ roles]:
      feasible to obtain the necessary controls and assurances of control effectiveness through
      appropriate contracting vehicles, organizations can implement appropriate compensating
      controls.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: AC-17, AC-18, AU-10, IA-3, IA-8, IA-9, MA-4, PE-4, SA-4, SA-8, SC-7, SC-16, SC20, SC-23, SC-28.
      Control Enhancements:
      (1) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CRYPTOGRAPHIC PROTECTION
@@ -16092,12 +15694,9 @@ roles]:
      distribution systems.
      Related Controls: SC-12, SC-13.
      (4) TRANSMISSION CONFIDENTIALITY AND INTEGRITY | CONCEAL OR RANDOMIZE COMMUNICATIONS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Implement cryptographic mechanisms to conceal or randomize communication patterns
      unless otherwise protected by [Assignment: organization-defined alternative physical
      controls].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Concealing or randomizing communication patterns addresses protection from
      unauthorized disclosure of information. Communication patterns include frequency, periods,
      predictability, and amount. Changes to communications patterns can reveal information
@@ -16118,10 +15717,14 @@ roles]:
      Related Controls: None.
      References: [FIPS 140-3], [FIPS 197], [SP 800-52], [SP 800-77], [SP 800-81-2], [SP 800-113], [SP
      800-177], [IR 8023].
-     SC-9
+
+#### SC-9
+
      TRANSMISSION CONFIDENTIALITY
      [Withdrawn: Incorporated into SC-8.]
-     SC-10 NETWORK DISCONNECT
+
+#### SC-10 NETWORK DISCONNECT
+
      Control: Terminate the network connection associated with a communications session at the
      end of the session or after [Assignment: organization-defined time period] of inactivity.
      Discussion: Network disconnect applies to internal and external networks. Terminating network
@@ -16133,18 +15736,17 @@ roles]:
      Related Controls: AC-17, SC-23.
      Control Enhancements: None.
      References: None.
-     SC-11 TRUSTED PATH
+
+#### SC-11 TRUSTED PATH
+
      Control:
      a.
-     CHAPTER THREE
      Provide a [Selection: physically; logically] isolated trusted communications path for
      communications between the user and the trusted components of the system; and
-     NIST SP 800-53, REV. 5
      b.
      Permit users to invoke the trusted communications path for communications between the
      user and the following security functions of the system, including at a minimum,
      authentication and re-authentication: [Assignment: organization-defined security functions].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Trusted paths are mechanisms by which users can communicate (using input devices
      such as keyboards) directly with the security functions of systems with the requisite assurance to
      support security policies. Trusted path mechanisms can only be activated by users or the security
@@ -16172,7 +15774,9 @@ roles]:
      spoofed.
      Related Controls: None.
      References: [OMB A-130].
-     SC-12 CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT
+
+#### SC-12 CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT
+
      Control: Establish and manage cryptographic keys when cryptography is employed within the
      system in accordance with the following key management requirements: [Assignment:
      organization-defined requirements for key generation, distribution, storage, access, and
@@ -16187,8 +15791,6 @@ roles]:
      additional information on validated cryptographic modules and algorithms that can be used in
      cryptographic key management and establishment.
      Related Controls: AC-17, AU-9, AU-10, CM-3, IA-3, IA-7, SA-4, SA-8, SA-9, SC-8, SC-11, SC-12, SC13, SC-17, SC-20, SC-37, SC-40, SI-3, SI-7.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements:
      (1) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | AVAILABILITY
      Maintain availability of information in the event of the loss of cryptographic keys by users.
@@ -16197,7 +15799,6 @@ roles]:
      Related Controls: None.
      (2) CRYPTOGRAPHIC KEY ESTABLISHMENT AND MANAGEMENT | SYMMETRIC KEYS
      Produce, control, and distribute symmetric cryptographic keys using [Selection: NIST FIPSvalidated; NSA-approved] key management technology and processes.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: [SP 800-56A], [SP 800-56B], and [SP 800-56C] provide guidance on cryptographic
      key establishment schemes and key derivation methods. [SP 800-57-1], [SP 800-57-2], and
      [SP 800-57-3] provide guidance on cryptographic key management.
@@ -16225,17 +15826,16 @@ roles]:
      Related Controls: None.
      References: [FIPS 140-3], [SP 800-56A], [SP 800-56B], [SP 800-56C], [SP 800-57-1], [SP 800-57-2],
      [SP 800-57-3], [SP 800-63-3], [IR 7956], [IR 7966].
-     SC-13 CRYPTOGRAPHIC PROTECTION
+
+#### SC-13 CRYPTOGRAPHIC PROTECTION
+
      Control:
      a.
-     CHAPTER THREE
      Determine the [Assignment: organization-defined cryptographic uses]; and
-     NIST SP 800-53, REV. 5
      b.
      Implement the following types of cryptography required for each specified cryptographic
      use: [Assignment: organization-defined types of cryptography for each specified
      cryptographic use].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Cryptography can be employed to support a variety of security solutions, including
      the protection of classified information and controlled unclassified information, the provision
      and implementation of digital signatures, and the enforcement of information separation when
@@ -16258,9 +15858,13 @@ roles]:
      (4) CRYPTOGRAPHIC PROTECTION | DIGITAL SIGNATURES
      [Withdrawn: Incorporated into SC-13.]
      References: [FIPS 140-3].
-     SC-14 PUBLIC ACCESS PROTECTIONS
+
+#### SC-14 PUBLIC ACCESS PROTECTIONS
+
      [Withdrawn: Incorporated into AC-2, AC-3, AC-5, AC-6, SI-3, SI-4, SI-5, SI-7, and SI-10.]
-     SC-15 COLLABORATIVE COMPUTING DEVICES AND APPLICATIONS
+
+#### SC-15 COLLABORATIVE COMPUTING DEVICES AND APPLICATIONS
+
      Control:
      a.
      Prohibit remote activation of collaborative computing devices and applications with the
@@ -16274,8 +15878,6 @@ roles]:
      activated.
      Related Controls: AC-21, SC-42.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) COLLABORATIVE COMPUTING DEVICES | PHYSICAL OR LOGICAL DISCONNECT
      Provide [Selection (one or more): physical; logical] disconnect of collaborative computing
      devices in a manner that supports ease of use.
@@ -16287,7 +15889,6 @@ roles]:
      automatic.
      Related Controls: None.
      (2) COLLABORATIVE COMPUTING DEVICES | BLOCKING INBOUND AND OUTBOUND COMMUNICATIONS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      TRAFFIC
      [Withdrawn: Incorporated into SC-7.]
      (3) COLLABORATIVE COMPUTING DEVICES | DISABLING AND REMOVAL IN SECURE WORK AREAS
@@ -16307,7 +15908,9 @@ roles]:
      participants.
      Related Controls: None.
      References: None.
-     SC-16 TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES
+
+#### SC-16 TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES
+
      Control: Associate [Assignment: organization-defined security and privacy attributes] with
      information exchanged between systems and between system components.
      Discussion: Security and privacy attributes can be explicitly or implicitly associated with the
@@ -16322,8 +15925,6 @@ roles]:
      conjunction with security attributes.
      Related Controls: AC-3, AC-4, AC-16.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | INTEGRITY VERIFICATION
      Verify the integrity of transmitted security and privacy attributes.
      Discussion: Part of verifying the integrity of transmitted information is ensuring that security
@@ -16334,7 +15935,6 @@ roles]:
      (2) TRANSMISSION OF SECURITY AND PRIVACY ATTRIBUTES | ANTI-SPOOFING MECHANISMS
      Implement anti-spoofing mechanisms to prevent adversaries from falsifying the security
      attributes indicating the successful application of the security process.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Some attack vectors operate by altering the security attributes of an information
      system to intentionally and maliciously implement an insufficient level of security within the
      system. The alteration of attributes leads organizations to believe that a greater number of
@@ -16348,7 +15948,9 @@ roles]:
      information.
      Related Controls: AC-16, SC-12, SC-13.
      References: [OMB A-130].
-     SC-17 PUBLIC KEY INFRASTRUCTURE CERTIFICATES
+
+#### SC-17 PUBLIC KEY INFRASTRUCTURE CERTIFICATES
+
      Control:
      a.
      Issue public key certificates under an [Assignment: organization-defined certificate policy] or
@@ -16365,14 +15967,14 @@ roles]:
      Related Controls: AU-10, IA-5, SC-12.
      Control Enhancements: None.
      References: [SP 800-32], [SP 800-57-1], [SP 800-57-2], [SP 800-57-3], [SP 800-63-3].
-     SC-18 MOBILE CODE
+
+#### SC-18 MOBILE CODE
+
      Control:
      a.
      Define acceptable and unacceptable mobile code and mobile code technologies; and
      b.
      Authorize, monitor, and control the use of mobile code within the system.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Mobile code includes any program, application, or content that can be transmitted
      across a network (e.g., embedded in an email, document, or website) and executed on a remote
      system. Decisions regarding the use of mobile code within organizational systems are based on
@@ -16385,7 +15987,6 @@ roles]:
      mobile code within organizational systems, including requiring mobile code to be digitally signed
      by a trusted source.
      Related Controls: AU-2, AU-12, CM-2, CM-6, SI-3.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) MOBILE CODE | IDENTIFY UNACCEPTABLE CODE AND TAKE CORRECTIVE ACTIONS
      Identify [Assignment: organization-defined unacceptable mobile code] and take
@@ -16417,17 +16018,18 @@ roles]:
      Related Controls: None.
      (5) MOBILE CODE | ALLOW EXECUTION ONLY IN CONFINED ENVIRONMENTS
      Allow execution of permitted mobile code only in confined virtual machine environments.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Permitting the execution of mobile code only in confined virtual machine
      environments helps prevent the introduction of malicious code into other systems and
      system components.
      Related Controls: SC-44, SI-7.
      References: [SP 800-28].
-     SC-19 VOICE OVER INTERNET PROTOCOL
+
+#### SC-19 VOICE OVER INTERNET PROTOCOL
+
      [Withdrawn: Technology-specific; addressed as any other technology or protocol.]
-     SC-20 SECURE NAME/ADDRESS RESOLUTION SERVICE (AUTHORITATIVE SOURCE)
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### SC-20 SECURE NAME/ADDRESS RESOLUTION SERVICE (AUTHORITATIVE SOURCE)
+
      Control:
      a.
      Provide additional data origin authentication and integrity verification artifacts along with
@@ -16458,13 +16060,13 @@ roles]:
      Discussion: None.
      Related Controls: None.
      References: [FIPS 140-3], [FIPS 186-4], [SP 800-81-2].
-     SC-21 SECURE NAME/ADDRESS RESOLUTION SERVICE (RECURSIVE OR CACHING RESOLVER)
+
+#### SC-21 SECURE NAME/ADDRESS RESOLUTION SERVICE (RECURSIVE OR CACHING RESOLVER)
+
      Control: Request and perform data origin authentication and data integrity verification on the
      name/address resolution responses the system receives from authoritative sources.
      Discussion: Each client of name resolution services either performs this validation on its own or
      has authenticated channels to trusted validation providers. Systems that provide name and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      address resolution services for local clients include recursive resolving or caching domain name
      system (DNS) servers. DNS client resolvers either perform validation of DNSSEC signatures, or
      clients use authenticated channels to recursive resolvers that perform such validations. Systems
@@ -16475,10 +16077,11 @@ roles]:
      Control Enhancements: None.
      (1) SECURE NAME/ADDRESS RESOLUTION SERVICE (RECURSIVE OR CACHING RESOLVER) | DATA ORIGIN
      AND INTEGRITY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [Withdrawn: Incorporated into SC-21.]
      References: [SP 800-81-2].
-     SC-22 ARCHITECTURE AND PROVISIONING FOR NAME/ADDRESS RESOLUTION SERVICE
+
+#### SC-22 ARCHITECTURE AND PROVISIONING FOR NAME/ADDRESS RESOLUTION SERVICE
+
      Control: Ensure the systems that collectively provide name/address resolution service for an
      organization are fault-tolerant and implement internal and external role separation.
      Discussion: Systems that provide name and address resolution services include domain name
@@ -16495,7 +16098,9 @@ roles]:
      Related Controls: SC-2, SC-20, SC-21, SC-24.
      Control Enhancements: None.
      References: [SP 800-81-2].
-     SC-23 SESSION AUTHENTICITY
+
+#### SC-23 SESSION AUTHENTICITY
+
      Control: Protect the authenticity of communications sessions.
      Discussion: Protecting session authenticity addresses communications protection at the session
      level, not at the packet level. Such protection establishes grounds for confidence at both ends of
@@ -16508,14 +16113,11 @@ roles]:
      Invalidate session identifiers upon user logout or other session termination.
      Discussion: Invalidating session identifiers at logout curtails the ability of adversaries to
      capture and continue to employ previously valid session IDs.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: None.
      (2) SESSION AUTHENTICITY | USER-INITIATED LOGOUTS AND MESSAGE DISPLAYS
      [Withdrawn: Incorporated into AC-12(1).]
      (3) SESSION AUTHENTICITY | UNIQUE SYSTEM-GENERATED SESSION IDENTIFIERS
      Generate a unique session identifier for each session with [Assignment: organizationdefined randomness requirements] and recognize only session identifiers that are systemgenerated.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Generating unique session identifiers curtails the ability of adversaries to reuse
      previously valid session IDs. Employing the concept of randomness in the generation of
      unique session identifiers protects against brute-force attacks to determine future session
@@ -16532,7 +16134,9 @@ roles]:
      protected sessions between web clients and web servers.
      Related Controls: SC-12, SC-13.
      References: [SP 800-52], [SP 800-77], [SP 800-95], [SP 800-113].
-     SC-24 FAIL IN KNOWN STATE
+
+#### SC-24 FAIL IN KNOWN STATE
+
      Control: Fail to a [Assignment: organization-defined known system state] for the following
      failures on the indicated components while preserving [Assignment: organization-defined system
      state information] in failure: [Assignment: list of organization-defined types of system failures on
@@ -16547,21 +16151,22 @@ roles]:
      Related Controls: CP-2, CP-4, CP-10, CP-12, SA-8, SC-7, SC-22, SI-13.
      Control Enhancements: None.
      References: None.
-     SC-25 THIN NODES
+
+#### SC-25 THIN NODES
+
      Control: Employ minimal functionality and information storage on the following system
      components: [Assignment: organization-defined system components].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: The deployment of system components with minimal functionality reduces the need
      to secure every endpoint and may reduce the exposure of information, systems, and services to
      attacks. Reduced or minimal functionality includes diskless nodes and thin client technologies.
      Related Controls: SC-30, SC-44.
      Control Enhancements: None.
      References: None.
-     SC-26 DECOYS
+
+#### SC-26 DECOYS
+
      Control: Include components within organizational systems specifically designed to be the target
      of malicious attacks for detecting, deflecting, and analyzing such attacks.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Decoys (i.e., honeypots, honeynets, or deception nets) are established to attract
      adversaries and deflect attacks away from the operational systems that support organizational
      mission and business functions. Use of decoys requires some supporting isolation measures to
@@ -16573,7 +16178,9 @@ roles]:
      (1) DECOYS | DETECTION OF MALICIOUS CODE
      [Withdrawn: Incorporated into SC-35.]
      References: None.
-     SC-27 PLATFORM-INDEPENDENT APPLICATIONS
+
+#### SC-27 PLATFORM-INDEPENDENT APPLICATIONS
+
      Control: Include within organizational systems the following platform independent applications:
      [Assignment: organization-defined platform-independent applications].
      Discussion: Platforms are combinations of hardware, firmware, and software components used
@@ -16586,7 +16193,9 @@ roles]:
      Related Controls: SC-29.
      Control Enhancements: None.
      References: None.
-     SC-28 PROTECTION OF INFORMATION AT REST
+
+#### SC-28 PROTECTION OF INFORMATION AT REST
+
      Control: Protect the [Selection (one or more): confidentiality; integrity] of the following
      information at rest: [Assignment: organization-defined information at rest].
      Discussion: Information at rest refers to the state of information when it is not in process or in
@@ -16594,8 +16203,6 @@ roles]:
      disk drives, storage area network devices, or databases. However, the focus of protecting
      information at rest is not on the type of storage device or frequency of access but rather on the
      state of the information. Information at rest addresses the confidentiality and integrity of
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      information and covers user information and system information. System-related information
      that requires protection includes configurations or rule sets for firewalls, intrusion detection and
      prevention systems, filtering routers, and authentication information. Organizations may employ
@@ -16606,7 +16213,6 @@ roles]:
      controls, including frequent scanning to identify malicious code at rest and secure offline storage
      in lieu of online storage.
      Related Controls: AC-3, AC-4, AC-6, AC-19, CA-7, CM-3, CM-5, CM-6, CP-9, MP-4, MP-5, PE-3, SC8, SC-12, SC-13, SC-34, SI-3, SI-7, SI-16.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) PROTECTION OF INFORMATION AT REST | CRYPTOGRAPHIC PROTECTION
      Implement cryptographic mechanisms to prevent unauthorized disclosure and
@@ -16632,15 +16238,15 @@ roles]:
      store that can be used to protect cryptographic keys.
      Related Controls: SC-12, SC-13.
      References: [OMB A-130], [SP 800-56A], [SP 800-56B], [SP 800-56C], [SP 800-57-1], [SP 800-572], [SP 800-57-3], [SP 800-111], [SP 800-124].
-     SC-29 HETEROGENEITY
+
+#### SC-29 HETEROGENEITY
+
      Control: Employ a diverse set of information technologies for the following system components
      in the implementation of the system: [Assignment: organization-defined system components].
      Discussion: Increasing the diversity of information technologies within organizational systems
      reduces the impact of potential exploitations or compromises of specific technologies. Such
      diversity protects against common mode failures, including those failures induced by supply
      chain attacks. Diversity in information technologies also reduces the likelihood that the means
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      adversaries use to compromise one system component will be effective against other system
      components, thus further increasing the adversary work factor to successfully complete planned
      attacks. An increase in diversity may add complexity and management overhead that could
@@ -16650,7 +16256,6 @@ roles]:
      (1) HETEROGENEITY | VIRTUALIZATION TECHNIQUES
      Employ virtualization techniques to support the deployment of a diversity of operating
      systems and applications that are changed [Assignment: organization-defined frequency].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: While frequent changes to operating systems and applications can pose
      significant configuration management challenges, the changes can result in an increased
      work factor for adversaries to conduct successful attacks. Changing virtual operating systems
@@ -16660,7 +16265,9 @@ roles]:
      of dubious provenance into confined execution environments.
      Related Controls: None.
      References: None.
-     SC-30 CONCEALMENT AND MISDIRECTION
+
+#### SC-30 CONCEALMENT AND MISDIRECTION
+
      Control: Employ the following concealment and misdirection techniques for [Assignment:
      organization-defined systems] at [Assignment: organization-defined time periods] to confuse and
      mislead adversaries: [Assignment: organization-defined concealment and misdirection
@@ -16687,8 +16294,6 @@ roles]:
      impede the ability of adversaries to correctly target information resources of organizations
      that support critical missions or business functions. Uncertainty may also cause adversaries
      to hesitate before initiating or continuing attacks. Misdirection techniques that involve
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      randomness include performing certain routine actions at different times of day, employing
      different information technologies, using different suppliers, and rotating roles and
      responsibilities of organizational personnel.
@@ -16696,7 +16301,6 @@ roles]:
      (3) CONCEALMENT AND MISDIRECTION | CHANGE PROCESSING AND STORAGE LOCATIONS
      Change the location of [Assignment: organization-defined processing and/or storage]
      [Selection: [Assignment: organization-defined time frequency]; at random time intervals]].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Adversaries target critical mission and business functions and the systems that
      support those mission and business functions while also trying to minimize the exposure of
      their existence and tradecraft. The static, homogeneous, and deterministic nature of
@@ -16732,10 +16336,10 @@ roles]:
      configuration of routers or the use of encryption or virtualization techniques.
      Related Controls: None.
      References: None.
-     SC-31 COVERT CHANNEL ANALYSIS
+
+#### SC-31 COVERT CHANNEL ANALYSIS
+
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Perform a covert channel analysis to identify those aspects of communications within the
      system that are potential avenues for covert [Selection (one or more): storage; timing]
@@ -16749,7 +16353,6 @@ roles]:
      (i.e., networks that are not controlled by organizations). Covert channel analysis is also useful for
      multilevel secure systems, multiple security level systems, and cross-domain systems.
      Related Controls: AC-3, AC-4, SA-8, SI-11.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) COVERT CHANNEL ANALYSIS | TEST COVERT CHANNELS FOR EXPLOITABILITY
      Test a subset of the identified covert channels to determine the channels that are
@@ -16772,7 +16375,9 @@ roles]:
      environments of operation, including laboratories or system development environments.
      Related Controls: None.
      References: None.
-     SC-32 SYSTEM PARTITIONING
+
+#### SC-32 SYSTEM PARTITIONING
+
      Control: Partition the system into [Assignment: organization-defined system components]
      residing in separate [Selection: physical; logical] domains or environments based on [Assignment:
      organization-defined circumstances for physical or logical separation of components].
@@ -16783,8 +16388,6 @@ roles]:
      guide the selection of candidates for domain partitioning. Managed interfaces restrict or prohibit
      network access and information flow among partitioned system components.
      Related Controls: AC-4, AC-6, SA-8, SC-2, SC-3, SC-7, SC-36.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Control Enhancements:
      (1) SYSTEM PARTITIONING | SEPARATE PHYSICAL DOMAINS FOR PRIVILEGED FUNCTIONS
      Partition privileged functions into separate physical domains.
@@ -16793,10 +16396,13 @@ roles]:
      service.
      Related Controls: None.
      References: [FIPS 199], [IR 8179].
-     SC-33 TRANSMISSION PREPARATION INTEGRITY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### SC-33 TRANSMISSION PREPARATION INTEGRITY
+
      [Withdrawn: Incorporated into SC-8.]
-     SC-34 NON-MODIFIABLE EXECUTABLE PROGRAMS
+
+#### SC-34 NON-MODIFIABLE EXECUTABLE PROGRAMS
+
      Control: For [Assignment: organization-defined system components], load and execute:
      a.
      The operating environment from hardware-enforced, read-only media; and
@@ -16829,14 +16435,13 @@ roles]:
      of programmable read-only media prior to installation into the systems. Integrity protection
      controls include a combination of prevention, detection, and response.
      Related Controls: CM-3, CM-5, CM-9, MP-2, MP-4, MP-5, SC-28, SI-3.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (3) NON-MODIFIABLE EXECUTABLE PROGRAMS | HARDWARE-BASED PROTECTION
      [Withdrawn: Moved to SC-51.]
-     SC-35 EXTERNAL MALICIOUS CODE IDENTIFICATION
+
+#### SC-35 EXTERNAL MALICIOUS CODE IDENTIFICATION
+
      Control: Include system components that proactively seek to identify network-based malicious
      code or malicious websites.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: External malicious code identification differs from decoys in SC-26 in that the
      components actively probe networks, including the Internet, in search of malicious code
      contained on external websites. Like decoys, the use of external malicious code identification
@@ -16846,7 +16451,9 @@ roles]:
      Related Controls: SC-7, SC-26, SC-44, SI-3, SI-4.
      Control Enhancements: None.
      References: None.
-     SC-36 DISTRIBUTED PROCESSING AND STORAGE
+
+#### SC-36 DISTRIBUTED PROCESSING AND STORAGE
+
      Control: Distribute the following processing and storage components across multiple [Selection:
      physical locations; logical domains]: [Assignment: organization-defined processing and storage
      components].
@@ -16874,16 +16481,15 @@ roles]:
      (2) DISTRIBUTED PROCESSING AND STORAGE | SYNCHRONIZATION
      Synchronize the following duplicate systems or system components: [Assignment:
      organization-defined duplicate systems or system components].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: SC-36 and CP-9(6) require the duplication of systems or system components in
      distributed locations. The synchronization of duplicated and redundant services and data
      helps to ensure that information contained in the distributed locations can be used in the
      mission or business functions of organizations, as needed.
      Related Controls: CP-9.
      References: [SP 800-160-2].
-     SC-37 OUT-OF-BAND CHANNELS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### SC-37 OUT-OF-BAND CHANNELS
+
      Control: Employ the following out-of-band channels for the physical delivery or electronic
      transmission of [Assignment: organization-defined information, system components, or devices]
      to [Assignment: organization-defined individuals or systems]: [Assignment: organization-defined
@@ -16912,7 +16518,9 @@ roles]:
      of government-issued photographic identification as a condition of receipt.
      Related Controls: None.
      References: [SP 800-57-1], [SP 800-57-2], [SP 800-57-3].
-     SC-38 OPERATIONS SECURITY
+
+#### SC-38 OPERATIONS SECURITY
+
      Control: Employ the following operations security controls to protect key organizational
      information throughout the system development life cycle: [Assignment: organization-defined
      operations security controls].
@@ -16922,8 +16530,6 @@ roles]:
      planning and execution of sensitive organizational activities. The OPSEC process involves five
      steps: identification of critical information, analysis of threats, analysis of vulnerabilities,
      assessment of risks, and the application of appropriate countermeasures. OPSEC controls are
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      applied to organizational systems and the environments in which those systems operate. OPSEC
      controls protect the confidentiality of information, including limiting the sharing of information
      with suppliers, potential suppliers, and other non-organizational elements and individuals.
@@ -16934,8 +16540,9 @@ roles]:
      Related Controls: CA-2, CA-7, PL-1, PM-9, PM-12, RA-2, RA-3, RA-5, SC-7, SR-3, SR-7.
      Control Enhancements: None.
      References: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-39 PROCESS ISOLATION
+
+#### SC-39 PROCESS ISOLATION
+
      Control: Maintain a separate execution domain for each executing system process.
      Discussion: Systems can maintain separate execution domains for each executing process by
      assigning each process a separate address space. Each system process has a distinct address
@@ -16961,14 +16568,14 @@ roles]:
      Discussion: None.
      Related Controls: None.
      References: [SP 800-160-1].
-     SC-40 WIRELESS LINK PROTECTION
+
+#### SC-40 WIRELESS LINK PROTECTION
+
      Control: Protect external and internal [Assignment: organization-defined wireless links] from the
      following signal parameter attacks: [Assignment: organization-defined types of signal parameter
      attacks or references to sources for such attacks].
      Discussion: Wireless link protection applies to internal and external wireless communication
      links that may be visible to individuals who are not authorized system users. Adversaries can
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      exploit the signal parameters of wireless links if such links are not adequately protected. There
      are many ways to exploit the signal parameters of wireless links to gain intelligence, deny service,
      or spoof system users. Protection of wireless links reduces the impact of attacks that are unique
@@ -16979,7 +16586,6 @@ roles]:
      Related Controls: AC-18, SC-5.
      Control Enhancements:
      (1) WIRELESS LINK PROTECTION | ELECTROMAGNETIC INTERFERENCE
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement cryptographic mechanisms that achieve [Assignment: organization-defined
      level of protection] against the effects of intentional electromagnetic interference.
      Discussion: The implementation of cryptographic mechanisms for electromagnetic
@@ -17016,8 +16622,6 @@ roles]:
      organization-defined wireless transmitters] by using the transmitter signal parameters.
      Discussion: The implementation of cryptographic mechanisms to prevent the identification
      of wireless transmitters protects against the unique identification of wireless transmitters
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      for the purposes of intelligence exploitation by ensuring that anti-fingerprinting alterations
      to signal parameters are not predictable by unauthorized individuals. It also provides
      anonymity when required. Radio fingerprinting techniques identify the unique signal
@@ -17025,8 +16629,9 @@ roles]:
      mission or user identification.
      Related Controls: SC-12, SC-13.
      References: None.
-     SC-41 PORT AND I/O DEVICE ACCESS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
+
+#### SC-41 PORT AND I/O DEVICE ACCESS
+
      Control: [Selection: Physically; Logically] disable or remove [Assignment: organization-defined
      connection ports or input/output devices] on the following systems or system components:
      [Assignment: organization-defined systems or system components].
@@ -17038,7 +16643,9 @@ roles]:
      Related Controls: AC-20, MP-7.
      Control Enhancements: None.
      References: None.
-     SC-42 SENSOR CAPABILITY AND DATA
+
+#### SC-42 SENSOR CAPABILITY AND DATA
+
      Control:
      a.
      Prohibit [Selection (one or more): the use of devices possessing [Assignment: organizationdefined environmental sensing capabilities] in [Assignment: organization-defined facilities,
@@ -17063,8 +16670,6 @@ roles]:
      Related Controls: SC-15.
      Control Enhancements:
      (1) SENSOR CAPABILITY AND DATA | REPORTING TO AUTHORIZED INDIVIDUALS OR ROLES
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Verify that the system is configured so that data or information collected by the
      [Assignment: organization-defined sensors] is only reported to authorized individuals or
      roles.
@@ -17076,7 +16681,6 @@ roles]:
      Employ the following measures so that data or information collected by [Assignment:
      organization-defined sensors] is only used for authorized purposes: [Assignment:
      organization-defined measures].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Information collected by sensors for a specific authorized purpose could be
      misused for some unauthorized purpose. For example, GPS sensors that are used to support
      traffic navigation could be misused to track the movements of individuals. Measures to
@@ -17106,13 +16710,13 @@ roles]:
      tones.
      Related Controls: SA-8, SI-12.
      References: [OMB A-130], [SP 800-124].
-     SC-43 USAGE RESTRICTIONS
+
+#### SC-43 USAGE RESTRICTIONS
+
      Control:
      a.
-     CHAPTER THREE
      Establish usage restrictions and implementation guidelines for the following system
      components: [Assignment: organization-defined system components]; and
-     NIST SP 800-53, REV. 5
      b.
      Authorize, monitor, and control the use of such components within the system.
      Discussion: Usage restrictions apply to all system components including but not limited to
@@ -17123,8 +16727,9 @@ roles]:
      Related Controls: AC-18, AC-19, CM-6, SC-7, SC-18.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-124].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-44 DETONATION CHAMBERS
+
+#### SC-44 DETONATION CHAMBERS
+
      Control: Employ a detonation chamber capability within [Assignment: organization-defined
      system, system component, or location].
      Discussion: Detonation chambers, also known as dynamic execution environments, allow
@@ -17140,7 +16745,9 @@ roles]:
      Related Controls: SC-7, SC-18, SC-25, SC-26, SC-30, SC-35, SC-39, SI-3, SI-7.
      Control Enhancements: None.
      References: [SP 800-177].
-     SC-45 SYSTEM TIME SYNCHRONIZATION
+
+#### SC-45 SYSTEM TIME SYNCHRONIZATION
+
      Control: Synchronize system clocks within and between systems and system components.
      Discussion: Time synchronization of system clocks is essential for the correct execution of many
      system services, including identification and authentication processes that involve certificates
@@ -17158,8 +16765,6 @@ roles]:
      (1) SYSTEM TIME SYNCHRONIZATION | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
      (a) Compare the internal system clocks [Assignment: organization-defined frequency]
      with [Assignment: organization-defined authoritative time source]; and
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (b) Synchronize the internal system clocks to the authoritative time source when the time
      difference is greater than [Assignment: organization-defined time period].
      Discussion: Synchronization of internal system clocks with an authoritative source provides
@@ -17171,12 +16776,13 @@ roles]:
      than the primary authoritative time source; and
      (b) Synchronize the internal system clocks to the secondary authoritative time source if
      the primary authoritative time source is unavailable.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: It may be necessary to employ geolocation information to determine that the
      secondary authoritative time source is in a different geographic region.
      Related Controls: None.
      References: [IETF 5905].
-     SC-46 CROSS DOMAIN POLICY ENFORCEMENT
+
+#### SC-46 CROSS DOMAIN POLICY ENFORCEMENT
+
      Control: Implement a policy enforcement mechanism [Selection: physically; logically] between
      the physical and/or network interfaces for the connecting security domains.
      Discussion: For logical policy enforcement mechanisms, organizations avoid creating a logical
@@ -17188,7 +16794,9 @@ roles]:
      Related Controls: AC-4, SC-7.
      Control Enhancements: None.
      References: [SP 800-160-1].
-     SC-47 ALTERNATE COMMUNICATIONS PATHS
+
+#### SC-47 ALTERNATE COMMUNICATIONS PATHS
+
      Control: Establish [Assignment: organization-defined alternate communications paths] for
      system operations organizational command and control.
      Discussion: An incident, whether adversarial- or nonadversarial-based, can disrupt established
@@ -17204,13 +16812,12 @@ roles]:
      Related Controls: CP-2, CP-8.
      Control Enhancements: None.
      References: [SP 800-34], [SP 800-61], [SP 800-160-2].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SC-48 SENSOR RELOCATION
+
+#### SC-48 SENSOR RELOCATION
+
      Control: Relocate [Assignment: organization-defined sensors and monitoring capabilities] to
      [Assignment: organization-defined locations] under the following conditions or circumstances:
      [Assignment: organization-defined conditions or circumstances].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Adversaries may take various paths and use different approaches as they move
      laterally through an organization (including its systems) to reach their target or as they attempt
      to exfiltrate information from the organization. The organization often only has a limited set of
@@ -17231,7 +16838,9 @@ roles]:
      Discussion: None.
      Related Controls: None.
      References: [SP 800-160-2].
-     SC-49 HARDWARE-ENFORCED SEPARATION AND POLICY ENFORCEMENT
+
+#### SC-49 HARDWARE-ENFORCED SEPARATION AND POLICY ENFORCEMENT
+
      Control: Implement hardware-enforced separation and policy enforcement mechanisms
      between [Assignment: organization-defined security domains].
      Discussion: System owners may require additional strength of mechanism and robustness to
@@ -17241,7 +16850,9 @@ roles]:
      Related Controls: AC-4, SA-8, SC-50.
      Control Enhancements: None.
      References: [SP 800-160-1].
-     SC-50 SOFTWARE-ENFORCED SEPARATION AND POLICY ENFORCEMENT
+
+#### SC-50 SOFTWARE-ENFORCED SEPARATION AND POLICY ENFORCEMENT
+
      Control: Implement software-enforced separation and policy enforcement mechanisms between
      [Assignment: organization-defined security domains].
      Discussion: System owners may require additional strength of mechanism to ensure domain
@@ -17249,9 +16860,9 @@ roles]:
      Related Controls: AC-3, AC-4, SA-8, SC-2, SC-3, SC-49.
      Control Enhancements: None.
      References: [SP 800-160-1].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SC-51 HARDWARE-BASED PROTECTION
+
+#### SC-51 HARDWARE-BASED PROTECTION
+
      Control:
      a.
      Employ hardware-based, write-protect for [Assignment: organization-defined system
@@ -17262,21 +16873,22 @@ roles]:
      write-protect prior to returning to operational mode.
      Discussion: None.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements: None.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.19 SYSTEM AND INFORMATION INTEGRITY
+
+### 3.19 SYSTEM AND INFORMATION INTEGRITY
+
      Quick link to System and Information Integrity Summary Table
-     SI-1
+
+#### SI-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 197. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] system and information integrity policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -17313,9 +16925,9 @@ roles]:
      Related Controls: PM-9, PS-8, SA-8, SI-12.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-12], [SP 800-100].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     SI-2
+
+#### SI-2
+
      FLAW REMEDIATION
      Control:
      a.
@@ -17327,7 +16939,6 @@ roles]:
      Install security-relevant software and firmware updates within [Assignment: organizationdefined time period] of the release of the updates; and
      d.
      Incorporate flaw remediation into the organizational configuration management process.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The need to remediate system flaws applies to all types of software and firmware.
      Organizations identify systems affected by software flaws, including potential vulnerabilities
      resulting from those flaws, and report this information to designated organizational personnel
@@ -17364,8 +16975,6 @@ roles]:
      organization-defined benchmarks].
      Discussion: Organizations determine the time it takes on average to correct system flaws
      after such flaws have been identified and subsequently establish organizational benchmarks
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (i.e., time frames) for taking corrective actions. Benchmarks can be established by the type
      of flaw or the severity of the potential vulnerability if the flaw can be exploited.
      Related Controls: None.
@@ -17376,7 +16985,6 @@ roles]:
      timeliness and completeness of system patching operations.
      Related Controls: None.
      (5) FLAW REMEDIATION | AUTOMATIC SOFTWARE AND FIRMWARE UPDATES
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Install [Assignment: organization-defined security-relevant software and firmware
      updates] automatically to [Assignment: organization-defined system components].
      Discussion: Due to system integrity and availability concerns, organizations consider the
@@ -17395,7 +17003,9 @@ roles]:
      Related Controls: None.
      References: [OMB A-130], [FIPS 140-3], [FIPS 186-4], [SP 800-39], [SP 800-40], [SP 800-128], [IR
      7788].
-     SI-3
+
+#### SI-3
+
      MALICIOUS CODE PROTECTION
      Control:
      a.
@@ -17407,14 +17017,13 @@ roles]:
      accordance with organizational configuration management policy and procedures;
      c.
      Configure malicious code protection mechanisms to:
-     CHAPTER THREE
+
 201. Perform periodic scans of the system [Assignment: organization-defined frequency] and
      real-time scans of files from external sources at [Selection (one or more): endpoint;
      network entry and exit points] as the files are downloaded, opened, or executed in
      accordance with organizational policy; and
 202. [Selection (one or more): block malicious code; quarantine malicious code; take
      [Assignment: organization-defined action]]; and send alert to [Assignment: organizationdefined personnel or roles] in response to malicious code detection; and
-     NIST SP 800-53, REV. 5
      d.
      Address the receipt of false positives during malicious code detection and eradication and
      the resulting potential impact on the availability of the system.
@@ -17426,7 +17035,6 @@ roles]:
      ways, including by electronic mail, the world-wide web, and portable storage devices. Malicious
      code insertions occur through the exploitation of system vulnerabilities. A variety of technologies
      and methods exist to limit or eliminate the effects of malicious code.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Malicious code protection mechanisms include both signature- and nonsignature-based
      technologies. Nonsignature-based detection mechanisms include artificial intelligence
      techniques that use heuristics to detect, analyze, and describe the characteristics or behavior of
@@ -17461,8 +17069,6 @@ roles]:
      appropriate access privileges.
      Related Controls: CM-5.
      (5) MALICIOUS CODE PROTECTION | PORTABLE STORAGE DEVICES
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      [Withdrawn: Incorporated into MP-7.]
      (6) MALICIOUS CODE PROTECTION | TESTING AND VERIFICATION
      (a) Test malicious code protection mechanisms [Assignment: organization-defined
@@ -17472,7 +17078,6 @@ roles]:
      Related Controls: CA-2, CA-7, RA-5.
      (7) MALICIOUS CODE PROTECTION | NONSIGNATURE-BASED DETECTION
      [Withdrawn: Incorporated into SI-3.]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (8) MALICIOUS CODE PROTECTION | DETECT UNAUTHORIZED COMMANDS
      (a) Detect the following unauthorized operating system commands through the kernel
      application programming interface on [Assignment: organization-defined system
@@ -17505,13 +17110,14 @@ roles]:
      engineering techniques or by monitoring the behavior of executing code.
      Related Controls: None.
      References: [SP 800-83], [SP 800-125B], [SP 800-177].
-     SI-4
+
+#### SI-4
+
      SYSTEM MONITORING
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Monitor the system to detect:
+
 203. Attacks and indicators of potential attacks in accordance with the following monitoring
      objectives: [Assignment: organization-defined monitoring objectives]; and
 204. Unauthorized local, network, and remote connections;
@@ -17520,7 +17126,6 @@ roles]:
      [Assignment: organization-defined techniques and methods];
      c.
      Invoke internal monitoring capabilities or deploy monitoring devices:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
 205. Strategically within the system to collect organization-determined essential information;
      and
 206. At ad hoc locations within the system to track specific types of transactions of interest
@@ -17562,8 +17167,6 @@ roles]:
      intelligence information, or other sources of information. The legality of system monitoring
      activities is based on applicable laws, executive orders, directives, regulations, policies,
      standards, and guidelines.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: AC-2, AC-3, AC-4, AC-8, AC-17, AU-2, AU-6, AU-7, AU-9, AU-12, AU-13, AU-14,
      CA-7, CM-3, CM-6, CM-8, CM-11, IA-10, IR-4, MA-3, MA-4, PL-9, PM-12, RA-5, RA-10, SC-5, SC-7,
      SC-18, SC-26, SC-31, SC-35, SC-36, SC-37, SC-43, SI-3, SI-6, SI-7, SR-9, SR-10.
@@ -17575,7 +17178,6 @@ roles]:
      detection system provides additional coverage and effective detection capabilities. The
      information contained in one intrusion detection tool can be shared widely across the
      organization, making the system-wide detection capability more robust and powerful.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: None.
      (2) SYSTEM MONITORING | AUTOMATED TOOLS AND MECHANISMS FOR REAL-TIME ANALYSIS
      Employ automated tools and mechanisms to support near real-time analysis of events.
@@ -17610,12 +17212,9 @@ roles]:
      legitimate code or credentials is used to identify potentially compromised systems or system
      components.
      Related Controls: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (5) SYSTEM MONITORING | SYSTEM-GENERATED ALERTS
      Alert [Assignment: organization-defined personnel or roles] when the following systemgenerated indications of compromise or potential compromise occur: [Assignment:
      organization-defined compromise indicators].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Alerts may be generated from a variety of sources, including audit records or
      inputs from malicious code protection mechanisms, intrusion detection or prevention
      mechanisms, or boundary protection devices such as firewalls, gateways, and routers. Alerts
@@ -17656,8 +17255,6 @@ roles]:
      traffic types.
      Related Controls: None.
      (11) SYSTEM MONITORING | ANALYZE COMMUNICATIONS TRAFFIC ANOMALIES
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Analyze outbound communications traffic at the external interfaces to the system and
      selected [Assignment: organization-defined interior points within the system] to discover
      anomalies.
@@ -17668,7 +17265,6 @@ roles]:
      transition), and attempted communications with suspected malicious external addresses.
      Related Controls: None.
      (12) SYSTEM MONITORING | AUTOMATED ORGANIZATION-GENERATED ALERTS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Alert [Assignment: organization-defined personnel or roles] using [Assignment:
      organization-defined automated mechanisms] when the following indications of
      inappropriate or unusual activities with security or privacy implications occur:
@@ -17705,8 +17301,6 @@ roles]:
      (15) SYSTEM MONITORING | WIRELESS TO WIRELINE COMMUNICATIONS
      Employ an intrusion detection system to monitor wireless communications traffic as the
      traffic passes from wireless to wireline networks.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Wireless networks are inherently less secure than wired networks. For example,
      wireless networks are more susceptible to eavesdroppers or traffic analysis than wireline
      networks. When wireless to wireline communications exist, the wireless network could
@@ -17718,7 +17312,6 @@ roles]:
      ensure that the traffic does not contain malicious code prior to transitioning to the wireline
      network.
      Related Controls: AC-18.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (16) SYSTEM MONITORING | CORRELATE MONITORING INFORMATION
      Correlate information from monitoring tools and mechanisms employed throughout the
      system.
@@ -17754,8 +17347,6 @@ roles]:
      Covert means that can be used to exfiltrate information include steganography.
      Related Controls: None.
      (19) SYSTEM MONITORING | RISK FOR INDIVIDUALS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Implement [Assignment: organization-defined additional monitoring] of individuals who
      have been identified by [Assignment: organization-defined sources] as posing an increased
      level of risk.
@@ -17767,7 +17358,6 @@ roles]:
      policies, standards, and guidelines.
      Related Controls: None.
      (20) SYSTEM MONITORING | PRIVILEGED USERS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Implement the following additional monitoring of privileged users: [Assignment:
      organization-defined additional monitoring].
      Discussion: Privileged users have access to more sensitive information, including securityrelated information, than the general user population. Access to such information means
@@ -17802,12 +17392,9 @@ roles]:
      servers, notebook computers, and mobile devices. Organizations may consider employing
      host-based monitoring mechanisms from multiple product developers or vendors.
      Related Controls: AC-18, AC-19.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (24) SYSTEM MONITORING | INDICATORS OF COMPROMISE
      Discover, collect, and distribute to [Assignment: organization-defined personnel or roles],
      indicators of compromise provided by [Assignment: organization-defined sources].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Indicators of compromise (IOC) are forensic artifacts from intrusions that are
      identified on organizational systems at the host or network level. IOCs provide valuable
      information on systems that have been compromised. IOCs can include the creation of
@@ -17833,7 +17420,9 @@ roles]:
      Related Controls: None.
      References: [OMB A-130], [FIPS 140-3], [SP 800-61], [SP 800-83], [SP 800-92], [SP 800-94], [SP
      800-137].
-     SI-5
+
+#### SI-5
+
      SECURITY ALERTS, ADVISORIES, AND DIRECTIVES
      Control:
      a.
@@ -17855,8 +17444,6 @@ roles]:
      critical nature of many of these directives and the potential (immediate) adverse effects on
      organizational operations and assets, individuals, other organizations, and the Nation should the
      directives not be implemented in a timely manner. External organizations include supply chain
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      partners, external mission or business partners, external service providers, and other peer or
      supporting organizations.
      Related Controls: PM-15, RA-5, SI-2.
@@ -17864,7 +17451,6 @@ roles]:
      (1) SECURITY ALERTS, ADVISORIES, AND DIRECTIVES | AUTOMATED ALERTS AND ADVISORIES
      Broadcast security alert and advisory information throughout the organization using
      [Assignment: organization-defined automated mechanisms].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The significant number of changes to organizational systems and environments
      of operation requires the dissemination of security-related information to a variety of
      organizational entities that have a direct interest in the success of organizational mission and
@@ -17874,7 +17460,9 @@ roles]:
      system level.
      Related Controls: None.
      References: [SP 800-40].
-     SI-6
+
+#### SI-6
+
      SECURITY AND PRIVACY FUNCTION VERIFICATION
      Control:
      a.
@@ -17903,8 +17491,6 @@ roles]:
      TESTING
      Implement automated mechanisms to support the management of distributed security
      and privacy function testing.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: The use of automated mechanisms to support the management of distributed
      function testing helps to ensure the integrity, timeliness, completeness, and efficacy of such
      testing.
@@ -17916,9 +17502,10 @@ roles]:
      of security and privacy functions include systems security officers, senior agency information
      security officers, and senior agency officials for privacy.
      Related Controls: SI-4, SR-4, SR-5.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      References: [OMB A-130].
-     SI-7
+
+#### SI-7
+
      SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY
      Control:
      a.
@@ -17952,8 +17539,6 @@ roles]:
      VIOLATIONS
      Employ automated tools that provide notification to [Assignment: organization-defined
      personnel or roles] upon discovering discrepancies during integrity verification.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: The employment of automated tools to report system and information integrity
      violations and to notify organizational personnel in a timely matter is essential to effective
      risk response. Personnel with an interest in system and information integrity violations
@@ -17963,7 +17548,6 @@ roles]:
      Related Controls: None.
      (3) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CENTRALLY MANAGED INTEGRITY TOOLS
      Employ centrally managed integrity verification tools.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Centrally managed integrity verification tools provides greater consistency in the
      application of such tools and can facilitate more comprehensive coverage of integrity
      verification actions.
@@ -18000,8 +17584,6 @@ roles]:
      tracked, monitored, corrected, and available for historical purposes. Maintaining historical
      records is important for being able to identify and discern adversary actions over an
      extended time period and for possible legal actions. Security-relevant changes include
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      unauthorized changes to established configuration settings or the unauthorized elevation of
      system privileges.
      Related Controls: AU-2, AU-6, IR-4, IR-5, SI-4.
@@ -18013,7 +17595,6 @@ roles]:
      organization-defined other actions]].
      Discussion: Organizations select response actions based on types of software, specific
      software, or information for which there are potential integrity violations.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: AU-2, AU-6, AU-12.
      (9) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | VERIFY BOOT PROCESS
      Verify the integrity of the boot process of the following system components: [Assignment:
@@ -18047,8 +17628,6 @@ roles]:
      Related Controls: CM-11.
      (13) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | CODE EXECUTION IN PROTECTED
      ENVIRONMENTS
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      [Withdrawn: Moved to CM-7(7).]
      (14) SOFTWARE, FIRMWARE, AND INFORMATION INTEGRITY | BINARY OR MACHINE EXECUTABLE CODE
      [Withdrawn: Moved to CM-7(8).]
@@ -18056,7 +17635,6 @@ roles]:
      Implement cryptographic mechanisms to authenticate the following software or firmware
      components prior to installation: [Assignment: organization-defined software or firmware
      components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Cryptographic authentication includes verifying that software or firmware
      components have been digitally signed using certificates recognized and approved by
      organizations. Code signing is an effective method to protect against malicious code.
@@ -18092,11 +17670,11 @@ roles]:
      Related Controls: SI-16.
      References: [OMB A-130], [FIPS 140-3], [FIPS 180-4], [FIPS 186-4], [FIPS 202], [SP 800-70], [SP
      800-147].
-     SI-8
+
+#### SI-8
+
      SPAM PROTECTION
      Control:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Employ spam protection mechanisms at system entry and exit points to detect and act on
      unsolicited messages; and
@@ -18109,7 +17687,6 @@ roles]:
      accesses. Spam protection mechanisms include signature definitions.
      Related Controls: PL-9, SC-5, SC-7, SC-38, SI-3, SI-4.
      Control Enhancements:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (1) SPAM PROTECTION | CENTRAL MANAGEMENT
      [Withdrawn: Incorporated into PL-9.]
      (2) SPAM PROTECTION | AUTOMATIC UPDATES
@@ -18127,10 +17704,14 @@ roles]:
      more accurately separating types of traffic.
      Related Controls: None.
      References: [SP 800-45], [SP 800-177].
-     SI-9
+
+#### SI-9
+
      INFORMATION INPUT RESTRICTIONS
      [Withdrawn: Incorporated into AC-2, AC-3, AC-5, and AC-6.]
-     SI-10
+
+#### SI-10
+
      INFORMATION INPUT VALIDATION
      Control: Check the validity of the following information inputs: [Assignment: organizationdefined information inputs to the system].
      Discussion: Checking the valid syntax and semantics of system inputs—including character set,
@@ -18143,8 +17724,6 @@ roles]:
      software modules or system components. Structured messages can contain raw or unstructured
      data interspersed with metadata or control information. If software applications use attackersupplied inputs to construct structured messages without properly encoding such messages,
      then the attacker could insert malicious commands or special characters that can cause the data
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      to be interpreted as control information or metadata. Consequently, the module or component
      that receives the corrupted output will perform the wrong operations or otherwise interpret the
      data incorrectly. Prescreening inputs prior to passing them to interpreters prevents the content
@@ -18155,7 +17734,6 @@ roles]:
      (1) INFORMATION INPUT VALIDATION | MANUAL OVERRIDE CAPABILITY
      (a) Provide a manual override capability for input validation of the following information
      inputs: [Assignment: organization-defined inputs defined in the base control (SI-10)];
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (b) Restrict the use of the manual override capability to only [Assignment: organizationdefined authorized individuals]; and
      (c) Audit the use of the manual override capability.
      Discussion: In certain situations, such as during events that are defined in contingency plans,
@@ -18191,8 +17769,6 @@ roles]:
      or collisions on the link. If TCP makes a congestion response, it takes the wrong action in
      response to a collision event. Adversaries may be able to use what appear to be acceptable
      individual behaviors of the protocols in concert to achieve adverse effects through suitable
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      construction of invalid input. The invalid inputs are those related to the information inputs
      defined by the organization in the base control (SI-10).
      Related Controls: None.
@@ -18200,7 +17776,6 @@ roles]:
      FORMATS
      Restrict the use of information inputs to [Assignment: organization-defined trusted
      sources] and/or [Assignment: organization-defined formats].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Restricting the use of inputs to trusted sources and in trusted formats applies
      the concept of authorized or permitted software to information inputs. Specifying known
      trusted sources for information inputs and acceptable formats for such inputs can reduce
@@ -18217,7 +17792,9 @@ roles]:
      information inputs defined by the organization in the base control (SI-10).
      Related Controls: AC-3, AC-6.
      References: [OMB A-130].
-     SI-11
+
+#### SI-11
+
      ERROR HANDLING
      Control:
      a.
@@ -18236,13 +17813,13 @@ roles]:
      Related Controls: AU-2, AU-3, SC-31, SI-2, SI-15.
      Control Enhancements: None.
      References: None.
-     SI-12
+
+#### SI-12
+
      INFORMATION MANAGEMENT AND RETENTION
      Control: Manage and retain information within the system and information output from the
      system in accordance with applicable laws, executive orders, directives, regulations, policies,
      standards, guidelines and operational requirements.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: Information management and retention requirements cover the full life cycle of
      information, in some cases extending beyond system disposal. Information to be retained may
      also include policies, procedures, plans, reports, data output from control implementation, and
@@ -18255,7 +17832,6 @@ roles]:
      MA-4, PE-2, PE-8, PE-16, PE-17, PL-2, PL-4, PL-7, PL-8, PM-5, PM-8, PM-9, PM-18, PM-21, PM-27,
      PM-28, PM-30, PM-31, PS-2, PS-6, PS-7, PT-2, PT-3, PT-7, RA-2, RA-3, RA-5, RA-8, SA-4, SA-5, SA-8,
      SA-10, SI-4, SR-2, SR-4, SR-8.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: All XX-1 Controls, AC-16, AU-5, AU-11, CA-2, CA-3, CA-5, CA-6, CA-7, CA-9, CM5, CM-9, CP-2, IR-8, MP-2, MP-3, MP-4, MP-6, PL-2, PL-4, PM-4, PM-8, PM-9, PS-2, PS-6, PT-2, PT3, RA-2, RA-3, SA-5, SA-8, SR-2.
      Control Enhancements:
      (1) INFORMATION MANAGEMENT AND RETENTION | LIMIT PERSONALLY IDENTIFIABLE INFORMATION
@@ -18288,11 +17864,11 @@ roles]:
      information when it is no longer needed. The disposal or destruction of information applies
      to originals as well as copies and archived records, including system logs that may contain
      personally identifiable information.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Related Controls: None.
      References: [USC 2901], [OMB A-130].
-     SI-13
+
+#### SI-13
+
      PREDICTABLE FAILURE PREVENTION
      Control:
      a.
@@ -18302,7 +17878,6 @@ roles]:
      Provide substitute system components and a means to exchange active and standby
      components in accordance with the following criteria: [Assignment: organization-defined
      MTTF substitution criteria].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: While MTTF is primarily a reliability issue, predictable failure prevention is intended
      to address potential failures of system components that provide security capabilities. Failure
      rates reflect installation-specific consideration rather than the industry-average. Organizations
@@ -18337,8 +17912,6 @@ roles]:
      Related Controls: None.
      (4) PREDICTABLE FAILURE PREVENTION | STANDBY COMPONENT INSTALLATION AND NOTIFICATION
      If system component failures are detected:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (a) Ensure that the standby components are successfully and transparently installed
      within [Assignment: organization-defined time period]; and
      (b) [Selection (one or more): Activate [Assignment: organization-defined alarm];
@@ -18349,14 +17922,15 @@ roles]:
      (5) PREDICTABLE FAILURE PREVENTION | FAILOVER CAPABILITY
      Provide [Selection: real-time; near real-time] [Assignment: organization-defined failover
      capability] for the system.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Failover refers to the automatic switchover to an alternate system upon the
      failure of the primary system. Failover capability includes incorporating mirrored system
      operations at alternate processing sites or periodic data mirroring at regular intervals
      defined by the recovery time periods of organizations.
      Related Controls: CP-6, CP-7, CP-9.
      References: None.
-     SI-14
+
+#### SI-14
+
      NON-PERSISTENCE
      Control: Implement non-persistent [Assignment: organization-defined system components and
      services] that are initiated in a known state and terminated [Selection (one or more): upon end of
@@ -18387,8 +17961,6 @@ roles]:
      Related Controls: SC-30, SC-34, SI-21.
      Control Enhancements:
      (1) NON-PERSISTENCE | REFRESH FROM TRUSTED SOURCES
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Obtain software and data employed during system component and service refreshes from
      the following trusted sources: [Assignment: organization-defined trusted sources].
      Discussion: Trusted sources include software and data from write-once, read-only media or
@@ -18399,7 +17971,6 @@ roles]:
      organization-defined frequency]; Generate [Assignment: organization-defined
      information] on demand]; and
      (b) Delete information when no longer needed.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Retaining information longer than is needed makes the information a potential
      target for advanced adversaries searching for high value assets to compromise through
      unauthorized disclosure, unauthorized modification, or exfiltration. For system-related
@@ -18415,7 +17986,9 @@ roles]:
      freely through organizational systems.
      Related Controls: SC-10.
      References: None.
-     SI-15
+
+#### SI-15
+
      INFORMATION OUTPUT FILTERING
      Control: Validate information output from the following software programs and/or applications
      to ensure that the information is consistent with the expected content: [Assignment:
@@ -18428,25 +18001,26 @@ roles]:
      Related Controls: SI-3, SI-4, SI-11.
      Control Enhancements: None.
      References: None.
-     SI-16
+
+#### SI-16
+
      MEMORY PROTECTION
      Control: Implement the following controls to protect the system memory from unauthorized
      code execution: [Assignment: organization-defined controls].
      Discussion: Some adversaries launch attacks with the intent of executing code in non-executable
      regions of memory or in memory locations that are prohibited. Controls employed to protect
      memory include data execution prevention and address space layout randomization. Data
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      execution prevention controls can either be hardware-enforced or software-enforced with
      hardware enforcement providing the greater strength of mechanism.
      Related Controls: AC-25, SC-3, SI-7.
      Control Enhancements: None.
      References: None.
-     SI-17
+
+#### SI-17
+
      FAIL-SAFE PROCEDURES
      Control: Implement the indicated fail-safe procedures when the indicated failures occur:
      [Assignment: organization-defined list of failure conditions and associated fail-safe procedures].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Failure conditions include the loss of communications among critical system
      components or between system components and operational facilities. Fail-safe procedures
      include alerting operator personnel and providing specific instructions on subsequent steps to
@@ -18455,7 +18029,9 @@ roles]:
      Related Controls: CP-12, CP-13, SC-24, SI-13.
      Control Enhancements: None.
      References: None.
-     SI-18
+
+#### SI-18
+
      PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS
      Control:
      a.
@@ -18483,8 +18059,6 @@ roles]:
      Related Controls: PM-22, PM-24, PT-2, SI-4.
      Control Enhancements:
      (1) PERSONALLY IDENTIFIABLE INFORMATION QUALITY OPERATIONS | AUTOMATION SUPPORT
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Correct or delete personally identifiable information that is inaccurate or outdated,
      incorrectly determined regarding impact, or incorrectly de-identified using [Assignment:
      organization-defined automated mechanisms].
@@ -18494,7 +18068,6 @@ roles]:
      unintended consequences. Organizations assess and document these risks in their privacy
      impact assessments and make determinations that are in alignment with their privacy
      program plans.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      As data is obtained and used across the information life cycle, it is important to confirm the
      accuracy and relevance of personally identifiable information. Automated mechanisms can
      augment existing data quality processes and procedures and enable an organization to
@@ -18534,8 +18107,6 @@ roles]:
      cause problems for individuals, especially in those business functions where inaccurate
      information may result in inappropriate decisions or the denial of benefits and services to
      individuals. Even correct information, in certain circumstances, can cause problems for
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      individuals that outweigh the benefits of an organization maintaining the information.
      Organizations use discretion when determining if personally identifiable information is to be
      corrected or deleted based on the scope of requests, the changes sought, the impact of the
@@ -18547,14 +18118,15 @@ roles]:
      DELETION
      Notify [Assignment: organization-defined recipients of personally identifiable information]
      and individuals that the personally identifiable information has been corrected or deleted.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: When personally identifiable information is corrected or deleted, organizations
      take steps to ensure that all authorized recipients of such information, and the individual
      with whom the information is associated or their designated representatives, are informed
      of the corrected or deleted information.
      Related Controls: None.
      References: [OMB M-19-15], [SP 800-188], [IR 8112].
-     SI-19
+
+#### SI-19
+
      DE-IDENTIFICATION
      Control:
      a.
@@ -18585,8 +18157,6 @@ roles]:
      information.
      Discussion: If a data source contains personally identifiable information but the information
      will not be used, the dataset can be de-identified when it is created by not collecting the
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      data elements that contain the personally identifiable information. For example, if an
      organization does not intend to use the social security number of an applicant, then
      application forms do not ask for a social security number.
@@ -18594,7 +18164,6 @@ roles]:
      (2) DE-IDENTIFICATION | ARCHIVING
      Prohibit archiving of personally identifiable information elements if those elements in a
      dataset will not be needed after the dataset is archived.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Datasets can be archived for many reasons. The envisioned purposes for the
      archived dataset are specified, and if personally identifiable information elements are not
      required, the elements are not archived. For example, social security numbers may have
@@ -18634,8 +18203,6 @@ roles]:
      10-19 such students in January, and subsequently reports that it has 20-29 such students in
      March, then it can be inferred that the student who enrolled in February was a minority.
      Related Controls: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (6) DE-IDENTIFICATION | DIFFERENTIAL PRIVACY
      Prevent disclosure of personally identifiable information by adding non-deterministic
      noise to the results of mathematical operations before the results are reported.
@@ -18648,7 +18215,6 @@ roles]:
      the trade-off between privacy protection and the overall accuracy, usefulness, and utility of
      the de-identified dataset. Non-deterministic noise can include adding small, random values
      to the results of mathematical operations in dataset analysis.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Related Controls: SC-12, SC-13.
      (7) DE-IDENTIFICATION | VALIDATED ALGORITHMS AND SOFTWARE
      Perform de-identification using validated algorithms and software that is validated to
@@ -18671,7 +18237,9 @@ roles]:
      alone cannot prove that de-identification is sufficient.
      Related Controls: None.
      References: [OMB A-130], [SP 800-188].
-     SI-20
+
+#### SI-20
+
      TAINTING
      Control: Embed data or capabilities in the following systems or system components to
      determine if organizational data has been exfiltrated or improperly removed from the
@@ -18684,8 +18252,6 @@ roles]:
      adding false email names and addresses to an internal database. If the organization receives
      email at one of the false email addresses, it knows that the database has been compromised.
      Moreover, the organization knows that the email was sent by an unauthorized entity, so any
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      packets it includes potentially contain malicious code, and that the unauthorized entity may have
      potentially obtained a copy of the database. Another tainting approach can include embedding
      false data or steganographic data in files to enable the data to be found via open-source analysis.
@@ -18695,9 +18261,10 @@ roles]:
      Related Controls: AU-13.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-160-2].
-     SI-21
+
+#### SI-21
+
      INFORMATION REFRESH
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control: Refresh [Assignment: organization-defined information] at [Assignment: organizationdefined frequencies] or generate the information on demand and delete the information when
      no longer needed.
      Discussion: Retaining information for longer than it is needed makes it an increasingly valuable
@@ -18707,7 +18274,9 @@ roles]:
      Related Controls: SI-14.
      Control Enhancements: None.
      References: [OMB A-130], [SP 800-160-2].
-     SI-22
+
+#### SI-22
+
      INFORMATION DIVERSITY
      Control:
      a.
@@ -18728,17 +18297,16 @@ roles]:
      Related Controls: None.
      Control Enhancements: None.
      References: [SP 800-160-2].
-     SI-23
+
+#### SI-23
+
      INFORMATION FRAGMENTATION
      Control: Based on [Assignment: organization-defined circumstances]:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      a.
      Fragment the following information: [Assignment: organization-defined information]; and
      b.
      Distribute the fragmented information across the following systems or system components:
      [Assignment organization-defined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: One objective of the advanced persistent threat is to exfiltrate valuable information.
      Once exfiltrated, there is generally no way for the organization to recover the lost information.
      Therefore, organizations may consider dividing the information into disparate elements and
@@ -18752,18 +18320,20 @@ roles]:
      Related Controls: None.
      Control Enhancements: None.
      References: [SP 800-160-2].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     3.20 SUPPLY CHAIN RISK MANAGEMENT
+
+### 3.20 SUPPLY CHAIN RISK MANAGEMENT
+
      Quick link to Supply Chain Risk Management Summary Table
-     SR-1
+
+#### SR-1
+
      POLICY AND PROCEDURES
      Control:
      a.
      Develop, document, and disseminate to [Assignment: organization-defined personnel or
      roles]:
+
 207. [Selection (one or more): Organization-level; Mission/business process-level; Systemlevel] supply chain risk management policy that:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (a) Addresses purpose, scope, roles, responsibilities, management commitment,
      coordination among organizational entities, and compliance; and
      (b) Is consistent with applicable laws, executive orders, directives, regulations, policies,
@@ -18800,13 +18370,12 @@ roles]:
      organizational policy or procedure.
      Related Controls: PM-9, PM-30, PS-8, SI-12.
      Control Enhancements: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      References: [FASC18], [41 CFR 201], [EO 13873], [CNSSD 505], [SP 800-12], [SP 800-30], [SP 80039], [SP 800-100], [SP 800-161].
-     SR-2
+
+#### SR-2
+
      SUPPLY CHAIN RISK MANAGEMENT PLAN
      Control:
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      a.
      Develop a plan for managing supply chain risks associated with the research and
      development, design, manufacturing, acquisition, delivery, integration, operations and
@@ -18851,11 +18420,8 @@ roles]:
      Related Controls: CA-2, CP-4, IR-4, MA-2, MA-6, PE-16, PL-2, PM-9, PM-30, RA-3, RA-7, SA-8, SI-4.
      Control Enhancements:
      (1) SUPPLY CHAIN RISK MANAGEMENT PLAN | ESTABLISH SCRM TEAM
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Establish a supply chain risk management team consisting of [Assignment: organizationdefined personnel, roles, and responsibilities] to lead and support the following SCRM
      activities: [Assignment: organization-defined supply chain risk management activities].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: To implement supply chain risk management plans, organizations establish a
      coordinated, team-based approach to identify and assess supply chain risks and manage
      these risks by using programmatic and technical mitigation techniques. The team approach
@@ -18873,7 +18439,9 @@ roles]:
      risk management team.
      Related Controls: None.
      References: [FASC18], [41 CFR 201], [EO 13873], [CNSSD 505], [SP 800-30], [SP 800-39], [SP-800160-1], [SP 800-161], [SP 800-181], [IR 7622], [IR 8272].
-     SR-3
+
+#### SR-3
+
      SUPPLY CHAIN CONTROLS AND PROCESSES
      Control:
      a.
@@ -18901,8 +18469,6 @@ roles]:
      Related Controls: CA-2, MA-2, MA-6, PE-3, PE-16, PL-8, PM-30, SA-2, SA-3, SA-4, SA-5, SA-8, SA-9,
      SA-10, SA-15, SC-7, SC-29, SC-30, SC-38, SI-7, SR-6, SR-9, SR-11.
      Control Enhancements:
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      (1) SUPPLY CHAIN CONTROLS AND PROCESSES | DIVERSE SUPPLY BASE
      Employ a diverse set of sources for the following system components and services:
      [Assignment: organization-defined system components and services].
@@ -18914,7 +18480,6 @@ roles]:
      reduce the impact of a natural disaster or other supply chain event. Organizations consider
      designing the system to include diverse materials and components.
      Related Controls: None.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (2) SUPPLY CHAIN PROTECTION CONTROLS AND PROCESSES | LIMITATION OF HARM
      Employ the following controls to limit harm from potential adversaries identifying and
      targeting the organizational supply chain: [Assignment: organization-defined controls].
@@ -18937,7 +18502,9 @@ roles]:
      Related Controls: SR-5, SR-8.
      References: [FASC18], [41 CFR 201], [EO 13873], [ISO 20243], [SP 800-30], [SP 800-161], [IR
      7622].
-     SR-4
+
+#### SR-4
+
      PROVENANCE
      Control: Document, monitor, and maintain valid provenance of the following systems, system
      components, and associated data: [Assignment: organization-defined systems, system
@@ -18952,8 +18519,6 @@ roles]:
      organizations; and preventing and monitoring for unauthorized changes to the provenance
      records. Organizations have methods to document, monitor, and maintain valid provenance
      baselines for systems, system components, and related data. These actions help track, assess,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      and document any changes to the provenance, including changes in supply chain elements or
      configuration, and help ensure non-repudiation of provenance information and the provenance
      change records. Provenance considerations are addressed throughout the system development
@@ -18961,7 +18526,6 @@ roles]:
      Related Controls: CM-8, MA-2, MA-6, RA-9, SA-3, SA-8, SI-4.
      Control Enhancements:
      (1) PROVENANCE | IDENTITY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Establish and maintain unique identification of the following supply chain elements,
      processes, and personnel associated with the identified system and critical system
      components: [Assignment: organization-defined supply chain elements, processes, and
@@ -19003,8 +18567,6 @@ roles]:
      Discussion: For many systems and system components, especially hardware, there are
      technical means to determine if the items are genuine or have been altered, including
      optical and nanotechnology tagging, physically unclonable functions, side-channel analysis,
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      cryptographic hash verifications or digital signatures, and visible anti-tamper labels or
      stickers. Controls can also include monitoring for out of specification performance, which
      can be an indicator of tampering or counterfeits. Organizations may leverage supplier and
@@ -19017,7 +18579,6 @@ roles]:
      the counterfeit or altered item. Organizations can provide training to personnel on how to
      identify suspicious system or component deliveries.
      Related Controls: AT-3, SR-9, SR-10, SR-11.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      (4) PROVENANCE | SUPPLY CHAIN INTEGRITY — PEDIGREE
      Employ [Assignment: organization-defined controls] and conduct [Assignment:
      organization-defined analysis] to ensure the integrity of the system and system
@@ -19040,7 +18601,9 @@ roles]:
      Related Controls: RA-3.
      References: [FASC18], [41 CFR 201], [EO 13873], [ISO 27036], [ISO 20243], [SP 800-160-1], [SP
      800-161], [IR 7622], [IR 8112], [IR 8272].
-     SR-5
+
+#### SR-5
+
      ACQUISITION STRATEGIES, TOOLS, AND METHODS
      Control: Employ the following acquisition strategies, contract tools, and procurement methods
      to protect against, identify, and mitigate supply chain risks: [Assignment: organization-defined
@@ -19053,8 +18616,6 @@ roles]:
      the situation. Tools and techniques may provide protections against unauthorized production,
      theft, tampering, insertion of counterfeits, insertion of malicious software or backdoors, and
      poor development practices throughout the system development life cycle. Organizations also
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      consider providing incentives for suppliers who implement controls, promote transparency into
      their processes and security and privacy practices, provide contract language that addresses the
      prohibition of tainted or counterfeit components, and restrict purchases from untrustworthy
@@ -19066,7 +18627,6 @@ roles]:
      Related Controls: AT-3, SA-2, SA-3, SA-4, SA-5, SA-8, SA-9, SA-10, SA-15, SR-6, SR-9, SR-10, SR-11.
      Control Enhancements:
      (1) ACQUISITION STRATEGIES, TOOLS, AND METHODS | ADEQUATE SUPPLY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Employ the following controls to ensure an adequate supply of [Assignment: organizationdefined critical system components]: [Assignment: organization-defined controls].
      Discussion: Adversaries can attempt to impede organizational operations by disrupting the
      supply of critical system components or corrupting supplier operations. Organizations may
@@ -19096,13 +18656,13 @@ roles]:
      accordance with organizational agreements.
      Related Controls: CA-8, RA-5, SA-11, SI-7.
      References: [FASC18], [41 CFR 201], [EO 13873], [ISO 27036], [ISO 20243], [SP 800-30], [SP 800161], [IR 7622], [IR 8272].
-     SR-6
+
+#### SR-6
+
      SUPPLIER ASSESSMENTS AND REVIEWS
      Control: Assess and review the supply chain-related risks associated with suppliers or
      contractors and the system, system component, or system service they provide [Assignment:
      organization-defined frequency].
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      Discussion: An assessment and review of supplier risk includes security and supply chain risk
      management processes, foreign ownership, control or influence (FOCI), and the ability of the
      supplier to effectively assess subordinate second-tier and third-tier suppliers and contractors.
@@ -19114,7 +18674,6 @@ roles]:
      required to share assessment and review results with other organizations in accordance with any
      applicable rules, policies, or inter-organizational agreements or contracts.
      Related Controls: SR-3, SR-5.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control Enhancements:
      (1) SUPPLIER ASSESSMENTS AND REVIEWS | TESTING AND ANALYSIS
      Employ [Selection (one or more): organizational analysis; independent third-party analysis;
@@ -19137,7 +18696,9 @@ roles]:
      Related Controls: CA-8, SI-4.
      References: [FASC18], [41 CFR 201], [EO 13873], [ISO 27036], [ISO 20243], [FIPS 140-3], [FIPS
      180-4], [FIPS 186-4], [FIPS 202], [SP 800-30], [SP 800-161], [IR 7622], [IR 8272].
-     SR-7
+
+#### SR-7
+
      SUPPLY CHAIN OPERATIONS SECURITY
      Control: Employ the following Operations Security (OPSEC) controls to protect supply chainrelated information for the system, system component, or system service: [Assignment:
      organization-defined Operations Security (OPSEC) controls].
@@ -19152,17 +18713,16 @@ roles]:
      identities; uses for systems, system components, and system services; supplier identities;
      security and privacy requirements; system and component configurations; supplier processes;
      design specifications; and testing and evaluation results. Supply chain OPSEC may require
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      organizations to withhold mission or business information from suppliers and may include the
      use of intermediaries to hide the end use or users of systems, system components, or system
      services.
      Related Controls: SC-38.
      Control Enhancements: None.
      References: [EO 13873], [SP 800-30], [ISO 27036], [SP 800-161], [IR 7622].
-     SR-8
+
+#### SR-8
+
      NOTIFICATION AGREEMENTS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Control: Establish agreements and procedures with entities involved in the supply chain for the
      system, system component, or system service for the [Selection (one or more): notification of
      supply chain compromises; results of assessments or audits; [Assignment: organization-defined
@@ -19178,7 +18738,9 @@ roles]:
      Control Enhancements: None.
      References: [FASC18], [41 CFR 201], [EO 13873], [ISO 27036], [SP 800-30], [SP 800-161], [IR
      7622].
-     SR-9
+
+#### SR-9
+
      TAMPER RESISTANCE AND DETECTION
      Control: Implement a tamper protection program for the system, system component, or system
      service.
@@ -19200,13 +18762,12 @@ roles]:
      customization of systems and system components can make substitutions easier to detect
      and therefore limit damage.
      Related Controls: SA-3.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      References: [ISO 20243].
-     SR-10 INSPECTION OF SYSTEMS OR COMPONENTS
+
+#### SR-10 INSPECTION OF SYSTEMS OR COMPONENTS
+
      Control: Inspect the following systems or system components [Selection (one or more): at
      random; at [Assignment: organization-defined frequency], upon [Assignment: organizationdefined indications of need for inspection]] to detect tampering: [Assignment: organizationdefined systems or system components].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: The inspection of systems or systems components for tamper resistance and
      detection addresses physical and logical tampering and is applied to systems and system
      components removed from organization-controlled areas. Indications of a need for inspection
@@ -19214,7 +18775,9 @@ roles]:
      purchased, and when individuals return from travel to high-risk locations.
      Related Controls: AT-3, PM-30, SI-4, SI-7, SR-3, SR-4, SR-5, SR-9, SR-11.
      References: [ISO 20243].
-     SR-11 COMPONENT AUTHENTICITY
+
+#### SR-11 COMPONENT AUTHENTICITY
+
      Control:
      a.
      Develop and implement anti-counterfeit policy and procedures that include the means to
@@ -19245,14 +18808,13 @@ roles]:
      Discussion: The type of component determines the type of scanning to be conducted (e.g.,
      web application scanning if the component is a web application).
      Related Controls: RA-5.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
      References: [ISO 20243].
-     SR-12 COMPONENT DISPOSAL
+
+#### SR-12 COMPONENT DISPOSAL
+
      Control: Dispose of [Assignment: organization-defined data, documentation, tools, or system
      components] using the following techniques and methods: [Assignment: organization-defined
      techniques and methods].
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Discussion: Data, documentation, tools, or system components can be disposed of at any time
      during the system development life cycle (not only in the disposal or retirement phase of the life
      cycle). For example, disposal can occur during research and development, design, prototyping, or
@@ -19265,9 +18827,9 @@ roles]:
      market.
      Related Controls: MP-6.
      References: None.
-     CHAPTER THREE
-     NIST SP 800-53, REV. 5
-     REFERENCES
+
+## REFERENCES
+
      LAWS, POLICIES, DIRECTIVES, REGULATIONS, STANDARDS, AND GUIDELINES 34
      LAWS AND EXECUTIVE ORDERS
      [ATOM54]
@@ -19276,7 +18838,6 @@ roles]:
      [CMPPA]
      Computer Matching and Privacy Protection Act of 1988 (P.L. 100-503),
      October 1988.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      https://www.govinfo.gov/content/pkg/STATUTE-102/pdf/STATUTE-102Pg2507.pdf
      [EGOV]
      E-Government Act [includes FISMA] (P.L. 107-347), December 2002.
@@ -19291,6 +18852,7 @@ roles]:
      https://www.congress.gov/bill/115th-congress/senate-bill/3085
      [FISMA]
      Federal Information Security Modernization Act (P.L. 113-283), December
+
 211. https://www.congress.gov/113/plaws/publ283/PLAW-113publ283.pdf
      [FOIA96]
      Freedom of Information Act (FOIA), 5 U.S.C. § 552, As Amended By Public
@@ -19316,7 +18878,6 @@ roles]:
      publication, including in the references section of the applicable controls in Chapter Three. Direct links to the NIST
      website are provided to obtain access to those publications.
      REFERENCES
-     NIST SP 800-53, REV. 5
      [USC 3502]
      “Definitions,” Title 44 U.S. Code, Sec. 3502. 2011 ed.
      [USC 11101]
@@ -19327,7 +18888,6 @@ roles]:
      https://www.govinfo.gov/app/details/USCODE-2018-title40/USCODE-2018-title40subtitleIII-chap111-sec11101
      https://www.archives.gov/isoo/policy-documents/cnsi-eo.html
      [EO 13556]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Executive Order 13556, Controlled Unclassified Information, November
 213. https://obamawhitehouse.archives.gov/the-press-office/2010/11/04/executiveorder-13556-controlled-unclassified-information
      [EO 13587]
@@ -19362,7 +18922,6 @@ roles]:
      Executive Branch Insider Threat Programs, November 2012.
      https://obamawhitehouse.archives.gov/the-press-office/2012/11/21/presidentialmemorandum-national-insider-threat-policy-and-minimum-stand
      REFERENCES
-     NIST SP 800-53, REV. 5
      [5 CFR 731]
      Code of Federal Regulations, Title 5, Administrative Personnel, Section
      731.106, Designation of Public Trust Positions and Investigative
@@ -19373,7 +18932,6 @@ roles]:
      (32 C.F.R. 2002).
      https://www.federalregister.gov/documents/2016/09/14/2016-21665/controlledunclassified-information
      [41 CFR 201]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      “Federal Acquisition Supply Chain Security Act; Rule,” 85 Federal Register
      54263 (September 1, 2020), pp 54263-54271.
      https://www.federalregister.gov/d/2020-18939 [or as published in Title 41 Code of
@@ -19415,7 +18973,6 @@ roles]:
 215. https://obamawhitehouse.archives.gov/sites/default/files/omb/memoranda/2017
      /m-17-12_0.pdf
      REFERENCES
-     NIST SP 800-53, REV. 5
      [OMB M-17-25]
      Office of Management and Budget Memorandum M-17-25, Reporting
      Guidance for Executive Order on Strengthening the Cybersecurity of Federal
@@ -19428,7 +18985,6 @@ roles]:
      Program, December 2018.
      https://www.whitehouse.gov/wp-content/uploads/2018/12/M-19-03.pdf
      [OMB M-19-15]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Office of Management and Budget Memorandum M-19-15, Improving
      Implementation of the Information Quality Act, April 2019.
      https://www.whitehouse.gov/wp-content/uploads/2019/04/M-19-15.pdf
@@ -19471,7 +19027,6 @@ roles]:
      March 2019.
      https://www.iso.org/standard/73567.html
      REFERENCES
-     NIST SP 800-53, REV. 5
      [ISO 15408-1]
      International Organization for Standardization/International
      Electrotechnical Commission 15408-1:2009, Information technology —
@@ -19484,7 +19039,6 @@ roles]:
      Security techniques — Evaluation criteria for IT security — Part 2: Security
      functional requirements, April 2017.
      https://www.commoncriteriaportal.org/files/ccfiles/CCPART2V3.1R5.pdf
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [ISO 15408-3]
      International Organization for Standardization/International
      Electrotechnical Commission 15408-3:2008, Information technology—
@@ -19526,7 +19080,6 @@ roles]:
      techniques—Vulnerability disclosure, October 2018.
      https://www.iso.org/standard/72311.html
      REFERENCES
-     NIST SP 800-53, REV. 5
      [ISO 29148]
      International Organization for Standardization/International
      Electrotechnical Commission/Institute of Electrical and Electronics
@@ -19539,7 +19092,6 @@ roles]:
      Washington, D.C.), Federal Information Processing Standards Publication
      (FIPS) 140-3.
      https://doi.org/10.6028/NIST.FIPS.140-3
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [FIPS 180-4]
      National Institute of Standards and Technology (2015) Secure Hash
      Standard (SHS). (U.S. Department of Commerce, Washington, D.C.), Federal
@@ -19580,7 +19132,6 @@ roles]:
      Processing Standards Publication (FIPS) 202.
      https://doi.org/10.6028/NIST.FIPS.202
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-12]
      Nieles M, Pillitteri VY, Dempsey KL (2017) An Introduction to Information
      Security. (National Institute of Standards and Technology, Gaithersburg,
@@ -19592,7 +19143,6 @@ roles]:
      Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-18, Rev.
 217. https://doi.org/10.6028/NIST.SP.800-18r1
      [SP 800-28]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Jansen W, Winograd T, Scarfone KA (2008) Guidelines on Active Content
      and Mobile Code. (National Institute of Standards and Technology,
      Gaithersburg, MD), NIST Special Publication (SP) 800-28, Version 2.
@@ -19632,7 +19182,6 @@ roles]:
      Special Publication (SP) 800-39.
      https://doi.org/10.6028/NIST.SP.800-39
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-40]
      Souppaya MP, Scarfone KA (2013) Guide to Enterprise Patch Management
      Technologies. (National Institute of Standards and Technology,
@@ -19646,7 +19195,6 @@ roles]:
      [SP 800-45]
      Tracy MC, Jansen W, Scarfone KA, Butterfield J (2007) Guidelines on
      Electronic Mail Security. (National Institute of Standards and Technology,
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Gaithersburg, MD), NIST Special Publication (SP) 800-45, Version 2.
      https://doi.org/10.6028/NIST.SP.800-45ver2
      [SP 800-46]
@@ -19685,7 +19233,6 @@ roles]:
      and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-53B.
      https://doi.org/10.6028/NIST.SP.800-53B
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-55]
      Chew E, Swanson MA, Stine KM, Bartol N, Brown A, Robinson W (2008)
      Performance Measurement Guide for Information Security. (National
@@ -19698,7 +19245,6 @@ roles]:
      Cryptography. (National Institute of Standards and Technology,
      Gaithersburg, MD), NIST Special Publication (SP) 800-56A, Rev. 3.
      https://doi.org/10.6028/NIST.SP.800-56Ar3
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-56B]
      Barker EB, Chen L, Roginsky A, Vassilev A, Davis R, Simon S (2019)
      Recommendation for Pair-Wise Key-Establishment Using Integer
@@ -19735,7 +19281,6 @@ roles]:
      MD), NIST Special Publication (SP) 800-60, Vol. 1, Rev. 1.
      https://doi.org/10.6028/NIST.SP.800-60v1r1
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-60-2]
      Stine KM, Kissel RL, Barker WC, Lee A, Fahlsing J (2008) Guide for Mapping
      Types of Information and Information Systems to Security Categories:
@@ -19748,7 +19293,6 @@ roles]:
      Gaithersburg, MD), NIST Special Publication (SP) 800-61, Rev. 2.
      https://doi.org/10.6028/NIST.SP.800-61r2
      [SP 800-63-3]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Grassi PA, Garcia ME, Fenton JL (2017) Digital Identity Guidelines. (National
      Institute of Standards and Technology, Gaithersburg, MD), NIST Special
      Publication (SP) 800-63-3, Includes updates as of March 2, 2020.
@@ -19790,7 +19334,6 @@ roles]:
      MD), NIST Special Publication (SP) 800-77, Rev. 1.
      https://doi.org/10.6028/NIST.SP.800-77r1
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-78-4]
      Polk T, Dodson DF, Burr WE, Ferraiolo H, Cooper DA (2015) Cryptographic
      Algorithms and Key Sizes for Personal Identity Verification. (National
@@ -19804,7 +19347,6 @@ roles]:
      Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP)
      800-79-2.
      https://doi.org/10.6028/NIST.SP.800-79-2
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-81-2]
      Chandramouli R, Rose SW (2013) Secure Domain Name System (DNS)
      Deployment Guide. (National Institute of Standards and Technology,
@@ -19844,7 +19386,6 @@ roles]:
      Special Publication (SP) 800-92.
      https://doi.org/10.6028/NIST.SP.800-92
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-94]
      Scarfone KA, Mell PM (2007) Guide to Intrusion Detection and Prevention
      Systems (IDPS). (National Institute of Standards and Technology,
@@ -19856,7 +19397,6 @@ roles]:
      Special Publication (SP) 800-95.
      https://doi.org/10.6028/NIST.SP.800-95
      [SP 800-97]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Frankel SE, Eydt B, Owens L, Scarfone KA (2007) Establishing Wireless
      Robust Security Networks: A Guide to IEEE 802.11i. (National Institute of
      Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP)
@@ -19895,7 +19435,6 @@ roles]:
      800-115.
      https://doi.org/10.6028/NIST.SP.800-115
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-116]
      Ferraiolo H, Mehta KL, Ghadiali N, Mohler J, Johnson V, Brady S (2018) A
      Recommendation for the Use of PIV Credentials in Physical Access Control
@@ -19907,7 +19446,6 @@ roles]:
      (2017) Guide to Bluetooth Security. (National Institute of Standards and
      Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-121, Rev.
 221. https://doi.org/10.6028/NIST.SP.800-121r2
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-124]
      Souppaya MP, Scarfone KA (2013) Guidelines for Managing the Security of
      Mobile Devices in the Enterprise. (National Institute of Standards and
@@ -19950,7 +19488,6 @@ roles]:
      and Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-137A.
      https://doi.org/10.6028/NIST.SP.800-137A
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-147]
      Cooper DA, Polk T, Regenscheid AR, Souppaya MP (2011) BIOS Protection
      Guidelines. (National Institute of Standards and Technology, Gaithersburg,
@@ -19962,7 +19499,6 @@ roles]:
      Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-150.
      https://doi.org/10.6028/NIST.SP.800-150
      [SP 800-152]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Barker EB, Branstad DK, Smid ME (2015) A Profile for U.S. Federal
      Cryptographic Key Management Systems (CKMS). (National Institute of
      Standards and Technology, Gaithersburg, MD), NIST Special Publication (SP)
@@ -20006,7 +19542,6 @@ roles]:
      as of August 2, 2019.
      https://doi.org/10.6028/NIST.SP.800-162
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-166]
      Cooper DA, Ferraiolo H, Chandramouli R, Ghadiali N, Mohler J, Brady S
      (2016) Derived PIV Application and Data Model Test Guidelines. (National
@@ -20019,7 +19554,6 @@ roles]:
      MD), NIST Special Publication (SP) 800-167.
      https://doi.org/10.6028/NIST.SP.800-167
      [SP 800-171]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Ross RS, Pillitteri VY, Dempsey KL, Riddle M, Guissanie G (2020) Protecting
      Controlled Unclassified Information in Nonfederal Systems and
      Organizations. (National Institute of Standards and Technology,
@@ -20062,7 +19596,6 @@ roles]:
      Publication (SP) 800-188.
      https://csrc.nist.gov/publications/detail/sp/800-188/draft
      REFERENCES
-     NIST SP 800-53, REV. 5
      [SP 800-189]
      Sriram K, Montgomery D (2019) Resilient Interdomain Traffic Exchange:
      BGP Security and DDoS Mitigation. (National Institute of Standards and
@@ -20074,7 +19607,6 @@ roles]:
      Gaithersburg, MD), NIST Special Publication (SP) 800-192.
      https://doi.org/10.6028/NIST.SP.800-192
      [IR 7539]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Cooper DA, MacGregor WI (2008) Symmetric Key Injection onto Smart
      Cards. (National Institute of Standards and Technology, Gaithersburg, MD),
      NIST Interagency or Internal Report (IR) 7539.
@@ -20117,7 +19649,6 @@ roles]:
      Interagency or Internal Report (IR) 7870.
      https://doi.org/10.6028/NIST.IR.7870
      REFERENCES
-     NIST SP 800-53, REV. 5
      [IR 7874]
      Hu VC, Scarfone KA (2012) Guidelines for Access Control System Evaluation
      Metrics. (National Institute of Standards and Technology, Gaithersburg,
@@ -20130,7 +19661,6 @@ roles]:
      Report (IR) 7956.
      https://doi.org/10.6028/NIST.IR.7956
      [IR 7966]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Ylonen T, Turner P, Scarfone KA, Souppaya MP (2015) Security of
      Interactive and Automated Access Management Using Secure Shell (SSH).
      (National Institute of Standards and Technology, Gaithersburg, MD), NIST
@@ -20172,7 +19702,6 @@ roles]:
      Report (IR) 8040.
      https://doi.org/10.6028/NIST.IR.8040
      REFERENCES
-     NIST SP 800-53, REV. 5
      [IR 8062]
      Brooks S, Garcia M, Lefkovitz N, Lightman S, Nadeau E (2017) An
      Introduction to Privacy Engineering and Risk Management in Federal
@@ -20185,7 +19714,6 @@ roles]:
      (National Institute of Standards and Technology, Gaithersburg, MD), NIST
      Interagency or Internal Report (IR) 8112.
      https://doi.org/10.6028/NIST.IR.8112
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [IR 8179]
      Paulsen C, Boyens JM, Bartol N, Winkler K (2018) Criticality Analysis Process
      Model: Prioritizing Systems and Components. (National Institute of
@@ -20229,7 +19757,6 @@ roles]:
      Internet Security Glossary, Version 2, August 2007.
      https://tools.ietf.org/html/rfc4949
      REFERENCES
-     NIST SP 800-53, REV. 5
      [IETF 5905]
      Internet Engineering Task Force (IETF), Request for Comments: 5905,
      Network Time Protocol Version 4: Protocol and Algorithms Specification,
@@ -20243,7 +19770,6 @@ roles]:
      Information (CUI) Registry.
      https://www.archives.gov/cui
      [NIAP CCEVS]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      National Information Assurance Partnership, Common Criteria Evaluation
      and Validation Scheme.
      https://www.niap-ccevs.org
@@ -20286,7 +19812,6 @@ roles]:
      National Security Agency, Media Destruction Guidance.
      https://www.nsa.gov/resources/everyone/media-destruction
      REFERENCES
-     NIST SP 800-53, REV. 5
      [ODNI CTF]
      Office of the Director of National Intelligence (ODNI) Cyber Threat
      Framework.
@@ -20301,19 +19826,18 @@ roles]:
      NIST Special Publication 800-53, Revision 5 Resource Center.
      https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final
      [USGCB]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      National Institute of Standards and Technology (2020) United States
      Government Configuration Baseline. Available at
      https://csrc.nist.gov/projects/united-states-government-configuration-baseline
      REFERENCES
-     NIST SP 800-53, REV. 5
-     APPENDIX A
+
+## APPENDIX A
+
      GLOSSARY
      COMMON TERMS AND DEFINITIONS
      Appendix A provides definitions for terminology used in NIST Special Publication 800-53. Sources
      for terms used in this publication are cited as applicable. Where no citation is noted, the source
      of the definition is Special Publication 800-53.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      access control
      The process of granting or denying specific requests for
      obtaining and using information and related information
@@ -20361,7 +19885,6 @@ roles]:
      [OMB A-130]
      [DODTERMS]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      application
      A software program hosted by an information system.
      assessment
@@ -20383,7 +19906,6 @@ roles]:
      Grounds for justified confidence that a [security or privacy] claim
      has been or will be achieved.
      [SP 800-37]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [ISO/IEC 15026, Adapted]
      Note 1: Assurance is typically obtained relative to a set of specific claims. The
      scope and focus of such claims may vary (e.g., security claims, safety claims)
@@ -20420,7 +19942,6 @@ roles]:
      [CNSSI 4009]
      [FIPS 200]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      authenticator
      Something that the claimant possesses and controls (typically a
      cryptographic module or password) that is used to authenticate
@@ -20472,7 +19993,6 @@ roles]:
      unauthorized communications using boundary protection
      devices.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-130]
      [OMB A-130]
      [OMB A-130]
@@ -20480,7 +20000,6 @@ roles]:
      [SP 800-128, Adapted]
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      boundary protection
      device
      A device (e.g., gateway, router, firewall, guard, or encrypted
@@ -20537,15 +20056,12 @@ roles]:
      protection against unauthorized disclosure and is marked to
      indicate its classified status when in documentary form.
      [OMB M-17-12]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-53A]
      [IETF 4949]
      [OMB A-130]
      [EO 13526]
      APPENDIX A
      See classified national security information.
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      commodity service
      A system service provided by a commercial service provider to a
      large and diverse set of consumers. The organization acquiring or
@@ -20609,7 +20125,6 @@ roles]:
      [SP 800-128]
      [SP 800-128]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      configuration settings
      The set of parameters that can be changed in hardware,
      software, or firmware that affect the security posture and/or
@@ -20661,10 +20176,8 @@ roles]:
      between connected systems.
      [SP 800-128]
      [SP 800-37]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-53B]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      controlled unclassified
      information
      Information that the Government creates or possesses, or that
@@ -20721,7 +20234,6 @@ roles]:
      information between different security domains.
      [32 CFR 2002]
      [SP 800-161]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [FIPS 200]
      [CNSSI 4009]
      [CNSSI 4009]
@@ -20731,7 +20243,6 @@ roles]:
      [USA PATRIOT]
      [CNSSI 1253]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      cryptographic module
      The set of hardware, software, and/or firmware that implements
      Approved security functions (including cryptographic algorithms
@@ -20786,15 +20297,12 @@ roles]:
      opposed to analog) form.
      [FIPS 140-3]
      [OMB A-130]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [CNSSI 4009]
      [IR 8062]
      [ISO 25237]
      [CNSSI 4009]
      [SP 800-53A]
      APPENDIX A
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      discretionary access
      control
      An access control policy that is enforced over all subjects and
@@ -20856,8 +20364,6 @@ roles]:
      [SP 800-61, Adapted]
      [OMB A-130]
      APPENDIX A
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      external system service
      A system service that is provided by an external service provider
      and for which the organization has no direct control over the
@@ -20921,7 +20427,6 @@ roles]:
      identifier
      [FIPS 201-2]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      impact
      The effect on organizational operations, organizational assets,
      individuals, other organizations, or the Nation (including the
@@ -20979,7 +20484,6 @@ roles]:
      and strategic plans.
      [FIPS 199]
      [FISMA]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-82]
      [OMB A-130]
      [SP 800-37]
@@ -20987,7 +20491,6 @@ roles]:
      [OMB A-130]
      [OMB A-130]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      information security
      policy
      Aggregate of directives, regulations, rules, and practices that
@@ -21043,12 +20546,10 @@ roles]:
      [CNSSI 4009]
      [OMB A-130]
      [SP 800-30]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-37]
      [USC 3502]
      [USC 11101]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      information type
      A specific category of information (e.g., privacy, medical,
      proprietary, financial, investigative, contractor-sensitive, security
@@ -21099,13 +20600,11 @@ roles]:
      [FIPS 199]
      [CNSSI 4009, Adapted]
      [CNSSI 4009, Adapted]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [CNSSI 4009, Adapted]
      [CNSSI 4009]
      [FISMA]
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      logical access control
      system
      An automated system that controls an individual’s ability to
@@ -21160,12 +20659,9 @@ roles]:
      format, syntax, semantics) and descriptive metadata that
      describes data contents (i.e., security labels).
      [FIPS 200]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-108]
      [FIPS 200]
      APPENDIX A
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      mobile code
      Software programs or parts of programs obtained from remote
      systems, transmitted across a network, and executed on a local
@@ -21213,7 +20709,6 @@ roles]:
      [CNSSI 4009]
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      national security system
      Any system (including any telecommunications system) used or
      operated by an agency or by a contractor of an agency, or other
@@ -21266,10 +20761,8 @@ roles]:
      in a specific environment, and a supporting key management
      infrastructure.
      [OMB A-130]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-63-3]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      object
      Passive system-related entity, including devices, files, records,
      tables, processes, programs, and domains that contain or receive
@@ -21321,11 +20814,9 @@ roles]:
      specific constraints, attempt to circumvent or defeat the security
      features of a system.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [FIPS 200, Adapted]
      [OMB A-130]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      periods processing
      A mode of system operation in which information of different
      sensitivities is processed at distinctly different times by the same
@@ -21387,12 +20878,10 @@ roles]:
      organizational sub-units, showing their alignment with the
      enterprise’s mission and strategic plans.
      [OMB A-130]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-116]
      [FIPS 199]
      [SP 800-37]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      privacy control
      The administrative, technical, and physical safeguards employed
      within an agency to ensure compliance with applicable privacy
@@ -21445,12 +20934,10 @@ roles]:
      authorized to perform.
      [OMB A-130]
      [OMB A-130]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-130]
      [OMB A-130]
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      protected distribution
      system
      Wire line or fiber optic system that includes adequate safeguards
@@ -21503,13 +20990,11 @@ roles]:
      analysis and tests, the completeness of which can be assured
      (i.e., verifiable).
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [CNSSI 4009]
      [SP 800-88]
      [SP 800-37]
      [OMB A-130]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      regrader
      A trusted process explicitly authorized to re-classify and re-label
      data in accordance with a defined policy exception. Untrusted or
@@ -21562,14 +21047,12 @@ roles]:
      with risk analysis.
      [CNSSI 4009]
      [SP 800-63-3]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-130]
      [ATOM54]
      [OMB A-130]
      [SP 800-39]
      [IR 8062, adapted]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      risk executive (function)
      An individual or group within an organization that helps to
      ensure that security risk-related considerations for individual
@@ -21621,14 +21104,12 @@ roles]:
      scalability, common control, operational or environmental, and
      security objective.
      [SP 800-37]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-130]
      [CNSSI 4009]
      [OMB A-130]
      [SP 800-39]
      [SP 800-88]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      security
      A condition that results from the establishment and
      maintenance of protective measures that enable an organization
@@ -21683,14 +21164,12 @@ roles]:
      to determine the extent to which changes to the system affect
      the security posture of the system.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [OMB A-130]
      [OMB A-130]
      [OMB A-130]
      [CNSSI 4009]
      [SP 800-128]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      security kernel
      Hardware, firmware, and software elements of a trusted
      computing base implementing the reference monitor concept.
@@ -21735,10 +21214,8 @@ roles]:
      which modifies the submitted content to comply with a defined
      policy.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [FIPS 199]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      security requirement
      [FIPS 200, Adapted]
      A requirement levied on an information system or an
@@ -21774,7 +21251,6 @@ roles]:
      officials, information system owners, and information system
      security officers.
      [SP 800-160-1]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      Note: Organizations subordinate to federal agencies may use the term senior
      information security officer or chief information security officer to denote
      individuals who fill positions with similar responsibilities to senior agency
@@ -21800,7 +21276,6 @@ roles]:
      sources, methods, or analytical processes, which is required to
      be handled within formal access control systems established by
      the Director of National Intelligence.
-     NIST SP 800-53, REV. 5
      service-oriented
      architecture
      A set of principles and methodologies for designing and
@@ -21854,11 +21329,8 @@ roles]:
      begins with the sourcing of products and services and extends
      through their life cycle.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      supply chain element
      Organizations, entities, or tools employed for the research and
      development, design, manufacturing, acquisition, delivery,
@@ -21921,7 +21393,6 @@ roles]:
      [USC 552]
      [OMB A-108]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      system owner
      (or program manager)
      Official responsible for the overall procurement, development,
@@ -21977,13 +21448,11 @@ roles]:
      of a system, components of systems, its intended behavior, or
      data.
      [SP 800-37]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      [SP 800-30]
      [OMB A-130]
      [SP 800-160-1]
      [SP 800-160-1]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      threat
      Any circumstance or event with the potential to adversely
      impact organizational operations, organizational assets,
@@ -22003,7 +21472,6 @@ roles]:
      [SP 800-30]
      [CNSSI 4009]
      [SP 800-154]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      threat source
      The intent and method targeted at the intentional exploitation of a vulnerability or a situation and method that may accidentally trigger a vulnerability. See threat agent.
      [FIPS 200]
@@ -22046,7 +21514,6 @@ roles]:
      of a dedicated line.
      [CNSSI 4009]
      APPENDIX A
-     NIST SP 800-53, REV. 5
      vulnerability
      [SP 800-30]
      Weakness in an information system, system security procedures,
@@ -22061,13 +21528,12 @@ roles]:
      effectiveness of proposed security measures, and confirm the
      adequacy of such measures after implementation.
      [CNSSI 4009]
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      APPENDIX A
-     NIST SP 800-53, REV. 5
-     APPENDIX B
+
+## APPENDIX B
+
      ACRONYMS
      COMMON ABBREVIATIONS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      ABAC
      Attribute-Based Access Control
      API
@@ -22127,8 +21593,6 @@ roles]:
      DVD
      Digital Versatile Disc
      APPENDIX B
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      DVD-R
      Digital Versatile Disc-Recordable
      EAP
@@ -22196,8 +21660,6 @@ roles]:
      MTTF
      Mean Time To Failure
      APPENDIX B
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      NARA
      National Archives and Records Administration
      NATO
@@ -22265,8 +21727,6 @@ roles]:
      SIEM
      Security Information and Event Management
      APPENDIX B
-     NIST SP 800-53, REV. 5
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      SME
      Subject Matter Expert
      SMTP
@@ -22310,13 +21770,13 @@ roles]:
      XML
      Extensible Markup Language
      APPENDIX B
-     NIST SP 800-53, REV. 5
-     APPENDIX C
+
+## APPENDIX C
+
      CONTROL SUMMARIES
      IMPLEMENTATION, WITHDRAWAL, AND ASSURANCE DESIGNATIONS
      Tables C-1 through C-20 provide a summary of the security and privacy controls and control
      enhancements in Chapter Three. Each table focuses on a different control family.
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
      •
      A control or control enhancement that has been withdrawn from the control catalog is
      indicated by a “W” and an explanation of the control or control enhancement disposition in
@@ -22358,4664 +21818,1291 @@ roles]:
      that the security and privacy functions, features, practices, policies, procedures, mechanisms, and architecture of
      organizational systems accurately mediate and enforce established security and privacy policies.
      APPENDIX C
-     NIST SP 800-53, REV. 5
-     TABLE C-1: ACCESS CONTROL FAMILY
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AC-1
-     AC-2
-     AC-2(1)
-     AC-2(2)
-     AC-2(3)
-     AC-2(4)
-     AC-2(5)
-     AC-2(6)
-     AC-2(7)
-     AC-2(8)
-     AC-2(9)
-     AC-2(10)
-     AC-2(11)
-     AC-2(12)
-     AC-2(13)
-     AC-3
-     AC-3(1)
-     AC-3(2)
-     AC-3(3)
-     AC-3(4)
-     AC-3(5)
-     AC-3(6)
-     AC-3(7)
-     AC-3(8)
-     Policy and Procedures
-     Account Management
-     O
-     AUTOMATED SYSTEM ACCOUNT MANAGEMENT
-     O
-     AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT
-     S
-     DISABLE ACCOUNTS
-     S
-     AC-3(9)
-     AC-3(10)
-     AC-3(11)
-     AC-3(12)
-     AC-3(13)
-     AC-3(14)
-     AC-3(15)
-     AC-4
-     AC-4(1)
-     AC-4(2)
-     AC-4(3)
-     AC-4(4)
-     AC-4(5)
-     AC-4(6)
-     AC-4(7)
-     AC-4(8)
-     AC-4(9)
-     AC-4(10)
-     APPENDIX C
-     O
-     AUTOMATED AUDIT ACTIONS
-     S
-     INACTIVITY LOGOUT
-     O /S
-     DYNAMIC PRIVILEGE MANAGEMENT
-     S
-     PRIVILEGED USER ACCOUNTS
-     O
-     DYNAMIC ACCOUNT MANAGEMENT
-     S
-     RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS
-     SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE
-     O
-     W: Incorporated into AC-2k.
-     USAGE CONDITIONS
-     S
-     ACCOUNT MONITORING FOR ATYPICAL USAGE
-     O /S
-     DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS
-     O
-     Access Enforcement
-     RESTRICTED ACCESS TO PRIVILEGED FUNCTIONS
-     S
-     W: Incorporated into AC-6.
-     DUAL AUTHORIZATION
-     S
-     MANDATORY ACCESS CONTROL
-     S
-     DISCRETIONARY ACCESS CONTROL
-     S
-     SECURITY-RELEVANT INFORMATION
-     S
-     PROTECTION OF USER AND SYSTEM INFORMATION
-     W: Incorporated into MP-4 and SC-28.
-     ROLE-BASED ACCESS CONTROL
-     O /S
-     REVOCATION OF ACCESS AUTHORIZATIONS
-     O /S
-     CONTROLLED RELEASE
-     O /S
-     AUDITED OVERRIDE OF ACCESS CONTROL MECHANISMS
-     O
-     RESTRICT ACCESS TO SPECIFIC INFORMATION TYPES
-     S
-     ASSERT AND ENFORCE APPLICATION ACCESS
-     S
-     ATTRIBUTE-BASED ACCESS CONTROL
-     S
-     INDIVIDUAL ACCESS
-     S
-     DISCRETIONARY AND MANDATORY ACCESS CONTROL
-     S
-     Information Flow Enforcement
-     S
-     OBJECT SECURITY AND PRIVACY ATTRIBUTES
-     S
-     PROCESSING DOMAINS
-     S
-     DYNAMIC INFORMATION FLOW CONTROL
-     S
-     FLOW CONTROL OF ENCRYPTED INFORMATION
-     S
-     EMBEDDED DATA TYPES
-     S
-     METADATA
-     S
-     ONE-WAY FLOW MECHANISMS
-     S
-     SECURITY AND PRIVACY POLICY FILTERS
-     S
-     HUMAN REVIEWS
-     O /S
-     ENABLE AND DISABLE SECURITY OR PRIVACY POLICY FILTERS
-     S
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AC-4(11)
-     AC-4(12)
-     AC-4(13)
-     AC-4(14)
-     AC-4(15)
-     AC-4(16)
-     AC-4(17)
-     AC-4(18)
-     AC-4(19)
-     AC-4(20)
-     AC-4(21)
-     CONFIGURATION OF SECURITY OR PRIVACY POLICY FILTERS
-     S
-     DATA TYPE IDENTIFIERS
-     S
-     DECOMPOSITION INTO POLICY-RELEVANT SUBCOMPONENTS
-     S
-     SECURITY OR PRIVACY POLICY FILTER CONSTRAINTS
-     S
-     AC-4(22)
-     AC-4(23)
-     AC-4(24)
-     AC-4(25)
-     AC-4(26)
-     AC-4(27)
-     AC-4(28)
-     AC-4(29)
-     AC-4(30)
-     AC-4(31)
-     AC-4(32)
-     AC-5
-     AC-6
-     AC-6(1)
-     AC-6(2)
-     AC-6(3)
-     AC-6(4)
-     AC-6(5)
-     AC-6(6)
-     AC-6(7)
-     AC-6(8)
-     AC-6(9)
-     AC-6(10)
-     ACCESS ONLY
-     S
-     MODIFY NON-RELEASABLE INFORMATION
-     O /S
-     INTERNAL NORMALIZED FORMAT
-     S
-     DETECTION OF UNSANCTIONED INFORMATION
-     INFORMATION TRANSFERS ON INTERCONNECTED SYSTEMS
-     DOMAIN AUTHENTICATION
-     SECURITY ATTRIBUTE BINDING
-     ASSURANCE
-     S
-     W: Incorporated into AC-4.
-     S
-     W: Incorporated into AC-16.
-     VALIDATION OF METADATA
-     S
-     APPROVED SOLUTIONS
-     O
-     PHYSICAL OR LOGICAL SEPARATION OF INFORMATION FLOWS
-     O /S
-     DATA SANITIZATION
-     S
-     AUDIT FILTERING ACTIONS
-     O /S
-     REDUNDANT/INDEPENDENT FILTERING MECHANISMS
-     S
-     LINEAR FILTER PIPELINES
-     S
-     FILTER ORCHESTRATION ENGINES
-     O /S
-     FILTER MECHANISMS USING MULTIPLE PROCESSES
-     S
-     FAILED CONTENT TRANSFER PREVENTION
-     S
-     PROCESS REQUIREMENTS FOR INFORMATION TRANSFER
-     S
-     Separation of Duties
-     Least Privilege
-     O
-     AUTHORIZE ACCESS TO SECURITY FUNCTIONS
-     O
-     NON-PRIVILEGED ACCESS FOR NONSECURITY FUNCTIONS
-     O
-     NETWORK ACCESS TO PRIVILEGED COMMANDS
-     O
-     SEPARATE PROCESSING DOMAINS
-     O /S
-     PRIVILEGED ACCOUNTS
-     O
-     PRIVILEGED ACCESS BY NON-ORGANIZATIONAL USERS
-     O
-     REVIEW OF USER PRIVILEGES
-     O
-     PRIVILEGE LEVELS FOR CODE EXECUTION
-     S
-     LOG USE OF PRIVILEGED FUNCTIONS
-     S
-     PROHIBIT NON-PRIVILEGED USERS FROM EXECUTING PRIVILEGED
-     S
-     O
-     FUNCTIONS
-     AC-7
-     AC-7(1)
-     AC-7(2)
-     AC-7(3)
-     AC-7(4)
-     AC-8
-     AC-9
-     AC-9(1)
-     APPENDIX C
-     Unsuccessful Logon Attempts
-     AUTOMATIC ACCOUNT LOCK
-     S
-     W: Incorporated into AC-7.
-     PURGE OR WIPE MOBILE DEVICE
-     S
-     BIOMETRIC ATTEMPT LIMITING
-     O
-     USE OF ALTERNATE AUTHENTICATION FACTOR
-     O /S
-     System Use Notification
-     Previous Logon Notification
-     O /S
-     UNSUCCESSFUL LOGONS
-     S
-     S
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AC-9(2)
-     AC-9(3)
-     AC-9(4)
-     AC-10
-     AC-11
-     AC-11(1)
-     AC-12
-     AC-12(1)
-     AC-12(2)
-     AC-12(3)
-     AC-13
-     SUCCESSFUL AND UNSUCCESSFUL LOGONS
-     S
-     NOTIFICATION OF ACCOUNT CHANGES
-     S
-     ADDITIONAL LOGON INFORMATION
-     S
-     Concurrent Session Control
-     Device Lock
-     PATTERN-HIDING DISPLAYS
-     Session Termination
-     USER-INITIATED LOGOUTS
-     S
-     O /S
-     TERMINATION MESSAGE
-     S
-     AC-14
-     Permitted Actions without Identification or
-     Authentication
-     AC-14(1)
-     AC-15
-     AC-16
-     AC-16(1)
-     AC-16(2)
-     AC-16(3)
-     AC-16(4)
-     AC-16(5)
-     AC-16(6)
-     AC-16(7)
-     AC-16(8)
-     AC-16(9)
-     AC-16(10)
-     AC-17
-     AC-17(1)
-     AC-17(2)
-     AC-17(3)
-     AC-17(4)
-     AC-17(5)
-     AC-17(6)
-     AC-17(7)
-     AC-17(8)
-     AC-17(9)
-     AC-17(10)
-     AC-18
-     AC-18(1)
-     AC-18(2)
-     AC-18(3)
-     AC-18(4)
-     AC-18(5)
-     NECESSARY USES
-     W: Incorporated into AC-14.
-     Automated Marking
-     Security and Privacy Attributes
-     W: Incorporated into MP-3.
-     APPENDIX C
-     TIMEOUT WARNING MESSAGE
-     Supervision and Review-Access Control
-     S
-     S
-     S
-     S
-     W: Incorporated into AC-2 and AU-6.
-     O
-     O
-     DYNAMIC ATTRIBUTE ASSOCIATION
-     S
-     ATTRIBUTE VALUE CHANGES BY AUTHORIZED INDIVIDUALS
-     S
-     MAINTENANCE OF ATTRIBUTE ASSOCIATIONS BY SYSTEM
-     S
-     ASSOCIATION OF ATTRIBUTES BY AUTHORIZED INDIVIDUALS
-     S
-     ATTRIBUTE DISPLAYS ON OBJECTS TO BE OUTPUT
-     S
-     MAINTENANCE OF ATTRIBUTE ASSOCIATION
-     O
-     CONSISTENT ATTRIBUTE INTERPRETATION
-     O
-     ASSOCIATION TECHNIQUES AND TECHNOLOGIES
-     S
-     ATTRIBUTE REASSIGNMENT – REGRADING MECHANISMS
-     O
-     ATTRIBUTE CONFIGURATION BY AUTHORIZED INDIVIDUALS
-     O
-     Remote Access
-     O
-     MONITORING AND CONTROL
-     O /S
-     PROTECTION OF CONFIDENTIALITY AND INTEGRITY USING ENCRYPTION
-     S
-     MANAGED ACCESS CONTROL POINTS
-     S
-     PRIVILEGED COMMANDS AND ACCESS
-     O
-     MONITORING FOR UNAUTHORIZED CONNECTIONS
-     PROTECTION OF MECHANISM INFORMATION
-     W: Incorporated into SI-4.
-     O
-     ADDITIONAL PROTECTION FOR SECURITY FUNCTION ACCESS
-     W: Incorporated into AC-3(10).
-     DISABLE NONSECURE NETWORK PROTOCOLS
-     W: Incorporated into CM-7.
-     DISCONNECT OR DISABLE ACCESS
-     O
-     AUTHENTICATE REMOTE COMMANDS
-     S
-     Wireless Access
-     O
-     AUTHENTICATION AND ENCRYPTION
-     MONITORING UNAUTHORIZED CONNECTIONS
-     S
-     W: Incorporated into SI-4.
-     DISABLE WIRELESS NETWORKING
-     O /S
-     RESTRICT CONFIGURATIONS BY USERS
-     O
-     ANTENNAS AND TRANSMISSION POWER LEVELS
-     O
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AC-19
-     AC-19(1)
-     AC-19(2)
-     AC-19(3)
-     AC-19(4)
-     AC-19(5)
-     AC-20
-     AC-20(1)
-     AC-20(2)
-     AC-20(3)
-     AC-20(4)
-     Access Control for Mobile Devices
-     AC-20(5)
-     AC-21
-     AC-21(1)
-     AC-21(2)
-     AC-22
-     AC-23
-     AC-24
-     AC-24(1)
-     AC-24(2)
-     AC-25
-     APPENDIX C
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     USE OF WRITABLE AND PORTABLE STORAGE DEVICES
-     W: Incorporated into MP-7.
-     USE OF PERSONALLY OWNED PORTABLE STORAGE DEVICES
-     W: Incorporated into MP-7.
-     USE OF PORTABLE STORAGE DEVICES WITH NO IDENTIFIABLE OWNER
-     W: Incorporated into MP-7.
-     RESTRICTIONS FOR CLASSIFIED INFORMATION
-     O
-     FULL DEVICE OR CONTAINER-BASED ENCRYPTION
-     O
-     Use of External Systems
-     O
-     LIMITS ON AUTHORIZED USE
-     O
-     PORTABLE STORAGE DEVICES — RESTRICTED USE
-     O
-     NON-ORGANIZATIONALLY OWNED SYSTEMS — RESTRICTED USE
-     O
-     NETWORK ACCESSIBLE STORAGE DEVICES — PROHIBITED USE
-     O
-     PORTABLE STORAGE DEVICES — PROHIBITED USE
-     O
-     Information Sharing
-     O
-     AUTOMATED DECISION SUPPORT
-     S
-     INFORMATION SEARCH AND RETRIEVAL
-     S
-     Publicly Accessible Content
-     Data Mining Protection
-     Access Control Decisions
-     O
-     TRANSMIT ACCESS AUTHORIZATION INFORMATION
-     S
-     NO USER OR PROCESS IDENTITY
-     S
-     Reference Monitor
-     S
-     O
-     O
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-2: AWARENESS AND TRAINING FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AT-1
-     AT-2
-     AT-2(1)
-     AT-2(2)
-     AT-2(3)
-     AT-2(4)
-     AT-2(5)
-     AT-2(6)
-     AT-3
-     AT-3(1)
-     AT-3(2)
-     AT-3(3)
-     AT-3(4)
-     AT-3(5)
-     AT-4
-     AT-5
-     AT-6
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Literacy Training and Awareness
-     O
-     PRACTICAL EXERCISES
-     O
-     INSIDER THREAT
-     O
-     SOCIAL ENGINEERING AND MINING
-     O
-     SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR
-     O
-     ADVANCED PERSISTENT THREAT
-     O
-     CYBER THREAT ENVIRONMENT
-     O
-     Role-Based Training
-     O
-     ENVIRONMENTAL CONTROLS
-     O
-     PHYSICAL SECURITY CONTROLS
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     CONTROL ENHANCEMENT NAME
-     PRACTICAL EXERCISES
-     SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR
-     O
-     O
-     W: Incorporated into AT-2(4).
-     PROCESSING PERSONALLY IDENTIFIABLE INFORMATION
-     O
-     Training Records
-     Contacts with Security Groups and Associations
-     Training Feedback
-     O
-     √
-     √
-     W: Incorporated into PM-15.
-     O
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-3: AUDIT AND ACCOUNTABILITY FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AU-1
-     AU-2
-     AU-2(1)
-     AU-2(2)
-     AU-2(3)
-     AU-2(4)
-     AU-3
-     AU-3(1)
-     AU-3(2)
-     AU-3(3)
-     AU-4
-     AU-4(1)
-     AU-5
-     AU-5(1)
-     AU-5(2)
-     AU-5(3)
-     AU-5(4)
-     AU-5(5)
-     AU-6
-     AU-6(1)
-     AU-6(2)
-     AU-6(3)
-     AU-6(4)
-     AU-6(5)
-     AU-6(6)
-     AU-6(7)
-     AU-6(8)
-     AU-6(9)
-     AU-6(10)
-     AU-7
-     AU-7(1)
-     AU-7(2)
-     AU-8
-     AU-8(1)
-     AU-8(2)
-     AU-9
-     AU-9(1)
-     AU-9(2)
-     AU-9(3)
-     AU-9(4)
-     AU-9(5)
-     AU-9(6)
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Event Logging
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     O
-     COMPILATION OF AUDIT RECORDS FROM MULTIPLE SOURCES
-     W: Incorporated into AU-12.
-     SELECTION OF AUDIT EVENTS BY COMPONENT
-     W: Incorporated into AU-12.
-     REVIEWS AND UPDATES
-     W: Incorporated into AU-2.
-     PRIVILEGED FUNCTIONS
-     W: Incorporated into AC-6(9).
-     Content of Audit Records
-     ADDITIONAL AUDIT INFORMATION
-     CENTRALIZED MANAGEMENT OF PLANNED AUDIT RECORD CONTENT
-     S
-     S
-     W: Incorporated into PL-9.
-     LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
-     O
-     Audit Log Storage Capacity
-     O /S
-     TRANSFER TO ALTERNATE STORAGE
-     O /S
-     Response to Audit Logging Process Failures
-     S
-     STORAGE CAPACITY WARNING
-     S
-     REAL-TIME ALERTS
-     S
-     CONFIGURABLE TRAFFIC VOLUME THRESHOLDS
-     S
-     SHUTDOWN ON FAILURE
-     S
-     ALTERNATE AUDIT LOGGING CAPABILITY
-     O
-     Audit Record Review, Analysis, and Reporting
-     O
-     AUTOMATED PROCESS INTEGRATION
-     O
-     AUTOMATED SECURITY ALERTS
-     W: Incorporated into SI-4.
-     CORRELATE AUDIT RECORD REPOSITORIES
-     O
-     CENTRAL REVIEW AND ANALYSIS
-     S
-     INTEGRATED ANALYSIS OF AUDIT RECORDS
-     O
-     CORRELATION WITH PHYSICAL MONITORING
-     O
-     PERMITTED ACTIONS
-     O
-     FULL TEXT ANALYSIS OF PRIVILEGED COMMANDS
-     O
-     CORRELATION WITH INFORMATION FROM NONTECHNICAL SOURCES
-     AUDIT LEVEL ADJUSTMENT
-     O
-     S
-     AUTOMATIC PROCESSING
-     S
-     Time Stamps
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into AU-6.
-     Audit Record Reduction and Report Generation
-     AUTOMATIC SORT AND SEARCH
-     √
-     √
-     √
-     √
-     W: Incorporated into AU-7(1).
-     S
-     SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
-     W: Moved to SC-45(1).
-     SECONDARY AUTHORITATIVE TIME SOURCE
-     W: Moved to SC-45(2).
-     Protection of Audit Information
-     HARDWARE WRITE-ONCE MEDIA
-     S
-     STORE ON SEPARATE PHYSICAL SYSTEMS OR COMPONENTS
-     S
-     CRYPTOGRAPHIC PROTECTION
-     S
-     S
-     ACCESS BY SUBSET OF PRIVILEGED USERS
-     O
-     DUAL AUTHORIZATION
-     O /S
-     READ-ONLY ACCESS
-     O /S
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     AU-9(7)
-     AU-10
-     AU-10(1)
-     AU-10(2)
-     AU-10(3)
-     AU-10(4)
-     AU-10(5)
-     AU-11
-     AU-11(1)
-     AU-12
-     AU-12(1)
-     STORE ON COMPONENT WITH DIFFERENT OPERATING SYSTEM
-     O
-     Non-repudiation
-     S
-     ASSOCIATION OF IDENTITIES
-     S
-     Audit Record Retention
-     LONG-TERM RETRIEVAL CAPABILITY
-     Audit Record Generation
-     SYSTEM-WIDE AND TIME-CORRELATED AUDIT TRAIL
-     O
-     AU-12(2)
-     AU-12(3)
-     AU-12(4)
-     AU-13
-     AU-13(1)
-     AU-13(2)
-     AU-13(3)
-     AU-14
-     AU-14(1)
-     AU-14(2)
-     AU-14(3)
-     AU-15
-     AU-16
-     AU-16(1)
-     AU-16(2)
-     AU-16(3)
-     STANDARDIZED FORMATS
-     S
-     CHANGES BY AUTHORIZED INDIVIDUALS
-     S
-     APPENDIX C
-     VALIDATE BINDING OF INFORMATION PRODUCER IDENTITY
-     S
-     CHAIN OF CUSTODY
-     O /S
-     VALIDATE BINDING OF INFORMATION REVIEWER IDENTITY
-     DIGITAL SIGNATURES
-     S
-     O
-     S
-     S
-     O
-     USE OF AUTOMATED TOOLS
-     O /S
-     REVIEW OF MONITORED SITES
-     O
-     UNAUTHORIZED REPLICATION OF INFORMATION
-     O /S
-     Session Audit
-     SYSTEM START-UP
-     S
-     Alternate Audit Logging Capability
-     Cross-Organizational Audit Logging
-     √
-     S
-     Monitoring for Information Disclosure
-     REMOTE VIEWING AND LISTENING
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into SI-7.
-     QUERY PARAMETER AUDITS OF PERSONALLY IDENTIFIABLE INFORMATION
-     CAPTURE AND RECORD CONTENT
-     ASSURANCE
-     S
-     √
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into AU-14.
-     S
-     √
-     W: Moved to AU-5(5).
-     O
-     IDENTITY PRESERVATION
-     O
-     SHARING OF AUDIT INFORMATION
-     O
-     DISASSOCIABILITY
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-4: ASSESSMENT, AUTHORIZATION, AND MONITORING FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     CA-1
-     CA-2
-     CA-2(1)
-     CA-2(2)
-     CA-2(3)
-     CA-3
-     CA-3(1)
-     CA-3(2)
-     CA-3(3)
-     CA-3(4)
-     CA-3(5)
-     CA-3(6)
-     CA-3(7)
-     CA-4
-     CA-5
-     CA-5(1)
-     CA-6
-     CA-6(1)
-     CA-6(2)
-     CA-7
-     CA-7(1)
-     CA-7(2)
-     CA-7(3)
-     CA-7(4)
-     CA-7(5)
-     CA-7(6)
-     CA-8
-     CA-8(1)
-     CA-8(2)
-     CA-8(3)
-     CA-9
-     CA-9(1)
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Control Assessments
-     O
-     INDEPENDENT ASSESSORS
-     O
-     SPECIALIZED ASSESSMENTS
-     O
-     LEVERAGING RESULTS FROM EXTERNAL ORGANIZATIONS
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     CONTROL ENHANCEMENT NAME
-     Information Exchange
-     O
-     O
-     UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
-     W: Moved to SC-7(25).
-     CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
-     W: Moved to SC-7(26).
-     UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
-     W: Moved to SC-7(27).
-     CONNECTIONS TO PUBLIC NETWORKS
-     W: Moved to SC-7(28).
-     RESTRICTIONS ON EXTERNAL SYSTEM CONNECTIONS
-     W: Incorporated into SC-7(5).
-     TRANSFER AUTHORIZATIONS
-     TRANSITIVE INFORMATION EXCHANGES
-     Security Certification
-     Plan of Action and Milestones
-     O /S
-     O /S
-     W: Incorporated into CA-2.
-     O
-     AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
-     O
-     Authorization
-     O
-     JOINT AUTHORIZATION — INTRA-ORGANIZATION
-     O
-     JOINT AUTHORIZATION — INTER-ORGANIZATION
-     O
-     Continuous Monitoring
-     O
-     INDEPENDENT ASSESSMENT
-     O
-     TYPES OF ASSESSMENTS
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into CA-2.
-     TREND ANALYSES
-     O
-     RISK MONITORING
-     O /S
-     CONSISTENCY ANALYSIS
-     O
-     AUTOMATION SUPPORT FOR MONITORING
-     O /S
-     Penetration Testing
-     O
-     INDEPENDENT PENETRATION TESTING AGENT OR TEAM
-     O
-     RED TEAM EXERCISES
-     O
-     FACILITY PENETRATION TESTING
-     O
-     Internal System Connections
-     O
-     COMPLIANCE CHECKS
-     O /S
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-5: CONFIGURATION MANAGEMENT FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     CM-1
-     CM-2
-     CM-2(1)
-     CM-2(2)
-     CM-2(3)
-     CM-2(4)
-     CM-2(5)
-     CM-2(6)
-     CM-2(7)
-     CM-3
-     CM-3(1)
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Baseline Configuration
-     REVIEWS AND UPDATES
-     AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY
-     RETENTION OF PREVIOUS CONFIGURATIONS
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     √
-     O
-     W: Incorporated into CM-2.
-     O
-     O
-     UNAUTHORIZED SOFTWARE
-     W: Incorporated into CM-7.
-     AUTHORIZED SOFTWARE
-     W: Incorporated into CM-7.
-     √
-     √
-     O
-     √
-     √
-     √
-     √
-     TESTING, VALIDATION, AND DOCUMENTATION OF CHANGES
-     O
-     √
-     AUTOMATED CHANGE IMPLEMENTATION
-     O
-     SECURITY AND PRIVACY REPRESENTATIVES
-     O
-     DEVELOPMENT AND TEST ENVIRONMENTS
-     O
-     CONFIGURE SYSTEMS AND COMPONENTS FOR HIGH-RISK AREAS
-     O
-     Configuration Change Control
-     AUTOMATED DOCUMENTATION, NOTIFICATION, AND PROHIBITION OF
-     O
-     CHANGES
-     CM-3(2)
-     CM-3(3)
-     CM-3(4)
-     CM-3(5)
-     CM-3(6)
-     CM-3(7)
-     CM-3(8)
-     CM-4
-     CM-4(1)
-     CM-4(2)
-     CM-5
-     CM-5(1)
-     CM-5(2)
-     CM-5(3)
-     CM-5(4)
-     CM-5(5)
-     CM-5(6)
-     CM-5(7)
-     CM-6
-     CM-6(1)
-     CM-6(2)
-     CM-6(3)
-     CM-6(4)
-     CM-7
-     CM-7(1)
-     CM-7(2)
-     CM-7(3)
-     CM-7(4)
-     CM-7(5)
-     CM-7(6)
-     APPENDIX C
-     AUTOMATED SECURITY RESPONSE
-     S
-     CRYPTOGRAPHY MANAGEMENT
-     O
-     REVIEW SYSTEM CHANGES
-     O
-     PREVENT OR RESTRICT CONFIGURATION CHANGES
-     S
-     Impact Analyses
-     O
-     SEPARATE TEST ENVIRONMENTS
-     O
-     VERIFICATION OF CONTROLS
-     O
-     Access Restrictions for Change
-     O
-     AUTOMATED ACCESS ENFORCEMENT AND AUDIT RECORDS
-     S
-     REVIEW SYSTEM CHANGES
-     W: Incorporated into CM-3(7).
-     SIGNED COMPONENTS
-     W: Moved to CM-14.
-     DUAL AUTHORIZATION
-     O /S
-     PRIVILEGE LIMITATION FOR PRODUCTION AND OPERATION
-     O
-     LIMIT LIBRARY PRIVILEGES
-     AUTOMATIC IMPLEMENTATION OF SECURITY SAFEGUARDS
-     Configuration Settings
-     AUTOMATED MANAGEMENT, APPLICATION, AND VERIFICATION
-     RESPOND TO UNAUTHORIZED CHANGES
-     √
-     √
-     √
-     O /S
-     W: Incorporated into SI-7.
-     O /S
-     O
-     O
-     UNAUTHORIZED CHANGE DETECTION
-     W: Incorporated into SI-7.
-     CONFORMANCE DEMONSTRATION
-     W: Incorporated into CM-4.
-     Least Functionality
-     O /S
-     PERIODIC REVIEW
-     O /S
-     PREVENT PROGRAM EXECUTION
-     S
-     REGISTRATION COMPLIANCE
-     O
-     UNAUTHORIZED SOFTWARE — DENY-BY-EXCEPTION
-     O /S
-     Supply Chain Controls and Processes
-     O /S
-     DIVERSE SUPPLY BASE
-     O
-     √
-     LIMITATION OF HARM
-     O
-     √
-     SUB-TIER FLOW DOWN
-     O
-     √
-     Provenance
-     O
-     √
-     IDENTITY
-     O
-     √
-     TRACK AND TRACE
-     O
-     √
-     VALIDATE AS GENUINE AND NOT ALTERED
-     O
-     √
-     SUPPLY CHAIN INTEGRITY — PEDIGREE
-     O
-     √
-     Acquisition Strategies, Tools, and Methods
-     O
-     √
-     ADEQUATE SUPPLY
-     O
-     √
-     ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
-     UPDATE
-     O
-     √
-     Supplier Assessments and Reviews
-     O
-     √
-     TESTING AND ANALYSIS
-     O
-     √
-     Supply Chain Operations Security
-     O
-     √
-     Notification Agreements
-     O
-     √
-     Tamper Resistance and Detection
-     O
-     √
-     MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
-     O
-     √
-     Inspection of Systems or Components
-     O
-     √
-     Component Authenticity
-     O
-     √
-     ANTI-COUNTERFEIT TRAINING
-     O
-     √
-     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-     O
-     √
-     ANTI-COUNTERFEIT SCANNING
-     O
-     √
-     Component Disposal
-     O
-     √
-     SR-3(1)
-     DIVERSE SUPPLY BASE
-     O
-     √
-     SR-3(2)
-     LIMITATION OF HARM
-     O
-     √
-     SR-3(3)
-     SUB-TIER FLOW DOWN
-     O
-     √
-     SR-4
-     Provenance
-     O
-     √
-     SR-4(1)
-     IDENTITY
-     O
-     √
-     SR-4(2)
-     TRACK AND TRACE
-     O
-     √
-     SR-4(3)
-     VALIDATE AS GENUINE AND NOT ALTERED
-     O
-     √
-     SR-4(4)
-     SUPPLY CHAIN INTEGRITY — PEDIGREE
-     O
-     √
-     SR-5
-     Acquisition Strategies, Tools, and Methods
-     O
-     √
-     SR-5(1)
-     ADEQUATE SUPPLY
-     O
-     √
-     SR-5(2)
-     ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
-     UPDATE
-     O
-     √
-     SR-6
-     Supplier Assessments and Reviews
-     O
-     √
-     SR-6(1)
-     TESTING AND ANALYSIS
-     O
-     √
-     SR-7
-     Supply Chain Operations Security
-     O
-     √
-     SR-8
-     Notification Agreements
-     O
-     √
-     SR-9
-     Tamper Resistance and Detection
-     O
-     √
-     SR-9(1)
-     MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
-     O
-     √
-     SR-10
-     Inspection of Systems or Components
-     O
-     √
-     SR-11
-     Component Authenticity
-     O
-     √
-     SR-11(1)
-     ANTI-COUNTERFEIT TRAINING
-     O
-     √
-     SR-11(2)
-     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-     O
-     √
-     SR-11(3)
-     ANTI-COUNTERFEIT SCANNING
-     O
-     √
-     SR-12
-     Component Disposal
-     O
-     √
-     APPENDIX C
-     PAGE 465
-     APPENDIX C
-     PAGE 465
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     CM-7(7)
-     CM-7(8)
-     CM-7(9)
-     CM-8
-     CM-8(1)
-     CM-8(2)
-     CM-8(3)
-     CM-8(4)
-     CM-8(5)
-     CM-8(6)
-     CM-8(7)
-     CODE EXECUTION IN PROTECTED ENVIRONMENTS
-     O /S
-     BINARY OR MACHINE EXECUTABLE CODE
-     O /S
-     PROHIBITING THE USE OF UNAUTHORIZED HARDWARE
-     O /S
-     System Component Inventory
-     O
-     UPDATES DURING INSTALLATION AND REMOVAL
-     O
-     AUTOMATED MAINTENANCE
-     O
-     AUTOMATED UNAUTHORIZED COMPONENT DETECTION
-     O
-     CM-8(8)
-     CM-8(9)
-     CM-9
-     CM-9(1)
-     CM-10
-     CM-10(1)
-     CM-11
-     CM-11(1)
-     CM-11(2)
-     CM-11(3)
-     CM-12
-     CM-12(1)
-     CM-13
-     CM-14
-     APPENDIX C
-     ACCOUNTABILITY INFORMATION
-     NO DUPLICATE ACCOUNTING OF COMPONENTS
-     O
-     W: Incorporated into CM-8.
-     ASSESSED CONFIGURATIONS AND APPROVED DEVIATIONS
-     O
-     CENTRALIZED REPOSITORY
-     O
-     AUTOMATED LOCATION TRACKING
-     O
-     ASSIGNMENT OF COMPONENTS TO SYSTEMS
-     O
-     Configuration Management Plan
-     O
-     ASSIGNMENT OF RESPONSIBILITY
-     O
-     Software Usage Restrictions
-     OPEN-SOURCE SOFTWARE
-     User-Installed Software
-     O
-     ALERTS FOR UNAUTHORIZED INSTALLATIONS
-     SOFTWARE INSTALLATION WITH PRIVILEGED STATUS
-     √
-     √
-     √
-     √
-     O
-     O
-     W: Incorporated into CM-8(3).
-     S
-     AUTOMATED ENFORCEMENT AND MONITORING
-     S
-     Information Location
-     O
-     AUTOMATED TOOLS TO SUPPORT INFORMATION LOCATION
-     O
-     Data Action Mapping
-     Signed Components
-     O
-     O /S
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-6: CONTINGENCY PLANNING FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     CP-1
-     CP-2
-     CP-2(1)
-     CP-2(2)
-     CP-2(3)
-     CP-2(4)
-     CP-2(5)
-     CP-2(6)
-     CP-2(7)
-     CP-2(8)
-     CP-3
-     CP-3(1)
-     CP-3(2)
-     CP-4
-     CP-4(1)
-     CP-4(2)
-     CP-4(3)
-     CP-4(4)
-     CP-4(5)
-     CP-5
-     CP-6
-     CP-6(1)
-     CP-6(2)
-     CP-6(3)
-     CP-7
-     CP-7(1)
-     CP-7(2)
-     CP-7(3)
-     CP-7(4)
-     CP-7(5)
-     CP-7(6)
-     CP-8
-     CP-8(1)
-     CP-8(2)
-     CP-8(3)
-     CP-8(4)
-     CP-8(5)
-     CP-9
-     CP-9(1)
-     CP-9(2)
-     CP-9(3)
-     CP-9(4)
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Contingency Plan
-     O
-     √
-     COORDINATE WITH RELATED PLANS
-     O
-     CAPACITY PLANNING
-     O
-     CONTROL ENHANCEMENT NAME
-     RESUME MISSION AND BUSINESS FUNCTIONS
-     RESUME ALL MISSION AND BUSINESS FUNCTIONS
-     O
-     O
-     W: Incorporated into CP-2(3).
-     CONTINUE MISSION AND BUSINESS FUNCTIONS
-     O
-     ALTERNATE PROCESSING AND STORAGE SITES
-     O
-     COORDINATE WITH EXTERNAL SERVICE PROVIDERS
-     O
-     IDENTIFY CRITICAL ASSETS
-     O
-     Contingency Training
-     O
-     SIMULATED EVENTS
-     O
-     MECHANISMS USED IN TRAINING ENVIRONMENTS
-     O
-     Contingency Plan Testing
-     O
-     COORDINATE WITH RELATED PLANS
-     O
-     ALTERNATE PROCESSING SITE
-     O
-     AUTOMATED TESTING
-     O
-     FULL RECOVERY AND RECONSTITUTION
-     O
-     SELF-CHALLENGE
-     Contingency Plan Update
-     Alternate Storage Site
-     O /S
-     W: Incorporated into CP-2.
-     O
-     SEPARATION FROM PRIMARY SITE
-     O
-     RECOVERY TIME AND RECOVERY POINT OBJECTIVES
-     O
-     ACCESSIBILITY
-     O
-     Alternate Processing Site
-     O
-     SEPARATION FROM PRIMARY SITE
-     O
-     ACCESSIBILITY
-     O
-     PRIORITY OF SERVICE
-     O
-     PREPARATION FOR USE
-     O
-     EQUIVALENT INFORMATION SECURITY SAFEGUARDS
-     W: Incorporated into CP-7.
-     INABILITY TO RETURN TO PRIMARY SITE
-     O
-     Telecommunications Services
-     O
-     PRIORITY OF SERVICE PROVISIONS
-     O
-     SINGLE POINTS OF FAILURE
-     O
-     SEPARATION OF PRIMARY AND ALTERNATE PROVIDERS
-     O
-     PROVIDER CONTINGENCY PLAN
-     O
-     ALTERNATE TELECOMMUNICATION SERVICE TESTING
-     O
-     System Backup
-     O
-     TESTING FOR RELIABILITY AND INTEGRITY
-     O
-     TEST RESTORATION USING SAMPLING
-     O
-     SEPARATE STORAGE FOR CRITICAL INFORMATION
-     PROTECTION FROM UNAUTHORIZED MODIFICATION
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     O
-     W: Incorporated into CP-9.
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     CP-9(5)
-     CP-9(6)
-     CP-9(7)
-     CP-9(8)
-     CP-10
-     CP-10(1)
-     CP-10(2)
-     CP-10(3)
-     CP-10(4)
-     CP-10(5)
-     CP-10(6)
-     TRANSFER TO ALTERNATE STORAGE SITE
-     O
-     REDUNDANT SECONDARY SYSTEM
-     O
-     DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION
-     O
-     CRYPTOGRAPHIC PROTECTION
-     O
-     COMPONENT PROTECTION
-     O
-     CP-11
-     CP-12
-     CP-13
-     Alternate Communications Protocols
-     Safe Mode
-     Alternative Security Mechanisms
-     O
-     APPENDIX C
-     System Recovery and Reconstitution
-     CONTINGENCY PLAN TESTING
-     TRANSACTION RECOVERY
-     COMPENSATING SECURITY CONTROLS
-     RESTORE WITHIN TIME PERIOD
-     FAILOVER CAPABILITY
-     ASSURANCE
-     O
-     W: Incorporated into CP-4.
-     O
-     W: Addressed through tailoring.
-     O
-     W: Incorporated into SI-13.
-     S
-     √
-     O /S
-     NIST SP 800-53, REV. 5
-     TABLE C-7: IDENTIFICATION AND AUTHENTICATION FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IA-1
-     IA-2
-     IA-2(1)
-     IA-2(2)
-     IA-2(3)
-     IA-2(4)
-     IA-2(5)
-     IA-2(6)
-     IA-2(7)
-     IA-2(8)
-     IA-2(9)
-     IA-2(10)
-     IA-2(11)
-     IA-2(12)
-     IA-2(13)
-     IA-3
-     IA-3(1)
-     IA-3(2)
-     IA-3(3)
-     IA-3(4)
-     IA-4
-     IA-4(1)
-     IA-4(2)
-     IA-4(3)
-     IA-4(4)
-     IA-4(5)
-     IA-4(6)
-     IA-4(7)
-     IA-4(8)
-     IA-4(9)
-     IA-5
-     IA-5(1)
-     IA-5(2)
-     IA-5(3)
-     IA-5(4)
-     IA-5(5)
-     IA-5(6)
-     IA-5(7)
-     IA-5(8)
-     IA-5(9)
-     IA-5(10)
-     IA-5(11)
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Identification and Authentication (Organizational Users)
-     MULTI-FACTOR AUTHENTICATION TO PRIVILEGED ACCOUNTS
-     MULTI-FACTOR AUTHENTICATION TO NON-PRIVILEGED ACCOUNTS
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     O /S
-     S
-     S
-     LOCAL ACCESS TO PRIVILEGED ACCOUNTS
-     W: Incorporated into IA-2(1).
-     LOCAL ACCESS TO NON-PRIVILEGED ACCOUNTS
-     W: Incorporated into IA-2(2).
-     INDIVIDUAL AUTHENTICATION WITH GROUP AUTHENTICATION
-     ACCESS TO ACCOUNTS — SEPARATE DEVICE
-     NETWORK ACCESS TO NON-PRIVILEGED ACCOUNTS — SEPARATE DEVICE
-     ACCESS TO ACCOUNTS — REPLAY RESISTANT
-     NETWORK ACCESS TO NON-PRIVILEGED ACCOUNTS — REPLAY RESISTANT
-     SINGLE SIGN-ON
-     REMOTE ACCESS — SEPARATE DEVICE
-     O /S
-     S
-     W: Incorporated into IA-2(6).
-     S
-     W: Incorporated into IA-2(8).
-     S
-     W: Incorporated into IA-2(6).
-     ACCEPTANCE OF PIV CREDENTIALS
-     S
-     OUT-OF-BAND AUTHENTICATION
-     S
-     Device Identification and Authentication
-     S
-     CRYPTOGRAPHIC BIDIRECTIONAL AUTHENTICATION
-     CRYPTOGRAPHIC BIDIRECTIONAL NETWORK AUTHENTICATION
-     S
-     W: Incorporated into IA-3(1).
-     DYNAMIC ADDRESS ALLOCATION
-     O
-     DEVICE ATTESTATION
-     O
-     Identifier Management
-     O
-     PROHIBIT ACCOUNT IDENTIFIERS AS PUBLIC IDENTIFIERS
-     O
-     SUPERVISOR AUTHORIZATION
-     W: Incorporated into IA-12(1).
-     MULTIPLE FORMS OF CERTIFICATION
-     W: Incorporated into IA-12(2).
-     IDENTIFY USER STATUS
-     O
-     DYNAMIC MANAGEMENT
-     S
-     CROSS-ORGANIZATION MANAGEMENT
-     IN-PERSON REGISTRATION
-     O
-     W: Incorporated into IA-12(4).
-     PAIRWISE PSEUDONYMOUS IDENTIFIERS
-     O
-     ATTRIBUTE MAINTENANCE AND PROTECTION
-     O /S
-     Authenticator Management
-     PASSWORD-BASED AUTHENTICATION
-     PUBLIC KEY-BASED AUTHENTICATION
-     IN-PERSON OR TRUSTED EXTERNAL PARTY REGISTRATION
-     O /S
-     W: Incorporated into IA-12(4).
-     AUTOMATED SUPPORT FOR PASSWORD STRENGTH DETERMINATION
-     W: Incorporated into IA-5(1).
-     O /S
-     S
-     CHANGE AUTHENTICATORS PRIOR TO DELIVERY
-     O
-     PROTECTION OF AUTHENTICATORS
-     O
-     NO EMBEDDED UNENCRYPTED STATIC AUTHENTICATORS
-     O
-     MULTIPLE SYSTEM ACCOUNTS
-     O
-     FEDERATED CREDENTIAL MANAGEMENT
-     O
-     DYNAMIC CREDENTIAL BINDING
-     HARDWARE TOKEN-BASED AUTHENTICATION
-     S
-     W: Incorporated into IA-2(1) and IA-2(2).
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IA-5(12)
-     IA-5(13)
-     IA-5(14)
-     IA-5(15)
-     IA-5(16)
-     IA-5(17)
-     IA-5(18)
-     IA-6
-     IA-7
-     IA-8
-     BIOMETRIC AUTHENTICATION PERFORMANCE
-     IA-8(1)
-     IA-8(2)
-     IA-8(3)
-     IA-8(4)
-     IA-8(5)
-     IA-8(6)
-     IA-9
-     IA-9(1)
-     IA-9(2)
-     IA-10
-     IA-11
-     IA-12
-     IA-12(1)
-     IA-12(2)
-     IA-12(3)
-     IA-12(4)
-     IA-12(5)
-     IA-12(6)
-     APPENDIX C
-     IMPLEMENTED
-     BY
-     S
-     EXPIRATION OF CACHED AUTHENTICATORS
-     S
-     MANAGING CONTENT OF PKI TRUST STORES
-     O
-     GSA-APPROVED PRODUCTS AND SERVICES
-     O
-     IN-PERSON OR TRUSTED EXTERNAL PARTY AUTHENTICATOR ISSUANCE
-     O
-     PRESENTATION ATTACK DETECTION FOR BIOMETRIC AUTHENTICATORS
-     S
-     PASSWORD MANAGERS
-     S
-     Authentication Feedback
-     Cryptographic Module Authentication
-     Identification and Authentication (Non-Organizational
-     Users)
-     S
-     ACCEPTANCE OF PIV CREDENTIALS FROM OTHER AGENCIES
-     S
-     ACCEPTANCE OF EXTERNAL AUTHENTICATORS
-     USE OF FICAM-APPROVED PRODUCTS
-     USE OF DEFINED PROFILES
-     S
-     S
-     S
-     W: Incorporated into IA-8(2).
-     S
-     ACCEPTANCE OF PIV-I CREDENTIALS
-     S
-     DISASSOCIABILITY
-     O
-     Service Identification and Authentication
-     ASSURANCE
-     O /S
-     INFORMATION EXCHANGE
-     W: Incorporated into IA-9.
-     TRANSMISSION OF DECISIONS
-     W: Incorporated into IA-9.
-     Adaptive Authentication
-     Re-authentication
-     Identity Proofing
-     O /S
-     SUPERVISOR AUTHORIZATION
-     O
-     IDENTITY EVIDENCE
-     O
-     IDENTITY EVIDENCE VALIDATION AND VERIFICATION
-     O
-     IN-PERSON VALIDATION AND VERIFICATION
-     O
-     ADDRESS CONFIRMATION
-     O
-     ACCEPT EXTERNALLY-PROOFED IDENTITIES
-     O
-     O
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-8: INCIDENT RESPONSE FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IR-1
-     IR-2
-     IR-2(1)
-     IR-2(2)
-     IR-2(3)
-     IR-3
-     IR-3(1)
-     IR-3(2)
-     IR-3(3)
-     IR-4
-     IR-4(1)
-     IR-4(2)
-     IR-4(3)
-     IR-4(4)
-     IR-4(5)
-     IR-4(6)
-     IR-4(7)
-     IR-4(8)
-     IR-4(9)
-     IR-4(10)
-     IR-4(11)
-     IR-4(12)
-     IR-4(13)
-     IR-4(14)
-     IR-4(15)
-     IR-5
-     IR-5(1)
-     IR-6
-     IR-6(1)
-     IR-6(2)
-     IR-6(3)
-     IR-7
-     IR-7(1)
-     IR-7(2)
-     IR-8
-     IR-8(1)
-     IR-9
-     IR-9(1)
-     IR-9(2)
-     IR-9(3)
-     IR-9(4)
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Incident Response Training
-     O
-     SIMULATED EVENTS
-     O
-     AUTOMATED TRAINING ENVIRONMENTS
-     O
-     BREACH
-     O
-     Incident Response Testing
-     O
-     AUTOMATED TESTING
-     O
-     COORDINATION WITH RELATED PLANS
-     O
-     CONTINUOUS IMPROVEMENT
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     Incident Handling
-     O
-     AUTOMATED INCIDENT HANDLING PROCESSES
-     O
-     DYNAMIC RECONFIGURATION
-     O
-     CONTINUITY OF OPERATIONS
-     O
-     CONTROL ENHANCEMENT NAME
-     O
-     INFORMATION CORRELATION
-     O
-     AUTOMATIC DISABLING OF SYSTEM
-     O /S
-     INSIDER THREATS
-     O
-     INSIDER THREATS — INTRA-ORGANIZATION COORDINATION
-     O
-     CORRELATION WITH EXTERNAL ORGANIZATIONS
-     O
-     DYNAMIC RESPONSE CAPABILITY
-     O
-     SUPPLY CHAIN COORDINATION
-     O
-     INTEGRATED INCIDENT RESPONSE TEAM
-     O
-     MALICIOUS CODE AND FORENSIC ANALYSIS
-     O
-     BEHAVIOR ANALYSIS
-     O
-     SECURITY OPERATIONS CENTER
-     O /S
-     PUBLIC RELATIONS AND REPUTATION REPAIR
-     O
-     Incident Monitoring
-     AUTOMATED TRACKING, DATA COLLECTION, AND ANALYSIS
-     Incident Reporting
-     O
-     AUTOMATED REPORTING
-     O
-     VULNERABILITIES RELATED TO INCIDENTS
-     O
-     SUPPLY CHAIN COORDINATION
-     O
-     Incident Response Assistance
-     O
-     AUTOMATION SUPPORT FOR AVAILABILITY OF INFORMATION AND SUPPORT
-     O
-     COORDINATION WITH EXTERNAL PROVIDERS
-     O
-     Incident Response Plan
-     O
-     BREACHES
-     O
-     Information Spillage Response
-     O
-     RESPONSIBLE PERSONNEL
-     O
-     √
-     √
-     O
-     W: Incorporated into IR-9.
-     TRAINING
-     O
-     POST-SPILL OPERATIONS
-     O
-     EXPOSURE TO UNAUTHORIZED PERSONNEL
-     O
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     IR-10
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Integrated Information Security Analysis Team
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     W: Moved to IR-4(11).
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     APPENDIX C
-     NIST SP 800-53, REV. 5
-     TABLE C-9: MAINTENANCE FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     MA-1
-     MA-2
-     MA-2(1)
-     MA-2(2)
-     MA-3
-     MA-3(1)
-     MA-3(2)
-     MA-3(3)
-     MA-3(4)
-     MA-3(5)
-     MA-3(6)
-     MA-4
-     MA-4(1)
-     MA-4(2)
-     MA-4(3)
-     MA-4(4)
-     MA-4(5)
-     MA-4(6)
-     MA-4(7)
-     MA-5
-     MA-5(1)
-     MA-5(2)
-     MA-5(3)
-     MA-5(4)
-     MA-5(5)
-     MA-6
-     MA-6(1)
-     MA-6(2)
-     MA-6(3)
-     MA-7
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Controlled Maintenance
-     RECORD CONTENT
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     O
-     W: Incorporated into MA-2.
-     AUTOMATED MAINTENANCE ACTIVITIES
-     O
-     Maintenance Tools
-     O
-     INSPECT TOOLS
-     O
-     INSPECT MEDIA
-     O
-     PREVENT UNAUTHORIZED REMOVAL
-     O
-     RESTRICTED TOOL USE
-     O /S
-     EXECUTION WITH PRIVILEGE
-     O /S
-     SOFTWARE UPDATES AND PATCHES
-     O /S
-     Nonlocal Maintenance
-     O
-     LOGGING AND REVIEW
-     DOCUMENT NONLOCAL MAINTENANCE
-     O
-     W: Incorporated into MA-1 and MA-4.
-     COMPARABLE SECURITY AND SANITIZATION
-     O
-     AUTHENTICATION AND SEPARATION OF MAINTENANCE SESSIONS
-     O
-     APPROVALS AND NOTIFICATIONS
-     O
-     CRYPTOGRAPHIC PROTECTION
-     O /S
-     DISCONNECT VERIFICATION
-     S
-     Maintenance Personnel
-     O
-     INDIVIDUALS WITHOUT APPROPRIATE ACCESS
-     O
-     SECURITY CLEARANCES FOR CLASSIFIED SYSTEMS
-     O
-     CITIZENSHIP REQUIREMENTS FOR CLASSIFIED SYSTEMS
-     O
-     FOREIGN NATIONALS
-     O
-     NON-SYSTEM MAINTENANCE
-     O
-     Timely Maintenance
-     O
-     PREVENTIVE MAINTENANCE
-     O
-     PREDICTIVE MAINTENANCE
-     O
-     AUTOMATED SUPPORT FOR PREDICTIVE MAINTENANCE
-     O
-     Field Maintenance
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-10: MEDIA PROTECTION FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     MP-1
-     MP-2
-     MP-2(1)
-     MP-2(2)
-     MP-3
-     MP-4
-     MP-4(1)
-     MP-4(2)
-     MP-5
-     MP-5(1)
-     MP-5(2)
-     MP-5(3)
-     MP-5(4)
-     MP-6
-     MP-6(1)
-     MP-6(2)
-     MP-6(3)
-     MP-6(4)
-     MP-6(5)
-     MP-6(6)
-     MP-6(7)
-     MP-6(8)
-     MP-7
-     MP-7(1)
-     MP-7(2)
-     MP-8
-     MP-8(1)
-     MP-8(2)
-     MP-8(3)
-     MP-8(4)
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Media Access
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     O
-     AUTOMATED RESTRICTED ACCESS
-     W: Incorporated into MP-4(2).
-     CRYPTOGRAPHIC PROTECTION
-     W: Incorporated into SC-28(1).
-     Media Marking
-     Media Storage
-     CRYPTOGRAPHIC PROTECTION
-     AUTOMATED RESTRICTED ACCESS
-     Media Transport
-     O
-     O
-     W: Incorporated into SC-28(1).
-     O
-     O
-     PROTECTION OUTSIDE OF CONTROLLED AREAS
-     W: Incorporated into MP-5.
-     DOCUMENTATION OF ACTIVITIES
-     W: Incorporated into MP-5.
-     CUSTODIANS
-     CRYPTOGRAPHIC PROTECTION
-     O
-     W: Incorporated into SC-28(1).
-     Media Sanitization
-     REVIEW, APPROVE, TRACK, DOCUMENT, AND VERIFY
-     O
-     EQUIPMENT TESTING
-     O
-     NONDESTRUCTIVE TECHNIQUES
-     O
-     O
-     CONTROLLED UNCLASSIFIED INFORMATION
-     W: Incorporated into MP-6.
-     CLASSIFIED INFORMATION
-     W: Incorporated into MP-6.
-     MEDIA DESTRUCTION
-     W: Incorporated into MP-6.
-     DUAL AUTHORIZATION
-     O
-     REMOTE PURGING OR WIPING OF INFORMATION
-     O
-     Media Use
-     PROHIBIT USE WITHOUT OWNER
-     O
-     W: Incorporated into MP-7.
-     PROHIBIT USE OF SANITIZATION-RESISTANT MEDIA
-     O
-     Media Downgrading
-     O
-     DOCUMENTATION OF PROCESS
-     O
-     EQUIPMENT TESTING
-     O
-     CONTROLLED UNCLASSIFIED INFORMATION
-     O
-     CLASSIFIED INFORMATION
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-11: PHYSICAL AND ENVIRONMENTAL PROTECTION FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PE-1
-     PE-2
-     PE-2(1)
-     PE-2(2)
-     PE-2(3)
-     PE-3
-     PE-3(1)
-     PE-3(2)
-     PE-3(3)
-     PE-3(4)
-     PE-3(5)
-     PE-3(6)
-     PE-3(7)
-     PE-3(8)
-     PE-4
-     PE-5
-     PE-5(1)
-     PE-5(2)
-     PE-5(3)
-     PE-6
-     PE-6(1)
-     PE-6(2)
-     PE-6(3)
-     PE-6(4)
-     PE-7
-     PE-8
-     PE-8(1)
-     PE-8(2)
-     PE-8(3)
-     PE-9
-     PE-9(1)
-     PE-9(2)
-     PE-10
-     PE-10(1)
-     PE-11
-     PE-11(1)
-     PE-11(2)
-     PE-12
-     PE-12(1)
-     PE-13
-     PE-13(1)
-     PE-13(2)
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Physical Access Authorizations
-     O
-     √
-     ACCESS BY POSITION AND ROLE
-     O
-     TWO FORMS OF IDENTIFICATION
-     O
-     RESTRICT UNESCORTED ACCESS
-     O
-     Physical Access Control
-     O
-     SYSTEM ACCESS
-     O
-     FACILITY AND SYSTEMS
-     O
-     CONTINUOUS GUARDS
-     O
-     LOCKABLE CASINGS
-     O
-     CONTROL ENHANCEMENT NAME
-     TAMPER PROTECTION
-     FACILITY PENETRATION TESTING
-     O
-     O
-     W: Incorporated into CA-8.
-     PHYSICAL BARRIERS
-     O
-     ACCESS CONTROL VESTIBULES
-     O
-     Access Control for Transmission
-     Access Control for Output Devices
-     O
-     ACCESS TO OUTPUT BY AUTHORIZED INDIVIDUALS
-     LINK TO INDIVIDUAL IDENTITY
-     MARKING OUTPUT DEVICES
-     O
-     W: Incorporated into PE-5.
-     S
-     W: Incorporated into PE-22.
-     Monitoring Physical Access
-     O
-     INTRUSION ALARMS AND SURVEILLANCE EQUIPMENT
-     O
-     AUTOMATED INTRUSION RECOGNITION AND RESPONSES
-     O
-     VIDEO SURVEILLANCE
-     O
-     MONITORING PHYSICAL ACCESS TO SYSTEMS
-     Visitor Control
-     Visitor Access Records
-     AUTOMATED RECORDS MAINTENANCE AND REVIEW
-     PHYSICAL ACCESS RECORDS
-     O
-     W: Incorporated into PE-2 and PE-3.
-     O
-     O
-     O
-     Power Equipment and Cabling
-     O
-     REDUNDANT CABLING
-     O
-     AUTOMATIC VOLTAGE CONTROLS
-     O
-     ACCIDENTAL AND UNAUTHORIZED ACTIVATION
-     √
-     W: Incorporated into PE-2.
-     LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
-     Emergency Shutoff
-     √
-     √
-     √
-     √
-     √
-     O
-     W: Incorporated into PE-10.
-     Emergency Power
-     O
-     ALTERNATE POWER SUPPLY — MINIMAL OPERATIONAL CAPABILITY
-     O
-     ALTERNATE POWER SUPPLY — SELF-CONTAINED
-     O
-     Emergency Lighting
-     O
-     ESSENTIAL MISSION AND BUSINESS FUNCTIONS
-     O
-     Fire Protection
-     O
-     DETECTION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
-     O
-     SUPPRESSION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION
-     O
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PE-13(3)
-     PE-13(4)
-     PE-14
-     PE-14(1)
-     PE-14(2)
-     PE-15
-     PE-15(1)
-     PE-16
-     PE-17
-     PE-18
-     PE-18(1)
-     AUTOMATIC FIRE SUPPRESSION
-     PE-19
-     PE-19(1)
-     PE-20
-     PE-21
-     PE-22
-     PE-23
-     Information Leakage
-     O
-     NATIONAL EMISSIONS POLICIES AND PROCEDURES
-     O
-     Asset Monitoring and Tracking
-     Electromagnetic Pulse Protection
-     Component Marking
-     Facility Location
-     O
-     APPENDIX C
-     W: Incorporated into PE-13(2).
-     INSPECTIONS
-     O
-     Environmental Controls
-     O
-     AUTOMATIC CONTROLS
-     O
-     MONITORING WITH ALARMS AND NOTIFICATIONS
-     O
-     Water Damage Protection
-     O
-     AUTOMATION SUPPORT
-     O
-     Delivery and Removal
-     Alternate Work Site
-     Location of System Components
-     O
-     FACILITY SITE
-     ASSURANCE
-     O
-     O
-     W: Moved to PE-23.
-     O
-     O
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-12: PLANNING FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PL-1
-     PL-2
-     PL-2(1)
-     PL-2(2)
-     PL-2(3)
-     PL-3
-     PL-4
-     PL-4(1)
-     PL-5
-     PL-6
-     PL-7
-     PL-8
-     PL-8(1)
-     PL-8(2)
-     PL-9
-     PL-10
-     PL-11
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     System Security and Privacy Plans
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     √
-     O
-     CONCEPT OF OPERATIONS
-     W: Incorporated into PL-7.
-     FUNCTIONAL ARCHITECTURE
-     W: Incorporated into PL-8.
-     PLAN AND COORDINATE WITH OTHER ORGANIZATIONAL ENTITIES
-     W: Incorporated into PL-2.
-     System Security Plan Update
-     Rules of Behavior
-     SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS
-     Privacy Impact Assessment
-     Security-Related Activity Planning
-     Concept of Operations
-     Security and Privacy Architectures
-     W: Incorporated into PL-2.
-     O
-     O
-     √
-     √
-     W: Incorporated into RA-8.
-     W: Incorporated into PL-2.
-     O
-     O
-     DEFENSE IN DEPTH
-     O
-     SUPPLIER DIVERSITY
-     O
-     Central Management
-     Baseline Selection
-     Baseline Tailoring
-     O
-     √
-     √
-     √
-     √
-     O
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-13: PROGRAM MANAGEMENT FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PM-1
-     PM-2
-     PM-3
-     PM-4
-     PM-5
-     PM-5(1)
-     PM-6
-     PM-7
-     PM-7(1)
-     PM-8
-     PM-9
-     PM-10
-     PM-11
-     PM-12
-     PM-13
-     PM-14
-     PM-15
-     PM-16
-     PM-16(1)
-     PM-17
-     PM-18
-     PM-19
-     PM-20
-     PM-20(1)
-     PM-21
-     PM-22
-     PM-23
-     PM-24
-     PM-25
-     PM-26
-     PM-27
-     PM-28
-     PM-29
-     PM-30
-     PM-30(1)
-     PM-31
-     PM-32
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     Information Security Program Plan
-     Information Security Program Leadership Role
-     Information Security and Privacy Resources
-     Plan of Action and Milestones Process
-     System Inventory
-     O
-     INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION
-     O
-     Measures of Performance
-     Enterprise Architecture
-     O
-     OFFLOADING
-     O
-     Critical Infrastructure Plan
-     Risk Management Strategy
-     Authorization Process
-     Mission and Business Process Definition
-     Insider Threat Program
-     Security and Privacy Workforce
-     Testing, Training, and Monitoring
-     Security and Privacy Groups and Associations
-     Threat Awareness Program
-     O
-     AUTOMATED MEANS FOR SHARING THREAT INTELLIGENCE
-     O
-     Protecting Controlled Unclassified Information on External
-     Systems
-     Privacy Program Plan
-     Privacy Program Leadership Role
-     Dissemination of Privacy Program Information
-     PRIVACY POLICIES ON WEBSITES, APPLICATIONS, AND DIGITAL SERVICES
-     Accounting of Disclosures
-     Personally Identifiable Information Quality Management
-     Data Governance Body
-     Data Integrity Board
-     Minimization of Personally Identifiable Information Used
-     in Testing, Training, and Research
-     Complaint Management
-     Privacy Reporting
-     Risk Framing
-     Risk Management Program Leadership Roles
-     Supply Chain Risk Management Strategy
-     SUPPLIERS OF CRITICAL OR MISSION-ESSENTIAL ITEMS
-     Continuous Monitoring Strategy
-     Purposing
-     O
-     ASSURANCE
-     O
-     O
-     O
-     O
-     √
-     O
-     O
-     O
-     √
-     √
-     O
-     O
-     √
-     O
-     O
-     √
-     O
-     O
-     √
-     √
-     √
-     O
-     O
-     O
-     O
-     √
-     O
-     O
-     O
-     O
-     √
-     √
-     √
-     O
-     O
-     O
-     O
-     √
-     O
-     O
-     O
-     √
-     √
-     O
-     O
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-14: PERSONNEL SECURITY FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PS-1
-     PS-2
-     PS-3
-     PS-3(1)
-     PS-3(2)
-     PS-3(3)
-     PS-3(4)
-     PS-4
-     PS-4(1)
-     PS-4(2)
-     PS-5
-     PS-6
-     PS-6(1)
-     PS-6(2)
-     PS-6(3)
-     PS-7
-     PS-8
-     PS-9
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Position Risk Designation
-     Personnel Screening
-     O
-     √
-     CLASSIFIED INFORMATION
-     O
-     FORMAL INDOCTRINATION
-     O
-     INFORMATION REQUIRING SPECIAL PROTECTION MEASURES
-     O
-     CITIZENSHIP REQUIREMENTS
-     O
-     Personnel Termination
-     POST-EMPLOYMENT REQUIREMENTS
-     O
-     AUTOMATED ACTIONS
-     O
-     Personnel Transfer
-     Access Agreements
-     O
-     CONTROL ENHANCEMENT NAME
-     INFORMATION REQUIRING SPECIAL PROTECTION
-     O
-     O
-     O
-     O
-     √
-     W: Incorporated into PS-3.
-     CLASSIFIED INFORMATION REQUIRING SPECIAL PROTECTION
-     O
-     POST-EMPLOYMENT REQUIREMENTS
-     O
-     External Personnel Security
-     Personnel Sanctions
-     Position Descriptions
-     O
-     √
-     √
-     √
-     O
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-15: PERSONALLY IDENTIFIABLE INFORMATION PROCESSING AND TRANSPARENCY FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     PT-1
-     PT-2
-     PT-2(1)
-     PT-2(2)
-     PT-3
-     PT-3(1)
-     PT-3(2)
-     PT-4
-     PT-4(1)
-     PT-4(2)
-     PT-4(3)
-     PT-5
-     PT-5(1)
-     PT-5(2)
-     PT-6
-     PT-6(1)
-     PT-6(2)
-     PT-7
-     PT-7(1)
-     PT-7(2)
-     PT-8
-     APPENDIX C
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Authority to Process Personally Identifiable Information
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     √
-     √
-     √
-     O
-     DATA TAGGING
-     S
-     AUTOMATION
-     O
-     Personally Identifiable Information Processing Purposes
-     O
-     DATA TAGGING
-     S
-     AUTOMATION
-     O
-     Consent
-     O
-     TAILORED CONSENT
-     O
-     JUST-IN-TIME CONSENT
-     O
-     REVOCATION
-     O
-     Privacy Notice
-     JUST-IN-TIME NOTICE
-     O
-     PRIVACY ACT STATEMENTS
-     O
-     System of Records Notice
-     O
-     ROUTINE USES
-     O
-     EXEMPTION RULES
-     O
-     Specific Categories of Personally Identifiable Information
-     O
-     SOCIAL SECURITY NUMBERS
-     O
-     FIRST AMENDMENT INFORMATION
-     O
-     Computer Matching Requirements
-     O
-     √
-     √
-     O
-     NIST SP 800-53, REV. 5
-     TABLE C-16: RISK ASSESSMENT FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     RA-1
-     RA-2
-     RA-2(1)
-     RA-3
-     RA-3(1)
-     RA-3(2)
-     RA-3(3)
-     RA-3(4)
-     RA-4
-     RA-5
-     RA-5(1)
-     RA-5(2)
-     RA-5(3)
-     RA-5(4)
-     RA-5(5)
-     RA-5(6)
-     RA-5(7)
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Security Categorization
-     IMPACT-LEVEL PRIORITIZATION
-     Risk Assessment
-     O
-     √
-     SUPPLY CHAIN RISK ASSESSMENT
-     O
-     USE OF ALL-SOURCE INTELLIGENCE
-     O
-     DYNAMIC THREAT AWARENESS
-     O
-     CONTROL ENHANCEMENT NAME
-     PREDICTIVE CYBER ANALYTICS
-     O
-     O
-     O
-     O
-     Risk Assessment Update
-     Vulnerability Monitoring and Scanning
-     W: Incorporated into RA-3.
-     UPDATE TOOL CAPABILITY
-     W: Incorporated into RA-5.
-     O
-     UPDATE VULNERABILITIES TO BE SCANNED
-     O
-     BREADTH AND DEPTH OF COVERAGE
-     O
-     DISCOVERABLE INFORMATION
-     O
-     PRIVILEGED ACCESS
-     O
-     AUTOMATED TREND ANALYSES
-     AUTOMATED DETECTION AND NOTIFICATION OF UNAUTHORIZED
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into CM-8.
-     COMPONENTS
-     RA-5(8)
-     RA-5(9)
-     RA-5(10)
-     RA-5(11)
-     RA-6
-     RA-7
-     RA-8
-     RA-9
-     RA-10
-     APPENDIX C
-     REVIEW HISTORIC AUDIT LOGS
-     PENETRATION TESTING AND ANALYSES
-     O
-     √
-     W: Incorporated into CA-8.
-     CORRELATE SCANNING INFORMATION
-     O
-     PUBLIC DISCLOSURE PROGRAM
-     O
-     Technical Surveillance Countermeasures Survey
-     Risk Response
-     Privacy Impact Assessments
-     Criticality Analysis
-     Threat Hunting
-     O
-     O
-     O
-     √
-     √
-     √
-     √
-     √
-     O
-     O /S
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-17: SYSTEM AND SERVICES ACQUISITION FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SA-1
-     SA-2
-     SA-3
-     SA-3(1)
-     SA-3(2)
-     SA-3(3)
-     SA-4
-     SA-4(1)
-     SA-4(2)
-     SA-4(3)
-     SA-4(4)
-     SA-4(5)
-     SA-4(6)
-     SA-4(7)
-     SA-4(8)
-     SA-4(9)
-     SA-4(10)
-     SA-4(11)
-     SA-4(12)
-     SA-5
-     SA-5(1)
-     SA-5(2)
-     SA-5(3)
-     SA-5(4)
-     SA-5(5)
-     SA-6
-     SA-7
-     SA-8
-     SA-8(1)
-     SA-8(2)
-     SA-8(3)
-     SA-8(4)
-     SA-8(5)
-     SA-8(6)
-     SA-8(7)
-     SA-8(8)
-     SA-8(9)
-     SA-8(10)
-     SA-8(11)
-     SA-8(12)
-     SA-8(13)
-     SA-8(14)
-     APPENDIX C
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Allocation of Resources
-     System Development Life Cycle
-     O
-     MANAGE PREPRODUCTION ENVIRONMENT
-     O
-     USE OF LIVE OR OPERATIONAL DATA
-     O
-     TECHNOLOGY REFRESH
-     O
-     Acquisition Process
-     O
-     FUNCTIONAL PROPERTIES OF CONTROLS
-     O
-     DESIGN AND IMPLEMENTATION INFORMATION FOR CONTROLS
-     O
-     DEVELOPMENT METHODS, TECHNIQUES, AND PRACTICES
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     CONTROL ENHANCEMENT NAME
-     ASSIGNMENT OF COMPONENTS TO SYSTEMS
-     O
-     O
-     W: Incorporated into CM-8(9).
-     SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS
-     O
-     USE OF INFORMATION ASSURANCE PRODUCTS
-     O
-     NIAP-APPROVED PROTECTION PROFILES
-     O
-     CONTINUOUS MONITORING PLAN FOR CONTROLS
-     O
-     FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE
-     O
-     USE OF APPROVED PIV PRODUCTS
-     O
-     SYSTEM OF RECORDS
-     O
-     DATA OWNERSHIP
-     O
-     System Documentation
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     FUNCTIONAL PROPERTIES OF SECURITY CONTROLS
-     W: Incorporated into SA-4(1).
-     SECURITY-RELEVANT EXTERNAL SYSTEM INTERFACES
-     W: Incorporated into SA-4(2).
-     HIGH-LEVEL DESIGN
-     W: Incorporated into SA-4(2).
-     LOW-LEVEL DESIGN
-     W: Incorporated into SA-4(2).
-     SOURCE CODE
-     W: Incorporated into SA-4(2).
-     Software Usage Restrictions
-     User-Installed Software
-     Security and Privacy Engineering Principles
-     W: Incorporated into CM-10 and SI-7.
-     W: Incorporated into CM-11 and SI-7.
-     O
-     CLEAR ABSTRACTIONS
-     O /S
-     LEAST COMMON MECHANISM
-     O /S
-     MODULARITY AND LAYERING
-     O /S
-     PARTIALLY ORDERED DEPENDENCIES
-     O /S
-     EFFICIENTLY MEDIATED ACCESS
-     O /S
-     MINIMIZED SHARING
-     O /S
-     REDUCED COMPLEXITY
-     O /S
-     SECURE EVOLVABILITY
-     O /S
-     TRUSTED COMPONENTS
-     O /S
-     HIERARCHICAL TRUST
-     O /S
-     INVERSE MODIFICATION THRESHOLD
-     O /S
-     HIERARCHICAL PROTECTION
-     O /S
-     MINIMIZED SECURITY ELEMENTS
-     O /S
-     LEAST PRIVILEGE
-     O /S
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     SA-8(15)
-     SA-8(16)
-     SA-8(17)
-     SA-8(18)
-     SA-8(19)
-     SA-8(20)
-     SA-8(21)
-     SA-8(22)
-     SA-8(23)
-     SA-8(24)
-     SA-8(25)
-     PREDICATE PERMISSION
-     O /S
-     SELF-RELIANT TRUSTWORTHINESS
-     O /S
-     SECURE DISTRIBUTED COMPOSITION
-     O /S
-     TRUSTED COMMUNICATIONS CHANNELS
-     O /S
-     CONTINUOUS PROTECTION
-     O /S
-     SECURE METADATA MANAGEMENT
-     O /S
-     SELF-ANALYSIS
-     O /S
-     ACCOUNTABILITY AND TRACEABILITY
-     O /S
-     SECURE DEFAULTS
-     O /S
-     SECURE FAILURE AND RECOVERY
-     O /S
-     ECONOMIC SECURITY
-     O /S
-     SA-8(26)
-     SA-8(27)
-     SA-8(28)
-     SA-8(29)
-     SA-8(30)
-     SA-8(31)
-     SA-8(32)
-     SA-8(33)
-     SA-9
-     SA-9(1)
-     SA-9(2)
-     SA-9(3)
-     SA-9(4)
-     SA-9(5)
-     SA-9(6)
-     SA-9(7)
-     SA-9(8)
-     SA-10
-     SA-10(1)
-     SA-10(2)
-     SA-10(3)
-     SA-10(4)
-     SA-10(5)
-     SA-10(6)
-     SA-10(7)
-     SA-11
-     SA-11(1)
-     SA-11(2)
-     SA-11(3)
-     SA-11(4)
-     SA-11(5)
-     SA-11(6)
-     PERFORMANCE SECURITY
-     O /S
-     HUMAN FACTORED SECURITY
-     O /S
-     ACCEPTABLE SECURITY
-     O /S
-     REPEATABLE AND DOCUMENTED PROCEDURES
-     O /S
-     PROCEDURAL RIGOR
-     O /S
-     SECURE SYSTEM MODIFICATION
-     O /S
-     SUFFICIENT DOCUMENTATION
-     O /S
-     MINIMIZATION
-     O /S
-     External System Services
-     O
-     RISK ASSESSMENTS AND ORGANIZATIONAL APPROVALS
-     O
-     IDENTIFICATION OF FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES
-     O
-     ESTABLISH AND MAINTAIN TRUST RELATIONSHIP WITH PROVIDERS
-     O
-     CONSISTENT INTERESTS OF CONSUMERS AND PROVIDERS
-     O
-     PROCESSING, STORAGE, AND SERVICE LOCATION
-     O
-     ORGANIZATION-CONTROLLED CRYPTOGRAPHIC KEYS
-     O
-     ORGANIZATION-CONTROLLED INTEGRITY CHECKING
-     O
-     PROCESSING AND STORAGE LOCATION — U.S. JURISDICTION
-     O
-     Developer Configuration Management
-     O
-     SOFTWARE AND FIRMWARE INTEGRITY VERIFICATION
-     O
-     ALTERNATIVE CONFIGURATION MANAGEMENT PROCESSES
-     O
-     HARDWARE INTEGRITY VERIFICATION
-     O
-     TRUSTED GENERATION
-     O
-     MAPPING INTEGRITY FOR VERSION CONTROL
-     O
-     TRUSTED DISTRIBUTION
-     O
-     SECURITY AND PRIVACY REPRESENTATIVES
-     O
-     Developer Testing and Evaluation
-     O
-     STATIC CODE ANALYSIS
-     O
-     THREAT MODELING AND VULNERABILITY ANALYSES
-     O
-     INDEPENDENT VERIFICATION OF ASSESSMENT PLANS AND EVIDENCE
-     O
-     MANUAL CODE REVIEWS
-     O
-     PENETRATION TESTING
-     O
-     ATTACK SURFACE REVIEWS
-     O
-     APPENDIX C
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     √
-     √
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SA-11(7)
-     SA-11(8)
-     SA-11(9)
-     SA-12
-     SA-12(1)
-     SA-12(2)
-     SA-12(3)
-     SA-12(4)
-     SA-12(5)
-     SA-12(6)
-     SA-12(7)
-     VERIFY SCOPE OF TESTING AND EVALUATION
-     O
-     DYNAMIC CODE ANALYSIS
-     O
-     INTERACTIVE APPLICATION SECURITY TESTING
-     O
-     SA-12(8)
-     SA-12(9)
-     SA-12(10)
-     SA-12(11)
-     Supply Chain Protection
-     ACQUISITION STRATEGIES, TOOLS, AND METHODS
-     W: Moved to SR Family.
-     SUPPLIER REVIEWS
-     W: Moved to SR-6.
-     TRUSTED SHIPPING AND WAREHOUSING
-     W: Incorporated into SR-3.
-     DIVERSITY OF SUPPLIERS
-     W: Moved to SR-3(1).
-     LIMITATION OF HARM
-     W: Moved to SR-3(2).
-     MINIMIZING PROCUREMENT TIME
-     W: Incorporated into SR-5(1).
-     ASSESSMENTS PRIOR TO SELECTION / ACCEPTANCE / UPDATE
-     W: Moved to SR-5(2).
-     USE OF ALL-SOURCE INTELLIGENCE
-     W: Incorporated into RA-3(2).
-     OPERATIONS SECURITY
-     W: Moved to SR-7.
-     VALIDATE AS GENUINE AND NOT ALTERED
-     W: Moved to SR-4(3).
-     PENETRATION TESTING / ANALYSIS OF ELEMENTS, PROCESSES, AND
-     W: Moved to SR-6(1).
-     W: Moved to SR-5.
-     ACTORS
-     SA-12(12)
-     SA-12(13)
-     SA-12(14)
-     SA-12(15)
-     SA-13
-     SA-14
-     SA-14(1)
-     SA-15
-     SA-15(1)
-     SA-15(2)
-     SA-15(3)
-     SA-15(4)
-     SA-15(5)
-     SA-15(6)
-     SA-15(7)
-     SA-15(8)
-     SA-15(9)
-     SA-15(10)
-     SA-15(11)
-     SA-15(12)
-     SA-16
-     SA-17
-     SA-17(1)
-     SA-17(2)
-     SA-17(3)
-     SA-17(4)
-     SA-17(5)
-     APPENDIX C
-     INTER-ORGANIZATIONAL AGREEMENTS
-     W: Moved to SR-8.
-     CRITICAL INFORMATION SYSTEM COMPONENTS
-     W: Incorporated into MA-6 and RA-9.
-     IDENTITY AND TRACEABILITY
-     W: Moved to SR-4(1) and SR-4(2).
-     PROCESSES TO ADDRESS WEAKNESSES OR DEFICIENCIES
-     W: Incorporated into SR-3.
-     Trustworthiness
-     Criticality Analysis
-     W: Incorporated into SA-8.
-     CRITICAL COMPONENTS WITH NO VIABLE ALTERNATIVE SOURCING
-     W: Incorporated into SA-20.
-     W: Incorporated into RA-9.
-     Development Process, Standards, and Tools
-     O
-     QUALITY METRICS
-     O
-     SECURITY AND PRIVACY TRACKING TOOLS
-     O
-     CRITICALITY ANALYSIS
-     THREAT MODELING AND VULNERABILITY ANALYSIS
-     O
-     W: Incorporated into SA-11(2).
-     ATTACK SURFACE REDUCTION
-     O
-     CONTINUOUS IMPROVEMENT
-     O
-     AUTOMATED VULNERABILITY ANALYSIS
-     O
-     REUSE OF THREAT AND VULNERABILITY INFORMATION
-     USE OF LIVE DATA
-     √
-     √
-     √
-     √
-     O
-     √
-     √
-     √
-     √
-     W: Incorporated into SA-3(2).
-     INCIDENT RESPONSE PLAN
-     O
-     ARCHIVE SYSTEM OR COMPONENT
-     O
-     MINIMIZE PERSONALLY IDENTIFIABLE INFORMATION
-     O
-     Developer-Provided Training
-     Developer Security and Privacy Architecture and Design
-     O
-     FORMAL POLICY MODEL
-     O
-     SECURITY-RELEVANT COMPONENTS
-     O
-     FORMAL CORRESPONDENCE
-     O
-     INFORMAL CORRESPONDENCE
-     O
-     CONCEPTUALLY SIMPLE DESIGN
-     O
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     √
-     √
-     √
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SA-17(6)
-     SA-17(7)
-     SA-17(8)
-     SA-17(9)
-     SA-18
-     SA-18(1)
-     SA-18(2)
-     SA-19
-     SA-19(1)
-     SA-19(2)
-     SA-19(3)
-     STRUCTURE FOR TESTING
-     O
-     STRUCTURE FOR LEAST PRIVILEGE
-     O
-     ORCHESTRATION
-     O
-     SA-19(4)
-     SA-20
-     SA-21
-     SA-21(1)
-     SA-22
-     SA-22(1)
-     SA-23
-     APPENDIX C
-     DESIGN DIVERSITY
-     O
-     Tamper Resistance and Detection
-     W: Moved to SR-9.
-     MULTIPLE PHASES OF SYSTEM DEVELOPMENT LIFE CYCLE
-     W: Moved to SR-9(1).
-     INSPECTION OF SYSTEMS OR COMPONENTS
-     W: Moved to SR-10.
-     Component Authenticity
-     ANTI-COUNTERFEIT TRAINING
-     W: Moved to SR-11.
-     CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-     W: Moved to SR-11(2).
-     COMPONENT DISPOSAL
-     W: Moved to SR-12.
-     ANTI-COUNTERFEIT SCANNING
-     W: Moved to SR-11(3).
-     Customized Development of Critical Components
-     Developer Screening
-     VALIDATION OF SCREENING
-     Unsupported System Components
-     ALTERNATIVE SOURCES FOR CONTINUED SUPPORT
-     Specialization
-     W: Moved to SR-11(1).
-     O
-     O
-     √
-     √
-     W: Incorporated into SA-21.
-     O
-     √
-     W: Incorporated into SA-22.
-     O
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-18: SYSTEM AND COMMUNICATIONS PROTECTION FAMILY
-     CONTROL
-     NUMBER
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-1
-     SC-2
-     SC-2(1)
-     SC-2(2)
-     SC-3
-     SC-3(1)
-     SC-3(2)
-     SC-3(3)
-     SC-3(4)
-     SC-3(5)
-     SC-4
-     SC-4(1)
-     SC-4(2)
-     SC-5
-     SC-5(1)
-     SC-5(2)
-     SC-5(3)
-     SC-6
-     SC-7
-     SC-7(1)
-     SC-7(2)
-     SC-7(3)
-     SC-7(4)
-     SC-7(5)
-     SC-7(6)
-     SC-7(7)
-     SC-7(8)
-     SC-7(9)
-     SC-7(10)
-     SC-7(11)
-     SC-7(12)
-     SC-7(13)
-     CONTROL NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     Policy and Procedures
-     Separation of System and User Functionality
-     INTERFACES FOR NON-PRIVILEGED USERS
-     O
-     DISASSOCIABILITY
-     S
-     Security Function Isolation
-     S
-     HARDWARE SEPARATION
-     S
-     ACCESS AND FLOW CONTROL FUNCTIONS
-     S
-     MINIMIZE NONSECURITY FUNCTIONALITY
-     O /S
-     MODULE COUPLING AND COHESIVENESS
-     O /S
-     LAYERED STRUCTURES
-     O /S
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     CONTROL ENHANCEMENT NAME
-     Information in Shared System Resources
-     SECURITY LEVELS
-     S
-     S
-     S
-     W: Incorporated into SC-4.
-     MULTILEVEL OR PERIODS PROCESSING
-     S
-     Denial-of-Service Protection
-     S
-     RESTRICT ABILITY TO ATTACK OTHER SYSTEMS
-     S
-     CAPACITY, BANDWIDTH, AND REDUNDANCY
-     S
-     DETECTION AND MONITORING
-     S
-     Resource Availability
-     Boundary Protection
-     S
-     S
-     PHYSICALLY SEPARATED SUBNETWORKS
-     W: Incorporated into SC-7.
-     PUBLIC ACCESS
-     W: Incorporated into SC-7.
-     ACCESS POINTS
-     S
-     EXTERNAL TELECOMMUNICATIONS SERVICES
-     O
-     DENY BY DEFAULT — ALLOW BY EXCEPTION
-     RESPONSE TO RECOGNIZED FAILURES
-     √
-     S
-     W: Incorporated into SC-7(18).
-     SPLIT TUNNELING FOR REMOTE DEVICES
-     S
-     ROUTE TRAFFIC TO AUTHENTICATED PROXY SERVERS
-     S
-     RESTRICT THREATENING OUTGOING COMMUNICATIONS TRAFFIC
-     S
-     PREVENT EXFILTRATION
-     S
-     RESTRICT INCOMING COMMUNICATIONS TRAFFIC
-     S
-     HOST-BASED PROTECTION
-     S
-     ISOLATION OF SECURITY TOOLS, MECHANISMS, AND SUPPORT
-     S
-     COMPONENTS
-     SC-7(14)
-     SC-7(15)
-     SC-7(16)
-     SC-7(17)
-     SC-7(18)
-     SC-7(19)
-     PROTECT AGAINST UNAUTHORIZED PHYSICAL CONNECTIONS
-     S
-     NETWORKED PRIVILEGED ACCESSES
-     S
-     PREVENT DISCOVERY OF SYSTEM COMPONENTS
-     S
-     AUTOMATED ENFORCEMENT OF PROTOCOL FORMATS
-     S
-     FAIL SECURE
-     S
-     BLOCK COMMUNICATION FROM NON-ORGANIZATIONALLY CONFIGURED
-     S
-     √
-     HOSTS
-     SC-7(20)
-     SC-7(21)
-     APPENDIX C
-     DYNAMIC ISOLATION AND SEGREGATION
-     S
-     ISOLATION OF SYSTEM COMPONENTS
-     O /S
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     CONTROL ENHANCEMENT NAME
-     SC-7(22)
-     SC-7(23)
-     SC-7(24)
-     SC-7(25)
-     SC-7(26)
-     SC-7(27)
-     SC-7(28)
-     SC-7(29)
-     SC-8
-     SC-8(1)
-     SC-8(2)
-     SEPARATE SUBNETS FOR CONNECTING TO DIFFERENT SECURITY DOMAINS
-     S
-     √
-     DISABLE SENDER FEEDBACK ON PROTOCOL VALIDATION FAILURE
-     S
-     PERSONALLY IDENTIFIABLE INFORMATION
-     O /S
-     UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
-     O
-     CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS
-     O
-     UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS
-     O
-     CONNECTIONS TO PUBLIC NETWORKS
-     O
-     SEPARATE SUBNETS TO ISOLATE FUNCTIONS
-     S
-     Transmission Confidentiality and Integrity
-     S
-     CRYPTOGRAPHIC PROTECTION
-     S
-     PRE- AND POST-TRANSMISSION HANDLING
-     S
-     SC-8(3)
-     SC-8(4)
-     SC-8(5)
-     SC-9
-     SC-10
-     SC-11
-     SC-11(1)
-     SC-12
-     SC-12(1)
-     SC-12(2)
-     SC-12(3)
-     SC-12(4)
-     SC-12(5)
-     SC-12(6)
-     SC-13
-     SC-13(1)
-     SC-13(2)
-     SC-13(3)
-     SC-13(4)
-     SC-14
-     CRYPTOGRAPHIC PROTECTION FOR MESSAGE EXTERNALS
-     S
-     CONCEAL OR RANDOMIZE COMMUNICATIONS
-     S
-     SC-15
-     SC-15(1)
-     SC-15(2)
-     SC-15(3)
-     SC-15(4)
-     SC-16
-     SC-16(1)
-     SC-16(2)
-     Collaborative Computing Devices and Applications
-     SC-16(3)
-     SC-17
-     SC-18
-     SC-18(1)
-     APPENDIX C
-     PROTECTED DISTRIBUTION SYSTEM
-     Transmission Confidentiality
-     Network Disconnect
-     Trusted Path
-     S
-     W: Incorporated into SC-8.
-     S
-     S
-     IRREFUTABLE COMMUNICATIONS PATH
-     S
-     Cryptographic Key Establishment and Management
-     O /S
-     AVAILABILITY
-     O /S
-     SYMMETRIC KEYS
-     O /S
-     ASYMMETRIC KEYS
-     O /S
-     PKI CERTIFICATES
-     W: Incorporated into SC-12(3).
-     PKI CERTIFICATES / HARDWARE TOKENS
-     W: Incorporated into SC-12(3).
-     PHYSICAL CONTROL OF KEYS
-     √
-     √
-     O /S
-     Cryptographic Protection
-     FIPS-VALIDATED CRYPTOGRAPHY
-     NSA-APPROVED CRYPTOGRAPHY
-     W: Incorporated into SC-13.
-     INDIVIDUALS WITHOUT FORMAL ACCESS APPROVALS
-     W: Incorporated into SC-13.
-     DIGITAL SIGNATURES
-     W: Incorporated into SC-13.
-     Public Access Protections
-     W: Incorporated into AC-2, AC-3, AC-5, SI3, SI-4, SI-5, SI-7, and SI-10.
-     PHYSICAL OR LOGICAL DISCONNECT
-     BLOCKING INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC
-     S
-     W: Incorporated into SC-13.
-     S
-     S
-     W: Incorporated into SC-7.
-     DISABLING AND REMOVAL IN SECURE WORK AREAS
-     O
-     EXPLICITLY INDICATE CURRENT PARTICIPANTS
-     S
-     Transmission of Security and Privacy Attributes
-     S
-     INTEGRITY VERIFICATION
-     S
-     ANTI-SPOOFING MECHANISMS
-     S
-     CRYPTOGRAPHIC BINDING
-     S
-     Public Key Infrastructure Certificates
-     Mobile Code
-     O /S
-     IDENTIFY UNACCEPTABLE CODE AND TAKE CORRECTIVE ACTIONS
-     S
-     O
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-18(2)
-     SC-18(3)
-     SC-18(4)
-     SC-18(5)
-     SC-19
-     ACQUISITION, DEVELOPMENT, AND USE
-     O
-     PREVENT DOWNLOADING AND EXECUTION
-     S
-     PREVENT AUTOMATIC EXECUTION
-     S
-     SC-20
-     Secure Name/Address Resolution Service
-     (Authoritative Source)
-     SC-20(1)
-     SC-20(2)
-     SC-21
-     CHILD SUBSPACES
-     SC-21(1)
-     SC-22
-     DATA ORIGIN AND INTEGRITY
-     SC-23
-     SC-23(1)
-     SC-23(2)
-     SC-23(3)
-     SC-23(4)
-     SC-23(5)
-     SC-24
-     SC-25
-     SC-26
-     SC-26(1)
-     SC-27
-     SC-28
-     SC-28(1)
-     SC-28(2)
-     SC-28(3)
-     SC-29
-     SC-29(1)
-     SC-30
-     SC-30(1)
-     SC-30(2)
-     SC-30(3)
-     SC-30(4)
-     SC-30(5)
-     SC-31
-     SC-31(1)
-     SC-31(2)
-     SC-31(3)
-     SC-32
-     SC-32(1)
-     APPENDIX C
-     ALLOW EXECUTION ONLY IN CONFINED ENVIRONMENTS
-     Voice over Internet Protocol
-     S
-     W: Technology-specific; addressed as any
-     other technology or protocol.
-     S
-     W: Incorporated into SC-20.
-     DATA ORIGIN AND INTEGRITY
-     S
-     Secure Name/Address Resolution Service
-     (Recursive or Caching Resolver)
-     S
-     Architecture and Provisioning for
-     Name/Address Resolution Service
-     Session Authenticity
-     INVALIDATE SESSION IDENTIFIERS AT LOGOUT
-     USER-INITIATED LOGOUTS AND MESSAGE DISPLAYS
-     UNIQUE SYSTEM-GENERATED SESSION IDENTIFIERS
-     UNIQUE SESSION IDENTIFIERS WITH RANDOMIZATION
-     W: Incorporated into SC-21.
-     S
-     S
-     S
-     W: Incorporated into AC-12(1).
-     S
-     W: Incorporated into SC-23(3).
-     ALLOWED CERTIFICATE AUTHORITIES
-     S
-     Fail in Known State
-     Thin Nodes
-     Decoys
-     S
-     DETECTION OF MALICIOUS CODE
-     Platform-Independent Applications
-     Protection of Information at Rest
-     √
-     S
-     S
-     W: Incorporated into SC-35.
-     S
-     S
-     CRYPTOGRAPHIC PROTECTION
-     S
-     OFFLINE STORAGE
-     O
-     CRYPTOGRAPHIC KEYS
-     O /S
-     Heterogeneity
-     O
-     VIRTUALIZATION TECHNIQUES
-     O
-     Concealment and Misdirection
-     O
-     VIRTUALIZATION TECHNIQUES
-     ASSURANCE
-     √
-     √
-     √
-     W: Incorporated into SC-29(1).
-     RANDOMNESS
-     O
-     CHANGE PROCESSING AND STORAGE LOCATIONS
-     O
-     MISLEADING INFORMATION
-     O
-     CONCEALMENT OF SYSTEM COMPONENTS
-     O
-     Covert Channel Analysis
-     O
-     TEST COVERT CHANNELS FOR EXPLOITABILITY
-     O
-     MAXIMUM BANDWIDTH
-     O
-     MEASURE BANDWIDTH IN OPERATIONAL ENVIRONMENTS
-     O
-     System Partitioning
-     O /S
-     SEPARATE PHYSICAL DOMAINS FOR PRIVILEGED FUNCTIONS
-     O /S
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SC-33
-     SC-34
-     SC-34(1)
-     SC-34(2)
-     SC-34(3)
-     SC-35
-     SC-36
-     SC-36(1)
-     SC-36(2)
-     SC-37
-     SC-37(1)
-     Transmission Preparation Integrity
-     Non-Modifiable Executable Programs
-     SC-38
-     SC-39
-     SC-39(1)
-     SC-39(2)
-     SC-40
-     SC-40(1)
-     SC-40(2)
-     SC-40(3)
-     SC-40(4)
-     SC-41
-     SC-42
-     SC-42(1)
-     SC-42(2)
-     SC-42(3)
-     SC-42(4)
-     SC-42(5)
-     SC-43
-     SC-44
-     SC-45
-     SC-45(1)
-     SC-45(2)
-     SC-46
-     SC-47
-     SC-48
-     SC-48(1)
-     SC-49
-     SC-50
-     SC-51
-     APPENDIX C
-     NO WRITABLE STORAGE
-     INTEGRITY PROTECTION AND READ-ONLY MEDIA
-     HARDWARE-BASED PROTECTION
-     IMPLEMENTED
-     BY
-     W: Incorporated into SC-8.
-     S
-     O
-     O
-     O
-     POLLING TECHNIQUES
-     O
-     SYNCHRONIZATION
-     O
-     Out-of-Band Channels
-     O
-     ENSURE DELIVERY AND TRANSMISSION
-     O
-     Operations Security
-     Process Isolation
-     O
-     HARDWARE SEPARATION
-     S
-     SEPARATE EXECUTION DOMAIN PER THREAD
-     S
-     Wireless Link Protection
-     S
-     ELECTROMAGNETIC INTERFERENCE
-     S
-     REDUCE DETECTION POTENTIAL
-     S
-     IMITATIVE OR MANIPULATIVE COMMUNICATIONS DECEPTION
-     S
-     S
-     S
-     SIGNAL PARAMETER IDENTIFICATION
-     S
-     Port and I/O Device Access
-     Sensor Capability and Data
-     O /S
-     REPORTING TO AUTHORIZED INDIVIDUALS OR ROLES
-     O
-     PROHIBIT USE OF DEVICES
-     √
-     √
-     √
-     W: Moved to SC-51.
-     External Malicious Code Identification
-     Distributed Processing and Storage
-     AUTHORIZED USE
-     ASSURANCE
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     S
-     O
-     W: Incorporated into SC-42.
-     NOTICE OF COLLECTION
-     O
-     COLLECTION MINIMIZATION
-     O
-     Usage Restrictions
-     Detonation Chambers
-     System Time Synchronization
-     O /S
-     SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE
-     S
-     SECONDARY AUTHORITATIVE TIME SOURCE
-     S
-     Cross Domain Policy Enforcement
-     Alternate Communications Paths
-     Sensor Relocation
-     O /S
-     DYNAMIC RELOCATION OF SENSORS OR MONITORING CAPABILITIES
-     O /S
-     Hardware-Enforced Separation and Policy Enforcement
-     Software-Enforced Separation and Policy Enforcement
-     Hardware-Based Protection
-     O /S
-     S
-     S
-     S
-     O /S
-     O /S
-     O /S
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     TABLE C-19: SYSTEM AND INFORMATION INTEGRITY FAMILY
-     CONTROL
-     NUMBER
-     SI-1
-     SI-2
-     SI-2(1)
-     SI-2(2)
-     SI-2(3)
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     Policy and Procedures
-     Flaw Remediation
-     CENTRAL MANAGEMENT
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     O
-     √
-     O
-     W: Incorporated into PL-9.
-     AUTOMATED FLAW REMEDIATION STATUS
-     O
-     TIME TO REMEDIATE FLAWS AND BENCHMARKS FOR CORRECTIVE
-     O
-     ACTIONS
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SI-2(4)
-     SI-2(5)
-     SI-2(6)
-     SI-3
-     SI-3(1)
-     SI-3(2)
-     SI-3(3)
-     SI-3(4)
-     SI-3(5)
-     SI-3(6)
-     SI-3(7)
-     SI-3(8)
-     SI-3(9)
-     SI-3(10)
-     SI-4
-     SI-4(1)
-     SI-4(2)
-     SI-4(3)
-     SI-4(4)
-     SI-4(5)
-     SI-4(6)
-     SI-4(7)
-     SI-4(8)
-     SI-4(9)
-     SI-4(10)
-     SI-4(11)
-     SI-4(12)
-     SI-4(13)
-     SI-4(14)
-     SI-4(15)
-     SI-4(16)
-     SI-4(17)
-     SI-4(18)
-     SI-4(19)
-     SI-4(20)
-     SI-4(21)
-     APPENDIX C
-     AUTOMATED PATCH MANAGEMENT TOOLS
-     O /S
-     AUTOMATIC SOFTWARE AND FIRMWARE UPDATES
-     O /S
-     REMOVAL OF PREVIOUS VERSIONS OF SOFTWARE AND FIRMWARE
-     O /S
-     Malicious Code Protection
-     O /S
-     CENTRAL MANAGEMENT
-     W: Incorporated into PL-9.
-     AUTOMATIC UPDATES
-     W: Incorporated into SI-3.
-     NON-PRIVILEGED USERS
-     W: Incorporated into AC-6(10).
-     UPDATES ONLY BY PRIVILEGED USERS
-     PORTABLE STORAGE DEVICES
-     TESTING AND VERIFICATION
-     NONSIGNATURE-BASED DETECTION
-     O /S
-     W: Incorporated into MP-7.
-     O
-     W: Incorporated into SI-3.
-     DETECT UNAUTHORIZED COMMANDS
-     S
-     AUTHENTICATE REMOTE COMMANDS
-     W: Moved to AC-17(10).
-     MALICIOUS CODE ANALYSIS
-     O
-     System Monitoring
-     SYSTEM-WIDE INTRUSION DETECTION SYSTEM
-     O /S
-     AUTOMATED TOOLS AND MECHANISMS FOR REAL-TIME ANALYSIS
-     S
-     AUTOMATED TOOL AND MECHANISM INTEGRATION
-     S
-     INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC
-     S
-     SYSTEM-GENERATED ALERTS
-     RESTRICT NON-PRIVILEGED USERS
-     AUTOMATED RESPONSE TO SUSPICIOUS EVENTS
-     PROTECTION OF MONITORING INFORMATION
-     TESTING OF MONITORING TOOLS AND MECHANISMS
-     O /S
-     S
-     √
-     √
-     √
-     √
-     √
-     √
-     W: Incorporated into AC-6(10).
-     S
-     √
-     W: Incorporated into SI-4.
-     O
-     VISIBILITY OF ENCRYPTED COMMUNICATIONS
-     O
-     ANALYZE COMMUNICATIONS TRAFFIC ANOMALIES
-     O /S
-     AUTOMATED ORGANIZATION-GENERATED ALERTS
-     O /S
-     ANALYZE TRAFFIC AND EVENT PATTERNS
-     O /S
-     WIRELESS INTRUSION DETECTION
-     S
-     WIRELESS TO WIRELINE COMMUNICATIONS
-     S
-     CORRELATE MONITORING INFORMATION
-     O /S
-     INTEGRATED SITUATIONAL AWARENESS
-     O
-     ANALYZE TRAFFIC AND COVERT EXFILTRATION
-     O /S
-     RISK FOR INDIVIDUALS
-     O
-     PRIVILEGED USERS
-     S
-     PROBATIONARY PERIODS
-     O
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     ASSURANCE
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SI-4(22)
-     SI-4(23)
-     SI-4(24)
-     SI-4(25)
-     SI-5
-     SI-5(1)
-     SI-6
-     SI-6(1)
-     SI-6(2)
-     SI-6(3)
-     SI-7
-     UNAUTHORIZED NETWORK SERVICES
-     S
-     HOST-BASED DEVICES
-     O
-     INDICATORS OF COMPROMISE
-     S
-     OPTIMIZE NETWORK TRAFFIC ANALYSIS
-     S
-     Security Alerts, Advisories, and Directives
-     O
-     AUTOMATED ALERTS AND ADVISORIES
-     O
-     Security and Privacy Function Verification
-     NOTIFICATION OF FAILED SECURITY TESTS
-     S
-     W: Incorporated into SI-6.
-     AUTOMATION SUPPORT FOR DISTRIBUTED TESTING
-     S
-     REPORT VERIFICATION RESULTS
-     O
-     Software, Firmware, and Information Integrity
-     O /S
-     √
-     SI-7(1)
-     SI-7(2)
-     SI-7(3)
-     SI-7(4)
-     SI-7(5)
-     SI-7(6)
-     SI-7(7)
-     SI-7(8)
-     SI-7(9)
-     SI-7(10)
-     SI-7(11)
-     SI-7(12)
-     SI-7(13)
-     SI-7(14)
-     SI-7(15)
-     SI-7(16)
-     SI-7(17)
-     SI-8
-     SI-8(1)
-     SI-8(2)
-     SI-8(3)
-     SI-9
-     INTEGRITY CHECKS
-     S
-     AUTOMATED NOTIFICATIONS OF INTEGRITY VIOLATIONS
-     S
-     √
-     √
-     √
-     SI-10
-     SI-10(1)
-     SI-10(2)
-     SI-10(3)
-     SI-10(4)
-     SI-10(5)
-     Information Input Validation
-     S
-     MANUAL OVERRIDE CAPABILITY
-     O /S
-     SI-10(6)
-     SI-11
-     SI-12
-     SI-12(1)
-     APPENDIX C
-     CENTRALLY MANAGED INTEGRITY TOOLS
-     TAMPER-EVIDENT PACKAGING
-     AUTOMATED RESPONSE TO INTEGRITY VIOLATIONS
-     O
-     W: Incorporated into SR-9.
-     S
-     CRYPTOGRAPHIC PROTECTION
-     S
-     INTEGRATION OF DETECTION AND RESPONSE
-     O
-     AUDITING CAPABILITY FOR SIGNIFICANT EVENTS
-     S
-     VERIFY BOOT PROCESS
-     S
-     PROTECTION OF BOOT FIRMWARE
-     CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES
-     INTEGRITY VERIFICATION
-     S
-     W: Moved to CM-7(6).
-     O /S
-     CODE EXECUTION IN PROTECTED ENVIRONMENTS
-     W: Moved to CM-7(7).
-     BINARY OR MACHINE EXECUTABLE CODE
-     W: Moved to CM-7(8).
-     CODE AUTHENTICATION
-     S
-     TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION
-     O
-     RUNTIME APPLICATION SELF-PROTECTION
-     O /S
-     Spam Protection
-     CENTRAL MANAGEMENT
-     AUTOMATIC UPDATES
-     CONTINUOUS LEARNING CAPABILITY
-     Information Input Restrictions
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     √
-     O
-     W: Incorporated into PL-9.
-     S
-     S
-     W: Incorporated into AC-2, AC-3, AC-5, and
-     AC-6.
-     REVIEW AND RESOLVE ERRORS
-     O
-     PREDICTABLE BEHAVIOR
-     O /S
-     TIMING INTERACTIONS
-     S
-     RESTRICT INPUTS TO TRUSTED SOURCES AND APPROVED FORMATS
-     S
-     √
-     √
-     √
-     √
-     √
-     √
-     INJECTION PREVENTION
-     S
-     √
-     Error Handling
-     Information Management and Retention
-     O
-     LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS
-     O
-     S
-     NIST SP 800-53, REV. 5
-     CONTROL
-     NUMBER
-     CONTROL NAME
-     CONTROL ENHANCEMENT NAME
-     IMPLEMENTED
-     BY
-     This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-     SI-12(2)
-     MINIMIZE PERSONALLY IDENTIFIABLE INFORMATION IN TESTING,
-     O
-     SI-12(3)
-     SI-13
-     SI-13(1)
-     SI-13(2)
-     SI-13(3)
-     SI-13(4)
-     SI-13(5)
-     SI-14
-     SI-14(1)
-     SI-14(2)
-     SI-14(3)
-     SI-15
-     SI-16
-     SI-17
-     SI-18
-     SI-18(1)
-     SI-18(2)
-     SI-18(3)
-     SI-18(4)
-     SI-18(5)
-     SI-19
-     SI-19(1)
-     SI-19(2)
-     SI-19(3)
-     SI-19(4)
-     INFORMATION DISPOSAL
-     O
-     Predictable Failure Prevention
-     O
-     TRAINING, AND RESEARCH
-     TRANSFERRING COMPONENT RESPONSIBILITIES
-     TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION
-     ASSURANCE
-     O
-     √
-     √
-     W: Incorporated into SI-7(16).
-     MANUAL TRANSFER BETWEEN COMPONENTS
-     O
-     STANDBY COMPONENT INSTALLATION AND NOTIFICATION
-     O /S
-     FAILOVER CAPABILITY
-     O
-     Non-Persistence
-     O
-     REFRESH FROM TRUSTED SOURCES
-     O
-     NON-PERSISTENT INFORMATION
-     O
-     NON-PERSISTENT CONNECTIVITY
-     O
-     Information Output Filtering
-     Memory Protection
-     Fail-Safe Procedures
-     Personally Identifiable Information Quality Operations
-     S
-     O /S
-     AUTOMATION SUPPORT
-     O /S
-     DATA TAGS
-     O /S
-     COLLECTION
-     O /S
-     INDIVIDUAL REQUESTS
-     O /S
-     NOTICE OF CORRECTION OR DELETION
-     O /S
-     De-Identification
-     O /S
-     COLLECTION
-     O /S
-     ARCHIVING
-     O /S
-     RELEASE
-     O /S
-     REMOVAL, MASKING, ENCRYPTION, HASHING, OR REPLACEMENT OF
-     S
-     SR-3(1) DIVERSE SUPPLY BASE O √
-     SR-3(2) LIMITATION OF HARM O √
 
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-SR-3(3) SUB-TIER FLOW DOWN O √
-SR-4 Provenance O √
-SR-4(1) IDENTITY O √
-SR-4(2) TRACK AND TRACE O √
-SR-4(3) VALIDATE AS GENUINE AND NOT ALTERED O √
-SR-4(4) SUPPLY CHAIN INTEGRITY — PEDIGREE O √
-SR-5 Acquisition Strategies, Tools, and Methods O √
-SR-5(1) ADEQUATE SUPPLY O √
-SR-5(2) ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR O √
-UPDATE
-SR-6 Supplier Assessments and Reviews O √
-SR-6(1) TESTING AND ANALYSIS O √
-SR-7 Supply Chain Operations Security O √
-SR-8 Notification Agreements O √
-SR-9 Tamper Resistance and Detection O √
-SR-9(1) MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE O √
-SR-10 Inspection of Systems or Components O √
-SR-11 Component Authenticity O √
-SR-11(1) ANTI-COUNTERFEIT TRAINING O √
-SR-11(2) CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR O √
-SR-11(3) ANTI-COUNTERFEIT SCANNING O √
-SR-12 Component Disposal O √
-APPENDIX C PAGE 465
-√
-√
-√
-√
-√
-√
-√
-√
-√
-DIRECT IDENTIFIERS
-SI-19(5)
-SI-19(6)
-SI-19(7)
-SI-19(8)
-SI-20
-SI-21
-SI-22
-SI-23
-APPENDIX C
-STATISTICAL DISCLOSURE CONTROL
-O /S
-DIFFERENTIAL PRIVACY
-O /S
-VALIDATED ALGORITHMS AND SOFTWARE
-O
-MOTIVATED INTRUDER
-O /S
-Tainting
-Information Refresh
-Information Diversity
-Information Fragmentation
-O /S
-O /S
-O /S
-O /S
-√
-√
-√
-√
-NIST SP 800-53, REV. 5
-TABLE C-20: SUPPLY CHAIN RISK MANAGEMENT FAMILY
-CONTROL
-NUMBER
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-53r5
-SR-1
-SR-2
-SR-2(1)
-SR-3
-SR-3(1)
-SR-3(2)
-SR-3(3)
-SR-4
-SR-4(1)
-SR-4(2)
-SR-4(3)
-SR-4(4)
-SR-5
-SR-5(1)
-SR-5(2)
-CONTROL NAME
-CONTROL ENHANCEMENT NAME
-Policy and Procedures
-Supply Chain Risk Management Plan
-IMPLEMENTED
-BY
-ASSURANCE
-O
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-√
-O
-ESTABLISH SCRM TEAM
-O
-Supply Chain Controls and Processes
-O /S
-DIVERSE SUPPLY BASE
-O
-LIMITATION OF HARM
-O
-SUB-TIER FLOW DOWN
-O
-Provenance
-O
-IDENTITY
-O
-TRACK AND TRACE
-O
-VALIDATE AS GENUINE AND NOT ALTERED
-O
-SUPPLY CHAIN INTEGRITY — PEDIGREE
-O
-Acquisition Strategies, Tools, and Methods
-O
-ADEQUATE SUPPLY
-O
-ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
-O
-UPDATE
-SR-6
-SR-6(1)
-SR-7
-SR-8
-SR-9
-SR-9(1)
-SR-10
-SR-11
-SR-11(1)
-SR-11(2)
-SR-11(3)
-SR-12
-APPENDIX C
-Supplier Assessments and Reviews
-O
-TESTING AND ANALYSIS
-O
-Supply Chain Operations Security
-Notification Agreements
-Tamper Resistance and Detection
-O
-MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
-O
-Inspection of Systems or Components
-Component Authenticity
-ANTI-COUNTERFEIT TRAINING
-O
-CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-O
-ANTI-COUNTERFEIT SCANNING
-O
-Component Disposal
-O
-√
-SR-3(3)
-SUB-TIER FLOW DOWN
-O
-√
-SR-4
-Provenance
-O
-√
-SR-4(1)
-IDENTITY
-O
-√
-SR-4(2)
-TRACK AND TRACE
-O
-√
-SR-4(3)
-VALIDATE AS GENUINE AND NOT ALTERED
-O
-√
-SR-4(4)
-SUPPLY CHAIN INTEGRITY — PEDIGREE
-O
-√
-SR-5
-Acquisition Strategies, Tools, and Methods
-O
-√
-SR-5(1)
-ADEQUATE SUPPLY
-O
-√
-SR-5(2)
-ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR
-UPDATE
-O
-√
-SR-6
-Supplier Assessments and Reviews
-O
-√
-SR-6(1)
-TESTING AND ANALYSIS
-O
-√
-SR-7
-Supply Chain Operations Security
-O
-√
-SR-8
-Notification Agreements
-O
-√
-SR-9
-Tamper Resistance and Detection
-O
-√
-SR-9(1)
-MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE
-O
-√
-SR-10
-Inspection of Systems or Components
-O
-√
-SR-11
-Component Authenticity
-O
-√
-SR-11(1)
-ANTI-COUNTERFEIT TRAINING
-O
-√
-SR-11(2)
-CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR
-O
-√
-SR-11(3)
-ANTI-COUNTERFEIT SCANNING
-O
-√
-SR-12
-Component Disposal
-O
-√
-APPENDIX C
-PAGE 465
+**TABLE C-1: ACCESS CONTROL FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                   | Implemented By                       | Assurance |
+| -------------- | ----------------------------------------------------------------- | ------------------------------------ | --------- |
+| AC-1           | Policy and Procedures                                             | O                                    | √         |
+| AC-2           | Account Management                                                | O                                    |           |
+| AC-2(1)        | AUTOMATED SYSTEM ACCOUNT MANAGEMENT                               | O                                    |           |
+| AC-2(2)        | AUTOMATED TEMPORARY AND EMERGENCY ACCOUNT MANAGEMENT              | S                                    |           |
+| AC-2(3)        | DISABLE ACCOUNTS                                                  | S                                    |           |
+| AC-2(4)        | AUTOMATED AUDIT ACTIONS                                           | S                                    |           |
+| AC-2(5)        | INACTIVITY LOGOUT                                                 | O /S                                 |           |
+| AC-2(6)        | DYNAMIC PRIVILEGE MANAGEMENT                                      | S                                    |           |
+| AC-2(7)        | PRIVILEGED USER ACCOUNTS                                          | O                                    |           |
+| AC-2(8)        | DYNAMIC ACCOUNT MANAGEMENT                                        | S                                    |           |
+| AC-2(9)        | RESTRICTIONS ON USE OF SHARED AND GROUP ACCOUNTS                  | O                                    |           |
+| AC-2(10)       | SHARED AND GROUP ACCOUNT CREDENTIAL CHANGE                        | W: Incorporated into AC-2k.          |           |
+| AC-2(11)       | USAGE CONDITIONS                                                  | S                                    |           |
+| AC-2(12)       | ACCOUNT MONITORING FOR ATYPICAL USAGE                             | O /S                                 |           |
+| AC-2(13)       | DISABLE ACCOUNTS FOR HIGH-RISK INDIVIDUALS                        | O                                    |           |
+| AC-3           | Access Enforcement                                                | S                                    |           |
+| AC-3(1)        | RESTRICTED ACCESS TO PRIVILEGED FUNCTIONS                         | W: Incorporated into AC-6.           |           |
+| AC-3(2)        | DUAL AUTHORIZATION                                                | S                                    |           |
+| AC-3(3)        | MANDATORY ACCESS CONTROL                                          | S                                    |           |
+| AC-3(4)        | DISCRETIONARY ACCESS CONTROL                                      | S                                    |           |
+| AC-3(5)        | SECURITY-RELEVANT INFORMATION                                     | S                                    |           |
+| AC-3(6)        | PROTECTION OF USER AND SYSTEM INFORMATION                         | W: Incorporated into MP-4 and SC-28. |           |
+| AC-3(7)        | ROLE-BASED ACCESS CONTROL                                         | O /S                                 |           |
+| AC-3(8)        | REVOCATION OF ACCESS AUTHORIZATIONS                               | O /S                                 |           |
+| AC-3(9)        | CONTROLLED RELEASE                                                | O /S                                 |           |
+| AC-3(10)       | AUDITED OVERRIDE OF ACCESS CONTROL MECHANISMS                     | O                                    |           |
+| AC-3(11)       | RESTRICT ACCESS TO SPECIFIC INFORMATION TYPES                     | S                                    |           |
+| AC-3(12)       | ASSERT AND ENFORCE APPLICATION ACCESS                             | S                                    |           |
+| AC-3(13)       | ATTRIBUTE-BASED ACCESS CONTROL                                    | S                                    |           |
+| AC-3(14)       | INDIVIDUAL ACCESS                                                 | S                                    |           |
+| AC-3(15)       | DISCRETIONARY AND MANDATORY ACCESS CONTROL                        | S                                    |           |
+| AC-4           | Information Flow Enforcement                                      | S                                    |           |
+| AC-4(1)        | OBJECT SECURITY AND PRIVACY ATTRIBUTES                            | S                                    |           |
+| AC-4(2)        | PROCESSING DOMAINS                                                | S                                    |           |
+| AC-4(3)        | DYNAMIC INFORMATION FLOW CONTROL                                  | S                                    |           |
+| AC-4(4)        | FLOW CONTROL OF ENCRYPTED INFORMATION                             | S                                    |           |
+| AC-4(5)        | EMBEDDED DATA TYPES                                               | S                                    |           |
+| AC-4(6)        | METADATA                                                          | S                                    |           |
+| AC-4(7)        | ONE-WAY FLOW MECHANISMS                                           | S                                    |           |
+| AC-4(8)        | SECURITY AND PRIVACY POLICY FILTERS                               | S                                    |           |
+| AC-4(9)        | HUMAN REVIEWS                                                     | O /S                                 |           |
+| AC-4(10)       | ENABLE AND DISABLE SECURITY OR PRIVACY POLICY FILTERS NUMBER BY   | S                                    |           |
+| AC-4(11)       | CONFIGURATION OF SECURITY OR PRIVACY POLICY FILTERS               | S                                    |           |
+| AC-4(12)       | DATA TYPE IDENTIFIERS                                             | S                                    |           |
+| AC-4(13)       | DECOMPOSITION INTO POLICY-RELEVANT SUBCOMPONENTS                  | S                                    |           |
+| AC-4(14)       | SECURITY OR PRIVACY POLICY FILTER CONSTRAINTS                     | S                                    |           |
+| AC-4(15)       | DETECTION OF UNSANCTIONED INFORMATION                             | S                                    |           |
+| AC-4(16)       | INFORMATION TRANSFERS ON INTERCONNECTED SYSTEMS                   | W: Incorporated into AC-4.           |           |
+| AC-4(17)       | DOMAIN AUTHENTICATION                                             | S                                    |           |
+| AC-4(18)       | SECURITY ATTRIBUTE BINDING                                        | W: Incorporated into AC-16.          |           |
+| AC-4(19)       | VALIDATION OF METADATA                                            | S                                    |           |
+| AC-4(20)       | APPROVED SOLUTIONS                                                | O                                    |           |
+| AC-4(21)       | PHYSICAL OR LOGICAL SEPARATION OF INFORMATION FLOWS               | O /S                                 |           |
+| AC-4(22)       | ACCESS ONLY                                                       | S                                    |           |
+| AC-4(23)       | MODIFY NON-RELEASABLE INFORMATION                                 | O /S                                 |           |
+| AC-4(24)       | INTERNAL NORMALIZED FORMAT                                        | S                                    |           |
+| AC-4(25)       | DATA SANITIZATION                                                 | S                                    |           |
+| AC-4(26)       | AUDIT FILTERING ACTIONS                                           | O /S                                 |           |
+| AC-4(27)       | REDUNDANT/INDEPENDENT FILTERING MECHANISMS                        | S                                    |           |
+| AC-4(28)       | LINEAR FILTER PIPELINES                                           | S                                    |           |
+| AC-4(29)       | FILTER ORCHESTRATION ENGINES                                      | O /S                                 |           |
+| AC-4(30)       | FILTER MECHANISMS USING MULTIPLE PROCESSES                        | S                                    |           |
+| AC-4(31)       | FAILED CONTENT TRANSFER PREVENTION                                | S                                    |           |
+| AC-4(32)       | PROCESS REQUIREMENTS FOR INFORMATION TRANSFER                     | S                                    |           |
+| AC-5           | Separation of Duties                                              | O                                    |           |
+| AC-6           | Least Privilege                                                   | O                                    |           |
+| AC-6(1)        | AUTHORIZE ACCESS TO SECURITY FUNCTIONS                            | O                                    |           |
+| AC-6(2)        | NON-PRIVILEGED ACCESS FOR NONSECURITY FUNCTIONS                   | O                                    |           |
+| AC-6(3)        | NETWORK ACCESS TO PRIVILEGED COMMANDS                             | O                                    |           |
+| AC-6(4)        | SEPARATE PROCESSING DOMAINS                                       | O /S                                 |           |
+| AC-6(5)        | PRIVILEGED ACCOUNTS                                               | O                                    |           |
+| AC-6(6)        | PRIVILEGED ACCESS BY NON-ORGANIZATIONAL USERS                     | O                                    |           |
+| AC-6(7)        | REVIEW OF USER PRIVILEGES                                         | O                                    |           |
+| AC-6(8)        | PRIVILEGE LEVELS FOR CODE EXECUTION                               | S                                    |           |
+| AC-6(9)        | LOG USE OF PRIVILEGED FUNCTIONS                                   | S                                    |           |
+| AC-6(10)       | PROHIBIT NON-PRIVILEGED USERS FROM EXECUTING PRIVILEGED FUNCTIONS | S                                    |           |
+| AC-7           | Unsuccessful Logon Attempts                                       | S                                    |           |
+| AC-7(1)        | AUTOMATIC ACCOUNT LOCK                                            | W: Incorporated into AC-7.           |           |
+| AC-7(2)        | PURGE OR WIPE MOBILE DEVICE                                       | S                                    |           |
+| AC-7(3)        | BIOMETRIC ATTEMPT LIMITING                                        | O                                    |           |
+| AC-7(4)        | USE OF ALTERNATE AUTHENTICATION FACTOR                            | O /S                                 |           |
+| AC-8           | System Use Notification                                           | O /S                                 |           |
+| AC-9           | Previous Logon Notification                                       | S                                    |           |
+| AC-9(1)        | UNSUCCESSFUL LOGONS NUMBER BY                                     | S                                    |           |
+| AC-9(2)        | SUCCESSFUL AND UNSUCCESSFUL LOGONS                                | S                                    |           |
+| AC-9(3)        | NOTIFICATION OF ACCOUNT CHANGES                                   | S                                    |           |
+| AC-9(4)        | ADDITIONAL LOGON INFORMATION                                      | S                                    |           |
+| AC-10          | Concurrent Session Control                                        | S                                    |           |
+| AC-11          | Device Lock                                                       | S                                    |           |
+| AC-11(1)       | PATTERN-HIDING DISPLAYS                                           | S                                    |           |
+| AC-12          | Session Termination                                               | S                                    |           |
+| AC-12(1)       | USER-INITIATED LOGOUTS                                            | O /S                                 |           |
+| AC-12(2)       | TERMINATION MESSAGE                                               | S                                    |           |
+| AC-12(3)       | TIMEOUT WARNING MESSAGE                                           | S                                    |           |
+| AC-13          | Supervision and Review-Access Control                             | W: Incorporated into AC-2 and AU-6.  |           |
+| AC-14          | Permitted Actions without Identification or Authentication        | O                                    |           |
+| AC-14(1)       | NECESSARY USES                                                    | W: Incorporated into AC-14.          |           |
+| AC-15          | Automated Marking                                                 | W: Incorporated into MP-3.           |           |
+| AC-16          | Security and Privacy Attributes                                   | O                                    |           |
+| AC-16(1)       | DYNAMIC ATTRIBUTE ASSOCIATION                                     | S                                    |           |
+| AC-16(2)       | ATTRIBUTE VALUE CHANGES BY AUTHORIZED INDIVIDUALS                 | S                                    |           |
+| AC-16(3)       | MAINTENANCE OF ATTRIBUTE ASSOCIATIONS BY SYSTEM                   | S                                    |           |
+| AC-16(4)       | ASSOCIATION OF ATTRIBUTES BY AUTHORIZED INDIVIDUALS               | S                                    |           |
+| AC-16(5)       | ATTRIBUTE DISPLAYS ON OBJECTS TO BE OUTPUT                        | S                                    |           |
+| AC-16(6)       | MAINTENANCE OF ATTRIBUTE ASSOCIATION                              | O                                    |           |
+| AC-16(7)       | CONSISTENT ATTRIBUTE INTERPRETATION                               | O                                    |           |
+| AC-16(8)       | ASSOCIATION TECHNIQUES AND TECHNOLOGIES                           | S                                    |           |
+| AC-16(9)       | ATTRIBUTE REASSIGNMENT – REGRADING MECHANISMS                     | O                                    |           |
+| AC-16(10)      | ATTRIBUTE CONFIGURATION BY AUTHORIZED INDIVIDUALS                 | O                                    |           |
+| AC-17          | Remote Access                                                     | O                                    |           |
+| AC-17(1)       | MONITORING AND CONTROL                                            | O /S                                 |           |
+| AC-17(2)       | PROTECTION OF CONFIDENTIALITY AND INTEGRITY USING ENCRYPTION      | S                                    |           |
+| AC-17(3)       | MANAGED ACCESS CONTROL POINTS                                     | S                                    |           |
+| AC-17(4)       | PRIVILEGED COMMANDS AND ACCESS                                    | O                                    |           |
+| AC-17(5)       | MONITORING FOR UNAUTHORIZED CONNECTIONS                           | W: Incorporated into SI-4.           |           |
+| AC-17(6)       | PROTECTION OF MECHANISM INFORMATION                               | O                                    |           |
+| AC-17(7)       | ADDITIONAL PROTECTION FOR SECURITY FUNCTION ACCESS                | W: Incorporated into AC-3(10).       |           |
+| AC-17(8)       | DISABLE NONSECURE NETWORK PROTOCOLS                               | W: Incorporated into CM-7.           |           |
+| AC-17(9)       | DISCONNECT OR DISABLE ACCESS                                      | O                                    |           |
+| AC-17(10)      | AUTHENTICATE REMOTE COMMANDS                                      | S                                    |           |
+| AC-18          | Wireless Access                                                   | O                                    |           |
+| AC-18(1)       | AUTHENTICATION AND ENCRYPTION                                     | S                                    |           |
+| AC-18(2)       | MONITORING UNAUTHORIZED CONNECTIONS                               | W: Incorporated into SI-4.           |           |
+| AC-18(3)       | DISABLE WIRELESS NETWORKING                                       | O /S                                 |           |
+| AC-18(4)       | RESTRICT CONFIGURATIONS BY USERS                                  | O                                    |           |
+| AC-18(5)       | ANTENNAS AND TRANSMISSION POWER LEVELS NUMBER BY                  | O                                    |           |
+| AC-19          | Access Control for Mobile Devices                                 | O                                    |           |
+| AC-19(1)       | USE OF WRITABLE AND PORTABLE STORAGE DEVICES                      | W: Incorporated into MP-7.           |           |
+| AC-19(2)       | USE OF PERSONALLY OWNED PORTABLE STORAGE DEVICES                  | W: Incorporated into MP-7.           |           |
+| AC-19(3)       | USE OF PORTABLE STORAGE DEVICES WITH NO IDENTIFIABLE OWNER        | W: Incorporated into MP-7.           |           |
+| AC-19(4)       | RESTRICTIONS FOR CLASSIFIED INFORMATION                           | O                                    |           |
+| AC-19(5)       | FULL DEVICE OR CONTAINER-BASED ENCRYPTION                         | O                                    |           |
+| AC-20          | Use of External Systems                                           | O                                    |           |
+| AC-20(1)       | LIMITS ON AUTHORIZED USE                                          | O                                    |           |
+| AC-20(2)       | PORTABLE STORAGE DEVICES — RESTRICTED USE                         | O                                    |           |
+| AC-20(3)       | NON-ORGANIZATIONALLY OWNED SYSTEMS — RESTRICTED USE               | O                                    |           |
+| AC-20(4)       | NETWORK ACCESSIBLE STORAGE DEVICES — PROHIBITED USE               | O                                    |           |
+| AC-20(5)       | PORTABLE STORAGE DEVICES — PROHIBITED USE                         | O                                    |           |
+| AC-21          | Information Sharing                                               | O                                    |           |
+| AC-21(1)       | AUTOMATED DECISION SUPPORT                                        | S                                    |           |
+| AC-21(2)       | INFORMATION SEARCH AND RETRIEVAL                                  | S                                    |           |
+| AC-22          | Publicly Accessible Content                                       | O                                    |           |
+| AC-23          | Data Mining Protection                                            | O                                    |           |
+| AC-24          | Access Control Decisions                                          | O                                    |           |
+| AC-24(1)       | TRANSMIT ACCESS AUTHORIZATION INFORMATION                         | S                                    |           |
+| AC-24(2)       | NO USER OR PROCESS IDENTITY                                       | S                                    |           |
+| AC-25          | Reference Monitor                                                 | S                                    | √         |
+
+**TABLE C-2: AWARENESS AND TRAINING FAMILY**
+
+| Control Number | Control Name / Enhancement Name                         | Implemented By                | Assurance |
+| -------------- | ------------------------------------------------------- | ----------------------------- | --------- |
+| AT-1           | Policy and Procedures                                   | O                             | √         |
+| AT-2           | Literacy Training and Awareness                         | O                             | √         |
+| AT-2(1)        | PRACTICAL EXERCISES                                     | O                             | √         |
+| AT-2(2)        | INSIDER THREAT                                          | O                             | √         |
+| AT-2(3)        | SOCIAL ENGINEERING AND MINING                           | O                             | √         |
+| AT-2(4)        | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR | O                             | √         |
+| AT-2(5)        | ADVANCED PERSISTENT THREAT                              | O                             | √         |
+| AT-2(6)        | CYBER THREAT ENVIRONMENT                                | O                             | √         |
+| AT-3           | Role-Based Training                                     | O                             | √         |
+| AT-3(1)        | ENVIRONMENTAL CONTROLS                                  | O                             | √         |
+| AT-3(2)        | PHYSICAL SECURITY CONTROLS                              | O                             | √         |
+| AT-3(3)        | PRACTICAL EXERCISES                                     | O                             | √         |
+| AT-3(4)        | SUSPICIOUS COMMUNICATIONS AND ANOMALOUS SYSTEM BEHAVIOR | W: Incorporated into AT-2(4). |           |
+| AT-3(5)        | PROCESSING PERSONALLY IDENTIFIABLE INFORMATION          | O                             | √         |
+| AT-4           | Training Records                                        | O                             | √         |
+| AT-5           | Contacts with Security Groups and Associations          | W: Incorporated into PM-15.   |           |
+| AT-6           | Training Feedback                                       | O                             | √         |
+
+**TABLE C-3: AUDIT AND ACCOUNTABILITY FAMILY**
+
+| Control Number | Control Name / Enhancement Name                               | Implemented By                | Assurance |
+| -------------- | ------------------------------------------------------------- | ----------------------------- | --------- |
+| AU-1           | Policy and Procedures                                         | O                             | √         |
+| AU-2           | Event Logging                                                 | O                             |           |
+| AU-2(1)        | COMPILATION OF AUDIT RECORDS FROM MULTIPLE SOURCES            | W: Incorporated into AU-12.   |           |
+| AU-2(2)        | SELECTION OF AUDIT EVENTS BY COMPONENT                        | W: Incorporated into AU-12.   |           |
+| AU-2(3)        | REVIEWS AND UPDATES                                           | W: Incorporated into AU-2.    |           |
+| AU-2(4)        | PRIVILEGED FUNCTIONS                                          | W: Incorporated into AC-6(9). |           |
+| AU-3           | Content of Audit Records                                      | S                             |           |
+| AU-3(1)        | ADDITIONAL AUDIT INFORMATION                                  | S                             |           |
+| AU-3(2)        | CENTRALIZED MANAGEMENT OF PLANNED AUDIT RECORD CONTENT        | W: Incorporated into PL-9.    |           |
+| AU-3(3)        | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS            | O                             |           |
+| AU-4           | Audit Log Storage Capacity                                    | O /S                          |           |
+| AU-4(1)        | TRANSFER TO ALTERNATE STORAGE                                 | O /S                          |           |
+| AU-5           | Response to Audit Logging Process Failures                    | S                             |           |
+| AU-5(1)        | STORAGE CAPACITY WARNING                                      | S                             |           |
+| AU-5(2)        | REAL-TIME ALERTS                                              | S                             |           |
+| AU-5(3)        | CONFIGURABLE TRAFFIC VOLUME THRESHOLDS                        | S                             |           |
+| AU-5(4)        | SHUTDOWN ON FAILURE                                           | S                             |           |
+| AU-5(5)        | ALTERNATE AUDIT LOGGING CAPABILITY                            | O                             |           |
+| AU-6           | Audit Record Review, Analysis, and Reporting                  | O                             | √         |
+| AU-6(1)        | AUTOMATED PROCESS INTEGRATION                                 | O                             | √         |
+| AU-6(2)        | AUTOMATED SECURITY ALERTS                                     | W: Incorporated into SI-4.    |           |
+| AU-6(3)        | CORRELATE AUDIT RECORD REPOSITORIES                           | O                             | √         |
+| AU-6(4)        | CENTRAL REVIEW AND ANALYSIS                                   | S                             | √         |
+| AU-6(5)        | INTEGRATED ANALYSIS OF AUDIT RECORDS                          | O                             | √         |
+| AU-6(6)        | CORRELATION WITH PHYSICAL MONITORING                          | O                             | √         |
+| AU-6(7)        | PERMITTED ACTIONS                                             | O                             | √         |
+| AU-6(8)        | FULL TEXT ANALYSIS OF PRIVILEGED COMMANDS                     | O                             | √         |
+| AU-6(9)        | CORRELATION WITH INFORMATION FROM NONTECHNICAL SOURCES        | O                             | √         |
+| AU-6(10)       | AUDIT LEVEL ADJUSTMENT                                        | W: Incorporated into AU-6.    |           |
+| AU-7           | Audit Record Reduction and Report Generation                  | S                             | √         |
+| AU-7(1)        | AUTOMATIC PROCESSING                                          | S                             | √         |
+| AU-7(2)        | AUTOMATIC SORT AND SEARCH                                     | W: Incorporated into AU-7(1). |           |
+| AU-8           | Time Stamps                                                   | S                             |           |
+| AU-8(1)        | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE                | W: Moved to SC-45(1).         |           |
+| AU-8(2)        | SECONDARY AUTHORITATIVE TIME SOURCE                           | W: Moved to SC-45(2).         |           |
+| AU-9           | Protection of Audit Information                               | S                             |           |
+| AU-9(1)        | HARDWARE WRITE-ONCE MEDIA                                     | S                             |           |
+| AU-9(2)        | STORE ON SEPARATE PHYSICAL SYSTEMS OR COMPONENTS              | S                             |           |
+| AU-9(3)        | CRYPTOGRAPHIC PROTECTION                                      | S                             |           |
+| AU-9(4)        | ACCESS BY SUBSET OF PRIVILEGED USERS                          | O                             |           |
+| AU-9(5)        | DUAL AUTHORIZATION                                            | O /S                          |           |
+| AU-9(6)        | READ-ONLY ACCESS NUMBER BY                                    | O /S                          |           |
+| AU-9(7)        | STORE ON COMPONENT WITH DIFFERENT OPERATING SYSTEM            | O                             |           |
+| AU-10          | Non-repudiation                                               | S                             | √         |
+| AU-10(1)       | ASSOCIATION OF IDENTITIES                                     | S                             | √         |
+| AU-10(2)       | VALIDATE BINDING OF INFORMATION PRODUCER IDENTITY             | S                             | √         |
+| AU-10(3)       | CHAIN OF CUSTODY                                              | O /S                          | √         |
+| AU-10(4)       | VALIDATE BINDING OF INFORMATION REVIEWER IDENTITY             | S                             | √         |
+| AU-10(5)       | DIGITAL SIGNATURES                                            | W: Incorporated into SI-7.    |           |
+| AU-11          | Audit Record Retention                                        | O                             |           |
+| AU-11(1)       | LONG-TERM RETRIEVAL CAPABILITY                                | O                             | √         |
+| AU-12          | Audit Record Generation                                       | S                             |           |
+| AU-12(1)       | SYSTEM-WIDE AND TIME-CORRELATED AUDIT TRAIL                   | S                             |           |
+| AU-12(2)       | STANDARDIZED FORMATS                                          | S                             |           |
+| AU-12(3)       | CHANGES BY AUTHORIZED INDIVIDUALS                             | S                             |           |
+| AU-12(4)       | QUERY PARAMETER AUDITS OF PERSONALLY IDENTIFIABLE INFORMATION | S                             |           |
+| AU-13          | Monitoring for Information Disclosure                         | O                             | √         |
+| AU-13(1)       | USE OF AUTOMATED TOOLS                                        | O /S                          | √         |
+| AU-13(2)       | REVIEW OF MONITORED SITES                                     | O                             | √         |
+| AU-13(3)       | UNAUTHORIZED REPLICATION OF INFORMATION                       | O /S                          | √         |
+| AU-14          | Session Audit                                                 | S                             | √         |
+| AU-14(1)       | SYSTEM START-UP                                               | S                             | √         |
+| AU-14(2)       | CAPTURE AND RECORD CONTENT                                    | W: Incorporated into AU-14.   |           |
+| AU-14(3)       | REMOTE VIEWING AND LISTENING                                  | S                             | √         |
+| AU-15          | Alternate Audit Logging Capability                            | W: Moved to AU-5(5).          |           |
+| AU-16          | Cross-Organizational Audit Logging                            | O                             |           |
+| AU-16(1)       | IDENTITY PRESERVATION                                         | O                             |           |
+| AU-16(2)       | SHARING OF AUDIT INFORMATION                                  | O                             |           |
+| AU-16(3)       | DISASSOCIABILITY                                              | O                             |           |
+
+**TABLE C-4: ASSESSMENT, AUTHORIZATION, AND MONITORING FAMILY**
+
+| Control Number | Control Name / Enhancement Name                       | Implemented By                | Assurance |
+| -------------- | ----------------------------------------------------- | ----------------------------- | --------- |
+| CA-1           | Policy and Procedures                                 | O                             | √         |
+| CA-2           | Control Assessments                                   | O                             | √         |
+| CA-2(1)        | INDEPENDENT ASSESSORS                                 | O                             | √         |
+| CA-2(2)        | SPECIALIZED ASSESSMENTS                               | O                             | √         |
+| CA-2(3)        | LEVERAGING RESULTS FROM EXTERNAL ORGANIZATIONS        | O                             | √         |
+| CA-3           | Information Exchange                                  | O                             | √         |
+| CA-3(1)        | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS     | W: Moved to SC-7(25).         |           |
+| CA-3(2)        | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS       | W: Moved to SC-7(26).         |           |
+| CA-3(3)        | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS | W: Moved to SC-7(27).         |           |
+| CA-3(4)        | CONNECTIONS TO PUBLIC NETWORKS                        | W: Moved to SC-7(28).         |           |
+| CA-3(5)        | RESTRICTIONS ON EXTERNAL SYSTEM CONNECTIONS           | W: Incorporated into SC-7(5). |           |
+| CA-3(6)        | TRANSFER AUTHORIZATIONS                               | O /S                          | √         |
+| CA-3(7)        | TRANSITIVE INFORMATION EXCHANGES                      | O /S                          | √         |
+| CA-4           | Security Certification                                | W: Incorporated into CA-2.    |           |
+| CA-5           | Plan of Action and Milestones                         | O                             | √         |
+| CA-5(1)        | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY          | O                             | √         |
+| CA-6           | Authorization                                         | O                             | √         |
+| CA-6(1)        | JOINT AUTHORIZATION — INTRA-ORGANIZATION              | O                             | √         |
+| CA-6(2)        | JOINT AUTHORIZATION — INTER-ORGANIZATION              | O                             | √         |
+| CA-7           | Continuous Monitoring                                 | O                             | √         |
+| CA-7(1)        | INDEPENDENT ASSESSMENT                                | O                             | √         |
+| CA-7(2)        | TYPES OF ASSESSMENTS                                  | W: Incorporated into CA-2.    |           |
+| CA-7(3)        | TREND ANALYSES                                        | O                             | √         |
+| CA-7(4)        | RISK MONITORING                                       | O /S                          | √         |
+| CA-7(5)        | CONSISTENCY ANALYSIS                                  | O                             | √         |
+| CA-7(6)        | AUTOMATION SUPPORT FOR MONITORING                     | O /S                          | √         |
+| CA-8           | Penetration Testing                                   | O                             | √         |
+| CA-8(1)        | INDEPENDENT PENETRATION TESTING AGENT OR TEAM         | O                             | √         |
+| CA-8(2)        | RED TEAM EXERCISES                                    | O                             | √         |
+| CA-8(3)        | FACILITY PENETRATION TESTING                          | O                             | √         |
+| CA-9           | Internal System Connections                           | O                             | √         |
+| CA-9(1)        | COMPLIANCE CHECKS                                     | O /S                          | √         |
+
+**TABLE C-5: CONFIGURATION MANAGEMENT FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                   | Implemented By                | Assurance |
+| -------------- | ----------------------------------------------------------------- | ----------------------------- | --------- |
+| CM-1           | Policy and Procedures                                             | O                             | √         |
+| CM-2           | Baseline Configuration                                            | O                             | √         |
+| CM-2(1)        | REVIEWS AND UPDATES                                               | W: Incorporated into CM-2.    |           |
+| CM-2(2)        | AUTOMATION SUPPORT FOR ACCURACY AND CURRENCY                      | O                             | √         |
+| CM-2(3)        | RETENTION OF PREVIOUS CONFIGURATIONS                              | O                             | √         |
+| CM-2(4)        | UNAUTHORIZED SOFTWARE                                             | W: Incorporated into CM-7.    |           |
+| CM-2(5)        | AUTHORIZED SOFTWARE                                               | W: Incorporated into CM-7.    |           |
+| CM-2(6)        | DEVELOPMENT AND TEST ENVIRONMENTS                                 | O                             | √         |
+| CM-2(7)        | CONFIGURE SYSTEMS AND COMPONENTS FOR HIGH-RISK AREAS              | O                             | √         |
+| CM-3           | Configuration Change Control                                      | O                             | √         |
+| CM-3(1)        | AUTOMATED DOCUMENTATION, NOTIFICATION, AND PROHIBITION OF CHANGES | O                             | √         |
+| CM-3(2)        | TESTING, VALIDATION, AND DOCUMENTATION OF CHANGES                 | O                             | √         |
+| CM-3(3)        | AUTOMATED CHANGE IMPLEMENTATION                                   | O                             |           |
+| CM-3(4)        | SECURITY AND PRIVACY REPRESENTATIVES                              | O                             |           |
+| CM-3(5)        | AUTOMATED SECURITY RESPONSE                                       | S                             |           |
+| CM-3(6)        | CRYPTOGRAPHY MANAGEMENT                                           | O                             |           |
+| CM-3(7)        | REVIEW SYSTEM CHANGES                                             | O                             |           |
+| CM-3(8)        | PREVENT OR RESTRICT CONFIGURATION CHANGES                         | S                             |           |
+| CM-4           | Impact Analyses                                                   | O                             | √         |
+| CM-4(1)        | SEPARATE TEST ENVIRONMENTS                                        | O                             | √         |
+| CM-4(2)        | VERIFICATION OF CONTROLS                                          | O                             | √         |
+| CM-5           | Access Restrictions for Change                                    | O                             |           |
+| CM-5(1)        | AUTOMATED ACCESS ENFORCEMENT AND AUDIT RECORDS                    | S                             |           |
+| CM-5(2)        | REVIEW SYSTEM CHANGES                                             | W: Incorporated into CM-3(7). |           |
+| CM-5(3)        | SIGNED COMPONENTS                                                 | W: Moved to CM-14.            |           |
+| CM-5(4)        | DUAL AUTHORIZATION                                                | O /S                          |           |
+| CM-5(5)        | PRIVILEGE LIMITATION FOR PRODUCTION AND OPERATION                 | O                             |           |
+| CM-5(6)        | LIMIT LIBRARY PRIVILEGES                                          | O /S                          |           |
+| CM-5(7)        | AUTOMATIC IMPLEMENTATION OF SECURITY SAFEGUARDS                   | W: Incorporated into SI-7.    |           |
+| CM-6           | Configuration Settings                                            | O /S                          |           |
+| CM-6(1)        | AUTOMATED MANAGEMENT, APPLICATION, AND VERIFICATION               | O                             |           |
+| CM-6(2)        | RESPOND TO UNAUTHORIZED CHANGES                                   | O                             |           |
+| CM-6(3)        | UNAUTHORIZED CHANGE DETECTION                                     | W: Incorporated into SI-7.    |           |
+| CM-6(4)        | CONFORMANCE DEMONSTRATION                                         | W: Incorporated into CM-4.    |           |
+| CM-7           | Least Functionality                                               | O /S                          |           |
+| CM-7(1)        | PERIODIC REVIEW                                                   | O /S                          |           |
+| CM-7(2)        | PREVENT PROGRAM EXECUTION                                         | S                             |           |
+| CM-7(3)        | REGISTRATION COMPLIANCE                                           | O                             |           |
+| CM-7(4)        | UNAUTHORIZED SOFTWARE — DENY-BY-EXCEPTION                         | O /S                          |           |
+| CM-7(5)        | AUTHORIZED SOFTWARE — ALLOW-BY-EXCEPTION                          | O /S                          |           |
+| CM-7(6)        | CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES NUMBER BY           | O                             | √         |
+| CM-7(7)        | CODE EXECUTION IN PROTECTED ENVIRONMENTS                          | O /S                          | √         |
+| CM-7(8)        | BINARY OR MACHINE EXECUTABLE CODE                                 | O /S                          | √         |
+| CM-7(9)        | PROHIBITING THE USE OF UNAUTHORIZED HARDWARE                      | O /S                          | √         |
+| CM-8           | System Component Inventory                                        | O                             | √         |
+| CM-8(1)        | UPDATES DURING INSTALLATION AND REMOVAL                           | O                             | √         |
+| CM-8(2)        | AUTOMATED MAINTENANCE                                             | O                             | √         |
+| CM-8(3)        | AUTOMATED UNAUTHORIZED COMPONENT DETECTION                        | O                             | √         |
+| CM-8(4)        | ACCOUNTABILITY INFORMATION                                        | O                             | √         |
+| CM-8(5)        | NO DUPLICATE ACCOUNTING OF COMPONENTS                             | W: Incorporated into CM-8.    |           |
+| CM-8(6)        | ASSESSED CONFIGURATIONS AND APPROVED DEVIATIONS                   | O                             | √         |
+| CM-8(7)        | CENTRALIZED REPOSITORY                                            | O                             | √         |
+| CM-8(8)        | AUTOMATED LOCATION TRACKING                                       | O                             | √         |
+| CM-8(9)        | ASSIGNMENT OF COMPONENTS TO SYSTEMS                               | O                             | √         |
+| CM-9           | Configuration Management Plan                                     | O                             |           |
+| CM-9(1)        | ASSIGNMENT OF RESPONSIBILITY                                      | O                             |           |
+| CM-10          | Software Usage Restrictions                                       | O                             |           |
+| CM-10(1)       | OPEN-SOURCE SOFTWARE                                              | O                             |           |
+| CM-11          | User-Installed Software                                           | O                             |           |
+| CM-11(1)       | ALERTS FOR UNAUTHORIZED INSTALLATIONS                             | W: Incorporated into CM-8(3). |           |
+| CM-11(2)       | SOFTWARE INSTALLATION WITH PRIVILEGED STATUS                      | S                             |           |
+| CM-11(3)       | AUTOMATED ENFORCEMENT AND MONITORING                              | S                             | √         |
+| CM-12          | Information Location                                              | O                             | √         |
+| CM-12(1)       | AUTOMATED TOOLS TO SUPPORT INFORMATION LOCATION                   | O                             | √         |
+| CM-13          | Data Action Mapping                                               | O                             |           |
+| CM-14          | Signed Components                                                 | O /S                          | √         |
+
+**TABLE C-6: CONTINGENCY PLANNING FAMILY**
+
+| Control Number | Control Name / Enhancement Name                     | Implemented By                  | Assurance |
+| -------------- | --------------------------------------------------- | ------------------------------- | --------- |
+| CP-1           | Policy and Procedures                               | O                               | √         |
+| CP-2           | Contingency Plan                                    | O                               |           |
+| CP-2(1)        | COORDINATE WITH RELATED PLANS                       | O                               |           |
+| CP-2(2)        | CAPACITY PLANNING                                   | O                               |           |
+| CP-2(3)        | RESUME MISSION AND BUSINESS FUNCTIONS               | O                               |           |
+| CP-2(4)        | RESUME ALL MISSION AND BUSINESS FUNCTIONS           | W: Incorporated into CP-2(3).   |           |
+| CP-2(5)        | CONTINUE MISSION AND BUSINESS FUNCTIONS             | O                               |           |
+| CP-2(6)        | ALTERNATE PROCESSING AND STORAGE SITES              | O                               |           |
+| CP-2(7)        | COORDINATE WITH EXTERNAL SERVICE PROVIDERS          | O                               |           |
+| CP-2(8)        | IDENTIFY CRITICAL ASSETS                            | O                               |           |
+| CP-3           | Contingency Training                                | O                               | √         |
+| CP-3(1)        | SIMULATED EVENTS                                    | O                               | √         |
+| CP-3(2)        | MECHANISMS USED IN TRAINING ENVIRONMENTS            | O                               | √         |
+| CP-4           | Contingency Plan Testing                            | O                               | √         |
+| CP-4(1)        | COORDINATE WITH RELATED PLANS                       | O                               | √         |
+| CP-4(2)        | ALTERNATE PROCESSING SITE                           | O                               | √         |
+| CP-4(3)        | AUTOMATED TESTING                                   | O                               | √         |
+| CP-4(4)        | FULL RECOVERY AND RECONSTITUTION                    | O                               | √         |
+| CP-4(5)        | SELF-CHALLENGE                                      | O /S                            | √         |
+| CP-5           | Contingency Plan Update                             | W: Incorporated into CP-2.      |           |
+| CP-6           | Alternate Storage Site                              | O                               |           |
+| CP-6(1)        | SEPARATION FROM PRIMARY SITE                        | O                               |           |
+| CP-6(2)        | RECOVERY TIME AND RECOVERY POINT OBJECTIVES         | O                               |           |
+| CP-6(3)        | ACCESSIBILITY                                       | O                               |           |
+| CP-7           | Alternate Processing Site                           | O                               |           |
+| CP-7(1)        | SEPARATION FROM PRIMARY SITE                        | O                               |           |
+| CP-7(2)        | ACCESSIBILITY                                       | O                               |           |
+| CP-7(3)        | PRIORITY OF SERVICE                                 | O                               |           |
+| CP-7(4)        | PREPARATION FOR USE                                 | O                               |           |
+| CP-7(5)        | EQUIVALENT INFORMATION SECURITY SAFEGUARDS          | W: Incorporated into CP-7.      |           |
+| CP-7(6)        | INABILITY TO RETURN TO PRIMARY SITE                 | O                               |           |
+| CP-8           | Telecommunications Services                         | O                               |           |
+| CP-8(1)        | PRIORITY OF SERVICE PROVISIONS                      | O                               |           |
+| CP-8(2)        | SINGLE POINTS OF FAILURE                            | O                               |           |
+| CP-8(3)        | SEPARATION OF PRIMARY AND ALTERNATE PROVIDERS       | O                               |           |
+| CP-8(4)        | PROVIDER CONTINGENCY PLAN                           | O                               |           |
+| CP-8(5)        | ALTERNATE TELECOMMUNICATION SERVICE TESTING         | O                               |           |
+| CP-9           | System Backup                                       | O                               |           |
+| CP-9(1)        | TESTING FOR RELIABILITY AND INTEGRITY               | O                               |           |
+| CP-9(2)        | TEST RESTORATION USING SAMPLING                     | O                               |           |
+| CP-9(3)        | SEPARATE STORAGE FOR CRITICAL INFORMATION           | O                               |           |
+| CP-9(4)        | PROTECTION FROM UNAUTHORIZED MODIFICATION NUMBER BY | W: Incorporated into CP-9.      |           |
+| CP-9(5)        | TRANSFER TO ALTERNATE STORAGE SITE                  | O                               |           |
+| CP-9(6)        | REDUNDANT SECONDARY SYSTEM                          | O                               |           |
+| CP-9(7)        | DUAL AUTHORIZATION FOR DELETION OR DESTRUCTION      | O                               |           |
+| CP-9(8)        | CRYPTOGRAPHIC PROTECTION                            | O                               |           |
+| CP-10          | System Recovery and Reconstitution                  | O                               |           |
+| CP-10(1)       | CONTINGENCY PLAN TESTING                            | W: Incorporated into CP-4.      |           |
+| CP-10(2)       | TRANSACTION RECOVERY                                | O                               |           |
+| CP-10(3)       | COMPENSATING SECURITY CONTROLS                      | W: Addressed through tailoring. |           |
+| CP-10(4)       | RESTORE WITHIN TIME PERIOD                          | O                               |           |
+| CP-10(5)       | FAILOVER CAPABILITY                                 | W: Incorporated into SI-13.     |           |
+| CP-10(6)       | COMPONENT PROTECTION                                | O                               |           |
+| CP-11          | Alternate Communications Protocols                  | O                               |           |
+| CP-12          | Safe Mode                                           | S                               | √         |
+| CP-13          | Alternative Security Mechanisms                     | O /S                            |           |
+
+**TABLE C-7: IDENTIFICATION AND AUTHENTICATION FAMILY**
+
+| Control Number | Control Name / Enhancement Name                              | Implemented By                            | Assurance |
+| -------------- | ------------------------------------------------------------ | ----------------------------------------- | --------- |
+| IA-1           | Policy and Procedures                                        | O                                         | √         |
+| IA-2           | Identification and Authentication (Organizational Users)     | O /S                                      |           |
+| IA-2(1)        | MULTI-FACTOR AUTHENTICATION TO PRIVILEGED ACCOUNTS           | S                                         |           |
+| IA-2(2)        | MULTI-FACTOR AUTHENTICATION TO NON-PRIVILEGED ACCOUNTS       | S                                         |           |
+| IA-2(3)        | LOCAL ACCESS TO PRIVILEGED ACCOUNTS                          | W: Incorporated into IA-2(1).             |           |
+| IA-2(4)        | LOCAL ACCESS TO NON-PRIVILEGED ACCOUNTS                      | W: Incorporated into IA-2(2).             |           |
+| IA-2(5)        | INDIVIDUAL AUTHENTICATION WITH GROUP AUTHENTICATION          | O /S                                      |           |
+| IA-2(6)        | ACCESS TO ACCOUNTS — SEPARATE DEVICE                         | S                                         |           |
+| IA-2(7)        | NETWORK ACCESS TO NON-PRIVILEGED ACCOUNTS — SEPARATE DEVICE  | W: Incorporated into IA-2(6).             |           |
+| IA-2(8)        | ACCESS TO ACCOUNTS — REPLAY RESISTANT                        | S                                         |           |
+| IA-2(9)        | NETWORK ACCESS TO NON-PRIVILEGED ACCOUNTS — REPLAY RESISTANT | W: Incorporated into IA-2(8).             |           |
+| IA-2(10)       | SINGLE SIGN-ON                                               | S                                         |           |
+| IA-2(11)       | REMOTE ACCESS — SEPARATE DEVICE                              | W: Incorporated into IA-2(6).             |           |
+| IA-2(12)       | ACCEPTANCE OF PIV CREDENTIALS                                | S                                         |           |
+| IA-2(13)       | OUT-OF-BAND AUTHENTICATION                                   | S                                         |           |
+| IA-3           | Device Identification and Authentication                     | S                                         |           |
+| IA-3(1)        | CRYPTOGRAPHIC BIDIRECTIONAL AUTHENTICATION                   | S                                         |           |
+| IA-3(2)        | CRYPTOGRAPHIC BIDIRECTIONAL NETWORK AUTHENTICATION           | W: Incorporated into IA-3(1).             |           |
+| IA-3(3)        | DYNAMIC ADDRESS ALLOCATION                                   | O                                         |           |
+| IA-3(4)        | DEVICE ATTESTATION                                           | O                                         |           |
+| IA-4           | Identifier Management                                        | O                                         |           |
+| IA-4(1)        | PROHIBIT ACCOUNT IDENTIFIERS AS PUBLIC IDENTIFIERS           | O                                         |           |
+| IA-4(2)        | SUPERVISOR AUTHORIZATION                                     | W: Incorporated into IA-12(1).            |           |
+| IA-4(3)        | MULTIPLE FORMS OF CERTIFICATION                              | W: Incorporated into IA-12(2).            |           |
+| IA-4(4)        | IDENTIFY USER STATUS                                         | O                                         |           |
+| IA-4(5)        | DYNAMIC MANAGEMENT                                           | S                                         |           |
+| IA-4(6)        | CROSS-ORGANIZATION MANAGEMENT                                | O                                         |           |
+| IA-4(7)        | IN-PERSON REGISTRATION                                       | W: Incorporated into IA-12(4).            |           |
+| IA-4(8)        | PAIRWISE PSEUDONYMOUS IDENTIFIERS                            | O                                         |           |
+| IA-4(9)        | ATTRIBUTE MAINTENANCE AND PROTECTION                         | O /S                                      |           |
+| IA-5           | Authenticator Management                                     | O /S                                      |           |
+| IA-5(1)        | PASSWORD-BASED AUTHENTICATION                                | O /S                                      |           |
+| IA-5(2)        | PUBLIC KEY-BASED AUTHENTICATION                              | S                                         |           |
+| IA-5(3)        | IN-PERSON OR TRUSTED EXTERNAL PARTY REGISTRATION             | W: Incorporated into IA-12(4).            |           |
+| IA-5(4)        | AUTOMATED SUPPORT FOR PASSWORD STRENGTH DETERMINATION        | W: Incorporated into IA-5(1).             |           |
+| IA-5(5)        | CHANGE AUTHENTICATORS PRIOR TO DELIVERY                      | O                                         |           |
+| IA-5(6)        | PROTECTION OF AUTHENTICATORS                                 | O                                         |           |
+| IA-5(7)        | NO EMBEDDED UNENCRYPTED STATIC AUTHENTICATORS                | O                                         |           |
+| IA-5(8)        | MULTIPLE SYSTEM ACCOUNTS                                     | O                                         |           |
+| IA-5(9)        | FEDERATED CREDENTIAL MANAGEMENT                              | O                                         |           |
+| IA-5(10)       | DYNAMIC CREDENTIAL BINDING                                   | S                                         |           |
+| IA-5(11)       | HARDWARE TOKEN-BASED AUTHENTICATION NUMBER BY                | W: Incorporated into IA-2(1) and IA-2(2). |           |
+| IA-5(12)       | BIOMETRIC AUTHENTICATION PERFORMANCE                         | S                                         |           |
+| IA-5(13)       | EXPIRATION OF CACHED AUTHENTICATORS                          | S                                         |           |
+| IA-5(14)       | MANAGING CONTENT OF PKI TRUST STORES                         | O                                         |           |
+| IA-5(15)       | GSA-APPROVED PRODUCTS AND SERVICES                           | O                                         |           |
+| IA-5(16)       | IN-PERSON OR TRUSTED EXTERNAL PARTY AUTHENTICATOR ISSUANCE   | O                                         |           |
+| IA-5(17)       | PRESENTATION ATTACK DETECTION FOR BIOMETRIC AUTHENTICATORS   | S                                         |           |
+| IA-5(18)       | PASSWORD MANAGERS                                            | S                                         |           |
+| IA-6           | Authentication Feedback                                      | S                                         |           |
+| IA-7           | Cryptographic Module Authentication                          | S                                         |           |
+| IA-8           | Identification and Authentication (Non-Organizational Users) | S                                         |           |
+| IA-8(1)        | ACCEPTANCE OF PIV CREDENTIALS FROM OTHER AGENCIES            | S                                         |           |
+| IA-8(2)        | ACCEPTANCE OF EXTERNAL AUTHENTICATORS                        | S                                         |           |
+| IA-8(3)        | USE OF FICAM-APPROVED PRODUCTS                               | W: Incorporated into IA-8(2).             |           |
+| IA-8(4)        | USE OF DEFINED PROFILES                                      | S                                         |           |
+| IA-8(5)        | ACCEPTANCE OF PIV-I CREDENTIALS                              | S                                         |           |
+| IA-8(6)        | DISASSOCIABILITY                                             | O                                         |           |
+| IA-9           | Service Identification and Authentication                    | O /S                                      |           |
+| IA-9(1)        | INFORMATION EXCHANGE                                         | W: Incorporated into IA-9.                |           |
+| IA-9(2)        | TRANSMISSION OF DECISIONS                                    | W: Incorporated into IA-9.                |           |
+| IA-10          | Adaptive Authentication                                      | O                                         |           |
+| IA-11          | Re-authentication                                            | O /S                                      |           |
+| IA-12          | Identity Proofing                                            | O                                         |           |
+| IA-12(1)       | SUPERVISOR AUTHORIZATION                                     | O                                         |           |
+| IA-12(2)       | IDENTITY EVIDENCE                                            | O                                         |           |
+| IA-12(3)       | IDENTITY EVIDENCE VALIDATION AND VERIFICATION                | O                                         |           |
+| IA-12(4)       | IN-PERSON VALIDATION AND VERIFICATION                        | O                                         |           |
+| IA-12(5)       | ADDRESS CONFIRMATION                                         | O                                         |           |
+| IA-12(6)       | ACCEPT EXTERNALLY-PROOFED IDENTITIES                         | O                                         |           |
+
+**TABLE C-8: INCIDENT RESPONSE FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                | Implemented By             | Assurance |
+| -------------- | -------------------------------------------------------------- | -------------------------- | --------- |
+| IR-1           | Policy and Procedures                                          | O                          | √         |
+| IR-2           | Incident Response Training                                     | O                          | √         |
+| IR-2(1)        | SIMULATED EVENTS                                               | O                          | √         |
+| IR-2(2)        | AUTOMATED TRAINING ENVIRONMENTS                                | O                          | √         |
+| IR-2(3)        | BREACH                                                         | O                          | √         |
+| IR-3           | Incident Response Testing                                      | O                          | √         |
+| IR-3(1)        | AUTOMATED TESTING                                              | O                          | √         |
+| IR-3(2)        | COORDINATION WITH RELATED PLANS                                | O                          | √         |
+| IR-3(3)        | CONTINUOUS IMPROVEMENT                                         | O                          | √         |
+| IR-4           | Incident Handling                                              | O                          |           |
+| IR-4(1)        | AUTOMATED INCIDENT HANDLING PROCESSES                          | O                          |           |
+| IR-4(2)        | DYNAMIC RECONFIGURATION                                        | O                          |           |
+| IR-4(3)        | CONTINUITY OF OPERATIONS                                       | O                          |           |
+| IR-4(4)        | INFORMATION CORRELATION                                        | O                          |           |
+| IR-4(5)        | AUTOMATIC DISABLING OF SYSTEM                                  | O /S                       |           |
+| IR-4(6)        | INSIDER THREATS                                                | O                          |           |
+| IR-4(7)        | INSIDER THREATS — INTRA-ORGANIZATION COORDINATION              | O                          |           |
+| IR-4(8)        | CORRELATION WITH EXTERNAL ORGANIZATIONS                        | O                          |           |
+| IR-4(9)        | DYNAMIC RESPONSE CAPABILITY                                    | O                          |           |
+| IR-4(10)       | SUPPLY CHAIN COORDINATION                                      | O                          |           |
+| IR-4(11)       | INTEGRATED INCIDENT RESPONSE TEAM                              | O                          |           |
+| IR-4(12)       | MALICIOUS CODE AND FORENSIC ANALYSIS                           | O                          |           |
+| IR-4(13)       | BEHAVIOR ANALYSIS                                              | O                          |           |
+| IR-4(14)       | SECURITY OPERATIONS CENTER                                     | O /S                       |           |
+| IR-4(15)       | PUBLIC RELATIONS AND REPUTATION REPAIR                         | O                          |           |
+| IR-5           | Incident Monitoring                                            | O                          | √         |
+| IR-5(1)        | AUTOMATED TRACKING, DATA COLLECTION, AND ANALYSIS              | O                          | √         |
+| IR-6           | Incident Reporting                                             | O                          |           |
+| IR-6(1)        | AUTOMATED REPORTING                                            | O                          |           |
+| IR-6(2)        | VULNERABILITIES RELATED TO INCIDENTS                           | O                          |           |
+| IR-6(3)        | SUPPLY CHAIN COORDINATION                                      | O                          |           |
+| IR-7           | Incident Response Assistance                                   | O                          |           |
+| IR-7(1)        | AUTOMATION SUPPORT FOR AVAILABILITY OF INFORMATION AND SUPPORT | O                          |           |
+| IR-7(2)        | COORDINATION WITH EXTERNAL PROVIDERS                           | O                          |           |
+| IR-8           | Incident Response Plan                                         | O                          |           |
+| IR-8(1)        | BREACHES                                                       | O                          |           |
+| IR-9           | Information Spillage Response                                  | O                          |           |
+| IR-9(1)        | RESPONSIBLE PERSONNEL                                          | W: Incorporated into IR-9. |           |
+| IR-9(2)        | TRAINING                                                       | O                          |           |
+| IR-9(3)        | POST-SPILL OPERATIONS                                          | O                          |           |
+| IR-9(4)        | EXPOSURE TO UNAUTHORIZED PERSONNEL NUMBER BY                   | O                          |           |
+| IR-10          | Integrated Information Security Analysis Team                  | W: Moved to IR-4(11).      |           |
+
+**TABLE C-9: MAINTENANCE FAMILY**
+
+| Control Number | Control Name / Enhancement Name                       | Implemented By                      | Assurance |
+| -------------- | ----------------------------------------------------- | ----------------------------------- | --------- |
+| MA-1           | Policy and Procedures                                 | O                                   | √         |
+| MA-2           | Controlled Maintenance                                | O                                   |           |
+| MA-2(1)        | RECORD CONTENT                                        | W: Incorporated into MA-2.          |           |
+| MA-2(2)        | AUTOMATED MAINTENANCE ACTIVITIES                      | O                                   |           |
+| MA-3           | Maintenance Tools                                     | O                                   |           |
+| MA-3(1)        | INSPECT TOOLS                                         | O                                   |           |
+| MA-3(2)        | INSPECT MEDIA                                         | O                                   |           |
+| MA-3(3)        | PREVENT UNAUTHORIZED REMOVAL                          | O                                   |           |
+| MA-3(4)        | RESTRICTED TOOL USE                                   | O /S                                |           |
+| MA-3(5)        | EXECUTION WITH PRIVILEGE                              | O /S                                |           |
+| MA-3(6)        | SOFTWARE UPDATES AND PATCHES                          | O /S                                |           |
+| MA-4           | Nonlocal Maintenance                                  | O                                   |           |
+| MA-4(1)        | LOGGING AND REVIEW                                    | O                                   |           |
+| MA-4(2)        | DOCUMENT NONLOCAL MAINTENANCE                         | W: Incorporated into MA-1 and MA-4. |           |
+| MA-4(3)        | COMPARABLE SECURITY AND SANITIZATION                  | O                                   |           |
+| MA-4(4)        | AUTHENTICATION AND SEPARATION OF MAINTENANCE SESSIONS | O                                   |           |
+| MA-4(5)        | APPROVALS AND NOTIFICATIONS                           | O                                   |           |
+| MA-4(6)        | CRYPTOGRAPHIC PROTECTION                              | O /S                                |           |
+| MA-4(7)        | DISCONNECT VERIFICATION                               | S                                   |           |
+| MA-5           | Maintenance Personnel                                 | O                                   |           |
+| MA-5(1)        | INDIVIDUALS WITHOUT APPROPRIATE ACCESS                | O                                   |           |
+| MA-5(2)        | SECURITY CLEARANCES FOR CLASSIFIED SYSTEMS            | O                                   |           |
+| MA-5(3)        | CITIZENSHIP REQUIREMENTS FOR CLASSIFIED SYSTEMS       | O                                   |           |
+| MA-5(4)        | FOREIGN NATIONALS                                     | O                                   |           |
+| MA-5(5)        | NON-SYSTEM MAINTENANCE                                | O                                   |           |
+| MA-6           | Timely Maintenance                                    | O                                   |           |
+| MA-6(1)        | PREVENTIVE MAINTENANCE                                | O                                   |           |
+| MA-6(2)        | PREDICTIVE MAINTENANCE                                | O                                   |           |
+| MA-6(3)        | AUTOMATED SUPPORT FOR PREDICTIVE MAINTENANCE          | O                                   |           |
+| MA-7           | Field Maintenance                                     | O                                   |           |
+
+**TABLE C-10: MEDIA PROTECTION FAMILY**
+
+| Control Number | Control Name / Enhancement Name              | Implemented By                 | Assurance |
+| -------------- | -------------------------------------------- | ------------------------------ | --------- |
+| MP-1           | Policy and Procedures                        | O                              | √         |
+| MP-2           | Media Access                                 | O                              |           |
+| MP-2(1)        | AUTOMATED RESTRICTED ACCESS                  | W: Incorporated into MP-4(2).  |           |
+| MP-2(2)        | CRYPTOGRAPHIC PROTECTION                     | W: Incorporated into SC-28(1). |           |
+| MP-3           | Media Marking                                | O                              |           |
+| MP-4           | Media Storage                                | O                              |           |
+| MP-4(1)        | CRYPTOGRAPHIC PROTECTION                     | W: Incorporated into SC-28(1). |           |
+| MP-4(2)        | AUTOMATED RESTRICTED ACCESS                  | O                              |           |
+| MP-5           | Media Transport                              | O                              |           |
+| MP-5(1)        | PROTECTION OUTSIDE OF CONTROLLED AREAS       | W: Incorporated into MP-5.     |           |
+| MP-5(2)        | DOCUMENTATION OF ACTIVITIES                  | W: Incorporated into MP-5.     |           |
+| MP-5(3)        | CUSTODIANS                                   | O                              |           |
+| MP-5(4)        | CRYPTOGRAPHIC PROTECTION                     | W: Incorporated into SC-28(1). |           |
+| MP-6           | Media Sanitization                           | O                              |           |
+| MP-6(1)        | REVIEW, APPROVE, TRACK, DOCUMENT, AND VERIFY | O                              |           |
+| MP-6(2)        | EQUIPMENT TESTING                            | O                              |           |
+| MP-6(3)        | NONDESTRUCTIVE TECHNIQUES                    | O                              |           |
+| MP-6(4)        | CONTROLLED UNCLASSIFIED INFORMATION          | W: Incorporated into MP-6.     |           |
+| MP-6(5)        | CLASSIFIED INFORMATION                       | W: Incorporated into MP-6.     |           |
+| MP-6(6)        | MEDIA DESTRUCTION                            | W: Incorporated into MP-6.     |           |
+| MP-6(7)        | DUAL AUTHORIZATION                           | O                              |           |
+| MP-6(8)        | REMOTE PURGING OR WIPING OF INFORMATION      | O                              |           |
+| MP-7           | Media Use                                    | O                              |           |
+| MP-7(1)        | PROHIBIT USE WITHOUT OWNER                   | W: Incorporated into MP-7.     |           |
+| MP-7(2)        | PROHIBIT USE OF SANITIZATION-RESISTANT MEDIA | O                              |           |
+| MP-8           | Media Downgrading                            | O                              |           |
+| MP-8(1)        | DOCUMENTATION OF PROCESS                     | O                              |           |
+| MP-8(2)        | EQUIPMENT TESTING                            | O                              |           |
+| MP-8(3)        | CONTROLLED UNCLASSIFIED INFORMATION          | O                              |           |
+| MP-8(4)        | CLASSIFIED INFORMATION                       | O                              |           |
+
+**TABLE C-11: PHYSICAL AND ENVIRONMENTAL PROTECTION FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                       | Implemented By                      | Assurance |
+| -------------- | --------------------------------------------------------------------- | ----------------------------------- | --------- |
+| PE-1           | Policy and Procedures                                                 | O                                   | √         |
+| PE-2           | Physical Access Authorizations                                        | O                                   |           |
+| PE-2(1)        | ACCESS BY POSITION AND ROLE                                           | O                                   |           |
+| PE-2(2)        | TWO FORMS OF IDENTIFICATION                                           | O                                   |           |
+| PE-2(3)        | RESTRICT UNESCORTED ACCESS                                            | O                                   |           |
+| PE-3           | Physical Access Control                                               | O                                   |           |
+| PE-3(1)        | SYSTEM ACCESS                                                         | O                                   |           |
+| PE-3(2)        | FACILITY AND SYSTEMS                                                  | O                                   |           |
+| PE-3(3)        | CONTINUOUS GUARDS                                                     | O                                   |           |
+| PE-3(4)        | LOCKABLE CASINGS                                                      | O                                   |           |
+| PE-3(5)        | TAMPER PROTECTION                                                     | O                                   |           |
+| PE-3(6)        | FACILITY PENETRATION TESTING                                          | W: Incorporated into CA-8.          |           |
+| PE-3(7)        | PHYSICAL BARRIERS                                                     | O                                   |           |
+| PE-3(8)        | ACCESS CONTROL VESTIBULES                                             | O                                   |           |
+| PE-4           | Access Control for Transmission                                       | O                                   |           |
+| PE-5           | Access Control for Output Devices                                     | O                                   |           |
+| PE-5(1)        | ACCESS TO OUTPUT BY AUTHORIZED INDIVIDUALS                            | W: Incorporated into PE-5.          |           |
+| PE-5(2)        | LINK TO INDIVIDUAL IDENTITY                                           | S                                   |           |
+| PE-5(3)        | MARKING OUTPUT DEVICES                                                | W: Incorporated into PE-22.         |           |
+| PE-6           | Monitoring Physical Access                                            | O                                   | √         |
+| PE-6(1)        | INTRUSION ALARMS AND SURVEILLANCE EQUIPMENT                           | O                                   | √         |
+| PE-6(2)        | AUTOMATED INTRUSION RECOGNITION AND RESPONSES                         | O                                   | √         |
+| PE-6(3)        | VIDEO SURVEILLANCE                                                    | O                                   | √         |
+| PE-6(4)        | MONITORING PHYSICAL ACCESS TO SYSTEMS                                 | O                                   | √         |
+| PE-7           | Visitor Control                                                       | W: Incorporated into PE-2 and PE-3. |           |
+| PE-8           | Visitor Access Records                                                | O                                   | √         |
+| PE-8(1)        | AUTOMATED RECORDS MAINTENANCE AND REVIEW                              | O                                   |           |
+| PE-8(2)        | PHYSICAL ACCESS RECORDS                                               | W: Incorporated into PE-2.          |           |
+| PE-8(3)        | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS                    | O                                   |           |
+| PE-9           | Power Equipment and Cabling                                           | O                                   |           |
+| PE-9(1)        | REDUNDANT CABLING                                                     | O                                   |           |
+| PE-9(2)        | AUTOMATIC VOLTAGE CONTROLS                                            | O                                   |           |
+| PE-10          | Emergency Shutoff                                                     | O                                   |           |
+| PE-10(1)       | ACCIDENTAL AND UNAUTHORIZED ACTIVATION                                | W: Incorporated into PE-10.         |           |
+| PE-11          | Emergency Power                                                       | O                                   |           |
+| PE-11(1)       | ALTERNATE POWER SUPPLY — MINIMAL OPERATIONAL CAPABILITY               | O                                   |           |
+| PE-11(2)       | ALTERNATE POWER SUPPLY — SELF-CONTAINED                               | O                                   |           |
+| PE-12          | Emergency Lighting                                                    | O                                   |           |
+| PE-12(1)       | ESSENTIAL MISSION AND BUSINESS FUNCTIONS                              | O                                   |           |
+| PE-13          | Fire Protection                                                       | O                                   |           |
+| PE-13(1)       | DETECTION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION             | O                                   |           |
+| PE-13(2)       | SUPPRESSION SYSTEMS — AUTOMATIC ACTIVATION AND NOTIFICATION NUMBER BY | O                                   |           |
+| PE-13(3)       | AUTOMATIC FIRE SUPPRESSION                                            | W: Incorporated into PE-13(2).      |           |
+| PE-13(4)       | INSPECTIONS                                                           | O                                   |           |
+| PE-14          | Environmental Controls                                                | O                                   |           |
+| PE-14(1)       | AUTOMATIC CONTROLS                                                    | O                                   |           |
+| PE-14(2)       | MONITORING WITH ALARMS AND NOTIFICATIONS                              | O                                   |           |
+| PE-15          | Water Damage Protection                                               | O                                   |           |
+| PE-15(1)       | AUTOMATION SUPPORT                                                    | O                                   |           |
+| PE-16          | Delivery and Removal                                                  | O                                   |           |
+| PE-17          | Alternate Work Site                                                   | O                                   |           |
+| PE-18          | Location of System Components                                         | O                                   |           |
+| PE-18(1)       | FACILITY SITE                                                         | W: Moved to PE-23.                  |           |
+| PE-19          | Information Leakage                                                   | O                                   |           |
+| PE-19(1)       | NATIONAL EMISSIONS POLICIES AND PROCEDURES                            | O                                   |           |
+| PE-20          | Asset Monitoring and Tracking                                         | O                                   |           |
+| PE-21          | Electromagnetic Pulse Protection                                      | O                                   |           |
+| PE-22          | Component Marking                                                     | O                                   |           |
+| PE-23          | Facility Location                                                     | O                                   |           |
+
+**TABLE C-12: PLANNING FAMILY**
+
+| Control Number | Control Name / Enhancement Name                               | Implemented By             | Assurance |
+| -------------- | ------------------------------------------------------------- | -------------------------- | --------- |
+| PL-1           | Policy and Procedures                                         | O                          | √         |
+| PL-2           | System Security and Privacy Plans                             | O                          | √         |
+| PL-2(1)        | CONCEPT OF OPERATIONS                                         | W: Incorporated into PL-7. |           |
+| PL-2(2)        | FUNCTIONAL ARCHITECTURE                                       | W: Incorporated into PL-8. |           |
+| PL-2(3)        | PLAN AND COORDINATE WITH OTHER ORGANIZATIONAL ENTITIES        | W: Incorporated into PL-2. |           |
+| PL-3           | System Security Plan Update                                   | W: Incorporated into PL-2. |           |
+| PL-4           | Rules of Behavior                                             | O                          | √         |
+| PL-4(1)        | SOCIAL MEDIA AND EXTERNAL SITE/APPLICATION USAGE RESTRICTIONS | O                          | √         |
+| PL-5           | Privacy Impact Assessment                                     | W: Incorporated into RA-8. |           |
+| PL-6           | Security-Related Activity Planning                            | W: Incorporated into PL-2. |           |
+| PL-7           | Concept of Operations                                         | O                          |           |
+| PL-8           | Security and Privacy Architectures                            | O                          | √         |
+| PL-8(1)        | DEFENSE IN DEPTH                                              | O                          | √         |
+| PL-8(2)        | SUPPLIER DIVERSITY                                            | O                          | √         |
+| PL-9           | Central Management                                            | O                          | √         |
+| PL-10          | Baseline Selection                                            | O                          |           |
+| PL-11          | Baseline Tailoring                                            | O                          |           |
+
+**TABLE C-13: PROGRAM MANAGEMENT FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                                             | Implemented By | Assurance |
+| -------------- | ------------------------------------------------------------------------------------------- | -------------- | --------- |
+| PM-1           | Information Security Program Plan                                                           | O              |           |
+| PM-2           | Information Security Program Leadership Role                                                | O              |           |
+| PM-3           | Information Security and Privacy Resources                                                  | O              |           |
+| PM-4           | Plan of Action and Milestones Process                                                       | O              |           |
+| PM-5           | System Inventory                                                                            | O              |           |
+| PM-5(1)        | INVENTORY OF PERSONALLY IDENTIFIABLE INFORMATION                                            | O              |           |
+| PM-6           | Measures of Performance                                                                     | O              | √         |
+| PM-7           | Enterprise Architecture                                                                     | O              |           |
+| PM-7(1)        | OFFLOADING                                                                                  | O              |           |
+| PM-8           | Critical Infrastructure Plan                                                                | O              |           |
+| PM-9           | Risk Management Strategy                                                                    | O              | √         |
+| PM-10          | Authorization Process                                                                       | O              | √         |
+| PM-11          | Mission and Business Process Definition                                                     | O              |           |
+| PM-12          | Insider Threat Program                                                                      | O              | √         |
+| PM-13          | Security and Privacy Workforce                                                              | O              |           |
+| PM-14          | Testing, Training, and Monitoring                                                           | O              | √         |
+| PM-15          | Security and Privacy Groups and Associations                                                | O              |           |
+| PM-16          | Threat Awareness Program                                                                    | O              | √         |
+| PM-16(1)       | AUTOMATED MEANS FOR SHARING THREAT INTELLIGENCE                                             | O              | √         |
+| PM-17          | Protecting Controlled Unclassified Information on External Systems                          | O              | √         |
+| PM-18          | Privacy Program Plan                                                                        | O              |           |
+| PM-19          | Privacy Program Leadership Role                                                             | O              |           |
+| PM-20          | Dissemination of Privacy Program Information                                                | O              |           |
+| PM-20(1)       | PRIVACY POLICIES ON WEBSITES, APPLICATIONS, AND DIGITAL SERVICES                            | O              | √         |
+| PM-21          | Accounting of Disclosures                                                                   | O              |           |
+| PM-22          | Personally Identifiable Information Quality Management                                      | O              | √         |
+| PM-23          | Data Governance Body                                                                        | O              | √         |
+| PM-24          | Data Integrity Board                                                                        | O              | √         |
+| PM-25          | Minimization of Personally Identifiable Information Used in Testing, Training, and Research | O              |           |
+| PM-26          | Complaint Management                                                                        | O              |           |
+| PM-27          | Privacy Reporting                                                                           | O              |           |
+| PM-28          | Risk Framing                                                                                | O              | √         |
+| PM-29          | Risk Management Program Leadership Roles                                                    | O              |           |
+| PM-30          | Supply Chain Risk Management Strategy                                                       | O              | √         |
+| PM-30(1)       | SUPPLIERS OF CRITICAL OR MISSION-ESSENTIAL ITEMS                                            | O              | √         |
+| PM-31          | Continuous Monitoring Strategy                                                              | O              |           |
+| PM-32          | Purposing                                                                                   | O              | √         |
+
+**TABLE C-14: PERSONNEL SECURITY FAMILY**
+
+| Control Number | Control Name / Enhancement Name                     | Implemented By             | Assurance |
+| -------------- | --------------------------------------------------- | -------------------------- | --------- |
+| PS-1           | Policy and Procedures                               | O                          | √         |
+| PS-2           | Position Risk Designation                           | O                          |           |
+| PS-3           | Personnel Screening                                 | O                          |           |
+| PS-3(1)        | CLASSIFIED INFORMATION                              | O                          |           |
+| PS-3(2)        | FORMAL INDOCTRINATION                               | O                          |           |
+| PS-3(3)        | INFORMATION REQUIRING SPECIAL PROTECTION MEASURES   | O                          |           |
+| PS-3(4)        | CITIZENSHIP REQUIREMENTS                            | O                          |           |
+| PS-4           | Personnel Termination                               | O                          |           |
+| PS-4(1)        | POST-EMPLOYMENT REQUIREMENTS                        | O                          |           |
+| PS-4(2)        | AUTOMATED ACTIONS                                   | O                          |           |
+| PS-5           | Personnel Transfer                                  | O                          |           |
+| PS-6           | Access Agreements                                   | O                          | √         |
+| PS-6(1)        | INFORMATION REQUIRING SPECIAL PROTECTION            | W: Incorporated into PS-3. |           |
+| PS-6(2)        | CLASSIFIED INFORMATION REQUIRING SPECIAL PROTECTION | O                          | √         |
+| PS-6(3)        | POST-EMPLOYMENT REQUIREMENTS                        | O                          | √         |
+| PS-7           | External Personnel Security                         | O                          | √         |
+| PS-8           | Personnel Sanctions                                 | O                          |           |
+| PS-9           | Position Descriptions                               | O                          |           |
+
+**TABLE C-15: PERSONALLY IDENTIFIABLE INFORMATION PROCESSING AND TRANSPARENCY FAMILY**
+
+| Control Number | Control Name / Enhancement Name                            | Implemented By | Assurance |
+| -------------- | ---------------------------------------------------------- | -------------- | --------- |
+| PT-1           | Policy and Procedures                                      | O              | √         |
+| PT-2           | Authority to Process Personally Identifiable Information   | O              | √         |
+| PT-2(1)        | DATA TAGGING                                               | S              | √         |
+| PT-2(2)        | AUTOMATION                                                 | O              | √         |
+| PT-3           | Personally Identifiable Information Processing Purposes    | O              |           |
+| PT-3(1)        | DATA TAGGING                                               | S              | √         |
+| PT-3(2)        | AUTOMATION                                                 | O              | √         |
+| PT-4           | Consent                                                    | O              |           |
+| PT-4(1)        | TAILORED CONSENT                                           | O              |           |
+| PT-4(2)        | JUST-IN-TIME CONSENT                                       | O              |           |
+| PT-4(3)        | REVOCATION                                                 | O              |           |
+| PT-5           | Privacy Notice                                             | O              |           |
+| PT-5(1)        | JUST-IN-TIME NOTICE                                        | O              |           |
+| PT-5(2)        | PRIVACY ACT STATEMENTS                                     | O              |           |
+| PT-6           | System of Records Notice                                   | O              |           |
+| PT-6(1)        | ROUTINE USES                                               | O              |           |
+| PT-6(2)        | EXEMPTION RULES                                            | O              |           |
+| PT-7           | Specific Categories of Personally Identifiable Information | O              |           |
+| PT-7(1)        | SOCIAL SECURITY NUMBERS                                    | O              |           |
+| PT-7(2)        | FIRST AMENDMENT INFORMATION                                | O              |           |
+| PT-8           | Computer Matching Requirements                             | O              |           |
+
+**TABLE C-16: RISK ASSESSMENT FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                 | Implemented By             | Assurance |
+| -------------- | --------------------------------------------------------------- | -------------------------- | --------- |
+| RA-1           | Policy and Procedures                                           | O                          | √         |
+| RA-2           | Security Categorization                                         | O                          |           |
+| RA-2(1)        | IMPACT-LEVEL PRIORITIZATION                                     | O                          |           |
+| RA-3           | Risk Assessment                                                 | O                          | √         |
+| RA-3(1)        | SUPPLY CHAIN RISK ASSESSMENT                                    | O                          | √         |
+| RA-3(2)        | USE OF ALL-SOURCE INTELLIGENCE                                  | O                          | √         |
+| RA-3(3)        | DYNAMIC THREAT AWARENESS                                        | O                          | √         |
+| RA-3(4)        | PREDICTIVE CYBER ANALYTICS                                      | O                          | √         |
+| RA-4           | Risk Assessment Update                                          | W: Incorporated into RA-3. |           |
+| RA-5           | Vulnerability Monitoring and Scanning                           | O                          | √         |
+| RA-5(1)        | UPDATE TOOL CAPABILITY                                          | W: Incorporated into RA-5. |           |
+| RA-5(2)        | UPDATE VULNERABILITIES TO BE SCANNED                            | O                          | √         |
+| RA-5(3)        | BREADTH AND DEPTH OF COVERAGE                                   | O                          | √         |
+| RA-5(4)        | DISCOVERABLE INFORMATION                                        | O                          | √         |
+| RA-5(5)        | PRIVILEGED ACCESS                                               | O                          | √         |
+| RA-5(6)        | AUTOMATED TREND ANALYSES                                        | O                          | √         |
+| RA-5(7)        | AUTOMATED DETECTION AND NOTIFICATION OF UNAUTHORIZED COMPONENTS | W: Incorporated into CM-8. |           |
+| RA-5(8)        | REVIEW HISTORIC AUDIT LOGS                                      | O                          | √         |
+| RA-5(9)        | PENETRATION TESTING AND ANALYSES                                | W: Incorporated into CA-8. |           |
+| RA-5(10)       | CORRELATE SCANNING INFORMATION                                  | O                          | √         |
+| RA-5(11)       | PUBLIC DISCLOSURE PROGRAM                                       | O                          | √         |
+| RA-6           | Technical Surveillance Countermeasures Survey                   | O                          | √         |
+| RA-7           | Risk Response                                                   | O                          | √         |
+| RA-8           | Privacy Impact Assessments                                      | O                          | √         |
+| RA-9           | Criticality Analysis                                            | O                          |           |
+| RA-10          | Threat Hunting                                                  | O /S                       | √         |
+
+**TABLE C-17: SYSTEM AND SERVICES ACQUISITION FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                   | Implemented By                       | Assurance |
+| -------------- | ----------------------------------------------------------------- | ------------------------------------ | --------- |
+| SA-1           | Policy and Procedures                                             | O                                    | √         |
+| SA-2           | Allocation of Resources                                           | O                                    | √         |
+| SA-3           | System Development Life Cycle                                     | O                                    | √         |
+| SA-3(1)        | MANAGE PREPRODUCTION ENVIRONMENT                                  | O                                    | √         |
+| SA-3(2)        | USE OF LIVE OR OPERATIONAL DATA                                   | O                                    | √         |
+| SA-3(3)        | TECHNOLOGY REFRESH                                                | O                                    | √         |
+| SA-4           | Acquisition Process                                               | O                                    | √         |
+| SA-4(1)        | FUNCTIONAL PROPERTIES OF CONTROLS                                 | O                                    | √         |
+| SA-4(2)        | DESIGN AND IMPLEMENTATION INFORMATION FOR CONTROLS                | O                                    | √         |
+| SA-4(3)        | DEVELOPMENT METHODS, TECHNIQUES, AND PRACTICES                    | O                                    | √         |
+| SA-4(4)        | ASSIGNMENT OF COMPONENTS TO SYSTEMS                               | W: Incorporated into CM-8(9).        |           |
+| SA-4(5)        | SYSTEM, COMPONENT, AND SERVICE CONFIGURATIONS                     | O                                    | √         |
+| SA-4(7)        | NIAP-APPROVED PROTECTION PROFILES                                 | O                                    | √         |
+| SA-4(8)        | CONTINUOUS MONITORING PLAN FOR CONTROLS                           | O                                    | √         |
+| SA-4(9)        | FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES IN USE                  | O                                    | √         |
+| SA-4(10)       | USE OF APPROVED PIV PRODUCTS                                      | O                                    | √         |
+| SA-4(11)       | SYSTEM OF RECORDS                                                 | O                                    | √         |
+| SA-4(12)       | DATA OWNERSHIP                                                    | O                                    | √         |
+| SA-5           | System Documentation                                              | O                                    | √         |
+| SA-5(1)        | FUNCTIONAL PROPERTIES OF SECURITY CONTROLS                        | W: Incorporated into SA-4(1).        |           |
+| SA-5(2)        | SECURITY-RELEVANT EXTERNAL SYSTEM INTERFACES                      | W: Incorporated into SA-4(2).        |           |
+| SA-5(3)        | HIGH-LEVEL DESIGN                                                 | W: Incorporated into SA-4(2).        |           |
+| SA-5(4)        | LOW-LEVEL DESIGN                                                  | W: Incorporated into SA-4(2).        |           |
+| SA-5(5)        | SOURCE CODE                                                       | W: Incorporated into SA-4(2).        |           |
+| SA-6           | Software Usage Restrictions                                       | W: Incorporated into CM-10 and SI-7. |           |
+| SA-7           | User-Installed Software                                           | W: Incorporated into CM-11 and SI-7. |           |
+| SA-8           | Security and Privacy Engineering Principles                       | O                                    | √         |
+| SA-8(1)        | CLEAR ABSTRACTIONS                                                | O /S                                 | √         |
+| SA-8(2)        | LEAST COMMON MECHANISM                                            | O /S                                 | √         |
+| SA-8(3)        | MODULARITY AND LAYERING                                           | O /S                                 | √         |
+| SA-8(4)        | PARTIALLY ORDERED DEPENDENCIES                                    | O /S                                 | √         |
+| SA-8(5)        | EFFICIENTLY MEDIATED ACCESS                                       | O /S                                 | √         |
+| SA-8(6)        | MINIMIZED SHARING                                                 | O /S                                 | √         |
+| SA-8(7)        | REDUCED COMPLEXITY                                                | O /S                                 | √         |
+| SA-8(8)        | SECURE EVOLVABILITY                                               | O /S                                 | √         |
+| SA-8(9)        | TRUSTED COMPONENTS                                                | O /S                                 | √         |
+| SA-8(10)       | HIERARCHICAL TRUST                                                | O /S                                 | √         |
+| SA-8(11)       | INVERSE MODIFICATION THRESHOLD                                    | O /S                                 | √         |
+| SA-8(12)       | HIERARCHICAL PROTECTION                                           | O /S                                 | √         |
+| SA-8(13)       | MINIMIZED SECURITY ELEMENTS                                       | O /S                                 | √         |
+| SA-8(14)       | LEAST PRIVILEGE NUMBER BY                                         | O /S                                 | √         |
+| SA-8(15)       | PREDICATE PERMISSION                                              | O /S                                 | √         |
+| SA-8(16)       | SELF-RELIANT TRUSTWORTHINESS                                      | O /S                                 | √         |
+| SA-8(17)       | SECURE DISTRIBUTED COMPOSITION                                    | O /S                                 | √         |
+| SA-8(18)       | TRUSTED COMMUNICATIONS CHANNELS                                   | O /S                                 | √         |
+| SA-8(19)       | CONTINUOUS PROTECTION                                             | O /S                                 | √         |
+| SA-8(20)       | SECURE METADATA MANAGEMENT                                        | O /S                                 | √         |
+| SA-8(21)       | SELF-ANALYSIS                                                     | O /S                                 | √         |
+| SA-8(22)       | ACCOUNTABILITY AND TRACEABILITY                                   | O /S                                 | √         |
+| SA-8(23)       | SECURE DEFAULTS                                                   | O /S                                 | √         |
+| SA-8(24)       | SECURE FAILURE AND RECOVERY                                       | O /S                                 | √         |
+| SA-8(25)       | ECONOMIC SECURITY                                                 | O /S                                 | √         |
+| SA-8(26)       | PERFORMANCE SECURITY                                              | O /S                                 | √         |
+| SA-8(27)       | HUMAN FACTORED SECURITY                                           | O /S                                 | √         |
+| SA-8(28)       | ACCEPTABLE SECURITY                                               | O /S                                 | √         |
+| SA-8(29)       | REPEATABLE AND DOCUMENTED PROCEDURES                              | O /S                                 | √         |
+| SA-8(30)       | PROCEDURAL RIGOR                                                  | O /S                                 | √         |
+| SA-8(31)       | SECURE SYSTEM MODIFICATION                                        | O /S                                 | √         |
+| SA-8(32)       | SUFFICIENT DOCUMENTATION                                          | O /S                                 | √         |
+| SA-8(33)       | MINIMIZATION                                                      | O /S                                 | √         |
+| SA-9           | External System Services                                          | O                                    | √         |
+| SA-9(1)        | RISK ASSESSMENTS AND ORGANIZATIONAL APPROVALS                     | O                                    | √         |
+| SA-9(2)        | IDENTIFICATION OF FUNCTIONS, PORTS, PROTOCOLS, AND SERVICES       | O                                    | √         |
+| SA-9(3)        | ESTABLISH AND MAINTAIN TRUST RELATIONSHIP WITH PROVIDERS          | O                                    | √         |
+| SA-9(4)        | CONSISTENT INTERESTS OF CONSUMERS AND PROVIDERS                   | O                                    | √         |
+| SA-9(5)        | PROCESSING, STORAGE, AND SERVICE LOCATION                         | O                                    | √         |
+| SA-9(6)        | ORGANIZATION-CONTROLLED CRYPTOGRAPHIC KEYS                        | O                                    | √         |
+| SA-9(7)        | ORGANIZATION-CONTROLLED INTEGRITY CHECKING                        | O                                    | √         |
+| SA-9(8)        | PROCESSING AND STORAGE LOCATION — U.S. JURISDICTION               | O                                    | √         |
+| SA-10          | Developer Configuration Management                                | O                                    | √         |
+| SA-10(1)       | SOFTWARE AND FIRMWARE INTEGRITY VERIFICATION                      | O                                    | √         |
+| SA-10(2)       | ALTERNATIVE CONFIGURATION MANAGEMENT PROCESSES                    | O                                    | √         |
+| SA-10(3)       | HARDWARE INTEGRITY VERIFICATION                                   | O                                    | √         |
+| SA-10(4)       | TRUSTED GENERATION                                                | O                                    | √         |
+| SA-10(5)       | MAPPING INTEGRITY FOR VERSION CONTROL                             | O                                    | √         |
+| SA-10(6)       | TRUSTED DISTRIBUTION                                              | O                                    | √         |
+| SA-10(7)       | SECURITY AND PRIVACY REPRESENTATIVES                              | O                                    | √         |
+| SA-11          | Developer Testing and Evaluation                                  | O                                    | √         |
+| SA-11(1)       | STATIC CODE ANALYSIS                                              | O                                    | √         |
+| SA-11(2)       | THREAT MODELING AND VULNERABILITY ANALYSES                        | O                                    | √         |
+| SA-11(3)       | INDEPENDENT VERIFICATION OF ASSESSMENT PLANS AND EVIDENCE         | O                                    | √         |
+| SA-11(4)       | MANUAL CODE REVIEWS                                               | O                                    | √         |
+| SA-11(5)       | PENETRATION TESTING                                               | O                                    | √         |
+| SA-11(6)       | ATTACK SURFACE REVIEWS NUMBER BY                                  | O                                    | √         |
+| SA-11(7)       | VERIFY SCOPE OF TESTING AND EVALUATION                            | O                                    | √         |
+| SA-11(8)       | DYNAMIC CODE ANALYSIS                                             | O                                    | √         |
+| SA-11(9)       | INTERACTIVE APPLICATION SECURITY TESTING                          | O                                    | √         |
+| SA-12          | Supply Chain Protection                                           | W: Moved to SR Family.               |           |
+| SA-12(1)       | ACQUISITION STRATEGIES, TOOLS, AND METHODS                        | W: Moved to SR-5.                    |           |
+| SA-12(2)       | SUPPLIER REVIEWS                                                  | W: Moved to SR-6.                    |           |
+| SA-12(3)       | TRUSTED SHIPPING AND WAREHOUSING                                  | W: Incorporated into SR-3.           |           |
+| SA-12(4)       | DIVERSITY OF SUPPLIERS                                            | W: Moved to SR-3(1).                 |           |
+| SA-12(5)       | LIMITATION OF HARM                                                | W: Moved to SR-3(2).                 |           |
+| SA-12(6)       | MINIMIZING PROCUREMENT TIME                                       | W: Incorporated into SR-5(1).        |           |
+| SA-12(7)       | ASSESSMENTS PRIOR TO SELECTION / ACCEPTANCE / UPDATE              | W: Moved to SR-5(2).                 |           |
+| SA-12(8)       | USE OF ALL-SOURCE INTELLIGENCE                                    | W: Incorporated into RA-3(2).        |           |
+| SA-12(9)       | OPERATIONS SECURITY                                               | W: Moved to SR-7.                    |           |
+| SA-12(10)      | VALIDATE AS GENUINE AND NOT ALTERED                               | W: Moved to SR-4(3).                 |           |
+| SA-12(11)      | PENETRATION TESTING / ANALYSIS OF ELEMENTS, PROCESSES, AND ACTORS | W: Moved to SR-6(1).                 |           |
+| SA-12(12)      | INTER-ORGANIZATIONAL AGREEMENTS                                   | W: Moved to SR-8.                    |           |
+| SA-12(13)      | CRITICAL INFORMATION SYSTEM COMPONENTS                            | W: Incorporated into MA-6 and RA-9.  |           |
+| SA-12(14)      | IDENTITY AND TRACEABILITY                                         | W: Moved to SR-4(1) and SR-4(2).     |           |
+| SA-12(15)      | PROCESSES TO ADDRESS WEAKNESSES OR DEFICIENCIES                   | W: Incorporated into SR-3.           |           |
+| SA-13          | Trustworthiness                                                   | W: Incorporated into SA-8.           |           |
+| SA-14          | Criticality Analysis                                              | W: Incorporated into RA-9.           |           |
+| SA-14(1)       | CRITICAL COMPONENTS WITH NO VIABLE ALTERNATIVE SOURCING           | W: Incorporated into SA-20.          |           |
+| SA-15          | Development Process, Standards, and Tools                         | O                                    | √         |
+| SA-15(1)       | QUALITY METRICS                                                   | O                                    | √         |
+| SA-15(2)       | SECURITY AND PRIVACY TRACKING TOOLS                               | O                                    | √         |
+| SA-15(3)       | CRITICALITY ANALYSIS                                              | O                                    | √         |
+| SA-15(4)       | THREAT MODELING AND VULNERABILITY ANALYSIS                        | W: Incorporated into SA-11(2).       |           |
+| SA-15(5)       | ATTACK SURFACE REDUCTION                                          | O                                    | √         |
+| SA-15(6)       | CONTINUOUS IMPROVEMENT                                            | O                                    | √         |
+| SA-15(7)       | AUTOMATED VULNERABILITY ANALYSIS                                  | O                                    | √         |
+| SA-15(8)       | REUSE OF THREAT AND VULNERABILITY INFORMATION                     | O                                    | √         |
+| SA-15(9)       | USE OF LIVE DATA                                                  | W: Incorporated into SA-3(2).        |           |
+| SA-15(10)      | INCIDENT RESPONSE PLAN                                            | O                                    | √         |
+| SA-15(11)      | ARCHIVE SYSTEM OR COMPONENT                                       | O                                    | √         |
+| SA-15(12)      | MINIMIZE PERSONALLY IDENTIFIABLE INFORMATION                      | O                                    | √         |
+| SA-16          | Developer-Provided Training                                       | O                                    | √         |
+| SA-17          | Developer Security and Privacy Architecture and Design            | O                                    | √         |
+| SA-17(1)       | FORMAL POLICY MODEL                                               | O                                    | √         |
+| SA-17(2)       | SECURITY-RELEVANT COMPONENTS                                      | O                                    | √         |
+| SA-17(3)       | FORMAL CORRESPONDENCE                                             | O                                    | √         |
+| SA-17(4)       | INFORMAL CORRESPONDENCE                                           | O                                    | √         |
+| SA-17(5)       | CONCEPTUALLY SIMPLE DESIGN NUMBER BY                              | O                                    | √         |
+| SA-17(6)       | STRUCTURE FOR TESTING                                             | O                                    | √         |
+| SA-17(7)       | STRUCTURE FOR LEAST PRIVILEGE                                     | O                                    | √         |
+| SA-17(8)       | ORCHESTRATION                                                     | O                                    | √         |
+| SA-17(9)       | DESIGN DIVERSITY                                                  | O                                    | √         |
+| SA-18          | Tamper Resistance and Detection                                   | W: Moved to SR-9.                    |           |
+| SA-18(1)       | MULTIPLE PHASES OF SYSTEM DEVELOPMENT LIFE CYCLE                  | W: Moved to SR-9(1).                 |           |
+| SA-18(2)       | INSPECTION OF SYSTEMS OR COMPONENTS                               | W: Moved to SR-10.                   |           |
+| SA-19          | Component Authenticity                                            | W: Moved to SR-11.                   |           |
+| SA-19(1)       | ANTI-COUNTERFEIT TRAINING                                         | W: Moved to SR-11(1).                |           |
+| SA-19(2)       | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR            | W: Moved to SR-11(2).                |           |
+| SA-19(3)       | COMPONENT DISPOSAL                                                | W: Moved to SR-12.                   |           |
+| SA-19(4)       | ANTI-COUNTERFEIT SCANNING                                         | W: Moved to SR-11(3).                |           |
+| SA-20          | Customized Development of Critical Components                     | O                                    | √         |
+| SA-21          | Developer Screening                                               | O                                    | √         |
+| SA-21(1)       | VALIDATION OF SCREENING                                           | W: Incorporated into SA-21.          |           |
+| SA-22          | Unsupported System Components                                     | O                                    | √         |
+| SA-22(1)       | ALTERNATIVE SOURCES FOR CONTINUED SUPPORT                         | W: Incorporated into SA-22.          |           |
+| SA-23          | Specialization                                                    | O                                    | √         |
+
+**TABLE C-18: SYSTEM AND COMMUNICATIONS PROTECTION FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                        | Implemented By                             | Assurance |
+| -------------- | ---------------------------------------------------------------------- | ------------------------------------------ | --------- |
+| SC-1           | Policy and Procedures                                                  | O                                          | √         |
+| SC-2           | Separation of System and User Functionality                            | S                                          | √         |
+| SC-2(1)        | INTERFACES FOR NON-PRIVILEGED USERS                                    | S                                          | √         |
+| SC-2(2)        | DISASSOCIABILITY                                                       | S                                          | √         |
+| SC-3           | Security Function Isolation                                            | S                                          | √         |
+| SC-3(1)        | HARDWARE SEPARATION                                                    | S                                          | √         |
+| SC-3(2)        | ACCESS AND FLOW CONTROL FUNCTIONS                                      | S                                          | √         |
+| SC-3(3)        | MINIMIZE NONSECURITY FUNCTIONALITY                                     | O /S                                       | √         |
+| SC-3(4)        | MODULE COUPLING AND COHESIVENESS                                       | O /S                                       | √         |
+| SC-3(5)        | LAYERED STRUCTURES                                                     | O /S                                       | √         |
+| SC-4           | Information in Shared System Resources                                 | S                                          |           |
+| SC-4(1)        | SECURITY LEVELS                                                        | W: Incorporated into SC-4.                 |           |
+| SC-4(2)        | MULTILEVEL OR PERIODS PROCESSING                                       | S                                          |           |
+| SC-5           | Denial-of-Service Protection                                           | S                                          |           |
+| SC-5(1)        | RESTRICT ABILITY TO ATTACK OTHER SYSTEMS                               | S                                          |           |
+| SC-5(2)        | CAPACITY, BANDWIDTH, AND REDUNDANCY                                    | S                                          |           |
+| SC-5(3)        | DETECTION AND MONITORING                                               | S                                          |           |
+| SC-6           | Resource Availability                                                  | S                                          | √         |
+| SC-7           | Boundary Protection                                                    | S                                          |           |
+| SC-7(1)        | PHYSICALLY SEPARATED SUBNETWORKS                                       | W: Incorporated into SC-7.                 |           |
+| SC-7(2)        | PUBLIC ACCESS                                                          | W: Incorporated into SC-7.                 |           |
+| SC-7(3)        | ACCESS POINTS                                                          | S                                          |           |
+| SC-7(4)        | EXTERNAL TELECOMMUNICATIONS SERVICES                                   | O                                          |           |
+| SC-7(5)        | DENY BY DEFAULT — ALLOW BY EXCEPTION                                   | S                                          |           |
+| SC-7(6)        | RESPONSE TO RECOGNIZED FAILURES                                        | W: Incorporated into SC-7(18).             |           |
+| SC-7(7)        | SPLIT TUNNELING FOR REMOTE DEVICES                                     | S                                          |           |
+| SC-7(8)        | ROUTE TRAFFIC TO AUTHENTICATED PROXY SERVERS                           | S                                          |           |
+| SC-7(9)        | RESTRICT THREATENING OUTGOING COMMUNICATIONS TRAFFIC                   | S                                          |           |
+| SC-7(10)       | PREVENT EXFILTRATION                                                   | S                                          |           |
+| SC-7(11)       | RESTRICT INCOMING COMMUNICATIONS TRAFFIC                               | S                                          |           |
+| SC-7(12)       | HOST-BASED PROTECTION                                                  | S                                          |           |
+| SC-7(13)       | ISOLATION OF SECURITY TOOLS, MECHANISMS, AND SUPPORT COMPONENTS        | S                                          |           |
+| SC-7(14)       | PROTECT AGAINST UNAUTHORIZED PHYSICAL CONNECTIONS                      | S                                          |           |
+| SC-7(15)       | NETWORKED PRIVILEGED ACCESSES                                          | S                                          |           |
+| SC-7(16)       | PREVENT DISCOVERY OF SYSTEM COMPONENTS                                 | S                                          |           |
+| SC-7(17)       | AUTOMATED ENFORCEMENT OF PROTOCOL FORMATS                              | S                                          |           |
+| SC-7(18)       | FAIL SECURE                                                            | S                                          | √         |
+| SC-7(19)       | BLOCK COMMUNICATION FROM NON-ORGANIZATIONALLY CONFIGURED HOSTS         | S                                          |           |
+| SC-7(20)       | DYNAMIC ISOLATION AND SEGREGATION                                      | S                                          |           |
+| SC-7(21)       | ISOLATION OF SYSTEM COMPONENTS NUMBER BY                               | O /S                                       | √         |
+| SC-7(22)       | SEPARATE SUBNETS FOR CONNECTING TO DIFFERENT SECURITY DOMAINS          | S                                          | √         |
+| SC-7(23)       | DISABLE SENDER FEEDBACK ON PROTOCOL VALIDATION FAILURE                 | S                                          |           |
+| SC-7(24)       | PERSONALLY IDENTIFIABLE INFORMATION                                    | O /S                                       |           |
+| SC-7(25)       | UNCLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS                      | O                                          |           |
+| SC-7(26)       | CLASSIFIED NATIONAL SECURITY SYSTEM CONNECTIONS                        | O                                          |           |
+| SC-7(27)       | UNCLASSIFIED NON-NATIONAL SECURITY SYSTEM CONNECTIONS                  | O                                          |           |
+| SC-7(28)       | CONNECTIONS TO PUBLIC NETWORKS                                         | O                                          |           |
+| SC-7(29)       | SEPARATE SUBNETS TO ISOLATE FUNCTIONS                                  | S                                          |           |
+| SC-8           | Transmission Confidentiality and Integrity                             | S                                          |           |
+| SC-8(1)        | CRYPTOGRAPHIC PROTECTION                                               | S                                          |           |
+| SC-8(2)        | PRE- AND POST-TRANSMISSION HANDLING                                    | S                                          |           |
+| SC-8(3)        | CRYPTOGRAPHIC PROTECTION FOR MESSAGE EXTERNALS                         | S                                          |           |
+| SC-8(4)        | CONCEAL OR RANDOMIZE COMMUNICATIONS                                    | S                                          |           |
+| SC-8(5)        | PROTECTED DISTRIBUTION SYSTEM                                          | S                                          |           |
+| SC-9           | Transmission Confidentiality                                           | W: Incorporated into SC-8.                 |           |
+| SC-10          | Network Disconnect                                                     | S                                          |           |
+| SC-11          | Trusted Path                                                           | S                                          | √         |
+| SC-11(1)       | IRREFUTABLE COMMUNICATIONS PATH                                        | S                                          | √         |
+| SC-12          | Cryptographic Key Establishment and Management                         | O /S                                       |           |
+| SC-12(1)       | AVAILABILITY                                                           | O /S                                       |           |
+| SC-12(2)       | SYMMETRIC KEYS                                                         | O /S                                       |           |
+| SC-12(3)       | ASYMMETRIC KEYS                                                        | O /S                                       |           |
+| SC-12(4)       | PKI CERTIFICATES                                                       | W: Incorporated into SC-12(3).             |           |
+| SC-12(5)       | PKI CERTIFICATES / HARDWARE TOKENS                                     | W: Incorporated into SC-12(3).             |           |
+| SC-12(6)       | PHYSICAL CONTROL OF KEYS                                               | O /S                                       |           |
+| SC-13          | Cryptographic Protection                                               | S                                          |           |
+| SC-13(1)       | FIPS-VALIDATED CRYPTOGRAPHY                                            | W: Incorporated into SC-13.                |           |
+| SC-13(2)       | NSA-APPROVED CRYPTOGRAPHY                                              | W: Incorporated into SC-13.                |           |
+| SC-13(3)       | INDIVIDUALS WITHOUT FORMAL ACCESS APPROVALS                            | W: Incorporated into SC-13.                |           |
+| SC-13(4)       | DIGITAL SIGNATURES                                                     | W: Incorporated into SC-13.                |           |
+| SC-14          | Public Access Protections 3, SI-4, SI-5, SI-7, and SI-10.              | W: Incorporated into AC-2, AC-3, AC-5, SI- |           |
+| SC-15          | Collaborative Computing Devices and Applications                       | S                                          |           |
+| SC-15(1)       | PHYSICAL OR LOGICAL DISCONNECT                                         | S                                          |           |
+| SC-15(2)       | BLOCKING INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC                   | W: Incorporated into SC-7.                 |           |
+| SC-15(3)       | DISABLING AND REMOVAL IN SECURE WORK AREAS                             | O                                          |           |
+| SC-15(4)       | EXPLICITLY INDICATE CURRENT PARTICIPANTS                               | S                                          |           |
+| SC-16          | Transmission of Security and Privacy Attributes                        | S                                          |           |
+| SC-16(1)       | INTEGRITY VERIFICATION                                                 | S                                          |           |
+| SC-16(2)       | ANTI-SPOOFING MECHANISMS                                               | S                                          |           |
+| SC-16(3)       | CRYPTOGRAPHIC BINDING                                                  | S                                          |           |
+| SC-17          | Public Key Infrastructure Certificates                                 | O /S                                       |           |
+| SC-18          | Mobile Code                                                            | O                                          |           |
+| SC-18(1)       | IDENTIFY UNACCEPTABLE CODE AND TAKE CORRECTIVE ACTIONS NUMBER BY       | S                                          |           |
+| SC-18(2)       | ACQUISITION, DEVELOPMENT, AND USE                                      | O                                          |           |
+| SC-18(3)       | PREVENT DOWNLOADING AND EXECUTION                                      | S                                          |           |
+| SC-18(4)       | PREVENT AUTOMATIC EXECUTION                                            | S                                          |           |
+| SC-18(5)       | ALLOW EXECUTION ONLY IN CONFINED ENVIRONMENTS                          | S                                          |           |
+| SC-19          | Voice over Internet Protocol other technology or protocol.             | W: Technology-specific; addressed as any   |           |
+| SC-20          | Secure Name/Address Resolution Service (Authoritative Source)          | S                                          |           |
+| SC-20(1)       | CHILD SUBSPACES                                                        | W: Incorporated into SC-20.                |           |
+| SC-20(2)       | DATA ORIGIN AND INTEGRITY                                              | S                                          |           |
+| SC-21          | Secure Name/Address Resolution Service (Recursive or Caching Resolver) | S                                          |           |
+| SC-21(1)       | DATA ORIGIN AND INTEGRITY                                              | W: Incorporated into SC-21.                |           |
+| SC-22          | Architecture and Provisioning for Name/Address Resolution Service      | S                                          |           |
+| SC-23          | Session Authenticity                                                   | S                                          |           |
+| SC-23(1)       | INVALIDATE SESSION IDENTIFIERS AT LOGOUT                               | S                                          |           |
+| SC-23(2)       | USER-INITIATED LOGOUTS AND MESSAGE DISPLAYS                            | W: Incorporated into AC-12(1).             |           |
+| SC-23(3)       | UNIQUE SYSTEM-GENERATED SESSION IDENTIFIERS                            | S                                          |           |
+| SC-23(4)       | UNIQUE SESSION IDENTIFIERS WITH RANDOMIZATION                          | W: Incorporated into SC-23(3).             |           |
+| SC-23(5)       | ALLOWED CERTIFICATE AUTHORITIES                                        | S                                          |           |
+| SC-24          | Fail in Known State                                                    | S                                          | √         |
+| SC-25          | Thin Nodes                                                             | S                                          |           |
+| SC-26          | Decoys                                                                 | S                                          |           |
+| SC-26(1)       | DETECTION OF MALICIOUS CODE                                            | W: Incorporated into SC-35.                |           |
+| SC-27          | Platform-Independent Applications                                      | S                                          |           |
+| SC-28          | Protection of Information at Rest                                      | S                                          |           |
+| SC-28(1)       | CRYPTOGRAPHIC PROTECTION                                               | S                                          |           |
+| SC-28(2)       | OFFLINE STORAGE                                                        | O                                          |           |
+| SC-28(3)       | CRYPTOGRAPHIC KEYS                                                     | O /S                                       |           |
+| SC-29          | Heterogeneity                                                          | O                                          | √         |
+| SC-29(1)       | VIRTUALIZATION TECHNIQUES                                              | O                                          | √         |
+| SC-30          | Concealment and Misdirection                                           | O                                          | √         |
+| SC-30(1)       | VIRTUALIZATION TECHNIQUES                                              | W: Incorporated into SC-29(1).             |           |
+| SC-30(2)       | RANDOMNESS                                                             | O                                          | √         |
+| SC-30(3)       | CHANGE PROCESSING AND STORAGE LOCATIONS                                | O                                          | √         |
+| SC-30(4)       | MISLEADING INFORMATION                                                 | O                                          | √         |
+| SC-30(5)       | CONCEALMENT OF SYSTEM COMPONENTS                                       | O                                          | √         |
+| SC-31          | Covert Channel Analysis                                                | O                                          | √         |
+| SC-31(1)       | TEST COVERT CHANNELS FOR EXPLOITABILITY                                | O                                          | √         |
+| SC-31(2)       | MAXIMUM BANDWIDTH                                                      | O                                          | √         |
+| SC-31(3)       | MEASURE BANDWIDTH IN OPERATIONAL ENVIRONMENTS                          | O                                          | √         |
+| SC-32          | System Partitioning                                                    | O /S                                       | √         |
+| SC-32(1)       | SEPARATE PHYSICAL DOMAINS FOR PRIVILEGED FUNCTIONS NUMBER BY           | O /S                                       | √         |
+| SC-33          | Transmission Preparation Integrity                                     | W: Incorporated into SC-8.                 |           |
+| SC-34          | Non-Modifiable Executable Programs                                     | S                                          | √         |
+| SC-34(1)       | NO WRITABLE STORAGE                                                    | O                                          | √         |
+| SC-34(2)       | INTEGRITY PROTECTION AND READ-ONLY MEDIA                               | O                                          | √         |
+| SC-34(3)       | HARDWARE-BASED PROTECTION                                              | W: Moved to SC-51.                         |           |
+| SC-35          | External Malicious Code Identification                                 | S                                          |           |
+| SC-36          | Distributed Processing and Storage                                     | O                                          | √         |
+| SC-36(1)       | POLLING TECHNIQUES                                                     | O                                          | √         |
+| SC-36(2)       | SYNCHRONIZATION                                                        | O                                          | √         |
+| SC-37          | Out-of-Band Channels                                                   | O                                          | √         |
+| SC-37(1)       | ENSURE DELIVERY AND TRANSMISSION                                       | O                                          | √         |
+| SC-38          | Operations Security                                                    | O                                          | √         |
+| SC-39          | Process Isolation                                                      | S                                          | √         |
+| SC-39(1)       | HARDWARE SEPARATION                                                    | S                                          | √         |
+| SC-39(2)       | SEPARATE EXECUTION DOMAIN PER THREAD                                   | S                                          | √         |
+| SC-40          | Wireless Link Protection                                               | S                                          |           |
+| SC-40(1)       | ELECTROMAGNETIC INTERFERENCE                                           | S                                          |           |
+| SC-40(2)       | REDUCE DETECTION POTENTIAL                                             | S                                          |           |
+| SC-40(3)       | IMITATIVE OR MANIPULATIVE COMMUNICATIONS DECEPTION                     | S                                          |           |
+| SC-40(4)       | SIGNAL PARAMETER IDENTIFICATION                                        | S                                          |           |
+| SC-41          | Port and I/O Device Access                                             | O /S                                       |           |
+| SC-42          | Sensor Capability and Data                                             | S                                          |           |
+| SC-42(1)       | REPORTING TO AUTHORIZED INDIVIDUALS OR ROLES                           | O                                          |           |
+| SC-42(2)       | AUTHORIZED USE                                                         | O                                          |           |
+| SC-42(3)       | PROHIBIT USE OF DEVICES                                                | W: Incorporated into SC-42.                |           |
+| SC-42(4)       | NOTICE OF COLLECTION                                                   | O                                          |           |
+| SC-42(5)       | COLLECTION MINIMIZATION                                                | O                                          |           |
+| SC-43          | Usage Restrictions                                                     | O /S                                       |           |
+| SC-44          | Detonation Chambers                                                    | S                                          |           |
+| SC-45          | System Time Synchronization                                            | S                                          |           |
+| SC-45(1)       | SYNCHRONIZATION WITH AUTHORITATIVE TIME SOURCE                         | S                                          |           |
+| SC-45(2)       | SECONDARY AUTHORITATIVE TIME SOURCE                                    | S                                          |           |
+| SC-46          | Cross Domain Policy Enforcement                                        | S                                          |           |
+| SC-47          | Alternate Communications Paths                                         | O /S                                       |           |
+| SC-48          | Sensor Relocation                                                      | O /S                                       |           |
+| SC-48(1)       | DYNAMIC RELOCATION OF SENSORS OR MONITORING CAPABILITIES               | O /S                                       |           |
+| SC-49          | Hardware-Enforced Separation and Policy Enforcement                    | O /S                                       | √         |
+| SC-50          | Software-Enforced Separation and Policy Enforcement                    | O /S                                       | √         |
+| SC-51          | Hardware-Based Protection                                              | O /S                                       | √         |
+
+**TABLE C-19: SYSTEM AND INFORMATION INTEGRITY FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                                 | Implemented By                             | Assurance |
+| -------------- | ------------------------------------------------------------------------------- | ------------------------------------------ | --------- |
+| SI-1           | Policy and Procedures                                                           | O                                          | √         |
+| SI-2           | Flaw Remediation                                                                | O                                          |           |
+| SI-2(1)        | CENTRAL MANAGEMENT                                                              | W: Incorporated into PL-9.                 |           |
+| SI-2(2)        | AUTOMATED FLAW REMEDIATION STATUS                                               | O                                          |           |
+| SI-2(3)        | TIME TO REMEDIATE FLAWS AND BENCHMARKS FOR CORRECTIVE ACTIONS                   | O                                          |           |
+| SI-2(4)        | O /S AUTOMATED PATCH MANAGEMENT TOOLS                                           |                                            |           |
+| SI-2(5)        | AUTOMATIC SOFTWARE AND FIRMWARE UPDATES                                         | O /S                                       |           |
+| SI-2(6)        | REMOVAL OF PREVIOUS VERSIONS OF SOFTWARE AND FIRMWARE                           | O /S                                       |           |
+| SI-3           | Malicious Code Protection                                                       | O /S                                       |           |
+| SI-3(1)        | CENTRAL MANAGEMENT                                                              | W: Incorporated into PL-9.                 |           |
+| SI-3(2)        | AUTOMATIC UPDATES                                                               | W: Incorporated into SI-3.                 |           |
+| SI-3(3)        | NON-PRIVILEGED USERS                                                            | W: Incorporated into AC-6(10).             |           |
+| SI-3(4)        | UPDATES ONLY BY PRIVILEGED USERS                                                | O /S                                       |           |
+| SI-3(5)        | PORTABLE STORAGE DEVICES                                                        | W: Incorporated into MP-7.                 |           |
+| SI-3(6)        | TESTING AND VERIFICATION                                                        | O                                          |           |
+| SI-3(7)        | NONSIGNATURE-BASED DETECTION                                                    | W: Incorporated into SI-3.                 |           |
+| SI-3(8)        | DETECT UNAUTHORIZED COMMANDS                                                    | S                                          |           |
+| SI-3(9)        | AUTHENTICATE REMOTE COMMANDS                                                    | W: Moved to AC-17(10).                     |           |
+| SI-3(10)       | MALICIOUS CODE ANALYSIS                                                         | O                                          |           |
+| SI-4           | System Monitoring                                                               | O /S                                       | √         |
+| SI-4(1)        | SYSTEM-WIDE INTRUSION DETECTION SYSTEM                                          | O /S                                       | √         |
+| SI-4(2)        | AUTOMATED TOOLS AND MECHANISMS FOR REAL-TIME ANALYSIS                           | S                                          | √         |
+| SI-4(3)        | AUTOMATED TOOL AND MECHANISM INTEGRATION                                        | S                                          | √         |
+| SI-4(4)        | INBOUND AND OUTBOUND COMMUNICATIONS TRAFFIC                                     | S                                          | √         |
+| SI-4(5)        | SYSTEM-GENERATED ALERTS                                                         | S                                          | √         |
+| SI-4(6)        | RESTRICT NON-PRIVILEGED USERS                                                   | W: Incorporated into AC-6(10).             |           |
+| SI-4(7)        | AUTOMATED RESPONSE TO SUSPICIOUS EVENTS                                         | S                                          | √         |
+| SI-4(8)        | PROTECTION OF MONITORING INFORMATION                                            | W: Incorporated into SI-4.                 |           |
+| SI-4(9)        | TESTING OF MONITORING TOOLS AND MECHANISMS                                      | O                                          | √         |
+| SI-4(10)       | VISIBILITY OF ENCRYPTED COMMUNICATIONS                                          | O                                          | √         |
+| SI-4(11)       | ANALYZE COMMUNICATIONS TRAFFIC ANOMALIES                                        | O /S                                       | √         |
+| SI-4(12)       | AUTOMATED ORGANIZATION-GENERATED ALERTS                                         | O /S                                       | √         |
+| SI-4(13)       | ANALYZE TRAFFIC AND EVENT PATTERNS                                              | O /S                                       | √         |
+| SI-4(14)       | WIRELESS INTRUSION DETECTION                                                    | S                                          | √         |
+| SI-4(15)       | WIRELESS TO WIRELINE COMMUNICATIONS                                             | S                                          | √         |
+| SI-4(16)       | CORRELATE MONITORING INFORMATION                                                | O /S                                       | √         |
+| SI-4(17)       | INTEGRATED SITUATIONAL AWARENESS                                                | O                                          | √         |
+| SI-4(18)       | ANALYZE TRAFFIC AND COVERT EXFILTRATION                                         | O /S                                       | √         |
+| SI-4(19)       | RISK FOR INDIVIDUALS                                                            | O                                          | √         |
+| SI-4(20)       | PRIVILEGED USERS                                                                | S                                          | √         |
+| SI-4(21)       | PROBATIONARY PERIODS NUMBER BY                                                  | O                                          | √         |
+| SI-4(22)       | UNAUTHORIZED NETWORK SERVICES                                                   | S                                          | √         |
+| SI-4(23)       | HOST-BASED DEVICES                                                              | O                                          | √         |
+| SI-4(24)       | INDICATORS OF COMPROMISE                                                        | S                                          | √         |
+| SI-4(25)       | OPTIMIZE NETWORK TRAFFIC ANALYSIS                                               | S                                          | √         |
+| SI-5           | Security Alerts, Advisories, and Directives                                     | O                                          | √         |
+| SI-5(1)        | AUTOMATED ALERTS AND ADVISORIES                                                 | O                                          | √         |
+| SI-6           | Security and Privacy Function Verification                                      | S                                          | √         |
+| SI-6(1)        | NOTIFICATION OF FAILED SECURITY TESTS                                           | W: Incorporated into SI-6.                 |           |
+| SI-6(2)        | AUTOMATION SUPPORT FOR DISTRIBUTED TESTING                                      | S                                          |           |
+| SI-6(3)        | REPORT VERIFICATION RESULTS                                                     | O                                          |           |
+| SI-7           | Software, Firmware, and Information Integrity                                   | O /S                                       | √         |
+| SI-7(1)        | INTEGRITY CHECKS                                                                | S                                          | √         |
+| SI-7(2)        | AUTOMATED NOTIFICATIONS OF INTEGRITY VIOLATIONS                                 | S                                          | √         |
+| SI-7(3)        | CENTRALLY MANAGED INTEGRITY TOOLS                                               | O                                          | √         |
+| SI-7(4)        | TAMPER-EVIDENT PACKAGING                                                        | W: Incorporated into SR-9.                 |           |
+| SI-7(5)        | AUTOMATED RESPONSE TO INTEGRITY VIOLATIONS                                      | S                                          | √         |
+| SI-7(6)        | CRYPTOGRAPHIC PROTECTION                                                        | S                                          | √         |
+| SI-7(7)        | INTEGRATION OF DETECTION AND RESPONSE                                           | O                                          | √         |
+| SI-7(8)        | AUDITING CAPABILITY FOR SIGNIFICANT EVENTS                                      | S                                          | √         |
+| SI-7(9)        | VERIFY BOOT PROCESS                                                             | S                                          | √         |
+| SI-7(10)       | PROTECTION OF BOOT FIRMWARE                                                     | S                                          | √         |
+| SI-7(11)       | CONFINED ENVIRONMENTS WITH LIMITED PRIVILEGES                                   | W: Moved to CM-7(6).                       |           |
+| SI-7(12)       | INTEGRITY VERIFICATION                                                          | O /S                                       | √         |
+| SI-7(13)       | CODE EXECUTION IN PROTECTED ENVIRONMENTS                                        | W: Moved to CM-7(7).                       |           |
+| SI-7(14)       | BINARY OR MACHINE EXECUTABLE CODE                                               | W: Moved to CM-7(8).                       |           |
+| SI-7(15)       | CODE AUTHENTICATION                                                             | S                                          | √         |
+| SI-7(16)       | TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION                             | O                                          | √         |
+| SI-7(17)       | RUNTIME APPLICATION SELF-PROTECTION                                             | O /S                                       | √         |
+| SI-8           | Spam Protection                                                                 | O                                          |           |
+| SI-8(1)        | CENTRAL MANAGEMENT                                                              | W: Incorporated into PL-9.                 |           |
+| SI-8(2)        | AUTOMATIC UPDATES                                                               | S                                          |           |
+| SI-8(3)        | CONTINUOUS LEARNING CAPABILITY                                                  | S                                          |           |
+| SI-9           | Information Input Restrictions                                                  | W: Incorporated into AC-2, AC-3, AC-5, and |           |
+| SI-10          | Information Input Validation                                                    | S                                          | √         |
+| SI-10(1)       | MANUAL OVERRIDE CAPABILITY                                                      | O /S                                       | √         |
+| SI-10(2)       | REVIEW AND RESOLVE ERRORS                                                       | O                                          | √         |
+| SI-10(3)       | PREDICTABLE BEHAVIOR                                                            | O /S                                       | √         |
+| SI-10(4)       | TIMING INTERACTIONS                                                             | S                                          | √         |
+| SI-10(5)       | RESTRICT INPUTS TO TRUSTED SOURCES AND APPROVED FORMATS                         | S                                          | √         |
+| SI-10(6)       | INJECTION PREVENTION                                                            | S                                          | √         |
+| SI-11          | Error Handling                                                                  | S                                          |           |
+| SI-12          | Information Management and Retention                                            | O                                          |           |
+| SI-12(1)       | LIMIT PERSONALLY IDENTIFIABLE INFORMATION ELEMENTS NUMBER BY                    | O                                          |           |
+| SI-12(2)       | MINIMIZE PERSONALLY IDENTIFIABLE INFORMATION IN TESTING, TRAINING, AND RESEARCH | O                                          |           |
+| SI-12(3)       | INFORMATION DISPOSAL                                                            | O                                          |           |
+| SI-13          | Predictable Failure Prevention                                                  | O                                          | √         |
+| SI-13(1)       | TRANSFERRING COMPONENT RESPONSIBILITIES                                         | O                                          | √         |
+| SI-13(2)       | TIME LIMIT ON PROCESS EXECUTION WITHOUT SUPERVISION                             | W: Incorporated into SI-7(16).             |           |
+| SI-13(3)       | MANUAL TRANSFER BETWEEN COMPONENTS                                              | O                                          | √         |
+| SI-13(4)       | STANDBY COMPONENT INSTALLATION AND NOTIFICATION                                 | O /S                                       | √         |
+| SI-13(5)       | FAILOVER CAPABILITY                                                             | O                                          | √         |
+| SI-14          | Non-Persistence                                                                 | O                                          | √         |
+| SI-14(1)       | REFRESH FROM TRUSTED SOURCES                                                    | O                                          | √         |
+| SI-14(2)       | NON-PERSISTENT INFORMATION                                                      | O                                          | √         |
+| SI-14(3)       | NON-PERSISTENT CONNECTIVITY                                                     | O                                          | √         |
+| SI-15          | Information Output Filtering                                                    | S                                          | √         |
+| SI-16          | Memory Protection                                                               | S                                          | √         |
+| SI-17          | Fail-Safe Procedures                                                            | S                                          | √         |
+| SI-18          | Personally Identifiable Information Quality Operations                          | O /S                                       |           |
+| SI-18(1)       | AUTOMATION SUPPORT                                                              | O /S                                       |           |
+| SI-18(2)       | DATA TAGS                                                                       | O /S                                       |           |
+| SI-18(3)       | COLLECTION                                                                      | O /S                                       |           |
+| SI-18(4)       | INDIVIDUAL REQUESTS                                                             | O /S                                       |           |
+| SI-18(5)       | NOTICE OF CORRECTION OR DELETION                                                | O /S                                       |           |
+| SI-19          | De-Identification                                                               | O /S                                       |           |
+| SI-19(1)       | COLLECTION                                                                      | O /S                                       |           |
+| SI-19(2)       | ARCHIVING                                                                       | O /S                                       |           |
+| SI-19(3)       | RELEASE                                                                         | O /S                                       |           |
+| SI-19(4)       | REMOVAL, MASKING, ENCRYPTION, HASHING, OR REPLACEMENT OF DIRECT IDENTIFIERS     | S                                          |           |
+| SI-19(5)       | STATISTICAL DISCLOSURE CONTROL                                                  | O /S                                       |           |
+| SI-19(6)       | DIFFERENTIAL PRIVACY                                                            | O /S                                       |           |
+| SI-19(7)       | VALIDATED ALGORITHMS AND SOFTWARE                                               | O                                          |           |
+| SI-19(8)       | MOTIVATED INTRUDER                                                              | O /S                                       |           |
+| SI-20          | Tainting                                                                        | O /S                                       | √         |
+| SI-21          | Information Refresh                                                             | O /S                                       | √         |
+| SI-22          | Information Diversity                                                           | O /S                                       | √         |
+| SI-23          | Information Fragmentation                                                       | O /S                                       | √         |
+
+**TABLE C-20: SUPPLY CHAIN RISK MANAGEMENT FAMILY**
+
+| Control Number | Control Name / Enhancement Name                                     | Implemented By | Assurance |
+| -------------- | ------------------------------------------------------------------- | -------------- | --------- |
+| SR-1           | Policy and Procedures                                               | O              | √         |
+| SR-2           | Supply Chain Risk Management Plan                                   | O              | √         |
+| SR-2(1)        | ESTABLISH SCRM TEAM                                                 | O              | √         |
+| SR-3           | Supply Chain Controls and Processes                                 | O /S           | √         |
+| SR-3(1)        | DIVERSE SUPPLY BASE                                                 | O              | √         |
+| SR-3(2)        | LIMITATION OF HARM                                                  | O              | √         |
+| SR-3(3)        | SUB-TIER FLOW DOWN                                                  | O              | √         |
+| SR-4           | Provenance                                                          | O              | √         |
+| SR-4(1)        | IDENTITY                                                            | O              | √         |
+| SR-4(2)        | TRACK AND TRACE                                                     | O              | √         |
+| SR-4(3)        | VALIDATE AS GENUINE AND NOT ALTERED                                 | O              | √         |
+| SR-4(4)        | SUPPLY CHAIN INTEGRITY — PEDIGREE                                   | O              | √         |
+| SR-5           | Acquisition Strategies, Tools, and Methods                          | O              | √         |
+| SR-5(1)        | ADEQUATE SUPPLY                                                     | O              | √         |
+| SR-5(2)        | ASSESSMENTS PRIOR TO SELECTION, ACCEPTANCE, MODIFICATION, OR UPDATE | O              | √         |
+| SR-6           | Supplier Assessments and Reviews                                    | O              | √         |
+| SR-6(1)        | TESTING AND ANALYSIS                                                | O              | √         |
+| SR-7           | Supply Chain Operations Security                                    | O              | √         |
+| SR-8           | Notification Agreements                                             | O              | √         |
+| SR-9           | Tamper Resistance and Detection                                     | O              | √         |
+| SR-9(1)        | MULTIPLE STAGES OF SYSTEM DEVELOPMENT LIFE CYCLE                    | O              | √         |
+| SR-10          | Inspection of Systems or Components                                 | O              | √         |
+| SR-11          | Component Authenticity                                              | O              | √         |
+| SR-11(1)       | ANTI-COUNTERFEIT TRAINING                                           | O              | √         |
+| SR-11(2)       | CONFIGURATION CONTROL FOR COMPONENT SERVICE AND REPAIR              | O              | √         |
+| SR-11(3)       | ANTI-COUNTERFEIT SCANNING                                           | O              | √         |
+| SR-12          | Component Disposal                                                  | O              | √         |
