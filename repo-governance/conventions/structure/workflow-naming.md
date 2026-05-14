@@ -50,7 +50,8 @@ Workflow scope MUST match its parent directory under `repo-governance/workflows/
 - **`infra`** — Workflows that provision development environments or infrastructure resources.
 - **`plan`** — Workflows in the plan lifecycle (authoring quality gate, plan execution).
 - **`repo`** — Repository-wide governance workflows (conventions, workflows, cross-reference integrity). Aligned with agent scope `repo` (both use `repo`, not `repository`).
-- **`pdf-to-md`** — Workflows for converting PDF documents to verbatim Markdown and validating conversion fidelity (text completeness, tables, figures, OCR quality).
+- **`content`** — Workflows scoped to content processing and transformation. Acts as a directory grouping for a family of content workflows. Workflows within `content/` use a more specific scope prefix in their filename (e.g., `pdf-to-md`) to communicate the exact sub-scope, since the directory name groups related content workflows rather than naming a single scope.
+- **`pdf-to-md`** — Workflows for converting PDF documents to verbatim Markdown and validating conversion fidelity (text completeness, tables, figures, OCR quality). Hosted under the `content/` directory.
 - **`specs`** — Workflows scoped to the `specs/` tree (Gherkin features, OpenAPI contracts, C4 diagrams).
 - **`ui`** — Workflows scoped to UI component quality (tokens, accessibility, responsive design).
 
@@ -100,7 +101,7 @@ The `rhino-cli workflows validate-naming` subcommand wraps this check plus a fro
 
 Current workflows, grouped by type, all conforming to the rule:
 
-- **`quality-gate`** — `plan-quality-gate` (scope `plan`, type `quality-gate`), `repo-rules-quality-gate` (scope `repo`, qualifier `rules`, type `quality-gate`), `specs-quality-gate` (scope `specs`, type `quality-gate`), `docs-quality-gate` (scope `docs`, type `quality-gate`), `ci-quality-gate` (scope `ci`, type `quality-gate`), `ui-quality-gate` (scope `ui`, type `quality-gate`), `ayokoding-web-by-example-quality-gate` (scope `ayokoding-web`, qualifier `by-example`, type `quality-gate`)
+- **`quality-gate`** — `plan-quality-gate` (scope `plan`, type `quality-gate`), `repo-rules-quality-gate` (scope `repo`, qualifier `rules`, type `quality-gate`), `specs-quality-gate` (scope `specs`, type `quality-gate`), `docs-quality-gate` (scope `docs`, type `quality-gate`), `ci-quality-gate` (scope `ci`, type `quality-gate`), `ui-quality-gate` (scope `ui`, type `quality-gate`), `ayokoding-web-by-example-quality-gate` (scope `ayokoding-web`, qualifier `by-example`, type `quality-gate`), `pdf-to-md-quality-gate` (scope `pdf-to-md`, type `quality-gate`, hosted in `content/` directory)
 - **`execution`** — `plan-execution` (scope `plan`, type `execution`)
 - **`setup`** — `infra-development-environment-setup` would be the fully qualified form; the file is stored as `development-environment-setup.md` in the `infra/` directory, making the scope implicit from directory location. The enforcement command (type-suffix check) passes. New `setup` workflows SHOULD include the scope prefix explicitly (e.g., `infra-something-setup.md`).
 

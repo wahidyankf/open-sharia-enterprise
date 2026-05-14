@@ -355,6 +355,8 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Operations**: apps-ayokoding-web-deployer, apps-ose-web-deployer, apps-organiclever-web-deployer, apps-wahidyankf-web-deployer
 
+**Content**: pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer
+
 **Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-parity-checker, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE).

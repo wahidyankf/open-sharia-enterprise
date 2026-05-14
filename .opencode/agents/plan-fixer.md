@@ -418,7 +418,7 @@ Provision before execution (run from repo root):
 claude --worktree <plan-identifier>
 ```
 
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
 ````
 
 **Single-file plans** — insert into `README.md` before the `## Delivery Checklist` heading using the same template as above.

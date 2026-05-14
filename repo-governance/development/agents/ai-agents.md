@@ -460,14 +460,15 @@ After frontmatter, agents should follow this structure:
 
 ### File Naming
 
-Agent files follow kebab-case naming with **optional scope prefixes** for app-specific or lib-specific agents:
+Agent files follow the authoritative pattern defined in the [Agent Naming Convention](../../conventions/structure/agent-naming.md). That convention is the single source of truth for agent filenames; the summary below is informational only.
 
-**Pattern**: `[scope__]agent-name.md`
+**Pattern**: `<scope>(-<qualifier>)*-<role>` (hyphens only — no underscores, no double-underscores)
 
 Where:
 
-- `scope` (optional): `apps-[app-name]-`, `libs-[lib-name]-`, or `apps-labs-[app-name]-`
-- `agent-name`: descriptive kebab-case identifier
+- `scope`: one token from the scope vocabulary in `agent-naming.md` (e.g., `docs`, `repo`, `apps-ayokoding-web`, `plan`)
+- `qualifier`: zero or more narrowing tokens (e.g., `by-example`, `software-engineering-separation`)
+- `role`: one of `maker`, `checker`, `fixer`, `dev`, `deployer`, etc.
 
 ```
 PASS: Good - General agents (no scope prefix):
@@ -482,20 +483,16 @@ PASS: Good - App-scoped agents:
 - apps-ose-web-content-maker.md
 - apps-ose-web-deployer.md
 
-PASS: Good - Lib-scoped agents (future):
-- libs__ts-auth__validator.md
-- libs__ts-payment__checker.md
-
-PASS: Good - Apps-labs scoped agents (future):
-- apps-labs__prototype-x__tester.md
-
 FAIL: Bad:
 - DocWriter.md (PascalCase)
 - doc_writer.md (snake_case)
 - documentation-writer-agent.md (redundant suffix)
-- ayokoding-general-maker.md (missing scope delimiter)
-- apps_ayokoding-web_general-maker.md (wrong delimiter - use hyphens)
+- ayokoding-general-maker.md (missing scope)
+- apps_ayokoding-web_general-maker.md (underscores forbidden — use hyphens)
+- libs__ts-auth__validator.md (double-underscores forbidden — violates file naming convention)
 ```
+
+See [Agent Naming Convention](../../conventions/structure/agent-naming.md) for the complete, authoritative naming rule including the full scope vocabulary.
 
 ### Scope Prefix Guidelines
 

@@ -30,6 +30,11 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 
 - [AI Model Benchmarks](./ai-model-benchmarks.md) - Cited benchmark scores for all AI models used in `.claude/agents/` — primary source backing for tier assignments in model-selection.md
 
+### Security
+
+- [Security Reference](./security/README.md) - Security framework documentation and compliance references
+  - [NIST SP 800-53 Rev 5](./security/frameworks/nist-sp-800-53-rev5.md) - NIST Special Publication 800-53 Revision 5: Security and Privacy Controls for Information Systems and Organizations (verbatim Markdown conversion)
+
 ### Ecosystem
 
 - [Related Repositories](./related-repositories.md) - Sibling repositories derived from or related to `ose-public` (notably `ose-primer`), upstream/downstream relationships, and license differences
