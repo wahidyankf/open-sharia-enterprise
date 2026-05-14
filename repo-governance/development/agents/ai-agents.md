@@ -601,14 +601,15 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 10. docs-tutorial-checker
 11. docs-link-checker
 12. docs-software-engineering-separation-checker
-13. readme-checker
-14. plan-checker
-15. plan-execution-checker
-16. specs-checker
-17. swe-code-checker
-18. ci-checker
-19. swe-ui-checker
-20. repo-parity-checker
+13. pdf-to-md-checker
+14. readme-checker
+15. plan-checker
+16. plan-execution-checker
+17. specs-checker
+18. swe-code-checker
+19. ci-checker
+20. swe-ui-checker
+21. repo-parity-checker
 
 > **Cross-vendor behavioral parity**: `repo-parity-checker` (green) and
 > `repo-parity-fixer` (yellow) validate the cross-vendor parity invariants

@@ -25,6 +25,8 @@ This directory contains OSE Platform-specific standards for automation testing t
 
 ## Testing Tools
 
+- **[Tools Index](tools/README.md)** - All automation testing tools organized by category
+
 ### End-to-End Testing
 
 - **[Playwright](tools/playwright/README.md)** - Cross-browser end-to-end testing framework

@@ -57,6 +57,8 @@ All applications using the frameworks documented here MUST follow the patterns a
 
 ### Technology Stacks
 
+- **[Tools Index](tools/README.md)** - All web development frameworks and tools organized by technology stack
+
 Each stack directory contains documentation for frameworks and libraries specific to that ecosystem:
 
 ```

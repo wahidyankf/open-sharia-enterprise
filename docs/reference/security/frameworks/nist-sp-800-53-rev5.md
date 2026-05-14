@@ -1,3 +1,15 @@
+---
+title: "NIST SP 800-53 Rev 5"
+description: NIST Special Publication 800-53 Revision 5 — Security and Privacy Controls for Information Systems and Organizations (verbatim Markdown conversion)
+category: reference
+tags:
+  - security
+  - nist
+  - compliance
+  - controls
+created: 2026-05-14
+---
+
 # NIST Special Publication 800-53
 
 Revision 5

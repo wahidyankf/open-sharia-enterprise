@@ -345,7 +345,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ose-web-content-maker, swe-ui-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ose-web-content-checker, swe-code-checker, swe-ui-checker, ci-checker, web-research-maker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ose-web-content-checker, swe-code-checker, swe-ui-checker, ci-checker, web-research-maker, repo-parity-checker, repo-workflow-checker
 
 **Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ose-web-content-fixer, docs-file-manager, swe-ui-fixer, ci-fixer, repo-parity-fixer
 
@@ -357,7 +357,7 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), delegated 
 
 **Content**: pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer
 
-**Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-parity-checker, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
+**Meta**: agent-maker, repo-rules-maker, repo-rules-checker, repo-rules-fixer, repo-workflow-maker, repo-workflow-fixer, repo-ose-primer-adoption-maker, repo-ose-primer-propagation-maker, social-linkedin-post-maker
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE).
 
