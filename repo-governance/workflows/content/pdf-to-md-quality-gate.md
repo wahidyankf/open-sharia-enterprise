@@ -204,7 +204,7 @@ Validate the Markdown file against the source PDF across all dimensions.
 **Notes**:
 
 - Processes PDF in 50-page chunks for large documents
-- Loads `.known-false-positives.md` skip list before validating
+- Loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` skip list before validating
 
 ### 3. Check for Findings (Sequential)
 
@@ -256,7 +256,7 @@ Apply validated fixes from the checker audit report.
 - Fixer re-validates each finding before applying (prevents false positives)
 - HIGH_CONFIDENCE fixes applied automatically
 - MEDIUM_CONFIDENCE fixes skipped (flagged for manual review)
-- FALSE_POSITIVE findings persisted to `.known-false-positives.md`
+- FALSE_POSITIVE findings persisted to `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md`
 - Fix report includes changed sections list for scoped re-validation
 
 ### 5. Re-validate (Sequential)
@@ -283,7 +283,7 @@ re-validates the full document.
 
 **Notes**:
 
-- Loads `.known-false-positives.md` skip list before validating
+- Loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` skip list before validating
 - Scoped re-validation (changed sections only) on iterations where fixes were applied
 - Full re-validation when confirming a zero-findings pass with no preceding fix step
 
@@ -453,8 +453,8 @@ Result: PASS (4 iterations)
 
 **Convergence Safeguards**:
 
-- Checker loads `.known-false-positives.md` at each iteration start
-- Fixer persists new FALSE_POSITIVEs to skip list
+- Checker loads `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` at each iteration start
+- Fixer persists new FALSE_POSITIVEs to that same file in `generated-reports/`
 - Step 5 (Re-validate) uses changed-sections-only scan when called after Step 4 (Apply Fixes)
 
 **False Positive Protection**:

@@ -265,7 +265,7 @@ Add summary:
 
 Before beginning validation, load the skip list:
 
-- **File**: `generated-reports/.known-false-positives.md`
+- **File**: `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md` (where `{md-basename}` is the filename without extension, e.g. `nist-sp-800-53-rev5`)
 - Check each finding against stable key: `[category] | [file] | [brief-description]`
 - If matched: log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]`
 

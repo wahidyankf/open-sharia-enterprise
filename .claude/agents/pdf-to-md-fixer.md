@@ -207,7 +207,7 @@ Extract paragraph from PDF source page. Insert after identified anchor text in M
 When a finding is confirmed FALSE_POSITIVE, append to skip list:
 
 ```bash
-echo "- [text-completeness] | $MD_FILE | $BRIEF_DESCRIPTION" >> "generated-reports/.known-false-positives.md"
+echo "- [text-completeness] | $MD_FILE | $BRIEF_DESCRIPTION" >> "generated-reports/pdf-to-md__${MD_BASENAME}__known-false-positives.md"
 ```
 
 Format: `[category] | [file] | [brief-description]`
@@ -268,7 +268,7 @@ This enables checker to scope its next iteration to only changed areas.
 
 **Finding**: Checker reported paragraph absent
 **Re-validation**: Paragraph present at line 892, whitespace-normalized match
-**Action**: Added to .known-false-positives.md
+**Action**: Added to `generated-reports/pdf-to-md__{md-basename}__known-false-positives.md`
 
 ## Changed Sections (for Scoped Re-validation)
 
