@@ -7,4 +7,4 @@ WORKDIR /workspace
 
 EXPOSE 8302
 
-CMD ["dotnet", "watch", "run", "--project", "src/OseGrcBe/OseGrcBe.fsproj", "--urls", "http://+:8302"]
+CMD ["dotnet", "watch", "run", "--project", "src/OseAppBe/OseAppBe.fsproj", "--urls", "http://+:8302"]
