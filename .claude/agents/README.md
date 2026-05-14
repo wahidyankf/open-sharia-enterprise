@@ -13,6 +13,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-by-example-maker](apps-ayokoding-web-by-example-maker.md)** - By-example tutorials
 - **[apps-ayokoding-web-in-the-field-maker](apps-ayokoding-web-in-the-field-maker.md)** - In-the-field tutorials for AyoKoding
 - **[apps-ose-web-content-maker](apps-ose-web-content-maker.md)** - OSE Platform content
+- **[pdf-to-md-maker](pdf-to-md-maker.md)** - PDF to verbatim Markdown conversion (text-based and image-only via OCR)
 - **[plan-maker](plan-maker.md)** - Project plan creation
 - **[repo-rules-maker](repo-rules-maker.md)** - Governance document creation
 - **[repo-workflow-maker](repo-workflow-maker.md)** - Workflow documentation
@@ -36,6 +37,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-facts-checker](apps-ayokoding-web-facts-checker.md)** - Factual accuracy for AyoKoding
 - **[apps-ayokoding-web-link-checker](apps-ayokoding-web-link-checker.md)** - Link validation for AyoKoding
 - **[apps-ose-web-content-checker](apps-ose-web-content-checker.md)** - OSE content validation
+- **[pdf-to-md-checker](pdf-to-md-checker.md)** - PDF-to-Markdown fidelity validation (text completeness, tables, figures, Mermaid, OCR quality)
 - **[plan-checker](plan-checker.md)** - Project plan validation
 - **[plan-execution-checker](plan-execution-checker.md)** - Plan execution validation
 - **[repo-rules-checker](repo-rules-checker.md)** - Governance compliance validation
@@ -59,6 +61,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[apps-ayokoding-web-facts-fixer](apps-ayokoding-web-facts-fixer.md)** - Apply factual corrections
 - **[apps-ayokoding-web-link-fixer](apps-ayokoding-web-link-fixer.md)** - Fix broken links
 - **[apps-ose-web-content-fixer](apps-ose-web-content-fixer.md)** - Fix OSE content issues
+- **[pdf-to-md-fixer](pdf-to-md-fixer.md)** - Apply validated PDF-to-Markdown fixes (re-extracts missing content from PDF source)
 - **[plan-fixer](plan-fixer.md)** - Apply plan fixes
 - **[repo-rules-fixer](repo-rules-fixer.md)** - Fix governance compliance issues
 - **[repo-parity-fixer](repo-parity-fixer.md)** - Apply validated cross-vendor parity fixes (auto-remediates binding-sync drift; flags color-map/tier-map gaps)
@@ -98,7 +101,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 Every agent filename follows: `<scope>(-<qualifier>)*-<role>`
 
-- `scope` — top-level domain (`apps`, `docs`, `plan`, `repo`, `swe`, `ci`, `readme`, `specs`, `social`, `web`, `agent`).
+- `scope` — top-level domain (`apps`, `ci`, `docs`, `pdf-to-md`, `plan`, `readme`, `repo`, `social`, `specs`, `swe`, `web`, `agent`).
 - `qualifier` — zero or more refinement tokens (e.g., `ayokoding-web`, `link`, `ui`, `execution`).
 - `role` — exactly one trailing token from the Role Vocabulary below.
 

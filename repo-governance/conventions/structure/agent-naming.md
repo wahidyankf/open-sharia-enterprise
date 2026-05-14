@@ -48,6 +48,7 @@ Exactly one of the following tokens MUST appear as the first token of every agen
 - **`apps`** — Agents scoped to a specific deployable application under `apps/` (web content authoring, app-specific checking, deployers).
 - **`ci`** — Agents that diagnose, validate, or repair continuous-integration pipelines and their failures.
 - **`docs`** — Agents scoped to the `docs/` tree (Diátaxis content, link integrity, software-engineering separation).
+- **`pdf-to-md`** — Agents that convert PDF documents to verbatim Markdown and validate conversion fidelity (text completeness, tables, diagrams, OCR quality).
 - **`plan`** — Agents in the plan lifecycle (authoring, checking, executing, validating execution, fixing plans).
 - **`readme`** — Agents that create, validate, or repair README files across the repository.
 - **`repo`** — Repository-wide governance agents (conventions, workflows, cross-reference integrity).

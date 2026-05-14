@@ -79,6 +79,7 @@ All workflows support standard input parameters:
 - [docs/README.md](docs/README.md) — Documentation quality workflows
 - [infra/README.md](infra/README.md) — Infrastructure and environment setup workflows
 - [meta/README.md](meta/README.md) — Workflow system reference documentation
+- [pdf-to-md/README.md](pdf-to-md/README.md) — PDF-to-Markdown conversion and fidelity validation workflows
 - [plan/README.md](plan/README.md) — Project planning workflows
 - [repo/README.md](repo/README.md) — Repository governance workflows
 - [specs/README.md](specs/README.md) — Specification quality workflows
@@ -102,6 +103,7 @@ All workflows support standard input parameters:
 | [Specs Validation](specs/README.md)                                          | Validate specs/ directory for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness, apply fixes iteratively until ZERO findings        | specs-checker, specs-fixer                                                                                                                                              | Medium     |
 | [UI Quality Gate](ui/README.md)                                              | Validate UI component quality (tokens, accessibility, patterns, dark mode, responsive), apply fixes iteratively until ZERO findings                                             | swe-ui-checker, swe-ui-fixer                                                                                                                                            | Medium     |
 | [CI Quality Gate](ci/README.md)                                              | Validate all projects conform to CI/CD standards (Nx targets, coverage, Docker, Gherkin, workflows), apply fixes iteratively until ZERO findings                                | ci-checker, ci-fixer                                                                                                                                                    | Medium     |
+| [PDF-to-Markdown Quality Gate](pdf-to-md/README.md)                          | Convert PDF to verbatim Markdown and validate conversion fidelity (text completeness, tables, figures, Mermaid, OCR) iteratively until ZERO findings                            | pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer                                                                                                                     | Medium     |
 | [Development Environment Setup](infra/README.md)                             | Install and verify all 18+ polyglot toolchains required for development, testing, and git hooks across all projects                                                             | (manual orchestration — developer-guided)                                                                                                                               | High       |
 
 All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](meta/README.md) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
@@ -168,6 +170,12 @@ Workflows for UI component quality:
 Workflows for CI/CD standards compliance:
 
 - **ci-quality-gate**: Validate all projects conform to CI/CD conventions (Nx targets, coverage, Docker, Gherkin, workflows)
+
+### PDF-to-Markdown Workflows
+
+Workflows for converting PDF documents to verbatim Markdown and validating fidelity:
+
+- **pdf-to-md-quality-gate**: Convert PDF → Markdown (text-based or OCR), validate completeness and accuracy iteratively until ZERO findings
 
 ### Infrastructure Workflows
 

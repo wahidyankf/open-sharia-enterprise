@@ -50,6 +50,7 @@ Workflow scope MUST match its parent directory under `repo-governance/workflows/
 - **`infra`** — Workflows that provision development environments or infrastructure resources.
 - **`plan`** — Workflows in the plan lifecycle (authoring quality gate, plan execution).
 - **`repo`** — Repository-wide governance workflows (conventions, workflows, cross-reference integrity). Aligned with agent scope `repo` (both use `repo`, not `repository`).
+- **`pdf-to-md`** — Workflows for converting PDF documents to verbatim Markdown and validating conversion fidelity (text completeness, tables, figures, OCR quality).
 - **`specs`** — Workflows scoped to the `specs/` tree (Gherkin features, OpenAPI contracts, C4 diagrams).
 - **`ui`** — Workflows scoped to UI component quality (tokens, accessibility, responsive design).
 
