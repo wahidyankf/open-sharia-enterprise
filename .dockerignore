@@ -23,6 +23,9 @@ specs
 !specs/apps/organiclever/behavior/be/gherkin
 !specs/apps/organiclever/behavior/web/gherkin
 !specs/apps/organiclever/containers/contracts/generated
+!specs/apps/ose-app/behavior/be/gherkin
+!specs/apps/ose-app/behavior/web/gherkin
+!specs/apps/ose-app/containers/contracts/generated
 infra
 .claude
 .opencode
