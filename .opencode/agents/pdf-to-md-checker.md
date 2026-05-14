@@ -302,5 +302,5 @@ On re-validation:
 
 - `repo-generating-validation-reports` Skill — UUID generation and progressive report writing
 - `repo-assessing-criticality-confidence` Skill — criticality/confidence system
-- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/pdf-to-md/pdf-to-md-quality-gate.md)
+- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
 - **Related Agents**: `pdf-to-md-maker.md`, `pdf-to-md-fixer.md`

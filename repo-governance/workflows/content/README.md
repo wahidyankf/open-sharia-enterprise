@@ -1,26 +1,27 @@
 ---
-title: "PDF-to-Markdown Workflows"
-description: Workflows for converting PDF files to verbatim Markdown and validating conversion fidelity
+title: "Content Workflows"
+description: Workflows for creating, converting, and validating content in various formats
 category: explanation
 subcategory: workflows
 tags:
   - index
+  - content
   - pdf
   - markdown
-  - conversion
   - quality-gate
 created: 2026-05-14
 ---
 
-# PDF-to-Markdown Workflows
+# Content Workflows
 
-Workflows for converting PDF source documents to verbatim Markdown and validating that the conversion is complete and faithful. These workflows underpin cross-referencing workflows that treat the Markdown as a source-of-truth proxy for the original PDF.
+Workflows for content creation, format conversion, and fidelity validation. These workflows ensure
+content quality across documents, reference materials, and Markdown representations.
 
 ## Workflows in This Family
 
-| Workflow | Purpose | Agents | Complexity |
-|---|---|---|---|
-| [pdf-to-md-quality-gate](pdf-to-md-quality-gate.md) | Convert PDF → verbatim Markdown, then validate fidelity iteratively until ZERO findings | pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer | Medium |
+| Workflow                                            | Purpose                                                                                                           | Agents                                              | Complexity |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ---------- |
+| [pdf-to-md-quality-gate](pdf-to-md-quality-gate.md) | Convert PDF → verbatim Markdown, then validate fidelity iteratively until ZERO findings on two consecutive checks | pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer | Medium     |
 
 ## When to Use These Workflows
 

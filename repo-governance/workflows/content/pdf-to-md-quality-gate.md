@@ -1,8 +1,8 @@
 ---
 name: pdf-to-md-quality-gate
 title: "pdf-to-md-quality-gate"
-goal: Convert a PDF file to verbatim Markdown and validate conversion fidelity iteratively until zero findings achieved
-termination: "Zero findings across all validation dimensions on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
+goal: Convert a PDF file to verbatim Markdown and validate conversion fidelity iteratively until zero findings achieved on two consecutive checks
+termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: pdf-file
     type: string
@@ -25,7 +25,7 @@ inputs:
     default: strict
   - name: min-iterations
     type: number
-    description: Minimum check-fix cycles before allowing zero-finding termination
+    description: Minimum check-fix cycles before allowing zero-finding termination (prevents premature success)
     required: false
   - name: max-iterations
     type: number
@@ -57,7 +57,9 @@ outputs:
 
 # PDF-to-Markdown Quality Gate Workflow
 
-**Purpose**: Convert a PDF file to a complete, verbatim Markdown representation, then validate conversion fidelity iteratively until all issues are resolved. The resulting Markdown serves as a cross-reference source-of-truth proxy for the original PDF.
+**Purpose**: Convert a PDF file to a complete, verbatim Markdown representation, then validate
+conversion fidelity iteratively until all issues are resolved. The resulting Markdown serves as a
+cross-reference source-of-truth proxy for the original PDF.
 
 **When to use**:
 
@@ -66,13 +68,17 @@ outputs:
 - When validating an existing conversion before using it as a reference source
 - After a PDF has been updated and the Markdown needs revalidation
 
-This workflow implements the **Maker-Checker-Fixer pattern** for PDF-to-Markdown conversion quality assurance.
+This workflow implements the **Maker-Checker-Fixer pattern** for PDF-to-Markdown conversion quality
+assurance.
 
 ## Execution Mode
 
-**Preferred Mode**: Agent Delegation — invoke `pdf-to-md-maker`, `pdf-to-md-checker`, and `pdf-to-md-fixer` via the Agent tool with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
+**Preferred Mode**: Agent Delegation — invoke `pdf-to-md-maker`, `pdf-to-md-checker`, and
+`pdf-to-md-fixer` via the Agent tool with `subagent_type`
+(see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
 
-**Fallback Mode**: Manual Orchestration — execute workflow logic directly using Read/Write/Edit/Bash tools when Agent Delegation is unavailable.
+**Fallback Mode**: Manual Orchestration — execute workflow logic directly using Read/Write/Edit/Bash
+tools when Agent Delegation is unavailable.
 
 **How to Execute**:
 
@@ -86,7 +92,7 @@ The AI will:
 2. Invoke `pdf-to-md-maker` via the Agent tool (convert PDF → Markdown)
 3. Invoke `pdf-to-md-checker` via the Agent tool (validate fidelity, write audit)
 4. Invoke `pdf-to-md-fixer` via the Agent tool (read audit, apply fixes)
-5. Iterate until zero findings achieved
+5. Iterate until zero findings achieved on two consecutive checks
 6. Show git status with modified files
 7. Wait for user commit approval
 
@@ -110,7 +116,7 @@ graph TB
     MakeStep -->|Success| Step2
     MakeStep -->|Fail| Fail([End: fail])
 
-    Step2 --> Step3{Step 3: Aggregate<br/>Findings}
+    Step2 --> Step3{Step 3: Check<br/>Findings}
 
     Step3 -->|Zero findings| Step5{Step 5: Iteration<br/>Control}
     Step3 -->|Findings exist| Step4[Step 4: Apply Fixes]
@@ -184,13 +190,13 @@ Validate the Markdown file against the source PDF across all dimensions.
 - Loads `.known-false-positives.md` skip list before validating
 - On iteration 2+: scoped re-validation (changed sections only)
 
-### 3. Aggregate Findings (Sequential)
+### 3. Check for Findings (Sequential)
 
-Analyze audit report to determine if fixes are needed.
+Analyze audit report to determine if fixes are needed and track convergence progress.
 
-**Condition Check**: Count findings based on mode level
+**Condition Check**: Count findings based on mode level in `{step2.outputs.pdf-to-md-report-N}`
 
-**Mode-Based Counting**:
+**Mode-based counting**:
 
 - **lax**: Count CRITICAL only
 - **normal**: Count CRITICAL + HIGH
@@ -202,7 +208,8 @@ Analyze audit report to determine if fixes are needed.
 **Decision**:
 
 - If threshold-level findings > 0: Proceed to step 4 (reset `consecutive_zero_count` to 0)
-- If threshold-level findings = 0: Set `consecutive_zero_count += 1`; proceed to step 5
+- If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the
+  first zero); proceed to step 5 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 2 completion
 
@@ -241,18 +248,25 @@ Determine whether to continue or finalize.
 
 **Logic**:
 
-- Track `consecutive_zero_count` across iterations (resets to 0 when threshold findings > 0, increments when = 0)
-- If `consecutive_zero_count >= 2` AND `iterations >= min-iterations` (or min not provided): Proceed to step 6 (double-zero confirmed — **pass**)
-- If `consecutive_zero_count >= 2` AND `iterations < min-iterations`: Loop back to step 2 (re-validate)
-- If `consecutive_zero_count < 2` AND threshold findings = 0: Loop back to step 2 (confirmation check — no fix needed, just re-verify)
-- If threshold findings > 0 AND iterations >= max-iterations: Proceed to step 6 (**partial**)
-- If threshold findings > 0 AND iterations < max-iterations: Loop back to step 4
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold findings > 0,
+  increments when = 0)
+- If `consecutive_zero_count >= 2` AND `iterations >= min-iterations` (or min not provided):
+  Proceed to step 6 (double-zero confirmed — **pass**)
+- If `consecutive_zero_count >= 2` AND `iterations < min-iterations`: Loop back to step 2
+  (re-validate to satisfy min-iterations)
+- If `consecutive_zero_count < 2` AND threshold findings = 0: Loop back to step 2 (confirmation
+  check — no fix needed, just re-verify)
+- If threshold findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed
+  to step 6 (**partial**)
+- If threshold findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop
+  back to step 4
 
 **Below-threshold findings**: Reported in audit but don't affect iteration logic.
 
 **Notes**:
 
-- Consecutive pass requirement: zero findings must be confirmed by a second independent check
+- **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check
+  before declaring success
 - Escalation warning logged at iteration 5 if not converging
 - Default max-iterations: 7
 
@@ -265,22 +279,24 @@ Report final status and summary.
 **Status determination**:
 
 - **pass**: Zero threshold-level findings across all dimensions on 2 consecutive checks
-- **partial**: Findings remain after max-iterations; or some fixes require manual intervention (e.g., OCR quality disputes)
+- **partial**: Findings remain after max-iterations; or some fixes require manual intervention
+  (e.g., OCR quality disputes)
 - **fail**: Technical errors (missing tools, corrupt PDF, empty output)
 
 **Notes**:
 
 - Below-threshold findings reported in final audit but don't prevent success
-- Manual intervention cases (e.g., true OCR quality issues) always result in `partial` — re-run after manual correction
+- Manual intervention cases (e.g., true OCR quality issues) always result in `partial` — re-run
+  after manual correction
 - Final report includes page coverage, table count, figure count, Mermaid block count
 
 ## Termination Criteria
 
 **Success** (`pass`):
 
-- **lax**: Zero CRITICAL findings on 2 consecutive checks
-- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks
+- **lax**: Zero CRITICAL findings on 2 consecutive checks (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks (LOW may exist)
 - **ocd**: Zero findings at all levels on 2 consecutive checks
 
 **Partial** (`partial`):
@@ -295,6 +311,9 @@ Report final status and summary.
 - Source PDF unreadable or corrupt
 - Output MD file could not be written
 
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status.
+Success requires two consecutive zero-finding validations (consecutive pass requirement).
+
 ## Example Usage
 
 ### Standard Invocation
@@ -308,7 +327,7 @@ AI will:
 - Check if MD exists; skip maker if it does
 - Validate fidelity in strict mode (default)
 - Fix CRITICAL/HIGH/MEDIUM findings
-- Iterate until zero CRITICAL/HIGH/MEDIUM findings
+- Iterate until zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks
 
 ### Force Regeneration
 
@@ -331,7 +350,7 @@ AI will:
 
 - Fix CRITICAL findings only
 - Report HIGH/MEDIUM/LOW without fixing them
-- Success when zero CRITICAL findings remain
+- Success when zero CRITICAL findings on 2 consecutive checks
 
 ### Custom Output Path
 
@@ -367,13 +386,13 @@ Iteration 2:
     - HIGH: 1 Mermaid block still invalid after first fix attempt
     - MEDIUM: 1 heading drift in re-inserted section
   Fixer: Applied 1 fix; 1 MEDIUM skipped
-  consecutive_zero_count: 0 → reset (findings > 0)
+  consecutive_zero_count: 0 (findings > 0 — reset)
 
 Iteration 3:
   Checker (scoped): 0 findings
-  consecutive_zero_count: 1
+  consecutive_zero_count: 1 (first zero)
 
-Iteration 4:
+Iteration 4 (confirmation):
   Checker (scoped): 0 findings
   consecutive_zero_count: 2 ← double-zero confirmed
 
@@ -457,8 +476,10 @@ mmdc --version
 
 ## Related Workflows
 
-- **Documentation Quality Gate** (`docs-quality-gate`) — Validate Markdown documentation quality after PDF conversion
-- **Repository Rules Validation** (`repo-rules-quality-gate`) — Validate after new reference documents are added
+- **Documentation Quality Gate** (`docs-quality-gate`) — Validate Markdown documentation quality
+  after PDF conversion
+- **Repository Rules Validation** (`repo-rules-quality-gate`) — Validate after new reference
+  documents are added
 
 ## Related Agents
 

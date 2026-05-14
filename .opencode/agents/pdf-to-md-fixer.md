@@ -246,5 +246,5 @@ This enables checker to scope its next iteration to only changed areas.
 
 - `repo-assessing-criticality-confidence` Skill — priority matrix (P0-P4)
 - `repo-applying-maker-checker-fixer` Skill — fixer role and confidence levels
-- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/pdf-to-md/pdf-to-md-quality-gate.md)
+- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
 - **Related Agents**: `pdf-to-md-maker.md`, `pdf-to-md-checker.md`
