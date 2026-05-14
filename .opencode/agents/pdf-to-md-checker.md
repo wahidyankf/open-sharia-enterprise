@@ -274,6 +274,20 @@ On re-validation:
 **Issue**: Block starts with unknown diagram type `xyz`
 **Fix**: Replace `xyz` with valid type (e.g., `graph TD`)
 **Criticality**: HIGH
+
+## MEDIUM Findings
+
+...
+
+## LOW Findings
+
+...
+
+## Verified (sample)
+
+- Pages 1-10: Full text match confirmed
+- Table on page 12: 4 columns, 8 rows verified
+- Figure 1 placeholder present
 ```
 
 ## Tools Usage
