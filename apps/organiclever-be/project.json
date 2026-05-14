@@ -48,7 +48,7 @@
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc organiclever)",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul organiclever)",
           "mvn test",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-be/target/site/jacoco/jacoco.xml 90)"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-be/target/site/jacoco/jacoco.xml 95)"
         ],
         "parallel": false,
         "cwd": "apps/organiclever-be"

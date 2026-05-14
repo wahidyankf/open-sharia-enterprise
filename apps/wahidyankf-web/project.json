@@ -65,7 +65,7 @@
         "commands": [
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc wahidyankf)",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul wahidyankf)",
-          "npx vitest run --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/wahidyankf-web/coverage/lcov.info 80)"
+          "npx vitest run --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/wahidyankf-web/coverage/lcov.info 90)"
         ],
         "parallel": false,
         "cwd": "{projectRoot}"

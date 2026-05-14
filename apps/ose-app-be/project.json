@@ -45,7 +45,7 @@
           "dotnet build tests/OseAppBe.Tests/OseAppBe.Tests.fsproj",
           "dotnet altcover --inputDirectory tests/OseAppBe.Tests/bin/Debug/net10.0 --outputDirectory tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented --assemblyExcludeFilter=OseAppBe.Tests '--assemblyFilter=xunit|TickSpec|Microsoft|FSharp|testhost|AltCover|coverlet|dbup|Npgsql|EFCore' '--fileFilter=Program|AppDbContext' --linecover --reportFormat=lcov --report=coverage/altcov.info --save",
           "dotnet altcover Runner --recorderDirectory tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented --lcovReport coverage/altcov.info --executable dotnet -- test tests/OseAppBe.Tests/bin/Debug/net10.0/__Instrumented/OseAppBe.Tests.dll",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-app-be/coverage/altcov.info 90)"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ose-app-be/coverage/altcov.info 95)"
         ],
         "parallel": false,
         "cwd": "apps/ose-app-be"

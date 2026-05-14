@@ -73,7 +73,7 @@
         "commands": [
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd bc organiclever)",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go ddd ul organiclever)",
-          "node scripts/gen-migrations.mjs && npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-web/coverage/lcov.info 70)"
+          "node scripts/gen-migrations.mjs && npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-web/coverage/lcov.info 85)"
         ],
         "parallel": false,
         "cwd": "{projectRoot}"
